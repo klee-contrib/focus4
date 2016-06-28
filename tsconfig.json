@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2015",
+        "moduleResolution": "node",
+        "declaration": true,
+        "outDir": "dist",
+        "jsx": "react",
+        "lib": ["es6", "dom"],
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "strictNullChecks": true,
+        "experimentalDecorators": true,
+        "noFallthroughCasesInSwitch": true,
+        "inlineSourceMap": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

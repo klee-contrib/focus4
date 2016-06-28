@@ -1,0 +1,39 @@
+{
+  "name": "autofocus",
+  "version": "0.1.0",
+  "description": "Focus-core clone in Typescript and more.",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JabX/autofocus.git"
+  },
+  "author": "damien.frikha@kleegroup.com",
+  "license": "MIT",
+  "homepage": "https://github.com/JabX/autofocus",
+  "scripts": {
+    "start": "tsc",
+    "tslint": "tslint src/**/*.ts src/**/*.tsx --force"
+  },
+  "dependencies": {
+    "@types/core-decorators": "^0.10.23-alpha",
+    "@types/flux": "0.0.21-alpha",
+    "@types/i18next": "0.0.21-alpha",
+    "@types/isomorphic-fetch": "0.0.21-alpha",
+    "@types/lodash": "^4.0.21-alpha",
+    "@types/node": "^4.0.22-alpha",
+    "@types/node-uuid": "^6.0.21-alpha",
+    "@types/react": "^0.14.21-alpha",
+    "core-decorators": "^0.12.3",
+    "events": "^1.1.0",
+    "flux": "^2.1.1",
+    "i18next": "^3.2.0",
+    "immutable": "^3.8.1",
+    "lodash": "^4.13.1",
+    "moment": "^2.13.0",
+    "node-uuid": "^1.4.7"
+  },
+  "devDependencies": {
+    "tslint": "^3.12.1",
+    "typescript": "^2.0.0-dev.20160628"
+  }
+}
