@@ -17,7 +17,7 @@ export let builtInStore = new UserStore();
  */
 export function hasRole(role: string | string[]) {
     role = isArray(role) ? role : [role];
-    return 0 < intersection(role, getRoles()).length;
+    return 0 < intersection(role, getRoles() || []).length;
 }
 
 /**
