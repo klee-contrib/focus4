@@ -6,7 +6,7 @@ export interface Domain {
     unformatter?: (text: string) => any;
     locale?: string;
     format?: string;
-    type: string;
+    type: string | undefined;
     validator?: Validator[];
     listName?: string;
     FieldComponent?: ReactType;

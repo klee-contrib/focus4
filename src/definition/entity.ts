@@ -1,5 +1,7 @@
+import {Domain} from "./";
+
 export interface EntityField {
-    domain: string;
+    domain: Domain;
     isRequired: boolean;
     name: string;
 }

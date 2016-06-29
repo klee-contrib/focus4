@@ -1,6 +1,7 @@
 import * as React from "react";
 import ApplicationStore, {ApplicationAction} from "../store/application";
 import {dispatcher} from "../";
+export {ApplicationAction};
 
 export { default as actionBuilder } from "./action-builder";
 

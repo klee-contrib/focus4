@@ -43,11 +43,11 @@ export default class CoreStore<D> extends EventEmitter {
         this.addListener(`${node}:status`, callback);
     }
 
-    get<T>(node: string): T {
+    get<T>(node: string): T | undefined {
         return this.data.has(node) ? this.data.get(node) as any : undefined;
     }
 
-    getError(node: string) {
+    getError(node: string): {[key: string]: any} | undefined {
         return this.error.has(node) ? this.error.get(node) : undefined;
     }
 
