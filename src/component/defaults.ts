@@ -9,6 +9,7 @@ export let Field: ReactComponent<any> | undefined;
 export let Button: ReactComponent<any> | undefined;
 export let ContextualActions: ReactComponent<any> | undefined;
 export let Checkbox: ReactComponent<any> | undefined;
+export let SearchBar: ReactComponent<any> | undefined;
 
 /** Interface de tous les composants à définir. */
 export interface Defaults {
@@ -19,6 +20,7 @@ export interface Defaults {
     Button: ReactComponent<any>;
     ContextualActions: ReactComponent<any>;
     Checkbox: ReactComponent<any>;
+    SearchBar: ReactComponent<any>;
 }
 
 /**
@@ -33,4 +35,5 @@ export function setDefaultComponents(c: Defaults) {
     Button = c.Button;
     ContextualActions = c.ContextualActions;
     Checkbox = c.Checkbox;
+    SearchBar = c.SearchBar;
 }

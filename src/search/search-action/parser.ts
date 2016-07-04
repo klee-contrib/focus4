@@ -1,6 +1,7 @@
 import {OutputFacet, QueryOutput, UnscopedQueryOutput} from "./types";
-import {Context} from "./builder";
+import {Context} from "./";
 import {AdvancedSearch, StoreFacets} from "../../store/search/advanced-search";
+import {isArray} from "lodash";
 
 function parseFacets(serverFacets: OutputFacet[]) {
     return serverFacets.reduce((formattedFacets, facet) => {
@@ -18,6 +19,7 @@ function parseFacets(serverFacets: OutputFacet[]) {
 }
 
 export function unscopedResponse(data: UnscopedQueryOutput): AdvancedSearch {
+    // Results are always stored as an array.
     return ({
         results: data.groups,
         facets: parseFacets(data.facets),
@@ -26,7 +28,8 @@ export function unscopedResponse(data: UnscopedQueryOutput): AdvancedSearch {
 };
 
 export function scopedResponse<T>(data: QueryOutput<T>, context: Context<T> & {scope: string}): AdvancedSearch {
-    if (context.isScroll) {
+    // Results are stored as an object if their is no groups.
+    if (context.isScroll && !isArray(context.results)) {
         let resultsKeys = Object.keys(context.results);
         let key = resultsKeys[0];
         data.list = [...context.results[key], ...(data.list ? data.list : [])];

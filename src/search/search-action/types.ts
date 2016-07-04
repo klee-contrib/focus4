@@ -10,7 +10,7 @@ export interface FacetValue {
 }
 
 export interface OutputFacet {
-    [facet: string]: FacetValue[]
+    [facet: string]: FacetValue[];
 }
 
 export interface QueryInput {
@@ -25,7 +25,7 @@ export interface QueryInput {
 
 export interface QueryOutput<T> {
     list?: T[];
-    groups?: {[name: string]: T[]};
+    groups?: {[name: string]: T[]}[];
     facets: OutputFacet[];
     totalCount: number;
     query: QueryInput;
@@ -33,7 +33,7 @@ export interface QueryOutput<T> {
 
 export interface UnscopedQueryOutput {
     facets: OutputFacet[];
-    groups: {[name: string]: {}[]};
+    groups: {[name: string]: {}[]}[];
     totalCount: number;
     query: QueryInput;
 }

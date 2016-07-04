@@ -2,7 +2,7 @@ import {buildFacets, buildOrderAndSort, buildPagination} from "./builder";
 import {scopedResponse, unscopedResponse} from "./parser";
 import {dispatcher} from "../..";
 import {QueryInput, QueryOutput, UnscopedQueryOutput} from "./types";
-import {AdvancedSearch} from "../../store/search/advanced-search";
+import {AdvancedSearch, Results} from "../../store/search/advanced-search";
 
 export interface SearchActionBuilderSpec {
 
@@ -19,6 +19,13 @@ export interface SearchActionBuilderSpec {
     getSearchOptions: () => AdvancedSearch;
 
     /**  Number of elements to request on each search. */
+    nbSearchElement?: number;
+}
+
+export interface Context<T> {
+    isScroll: boolean;
+    results: Results<T>;
+    totalCount?: number;
     nbSearchElement?: number;
 }
 

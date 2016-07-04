@@ -1,13 +1,13 @@
 import SearchStore from "./search";
 import {InputFacet} from "../../search/search-action/types";
 
-export type Results = {[group: string]: {}[]};
+export type Results<T extends {}> = {[group: string]: T[]} | {[group: string]: T[]}[];
 export type StoreFacets = {[facet: string]: {[code: string]: {count: number, label: string}}};
 
 export const definition: AdvancedSearch = {
     query: "query",
     scope: "scope",
-    results: {} as Results,
+    results: {} as Results<{}>,
     facets: {} as StoreFacets,
     totalCount: 0,
     selectedFacets: {} as {[facet: string]: InputFacet},
@@ -19,7 +19,7 @@ export const definition: AdvancedSearch = {
 export interface AdvancedSearch {
     query?: string;
     scope?: string;
-    results?: Results;
+    results?: Results<{}>;
     facets?: StoreFacets;
     totalCount?: number;
     selectedFacets?: {[facet: string]: InputFacet};

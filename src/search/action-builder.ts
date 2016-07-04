@@ -6,6 +6,11 @@ import {AdvancedSearch} from "../store/search/advanced-search";
 import {InputFacet, OutputFacet} from "./search-action/types";
 /* tslint:enable */
 
+export interface SearchAction {
+    search: (isScroll: boolean) => Promise<void>;
+    updateProperties: (data: AdvancedSearch) => void;
+}
+
 export default function searchActionBuilder(config: SearchActionBuilderSpec) {
     config.nbSearchElement = config.nbSearchElement || 50;
     return {

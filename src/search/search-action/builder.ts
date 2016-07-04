@@ -1,12 +1,6 @@
-import {mapValues} from "lodash";
+import {mapValues, isArray} from "lodash";
 import {InputFacet} from "./types";
-
-export interface Context<T> {
-    isScroll: boolean;
-    results: {[key: string]: T[]};
-    totalCount?: number;
-    nbSearchElement?: number;
-}
+import {Context} from "./";
 
 export function buildFacets(facets: {[key: string]: InputFacet}): {[key: string]: string} {
     return mapValues(facets, facetData => {
@@ -21,9 +15,9 @@ export function buildOrderAndSort({sortBy, sortAsc}: {sortBy?: string, sortAsc?:
     };
 }
 
-export function buildPagination(opts: Context<any>) {
+export function buildPagination(opts: Context<{}>) {
     const resultsKeys = Object.keys(opts.results);
-    if (opts.isScroll && resultsKeys.length === 1) {
+    if (opts.isScroll && !isArray(opts.results) && resultsKeys.length === 1) {
         const key = resultsKeys[0];
         const previousRes = opts.results[key];
         return {
