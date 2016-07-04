@@ -121,7 +121,7 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
     }
 
     @autobind
-    private handleSelectionClick() {
+    handleSelectionClick() {
         const isSelected = !this.state.isSelected;
         const {data, onSelection} = this.props;
         this.setState({isSelected} as any);
