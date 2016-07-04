@@ -40,7 +40,7 @@ export default class extends ComponentWithStore<Props, {}, StoreNodes> {
         this.state.isLoading = false;
         this.action = props.action || actionBuilder({
             service: props.service,
-            identifier: store.identifier || "",
+            identifier: store.identifier!,
             getSearchOptions: () => store.getValue.call(props.store)
         });
     }

@@ -75,7 +75,14 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
 
     componentWillMount() {
         super.componentWillMount();
-        if (this.store && this.storeNodes) {
+
+        if (!this.store && this.storeNodes && Object.keys(this.storeNodes).length > 0) {
+            throw new Error("Impossible de définir des noeuds de store sans store.");
+        } else if (this.store && (!this.storeNodes || Object.keys(this.storeNodes).length === 0)) {
+            throw new Error("Impossible de définir un store sans noeuds de store.");
+        }
+
+        if (this.store) {
             this.registerStore(this.store, Object.keys(this.storeNodes), "add");
         }
         if (this.referenceNames) {
@@ -132,13 +139,10 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      */
     getErrorStateFromStore() {
         const storeNodes = this.storeNodes && Object.keys(this.storeNodes) || [];
-        if (!this.store && storeNodes.length > 0) {
-            throw new Error("No store specified");
-        }
 
         let newState: {[key: string]: any} = {};
         storeNodes.map(property => {
-            const errorState = this.store && this.store.getError(property);
+            const errorState = this.store!.getError(property);
             if (errorState) {
                 for (const prop in errorState) {
                     newState[`${property}.${prop}`] = errorState[prop];
@@ -154,14 +158,11 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      */
     getLoadingStateFromStore() {
         const storeNodes = this.storeNodes && Object.keys(this.storeNodes) || [];
-        if (!this.store && storeNodes.length > 0) {
-            throw new Error("No store specified");
-        }
 
         let isLoading: boolean | undefined = false;
         storeNodes.forEach(property => {
             if (!isLoading) {
-                let propStatus = this.store && this.store.getStatus(property) || {isLoading: undefined};
+                let propStatus = this.store!.getStatus(property) || {isLoading: undefined};
                 isLoading = propStatus.isLoading;
             }
         });
@@ -187,17 +188,12 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
                 if (nextValue) {
                     newState.reference[property] = nextValue;
                 }
-            } else if (this.storeNodes && storeNodes.indexOf(property) !== -1) {
-                if (!this.store) {
-                    throw new Error("No store specified");
-                }
-                newState[property] = this.store.get(property) || this.storeNodes[property];
+            } else if (storeNodes.indexOf(property) !== -1) {
+                newState[property] = this.store!.get(property) || this.storeNodes![property];
             }
         } else {
             storeNodes.map(node => {
-                if (this.store && this.storeNodes) {
-                    newState[node] = this.store.get(node) || this.storeNodes[node];
-                }
+                newState[node] = this.store!.get(node) || this.storeNodes![node];
             });
             referenceNames.map(node => {
                 const nextValue = this.referenceStore.get<{}[]>(node);

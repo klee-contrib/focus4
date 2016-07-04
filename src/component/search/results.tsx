@@ -170,14 +170,12 @@ export default class extends React.Component<ResultsProps, ResultsState> {
         if (resultsFacets && resultsFacets[scopeFacetKey || "FCT_SCOPE"]) {
             this.scopeSelectionHandler(key);
         } else {
-            this.facetSelectionHandler(groupingKey || "", key);
+            this.facetSelectionHandler(groupingKey!, key);
         }
     }
 
-    private scopeSelectionHandler(key: string) {
-        this.props.action.updateProperties({
-            scope: key
-        });
+    private scopeSelectionHandler(scope: string) {
+        this.props.action.updateProperties({scope});
     }
 
     private facetSelectionHandler(key: string, value: string) {
@@ -207,9 +205,9 @@ export default class extends React.Component<ResultsProps, ResultsState> {
     }
 
     private getGroupCounts()         {
-        const {resultsFacets} = this.props;
+        const {resultsFacets, groupingKey, scopeFacetKey} = this.props;
         if (resultsFacets) {
-            const scopeFacet = resultsFacets[this.key];
+            const scopeFacet = resultsFacets[groupingKey || scopeFacetKey || "FCT_SCOPE"];
             return mapValues(scopeFacet, facetData => {
                 const {label, count} = facetData;
                 return {label, count};
