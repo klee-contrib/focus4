@@ -9,9 +9,7 @@ import {changeMode} from "../application";
 import {CoreStore} from "../store";
 import * as defaults from "./defaults";
 
-/**
- * Props propre à ComponentWithForm.
- */
+/** Props propre à ComponentWithForm. */
 export interface CWFProps {
     hasEdit?: boolean;
     hasDelete?: boolean;
@@ -21,9 +19,7 @@ export interface CWFProps {
     style?: {className?: string};
 }
 
-/**
- * Config d'actions à fournir à ComponentWithForm.
- */
+/** Config d'actions à fournir à ComponentWithForm. */
 export interface ActionConfig<E> {
     [x: string]: any;
     delete?: (...args: any[]) => Promise<void | number | boolean>;
@@ -31,9 +27,7 @@ export interface ActionConfig<E> {
     save: (...args: any[]) => Promise<E>;
 }
 
-/**
- * Classe de base pour un composant Focus avec un formulaire.
- */
+/** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
 export abstract class ComponentWithForm<P, S, E, TS extends {}> extends ComponentWithEntityAndStore<P & CWFProps, S, E, TS> {
     static defaultProps = {
@@ -44,9 +38,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
         isEdit: false
     };
 
-    /**
-     * Container d'action pour le formulaire.
-     */
+    /** Container d'action pour le formulaire. */
     private _action: ActionConfig<E>;
 
     /**
@@ -84,16 +76,12 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
         }
     }
 
-    /**
-     * Identifiant utilisé pour l'appel à l'action de load.
-     */
+    /** Identifiant utilisé pour l'appel à l'action de load. */
     get Id() {
         return this.props["id"];
     }
 
-    /**
-     * Vide les erreurs.
-     */
+    /** Vide les erreurs. */
     clearError() {
         for (let r in this.refs) {
             if (this.refs[r] && isFunction((this.refs[r] as any).setError)) {
@@ -102,9 +90,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
         }
     }
 
-    /**
-     * Récupère l'entité dans les différents champs et dans le state.
-     */
+    /** Récupère l'entité dans les différents champs et dans le state. */
     getEntity() {
         let fieldValues: {[key: string]: string} = {};
         let {refs} = this;
@@ -163,16 +149,12 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
         }
     }
 
-    /**
-     * Retourne les actions du formulaire.
-     */
+    /** Retourne les actions du formulaire. */
     renderActions() {
         return this.state.isEdit ? this.renderEditActions() : this.renderConsultActions();
     }
 
-    /**
-     * Retoune les actions en consulation du formualaire.
-     */
+    /** Retoune les actions en consulation du formualaire. */
     renderConsultActions() {
         let {hasEdit = true, hasDelete = false} = this.props;
         return (
@@ -183,9 +165,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
         );
     }
 
-    /**
-     * Retourne les action en édition du formulaire.
-     */
+    /** Retourne les action en édition du formulaire. */
     renderEditActions() {
         return (
             <span>

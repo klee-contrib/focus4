@@ -4,16 +4,18 @@ import {dispatcher} from "../..";
 import {QueryInput, QueryOutput, UnscopedQueryOutput} from "./types";
 import {AdvancedSearch, Results} from "../../store/search/advanced-search";
 
+export interface SearchActionService {
+    scoped: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
+    unscoped: (query: QueryInput) => Promise<UnscopedQueryOutput>;
+}
+
 export interface SearchActionBuilderSpec {
 
     /** SearchStore identifier */
     identifier: string;
 
     /** Service */
-    service: {
-        scoped: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
-        unscoped: (query: QueryInput) => Promise<UnscopedQueryOutput>;
-    };
+    service: SearchActionService;
 
     /** Function that get the associated search store value. */
     getSearchOptions: () => AdvancedSearch;
@@ -43,7 +45,7 @@ export default function searchAction(config: SearchActionBuilderSpec) {
         });
     }
 
-    return async function searchAction(isScroll: boolean) {
+    return async function searchAction(isScroll?: boolean) {
         let {
             scope, query, selectedFacets,
             groupingKey, sortBy, sortAsc,

@@ -15,7 +15,7 @@ export interface ChangeInfos {
 export interface CWSState {
     isEdit?: boolean;
     isLoading?: boolean;
-    reference?: {[key: string]: {}[]};
+    reference?: {[refName: string]: {[key: string]: any}[]};
 }
 
 /** Classe de base pour un composant Focus avec un store. */

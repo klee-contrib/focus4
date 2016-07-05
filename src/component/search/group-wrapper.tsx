@@ -8,7 +8,7 @@ export type GroupComponent = ReactComponent<{
     count: number;
     groupKey: string;
     groupLabel?: string;
-    showAllHandler?: (key: string) => void;
+    showAllHandler?: (groupKey: string) => void;
     showMoreHandler: () => void;
 }> ;
 

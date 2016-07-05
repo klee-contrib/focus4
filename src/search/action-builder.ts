@@ -7,7 +7,7 @@ import {InputFacet, OutputFacet} from "./search-action/types";
 /* tslint:enable */
 
 export interface SearchAction {
-    search: (isScroll: boolean) => Promise<void>;
+    search: (isScroll?: boolean) => Promise<void>;
     updateProperties: (data: AdvancedSearch) => void;
 }
 

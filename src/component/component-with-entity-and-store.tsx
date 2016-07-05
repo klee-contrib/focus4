@@ -7,9 +7,7 @@ import {Entity, EntityField} from "../definition";
 import {builtInStore} from "../reference";
 import {CoreStore} from "../store";
 
-/**
- * Classe de base pour un composant Focus avec une entité et un store.
- */
+/** Classe de base pour un composant Focus avec une entité et un store. */
 /* tslint:disable:no-unused-variable */
 @autobind
 @mixin(ComponentWithEntity.prototype, ComponentWithStore.prototype)

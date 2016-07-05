@@ -7,10 +7,10 @@ export type StoreFacets = {[facet: string]: {[code: string]: {count: number, lab
 export const definition: AdvancedSearch = {
     query: "query",
     scope: "scope",
-    results: {} as Results<{}>,
-    facets: {} as StoreFacets,
+    results: {},
+    facets: {},
     totalCount: 0,
-    selectedFacets: {} as {[facet: string]: InputFacet},
+    selectedFacets: {},
     groupingKey: "groupingKey",
     sortBy: "sortBy",
     sortAsc: false

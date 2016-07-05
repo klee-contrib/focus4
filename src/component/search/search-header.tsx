@@ -4,11 +4,12 @@ import {ComponentWithStore} from "../component-with-store";
 
 import {AdvancedSearchStore} from "../../store/search";
 import actionBuilder, {SearchAction} from "../../search/action-builder";
+import {SearchActionService} from "../../search/search-action";
 import {advancedSearchStore} from "../../search/built-in-store";
 import * as defaults from "../defaults";
 
 export interface Props {
-    service: {scoped: any, unscoped: any};
+    service: SearchActionService;
     store?: AdvancedSearchStore;
     action?: SearchAction;
     helpTranslationPath?: string;
@@ -59,7 +60,7 @@ export default class extends ComponentWithStore<Props, {}, StoreNodes> {
     render() {
         const {SearchBar, Button} = defaults;
         if (!SearchBar || !Button) {
-            throw new Error("Les composants Button ou SearchBat n'ont pas été définis. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
+            throw new Error("Les composants Button ou SearchBar n'ont pas été définis. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
         }
 
         const {helpTranslationPath, minChar, onSearchCriteriaChangeByUser, placeholder, store} = this.props;

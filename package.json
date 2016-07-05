@@ -12,7 +12,7 @@
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
     "start": "tsc",
-    "tslint": "tslint src/**/*.ts src/**/*.tsx --force"
+    "test": "tslint src/**/*.ts src/**/*.tsx --force"
   },
   "dependencies": {
     "@types/core-decorators": "^0.10.23-alpha",

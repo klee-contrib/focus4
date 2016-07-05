@@ -4,6 +4,7 @@ import {clone, omit, isArray, mapValues} from "lodash";
 import GroupWrapper, {GroupComponent} from "./group-wrapper";
 import * as defaults from "../defaults";
 import {translate} from "../../translation";
+import {SearchAction} from "../../search/action-builder";
 import SearchStore from "../../store/search/search";
 import {StoreFacets, Results} from "../../store/search/advanced-search";
 
@@ -16,26 +17,26 @@ function DefaultEmpty() {
 }
 
 export interface ResultsProps {
-    action: any;
+    action: SearchAction;
     /** Default: DefaultEmpty */
     emptyComponent?: () => React.ReactElement<any>;
-    groupComponent?: GroupComponent;
+    groupComponent: GroupComponent;
     groupingKey?: string;
     idField?: string;
     /** Default: 3 */
     initialRowsCount?: number;
     isSelection: boolean;
-    lineClickHandler: (item: any) => void;
-    lineComponentMapper: (key: string, list: any[]) => React.ComponentClass<any>;
+    lineClickHandler?: (item: any) => void;
+    lineComponentMapper: (key: string, list: any[]) => defaults.ReactComponent<any>;
     lineOperationList?: {} | {}[];
     lineSelectionHandler?: (data?: any, isSelected?: boolean) => void;
     /** Default: FCT_SCOPE */
     scopeFacetKey?: string;
     scrollParentSelector?: any;
     selectionStatus?: string;
-    reference?: any;
+    reference?: {[key: string]: {}[]};
     renderSingleGroupDecoration: boolean;
-    resultsMap: Results< {[key: string]: any} >;
+    resultsMap?: Results< {[key: string]: any} >;
     resultsFacets?: StoreFacets;
     selectionResultsMap?: {[key: string]: {}};
     /** Default: 5 */
@@ -51,6 +52,12 @@ export interface ResultsState {
 
 @autobind
 export default class extends React.Component<ResultsProps, ResultsState> {
+    static defaultProps = {
+        emptyComponent: DefaultEmpty,
+        initialRowsCount: 3,
+        scopeFacetKey: "FCT_SCOPE",
+        showMoreAdditionalRows: 5
+    };
 
     constructor(props: ResultsProps) {
         super(props);
@@ -66,14 +73,14 @@ export default class extends React.Component<ResultsProps, ResultsState> {
     getShowMoreHandler(key: string) {
         return () => {
             let groupsRowsCounts = clone(this.state.groupsRowsCounts) || {};
-            groupsRowsCounts[key] = groupsRowsCounts[key] ? groupsRowsCounts[key] + (this.props.showMoreAdditionalRows || 5) : (this.props.initialRowsCount || 3);
+            groupsRowsCounts[key] = groupsRowsCounts[key] ? groupsRowsCounts[key] + (this.props.showMoreAdditionalRows!) : (this.props.initialRowsCount!);
             this.setState({groupsRowsCounts});
         };
     }
 
     private get key() {
         const {groupingKey, scopeFacetKey} = this.props;
-        return groupingKey || scopeFacetKey || "FCT_SCOPE";
+        return groupingKey || scopeFacetKey!;
     }
 
     private renderSingleGroup(list: any[], key: string, label: string | undefined, count: number, isUnique?: boolean) {
@@ -90,7 +97,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
                         groupComponent={groupComponent}
                         groupKey={key}
                         groupLabel={label}
-                        initialRowsCount={initialRowsCount || 3}
+                        initialRowsCount={initialRowsCount!}
                         isUnique={true}
                         list={list}
                         ref={"group-" + key}
@@ -107,7 +114,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
                     groupComponent={groupComponent}
                     groupKey={key}
                     groupLabel={label}
-                    initialRowsCount={initialRowsCount || 3}
+                    initialRowsCount={initialRowsCount!}
                     list={list}
                     ref={"group-" + key}
                     renderResultsList={this.renderResultsList}
@@ -121,7 +128,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
     }
 
     private renderEmptyResults() {
-        const Empty = this.props.emptyComponent || DefaultEmpty;
+        const Empty = this.props.emptyComponent!;
         return <Empty />;
     }
 
@@ -167,7 +174,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
 
     private showAllHandler(key: string) {
         const {resultsFacets, scopeFacetKey, groupingKey} = this.props;
-        if (resultsFacets && resultsFacets[scopeFacetKey || "FCT_SCOPE"]) {
+        if (resultsFacets && resultsFacets[scopeFacetKey!]) {
             this.scopeSelectionHandler(key);
         } else {
             this.facetSelectionHandler(groupingKey!, key);
@@ -207,7 +214,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
     private getGroupCounts()         {
         const {resultsFacets, groupingKey, scopeFacetKey} = this.props;
         if (resultsFacets) {
-            const scopeFacet = resultsFacets[groupingKey || scopeFacetKey || "FCT_SCOPE"];
+            const scopeFacet = resultsFacets[groupingKey || scopeFacetKey!];
             return mapValues(scopeFacet, facetData => {
                 const {label, count} = facetData;
                 return {label, count};
@@ -232,7 +239,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
                 return 0 !== list.length;
             });
         } else {
-            resultsMap = omit(this.props.resultsMap, (resultGroup: {[key: string]: any}) => {
+            resultsMap = omit(this.props.resultsMap || {}, (resultGroup: {[key: string]: any}) => {
                 const propertyGroupName = Object.keys(resultGroup)[0]; // group property name
                 const list = resultGroup[propertyGroupName];
                 return 0 === list.length;
