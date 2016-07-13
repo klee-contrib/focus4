@@ -19,6 +19,7 @@ export interface CLProps<E> {
         priority: number
     }[];
     reference?: {[key: string]: {}[]};
+    isSelection?: boolean;
 }
 
 /**
@@ -47,7 +48,7 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
     constructor(props: P & CLProps<E>, entity: Entity<E>, lineType: 'selection' | 'table' | 'timeline' = "table", dateField?: EntityField) {
         super(props, entity);
         this.state.entity = props.data;
-        this.lineType = props.lineType || lineType;
+        this.lineType = props.lineType || props.isSelection && 'selection' || (props.isSelection === false) && 'table' || lineType;
 
         if (lineType === "selection" && props.data) {
             this.state.isSelected = props.isSelected !== undefined ? props.isSelected : this.selectedInitializer(props.data);
