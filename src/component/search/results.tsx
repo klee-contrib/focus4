@@ -2,11 +2,13 @@ import * as React from "react";
 import {autobind} from "core-decorators";
 import {clone, omit, isArray, mapValues} from "lodash";
 import GroupWrapper, {GroupComponent} from "./group-wrapper";
-import * as defaults from "../defaults";
+import {ListSelection} from "../list/list-selection";
+import {ReactComponent} from "../defaults";
 import {translate} from "../../translation";
 import {SearchAction} from "../../search/action-builder";
 import SearchStore from "../../store/search/search";
 import {StoreFacets, Results} from "../../store/search/advanced-search";
+import {OperationListItem} from "../list/memory-list";
 
 function DefaultEmpty() {
     return (
@@ -27,18 +29,17 @@ export interface ResultsProps {
     initialRowsCount?: number;
     isSelection: boolean;
     lineClickHandler?: (item: any) => void;
-    lineComponentMapper: (key: string, list: any[]) => defaults.ReactComponent<any>;
-    lineOperationList?: {} | {}[];
+    lineComponentMapper: (key: string, list: any[]) => ReactComponent<any>;
+    lineOperationList?: OperationListItem[];
     lineSelectionHandler?: (data?: any, isSelected?: boolean) => void;
     /** Default: FCT_SCOPE */
     scopeFacetKey?: string;
     scrollParentSelector?: any;
-    selectionStatus?: string;
+    selectionStatus?: 'none' | 'partial' | 'selected';
     reference?: {[key: string]: {}[]};
     renderSingleGroupDecoration: boolean;
     resultsMap?: Results< {[key: string]: any} >;
     resultsFacets?: StoreFacets;
-    selectionResultsMap?: {[key: string]: {}};
     /** Default: 5 */
     showMoreAdditionalRows?: number;
     store: SearchStore<any>;
@@ -133,20 +134,14 @@ export default class extends React.Component<ResultsProps, ResultsState> {
     }
 
     private renderResultsList(list: any[], key: string, count: number, isUnique: boolean) {
-        const {List} = defaults;
-        if (!List) {
-            throw new Error("Le composant List n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
-        }
-
-        const {reference, lineComponentMapper, idField, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, selectionResultsMap, store} = this.props;
-        const selectionData = selectionResultsMap ? selectionResultsMap[key] || [] : [];
+        const {reference, lineComponentMapper, idField, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
         const scope = store.get<string>("scope");
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
         const hasMoreData = isUnique !== undefined && isUnique && list.length < count;
         return (
             <div>
-                <List
+                <ListSelection
                     data={list}
                     data-focus="results-list"
                     fetchNextPage={this.onScrollReachedBottom}
@@ -160,7 +155,6 @@ export default class extends React.Component<ResultsProps, ResultsState> {
                     parentSelector={scrollParentSelector}
                     ref={"list-" + key}
                     reference={reference}
-                    selectionData={selectionData}
                     selectionStatus={selectionStatus}
                 />
                 {this.state.loading &&

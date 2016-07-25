@@ -1,7 +1,7 @@
 {
   "name": "autofocus",
   "version": "0.1.0",
-  "description": "Focus-core clone in Typescript and more.",
+  "description": "Focus-core clone in Typescript and much more.",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -23,15 +23,17 @@
     "@types/node": "^4.0.22-alpha",
     "@types/node-uuid": "^6.0.21-alpha",
     "@types/react": "^0.14.21-alpha",
+    "@types/react-dom": "^0.14.13",
     "core-decorators": "^0.12.3",
     "events": "^1.1.1",
     "flux": "^2.1.1",
-    "i18next": "^3.3.1",
+    "i18next": "^3.4.1",
     "immutable": "^3.8.1",
-    "lodash": "^4.13.1",
+    "lodash": "^4.14.0",
     "moment": "^2.14.1",
     "node-uuid": "^1.4.7",
-    "react": "^15.2.1"
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1"
   },
   "devDependencies": {
     "tslint": "^3.13.0",

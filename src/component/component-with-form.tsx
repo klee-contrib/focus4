@@ -257,7 +257,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
         return `${this.state.isEdit ? "edit" : "consult"}`;
     }
 
-    private handleSubmitForm(e: React.FormEvent) {
+    private handleSubmitForm(e: React.FormEvent<any>) {
         e.preventDefault();
         if (this.validate()) {
             this.action.save.call(this, this.getEntity());

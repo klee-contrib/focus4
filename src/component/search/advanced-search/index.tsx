@@ -14,6 +14,7 @@ import FacetBox from "./facet-box";
 import ListActionBar from "./action-bar";
 import ListSummary from "./list-summary";
 import ResultsComponent from "../results";
+import {OperationListItem} from "../../list/memory-list";
 
 export interface Props {
     action?: SearchAction;
@@ -27,7 +28,7 @@ export interface Props {
     isSelection?: boolean;
     lineComponentMapper: (...args: any[]) => ReactComponent<any>;
     /** Default: [] */
-    lineOperationList?: {} | {}[];
+    lineOperationList?: OperationListItem[];
     onLineClick?: (...args: any[]) => void;
     onScopeChange?: (scope?: string) => void;
     /** Default: [] */
@@ -48,7 +49,7 @@ export interface Props {
 
 export interface State extends AdvancedSearch {
     hasGrouping?: boolean;
-    selectionStatus?: string;
+    selectionStatus?: 'none' | 'partial' | 'selected';
 }
 
 @autobind
@@ -258,10 +259,10 @@ export default class extends React.Component<Props, State> {
         }
     }
 
-    private selectionAction(status: string) {
-        this.setState({selectionStatus: status});
+    private selectionAction(selectionStatus: 'none' | 'partial' | 'selected') {
+        this.setState({selectionStatus});
         if (this.props.selectionAction) {
-            this.props.selectionAction(status);
+            this.props.selectionAction(selectionStatus);
         }
     }
 

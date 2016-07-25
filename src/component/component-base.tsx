@@ -1,17 +1,13 @@
 import * as React from "react";
 import {autobind} from "core-decorators";
 import {v4} from "node-uuid";
+
 import {setHeader, ApplicationAction} from "../application";
 import {translate} from "../translation";
-import * as defaults from "./defaults";
-
-/** Options de base pour `listFor` et `tableFor`. */
-export interface ListOptions<ListProps, LineProps> {
-    listComponent?: defaults.ReactComponent<ListProps>;
-    LineComponent?: defaults.ReactComponent<LineProps>;
-    perPage?: number;
-    isEdit?: boolean;
-}
+import {ListSelection, ListSelectionProps} from "./list/list-selection";
+import {ListTable, ListTableProps} from "./list/list-table";
+import {MemoryList, CLProps, BaseListProps} from "./list/memory-list";
+import {ReactComponent} from "./defaults";
 
 /** Classe de base pour un composant Focus simple. */
 @autobind
@@ -59,27 +55,27 @@ export class ComponentBase<P, S> extends React.Component<P, S> {
     }
 
     /**
-     * Crée un composant de liste à partir de la liste fournie.
+     * Crée un composant de liste (par défaut) à partir de la liste fournie.
      * @param data La liste.
      * @param options Les options.
      */
-    listFor<ListProps, LineProps>(data: {}[], options: ListOptions<ListProps, LineProps> & ListProps & LineProps) {
-        const {MemoryList, List} = defaults;
-        if (!MemoryList) {
-            throw new Error("Le composant MemoryList n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
-        }
+    listFor<LineProps extends CLProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListSelectionProps<LineProps>) {
+        return this.listForWith(ListSelection, data, options);
+    }
 
+    /**
+     * Crée un composant de liste personnalisé à partir de la liste fournie.
+     * @param ListComponent Le component de liste.
+     * @param data La liste.
+     * @param options Les options.
+     */
+    listForWith<ListProps extends BaseListProps>(ListComponent: ReactComponent<ListProps>, data: {}[], options: BaseListProps & {perPage?: number} & ListProps) {
         const defaultProps = {
             data: data || [],
-            listComponent: options.listComponent || List,
-            perPage: 5,
+            ListComponent,
             reference: this.state["reference"],
             isEdit: false
         };
-
-        if (!defaultProps.listComponent) {
-            throw new Error("Aucun listComponent spécifié. Vous manque-t-il un défaut ?");
-        }
 
         const finalProps = Object.assign(defaultProps, options);
         return <MemoryList ref="list" {...finalProps} />;
@@ -90,8 +86,7 @@ export class ComponentBase<P, S> extends React.Component<P, S> {
      * @param data La liste.
      * @param options Les options.
      */
-    tableFor<ListProps, LineProps>(data: {}[], options: ListOptions<ListProps, LineProps> & ListProps & LineProps) {
-        options.listComponent = options.listComponent || defaults.Table;
-        return this.listFor(data, options);
+    tableFor<LineProps extends CLProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListTableProps<LineProps>) {
+        return this.listForWith(ListTable, data, options);
     }
 }

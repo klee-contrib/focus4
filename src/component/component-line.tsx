@@ -3,39 +3,14 @@ import {ComponentWithEntity} from "./component-with-entity";
 import {autobind} from "core-decorators";
 import {Entity, EntityField} from "../definition";
 import * as defaults from "./defaults";
+import {CLProps} from "./list/memory-list";
+export {CLProps};
 
-/**
- * Props propre à ComponentLine.
- */
-export interface CLProps<E> {
-    data?: E;
-    isSelected?: boolean;
-    lineType?: 'selection' | 'table' | 'timeline';
-    onSelection?: (data: E, isSelected: boolean) => void;
-    operationList?: {
-        action: (data: {}) => void,
-        style: {shape: 'icon' | 'flat' | 'raised'},
-        icon: string,
-        priority: number
-    }[];
-    reference?: {[key: string]: {}[]};
-    isSelection?: boolean;
-}
+/** Classe de base pour des composants de ligne Focus (à utiliser avec `listFor`). */
+export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLProps<E>, S, E> {
 
-/**
- * State propre à ComponentLine.
- */
-export interface CLState {
-    isSelected?: boolean;
-}
-
-/**
- * Classe de base pour des composants de ligne Focus (à utiliser avec `listFor`).
- */
-export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLProps<E>, S & CLState, E> {
-
+    readonly lineType: 'selection' | 'table' | 'timeline';
     private dateField: EntityField | undefined;
-    private lineType: 'selection' | 'table' | 'timeline';
     private isSelectionnable: boolean;
 
     /**
@@ -48,52 +23,42 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
     constructor(props: P & CLProps<E>, entity: Entity<E>, lineType: 'selection' | 'table' | 'timeline' = "table", dateField?: EntityField) {
         super(props, entity);
         this.state.entity = props.data;
-        this.lineType = props.lineType || props.isSelection && 'selection' || (props.isSelection === false) && 'table' || lineType;
-
-        if (lineType === "selection" && props.data) {
-            this.state.isSelected = props.isSelected !== undefined ? props.isSelected : this.selectedInitializer(props.data);
+        this.lineType = props.lineType || lineType;
+        this.dateField = dateField;
+        if (lineType === "timeline" && !dateField) {
+            this.dateField = entity.fields["date"];
         }
-
-        this.dateField = dateField || entity.fields["date"];
     }
 
     componentWillMount() {
         super.componentWillMount();
-
-        if (this.lineType === "selection" && this.props.data) {
-            this.isSelectionnable = this.selectionnableInitializer(this.props.data);
-        }
-    }
-
-    componentWillReceiveProps({data, isSelected}: P & CLProps<E>) {
-        this.setState({entity: data} as any);
-
-        if (this.lineType === "selection") {
-            if (_.isEqual(data, this.props.data)) {
-                if (isSelected !== undefined) {
-                    this.setState({isSelected} as any);
-                }
-            } else {
-                this.setState({isSelected: false} as any);
+        const {isSelected, isSelection, onSelection, data} = this.props;
+        if (this.lineType === "selection" && isSelection) {
+            this.isSelectionnable = this.selectionnableInitializer(data);
+            if (onSelection) {
+                onSelection(data, this.selectedInitializer(data) || isSelected, true);
             }
         }
     }
 
+    componentWillReceiveProps({data}: P & CLProps<E>) {
+        this.setState({entity: data} as any);
+    }
+
     /** Définit si la ligne est sélectionnée à l'initialisation. */
-    selectedInitializer(data: E) {
+    selectedInitializer(data?: E) {
         return false;
     }
 
     /** Définit si la ligne est sélectionnable à l'initialisation. */
-    selectionnableInitializer(data: E) {
+    selectionnableInitializer(data?: E) {
         return true;
     }
 
     /** Récupère la valeur de la ligne. */
     @autobind
     getValue() {
-        const {data: item} = this.props;
-        const {isSelected} = this.state;
+        const {data: item, isSelected} = this.props;
         return {item, isSelected};
     }
 
@@ -123,9 +88,8 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
 
     @autobind
     handleSelectionClick() {
-        const isSelected = !this.state.isSelected;
+        const isSelected = !this.props.isSelected;
         const {data, onSelection} = this.props;
-        this.setState({isSelected} as any);
         if (onSelection && data) {
             onSelection(data, isSelected);
         }
@@ -138,7 +102,7 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
             throw new Error("Le composant Checkbox n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
         }
 
-        const {isSelected} = this.state;
+        const {isSelected} = this.props;
         if (this.isSelectionnable) {
             const selectionClass = isSelected ? "selected" : "no-selection";
             return (
