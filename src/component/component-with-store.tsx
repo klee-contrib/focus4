@@ -175,7 +175,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      * Récupère l'état d'un (ou de tous les) noeud(s) du store et l'écrit dans le state.
      * @param property Le noeud de store.
      */
-    getStateFromStore(property?: string) {
+    getStateFromStore(property?: string): TS & CWSState {
         let newState: {[key: string]: any, reference: {[key: string]: {}[]}} = {reference: this.state.reference || {}};
 
         const referenceNames = this.referenceNames || [];
@@ -202,8 +202,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
                 }
             });
         }
-        const computedState = Object.assign(newState, this.getLoadingStateFromStore());
-        return computedState;
+        return Object.assign(newState, this.getLoadingStateFromStore()) as any;
     }
 
     /**
