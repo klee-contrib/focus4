@@ -23,7 +23,7 @@ export interface CLProps<E> {
 export interface BaseListProps {
     ref?: string;
     data?: {[key: string]: any}[];
-    fetchNextPage?: (page?: number) => void;
+    fetchNextPage?: () => void;
     hasMoreData?: boolean;
     isManualFetch?: boolean;
     isSelection?: boolean;
@@ -56,7 +56,7 @@ export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, 
         let currentPage = this.state.page + 1;
         this.setState({
             page: currentPage,
-            maxElements: this.props.perPage * currentPage
+            maxElements: (this.props.perPage || 5) * currentPage
         });
     }
 
