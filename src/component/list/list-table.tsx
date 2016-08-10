@@ -106,7 +106,7 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
                 <tfoot className="table-manual-fetch">
                     <tr>
                         <td colSpan={this.props.columns.length}>
-                            <Button handleOnClick={() => this.fetchNextPage()} label="list.button.showMore" type="button" />
+                            <Button handleOnClick={() => this.handleShowMore()} label="list.button.showMore" type="button" />
                         </td>
                     </tr>
                 </tfoot>
