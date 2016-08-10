@@ -6,8 +6,6 @@ import {CLProps} from "../component-line";
 
 export interface ListBaseProps<LineProps extends CLProps<{}>> extends BaseListProps {
     LineComponent: ComponentClass<LineProps> | ((props: LineProps) => JSX.Element);
-    /** Default: 1 */
-    initialPage?: number;
     isInfiniteScroll?: boolean;
     isLoading?: boolean;
     /** Default: 250 */
@@ -24,14 +22,8 @@ function topOfElement(element: HTMLElement): number {
 
 @autobind
 export abstract class ListBase<P extends ListBaseProps<{}>, S> extends Component<P, S> {
-    nextPage: number = 1;
     parentNode: Element | Window;
-
-    constructor(props: P & ListBaseProps<{}>) {
-        super(props);
-        this.nextPage = props.initialPage || 1;
-    }
-
+    
     componentWillUnmount() {
         if (!this.props.isManualFetch) {
             this.detachScrollListener();
@@ -70,21 +62,16 @@ export abstract class ListBase<P extends ListBaseProps<{}>, S> extends Component
         const scrollTop = ((this.parentNode as Window).pageYOffset !== undefined) ? (this.parentNode as Window).pageYOffset : (this.parentNode as Element).scrollTop;
         if (topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight || (this.parentNode as HTMLElement).offsetHeight) < (this.props.offset || 250)) {
             this.detachScrollListener();
-            this.fetchNextPage(this.nextPage++);
-        }
-    }
-
-    fetchNextPage(page?: number) {
-        if (!this.props.hasMoreData) {
-            return;
-        }
-        if (this.props.fetchNextPage) {
-            return this.props.fetchNextPage(page);
+            this.handleShowMore();
         }
     }
 
     handleShowMore() {
-        this.nextPage++;
-        this.fetchNextPage(this.nextPage);
+        if (!this.props.hasMoreData) {
+            return;
+        }
+        if (this.props.fetchNextPage) {
+            return this.props.fetchNextPage();
+        }
     }
 }
