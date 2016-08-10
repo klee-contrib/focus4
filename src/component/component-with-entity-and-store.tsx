@@ -161,7 +161,7 @@ export abstract class ComponentWithEntityAndStore<P, S, E, TS extends {[key: str
      * @param property Le noeud de store.
      */
     getStateFromStore(property?: string) {
-        let state: TS & {reference: {[key: string]: {}}, isLoading: boolean, entity: E} = ComponentWithStore.prototype.getStateFromStore.call(this, property);
+        let state: TS & CWEState<E> & CWSState = ComponentWithStore.prototype.getStateFromStore.call(this, property);
         const entityKey = Object.keys(state).find(key => key === this.entity.name);
         if (entityKey) {
             state.entity = state[entityKey];
