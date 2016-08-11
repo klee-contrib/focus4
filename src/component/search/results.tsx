@@ -241,10 +241,15 @@ export default class extends React.Component<ResultsProps, ResultsState> {
         }
 
         if (!isArray(resultsMap)) {
-            const key = Object.keys(resultsMap)[0];
-            const list = resultsMap[key];
-            const count = this.props.totalCount;
-            return this.renderSingleGroup(list, key, undefined, count, true);
+            const keys = Object.keys(resultsMap);
+            if (keys.length > 0) {
+                const key = Object.keys(resultsMap)[0];
+                const list = resultsMap[key];
+                const count = this.props.totalCount;
+                return this.renderSingleGroup(list, key, undefined, count, true);
+            } else {
+                return null;
+            }
         } else if (isArray(resultsMap) && 1 === resultsMap.length) {
             const key = Object.keys(resultsMap[0])[0];
             const list = resultsMap[0][key];

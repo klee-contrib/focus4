@@ -12,31 +12,39 @@
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
     "start": "tsc",
-    "test": "tslint src/**/*.ts src/**/*.tsx --force"
+    "test": "ts-node node_modules/tape/bin/tape tests.tsx | tap-spec",
+    "tslint": "tslint src/**/*.ts src/**/*.tsx --force"
   },
   "dependencies": {
-    "@types/core-decorators": "^0.10.23-alpha",
-    "@types/flux": "0.0.21-alpha",
-    "@types/i18next": "0.0.21-alpha",
-    "@types/isomorphic-fetch": "0.0.21-alpha",
-    "@types/lodash": "^4.0.21-alpha",
-    "@types/node": "^4.0.22-alpha",
+    "@types/core-decorators": "^0.10.29",
+    "@types/enzyme": "^2.4.30",
+    "@types/flux": "^0.0.21-alpha",
+    "@types/i18next": "^0.0.21-alpha",
+    "@types/isomorphic-fetch": "^0.0.21-alpha",
+    "@types/lodash": "^4.14.30",
+    "@types/node": "^4.0.30",
     "@types/node-uuid": "^6.0.21-alpha",
-    "@types/react": "^0.14.21-alpha",
-    "@types/react-dom": "^0.14.13",
+    "@types/react": "0.14.29",
+    "@types/react-dom": "^0.14.14",
+    "@types/tape": "^4.2.27",
     "core-decorators": "^0.12.3",
+    "enzyme": "^2.4.1",
     "events": "^1.1.1",
     "flux": "^2.1.1",
     "i18next": "^3.4.1",
     "immutable": "^3.8.1",
-    "lodash": "^4.14.0",
+    "lodash": "^4.14.2",
     "moment": "^2.14.1",
     "node-uuid": "^1.4.7",
-    "react": "^15.2.1",
-    "react-dom": "^15.2.1"
+    "react": "^15.3.0",
+    "react-addons-test-utils": "^15.3.0",
+    "react-dom": "^15.3.0",
+    "tape": "^4.6.0"
   },
   "devDependencies": {
-    "tslint": "^3.13.0",
+    "tap-spec": "^4.1.1",
+    "ts-node": "^1.2.2",
+    "tslint": "^3.14.0",
     "typescript": "^2.0.0"
   }
 }

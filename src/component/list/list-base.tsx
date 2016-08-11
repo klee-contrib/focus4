@@ -23,7 +23,7 @@ function topOfElement(element: HTMLElement): number {
 @autobind
 export abstract class ListBase<P extends ListBaseProps<{}>, S> extends Component<P, S> {
     parentNode: Element | Window;
-    
+
     componentWillUnmount() {
         if (!this.props.isManualFetch) {
             this.detachScrollListener();

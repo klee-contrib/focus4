@@ -49,7 +49,7 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
     }
 
     private sortColumnAction(index: number, order: 'asc' | 'desc') {
-        return (event: Event) => {
+        return (event: React.MouseEvent<HTMLAnchorElement>) => {
             event.preventDefault();
             if (this.props.sortColumn) {
                 this.props.sortColumn(index, order);
@@ -96,7 +96,7 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
     }
 
     private renderManualFetch() {
-        const {isManualFetch, hasMoreData} = this.props;
+        const {isManualFetch, hasMoreData, columns} = this.props;
         const {Button} = defaults;
         if (!Button) {
             throw new Error("Button n'a pas été défini.");
@@ -105,7 +105,7 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
             return (
                 <tfoot className="table-manual-fetch">
                     <tr>
-                        <td colSpan={this.props.columns.length}>
+                        <td colSpan={columns.length}>
                             <Button handleOnClick={() => this.handleShowMore()} label="list.button.showMore" type="button" />
                         </td>
                     </tr>

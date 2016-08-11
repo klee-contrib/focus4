@@ -1,6 +1,6 @@
-import {ComponentClass, ReactElement} from "react";
+import {ComponentClass, SFC} from "react";
 
-export type ReactComponent<P> = ComponentClass<P> | ((props: P) => ReactElement<P>);
+export type ReactComponent<P> = ComponentClass<P> | SFC<P>;
 
 export let Field: ReactComponent<any> | undefined;
 export let Button: ReactComponent<any> | undefined;

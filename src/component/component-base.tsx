@@ -11,7 +11,7 @@ import {ReactComponent} from "./defaults";
 
 /** Classe de base pour un composant Focus simple. */
 @autobind
-export class ComponentBase<P, S> extends React.Component<P, S> {
+export abstract class ComponentBase<P, S> extends React.Component<P, S> {
 
     /** Identifieur unique de l'instance du composant. */
     readonly _identifier = v4();

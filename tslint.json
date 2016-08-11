@@ -35,7 +35,6 @@
         "no-eval": true,
         "no-inferrable-types": true,
         "no-internal-module": true,
-        "no-require-imports": true,
         "no-shadowed-variable": true,
         "no-trailing-whitespace": true,
         "no-unreachable": true,
