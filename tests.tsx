@@ -14,13 +14,13 @@ import Results from "./src/component/search/results";
 import SearchHeader from "./src/component/search/search-header";
 
 test("ActionBar", <ActionBar action={{search: dum.function, updateProperties: dum.function}} />);
-// test("AdvancedSearch", <AdvancedSearch lineComponentMapper={dum.function} service={{scoped: dum.function, unscoped: dum.function}} />);
+test("AdvancedSearch", <AdvancedSearch lineComponentMapper={dum.function} service={{scoped: dum.function, unscoped: dum.function}} />);
 test("FacetBox", <FacetBox action={{search: dum.function, updateProperties: dum.function}} facetConfig={{}} openedFacetList={{}} scopesConfig={{}} />);
 test("GroupComponent", <GroupComponent canShowMore={dum.boolean} count={dum.number} groupKey={dum.string} groupLabel={dum.string} showMoreHandler={dum.function} />);
 test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.class} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
 test("ListSelection", <ListSelection LineComponent={dum.class} />);
-// test("ListSummary", <ListSummary action={{search: dum.function, updateProperties: dum.function}} onScopeChange={dum.function} query={dum.string} scope={dum.string} scopeLock={dum.boolean} totalCount={dum.number} />);
+test("ListSummary", <ListSummary action={{search: dum.function, updateProperties: dum.function}} onScopeChange={dum.function} query={dum.string} scope={dum.string} scopeLock={dum.boolean} totalCount={dum.number} />);
 test("ListTable", <ListTable LineComponent={dum.class} columns={dum.array} />);
 test("MemoryList", <MemoryList ListComponent={dum.class} />);
 test("Results", <Results action={{search: dum.function, updateProperties: dum.function}} groupComponent={dum.class} isSelection={dum.boolean} lineComponentMapper={dum.function} renderSingleGroupDecoration={dum.boolean} store={dum.any} totalCount={dum.number} />);
-// test("SearchHeader", <SearchHeader service={{scoped: dum.function, unscoped: dum.function}} />);
+test("SearchHeader", <SearchHeader service={{scoped: dum.function, unscoped: dum.function}} />);

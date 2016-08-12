@@ -1,3 +1,5 @@
+import {isArray} from "lodash";
+
 import {ComponentBase} from "./component-base";
 import {ComponentWithEntity, CWEState, AutocompleteTextOptions, AutocompleteSelectOptions, DisplayOptions, FieldOptions, SelectOptions, TextOptions} from "./component-with-entity";
 import {ComponentWithStore, CWSState, ChangeInfos} from "./component-with-store";
@@ -47,7 +49,7 @@ export abstract class ComponentWithEntityAndStore<P, S, E, TS extends {[key: str
         this.state.entity = {} as E;
         if (storeNodes) {
             for (const node in storeNodes) {
-                this.state[node] = _.isArray(storeNodes[node]) ? [] : {};
+                this.state[node] = isArray(storeNodes[node]) ? [] : {};
             }
         }
 

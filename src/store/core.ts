@@ -1,7 +1,7 @@
 import {EventEmitter} from "events";
 import {defer, isFunction, isArray} from "lodash";
 import {List, Map, fromJS} from "immutable";
-import {dispatcher} from "../";
+import dispatcher from "../dispatcher";
 import {autobind} from "core-decorators";
 
 export type Status = {name?: string, isLoading: boolean}

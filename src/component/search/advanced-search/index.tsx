@@ -7,7 +7,7 @@ import {SearchActionService} from "../../../search/search-action";
 import {advancedSearchStore} from "../../../search/built-in-store";
 import {AdvancedSearchStore} from "../../../store/search";
 import {AdvancedSearch} from "../../../store/search/advanced-search";
-import {dispatcher} from "../../../";
+import dispatcher from "../../../dispatcher";
 import {ButtonBackToTop, ReactComponent} from "../../defaults";
 import {GroupComponent} from "./group";
 import FacetBox from "./facet-box";

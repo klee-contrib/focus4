@@ -2,6 +2,7 @@ import tape = require("tape");
 import {shallow} from "enzyme";
 import {Component, ComponentClass, ReactElement} from "react";
 import {setDefaultComponents} from "../component/defaults";
+import {set} from "../reference/config";
 
 export const dum = {
     any: {} as any,
@@ -25,6 +26,7 @@ setDefaultComponents({
     SearchBar: dum.class,
     TopicDisplayer: dum.class
 });
+set({scopes: () => Promise.resolve([])});
 
 export function test(name: string, Element: ReactElement<any>) {
     tape(name, t => {

@@ -1,5 +1,6 @@
 import * as React from "react";
 import {autobind} from "core-decorators";
+import {isArray} from "lodash";
 import {ComponentWithStore} from "../../component-with-store";
 import * as defaults from "../../defaults";
 
@@ -33,7 +34,7 @@ export default class extends ComponentWithStore<Props, {}, {}> {
     }
 
     private get scopeLabel() {
-        if (_.isArray(this.state.reference!["scopes"])) {
+        if (isArray(this.state.reference!["scopes"])) {
             const selectedScope = this.state.reference!["scopes"].find(scope =>
                 scope["code"] === this.props.scope
             );

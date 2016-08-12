@@ -1,3 +1,5 @@
+import {isArray} from "lodash";
+
 import {ComponentBase} from "./component-base";
 import {addSuccessMessage} from "../message";
 import {changeMode} from "../application";
@@ -49,7 +51,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
 
         if (storeNodes) {
             for (const node in storeNodes) {
-                this.state[node] = _.isArray(storeNodes[node]) ? [] : {};
+                this.state[node] = isArray(storeNodes[node]) ? [] : {};
             }
         }
 
