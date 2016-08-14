@@ -21,6 +21,10 @@ function isClass(node: ts.Node): node is ts.ClassDeclaration {
     return node.kind === ts.SyntaxKind.ClassDeclaration;
 }
 
+function isUnion(type: ts.Type): type is ts.UnionType {
+    return (type.flags & ts.TypeFlags.Union) !== 0;
+}
+
 function getName(node: ts.Node, type: ts.Type): NamedComponent {
     const symbolName = type.symbol && type.symbol.name;
     const fileName = node.getSourceFile().fileName;
@@ -59,7 +63,7 @@ glob("src/**/*.tsx", (error, fileNames) => {
 
 ${sortedOutput.map(getImport).join("\r\n")}
 
-${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(p => `${p.getName()}={dum.any}`).join(" ")} />);`).join("\r\n")}
+${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).join(" ")} />);`).join("\r\n")}
 `);
 
     function visit(node: ts.Node) {
@@ -76,5 +80,39 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(p => `${p.ge
                 }
             }
         }
+    }
+
+    function getProp(prop: ts.Symbol) {
+        return getPropFromType(checker.getTypeAtLocation(prop.valueDeclaration!), prop.getName());
+    }
+
+    function getPropFromType(type: ts.Type, name: string): string {
+        if (isUnion(type)) {
+            return getPropFromType(type.types[0], name);
+        }
+
+        const typeName = checker.typeToString(type);
+        if (["any", "boolean", "number", "string"].find(x => x === typeName)) {
+            return `${name}={dum.${typeName}}`;
+        }
+
+        if (type.getCallSignatures().length || type.symbol!.name === "Function") {
+            return `${name}={dum.function}`;
+        }
+
+        if (type.getNumberIndexType()) {
+            return `${name}={dum.array}`;
+        }
+
+        const constructSignatures = type.getConstructSignatures();
+        if (constructSignatures.length && constructSignatures[0].getReturnType().getProperties().filter(p => p.name === "render").length) {
+            return `${name}={dum.component}`;
+        }
+
+        if (type.flags === ts.TypeFlags.Anonymous || type.flags === ts.TypeFlags.Interface) {
+            return `${name}={{${type.getProperties().filter(p => !(p.valueDeclaration as ts.ParameterDeclaration).questionToken).map(getProp).map(p => p.replace(/={(.+)}/, ": $1")).join(", ")}}}`;
+        }
+
+        return `${name}={dum.any}`;
     }
 });

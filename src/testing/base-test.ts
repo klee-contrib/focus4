@@ -8,7 +8,7 @@ export const dum = {
     any: {} as any,
     array: [],
     boolean: true,
-    class: class extends Component<any, any> { render() { return null; }} as ComponentClass<any>,
+    component: class extends Component<any, any> { render() { return null; }} as ComponentClass<any>,
     function: (...args: any[]) => null as any,
     number: 1,
     string: "yolo"
@@ -16,15 +16,15 @@ export const dum = {
 
 console.error = () => undefined;
 setDefaultComponents({
-    ActionBar: dum.class,
-    Button: dum.class,
-    ButtonBackToTop: dum.class,
-    Checkbox: dum.class,
-    ContextualActions: dum.class,
-    FacetBox: dum.class,
-    Field: dum.class,
-    SearchBar: dum.class,
-    TopicDisplayer: dum.class
+    ActionBar: dum.component,
+    Button: dum.component,
+    ButtonBackToTop: dum.component,
+    Checkbox: dum.component,
+    ContextualActions: dum.component,
+    FacetBox: dum.component,
+    Field: dum.component,
+    SearchBar: dum.component,
+    TopicDisplayer: dum.component
 });
 set({scopes: () => Promise.resolve([])});
 
