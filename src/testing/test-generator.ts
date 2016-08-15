@@ -4,7 +4,12 @@ import glob = require("glob");
 import pascalCase = require("pascal-case");
 
 const imports =
-`import * as React from "react";
+`/*
+    Ce fichier à été généré par un outil.
+    Toute modification sera perdue.
+*/
+
+import * as React from "react";
 import {test, dum} from "./src/testing/base-test";`;
 
 interface NamedComponent {
@@ -19,6 +24,10 @@ interface TestedComponent extends NamedComponent {
 
 function isClass(node: ts.Node): node is ts.ClassDeclaration {
     return node.kind === ts.SyntaxKind.ClassDeclaration;
+}
+
+function isFunction(node: ts.Node): node is ts.FunctionDeclaration {
+    return node.kind === ts.SyntaxKind.FunctionDeclaration;
 }
 
 function isUnion(type: ts.Type): type is ts.UnionType {
@@ -58,7 +67,7 @@ glob("src/**/*.tsx", (error, fileNames) => {
 
     const sortedOutput = output.sort((a, b) => a.name > b.name ? 1 : -1);
 
-    fs.writeFileSync("tests_generated.tsx",
+    fs.writeFileSync("tests.tsx",
 `${imports}
 
 ${sortedOutput.map(getImport).join("\r\n")}
@@ -67,19 +76,32 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).joi
 `);
 
     function visit(node: ts.Node) {
-        if (isClass(node) && (!node.modifiers || !node.modifiers.find(m => m.kind === ts.SyntaxKind.AbstractKeyword))) {
+        if (node.getSourceFile().isDeclarationFile) {
+            return;
+        }
+
+        if (isClass(node) && (node.flags & ts.NodeFlags.Export) && (!node.modifiers || !node.modifiers.find(m => m.kind === ts.SyntaxKind.AbstractKeyword))) {
             const type = checker.getTypeAtLocation(node);
             if (type && type.getProperties().filter(prop => prop.name === "render").length) {
-                const c = getName(node, type) as TestedComponent;
-                c.props = checker.getTypeAtLocation(node.heritageClauses![0].types![0].typeArguments![0])
-                    .getProperties()
-                    .filter(p => !(p.valueDeclaration as ts.ParameterDeclaration).questionToken)
-                    .sort((a, b) => a.getName() > b.getName() ? 1 : -1);
-                if (c.name !== "ElementClass") {
-                    output.push(c);
-                }
+                pushToOutput(node, type, checker.getTypeAtLocation(node.heritageClauses![0].types![0].typeArguments![0]));
+            }
+        } else if (isFunction(node) && (node.flags & ts.NodeFlags.Export)) {
+            const type = checker.getTypeAtLocation(node);
+            const callSignature = type.getCallSignatures()[0];
+            const returnType = callSignature.getReturnType();
+            if (returnType.symbol && (returnType.symbol.name === "Element" || returnType.symbol.name === "ReactElement")) {
+                pushToOutput(node, type, checker.getTypeAtLocation(callSignature.getParameters()[0].valueDeclaration!));
             }
         }
+    }
+
+    function pushToOutput(node: ts.Node, type: ts.Type, propTypes: ts.Type) {
+        const c = getName(node, type) as TestedComponent;
+        c.props = propTypes
+            .getProperties()
+            .filter(p => !(p.valueDeclaration as ts.ParameterDeclaration).questionToken)
+            .sort((a, b) => a.getName() > b.getName() ? 1 : -1);
+        output.push(c);
     }
 
     function getProp(prop: ts.Symbol) {

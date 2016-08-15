@@ -1,3 +1,8 @@
+/*
+    Ce fichier à été généré par un outil.
+    Toute modification sera perdue.
+*/
+
 import * as React from "react";
 import {test, dum} from "./src/testing/base-test";
 
