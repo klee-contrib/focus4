@@ -5,7 +5,7 @@ import pascalCase = require("pascal-case");
 
 const imports =
 `/*
-    Ce fichier à été généré par un outil.
+    Ce fichier à été généré automatiquement.
     Toute modification sera perdue.
 */
 
@@ -72,7 +72,7 @@ glob("src/**/*.tsx", (error, fileNames) => {
 
 ${sortedOutput.map(getImport).join("\r\n")}
 
-${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).join(" ")} />);`).join("\r\n")}
+${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).filter(p => p !== undefined).join(" ")} />);`).join("\r\n")}
 `);
 
     function visit(node: ts.Node) {
@@ -83,14 +83,27 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).joi
         if (isClass(node) && (node.flags & ts.NodeFlags.Export) && (!node.modifiers || !node.modifiers.find(m => m.kind === ts.SyntaxKind.AbstractKeyword))) {
             const type = checker.getTypeAtLocation(node);
             if (type && type.getProperties().filter(prop => prop.name === "render").length) {
-                pushToOutput(node, type, checker.getTypeAtLocation(node.heritageClauses![0].types![0].typeArguments![0]));
+                const {heritageClauses} = node;
+                if (heritageClauses) {
+                    const {types} = heritageClauses[0];
+                    if (types) {
+                        const {typeArguments} = types[0];
+                        if (typeArguments) {
+                            pushToOutput(node, type, checker.getTypeAtLocation(typeArguments[0]));
+                        }
+                    }
+                }
+
             }
         } else if (isFunction(node) && (node.flags & ts.NodeFlags.Export)) {
             const type = checker.getTypeAtLocation(node);
             const callSignature = type.getCallSignatures()[0];
             const returnType = callSignature.getReturnType();
             if (returnType.symbol && (returnType.symbol.name === "Element" || returnType.symbol.name === "ReactElement")) {
-                pushToOutput(node, type, checker.getTypeAtLocation(callSignature.getParameters()[0].valueDeclaration!));
+                const {parameters} = callSignature;
+                if (parameters && parameters[0]) {
+                    pushToOutput(node, type, checker.getTypeAtLocation(parameters[0].valueDeclaration!));
+                }
             }
         }
     }
@@ -99,13 +112,13 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).joi
         const c = getName(node, type) as TestedComponent;
         c.props = propTypes
             .getProperties()
-            .filter(p => !(p.valueDeclaration as ts.ParameterDeclaration).questionToken)
+            .filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken))
             .sort((a, b) => a.getName() > b.getName() ? 1 : -1);
         output.push(c);
     }
 
     function getProp(prop: ts.Symbol) {
-        return getPropFromType(checker.getTypeAtLocation(prop.valueDeclaration!), prop.getName());
+        return prop.valueDeclaration && getPropFromType(checker.getTypeAtLocation(prop.valueDeclaration), prop.getName());
     }
 
     function getPropFromType(type: ts.Type, name: string): string {
@@ -118,7 +131,7 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).joi
             return `${name}={dum.${typeName}}`;
         }
 
-        if (type.getCallSignatures().length || type.symbol!.name === "Function") {
+        if (type.getCallSignatures().length || type.symbol && type.symbol.name === "Function") {
             return `${name}={dum.function}`;
         }
 
@@ -132,7 +145,7 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).joi
         }
 
         if (type.flags === ts.TypeFlags.Anonymous || type.flags === ts.TypeFlags.Interface) {
-            return `${name}={{${type.getProperties().filter(p => !(p.valueDeclaration as ts.ParameterDeclaration).questionToken).map(getProp).map(p => p.replace(/={(.+)}/, ": $1")).join(", ")}}}`;
+            return `${name}={{${type.getProperties().filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken)).map(getProp).filter(p => p !== undefined).map(p => p!.replace(/={(.+)}/, ": $1")).join(", ")}}}`;
         }
 
         return `${name}={dum.any}`;
