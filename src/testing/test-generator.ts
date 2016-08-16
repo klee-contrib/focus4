@@ -131,6 +131,10 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
             return `${name}={dum.${typeName}}`;
         }
 
+        if (type.flags === ts.TypeFlags.StringLiteral) {
+            return `${name}=${typeName}`;
+        }
+
         if (type.getCallSignatures().length || type.symbol && type.symbol.name === "Function") {
             return `${name}={dum.function}`;
         }
