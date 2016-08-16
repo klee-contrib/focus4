@@ -31,7 +31,7 @@ set({scopes: () => Promise.resolve([])});
 export function test(name: string, Element: ReactElement<any>) {
     tape(name, t => {
         try {
-            t.ok(shallow(Element).render(), "Ok");
+            t.ok(shallow(Element), "Ok");
         } catch (e) {
             t.error(e);
         } finally {
