@@ -14,7 +14,6 @@ export const dum = {
     string: "yolo"
 };
 
-console.error = () => undefined;
 setDefaultComponents({
     ActionBar: dum.component,
     Button: dum.component,

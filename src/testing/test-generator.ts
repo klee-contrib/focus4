@@ -1,7 +1,7 @@
 import * as ts from "typescript";
 import * as fs from "fs";
+import {upperFirst, camelCase} from "lodash";
 import glob = require("glob");
-import pascalCase = require("pascal-case");
 
 const imports =
 `/*
@@ -46,7 +46,7 @@ function getName(node: ts.Node, type: ts.Type): NamedComponent {
 
 function getDefaultName(fileName: string) {
     const possibleNames = fileName.split("/").reverse();
-    return pascalCase(possibleNames[0] !== "index.tsx" ? possibleNames[0].replace(".tsx", "") : possibleNames[1]);
+    return upperFirst(camelCase(possibleNames[0] !== "index.tsx" ? possibleNames[0].replace(".tsx", "") : possibleNames[1]));
 }
 
 function getImport(comp: TestedComponent) {
