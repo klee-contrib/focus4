@@ -3,14 +3,16 @@ import {autobind} from "core-decorators";
 import {clone} from "lodash";
 import {ReactComponent} from "../defaults";
 
-export type GroupComponent = ReactComponent<{
+export interface GroupComponentProps {
     canShowMore: boolean;
     count: number;
     groupKey: string;
     groupLabel?: string;
     showAllHandler?: (groupKey: string) => void;
     showMoreHandler: () => void;
-}> ;
+}
+
+export type GroupComponent = ReactComponent<GroupComponentProps> ;
 
 export interface Props {
     initialRowsCount: number;
@@ -49,7 +51,7 @@ export default class extends React.Component<Props, State> {
         const {groupComponent, isUnique, list, count, groupKey, groupLabel, showAllHandler, renderResultsList} = this.props;
         const listClone = clone(list);
         const listToRender = isUnique ? listClone : listClone.splice(0, this.state.resultsDisplayedCount);
-        const Group = groupComponent;
+        const Group = groupComponent as React.ComponentClass<GroupComponentProps>;
         return (
             <Group
                 canShowMore={list.length > this.state.resultsDisplayedCount}

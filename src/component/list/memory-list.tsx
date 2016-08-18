@@ -1,6 +1,7 @@
 import * as React from "react";
 import {autobind} from "core-decorators";
 import {omit} from "lodash";
+import {ReactComponent} from "../defaults";
 
 export interface OperationListItem {
     label?: string;
@@ -31,7 +32,7 @@ export interface BaseListProps {
 }
 
 export interface MemoryListProps<ListProps extends BaseListProps> extends BaseListProps {
-    ListComponent: React.ComponentClass<ListProps> | ((props: ListProps & {ref?: string}) => React.ReactElement<any>);
+    ListComponent: ReactComponent<ListProps>;
     /** Default: 5 */
     perPage?: number;
 }
@@ -70,10 +71,11 @@ export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, 
 
     render() {
         const {data = [], ListComponent, reference} = this.props;
-        let hasMoreData = data.length > this.state.maxElements;
-        let childProps = omit(this.props, "data");
+        const hasMoreData = data.length > this.state.maxElements;
+        const childProps = omit(this.props, "data");
+        const LC = ListComponent as React.ComponentClass<BaseListProps>;
         return (
-            <ListComponent
+            <LC
                 ref="list"
                 data={this.getDataToUse()}
                 hasMoreData={hasMoreData}
