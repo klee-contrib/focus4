@@ -66,7 +66,7 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
                     return (
                         <LineComponent
                             data={line}
-                            key={line[idField]}
+                            key={line[idField] || idx}
                             reference={reference}
                             operationList={operationList || []}
                             {...otherLineProps}
