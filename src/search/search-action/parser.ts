@@ -6,16 +6,9 @@ import {isArray} from "lodash";
 function parseFacets(serverFacets: OutputFacet[]) {
     return serverFacets.reduce((formattedFacets, facet) => {
         const facetName = Object.keys(facet)[0];
-        const serverFacetData = facet[facetName];
-        formattedFacets[facetName] = serverFacetData.reduce((facetData, serverFacetItem) => {
-            facetData[serverFacetItem.code] = {
-                label: serverFacetItem.label,
-                count: serverFacetItem.count
-            };
-            return facetData;
-        }, {} as {[code: string]: {count: number, label: string}});
-        return formattedFacets;
-    }, {} as StoreFacets);
+        const values = facet[facetName];
+        return [...formattedFacets, {code: facetName, label: facetName, values}];
+    }, [] as StoreFacets);
 }
 
 export function unscopedResponse(data: UnscopedQueryOutput): AdvancedSearch {

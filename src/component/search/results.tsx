@@ -1,6 +1,6 @@
 import * as React from "react";
 import {autobind} from "core-decorators";
-import {clone, omit, isArray, mapValues} from "lodash";
+import {clone, omit, isArray} from "lodash";
 import GroupWrapper, {GroupComponent} from "./group-wrapper";
 import {ListSelection} from "../list/list-selection";
 import {ReactComponent} from "../defaults";
@@ -168,7 +168,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
 
     private showAllHandler(key: string) {
         const {resultsFacets, scopeFacetKey, groupingKey} = this.props;
-        if (resultsFacets && resultsFacets[scopeFacetKey!]) {
+        if (resultsFacets && resultsFacets.find(facet => facet.code === scopeFacetKey)) {
             this.scopeSelectionHandler(key);
         } else {
             this.facetSelectionHandler(groupingKey!, key);
@@ -205,11 +205,14 @@ export default class extends React.Component<ResultsProps, ResultsState> {
         }
     }
 
-    private getGroupCounts()         {
+    private getGroupCounts() {
         const {resultsFacets, groupingKey, scopeFacetKey} = this.props;
         if (resultsFacets) {
-            const scopeFacet = resultsFacets[groupingKey || scopeFacetKey!];
-            return mapValues(scopeFacet, facetData => {
+            let scopeFacet = resultsFacets.filter(facet => facet.code === groupingKey);
+            if (scopeFacet.length === 0) {
+                scopeFacet = resultsFacets.filter(facet => facet.code === scopeFacetKey);
+            }
+            return scopeFacet[0].values.map(facetData => {
                 const {label, count} = facetData;
                 return {label, count};
             });
@@ -264,8 +267,8 @@ export default class extends React.Component<ResultsProps, ResultsState> {
                         resultsMap.map(resultGroup  => {
                             const key = Object.keys(resultGroup)[0]; // group property name
                             const list = resultGroup[key];
-                            const label = groupCounts[key] && groupCounts[key].label;
-                            const count = groupCounts[key] && groupCounts[key].count;
+                            const label = groupCounts[0] && groupCounts[0].label;
+                            const count = groupCounts[0] && groupCounts[0].count;
                             return this.renderSingleGroup(list, key, label, count);
                         })
                     : null}

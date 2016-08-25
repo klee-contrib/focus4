@@ -20,7 +20,6 @@ setDefaultComponents({
     ButtonBackToTop: dum.component,
     Checkbox: dum.component,
     ContextualActions: dum.component,
-    FacetBox: dum.component,
     Field: dum.component,
     SearchBar: dum.component,
     TopicDisplayer: dum.component

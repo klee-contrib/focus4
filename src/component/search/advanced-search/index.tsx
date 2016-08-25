@@ -10,7 +10,7 @@ import {AdvancedSearch} from "../../../store/search/advanced-search";
 import dispatcher from "../../../dispatcher";
 import {ButtonBackToTop, ReactComponent} from "../../defaults";
 import {GroupComponent} from "./group";
-import FacetBox from "./facet-box";
+import {FacetBox} from "./facet-box";
 import ListActionBar from "./action-bar";
 import ListSummary from "./list-summary";
 import ResultsComponent from "../results";
@@ -20,8 +20,6 @@ export interface Props {
     action?: SearchAction;
     /** Default: ButtonBackToTop */
     backToTopComponent?: typeof ButtonBackToTop;
-    /** Default: {} */
-    facetConfig?: {};
     /** Default: true */
     hasBackToTop?: boolean;
     /** Default: true */
@@ -57,7 +55,6 @@ export default class extends React.Component<Props, State> {
     static displayName = "advanced-search";
     static defaultProps = {
         backToTopComponent: ButtonBackToTop,
-        facetConfig: {},
         hasBackToTop: true,
         isSelection: true,
         lineOperationList: [],
@@ -169,16 +166,15 @@ export default class extends React.Component<Props, State> {
 
     private renderFacetBox() {
         const {facets, selectedFacets} = this.state;
-        const {facetConfig, scopesConfig, openedFacetList} = this.props;
+        const {scopesConfig, openedFacetList} = this.props;
         return (
             <FacetBox
                 action={this.action}
-                facetConfig={facetConfig!}
-                openedFacetList={openedFacetList!}
-                facets={facets}
+                openedFacetList={openedFacetList || {}}
+                facetList={facets}
                 ref="facetBox"
                 scopesConfig={scopesConfig!}
-                selectedFacets={selectedFacets}
+                selectedFacetList={selectedFacets!}
             />
         );
     }
@@ -201,9 +197,9 @@ export default class extends React.Component<Props, State> {
     private renderActionBar() {
         const {facets, groupingKey, hasGrouping, selectedFacets, selectionStatus, sortBy, totalCount} = this.state;
         const {isSelection, lineOperationList, orderableColumnList} = this.props;
-        const groupableColumnList = facets ? Object.keys(facets).reduce((result, facetKey) => {
-            if (Object.keys(facets[facetKey]).length > 1) {
-                result[facetKey] = facetKey;
+        const groupableColumnList = facets ? facets.reduce((result, facet) => {
+            if (facet.values.length > 1) {
+                result[facet.code] = facet.label;
             }
             return result;
         }, {} as {[facet: string]: string}) : {};

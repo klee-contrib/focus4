@@ -1,5 +1,5 @@
 /*
-    Ce fichier à été généré par un outil.
+    Ce fichier à été généré automatiquement.
     Toute modification sera perdue.
 */
 
@@ -8,7 +8,9 @@ import {test, dum} from "./src/testing/base-test";
 
 import ActionBar from "./src/component/search/advanced-search/action-bar";
 import AdvancedSearch from "./src/component/search/advanced-search";
-import FacetBox from "./src/component/search/advanced-search/facet-box";
+import {Facet} from "./src/component/search/advanced-search/facet-box/facet";
+import {FacetBox} from "./src/component/search/advanced-search/facet-box";
+import {FacetData} from "./src/component/search/advanced-search/facet-box/facet-data";
 import {GroupComponent} from "./src/component/search/advanced-search/group";
 import GroupWrapper from "./src/component/search/group-wrapper";
 import {ListSelection} from "./src/component/list/list-selection";
@@ -20,7 +22,9 @@ import SearchHeader from "./src/component/search/search-header";
 
 test("ActionBar", <ActionBar action={{search: dum.function, updateProperties: dum.function}} />);
 test("AdvancedSearch", <AdvancedSearch lineComponentMapper={dum.function} service={{scoped: dum.function, unscoped: dum.function}} />);
-test("FacetBox", <FacetBox action={{search: dum.function, updateProperties: dum.function}} facetConfig={{}} openedFacetList={{}} scopesConfig={{}} />);
+test("Facet", <Facet expandHandler={dum.function} facet={{code: dum.string, label: dum.string, values: dum.array}} facetKey={dum.string} isExpanded={dum.boolean} nbDefaultDataList={dum.number} selectHandler={dum.function} selectedDataKey={dum.string} />);
+test("FacetBox", <FacetBox action={{search: dum.function, updateProperties: dum.function}} facetList={dum.array} openedFacetList={{}} scopesConfig={{}} selectedFacetList={{}} />);
+test("FacetData", <FacetData data={{code: dum.string, label: dum.string, count: dum.number}} dataKey={dum.string} selectHandler={dum.function} />);
 test("GroupComponent", <GroupComponent canShowMore={dum.boolean} count={dum.number} groupKey={dum.string} groupLabel={dum.string} showMoreHandler={dum.function} />);
 test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.component} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
 test("ListSelection", <ListSelection LineComponent={dum.component} />);
