@@ -26,7 +26,7 @@ export interface Props {
 };
 
 @autobind
-export default class extends React.Component<Props, {}> {
+export class ActionBar extends React.Component<Props, {}> {
     static defaultProps = {
         groupableColumnList: {},
         hasGrouping: true,

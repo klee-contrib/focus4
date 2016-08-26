@@ -6,14 +6,14 @@ import actionBuilder, {SearchAction} from "../../../search/action-builder";
 import {SearchActionService} from "../../../search/search-action";
 import {advancedSearchStore} from "../../../search/built-in-store";
 import {AdvancedSearchStore} from "../../../store/search";
-import {AdvancedSearch} from "../../../store/search/advanced-search";
+import {AdvancedSearch as SearchStore} from "../../../store/search/advanced-search";
 import dispatcher from "../../../dispatcher";
 import {ButtonBackToTop, ReactComponent} from "../../defaults";
 import {GroupComponent} from "./group";
 import {FacetBox} from "./facet-box";
-import ListActionBar from "./action-bar";
-import ListSummary from "./list-summary";
-import ResultsComponent from "../results";
+import {ActionBar} from "./action-bar";
+import {ListSummary} from "./list-summary";
+import {Results} from "../results";
 import {OperationListItem} from "../../list/memory-list";
 
 export interface Props {
@@ -45,14 +45,14 @@ export interface Props {
     store?: AdvancedSearchStore;
 }
 
-export interface State extends AdvancedSearch {
+export interface State extends SearchStore {
     hasGrouping?: boolean;
     selectionStatus?: 'none' | 'partial' | 'selected';
 }
 
 @autobind
-export default class extends React.Component<Props, State> {
-    static displayName = "advanced-search";
+export class AdvancedSearch extends React.Component<Props, State> {
+
     static defaultProps = {
         backToTopComponent: ButtonBackToTop,
         hasBackToTop: true,
@@ -114,7 +114,7 @@ export default class extends React.Component<Props, State> {
 
     /** Cette fonction est le diable incarné. C'est vraiment laid. */
     getSelectedItems() {
-        const results = this.refs["resultList"] as ResultsComponent;
+        const results = this.refs["resultList"] as Results;
         const outSelectedItems = reduce(results.refs, (selectedItems, ref) => {
             if (isFunction((ref as any).getSelectedItems)) { // ListSelection dans le Results, cas sans groupes.
                 selectedItems = selectedItems.concat((ref as any).getSelectedItems());
@@ -205,7 +205,7 @@ export default class extends React.Component<Props, State> {
         }, {} as {[facet: string]: string}) : {};
 
         return (
-            <ListActionBar
+            <ActionBar
                 action={this.action}
                 groupingKey={groupingKey}
                 groupableColumnList={groupableColumnList}
@@ -226,7 +226,7 @@ export default class extends React.Component<Props, State> {
         const {isSelection, onLineClick, lineComponentMapper, lineOperationList, refContainer, scrollParentSelector, store} = this.props;
         const {groupingKey, facets, results, selectionStatus, totalCount} = this.state;
         return (
-            <ResultsComponent
+            <Results
                 action={this.action}
                 groupComponent={GroupComponent}
                 groupingKey={groupingKey}

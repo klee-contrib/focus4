@@ -26,7 +26,7 @@ export interface StoreNodes {
 }
 
 @autobind
-export default class extends ComponentWithStore<Props, {}, StoreNodes> {
+export class SearchHeader extends ComponentWithStore<Props, {}, StoreNodes> {
 
     private action: SearchAction;
 

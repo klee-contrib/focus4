@@ -1,13 +1,13 @@
 import * as React from "react";
 import {autobind} from "core-decorators";
 import {clone, omit, isArray} from "lodash";
-import GroupWrapper, {GroupComponent} from "./group-wrapper";
+import {GroupWrapper, GroupComponent} from "./group-wrapper";
 import {ListSelection} from "../list/list-selection";
 import {ReactComponent} from "../defaults";
 import {translate} from "../../translation";
 import {SearchAction} from "../../search/action-builder";
 import SearchStore from "../../store/search/search";
-import {StoreFacets, Results} from "../../store/search/advanced-search";
+import {StoreFacets, Results as ResultsType} from "../../store/search/advanced-search";
 import {OperationListItem} from "../list/memory-list";
 
 function DefaultEmpty() {
@@ -38,7 +38,7 @@ export interface ResultsProps {
     selectionStatus?: 'none' | 'partial' | 'selected';
     reference?: {[key: string]: {}[]};
     renderSingleGroupDecoration: boolean;
-    resultsMap?: Results< {[key: string]: any} >;
+    resultsMap?: ResultsType< {[key: string]: any} >;
     resultsFacets?: StoreFacets;
     /** Default: 5 */
     showMoreAdditionalRows?: number;
@@ -52,7 +52,7 @@ export interface ResultsState {
 }
 
 @autobind
-export default class extends React.Component<ResultsProps, ResultsState> {
+export class Results extends React.Component<ResultsProps, ResultsState> {
     static defaultProps = {
         emptyComponent: DefaultEmpty,
         initialRowsCount: 3,
@@ -226,7 +226,7 @@ export default class extends React.Component<ResultsProps, ResultsState> {
             return this.renderEmptyResults();
         }
 
-        let resultsMap: Results< {[key: string]: any} >;
+        let resultsMap: ResultsType< {[key: string]: any} >;
 
         // resultsMap est un objet avec une seule propriété (le scope) dans si on est dans une recherche scopée sans groupes, sinon c'est un array.
         if (isArray(this.props.resultsMap)) {

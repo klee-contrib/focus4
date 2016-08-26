@@ -6,19 +6,19 @@
 import * as React from "react";
 import {test, dum} from "./src/testing/base-test";
 
-import ActionBar from "./src/component/search/advanced-search/action-bar";
-import AdvancedSearch from "./src/component/search/advanced-search";
+import {ActionBar} from "./src/component/search/advanced-search/action-bar";
+import {AdvancedSearch} from "./src/component/search/advanced-search";
 import {Facet} from "./src/component/search/advanced-search/facet-box/facet";
 import {FacetBox} from "./src/component/search/advanced-search/facet-box";
 import {FacetData} from "./src/component/search/advanced-search/facet-box/facet-data";
 import {GroupComponent} from "./src/component/search/advanced-search/group";
-import GroupWrapper from "./src/component/search/group-wrapper";
+import {GroupWrapper} from "./src/component/search/group-wrapper";
 import {ListSelection} from "./src/component/list/list-selection";
-import ListSummary from "./src/component/search/advanced-search/list-summary";
+import {ListSummary} from "./src/component/search/advanced-search/list-summary";
 import {ListTable} from "./src/component/list/list-table";
 import {MemoryList} from "./src/component/list/memory-list";
-import Results from "./src/component/search/results";
-import SearchHeader from "./src/component/search/search-header";
+import {Results} from "./src/component/search/results";
+import {SearchHeader} from "./src/component/search/search-header";
 
 test("ActionBar", <ActionBar action={{search: dum.function, updateProperties: dum.function}} />);
 test("AdvancedSearch", <AdvancedSearch lineComponentMapper={dum.function} service={{scoped: dum.function, unscoped: dum.function}} />);

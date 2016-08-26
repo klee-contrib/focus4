@@ -15,7 +15,7 @@ export interface Props {
 }
 
 @autobind
-export default class extends ComponentWithStore<Props, {}, {}> {
+export class ListSummary extends ComponentWithStore<Props, {}, {}> {
     static defaultProps = {
         totalCount: 0,
         query: ""

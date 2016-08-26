@@ -31,7 +31,7 @@ export interface State {
 }
 
 @autobind
-export default class extends React.Component<Props, State> {
+export class GroupWrapper extends React.Component<Props, State> {
     static defaultProps = {
         isUnique: false
     };
