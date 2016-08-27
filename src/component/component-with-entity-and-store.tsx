@@ -1,13 +1,13 @@
+import {autobind, mixin} from "core-decorators";
 import {isArray} from "lodash";
+
+import {Entity, EntityField} from "definition";
+import {builtInStore} from "reference";
+import CoreStore from "store";
 
 import {ComponentBase} from "./component-base";
 import {ComponentWithEntity, CWEState, AutocompleteTextOptions, AutocompleteSelectOptions, DisplayOptions, FieldOptions, SelectOptions, TextOptions} from "./component-with-entity";
 import {ComponentWithStore, CWSState, ChangeInfos} from "./component-with-store";
-import {autobind, mixin} from "core-decorators";
-
-import {Entity, EntityField} from "../definition";
-import {builtInStore} from "../reference";
-import {CoreStore} from "../store";
 
 /** Classe de base pour un composant Focus avec une entité et un store. */
 /* tslint:disable:no-unused-variable */

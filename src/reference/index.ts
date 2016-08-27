@@ -1,5 +1,6 @@
-import {dispatcher} from "../";
-import {ReferenceStore} from "../store";
+import dispatcher from "dispatcher";
+
+import {ReferenceStore} from "./store";
 
 import * as builder from "./builder"; export {builder};
 import * as config from "./config"; export {config};

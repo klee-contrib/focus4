@@ -1,10 +1,7 @@
-import {dispatcher} from "../";
-import searchAction, {SearchActionBuilderSpec} from "./search-action";
-import {AdvancedSearch} from "../store/search/advanced-search";
+import dispatcher from "dispatcher";
 
-/* tslint:disable */
-import {InputFacet, OutputFacet} from "./search-action/types";
-/* tslint:enable */
+import searchAction, {SearchActionBuilderSpec} from "./action";
+import {AdvancedSearch} from "./store/advanced-search";
 
 export interface SearchAction {
     search: (isScroll?: boolean) => Promise<void>;

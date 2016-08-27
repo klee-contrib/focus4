@@ -1,6 +1,7 @@
-import dispatcher from "../dispatcher";
-import {ManagedErrorResponse, FieldErrors} from "../network/error-parsing";
 import {isArray} from "lodash";
+
+import dispatcher from "dispatcher";
+import {ManagedErrorResponse, FieldErrors} from "network/error-parsing";
 
 export interface Service {
     (...args: any[]): Promise<string | {}>;

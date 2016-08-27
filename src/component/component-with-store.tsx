@@ -1,10 +1,11 @@
 import {isArray} from "lodash";
 
+import {changeMode} from "application";
+import {addSuccessMessage} from "message";
+import {builtInStore, builtInReferenceAction} from "reference";
+import CoreStore from "store";
+
 import {ComponentBase} from "./component-base";
-import {addSuccessMessage} from "../message";
-import {changeMode} from "../application";
-import {CoreStore} from "../store";
-import {builtInStore, builtInReferenceAction} from "../reference";
 
 /** Informations renvoyées par une modification de store. */
 export interface ChangeInfos {

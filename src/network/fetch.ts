@@ -1,8 +1,10 @@
 import fetch from "isomorphic-fetch";
-import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
 import {v4} from "node-uuid";
-import {Request} from "../store/request";
-import {dispatcher} from "../";
+
+import dispatcher from "dispatcher";
+
+import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
+import {Request} from "./store";
 
 type DataType = 'json' | 'string';
 

@@ -1,13 +1,13 @@
-import * as React from "react";
+import {autobind} from "core-decorators";
 import {isFunction, isEmpty} from "lodash";
+import * as React from "react";
+
+import {changeMode} from "application";
+import * as defaults from "defaults";
+import {Entity} from "definition";
+import CoreStore from "store";
 
 import {ComponentWithEntityAndStore} from "./component-with-entity-and-store";
-import {autobind} from "core-decorators";
-
-import {Entity} from "../definition/";
-import {changeMode} from "../application";
-import {CoreStore} from "../store";
-import * as defaults from "./defaults";
 
 /** Props propre à ComponentWithForm. */
 export interface CWFProps {

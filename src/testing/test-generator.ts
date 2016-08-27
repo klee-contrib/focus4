@@ -1,7 +1,7 @@
-import * as ts from "typescript";
 import * as fs from "fs";
-import {upperFirst, camelCase} from "lodash";
 import glob = require("glob");
+import {upperFirst, camelCase} from "lodash";
+import * as ts from "typescript";
 
 const imports =
 `/*

@@ -1,4 +1,5 @@
 import {ReactType} from "react";
+
 import {Validator} from "./validation";
 
 export interface Domain {

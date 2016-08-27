@@ -1,8 +1,10 @@
 import * as React from "react";
-import ApplicationStore, {ApplicationAction} from "../store/application";
-import {dispatcher} from "../";
-export {ApplicationAction};
 
+import dispatcher from "dispatcher";
+
+import ApplicationStore, {ApplicationAction} from "./store";
+
+export {ApplicationAction};
 export { default as actionBuilder } from "./action-builder";
 
 export const builtInStore = new ApplicationStore();

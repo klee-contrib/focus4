@@ -1,9 +1,12 @@
-import * as React from "react";
-import {ComponentWithEntity} from "./component-with-entity";
 import {autobind} from "core-decorators";
-import {Entity, EntityField} from "../definition";
-import * as defaults from "./defaults";
-import {CLProps} from "./list/memory-list";
+import * as React from "react";
+
+import * as defaults from "defaults";
+import {Entity, EntityField} from "definition";
+import {CLProps} from "list/component/memory-list";
+
+import {ComponentWithEntity} from "./component-with-entity";
+
 export {CLProps};
 
 /** Classe de base pour des composants de ligne Focus (à utiliser avec `listFor`). */
