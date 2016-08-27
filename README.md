@@ -93,4 +93,6 @@ D'autant plus que, si on veut plus tard refondre certaines parties (genre rempla
 ## Une petite note pour finir
 Le projet utilise Typescript 2.0, qui n'est pas encore capable de compiler async/await en ES5 (2.1 pourra par contre). Donc en l'état (cible en ES2015) ça ne doit marcher que sur les toutes dernières versions des navigateurs. J'utilise aussi toutes les options les plus strictes (dont la toute nouvelle non-nullité par défaut), ce qui veut dire qu'il y a beaucoup de vérifications qui sont laissées au langage. Ca veut dire qu'il est plus facilement possible de se tirer dans le pied si on se borgne à vouloir coder les yeux fermés avec deux mains dans le dos. Ca veut aussi dire que dans les bonnes conditions, c'est quasiment impossible.
 
+Aussi, les modules sont résolus avec un `basePath` qui n'est pas du tout réécrit à la compilation, du coup ça ne peut pas marcher tel quel.
+
 Et c'est évidemment pas du tout testé. #YOLO.

@@ -6,7 +6,6 @@ import {Entity, EntityField, Domain} from "definition";
 
 import {ComponentBase} from "./component-base";
 
-
 /** Item attendu dans recherche d'autocomplétion. */
 export interface AutoCompleteItem {
     key: string;

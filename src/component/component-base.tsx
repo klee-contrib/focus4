@@ -9,8 +9,6 @@ import {ListTable, ListTableProps} from "list/component/list-table";
 import {MemoryList, CLProps, BaseListProps} from "list/component/memory-list";
 import {translate} from "translation";
 
-
-
 /** Classe de base pour un composant Focus simple. */
 @autobind
 export abstract class ComponentBase<P, S> extends React.Component<P, S> {
