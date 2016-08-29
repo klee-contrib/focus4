@@ -1,7 +1,7 @@
 import fetch from "isomorphic-fetch";
 import {v4} from "node-uuid";
 
-import dispatcher from "dispatcher";
+import dispatcher from "../dispatcher";
 
 import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
 import {Request} from "./store";

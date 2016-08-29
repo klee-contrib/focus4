@@ -1,4 +1,4 @@
-import dispatcher from "dispatcher";
+import dispatcher from "../../dispatcher";
 
 import {QueryInput, QueryOutput, UnscopedQueryOutput, Results} from "../types";
 import {AdvancedSearch} from "../store/advanced-search";

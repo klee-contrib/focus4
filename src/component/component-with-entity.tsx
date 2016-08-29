@@ -1,8 +1,8 @@
 import {find, result} from "lodash";
 import * as React from "react";
 
-import * as defaults from "defaults";
-import {Entity, EntityField, Domain} from "definition";
+import * as defaults from "../defaults";
+import {Entity, EntityField, Domain} from "../definition";
 
 import {ComponentBase} from "./component-base";
 

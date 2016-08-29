@@ -1,6 +1,6 @@
 import loadAction, {ListActionBuilderSpec, ListStoreNodes} from "./action";
 
-import dispatcher from "dispatcher";
+import dispatcher from "../dispatcher";
 
 export default function listActionBuilder(config: ListActionBuilderSpec) {
     config.nbElement = config.nbElement || 50;

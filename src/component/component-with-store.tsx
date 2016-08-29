@@ -1,9 +1,8 @@
 import {isArray} from "lodash";
 
-import {changeMode} from "application";
-import {addSuccessMessage} from "message";
-import {builtInStore, builtInReferenceAction} from "reference";
-import CoreStore from "store";
+import {applicationStore, messageStore} from "../";
+import {builtInStore, builtInReferenceAction} from "../reference";
+import CoreStore from "../store";
 
 import {ComponentBase} from "./component-base";
 
@@ -123,7 +122,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
                 this.onStoreLoaded(property);
             } else if ("saved" === name) {
                 if (this.state.isEdit) {
-                    this.setState({isEdit: false} as any, () => changeMode("consult", "edit"));
+                    this.setState({isEdit: false} as any, () => applicationStore.changeMode("consult", "edit"));
                 }
                 if (triggerOnChange) {
                     this.onStoreSaved(property);
@@ -247,7 +246,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      * @param property Le noeud de store.
      */
     onStoreDeleted(property?: string) {
-        addSuccessMessage("detail.deleted");
+        messageStore.addSuccessMessage("detail.deleted");
     }
 
     /**
@@ -264,7 +263,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      * @param property Le noeud de store.
      */
     onStoreSaved(property?: string) {
-        addSuccessMessage("detail.saved");
+        messageStore.addSuccessMessage("detail.saved");
     }
 
     private registerStore(store: CoreStore<any>, nodes: string[], action: "add" | "remove") {

@@ -2,10 +2,10 @@ import {autobind} from "core-decorators";
 import {isFunction, isEmpty} from "lodash";
 import * as React from "react";
 
-import {changeMode} from "application";
-import * as defaults from "defaults";
-import {Entity} from "definition";
-import CoreStore from "store";
+import {applicationStore} from "../";
+import * as defaults from "../defaults";
+import {Entity} from "../definition";
+import CoreStore from "../store";
 
 import {ComponentWithEntityAndStore} from "./component-with-entity-and-store";
 
@@ -113,7 +113,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
                 {isEdit: !this.state.isEdit},
                 this.getStateFromStore()
             ) as any, () => {
-            changeMode("consult", "edit");
+            applicationStore.changeMode("consult", "edit");
         });
     }
 
@@ -133,7 +133,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
      */
     onClickEdit() {
         this.setState({isEdit: !this.state.isEdit} as any, () => {
-            changeMode("edit", "consult");
+            applicationStore.changeMode("edit", "consult");
             this.clearError();
         });
     }

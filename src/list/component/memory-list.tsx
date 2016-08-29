@@ -2,7 +2,7 @@ import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import * as React from "react";
 
-import {ReactComponent} from "defaults";
+import {ReactComponent} from "../../defaults";
 
 export interface OperationListItem {
     label?: string;

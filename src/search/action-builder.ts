@@ -1,4 +1,4 @@
-import dispatcher from "dispatcher";
+import dispatcher from "../dispatcher";
 
 import searchAction, {SearchActionBuilderSpec} from "./action";
 import {AdvancedSearch} from "./store/advanced-search";

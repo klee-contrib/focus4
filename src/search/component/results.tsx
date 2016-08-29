@@ -2,10 +2,10 @@ import {autobind} from "core-decorators";
 import {clone, omit, isArray} from "lodash";
 import * as React from "react";
 
-import {ReactComponent} from "defaults";
-import {ListSelection} from "list/component/list-selection";
-import {OperationListItem} from "list/component/memory-list";
-import {translate} from "translation";
+import {ReactComponent} from "../../defaults";
+import {ListSelection} from "../../list/component/list-selection";
+import {OperationListItem} from "../../list/component/memory-list";
+import {translate} from "../../translation";
 
 import {SearchAction} from "../action-builder";
 import {SearchStore} from "../store/search";

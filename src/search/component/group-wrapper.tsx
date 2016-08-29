@@ -2,7 +2,7 @@ import {autobind} from "core-decorators";
 import {clone} from "lodash";
 import * as React from "react";
 
-import {ReactComponent} from "defaults";
+import {ReactComponent} from "../../defaults";
 
 export interface GroupComponentProps {
     canShowMore: boolean;

@@ -2,8 +2,8 @@ import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import * as React from "react";
 
-import * as defaults from "defaults";
-import {translate} from "translation";
+import * as defaults from "../../defaults";
+import {translate} from "../../translation";
 
 import {ListBase, ListBaseProps} from "./list-base";
 import {CLProps, OperationListItem} from "./memory-list";

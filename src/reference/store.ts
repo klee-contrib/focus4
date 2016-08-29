@@ -1,7 +1,7 @@
 import {isEmpty} from "lodash";
 import {Map} from "immutable";
 
-import CoreStore from "store";
+import CoreStore from "../store";
 
 import {get} from "./config";
 

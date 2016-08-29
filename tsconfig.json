@@ -13,8 +13,7 @@
         "strictNullChecks": true,
         "experimentalDecorators": true,
         "noFallthroughCasesInSwitch": true,
-        "inlineSourceMap": true,
-        "baseUrl": "./src"
+        "inlineSourceMap": true
     },
     "exclude": [
         "node_modules",

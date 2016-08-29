@@ -1,7 +1,7 @@
 import {buildOrderAndSort, buildPagination, ListStoreNodes} from "./builder";
 import {parser, ListServiceResponse} from "./parser";
 
-import dispatcher from "dispatcher";
+import dispatcher from "../../dispatcher";
 
 export {ListStoreNodes};
 

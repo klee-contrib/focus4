@@ -3,7 +3,7 @@ import {EventEmitter} from "events";
 import {List, Map, fromJS} from "immutable";
 import {defer, isFunction, isArray} from "lodash";
 
-import dispatcher from "dispatcher";
+import dispatcher from "./dispatcher";
 
 export type Status = {name?: string, isLoading: boolean}
 

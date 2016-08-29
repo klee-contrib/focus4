@@ -1,4 +1,4 @@
-import CoreStore from "store";
+import CoreStore from "../store";
 
 export interface ListStoreNodes {
     criteria?: {};

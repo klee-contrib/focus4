@@ -2,7 +2,7 @@ import {EventEmitter} from "events";
 import {Map} from "immutable";
 import {v4} from "node-uuid";
 
-import dispatcher from "dispatcher";
+import dispatcher from "../dispatcher";
 
 export interface Request {
     id?: string;

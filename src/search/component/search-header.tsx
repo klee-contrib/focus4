@@ -1,8 +1,8 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
-import {ComponentWithStore} from "component/component-with-store";
-import * as defaults from "defaults";
+import {ComponentWithStore} from "../../component/component-with-store";
+import * as defaults from "../../defaults";
 
 import {advancedSearchStore} from "../";
 import {SearchActionService} from "../action";

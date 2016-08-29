@@ -1,9 +1,9 @@
 import {autobind, mixin} from "core-decorators";
 import {isArray} from "lodash";
 
-import {Entity, EntityField} from "definition";
-import {builtInStore} from "reference";
-import CoreStore from "store";
+import {Entity, EntityField} from "../definition";
+import {builtInStore} from "../reference";
+import CoreStore from "../store";
 
 import {ComponentBase} from "./component-base";
 import {ComponentWithEntity, CWEState, AutocompleteTextOptions, AutocompleteSelectOptions, DisplayOptions, FieldOptions, SelectOptions, TextOptions} from "./component-with-entity";

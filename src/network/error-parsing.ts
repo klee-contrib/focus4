@@ -1,7 +1,7 @@
 import {isArray} from "lodash";
 
-import {addMessage} from "message";
-import {translate} from "translation";
+import {messageStore} from "../";
+import {translate} from "../translation";
 
 export type FieldErrors = {[key: string]: string[] | {[key: string]: string[]}};
 
@@ -48,7 +48,7 @@ const errorTypes = {
 
 function dispatchMessages(messages: string[], type: ErrorType) {
     messages.forEach(message =>
-        addMessage({
+        messageStore.addMessage({
             type,
             content: translate(message)
         })

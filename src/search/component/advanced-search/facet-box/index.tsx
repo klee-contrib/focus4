@@ -2,7 +2,7 @@ import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import * as React from "react";
 
-import {translate} from "translation";
+import {translate} from "../../../../translation";
 
 import {SearchAction} from "../../../action-builder";
 import {AdvancedSearch} from "../../../store/advanced-search";
