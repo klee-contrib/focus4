@@ -58,21 +58,17 @@ export interface FieldOptions<DisplayProps, FieldProps, InputProps, InputLabelPr
 }
 
 /** Options pour `selectFor`. */
-export interface SelectOptions<Props> extends BaseOptions {
+export interface SelectOptions<T, Props> extends BaseOptions {
     SelectComponent?: React.ComponentClass<Props>;
     labelKey?: string;
-    listName?: string;
-    refContainer?: {[x: string]: {}[]};
     valueKey?: string;
-    values?: {}[];
+    values?: T[];
 }
 
 /** Options pour `stringFor` et `textFor`. */
 export interface TextOptions {
     formatter?: (data: any) => string;
     labelKey?: string;
-    listName?: string;
-    refContainer?: {[x: string]: {}[]};
     style?: React.CSSProperties;
     value?: any;
     valueKey?: string;
@@ -162,8 +158,8 @@ export abstract class ComponentWithEntity<P, S, E> extends ComponentBase<P, S & 
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<Props>(field: EntityField, listName: string,  options: SelectOptions<Props> & Props = {} as any) {
-        options.listName = listName;
+    selectFor<T, Props>(field: EntityField, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
+        options.values = values;
         return this.fieldFor(field, options);
     }
 
@@ -192,8 +188,6 @@ export abstract class ComponentWithEntity<P, S, E> extends ComponentBase<P, S & 
         const value = options.value !== undefined ? options.value : (this.props["data"] || this.state.entity)[field.name];
         const hasLabel = options.hasLabel || true;
         const dom: Domain = field.domain || {type: undefined};
-        const refContainer: {[key: string]: {}[]} | undefined = options.refContainer || this.props["reference"] || this.state["reference"];
-        const listName = options.listName || dom.listName;
 
         const propsContainer = {
             name: field.name,
@@ -216,8 +210,7 @@ export abstract class ComponentWithEntity<P, S, E> extends ComponentBase<P, S & 
             InputComponent: dom.InputComponent,
             SelectComponent: dom.SelectComponent,
             TextComponent: dom.TextComponent,
-            DisplayComponent: dom.DisplayComponent,
-            values: refContainer && listName && refContainer[listName]
+            DisplayComponent: dom.DisplayComponent
         };
 
         return Object.assign(propsContainer, dom.options, options);
@@ -228,7 +221,5 @@ interface BuildFieldProps {
     [key: string]: any;
     hasLabel?: boolean;
     isEdit?: boolean;
-    listName?: string;
-    refContainer?: {[x: string]: {}[]};
     value?: any;
 }

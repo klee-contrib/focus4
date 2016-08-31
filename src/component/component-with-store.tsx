@@ -1,7 +1,6 @@
 import {isArray} from "lodash";
 
 import {applicationStore, messageStore} from "../";
-import {builtInStore, builtInReferenceAction} from "../reference";
 import CoreStore from "../store";
 
 import {ComponentBase} from "./component-base";
@@ -17,14 +16,11 @@ export interface ChangeInfos {
 export interface CWSState {
     isEdit?: boolean;
     isLoading?: boolean;
-    reference?: {[refName: string]: {[key: string]: any}[]};
 }
 
 /** Classe de base pour un composant Focus avec un store. */
 export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> extends ComponentBase<P, S & TS & CWSState> {
 
-    private referenceStore = builtInStore;
-    private referenceNames?: string[];
     private store?: CoreStore<TS>;
     private storeNodes?: TS;
     private restrictOnChangeOnSelf: boolean;
@@ -34,31 +30,22 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      * Crée une nouvelle instance de ComponentWithStore.
      * @param config La config du composant.
      */
-    constructor({props, store, storeNodes, referenceNames, restrictOnChangeOnSelf = false, initWithStore = true}: {
+    constructor({props, store, storeNodes, restrictOnChangeOnSelf = false, initWithStore = true}: {
         props: P,
         store?: CoreStore<TS>,
         storeNodes?: TS,
-        referenceNames?: string[],
         restrictOnChangeOnSelf?: boolean,
         initWithStore?: boolean
     }) {
         super(props);
         this.store = store;
         this.storeNodes = storeNodes;
-        this.referenceNames = referenceNames;
         this.restrictOnChangeOnSelf = restrictOnChangeOnSelf;
         this.initWithStore = initWithStore;
 
         if (storeNodes) {
             for (const node in storeNodes) {
                 this.state[node] = isArray(storeNodes[node]) ? [] : {};
-            }
-        }
-
-        this.state.reference = {};
-        if (referenceNames) {
-            for (const ref in referenceNames) {
-                this.state.reference[referenceNames[ref]] = [];
             }
         }
 
@@ -87,10 +74,6 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
         if (this.store) {
             this.registerStore(this.store, Object.keys(this.storeNodes), "add");
         }
-        if (this.referenceNames) {
-            this.registerStore(this.referenceStore, this.referenceNames, "add");
-            builtInReferenceAction(this.referenceNames)();
-        }
 
         if (this.initWithStore) {
             this.setState(this.getStateFromStore() as any);
@@ -101,9 +84,6 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
         if (this.store) {
             this.registerStore(this.store, Object.keys(this.storeNodes), "remove");
         }
-        if (this.referenceNames) {
-            this.registerStore(this.referenceStore, this.referenceNames, "remove");
-        }
     }
 
     /**
@@ -112,7 +92,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      * @param changeOptions Les informations de la mise à jour.
      */
     afterChange(changeOptions: ChangeInfos) {
-        if (changeOptions.status || this.referenceNames && this.referenceNames.find(x => x === changeOptions.property)) {
+        if (changeOptions.status) {
             let {callerId} = changeOptions.informations;
             let name = changeOptions.status ? changeOptions.status.name : "loaded";
             let {property} = changeOptions;
@@ -178,30 +158,17 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
      * @param property Le noeud de store.
      */
     getStateFromStore(property?: string): TS & CWSState {
-        let newState: {[key: string]: any, reference: {[key: string]: {}[]}} = {reference: this.state.reference || {}};
+        let newState: {[key: string]: {}} = {};
 
-        const referenceNames = this.referenceNames || [];
         const storeNodes = this.storeNodes && Object.keys(this.storeNodes) || [];
 
         if (property) {
-            const isReference = !!referenceNames.find(r => r === property);
-            if (isReference && referenceNames.indexOf(property) !== -1) {
-                const nextValue = this.referenceStore.get<{}[]>(property);
-                if (nextValue) {
-                    newState.reference[property] = nextValue;
-                }
-            } else if (storeNodes.indexOf(property) !== -1) {
+            if (storeNodes.indexOf(property) !== -1) {
                 newState[property] = this.store!.get(property) || this.storeNodes![property];
             }
         } else {
             storeNodes.map(node => {
                 newState[node] = this.store!.get(node) || this.storeNodes![node];
-            });
-            referenceNames.map(node => {
-                const nextValue = this.referenceStore.get<{}[]>(node);
-                if (nextValue) {
-                    newState.reference[node] = nextValue;
-                }
             });
         }
         return Object.assign(newState, this.getLoadingStateFromStore()) as any;

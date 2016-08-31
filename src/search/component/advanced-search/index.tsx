@@ -33,7 +33,7 @@ export interface Props {
     orderableColumnList?: {} | {}[];
     /** Default: {} */
     openedFacetList?: {};
-    refContainer?: {[key: string]: {}[]};
+    scopes: {code: string, label: string}[];
     /** Default: {} */
     scopesConfig?: {};
     scrollParentSelector?: string;
@@ -180,6 +180,7 @@ export class AdvancedSearch extends React.Component<Props, State> {
     }
 
     private renderListSummary() {
+        const {scopes, scopeLock} = this.props;
         const {query, scope, totalCount} = this.state;
         return (
             <ListSummary
@@ -187,7 +188,8 @@ export class AdvancedSearch extends React.Component<Props, State> {
                 query={query!}
                 ref="summary"
                 scope={scope!}
-                scopeLock={!!this.props.scopeLock}
+                scopes={scopes}
+                scopeLock={!!scopeLock}
                 totalCount={totalCount!}
             />
         );
@@ -222,7 +224,7 @@ export class AdvancedSearch extends React.Component<Props, State> {
     }
 
     private renderResults() {
-        const {isSelection, onLineClick, lineComponentMapper, lineOperationList, refContainer, scrollParentSelector, store} = this.props;
+        const {isSelection, onLineClick, lineComponentMapper, lineOperationList, scrollParentSelector, store} = this.props;
         const {groupingKey, facets, results, selectionStatus, totalCount} = this.state;
         return (
             <Results
@@ -235,7 +237,6 @@ export class AdvancedSearch extends React.Component<Props, State> {
                 lineOperationList={lineOperationList}
                 lineSelectionHandler={this.selectItem}
                 ref="resultList"
-                reference={refContainer}
                 renderSingleGroupDecoration={false}
                 resultsFacets={facets}
                 resultsMap={results}

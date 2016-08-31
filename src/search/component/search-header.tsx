@@ -18,6 +18,7 @@ export interface Props {
     onSearchCriteriaChangeByUser?: () => void;
     placeholder?: string;
     onSearchCriteriaChange?: (text: string) => void;
+    scopes: {code: string, label: string}[];
 }
 
 const {query, scope} = advancedSearchStore.definition;
@@ -36,8 +37,7 @@ export class SearchHeader extends ComponentWithStore<Props, {}, StoreNodes> {
         super({
             props,
             store,
-            storeNodes: {query, scope},
-            referenceNames: ["scopes"]
+            storeNodes: {query, scope}
         });
         this.state.isLoading = false;
         this.action = props.action || actionBuilder({
@@ -64,8 +64,8 @@ export class SearchHeader extends ComponentWithStore<Props, {}, StoreNodes> {
             throw new Error("Les composants Button ou SearchBar n'ont pas été définis. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
         }
 
-        const {helpTranslationPath, minChar, onSearchCriteriaChangeByUser, placeholder, store} = this.props;
-        const {isLoading, reference} = this.state;
+        const {helpTranslationPath, minChar, onSearchCriteriaChangeByUser, placeholder, store, scopes} = this.props;
+        const {isLoading} = this.state;
         return (
             <div style={{display: "flex"}}>
                 <SearchBar
@@ -75,7 +75,7 @@ export class SearchHeader extends ComponentWithStore<Props, {}, StoreNodes> {
                     loading={isLoading}
                     minChar={minChar}
                     placeholder={placeholder}
-                    scopes={reference && reference["scopes"]}
+                    scopes={scopes}
                     store={store}
                     onSearchCriteriaChangeByUser={onSearchCriteriaChangeByUser}
                     hasScopes={false}

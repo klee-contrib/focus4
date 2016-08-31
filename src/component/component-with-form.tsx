@@ -46,17 +46,16 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
      * `storeNodes` n'inclus PAS le noeud de store de l'entité. Par conséquent, l'entité doit avoir le même nom que le noeud du store.
      * @param config La config du composant.
      */
-    constructor({props, entity, store, action, storeNodes, referenceNames, restrictOnChangeOnSelf = false, initWithStore = true}: {
+    constructor({props, entity, store, action, storeNodes, restrictOnChangeOnSelf = false, initWithStore = true}: {
         props: P & CWFProps,
         entity: Entity<E>,
         store: CoreStore<TS>,
         action: ActionConfig<E>,
         storeNodes?: TS,
-        referenceNames?: string[],
         restrictOnChangeOnSelf?: boolean,
         initWithStore?: boolean
     }) {
-        super({props, entity, store, storeNodes, referenceNames, restrictOnChangeOnSelf, initWithStore});
+        super({props, entity, store, storeNodes, restrictOnChangeOnSelf, initWithStore});
         this._action = action;
 
         let {isEdit = false} = this.props;

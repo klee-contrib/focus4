@@ -38,7 +38,6 @@ export interface ResultsProps {
     scopeFacetKey?: string;
     scrollParentSelector?: any;
     selectionStatus?: "none" | "partial" | "selected";
-    reference?: {[key: string]: {}[]};
     renderSingleGroupDecoration: boolean;
     resultsMap?: ResultsType< {[key: string]: any} >;
     resultsFacets?: StoreFacet[];
@@ -136,7 +135,7 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
     }
 
     private renderResultsList(list: any[], key: string, count: number, isUnique: boolean) {
-        const {reference, lineComponentMapper, idField, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
+        const {lineComponentMapper, idField, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
         const scope = store.get<string>("scope");
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
@@ -156,7 +155,6 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
                     operationList={lineOperationList}
                     parentSelector={scrollParentSelector}
                     ref={"list-" + key}
-                    reference={reference}
                     selectionStatus={selectionStatus}
                 />
                 {this.state.loading &&

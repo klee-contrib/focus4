@@ -9,7 +9,6 @@ export interface Domain {
     format?: string;
     type: string | undefined;
     validator?: Validator[];
-    listName?: string;
     FieldComponent?: ReactType;
     InputLabelComponent?: ReactType;
     InputComponent?: ReactType;

@@ -1,8 +1,6 @@
 import {autobind} from "core-decorators";
-import {isArray} from "lodash";
 import * as React from "react";
 
-import {ComponentWithStore} from "../../../component/component-with-store";
 import * as defaults from "../../../defaults";
 
 export interface Props {
@@ -10,20 +8,17 @@ export interface Props {
     query: string;
     action: {updateProperties: Function};
     scope: string;
+    scopes: {code: string, label: string}[];
     scopeLock: boolean;
     exportAction?: () => void;
 }
 
 @autobind
-export class ListSummary extends ComponentWithStore<Props, {}, {}> {
+export class ListSummary extends React.Component<Props, {}> {
     static defaultProps = {
         totalCount: 0,
         query: ""
     };
-
-    constructor(props: Props) {
-        super({props, referenceNames: ["scopes"]});
-    }
 
     private onScopeClick() {
         this.props.action.updateProperties({
@@ -34,15 +29,10 @@ export class ListSummary extends ComponentWithStore<Props, {}, {}> {
     }
 
     private get scopeLabel() {
-        if (isArray(this.state.reference!["scopes"])) {
-            const selectedScope = this.state.reference!["scopes"].find(scope =>
-                scope["code"] === this.props.scope
-            );
-            return selectedScope && selectedScope["label"] || this.props.scope;
-        }
-
-        return this.props.scope;
-    }
+        const {scope, scopes} = this.props;
+        const selectedScope = scopes.find(sc => sc.code === scope);
+        return selectedScope && selectedScope.label || scope;
+}
 
     private get resultSentence() {
         const {totalCount, query} = this.props;

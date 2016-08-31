@@ -2,7 +2,6 @@ import {autobind, mixin} from "core-decorators";
 import {isArray} from "lodash";
 
 import {Entity, EntityField} from "../definition";
-import {builtInStore} from "../reference";
 import CoreStore from "../store";
 
 import {ComponentBase} from "./component-base";
@@ -16,8 +15,6 @@ import {ComponentWithStore, CWSState, ChangeInfos} from "./component-with-store"
 export abstract class ComponentWithEntityAndStore<P, S, E, TS extends {[key: string]: any}> extends ComponentBase<P, S & TS & CWEState<E> & CWSState> {
 
     private entity: Entity<E>;
-    private referenceStore = builtInStore;
-    private referenceNames?: string[];
     private store: CoreStore<TS>;
     private storeNodes?: TS;
     private restrictOnChangeOnSelf: boolean;
@@ -28,12 +25,11 @@ export abstract class ComponentWithEntityAndStore<P, S, E, TS extends {[key: str
      * `storeNodes` n'inclus PAS le noeud de store de l'entité. Par conséquent, l'entité doit avoir le même nom que le noeud du store.
      * @param config La config du composant.
      */
-    constructor({props, entity, store, storeNodes, referenceNames, restrictOnChangeOnSelf = false, initWithStore = true}: {
+    constructor({props, entity, store, storeNodes, restrictOnChangeOnSelf = false, initWithStore = true}: {
         props: P,
         entity: Entity<E>,
         store: CoreStore<TS>,
         storeNodes?: TS,
-        referenceNames?: string[],
         restrictOnChangeOnSelf?: boolean,
         initWithStore?: boolean
     }) {
@@ -42,7 +38,6 @@ export abstract class ComponentWithEntityAndStore<P, S, E, TS extends {[key: str
         this.store = store;
         this.storeNodes = storeNodes || {} as TS;
         this.storeNodes[this.entity.name] = {};
-        this.referenceNames = referenceNames;
         this.restrictOnChangeOnSelf = restrictOnChangeOnSelf;
         this.initWithStore = initWithStore;
 
@@ -50,13 +45,6 @@ export abstract class ComponentWithEntityAndStore<P, S, E, TS extends {[key: str
         if (storeNodes) {
             for (const node in storeNodes) {
                 this.state[node] = isArray(storeNodes[node]) ? [] : {};
-            }
-        }
-
-        this.state.reference = {};
-        if (referenceNames) {
-            for (const ref in referenceNames) {
-                this.state.reference[referenceNames[ref]] = [];
             }
         }
     }
@@ -106,8 +94,8 @@ export abstract class ComponentWithEntityAndStore<P, S, E, TS extends {[key: str
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<Props>(field: EntityField, listName: string, options?: SelectOptions<Props> & Props): JSX.Element {
-        return ComponentWithEntity.prototype.selectFor.call(this, field, listName, options);
+    selectFor<T, Props>(field: EntityField, values: T[], options?: SelectOptions<T, Props> & Props): JSX.Element {
+        return ComponentWithEntity.prototype.selectFor.call(this, field, values, options);
     }
 
     /**

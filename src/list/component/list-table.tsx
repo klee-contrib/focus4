@@ -21,7 +21,6 @@ export interface ListTablePropsBase<LineProps> extends ListBaseProps<LineProps> 
     loader?: () => React.ReactElement<any>;
     /** Default: [] */
     operationList?: OperationListItem[];
-    reference?: any;
     /** Default: false */
     isSelectable?: boolean;
     sortColumn?: (index: number, order: "asc" | "desc") => void;
@@ -58,7 +57,7 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
     }
 
     private renderTableBody() {
-        const {data, LineComponent, idField = "id", reference, operationList} = this.props;
+        const {data, LineComponent, idField = "id", operationList} = this.props;
         return (
             <tbody>
                 {data && data.map((line, idx) => {
@@ -67,7 +66,6 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
                         <LineComponent
                             data={line}
                             key={line[idField] || idx}
-                            reference={reference}
                             operationList={operationList || []}
                             {...otherLineProps}
                         />

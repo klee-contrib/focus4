@@ -3,7 +3,6 @@ import {Component, ComponentClass, ReactElement} from "react";
 import tape = require("tape");
 
 import {setDefaultComponents} from "../defaults";
-import {set} from "../reference/config";
 
 export const dum = {
     any: {} as any,
@@ -25,7 +24,6 @@ setDefaultComponents({
     SearchBar: dum.component,
     TopicDisplayer: dum.component
 });
-set({scopes: () => Promise.resolve([])});
 
 export function test(name: string, Element: ReactElement<any>) {
     tape(name, t => {

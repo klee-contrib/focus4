@@ -74,7 +74,6 @@ export abstract class ComponentBase<P, S> extends React.Component<P, S> {
         const defaultProps = {
             data: data || [],
             ListComponent,
-            reference: this.props["reference"] || this.state["reference"],
             isEdit: false
         };
 

@@ -17,7 +17,6 @@ export interface ListSelectionPropsBase<LineProps> extends ListBaseProps<LinePro
     onLineClick?: (...args: any[]) => void;
     onSelection?: (data?: {}, isSelected?: boolean, isInit?: boolean) => void;
     operationList?: OperationListItem[];
-    reference?: any;
     /** Default: 'partial' */
     selectionStatus?: "none" | "partial" | "selected";
 }

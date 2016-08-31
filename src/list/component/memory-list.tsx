@@ -18,7 +18,6 @@ export interface CLProps<E> {
     lineType?: "selection" | "table" | "timeline";
     onSelection?: (data?: E, isSelected?: boolean, isInit?: boolean) => void;
     operationList?: OperationListItem[];
-    reference?: {[key: string]: {}[]};
     isSelection?: boolean;
 }
 
@@ -29,7 +28,6 @@ export interface BaseListProps {
     hasMoreData?: boolean;
     isManualFetch?: boolean;
     isSelection?: boolean;
-    reference?: {[key: string]: {}[]};
 }
 
 export interface MemoryListProps<ListProps extends BaseListProps> extends BaseListProps {
@@ -71,7 +69,7 @@ export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, 
     }
 
     render() {
-        const {data = [], ListComponent, reference} = this.props;
+        const {data = [], ListComponent} = this.props;
         const hasMoreData = data.length > this.state.maxElements;
         const childProps = omit(this.props, "data");
         const LC = ListComponent as React.ComponentClass<BaseListProps>;
@@ -83,7 +81,6 @@ export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, 
                 isSelection={false}
                 isManualFetch={true}
                 fetchNextPage={this.fetchNextPage}
-                reference={reference}
                 {...childProps}
             />
         );
