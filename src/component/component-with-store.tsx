@@ -267,7 +267,7 @@ export abstract class ComponentWithStore<P, S, TS extends {[key: string]: any}> 
         addSuccessMessage("detail.saved");
     }
 
-    private registerStore(store: CoreStore<any>, nodes: string[], action: 'add' | 'remove') {
+    private registerStore(store: CoreStore<any>, nodes: string[], action: "add" | "remove") {
         if (action === "add") {
             nodes.map(property => {
                 store.addChangeListener(property, this.onChange);

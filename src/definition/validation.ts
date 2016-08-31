@@ -26,39 +26,39 @@ export interface StringOptions extends TrKey {
 }
 
 export interface NumberValidator {
-    type: 'number';
+    type: "number";
     options?: NumberOptions;
 }
 
 export interface StringValidator {
-    type: 'string';
+    type: "string";
     options?: StringOptions;
 }
 
 export interface RequiredValidator {
-    type: 'required';
+    type: "required";
     value: boolean;
     options?: TrKey;
 }
 
 export interface RegexValidator {
-    type: 'regex';
+    type: "regex";
     value: RegExp;
     options?: TrKey;
 }
 
 export interface EmailValidator {
-    type: 'email';
+    type: "email";
     options?: TrKey;
 }
 
 export interface DateValidator {
-    type: 'date';
+    type: "date";
     options?: TrKey;
 }
 
 export interface FunctionValidator {
-    type: 'function';
+    type: "function";
     value: (param: any, options?: {isEdit?: boolean}) => boolean;
     options?: {isEdit?: boolean} & TrKey;
 }

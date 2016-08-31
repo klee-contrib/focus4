@@ -11,7 +11,6 @@ export interface Props {
     action: {updateProperties: Function};
     scope: string;
     scopeLock: boolean;
-    onScopeChange: (scope: string) => void;
     exportAction?: () => void;
 }
 

@@ -12,7 +12,7 @@ const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 
 export interface ListTablePropsBase<LineProps> extends ListBaseProps<LineProps> {
-    columns: {sort?: 'asc' | 'desc', label: string, noSort: boolean}[];
+    columns: {sort?: "asc" | "desc", label: string, noSort: boolean}[];
     /** Default: 'id' */
     idField?: string;
     isEdit?: boolean;
@@ -24,7 +24,7 @@ export interface ListTablePropsBase<LineProps> extends ListBaseProps<LineProps> 
     reference?: any;
     /** Default: false */
     isSelectable?: boolean;
-    sortColumn?: (index: number, order: 'asc' | 'desc') => void;
+    sortColumn?: (index: number, order: "asc" | "desc") => void;
 }
 
 export type ListTableProps<LineProps extends CLProps<{}>> = ListTablePropsBase<LineProps> & LineProps;
@@ -48,7 +48,7 @@ export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
         return <thead><tr>{columns}</tr></thead>;
     }
 
-    private sortColumnAction(index: number, order: 'asc' | 'desc') {
+    private sortColumnAction(index: number, order: "asc" | "desc") {
         return (event: React.MouseEvent<HTMLAnchorElement>) => {
             event.preventDefault();
             if (this.props.sortColumn) {

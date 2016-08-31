@@ -37,7 +37,7 @@ export interface ResultsProps {
     /** Default: FCT_SCOPE */
     scopeFacetKey?: string;
     scrollParentSelector?: any;
-    selectionStatus?: 'none' | 'partial' | 'selected';
+    selectionStatus?: "none" | "partial" | "selected";
     reference?: {[key: string]: {}[]};
     renderSingleGroupDecoration: boolean;
     resultsMap?: ResultsType< {[key: string]: any} >;

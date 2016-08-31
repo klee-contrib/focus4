@@ -7,7 +7,7 @@ import {ReactComponent} from "defaults";
 export interface OperationListItem {
     label?: string;
     action: (data: {}) => void;
-    style: {shape?: 'icon' | 'flat' | 'raised'};
+    style: {shape?: "icon" | "flat" | "raised"};
     icon?: string;
     priority: number;
 }
@@ -15,7 +15,7 @@ export interface OperationListItem {
 export interface CLProps<E> {
     data?: E;
     isSelected?: boolean;
-    lineType?: 'selection' | 'table' | 'timeline';
+    lineType?: "selection" | "table" | "timeline";
     onSelection?: (data?: E, isSelected?: boolean, isInit?: boolean) => void;
     operationList?: OperationListItem[];
     reference?: {[key: string]: {}[]};

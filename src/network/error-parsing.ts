@@ -26,7 +26,7 @@ export interface ManagedErrorResponse {
     fields?: FieldErrors;
 }
 
-type ErrorType = 'error' | 'warning' | 'success';
+type ErrorType = "error" | "warning" | "success";
 
 const globalErrorTypes: {[key: string]: ErrorType} = {
     globalErrors: "error",

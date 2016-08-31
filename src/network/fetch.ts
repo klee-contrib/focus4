@@ -6,7 +6,7 @@ import dispatcher from "dispatcher";
 import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
 import {Request} from "./store";
 
-type DataType = 'json' | 'string';
+type DataType = "json" | "string";
 
 function updateRequestStatus(request: Request) {
     if (request.id) {
@@ -45,30 +45,30 @@ async function coreFetch<RS>(url: string, method: string, responseType: DataType
     }
 }
 
-export async function httpGet(url: string, responseType: 'string'): Promise<string>;
-export async function httpGet<RS>(url: string, responseType?: 'json'): Promise<RS>;
+export async function httpGet(url: string, responseType: "string"): Promise<string>;
+export async function httpGet<RS>(url: string, responseType?: "json"): Promise<RS>;
 export async function httpGet<RS>(url: string, responseType: DataType = "json") {
     return coreFetch(url, "GET", responseType);
 }
 
-export async function httpPost(url: string, data: string, responseType: 'string', contentType: 'string'): Promise<string>;
-export async function httpPost<RQ>(url: string, data: RQ, responseType: 'string', contentType?: 'json'): Promise<string>;
-export async function httpPost<RS>(url: string, data: string, responseType: 'json', contentType: 'string'): Promise<RS>;
-export async function httpPost<RQ, RS>(url: string, data: RQ, responseType?: 'json', contentType?: 'json'): Promise<RS>;
+export async function httpPost(url: string, data: string, responseType: "string", contentType: "string"): Promise<string>;
+export async function httpPost<RQ>(url: string, data: RQ, responseType: "string", contentType?: "json"): Promise<string>;
+export async function httpPost<RS>(url: string, data: string, responseType: "json", contentType: "string"): Promise<RS>;
+export async function httpPost<RQ, RS>(url: string, data: RQ, responseType?: "json", contentType?: "json"): Promise<RS>;
 export async function httpPost<RQ, RS>(url: string, data: RQ, responseType: DataType = "json", contentType: DataType = "json") {
     return coreFetch(url, "POST", responseType, data, contentType);
 }
 
-export async function httpPut(url: string, data: string, responseType: 'string', contentType: 'string'): Promise<string>;
-export async function httpPut<RQ>(url: string, data: RQ, responseType: 'string', contentType?: 'json'): Promise<string>;
-export async function httpPut<RS>(url: string, data: string, responseType: 'json', contentType: 'string'): Promise<RS>;
-export async function httpPut<RQ, RS>(url: string, data: RQ, responseType?: 'json', contentType?: 'json'): Promise<RS>;
+export async function httpPut(url: string, data: string, responseType: "string", contentType: "string"): Promise<string>;
+export async function httpPut<RQ>(url: string, data: RQ, responseType: "string", contentType?: "json"): Promise<string>;
+export async function httpPut<RS>(url: string, data: string, responseType: "json", contentType: "string"): Promise<RS>;
+export async function httpPut<RQ, RS>(url: string, data: RQ, responseType?: "json", contentType?: "json"): Promise<RS>;
 export async function httpPut<RQ, RS>(url: string, data: RQ, responseType: DataType = "json", contentType: DataType = "json") {
     return coreFetch(url, "PUT", responseType, data, contentType);
 }
 
-export async function httpDelete(url: string, responseType: 'string'): Promise<string>;
-export async function httpDelete<RS>(url: string, responseType?: 'json'): Promise<RS>;
+export async function httpDelete(url: string, responseType: "string"): Promise<string>;
+export async function httpDelete<RS>(url: string, responseType?: "json"): Promise<RS>;
 export async function httpDelete<RS>(url: string, responseType: DataType = "json") {
     return coreFetch(url, "DELETE", responseType);
 }

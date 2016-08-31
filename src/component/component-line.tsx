@@ -12,7 +12,7 @@ export {CLProps};
 /** Classe de base pour des composants de ligne Focus (à utiliser avec `listFor`). */
 export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLProps<E>, S, E> {
 
-    readonly lineType: 'selection' | 'table' | 'timeline';
+    readonly lineType: "selection" | "table" | "timeline";
     private dateField: EntityField | undefined;
     private isSelectionnable: boolean;
 
@@ -23,7 +23,7 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
      * @param lineType Le type de ligne.
      * @param dateField Pour une ligne de type `timeline`, le nom du champ date (`fields['date']` sera utilisé si non spécifié).
      */
-    constructor(props: P & CLProps<E>, entity: Entity<E>, lineType: 'selection' | 'table' | 'timeline' = "table", dateField?: EntityField) {
+    constructor(props: P & CLProps<E>, entity: Entity<E>, lineType: "selection" | "table" | "timeline" = "table", dateField?: EntityField) {
         super(props, entity);
         this.state.entity = props.data;
         this.lineType = props.lineType || lineType;

@@ -19,7 +19,7 @@ export interface ListSelectionPropsBase<LineProps> extends ListBaseProps<LinePro
     operationList?: OperationListItem[];
     reference?: any;
     /** Default: 'partial' */
-    selectionStatus?: 'none' | 'partial' | 'selected';
+    selectionStatus?: "none" | "partial" | "selected";
 }
 
 export interface ListSelectionState {

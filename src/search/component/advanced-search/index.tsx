@@ -47,7 +47,7 @@ export interface Props {
 
 export interface State extends SearchStore {
     hasGrouping?: boolean;
-    selectionStatus?: 'none' | 'partial' | 'selected';
+    selectionStatus?: "none" | "partial" | "selected";
 }
 
 @autobind
@@ -184,12 +184,11 @@ export class AdvancedSearch extends React.Component<Props, State> {
         return (
             <ListSummary
                 action={this.action}
-                query={query}
+                query={query!}
                 ref="summary"
-                scope={scope}
-                scopeLock={this.props.scopeLock}
-                totalCount={totalCount}
-                onScopeChange={this.props.onScopeChange}
+                scope={scope!}
+                scopeLock={!!this.props.scopeLock}
+                totalCount={totalCount!}
             />
         );
     }
@@ -255,7 +254,7 @@ export class AdvancedSearch extends React.Component<Props, State> {
         }
     }
 
-    private selectionAction(selectionStatus: 'none' | 'partial' | 'selected') {
+    private selectionAction(selectionStatus: "none" | "partial" | "selected") {
         this.setState({selectionStatus});
         if (this.props.selectionAction) {
             this.props.selectionAction(selectionStatus);

@@ -6,7 +6,7 @@ import dispatcher from "dispatcher";
 
 export interface Request {
     id?: string;
-    status: 'error' | 'success' | 'pending' | 'cancelled' ;
+    status: "error" | "success" | "pending" | "cancelled" ;
 }
 
 export default class RequestStore extends EventEmitter {

@@ -38,7 +38,7 @@ function preServiceCall({node, preStatus, callerId, shouldDumpStoreOnActionCall}
 }
 
 function dispatchServiceResponse({node, type, status, callerId}: ActionBuilderSpecExt<any>, response: string | {}) {
-    const data = isArray(node) ? response : {[node]: response};
+    const data = isArray(node) ? response as {} : {[node]: response};
     const postStatus = {name: status, isLoading: false};
     let newStatus: {[key: string]: typeof postStatus} = {};
     if (isArray(node)) {
