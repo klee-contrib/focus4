@@ -201,7 +201,7 @@ export abstract class ComponentWithEntity<P, S, E> extends ComponentBase<P, S & 
             ref: field.name,
             value: value,
             domain: field.domain,
-            error: this.state.error ? this.state.error[name] : undefined,
+            error: this.state.error ? this.state.error[field.name] : undefined,
             locale: dom.locale,
             format: dom.format,
             isEdit: isEdit,
