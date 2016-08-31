@@ -1,7 +1,7 @@
 import {observable, action} from "mobx";
 import * as React from "react";
 
-export type Mode = 'consult' | 'edit';
+export type Mode = "consult" | "edit";
 
 export interface ApplicationAction {
     summary?: React.ReactElement<any>;

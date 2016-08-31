@@ -26,10 +26,10 @@ test("Facet", <Facet expandHandler={dum.function} facet={{code: dum.string, labe
 test("FacetBox", <FacetBox action={{search: dum.function, updateProperties: dum.function}} facetList={dum.array} openedFacetList={{}} scopesConfig={{}} selectedFacetList={{}} />);
 test("FacetData", <FacetData data={{code: dum.string, label: dum.string, count: dum.number}} dataKey={dum.string} selectHandler={dum.function} />);
 test("GroupComponent", <GroupComponent canShowMore={dum.any} count={dum.number} groupKey={dum.string} groupLabel={dum.string} showMoreHandler={dum.function} />);
-test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.any} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
+test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.component} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
 test("ListSelection", <ListSelection LineComponent={dum.component} />);
 test("ListSummary", <ListSummary action={{updateProperties: dum.function}} query={dum.string} scope={dum.string} scopeLock={dum.any} totalCount={dum.number} />);
 test("ListTable", <ListTable LineComponent={dum.component} columns={dum.array} />);
 test("MemoryList", <MemoryList ListComponent={dum.component} />);
-test("Results", <Results action={{search: dum.function, updateProperties: dum.function}} groupComponent={dum.component} isSelection={dum.boolean} lineComponentMapper={dum.function} renderSingleGroupDecoration={dum.boolean} store={dum.any} totalCount={dum.number} />);
+test("Results", <Results action={{search: dum.function, updateProperties: dum.function}} groupComponent={dum.component} isSelection={dum.any} lineComponentMapper={dum.function} renderSingleGroupDecoration={dum.any} store={dum.any} totalCount={dum.number} />);
 test("SearchHeader", <SearchHeader service={{scoped: dum.function, unscoped: dum.function}} />);

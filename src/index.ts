@@ -1,4 +1,3 @@
-
 import {ApplicationStore} from "./application";
 import {MessageStore} from "./message";
 export {makeReferenceStore} from "./reference";
