@@ -1,3 +1,4 @@
+import {autobind} from "core-decorators";
 import {computed, map, action, ObservableMap} from "mobx";
 import {v4} from "node-uuid";
 
@@ -9,6 +10,7 @@ export interface Request {
     url: string;
 }
 
+@autobind
 export class RequestStore {
     error = map<Request>({});
     pending = map<Request>({});

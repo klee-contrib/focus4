@@ -3,7 +3,7 @@ import * as React from "react";
 
 import * as defaults from "../defaults";
 import {Entity, EntityField} from "../definition";
-import {CLProps} from "../list/component/memory-list";
+import {CLProps} from "../list/memory-list";
 
 import {ComponentWithEntity} from "./component-with-entity";
 

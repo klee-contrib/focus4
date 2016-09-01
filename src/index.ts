@@ -7,12 +7,12 @@ export {observable, action} from "mobx";
 export {observer} from "mobx-react";
 
 export {back, navigate} from "./history";
+export {ListSelection, ListStore, ListTable, MemoryList} from "./list";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
 
 import * as definition from "./definition"; export {definition};
 export { default as dispatcher } from "./dispatcher";
-import * as list from "./list"; export {list};
 import * as search from "./search"; export {search};
 import * as store from "./store"; export {store};
 

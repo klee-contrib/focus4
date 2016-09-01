@@ -4,8 +4,8 @@ import * as React from "react";
 
 import {translate} from "../..";
 import {ReactComponent} from "../../defaults";
-import {ListSelection} from "../../list/component/list-selection";
-import {OperationListItem} from "../../list/component/memory-list";
+import {ListSelection} from "../../list/list-selection";
+import {OperationListItem} from "../../list/memory-list";
 
 import {SearchAction} from "../action-builder";
 import {SearchStore} from "../store/search";

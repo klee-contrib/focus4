@@ -5,9 +5,9 @@ import * as React from "react";
 import {applicationStore, translate} from "..";
 import {ApplicationAction} from "../application";
 import {ReactComponent} from "../defaults";
-import {ListSelection, ListSelectionProps} from "../list/component/list-selection";
-import {ListTable, ListTableProps} from "../list/component/list-table";
-import {MemoryList, CLProps, BaseListProps} from "../list/component/memory-list";
+import {ListSelection, ListSelectionProps} from "../list/list-selection";
+import {ListTable, ListTableProps} from "../list/list-table";
+import {MemoryList, CLProps, BaseListProps} from "../list/memory-list";
 
 /** Classe de base pour un composant Focus simple. */
 @autobind

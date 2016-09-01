@@ -4,7 +4,7 @@ import * as React from "react";
 
 import {ButtonBackToTop, ReactComponent} from "../../../defaults";
 import dispatcher from "../../../dispatcher";
-import {OperationListItem} from "../../../list/component/memory-list";
+import {OperationListItem} from "../../../list/memory-list";
 
 import {advancedSearchStore} from "../../";
 import {SearchActionService} from "../../action";
