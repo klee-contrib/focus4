@@ -15,6 +15,8 @@ export interface ListServiceResponse<T> {
     totalCount: number;
 };
 
+export type ListService<T> = (data: ListServiceParams) => Promise<ListServiceResponse<T>>;
+
 @autobind
 export class ListStore<T> {
     @observable criteria = {};
@@ -25,9 +27,9 @@ export class ListStore<T> {
     @observable dataList: T[] = [];
     @observable totalCount = 0;
 
-    private service: (data: ListServiceParams) => Promise<ListServiceResponse<T>>;
+    private service: ListService<T>;
 
-    constructor(service: (data: ListServiceParams) => Promise<ListServiceResponse<T>>) {
+    constructor(service: ListService<T>) {
         this.service = service;
     }
 
