@@ -1,7 +1,6 @@
 import {isArray} from "lodash";
 
-import {messageStore} from "../";
-import {translate} from "../translation";
+import {messageStore, translate} from "..";
 
 export type FieldErrors = {[key: string]: string[] | {[key: string]: string[]}};
 

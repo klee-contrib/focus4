@@ -2,13 +2,12 @@ import {autobind} from "core-decorators";
 import {v4} from "node-uuid";
 import * as React from "react";
 
-import {applicationStore} from "../";
+import {applicationStore, translate} from "..";
 import {ApplicationAction} from "../application";
 import {ReactComponent} from "../defaults";
 import {ListSelection, ListSelectionProps} from "../list/component/list-selection";
 import {ListTable, ListTableProps} from "../list/component/list-table";
 import {MemoryList, CLProps, BaseListProps} from "../list/component/memory-list";
-import {translate} from "../translation";
 
 /** Classe de base pour un composant Focus simple. */
 @autobind

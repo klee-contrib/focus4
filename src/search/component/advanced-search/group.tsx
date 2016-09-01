@@ -1,7 +1,7 @@
 import * as React from "react";
 
+import {translate} from "../../..";
 import * as defaults from "../../../defaults";
-import {translate} from "../../../translation";
 
 export interface Props {
     canShowMore: boolean;

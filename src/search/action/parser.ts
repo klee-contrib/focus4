@@ -2,7 +2,7 @@ import {isArray} from "lodash";
 
 import {AdvancedSearch} from "../store/advanced-search";
 import {OutputFacet, QueryOutput, UnscopedQueryOutput, StoreFacet} from "../types";
-import {Context} from "./";
+import {Context} from ".";
 
 function parseFacets(serverFacets: OutputFacet[]) {
     return serverFacets.reduce((formattedFacets, facet) => {

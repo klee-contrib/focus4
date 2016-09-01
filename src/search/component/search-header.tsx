@@ -4,7 +4,7 @@ import * as React from "react";
 import {ComponentWithStore} from "../../component/component-with-store";
 import * as defaults from "../../defaults";
 
-import {advancedSearchStore} from "../";
+import {advancedSearchStore} from "..";
 import {SearchActionService} from "../action";
 import actionBuilder, {SearchAction} from "../action-builder";
 import AdvancedSearchStore from "../store/advanced-search";

@@ -2,8 +2,8 @@ import {autobind} from "core-decorators";
 import {reduce, omit} from "lodash";
 import * as React from "react";
 
+import {translate} from "../../..";
 import * as defaults from "../../../defaults";
-import {translate} from "../../../translation";
 
 import {SearchAction} from "../../action-builder";
 import {InputFacet} from "../../types";

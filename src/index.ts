@@ -1,15 +1,20 @@
 import {ApplicationStore} from "./application";
 import {MessageStore} from "./message";
-export {makeReferenceStore} from "./reference";
 import {UserStore} from "./user";
+
+export {t as translate} from "i18next";
+export {observable, action} from "mobx";
+export {observer} from "mobx-react";
+
+export {back, navigate} from "./history";
+export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
+export {makeReferenceStore} from "./reference";
 
 import * as definition from "./definition"; export {definition};
 export { default as dispatcher } from "./dispatcher";
-import * as history from "./history"; export {history};
 import * as list from "./list"; export {list};
 import * as search from "./search"; export {search};
 import * as store from "./store"; export {store};
-import * as translation from "./translation"; export {translation};
 
 /** Instance principale de l'ApplicationStore. */
 export const applicationStore = new ApplicationStore();

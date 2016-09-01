@@ -1,7 +1,7 @@
 import {mapValues, isArray} from "lodash";
 
 import {InputFacet} from "../types";
-import {Context} from "./";
+import {Context} from ".";
 
 export function buildFacets(facets: {[key: string]: InputFacet}): {[key: string]: string} {
     return mapValues(facets, facetData => {

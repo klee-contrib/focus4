@@ -1,4 +1,4 @@
-import {Domain} from "./";
+import {Domain} from ".";
 
 export interface EntityField {
     domain: Domain;

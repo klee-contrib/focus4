@@ -1,6 +1,6 @@
 import {isArray} from "lodash";
 
-import {applicationStore, messageStore} from "../";
+import {applicationStore, messageStore} from "..";
 import CoreStore from "../store";
 
 import {ComponentBase} from "./component-base";

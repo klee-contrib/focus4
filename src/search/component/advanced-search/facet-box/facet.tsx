@@ -2,7 +2,7 @@ import {autobind} from "core-decorators";
 import {uniqueId} from "lodash";
 import * as React from "react";
 
-import {translate} from "../../../../translation";
+import {translate} from "../../../..";
 
 import {FacetData, FacetValue} from "./facet-data";
 
