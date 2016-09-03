@@ -3,14 +3,17 @@ import glob = require("glob");
 import {upperFirst, camelCase} from "lodash";
 import * as ts from "typescript";
 
+const appRoot = process.argv[2] || "src";
+const testingRoot = process.argv[3] || "autofocus";
+
 const imports =
 `/*
     Ce fichier à été généré automatiquement.
     Toute modification sera perdue.
 */
 
-import * as React from "react";
-import {test, dum} from "./src/testing/base-test";`;
+import {test, dum} from "${testingRoot}/testing";
+import * as React from "react";`;
 
 interface NamedComponent {
     fileName: string;
@@ -55,7 +58,7 @@ function getImport(comp: TestedComponent) {
     return `import ${comp.importName || comp.name} from "./${fileName.substring(srcIndex)}";`;
 }
 
-glob("src/**/*.tsx", (error, fileNames) => {
+glob(`${appRoot}/**/*.tsx`, (error, fileNames) => {
     const program = ts.createProgram(fileNames, {target: ts.ScriptTarget.ES5, module: ts.ModuleKind.CommonJS});
     const checker = program.getTypeChecker();
 

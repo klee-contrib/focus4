@@ -8,10 +8,11 @@ export {observer} from "mobx-react";
 
 export {back, navigate} from "./history";
 export {ListSelection, ListStore, ListTable, MemoryList} from "./list";
+export {Domain, Entity, EntityField} from "./metadata";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
+export {validate} from "./validation";
 
-import * as definition from "./definition"; export {definition};
 export { default as dispatcher } from "./dispatcher";
 import * as search from "./search"; export {search};
 import * as store from "./store"; export {store};

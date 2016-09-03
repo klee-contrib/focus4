@@ -1,14 +1,14 @@
 import {isNull, isNumber, isUndefined} from "lodash";
 import moment from "moment";
 
-import {translate} from "..";
+import {translate} from ".";
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export interface ValidationProperty {
     modelName: string;
     name: string;
-    value: string;
+    value: any;
 }
 
 export interface TrKey {
@@ -66,25 +66,25 @@ export interface FunctionValidator {
 export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | RequiredValidator | StringValidator;
 
 /**
- * Returns true is the date is valid, false otherwise.
- * @param text The date to validate.
+ * Vérifie que le texte est une date.
+ * @param text Le texte.
  */
 export function dateValidator(text: string) {
     return moment(text).isValid();
 }
 
 /**
- * Returns true is the email is valid, false otherwise.
- * @param text The email to validate.
+ * Vérifie que le texte est un email.
+ * @param text Le texte.
  */
 export function emailValidator(text: string) {
     return EMAIL_REGEX.test(text);
 }
 
 /**
- * Returns true is the number is valid, false otherwise.
- * @param numberToValidate  The number to validate.
- * @param options           The validator options.
+ * Vérifie que le texte est un nombre.
+ * @param text Le texte.
+ * @param options Les options du validateur.
  */
 export function numberValidator(text: string, options?: NumberOptions) {
     if (isUndefined(text) || isNull(text)) {
@@ -105,9 +105,9 @@ export function numberValidator(text: string, options?: NumberOptions) {
 }
 
 /**
- * Returns true is the string is valid, false otherwise.
- * @param text The number to validate.
- * @param options The validator options.
+ * Vérifie que le texte est un string valide.
+ * @param text Le texte.
+ * @param options Les options du validateur.
  */
 export function stringValidator(text: string, options?: StringOptions) {
     if (!options) {
@@ -119,35 +119,10 @@ export function stringValidator(text: string, options?: StringOptions) {
     return isMinLength && isMaxLength;
 }
 
-/**
- * Validate a property with given validators and returns the validation status.
- * @param property      Property to validate.
- * @param validators    The validators to apply on the property.
- */
-export function validate(property: ValidationProperty, validators?: Validator[]) {
-    let errors: string[] = [];
-    if (validators) {
-        for (const validator of validators) {
-            const res = validateProperty(property, validator);
-            if (res !== undefined) {
-                errors.push(res);
-            }
-        }
-    }
-
-    return {
-        name: property.name,
-        value: property.value,
-        isValid: 0 === errors.length,
-        errors
-    };
+function getErrorLabel(type: string, fieldName: string, options?: TrKey): string {
+    return translate(options && options.translationKey ? options.translationKey : `domain.validation.${type}`);
 }
 
-/**
- * Validate a property.
- * @param property  - The property to validate.
- * @param validator - The validator to apply.
- */
 function validateProperty(property: ValidationProperty, validator: Validator) {
     const {value} = property;
     const isValueNullOrUndefined = isNull(value) || isUndefined(value);
@@ -188,6 +163,26 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
     return undefined;
 }
 
-function getErrorLabel(type: string, fieldName: string, options?: TrKey): string {
-    return translate(options && options.translationKey ? options.translationKey : `domain.validation.${type}`);
+/**
+ * Valide une propriété avec les validateurs fournis et retourne le status de validation.
+ * @param property La propriété à valider.
+ * @param validators Les validateurs.
+ */
+export function validate(property: ValidationProperty, validators?: Validator[]) {
+    let errors: string[] = [];
+    if (validators) {
+        for (const validator of validators) {
+            const res = validateProperty(property, validator);
+            if (res !== undefined) {
+                errors.push(res);
+            }
+        }
+    }
+
+    return {
+        name: property.name,
+        value: property.value,
+        isValid: 0 === errors.length,
+        errors
+    };
 }
