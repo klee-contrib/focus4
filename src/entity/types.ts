@@ -21,12 +21,11 @@ export interface Domain {
 export interface EntityField {
     domain: Domain;
     isRequired: boolean;
-    name: string;
+    translationKey: string;
     entityName?: string;
 }
 
 export interface Entity {
     fields: {[name: string]: EntityField};
-    moduleName: string;
     name: string;
 }
