@@ -16,7 +16,7 @@ export interface Props {
 export function GroupComponent({canShowMore, count, children, groupKey, groupLabel, showAllHandler, showMoreHandler}: Props) {
     const {Button} = defaults;
     if (!Button) {
-        throw new Error("Le composant Button n'ont pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
+        throw new Error("Le composant Button n'ont pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
     }
 
     return (
@@ -26,12 +26,12 @@ export function GroupComponent({canShowMore, count, children, groupKey, groupLab
                 {children}
             </div>
             <div data-focus="group-container-actions">
-                {canShowMore &&
+                {canShowMore ?
                     <Button icon="add" handleOnClick={showMoreHandler} label={translate("show.more")} />
-                }
-                {showAllHandler &&
+                : null}
+                {showAllHandler ?
                     <Button icon="arrow_forward" handleOnClick={() => showAllHandler && showAllHandler(groupKey)} label={translate("show.all")} />
-                }
+                : null}
             </div>
         </div>
     );

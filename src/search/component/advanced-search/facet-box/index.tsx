@@ -1,90 +1,77 @@
 import {autobind} from "core-decorators";
 import {omit} from "lodash";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {translate} from "../../../..";
 
-import {SearchAction} from "../../../action-builder";
-import {AdvancedSearch} from "../../../store/advanced-search";
+import {SearchStore} from "../../../store";
 import {InputFacet, FacetValue, StoreFacet} from "../../../types";
 import {Facet} from "./facet";
 
 export interface FacetBoxProps {
-    facetList: StoreFacet[] | undefined;
     openedFacetList: {[facet: string]: boolean};
-    selectedFacetList: {[facet: string]: InputFacet};
-    action: SearchAction;
+    store: SearchStore;
     scopesConfig: {[key: string]: string};
 }
 
-export interface FacetBoxState {
-    isExpanded?: boolean;
-    openedFacetList?: {[facet: string]: boolean};
-}
-
 @autobind
-export class FacetBox extends React.Component<FacetBoxProps, FacetBoxState> {
-    constructor(props: FacetBoxProps) {
-        super(props);
-        let {openedFacetList} = this.props;
-        if (Object.keys(openedFacetList).length === 0) {
-            this.generateOpenedFacetList(this.props.facetList || []);
-        }
-        this.state = {
-            isExpanded: true,
-            openedFacetList
-        };
+@observer
+export class FacetBox extends React.Component<FacetBoxProps, {}> {
+
+    @observable private isExpanded = true;
+    @observable private openedFacetList = this.generateOpenedFacetList(this.props.openedFacetList, this.props.store.facets);
+
+    componentWillReceiveProps({store, openedFacetList}: FacetBoxProps) {
+        this.openedFacetList = this.generateOpenedFacetList(this.props.openedFacetList, this.props.store.facets);
     }
 
-    componentWillReceiveProps(nextProps: FacetBoxProps) {
-        let openedFacetList = nextProps.openedFacetList;
+    private generateOpenedFacetList(openedFacetList: {[facet: string]: boolean}, facetList: StoreFacet[]) {
         if (Object.keys(openedFacetList).length === 0) {
-            openedFacetList = this.generateOpenedFacetList(nextProps.facetList || []);
+            return facetList.reduce((list, facet) => {
+                list[facet.code] = true;
+                return list;
+            }, {} as {[facet: string]: boolean});
         }
-        this.setState({openedFacetList});
-    }
 
-    private generateOpenedFacetList(facetList: StoreFacet[]) {
-        return facetList.reduce(function (list, facet) {
-            list[facet.code] = true;
-            return list;
-        }, {} as {[facet: string]: boolean});
+        return openedFacetList;
     }
 
     private facetBoxTitleClickHandler() {
-        this.setState({isExpanded: !this.state.isExpanded});
+        this.isExpanded = !this.isExpanded;
     }
 
     private facetSelectionHandler(facetKey: string, dataKey: string | undefined, data: FacetValue | undefined) {
-        const selectedFacetList = (dataKey === undefined ? omit(this.props.selectedFacetList, facetKey) : Object.assign(this.props.selectedFacetList, {[facetKey]: {key: dataKey, data: data}})) as {[facet: string]: InputFacet};
+        const {selectedFacets} = this.props.store;
+        const selectedFacetList = (dataKey === undefined ? omit(selectedFacets || {}, facetKey) : Object.assign(selectedFacets || {}, {[facetKey]: {key: dataKey, data: data}})) as {[facet: string]: InputFacet};
         this.onFacetSelection({selectedFacetList});
     }
 
     private onFacetSelection(facetComponentData: {selectedFacetList: {[facet: string]: InputFacet}}, isDisableGroup?: boolean) {
+        const {store} = this.props;
         if (Object.keys(facetComponentData.selectedFacetList).length === 1 && facetComponentData.selectedFacetList["FCT_SCOPE"]) {
-            this.props.action.updateProperties({
+            store.setProperties({
                 scope: this.props.scopesConfig[facetComponentData.selectedFacetList["FCT_SCOPE"].key]
             });
         } else {
             delete facetComponentData.selectedFacetList["FCT_SCOPE"];
-            const newProperties: AdvancedSearch = {
+            const newProperties: {selectedFacets: any, groupingKey?: any} = {
                 selectedFacets: facetComponentData.selectedFacetList
             };
             if (isDisableGroup) {
                 newProperties.groupingKey = undefined;
             }
-            this.props.action.updateProperties(newProperties);
+            store.setProperties(newProperties);
         }
     }
 
     private facetExpansionHandler(facetKey: string, isExpanded: boolean) {
-        const {openedFacetList} = this.state;
-        openedFacetList![facetKey] = isExpanded;
-        this.setState({openedFacetList});
+        this.openedFacetList[facetKey] = isExpanded;
     }
 
     private renderFacetBoxTitle() {
-        const title = this.state.isExpanded ? translate("live.filter.title") : "";
+        const title = this.isExpanded ? translate("live.filter.title") : "";
         return (
             <div data-focus="facet-box-heading" onClick={this.facetBoxTitleClickHandler}>
                 <h2>{title}</h2>
@@ -93,13 +80,14 @@ export class FacetBox extends React.Component<FacetBoxProps, FacetBoxState> {
     }
 
     private renderFacetList() {
-        if (!this.state.isExpanded) {
+        if (!this.isExpanded) {
             return null;
         }
+        const {facets, selectedFacets} = this.props.store;
         return (
             <div data-focus="facet-box-body">
-                {(this.props.facetList || []).map(facet => {
-                    let selectedDataKey = this.props.selectedFacetList[facet.code] ? this.props.selectedFacetList[facet.code].key : undefined;
+                {facets.map(facet => {
+                    let selectedDataKey = (selectedFacets || {})[facet.code] ? (selectedFacets || {})[facet.code].key : undefined;
                     if (selectedDataKey || Object.keys(facet).length > 1) {
                         return (
                             <Facet
@@ -107,7 +95,7 @@ export class FacetBox extends React.Component<FacetBoxProps, FacetBoxState> {
                                 facetKey={facet.code}
                                 facet={facet}
                                 selectedDataKey={selectedDataKey}
-                                isExpanded={this.state.openedFacetList![facet.code]}
+                                isExpanded={this.openedFacetList[facet.code]}
                                 expandHandler={this.facetExpansionHandler}
                                 selectHandler={this.facetSelectionHandler}
                                 nbDefaultDataList={6}
@@ -122,7 +110,7 @@ export class FacetBox extends React.Component<FacetBoxProps, FacetBoxState> {
 
     render() {
         return (
-            <div className={`${this.state.isExpanded ? "expanded" : "collapsed"}`} data-focus="facet-box">
+            <div className={`${this.isExpanded ? "expanded" : "collapsed"}`} data-focus="facet-box">
                 {this.renderFacetBoxTitle()}
                 {this.renderFacetList()}
             </div>

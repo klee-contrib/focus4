@@ -2,9 +2,8 @@ import {autobind} from "core-decorators";
 import {isFunction, isEmpty} from "lodash";
 import * as React from "react";
 
-import {applicationStore} from "..";
+import {applicationStore, Entity} from "..";
 import * as defaults from "../defaults";
-import {Entity} from "../definition";
 import CoreStore from "../store";
 
 import {ComponentWithEntityAndStore} from "./component-with-entity-and-store";
@@ -194,7 +193,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
 
     private get ButtonCancel() {
         const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts."); }
+        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
         return (
             <Button
                 handleOnClick={this.onClickCancel}
@@ -208,7 +207,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
 
     private get ButtonDelete() {
         const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts."); }
+        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
         return (
             <Button
                 handleOnClick={this.onClickDelete}
@@ -222,7 +221,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
 
     private get ButtonEdit() {
         const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts."); }
+        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
         return (
             <Button
                 handleOnClick={this.onClickEdit}
@@ -236,7 +235,7 @@ export abstract class ComponentWithForm<P, S, E, TS extends {}> extends Componen
 
     private get ButtonSave() {
         const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts."); }
+        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
         return (
             <Button
                 handleOnClick={this.onClickSave}

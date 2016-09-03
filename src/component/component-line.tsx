@@ -1,8 +1,8 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
+import {Entity, EntityField} from "..";
 import * as defaults from "../defaults";
-import {Entity, EntityField} from "../definition";
 import {CLProps} from "../list/memory-list";
 
 import {ComponentWithEntity} from "./component-with-entity";
@@ -70,7 +70,7 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
     renderLineActions() {
         const {ContextualActions} = defaults;
         if (!ContextualActions) {
-            throw new Error("Le composant ContextualActions n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
+            throw new Error("Le composant ContextualActions n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
         }
 
         const {data, operationList} = this.props;
@@ -102,7 +102,7 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
     private renderSelectionBox() {
         const {Checkbox} = defaults;
         if (!Checkbox) {
-            throw new Error("Le composant Checkbox n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
+            throw new Error("Le composant Checkbox n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
         }
 
         const {isSelected} = this.props;

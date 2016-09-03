@@ -1,33 +1,31 @@
 import {autobind} from "core-decorators";
 import {reduce, omit} from "lodash";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {translate} from "../../..";
 import * as defaults from "../../../defaults";
 
-import {SearchAction} from "../../action-builder";
+import {SearchStore} from "../../store";
 import {InputFacet} from "../../types";
 
 export interface Props {
-    action: SearchAction;
     /** Default: {} */
     groupableColumnList?: {[facet: string]: string};
-    groupingKey?: string;
     /** Default: true */
     hasGrouping?: boolean;
     isSelection?: boolean;
-    lineOperationList?: {}[];
     operationList?: {};
     /** Default: {} */
     orderableColumnList?: {};
     selectionAction?: (status: string) => void;
     selectionStatus?: string;
     /** Default: {} */
-    selectedFacets?: {[facet: string]: InputFacet};
-    sortBy?: string;
+    store: SearchStore;
 };
 
 @autobind
+@observer
 export class ActionBar extends React.Component<Props, {}> {
     static defaultProps = {
         groupableColumnList: {},
@@ -37,7 +35,7 @@ export class ActionBar extends React.Component<Props, {}> {
     };
 
     private filterFacetList() {
-        const {selectedFacets} = this.props;
+        const {selectedFacets} = this.props.store;
         return reduce(selectedFacets!, (result, facet, facetKey) => {
             result[facetKey] = {
                 label: translate(`live.filter.facets.${facetKey}`),
@@ -48,28 +46,28 @@ export class ActionBar extends React.Component<Props, {}> {
     }
 
     private onFacetClick(key: string) {
-        const {selectedFacets, action: {updateProperties}} = this.props;
-        updateProperties({selectedFacets: omit(selectedFacets!, key) as {[facet: string]: InputFacet}});
+        const {store} = this.props;
+        store.setProperties({selectedFacets: omit(store.selectedFacets!, key) as {[facet: string]: InputFacet}});
     }
 
     private orderAction(key: string, order: boolean) {
-        this.props.action.updateProperties({
+        this.props.store.setProperties({
             sortBy: key,
             sortAsc: order
         });
     }
 
     private groupAction(groupingKey: string) {
-        this.props.action.updateProperties({groupingKey});
+        this.props.store.setProperties({groupingKey});
     }
 
     render() {
         const {ActionBar} = defaults;
         if (!ActionBar) {
-            throw new Error("Le composant ActionBar n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
+            throw new Error("Le composant ActionBar n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
         }
 
-        const {groupableColumnList, groupingKey, hasGrouping, isSelection, operationList, orderableColumnList, selectionAction, selectionStatus, sortBy} = this.props;
+        const {groupableColumnList, hasGrouping, isSelection, operationList, orderableColumnList, selectionAction, selectionStatus, store} = this.props;
         return (
             <ActionBar
                 data-focus="advanced-search-action-bar"
@@ -78,12 +76,12 @@ export class ActionBar extends React.Component<Props, {}> {
                 groupAction={this.groupAction}
                 groupableColumnList={groupableColumnList}
                 groupLabelPrefix="live.filter.facets."
-                groupSelectedKey={groupingKey}
+                groupSelectedKey={store.groupingKey}
                 hasGrouping={hasGrouping}
                 isSelection={isSelection}
                 operationList={operationList}
                 orderAction={this.orderAction}
-                orderSelected={sortBy}
+                orderSelected={store.sortBy}
                 orderableColumnList={orderableColumnList}
                 selectionAction={selectionAction}
                 selectionStatus={selectionStatus}

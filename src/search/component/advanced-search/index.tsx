@@ -1,23 +1,20 @@
 import {autobind} from "core-decorators";
 import {isFunction, reduce} from "lodash";
+import {observable, computed, reaction} from "mobx";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ButtonBackToTop, ReactComponent} from "../../../defaults";
-import dispatcher from "../../../dispatcher";
 import {OperationListItem} from "../../../list/memory-list";
 
-import {advancedSearchStore} from "../../";
-import {SearchActionService} from "../../action";
-import actionBuilder, {SearchAction} from "../../action-builder";
-import AdvancedSearchStore, {AdvancedSearch as SearchStore} from "../../store/advanced-search";
+import {SearchStore} from "../../store";
 import {Results} from "../results";
 import {ActionBar} from "./action-bar";
 import {FacetBox} from "./facet-box";
 import {GroupComponent} from "./group";
 import {ListSummary} from "./list-summary";
 
-export interface Props {
-    action?: SearchAction;
+export interface AdvancedSearchProps {
     /** Default: ButtonBackToTop */
     backToTopComponent?: typeof ButtonBackToTop;
     /** Default: true */
@@ -28,7 +25,6 @@ export interface Props {
     /** Default: [] */
     lineOperationList?: OperationListItem[];
     onLineClick?: (...args: any[]) => void;
-    onScopeChange?: (scope?: string) => void;
     /** Default: [] */
     orderableColumnList?: {} | {}[];
     /** Default: {} */
@@ -40,76 +36,45 @@ export interface Props {
     scopeLock?: boolean;
     selectItem?: (data?: any, isSelected?: boolean) => void;
     selectionAction?: (status: string) => void;
-    service: SearchActionService;
-    /** Default: advancedSearchStore */
-    store?: AdvancedSearchStore;
-}
-
-export interface State extends SearchStore {
-    hasGrouping?: boolean;
-    selectionStatus?: "none" | "partial" | "selected";
+    store: SearchStore;
 }
 
 @autobind
-export class AdvancedSearch extends React.Component<Props, State> {
+@observer
+export class AdvancedSearch extends React.Component<AdvancedSearchProps, {}> {
 
     static defaultProps = {
-        backToTopComponent: ButtonBackToTop,
         hasBackToTop: true,
         isSelection: true,
         lineOperationList: [],
         orderableColumnList: [],
         openedFacetList: {},
-        scopesConfig: {},
-        store: advancedSearchStore
+        scopesConfig: {}
     };
 
-    private action: SearchAction;
+    @observable private selectionStatus?: "none" | "partial" | "selected";
+    private reaction: () => void;
 
-    constructor(props: Props) {
-        super(props);
-        this.state = this.getNewStateFromStore();
+    @computed
+    private get hasGrouping() {
+        const {scope} = this.props.store;
+        return scope !== undefined && scope !== "ALL";
     }
 
     componentWillMount() {
-        this.props.store!.on("advanced-search-criterias:change", this.onStoreChangeWithSearch);
-
-        // Listen to data changes
-        ["facets", "results", "totalCount"].forEach((node) => {
-            this.props.store!.addChangeListener(node, this.onStoreChangeWithoutSearch);
-        });
-
-        // Listen to scope change
-        this.props.store!.addChangeListener("scope", this.onScopeChange);
-
-        this.action = this.props.action || actionBuilder({
-            service: this.props.service,
-            identifier: this.props.store!.identifier!,
-            getSearchOptions: () => this.props.store!.getValue.call(this.props.store) // Binding the store in the function call
-        });
-
-        const {updateProperties} = this.action;
-
-        // On ajoute le onScopeChange si l'action modifie le scope.
-        this.action.updateProperties = data => {
-            if (data.scope && data.scope !== this.state.scope) {
-                data.selectedFacets = {};
-            }
-            updateProperties(data);
-            if (Object.keys(data).find(d => d === "scope") && this.props.onScopeChange) {
-                this.props.onScopeChange(data.scope);
-            }
-        };
-        this.action.search();
+        const {store} = this.props;
+        this.reaction = reaction(() => [
+            store.groupingKey,
+            store.query,
+            store.scope,
+            store.selectedFacets,
+            store.sortAsc,
+            store.sortBy
+        ], () => store.search, true, 100);
     }
 
     componentWillUnmount() {
-        // Remove listeners
-        this.props.store!.removeListener("advanced-search-criterias:change", this.onStoreChangeWithSearch);
-        ["facets", "results", "totalCount"].forEach((node) => {
-            this.props.store!.removeChangeListener(node, this.onStoreChangeWithoutSearch);
-        });
-        this.props.store!.removeChangeListener("scope", this.onScopeChange);
+        this.reaction();
     }
 
     /** Cette fonction est le diable incarné. C'est vraiment laid. */
@@ -131,74 +96,33 @@ export class AdvancedSearch extends React.Component<Props, State> {
         return outSelectedItems;
     }
 
-    private onStoreChangeWithSearch() {
-        this.setState(this.getNewStateFromStore(), this.action.search);
-    }
-
-    private onStoreChangeWithoutSearch() {
-        this.setState(this.getNewStateFromStore());
-    }
-
-    private onScopeChange() {
-        dispatcher.handleViewAction({
-            data: {sortBy: null, sortAsc: null},
-            type: "update",
-            identifier: advancedSearchStore.identifier
-        });
-    }
-
-    private getNewStateFromStore(): State {
-        const {store} = this.props;
-        const scope = store!.get<string>("scope");
-        return {
-            scope,
-            query: store!.get<string>("query"),
-            selectedFacets: store!.get<any>("selectedFacets") || {},
-            groupingKey: store!.get<string>("groupingKey"),
-            sortBy: store!.get<string>("sortBy"),
-            sortAsc: store!.get<boolean>("sortAsc"),
-            facets: store!.get<any>("facets"),
-            results: store!.get<any>("results"),
-            totalCount: store!.get<number>("totalCount"),
-            hasGrouping: scope !== undefined && scope !== "ALL",
-        };
-    }
-
     private renderFacetBox() {
-        const {facets, selectedFacets} = this.state;
-        const {scopesConfig, openedFacetList} = this.props;
+        const {scopesConfig, openedFacetList, store} = this.props;
         return (
             <FacetBox
-                action={this.action}
                 openedFacetList={openedFacetList || {}}
-                facetList={facets}
                 ref="facetBox"
                 scopesConfig={scopesConfig!}
-                selectedFacetList={selectedFacets!}
+                store={store}
             />
         );
     }
 
     private renderListSummary() {
-        const {scopes, scopeLock} = this.props;
-        const {query, scope, totalCount} = this.state;
+        const {scopes, scopeLock, store} = this.props;
         return (
             <ListSummary
-                action={this.action}
-                query={query!}
                 ref="summary"
-                scope={scope!}
                 scopes={scopes}
                 scopeLock={!!scopeLock}
-                totalCount={totalCount!}
+                store={store}
             />
         );
     }
 
     private renderActionBar() {
-        const {facets, groupingKey, hasGrouping, selectedFacets, selectionStatus, sortBy, totalCount} = this.state;
-        const {isSelection, lineOperationList, orderableColumnList} = this.props;
-        const groupableColumnList = facets ? facets.reduce((result, facet) => {
+        const {isSelection, lineOperationList, orderableColumnList, store} = this.props;
+        const groupableColumnList = store.facets ? store.facets.reduce((result, facet) => {
             if (facet.values.length > 1) {
                 result[facet.code] = facet.label;
             }
@@ -207,43 +131,34 @@ export class AdvancedSearch extends React.Component<Props, State> {
 
         return (
             <ActionBar
-                action={this.action}
-                groupingKey={groupingKey}
                 groupableColumnList={groupableColumnList}
-                hasGrouping={hasGrouping}
+                hasGrouping={this.hasGrouping}
                 isSelection={isSelection}
-                operationList={totalCount > 0 ? lineOperationList : {}}
-                sortBy={sortBy}
+                operationList={store.totalCount > 0 ? lineOperationList : {}}
                 orderableColumnList={orderableColumnList}
                 ref="actionBar"
-                selectedFacets={selectedFacets}
                 selectionAction={this.selectionAction}
-                selectionStatus={selectionStatus}
+                selectionStatus={this.selectionStatus}
+                store={store}
             />
         );
     }
 
     private renderResults() {
         const {isSelection, onLineClick, lineComponentMapper, lineOperationList, scrollParentSelector, store} = this.props;
-        const {groupingKey, facets, results, selectionStatus, totalCount} = this.state;
         return (
             <Results
-                action={this.action}
                 groupComponent={GroupComponent}
-                groupingKey={groupingKey}
-                isSelection={isSelection!}
+                isSelection={!!isSelection}
                 lineClickHandler={onLineClick}
                 lineComponentMapper={lineComponentMapper}
                 lineOperationList={lineOperationList}
                 lineSelectionHandler={this.selectItem}
                 ref="resultList"
                 renderSingleGroupDecoration={false}
-                resultsFacets={facets}
-                resultsMap={results}
                 scrollParentSelector={scrollParentSelector}
-                selectionStatus={selectionStatus}
-                store={store!}
-                totalCount={totalCount!}
+                selectionStatus={this.selectionStatus}
+                store={store}
             />
         );
     }
@@ -265,7 +180,8 @@ export class AdvancedSearch extends React.Component<Props, State> {
     render() {
         // true if a facet is collapsed
         const facetCollapsedClassName = Object.keys(this.props.openedFacetList).length === 0 ? "facet-collapsed" : "";
-        const {backToTopComponent: BackToTop} = this.props;
+        const {backToTopComponent, store} = this.props;
+        const BackToTop = backToTopComponent || ButtonBackToTop;
 
         if (!BackToTop) {
             throw new Error("`backToTopComponent` n'a pas été défini. Vous manque-t'il un défaut ?");
@@ -273,11 +189,11 @@ export class AdvancedSearch extends React.Component<Props, State> {
 
         return (
             <div className="advanced-search" data-focus="advanced-search">
-                {this.state.scope !== "ALL" ?
+                {store.scope !== "ALL" ?
                     <div data-focus="facet-container" className={facetCollapsedClassName}>
                         {this.renderFacetBox()}
                     </div>
-                : ""}
+                : null}
                 <div data-focus="result-container">
                     {this.renderListSummary()}
                     {this.renderActionBar()}

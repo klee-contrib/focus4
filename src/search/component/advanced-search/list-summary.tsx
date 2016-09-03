@@ -1,19 +1,20 @@
 import {autobind} from "core-decorators";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import * as defaults from "../../../defaults";
 
+import {SearchStore} from "../../store";
+
 export interface Props {
-    totalCount: number;
-    query: string;
-    action: {updateProperties: Function};
-    scope: string;
+    exportAction?: () => void;
     scopes: {code: string, label: string}[];
     scopeLock: boolean;
-    exportAction?: () => void;
+    store: SearchStore;
 }
 
 @autobind
+@observer
 export class ListSummary extends React.Component<Props, {}> {
     static defaultProps = {
         totalCount: 0,
@@ -21,7 +22,7 @@ export class ListSummary extends React.Component<Props, {}> {
     };
 
     private onScopeClick() {
-        this.props.action.updateProperties({
+        this.props.store.setProperties({
             scope: "ALL",
             selectedFacets: {},
             groupingKey: undefined
@@ -29,13 +30,13 @@ export class ListSummary extends React.Component<Props, {}> {
     }
 
     private get scopeLabel() {
-        const {scope, scopes} = this.props;
-        const selectedScope = scopes.find(sc => sc.code === scope);
-        return selectedScope && selectedScope.label || scope;
+        const {store, scopes} = this.props;
+        const selectedScope = scopes.find(sc => sc.code === store.scope);
+        return selectedScope && selectedScope.label || store.scope;
 }
 
     private get resultSentence() {
-        const {totalCount, query} = this.props;
+        const {totalCount, query} = this.props.store;
         const hasText = query && query.trim().length > 0;
         return (
             <span>
@@ -48,22 +49,23 @@ export class ListSummary extends React.Component<Props, {}> {
     render() {
         const {TopicDisplayer, Button} = defaults;
         if (!TopicDisplayer || !Button) {
-            throw new Error("Les composants Button ou TopicDisplayer n'ont pas été définis. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
+            throw new Error("Les composants Button ou TopicDisplayer n'ont pas été définis. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
         }
 
-        const scope = this.props.scope && this.props.scope !== "ALL" ? {scope: {
-            code: this.props.scope,
+        const {store, exportAction} = this.props;
+        const scope = store.scope && store.scope !== "ALL" ? {scope: {
+            code: store.scope,
             label: "Scope",
             value: this.scopeLabel
         }} : undefined;
 
         return (
             <div data-focus="list-summary">
-                {this.props.exportAction &&
+                {exportAction ?
                     <div className="print">
                         <Button handleOnClick={this.props.exportAction} icon="print" label="result.export" shape={null} />
                     </div>
-                }
+                : null}
                 <span className="sentence">{this.resultSentence}</span>
                 <span className="topics">
                     <TopicDisplayer

@@ -1,8 +1,8 @@
 import {find, result} from "lodash";
 import * as React from "react";
 
+import {Entity, EntityField, Domain} from "..";
 import * as defaults from "../defaults";
-import {Entity, EntityField, Domain} from "../definition";
 
 import {ComponentBase} from "./component-base";
 
@@ -145,7 +145,7 @@ export abstract class ComponentWithEntity<P, S, E> extends ComponentBase<P, S & 
     ) {
         const {Field} = defaults;
         if (!Field) {
-            throw new Error("Le composant Field n'a pas été défini. Utiliser 'autofocus/component/defaults' pour enregistrer les défauts.");
+            throw new Error("Le composant Field n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
         }
 
         const props = this.buildFieldProps(field, options);

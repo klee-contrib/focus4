@@ -1,5 +1,6 @@
 import {autobind} from "core-decorators";
-import {clone, omit, isArray} from "lodash";
+import {omit, isArray} from "lodash";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {translate} from "../..";
@@ -7,9 +8,8 @@ import {ReactComponent} from "../../defaults";
 import {ListSelection} from "../../list/list-selection";
 import {OperationListItem} from "../../list/memory-list";
 
-import {SearchAction} from "../action-builder";
-import {SearchStore} from "../store/search";
-import {StoreFacet, Results as ResultsType} from "../types";
+import {Results as ResultsType} from "../types";
+import {SearchStore} from "../store";
 import {GroupWrapper, GroupComponent} from "./group-wrapper";
 
 function DefaultEmpty() {
@@ -21,7 +21,6 @@ function DefaultEmpty() {
 }
 
 export interface ResultsProps {
-    action: SearchAction;
     /** Default: DefaultEmpty */
     emptyComponent?: () => React.ReactElement<any>;
     groupComponent: GroupComponent;
@@ -39,46 +38,20 @@ export interface ResultsProps {
     scrollParentSelector?: any;
     selectionStatus?: "none" | "partial" | "selected";
     renderSingleGroupDecoration: boolean;
-    resultsMap?: ResultsType< {[key: string]: any} >;
-    resultsFacets?: StoreFacet[];
     /** Default: 5 */
     showMoreAdditionalRows?: number;
-    store: SearchStore<any>;
-    totalCount: number;
-}
-
-export interface ResultsState {
-    groupsRowsCounts?: {[x: string]: number};
-    loading?: boolean;
+    store: SearchStore;
 }
 
 @autobind
-export class Results extends React.Component<ResultsProps, ResultsState> {
+@observer
+export class Results extends React.Component<ResultsProps, {}> {
     static defaultProps = {
         emptyComponent: DefaultEmpty,
         initialRowsCount: 3,
         scopeFacetKey: "FCT_SCOPE",
         showMoreAdditionalRows: 5
     };
-
-    constructor(props: ResultsProps) {
-        super(props);
-        this.state = {loading: false};
-    }
-
-    componentWillReceiveProps() {
-        if (this.state.loading) {
-            this.setState({loading: false});
-        }
-    }
-
-    getShowMoreHandler(key: string) {
-        return () => {
-            let groupsRowsCounts = clone(this.state.groupsRowsCounts) || {};
-            groupsRowsCounts[key] = groupsRowsCounts[key] ? groupsRowsCounts[key] + (this.props.showMoreAdditionalRows!) : (this.props.initialRowsCount!);
-            this.setState({groupsRowsCounts});
-        };
-    }
 
     private get key() {
         const {groupingKey, scopeFacetKey} = this.props;
@@ -136,7 +109,7 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
 
     private renderResultsList(list: any[], key: string, count: number, isUnique: boolean) {
         const {lineComponentMapper, idField, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
-        const scope = store.get<string>("scope");
+        const {scope, isLoading} = store;
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
         const hasMoreData = isUnique !== undefined && isUnique && list.length < count;
@@ -157,7 +130,7 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
                     ref={"list-" + key}
                     selectionStatus={selectionStatus}
                 />
-                {this.state.loading &&
+                {isLoading &&
                     <div data-focus="loading-more-results">
                         {translate("search.loadingMore")}
                     </div>
@@ -167,8 +140,8 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
     }
 
     private showAllHandler(key: string) {
-        const {resultsFacets, scopeFacetKey, groupingKey} = this.props;
-        if (resultsFacets && resultsFacets.find(facet => facet.code === scopeFacetKey)) {
+        const {store, scopeFacetKey, groupingKey} = this.props;
+        if (store.facets.find(facet => facet.code === scopeFacetKey)) {
             this.scopeSelectionHandler(key);
         } else {
             this.facetSelectionHandler(groupingKey!, key);
@@ -176,11 +149,11 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
     }
 
     private scopeSelectionHandler(scope: string) {
-        this.props.action.updateProperties({scope});
+        this.props.store.setProperties({scope});
     }
 
     private facetSelectionHandler(key: string, value: string) {
-        let selectedFacets = Object.assign({}, this.props.store.get("selectedFacets"), {
+        let selectedFacets = Object.assign({}, this.props.store.selectedFacets || {}, {
             [key]: {
                 key: value,
                 data: {
@@ -189,54 +162,51 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
                 }
             }
         });
-        this.props.action.updateProperties({
+        this.props.store.setProperties({
             groupingKey: undefined,
             selectedFacets
         });
     }
 
     private onScrollReachedBottom() {
-        if (!this.state.loading) {
-            this.setState({
-                loading: true
-            }, () => {
-                this.props.action.search(true);
-            });
+        const {isLoading, search} = this.props.store;
+        if (!isLoading) {
+            search(true);
         }
     }
 
     private getGroupCounts() {
-        const {resultsFacets, groupingKey, scopeFacetKey} = this.props;
-        if (resultsFacets) {
-            let scopeFacet = resultsFacets.filter(facet => facet.code === groupingKey);
-            if (scopeFacet.length === 0) {
-                scopeFacet = resultsFacets.filter(facet => facet.code === scopeFacetKey);
-            }
-            return scopeFacet[0].values.map(facetData => {
-                const {label, count} = facetData;
-                return {label, count};
-            });
+        const {store, groupingKey, scopeFacetKey} = this.props;
+
+        let scopeFacet = store.facets.filter(facet => facet.code === groupingKey);
+        if (scopeFacet.length === 0) {
+            scopeFacet = store.facets.filter(facet => facet.code === scopeFacetKey);
         }
-        return undefined;
+        return scopeFacet[0].values.map(facetData => {
+            const {label, count} = facetData;
+            return {label, count};
+        });
     }
 
     render() {
+        const {results, totalCount} = this.props.store;
+
         // If there is no result, render the given empty component
-        if (0 === this.props.totalCount) {
+        if (0 === totalCount) {
             return this.renderEmptyResults();
         }
 
         let resultsMap: ResultsType< {[key: string]: any} >;
 
         // resultsMap est un objet avec une seule propriété (le scope) dans si on est dans une recherche scopée sans groupes, sinon c'est un array.
-        if (isArray(this.props.resultsMap)) {
-            resultsMap = this.props.resultsMap.filter(resultGroup => {
+        if (isArray(results)) {
+            resultsMap = results.filter(resultGroup => {
                 const propertyGroupName = Object.keys(resultGroup)[0]; // group property name
                 const list = resultGroup[propertyGroupName];
                 return 0 !== list.length;
             });
         } else {
-            resultsMap = omit(this.props.resultsMap || {}, (resultGroup: {[key: string]: any}) => {
+            resultsMap = omit(results || {}, (resultGroup: {[key: string]: any}) => {
                 const propertyGroupName = Object.keys(resultGroup)[0]; // group property name
                 const list = resultGroup[propertyGroupName];
                 return 0 === list.length;
@@ -248,7 +218,7 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
             if (keys.length > 0) {
                 const key = Object.keys(resultsMap)[0];
                 const list = resultsMap[key];
-                const count = this.props.totalCount;
+                const count = totalCount;
                 return this.renderSingleGroup(list, key, undefined, count, true);
             } else {
                 return null;
@@ -256,7 +226,7 @@ export class Results extends React.Component<ResultsProps, ResultsState> {
         } else if (isArray(resultsMap) && 1 === resultsMap.length) {
             const key = Object.keys(resultsMap[0])[0];
             const list = resultsMap[0][key];
-            const count = this.props.totalCount;
+            const count = totalCount;
             return this.renderSingleGroup(list, key, undefined, count, true);
         } else {
             const groupCounts = this.getGroupCounts();

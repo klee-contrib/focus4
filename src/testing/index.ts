@@ -2,6 +2,7 @@ import {shallow} from "enzyme";
 import {Component, ComponentClass, ReactElement} from "react";
 import tape = require("tape");
 
+import {SearchStore} from "..";
 import {setDefaultComponents} from "../defaults";
 
 export const dum = {
@@ -14,6 +15,10 @@ export const dum = {
     string: "yolo"
 };
 
+export const dumClass = {
+    SearchStore: new SearchStore({scoped: (data: any) => Promise.resolve({}), unscoped: (data: any) => Promise.resolve({})})
+};
+
 setDefaultComponents({
     ActionBar: dum.component,
     Button: dum.component,
@@ -21,7 +26,8 @@ setDefaultComponents({
     Checkbox: dum.component,
     ContextualActions: dum.component,
     Field: dum.component,
-    SearchBar: dum.component,
+    InputText: dum.component,
+    Scope: dum.component,
     TopicDisplayer: dum.component
 });
 

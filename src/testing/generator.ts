@@ -12,7 +12,7 @@ const imports =
     Toute modification sera perdue.
 */
 
-import {test, dum} from "${testingRoot}/testing";
+import {test, dum, dumClass} from "${testingRoot}/testing";
 import * as React from "react";`;
 
 interface NamedComponent {
@@ -138,6 +138,10 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
             return `${name}=${typeName}`;
         }
 
+        if (type.flags === ts.TypeFlags.BooleanLiteral || type.flags === ts.TypeFlags.NumberLiteral || type.flags === ts.TypeFlags.EnumLiteral) {
+            return `${name}={${typeName}}`;
+        }
+
         if (type.getCallSignatures().length || type.symbol && type.symbol.name === "Function") {
             return `${name}={dum.function}`;
         }
@@ -152,7 +156,15 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
         }
 
         if (type.flags === ts.TypeFlags.Anonymous || type.flags === ts.TypeFlags.Interface) {
-            return `${name}={{${type.getProperties().filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken)).map(getProp).filter(p => p !== undefined).map(p => p!.replace(/={(.+)}/, ": $1")).join(", ")}}}`;
+            return `${name}={{${
+                type.getProperties()
+                    .filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken))
+                    .map(getProp).filter(p => p !== undefined).map(p => p!.replace(/={(.+)}/, ": $1")).join(", ")
+            }}}`;
+        }
+
+        if (type.flags & ts.TypeFlags.Class) {
+            return `${name}={dumClass.${typeName}}`;
         }
 
         return `${name}={dum.any}`;

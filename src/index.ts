@@ -11,10 +11,10 @@ export {ListSelection, ListStore, ListTable, MemoryList} from "./list";
 export {Domain, Entity, EntityField} from "./metadata";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
+export {AdvancedSearch, SearchBar, SearchStore} from "./search";
 export {validate} from "./validation";
 
 export { default as dispatcher } from "./dispatcher";
-import * as search from "./search"; export {search};
 import * as store from "./store"; export {store};
 
 /** Instance principale de l'ApplicationStore. */
