@@ -22,7 +22,7 @@ function cacheData(key: string, value: {}[]) {
  */
 export function makeReferenceStore<T extends ReferenceConfig>(serviceFactory: ServiceFactory, config: T): T {
     const referenceStore: any = {};
-    Object.keys(config).forEach(ref => {
+    for (const ref in config) {
         referenceStore[`_${ref}`] = [];
         referenceStore[ref] = () => {
             if (!referenceStore[`_${ref}_loading`] && !(cache[ref] && (getTimeStamp() - cache[ref].timeStamp) < CACHE_DURATION)) {
@@ -36,7 +36,7 @@ export function makeReferenceStore<T extends ReferenceConfig>(serviceFactory: Se
 
             return referenceStore[`_${ref}`];
         };
-    });
+    }
 
     return observable(referenceStore) as any;
 }

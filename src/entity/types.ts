@@ -1,6 +1,6 @@
 import {ReactType} from "react";
 
-import {Validator} from "./validation";
+import {Validator} from "../validation";
 
 export interface Domain {
     formatter?: (value: any) => string;
@@ -22,11 +22,11 @@ export interface EntityField {
     domain: Domain;
     isRequired: boolean;
     name: string;
+    entityName?: string;
 }
 
-export interface Entity<T> {
+export interface Entity {
     fields: {[name: string]: EntityField};
     moduleName: string;
     name: string;
-    type: T;
 }

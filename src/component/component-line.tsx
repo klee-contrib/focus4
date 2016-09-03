@@ -1,8 +1,8 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
-import {Entity, EntityField} from "..";
 import * as defaults from "../defaults";
+import {Entity, EntityField} from "../entity";
 import {CLProps} from "../list/memory-list";
 
 import {ComponentWithEntity} from "./component-with-entity";

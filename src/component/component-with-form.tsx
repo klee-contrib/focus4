@@ -2,7 +2,8 @@ import {autobind} from "core-decorators";
 import {isFunction, isEmpty} from "lodash";
 import * as React from "react";
 
-import {applicationStore, Entity} from "..";
+import {applicationStore} from "..";
+import {Entity} from "../entity";
 import * as defaults from "../defaults";
 import CoreStore from "../store";
 

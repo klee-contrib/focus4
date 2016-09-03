@@ -1,7 +1,7 @@
 import {autobind, mixin} from "core-decorators";
 import {isArray} from "lodash";
 
-import {Entity, EntityField} from "..";
+import {Entity, EntityField} from "../entity";
 import CoreStore from "../store";
 
 import {ComponentBase} from "./component-base";
