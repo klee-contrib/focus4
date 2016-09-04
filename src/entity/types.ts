@@ -19,13 +19,19 @@ export interface Domain {
 }
 
 export interface EntityField {
+    type: "field";
     domain: Domain;
+    entityName?: string;
     isRequired: boolean;
     translationKey: string;
-    entityName?: string;
+}
+
+export interface EntityList {
+    type: "list";
+    entityName: string;
 }
 
 export interface Entity {
-    fields: {[name: string]: EntityField};
+    fields: {[name: string]: EntityField | EntityList};
     name: string;
 }
