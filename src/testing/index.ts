@@ -1,4 +1,4 @@
-import {shallow} from "enzyme";
+import {createRenderer} from "react-addons-test-utils";
 import {Component, ComponentClass, ReactElement} from "react";
 import tape = require("tape");
 
@@ -34,7 +34,7 @@ setDefaultComponents({
 export function test(name: string, Element: ReactElement<any>) {
     tape(name, t => {
         try {
-            t.ok(shallow(Element), "Ok");
+            t.ok(createRenderer().render(Element), "Ok");
         } catch (e) {
             t.error(e);
         } finally {
