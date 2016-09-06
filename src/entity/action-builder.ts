@@ -1,3 +1,5 @@
+// A supprimer et à intégrer ailleurs
+
 import {isArray} from "lodash";
 
 import dispatcher from "./dispatcher";

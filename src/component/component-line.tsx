@@ -2,15 +2,16 @@ import {autobind} from "core-decorators";
 import * as React from "react";
 
 import * as defaults from "../defaults";
-import {Entity, EntityField} from "../entity";
+import {EntityField} from "../entity";
 import {CLProps} from "../list/memory-list";
 
-import {ComponentWithEntity} from "./component-with-entity";
+import {Component} from "./component";
+import {textFor} from "./field-helpers";
 
 export {CLProps};
 
 /** Classe de base pour des composants de ligne Focus (à utiliser avec `listFor`). */
-export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLProps<E>, S, E> {
+export abstract class ComponentLine<P, E> extends Component<P & CLProps<E>> {
 
     readonly lineType: "selection" | "table" | "timeline";
     private dateField: EntityField | undefined;
@@ -23,18 +24,18 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
      * @param lineType Le type de ligne.
      * @param dateField Pour une ligne de type `timeline`, le nom du champ date (`fields['date']` sera utilisé si non spécifié).
      */
-    constructor(props: P & CLProps<E>, entity: Entity<E>, lineType: "selection" | "table" | "timeline" = "table", dateField?: EntityField) {
-        super(props, entity);
-        this.state.entity = props.data;
+    constructor(props: P & CLProps<E>, lineType: "selection" | "table" | "timeline" = "table", dateField?: EntityField) {
+        super(props);
         this.lineType = props.lineType || lineType;
         this.dateField = dateField;
-        if (lineType === "timeline" && !dateField) {
+
+        // TODO
+        /*if (lineType === "timeline" && !dateField) {
             this.dateField = entity.fields["date"];
-        }
+        }*/
     }
 
     componentWillMount() {
-        super.componentWillMount();
         const {isSelected, isSelection, onSelection, data} = this.props;
         if (this.lineType === "selection" && isSelection) {
             this.isSelectionnable = this.selectionnableInitializer(data);
@@ -42,10 +43,6 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
                 onSelection(data, this.selectedInitializer(data) || isSelected, true);
             }
         }
-    }
-
-    componentWillReceiveProps({data}: P & CLProps<E>) {
-        this.setState({entity: data} as any);
     }
 
     /** Définit si la ligne est sélectionnée à l'initialisation. */
@@ -134,7 +131,7 @@ export abstract class ComponentLine<P, S, E> extends ComponentWithEntity<P & CLP
     private timeline(content: React.ReactElement<any>) {
         return (
             <li>
-                <div className="timeline-date">{this.dateField ? this.textFor(this.dateField) : null}</div>
+                <div className="timeline-date">{this.dateField ? textFor(this.dateField) : null}</div>
                 <div className="timeline-badge"></div>
                 <div className="timeline-panel">
                     {content}
