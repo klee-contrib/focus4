@@ -18,20 +18,31 @@ export interface Domain {
     options?: {};
 }
 
-export interface EntityField {
+export interface Field {
     type: "field";
     domain: Domain;
     entityName?: string;
     isRequired: boolean;
+    name: string;
     translationKey: string;
 }
 
-export interface EntityList {
+export interface List {
     type: "list";
     entityName: string;
 }
 
 export interface Entity {
-    fields: {[name: string]: EntityField | EntityList};
+    fields: {[name: string]: Field | List};
     name: string;
+}
+
+export interface EntityField<T> {
+    $entity: Field;
+    value: T;
+}
+
+export interface EntityValue<T> {
+    $entity: Field | List;
+    value: T;
 }

@@ -6,6 +6,7 @@ export {t as translate} from "i18next";
 export {observable, action} from "mobx";
 export {observer} from "mobx-react";
 
+export {AutoForm, AutoLine, displayFor, fieldFor, listFor, selectFor} from "./component";
 export {makeEntityStore} from "./entity";
 export {back, navigate} from "./history";
 export {ListSelection, ListStore, ListTable, MemoryList} from "./list";

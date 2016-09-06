@@ -1,12 +1,7 @@
 import {isArray, isObject, mapValues} from "lodash";
 import {observable, isObservableArray} from "mobx";
 
-import {Entity, EntityField, EntityList} from "./types";
-
-export interface EntityValue<T> {
-    $entity: EntityField | EntityList;
-    value: T;
-}
+import {Entity, EntityValue} from "./types";
 
 export type EntityConfig = {[key: string]:
     {[field: string]: EntityValue<{}>}

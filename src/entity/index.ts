@@ -1,2 +1,2 @@
 export {makeEntityStore} from "./store";
-export {Domain, Entity, EntityField, EntityList} from "./types";
+export {Domain, Entity, Field, List, EntityField, EntityValue} from "./types";

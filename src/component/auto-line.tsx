@@ -1,38 +1,36 @@
+/*
+    TODO : Refactor des trois types en :
+    - table => rien (plus besoin)
+    - timeline => une fonction qui wrap le render pour ajouter la timeline
+    - selection => cette classe au moins, à voir si on peut faire comme la timeline sans que ça soit l'horreur (je pense que oui)
+*/
+
 import {autobind} from "core-decorators";
 import * as React from "react";
 
 import * as defaults from "../defaults";
 import {EntityField} from "../entity";
-import {CLProps} from "../list/memory-list";
+import {ALProps} from "../list/memory-list";
 
-import {Component} from "./component";
 import {textFor} from "./field-helpers";
 
-export {CLProps};
+export {ALProps};
 
 /** Classe de base pour des composants de ligne Focus (à utiliser avec `listFor`). */
-export abstract class ComponentLine<P, E> extends Component<P & CLProps<E>> {
+export abstract class AutoLine<P, E> extends React.Component<P & ALProps<E>, {}> {
 
     readonly lineType: "selection" | "table" | "timeline";
-    private dateField: EntityField | undefined;
+    protected date: EntityField<string> | undefined;
     private isSelectionnable: boolean;
 
     /**
      * Crée une nouvelle instance de ComponentLine.
      * @param props Les props du composant.
-     * @param entity L'entité du composant.
      * @param lineType Le type de ligne.
-     * @param dateField Pour une ligne de type `timeline`, le nom du champ date (`fields['date']` sera utilisé si non spécifié).
      */
-    constructor(props: P & CLProps<E>, lineType: "selection" | "table" | "timeline" = "table", dateField?: EntityField) {
+    constructor(props: P & ALProps<E>, lineType: "selection" | "table" | "timeline" = "table") {
         super(props);
         this.lineType = props.lineType || lineType;
-        this.dateField = dateField;
-
-        // TODO
-        /*if (lineType === "timeline" && !dateField) {
-            this.dateField = entity.fields["date"];
-        }*/
     }
 
     componentWillMount() {
@@ -131,7 +129,7 @@ export abstract class ComponentLine<P, E> extends Component<P & CLProps<E>> {
     private timeline(content: React.ReactElement<any>) {
         return (
             <li>
-                <div className="timeline-date">{this.dateField ? textFor(this.dateField) : null}</div>
+                <div className="timeline-date">{this.date ? textFor(this.date) : null}</div>
                 <div className="timeline-badge"></div>
                 <div className="timeline-panel">
                     {content}

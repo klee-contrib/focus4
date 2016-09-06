@@ -2,10 +2,10 @@ import {find, result} from "lodash";
 import * as React from "react";
 
 import * as defaults from "../defaults";
-import {EntityField, Domain} from "../entity";
+import {EntityField} from "../entity";
 import {ListSelection, ListSelectionProps} from "../list/list-selection";
 import {ListTable, ListTableProps} from "../list/list-table";
-import {MemoryList, CLProps, BaseListProps} from "../list/memory-list";
+import {MemoryList, ALProps, BaseListProps} from "../list/memory-list";
 
 /** Item attendu dans recherche d'autocomplétion. */
 export interface AutoCompleteItem {
@@ -88,7 +88,7 @@ export interface CWEState<E> {
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function autocompleteSelectFor<Props>(field: EntityField, options: AutocompleteSelectOptions<Props> & Props) {
+export function autocompleteSelectFor<T, Props>(field: EntityField<T>, options: AutocompleteSelectOptions<Props> & Props) {
     return fieldFor(field, options);
 }
 
@@ -97,7 +97,7 @@ export function autocompleteSelectFor<Props>(field: EntityField, options: Autoco
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function autocompleteTextFor<Props>(field: EntityField, options: AutocompleteTextOptions<Props> & Props) {
+export function autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
     return fieldFor(field, options);
 }
 
@@ -106,7 +106,7 @@ export function autocompleteTextFor<Props>(field: EntityField, options: Autocomp
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function displayFor<Props>(field: EntityField, options: DisplayOptions<Props> & Props = {} as any) {
+export function displayFor<T, Props>(field: EntityField<T>, options: DisplayOptions<Props> & Props = {} as any) {
     options.isEdit = false;
     return fieldFor(field, options);
 }
@@ -116,8 +116,8 @@ export function displayFor<Props>(field: EntityField, options: DisplayOptions<Pr
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<DisplayProps, FieldProps, InputProps, InputLabelProps>(
-    field: EntityField,
+export function fieldFor<T, DisplayProps, FieldProps, InputProps, InputLabelProps>(
+    field: EntityField<T>,
     options: FieldOptions<DisplayProps, FieldProps, InputProps, InputLabelProps> & DisplayProps & FieldProps & InputProps & InputLabelProps = {} as any
 ) {
     const {Field} = defaults;
@@ -134,7 +134,7 @@ export function fieldFor<DisplayProps, FieldProps, InputProps, InputLabelProps>(
  * @param data La liste.
  * @param options Les options.
  */
-export function listFor<LineProps extends CLProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListSelectionProps<LineProps>) {
+export function listFor<LineProps extends ALProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListSelectionProps<LineProps>) {
     return listForWith(ListSelection, data, options);
 }
 
@@ -161,7 +161,7 @@ export function listForWith<ListProps extends BaseListProps>(ListComponent: defa
  * @param listName Le nom de la liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T, Props>(field: EntityField, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
+export function selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
     options.values = values;
     return fieldFor(field, options);
 }
@@ -171,8 +171,8 @@ export function selectFor<T, Props>(field: EntityField, values: T[], options: Se
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function stringFor(field: EntityField, options: TextOptions = {}): string {
-    const {formatter, valueKey, labelKey, values, value} = this.buildFieldProps(field, options);
+export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): string {
+    const {formatter, valueKey, labelKey, values, value} = buildFieldProps(field, options);
     const processedValue = values ? result(find(values, {[valueKey || "code"]: value}), labelKey || "label") : value;
     return formatter(processedValue);
 }
@@ -182,7 +182,7 @@ export function stringFor(field: EntityField, options: TextOptions = {}): string
  * @param data La liste.
  * @param options Les options.
  */
-export function tableFor<LineProps extends CLProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListTableProps<LineProps>) {
+export function tableFor<LineProps extends ALProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListTableProps<LineProps>) {
     return listForWith(ListTable, data, options);
 }
 
@@ -191,27 +191,24 @@ export function tableFor<LineProps extends CLProps<{}>>(data: {}[], options: Bas
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function textFor(field: EntityField, options: TextOptions = {}) {
-    return <div name={field.translationKey} style={options.style}>{this.stringFor(field, options)}</div>;
+export function textFor<T>(field: EntityField<T>, options: TextOptions = {}) {
+    return <div name={field.$entity.translationKey} style={options.style}>{stringFor(field, options)}</div>;
 }
 
-function buildFieldProps(field: EntityField, options: BuildFieldProps = {}) {
-    const isEdit: boolean = options.isEdit !== undefined ? options.isEdit : this.state.isEdit !== undefined ? this.state.isEdit : this.props["isEdit"];
-    const value = options.value !== undefined ? options.value : undefined; // TODO
+function buildFieldProps<T>(field: EntityField<T>, options: {hasLabel?: boolean} = {}) {
+    const {value, $entity: {domain, translationKey, isRequired}} = field;
     const hasLabel = options.hasLabel || true;
-    const dom: Domain = field.domain || {type: undefined};
+    const dom = domain || {type: undefined};
 
     const propsContainer = {
-        name: field.translationKey,
-        label: field.translationKey,
-        value: value,
-        domain: field.domain,
-        error: undefined, // TODO
-        locale: dom.locale,
+        domain,
+        hasLabel,
+        label: translationKey,
+        isRequired,
+        name,
+        value,
         format: dom.format,
-        isEdit: isEdit,
-        hasLabel: hasLabel,
-        isRequired: field.isRequired,
+        locale: dom.locale,
         type: dom.type,
         validator: dom.validator,
         formatter: dom.formatter || (x => x),
@@ -224,12 +221,5 @@ function buildFieldProps(field: EntityField, options: BuildFieldProps = {}) {
         DisplayComponent: dom.DisplayComponent
     };
 
-    return Object.assign(propsContainer, dom.options, options);
-}
-
-interface BuildFieldProps {
-    [key: string]: any;
-    hasLabel?: boolean;
-    isEdit?: boolean;
-    value?: any;
+    return Object.assign(propsContainer, dom.options as {[key: string]: any}, options);
 }

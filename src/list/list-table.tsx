@@ -6,7 +6,7 @@ import {translate} from "..";
 import * as defaults from "../defaults";
 
 import {ListBase, ListBaseProps} from "./list-base";
-import {CLProps, OperationListItem} from "./memory-list";
+import {ALProps, OperationListItem} from "./memory-list";
 
 const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
@@ -26,10 +26,10 @@ export interface ListTablePropsBase<LineProps> extends ListBaseProps<LineProps> 
     sortColumn?: (index: number, order: "asc" | "desc") => void;
 }
 
-export type ListTableProps<LineProps extends CLProps<{}>> = ListTablePropsBase<LineProps> & LineProps;
+export type ListTableProps<LineProps extends ALProps<{}>> = ListTablePropsBase<LineProps> & LineProps;
 
 @autobind
-export class ListTable extends ListBase<ListTablePropsBase<CLProps<{}>>, {}> {
+export class ListTable extends ListBase<ListTablePropsBase<ALProps<{}>>, {}> {
 
     private renderTableHeader() {
         const columns = this.props.columns.map((colProperties, id) => {

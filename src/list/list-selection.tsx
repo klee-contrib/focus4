@@ -6,7 +6,7 @@ import {translate} from "..";
 import * as defaults from "../defaults";
 
 import {ListBase, ListBaseProps} from "./list-base";
-import {CLProps, OperationListItem} from "./memory-list";
+import {ALProps, OperationListItem} from "./memory-list";
 
 export interface ListSelectionPropsBase<LineProps> extends ListBaseProps<LineProps> {
     /** Default: 'id' */
@@ -28,7 +28,7 @@ export interface ListSelectionState {
 export type ListSelectionProps<LineProps> = ListSelectionPropsBase<LineProps> & LineProps;
 
 @autobind
-export class ListSelection extends ListBase<ListSelectionPropsBase<CLProps<{}>>, ListSelectionState> {
+export class ListSelection extends ListBase<ListSelectionPropsBase<ALProps<{}>>, ListSelectionState> {
 
     constructor(props: ListSelectionProps<{}>) {
         super(props);

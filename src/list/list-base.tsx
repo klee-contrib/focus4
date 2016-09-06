@@ -2,9 +2,9 @@ import {autobind} from "core-decorators";
 import {Component, ComponentClass} from "react";
 import {findDOMNode} from "react-dom";
 
-import {BaseListProps, CLProps} from "./memory-list";
+import {BaseListProps, ALProps} from "./memory-list";
 
-export interface ListBaseProps<LineProps extends CLProps<{}>> extends BaseListProps {
+export interface ListBaseProps<LineProps extends ALProps<{}>> extends BaseListProps {
     LineComponent: ComponentClass<LineProps> | ((props: LineProps) => JSX.Element);
     isInfiniteScroll?: boolean;
     isLoading?: boolean;

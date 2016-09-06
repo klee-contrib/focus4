@@ -12,7 +12,7 @@ export interface OperationListItem {
     priority: number;
 }
 
-export interface CLProps<E> {
+export interface ALProps<E> {
     data?: E;
     isSelected?: boolean;
     lineType?: "selection" | "table" | "timeline";
