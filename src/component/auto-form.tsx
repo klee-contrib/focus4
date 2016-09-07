@@ -1,6 +1,5 @@
 /*
     TODO
-    - Gérer l'interop EntityValue <-> primitive (load, save, delete). Je pense qu'il faudrait un `set()` par entity aussi ?
     - Brancher les erreurs
 */
 
@@ -11,7 +10,7 @@ import * as React from "react";
 
 import {applicationStore} from "..";
 import * as defaults from "../defaults";
-import {EntityField, EntityValue} from "../entity";
+import {EntityField, EntityStoreData, toFlatValues} from "../entity";
 
 import {
     AutocompleteSelectOptions,
@@ -31,12 +30,26 @@ import {
 
 /** Props propre à AutoForm. */
 export interface AutoFormProps {
+
+    /** Défaut: true */
     hasEdit?: boolean;
+
+    /** Défaut: false */
     hasDelete?: boolean;
+
+    /** Défaut: true */
     hasForm?: boolean;
+
+    /** Défaut: true */
     hasLoad?: boolean;
-    id?: number;
+
+    /** L'id ne sera utilisé que par le service de chargement. */
+    id?: number | string;
+
+    /** Défaut: false */
     isEdit?: boolean;
+
+    /** Pour ajouter une classe particulière sur le formulaire. */
     style?: { className?: string };
 }
 
@@ -50,22 +63,14 @@ export interface ServiceConfig {
 
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
-export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> extends React.Component<P & AutoFormProps, {}> {
-    static defaultProps = {
-        hasForm: true,
-        hasEdit: true,
-        hasDelete: false,
-        hasLoad: true,
-        isEdit: false
-    };
+export abstract class AutoForm<P, E extends EntityStoreData> extends React.Component<P & AutoFormProps, {}> {
+    abstract entity: E;
+    abstract services: ServiceConfig;
 
-    protected entity: E;
-    protected services: ServiceConfig;
-
-    @observable protected errors: {[key: string]: string} = {};
-    @observable protected formState: E;
-    @observable protected isEdit = this.props.isEdit || false;
-    @observable protected isLoading = false;
+    @observable errors: {[key: string]: string} = {};
+    @observable formState: E;
+    @observable isEdit = this.props.isEdit || false;
+    @observable isLoading = false;
 
     @action
     async componentWillMount() {
@@ -75,83 +80,11 @@ export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> ex
             this.isLoading = true;
             const data = await this.services.load(id);
             runInAction(() => {
-                this.entity = data;
+                this.entity.set(data);
                 this.isLoading = false;
             });
         }
     }
-
-    /**
-     * Crée un champ de type AutocompleteSelect.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    autocompleteSelectFor<T, Props>(field: EntityField<T>, options: AutocompleteSelectOptions<Props> & Props) {
-        options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
-        return autocompleteSelectFor(field, options);
-    }
-
-    /**
-     * Crée un champ de type AutocompleteText.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
-        options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
-        return autocompleteTextFor(field, options);
-    }
-
-    /**
-     * Crée un champ standard en lecture seule.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    displayFor<T, Props>(field: EntityField<T>, options: DisplayOptions<Props> & Props = {} as any) { return displayFor(field, options); }
-
-    /**
-     * Crée un champ standard.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    fieldFor<T, DisplayProps, FieldProps, InputProps, InputLabelProps>(
-        field: EntityField<T>,
-        options: FieldOptions<DisplayProps, FieldProps, InputProps, InputLabelProps> & DisplayProps & FieldProps & InputProps & InputLabelProps = {} as any
-    ) {
-        options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
-        return fieldFor(field, options);
-    }
-
-    /**
-     * Crée un champ avec résolution de référence.
-     * @param field La définition de champ.
-     * @param listName Le nom de la liste de référence.
-     * @param options Les options du champ.
-     */
-    selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
-        options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
-        return selectFor(field, values, options);
-    }
-
-    /**
-     * Récupère le texte correspondant à un champ.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    stringFor<T>(field: EntityField<T>, options: TextOptions = {}) { return stringFor(field, options); }
-
-    /**
-     * Affiche un champ sous format texte.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    textFor<T>(field: EntityField<T>, options: TextOptions = {}) { return textFor(field, options); }
 
     /**
      * Handler du bouton d'annulation.
@@ -173,7 +106,7 @@ export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> ex
     async onClickDelete() {
         if (this.services.delete) {
             this.isLoading = true;
-            await this.services.delete(this.formState);
+            await this.services.delete(toFlatValues(this.formState));
             runInAction(() => {
                 this.isLoading = false;
                 this.entity = {} as E;
@@ -201,10 +134,10 @@ export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> ex
     async onClickSave() {
         if (this.validate()) {
             this.isLoading = true;
-            const data = await this.services.save(this.formState);
+            const data = await this.services.save(toFlatValues(this.formState));
             runInAction(() => {
                 this.isLoading = false;
-                this.entity = data;
+                this.entity.set(data);
             });
         }
     }
@@ -217,22 +150,12 @@ export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> ex
     /** Retoune les actions en consulation du formualaire. */
     renderConsultActions() {
         let {hasEdit = true, hasDelete = false} = this.props;
-        return (
-            <div>
-                {hasEdit && this.buttonEdit}
-                {hasDelete && this.buttonDelete}
-            </div>
-        );
+        return <span>{hasEdit ? this.buttonEdit : null} {hasDelete ? this.buttonDelete : null}</span>;
     }
 
     /** Retourne les action en édition du formulaire. */
     renderEditActions() {
-        return (
-            <span>
-                {this.buttonSave}
-                {this.buttonCancel}
-            </span>
-        );
+        return <span>{this.buttonSave} {this.buttonCancel}</span>;
     }
 
     validate() {
@@ -309,29 +232,17 @@ export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> ex
         );
     }
 
-    private get className() {
-        return `form-horizontal ${this.props.style && this.props.style.className || ""}`;
-    }
-
-    private get mode() {
-        return `${this.isEdit ? "edit" : "consult"}`;
-    }
-
-    private handleSubmitForm(e: React.FormEvent<any>) {
-        e.preventDefault();
-        this.onClickSave();
-    }
-
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        if (this.props.hasForm) {
+        const {hasForm = true, style} = this.props;
+        if (hasForm) {
             return (
                 <form
-                    className={this.className}
+                    className={`form-horizontal ${style && style.className || ""}`}
                     data-loading={this.isLoading}
-                    data-mode={this.mode}
+                    data-mode={this.isEdit ? "edit" : "consult"}
                     noValidate={true}
-                    onSubmit={this.handleSubmitForm}
+                    onSubmit={e => { e.preventDefault(); this.onClickSave(); }}
                 >
                     <fieldset>{this.renderContent()}</fieldset>
                 </form>
@@ -340,6 +251,78 @@ export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> ex
             return this.renderContent();
         }
     }
+
+    /**
+     * Crée un champ de type AutocompleteSelect.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    autocompleteSelectFor<T, Props>(field: EntityField<T>, options: AutocompleteSelectOptions<Props> & Props) {
+        options.isEdit = this.isEdit;
+        options.error = this.errors[field.$entity.name];
+        return autocompleteSelectFor(field, options);
+    }
+
+    /**
+     * Crée un champ de type AutocompleteText.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
+        options.isEdit = this.isEdit;
+        options.error = this.errors[field.$entity.name];
+        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
+        return autocompleteTextFor(field, options);
+    }
+
+    /**
+     * Crée un champ standard en lecture seule.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    displayFor<T, Props>(field: EntityField<T>, options: DisplayOptions<Props> & Props = {} as any) { return displayFor(field, options); }
+
+    /**
+     * Crée un champ standard.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    fieldFor<T, DisplayProps, FieldProps, InputProps, InputLabelProps>(
+        field: EntityField<T>,
+        options: FieldOptions<DisplayProps, FieldProps, InputProps, InputLabelProps> & DisplayProps & FieldProps & InputProps & InputLabelProps = {} as any
+    ) {
+        options.isEdit = this.isEdit;
+        options.error = this.errors[field.$entity.name];
+        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
+        return fieldFor(field, options);
+    }
+
+    /**
+     * Crée un champ avec résolution de référence.
+     * @param field La définition de champ.
+     * @param listName Le nom de la liste de référence.
+     * @param options Les options du champ.
+     */
+    selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
+        options.isEdit = this.isEdit;
+        options.error = this.errors[field.$entity.name];
+        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
+        return selectFor(field, values, options);
+    }
+
+    /**
+     * Récupère le texte correspondant à un champ.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    stringFor<T>(field: EntityField<T>, options: TextOptions = {}) { return stringFor(field, options); }
+
+    /**
+     * Affiche un champ sous format texte.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    textFor<T>(field: EntityField<T>, options: TextOptions = {}) { return textFor(field, options); }
 }
 
 /*

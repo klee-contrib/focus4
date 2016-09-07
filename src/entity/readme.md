@@ -36,7 +36,7 @@ sera stocké dans un EntityStore sous la forme :
 
 Un EntityStore expose une méthode `set(config)` qui prend un objet représentant un contenu possible du store pour le mettre à jour, mais il est tout à fait possible de faire `store.operation.id.value = 4` pour effectuer une mise à jour (on voit bien que ça coince lorsqu'on voudra mettre à jour plusieurs valeurs à la fois, d'où `set(config)`).
 
-L'EntityStore peut contenir des objets avec autant de niveau de composition que l'on veut, mais il ne peut contenir que des arrays d'objets simples. En l'état actuel, il ne gère les arrays qu'au premier niveau.
+L'EntityStore peut contenir des objets avec autant de niveau de composition que l'on veut, mais il ne peut contenir que des arrays d'objets simples.
 
 La fonction `makeEntityStore<T>(entityConfig, entities)` permet de créer un EntityStore. Elle prend comme paramètre `T` le type de sortie de la fonction (le store), comme paramètre `entityConfig` la config des entités, et comme paramètre `entities` la liste des entités utilisées dans la config.
 
