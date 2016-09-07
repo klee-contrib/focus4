@@ -1,7 +1,7 @@
 /*
     TODO
+    - Gérer l'interop EntityValue <-> primitive (load, save, delete). Je pense qu'il faudrait un `set()` par entity aussi ?
     - Brancher les erreurs
-    - Gérer le formState
 */
 
 import {autobind} from "core-decorators";
@@ -11,7 +11,7 @@ import * as React from "react";
 
 import {applicationStore} from "..";
 import * as defaults from "../defaults";
-import {EntityField} from "../entity";
+import {EntityField, EntityValue} from "../entity";
 
 import {
     AutocompleteSelectOptions,
@@ -40,17 +40,17 @@ export interface AutoFormProps {
     style?: { className?: string };
 }
 
-/** Config d'actions à fournir à AutoForm. */
-export interface ActionConfig<E> {
+/** Config de services à fournir à AutoForm. */
+export interface ServiceConfig {
     [x: string]: any;
-    delete?: (entity: E) => Promise<void | number | boolean>;
-    load: (id: number | string) => Promise<E>;
-    save: (entity: E) => Promise<E>;
+    delete?: (entity: {}) => Promise<void | number | boolean>;
+    load: (id: number | string) => Promise<{}>;
+    save: (entity: {}) => Promise<{}>;
 }
 
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
-export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, {}> {
+export abstract class AutoForm<P, E extends {[key: string]: EntityValue<{}>}> extends React.Component<P & AutoFormProps, {}> {
     static defaultProps = {
         hasForm: true,
         hasEdit: true,
@@ -59,8 +59,9 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
         isEdit: false
     };
 
-    protected action: ActionConfig<E>;
     protected entity: E;
+    protected services: ServiceConfig;
+
     @observable protected errors: {[key: string]: string} = {};
     @observable protected formState: E;
     @observable protected isEdit = this.props.isEdit || false;
@@ -72,7 +73,7 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
         let {hasLoad = true, id} = this.props;
         if (hasLoad && id) {
             this.isLoading = true;
-            const data = await this.action.load(id);
+            const data = await this.services.load(id);
             runInAction(() => {
                 this.entity = data;
                 this.isLoading = false;
@@ -99,6 +100,7 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
     autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
+        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
         return autocompleteTextFor(field, options);
     }
 
@@ -120,6 +122,7 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
     ) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
+        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
         return fieldFor(field, options);
     }
 
@@ -132,6 +135,7 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
     selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
+        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
         return selectFor(field, values, options);
     }
 
@@ -167,9 +171,9 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
      */
     @action
     async onClickDelete() {
-        if (this.action.delete) {
+        if (this.services.delete) {
             this.isLoading = true;
-            await this.action.delete(this.formState);
+            await this.services.delete(this.formState);
             runInAction(() => {
                 this.isLoading = false;
                 this.entity = {} as E;
@@ -197,7 +201,7 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
     async onClickSave() {
         if (this.validate()) {
             this.isLoading = true;
-            const data = await this.action.save(this.formState);
+            const data = await this.services.save(this.formState);
             runInAction(() => {
                 this.isLoading = false;
                 this.entity = data;
@@ -232,7 +236,7 @@ export abstract class AutoForm<P, E> extends React.Component<P & AutoFormProps, 
     }
 
     validate() {
-        let validationMap: { [key: string]: string } = {};
+        let validationMap: {[key: string]: string} = {};
         for (let inptKey in this.refs) {
             if (isFunction((this.refs[inptKey] as any).validate)) {
                 let validationRes = (this.refs[inptKey] as any).validate();
