@@ -11,6 +11,7 @@ import * as React from "react";
 import {applicationStore} from "..";
 import * as defaults from "../defaults";
 import {EntityField, EntityStoreData, toFlatValues} from "../entity";
+import {FieldErrors} from "../network";
 
 import {
     AutocompleteSelectOptions,
@@ -67,7 +68,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     abstract entity: E;
     abstract services: ServiceConfig;
 
-    @observable errors: {[key: string]: string} = {};
+    @observable errors: FieldErrors = {};
     @observable formState: E;
     @observable isEdit = this.props.isEdit || false;
     @observable isLoading = false;
@@ -134,11 +135,15 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     async onClickSave() {
         if (this.validate()) {
             this.isLoading = true;
-            const data = await this.services.save(toFlatValues(this.formState));
-            runInAction(() => {
-                this.isLoading = false;
-                this.entity.set(data);
-            });
+            try {
+                const data = await this.services.save(toFlatValues(this.formState));
+                runInAction(() => {
+                    this.isLoading = false;
+                    this.entity.set(data);
+                });
+            } catch (e) {
+                runInAction(() => this.errors = e.fields);
+            }
         }
     }
 
@@ -324,22 +329,3 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      */
     textFor<T>(field: EntityField<T>, options: TextOptions = {}) { return textFor(field, options); }
 }
-
-/*
-    function dispatchFieldErrors(errorResult: FieldErrors | undefined) {
-        const data: {[key: string]: {[key: string]: string[]}} = isArray(node) ? errorResult as any : {[node]: errorResult} as any;
-        const errorStatus = {name: "error", isLoading: false};
-        let newStatus: {[key: string]: typeof errorStatus} = {};
-        if (isArray(node)) {
-            node.forEach(nd => newStatus[nd] = errorStatus);
-        } else {
-            newStatus[node] = errorStatus;
-        }
-        dispatcher.handleServerAction({
-            data,
-            type: "updateError",
-            status: newStatus,
-            callerId
-        });
-    }
-*/

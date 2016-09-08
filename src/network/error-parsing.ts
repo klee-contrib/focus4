@@ -2,7 +2,7 @@ import {isArray} from "lodash";
 
 import {messageStore, translate} from "..";
 
-export type FieldErrors = {[key: string]: string[] | {[key: string]: string[]}};
+export type FieldErrors = {[key: string]: string};
 
 export interface ErrorResponse {
     [key: string]: string[] | string | number | FieldErrors | undefined;
