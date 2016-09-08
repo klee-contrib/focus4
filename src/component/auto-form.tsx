@@ -1,8 +1,3 @@
-/*
-    TODO
-    - Brancher les erreurs
-*/
-
 import {autobind} from "core-decorators";
 import {isFunction, isEmpty} from "lodash";
 import {observable, action, runInAction} from "mobx";
