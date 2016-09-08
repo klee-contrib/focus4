@@ -3,22 +3,22 @@
     Toute modification sera perdue.
 */
 
-import {test, dum, dumClass} from "./src/testing";
+import {test, dum, dumClass} from "../testing";
 import * as React from "react";
 
-import {ActionBar} from "./src/search/component/advanced-search/action-bar";
-import {AdvancedSearch} from "./src/search/component/advanced-search";
-import {Facet} from "./src/search/component/advanced-search/facet-box/facet";
-import {FacetBox} from "./src/search/component/advanced-search/facet-box";
-import {FacetData} from "./src/search/component/advanced-search/facet-box/facet-data";
-import {GroupComponent} from "./src/search/component/advanced-search/group";
-import {GroupWrapper} from "./src/search/component/group-wrapper";
-import {ListSelection} from "./src/list/list-selection";
-import {ListSummary} from "./src/search/component/advanced-search/list-summary";
-import {ListTable} from "./src/list/list-table";
-import {MemoryList} from "./src/list/memory-list";
-import {Results} from "./src/search/component/results";
-import {SearchBar} from "./src/search/component/search-bar";
+import {ActionBar} from "../search/component/advanced-search/action-bar";
+import {AdvancedSearch} from "../search/component/advanced-search";
+import {Facet} from "../search/component/advanced-search/facet-box/facet";
+import {FacetBox} from "../search/component/advanced-search/facet-box";
+import {FacetData} from "../search/component/advanced-search/facet-box/facet-data";
+import {GroupComponent} from "../search/component/advanced-search/group";
+import {GroupWrapper} from "../search/component/group-wrapper";
+import {ListSelection} from "../list/list-selection";
+import {ListSummary} from "../search/component/advanced-search/list-summary";
+import {ListTable} from "../list/list-table";
+import {MemoryList} from "../list/memory-list";
+import {Results} from "../search/component/results";
+import {SearchBar} from "../search/component/search-bar";
 
 test("ActionBar", <ActionBar store={dumClass.SearchStore} />);
 test("AdvancedSearch", <AdvancedSearch lineComponentMapper={dum.function} scopes={dum.array} store={dumClass.SearchStore} />);

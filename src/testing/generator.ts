@@ -54,8 +54,8 @@ function getDefaultName(fileName: string) {
 
 function getImport(comp: TestedComponent) {
     const fileName = comp.fileName.replace(".tsx", "").replace("/index", "");
-    const srcIndex = fileName.search("src");
-    return `import ${comp.importName || comp.name} from "./${fileName.substring(srcIndex)}";`;
+    const srcIndex = fileName.search(appRoot);
+    return `import ${comp.importName || comp.name} from "..${fileName.substring(srcIndex + appRoot.length)}";`;
 }
 
 glob(`${appRoot}/**/*.tsx`, (error, fileNames) => {
@@ -70,7 +70,7 @@ glob(`${appRoot}/**/*.tsx`, (error, fileNames) => {
 
     const sortedOutput = output.sort((a, b) => a.name > b.name ? 1 : -1);
 
-    fs.writeFileSync("tests.tsx",
+    fs.writeFileSync(`${appRoot}/__test__/index.tsx`,
 `${imports}
 
 ${sortedOutput.map(getImport).join("\r\n")}
@@ -98,7 +98,7 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
                 }
 
             }
-        } else if (isFunction(node) && (node.flags & ts.NodeFlags.Export)) {
+        } else if (isFunction(node) && (node.flags & ts.NodeFlags.Export) && node.parameters.length === 1) {
             const type = checker.getTypeAtLocation(node);
             const callSignature = type.getCallSignatures()[0];
             const returnType = callSignature.getReturnType();

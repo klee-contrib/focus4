@@ -8,7 +8,7 @@ export interface EntitySetter {
 }
 
 export type EntityArray<T> = IObservableArray<T> & {$entity: Entity};
-export function isEntityArray(data: EntityStoreEntry): data is EntityArray<any> & EntitySetter {
+function isEntityArray(data: EntityStoreEntry): data is EntityArray<any> & EntitySetter {
     return isObservableArray(data);
 }
 
@@ -63,9 +63,8 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
 function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Entity}, ref: string): EntityStoreEntry {
     const entity = config[ref];
     if (isArray(entity) && isArray(entity[0])) {
-        const output: EntityArray<EntityStoreData> & EntitySetter = [] as any;
+        const output: EntityArray<EntityStoreData> = observable([]) as any;
         output.$entity = entityMap[entity[1]];
-        output.set = (entityValue: any[]) => setEntityEntry(output, entityValue, ref);
         return output;
     }
 
@@ -76,7 +75,7 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
         }
         return {
             $entity: entityMap[trueRef].fields[key!],
-            value: v.entityName ? buildEntityEntry({value: [v.type === "list" ? [] : {}, v.entityName!]}, entityMap, "value") : undefined,
+            value: v.entityName ? buildEntityEntry({[v.entityName]: [v.type === "list" ? [] : {}, v.entityName!]}, entityMap, v.entityName!) : undefined,
         };
     }) as any;
     output.set = (entityValue: any) => setEntityEntry(output, entityValue, ref);

@@ -12,8 +12,8 @@
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
     "start": "tsc",
-    "test": "ts-node tests.tsx | tap-spec",
-    "testgen": "ts-node src/testing/generator.ts src ./src",
+    "test": "ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
+    "testgen": "ts-node src/testing/generator.ts src ..",
     "tslint": "tslint src/**/*.ts src/**/*.tsx --force"
   },
   "dependencies": {
