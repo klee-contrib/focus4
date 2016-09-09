@@ -1,5 +1,5 @@
 import {EntityValue} from "../";
-import {Structure, StructureEntry} from "./structure";
+import {Structure, StructureData} from "./structure";
 
 export interface Operation {
     id?: number;
@@ -8,12 +8,13 @@ export interface Operation {
     structure?: Structure;
 }
 
-export interface OperationEntry {
+export interface OperationData {
     id: EntityValue<number>;
     numero: EntityValue<string>;
     montant: EntityValue<string>;
-    structure: EntityValue<StructureEntry>;
+    structure: EntityValue<StructureData>;
     set: (structure: Operation) => void;
+    clear: () => void;
 }
 
 export const OperationEntity = {

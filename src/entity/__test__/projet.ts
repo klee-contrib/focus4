@@ -1,15 +1,16 @@
 import {EntityValue, EntityArray} from "../";
-import {Operation, OperationEntry} from "./operation";
+import {Ligne, LigneData} from "./ligne";
 
 export interface Projet {
     id?: number;
-    operationList?: Operation[];
+    ligneList?: Ligne[];
 }
 
-export interface ProjetEntry {
+export interface ProjetData {
     id: EntityValue<number>;
-    operationList: EntityValue<EntityArray<OperationEntry>>;
+    ligneList: EntityValue<EntityArray<LigneData>>;
     set: (structure: Projet) => void;
+    clear: () => void;
 }
 
 export const ProjetEntity = {
@@ -22,9 +23,9 @@ export const ProjetEntity = {
             name: "id",
             translationKey: "projet.id"
         },
-        operationList: {
+        ligneList: {
             type: "list",
-            entityName: "operation"
+            entityName: "ligne"
         }
     }
 };

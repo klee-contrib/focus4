@@ -6,11 +6,12 @@ export interface Structure {
     siret?: string;
 }
 
-export interface StructureEntry {
+export interface StructureData {
     id: EntityValue<number>;
     nom: EntityValue<string>;
     siret: EntityValue<string>;
     set: (structure: Structure) => void;
+    clear: () => void;
 }
 
 export const StructureEntity = {

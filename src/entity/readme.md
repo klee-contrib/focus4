@@ -1,7 +1,7 @@
 # EntityStore
-Il remplace à l'usage l'ancien `CoreStore` de `focus-core`, mais en réalité ce n'est pas la même chose. Toute la partie "store" est de toute façon déjà couverte par MobX, donc il n'y avait rien à faire pour atteindre les mêmes fonctionnalités.
+Il remplace à l'usage l'ancien `CoreStore` de `focus-core`, mais en réalité ce n'est pas la même chose. Toute la partie "store" est de toute façon déjà couverte par MobX, donc en pratique il n'y avait rien à faire pour atteindre les mêmes fonctionnalités.
 
-A la place, on a un `EntityStore` dont le but est de stocker des **entités**, c'est-à-dire des objets structurés (mappés sur les beans et DTOs renvoyés par le serveur) avec leurs métadonnées.
+A la place, on a un `EntityStore`, dont le but est de stocker des **entités**, c'est-à-dire des objets structurés (mappés sur les beans et DTOs renvoyés par le serveur) avec leurs *métadonnées*. Si vous cherchez à stocker des primitives, des objets non structurés ou des arrays de ceux-ci, vous n'avez pas besoin de tout ça et vous pouvez directement utiliser des observables.
 
 Par exemple, un objet `operation` de la forme:
 
@@ -13,7 +13,7 @@ Par exemple, un objet `operation` de la forme:
 }
 ```
 
-sera stocké dans un EntityStore sous la forme :
+sera stocké dans un `EntityStore` sous la forme :
 
 ```ts
 {
@@ -34,70 +34,33 @@ sera stocké dans un EntityStore sous la forme :
 }
 ```
 
-Un EntityStore expose une méthode `set(config)` qui prend un objet représentant un contenu possible du store pour le mettre à jour, mais il est tout à fait possible de faire `store.operation.id.value = 4` pour effectuer une mise à jour (on voit bien que ça coince lorsqu'on voudra mettre à jour plusieurs valeurs à la fois, d'où `set(config)`).
+Un `EntityStore` contient des *entrées* (`EntityStoreEntry`) qui peuvent être soit un objet (`EntityStoreData`), soit un array d'objets (`EntityArray<EntityStoreData>`). Une `EntityStoreData` contient des *valeurs* (`EntityStoreValue`) qui peuvent être soit des *primitives*, soit une autre *entrée*. Chaque `EntityStoreValue` se présente sous la forme `{$entity, value}` où `$entity` est la métadonnée associée à la valeur. Chaque *entrée* (objet ou array), ainsi que le store lui-même, est également munie de deux méthodes `set(data)` et `clear()`, permettant respectivement de les remplir ou de les vider.
 
-L'EntityStore peut contenir des objets avec autant de niveau de composition que l'on veut, mais il ne peut contenir que des arrays d'objets simples.
+Une `EntityStoreData` est conçue pour être utilisé par les `fieldHelpers` (`fieldFor`, `selectFor`...) et par extension par l'`AutoForm`, qui sont des composants qui consomment des métadonnées. Si un `fieldHelper` peut se passer de l'entrée et directement utiliser des `EntityStoreValue`'s directement, le form requiert absolumement que son state soit un `EntityStoreData`.
 
-La fonction `makeEntityStore<T>(entityConfig, entities)` permet de créer un EntityStore. Elle prend comme paramètre `T` le type de sortie de la fonction (le store), comme paramètre `entityConfig` la config des entités, et comme paramètre `entities` la liste des entités utilisées dans la config.
+La modification du store ou de l'une de ses entrées n'est pas limitée à l'usage des méthodes `set()` ou `clear()`. Etant toujours une observable MobX, il est tout à fait possible d'affecter des valeurs directement, comme `store.operation.id.value = undefined` par exemple. Ca peut être utile car `set()` ne mettra à jour que les valeurs qu'il reçoit. Pour un array, la méthode `set()` va remplacer tous les éléments de l'array par ceux fournis à la méthode. Il est donc intéressant de pouvoir appeler directement des méthodes comme `push()` pour y ajouter des éléments, quitte à construire les `EntityStoreData` à la main.
 
-Ci-dessous un exemple de tout ce qui est géré pour l'instant :
+**Attention** : Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, mais il ne peut contenir que des arrays d'objets simples (c'est-à-dire des objets qui ne dépendent d'aucune autre entité).
 
-```tsx
-/*
-    La convention utilisée est la suivante :
-    - *entity*Store est le type de la forme {[key]: {$entity, value}}
-    - *entity*Entity est l'objet de la forme {name: *entity*, fields: EntityField[]}
-*/
+## API
+### `makeEntityStore<T>(entityConfig, entities)`
+La fonction `makeEntityStore` permet de créer un nouvel `EntityStore`. Elle prend comme paramètre:
+- `T`, le type de sortie de la fonction (le store). Cela doit être un objet qui comprend tous les entrées sous la forme d'une `EntityStoreEntry`
+- `entityConfig`, un objet contenant toutes les entrées du store. Trois valeurs sont possibles:
+    - `{}` => l'entrée sera crée avec l'entité de même nom.
+    - `[{}, "entityName"]` => l'entrée sera créée avec l'entité `entityName`
+    - `[[], "entityName"]` => l'entrée sera une liste qui utilise l'entité `entityName`
+- `entities`, la liste des entités utilisées par le store.
 
-const store = makeEntityStore<{
-    operation: OperationStore,
-    projet: ProjetStore,
-    operationList: OperationStore[]
-}>({
-    operation: {}, // Créé une entrée "operation" qui utilise l'entité "OperationEntity"
-    projet: [{}, "yolo"], // Crée une entrée "projet" qui utilise l'entité "YoloEntity", qui dépend de "StructureEntity".
-    operationList: [[], "operation"] // Créé une entrée "operationList" qui est une liste de "OperationEntity
-}, [
-    OperationEntity,
-    YoloEntity,
-    StructureEntity
-]);
+*Remarque : le typage ne fonctionne pas bien encore, cf. les tests pour voir comment contourner les problèmes*
 
-import * as React from "react";
-import {render} from "react-dom";
-import {observer} from 'mobx-react';
+### `toFlatValues(entityStoreEntry)`
+La fonction `toFlatValues` prend une **entrée** est la met à plat en enlevant toutes les métadonnées.
 
-const clickHandler = () => store.set({
-    projet: {
-        isEss: true,
-        solde: 43,
-        structure: {
-            libelle: "YOLO"
-        }
-    },
-    operationList: [
-        {numero: "1.01.00001", ligneId: 3},
-        {numero: "1.01.00002", ligneId: 4},
-        {numero: "1.01.00003", ligneId: 5}
-    ]
-});
+## Ce qui faut générer pour un `EntityStore`
+Pour pouvoir pleinement profiter d'un `EntityStore`, il est vivement conseillé de générer automatiquement les 3 objets/types à partir du modèle du serveur. Ces trois objets, pour un objet `Operation`:
+- Le type **`Operation`**, qui est une bête interface représentant le type "plat", dont tous les champs sont **optionnels**.
+- Le type **`OperationData`**, qui est l'`EntityStoreData` correspondante, dont tous les champs sont **obligatoires**. C'est le type `Operation` avec toutes ses valeurs wrappées dans des `EntityValue` et `EntityArray`, et avec les méthodes `set()` et `clear()` correspondantes.
+- L'objet **`OperationEntity`**, qui est l'objet contenant les métadonnées.
 
-store.projet.solde.value = 133333;
-
-const View = observer(function View() {
-    return (
-        <div>
-            <button onClick={clickHandler}>CLICK</button>
-            <div>{store.projet.structure.libelle}</div>
-            <ul>
-                {store.operationList.map((op, i) => <li key={i}>{op.numero.$entity.translationKey} {op.numero.value}</li>)}
-            </ul>
-        </div>
-    );
-});
-
-render(<View />, document.getElementById("root")!);
-```
-
-## Remarque
-Il est important de noter que l'usage de ce store est totalement facultatif et qu'il n'est là que pour tenter de simplifier les usages courants. En particulier, le `fieldFor` d'autofocus-mobx prend un objet `{$entity, value}` comme premier paramètre : Il peut donc soit être issu directement du store, soit reconstruit sur place en important l'entité directement dans le composant.
+#### Tous les cas d'usages sont retrouvables dans les tests.

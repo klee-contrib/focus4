@@ -1,5 +1,6 @@
 {
     "typescript.tsdk": "./node_modules/typescript/lib",
     "editor.snippetSuggestions": "bottom",
-    "files.trimTrailingWhitespace": true
+    "files.trimTrailingWhitespace": true,
+    "editor.wrappingColumn": 150
 }
