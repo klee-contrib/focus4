@@ -1,17 +1,17 @@
 import {autobind} from "core-decorators";
+import {t as translate} from "i18next";
 import {omit} from "lodash";
 import * as React from "react";
 
-import {translate} from "..";
-import * as defaults from "../defaults";
+import * as defaults from "../../defaults";
 
+import {LineProps, OperationListItem} from "./lines";
 import {ListBase, ListBaseProps} from "./list-base";
-import {ALProps, OperationListItem} from "./memory-list";
 
 const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 
-export interface ListTablePropsBase<LineProps> extends ListBaseProps<LineProps> {
+export interface ListTablePropsBase<P extends LineProps<{}>> extends ListBaseProps<P> {
     columns: {sort?: "asc" | "desc", label: string, noSort: boolean}[];
     /** Default: 'id' */
     idField?: string;
@@ -26,10 +26,10 @@ export interface ListTablePropsBase<LineProps> extends ListBaseProps<LineProps> 
     sortColumn?: (index: number, order: "asc" | "desc") => void;
 }
 
-export type ListTableProps<LineProps extends ALProps<{}>> = ListTablePropsBase<LineProps> & LineProps;
+export type ListTableProps<P extends LineProps<{}>> = ListTablePropsBase<P> & P;
 
 @autobind
-export class ListTable extends ListBase<ListTablePropsBase<ALProps<{}>>, {}> {
+export class ListTable extends ListBase<ListTablePropsBase<LineProps<{}>>, {}> {
 
     private renderTableHeader() {
         const columns = this.props.columns.map((colProperties, id) => {
@@ -57,10 +57,10 @@ export class ListTable extends ListBase<ListTablePropsBase<ALProps<{}>>, {}> {
     }
 
     private renderTableBody() {
-        const {data, LineComponent, idField = "id", operationList} = this.props;
+        const {values, LineComponent, idField = "id", operationList} = this.props;
         return (
             <tbody>
-                {data && data.map((line, idx) => {
+                {values && values.map((line, idx) => {
                     const otherLineProps = omit(this.props, "data", "operationList");
                     return (
                         <LineComponent

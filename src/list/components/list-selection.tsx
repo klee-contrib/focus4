@@ -1,14 +1,14 @@
 import {autobind} from "core-decorators";
+import {t as translate} from "i18next";
 import {omit} from "lodash";
 import * as React from "react";
 
-import {translate} from "..";
-import * as defaults from "../defaults";
+import * as defaults from "../../defaults";
 
+import {LineSelectionProps, OperationListItem} from "./lines";
 import {ListBase, ListBaseProps} from "./list-base";
-import {ALProps, OperationListItem} from "./memory-list";
 
-export interface ListSelectionPropsBase<LineProps> extends ListBaseProps<LineProps> {
+export interface ListSelectionPropsBase<P extends LineSelectionProps<{}>> extends ListBaseProps<P> {
     /** Default: 'id' */
     idField?: string;
     /** Default: true */
@@ -25,28 +25,28 @@ export interface ListSelectionState {
     items: {[key: string]: boolean};
 };
 
-export type ListSelectionProps<LineProps> = ListSelectionPropsBase<LineProps> & LineProps;
+export type ListSelectionProps<P extends LineSelectionProps<{}>> = ListSelectionPropsBase<P> & P;
 
 @autobind
-export class ListSelection extends ListBase<ListSelectionPropsBase<ALProps<{}>>, ListSelectionState> {
+export class ListSelection extends ListBase<ListSelectionPropsBase<LineSelectionProps<{}>>, ListSelectionState> {
 
-    constructor(props: ListSelectionProps<{}>) {
+    constructor(props: ListSelectionProps<{data: {}}>) {
         super(props);
         this.state = {items: this.getItems(props, true)};
     }
 
-    componentWillReceiveProps(props: ListSelectionProps<{}>) {
+    componentWillReceiveProps(props: ListSelectionProps<{data: {}}>) {
         this.setState({items: this.getItems(props)});
     }
 
-    shouldComponentUpdate({selectionStatus = "partial"}: ListSelectionProps<{}>, {items}: ListSelectionState) {
+    shouldComponentUpdate({selectionStatus = "partial"}: ListSelectionProps<{data: {}}>, {items}: ListSelectionState) {
         return items !== this.state.items || selectionStatus !== this.props.selectionStatus;
     }
 
-    getItems({data, selectionStatus = "partial"}: ListSelectionProps<{}>, isInit?: boolean) {
+    getItems({values, selectionStatus = "partial"}: ListSelectionProps<{data: {}}>, isInit?: boolean) {
         const items: {[key: string]: boolean} = {};
-        if (data) {
-            data.forEach(item => {
+        if (values) {
+            values.forEach(item => {
                 if (isInit || selectionStatus !== "partial") {
                     items[JSON.stringify(item)] = selectionStatus === "selected";
                 } else {

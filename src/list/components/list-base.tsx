@@ -1,11 +1,14 @@
 import {autobind} from "core-decorators";
-import {Component, ComponentClass} from "react";
+import {Component} from "react";
 import {findDOMNode} from "react-dom";
 
-import {BaseListProps, ALProps} from "./memory-list";
+import {ReactComponent} from "../../defaults";
 
-export interface ListBaseProps<LineProps extends ALProps<{}>> extends BaseListProps {
-    LineComponent: ComponentClass<LineProps> | ((props: LineProps) => JSX.Element);
+import {LineProps} from "./lines";
+import {BaseListProps} from "./memory-list";
+
+export interface ListBaseProps<P extends LineProps<{}>> extends BaseListProps {
+    LineComponent: ReactComponent<P>;
     isInfiniteScroll?: boolean;
     isLoading?: boolean;
     /** Default: 250 */
@@ -21,7 +24,7 @@ function topOfElement(element: HTMLElement): number {
 };
 
 @autobind
-export abstract class ListBase<P extends ListBaseProps<{}>, S> extends Component<P, S> {
+export abstract class ListBase<P extends ListBaseProps<LineProps<{}>>, S> extends Component<P, S> {
     parentNode: Element | Window;
 
     componentWillUnmount() {

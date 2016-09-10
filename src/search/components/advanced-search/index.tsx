@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ButtonBackToTop, ReactComponent} from "../../../defaults";
-import {OperationListItem} from "../../../list/memory-list";
+import {OperationListItem} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {Results} from "../results";

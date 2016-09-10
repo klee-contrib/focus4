@@ -1,4 +1,6 @@
-# EntityStore
+# Module `entity`
+
+## EntityStore
 Il remplace à l'usage l'ancien `CoreStore` de `focus-core`, mais en réalité ce n'est pas la même chose. Toute la partie "store" est de toute façon déjà couverte par MobX, donc en pratique il n'y avait rien à faire pour atteindre les mêmes fonctionnalités.
 
 A la place, on a un `EntityStore`, dont le but est de stocker des **entités**, c'est-à-dire des objets structurés (mappés sur les beans et DTOs renvoyés par le serveur) avec leurs *métadonnées*. Si vous cherchez à stocker des primitives, des objets non structurés ou des arrays de ceux-ci, vous n'avez pas besoin de tout ça et vous pouvez directement utiliser des observables.
@@ -42,8 +44,8 @@ La modification du store ou de l'une de ses entrées n'est pas limitée à l'usa
 
 **Attention** : Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, mais il ne peut contenir que des arrays d'objets simples (c'est-à-dire des objets qui ne dépendent d'aucune autre entité).
 
-## API
-### `makeEntityStore<T>(entityConfig, entities)`
+### API
+#### `makeEntityStore<T>(entityConfig, entities)`
 La fonction `makeEntityStore` permet de créer un nouvel `EntityStore`. Elle prend comme paramètre:
 - `T`, le type de sortie de la fonction (le store). Cela doit être un objet qui comprend tous les entrées sous la forme d'une `EntityStoreEntry`
 - `entityConfig`, un objet contenant toutes les entrées du store. Trois valeurs sont possibles:
@@ -54,13 +56,13 @@ La fonction `makeEntityStore` permet de créer un nouvel `EntityStore`. Elle pre
 
 *Remarque : le typage ne fonctionne pas bien encore, cf. les tests pour voir comment contourner les problèmes*
 
-### `toFlatValues(entityStoreEntry)`
+#### `toFlatValues(entityStoreEntry)`
 La fonction `toFlatValues` prend une **entrée** est la met à plat en enlevant toutes les métadonnées.
 
-## Ce qui faut générer pour un `EntityStore`
+### Ce qui faut générer pour un `EntityStore`
 Pour pouvoir pleinement profiter d'un `EntityStore`, il est vivement conseillé de générer automatiquement les 3 objets/types à partir du modèle du serveur. Ces trois objets, pour un objet `Operation`:
 - Le type **`Operation`**, qui est une bête interface représentant le type "plat", dont tous les champs sont **optionnels**.
 - Le type **`OperationData`**, qui est l'`EntityStoreData` correspondante, dont tous les champs sont **obligatoires**. C'est le type `Operation` avec toutes ses valeurs wrappées dans des `EntityValue` et `EntityArray`, et avec les méthodes `set()` et `clear()` correspondantes.
 - L'objet **`OperationEntity`**, qui est l'objet contenant les métadonnées.
 
-#### Tous les cas d'usages sont retrouvables dans les tests.
+##### Tous les cas d'usages sont retrouvables dans les tests.

@@ -52,3 +52,6 @@ function parseString(message: string | Message) {
     }
     return message;
 }
+
+/** Instance principale du MessageStore. */
+export const messageStore = new MessageStore();

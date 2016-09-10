@@ -31,3 +31,6 @@ export class UserStore {
         return 0 < intersection(role, this.roles || []).length;
     }
 }
+
+/** Instance principale du UserStore. */
+export const userStore = new UserStore();

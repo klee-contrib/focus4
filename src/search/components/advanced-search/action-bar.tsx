@@ -1,9 +1,9 @@
 import {autobind} from "core-decorators";
+import {t as translate} from "i18next";
 import {reduce, omit} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {translate} from "../../..";
 import * as defaults from "../../../defaults";
 
 import {SearchStore} from "../../store";

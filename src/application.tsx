@@ -74,3 +74,6 @@ export class ApplicationStore implements ApplicationAction {
         }
     }
 }
+
+/** Instance principale de l'ApplicationStore. */
+export const applicationStore = new ApplicationStore();

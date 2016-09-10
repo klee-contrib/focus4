@@ -1,10 +1,9 @@
 import {autobind} from "core-decorators";
+import {t as translate} from "i18next";
 import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-
-import {translate} from "../../../..";
 
 import {SearchStore} from "../../../store";
 import {InputFacet, FacetValue, StoreFacet} from "../../../types";

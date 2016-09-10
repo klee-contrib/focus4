@@ -6,19 +6,19 @@
 import {test, dum, dumClass} from "../testing";
 import * as React from "react";
 
-import {ActionBar} from "../search/component/advanced-search/action-bar";
-import {AdvancedSearch} from "../search/component/advanced-search";
-import {Facet} from "../search/component/advanced-search/facet-box/facet";
-import {FacetBox} from "../search/component/advanced-search/facet-box";
-import {FacetData} from "../search/component/advanced-search/facet-box/facet-data";
-import {GroupComponent} from "../search/component/advanced-search/group";
-import {GroupWrapper} from "../search/component/group-wrapper";
-import {ListSelection} from "../list/list-selection";
-import {ListSummary} from "../search/component/advanced-search/list-summary";
-import {ListTable} from "../list/list-table";
-import {MemoryList} from "../list/memory-list";
-import {Results} from "../search/component/results";
-import {SearchBar} from "../search/component/search-bar";
+import {ActionBar} from "../search/components/advanced-search/action-bar";
+import {AdvancedSearch} from "../search/components/advanced-search";
+import {Facet} from "../search/components/advanced-search/facet-box/facet";
+import {FacetBox} from "../search/components/advanced-search/facet-box";
+import {FacetData} from "../search/components/advanced-search/facet-box/facet-data";
+import {GroupComponent} from "../search/components/advanced-search/group";
+import {GroupWrapper} from "../search/components/group-wrapper";
+import {ListSelection} from "../list/components/list-selection";
+import {ListSummary} from "../search/components/advanced-search/list-summary";
+import {ListTable} from "../list/components/list-table";
+import {MemoryList} from "../list/components/memory-list";
+import {Results} from "../search/components/results";
+import {SearchBar} from "../search/components/search-bar";
 
 test("ActionBar", <ActionBar store={dumClass.SearchStore} />);
 test("AdvancedSearch", <AdvancedSearch lineComponentMapper={dum.function} scopes={dum.array} store={dumClass.SearchStore} />);

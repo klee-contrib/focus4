@@ -3,7 +3,7 @@ import {isFunction, isEmpty} from "lodash";
 import {observable, action, runInAction} from "mobx";
 import * as React from "react";
 
-import {applicationStore} from "..";
+import {applicationStore} from "../application";
 import * as defaults from "../defaults";
 import {EntityField, EntityStoreData, toFlatValues} from "../entity";
 import {FieldErrors} from "../network";

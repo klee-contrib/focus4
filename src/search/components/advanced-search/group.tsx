@@ -1,6 +1,6 @@
+import {t as translate} from "i18next";
 import * as React from "react";
 
-import {translate} from "../../..";
 import * as defaults from "../../../defaults";
 
 export interface Props {

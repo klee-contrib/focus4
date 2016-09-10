@@ -47,3 +47,6 @@ export class RequestStore {
         }
     }
 }
+
+/** Instance principale du RequestStore. */
+export const requestStore = new RequestStore();

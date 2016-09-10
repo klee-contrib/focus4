@@ -1,9 +1,10 @@
 # Référence d'API
 
-### EntityStore
+## Module `entity`
 [Par ici](entity)
 
-### ReferenceStore
+## Module `reference`
+### `ReferenceStore`
 Un `referenceStore` d'autofocus-mobx est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
 * `serviceFactory` est une fonction qui prend en paramètre un nom de référence et renvoie un service (sans paramètre) permettant de récupérer la liste de référence (qui renvoie donc une Promise)
 * `refConfig` est un objet dont les propriétés seront les listes de références à charger. Pour typer le store de référence, il suffit de typer ces propriétés avec le type correspondant :

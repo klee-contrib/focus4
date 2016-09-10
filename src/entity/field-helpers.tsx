@@ -3,9 +3,7 @@ import * as React from "react";
 
 import * as defaults from "../defaults";
 import {EntityField} from "../entity";
-import {ListSelection, ListSelectionProps} from "../list/list-selection";
-import {ListTable, ListTableProps} from "../list/list-table";
-import {MemoryList, ALProps, BaseListProps} from "../list/memory-list";
+import {BaseListProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
 
 /** Item attendu dans recherche d'autocomplétion. */
 export interface AutoCompleteItem {
@@ -134,7 +132,7 @@ export function fieldFor<T, DisplayProps, FieldProps, InputProps, InputLabelProp
  * @param data La liste.
  * @param options Les options.
  */
-export function listFor<LineProps extends ALProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListSelectionProps<LineProps>) {
+export function listFor<P extends LineSelectionProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListSelectionProps<P>) {
     return listForWith(ListSelection, data, options);
 }
 
@@ -146,7 +144,7 @@ export function listFor<LineProps extends ALProps<{}>>(data: {}[], options: Base
  */
 export function listForWith<ListProps extends BaseListProps>(ListComponent: defaults.ReactComponent<ListProps>, data: {}[], options: BaseListProps & {perPage?: number} & ListProps) {
     const defaultProps = {
-        data: data || [],
+        values: data || [],
         ListComponent,
         isEdit: false
     };
@@ -182,7 +180,7 @@ export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): 
  * @param data La liste.
  * @param options Les options.
  */
-export function tableFor<LineProps extends ALProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListTableProps<LineProps>) {
+export function tableFor<P extends LineProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListTableProps<P>) {
     return listForWith(ListTable, data, options);
 }
 

@@ -2,8 +2,8 @@ import {createRenderer} from "react-addons-test-utils";
 import {Component, ComponentClass, ReactElement} from "react";
 import tape = require("tape");
 
-import {SearchStore} from "..";
 import {setDefaultComponents} from "../defaults";
+import {SearchStore} from "../search";
 
 export const dum = {
     any: {} as any,

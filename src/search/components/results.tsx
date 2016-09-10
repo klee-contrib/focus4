@@ -1,12 +1,11 @@
 import {autobind} from "core-decorators";
 import {omit, isArray} from "lodash";
+import {t as translate} from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {translate} from "../..";
 import {ReactComponent} from "../../defaults";
-import {ListSelection} from "../../list/list-selection";
-import {OperationListItem} from "../../list/memory-list";
+import {ListSelection, OperationListItem} from "../../list";
 
 import {Results as ResultsType} from "../types";
 import {SearchStore} from "../store";
@@ -116,7 +115,7 @@ export class Results extends React.Component<ResultsProps, {}> {
         return (
             <div>
                 <ListSelection
-                    data={list}
+                    values={list}
                     data-focus="results-list"
                     fetchNextPage={this.onScrollReachedBottom}
                     hasMoreData={hasMoreData}
