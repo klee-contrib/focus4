@@ -42,7 +42,7 @@ export class ListStore<T> {
     }
 
     @action
-    async listLoader(isScroll: boolean) {
+    async load(isScroll: boolean) {
         const {dataList, totalCount, sortAsc, sortBy, criteria, groupingKey, nbElement} = this;
 
         this.pendingCount++;

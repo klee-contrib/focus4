@@ -13,6 +13,7 @@ import {FacetBox} from "../search/components/advanced-search/facet-box";
 import {FacetData} from "../search/components/advanced-search/facet-box/facet-data";
 import {GroupComponent} from "../search/components/advanced-search/group";
 import {GroupWrapper} from "../search/components/group-wrapper";
+import {ListPage} from "../list/page";
 import {ListSelection} from "../list/components/list-selection";
 import {ListSummary} from "../search/components/advanced-search/list-summary";
 import {ListTable} from "../list/components/list-table";
@@ -27,6 +28,7 @@ test("FacetBox", <FacetBox openedFacetList={{}} scopesConfig={{}} store={dumClas
 test("FacetData", <FacetData data={{code: dum.string, label: dum.string, count: dum.number}} dataKey={dum.string} selectHandler={dum.function} />);
 test("GroupComponent", <GroupComponent canShowMore={true} count={dum.number} groupKey={dum.string} groupLabel={dum.string} showMoreHandler={dum.function} />);
 test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.component} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
+test("ListPage", <ListPage store={dumClass.ListStore} />);
 test("ListSelection", <ListSelection LineComponent={dum.component} />);
 test("ListSummary", <ListSummary scopeLock={true} scopes={dum.array} store={dumClass.SearchStore} />);
 test("ListTable", <ListTable LineComponent={dum.component} columns={dum.array} />);

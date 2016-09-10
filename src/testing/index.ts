@@ -3,6 +3,7 @@ import {Component, ComponentClass, ReactElement} from "react";
 import tape = require("tape");
 
 import {setDefaultComponents} from "../defaults";
+import {ListStore} from "../list";
 import {SearchStore} from "../search";
 
 export const dum = {
@@ -16,6 +17,7 @@ export const dum = {
 };
 
 export const dumClass = {
+    ListStore: new ListStore((data: any) => Promise.resolve({})),
     SearchStore: new SearchStore({scoped: (data: any) => Promise.resolve({}), unscoped: (data: any) => Promise.resolve({})})
 };
 

@@ -5,7 +5,7 @@ export {observer} from "mobx-react";
 export {applicationStore} from "./application";
 export {AutoForm, displayFor, fieldFor, listFor, makeEntityStore, selectFor} from "./entity";
 export {back, navigate} from "./history";
-export {lineSelection, lineTimeline, ListSelection, ListStore, ListTable, renderLineActions} from "./list";
+export {lineSelection, lineTimeline, ListPage, ListSelection, ListStore, ListTable, renderLineActions} from "./list";
 export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
