@@ -1,8 +1,8 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-alpha0",
+  "version": "1.0.0-alpha3",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/JabX/autofocus.git"
@@ -11,6 +11,8 @@
   "license": "MIT",
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
+    "prepublish": "sh scripts/pre-publish.sh",
+    "postpublish": "sh scripts/post-publish.sh",
     "start": "tsc",
     "test": "ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
     "testgen": "ts-node src/testing/generator.ts src ..",
