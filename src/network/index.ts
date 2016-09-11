@@ -1,4 +1,4 @@
-import * as fetch from "./fetch"; export {fetch};
-import * as errorParsing from "./error-parsing"; export {errorParsing};
-import RequestStore from "./store";
-export const builtInStore = new RequestStore();
+export {manageResponseErrors, FieldErrors} from "./error-parsing";
+export {LoadingBar} from "./loading-bar";
+export {httpDelete, httpGet, httpPost, httpPut} from "./fetch";
+export {RequestStore, requestStore} from "./store";

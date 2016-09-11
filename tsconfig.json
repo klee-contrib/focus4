@@ -1,23 +1,24 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es2015",
+        "target": "es5",
         "moduleResolution": "node",
         "declaration": true,
         "outDir": "dist",
         "jsx": "react",
-        "lib": ["es6", "dom"],
+        "lib": ["es2015", "dom"],
         "allowSyntheticDefaultImports": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
+        "noImplicitThis": true,
         "strictNullChecks": true,
         "experimentalDecorators": true,
         "noFallthroughCasesInSwitch": true,
-        "inlineSourceMap": true,
-        "baseUrl": "./src"
+        "inlineSourceMap": true
     },
     "exclude": [
+        "dist",
         "node_modules",
-        "./tests.tsx"
+        "./src/**/__test__/*"
     ]
 }

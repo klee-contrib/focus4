@@ -1,18 +1,7 @@
-import {Map, fromJS} from "immutable";
+import {observable, action} from "mobx";
 import * as React from "react";
 
-import CoreStore from "store";
-
-export const definition: Application = {
-    summary: <div />,
-    barLeft: <div />,
-    barRight: <div />,
-    cartridge: <div />,
-    actions: {},
-    mode: undefined,
-    route: undefined,
-    canDeploy: undefined
-};
+export type Mode = "consult" | "edit";
 
 export interface ApplicationAction {
     summary?: React.ReactElement<any>;
@@ -20,31 +9,73 @@ export interface ApplicationAction {
     barRight?: React.ReactElement<any>;
     cartridge?: React.ReactElement<any>;
     actions?: {
-        primary?: {icon: string, action: () => void}[];
-        secondary?: {label: string, action: () => void}[];
+        primary?: {className?: string, icon: string, iconLibrary?: "", label?: string, action: () => void}[];
+        secondary?: {className?: string, label: string, action: () => void}[];
     };
     canDeploy?: boolean;
 }
 
-export interface Application extends ApplicationAction {
-    mode?: Map<string, number>;
-    route?: string;
-}
+export class ApplicationStore implements ApplicationAction {
+    @observable actions: {
+        primary: {className?: string, icon: string, iconLibrary?: "", label?: string, action: () => void}[],
+        secondary: {className?: string, label: string, action: () => void}[],
+    } = {primary: [], secondary: []};
+    @observable canDeploy = true;
+    @observable mode: {[mode: string]: number} = {};
+    @observable route: string;
 
-export default class ApplicationStore extends CoreStore<typeof definition> {
+    @observable barLeft = <div />;
+    @observable barRight = <div />;
+    @observable cartridge = <div />;
+    @observable summary = <div />;
 
-    constructor() {
-        super({definition});
+    @action
+    changeMode(newMode: Mode, previousMode: Mode) {
+        this.mode[newMode] = this.mode[newMode] ? (this.mode[newMode] + 1) : 1;
+        this.mode[previousMode] = this.mode[previousMode] ? (this.mode[previousMode] - 1) : 0;
     }
 
-    updateMode({newMode, previousMode}: {newMode: string, previousMode: string}) {
-        const modeData: Map<string, number> = this.data.has("mode") ? this.data.get("mode") : fromJS({});
-        const newModeValue = modeData.has(newMode) ? (modeData.get(newMode) + 1) : 1;
-        // Add a check to not have a negative mode, but it should not happen.
-        const previousModeValue =  modeData.has(previousMode) ? (modeData.get(previousMode) - 1) : 0;
-        this.data = this.data.set("mode",
-            modeData.set(newMode, newModeValue).set(previousMode, previousModeValue)
-        );
-        this.willEmit("mode:change");
+    @action
+    clearHeader() {
+        this.cartridge = <div />;
+        this.barLeft = <div />;
+        this.summary = <div />;
+        this.actions = {primary: [], secondary: []};
+    }
+
+    @action
+    setHeader({cartridge, summary, actions, barLeft, canDeploy, barRight}: ApplicationAction, isPartial?: boolean) {
+        if (!isPartial) {
+            this.cartridge = cartridge || <div />;
+            this.summary = summary || <div />;
+            this.actions.primary = actions && actions.primary || [];
+            this.actions.secondary = actions && actions.secondary || [];
+            this.barLeft = barLeft || <div />;
+            this.canDeploy = canDeploy === undefined ? true : canDeploy;
+        } else {
+            if (cartridge) {
+                this.cartridge = cartridge;
+            }
+            if (summary) {
+                this.summary = summary;
+            }
+            if (actions) {
+                this.actions.primary = actions && actions.primary || [];
+                this.actions.secondary = actions && actions.secondary || [];
+            }
+            if (barLeft) {
+                this.barLeft = barLeft;
+            }
+            if (canDeploy) {
+                this.canDeploy = canDeploy;
+            }
+        }
+
+        if (barRight) {
+            this.barRight = barRight;
+        }
     }
 }
+
+/** Instance principale de l'ApplicationStore. */
+export const applicationStore = new ApplicationStore();

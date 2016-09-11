@@ -1,48 +1,42 @@
 import fetch from "isomorphic-fetch";
 import {v4} from "node-uuid";
 
-import dispatcher from "dispatcher";
-
 import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
-import {Request} from "./store";
+import {requestStore} from "./store";
 
 type DataType = "json" | "string";
-
-function updateRequestStatus(request: Request) {
-    if (request.id) {
-        dispatcher.handleViewAction({
-            data: {request},
-            type: "update"
-        });
-    }
-    return request;
-}
 
 async function coreFetch<RS>(url: string, method: string, responseType: DataType, data?: any, contentType?: DataType): Promise<any> {
     const body = data ? JSON.stringify(data) : undefined;
     const headers = contentType ? {"Content-Type": contentType === "json" ? "application/json" : "text/plain"} : undefined;
     const id = v4();
-    updateRequestStatus({id, status: "pending"});
+    requestStore.updateRequest({id, url, status: "pending"});
     try {
         const response = await fetch(url, {method, body, headers, credentials: "include"});
         if (response.status >= 200 && response.status < 300) {
-            updateRequestStatus({id, status: "success"});
+            requestStore.updateRequest({id, url, status: "success"});
             if (responseType === "json") {
                 return await response.json<RS>();
             } else {
                 return await response.text();
             }
         } else {
-            updateRequestStatus({id, status: "error"});
+            requestStore.updateRequest({id, url, status: "error"});
             console.error(`${response.status} error when calling ${url}`);
             return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
         }
     } catch (e) {
-        updateRequestStatus({id, status: "error"});
+        requestStore.updateRequest({id, url, status: "error"});
         const error = `"${e.message}" error when calling ${url}`;
         console.error(error);
         return Promise.reject<string>(error);
     }
+}
+
+export async function httpDelete(url: string, responseType: "string"): Promise<string>;
+export async function httpDelete<RS>(url: string, responseType?: "json"): Promise<RS>;
+export async function httpDelete<RS>(url: string, responseType: DataType = "json") {
+    return coreFetch(url, "DELETE", responseType);
 }
 
 export async function httpGet(url: string, responseType: "string"): Promise<string>;
@@ -65,10 +59,4 @@ export async function httpPut<RS>(url: string, data: string, responseType: "json
 export async function httpPut<RQ, RS>(url: string, data: RQ, responseType?: "json", contentType?: "json"): Promise<RS>;
 export async function httpPut<RQ, RS>(url: string, data: RQ, responseType: DataType = "json", contentType: DataType = "json") {
     return coreFetch(url, "PUT", responseType, data, contentType);
-}
-
-export async function httpDelete(url: string, responseType: "string"): Promise<string>;
-export async function httpDelete<RS>(url: string, responseType?: "json"): Promise<RS>;
-export async function httpDelete<RS>(url: string, responseType: DataType = "json") {
-    return coreFetch(url, "DELETE", responseType);
 }

@@ -1,8 +1,7 @@
-import {EventEmitter} from "events";
-import {Map} from "immutable";
+import {autobind} from "core-decorators";
+import {isString} from "lodash";
+import {observable, action} from "mobx";
 import {v4} from "node-uuid";
-
-import dispatcher from "dispatcher";
 
 export interface Message {
     id?: string;
@@ -10,68 +9,50 @@ export interface Message {
     type?: string;
 }
 
-export default class MessageStore extends EventEmitter {
+@autobind
+export class MessageStore {
 
-    private dispatch: string;
-    private data = Map<string, Message>({});
+    @observable data: {[id: string]: Message};
+    @observable latestMessage: Message;
 
-    getMessage(messageId: string) {
-        if (!this.data.has(messageId)) {
-            return undefined;
-        }
-        return this.data.get(messageId);
-    }
-
-    deleteMessage(messageId: string) {
-        if (this.data.has(messageId)) {
-            this.data = this.data.delete(messageId);
-        }
-    }
-
-    pushMessage(message: Message) {
+    @action
+    addMessage(message: string | Message) {
         const id = v4();
-        this.data = this.data.set(id, Object.assign({id}, message));
-        this.emit("push", id);
+        this.data[id] = parseString(message);
+        this.latestMessage = this.data[id];
     }
 
-    clearMessages() {
-        this.data = this.data.clear();
-        this.emit("clear");
+    addWarningMessage(message: string | Message) {
+        message = parseString(message);
+        message.type = "warning";
+        this.addMessage(message);
     }
 
-    addPushedMessageListener(cb: Function) {
-        this.addListener("push", cb);
+    addInformationMessage(message: string | Message) {
+        message = parseString(message);
+        message.type = "info";
+        this.addMessage(message);
     }
 
-    removePushedMessageListener(cb: Function) {
-        this.removeListener("push", cb);
+    addErrorMessage(message: string | Message) {
+        message = parseString(message);
+        message.type = "error";
+        this.addMessage(message);
     }
 
-    addClearMessagesListener(cb: Function) {
-        this.addListener("clear", cb);
-    }
-
-    removeClearMessagesListener(cb: Function) {
-        this.removeListener("clear", cb);
-    }
-
-    registerDispatcher() {
-        this.dispatch = dispatcher.register(transferInfo => {
-            const {data, type} = transferInfo.action;
-            if (data) {
-                switch (type) {
-                    case "push":
-                        if (data["message"]) {
-                            this.pushMessage(data["message"]);
-                        }
-                        break;
-                    case "clear":
-                        if (data["messages"]) {
-                            this.clearMessages();
-                        }
-                        break;
-                }
-            }
-        });
+    addSuccessMessage(message: string | Message) {
+        message = parseString(message);
+        message.type = "success";
+        this.addMessage(message);
     }
 }
+
+function parseString(message: string | Message) {
+    if (isString(message)) {
+        message = {content: message};
+    }
+    return message;
+}
+
+/** Instance principale du MessageStore. */
+export const messageStore = new MessageStore();

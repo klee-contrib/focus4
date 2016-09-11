@@ -1,9 +1,9 @@
+import {t as translate} from "i18next";
 import {isArray} from "lodash";
 
-import {addMessage} from "message";
-import {translate} from "translation";
+import {messageStore} from "../message";
 
-export type FieldErrors = {[key: string]: string[] | {[key: string]: string[]}};
+export type FieldErrors = {[key: string]: string};
 
 export interface ErrorResponse {
     [key: string]: string[] | string | number | FieldErrors | undefined;
@@ -48,7 +48,7 @@ const errorTypes = {
 
 function dispatchMessages(messages: string[], type: ErrorType) {
     messages.forEach(message =>
-        addMessage({
+        messageStore.addMessage({
             type,
             content: translate(message)
         })
