@@ -12,13 +12,14 @@ export interface Message {
 @autobind
 export class MessageStore {
 
-    @observable
-    data: {[id: string]: Message};
+    @observable data: {[id: string]: Message};
+    @observable latestMessage: Message;
 
     @action
     addMessage(message: string | Message) {
         const id = v4();
         this.data[id] = parseString(message);
+        this.latestMessage = this.data[id];
     }
 
     addWarningMessage(message: string | Message) {

@@ -1,7 +1,32 @@
 # Référence d'API
+## [Module `application`](application)
 
-## Module `entity`
-[Par ici](entity)
+## Module `defaults`
+`autofocus` est une réécriture de `focus-core` et *partielle* de `focus-components` (pré-V3), parce qu'il y a un grand nombre de composants dont une réécriture n'aurait que peu d'intérêt. Néanmoins, des composants comme un simple Bouton sont indispensables pour une grande parties des composants proposés par `autofocus`, donc on a besoin d'un mécanisme pour les importer, ce que propose ce module. On ne prend pas `focus-components` comme dépendance parce que c'est une dépendance beaucoup trop importante alors qu'on n'en veut qu'un petit peu. En revanche, la future v3 sera beaucoup plus légère et enlèvera tout ce dont on avait pas besoin, donc à ce moment-là on prendra la dépendance. (D'ailleurs, en ce moment, `autofocus` ne fournit aucun CSS et suppose que vous avez le `focus-components` en entier avec.)
+
+### `setDefaultComponents(config)`
+La fonction prend un objet comportant tous les composants nécessaires (à priori issus de `focus-components`, mais pas nécéessairement). Aujourd'hui, on attend:
+- ActionBar
+- Button
+- ButtonBackToTop
+- Checkbox
+- ContextualActions
+- Dropdown
+- Field
+- Icon
+- InputText
+- Scope
+- TopicDisplayer
+Cette liste est amenée à évoluer au fil des versions.
+
+## [Module `entity`](entity)
+
+## Module `history`
+C'est exactement le même que `focus-core`.
+
+## [Module `list`](list)
+## [Module `message`](message)
+## [Module `network`](network)
 
 ## Module `reference`
 ### `ReferenceStore`
@@ -44,3 +69,12 @@ Les fois suivantes (dans la mesure que les listes sont toujours en cache), il n'
 Et voilà, ça marche tout seul.
 
 (Note: Du coup, tout ce qui avait attrait au fonctionnement des références dans `focus-components` est obsolète (car inutile). `selectFor` prend simplement la liste de référence en paramètre à la place de son nom.)
+
+## [Module `search`](search)
+## [Module `testing`](testing)
+
+## Module `user`
+Le store d'utilisateur est le même que `focus-core`, à la différence près que la fonction `hasRole` est située sur l'instance du `UserStore` (ce qui est plus logique).
+
+## Module `validation`
+Euh, je crois que celui-là est utilisé par les composants d'input de `focus-components`. Donc en pratique là maintenant c'est inutile. Mais dans une version future, ça changera.

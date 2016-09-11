@@ -5,6 +5,8 @@ export type ReactComponent<P> = ComponentClass<P> | SFC<P>;
 export let Field: ReactComponent<any> | undefined;
 export let InputText: ReactComponent<any> | undefined;
 export let Button: ReactComponent<any> | undefined;
+export let Icon: ReactComponent<any> | undefined;
+export let Dropdown: ReactComponent<any> | undefined;
 export let ContextualActions: ReactComponent<any> | undefined;
 export let Scope: ReactComponent<any> | undefined;
 export let Checkbox: ReactComponent<any> | undefined;
@@ -17,7 +19,9 @@ export interface Defaults {
     Field: ReactComponent<any>;
     InputText: ReactComponent<any>;
     Button: ReactComponent<any>;
+    Icon: ReactComponent<any>;
     ContextualActions: ReactComponent<any>;
+    Dropdown: ReactComponent<any>;
     Scope: ReactComponent<any>;
     Checkbox: ReactComponent<any>;
     ActionBar: ReactComponent<any>;
@@ -33,6 +37,8 @@ export function setDefaultComponents(c: Defaults) {
     Field = c.Field;
     InputText = c.InputText;
     Button = c.Button;
+    Icon = c.Icon;
+    Dropdown = c.Dropdown;
     ContextualActions = c.ContextualActions;
     Scope = c.Scope;
     Checkbox = c.Checkbox;

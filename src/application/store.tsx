@@ -9,17 +9,17 @@ export interface ApplicationAction {
     barRight?: React.ReactElement<any>;
     cartridge?: React.ReactElement<any>;
     actions?: {
-        primary?: {icon: string, action: () => void}[];
-        secondary?: {label: string, action: () => void}[];
+        primary?: {className?: string, icon: string, iconLibrary?: "", label?: string, action: () => void}[];
+        secondary?: {className?: string, label: string, action: () => void}[];
     };
     canDeploy?: boolean;
 }
 
 export class ApplicationStore implements ApplicationAction {
     @observable actions: {
-        primary?: {icon: string, action: () => void}[],
-        secondary?: {label: string, action: () => void}[],
-    } = {};
+        primary: {className?: string, icon: string, iconLibrary?: "", label?: string, action: () => void}[],
+        secondary: {className?: string, label: string, action: () => void}[],
+    } = {primary: [], secondary: []};
     @observable canDeploy = true;
     @observable mode: {[mode: string]: number} = {};
     @observable route: string;
@@ -48,7 +48,8 @@ export class ApplicationStore implements ApplicationAction {
         if (!isPartial) {
             this.cartridge = cartridge || <div />;
             this.summary = summary || <div />;
-            this.actions = actions || {primary: [], secondary: []};
+            this.actions.primary = actions && actions.primary || [];
+            this.actions.secondary = actions && actions.secondary || [];
             this.barLeft = barLeft || <div />;
             this.canDeploy = canDeploy === undefined ? true : canDeploy;
         } else {
@@ -59,7 +60,8 @@ export class ApplicationStore implements ApplicationAction {
                 this.summary = summary;
             }
             if (actions) {
-                this.actions = actions;
+                this.actions.primary = actions && actions.primary || [];
+                this.actions.secondary = actions && actions.secondary || [];
             }
             if (barLeft) {
                 this.barLeft = barLeft;

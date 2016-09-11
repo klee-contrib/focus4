@@ -83,7 +83,7 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
             return;
         }
 
-        if (isClass(node) && (node.flags & ts.NodeFlags.Export) && (!node.modifiers || !node.modifiers.find(m => m.kind === ts.SyntaxKind.AbstractKeyword))) {
+        if (isClass(node) && node.modifiers && node.modifiers.find(m => m.kind === ts.SyntaxKind.ExportKeyword) && !node.modifiers.find(m => m.kind === ts.SyntaxKind.AbstractKeyword)) {
             const type = checker.getTypeAtLocation(node);
             if (type && type.getProperties().filter(prop => prop.name === "render").length) {
                 const {heritageClauses} = node;
@@ -96,9 +96,8 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
                         }
                     }
                 }
-
             }
-        } else if (isFunction(node) && (node.flags & ts.NodeFlags.Export) && node.parameters.length === 1) {
+        } else if (isFunction(node) && node.modifiers && node.modifiers.find(m => m.kind === ts.SyntaxKind.ExportKeyword) && node.parameters.length <= 1) {
             const type = checker.getTypeAtLocation(node);
             const callSignature = type.getCallSignatures()[0];
             const returnType = callSignature.getReturnType();
@@ -163,8 +162,8 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
             }}}`;
         }
 
-        if (type.flags & ts.TypeFlags.Class) {
-            return `${name}={dumClass.${typeName}}`;
+        if (type.flags & ts.TypeFlags.Class || type.flags & ts.TypeFlags.Reference) {
+            return `${name}={dumClass.${typeName.replace(/<(.+)>/, "")}}`;
         }
 
         return `${name}={dum.any}`;

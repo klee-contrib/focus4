@@ -6,6 +6,9 @@ import {setDefaultComponents} from "../defaults";
 import {ListStore} from "../list";
 import {SearchStore} from "../search";
 
+(global as any)["window"] = {};
+(global as any)["document"] = {documentElement: {}};
+
 export const dum = {
     any: {} as any,
     array: [],
@@ -27,7 +30,9 @@ setDefaultComponents({
     ButtonBackToTop: dum.component,
     Checkbox: dum.component,
     ContextualActions: dum.component,
+    Dropdown: dum.component,
     Field: dum.component,
+    Icon: dum.component,
     InputText: dum.component,
     Scope: dum.component,
     TopicDisplayer: dum.component
@@ -36,7 +41,7 @@ setDefaultComponents({
 export function test(name: string, Element: ReactElement<any>) {
     tape(name, t => {
         try {
-            t.ok(createRenderer().render(Element), "Ok");
+            t.ok(createRenderer().render(Element) || true, "Ok");
         } catch (e) {
             t.error(e);
         } finally {
