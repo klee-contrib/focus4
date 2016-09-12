@@ -5,6 +5,7 @@ export {autobind} from "core-decorators";
 export {t as translate} from "i18next";
 export {observable, action} from "mobx";
 export {observer} from "mobx-react";
+import * as React from "react"; export {React};
 
 export {applicationStore} from "./application";
 export {AutoForm, displayFor, fieldFor, listFor, makeEntityStore, selectFor} from "./entity";
