@@ -181,10 +181,11 @@ export class Results extends React.Component<ResultsProps, {}> {
         if (scopeFacet.length === 0) {
             scopeFacet = store.facets.filter(facet => facet.code === scopeFacetKey);
         }
-        return scopeFacet[0].values.map(facetData => {
-            const {label, count} = facetData;
-            return {label, count};
-        });
+        return scopeFacet[0].values.reduce((result, facetData) => {
+            const {code, label, count} = facetData;
+            result[code] = {label, count};
+            return result;
+        }, {} as {[group: string]: {label: string, count: number}});
     }
 
     render() {
@@ -231,17 +232,15 @@ export class Results extends React.Component<ResultsProps, {}> {
             const groupCounts = this.getGroupCounts();
             return (
                 <div data-focus="search-results">
-                {
-                    groupCounts ?
-                        resultsMap.map(resultGroup  => {
-                            const key = Object.keys(resultGroup)[0]; // group property name
-                            const list = resultGroup[key];
-                            const label = groupCounts[0] && groupCounts[0].label;
-                            const count = groupCounts[0] && groupCounts[0].count;
-                            return this.renderSingleGroup(list, key, label, count);
-                        })
-                    : null}
-                }
+                {groupCounts ?
+                    resultsMap.map(resultGroup  => {
+                        const key = Object.keys(resultGroup)[0]; // group property name
+                        const list = resultGroup[key];
+                        const label = groupCounts[key] && groupCounts[key].label;
+                        const count = groupCounts[key] && groupCounts[key].count;
+                        return this.renderSingleGroup(list, key, label, count);
+                    })
+                : null}
                 </div>
             );
         }
