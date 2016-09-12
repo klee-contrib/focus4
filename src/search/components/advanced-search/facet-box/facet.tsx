@@ -1,7 +1,8 @@
 import {autobind} from "core-decorators";
-import {t as translate} from "i18next";
 import {uniqueId} from "lodash";
 import * as React from "react";
+
+import {translate} from "../../../../translation";
 
 import {FacetData, FacetValue} from "./facet-data";
 

@@ -22,7 +22,7 @@ export function Layout({
     OtherRootComponent
 }: {
     AppHeader?: ReactComponent<any>,
-    children: React.ReactChildren
+    children?: React.ReactChildren
     ErrorCenter?: ReactComponent<any> | undefined,
     Footer?: ReactComponent<any>,
     LoadingBar?: ReactComponent<any>,

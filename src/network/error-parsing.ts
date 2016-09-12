@@ -1,7 +1,7 @@
-import {t as translate} from "i18next";
 import {isArray} from "lodash";
 
 import {messageStore} from "../message";
+import {translate} from "../translation";
 
 export type FieldErrors = {[key: string]: string};
 

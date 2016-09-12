@@ -16,17 +16,17 @@ export let ButtonBackToTop: ReactComponent<any> | undefined;
 
 /** Interface de tous les composants à définir. */
 export interface Defaults {
-    Field: ReactComponent<any>;
-    InputText: ReactComponent<any>;
-    Button: ReactComponent<any>;
-    Icon: ReactComponent<any>;
-    ContextualActions: ReactComponent<any>;
-    Dropdown: ReactComponent<any>;
-    Scope: ReactComponent<any>;
-    Checkbox: ReactComponent<any>;
-    ActionBar: ReactComponent<any>;
-    TopicDisplayer: ReactComponent<any>;
-    ButtonBackToTop: ReactComponent<any>;
+    Field?: ReactComponent<any>;
+    InputText?: ReactComponent<any>;
+    Button?: ReactComponent<any>;
+    Icon?: ReactComponent<any>;
+    ContextualActions?: ReactComponent<any>;
+    Dropdown?: ReactComponent<any>;
+    Scope?: ReactComponent<any>;
+    Checkbox?: ReactComponent<any>;
+    ActionBar?: ReactComponent<any>;
+    TopicDisplayer?: ReactComponent<any>;
+    ButtonBackToTop?: ReactComponent<any>;
 }
 
 /**

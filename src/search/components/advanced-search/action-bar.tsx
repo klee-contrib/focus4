@@ -1,10 +1,10 @@
 import {autobind} from "core-decorators";
-import {t as translate} from "i18next";
 import {reduce, omit} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import * as defaults from "../../../defaults";
+import {translate} from "../../../translation";
 
 import {SearchStore} from "../../store";
 import {InputFacet} from "../../types";

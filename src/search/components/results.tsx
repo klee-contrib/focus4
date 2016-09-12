@@ -1,11 +1,11 @@
 import {autobind} from "core-decorators";
 import {omit, isArray} from "lodash";
-import {t as translate} from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ReactComponent} from "../../defaults";
 import {ListSelection, OperationListItem} from "../../list";
+import {translate} from "../../translation";
 
 import {Results as ResultsType} from "../types";
 import {SearchStore} from "../store";

@@ -1,9 +1,9 @@
 import {autobind} from "core-decorators";
-import {t as translate} from "i18next";
 import {omit} from "lodash";
 import * as React from "react";
 
 import * as defaults from "../../defaults";
+import {translate} from "../../translation";
 
 import {LineProps, OperationListItem} from "./lines";
 import {ListBase, ListBaseProps} from "./list-base";

@@ -1,8 +1,9 @@
 import {autobind} from "core-decorators";
-import {t as translate} from "i18next";
 import {observable, reaction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+
+import {translate} from "../translation";
 
 import {messageStore, Message} from "./store";
 

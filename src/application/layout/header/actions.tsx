@@ -24,7 +24,7 @@ export const HeaderActions = observer(() => {
                         icon={icon}
                         iconLibrary={iconLibrary}
                         label={label}
-                        hape="fab"
+                        shape="fab"
                         type="button"
                     />
                 );

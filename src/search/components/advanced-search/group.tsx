@@ -1,7 +1,7 @@
-import {t as translate} from "i18next";
 import * as React from "react";
 
 import * as defaults from "../../../defaults";
+import {translate} from "../../../translation";
 
 export interface Props {
     canShowMore: boolean;
