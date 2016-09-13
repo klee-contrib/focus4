@@ -20,7 +20,7 @@ export interface Domain {
 
 export interface Field {
     type: "field";
-    domain: Domain;
+    domain?: Domain;
     entityName?: string;
     isRequired: boolean;
     name: string;
