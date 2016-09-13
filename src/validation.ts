@@ -168,7 +168,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
  * @param property La propriété à valider.
  * @param validators Les validateurs.
  */
-export function validate(property: ValidationProperty, validators?: Validator[]) {
+export default function validate(property: ValidationProperty, validators?: Validator[]) {
     let errors: string[] = [];
     if (validators) {
         for (const validator of validators) {

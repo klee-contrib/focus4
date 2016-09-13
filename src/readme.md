@@ -80,4 +80,4 @@ C'est exactement le même que `focus-core`.
 Le store d'utilisateur est le même que `focus-core`, à la différence près que la fonction `hasRole` est située sur l'instance du `UserStore` (ce qui est plus logique).
 
 ## Module `validation`
-Euh, je crois que celui-là est utilisé par les composants d'input de `focus-components`. Donc en pratique là maintenant c'est inutile. Mais dans une version future, ça changera.
+Idem `focus-core/definition/validation/valide` (à peu près). Il faut faire un alias dessus pour utiliser le `Field` de `focus-components`.
