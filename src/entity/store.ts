@@ -88,7 +88,7 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
             throw new Error(`L'entité "${trueEntry}" dépend de l'entité "${v.entityName}" qui n'a pas été trouvée dans la liste.`);
         }
         return {
-            $entity: entityMap[trueEntry].fields[key!],
+            $entity: asReference(entityMap[trueEntry].fields[key!]),
             value: v.entityName ? buildEntityEntry({[v.entityName]: [v.type === "list" ? [] : {}, v.entityName!]}, entityMap, v.entityName!) : undefined,
         };
     }) as any;
