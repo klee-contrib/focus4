@@ -1,5 +1,5 @@
 import {isArray, isObject, isUndefined, mapValues, omitBy} from "lodash";
-import {asReference, isObservableArray, observable, IObservableArray} from "mobx";
+import {asReference, isObservableArray, observable, IObservableArray, action, isAction} from "mobx";
 
 import {Entity, EntityField, EntityList} from "./types";
 
@@ -16,7 +16,7 @@ function isEntityArray(data: StoreTypes): data is EntityArray<any> {
     return isObservableArray(data);
 }
 function isEntityStoreData(data: StoreTypes): data is EntityStoreData {
-    return !isObservableArray(data) && isObject(data);
+    return !isObservableArray(data) && isObject(data) && !isAction(data);
 }
 
 export type EntityValue<T> = EntityField<T> | EntityList<T>;
@@ -55,7 +55,7 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
         entityStore[entry] = buildEntityEntry(config, entityMap, entry);
     }
 
-    entityStore.set = (setConfig: {[key: string]: any}) => {
+    entityStore.set = action((setConfig: {[key: string]: any}) => {
         for (const entry in setConfig) {
             const entity = entityStore[entry];
             if (!entity) {
@@ -63,7 +63,7 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
             }
             setEntityEntry(entity, setConfig[entry], entry);
         }
-    };
+    });
 
     entityStore.clear = asReference(() => {
         for (const entry in entityStore) {
@@ -79,7 +79,7 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
     if (isArray(entity) && isArray(entity[0])) {
         const output: EntityArray<EntityStoreData> = observable([]) as any;
         output.$entity = entityMap[entity[1]];
-        output.set = (values: {}[]) => setEntityEntry(output, values, entity[1]);
+        output.set = action((values: {}[]) => setEntityEntry(output, values, entity[1]));
         return output;
     }
 
@@ -93,8 +93,8 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
             value: v.entityName ? buildEntityEntry({[v.entityName]: [v.type === "list" ? [] : {}, v.entityName!]}, entityMap, v.entityName!) : undefined,
         };
     }) as any;
-    output.set = (entityValue: any) => setEntityEntry(output, entityValue, trueEntry);
-    output.clear = asReference(() => clearEntity(output));
+    output.set = action((entityValue: any) => setEntityEntry(output, entityValue, trueEntry));
+    output.clear = asReference(action(() => clearEntity(output)));
     return output;
 }
 
@@ -127,7 +127,7 @@ function clearEntity(entity: EntityStoreEntry) {
                 clearEntity(value);
             } else if (isEntityArray(value)) {
                 value.replace([]);
-            } else {
+            } else if (value !== undefined) {
                 entity[entry].value = undefined;
             }
         }
