@@ -3,10 +3,10 @@ import {ReactType} from "react";
 import {Validator} from "../validation";
 
 export interface Domain {
-    formatter?: (value: any) => string;
-    unformatter?: (text: string) => any;
+    formatter?: (value: any, options?: {isEdit: boolean}) => string;
+    unformatter?: (text: string, options?: {isEdit: boolean}) => any;
     locale?: string;
-    format?: string;
+    format?: string[];
     type: string | undefined;
     validator?: Validator[];
     FieldComponent?: ReactType;
