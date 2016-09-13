@@ -12,4 +12,4 @@ export {
     textFor
 } from "./field-helpers";
 export {makeEntityStore, toFlatValues, EntityStoreData, EntityArray} from "./store";
-export {Domain, Entity, Field, List, EntityField, EntityValue} from "./types";
+export {Domain, Entity, Field, List, EntityField, EntityList} from "./types";

@@ -34,7 +34,7 @@ test("FacetData", <FacetData data={{code: dum.string, label: dum.string, count: 
 test("GroupComponent", <GroupComponent canShowMore={true} count={dum.number} groupKey={dum.string} groupLabel={dum.string} showMoreHandler={dum.function} />);
 test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.component} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
 test("HeaderScrolling", <HeaderScrolling  />);
-test("Layout", <Layout children={{map: dum.function, forEach: dum.function, count: dum.function, only: dum.function, toArray: dum.function}} />);
+test("Layout", <Layout  />);
 test("ListPage", <ListPage store={dumClass.ListStore} />);
 test("ListSelection", <ListSelection LineComponent={dum.component} />);
 test("ListSummary", <ListSummary scopeLock={true} scopes={dum.array} store={dumClass.SearchStore} />);

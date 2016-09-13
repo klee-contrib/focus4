@@ -1,7 +1,7 @@
 import {isArray, isObject, isUndefined, mapValues, omitBy} from "lodash";
 import {asReference, isObservableArray, observable, IObservableArray} from "mobx";
 
-import {Entity, EntityValue} from "./types";
+import {Entity, EntityField, EntityList} from "./types";
 
 export interface Setter {
     set: (config: {}) => void;
@@ -19,6 +19,7 @@ function isEntityStoreData(data: StoreTypes): data is EntityStoreData {
     return !isObservableArray(data) && isObject(data);
 }
 
+export type EntityValue<T> = EntityField<T> | EntityList<T>;
 export type StoreTypes = undefined | null | number | boolean | string | EntityStoreEntry;
 
 export type EntityStoreData = {[key: string]: EntityStoreValue} & Setter & Clearer;

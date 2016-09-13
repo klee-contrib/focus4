@@ -1,4 +1,4 @@
-import {EntityValue} from "../types";
+import {EntityField} from "../types";
 
 export interface Structure {
     id?: number;
@@ -7,9 +7,9 @@ export interface Structure {
 }
 
 export interface StructureData {
-    id: EntityValue<number>;
-    nom: EntityValue<string>;
-    siret: EntityValue<string>;
+    id: EntityField<number>;
+    nom: EntityField<string>;
+    siret: EntityField<string>;
     set: (structure: Structure) => void;
     clear: () => void;
 }

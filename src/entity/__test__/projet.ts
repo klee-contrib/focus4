@@ -1,4 +1,4 @@
-import {EntityValue, EntityArray} from "../";
+import {EntityField, EntityList, EntityArray} from "../";
 import {Ligne, LigneData} from "./ligne";
 
 export interface Projet {
@@ -7,8 +7,8 @@ export interface Projet {
 }
 
 export interface ProjetData {
-    id: EntityValue<number>;
-    ligneList: EntityValue<EntityArray<LigneData>>;
+    id: EntityField<number>;
+    ligneList: EntityList<EntityArray<LigneData>>;
     set: (structure: Projet) => void;
     clear: () => void;
 }

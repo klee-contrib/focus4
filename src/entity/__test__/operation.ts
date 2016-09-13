@@ -1,4 +1,4 @@
-import {EntityValue} from "../";
+import {EntityField} from "../";
 import {Structure, StructureData} from "./structure";
 
 export interface Operation {
@@ -9,10 +9,10 @@ export interface Operation {
 }
 
 export interface OperationData {
-    id: EntityValue<number>;
-    numero: EntityValue<string>;
-    montant: EntityValue<string>;
-    structure: EntityValue<StructureData>;
+    id: EntityField<number>;
+    numero: EntityField<string>;
+    montant: EntityField<string>;
+    structure: EntityField<StructureData>;
     set: (structure: Operation) => void;
     clear: () => void;
 }

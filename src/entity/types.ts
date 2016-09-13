@@ -42,7 +42,7 @@ export interface EntityField<T> {
     value: T;
 }
 
-export interface EntityValue<T> {
-    $entity: Field | List;
+export interface EntityList<T> {
+    $entity: List;
     value: T;
 }
