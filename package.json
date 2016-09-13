@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-alpha7",
+  "version": "1.0.0-alpha8",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -34,6 +34,7 @@
     "lodash": "^4.15.0",
     "mobx": "^2.5.1",
     "mobx-react": "^3.5.5",
+    "mobx-utils": "1.0.1",
     "moment": "^2.14.1",
     "node-uuid": "^1.4.7",
     "react": "^15.3.1",

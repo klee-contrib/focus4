@@ -1,6 +1,7 @@
 import {autobind} from "core-decorators";
 import {isFunction, isEmpty} from "lodash";
 import {observable, action, runInAction} from "mobx";
+import {createViewModel, IViewModel} from "mobx-utils";
 import * as React from "react";
 
 import {applicationStore} from "../application";
@@ -60,23 +61,37 @@ export interface ServiceConfig {
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
 export abstract class AutoForm<P, E extends EntityStoreData> extends React.Component<P & AutoFormProps, {}> {
-    abstract entity: E;
-    abstract services: ServiceConfig;
+    private services: ServiceConfig;
+    private storeData: E;
+
+    entity: E & IViewModel<E>;
 
     @observable errors: FieldErrors = {};
-    @observable formState: E;
     @observable isEdit = this.props.isEdit || false;
     @observable isLoading = false;
 
+    /**
+     * Initialise le formulaire.
+     * @param props Les props du composant.
+     * @param storeData L'EntityStoreData de base du formulaire.
+     * @param services La config de services pour le formulaire ({delete?, load, save}).
+     * @param entity ViewModel (de mobx-utils) externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire.
+     */
+    constructor(props: P, storeData: E, services: ServiceConfig, entity?: E & IViewModel<E>) {
+        super(props);
+        this.storeData = storeData;
+        this.services = services;
+        this.entity = entity || createViewModel(storeData);
+    }
+
     @action
     async componentWillMount() {
-        this.formState = this.entity;
         let {hasLoad = true, id} = this.props;
         if (hasLoad && id) {
             this.isLoading = true;
             const data = await this.services.load(id);
             runInAction(() => {
-                this.entity.set(data);
+                this.storeData.set(data);
                 this.isLoading = false;
             });
         }
@@ -90,7 +105,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     onClickCancel() {
         this.errors = {};
         this.isEdit = false;
-        this.formState = this.entity;
+        this.entity.reset();
         applicationStore.changeMode("consult", "edit");
     }
 
@@ -102,11 +117,10 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     async onClickDelete() {
         if (this.services.delete) {
             this.isLoading = true;
-            await this.services.delete(toFlatValues(this.formState));
+            await this.services.delete(toFlatValues(this.entity));
             runInAction(() => {
                 this.isLoading = false;
-                this.entity = {} as E;
-                this.formState = {} as E;
+                this.storeData = {} as E;
             });
         }
     }
@@ -131,10 +145,10 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
         if (this.validate()) {
             this.isLoading = true;
             try {
-                const data = await this.services.save(toFlatValues(this.formState));
+                const data = await this.services.save(toFlatValues(this.entity));
                 runInAction(() => {
                     this.isLoading = false;
-                    this.entity.set(data);
+                    this.storeData.set(data);
                 });
             } catch (e) {
                 runInAction(() => this.errors = e.fields);
@@ -260,6 +274,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     autocompleteSelectFor<T, Props>(field: EntityField<T>, options: AutocompleteSelectOptions<Props> & Props) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
+        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
         return autocompleteSelectFor(field, options);
     }
 
@@ -271,7 +286,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
+        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
         return autocompleteTextFor(field, options);
     }
 
@@ -293,7 +308,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     ) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
+        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
         return fieldFor(field, options);
     }
 
@@ -306,7 +321,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.formState[field.$entity.name].value = value);
+        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
         return selectFor(field, values, options);
     }
 
