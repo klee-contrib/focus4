@@ -74,9 +74,9 @@ export class ListSelection extends ListBase<ListSelectionPropsBase<LineSelection
             const data = JSON.parse(key);
             return (
                 <LineComponent
-                    data={data.$entity ? data.value : data}
+                    data={data}
                     isSelected={this.items[key]}
-                    key={data.$entity ? data.value[idField] : data[idField] || idx}
+                    key={(data[idField].$entity ? data[idField].value : data[idField]) || idx}
                     onSelection={this.handleLineSelection}
                     operationList={operationList || []}
                     {...otherProps}

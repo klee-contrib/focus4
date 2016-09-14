@@ -60,12 +60,12 @@ export class ListTable extends ListBase<ListTablePropsBase<LineProps<{}>>, void>
         const {values, LineComponent, idField = "id", operationList} = this.props;
         return (
             <tbody>
-                {values && values.map((line, idx) => {
+                {values && values.map((data, idx) => {
                     const otherLineProps = omit(this.props, "data", "operationList");
                     return (
                         <LineComponent
-                            data={line["$entity"] ? line["value"] : line}
-                            key={line["$entity"] ? line["value"][idField] : line[idField] || idx}
+                            data={data}
+                            key={(data[idField].$entity ? data[idField].value : data[idField]) || idx}
                             operationList={operationList || []}
                             {...otherLineProps}
                         />
