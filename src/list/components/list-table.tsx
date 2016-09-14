@@ -64,8 +64,8 @@ export class ListTable extends ListBase<ListTablePropsBase<LineProps<{}>>, void>
                     const otherLineProps = omit(this.props, "data", "operationList");
                     return (
                         <LineComponent
-                            data={line}
-                            key={line[idField] || idx}
+                            data={line["$entity"] ? line["value"] : line}
+                            key={line["$entity"] ? line["value"][idField] : line[idField] || idx}
                             operationList={operationList || []}
                             {...otherLineProps}
                         />
