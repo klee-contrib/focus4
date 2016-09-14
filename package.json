@@ -11,8 +11,8 @@
   "license": "MIT",
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
-    "prepublish": "in-publish && sh scripts/pre-publish.sh || true",
-    "postpublish": "sh scripts/post-publish.sh",
+    "prepublish": "in-publish && tsc --outDir ./ || true",
+    "postpublish": "rm -f *.js *.d.ts && rm -rf application entity list message network search testing",
     "start": "tsc",
     "test": "ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
     "testgen": "ts-node src/testing/generator.ts src ..",
