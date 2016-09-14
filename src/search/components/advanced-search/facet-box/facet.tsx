@@ -1,5 +1,7 @@
 import {autobind} from "core-decorators";
 import {uniqueId} from "lodash";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {translate} from "../../../../translation";
@@ -16,15 +18,12 @@ export interface FacetProps {
     selectHandler: (facetKey: string, dataKey: string | undefined, data: FacetValue | undefined) => void;
 }
 
-export interface FacetState {
-    isExpanded?: boolean;
-    isShowAll?: boolean;
-}
-
 @autobind
-export class Facet extends React.Component<FacetProps, FacetState> {
+@observer
+export class Facet extends React.Component<FacetProps, void> {
 
-    state = {isShowAll: false};
+    @observable private isExpanded: boolean;
+    @observable private isShowAll = false;
 
     private facetDataSelectionHandler(dataKey: string, data: FacetValue) {
         this.props.expandHandler(this.props.facetKey, false);
@@ -36,14 +35,12 @@ export class Facet extends React.Component<FacetProps, FacetState> {
         if (this.props.selectedDataKey) {
             this.props.selectHandler(this.props.facetKey, undefined, undefined);
         }
-        this.setState({
-            isExpanded: !this.props.isExpanded,
-            isShowAll: false
-        });
+        this.isExpanded = !this.props.isExpanded;
+        this.isShowAll = false;
     }
 
     private showAllHandler() {
-        this.setState({isShowAll: !this.state.isShowAll});
+        this.isShowAll = !this.isShowAll;
     }
 
     private renderFacetTitle() {
@@ -62,7 +59,7 @@ export class Facet extends React.Component<FacetProps, FacetState> {
     }
 
     private renderShowAllDataList() {
-        if (!this.state.isShowAll && this.props.facet.values.length > this.props.nbDefaultDataList) {
+        if (!this.isShowAll && this.props.facet.values.length > this.props.nbDefaultDataList) {
             return (
                 <a href="javascript:void(0);" data-focus="facet-show-all" onClick={this.showAllHandler}>
                     {translate("show.all")}
@@ -78,7 +75,7 @@ export class Facet extends React.Component<FacetProps, FacetState> {
             return null;
         }
 
-        const facetValues = this.state.isShowAll ? this.props.facet.values : this.props.facet.values.slice(0, this.props.nbDefaultDataList);
+        const facetValues = this.isShowAll ? this.props.facet.values : this.props.facet.values.slice(0, this.props.nbDefaultDataList);
         return (
             <div data-focus="facet-data-list">
                 <ul>

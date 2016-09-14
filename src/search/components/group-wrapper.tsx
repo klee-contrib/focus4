@@ -1,5 +1,7 @@
 import {autobind} from "core-decorators";
 import {clone} from "lodash";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ReactComponent} from "../../defaults";
@@ -27,35 +29,28 @@ export interface Props {
     renderResultsList: (list: any[], groupKey: string, count: number, isUnique: boolean) => React.ReactElement<any>;
 }
 
-export interface State {
-    resultsDisplayedCount: number;
-}
-
 @autobind
-export class GroupWrapper extends React.Component<Props, State> {
+@observer
+export class GroupWrapper extends React.Component<Props, void> {
     static defaultProps = {
         isUnique: false
     };
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {resultsDisplayedCount: this.props.initialRowsCount || 3};
-    }
+    @observable
+    private resultsDisplayedCount = this.props.initialRowsCount || 3;
 
     private showMoreHandler() {
-        this.setState({
-            resultsDisplayedCount: this.state.resultsDisplayedCount + 3 <= this.props.list.length ? this.state.resultsDisplayedCount + 3 : this.props.list.length
-        });
+        this.resultsDisplayedCount = this.resultsDisplayedCount + 3 <= this.props.list.length ? this.resultsDisplayedCount + 3 : this.props.list.length;
     }
 
     render() {
         const {groupComponent, isUnique, list, count, groupKey, groupLabel, showAllHandler, renderResultsList} = this.props;
         const listClone = clone(list);
-        const listToRender = isUnique ? listClone : listClone.splice(0, this.state.resultsDisplayedCount);
+        const listToRender = isUnique ? listClone : listClone.splice(0, this.resultsDisplayedCount);
         const Group = groupComponent as React.ComponentClass<GroupComponentProps>;
         return (
             <Group
-                canShowMore={list.length > this.state.resultsDisplayedCount}
+                canShowMore={list.length > this.resultsDisplayedCount}
                 count={count}
                 groupKey={groupKey}
                 groupLabel={groupLabel}

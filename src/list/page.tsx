@@ -13,7 +13,7 @@ export interface ListPageProps<T> {
 }
 
 @observer
-export class ListPage extends React.Component<ListPageProps<{}>, {}> {
+export class ListPage extends React.Component<ListPageProps<{}>, void> {
 
     componentWillMount() {
        this.props.store.load(false);

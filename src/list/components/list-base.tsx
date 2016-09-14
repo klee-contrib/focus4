@@ -24,7 +24,7 @@ function topOfElement(element: HTMLElement): number {
 };
 
 @autobind
-export abstract class ListBase<P extends ListBaseProps<LineProps<{}>>, S> extends Component<P, S> {
+export abstract class ListBase<P extends ListBaseProps<LineProps<{}>>, S> extends Component<P, void> {
     parentNode: Element | Window;
 
     componentWillUnmount() {

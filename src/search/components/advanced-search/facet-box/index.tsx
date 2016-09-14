@@ -18,7 +18,7 @@ export interface FacetBoxProps {
 
 @autobind
 @observer
-export class FacetBox extends React.Component<FacetBoxProps, {}> {
+export class FacetBox extends React.Component<FacetBoxProps, void> {
 
     @observable private isExpanded = true;
     @observable private openedFacetList = this.generateOpenedFacetList(this.props.openedFacetList, this.props.store.facets);

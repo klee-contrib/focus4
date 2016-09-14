@@ -1,5 +1,7 @@
 import {autobind} from "core-decorators";
 import {omit} from "lodash";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ReactComponent} from "../../defaults";
@@ -19,28 +21,16 @@ export interface MemoryListProps<ListProps extends BaseListProps> extends BaseLi
     perPage?: number;
 }
 
-export interface MemoryListState {
-    page?: number;
-    maxElements?: number;
-}
-
 @autobind
-export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, MemoryListState> {
+@observer
+export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, void> {
 
-    constructor(props: MemoryListProps<BaseListProps>) {
-        super(props);
-        this.state = {
-            page: 1,
-            maxElements: this.props.perPage || 5
-        };
-    }
+    @observable page = 1;
+    @observable maxElements = this.props.perPage || 5;
 
     fetchNextPage() {
-        let currentPage = this.state.page + 1;
-        this.setState({
-            page: currentPage,
-            maxElements: (this.props.perPage || 5) * currentPage
-        });
+        this.page = this.page + 1;
+        this.maxElements = (this.props.perPage || 5) * this.page;
     }
 
     getDataToUse() {
@@ -48,12 +38,12 @@ export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, 
         if (!values) {
             return [];
         }
-        return values.slice(0, this.state.maxElements);
+        return values.slice(0, this.maxElements);
     }
 
     render() {
         const {values = [], ListComponent} = this.props;
-        const hasMoreData = values.length > this.state.maxElements;
+        const hasMoreData = values.length > this.maxElements;
         const childProps = omit(this.props, "data");
         const LC = ListComponent as React.ComponentClass<BaseListProps>;
         return (

@@ -1,5 +1,7 @@
 import {autobind} from "core-decorators";
 import {omit} from "lodash";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import * as defaults from "../../defaults";
@@ -21,36 +23,26 @@ export interface ListSelectionPropsBase<P extends LineSelectionProps<{}>> extend
     selectionStatus?: "none" | "partial" | "selected";
 }
 
-export interface ListSelectionState {
-    items: {[key: string]: boolean};
-};
-
 export type ListSelectionProps<P extends LineSelectionProps<{}>> = ListSelectionPropsBase<P> & P;
 
 @autobind
-export class ListSelection extends ListBase<ListSelectionPropsBase<LineSelectionProps<{}>>, ListSelectionState> {
+@observer
+export class ListSelection extends ListBase<ListSelectionPropsBase<LineSelectionProps<{}>>, void> {
 
-    constructor(props: ListSelectionProps<{data: {}}>) {
-        super(props);
-        this.state = {items: this.getItems(props, true)};
+    @observable items = this.getItems(this.props as ListSelectionProps< {data: {}} >, true);
+
+    componentWillReceiveProps(props: ListSelectionProps<{}>) {
+        this.items = this.getItems(props, true);
     }
 
-    componentWillReceiveProps(props: ListSelectionProps<{data: {}}>) {
-        this.setState({items: this.getItems(props)});
-    }
-
-    shouldComponentUpdate({selectionStatus = "partial"}: ListSelectionProps<{data: {}}>, {items}: ListSelectionState) {
-        return items !== this.state.items || selectionStatus !== this.props.selectionStatus;
-    }
-
-    getItems({values, selectionStatus = "partial"}: ListSelectionProps<{data: {}}>, isInit?: boolean) {
+    getItems({values, selectionStatus = "partial"}: ListSelectionProps<{}>, isInit?: boolean) {
         const items: {[key: string]: boolean} = {};
         if (values) {
             values.forEach(item => {
                 if (isInit || selectionStatus !== "partial") {
                     items[JSON.stringify(item)] = selectionStatus === "selected";
                 } else {
-                    items[JSON.stringify(item)] = this.state.items[JSON.stringify(item)];
+                    items[JSON.stringify(item)] = this.items[JSON.stringify(item)];
                 }
             });
         }
@@ -58,10 +50,9 @@ export class ListSelection extends ListBase<ListSelectionPropsBase<LineSelection
     }
 
     getSelectedItems() {
-        const {items} = this.state;
         const selectedItems: {}[] = [];
-        Object.keys(items).forEach(item => {
-            if (items[item]) {
+        Object.keys(this.items).forEach(item => {
+            if (this.items[item]) {
                 selectedItems.push(JSON.parse(item));
             }
         });
@@ -69,27 +60,22 @@ export class ListSelection extends ListBase<ListSelectionPropsBase<LineSelection
     }
 
     private handleLineSelection(item: {}, isSelected: boolean, isInit?: boolean) {
-        const {items} = this.state;
-        items[JSON.stringify(item)] = isSelected;
-
-        this.setState({items}, () => {
-            if (this.props.onSelection && !isInit) {
-                this.props.onSelection(item, isSelected);
-            }
-        });
+        this.items[JSON.stringify(item)] = isSelected;
+        if (this.props.onSelection && !isInit) {
+            this.props.onSelection(item, isSelected);
+        }
     }
 
     private renderLines() {
         const {LineComponent, idField = "id", operationList} = this.props;
         const otherProps = omit(this.props, "data", "LineComponent", "idField", "selectionStatus", "onSelection", "operationList");
-        const {items} = this.state;
 
-        return Object.keys(items).map((key, idx) => {
+        return Object.keys(this.items).map((key, idx) => {
             const data = JSON.parse(key);
             return (
                 <LineComponent
                     data={data}
-                    isSelected={items[key]}
+                    isSelected={this.items[key]}
                     key={data[idField] || idx}
                     onSelection={this.handleLineSelection}
                     operationList={operationList || []}

@@ -41,7 +41,7 @@ export interface AdvancedSearchProps {
 
 @autobind
 @observer
-export class AdvancedSearch extends React.Component<AdvancedSearchProps, {}> {
+export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
 
     static defaultProps = {
         hasBackToTop: true,
@@ -164,14 +164,14 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, {}> {
     }
 
     private selectItem(data: any) {
-        this.setState({selectionStatus: "partial"});
+        this.selectionStatus = "partial";
         if (this.props.selectItem) {
             this.props.selectItem(data);
         }
     }
 
     private selectionAction(selectionStatus: "none" | "partial" | "selected") {
-        this.setState({selectionStatus});
+        this.selectionStatus = selectionStatus;
         if (this.props.selectionAction) {
             this.props.selectionAction(selectionStatus);
         }

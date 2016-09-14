@@ -44,7 +44,7 @@ export interface ResultsProps {
 
 @autobind
 @observer
-export class Results extends React.Component<ResultsProps, {}> {
+export class Results extends React.Component<ResultsProps, void> {
     static defaultProps = {
         emptyComponent: DefaultEmpty,
         initialRowsCount: 3,

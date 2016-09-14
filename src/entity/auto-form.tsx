@@ -60,7 +60,7 @@ export interface ServiceConfig {
 
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
-export abstract class AutoForm<P, E extends EntityStoreData> extends React.Component<P & AutoFormProps, {}> {
+export abstract class AutoForm<P, E extends EntityStoreData> extends React.Component<P & AutoFormProps, void> {
     private services: ServiceConfig;
     private storeData: E;
 

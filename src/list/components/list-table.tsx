@@ -29,7 +29,7 @@ export interface ListTablePropsBase<P extends LineProps<{}>> extends ListBasePro
 export type ListTableProps<P extends LineProps<{}>> = ListTablePropsBase<P> & P;
 
 @autobind
-export class ListTable extends ListBase<ListTablePropsBase<LineProps<{}>>, {}> {
+export class ListTable extends ListBase<ListTablePropsBase<LineProps<{}>>, void> {
 
     private renderTableHeader() {
         const columns = this.props.columns.map((colProperties, id) => {

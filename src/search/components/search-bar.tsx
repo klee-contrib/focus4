@@ -20,7 +20,7 @@ export interface Props {
 
 @autobind
 @observer
-export class SearchBar extends React.Component<Props, {}> {
+export class SearchBar extends React.Component<Props, void> {
 
     componentDidMount() {
         this.focusQuery();

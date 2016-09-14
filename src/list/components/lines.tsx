@@ -56,7 +56,7 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
     selectedInitializer = (data?: E) => false,
     selectionnableInitializer = (data?: E) => true
 ): (Component: defaults.ReactComponent<P>) => React.ComponentClass<P> {
-    return (Component: defaults.ReactComponent<P>) => class extends React.Component<P, {}> {
+    return (Component: defaults.ReactComponent<P>) => class extends React.Component<P, void> {
         private isSelectionnable: boolean;
 
         componentWillMount() {

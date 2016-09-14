@@ -15,7 +15,7 @@ export interface Props {
 
 @autobind
 @observer
-export class ListSummary extends React.Component<Props, {}> {
+export class ListSummary extends React.Component<Props, void> {
     static defaultProps = {
         totalCount: 0,
         query: ""
