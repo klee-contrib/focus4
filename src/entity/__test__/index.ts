@@ -21,8 +21,8 @@ function getStore() {
         operation: OperationData,
         projet: ProjetData,
         structureList: EntityArray<StructureData>,
-        set: (config: {}) => void,
-        clear: () => void;
+        set(config: {}): void,
+        clear(): void;
     };
 }
 

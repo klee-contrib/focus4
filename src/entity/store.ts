@@ -4,11 +4,11 @@ import {asReference, isObservableArray, observable, IObservableArray, action, is
 import {Entity, EntityField, EntityList} from "./types";
 
 export interface Setter {
-    set: (config: {}) => void;
+    set(config: {}): void;
 }
 
 export interface Clearer {
-    clear: () => void;
+    clear(): void;
 }
 
 export type EntityArray<T> = IObservableArray<T> & {$entity: Entity} & Setter;

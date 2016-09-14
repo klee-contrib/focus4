@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import {omit, isArray} from "lodash";
+import {omit, isArray, isEmpty} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -24,7 +24,6 @@ export interface ResultsProps {
     emptyComponent?: () => React.ReactElement<any>;
     groupComponent: GroupComponent;
     groupingKey?: string;
-    idField?: string;
     /** Default: 3 */
     initialRowsCount?: number;
     isSelection: boolean;
@@ -107,7 +106,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderResultsList(list: any[], key: string, count: number, isUnique: boolean) {
-        const {lineComponentMapper, idField, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
+        const {lineComponentMapper, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
         const {scope, isLoading} = store;
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
@@ -119,7 +118,6 @@ export class Results extends React.Component<ResultsProps, void> {
                     data-focus="results-list"
                     fetchNextPage={this.onScrollReachedBottom}
                     hasMoreData={hasMoreData}
-                    idField={idField}
                     isSelection={isSelection}
                     LineComponent={LineComponent}
                     onLineClick={lineClickHandler}
@@ -211,6 +209,10 @@ export class Results extends React.Component<ResultsProps, void> {
                 const list = resultGroup[propertyGroupName];
                 return 0 === list.length;
             }) as any;
+        }
+
+        if (isEmpty(resultsMap)) {
+            return null;
         }
 
         if (!isArray(resultsMap)) {

@@ -132,7 +132,7 @@ export function fieldFor<T, DisplayProps, FieldProps, InputProps, InputLabelProp
  * @param data La liste.
  * @param options Les options.
  */
-export function listFor<P extends LineSelectionProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListSelectionProps<P>) {
+export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: BaseListProps & {perPage?: number} & ListSelectionProps<T, P>) {
     return listForWith(ListSelection, data, options);
 }
 
@@ -180,7 +180,7 @@ export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): 
  * @param data La liste.
  * @param options Les options.
  */
-export function tableFor<P extends LineProps<{}>>(data: {}[], options: BaseListProps & {perPage?: number} & ListTableProps<P>) {
+export function tableFor<T, P extends LineProps<T>>(data: T[], options: BaseListProps & {perPage?: number} & ListTableProps<T, P>) {
     return listForWith(ListTable, data, options);
 }
 

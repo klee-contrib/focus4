@@ -11,14 +11,14 @@ export interface OperationListItem {
     priority: number;
 }
 
-export interface LineProps<E> {
-    data?: E;
+export interface LineProps<T> {
+    data?: T;
     operationList?: OperationListItem[];
 }
 
-export interface LineSelectionProps<E> extends LineProps<E> {
+export interface LineSelectionProps<T> extends LineProps<T> {
     isSelected?: boolean;
-    onSelection?: (data?: E, isSelected?: boolean, isInit?: boolean) => void;
+    onSelection?: (data?: T, isSelected?: boolean, isInit?: boolean) => void;
     isSelection?: boolean;
 }
 

@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {omit} from "lodash";
-import {observable} from "mobx";
+import {observable, asMap, isObservableArray} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -10,9 +10,9 @@ import {translate} from "../../translation";
 import {LineSelectionProps, OperationListItem} from "./lines";
 import {ListBase, ListBaseProps} from "./list-base";
 
-export interface ListSelectionPropsBase<P extends LineSelectionProps<{}>> extends ListBaseProps<P> {
-    /** Default: 'id' */
-    idField?: string;
+export interface ListSelectionPropsBase<T, P extends LineSelectionProps<T>> extends ListBaseProps<P> {
+    /** Default: data => data.id.value || data.id */
+    idField?: (data: T) => string;
     /** Default: true */
     isSelection?: boolean;
     loader?: () => React.ReactElement<any>;
@@ -23,66 +23,79 @@ export interface ListSelectionPropsBase<P extends LineSelectionProps<{}>> extend
     selectionStatus?: "none" | "partial" | "selected";
 }
 
-export type ListSelectionProps<P extends LineSelectionProps<{}>> = ListSelectionPropsBase<P> & P;
+export type ListSelectionProps<T, P extends LineSelectionProps<T>> = ListSelectionPropsBase<T, P> & P;
 
 @autobind
 @observer
-export class ListSelection extends ListBase<ListSelectionPropsBase<LineSelectionProps<{}>>, void> {
+export class ListSelection extends ListBase<ListSelectionPropsBase<{}, LineSelectionProps<{}>>, void> {
 
-    @observable items = this.getItems(this.props as ListSelectionProps< {data: {}} >, true);
+    idField = this.props.idField || ((data: any) => (data.id.value || data.id).toString());
 
-    componentWillReceiveProps(props: ListSelectionProps<{}>) {
-        this.items = this.getItems(props, true);
+    @observable private items = asMap(this.props.values && this.props.values.reduce< {[key: string]: {item: {}, selected: boolean}} >((items, item) => {
+        items[this.idField(item)] = {item, selected: this.props.selectionStatus === "selected"};
+        return items;
+    }, {}) || {});
+
+    componentWillReact() {
+        if (isObservableArray(this.props.values)) {
+            this.updateItems(this.props);
+        }
     }
 
-    getItems({values, selectionStatus = "partial"}: ListSelectionProps<{}>, isInit?: boolean) {
-        const items: {[key: string]: boolean} = {};
-        if (values) {
-            values.forEach(item => {
-                if (isInit || selectionStatus !== "partial") {
-                    items[JSON.stringify(item)] = selectionStatus === "selected";
-                } else {
-                    items[JSON.stringify(item)] = this.items[JSON.stringify(item)];
-                }
-            });
+    componentWillReceiveProps(props: ListSelectionPropsBase<{}, LineSelectionProps<{}>>) {
+        if (!isObservableArray(this.props.values)) {
+            this.updateItems(props);
         }
-        return items;
+    }
+
+    updateItems({selectionStatus, values}: ListSelectionPropsBase<{}, LineSelectionProps<{}>>) {
+        if (values) {
+            for (const item of values) {
+                const key = this.idField(item);
+                if (!(this.items.has(key) && selectionStatus === "partial")) {
+                    this.items.set(key, {item, selected: this.props.selectionStatus === "selected"});
+                }
+            }
+        }
     }
 
     getSelectedItems() {
         const selectedItems: {}[] = [];
-        Object.keys(this.items).forEach(item => {
-            if (this.items[item]) {
-                selectedItems.push(JSON.parse(item));
+        this.items.forEach((item, key) => {
+            if (item.selected) {
+                selectedItems.push(item.item);
             }
         });
         return selectedItems;
     }
 
-    private handleLineSelection(item: {}, isSelected: boolean, isInit?: boolean) {
-        this.items[JSON.stringify(item)] = isSelected;
+    private handleLineSelection(item: {}, selected: boolean, isInit?: boolean) {
+        this.items.set(this.idField(item), {item, selected});
         if (this.props.onSelection && !isInit) {
-            this.props.onSelection(item, isSelected);
+            this.props.onSelection(item, selected);
         }
     }
 
     private renderLines() {
-        const {LineComponent, idField = "id", operationList} = this.props;
+        const {LineComponent, operationList, values} = this.props;
         const otherProps = omit(this.props, "data", "LineComponent", "idField", "selectionStatus", "onSelection", "operationList");
 
-        return Object.keys(this.items).map((key, idx) => {
-            const data = JSON.parse(key);
-            return (
-                <LineComponent
-                    data={data}
-                    isSelected={this.items[key]}
-                    key={(data[idField].$entity ? data[idField].value : data[idField]) || idx}
-                    onSelection={this.handleLineSelection}
-                    operationList={operationList || []}
-                    {...otherProps}
-                />
-            );
-        });
+        if (values) {
+            return values.map(value => {
+                return (
+                    <LineComponent
+                        data={value}
+                        isSelected={this.items.get(this.idField(value)).selected}
+                        key={this.idField(value)}
+                        onSelection={this.handleLineSelection}
+                        operationList={operationList || []}
+                        {...otherProps}
+                    />
+                );
+            });
+        } else {
+            return null;
+        }
     }
 
     private renderLoading() {
