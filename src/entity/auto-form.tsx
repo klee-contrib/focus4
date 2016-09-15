@@ -274,7 +274,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     autocompleteSelectFor<T, Props>(field: EntityField<T>, options: AutocompleteSelectOptions<Props> & Props) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
+        options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return autocompleteSelectFor(field, options);
     }
 
@@ -286,7 +286,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
+        options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return autocompleteTextFor(field, options);
     }
 
@@ -308,7 +308,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     ) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
+        options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return fieldFor(field, options);
     }
 
@@ -321,7 +321,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
     selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.entity[field.$entity.name].value = value);
+        options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return selectFor(field, values, options);
     }
 
