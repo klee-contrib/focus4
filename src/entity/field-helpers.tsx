@@ -5,6 +5,8 @@ import * as defaults from "../defaults";
 import {EntityField} from "../entity";
 import {BaseListProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
 
+import {Field, FieldProps} from "./field";
+
 /** Item attendu dans recherche d'autocomplétion. */
 export interface AutoCompleteItem {
     key: string;
@@ -20,48 +22,46 @@ export interface AutoCompleteResult {
 /** Options communes à tous les champs. */
 export interface BaseOptions {
     error?: string;
-    hasLabel?: boolean;
     isEdit?: boolean;
+    labelKey?: string;
+    name?: string;
+    value?: any;
+    contentCellPosition?: string;
+    contentOffset?: number;
+    contentSize?: number;
+    hasLabel?: boolean;
     isRequired?: boolean;
     label?: string;
+    labelCellPosition?: string;
+    labelOffset?: number;
     labelSize?: number;
-    onChange?: (...args: any[]) => void;
-    style?: React.CSSProperties;
-    value?: any;
 }
 
 /** Options pour `autocompleteSelectFor`. */
-export interface AutocompleteSelectOptions<Props> extends BaseOptions {
-    AutocompleteSelectComponent?: React.ComponentClass<Props>;
+export interface AutocompleteSelectOptions extends AutocompleteTextOptions {
     keyResolver: (code: string | number) => Promise<string>;
-    querySearcher: (text: string) => Promise<AutoCompleteResult>;
 }
 
 /** Options pour `autocompleteTextFor`. */
-export interface AutocompleteTextOptions<Props> extends BaseOptions {
-    AutocompleteTextComponent?: React.ComponentClass<Props>;
+export interface AutocompleteTextOptions extends BaseOptions {
+    onChange?: (code: string) => void;
     querySearcher: (text: string) => Promise<AutoCompleteResult>;
 }
 
-/** Options pour `displayFor`. */
-export interface DisplayOptions<Props> extends BaseOptions {
-    DisplayComponent?: React.ComponentClass<Props> | ((props: Props) => JSX.Element);
-    LabelComponent?: React.ComponentClass<{domain: string, name: string, text: string}>;
-}
-
-/** Options pour `fieldFor` */
-export interface FieldOptions<DisplayProps, FieldProps, InputProps, InputLabelProps> extends DisplayOptions<DisplayProps> {
-    FieldComponent?: React.ComponentClass<FieldProps> | ((props: FieldProps) => JSX.Element);
-    InputComponent?: React.ComponentClass<InputProps> | ((props: InputProps) => JSX.Element);
-    InputLabelComponent?: React.ComponentClass<InputLabelProps> | ((props: InputLabelProps) => JSX.Element);
+/** Options pour `fieldForWith` */
+export interface FieldOptions<DisplayProps, FieldProps, InputProps> extends BaseOptions {
+    DisplayComponent?: defaults.ReactComponent<DisplayProps>;
+    FieldComponent?: defaults.ReactComponent<FieldProps>;
+    InputComponent?: defaults.ReactComponent<InputProps>;
+    LabelComponent?: defaults.ReactComponent<{domain: string, name: string, text: string}>;
 }
 
 /** Options pour `selectFor`. */
-export interface SelectOptions<T, Props> extends BaseOptions {
-    SelectComponent?: React.ComponentClass<Props>;
+export interface SelectOptions<T> extends BaseOptions {
+    onChange?: (code: T) => void;
     labelKey?: string;
     valueKey?: string;
-    values?: T[];
+    values?: {code?: T, id?: T}[];
 }
 
 /** Options pour `stringFor` et `textFor`. */
@@ -86,8 +86,13 @@ export interface CWEState<E> {
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function autocompleteSelectFor<T, Props>(field: EntityField<T>, options: AutocompleteSelectOptions<Props> & Props) {
-    return fieldFor(field, options);
+export function autocompleteSelectFor<T>(field: EntityField<T>, options: AutocompleteSelectOptions) {
+    const {AutocompleteSelect} = defaults;
+    if (!AutocompleteSelect) {
+        throw new Error("AutocompleteSelect manque. Utilisez autofocus/defaults pour le fournir.");
+    }
+    (options as FieldProps).InputComponent = AutocompleteSelect;
+    return fieldForWith(field, options);
 }
 
 /**
@@ -95,8 +100,13 @@ export function autocompleteSelectFor<T, Props>(field: EntityField<T>, options: 
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
-    return fieldFor(field, options);
+export function autocompleteTextFor<T>(field: EntityField<T>, options: AutocompleteTextOptions) {
+    const {AutocompleteText} = defaults;
+    if (!AutocompleteText) {
+        throw new Error("AutocompleteText manque. Utilisez autofocus/defaults pour le fournir.");
+    }
+    (options as FieldProps).InputComponent = AutocompleteText;
+    return fieldForWith(field, options);
 }
 
 /**
@@ -104,9 +114,9 @@ export function autocompleteTextFor<T, Props>(field: EntityField<T>, options: Au
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function displayFor<T, Props>(field: EntityField<T>, options: DisplayOptions<Props> & Props = {} as any) {
+export function displayFor<T>(field: EntityField<T>, options: BaseOptions & {[key: string]: any} = {}) {
     options.isEdit = false;
-    return fieldFor(field, options);
+    return fieldForWith(field, options);
 }
 
 /**
@@ -114,15 +124,16 @@ export function displayFor<T, Props>(field: EntityField<T>, options: DisplayOpti
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<T, DisplayProps, FieldProps, InputProps, InputLabelProps>(
-    field: EntityField<T>,
-    options: FieldOptions<DisplayProps, FieldProps, InputProps, InputLabelProps> & DisplayProps & FieldProps & InputProps & InputLabelProps = {} as any
-) {
-    const {Field} = defaults;
-    if (!Field) {
-        throw new Error("Le composant Field n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
-    }
+export function fieldFor<T>(field: EntityField<T>, options: BaseOptions & {[key: string]: any} = {}) {
+    return fieldForWith(field, options);
+}
 
+/**
+ * Crée un champ avec des composants personnalisés.
+ * @param field La définition de champ.
+ * @param options Les options du champ.
+ */
+export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
     const props = buildFieldProps(field, options);
     return <Field {...props} />;
 }
@@ -159,9 +170,14 @@ export function listForWith<ListProps extends BaseListProps>(ListComponent: defa
  * @param listName Le nom de la liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
-    options.values = values;
-    return fieldFor(field, options);
+export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
+    const {Select} = defaults;
+    if (!Select) {
+        throw new Error("Select manque. Utilisez autofocus/defaults pour le fournir.");
+    }
+    (options as FieldProps).InputComponent = Select;
+    (options as FieldProps).values = values;
+    return fieldForWith(field, options);
 }
 
 /**
@@ -172,7 +188,7 @@ export function selectFor<T, Props>(field: EntityField<T>, values: T[], options:
 export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): string {
     const {formatter, valueKey, labelKey, values, value} = buildFieldProps(field, options);
     const processedValue = values ? result(find(values, {[valueKey || "code"]: value}), labelKey || "label") : value;
-    return formatter(processedValue);
+    return formatter!(processedValue);
 }
 
 /**
@@ -193,31 +209,22 @@ export function textFor<T>(field: EntityField<T>, options: TextOptions = {}) {
     return <div name={field.$entity.translationKey} style={options.style}>{stringFor(field, options)}</div>;
 }
 
-function buildFieldProps<T>(field: EntityField<T>, options: {hasLabel?: boolean} = {}) {
+function buildFieldProps<T>(field: EntityField<T>, options: FieldProps = {}): FieldProps {
     const {value, $entity: {domain, translationKey, isRequired}} = field;
     const hasLabel = options.hasLabel || true;
-    const dom = domain || {type: undefined};
+    const dom = domain || {};
 
-    const propsContainer = {
+    const props = {
+        ref: translationKey,
         domain,
         hasLabel,
         label: translationKey,
         isRequired,
         name,
         value,
-        format: dom.format,
-        locale: dom.locale,
-        type: dom.type,
-        validator: dom.validator,
         formatter: dom.formatter || (x => x),
-        unformatter: dom.unformatter || (x => x),
-        FieldComponent: dom.FieldComponent,
-        InputLabelComponent: dom.InputLabelComponent,
-        InputComponent: dom.InputComponent,
-        SelectComponent: dom.SelectComponent,
-        TextComponent: dom.TextComponent,
-        DisplayComponent: dom.DisplayComponent
+        unformatter: dom.unformatter || (x => x)
     };
 
-    return Object.assign(propsContainer, dom.options as {[key: string]: any}, options);
+    return Object.assign({}, domain, props, options);
 }

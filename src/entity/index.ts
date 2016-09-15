@@ -1,4 +1,5 @@
 export {AutoForm} from "./auto-form";
+export {Field} from "./field";
 export {
     autocompleteSelectFor,
     autocompleteTextFor,
@@ -12,4 +13,4 @@ export {
     textFor
 } from "./field-helpers";
 export {makeEntityStore, toFlatValues, EntityStoreData, EntityArray} from "./store";
-export {Domain, Entity, Field, List, EntityField, EntityList} from "./types";
+export {Domain, Entity, FieldEntry, ListEntry, EntityField, EntityList} from "./types";

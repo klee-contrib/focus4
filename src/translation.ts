@@ -4,6 +4,6 @@ export function init(options?: i18next.Options, callback?: (err: any, t: i18next
     i18next.init(options, callback);
 }
 
-export function translate(key: string, options?: i18next.TranslationOptions) {
+export function translate(key: string, options?: i18next.TranslationOptions): string {
     return i18next.t(key, options);
 }

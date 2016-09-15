@@ -6,7 +6,6 @@ import {translate} from "./translation";
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export interface ValidationProperty {
-    modelName: string;
     name: string;
     value: any;
 }
@@ -119,7 +118,7 @@ export function stringValidator(text: string, options?: StringOptions) {
     return isMinLength && isMaxLength;
 }
 
-function getErrorLabel(type: string, fieldName: string, options?: TrKey): string {
+function getErrorLabel(type: string, options?: TrKey): string {
     return translate(options && options.translationKey ? options.translationKey : `domain.validation.${type}`);
 }
 
@@ -157,7 +156,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
     if (isValid === undefined) {
         console.warn(`The validator of type: ${validator.type} is not defined`);
     } else if (isValid === false) {
-        return getErrorLabel(validator.type, property.modelName + "." + property.name, validator.options);
+        return getErrorLabel(validator.type, validator.options);
     }
 
     return undefined;
@@ -168,7 +167,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
  * @param property La propriété à valider.
  * @param validators Les validateurs.
  */
-export default function validate(property: ValidationProperty, validators?: Validator[]) {
+export function validate(property: ValidationProperty, validators?: Validator[]) {
     let errors: string[] = [];
     if (validators) {
         for (const validator of validators) {

@@ -2,7 +2,11 @@ import {ComponentClass, SFC} from "react";
 
 export type ReactComponent<P> = ComponentClass<P> | SFC<P>;
 
-export let Field: ReactComponent<any> | undefined;
+export let AutocompleteSelect: ReactComponent<any> | undefined;
+export let AutocompleteText: ReactComponent<any> | undefined;
+export let DisplayText: ReactComponent<any> | undefined;
+export let Select: ReactComponent<any> | undefined;
+export let Label: ReactComponent<any> | undefined;
 export let InputText: ReactComponent<any> | undefined;
 export let Button: ReactComponent<any> | undefined;
 export let Icon: ReactComponent<any> | undefined;
@@ -16,7 +20,11 @@ export let ButtonBackToTop: ReactComponent<any> | undefined;
 
 /** Interface de tous les composants à définir. */
 export interface Defaults {
-    Field?: ReactComponent<any>;
+    AutocompleteSelect?: ReactComponent<any>;
+    AutocompleteText?: ReactComponent<any>;
+    DisplayText?: ReactComponent<any>;
+    Select?: ReactComponent<any>;
+    Label?: ReactComponent<any>;
     InputText?: ReactComponent<any>;
     Button?: ReactComponent<any>;
     Icon?: ReactComponent<any>;
@@ -34,7 +42,11 @@ export interface Defaults {
  * @param c L'objet contenant les composants.
  */
 export function setDefaultComponents(c: Defaults) {
-    Field = c.Field;
+    AutocompleteSelect = c.AutocompleteSelect;
+    AutocompleteText = c.AutocompleteText;
+    DisplayText = c.DisplayText;
+    Select = c.Select;
+    Label = c.Label;
     InputText = c.InputText;
     Button = c.Button;
     Icon = c.Icon;

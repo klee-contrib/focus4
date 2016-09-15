@@ -12,7 +12,7 @@ import {FieldErrors} from "../network";
 import {
     AutocompleteSelectOptions,
     AutocompleteTextOptions,
-    DisplayOptions,
+    BaseOptions,
     FieldOptions,
     SelectOptions,
     TextOptions,
@@ -20,6 +20,7 @@ import {
     autocompleteTextFor,
     displayFor,
     fieldFor,
+    fieldForWith,
     selectFor,
     stringFor,
     textFor
@@ -142,12 +143,14 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      */
     @action
     async onClickSave() {
+        this.errors = {};
         if (this.validate()) {
             this.isLoading = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity));
                 runInAction(() => {
                     this.isLoading = false;
+                    this.isEdit = false;
                     this.storeData.set(data);
                 });
             } catch (e) {
@@ -271,7 +274,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    autocompleteSelectFor<T, Props>(field: EntityField<T>, options: AutocompleteSelectOptions<Props> & Props) {
+    autocompleteSelectFor<T>(field: EntityField<T>, options: AutocompleteSelectOptions) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
         options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
@@ -283,7 +286,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    autocompleteTextFor<T, Props>(field: EntityField<T>, options: AutocompleteTextOptions<Props> & Props) {
+    autocompleteTextFor<T>(field: EntityField<T>, options: AutocompleteTextOptions) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
         options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
@@ -295,21 +298,30 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    displayFor<T, Props>(field: EntityField<T>, options: DisplayOptions<Props> & Props = {} as any) { return displayFor(field, options); }
+    displayFor<T>(field: EntityField<T>, options?: BaseOptions & {[key: string]: any}) { return displayFor(field, options); }
 
     /**
      * Crée un champ standard.
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldFor<T, DisplayProps, FieldProps, InputProps, InputLabelProps>(
-        field: EntityField<T>,
-        options: FieldOptions<DisplayProps, FieldProps, InputProps, InputLabelProps> & DisplayProps & FieldProps & InputProps & InputLabelProps = {} as any
-    ) {
+    fieldFor<T>(field: EntityField<T>, options: BaseOptions & {[key: string]: any} = {}) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
-        options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
+        options["onChange"] = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return fieldFor(field, options);
+    }
+
+    /**
+     * Crée un champ avec des composants personnalisés.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
+        options.isEdit = this.isEdit;
+        options.error = this.errors[field.$entity.name];
+        (options as any).onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
+        return fieldForWith(field, options);
     }
 
     /**
@@ -318,7 +330,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T, Props>(field: EntityField<T>, values: T[], options: SelectOptions<T, Props> & Props = {} as any) {
+    selectFor<T>(field: EntityField<T>, values: T[], options: SelectOptions<T> = {}) {
         options.isEdit = this.isEdit;
         options.error = this.errors[field.$entity.name];
         options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);

@@ -1,24 +1,17 @@
-import {ReactType} from "react";
-
+import {ReactComponent} from "../defaults";
 import {Validator} from "../validation";
 
 export interface Domain {
     formatter?: (value: any, options?: {isEdit: boolean}) => string;
     unformatter?: (text: string, options?: {isEdit: boolean}) => any;
-    locale?: string;
-    format?: string[];
-    type: string | undefined;
     validator?: Validator[];
-    FieldComponent?: ReactType;
-    InputLabelComponent?: ReactType;
-    InputComponent?: ReactType;
-    SelectComponent?: ReactType;
-    TextComponent?: ReactType;
-    DisplayComponent?: ReactType;
-    options?: {};
+    DisplayComponent?: ReactComponent<any>;
+    FieldComponent?: ReactComponent<any>;
+    InputComponent?: ReactComponent<any>;
+    LabelComponent?: ReactComponent<any>;
 }
 
-export interface Field {
+export interface FieldEntry {
     type: "field";
     domain?: Domain;
     entityName?: string;
@@ -27,22 +20,22 @@ export interface Field {
     translationKey: string;
 }
 
-export interface List {
+export interface ListEntry {
     type: "list";
     entityName: string;
 }
 
 export interface Entity {
-    fields: {[name: string]: Field | List};
+    fields: {[name: string]: FieldEntry | ListEntry};
     name: string;
 }
 
 export interface EntityField<T> {
-    $entity: Field;
+    $entity: FieldEntry;
     value: T;
 }
 
 export interface EntityList<T> {
-    $entity: List;
+    $entity: ListEntry;
     value: T;
 }
