@@ -1,20 +1,18 @@
-import {EntityField} from "../";
+import {EntityField, ClearSet} from "../";
 
 export interface Ligne {
     id?: number;
 }
 
-export interface LigneData {
+export interface LigneData extends ClearSet<Ligne> {
     id: EntityField<number>;
-    set: (structure: Ligne) => void;
-    clear: () => void;
 }
 
 export const LigneEntity = {
     name: "ligne",
     fields: {
         id: {
-            type: "field",
+            type: "field" as "field",
             domain: {},
             isRequired: true,
             name: "id",

@@ -12,30 +12,30 @@ export interface Domain {
 }
 
 export interface FieldEntry {
-    type: "field";
-    domain?: Domain;
-    entityName?: string;
-    isRequired: boolean;
-    name: string;
-    translationKey: string;
+    readonly type: "field";
+    readonly domain?: Domain;
+    readonly entityName?: string;
+    readonly isRequired: boolean;
+    readonly name: string;
+    readonly translationKey: string;
 }
 
 export interface ListEntry {
-    type: "list";
-    entityName: string;
+    readonly type: "list";
+    readonly entityName: string;
 }
 
 export interface Entity {
-    fields: {[name: string]: FieldEntry | ListEntry};
-    name: string;
+    readonly fields: {readonly [name: string]: FieldEntry | ListEntry};
+    readonly name: string;
 }
 
 export interface EntityField<T> {
-    $entity: FieldEntry;
+    readonly $entity: FieldEntry;
     value: T;
 }
 
 export interface EntityList<T> {
-    $entity: ListEntry;
+    readonly $entity: ListEntry;
     value: T;
 }

@@ -1,4 +1,4 @@
-import {EntityField} from "../types";
+import {EntityField, ClearSet} from "../";
 
 export interface Structure {
     id?: number;
@@ -6,33 +6,31 @@ export interface Structure {
     siret?: string;
 }
 
-export interface StructureData {
+export interface StructureData extends ClearSet<Structure> {
     id: EntityField<number>;
     nom: EntityField<string>;
     siret: EntityField<string>;
-    set: (structure: Structure) => void;
-    clear: () => void;
 }
 
 export const StructureEntity = {
     name: "structure",
     fields: {
         id: {
-            type: "field",
+            type: "field" as "field",
             domain: {},
             isRequired: true,
             name: "id",
             translationKey: "structure.id"
         },
         nom: {
-            type: "field",
+            type: "field" as "field",
             domain: {},
             isRequired: true,
             name: "nom",
             translationKey: "structure.nom"
         },
         siret: {
-            type: "field",
+            type: "field" as "field",
             domain: {},
             isRequired: false,
             name: "siret",

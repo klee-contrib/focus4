@@ -3,15 +3,17 @@ import {asReference, isObservableArray, observable, IObservableArray, action, is
 
 import {Entity, EntityField, EntityList} from "./types";
 
-export interface Setter {
-    set(config: {}): void;
+export interface Setter<T> {
+    set(config: T): void;
 }
 
 export interface Clearer {
     clear(): void;
 }
 
-export type EntityArray<T> = IObservableArray<T> & {$entity: Entity} & Setter;
+export interface ClearSet<T> extends Setter<T>, Clearer {}
+
+export type EntityArray<T> = IObservableArray<T> & {$entity: Entity} & Setter<{}>;
 function isEntityArray(data: StoreTypes): data is EntityArray<any> {
     return isObservableArray(data);
 }
@@ -22,13 +24,13 @@ function isEntityStoreData(data: StoreTypes): data is EntityStoreData {
 export type EntityValue<T> = EntityField<T> | EntityList<T>;
 export type StoreTypes = undefined | null | number | boolean | string | EntityStoreEntry;
 
-export type EntityStoreData = {[key: string]: EntityStoreValue} & Setter & Clearer;
+export type EntityStoreData = {[key: string]: EntityStoreValue} & ClearSet<{}>;
 export type EntityStoreEntry = EntityStoreData | EntityArray<EntityStoreData>;
 export type EntityStoreValue = EntityValue<StoreTypes>;
 
 export type EntityStoreConfig = {[key: string]: EntityStoreEntry}
 export type EntityConfig = {[key: string]: {[field: string]: EntityValue<{}>} | [{[field: string]: EntityStoreValue}, string] | [{[field: string]: EntityStoreValue}[], string]};
-export type EntityStore = EntityStoreConfig & Setter & Clearer;
+export type EntityStore = EntityStoreConfig & ClearSet<{}>;
 
 /**
  * Construit un store d'entité à partir de la config et les entités données.
@@ -71,7 +73,7 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
         }
     });
 
-    return observable(entityStore) as T & Setter & Clearer;
+    return observable(entityStore) as T & ClearSet<{}>;
 }
 
 function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Entity}, entry: string): EntityStoreEntry {
@@ -84,7 +86,7 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
     }
 
     const trueEntry = isArray(entity) ? entity[1] : entry;
-    const output: EntityStoreData & Setter = mapValues(entityMap[trueEntry].fields, (v, key) => {
+    const output: EntityStoreData & Setter<{}> = mapValues(entityMap[trueEntry].fields, (v, key) => {
         if (v.entityName && !entityMap[v.entityName]) {
             throw new Error(`L'entité "${trueEntry}" dépend de l'entité "${v.entityName}" qui n'a pas été trouvée dans la liste.`);
         }

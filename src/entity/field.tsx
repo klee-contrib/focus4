@@ -119,7 +119,7 @@ export class Field extends React.Component<FieldProps, void> {
 
         if (validator && value !== undefined && value !== null) {
             let validStat = validate({value: value, name: translate(label)}, validator);
-            if (validStat.errors) {
+            if (validStat.errors.length) {
                 return translate(validStat.errors.join(", "));
             }
         }

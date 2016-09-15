@@ -12,5 +12,5 @@ export {
     tableFor,
     textFor
 } from "./field-helpers";
-export {makeEntityStore, toFlatValues, EntityStoreData, EntityArray} from "./store";
+export {makeEntityStore, toFlatValues, EntityStoreData, EntityArray, ClearSet} from "./store";
 export {Domain, Entity, FieldEntry, ListEntry, EntityField, EntityList} from "./types";

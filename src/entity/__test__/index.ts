@@ -1,7 +1,7 @@
 import {isObservableArray} from "mobx";
 import test = require("tape");
 
-import {makeEntityStore, EntityArray, toFlatValues} from "../";
+import {makeEntityStore, EntityArray, toFlatValues, ClearSet} from "../";
 import {LigneEntity} from "./ligne";
 import {OperationEntity, OperationData} from "./operation";
 import {ProjetEntity, ProjetData} from "./projet";
@@ -13,7 +13,7 @@ function getStore() {
         projet: {},
         structureList: [[], "structure"]
     }, [
-        OperationEntity as any,
+        OperationEntity,
         ProjetEntity,
         StructureEntity,
         LigneEntity
@@ -21,9 +21,7 @@ function getStore() {
         operation: OperationData,
         projet: ProjetData,
         structureList: EntityArray<StructureData>,
-        set(config: {}): void,
-        clear(): void;
-    };
+    } & ClearSet<{}>;
 }
 
 const operation = {

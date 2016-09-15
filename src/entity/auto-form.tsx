@@ -1,13 +1,16 @@
 import {autobind} from "core-decorators";
-import {isFunction, isEmpty} from "lodash";
+import {isEmpty} from "lodash";
 import {observable, action, runInAction} from "mobx";
 import {createViewModel, IViewModel} from "mobx-utils";
 import * as React from "react";
 
 import {applicationStore} from "../application";
 import * as defaults from "../defaults";
-import {EntityField, EntityStoreData, toFlatValues} from "../entity";
 import {FieldErrors} from "../network";
+
+import {Field} from "./field";
+import {EntityStoreData, toFlatValues} from "./store";
+import {EntityField} from "./types";
 
 import {
     AutocompleteSelectOptions,
@@ -175,21 +178,20 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
         return <span>{this.buttonSave} {this.buttonCancel}</span>;
     }
 
+    @action
     validate() {
-        let validationMap: {[key: string]: string} = {};
-        for (let inptKey in this.refs) {
-            if (isFunction((this.refs[inptKey] as any).validate)) {
-                let validationRes = (this.refs[inptKey] as any).validate();
-                if (validationRes !== undefined) {
-                    validationMap[inptKey] = validationRes;
+        for (const ref in this.refs) {
+            const field = this.refs[ref];
+            if (field instanceof Field) {
+                let validationRes = field.validate();
+                if (validationRes !== true) {
+                    this.errors[ref] = validationRes;
                 }
             }
         }
-
-        if (isEmpty(validationMap)) {
+        if (isEmpty(this.errors)) {
             return true;
         }
-
         return false;
     }
 
@@ -276,7 +278,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      */
     autocompleteSelectFor<T>(field: EntityField<T>, options: AutocompleteSelectOptions) {
         options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
+        options.error = this.errors[field.$entity.translationKey];
         options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return autocompleteSelectFor(field, options);
     }
@@ -288,7 +290,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      */
     autocompleteTextFor<T>(field: EntityField<T>, options: AutocompleteTextOptions) {
         options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
+        options.error = this.errors[field.$entity.translationKey];
         options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return autocompleteTextFor(field, options);
     }
@@ -307,7 +309,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      */
     fieldFor<T>(field: EntityField<T>, options: BaseOptions & {[key: string]: any} = {}) {
         options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
+        options.error = this.errors[field.$entity.translationKey];
         options["onChange"] = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return fieldFor(field, options);
     }
@@ -319,7 +321,7 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      */
     fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
         options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
+        options.error = this.errors[field.$entity.translationKey];
         (options as any).onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return fieldForWith(field, options);
     }
@@ -330,9 +332,9 @@ export abstract class AutoForm<P, E extends EntityStoreData> extends React.Compo
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T>(field: EntityField<T>, values: T[], options: SelectOptions<T> = {}) {
+    selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
         options.isEdit = this.isEdit;
-        options.error = this.errors[field.$entity.name];
+        options.error = this.errors[field.$entity.translationKey];
         options.onChange = action((value: any) => this.entity[field.$entity.name] = {$entity: this.entity[field.$entity.name].$entity, value} as any);
         return selectFor(field, values, options);
     }
