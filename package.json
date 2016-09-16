@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-alpha16",
+  "version": "1.0.0-alpha17",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -21,6 +21,7 @@
   "dependencies": {
     "@types/core-decorators": "^0.10.29",
     "@types/glob": "^5.0.29",
+    "@types/history": "^2.0.35",
     "@types/i18next": "^0.0.31",
     "@types/isomorphic-fetch": "^0.0.30",
     "@types/lodash": "^4.14.34",
@@ -30,12 +31,13 @@
     "@types/react-dom": "^0.14.16",
     "@types/tape": "^4.2.27",
     "core-decorators": "^0.12.3",
-    "i18next": "^3.4.1",
+    "director": "^1.2.8",
+    "i18next": "^3.4.2",
     "lodash": "^4.15.0",
     "mobx": "^2.5.1",
     "mobx-react": "^3.5.6",
     "mobx-utils": "^1.0.1",
-    "moment": "^2.14.1",
+    "moment": "^2.15.0",
     "node-uuid": "^1.4.7",
     "react": "^15.3.1",
     "react-addons-test-utils": "^15.3.1",
