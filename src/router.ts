@@ -43,7 +43,7 @@ export class ViewStore<V extends {[key: string]: string}> {
     /** Calcule l'URL en fonction de l'état courant. */
     @computed
     get currentPath() {
-        return `/${this.paramNames.map(view => this.currentView[view]).join("/")}`;
+        return `/${this.paramNames.map(p => this.currentView[p]).join("/")}`;
     }
 
     /** Calcule l'état en fonction de l'URL courante. */
