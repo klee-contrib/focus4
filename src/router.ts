@@ -37,8 +37,8 @@ export class ViewStore<V extends {[key: string]: string}> {
     /** Représente l'état courant de l'URL. */
     @observable currentView: V;
 
-    paramNames: string[];
-    prefix?: string;
+    readonly paramNames: string[];
+    readonly prefix?: string;
 
     /**
      * Construit un nouveau ViewStore.
