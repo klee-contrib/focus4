@@ -11,7 +11,7 @@ export function startRouter(...stores: ViewStore<any>[]) {
     }
 
     new Router(stores.reduce((routes, store) => {
-        routes[`/${store.prefix ? `${store.prefix}/` : ""}${store.paramNames.map(p => `:${p}`).join("/")}`] = (...params: string[]) => store.updateView(store.prefix, params);
+        routes[`/${store.prefix ? `${store.prefix}/` : ""}${store.paramNames.map(p => `([^\/]*)?`).join("/?")}`] = (...params: string[]) => store.updateView(store.prefix, params);
         return routes;
     }, {} as {[route: string]: (...params: string[]) => void})).configure({
         notfound: () => stores.forEach(store => store.updateView()),
