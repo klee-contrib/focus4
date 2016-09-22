@@ -41,8 +41,7 @@
     "react": "^15.3.1",
     "react-addons-test-utils": "^15.3.1",
     "react-dom": "^15.3.1",
-    "tape": "^4.6.0",
-    "tslib": "^1.0.0"
+    "tape": "^4.6.0"
   },
   "devDependencies": {
     "in-publish": "2.0.0",

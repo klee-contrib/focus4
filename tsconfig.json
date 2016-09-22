@@ -14,8 +14,7 @@
         "strictNullChecks": true,
         "experimentalDecorators": true,
         "noFallthroughCasesInSwitch": true,
-        "inlineSourceMap": true,
-        "importHelpers": true
+        "inlineSourceMap": true
     },
     "exclude": [
         "dist",
