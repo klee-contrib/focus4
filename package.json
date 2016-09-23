@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-alpha20",
+  "version": "1.0.0-alpha21",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -12,7 +12,7 @@
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
     "prepublish": "in-publish && tsc --outDir ./ || true",
-    "postpublish": "rm -f *.js *.d.ts && rm -rf application entity list message network search testing",
+    "postpublish": "rm -f *.js *.d.ts && rm -rf application entity list message network router search testing",
     "start": "tsc",
     "test": "ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
     "testgen": "ts-node src/testing/generator.ts src ..",

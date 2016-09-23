@@ -1,73 +1,8 @@
 import {autobind} from "core-decorators";
+import {flatten} from "lodash";
 
 const QUERY_SEPARATOR = /\?.*/;
 
-const listeners: any[] = [];
-
-@autobind
-class Listener {
-    mode = "modern";
-    hash = document.location.hash;
-    history = false;
-
-    check() {
-        const {hash} = document.location;
-        if (hash !== this.hash) {
-            this.hash = hash;
-            this.onHashChanged();
-        }
-    }
-
-    fire() {
-        if (this.mode === "modern") {
-            this.history === true ? window.onpopstate(undefined as any) : window.onhashchange(undefined as any);
-        } else {
-            this.onHashChanged();
-        }
-    }
-
-    init(fn: (onChangeEvent: PopStateEvent | HashChangeEvent) => void, history: boolean) {
-        this.history = history;
-
-        function onChange(onChangeEvent: PopStateEvent | HashChangeEvent) {
-            for (let i = 0, l = listeners.length; i < l; i++) {
-                listeners[i](onChangeEvent);
-            }
-        }
-
-        if (this.history === true) {
-            window.onpopstate = onChange;
-        } else {
-            window.onhashchange = onChange;
-        }
-
-        listeners.push(fn);
-    }
-
-    destroy(fn: any) {
-        for (let i = listeners.length - 1; i >= 0; i--) {
-            if (listeners[i] === fn) {
-                listeners.splice(i, 1);
-            }
-        }
-    }
-
-    setHash(s: string) {
-        if (this.history === true) {
-            window.history.pushState({}, document.title, s);
-            this.fire();
-        } else {
-            document.location.hash = (s[0] === "/") ? s : "/" + s;
-        }
-        return this;
-    }
-
-    onHashChanged() {
-        // A surcharger
-    }
-}
-
-const listener = new Listener();
 export type Route = (...args: string[]) => void;
 export interface Routes {
     [key: string]: Route | Routes;
@@ -75,7 +10,6 @@ export interface Routes {
 
 export interface RouterConfig {
     recurse?: boolean | "forward";
-    async?: boolean;
     delimiter?: string;
     strict?: boolean;
     notfound?: () => void;
@@ -108,7 +42,8 @@ interface ThisArray extends Array<any> {
 
 @autobind
 export class Router {
-    private params: Params = {};
+    listeners: Function[] = [];
+
     private routes: ThisRoutes = {};
     private methods = ["on", "once", "after", "before"];
     private _methods: {[key: string]: boolean} = {};
@@ -116,7 +51,6 @@ export class Router {
     private historySupport = (window.history !== null ? window.history.pushState : null) !== null;
 
     private recurse: boolean | "forward";
-    private async: boolean;
     private delimiter: string;
     private strict: boolean;
     private notfound?: () => void;
@@ -139,7 +73,6 @@ export class Router {
             this._methods[this.methods[i]] = true;
         }
         this.recurse = options.recurse || this.recurse || false;
-        this.async = options.async || false;
         this.delimiter = options.delimiter || "/";
         this.strict = typeof options.strict === "undefined" ? true : options.strict;
         this.notfound = options.notfound;
@@ -210,7 +143,7 @@ export class Router {
         let parentMethod = parent[method];
         let part = path.shift();
         if (/\:|\*/.test(part!) && !/\\d|\\w/.test(part!)) {
-            part = regifyString(part!, this.params);
+            part = regifyString(part!);
         }
         if (path.length > 0) {
             parent[part!] = parent[part!] || {};
@@ -258,7 +191,19 @@ export class Router {
             this.dispatch("on", url.charAt(0) === "/" ? url : "/" + url);
         };
 
-        listener.init(handler, this.history);
+        this.listeners.push(handler);
+
+        const onChange = (onChangeEvent: PopStateEvent | HashChangeEvent) => {
+            for (let i = 0, l = this.listeners.length; i < l; i++) {
+                this.listeners[i](onChangeEvent);
+            }
+        };
+
+        if (this.history === true) {
+            window.onpopstate = onChange;
+        } else {
+            window.onhashchange = onChange;
+        }
 
         if (this.history === false) {
             if (dlocHashEmpty() && r) {
@@ -316,12 +261,8 @@ export class Router {
         };
         const after = this.every && this.every.after ? [this.every.after].concat(this.last) : [this.last];
         if (after && after.length > 0 && invoked) {
-            if (this.async) {
-                this.invoke(after, this, updateAndInvoke);
-            } else {
-                this.invoke(after, this);
-                updateAndInvoke();
-            }
+            this.invoke(after, this);
+            updateAndInvoke();
             return true;
         }
         updateAndInvoke();
@@ -415,33 +356,17 @@ export class Router {
     }
 
     private invoke(fns: ThisArray, thisArg: any, callback?: Function) {
-        if (this.async) {
-            let apply: (d: any, next: (e?: any) => void) => void;
-            apply = (fn: any, next: (e?: any) => void) => {
-                if (Array.isArray(fn)) {
-                    return asyncEverySeries(fn, apply, next);
-                } else if (typeof fn === "function") {
-                    fn.apply(thisArg, (fns.captures || []).concat(next));
-                }
-            };
-            asyncEverySeries(fns, apply, (...args: any[]) => {
-                if (callback) {
-                    callback.apply(thisArg, args);
-                }
-            });
-        } else {
-            let apply: (d: any) => boolean;
-            apply = (fn: any) => {
-                if (Array.isArray(fn)) {
-                    return fn.every(apply);
-                } else if (typeof fn === "function") {
-                    return fn.apply(thisArg, fns.captures || []);
-                } else if (typeof fn === "string" && this.resource) {
-                    this.resource[fn].apply(thisArg, fns.captures || []);
-                }
-            };
-            fns.every(apply);
-        }
+        let apply: (d: any) => boolean;
+        apply = (fn: any) => {
+            if (Array.isArray(fn)) {
+                return fn.every(apply);
+            } else if (typeof fn === "function") {
+                return fn.apply(thisArg, fns.captures || []);
+            } else if (typeof fn === "string" && this.resource) {
+                this.resource[fn].apply(thisArg, fns.captures || []);
+            }
+        };
+        fns.every(apply);
     }
 
     private runlist(fns: ThisArray) {
@@ -459,50 +384,7 @@ function dlocHashEmpty() {
     return document.location.hash === "" || document.location.hash === "#";
 }
 
-function flatten(arr: any[]) {
-    let flat = [];
-    for (let i = 0, n = arr.length; i < n; i++) {
-        flat = flat.concat(arr[i]);
-    }
-    return flat;
-}
-
-function asyncEverySeries(arr: any[], iterator: (d: any, cb: (e?: any) => void) => boolean | void, callback: (e?: any) => void) {
-    if (!arr.length) {
-        return callback();
-    }
-    let completed = 0;
-    (function iterate() {
-        iterator(arr[completed], function (err) {
-            if (err || err === false) {
-                callback(err);
-                callback = () => undefined;
-            } else {
-                completed += 1;
-                if (completed === arr.length) {
-                    callback();
-                } else {
-                    iterate();
-                }
-            }
-        });
-    })();
-}
-
-function paramifyString(str: string, params: Params) {
-    let mod = str;
-    for (let param in params) {
-        if (params.hasOwnProperty(param)) {
-            mod = params[param](str);
-            if (mod !== str) {
-                break;
-            }
-        }
-    }
-    return mod === str ? "([._a-zA-Z0-9-%()]+)" : mod;
-}
-
-function regifyString(str: string, params: Params) {
+function regifyString(str: string) {
     let matches: RegExpMatchArray | null;
     let last = 0;
     let out = "";
@@ -519,7 +401,7 @@ function regifyString(str: string, params: Params) {
             if (capture.slice(0, 2) === "::") {
                 str = capture.slice(1);
             } else {
-                str = str.replace(capture, paramifyString(capture, params));
+                str = str.replace(capture, "([._a-zA-Z0-9-%()]+)");
             }
         }
     }
