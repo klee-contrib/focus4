@@ -1,5 +1,6 @@
-import {Router} from "director";
 import {observable, computed, action, autorun} from "mobx";
+
+import {Router} from "./director";
 
 /**
  * Crée un routeur et le lance.
