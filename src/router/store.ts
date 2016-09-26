@@ -20,7 +20,7 @@ export class ViewStore<V> {
     constructor(paramNames: string[], prefix?: string) {
         this.paramNames = paramNames;
         this.prefix = prefix;
-        this.currentView = {} as any;
+        this.currentView = paramNames.reduce((view, param) => { (view as any)[param] = undefined; return view; }, {} as V);
     }
 
     /** Calcule l'URL en fonction de l'état courant. */
@@ -40,9 +40,8 @@ export class ViewStore<V> {
      */
     @action
     updateView(prefix?: string, params: string[] = []) {
-        this.currentView = {} as V;
         if (prefix === this.prefix) {
-            for (let i = 0; i < params.length; i++) {
+            for (let i = 0; i < this.paramNames.length; i++) {
                 (this.currentView as any)[this.paramNames[i]] = params[i];
             }
         }

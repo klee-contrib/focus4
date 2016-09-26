@@ -140,7 +140,6 @@ export class Router {
         }
 
         path = path.filter(p => p && p.length > 0);
-        let parentMethod = parent[method];
         let part = path.shift();
         if (/\:|\*/.test(part!) && !/\\d|\\w/.test(part!)) {
             part = regifyString(part!);
@@ -150,38 +149,38 @@ export class Router {
             return this.insert(method, path, route, parent[part!] as Routes);
         }
         if (!part && !path.length && parent === this.routes) {
-            switch (typeof parentMethod) {
+            switch (typeof parent[method]) {
                 case "function":
-                    parentMethod = [parent[method], route];
+                    parent[method] = [parent[method], route];
                     return;
                 case "object":
-                    parentMethod.push(route);
+                    parent[method].push(route);
                     return;
                 case "undefined":
-                    parentMethod = route;
+                    parent[method] = route;
                     return;
             }
             return;
         }
-        let parentPart = parent[part!];
-        const isArray = Array.isArray(parentPart);
-        if (parentPart && !isArray && typeof parentPart === "object") {
-            switch (typeof parentPart[method]) {
+
+        const isArray = Array.isArray(parent[part!]);
+        if (parent[part!] && !isArray && typeof parent[part!] === "object") {
+            switch (typeof parent[part!][method]) {
                 case "function":
-                    parentPart[method] = [parentPart[method], route];
+                    parent[part!][method] = [parent[part!][method], route];
                     return;
                 case "object":
-                    parentPart[method].push(route);
+                    parent[part!][method].push(route);
                     return;
                 case "undefined":
-                    parentPart[method] = route;
+                    parent[part!][method] = route;
                     return;
             }
-        } else if (typeof parentPart === "undefined") {
-            parentPart = {[method]: route};
+        } else if (typeof parent[part!] === "undefined") {
+            parent[part!] = {[method]: route};
             return;
         }
-        throw new Error("Invalid route context: " + typeof parentPart);
+        throw new Error("Invalid route context: " + typeof parent[part!]);
     }
 
     init(r?: string) {
