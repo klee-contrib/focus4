@@ -6,6 +6,7 @@ import * as React from "react";
 
 import {applicationStore} from "../application";
 import * as defaults from "../defaults";
+import {messageStore} from "../message";
 import {FieldErrors} from "../network";
 
 import {Field} from "./field";
@@ -122,6 +123,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
         if (this.services.delete) {
             this.isLoading = true;
             await this.services.delete(toFlatValues(this.entity as any));
+            messageStore.addSuccessMessage("detail.deleted");
             runInAction(() => {
                 this.isLoading = false;
                 this.storeData = {} as E;
@@ -151,12 +153,14 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
             this.isLoading = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity as any));
+                messageStore.addSuccessMessage("detail.saved");
                 runInAction(() => {
                     this.isLoading = false;
                     this.isEdit = false;
                     this.storeData.set(data);
                 });
             } catch (e) {
+                messageStore.addErrorMessage("detail.error");
                 runInAction(() => this.errors = e.fields);
             }
         }

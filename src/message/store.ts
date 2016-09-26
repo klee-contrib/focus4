@@ -12,7 +12,7 @@ export interface Message {
 @autobind
 export class MessageStore {
 
-    @observable data: {[id: string]: Message};
+    @observable data: {[id: string]: Message} = {};
     @observable latestMessage: Message;
 
     @action
