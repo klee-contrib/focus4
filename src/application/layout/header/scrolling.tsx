@@ -41,7 +41,7 @@ export class HeaderScrolling extends React.Component<HeaderProps, void> {
         } else if (document.documentElement) {
             return document.documentElement;
         }
-        return document.querySelector("body");
+        return document.querySelector("body")!;
     }
 
     scrollTo(element: Element, to: number, duration = 500) {
@@ -55,7 +55,7 @@ export class HeaderScrolling extends React.Component<HeaderProps, void> {
     componentWillMount() {
         this.handleScroll();
         const {scrollTargetSelector} = this.props;
-        this.scrollTargetNode = (scrollTargetSelector && scrollTargetSelector !== "") ? document.querySelector(scrollTargetSelector) : window;
+        this.scrollTargetNode = (scrollTargetSelector && scrollTargetSelector !== "") ? document.querySelector(scrollTargetSelector)! : window;
     }
 
     componentDidMount() {

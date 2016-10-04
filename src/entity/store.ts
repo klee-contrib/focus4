@@ -38,7 +38,7 @@ export type EntityStore = EntityStoreConfig & ClearSet<{}>;
  * @param config L'objet constituant du store, dont chaque propriété doit correspondre à une entité. Les valeurs possibles sont "{}", [{}, "entityName"] ou [[], "entityName"] (pour une liste).
  * @param entityList La liste des toutes les entités utilisées par les propriétés du store (y compris les composées).
  */
-export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfig, entityList: Entity[]) {
+export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfig, entityList: Entity[]): T & ClearSet<{}> {
     const entityMap = entityList.reduce((entities, entity) => {
         entities[entity.name] = entity;
         return entities;
@@ -73,7 +73,7 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
         }
     });
 
-    return observable(entityStore) as T & ClearSet<{}>;
+    return observable(entityStore) as any;
 }
 
 function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Entity}, entry: string): EntityStoreEntry {
@@ -100,7 +100,7 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
     return output;
 }
 
-function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry: string) {
+export function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry: string) {
     if (isArray(entityValue) && isEntityArray(entity)) {
         entity.replace(entityValue.map((item: {}) => buildEntityEntry({[entry]: [{}, entry]}, {[entry]: entity.$entity}, entry) as EntityStoreData));
         for (let i = 0; i < entityValue.length; i++) {
@@ -119,7 +119,7 @@ function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry: strin
     return entity;
 }
 
-function clearEntity(entity: EntityStoreEntry) {
+export function clearEntity(entity: EntityStoreEntry) {
     if (isEntityArray(entity)) {
         entity.replace([]);
     } else {

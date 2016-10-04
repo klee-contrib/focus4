@@ -27,7 +27,7 @@ export function startRouter(config: RouterConfig, ...stores: ViewStore<any>[]) {
             const {currentPath} = store;
             if (config.html5history) {
                 if (currentPath !== window.location.pathname) {
-                    window.history.pushState(null, undefined, currentPath);
+                    window.history.pushState(null, "", currentPath);
                 }
             } else {
                 if (currentPath !== window.location.hash) {

@@ -1,7 +1,6 @@
 import {autobind} from "core-decorators";
 import {isEmpty} from "lodash";
 import {observable, action, runInAction} from "mobx";
-import {createViewModel, IViewModel} from "mobx-utils";
 import * as React from "react";
 
 import {applicationStore} from "../application";
@@ -12,6 +11,7 @@ import {FieldErrors} from "../network";
 import {Field} from "./field";
 import {ClearSet, toFlatValues} from "./store";
 import {EntityField} from "./types";
+import {createViewModel, ViewModel} from "./view-model";
 
 import {
     AutocompleteSelectOptions,
@@ -66,10 +66,11 @@ export interface ServiceConfig {
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
 export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Component<P & AutoFormProps, void> {
+    private isCustomEntity: boolean;
     private services: ServiceConfig;
     private storeData: E;
 
-    entity: E & IViewModel<E>;
+    entity: E & ViewModel;
 
     @observable errors: FieldErrors = {};
     @observable isEdit = this.props.isEdit || false;
@@ -80,17 +81,19 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
      * @param props Les props du composant.
      * @param storeData L'EntityStoreData de base du formulaire.
      * @param services La config de services pour le formulaire ({delete?, load, save}).
-     * @param entity ViewModel (de mobx-utils) externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire.
+     * @param entity ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire.
      */
-    constructor(props: P, storeData: E, services: ServiceConfig, entity?: E & IViewModel<E>) {
+    constructor(props: P, storeData: E, services: ServiceConfig, entity?: E & ViewModel) {
         super(props);
         this.storeData = storeData;
         this.services = services;
         this.entity = entity || createViewModel(storeData);
+        this.isCustomEntity = entity !== undefined;
     }
 
     @action
     async componentWillMount() {
+        this.entity.subscribe();
         let {hasLoad = true, id} = this.props;
         if (hasLoad && id) {
             this.isLoading = true;
@@ -99,6 +102,12 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
                 this.storeData.set(data);
                 this.isLoading = false;
             });
+        }
+    }
+
+    componentWillUnmount() {
+        if (!this.isCustomEntity) {
+            this.entity.unsubscribe();
         }
     }
 
@@ -345,7 +354,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
     private setFieldOptions<T>(field: EntityField<T>, options: {[key: string]: any}) {
         options["isEdit"] = this.isEdit;
         options["error"] = this.errors[field.$entity.translationKey];
-        options["onChange"] = action((value: any) => (this.entity as any)[field.$entity.name] = {$entity: (this.entity as any)[field.$entity.name].$entity, value} as any);
+        options["onChange"] = action((value: any) => (this.entity as any)[field.$entity.name].value = value);
         return options as any;
     }
 }

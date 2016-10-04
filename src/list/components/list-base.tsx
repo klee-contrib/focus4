@@ -34,7 +34,7 @@ export abstract class ListBase<P extends ListBaseProps<LineProps<{}>>, S> extend
     }
 
     componentDidMount() {
-        this.parentNode = this.props.parentSelector ? document.querySelector(this.props.parentSelector) : window;
+        this.parentNode = this.props.parentSelector ? document.querySelector(this.props.parentSelector)! : window;
         if (!this.props.isManualFetch) {
             this.attachScrollListener();
         }
