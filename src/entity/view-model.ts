@@ -1,7 +1,7 @@
-import {merge, omit} from "lodash";
+import {merge} from "lodash";
 import {autorun, action, observable, toJS} from "mobx";
 
-import {ClearSet, clearEntity, setEntityEntry} from "./store";
+import {ClearSet, toFlatValues} from "./store";
 
 export interface ViewModel {
     /** Précise l'état de la synchronisation entre le model et le viewModel. */
@@ -26,23 +26,16 @@ export interface ViewModel {
  * Toute mise à jour du model réinitialise le viewModel.
  */
 export function createViewModel<T extends ClearSet<{}>>(model: T) {
-    const getModel = () => omit(toJS(model), "set", "clear");
+    const getModel = () => toJS(model);
     const viewModel = observable(getModel()) as any as T & ViewModel;
 
-    viewModel.clear = action(() => clearEntity(viewModel as any));
-    viewModel.set = action((entityValue: {}) => setEntityEntry(viewModel as any, entityValue, ""));
+    const reset = () => viewModel.set(toFlatValues(model as any));
 
-    viewModel.reset = () => {
-        for (const entry in model) {
-            if (entry !== "set" && entry !== "clear") {
-                (viewModel as any)[entry] = (model as any)[entry];
-            }
-        }
-    };
-    viewModel.submit = () => merge(viewModel, getModel());
+    viewModel.reset = action(reset);
+    viewModel.submit = action(() => merge(model, viewModel));
     viewModel.subscribe = () => {
         if (!viewModel.isSubscribed) {
-            const disposer = autorun(viewModel.reset);
+            const disposer = autorun(reset);
             viewModel.unsubscribe = () => {
                 disposer();
                 viewModel.isSubscribed = false;

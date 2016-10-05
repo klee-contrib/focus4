@@ -11,7 +11,7 @@ export interface Operation {
 export interface OperationData extends ClearSet<Operation> {
     id: EntityField<number>;
     numero: EntityField<string>;
-    montant: EntityField<string>;
+    montant: EntityField<number>;
     structure: EntityField<StructureData>;
 }
 

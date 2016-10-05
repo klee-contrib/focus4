@@ -1,5 +1,4 @@
-import {omit} from "lodash";
-import {isObservableArray, toJS} from "mobx";
+import {isObservableArray} from "mobx";
 import test = require("tape");
 
 import {makeEntityStore, EntityArray, toFlatValues, ClearSet, createViewModel} from "../";
@@ -145,17 +144,30 @@ test("toFlatValues", t => {
     t.end();
 });
 
-test.only("ViewModel", t => {
+test("ViewModel: Création", t => {
     const entry = getStore().operation;
     const viewModel = createViewModel(entry);
 
     t.deepEqual(viewModel.numero, entry.numero, "Les champs simples du viewModel sont bien identiques à ceux du model.");
     t.deepEqual(viewModel.structure, entry.structure, "Les champs composites du viewModel sont bien identiques à ceux du model.");
 
+    t.comment("ViewModel: Modification de model.");
     entry.set(operation);
 
     t.equal(viewModel.id.value, entry.id.value, "Les modifications du model sont bien répercutées sur les champs simples.");
     t.deepEqual(viewModel.structure, entry.structure, "Les modifications du model sont bien répercutées sur les champs composites.");
+
+    t.comment("ViewModel: Modification de viewModel");
+    viewModel.montant.value = 1000;
+    viewModel.set({structure: {id: 26}});
+    viewModel.structure.value.set({nom: "yolo"});
+
+    t.equal(viewModel.montant.value, 1000, "Champ simple: le viewModel a bien été modifié.");
+    t.equal(entry.montant.value, operation.montant, "Champ simple: le model est bien toujours identique.");
+    t.equal(viewModel.structure.value.id.value, 26, "Champ composite via set global: le viewModel a bien été modifié.");
+    t.equal(entry.structure.value.id.value, operation.structure.id, "Champ composite via set global: le model est bien toujours identique.");
+    t.equal(viewModel.structure.value.nom.value, "yolo", "Champ composite via set local: le viewModel a bien été modifié.");
+    t.equal(entry.structure.value.nom.value, operation.structure.nom, "Champ composite via set local: le model est bien toujours identique.");
 
     t.end();
 });

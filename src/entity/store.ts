@@ -57,9 +57,9 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
         entityStore[entry] = buildEntityEntry(config, entityMap, entry);
     }
 
-    entityStore.set = action((setConfig: {[key: string]: any}) => {
+    entityStore.set = action(function set(this: typeof entityStore, setConfig: {[key: string]: any}) {
         for (const entry in setConfig) {
-            const entity = entityStore[entry];
+            const entity = this[entry];
             if (!entity) {
                 throw new Error(`"${entry}" n'existe pas dans ce store.`);
             }
@@ -67,9 +67,9 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
         }
     });
 
-    entityStore.clear = asReference(() => {
-        for (const entry in entityStore) {
-            clearEntity(entityStore[entry]);
+    entityStore.clear = asReference(function clear(this: typeof entityStore) {
+        for (const entry in this) {
+            clearEntity(this[entry]);
         }
     });
 
@@ -81,7 +81,7 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
     if (isArray(entity) && isArray(entity[0])) {
         const output: EntityArray<EntityStoreData> = observable([]) as any;
         output.$entity = entityMap[entity[1]];
-        output.set = action((values: {}[]) => setEntityEntry(output, values, entity[1]));
+        output.set = action(function set(this: typeof output, values: {}[]) { setEntityEntry(this, values, entity[1]); });
         return output;
     }
 
@@ -95,12 +95,12 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
             value: v.entityName ? buildEntityEntry({[v.entityName]: [v.type === "list" ? [] : {}, v.entityName!]}, entityMap, v.entityName!) : undefined,
         };
     }) as any;
-    output.set = action((entityValue: any) => setEntityEntry(output, entityValue, trueEntry));
-    output.clear = asReference(action(() => clearEntity(output)));
+    output.set = action(function set(this: typeof output, entityValue: any) { setEntityEntry(this, entityValue, trueEntry); });
+    output.clear = asReference(action(function clear(this: typeof output) { clearEntity(this); }));
     return output;
 }
 
-export function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry: string) {
+function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry: string) {
     if (isArray(entityValue) && isEntityArray(entity)) {
         entity.replace(entityValue.map((item: {}) => buildEntityEntry({[entry]: [{}, entry]}, {[entry]: entity.$entity}, entry) as EntityStoreData));
         for (let i = 0; i < entityValue.length; i++) {
@@ -119,7 +119,7 @@ export function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry
     return entity;
 }
 
-export function clearEntity(entity: EntityStoreEntry) {
+function clearEntity(entity: EntityStoreEntry) {
     if (isEntityArray(entity)) {
         entity.replace([]);
     } else {
