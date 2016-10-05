@@ -1,7 +1,8 @@
-import {isObservableArray} from "mobx";
+import {omit} from "lodash";
+import {isObservableArray, toJS} from "mobx";
 import test = require("tape");
 
-import {makeEntityStore, EntityArray, toFlatValues, ClearSet} from "../";
+import {makeEntityStore, EntityArray, toFlatValues, ClearSet, createViewModel} from "../";
 import {LigneEntity} from "./ligne";
 import {OperationEntity, OperationData} from "./operation";
 import {ProjetEntity, ProjetData} from "./projet";
@@ -140,6 +141,21 @@ test("toFlatValues", t => {
     t.deepEqual(toFlatValues(store.operation as any), operation, "L'entrée 'operation' a bien été mise à plat.");
     t.deepEqual(toFlatValues(store.projet as any), projet, "L'entrée 'projet' a bien été mise à plat.");
     t.deepEqual(toFlatValues(store.structureList as any), structureList, "L'entrée 'structureList' a bien été mise à plat.");
+
+    t.end();
+});
+
+test.only("ViewModel", t => {
+    const entry = getStore().operation;
+    const viewModel = createViewModel(entry);
+
+    t.deepEqual(viewModel.numero, entry.numero, "Les champs simples du viewModel sont bien identiques à ceux du model.");
+    t.deepEqual(viewModel.structure, entry.structure, "Les champs composites du viewModel sont bien identiques à ceux du model.");
+
+    entry.set(operation);
+
+    t.equal(viewModel.id.value, entry.id.value, "Les modifications du model sont bien répercutées sur les champs simples.");
+    t.deepEqual(viewModel.structure, entry.structure, "Les modifications du model sont bien répercutées sur les champs composites.");
 
     t.end();
 });
