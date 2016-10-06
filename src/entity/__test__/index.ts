@@ -169,5 +169,38 @@ test("ViewModel: Création", t => {
     t.equal(viewModel.structure.value.nom.value, "yolo", "Champ composite via set local: le viewModel a bien été modifié.");
     t.equal(entry.structure.value.nom.value, operation.structure.nom, "Champ composite via set local: le model est bien toujours identique.");
 
+    t.comment("ViewModel: submit");
+    viewModel.submit();
+
+    t.equal(viewModel.montant.value, 1000, "Champ simple: le viewModel est bien toujours identique.");
+    t.equal(entry.montant.value, 1000, "Champ simple: le model a bien été mis à jour.");
+    t.equal(viewModel.structure.value.id.value, 26, "Champ composite via set global: le viewModel est bien toujours identique.");
+    t.equal(entry.structure.value.id.value, 26, "Champ composite via set global: le model a bien été mis à jour.");
+    t.equal(viewModel.structure.value.nom.value, "yolo", "Champ composite via set local: le viewModel est bien toujours identique.");
+    t.equal(entry.structure.value.nom.value, "yolo", "Champ composite via set local: le model a bien été mis à jour.");
+
+    t.comment("ViewModel: reset");
+    viewModel.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
+    viewModel.reset();
+
+    t.equal(viewModel.montant.value, 1000, "Champ simple: le viewModel a bien été réinitialisé.");
+    t.equal(entry.montant.value, 1000, "Champ simple: le model est bien toujours identique.");
+    t.equal(viewModel.structure.value.id.value, 26, "Champ composite via set global: le viewModel a bien été réinitialisé.");
+    t.equal(entry.structure.value.id.value, 26, "Champ composite via set global: le model est bien toujours identique.");
+    t.equal(viewModel.structure.value.nom.value, "yolo", "Champ composite via set local: le viewModel a bien été réinitialisé.");
+    t.equal(entry.structure.value.nom.value, "yolo", "Champ composite via set local: le model est bien toujours identique.");
+
+    t.comment("ViewModel: unsubscribe");
+    viewModel.unsubscribe();
+    entry.montant.value = 2;
+
+    t.equal(viewModel.montant.value, 1000, "Le viewModel n'a pas été mis à jour.");
+
+    t.comment("ViewModel: subscribe");
+    viewModel.subscribe();
+    entry.montant.value = 5;
+
+    t.equal(viewModel.montant.value, 5, "Le viewModel a bien été mis à jour.");
+
     t.end();
 });
