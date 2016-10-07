@@ -354,7 +354,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
     private setFieldOptions<T>(field: EntityField<T>, options: {[key: string]: any}) {
         options["isEdit"] = this.isEdit;
         options["error"] = this.errors[field.$entity.translationKey];
-        options["onChange"] = action((value: any) => (this.entity as any)[field.$entity.name].value = value);
+        options["onChange"] = options["onChange"] || action((value: any) => (this.entity as any)[field.$entity.name].value = value);
         return options as any;
     }
 }

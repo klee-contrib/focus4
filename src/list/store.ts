@@ -43,20 +43,18 @@ export class ListStore<T> {
 
     @action
     async load(isScroll: boolean) {
-        const {dataList, totalCount, sortAsc, sortBy, criteria, groupingKey, nbElement} = this;
-
         this.pendingCount++;
         const response = await this.service({
-            top: nbElement,
-            skip: isScroll && dataList.length < totalCount ? dataList.length : 0,
-            sortFieldName: sortBy,
-            sortDesc: sortAsc === undefined ? false : !sortAsc,
-            criteria,
-            group: groupingKey || ""
+            top: this.nbElement,
+            skip: isScroll && this.dataList.length < this.totalCount ? this.dataList.length : 0,
+            sortFieldName: this.sortBy,
+            sortDesc: this.sortAsc === undefined ? false : !this.sortAsc,
+            criteria: this.criteria,
+            group: this.groupingKey || ""
         });
         this.pendingCount--;
 
-        this.dataList = isScroll ? [...this.dataList, ...response.dataList] : response.dataList;
+        this.dataList = (isScroll ? [...this.dataList, ...response.dataList] : response.dataList) || [];
         this.totalCount = response.totalCount;
     }
 

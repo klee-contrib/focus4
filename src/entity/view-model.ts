@@ -26,8 +26,7 @@ export interface ViewModel {
  * Toute mise à jour du model réinitialise le viewModel.
  */
 export function createViewModel<T extends ClearSet<{}>>(model: T) {
-    const getModel = () => toJS(model);
-    const viewModel = observable(getModel()) as any as T & ViewModel;
+    const viewModel = observable(toJS(model)) as any as T & ViewModel;
 
     const reset = () => viewModel.set(toFlatValues(model as any));
 
