@@ -17,7 +17,6 @@ import {GroupComponent} from "../search/components/advanced-search/group";
 import {GroupWrapper} from "../search/components/group-wrapper";
 import {HeaderScrolling} from "../application/layout/header/scrolling";
 import {Layout} from "../application/layout";
-import {ListPage} from "../list/page";
 import {ListSelection} from "../list/components/list-selection";
 import {ListSummary} from "../search/components/advanced-search/list-summary";
 import {ListTable} from "../list/components/list-table";
@@ -37,7 +36,6 @@ test("GroupComponent", <GroupComponent canShowMore={true} count={dum.number} gro
 test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.component} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
 test("HeaderScrolling", <HeaderScrolling  />);
 test("Layout", <Layout  />);
-test("ListPage", ListPage.create({ListComponent: dum.component, listProps: dum.any, store: dumClass.ListStore}));
 test("ListSelection", ListSelection.create({LineComponent: dum.component, data: dum.array}));
 test("ListSummary", <ListSummary scopeLock={true} scopes={dum.array} store={dumClass.SearchStore} />);
 test("ListTable", ListTable.create({LineComponent: dum.component, columns: dum.array, data: dum.array}));

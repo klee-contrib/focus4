@@ -66,3 +66,8 @@ export class ListStore<T> {
         this.sortBy = props.sortBy || this.sortBy;
     }
 }
+
+/** Retourne les props à fournir à un composant de liste pour se connecter à un ListStore. */
+export function connectToListStore<T>({dataList, totalCount, load}: ListStore<T>) {
+    return {data: dataList, fetchNextPage: () => load(false), hasMoreData: dataList.length < totalCount};
+}

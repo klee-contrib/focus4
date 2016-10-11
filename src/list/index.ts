@@ -12,5 +12,4 @@ export {
     OperationListItem,
     renderLineActions
 } from "./components";
-export {ListPage} from "./page";
-export {ListStore, ListServiceParams, ListServiceResponse} from "./store";
+export {connectToListStore, ListStore, ListServiceParams, ListServiceResponse} from "./store";
