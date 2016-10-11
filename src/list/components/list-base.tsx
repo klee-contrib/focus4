@@ -7,8 +7,9 @@ import {ReactComponent} from "../../defaults";
 import {LineProps} from "./lines";
 import {BaseListProps} from "./memory-list";
 
-export interface ListBaseProps<P extends LineProps<{}>> extends BaseListProps {
+export interface ListBaseProps<T, P extends LineProps<T>> extends BaseListProps<T> {
     LineComponent: ReactComponent<P>;
+    lineProps?: P;
     isInfiniteScroll?: boolean;
     isLoading?: boolean;
     /** Default: 250 */
@@ -24,7 +25,7 @@ function topOfElement(element: HTMLElement): number {
 };
 
 @autobind
-export abstract class ListBase<P extends ListBaseProps<LineProps<{}>>, S> extends Component<P, void> {
+export abstract class ListBase<T, P extends ListBaseProps<T, LineProps<T>>> extends Component<P, void> {
     parentNode: Element | Window;
 
     componentWillUnmount() {

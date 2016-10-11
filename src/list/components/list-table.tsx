@@ -1,5 +1,4 @@
 import {autobind} from "core-decorators";
-import {omit} from "lodash";
 import * as React from "react";
 
 import * as defaults from "../../defaults";
@@ -11,7 +10,7 @@ import {ListBase, ListBaseProps} from "./list-base";
 const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 
-export interface ListTablePropsBase<T, P extends LineProps<T>> extends ListBaseProps<P> {
+export interface ListTableProps<T, P extends LineProps<T>> extends ListBaseProps<T, P> {
     columns: {sort?: "asc" | "desc", label: string, noSort: boolean}[];
     /** Default: 'id' */
     idField?: string;
@@ -26,10 +25,14 @@ export interface ListTablePropsBase<T, P extends LineProps<T>> extends ListBaseP
     sortColumn?: (index: number, order: "asc" | "desc") => void;
 }
 
-export type ListTableProps<T, P extends LineProps<T>> = ListTablePropsBase<T, P> & P;
-
 @autobind
-export class ListTable extends ListBase<ListTablePropsBase<{}, LineProps<{}>>, void> {
+export class ListTable<T, P extends LineProps<T>> extends ListBase<T, ListTableProps<T, P>> {
+
+    /** Instancie une version typée du ListTable. */
+    static create<T, L extends LineProps<T>>(props: ListTableProps<T, L>) {
+        const List = ListTable as any;
+        return <List {...props} />;
+    }
 
     private renderTableHeader() {
         const columns = this.props.columns.map((colProperties, id) => {
@@ -57,17 +60,17 @@ export class ListTable extends ListBase<ListTablePropsBase<{}, LineProps<{}>>, v
     }
 
     private renderTableBody() {
-        const {values, LineComponent, idField = "id", operationList} = this.props;
+        const {data, LineComponent, idField = "id", operationList, lineProps} = this.props;
         return (
             <tbody>
-                {values && values.map((data, idx) => {
-                    const otherLineProps = omit(this.props, "data", "operationList");
+                {data.map((item, idx) => {
+                    const idValue = (item as any)[idField];
                     return (
                         <LineComponent
-                            data={data}
-                            key={(data[idField].$entity ? data[idField].value : data[idField]) || idx}
+                            data={item}
+                            key={(idValue && (idValue.$entity ? idValue.value : idValue)) || idx}
                             operationList={operationList || []}
-                            {...otherLineProps}
+                            {...lineProps}
                         />
                     );
                 })}

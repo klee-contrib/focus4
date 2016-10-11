@@ -143,7 +143,7 @@ export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: Ent
  * @param data La liste.
  * @param options Les options.
  */
-export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: BaseListProps & {perPage?: number} & ListSelectionProps<T, P>) {
+export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: BaseListProps<T> & {perPage?: number} & ListSelectionProps<T, P>) {
     return listForWith(ListSelection, data, options);
 }
 
@@ -153,15 +153,13 @@ export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: 
  * @param data La liste.
  * @param options Les options.
  */
-export function listForWith<ListProps extends BaseListProps>(ListComponent: defaults.ReactComponent<ListProps>, data: {}[], options: BaseListProps & {perPage?: number} & ListProps) {
-    const defaultProps = {
-        values: data || [],
+export function listForWith<T, P extends BaseListProps<T>>(ListComponent: defaults.ReactComponent<P>, data: {}[], options: BaseListProps<T> & {perPage?: number} & P) {
+    return MemoryList.create({
+        data,
         ListComponent,
-        isEdit: false
-    };
-
-    const finalProps = Object.assign(defaultProps, options);
-    return <MemoryList ref="list" {...finalProps} />;
+        perPage: options.perPage,
+        listProps: options
+    });
 }
 
 /**
@@ -196,7 +194,7 @@ export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): 
  * @param data La liste.
  * @param options Les options.
  */
-export function tableFor<T, P extends LineProps<T>>(data: T[], options: BaseListProps & {perPage?: number} & ListTableProps<T, P>) {
+export function tableFor<T, P extends LineProps<T>>(data: T[], options: BaseListProps<T> & {perPage?: number} & ListTableProps<T, P>) {
     return listForWith(ListTable, data, options);
 }
 

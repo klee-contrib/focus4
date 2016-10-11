@@ -114,7 +114,7 @@ export class Results extends React.Component<ResultsProps, void> {
         return (
             <div>
                 <ListSelection
-                    values={list}
+                    data={list}
                     data-focus="results-list"
                     fetchNextPage={this.onScrollReachedBottom}
                     hasMoreData={hasMoreData}

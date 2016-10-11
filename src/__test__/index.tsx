@@ -37,11 +37,11 @@ test("GroupComponent", <GroupComponent canShowMore={true} count={dum.number} gro
 test("GroupWrapper", <GroupWrapper count={dum.number} groupComponent={dum.component} groupKey={dum.string} initialRowsCount={dum.number} list={dum.array} renderResultsList={dum.function} />);
 test("HeaderScrolling", <HeaderScrolling  />);
 test("Layout", <Layout  />);
-test("ListPage", <ListPage store={dumClass.ListStore} />);
-test("ListSelection", <ListSelection LineComponent={dum.component} />);
+test("ListPage", ListPage.create({ListComponent: dum.component, listProps: dum.any, store: dumClass.ListStore}));
+test("ListSelection", ListSelection.create({LineComponent: dum.component, data: dum.array}));
 test("ListSummary", <ListSummary scopeLock={true} scopes={dum.array} store={dumClass.SearchStore} />);
-test("ListTable", <ListTable LineComponent={dum.component} columns={dum.array} />);
-test("MemoryList", <MemoryList ListComponent={dum.component} />);
+test("ListTable", ListTable.create({LineComponent: dum.component, columns: dum.array, data: dum.array}));
+test("MemoryList", MemoryList.create({ListComponent: dum.component, listProps: dum.any, data: dum.array}));
 test("MessageCenter", <MessageCenter  />);
 test("Results", <Results groupComponent={dum.component} isSelection={true} lineComponentMapper={dum.function} renderSingleGroupDecoration={true} store={dumClass.SearchStore} />);
 test("SearchBar", <SearchBar scopes={dum.array} store={dumClass.SearchStore} />);

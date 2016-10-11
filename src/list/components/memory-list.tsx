@@ -1,32 +1,38 @@
 import {autobind} from "core-decorators";
-import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ReactComponent} from "../../defaults";
 
-export interface BaseListProps {
+export interface BaseListProps<T> {
     ref?: string;
-    values?: {[key: string]: any}[];
+    data: T[];
     fetchNextPage?: () => void;
     hasMoreData?: boolean;
     isManualFetch?: boolean;
-    isSelection?: boolean;
 }
 
-export interface MemoryListProps<ListProps extends BaseListProps> extends BaseListProps {
-    ListComponent: ReactComponent<ListProps>;
+export interface MemoryListProps<T, P extends BaseListProps<T>> {
+    ListComponent: ReactComponent<P>;
+    data: T[];
+    listProps: P;
     /** Default: 5 */
     perPage?: number;
 }
 
 @autobind
 @observer
-export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, void> {
+export class MemoryList<T, P extends BaseListProps<T>> extends React.Component<MemoryListProps<T, P>, void> {
 
     @observable page = 1;
     @observable maxElements = this.props.perPage || 5;
+
+    /** Instancie une version typée du MemoryList. */
+    static create<T, L extends BaseListProps<T>>(props: MemoryListProps<T, L>) {
+        const List = MemoryList as any;
+        return <List {...props} />;
+    }
 
     fetchNextPage() {
         this.page = this.page + 1;
@@ -34,27 +40,20 @@ export class MemoryList extends React.Component<MemoryListProps<BaseListProps>, 
     }
 
     getDataToUse() {
-        const {values} = this.props;
-        if (!values) {
-            return [];
-        }
-        return values.slice(0, this.maxElements);
+        return this.props.data.slice(0, this.maxElements);
     }
 
     render() {
-        const {values = [], ListComponent} = this.props;
-        const hasMoreData = values.length > this.maxElements;
-        const childProps = omit(this.props, "data");
-        const LC = ListComponent as React.ComponentClass<BaseListProps>;
+        const {data, ListComponent, listProps} = this.props;
+        const hasMoreData = data.length > this.maxElements;
         return (
-            <LC
+            <ListComponent
                 ref="list"
-                values={this.getDataToUse()}
+                data={this.getDataToUse()}
                 hasMoreData={hasMoreData}
-                isSelection={false}
                 isManualFetch={true}
                 fetchNextPage={this.fetchNextPage}
-                {...childProps}
+                {...listProps}
             />
         );
     }

@@ -19,6 +19,7 @@ interface NamedComponent {
     fileName: string;
     importName?: string;
     name?: string;
+    isCreate?: boolean;
 }
 
 interface TestedComponent extends NamedComponent {
@@ -75,8 +76,19 @@ glob(`${appRoot}/**/*.tsx`, (error, fileNames) => {
 
 ${sortedOutput.map(getImport).join("\r\n")}
 
-${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).filter(p => p !== undefined).join(" ")} />);`).join("\r\n")}
+${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
 `);
+
+    function getComponent(c: TestedComponent) {
+        if (c.isCreate) {
+            return `${c.name}.create({${c.props.map(getProp)
+                .filter(p => p !== undefined)
+                .map(p => p!.replace("{", "").replace("}", "").replace("=", ": "))
+                .join(", ")}})`;
+        } else {
+            return `<${c.name} ${c.props.map(getProp).filter(p => p !== undefined).join(" ")} />`;
+        }
+    }
 
     function visit(node: ts.Node) {
         if (node.getSourceFile().isDeclarationFile) {
@@ -91,7 +103,9 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
                     const {types} = heritageClauses[0];
                     if (types) {
                         const {typeArguments} = types[0];
-                        if (typeArguments) {
+                        if (typeArguments && node.members.find(member => !!(member.name && member.name.getText() === "create" && member.modifiers && member.modifiers.find(modifier => modifier.kind === ts.SyntaxKind.StaticKeyword)))) {
+                            pushToOutput(node, type, checker.getTypeAtLocation(typeArguments[0]), true);
+                        } else if (typeArguments) {
                             pushToOutput(node, type, checker.getTypeAtLocation(typeArguments[0]));
                         }
                     }
@@ -110,8 +124,9 @@ ${sortedOutput.map(c => `test("${c.name}", <${c.name} ${c.props.map(getProp).fil
         }
     }
 
-    function pushToOutput(node: ts.Node, type: ts.Type, propTypes: ts.Type) {
+    function pushToOutput(node: ts.Node, type: ts.Type, propTypes: ts.Type, isCreate = false) {
         const c = getName(node, type) as TestedComponent;
+        c.isCreate = isCreate;
         c.props = propTypes
             .getProperties()
             .filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken))

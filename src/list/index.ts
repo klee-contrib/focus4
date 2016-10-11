@@ -13,4 +13,4 @@ export {
     renderLineActions
 } from "./components";
 export {ListPage} from "./page";
-export {ListStore} from "./store";
+export {ListStore, ListServiceParams, ListServiceResponse} from "./store";
