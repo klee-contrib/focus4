@@ -6,7 +6,7 @@ import * as React from "react";
 import * as defaults from "../../defaults";
 import {translate} from "../../translation";
 
-import {LineSelectionProps, OperationListItem} from "./lines";
+import {LineSelectionProps} from "./lines";
 import {ListBase, ListBaseProps} from "./list-base";
 
 export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends ListBaseProps<T, P> {
@@ -15,9 +15,7 @@ export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends 
     /** Default: true */
     isSelection?: boolean;
     loader?: () => React.ReactElement<any>;
-    onLineClick?: (...args: any[]) => void;
     onSelection?: (data?: {}, isSelected?: boolean, isInit?: boolean) => void;
-    operationList?: OperationListItem[];
     /** Default: 'partial' */
     selectionStatus?: "none" | "partial" | "selected";
 }
@@ -78,7 +76,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
     }
 
     private renderLines() {
-        const {LineComponent, operationList, data, lineProps} = this.props;
+        const {LineComponent, data, lineProps} = this.props;
         return data.map(value => {
             return (
                 <LineComponent
@@ -86,7 +84,6 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
                     isSelected={this.items.get(this.idField(value)).selected}
                     key={this.idField(value)}
                     onSelection={this.handleLineSelection}
-                    operationList={operationList || []}
                     {...lineProps}
                 />
             );

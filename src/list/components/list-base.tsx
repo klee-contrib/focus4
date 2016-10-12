@@ -5,9 +5,9 @@ import {findDOMNode} from "react-dom";
 import {ReactComponent} from "../../defaults";
 
 import {LineProps} from "./lines";
-import {BaseListProps} from "./memory-list";
+import {CommonListProps} from "./memory-list";
 
-export interface ListBaseProps<T, P extends LineProps<T>> extends BaseListProps<T> {
+export interface ListBaseProps<T, P extends LineProps<T>> extends CommonListProps<T> {
     LineComponent: ReactComponent<P>;
     lineProps?: P;
     isInfiniteScroll?: boolean;

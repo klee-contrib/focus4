@@ -113,20 +113,19 @@ export class Results extends React.Component<ResultsProps, void> {
         const hasMoreData = isUnique !== undefined && isUnique && list.length < count;
         return (
             <div>
-                <ListSelection
-                    data={list}
-                    data-focus="results-list"
-                    fetchNextPage={this.onScrollReachedBottom}
-                    hasMoreData={hasMoreData}
-                    isSelection={isSelection}
-                    LineComponent={LineComponent}
-                    onLineClick={lineClickHandler}
-                    onSelection={lineSelectionHandler}
-                    operationList={lineOperationList}
-                    parentSelector={scrollParentSelector}
-                    ref={"list-" + key}
-                    selectionStatus={selectionStatus}
-                />
+                {ListSelection.create({
+                    data: list,
+                    "data-focus": "results-list",
+                    fetchNextPage: this.onScrollReachedBottom,
+                    hasMoreData,
+                    isSelection,
+                    LineComponent,
+                    lineProps: {operationList: lineOperationList, onLineClick: lineClickHandler},
+                    onSelection: lineSelectionHandler,
+                    parentSelector: scrollParentSelector,
+                    ref: "list-" + key,
+                    selectionStatus
+                } as any)}
                 {isLoading &&
                     <div data-focus="loading-more-results">
                         {translate("search.loadingMore")}

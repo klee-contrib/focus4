@@ -4,7 +4,7 @@ import * as React from "react";
 import * as defaults from "../../defaults";
 import {translate} from "../../translation";
 
-import {LineProps, OperationListItem} from "./lines";
+import {LineProps} from "./lines";
 import {ListBase, ListBaseProps} from "./list-base";
 
 const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
@@ -14,12 +14,9 @@ export interface ListTableProps<T, P extends LineProps<T>> extends ListBaseProps
     columns: {sort?: "asc" | "desc", label: string, noSort: boolean}[];
     /** Default: 'id' */
     idField?: string;
-    isEdit?: boolean;
     /** Default: false */
     isLoading?: boolean;
     loader?: () => React.ReactElement<any>;
-    /** Default: [] */
-    operationList?: OperationListItem[];
     /** Default: false */
     isSelectable?: boolean;
     sortColumn?: (index: number, order: "asc" | "desc") => void;
@@ -37,7 +34,7 @@ export class ListTable<T, P extends LineProps<T>> extends ListBase<T, ListTableP
     private renderTableHeader() {
         const columns = this.props.columns.map((colProperties, id) => {
             let sort: React.ReactElement<any> | null;
-            if (!this.props.isEdit && !colProperties.noSort) {
+            if (!colProperties.noSort) {
                 const order = colProperties.sort ? colProperties.sort : "asc";
                 const iconName = "asc" === order ? "arrow_drop_up" : "arrow_drop_down";
                 const icon = <i className="material-icons">{iconName}</i>;
@@ -60,7 +57,7 @@ export class ListTable<T, P extends LineProps<T>> extends ListBase<T, ListTableP
     }
 
     private renderTableBody() {
-        const {data, LineComponent, idField = "id", operationList, lineProps} = this.props;
+        const {data, LineComponent, idField = "id", lineProps} = this.props;
         return (
             <tbody>
                 {data.map((item, idx) => {
@@ -69,7 +66,6 @@ export class ListTable<T, P extends LineProps<T>> extends ListBase<T, ListTableP
                         <LineComponent
                             data={item}
                             key={(idValue && (idValue.$entity ? idValue.value : idValue)) || idx}
-                            operationList={operationList || []}
                             {...lineProps}
                         />
                     );

@@ -13,6 +13,7 @@ export interface OperationListItem {
 
 export interface LineProps<T> {
     data?: T;
+    onLineClick?: (data: T) => void;
     operationList?: OperationListItem[];
 }
 

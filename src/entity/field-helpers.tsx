@@ -3,7 +3,7 @@ import * as React from "react";
 
 import * as defaults from "../defaults";
 import {EntityField} from "../entity";
-import {BaseListProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
+import {CommonListProps, ListForProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
 
 import {Field, FieldProps} from "./field";
 
@@ -143,7 +143,7 @@ export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: Ent
  * @param data La liste.
  * @param options Les options.
  */
-export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: BaseListProps<T> & {perPage?: number} & ListSelectionProps<T, P>) {
+export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: ListForProps & {perPage?: number} & ListSelectionProps<T, P>) {
     return listForWith(ListSelection, data, options);
 }
 
@@ -153,7 +153,7 @@ export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: 
  * @param data La liste.
  * @param options Les options.
  */
-export function listForWith<T, P extends BaseListProps<T>>(ListComponent: defaults.ReactComponent<P>, data: {}[], options: BaseListProps<T> & {perPage?: number} & P) {
+export function listForWith<T, P extends CommonListProps<T>>(ListComponent: defaults.ReactComponent<P>, data: T[], options: ListForProps & {perPage?: number} & P) {
     return MemoryList.create({
         data,
         ListComponent,
@@ -194,7 +194,7 @@ export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): 
  * @param data La liste.
  * @param options Les options.
  */
-export function tableFor<T, P extends LineProps<T>>(data: T[], options: BaseListProps<T> & {perPage?: number} & ListTableProps<T, P>) {
+export function tableFor<T, P extends LineProps<T>>(data: T[], options: CommonListProps<T> & {perPage?: number} & ListTableProps<T, P>) {
     return listForWith(ListTable, data, options);
 }
 
