@@ -1,4 +1,4 @@
-import {find, result} from "lodash";
+import {find, result, omit} from "lodash";
 import * as React from "react";
 
 import * as defaults from "../defaults";
@@ -157,7 +157,7 @@ export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComp
         data: options.data,
         ListComponent,
         perPage: options.perPage,
-        listProps: options
+        listProps: omit(options, "data", "perPage")
     });
 }
 
