@@ -5,9 +5,10 @@ import {findDOMNode} from "react-dom";
 import {ReactComponent} from "../../defaults";
 
 import {LineProps} from "./lines";
-import {CommonListProps} from "./memory-list";
+import {CommonListProps, WithData} from "./memory-list";
+export {WithData};
 
-export interface ListBaseProps<T, P extends LineProps<T>> extends CommonListProps<T> {
+export interface ListBaseProps<T, P extends LineProps<T>> extends CommonListProps {
     LineComponent: ReactComponent<P>;
     lineProps?: P;
     isInfiniteScroll?: boolean;
@@ -25,7 +26,7 @@ function topOfElement(element: HTMLElement): number {
 };
 
 @autobind
-export abstract class ListBase<T, P extends ListBaseProps<T, LineProps<T>>> extends Component<P, void> {
+export abstract class ListBase<T, P extends WithData<ListBaseProps<T, LineProps<T>>, T>> extends Component<P, void> {
     parentNode: Element | Window;
 
     componentWillUnmount() {

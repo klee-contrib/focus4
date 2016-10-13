@@ -5,7 +5,7 @@ import * as defaults from "../../defaults";
 import {translate} from "../../translation";
 
 import {LineProps} from "./lines";
-import {ListBase, ListBaseProps} from "./list-base";
+import {ListBase, ListBaseProps, WithData} from "./list-base";
 
 const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
@@ -23,10 +23,10 @@ export interface ListTableProps<T, P extends LineProps<T>> extends ListBaseProps
 }
 
 @autobind
-export class ListTable<T, P extends LineProps<T>> extends ListBase<T, ListTableProps<T, P>> {
+export class ListTable<T, P extends LineProps<T>> extends ListBase<T, WithData<ListTableProps<T, P>, T>> {
 
     /** Instancie une version typée du ListTable. */
-    static create<T, L extends LineProps<T>>(props: ListTableProps<T, L>) {
+    static create<T, L extends LineProps<T>>(props: WithData<ListTableProps<T, L>, T>) {
         const List = ListTable as any;
         return <List {...props} />;
     }

@@ -6,7 +6,7 @@ import {EntityField, textFor} from "../../entity";
 export interface OperationListItem {
     label?: string;
     action: (data: {}) => void;
-    style: {shape?: "icon" | "flat" | "raised"};
+    style?: {shape?: "icon" | "flat" | "raised"};
     icon?: string;
     priority: number;
 }

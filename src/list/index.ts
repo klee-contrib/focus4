@@ -1,6 +1,5 @@
 export {
     CommonListProps,
-    ListForProps,
     LineProps,
     lineSelection,
     LineSelectionProps,

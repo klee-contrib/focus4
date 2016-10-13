@@ -7,7 +7,7 @@ import * as defaults from "../../defaults";
 import {translate} from "../../translation";
 
 import {LineSelectionProps} from "./lines";
-import {ListBase, ListBaseProps} from "./list-base";
+import {ListBase, ListBaseProps, WithData} from "./list-base";
 
 export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends ListBaseProps<T, P> {
     /** Default: data => data.id.value || data.id */
@@ -22,7 +22,7 @@ export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends 
 
 @autobind
 @observer
-export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<T, ListSelectionProps<T, P>> {
+export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<T, WithData<ListSelectionProps<T, P>, T>> {
 
     idField = this.props.idField || ((data: any) => (data.id.value || data.id).toString());
 
@@ -32,7 +32,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
     }, {}) || {});
 
     /** Instancie une version typée du ListSelection. */
-    static create<T, L extends LineSelectionProps<T>>(props: ListSelectionProps<T, L>) {
+    static create<T, L extends LineSelectionProps<T>>(props: WithData<ListSelectionProps<T, L>, T>) {
         const List = ListSelection as any;
         return <List {...props} />;
     }
@@ -43,13 +43,13 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
         }
     }
 
-    componentWillReceiveProps(props: ListSelectionProps<T, P>) {
+    componentWillReceiveProps(props: WithData<ListSelectionProps<T, P>, T>) {
         if (!isObservableArray(this.props.data)) {
             this.updateItems(props);
         }
     }
 
-    updateItems({selectionStatus, data}: ListSelectionProps<T, P>) {
+    updateItems({selectionStatus, data}: WithData<ListSelectionProps<T, P>, T>) {
         for (const item of data) {
             const key = this.idField(item);
             if (!(this.items.has(key) && selectionStatus === "partial")) {

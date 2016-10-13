@@ -3,7 +3,7 @@ import * as React from "react";
 
 import * as defaults from "../defaults";
 import {EntityField} from "../entity";
-import {CommonListProps, ListForProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
+import {CommonListProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
 
 import {Field, FieldProps} from "./field";
 
@@ -143,19 +143,18 @@ export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: Ent
  * @param data La liste.
  * @param options Les options.
  */
-export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: ListForProps & {perPage?: number} & ListSelectionProps<T, P>) {
-    return listForWith(ListSelection, data, options);
+export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: ListSelectionProps<T, P> & {perPage?: number}) {
+    return listForWith(ListSelection, Object.assign({}, options, {data}));
 }
 
 /**
  * Crée un composant de liste personnalisé à partir de la liste fournie.
  * @param ListComponent Le component de liste.
- * @param data La liste.
- * @param options Les options.
+ * @param options Les options (dont les données de la liste).
  */
-export function listForWith<T, P extends CommonListProps<T>>(ListComponent: defaults.ReactComponent<P>, data: T[], options: ListForProps & {perPage?: number} & P) {
+export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComponent: defaults.ReactComponent<P>, options: P & {perPage?: number}) {
     return MemoryList.create({
-        data,
+        data: options.data,
         ListComponent,
         perPage: options.perPage,
         listProps: options
@@ -194,8 +193,8 @@ export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): 
  * @param data La liste.
  * @param options Les options.
  */
-export function tableFor<T, P extends LineProps<T>>(data: T[], options: CommonListProps<T> & {perPage?: number} & ListTableProps<T, P>) {
-    return listForWith(ListTable, data, options);
+export function tableFor<T, P extends LineProps<T>>(data: T[], options: ListTableProps<T, P> & {perPage?: number}) {
+    return listForWith(ListTable, Object.assign({}, options, {data}));
 }
 
 /**

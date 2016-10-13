@@ -5,19 +5,17 @@ import * as React from "react";
 
 import {ReactComponent} from "../../defaults";
 
-export interface ListForProps {
+export interface CommonListProps {
     ref?: string;
     fetchNextPage?: () => void;
     hasMoreData?: boolean;
     isManualFetch?: boolean;
 }
 
-export interface CommonListProps<T> extends ListForProps {
-    data: T[];
-}
+export type WithData<P, T> = P & {data: T[]};
 
-export interface MemoryListProps<T, P extends CommonListProps<T>> {
-    ListComponent: ReactComponent<P>;
+export interface MemoryListProps<T, P extends CommonListProps> {
+    ListComponent: ReactComponent<WithData<P, T>>;
     data: T[];
     listProps: P;
     /** Default: 5 */
@@ -26,13 +24,13 @@ export interface MemoryListProps<T, P extends CommonListProps<T>> {
 
 @autobind
 @observer
-export class MemoryList<T, P extends CommonListProps<T>> extends React.Component<MemoryListProps<T, P>, void> {
+export class MemoryList<T, P extends CommonListProps> extends React.Component<MemoryListProps<T, P>, void> {
 
     @observable page = 1;
     @observable maxElements = this.props.perPage || 5;
 
     /** Instancie une version typée du MemoryList. */
-    static create<T, L extends CommonListProps<T>>(props: MemoryListProps<T, L>) {
+    static create<T, L extends CommonListProps>(props: MemoryListProps<T, L>) {
         const List = MemoryList as any;
         return <List {...props} />;
     }
