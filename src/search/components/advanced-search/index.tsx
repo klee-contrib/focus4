@@ -9,7 +9,7 @@ import {OperationListItem} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {Results} from "../results";
-import {ActionBar} from "./action-bar";
+import {SearchActionBar} from "./search-action-bar";
 import {FacetBox} from "./facet-box";
 import {GroupComponent} from "./group";
 import {ListSummary} from "./list-summary";
@@ -26,12 +26,12 @@ export interface AdvancedSearchProps {
     lineOperationList?: OperationListItem[];
     onLineClick?: (...args: any[]) => void;
     /** Default: [] */
-    orderableColumnList?: {} | {}[];
+    orderableColumnList?: {key: string, label: string, order: boolean}[];
     /** Default: {} */
     openedFacetList?: {};
     scopes: {code: string, label: string}[];
     /** Default: {} */
-    scopesConfig?: {};
+    scopesConfig?: {[key: string]: string};
     scrollParentSelector?: string;
     scopeLock?: boolean;
     selectItem?: (data?: any, isSelected?: boolean) => void;
@@ -130,11 +130,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         }, {} as {[facet: string]: string}) : {};
 
         return (
-            <ActionBar
+            <SearchActionBar
                 groupableColumnList={groupableColumnList}
                 hasGrouping={this.hasGrouping}
-                isSelection={isSelection}
-                operationList={store.totalCount > 0 ? lineOperationList : {}}
+                hasSelection={isSelection}
+                operationList={store.totalCount > 0 ? lineOperationList : []}
                 orderableColumnList={orderableColumnList}
                 ref="actionBar"
                 selectionAction={this.selectionAction}

@@ -3,10 +3,11 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import * as defaults from "../../defaults";
-import {translate} from "../../translation";
+import * as defaults from "../../../defaults";
+import {translate} from "../../../translation";
 
-import {SearchStore} from "../store";
+import {SearchStore} from "../../store";
+import {Scope, ScopeSelect} from "./scope-select";
 
 export interface Props {
     hasScopes?: boolean;
@@ -14,7 +15,7 @@ export interface Props {
     minChar?: number;
     onSearchCriteriaChange?: (query?: string, scope?: string) => void;
     placeholder?: string;
-    scopes: {code: string, label: string}[];
+    scopes: Scope[];
     store: SearchStore;
 }
 
@@ -69,9 +70,9 @@ export class SearchBar extends React.Component<Props, void> {
     }
 
     render() {
-        const {Scope, Button, InputText} = defaults;
-        if (!Scope || !Button || !InputText) {
-            throw new Error("Les composants Button, Scope ou InputText n'ont pas été définis. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
+        const {Button, InputText} = defaults;
+        if (!Button || !InputText) {
+            throw new Error("Les composants Button ou InputText n'ont pas été définis. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
         }
 
         let {hasScopes, placeholder, store, scopes} = this.props;
@@ -83,7 +84,7 @@ export class SearchBar extends React.Component<Props, void> {
             <div style={{display: "flex"}}>
                 <div data-focus="search-bar">
                     {hasScopes ?
-                        <Scope list={scopes} onScopeSelection={this.onScopeSelection} ref="scope" value={store.scope}/>
+                        <ScopeSelect list={scopes} onScopeSelection={this.onScopeSelection} ref="scope" value={store.scope} />
                     : null}
                     <div data-focus="search-bar-input">
                         <InputText

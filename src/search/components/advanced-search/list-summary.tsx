@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import * as defaults from "../../../defaults";
-
+import {TopicDisplayer} from"../../../list";
 import {SearchStore} from "../../store";
 
 export interface Props {
@@ -47,9 +47,9 @@ export class ListSummary extends React.Component<Props, void> {
     }
 
     render() {
-        const {TopicDisplayer, Button} = defaults;
-        if (!TopicDisplayer || !Button) {
-            throw new Error("Les composants Button ou TopicDisplayer n'ont pas été définis. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
+        const {Button} = defaults;
+        if (!Button) {
+            throw new Error("Les composants Button n'ont pas été définis. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
         }
 
         const {store, exportAction} = this.props;

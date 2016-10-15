@@ -25,17 +25,13 @@ export const dumClass = {
 };
 
 setDefaultComponents({
-    ActionBar: dum.component,
     Button: dum.component,
     ButtonBackToTop: dum.component,
     Checkbox: dum.component,
-    ContextualActions: dum.component,
     DisplayText: dum.component,
     Dropdown: dum.component,
     Icon: dum.component,
-    InputText: dum.component,
-    Scope: dum.component,
-    TopicDisplayer: dum.component
+    InputText: dum.component
 });
 
 export function test(name: string, Element: ReactElement<any>) {

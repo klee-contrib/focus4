@@ -6,8 +6,9 @@
 import {test, dum, dumClass} from "../testing";
 import * as React from "react";
 
-import {ActionBar} from "../search/components/advanced-search/action-bar";
+import {ActionBar} from "../list/components/action-bar";
 import {AdvancedSearch} from "../search/components/advanced-search";
+import {ContextualActions} from "../list/components/contextual-actions";
 import {ErrorCenter} from "../application/layout/error-center";
 import {Facet} from "../search/components/advanced-search/facet-box/facet";
 import {FacetBox} from "../search/components/advanced-search/facet-box";
@@ -23,10 +24,14 @@ import {ListTable} from "../list/components/list-table";
 import {MemoryList} from "../list/components/memory-list";
 import {MessageCenter} from "../message/message-center";
 import {Results} from "../search/components/results";
+import {ScopeSelect} from "../search/components/search-bar/scope-select";
+import {SearchActionBar} from "../search/components/advanced-search/search-action-bar";
 import {SearchBar} from "../search/components/search-bar";
+import {TopicDisplayer} from "../list/components/topic-displayer";
 
-test("ActionBar", <ActionBar store={dumClass.SearchStore} />);
+test("ActionBar", <ActionBar  />);
 test("AdvancedSearch", <AdvancedSearch lineComponentMapper={dum.function} scopes={dum.array} store={dumClass.SearchStore} />);
+test("ContextualActions", <ContextualActions operationList={dum.array} />);
 test("ErrorCenter", <ErrorCenter  />);
 test("Facet", <Facet expandHandler={dum.function} facet={{code: dum.string, label: dum.string, values: dum.array}} facetKey={dum.string} isExpanded={true} nbDefaultDataList={dum.number} selectHandler={dum.function} selectedDataKey={dum.string} />);
 test("FacetBox", <FacetBox openedFacetList={{}} scopesConfig={{}} store={dumClass.SearchStore} />);
@@ -42,4 +47,7 @@ test("ListTable", ListTable.create({LineComponent: dum.component, columns: dum.a
 test("MemoryList", MemoryList.create({ListComponent: dum.component, listProps: dum.any, data: dum.array}));
 test("MessageCenter", <MessageCenter  />);
 test("Results", <Results groupComponent={dum.component} isSelection={true} lineComponentMapper={dum.function} renderSingleGroupDecoration={true} store={dumClass.SearchStore} />);
+test("ScopeSelect", <ScopeSelect list={dum.array} value={dum.string} />);
+test("SearchActionBar", <SearchActionBar store={dumClass.SearchStore} />);
 test("SearchBar", <SearchBar scopes={dum.array} store={dumClass.SearchStore} />);
+test("TopicDisplayer", <TopicDisplayer  />);

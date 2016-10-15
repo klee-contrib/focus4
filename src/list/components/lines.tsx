@@ -3,12 +3,15 @@ import * as React from "react";
 import * as defaults from "../../defaults";
 import {EntityField, textFor} from "../../entity";
 
+import {ContextualActions} from "./contextual-actions";
+
 export interface OperationListItem {
     label?: string;
-    action: (data: {}) => void;
+    action: (data?: {}) => void;
     style?: {shape?: "icon" | "flat" | "raised"};
     icon?: string;
-    priority: number;
+    iconLibrary?: string;
+    priority?: number;
 }
 
 export interface LineProps<T> {
@@ -29,11 +32,6 @@ export interface LineSelectionProps<T> extends LineProps<T> {
  * @param isSelection Utilise les classes CSS de la ligne de sélection.
  */
 export function renderLineActions({data, operationList}: LineProps<any>, isSelection = false) {
-    const {ContextualActions} = defaults;
-    if (!ContextualActions) {
-        throw new Error("Le composant ContextualActions n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
-    }
-
     if (operationList && operationList.length > 0) {
         return (
             <div className={isSelection ? "sl-actions" : ""} data-focus={isSelection ? "" : "table-line-actions"}>

@@ -1,4 +1,5 @@
 export {
+    ActionBar,
     CommonListProps,
     LineProps,
     lineSelection,
@@ -10,6 +11,7 @@ export {
     ListTableProps,
     MemoryList,
     OperationListItem,
-    renderLineActions
+    renderLineActions,
+    TopicDisplayer
 } from "./components";
 export {connectToListStore, ListStore, ListServiceParams, ListServiceResponse} from "./store";
