@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import {ReactComponent} from "../../defaults";
 import {MessageCenter as DefaultMessageCenter} from "../../message";
 
 import {ErrorCenter as DefaultErrorCenter} from "./error-center";

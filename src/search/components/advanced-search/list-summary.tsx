@@ -2,7 +2,8 @@ import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import * as defaults from "../../../defaults";
+import Button from "focus-components/button";
+
 import {TopicDisplayer} from"../../../list";
 import {SearchStore} from "../../store";
 
@@ -47,11 +48,6 @@ export class ListSummary extends React.Component<Props, void> {
     }
 
     render() {
-        const {Button} = defaults;
-        if (!Button) {
-            throw new Error("Les composants Button n'ont pas été définis. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
-        }
-
         const {store, exportAction} = this.props;
         const scope = store.scope && store.scope !== "ALL" ? {scope: {
             code: store.scope,
@@ -63,7 +59,7 @@ export class ListSummary extends React.Component<Props, void> {
             <div data-focus="list-summary">
                 {exportAction ?
                     <div className="print">
-                        <Button handleOnClick={this.props.exportAction} icon="print" label="result.export" shape={null} />
+                        <Button handleOnClick={exportAction} icon="print" label="result.export"  />
                     </div>
                 : null}
                 <span className="sentence">{this.resultSentence}</span>

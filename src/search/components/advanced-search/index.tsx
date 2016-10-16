@@ -4,8 +4,8 @@ import {observable, computed, reaction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ButtonBackToTop, ReactComponent} from "../../../defaults";
-import {OperationListItem} from "../../../list";
+import BackToTop from "focus-components/button-back-to-top";
+import {DropdownItem} from "focus-components/dropdown";
 
 import {SearchStore} from "../../store";
 import {Results} from "../results";
@@ -15,15 +15,13 @@ import {GroupComponent} from "./group";
 import {ListSummary} from "./list-summary";
 
 export interface AdvancedSearchProps {
-    /** Default: ButtonBackToTop */
-    backToTopComponent?: typeof ButtonBackToTop;
     /** Default: true */
     hasBackToTop?: boolean;
     /** Default: true */
     isSelection?: boolean;
     lineComponentMapper: (...args: any[]) => ReactComponent<any>;
     /** Default: [] */
-    lineOperationList?: OperationListItem[];
+    lineOperationList?: DropdownItem[];
     onLineClick?: (...args: any[]) => void;
     /** Default: [] */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
@@ -178,18 +176,10 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     render() {
-        // true if a facet is collapsed
         const facetCollapsedClassName = Object.keys(this.props.openedFacetList).length === 0 ? "facet-collapsed" : "";
-        const {backToTopComponent, store} = this.props;
-        const BackToTop = backToTopComponent || ButtonBackToTop;
-
-        if (!BackToTop) {
-            throw new Error("`backToTopComponent` n'a pas été défini. Vous manque-t'il un défaut ?");
-        }
-
         return (
             <div className="advanced-search" data-focus="advanced-search">
-                {store.scope !== "ALL" ?
+                {this.props.store.scope !== "ALL" ?
                     <div data-focus="facet-container" className={facetCollapsedClassName}>
                         {this.renderFacetBox()}
                     </div>

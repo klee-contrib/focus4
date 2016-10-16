@@ -1,23 +1,14 @@
 import {find, result, omit} from "lodash";
 import * as React from "react";
 
-import * as defaults from "../defaults";
+import AutocompleteSelect, {AutoCompleteResult} from "focus-components/autocomplete-select";
+import AutocompleteText from "focus-components/autocomplete-text";
+import Select from "focus-components/select-mdl";
+
 import {EntityField} from "../entity";
 import {CommonListProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
 
 import {Field, FieldProps} from "./field";
-
-/** Item attendu dans recherche d'autocomplétion. */
-export interface AutoCompleteItem {
-    key: string;
-    label: string;
-}
-
-/** Résultat attendu d'une recherche d'autocomplétion. */
-export interface AutoCompleteResult {
-    data: AutoCompleteItem[];
-    totalCount: number;
-}
 
 /** Options communes à tous les champs. */
 export interface BaseOptions {
@@ -50,10 +41,10 @@ export interface AutocompleteTextOptions extends BaseOptions {
 
 /** Options pour `fieldForWith` */
 export interface FieldOptions<DisplayProps, FieldProps, InputProps> extends BaseOptions {
-    DisplayComponent?: defaults.ReactComponent<DisplayProps>;
-    FieldComponent?: defaults.ReactComponent<FieldProps>;
-    InputComponent?: defaults.ReactComponent<InputProps>;
-    LabelComponent?: defaults.ReactComponent<{domain: string, name: string, text: string}>;
+    DisplayComponent?: ReactComponent<DisplayProps>;
+    FieldComponent?: ReactComponent<FieldProps>;
+    InputComponent?: ReactComponent<InputProps>;
+    LabelComponent?: ReactComponent<{domain: string, name: string, text: string}>;
 }
 
 /** Options pour `selectFor`. */
@@ -87,10 +78,6 @@ export interface CWEState<E> {
  * @param options Les options du champ.
  */
 export function autocompleteSelectFor<T>(field: EntityField<T>, options: AutocompleteSelectOptions) {
-    const {AutocompleteSelect} = defaults;
-    if (!AutocompleteSelect) {
-        throw new Error("AutocompleteSelect manque. Utilisez autofocus/defaults pour le fournir.");
-    }
     (options as FieldProps).InputComponent = AutocompleteSelect;
     return fieldForWith(field, options);
 }
@@ -101,10 +88,6 @@ export function autocompleteSelectFor<T>(field: EntityField<T>, options: Autocom
  * @param options Les options du champ.
  */
 export function autocompleteTextFor<T>(field: EntityField<T>, options: AutocompleteTextOptions) {
-    const {AutocompleteText} = defaults;
-    if (!AutocompleteText) {
-        throw new Error("AutocompleteText manque. Utilisez autofocus/defaults pour le fournir.");
-    }
     (options as FieldProps).InputComponent = AutocompleteText;
     return fieldForWith(field, options);
 }
@@ -152,7 +135,7 @@ export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: 
  * @param ListComponent Le component de liste.
  * @param options Les options (dont les données de la liste).
  */
-export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComponent: defaults.ReactComponent<P>, options: P & {perPage?: number}) {
+export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComponent: ReactComponent<P>, options: P & {perPage?: number}) {
     return MemoryList.create({
         data: options.data,
         ListComponent,
@@ -168,10 +151,6 @@ export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComp
  * @param options Les options du champ.
  */
 export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
-    const {Select} = defaults;
-    if (!Select) {
-        throw new Error("Select manque. Utilisez autofocus/defaults pour le fournir.");
-    }
     (options as FieldProps).InputComponent = Select;
     (options as FieldProps).values = values;
     return fieldForWith(field, options);

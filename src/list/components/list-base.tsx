@@ -2,8 +2,6 @@ import {autobind} from "core-decorators";
 import {Component} from "react";
 import {findDOMNode} from "react-dom";
 
-import {ReactComponent} from "../../defaults";
-
 import {LineProps} from "./lines";
 import {CommonListProps, WithData} from "./memory-list";
 export {WithData};

@@ -3,7 +3,6 @@ import {omit, isArray, isEmpty} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ReactComponent} from "../../defaults";
 import {ListSelection, OperationListItem} from "../../list";
 import {translate} from "../../translation";
 

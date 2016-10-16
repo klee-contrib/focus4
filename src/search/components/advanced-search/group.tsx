@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import * as defaults from "../../../defaults";
+import Button from "focus-components/button";
+
 import {translate} from "../../../translation";
 
 export interface Props {
@@ -14,11 +15,6 @@ export interface Props {
 };
 
 export function GroupComponent({canShowMore, count, children, groupKey, groupLabel, showAllHandler, showMoreHandler}: Props) {
-    const {Button} = defaults;
-    if (!Button) {
-        throw new Error("Le composant Button n'ont pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
-    }
-
     return (
         <div data-focus="group-container">
             <h3>{`${groupLabel} (${count || 0})`}</h3>

@@ -26,7 +26,7 @@ Cette liste est amenée à évoluer au fil des versions.
 
 ## Module `reference`
 ### `ReferenceStore`
-Un `referenceStore` d'autofocus-mobx est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
+Un `referenceStore` d'autofocus est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
 * `serviceFactory` est une fonction qui prend en paramètre un nom de référence et renvoie un service (sans paramètre) permettant de récupérer la liste de référence (qui renvoie donc une Promise)
 * `refConfig` est un objet dont les propriétés seront les listes de références à charger. Pour typer le store de référence, il suffit de typer ces propriétés avec le type correspondant :
 
@@ -66,30 +66,7 @@ Et voilà, ça marche tout seul.
 
 (Note: Du coup, tout ce qui avait attrait au fonctionnement des références dans `focus-components` est obsolète (car inutile). `selectFor` prend simplement la liste de référence en paramètre à la place de son nom.)
 
-## Module `router`
-Le router proposé par autofocus est un peu particulier et est basé sur les [idées proposées](https://medium.com/@mweststrate/how-to-decouple-state-and-ui-a-k-a-you-dont-need-componentwillmount-cc90b787aa37#.hwq43wau0) par le créateur de MobX.
-
-Il s'articule autour d'un store (le `ViewStore`) qui sert d'intermédiaire entre le "vrai" routeur et le reste de l'application. Ce store expose une propriété observable `currentView`, qui est le miroir de l'état de l'URL. Modifier l'URL va mettre `currentView` à jour en conséquence, et inversement.
-
-Exemple :
-```ts
-interface View {
-    page: string;
-    id: string;
-    subPage: string;
-    subId: string;
-}
-const viewStore = new ViewStore<View>(["page", "id", "subPage", "subId"]);
-startRouter(viewStore);
-```
-```
-navigation vers "/structure/1/detail" -> viewStore.currentView = {page: "structure", id: "1", subPage: "detail"}
-action utilisateur viewStore.currentView.id = 5 -> URL = "/structure/5/detail"
-```
-Il est ensuite très facile dans des composants de réagir aux changements de route en utilisant `store.currentView`, comme n'importe quelle autre observable.
-
-Il est également possible d'avoir plusieurs `ViewStore`s sur le même routeur, à condition de spécifier un préfixe d'URL pour tous les stores (pour éviter les collisions de route et identifier quelle URL correspond à quel store). Il suffit de passer ce préfixe en deuxième paramètre du constructeur.
-
+## [Module `router`](router)
 ## [Module `search`](search)
 ## [Module `testing`](testing)
 

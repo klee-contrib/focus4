@@ -3,7 +3,10 @@ import {omit, find, result, isFunction} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import * as defaults from "../defaults";
+import DisplayText from "focus-components/input-display/text";
+import InputText from "focus-components/input-text";
+import Label from "focus-components/label";
+
 import {translate} from "../translation";
 import {validate} from "../validation";
 
@@ -60,11 +63,7 @@ export class Field extends React.Component<FieldProps, void> {
         const {valueKey, labelKey, values, value: rawValue, DisplayComponent} = this.props;
         const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
         const props = Object.assign({}, omit(this.props, omittedProps), {value});
-        const {DisplayText} = defaults;
         const FinalDisplay = DisplayComponent || DisplayText;
-        if (!FinalDisplay) {
-            throw new Error("DisplayText manque. Utilisez autofocus/defaults pour le fournir.");
-        }
         return <FinalDisplay {...props}/>;
     }
 
@@ -81,21 +80,13 @@ export class Field extends React.Component<FieldProps, void> {
     input() {
         const {InputComponent} = this.props;
         const props = omit(this.props, omittedProps);
-        const {InputText} = defaults;
         const FinalInput = InputComponent || InputText;
-        if (!FinalInput) {
-            throw new Error("InputText manque. Utilisez autofocus/defaults pour le fournir.");
-        }
         return <FinalInput ref="input" {...props} />;
     }
 
     label() {
         const {name, label, LabelComponent, domain, labelCellPosition, labelSize, labelOffset} = this.props;
-        const {Label} = defaults;
         const FinalLabel = LabelComponent || Label;
-        if (!FinalLabel) {
-            throw new Error("Label manque. Utilisez autofocus/defaults pour le fournir.");
-        }
         return (
             <div
                 className ={`${getCellGridClassName(labelCellPosition || "top", labelSize || 4, labelOffset || 0)}`}

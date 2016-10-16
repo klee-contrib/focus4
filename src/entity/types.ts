@@ -1,4 +1,3 @@
-import {ReactComponent} from "../defaults";
 import {Validator} from "../validation";
 
 export interface Domain {

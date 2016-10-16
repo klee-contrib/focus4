@@ -1,7 +1,8 @@
 import {map} from "lodash";
 import * as React from "react";
 
-import * as defaults from "../../defaults";
+import Button from "focus-components/button";
+
 import {translate} from "../../translation";
 
 function topicClickHandler(key: string, topicClickAction: (key: string) => void) {
@@ -13,10 +14,6 @@ export function TopicDisplayer({displayLabels = false, topicList = {}, topicClic
     topicList?: {[key: string]: {code: string, label: string, value: string}},
     topicClickAction?: (key: string) => void
 }) {
-    const {Button} = defaults;
-    if (!Button) {
-        throw new Error("Button manque.");
-    }
     return (
         <div data-focus="topic-displayer">
             {map(topicList, (topic, key) => {

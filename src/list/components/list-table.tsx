@@ -1,7 +1,8 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
-import * as defaults from "../../defaults";
+import Button from "focus-components/button";
+
 import {translate} from "../../translation";
 
 import {LineProps} from "./lines";
@@ -94,10 +95,6 @@ export class ListTable<T, P extends LineProps<T>> extends ListBase<T, WithData<L
 
     private renderManualFetch() {
         const {isManualFetch, hasMoreData, columns} = this.props;
-        const {Button} = defaults;
-        if (!Button) {
-            throw new Error("Button n'a pas été défini.");
-        }
         if (isManualFetch && hasMoreData) {
             return (
                 <tfoot className="table-manual-fetch">

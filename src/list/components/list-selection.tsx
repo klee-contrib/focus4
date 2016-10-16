@@ -3,7 +3,8 @@ import {observable, asMap, isObservableArray} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import * as defaults from "../../defaults";
+import Button from "focus-components/button";
+
 import {translate} from "../../translation";
 
 import {LineSelectionProps} from "./lines";
@@ -106,10 +107,6 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
 
     private renderManualFetch() {
         const {isManualFetch, hasMoreData} = this.props;
-        const {Button} = defaults;
-        if (!Button) {
-            throw new Error("Button n'a pas été défini.");
-        }
         if (isManualFetch && hasMoreData) {
             const style = {className: "primary"};
             return (

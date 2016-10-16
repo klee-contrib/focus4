@@ -4,8 +4,6 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ReactComponent} from "../../defaults";
-
 export interface GroupComponentProps {
     canShowMore: boolean;
     count: number;

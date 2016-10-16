@@ -1,12 +1,12 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
-import * as defaults from "../../defaults";
+import Button from "focus-components/button";
+import Dropdown, {DropdownItem} from "focus-components/dropdown";
 
 import {OperationListItem} from "./lines";
 
 export interface ContextualActionsProps {
-    ButtonComponent?: defaults.ReactComponent<any>;
     operationList: OperationListItem[];
     operationParam?: {};
 }
@@ -28,40 +28,36 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     }
 
     render() {
-        const {operationList, operationParam, ButtonComponent} = this.props;
-
-        const Button = ButtonComponent || defaults.Button;
-        const {Dropdown} = defaults;
-        if (!Button || !Dropdown) {
-            throw new Error("Button ou Dropdown n'ont pas été définis et vous avez pas fourni de ButtonComponent à ce ContextualActions");
-        }
-
-        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, operation, key) => {
+        const {operationList, operationParam} = this.props;
+        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {priority, icon, iconLibrary, label, buttonShape, style}, key) => {
             let {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
-            if (1 === operation.priority) {
+            if (1 === priority) {
                 primaryActions.push(
                     <Button
                         handleOnClick={this.handleAction(key)}
-                        icon={operation.icon}
-                        iconLibrary={operation.iconLibrary}
+                        icon={icon}
+                        iconLibrary={iconLibrary}
                         key={key}
-                        label={operation.label}
-                        shape={operation.style && operation.style.shape || "icon"}
-                        style={operation.style || {}}
+                        label={label}
+                        shape={buttonShape || "icon"}
+                        style={typeof style === "object" ? style : {}}
                         type="button"
-                        {...operation}
                     />
                 );
             } else {
-                secondaryActions.push(operation);
+                secondaryActions.push({
+                    action: this.handleAction(key),
+                    label,
+                    style: typeof style === "string" ? style : ""
+                });
             }
             return actionLists;
-        }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as OperationListItem[]});
+        }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as DropdownItem[]});
         return (
             <div className="list-action-contextual">
                 <span>{primaryActionList}</span>
                 <Dropdown
-                    operationList={secondaryActionList}
+                    operations={secondaryActionList}
                     operationParam={operationParam}
                 />
             </div>

@@ -3,7 +3,9 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import * as defaults from "../../../defaults";
+import Button from "focus-components/button";
+import InputText from "focus-components/input-text";
+
 import {translate} from "../../../translation";
 
 import {SearchStore} from "../../store";
@@ -70,16 +72,10 @@ export class SearchBar extends React.Component<Props, void> {
     }
 
     render() {
-        const {Button, InputText} = defaults;
-        if (!Button || !InputText) {
-            throw new Error("Les composants Button ou InputText n'ont pas été définis. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
-        }
-
         let {hasScopes, placeholder, store, scopes} = this.props;
         if (store.query && 0 < store.query.length) {
             placeholder = "";
         }
-
         return (
             <div style={{display: "flex"}}>
                 <div data-focus="search-bar">

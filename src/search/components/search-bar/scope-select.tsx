@@ -1,7 +1,7 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
-import * as defaults from "../../../defaults";
+import Dropdown from "focus-components/dropdown";
 
 export interface Scope {
     code: string;
@@ -35,10 +35,6 @@ export class ScopeSelect extends React.Component<ScopeProps, void> {
 
     render() {
         const {icon: bIcon = undefined, label: bLabel = undefined} = this.getActiveScope() || {};
-        const {Dropdown} = defaults;
-        if (!Dropdown) {
-            throw new Error("Dropdown manque");
-        }
         return (
             <div data-focus="search-bar-scope" ref="parent">
                 <Dropdown

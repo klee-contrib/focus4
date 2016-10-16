@@ -1,24 +1,18 @@
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import * as defaults from "../defaults";
+import Icon from "focus-components/icon";
 
 import {requestStore} from "./store";
 
 export interface LoadingBarProps {
     displayDevBar?: boolean;
-    ProgressBar: defaults.ReactComponent<{completed: number}>;
+    ProgressBar: ReactComponent<{completed: number}>;
 }
 
 export const LoadingBar = observer(({displayDevBar, ProgressBar}: LoadingBarProps) => {
     const {count, error, pending, success} = requestStore;
     const completed = +((count.total - count.pending) / count.total) * 100;
-
-    const {Icon} = defaults;
-    if (!Icon) {
-        throw new Error("Icon n'a pas été défini. Utilisez 'autofocus/defaults'.");
-    }
-
     return (
         <div data-focus="loading-bar">
             {completed < 100 ? <ProgressBar completed={completed} /> : null}

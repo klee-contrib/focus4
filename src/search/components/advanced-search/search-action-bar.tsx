@@ -3,7 +3,9 @@ import {reduce, omit} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ActionBar, OperationListItem} from "../../../list";
+import {DropdownItem} from "focus-components/dropdown";
+
+import {ActionBar} from "../../../list";
 import {translate} from "../../../translation";
 
 import {SearchStore} from "../../store";
@@ -15,7 +17,7 @@ export interface Props {
     /** Default: true */
     hasGrouping?: boolean;
     hasSelection?: boolean;
-    operationList?: OperationListItem[];
+    operationList?: DropdownItem[];
     /** Default: {} */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     selectionAction?: (status: "none" | "partial" | "selected") => void;

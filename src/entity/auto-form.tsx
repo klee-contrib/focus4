@@ -3,8 +3,9 @@ import {isEmpty} from "lodash";
 import {observable, action, runInAction} from "mobx";
 import * as React from "react";
 
+import {PanelButtonsProps} from "focus-components/panel";
+
 import {applicationStore} from "../application";
-import * as defaults from "../defaults";
 import {messageStore} from "../message";
 import {FieldErrors} from "../network";
 
@@ -111,24 +112,22 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
         }
     }
 
-    /**
-     * Handler du bouton d'annulation.
-     * Repasse le formulaire en consulation et récupère l'état du store.
-     */
+    /** Change le mode du formulaire. */
     @action
-    onClickCancel() {
+    toggleEdit(isEdit: boolean) {
+        this.isEdit = isEdit;
         this.errors = {};
-        this.isEdit = false;
-        this.entity.reset();
-        applicationStore.changeMode("consult", "edit");
+        if (isEdit) {
+            applicationStore.changeMode("edit", "consult");
+        } else {
+            this.entity.reset();
+            applicationStore.changeMode("consult", "edit");
+        }
     }
 
-    /**
-     * Handler du bouton de suppression.
-     * Appelle l'action de suppression.
-     */
+    /** Appelle le service de suppression. */
     @action
-    async onClickDelete() {
+    async delete() {
         if (this.services.delete) {
             this.isLoading = true;
             await this.services.delete(toFlatValues(this.entity as any));
@@ -140,23 +139,9 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
         }
     }
 
-    /**
-     * Handler du bouton d'édition.
-     * Passe le formulaire en édition et vide les erreurs.
-     */
+    /** Appelle le service de sauvegarde. */
     @action
-    onClickEdit() {
-        this.isEdit = !this.isEdit;
-        applicationStore.changeMode("edit", "consult");
-        this.errors = {};
-    }
-
-    /**
-     * Handler du bouton de sauvegarde.
-     * Valide l'entité et appelle l'action de sauvegarde.
-     */
-    @action
-    async onClickSave() {
+    async save() {
         this.errors = {};
         if (this.validate()) {
             this.isLoading = true;
@@ -175,22 +160,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
         }
     }
 
-    /** Retourne les actions du formulaire. */
-    renderActions() {
-        return this.isEdit ? this.renderEditActions() : this.renderConsultActions();
-    }
-
-    /** Retoune les actions en consulation du formualaire. */
-    renderConsultActions() {
-        let {hasEdit = true, hasDelete = false} = this.props;
-        return <span>{hasEdit ? this.buttonEdit : null} {hasDelete ? this.buttonDelete : null}</span>;
-    }
-
-    /** Retourne les action en édition du formulaire. */
-    renderEditActions() {
-        return <span>{this.buttonSave} {this.buttonCancel}</span>;
-    }
-
+    /** Valide les différents champs du formulaire. */
     @action
     validate() {
         for (const ref in this.refs) {
@@ -208,60 +178,14 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
         return false;
     }
 
-    private get buttonCancel() {
-        const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
-        return (
-            <Button
-                handleOnClick={this.onClickCancel}
-                icon="undo"
-                label="button.cancel"
-                shape={null}
-                type="button"
-            />
-        );
-    }
-
-    private get buttonDelete() {
-        const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
-        return (
-            <Button
-                handleOnClick={this.onClickDelete}
-                icon="delete"
-                label="button.delete"
-                shape={null}
-                type="button"
-            />
-        );
-    }
-
-    private get buttonEdit() {
-        const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
-        return (
-            <Button
-                handleOnClick={this.onClickEdit}
-                icon="edit"
-                label="button.edit"
-                shape={null}
-                type="button"
-            />
-        );
-    }
-
-    private get buttonSave() {
-        const {Button} = defaults;
-        if (!Button) { throw new Error("Le composant Button n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts."); }
-        return (
-            <Button
-                handleOnClick={this.onClickSave}
-                icon="save"
-                label="button.save"
-                shape={null}
-                type="button"
-            />
-        );
+    /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */
+    getPanelButtonProps(): PanelButtonsProps {
+        return {
+            editing: this.isEdit,
+            getUserInput: () => ({}), // Pas besoin de passer l'input il est déjà dans le state du formulaire.
+            toggleEdit: this.toggleEdit,
+            save: this.save
+        };
     }
 
     abstract renderContent(): React.ReactElement<any> | null;
@@ -274,7 +198,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
                     data-loading={this.isLoading}
                     data-mode={this.isEdit ? "edit" : "consult"}
                     noValidate={true}
-                    onSubmit={e => { e.preventDefault(); this.onClickSave(); }}
+                    onSubmit={e => { e.preventDefault(); this.save(); }}
                 >
                     <fieldset>{this.renderContent()}</fieldset>
                 </form>

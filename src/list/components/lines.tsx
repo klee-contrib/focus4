@@ -1,17 +1,19 @@
 import * as React from "react";
 
-import * as defaults from "../../defaults";
+import Checkbox from "focus-components/input-checkbox";
+
 import {EntityField, textFor} from "../../entity";
 
 import {ContextualActions} from "./contextual-actions";
 
 export interface OperationListItem {
-    label?: string;
     action: (data?: {}) => void;
-    style?: {shape?: "icon" | "flat" | "raised"};
+    buttonShape?: "raised" | "fab" | "icon" | "mini-fab";
+    label?: string;
     icon?: string;
-    iconLibrary?: string;
+    iconLibrary?: "material" | "font-awesome" | "font-custom";
     priority?: number;
+    style?: string | React.CSSProperties;
 }
 
 export interface LineProps<T> {
@@ -54,8 +56,8 @@ export function renderLineActions({data, operationList}: LineProps<any>, isSelec
 export function lineSelection<P extends LineSelectionProps<E>, E>(
     selectedInitializer = (data?: E) => false,
     selectionnableInitializer = (data?: E) => true
-): (Component: defaults.ReactComponent<P>) => React.ComponentClass<P> {
-    return (Component: defaults.ReactComponent<P>) => class extends React.Component<P, void> {
+): (Component: ReactComponent<P>) => React.ComponentClass<P> {
+    return (Component: ReactComponent<P>) => class extends React.Component<P, void> {
         private isSelectionnable: boolean;
 
         componentWillMount() {
@@ -83,11 +85,6 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
         }
 
         renderSelectionBox = () => {
-            const {Checkbox} = defaults;
-            if (!Checkbox) {
-                throw new Error("Le composant Checkbox n'a pas été défini. Utiliser 'autofocus/defaults' pour enregistrer les défauts.");
-            }
-
             const {isSelected} = this.props;
             if (this.isSelectionnable) {
                 const selectionClass = isSelected ? "selected" : "no-selection";
@@ -119,7 +116,7 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
  * @param dateSelector Un sélecteur pour récupérer le champ data de l'entité.
  */
 export function lineTimeline<P extends LineProps<E>, E>(dateSelector: (data: E) => EntityField<string>) {
-    return (Component: defaults.ReactComponent<P>) => (props: P) => (
+    return (Component: ReactComponent<P>) => (props: P) => (
         <li>
             <div className="timeline-date">{textFor(dateSelector(props.data!))}</div>
             <div className="timeline-badge"></div>

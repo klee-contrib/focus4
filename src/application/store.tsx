@@ -9,7 +9,7 @@ export interface ApplicationAction {
     barRight?: React.ReactElement<any>;
     cartridge?: React.ReactElement<any>;
     actions?: {
-        primary?: {className?: string, icon: string, iconLibrary?: "", label?: string, action: () => void}[];
+        primary?: {className?: string, icon: string, iconLibrary?: "material" | "font-awesome" | "font-custom", label?: string, action: () => void}[];
         secondary?: {className?: string, label: string, action: () => void}[];
     };
     canDeploy?: boolean;
@@ -17,7 +17,7 @@ export interface ApplicationAction {
 
 export class ApplicationStore implements ApplicationAction {
     @observable actions: {
-        primary: {className?: string, icon: string, iconLibrary?: "", label?: string, action: () => void}[],
+        primary: {className?: string, icon: string, iconLibrary?: "material" | "font-awesome" | "font-custom", label?: string, action: () => void}[],
         secondary: {className?: string, label: string, action: () => void}[],
     } = {primary: asFlat([]), secondary: asFlat([])};
     @observable canDeploy = true;

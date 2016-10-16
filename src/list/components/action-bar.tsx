@@ -2,11 +2,12 @@ import {autobind} from "core-decorators";
 import {reduce} from "lodash";
 import * as React from "react";
 
-import * as defaults from "../../defaults";
+import Button from "focus-components/button";
+import Dropdown, {DropdownItem} from "focus-components/dropdown";
+
 import {translate} from "../../translation";
 
 import {ContextualActions} from "./contextual-actions";
-import {OperationListItem} from "./lines";
 import {TopicDisplayer} from "./topic-displayer";
 
 export interface ActionBarProps {
@@ -22,7 +23,7 @@ export interface ActionBarProps {
     groupableColumnList?: {[column: string]: string};
     groupAction?: (key?: string) => void;
     groupSelectedKey?: string;
-    operationList?: OperationListItem[];
+    operationList?: DropdownItem[];
     groupLabelPrefix?: string;
 }
 
@@ -32,10 +33,6 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     getSelectionObject() {
         const {hasSelection, selectionAction, selectionStatus} = this.props;
         if (hasSelection && selectionAction) {
-            const {Button} = defaults;
-            if (!Button) {
-                throw "Déso";
-            }
             const onIconClick = () => {
                 const newSelectionStatus = selectionStatus === "none" ? "selected" : "none";
                 selectionAction(newSelectionStatus);
@@ -51,11 +48,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     getOrderObject() {
         const {orderableColumnList, orderSelected, orderAction} = this.props;
         if (orderableColumnList && orderSelected && orderSelected.key && orderSelected.order !== undefined && orderAction) {
-            const {Dropdown} = defaults;
-            if (!Dropdown) {
-                throw "Déso";
-            }
-            const orderOperationList: OperationListItem[] = []; // [{key:'columnKey', order:'asc', label:'columnLabel'}]
+            const orderOperationList: DropdownItem[] = []; // [{key:'columnKey', order:'asc', label:'columnLabel'}]
             for (const key in orderableColumnList) {
                 const description = orderableColumnList[key];
                 orderOperationList.push({
@@ -64,7 +57,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                     style: this.getSelectedStyle(description.key + description.order, orderSelected.key + (orderSelected.order ? "asc" : "desc"))
                 });
             }
-            return <Dropdown iconProps={{name: "sort_by_alpha"}} key="down" operationList={orderOperationList} />;
+            return <Dropdown button={{icon: "sort_by_alpha"}} key="down" operations={orderOperationList} />;
         }
 
         return null;
@@ -73,10 +66,6 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     getGroupObject() {
         const {hasGrouping, groupLabelPrefix = "", groupSelectedKey, groupableColumnList, groupAction} = this.props;
         if (hasGrouping && groupSelectedKey && groupableColumnList && groupAction) {
-            const {Dropdown} = defaults;
-            if (!Dropdown) {
-                throw "Déso";
-            }
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
                     action: () => groupAction(key),
@@ -84,12 +73,12 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                     style: this.getSelectedStyle(key, groupSelectedKey)
                 });
                 return operationList;
-            }, [] as OperationListItem[]).concat([{
+            }, [] as DropdownItem[]).concat([{
                 label: translate("list.actionBar.ungroup"),
                 action: () => groupAction()
             }]);
 
-            return <Dropdown iconProps={{name: "folder_open"}} operationList={groupOperationList} />;
+            return <Dropdown button={{icon: "folder_open"}} operations={groupOperationList} />;
         } else if (hasGrouping) {
             console.warn("Pour utiliser la fonction de groupe de l'ActionBar, il est nécessaire de spécifier les props 'groupSelectedKey', 'groupableColumnList' et 'groupAction'.");
         }
