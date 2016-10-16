@@ -30,7 +30,7 @@ declare module "focus-components/autocomplete-select" {
     }, {}> {}
 }
 
-declare module "focus-components/autocomplete-text" {
+declare module "focus-components/autocomplete-text/field" {
     export interface AutoCompleteItem {
         key: string;
         label: string;

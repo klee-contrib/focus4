@@ -1,12 +1,14 @@
+(global as any)["window"] = {addEventListener: () => null, navigator: {}};
+(global as any)["document"] = {documentElement: {}};
+(global as any)["componentHandler"] = {};
+(global as any)["Element"] = {prototype: {}};
+
 import {createRenderer} from "react-addons-test-utils";
 import {Component, ComponentClass, ReactElement} from "react";
 import tape = require("tape");
 
 import {ListStore} from "../list";
 import {SearchStore} from "../search";
-
-(global as any)["window"] = {};
-(global as any)["document"] = {documentElement: {}};
 
 export const dum = {
     any: {} as any,

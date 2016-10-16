@@ -2,7 +2,7 @@ import {find, result, omit} from "lodash";
 import * as React from "react";
 
 import AutocompleteSelect, {AutoCompleteResult} from "focus-components/autocomplete-select";
-import AutocompleteText from "focus-components/autocomplete-text";
+import AutocompleteText from "focus-components/autocomplete-text/field";
 import Select from "focus-components/select-mdl";
 
 import {EntityField} from "../entity";
