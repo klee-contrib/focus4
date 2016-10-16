@@ -33,6 +33,10 @@ Ce qu'il faut bien comprendre, pour l'intégration avec React, c'est que ces ré
 La doc est **[ici](http://mobxjs.github.io/mobx)**.
 
 ## Ce qu'il y a dans autofocus
-MobX permet de simplifier beaucoup les choses, mais ça ne veut pas dire pour autant qu'on a plus besoin de tout ce proposait déjà `focus-core` (loin de là). Voici la liste de tous les différents modules qui composent `autofocus-mobx`:
+Pour résumé, `autofocus`, c'est :
+- Une version modifiée de `focus-core v2` pour Typescript et MobX
+- Les composants "dépréciés" de `focus-components v2` (layout, listes et recherche), modifiés pour Typescript et MobX (ces composants ont été réécrits de zéro pour Focus v3 et se trouvent dans les modules correspondants)
+- Une nouvelle gestion de l'état des formulaires (le reste fonctionne à peu près comme Focus V2), réalisée grâce à MobX, qui facilite beaucoup l’usage et réduit la configuration nécessaire. Ce nouveau module est entièrement testé unitairement.
+- Un nouveau routeur
 
 La doc est disponible [ici](src)
