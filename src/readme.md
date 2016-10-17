@@ -1,24 +1,5 @@
 # Référence d'API
 ## [Module `application`](application)
-
-## Module `defaults`
-`autofocus` est une réécriture de `focus-core` et *partielle* de `focus-components` (pré-V3), parce qu'il y a un grand nombre de composants dont une réécriture n'aurait que peu d'intérêt. Néanmoins, des composants comme un simple Bouton sont indispensables pour une grande parties des composants proposés par `autofocus`, donc on a besoin d'un mécanisme pour les importer, ce que propose ce module. On ne prend pas `focus-components` comme dépendance parce que c'est une dépendance beaucoup trop importante alors qu'on n'en veut qu'un petit peu. En revanche, la future v3 sera beaucoup plus légère et enlèvera tout ce dont on avait pas besoin, donc à ce moment-là on prendra la dépendance. (D'ailleurs, en ce moment, `autofocus` ne fournit aucun CSS et suppose que vous avez le `focus-components` en entier avec.)
-
-### `setDefaultComponents(config)`
-La fonction prend un objet comportant tous les composants nécessaires (à priori issus de `focus-components`, mais pas nécéessairement). Aujourd'hui, on attend:
-- ActionBar
-- Button
-- ButtonBackToTop
-- Checkbox
-- ContextualActions
-- Dropdown
-- Field
-- Icon
-- InputText
-- Scope
-- TopicDisplayer
-Cette liste est amenée à évoluer au fil des versions.
-
 ## [Module `entity`](entity)
 ## [Module `list`](list)
 ## [Module `message`](message)
