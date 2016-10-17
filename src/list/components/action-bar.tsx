@@ -1,11 +1,10 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {reduce} from "lodash";
 import * as React from "react";
 
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
-
-import {translate} from "../../translation";
 
 import {ContextualActions} from "./contextual-actions";
 import {TopicDisplayer} from "./topic-displayer";
@@ -69,12 +68,12 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
                     action: () => groupAction(key),
-                    label: translate(groupLabelPrefix + label),
+                    label: i18n.t(groupLabelPrefix + label),
                     style: this.getSelectedStyle(key, groupSelectedKey)
                 });
                 return operationList;
             }, [] as DropdownItem[]).concat([{
-                label: translate("list.actionBar.ungroup"),
+                label: i18n.t("list.actionBar.ungroup"),
                 action: () => groupAction()
             }]);
 

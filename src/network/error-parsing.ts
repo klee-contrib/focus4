@@ -1,7 +1,7 @@
+import i18n = require("i18next");
 import {isArray} from "lodash";
 
 import {messageStore} from "../message";
-import {translate} from "../translation";
 
 export type FieldErrors = {[key: string]: string};
 
@@ -50,7 +50,7 @@ function dispatchMessages(messages: string[], type: ErrorType) {
     messages.forEach(message =>
         messageStore.addMessage({
             type,
-            content: translate(message)
+            content: i18n.t(message)
         })
     );
 }

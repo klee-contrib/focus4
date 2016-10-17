@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {reduce, omit} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -6,7 +7,6 @@ import * as React from "react";
 import {DropdownItem} from "focus-components/dropdown";
 
 import {ActionBar} from "../../../list";
-import {translate} from "../../../translation";
 
 import {SearchStore} from "../../store";
 import {InputFacet} from "../../types";
@@ -41,7 +41,7 @@ export class SearchActionBar extends React.Component<Props, void> {
         return reduce(selectedFacets!, (result, facet, facetKey) => {
             result[facetKey] = {
                 code: facetKey,
-                label: translate(`live.filter.facets.${facetKey}`),
+                label: i18n.t(`live.filter.facets.${facetKey}`),
                 value: facet.value
             };
             return result;

@@ -1,10 +1,10 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {omit, isArray, isEmpty} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ListSelection, OperationListItem} from "../../list";
-import {translate} from "../../translation";
 
 import {Results as ResultsType} from "../types";
 import {SearchStore} from "../store";
@@ -13,7 +13,7 @@ import {GroupWrapper, GroupComponent} from "./group-wrapper";
 function DefaultEmpty() {
     return (
         <div data-focus="empty-result">
-            {translate("search.empty")}
+            {i18n.t("search.empty")}
         </div>
     );
 }
@@ -127,7 +127,7 @@ export class Results extends React.Component<ResultsProps, void> {
                 } as any)}
                 {isLoading &&
                     <div data-focus="loading-more-results">
-                        {translate("search.loadingMore")}
+                        {i18n.t("search.loadingMore")}
                     </div>
                 }
             </div>

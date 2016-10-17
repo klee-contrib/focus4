@@ -2,6 +2,7 @@
 // Il n'a pas du tout vocation a être exhaustif.
 
 export {autobind} from "core-decorators";
+import i18n = require("i18next"); export {i18n};
 export {observable, action} from "mobx";
 export {observer} from "mobx-react";
 import * as React from "react"; export {React};
@@ -13,5 +14,4 @@ export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
 export {AdvancedSearch, SearchBar} from "./search";
-export {translate} from "./translation";
 export {userStore} from "./user";

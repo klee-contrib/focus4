@@ -51,11 +51,5 @@ Et voilà, ça marche tout seul.
 ## [Module `search`](search)
 ## [Module `testing`](testing)
 
-## Module `translation`
-C'est exactement le même que `focus-core`.
-
 ## Module `user`
 Le store d'utilisateur est le même que `focus-core`, à la différence près que la fonction `hasRole` est située sur l'instance du `UserStore` (ce qui est plus logique).
-
-## Module `validation`
-Idem `focus-core/definition/validation` (à peu près).

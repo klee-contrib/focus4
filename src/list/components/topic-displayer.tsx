@@ -1,9 +1,8 @@
+import i18n = require("i18next");
 import {map} from "lodash";
 import * as React from "react";
 
 import Button from "focus-components/button";
-
-import {translate} from "../../translation";
 
 function topicClickHandler(key: string, topicClickAction: (key: string) => void) {
     topicClickAction(key);
@@ -17,7 +16,7 @@ export function TopicDisplayer({displayLabels = false, topicList = {}, topicClic
     return (
         <div data-focus="topic-displayer">
             {map(topicList, (topic, key) => {
-                const text = displayLabels ? `${translate(topic.label)}: ${translate(topic.value)}` : translate(topic.value);
+                const text = displayLabels ? `${i18n.t(topic.label)}: ${i18n.t(topic.value)}` : i18n.t(topic.value);
                 return (
                     <Button
                         handleOnClick={() => {topicClickHandler(key!, topicClickAction);}}

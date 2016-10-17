@@ -1,10 +1,9 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-
-import {translate} from "../../../../translation";
 
 import {SearchStore} from "../../../store";
 import {InputFacet, FacetValue, StoreFacet} from "../../../types";
@@ -71,7 +70,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     }
 
     private renderFacetBoxTitle() {
-        const title = this.isExpanded ? translate("live.filter.title") : "";
+        const title = this.isExpanded ? i18n.t("live.filter.title") : "";
         return (
             <div data-focus="facet-box-heading" onClick={this.facetBoxTitleClickHandler}>
                 <h2>{title}</h2>

@@ -1,9 +1,8 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {observable, reaction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-
-import {translate} from "../translation";
 
 import {messageStore, Message} from "./store";
 
@@ -84,7 +83,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
         const otherProps = { "aria-hidden": this.active, "aria-live": "assertive", "aria-atomic": "true", "aria-relevant": "text" };
         return (
             <div data-focus="snackbar-message-center" data-message-type={type} className={classNames} {...otherProps}>
-                <div className="mdl-snackbar__text">{translate(content)}</div>
+                <div className="mdl-snackbar__text">{i18n.t(content)}</div>
                 <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><i className="material-icons">clear</i></button>
             </div>
         );

@@ -1,7 +1,6 @@
+import i18n = require("i18next");
 import {isNull, isNumber, isUndefined} from "lodash";
-import moment from "moment";
-
-import {translate} from "./translation";
+import moment = require("moment");
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -119,7 +118,7 @@ export function stringValidator(text: string, options?: StringOptions) {
 }
 
 function getErrorLabel(type: string, options?: TrKey): string {
-    return translate(options && options.translationKey ? options.translationKey : `domain.validation.${type}`);
+    return i18n.t(options && options.translationKey ? options.translationKey : `domain.validation.${type}`);
 }
 
 function validateProperty(property: ValidationProperty, validator: Validator) {

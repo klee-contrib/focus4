@@ -1,8 +1,7 @@
+import i18n = require("i18next");
 import * as React from "react";
 
 import Button from "focus-components/button";
-
-import {translate} from "../../../translation";
 
 export interface Props {
     canShowMore: boolean;
@@ -23,10 +22,10 @@ export function GroupComponent({canShowMore, count, children, groupKey, groupLab
             </div>
             <div data-focus="group-container-actions">
                 {canShowMore ?
-                    <Button icon="add" handleOnClick={showMoreHandler} label={translate("show.more")} />
+                    <Button icon="add" handleOnClick={showMoreHandler} label={i18n.t("show.more")} />
                 : null}
                 {showAllHandler ?
-                    <Button icon="arrow_forward" handleOnClick={() => showAllHandler && showAllHandler(groupKey)} label={translate("show.all")} />
+                    <Button icon="arrow_forward" handleOnClick={() => showAllHandler && showAllHandler(groupKey)} label={i18n.t("show.all")} />
                 : null}
             </div>
         </div>

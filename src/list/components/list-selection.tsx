@@ -1,11 +1,10 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {observable, asMap, isObservableArray} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import Button from "focus-components/button";
-
-import {translate} from "../../translation";
 
 import {LineSelectionProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
@@ -98,7 +97,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
                 return loader();
             }
             return (
-                <li className="sl-loading">{translate("list.loading")} ...</li>
+                <li className="sl-loading">{i18n.t("list.loading")} ...</li>
             );
         } else {
             return null;

@@ -1,12 +1,11 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
 import Button from "focus-components/button";
 import InputText from "focus-components/input-text";
-
-import {translate} from "../../../translation";
 
 import {SearchStore} from "../../store";
 import {Scope, ScopeSelect} from "./scope-select";
@@ -86,7 +85,7 @@ export class SearchBar extends React.Component<Props, void> {
                         <InputText
                             name="searchbarinput"
                             onChange={this.onInputChange}
-                            placeholder={translate(placeholder || "")}
+                            placeholder={i18n.t(placeholder || "")}
                             ref="query"
                             value={store.query}
                         />

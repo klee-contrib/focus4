@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {omit, find, result, isFunction} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -7,10 +8,8 @@ import DisplayText from "focus-components/input-display/text";
 import InputText from "focus-components/input-text";
 import Label from "focus-components/label";
 
-import {translate} from "../translation";
-import {validate} from "../validation";
-
 import {Domain} from "./types";
+import {validate} from "./validation";
 
 export interface FieldProps extends Domain {
 
@@ -105,13 +104,13 @@ export class Field extends React.Component<FieldProps, void> {
         const {value} = this.props;
         let {isRequired, validator, label = ""} = this.props;
         if (isRequired && (undefined === value || null === value)) {
-            return translate("field.required");
+            return i18n.t("field.required");
         }
 
         if (validator && value !== undefined && value !== null) {
-            let validStat = validate({value: value, name: translate(label)}, validator);
+            let validStat = validate({value: value, name: i18n.t(label)}, validator);
             if (validStat.errors.length) {
-                return translate(validStat.errors.join(", "));
+                return i18n.t(validStat.errors.join(", "));
             }
         }
 
@@ -124,7 +123,7 @@ export class Field extends React.Component<FieldProps, void> {
             if (this.refs && this.refs["input"] && isFunction((this.refs["input"] as any).validate)) {
                 const componentValidation: {isValid: boolean, message?: string} = (this.refs["input"] as any).validate();
                 if (!componentValidation.isValid) {
-                    return translate(componentValidation.message!);
+                    return i18n.t(componentValidation.message!);
                 }
             }
             return true;

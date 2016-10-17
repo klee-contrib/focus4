@@ -1,9 +1,8 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import * as React from "react";
 
 import Button from "focus-components/button";
-
-import {translate} from "../../translation";
 
 import {LineProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
@@ -43,7 +42,7 @@ export class ListTable<T, P extends LineProps<T>> extends ListBase<T, WithData<L
             } else {
                 sort = null;
             }
-            return <th className={TABLE_CELL_CLASS} key={colProperties.label}>{translate(colProperties.label)}{sort}</th>;
+            return <th className={TABLE_CELL_CLASS} key={colProperties.label}>{i18n.t(colProperties.label)}{sort}</th>;
         });
         return <thead><tr>{columns}</tr></thead>;
     }
@@ -84,7 +83,7 @@ export class ListTable<T, P extends LineProps<T>> extends ListBase<T, WithData<L
             return (
                 <tbody className={"table-loading"}>
                     <tr>
-                        <td>{`${translate("list.loading")}`}</td>
+                        <td>{`${i18n.t("list.loading")}`}</td>
                     </tr>
                 </tbody>
             );

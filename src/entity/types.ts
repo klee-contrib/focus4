@@ -1,4 +1,4 @@
-import {Validator} from "../validation";
+import {Validator} from "./validation";
 
 export interface Domain {
     formatter?: (value: any, options?: {isEdit: boolean}) => string;

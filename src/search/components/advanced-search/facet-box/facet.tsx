@@ -1,10 +1,9 @@
 import {autobind} from "core-decorators";
+import i18n = require("i18next");
 import {uniqueId} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-
-import {translate} from "../../../../translation";
 
 import {FacetData, FacetValue} from "./facet-data";
 
@@ -44,7 +43,7 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     private renderFacetTitle() {
-        let title = translate("live.filter.facets." + this.props.facetKey); // Default facet translation path is live.filter.facets.
+        let title = i18n.t("live.filter.facets." + this.props.facetKey); // Default facet translation path is live.filter.facets.
         if (this.props.selectedDataKey) {
             const selectedFacet = this.props.facet.values.filter(value => value.code === this.props.selectedDataKey);
             const facetLabel = selectedFacet.length ? selectedFacet[0].label : "";
@@ -62,7 +61,7 @@ export class Facet extends React.Component<FacetProps, void> {
         if (!this.isShowAll && this.props.facet.values.length > this.props.nbDefaultDataList) {
             return (
                 <a href="javascript:void(0);" data-focus="facet-show-all" onClick={this.showAllHandler}>
-                    {translate("show.all")}
+                    {i18n.t("show.all")}
                 </a>
             );
         } else {
