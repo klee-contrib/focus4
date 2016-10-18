@@ -9,6 +9,8 @@ export {
     ListSelectionProps,
     ListTable,
     ListTableProps,
+    ListTimeline,
+    ListTimelineProps,
     MemoryList,
     OperationListItem,
     renderLineActions,

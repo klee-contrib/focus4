@@ -12,12 +12,10 @@ const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 
 export interface ListTableProps<T, P extends LineProps<T>> extends ListBaseProps<T, P> {
     columns: {sort?: "asc" | "desc", label: string, noSort: boolean}[];
-    /** Default: 'id' */
+    /** Par défaut: "id" */
     idField?: string;
-    /** Default: false */
     isLoading?: boolean;
     loader?: () => React.ReactElement<any>;
-    /** Default: false */
     isSelectable?: boolean;
     sortColumn?: (index: number, order: "asc" | "desc") => void;
 }

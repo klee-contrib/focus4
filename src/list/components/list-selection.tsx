@@ -10,13 +10,13 @@ import {LineSelectionProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
 
 export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends ListBaseProps<T, P> {
-    /** Default: data => data.id.value || data.id */
+    /** Par défaut: data => data.id.value || data.id */
     idField?: (data: T) => string;
-    /** Default: true */
+    /** Par défaut: true */
     isSelection?: boolean;
     loader?: () => React.ReactElement<any>;
     onSelection?: (data?: {}, isSelected?: boolean, isInit?: boolean) => void;
-    /** Default: 'partial' */
+    /** Par défaut: "partial" */
     selectionStatus?: "none" | "partial" | "selected";
 }
 
