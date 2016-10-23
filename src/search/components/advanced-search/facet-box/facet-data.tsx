@@ -21,7 +21,7 @@ export class FacetData extends React.Component<FacetDataProps, void> {
     render() {
         const {label, count} = this.props.data;
         return(
-            <div data-focus="facet-data" onClick={this.selectFacetData}>
+            <div onClick={this.selectFacetData}>
                 {`${label} (${count})`}
             </div>
         );

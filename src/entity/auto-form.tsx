@@ -31,8 +31,13 @@ import {
     textFor
 } from "./field-helpers";
 
+import {form} from "./style/auto-form.css";
+
 /** Props propre à AutoForm. */
 export interface AutoFormProps {
+
+    /** Pour ajouter une classe particulière sur le formulaire. */
+    className?: string;
 
     /** Défaut: true */
     hasEdit?: boolean;
@@ -51,9 +56,6 @@ export interface AutoFormProps {
 
     /** Défaut: false */
     isEdit?: boolean;
-
-    /** Pour ajouter une classe particulière sur le formulaire. */
-    style?: { className?: string };
 }
 
 /** Config de services à fournir à AutoForm. */
@@ -190,13 +192,11 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
 
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        const {hasForm = true, style} = this.props;
+        const {hasForm = true, className = ""} = this.props;
         if (hasForm) {
             return (
                 <form
-                    className={`form-horizontal ${style && style.className || ""}`}
-                    data-loading={this.isLoading}
-                    data-mode={this.isEdit ? "edit" : "consult"}
+                    className={`${className} ${form}`}
                     noValidate={true}
                     onSubmit={e => { e.preventDefault(); this.save(); }}
                 >

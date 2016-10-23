@@ -68,7 +68,6 @@ export class SearchActionBar extends React.Component<Props, void> {
         const {groupableColumnList, hasGrouping, hasSelection, operationList, orderableColumnList, selectionAction, selectionStatus, store} = this.props;
         return (
             <ActionBar
-                data-focus="advanced-search-action-bar"
                 facetClickAction={this.onFacetClick}
                 facetList={this.filterFacetList()}
                 groupAction={this.groupAction}

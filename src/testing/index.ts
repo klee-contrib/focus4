@@ -3,6 +3,7 @@
 (global as any)["componentHandler"] = {};
 (global as any)["Element"] = {prototype: {}};
 
+import "ignore-styles";
 import {createRenderer} from "react-addons-test-utils";
 import {Component, ComponentClass, ReactElement} from "react";
 import tape = require("tape");

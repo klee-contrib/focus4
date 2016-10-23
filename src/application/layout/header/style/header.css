@@ -1,0 +1,120 @@
+.actionsContainer {
+    text-align: right;
+    display: inline;
+}
+
+.actionsContainer button {
+    margin: 0 5px;
+}
+
+.actionsContainer :global(.mdl-button--fab) {
+    background-color: #FFF !important;
+}
+
+.actionsContainer button:hover {
+    background-color: #F9F9F9 !important;
+}
+
+.actionsContainer div {
+    float: right;
+}
+
+.content {
+    background-color: #FFF;
+    padding: 20px 10px;
+}
+
+.topRow {
+    z-index: 1001;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.topRow > div {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content:space-between;
+    align-items: stretch;
+    align-content: center;
+}
+
+.topRow > div .item {
+    height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 15px;
+}
+
+.topRow > div .item.left {
+    order: 1;
+    flex-grow: 0;
+}
+
+.topRow > div .item.middle {
+    order: 2;
+    flex-grow: 4;
+}
+
+.topRow > div .item.right {
+    order: 3;
+    flex-grow: 0;
+    text-align: right;
+}
+
+.scrolling {
+    position: relative;
+    box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.2);
+    margin-bottom: 50px;
+}
+
+.deployed .topRow .item.middle {
+    display: none;
+}
+
+.deployed .actionsContainer {
+    position: absolute;
+    right: 0;
+    bottom: -28px;
+}
+
+.undeployed {
+    z-index: inherit;
+    overflow-y: hidden;
+    box-shadow: none;
+}
+
+.undeployed .topRow {
+    box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.undeployed .topRow > div {
+    margin-left: 60px;
+}
+
+.undeployed .content {
+    display: none;
+}
+
+.undeployed .actionsContainer {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    z-index: 1001;
+}
+
+@media (max-width: 480px) {
+    .scrolling .actionsContainer {
+        margin-right: 20px;
+    }
+}
+
+@media (min-width: 840px) {
+    scrolling .actionsContainer {
+        margin-right: 200px;
+    }
+}

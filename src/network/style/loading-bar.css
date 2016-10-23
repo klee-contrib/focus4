@@ -1,0 +1,42 @@
+.bar {
+    position: fixed;
+    z-index: 999999;
+    width: 100%;
+}
+
+.bar :global([data-focus="progress-bar"]) {
+    margin: 0;
+    background-color: transparent;
+    overflow: visible;
+}
+
+.bar :global([data-focus="progress-bar"]) :global(.progress-bar) {
+    box-shadow: 0px 0px 6px 0px #03A9F4;
+}
+
+.bar ul {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 0 0 0 60px;
+    list-style: none;
+    width: 100%;
+    margin: 0;
+}
+
+.bar ul li {
+    width: 200px;
+    display: inline-block;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.bar ul li i {
+    position: relative;
+    top: 5px;
+}
+
+.bar ul li span {
+    margin: 0 5px;
+}

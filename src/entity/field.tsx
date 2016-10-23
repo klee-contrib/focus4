@@ -11,6 +11,8 @@ import Label from "focus-components/label";
 import {Domain} from "./types";
 import {validate} from "./validation";
 
+import {edit, field, invalid, labelContainer, required, valueContainer} from "./style/field.css";
+
 export interface FieldProps extends Domain {
 
     // Props passées aux composants Display/Field/Input.
@@ -87,10 +89,7 @@ export class Field extends React.Component<FieldProps, void> {
         const {name, label, LabelComponent, domain, labelCellPosition, labelSize, labelOffset} = this.props;
         const FinalLabel = LabelComponent || Label;
         return (
-            <div
-                className ={`${getCellGridClassName(labelCellPosition || "top", labelSize || 4, labelOffset || 0)}`}
-                data-focus="field-label-container"
-            >
+            <div className ={`${getCellGridClassName(labelCellPosition || "top", labelSize || 4, labelOffset || 0)} ${labelContainer}`}>
                 <FinalLabel
                     domain={domain}
                     name={name}
@@ -133,13 +132,13 @@ export class Field extends React.Component<FieldProps, void> {
     }
 
     render() {
-        const {FieldComponent, contentCellPosition, contentSize, labelSize, contentOffset, error, isRequired, hasLabel, isEdit} = this.props;
+        const {FieldComponent, contentCellPosition, contentSize, labelSize, contentOffset, error, isRequired, hasLabel, isEdit, domain} = this.props;
         return (
-            <div className="mdl-grid" data-focus="field" data-mode={isEdit ? "edit" : "consult"} data-required={isRequired} data-valid={!error}>
+            <div className={`mdl-grid ${field} ${isEdit ? edit : ""} ${error ? invalid : ""} ${isRequired ? required : ""} ${domain && domain.className ? domain.className : ""}`}>
                 {FieldComponent ? this.field() : null}
                 {!FieldComponent && hasLabel ? this.label() : null}
                 {!FieldComponent ?
-                    <div className ={`${getCellGridClassName(contentCellPosition || "top", contentSize || 12 - (labelSize || 4), contentOffset || 0)}`} data-focus="field-value-container">
+                    <div className ={`${getCellGridClassName(contentCellPosition || "top", contentSize || 12 - (labelSize || 4), contentOffset || 0)} ${valueContainer}`}>
                         {isEdit ? this.input() : this.display()}
                     </div>
                 : null}

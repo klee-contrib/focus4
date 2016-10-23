@@ -6,6 +6,8 @@ import {EntityField, textFor} from "../../entity";
 
 import {ContextualActions} from "./contextual-actions";
 
+import {selection, checkbox, actions, unselected, selected, timelineDate, timelineBadge, timelinePanel} from "./style/lines.css";
+
 export interface OperationListItem {
     action: (data?: {}) => void;
     buttonShape?: "raised" | "fab" | "icon" | "mini-fab";
@@ -36,7 +38,7 @@ export interface LineSelectionProps<T> extends LineProps<T> {
 export function renderLineActions({data, operationList}: LineProps<any>, isSelection = false) {
     if (operationList && operationList.length > 0) {
         return (
-            <div className={isSelection ? "sl-actions" : ""} data-focus={isSelection ? "" : "table-line-actions"}>
+            <div className={isSelection ? actions : undefined}>
                 <ContextualActions
                     operationList={operationList}
                     operationParam={data}
@@ -87,24 +89,22 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
         renderSelectionBox = () => {
             const {isSelected} = this.props;
             if (this.isSelectionnable) {
-                const selectionClass = isSelected ? "selected" : "no-selection";
                 return (
-                    <div className={`sl-selection ${selectionClass}`}>
+                    <div className={`${checkbox} ${isSelected ? selected : unselected}`}>
                         <Checkbox onChange={this.handleSelectionClick} value={isSelected} />
                     </div>
                 );
+            } else {
+                return null;
             }
-            return null;
         }
 
         render() {
             return (
-                <li data-focus="sl-line">
+                <li className={selection}>
                     {this.renderSelectionBox()}
-                    <div className="sl-content">
-                        <Component {...this.props} />
-                    </div>
-                    {renderLineActions(this.props, this.props.isSelection)}
+                    <Component {...this.props} />
+                    {renderLineActions(this.props, true)}
                 </li>
             );
         }
@@ -118,9 +118,9 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
 export function lineTimeline<P extends LineProps<E>, E>(dateSelector: (data: E) => EntityField<string>) {
     return (Component: ReactComponent<P>) => (props: P) => (
         <li>
-            <div className="timeline-date">{textFor(dateSelector(props.data!))}</div>
-            <div className="timeline-badge"></div>
-            <div className="timeline-panel">
+            <div className={timelineDate}>{textFor(dateSelector(props.data!))}</div>
+            <div className={timelineBadge}></div>
+            <div className={timelinePanel}>
                 <Component {...props} />
             </div>
         </li>

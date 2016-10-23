@@ -8,6 +8,7 @@ export interface Domain {
     FieldComponent?: ReactComponent<any>;
     InputComponent?: ReactComponent<any>;
     LabelComponent?: ReactComponent<any>;
+    className?: string;
 }
 
 export interface FieldEntry {

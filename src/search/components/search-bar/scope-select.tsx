@@ -3,6 +3,8 @@ import * as React from "react";
 
 import Dropdown from "focus-components/dropdown";
 
+import {scope} from "./style/scope-select.css";
+
 export interface Scope {
     code: string;
     label: string;
@@ -36,7 +38,7 @@ export class ScopeSelect extends React.Component<ScopeProps, void> {
     render() {
         const {icon: bIcon = undefined, label: bLabel = undefined} = this.getActiveScope() || {};
         return (
-            <div data-focus="search-bar-scope" ref="parent">
+            <div className={scope} ref="parent">
                 <Dropdown
                     button={{icon: bIcon, label: bLabel}}
                     operations={this.props.list.map(({code, label, icon, iconLibrary}) => ({

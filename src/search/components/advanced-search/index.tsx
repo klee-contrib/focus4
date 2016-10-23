@@ -14,6 +14,8 @@ import {FacetBox} from "./facet-box";
 import {GroupComponent} from "./group";
 import {ListSummary} from "./list-summary";
 
+import {facetContainer, resultContainer} from "./style/index.css";
+
 export interface AdvancedSearchProps {
     /** Default: true */
     hasBackToTop?: boolean;
@@ -176,15 +178,14 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     render() {
-        const facetCollapsedClassName = Object.keys(this.props.openedFacetList).length === 0 ? "facet-collapsed" : "";
         return (
-            <div className="advanced-search" data-focus="advanced-search">
+            <div>
                 {this.props.store.scope !== "ALL" ?
-                    <div data-focus="facet-container" className={facetCollapsedClassName}>
+                    <div className={facetContainer}>
                         {this.renderFacetBox()}
                     </div>
                 : null}
-                <div data-focus="result-container">
+                <div className={resultContainer}>
                     {this.renderListSummary()}
                     {this.renderActionBar()}
                     {this.renderResults()}

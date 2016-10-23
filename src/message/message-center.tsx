@@ -6,6 +6,8 @@ import * as React from "react";
 
 import {messageStore, Message} from "./store";
 
+import Snackbar from "focus-components/snackbar";
+
 export interface MessageCenterProps {
     error?: number;
     info?: number;
@@ -78,14 +80,12 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     }
 
     render() {
-        const {content = "", type = undefined} = this.currentNotification || {};
-        const classNames = `mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""}`;
-        const otherProps = { "aria-hidden": this.active, "aria-live": "assertive", "aria-atomic": "true", "aria-relevant": "text" };
+        const {content = ""} = this.currentNotification || {};
         return (
-            <div data-focus="snackbar-message-center" data-message-type={type} className={classNames} {...otherProps}>
-                <div className="mdl-snackbar__text">{i18n.t(content)}</div>
-                <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><i className="material-icons">clear</i></button>
-            </div>
+            <Snackbar
+                content={i18n.t(content)}
+                deleteMessage={this.forceCleanup}
+            />
         );
     };
 }

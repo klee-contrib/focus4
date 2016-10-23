@@ -1,0 +1,38 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+.layout {
+    background-color: #FAFAFA;
+    height: auto;
+    min-height: 100%;
+}
+
+.content {
+    margin-left: 0;
+    padding: 10px 25px;
+}
+
+.hasMenu .content {
+    padding-left: 70px;
+}
+
+.hasMenu footer,
+.hasMenu header {
+    padding-left: 60px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    margin-top: 30px;
+    padding: 10px;
+    text-align: center;
+    padding-left: 70px;
+    width: 100%;
+}

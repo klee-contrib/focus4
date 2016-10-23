@@ -9,6 +9,8 @@ import Dropdown, {DropdownItem} from "focus-components/dropdown";
 import {ContextualActions} from "./contextual-actions";
 import {TopicDisplayer} from "./topic-displayer";
 
+import {actionBar, buttons, facets, contextualActions} from "./style/action-bar.css";
+
 export interface ActionBarProps {
     hasSelection?: boolean;
     hasGrouping?: boolean;
@@ -100,20 +102,20 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
 
     render() {
         return (
-            <div className="mdl-grid" data-focus="list-action-bar">
-                <div className="mdl-cell" data-focus="global-list-content">
+            <div className={`mdl-grid ${actionBar}`}>
+                <div className={`mdl-cell ${buttons}`}>
                     {this.getSelectionObject()}
                     {this.getOrderObject()}
                     {this.getGroupObject()}
                 </div>
-                <div className="mdl-cell mdl-cell--hide-tablet mdl-cell--hide-phone" data-focus="selected-facet-content">
+                <div className={`mdl-cell mdl-cell--hide-tablet mdl-cell--hide-phone ${facets}`}>
                     <TopicDisplayer
                         displayLabels
                         topicClickAction={this.props.facetClickAction}
                         topicList={this.props.facetList}
                     />
                 </div>
-                <div className="mdl-cell" data-focus="contextual-action-content">
+                <div className={`mdl-cell ${contextualActions}`}>
                     <ContextualActions operationList={this.props.operationList || []}/>
                 </div>
             </div>

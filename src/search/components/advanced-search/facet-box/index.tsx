@@ -9,6 +9,8 @@ import {SearchStore} from "../../../store";
 import {InputFacet, FacetValue, StoreFacet} from "../../../types";
 import {Facet} from "./facet";
 
+import {collapsed, expanded, facetBox, heading} from "./style/index.css";
+
 export interface FacetBoxProps {
     openedFacetList: {[facet: string]: boolean};
     store: SearchStore;
@@ -72,7 +74,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     private renderFacetBoxTitle() {
         const title = this.isExpanded ? i18n.t("live.filter.title") : "";
         return (
-            <div data-focus="facet-box-heading" onClick={this.facetBoxTitleClickHandler}>
+            <div className={heading} onClick={this.facetBoxTitleClickHandler}>
                 <h2>{title}</h2>
             </div>
         );
@@ -84,7 +86,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
         }
         const {facets, selectedFacets} = this.props.store;
         return (
-            <div data-focus="facet-box-body">
+            <div>
                 {facets.map(facet => {
                     let selectedDataKey = (selectedFacets || {})[facet.code] ? (selectedFacets || {})[facet.code].key : undefined;
                     if (selectedDataKey || Object.keys(facet).length > 1) {
@@ -109,7 +111,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
 
     render() {
         return (
-            <div className={`${this.isExpanded ? "expanded" : "collapsed"}`} data-focus="facet-box">
+            <div className={`${facetBox} ${this.isExpanded ? expanded : collapsed}`}>
                 {this.renderFacetBoxTitle()}
                 {this.renderFacetList()}
             </div>

@@ -5,6 +5,8 @@ import * as React from "react";
 
 import {applicationStore} from "../../store";
 
+import {scrolling, deployed, undeployed} from "./style/header.css";
+
 export interface HeaderProps {
     notifySizeChange?: (isDeployed?: boolean) => void;
     scrollTargetSelector?: string;
@@ -97,7 +99,7 @@ export class HeaderScrolling extends React.Component<HeaderProps, void> {
         const {isDeployed, placeholderHeight} = this;
         const {canDeploy, mode, route} = applicationStore;
         return (
-            <header ref="header" data-focus="header-scrolling" data-mode={mode} data-route={route} data-deployed={isDeployed}>
+            <header ref="header" className={`${scrolling} ${isDeployed ? deployed : undeployed}`} data-mode={mode} data-route={route}>
                 {this.props.children}
                 {!isDeployed ? <div style={{height: canDeploy ? placeholderHeight : 60, width: "100%"}} /> : null}
             </header>

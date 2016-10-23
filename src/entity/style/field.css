@@ -1,0 +1,34 @@
+.field {
+    padding: 0;
+}
+
+.labelContainer {
+    text-align: right;
+}
+
+.labelContainer > div {
+    display: block;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.edit .invalid .labelContainer > div {
+    color: rgb(222, 50, 38);
+}
+
+.edit .required .labelContainer > div:after {
+    content: "*";
+    margin-left: 3px;
+}
+
+.edit .labelContainer > div {
+    margin: 4px 0;
+}
+
+.edit .valueContainer select {
+    margin: 2px 0;
+}
+
+.edit .valueContainer .field > div {
+    width: 250px;
+}

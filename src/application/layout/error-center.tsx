@@ -3,6 +3,8 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
+import {actions, center, counter, stack} from "./style/error-center.css";
+
 export interface ErrorCenterProps {
     areErrorsVisible?: boolean;
     errors?: string[];
@@ -29,16 +31,16 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
         const {numberDisplayed = 3} = this.props;
         const errorLength = this.errors.length;
         return (
-            <div data-focus="error-center">
-                <div data-focus="error-counter">
+            <div className={center}>
+                <div className={counter}>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "28px", padding: "15px 5px 5px 5px"}}>error</i>{errorLength}
                 </div>
-                <div data-focus="error-actions">
+                <div className={actions}>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "36px", padding: "10px"}} onClick={() => {window.location.reload(); }}>refresh</i>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "36px", padding: "10px"}} onClick={this.toggleVisible}>{`keyboard_arrow_${this.areErrorsVisible ? "down" : "up"}`}</i>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "36px", padding: "10px"}} onClick={() => this.errors = []}>delete</i>
                 </div>
-                <ul data-focus="error-stack">
+                <ul className={stack}>
                     {this.areErrorsVisible ?
                         this.errors.slice(errorLength - numberDisplayed, errorLength).map((e, i) => <li key={i}>{e}</li>)
                     : null}

@@ -341,3 +341,14 @@ declare module "focus-components/select-radio" {
         getValue(): string | number;
     }
 }
+
+declare module "focus-components/snackbar" {
+    export interface SnackbarProps {
+        actionHandler?: (props?: SnackbarProps) => void;
+        actionText?: string;
+        content: string;
+        deleteMessage: () => void;
+    }
+
+    export default function Snackbar(props: SnackbarProps): React.ReactElement<any>
+}

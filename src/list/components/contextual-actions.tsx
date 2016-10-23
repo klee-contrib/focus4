@@ -54,7 +54,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
             return actionLists;
         }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as DropdownItem[]});
         return (
-            <div className="list-action-contextual">
+            <div>
                 <span>{primaryActionList}</span>
                 <Dropdown
                     operations={secondaryActionList}

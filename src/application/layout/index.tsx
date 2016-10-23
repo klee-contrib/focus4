@@ -5,6 +5,8 @@ import {MessageCenter as DefaultMessageCenter} from "../../message";
 import {ErrorCenter as DefaultErrorCenter} from "./error-center";
 import {Header} from "./header";
 
+import {content, hasMenu, layout} from "./style/index.css";
+
 export {DefaultErrorCenter as ErrorCenter}
 export {Header};
 
@@ -31,19 +33,18 @@ export function Layout({
     DevTools?: ReactComponent<any>,
     OtherRootComponent?: ReactComponent<any>
 }) {
-    const menuType = MenuLeft ? "left" : "other";
     return (
-        <div data-focus="layout" data-menu={menuType}>
+        <div className={`${layout} ${MenuLeft ? hasMenu : ""}`}>
             {LoadingBar ? <LoadingBar /> : null}
             <MessageCenter />
             {ErrorCenter ? <ErrorCenter /> : null}
             <AppHeader />
             {MenuLeft ? <MenuLeft /> : null}
-            <div data-focus="page-content">
+            <div className={content}>
                 {children}
             </div>
             {Footer ?
-                <footer data-focus="footer">
+                <footer>
                     <Footer />
                 </footer>
             : null}

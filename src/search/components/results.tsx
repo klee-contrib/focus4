@@ -12,7 +12,7 @@ import {GroupWrapper, GroupComponent} from "./group-wrapper";
 
 function DefaultEmpty() {
     return (
-        <div data-focus="empty-result">
+        <div>
             {i18n.t("search.empty")}
         </div>
     );
@@ -114,7 +114,6 @@ export class Results extends React.Component<ResultsProps, void> {
             <div>
                 {ListSelection.create({
                     data: list,
-                    "data-focus": "results-list",
                     fetchNextPage: this.onScrollReachedBottom,
                     hasMoreData,
                     isSelection,
@@ -124,9 +123,9 @@ export class Results extends React.Component<ResultsProps, void> {
                     parentSelector: scrollParentSelector,
                     ref: "list-" + key,
                     selectionStatus
-                } as any)}
+                })}
                 {isLoading &&
-                    <div data-focus="loading-more-results">
+                    <div style={{padding: "15px"}}>
                         {i18n.t("search.loadingMore")}
                     </div>
                 }
@@ -231,16 +230,16 @@ export class Results extends React.Component<ResultsProps, void> {
         } else {
             const groupCounts = this.getGroupCounts();
             return (
-                <div data-focus="search-results">
-                {groupCounts ?
-                    resultsMap.map(resultGroup  => {
-                        const key = Object.keys(resultGroup)[0]; // group property name
-                        const list = resultGroup[key];
-                        const label = groupCounts[key] && groupCounts[key].label;
-                        const count = groupCounts[key] && groupCounts[key].count;
-                        return this.renderSingleGroup(list, key, label, count);
-                    })
-                : null}
+                <div>
+                    {groupCounts ?
+                        resultsMap.map(resultGroup  => {
+                            const key = Object.keys(resultGroup)[0]; // group property name
+                            const list = resultGroup[key];
+                            const label = groupCounts[key] && groupCounts[key].label;
+                            const count = groupCounts[key] && groupCounts[key].count;
+                            return this.renderSingleGroup(list, key, label, count);
+                        })
+                    : null}
                 </div>
             );
         }

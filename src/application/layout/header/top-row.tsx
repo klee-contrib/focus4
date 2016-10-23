@@ -3,18 +3,20 @@ import * as React from "react";
 
 import {applicationStore} from "../../store";
 
+import {topRow, item, left, middle, right} from "./style/header.css";
+
 export const HeaderTopRow = observer(() => {
     const {barLeft, barRight, summary} = applicationStore;
     return (
-        <div data-focus="header-top-row">
+        <div className={topRow}>
             <div>
-                <div data-focus="header-top-row-left">
+                <div className={`${item} ${left}`}>
                     {barLeft}
                 </div>
-                <div data-focus="header-top-row-right">
+                <div className={`${item} ${right}`}>
                     {barRight}
                 </div>
-                <div data-focus="header-top-row-middle">
+                <div className={`${item} ${middle}`}>
                     {summary}
                 </div>
             </div>

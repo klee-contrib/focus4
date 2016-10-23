@@ -7,6 +7,8 @@ import * as React from "react";
 
 import {FacetData, FacetValue} from "./facet-data";
 
+import {collapsed, expanded, list, selected, showAll, title} from "./style/facet.css";
+
 export interface FacetProps {
     expandHandler: (facetKey: string, expand: boolean) => void;
     facet: {code: string, label: string, values: FacetValue[]};
@@ -43,16 +45,16 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     private renderFacetTitle() {
-        let title = i18n.t("live.filter.facets." + this.props.facetKey); // Default facet translation path is live.filter.facets.
+        let facetTitle = i18n.t("live.filter.facets." + this.props.facetKey); // Default facet translation path is live.filter.facets.
         if (this.props.selectedDataKey) {
             const selectedFacet = this.props.facet.values.filter(value => value.code === this.props.selectedDataKey);
             const facetLabel = selectedFacet.length ? selectedFacet[0].label : "";
-            title = `${title} : ${facetLabel}`;
+            facetTitle = `${facetTitle} : ${facetLabel}`;
         }
 
         return (
-            <div data-focus="facet-title" onClick={this.facetTitleClickHandler}>
-                <h3>{title}</h3>
+            <div className={title} onClick={this.facetTitleClickHandler}>
+                <h3>{facetTitle}</h3>
             </div>
         );
     }
@@ -60,7 +62,7 @@ export class Facet extends React.Component<FacetProps, void> {
     private renderShowAllDataList() {
         if (!this.isShowAll && this.props.facet.values.length > this.props.nbDefaultDataList) {
             return (
-                <a href="javascript:void(0);" data-focus="facet-show-all" onClick={this.showAllHandler}>
+                <a href="javascript:void(0);" onClick={this.showAllHandler}>
                     {i18n.t("show.all")}
                 </a>
             );
@@ -76,7 +78,7 @@ export class Facet extends React.Component<FacetProps, void> {
 
         const facetValues = this.isShowAll ? this.props.facet.values : this.props.facet.values.slice(0, this.props.nbDefaultDataList);
         return (
-            <div data-focus="facet-data-list">
+            <div className={list}>
                 <ul>
                     {facetValues.map(facetValue => {
                         return (
@@ -90,7 +92,7 @@ export class Facet extends React.Component<FacetProps, void> {
                         );
                     })}
                 </ul>
-                <div data-focus="facet-data-show-all">
+                <div className={showAll}>
                     {this.renderShowAllDataList()}
                 </div>
             </div>
@@ -98,16 +100,9 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     render() {
-        let className = "facet";
-        if (this.props.selectedDataKey) {
-            className += "-selected";
-        } else if (this.props.isExpanded) {
-            className += "-expanded";
-        } else {
-            className += "-collapsed";
-        }
+        const {selectedDataKey, isExpanded} = this.props;
         return (
-            <div className={className} data-focus="facet">
+            <div className={selectedDataKey ? selected : isExpanded ? expanded : collapsed}>
                 {this.renderFacetTitle()}
                 {this.renderFacetDataList()}
             </div>

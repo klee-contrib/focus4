@@ -9,6 +9,8 @@ import Button from "focus-components/button";
 import {LineSelectionProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
 
+import {list, button} from "./style/list-selection.css";
+
 export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends ListBaseProps<T, P> {
     /** Par défaut: data => data.id.value || data.id */
     idField?: (data: T) => string;
@@ -76,7 +78,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
     }
 
     private renderLines() {
-        const {LineComponent, data, lineProps} = this.props;
+        const {LineComponent, data, lineProps, isSelection = true} = this.props;
         return data.map(value => {
             return (
                 <LineComponent
@@ -84,6 +86,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
                     isSelected={this.items.get(this.idField(value)).selected}
                     key={this.idField(value)}
                     onSelection={this.handleLineSelection}
+                    isSelection={isSelection}
                     {...lineProps}
                 />
             );
@@ -97,7 +100,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
                 return loader();
             }
             return (
-                <li className="sl-loading">{i18n.t("list.loading")} ...</li>
+                <li>{i18n.t("list.loading")}</li>
             );
         } else {
             return null;
@@ -107,13 +110,12 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
     private renderManualFetch() {
         const {isManualFetch, hasMoreData} = this.props;
         if (isManualFetch && hasMoreData) {
-            const style = {className: "primary"};
             return (
-                <li className="sl-button">
+                <li className={button}>
                     <Button
+                        color="primary"
                         handleOnClick={this.handleShowMore}
                         label="list.button.showMore"
-                        style={style}
                         type="button"
                     />
                 </li>
@@ -124,9 +126,8 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
     }
 
     render() {
-        const {isSelection = true} = this.props;
         return (
-            <ul data-focus="selection-list" data-selection={isSelection}>
+            <ul className={list}>
                 {this.renderLines()}
                 {this.renderLoading()}
                 {this.renderManualFetch()}

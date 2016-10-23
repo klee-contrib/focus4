@@ -7,6 +7,8 @@ import Button from "focus-components/button";
 import {LineProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
 
+import {list} from "./style/list-timeline.css";
+
 export interface ListTimelineProps<T, P extends LineProps<T>> extends ListBaseProps<T, P> {
     /** Par défaut: "id" */
     idField?: string;
@@ -37,7 +39,7 @@ export class ListTimeline<T, P extends LineProps<T>> extends ListBase<T, WithDat
             if (loader) {
                 return loader();
             }
-            return <li className="timeline-loading">{i18n.t("list.loading")}</li>;
+            return <li>{i18n.t("list.loading")}</li>;
         } else {
             return null;
         }
@@ -47,7 +49,7 @@ export class ListTimeline<T, P extends LineProps<T>> extends ListBase<T, WithDat
         const {isManualFetch, hasMoreData} = this.props;
         if (isManualFetch && hasMoreData) {
             return (
-                <li className="timeline-button">
+                <li>
                     <Button
                         label="list.button.showMore"
                         type="button"
@@ -62,7 +64,7 @@ export class ListTimeline<T, P extends LineProps<T>> extends ListBase<T, WithDat
 
     render() {
         return (
-            <ul className="timeline">
+            <ul className={list}>
                 {this.renderLines()}
                 {this.renderLoading()}
                 {this.renderManualFetch()}

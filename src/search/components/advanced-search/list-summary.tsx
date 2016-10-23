@@ -14,6 +14,8 @@ export interface Props {
     store: SearchStore;
 }
 
+import {print, sentence, summary} from "./style/list-summary.css";
+
 @autobind
 @observer
 export class ListSummary extends React.Component<Props, void> {
@@ -56,14 +58,14 @@ export class ListSummary extends React.Component<Props, void> {
         }} : undefined;
 
         return (
-            <div data-focus="list-summary">
+            <div className={summary}>
                 {exportAction ?
-                    <div className="print">
+                    <div className={print}>
                         <Button handleOnClick={exportAction} icon="print" label="result.export"  />
                     </div>
                 : null}
-                <span className="sentence">{this.resultSentence}</span>
-                <span className="topics">
+                <span className={sentence}>{this.resultSentence}</span>
+                <span>
                     <TopicDisplayer
                         topicClickAction={this.onScopeClick}
                         topicList={!this.props.scopeLock ? scope : undefined}

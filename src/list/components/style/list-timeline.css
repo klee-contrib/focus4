@@ -1,0 +1,40 @@
+.list {
+    list-style: none;
+    padding: 20px 0;
+    position: relative;
+}
+
+.list:before {
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    content: " ";
+    width: 3px;
+    background-color: #EEE;
+}
+
+.list > li {
+    margin-bottom: 10px;
+    margin-left : 38px;
+    position: relative;
+}
+
+.list > li:before,
+.list > li:after {
+    content: " ";
+    display: table;
+}
+
+.list > li:after {
+    clear: both;
+}
+
+.list > li:before,
+.list > li:after {
+    content: " ";
+    display: table;
+}
+
+.list > li:after {
+    clear: both;
+}

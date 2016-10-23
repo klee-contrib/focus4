@@ -10,6 +10,8 @@ import InputText from "focus-components/input-text";
 import {SearchStore} from "../../store";
 import {Scope, ScopeSelect} from "./scope-select";
 
+import {bar, input, spinner} from "./style/index.css";
+
 export interface Props {
     hasScopes?: boolean;
     helpTranslationPath?: string;
@@ -77,11 +79,11 @@ export class SearchBar extends React.Component<Props, void> {
         }
         return (
             <div style={{display: "flex"}}>
-                <div data-focus="search-bar">
+                <div className={bar}>
                     {hasScopes ?
                         <ScopeSelect list={scopes} onScopeSelection={this.onScopeSelection} ref="scope" value={store.scope} />
                     : null}
-                    <div data-focus="search-bar-input">
+                    <div className={input}>
                         <InputText
                             name="searchbarinput"
                             onChange={this.onInputChange}
@@ -90,7 +92,7 @@ export class SearchBar extends React.Component<Props, void> {
                             value={store.query}
                         />
                     {store.isLoading ?
-                        <div className="three-quarters-loader" data-role="spinner"></div>
+                        <div className={`three-quarters-loader ${spinner}`} />
                     : null}
                 </div>
             </div>

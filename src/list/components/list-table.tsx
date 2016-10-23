@@ -79,7 +79,7 @@ export class ListTable<T, P extends LineProps<T>> extends ListBase<T, WithData<L
                 return loader();
             }
             return (
-                <tbody className={"table-loading"}>
+                <tbody className="table-loading">
                     <tr>
                         <td>{`${i18n.t("list.loading")}`}</td>
                     </tr>

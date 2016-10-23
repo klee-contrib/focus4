@@ -3,6 +3,8 @@ import * as React from "react";
 
 import Button from "focus-components/button";
 
+import {actions, container} from "./style/group.css";
+
 export interface Props {
     canShowMore: boolean;
     count: number;
@@ -15,12 +17,12 @@ export interface Props {
 
 export function GroupComponent({canShowMore, count, children, groupKey, groupLabel, showAllHandler, showMoreHandler}: Props) {
     return (
-        <div data-focus="group-container">
+        <div className={container}>
             <h3>{`${groupLabel} (${count || 0})`}</h3>
-            <div data-focus="group-container-results">
+            <div>
                 {children}
             </div>
-            <div data-focus="group-container-actions">
+            <div className={actions}>
                 {canShowMore ?
                     <Button icon="add" handleOnClick={showMoreHandler} label={i18n.t("show.more")} />
                 : null}

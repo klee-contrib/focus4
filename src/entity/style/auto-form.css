@@ -1,0 +1,17 @@
+.form {
+    margin: 0;
+    padding: 0;
+}
+
+.form [data-focus='panel'] {
+    position: relative;
+}
+
+.form [data-focus='panel']:after {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.19);
+}
