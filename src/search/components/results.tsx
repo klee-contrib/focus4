@@ -176,11 +176,15 @@ export class Results extends React.Component<ResultsProps, void> {
         if (scopeFacet.length === 0) {
             scopeFacet = store.facets.filter(facet => facet.code === scopeFacetKey);
         }
-        return scopeFacet[0].values.reduce((result, facetData) => {
-            const {code, label, count} = facetData;
-            result[code] = {label, count};
-            return result;
-        }, {} as {[group: string]: {label: string, count: number}});
+        if (scopeFacet.length) {
+            return scopeFacet[0].values.reduce((result, facetData) => {
+                const {code, label, count} = facetData;
+                result[code] = {label, count};
+                return result;
+            }, {} as {[group: string]: {label: string, count: number}});
+        } else {
+            return undefined;
+        }
     }
 
     render() {
