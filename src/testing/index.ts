@@ -6,7 +6,7 @@
 import "ignore-styles";
 import {createRenderer} from "react-addons-test-utils";
 import {Component, ComponentClass, ReactElement} from "react";
-import tape = require("tape");
+import * as tape from "tape";
 
 import {ListStore} from "../list";
 import {SearchStore} from "../search";

@@ -1,4 +1,4 @@
-import fetch = require("isomorphic-fetch");
+import fetch from "isomorphic-fetch";
 import {v4} from "node-uuid";
 
 import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";

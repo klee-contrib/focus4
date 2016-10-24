@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n = require("i18next");
+import * as i18n from "i18next";
 import {reduce} from "lodash";
 import * as React from "react";
 

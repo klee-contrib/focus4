@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import glob = require("glob");
+import * as glob from "glob";
 import {upperFirst, camelCase} from "lodash";
 import * as ts from "typescript";
 

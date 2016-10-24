@@ -1,6 +1,6 @@
-import i18n = require("i18next");
+import * as i18n from "i18next";
 import {isNull, isNumber, isUndefined} from "lodash";
-import moment = require("moment");
+import moment from "moment";
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 

@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-beta2",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -12,12 +12,12 @@
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
     "prepublish": "in-publish && tsc --outDir ./ && cd src && %AppData%\\..\\Local\\Programs\\Git\\usr\\bin\\find.exe . -name '*.css' -type f -exec cp --parents {} ../ ; || true",
-    "postpublish": "rm -f  *.js index.d.ts reference.d.ts user.d.ts && rm -rf application entity list message network router search testing",
+    "postpublish": "rm -rf *.js index.d.ts reference.d.ts user.d.ts && rm -rf application entity list message network router search testing",
     "start": "tsc && cd src && %AppData%\\..\\Local\\Programs\\Git\\usr\\bin\\find.exe . -name '*.css' -type f -exec cp --parents {} ../dist ;",
     "tcm": "tcm src",
     "tcm:watch": "tcm -w src",
-    "test": "ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
-    "testgen": "ts-node src/testing/generator.ts src ..",
+    "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
+    "testgen": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node src/testing/generator.ts src ..",
     "tslint": "tslint src/**/*.ts src/**/*.tsx --force"
   },
   "dependencies": {
