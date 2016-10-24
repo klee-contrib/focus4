@@ -1,0 +1,34 @@
+.center {
+    z-index: 1002;
+}
+
+.error {
+    background-color: #DE3226;
+}
+
+.success {
+    background-color: #2AC955;
+}
+
+.warning {
+    background-color: #FFAE00;
+}
+
+.center :global(.mdl-snackbar__close) {
+    cursor:pointer;
+    background: transparent;
+    float: right;
+    border:none;
+    text-transform: uppercase;
+    padding: 14px 14px;
+    line-height: 1;
+    letter-spacing: 0;
+    outline: none;
+    text-align: center;
+    align-self: center;
+}
+
+.center :global(.mdl-snackbar__close) i {
+    color: FFF;
+    font-size: 12px;
+}
