@@ -283,7 +283,7 @@ declare module "focus-components/panel" {
 
     export default class Panel extends React.Component<{
         blockName?: string;
-        Buttons?: ReactComponent<PanelButtonsProps>;
+        Buttons?: ReactComponent<PanelButtonsProps> | null;
         buttonsPosition?: "both" | "bottom" | "top";
         showHelp?: boolean;
         title?: string;
@@ -297,6 +297,30 @@ declare module "focus-components/scrollspy-container" {
         offset?: number;
         scrollDelay?: number;
     }, {}> {}
+}
+
+declare module "focus-components/select" {
+    export default class Select extends React.Component<{
+        autoFocus?: boolean;
+        disabled?: boolean;
+        error?: string;
+        hasUndefined?: boolean;
+        isActiveProperty?: string;
+        isRequired?: boolean;
+        labelKey?: string;
+        multiple?: boolean;
+        name: string;
+        onChange: (value: string | number) => void;
+        placeholder?: string;
+        size?: number;
+        style?: React.CSSProperties;
+        unSelectedLabel?: string;
+        value?: string | number;
+        valueKey?: string;
+        values: {}[];
+    }, {}> {
+        getValue(): string | number;
+    }
 }
 
 declare module "focus-components/select-mdl" {

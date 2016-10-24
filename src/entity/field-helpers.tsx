@@ -3,7 +3,7 @@ import * as React from "react";
 
 import AutocompleteSelect, {AutoCompleteResult} from "focus-components/autocomplete-select";
 import AutocompleteText from "focus-components/autocomplete-text/field";
-import Select from "focus-components/select-mdl";
+import Select from "focus-components/select";
 
 import {EntityField} from "../entity";
 import {CommonListProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
