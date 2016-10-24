@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-beta0",
+  "version": "1.0.0-beta1",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -27,21 +27,23 @@
     "@types/isomorphic-fetch": "^0.0.31",
     "@types/lodash": "^4.14.37",
     "@types/node-uuid": "^0.0.28",
+    "@types/numeral": "^0.0.18",
     "@types/react": "^0.14.41",
     "@types/react-addons-test-utils": "^0.14.15",
     "@types/react-dom": "^0.14.18",
     "@types/tape": "^4.2.28",
-    "core-decorators": "^0.13.0",
-    "focus-components": "3.0.0-rc9",
-    "i18next": "^3.4.3",
+    "core-decorators": "^0.14.0",
+    "focus-components": "3.0.0-rc18",
+    "i18next": "^3.4.4",
     "ignore-styles": "^5.0.1",
     "lodash": "^4.16.4",
-    "material-design-icons-iconfont": "^3.0.1",
+    "material-design-icons-iconfont": "^3.0.2",
     "material-design-lite": "^1.2.1",
     "mobx": "^2.6.0",
     "mobx-react": "^3.5.8",
-    "moment": "^2.15.1",
+    "moment": "^2.15.2",
     "node-uuid": "^1.4.7",
+    "numeral": "^1.5.3",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
@@ -50,9 +52,9 @@
   "devDependencies": {
     "in-publish": "2.0.0",
     "tap-spec": "4.1.1",
-    "ts-node": "1.5.2",
+    "ts-node": "1.6.0",
     "tslint": "3.15.1",
     "typed-css-modules": "0.1.13",
-    "typescript": "2.1.0-dev.20161017"
+    "typescript": "2.1.0-dev.20161024"
   }
 }

@@ -257,26 +257,19 @@ declare module "focus-components/label" {
 }
 
 declare module "focus-components/menu" {
-    export interface ButtonProps {
-        className?: string;
-        color?: "colored" | "primary" | "accent";
-        disabled?: boolean;
-        handleOnClick: (e: React.SyntheticEvent<any>) => void;
-        hasRipple?: boolean;
+    export interface MenuItem {
         icon?: string;
-        iconLibrary?: "material" | "font-awesome" | "font-custom";
-        id?: string;
-        isJs?: boolean;
         label?: string;
-        shape?: "raised" | "fab" | "icon" | "mini-fab";
-        style?: React.CSSProperties;
-        type?: "button" | "submit";
+        route?: string;
+        subMenus?: MenuItem[];
     }
 
     export default function MenuLeft(props: {
         handleBrandClick?: () => void;
-        items: (ButtonProps & {route?: string})[];
         LinkComponent?: ReactComponent<{to: string}>;
+        menus: MenuItem[];
+        showLabels?: boolean;
+        showPanel?: boolean;
     }): React.ReactElement<any>
 }
 
