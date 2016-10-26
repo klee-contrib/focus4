@@ -30,9 +30,9 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
                     fillClassNames(contextClassNames, classNames);
                 }
                 if (!isStateful(Comp)) {
-                    return <Comp {...this.props} classNames={contextClassNames || {}} />;
+                    return <Comp {...this.props} classNames={contextClassNames || classNames} />;
                 } else {
-                    return <Comp {...this.props} classNames={contextClassNames || {}} ref={(instance: any) => this.wrappedInstance = instance} />;
+                    return <Comp {...this.props} classNames={contextClassNames || classNames} ref={(instance: any) => this.wrappedInstance = instance} />;
                 }
             }
         };
