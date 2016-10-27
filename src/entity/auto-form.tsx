@@ -37,7 +37,7 @@ import {form} from "./style/auto-form.css";
 export interface AutoFormProps {
 
     /** Pour ajouter une classe particulière sur le formulaire. */
-    className?: string;
+    formClassName?: string;
 
     /** Défaut: true */
     hasEdit?: boolean;
@@ -69,6 +69,11 @@ export interface ServiceConfig {
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
 export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Component<P & AutoFormProps, void> {
+
+    // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement.
+    static contextTypes = {classNames: React.PropTypes.object};
+    context: {classNames: {[key: string]: {[key: string]: any}}};
+
     private isCustomEntity: boolean;
     private services: ServiceConfig;
     private storeData: E;
@@ -192,11 +197,12 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
 
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        const {hasForm = true, className = ""} = this.props;
+        const {hasForm = true, formClassName = ""} = this.props;
+        const contextClassName = this.context && this.context.classNames && this.context.classNames["form"] || "";
         if (hasForm) {
             return (
                 <form
-                    className={`${className} ${form}`}
+                    className={`${form} ${contextClassName} ${formClassName}`}
                     noValidate={true}
                     onSubmit={e => { e.preventDefault(); this.save(); }}
                 >
