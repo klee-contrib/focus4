@@ -24,9 +24,7 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
             render() {
                 const contextClassNames = this.context && this.context.classNames && this.context.classNames[classContainerName];
                 const {classNames = {}} = this.props;
-                if (!contextClassNames) {
-                    console.warn(`Le conteneur de classes CSS ${classContainerName} n'a pas été trouvé dans un StyleProvider parent.`);
-                } else {
+                if (contextClassNames) {
                     fillClassNames(contextClassNames, classNames);
                 }
                 if (!isStateful(Comp)) {

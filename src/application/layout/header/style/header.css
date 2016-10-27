@@ -1,21 +1,21 @@
-.actionsContainer {
+.actions {
     text-align: right;
     display: inline;
 }
 
-.actionsContainer button {
+.actions button {
     margin: 0 5px;
 }
 
-.actionsContainer :global(.mdl-button--fab) {
+.actions :global(.mdl-button--fab) {
     background-color: #FFF !important;
 }
 
-.actionsContainer button:hover {
+.actions button:hover {
     background-color: #F9F9F9 !important;
 }
 
-.actionsContainer div {
+.actions div {
     float: right;
 }
 
@@ -72,7 +72,7 @@
     display: none;
 }
 
-.deployed .actionsContainer {
+.deployed .actions {
     position: absolute;
     right: 0;
     bottom: -28px;
@@ -100,7 +100,7 @@
     display: none;
 }
 
-.undeployed .actionsContainer {
+.undeployed .actions {
     position: fixed;
     top: 60px;
     right: 0;
@@ -108,13 +108,13 @@
 }
 
 @media (max-width: 480px) {
-    .scrolling .actionsContainer {
+    .scrolling .actions {
         margin-right: 20px;
     }
 }
 
 @media (min-width: 840px) {
-    scrolling .actionsContainer {
+    scrolling .actions {
         margin-right: 200px;
     }
 }

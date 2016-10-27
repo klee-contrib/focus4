@@ -3,23 +3,24 @@ import * as React from "react";
 
 import {applicationStore} from "../../store";
 
-import {topRow, item, left, middle, right} from "./style/header.css";
-
-export const HeaderTopRow = observer(() => {
-    const {barLeft, barRight, summary} = applicationStore;
-    return (
-        <div className={topRow}>
-            <div>
-                <div className={`${item} ${left}`}>
-                    {barLeft}
-                </div>
-                <div className={`${item} ${right}`}>
-                    {barRight}
-                </div>
-                <div className={`${item} ${middle}`}>
-                    {summary}
+export const HeaderTopRow = observer<{classNames: {topRow: string; item: string; left: string; middle: string; right: string}}>(
+    ({classNames}) => {
+        const {barLeft, barRight, summary} = applicationStore;
+        const {item, left, middle, right, topRow} = classNames;
+        return (
+            <div className={topRow}>
+                <div>
+                    <div className={`${item} ${left}`}>
+                        {barLeft}
+                    </div>
+                    <div className={`${item} ${right}`}>
+                        {barRight}
+                    </div>
+                    <div className={`${item} ${middle}`}>
+                        {summary}
+                    </div>
                 </div>
             </div>
-        </div>
-    );
-});
+        );
+    }
+);

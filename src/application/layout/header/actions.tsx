@@ -6,30 +6,30 @@ import Dropdown from "focus-components/dropdown";
 
 import {applicationStore} from "../../store";
 
-import {actionsContainer} from "./style/header.css";
-
-export const HeaderActions = observer(() => {
-    const {actions} = applicationStore;
-    return (
-        <div className={actionsContainer}>
-            {actions.primary.map(primary => {
-                const {action, className, icon, iconLibrary, label} = primary;
-                return (
-                    <Button
-                        key={`header-action-${label}`}
-                        className={className}
-                        handleOnClick={action}
-                        icon={icon}
-                        iconLibrary={iconLibrary}
-                        label={label}
-                        shape="fab"
-                        type="button"
-                    />
-                );
-            })}
-            {actions.secondary && actions.secondary.length > 0 ?
-                <Dropdown operations={actions.secondary} />
-            : null}
-        </div>
-    );
-});
+export const HeaderActions = observer<{className: string}>(
+    ({className: cName}) => {
+        const {actions} = applicationStore;
+        return (
+            <div className={cName}>
+                {actions.primary.map(primary => {
+                    const {action, className, icon, iconLibrary, label} = primary;
+                    return (
+                        <Button
+                            key={`header-action-${label}`}
+                            className={className}
+                            handleOnClick={action}
+                            icon={icon}
+                            iconLibrary={iconLibrary}
+                            label={label}
+                            shape="fab"
+                            type="button"
+                        />
+                    );
+                })}
+                {actions.secondary && actions.secondary.length > 0 ?
+                    <Dropdown operations={actions.secondary} />
+                : null}
+            </div>
+        );
+    }
+);

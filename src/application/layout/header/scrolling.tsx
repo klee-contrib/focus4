@@ -5,16 +5,15 @@ import * as React from "react";
 
 import {applicationStore} from "../../store";
 
-import {scrolling, deployed, undeployed} from "./style/header.css";
-
-export interface HeaderProps {
+export interface HeaderScrollingProps {
+    classNames: {scrolling: string; deployed: string; undeployed: string};
     notifySizeChange?: (isDeployed?: boolean) => void;
     scrollTargetSelector?: string;
 }
 
 @autobind
 @observer
-export class HeaderScrolling extends React.Component<HeaderProps, void> {
+export class HeaderScrolling extends React.Component<HeaderScrollingProps, void> {
 
     @observable deployThreshold: number;
     @observable isDeployed = true;
@@ -98,6 +97,7 @@ export class HeaderScrolling extends React.Component<HeaderProps, void> {
     render() {
         const {isDeployed, placeholderHeight} = this;
         const {canDeploy, route} = applicationStore;
+        const {scrolling, deployed, undeployed} = this.props.classNames;
         return (
             <header ref="header" className={`${scrolling} ${isDeployed ? deployed : undeployed}`} data-route={route}>
                 {this.props.children}
