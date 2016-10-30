@@ -3,10 +3,12 @@ import * as React from "react";
 import Checkbox from "focus-components/input-checkbox";
 
 import {EntityField, textFor} from "../../entity";
+import {injectStyle} from "../../theming";
 
 import {ContextualActions} from "./contextual-actions";
 
-import {selection, checkbox, actions, unselected, selected, timelineDate, timelineBadge, timelinePanel} from "./style/lines.css";
+import * as styles from "./style/lines.css";
+export type LineStyle = typeof styles;
 
 export interface OperationListItem {
     action: (data?: {}) => void;
@@ -19,6 +21,7 @@ export interface OperationListItem {
 }
 
 export interface LineProps<T> {
+    classNames?: LineStyle;
     data?: T;
     onLineClick?: (data: T) => void;
     operationList?: OperationListItem[];
@@ -35,10 +38,10 @@ export interface LineSelectionProps<T> extends LineProps<T> {
  * @param {data, operationList} Les données et la liste d'actions de la ligne.
  * @param isSelection Utilise les classes CSS de la ligne de sélection.
  */
-export function renderLineActions({data, operationList}: LineProps<any>, isSelection = false) {
+export function renderLineActions({classNames, data, operationList}: LineProps<any>, isSelection = false) {
     if (operationList && operationList.length > 0) {
         return (
-            <div className={isSelection ? actions : undefined}>
+            <div className={isSelection ? `${styles.actions} ${classNames!.actions || ""}` : undefined}>
                 <ContextualActions
                     operationList={operationList}
                     operationParam={data}
@@ -59,7 +62,7 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
     selectedInitializer = (data?: E) => false,
     selectionnableInitializer = (data?: E) => true
 ): (Component: ReactComponent<P>) => React.ComponentClass<P> {
-    return (Component: ReactComponent<P>) => class extends React.Component<P, void> {
+    return (Component: ReactComponent<P>) => injectStyle("line", class extends React.Component<P, void> {
         private isSelectionnable: boolean;
 
         componentWillMount() {
@@ -87,10 +90,10 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
         }
 
         renderSelectionBox = () => {
-            const {isSelected} = this.props;
+            const {isSelected, classNames} = this.props;
             if (this.isSelectionnable) {
                 return (
-                    <div className={`${checkbox} ${isSelected ? selected : unselected}`}>
+                    <div className={`${styles.checkbox} ${classNames!.checkbox || ""} ${isSelected ? `${styles.selected} ${classNames!.selected || ""}` : `${styles.unselected} ${classNames!.unselected || ""}`}`}>
                         <Checkbox onChange={this.handleSelectionClick} value={isSelected} />
                     </div>
                 );
@@ -101,14 +104,14 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
 
         render() {
             return (
-                <li className={selection}>
+                <li className={`${styles.selection} ${this.props.classNames!.selection || ""}`}>
                     {this.renderSelectionBox()}
                     <Component {...this.props} />
                     {renderLineActions(this.props, true)}
                 </li>
             );
         }
-    };
+    });
 }
 
 /**
@@ -116,13 +119,13 @@ export function lineSelection<P extends LineSelectionProps<E>, E>(
  * @param dateSelector Un sélecteur pour récupérer le champ data de l'entité.
  */
 export function lineTimeline<P extends LineProps<E>, E>(dateSelector: (data: E) => EntityField<string>) {
-    return (Component: ReactComponent<P>) => (props: P) => (
+    return (Component: ReactComponent<P>) => injectStyle("line", (props: P) => (
         <li>
-            <div className={timelineDate}>{textFor(dateSelector(props.data!))}</div>
-            <div className={timelineBadge}></div>
-            <div className={timelinePanel}>
+            <div className={`${styles.timelineDate} ${props.classNames!.timelineDate || ""}`}>{textFor(dateSelector(props.data!))}</div>
+            <div className={`${styles.timelineBadge} ${props.classNames!.timelineBadge || ""}`}></div>
+            <div className={`${styles.timelinePanel} ${props.classNames!.timelinePanel || ""}`}>
                 <Component {...props} />
             </div>
         </li>
-    );
+    ));
 }

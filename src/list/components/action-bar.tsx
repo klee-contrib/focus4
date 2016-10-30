@@ -6,12 +6,16 @@ import * as React from "react";
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
 
+import {injectStyle} from "../../theming";
+
 import {ContextualActions} from "./contextual-actions";
 import {TopicDisplayer} from "./topic-displayer";
 
-import {actionBar, buttons, facets, contextualActions} from "./style/action-bar.css";
+import * as styles from "./style/action-bar.css";
+export type ActionBarStyle = typeof styles;
 
 export interface ActionBarProps {
+    classNames?: ActionBarStyle;
     hasSelection?: boolean;
     hasGrouping?: boolean;
     selectionStatus?: "none" | "partial" | "selected";
@@ -28,6 +32,7 @@ export interface ActionBarProps {
     groupLabelPrefix?: string;
 }
 
+@injectStyle("actionBar")
 @autobind
 export class ActionBar extends React.Component<ActionBarProps, void> {
 
@@ -101,22 +106,23 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     render() {
+        const {facetClickAction, facetList, operationList, classNames} = this.props;
         return (
-            <div className={`mdl-grid ${actionBar}`}>
-                <div className={`mdl-cell ${buttons}`}>
+            <div className={`mdl-grid ${styles.actionBar} ${classNames!.actionBar}`}>
+                <div className={`mdl-cell ${styles.buttons} ${classNames!.buttons}`}>
                     {this.getSelectionObject()}
                     {this.getOrderObject()}
                     {this.getGroupObject()}
                 </div>
-                <div className={`mdl-cell mdl-cell--hide-tablet mdl-cell--hide-phone ${facets}`}>
+                <div className={`mdl-cell mdl-cell--hide-tablet mdl-cell--hide-phone ${styles.facets} ${classNames!.facets}`}>
                     <TopicDisplayer
                         displayLabels
-                        topicClickAction={this.props.facetClickAction}
-                        topicList={this.props.facetList}
+                        topicClickAction={facetClickAction}
+                        topicList={facetList}
                     />
                 </div>
-                <div className={`mdl-cell ${contextualActions}`}>
-                    <ContextualActions operationList={this.props.operationList || []}/>
+                <div className={`mdl-cell ${styles.contextualActions} ${classNames!.contextualActions}`}>
+                    <ContextualActions operationList={operationList || []}/>
                 </div>
             </div>
         );

@@ -5,18 +5,24 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
+import {injectStyle} from "../../../../theming";
+
 import {SearchStore} from "../../../store";
 import {InputFacet, FacetValue, StoreFacet} from "../../../types";
-import {Facet} from "./facet";
+import {Facet, FacetStyle} from "./facet";
+export {FacetStyle};
 
-import {collapsed, expanded, facetBox, heading} from "./style/index.css";
+import * as styles from "./style/index.css";
+export type FacetBoxStyle = typeof styles;
 
 export interface FacetBoxProps {
+    classNames?: FacetBoxStyle;
     openedFacetList: {[facet: string]: boolean};
     store: SearchStore;
     scopesConfig: {[key: string]: string};
 }
 
+@injectStyle("facetBox")
 @autobind
 @observer
 export class FacetBox extends React.Component<FacetBoxProps, void> {
@@ -74,7 +80,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     private renderFacetBoxTitle() {
         const title = this.isExpanded ? i18n.t("live.filter.title") : "";
         return (
-            <div className={heading} onClick={this.facetBoxTitleClickHandler}>
+            <div className={`${styles.heading} ${this.props.classNames!.heading || ""}`} onClick={this.facetBoxTitleClickHandler}>
                 <h2>{title}</h2>
             </div>
         );
@@ -110,8 +116,9 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     }
 
     render() {
+        const {expanded, collapsed, facetBox} = this.props.classNames!;
         return (
-            <div className={`${facetBox} ${this.isExpanded ? expanded : collapsed}`}>
+            <div className={`${styles.facetBox} ${facetBox || ""}${this.isExpanded ? `${styles.expanded} ${expanded}` : `${styles.collapsed} ${collapsed}`}`}>
                 {this.renderFacetBoxTitle()}
                 {this.renderFacetList()}
             </div>

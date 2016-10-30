@@ -8,10 +8,13 @@ import DisplayText from "focus-components/input-display/text";
 import InputText from "focus-components/input-text";
 import Label from "focus-components/label";
 
+import {injectStyle} from "../theming";
+
 import {Domain} from "./types";
 import {validate} from "./validation";
 
-import {edit, field, invalid, labelContainer, required, valueContainer} from "./style/field.css";
+import * as styles from "./style/field.css";
+export type FieldStyle = typeof styles;
 
 export interface FieldProps extends Domain {
 
@@ -26,6 +29,7 @@ export interface FieldProps extends Domain {
     values?: any[];
 
     // Props propres au Field.
+    classNames?: FieldStyle;
     contentCellPosition?: string;
     contentOffset?: number;
     contentSize?: number;
@@ -38,6 +42,7 @@ export interface FieldProps extends Domain {
 }
 
 const omittedProps = [
+    "classNames",
     "contentCellPosition",
     "contentOffset",
     "contentSize",
@@ -56,6 +61,7 @@ const omittedProps = [
     "LabelComponent"
 ];
 
+@injectStyle("field")
 @autobind
 @observer
 export class Field extends React.Component<FieldProps, void> {
@@ -86,10 +92,10 @@ export class Field extends React.Component<FieldProps, void> {
     }
 
     label() {
-        const {name, label, LabelComponent, domain, labelCellPosition, labelSize, labelOffset} = this.props;
+        const {name, label, LabelComponent, domain, labelCellPosition, labelSize, labelOffset, classNames} = this.props;
         const FinalLabel = LabelComponent || Label;
         return (
-            <div className ={`${getCellGridClassName(labelCellPosition || "top", labelSize || 4, labelOffset || 0)} ${labelContainer}`}>
+            <div className ={`${getCellGridClassName(labelCellPosition || "top", labelSize || 4, labelOffset || 0)} ${styles.label} ${classNames!.label || ""}`}>
                 <FinalLabel
                     domain={domain}
                     name={name}
@@ -132,13 +138,13 @@ export class Field extends React.Component<FieldProps, void> {
     }
 
     render() {
-        const {FieldComponent, contentCellPosition, contentSize, labelSize, contentOffset, error, isRequired, hasLabel, isEdit, domain} = this.props;
+        const {FieldComponent, contentCellPosition, contentSize, labelSize, contentOffset, error, isRequired, hasLabel, isEdit, domain, classNames} = this.props;
         return (
-            <div className={`mdl-grid ${field} ${isEdit ? edit : ""} ${error ? invalid : ""} ${isRequired ? required : ""} ${domain && domain.className ? domain.className : ""}`}>
+            <div className={`mdl-grid ${styles.field} ${classNames!.field || ""} ${isEdit ? `${styles.edit} ${classNames!.edit || ""}` : ""} ${error ? `${styles.invalid} ${classNames!.invalid || ""}` : ""} ${isRequired ? `${styles.required} ${classNames!.required || ""}` : ""} ${domain && domain.className ? domain.className : ""}`}>
                 {FieldComponent ? this.field() : null}
                 {!FieldComponent && hasLabel ? this.label() : null}
                 {!FieldComponent ?
-                    <div className ={`${getCellGridClassName(contentCellPosition || "top", contentSize || 12 - (labelSize || 4), contentOffset || 0)} ${valueContainer}`}>
+                    <div className ={`${getCellGridClassName(contentCellPosition || "top", contentSize || 12 - (labelSize || 4), contentOffset || 0)} ${styles.value} ${classNames!.value || ""}`}>
                         {isEdit ? this.input() : this.display()}
                     </div>
                 : null}

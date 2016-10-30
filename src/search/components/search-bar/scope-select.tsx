@@ -3,7 +3,10 @@ import * as React from "react";
 
 import Dropdown from "focus-components/dropdown";
 
-import {scope} from "./style/scope-select.css";
+import {injectStyle} from "../../../theming";
+
+import * as styles from "./style/scope-select.css";
+export type ScopeSelectStyle = typeof styles;
 
 export interface Scope {
     code: string;
@@ -12,14 +15,16 @@ export interface Scope {
     iconLibrary?: string;
 }
 
-export interface ScopeProps {
+export interface ScopeSelectProps {
+    classNames?: ScopeSelectStyle;
     list: Scope[];
     onScopeSelection?: (code: string) => void;
     value: string | number;
 }
 
+@injectStyle("scopeSelect")
 @autobind
-export class ScopeSelect extends React.Component<ScopeProps, void> {
+export class ScopeSelect extends React.Component<ScopeSelectProps, void> {
 
     getScopeClickHandler(code: string) {
         const {onScopeSelection} = this.props;
@@ -38,7 +43,7 @@ export class ScopeSelect extends React.Component<ScopeProps, void> {
     render() {
         const {icon: bIcon = undefined, label: bLabel = undefined} = this.getActiveScope() || {};
         return (
-            <div className={scope} ref="parent">
+            <div className={`${styles.scope} ${this.props.classNames!.scope || ""}`} ref="parent">
                 <Dropdown
                     button={{icon: bIcon, label: bLabel}}
                     operations={this.props.list.map(({code, label, icon, iconLibrary}) => ({

@@ -6,12 +6,16 @@ import * as React from "react";
 
 import Button from "focus-components/button";
 
+import {injectStyle} from "../../theming";
+
 import {LineSelectionProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
 
-import {list, button} from "./style/list-selection.css";
+import * as styles from "./style/list-selection.css";
+export type ListSelectionStyle = typeof styles;
 
 export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends ListBaseProps<T, P> {
+    classNames?: ListSelectionStyle;
     /** Par défaut: data => data.id.value || data.id */
     idField?: (data: T) => string;
     /** Par défaut: true */
@@ -22,6 +26,7 @@ export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends 
     selectionStatus?: "none" | "partial" | "selected";
 }
 
+@injectStyle("listSelection")
 @autobind
 @observer
 export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<T, WithData<ListSelectionProps<T, P>, T>> {
@@ -35,7 +40,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
 
     /** Instancie une version typée du ListSelection. */
     static create<T, L extends LineSelectionProps<T>>(props: WithData<ListSelectionProps<T, L>, T>) {
-        const List = ListSelection as any;
+        const List = injectStyle("listSelection", ListSelection) as any;
         return <List {...props} />;
     }
 
@@ -108,10 +113,10 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
     }
 
     private renderManualFetch() {
-        const {isManualFetch, hasMoreData} = this.props;
+        const {isManualFetch, hasMoreData, classNames} = this.props;
         if (isManualFetch && hasMoreData) {
             return (
-                <li className={button}>
+                <li className={`${styles.button} ${classNames!.button || ""}`}>
                     <Button
                         color="primary"
                         handleOnClick={this.handleShowMore}
@@ -127,7 +132,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
 
     render() {
         return (
-            <ul className={list}>
+            <ul className={`${styles.list} ${this.props.classNames!.list || ""}`}>
                 {this.renderLines()}
                 {this.renderLoading()}
                 {this.renderManualFetch()}

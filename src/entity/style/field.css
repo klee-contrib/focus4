@@ -2,33 +2,33 @@
     padding: 0;
 }
 
-.labelContainer {
+.label {
     text-align: right;
 }
 
-.labelContainer > div {
+.label > div {
     display: block;
     font-weight: bold;
     font-size: 13px;
 }
 
-.edit .invalid .labelContainer > div {
+.edit .invalid .label > div {
     color: rgb(222, 50, 38);
 }
 
-.edit .required .labelContainer > div:after {
+.edit .required .label > div:after {
     content: "*";
     margin-left: 3px;
 }
 
-.edit .labelContainer > div {
+.edit .label > div {
     margin: 4px 0;
 }
 
-.edit .valueContainer select {
+.edit .value select {
     margin: 2px 0;
 }
 
-.edit .valueContainer .field > div {
+.edit .value .field > div {
     width: 250px;
 }

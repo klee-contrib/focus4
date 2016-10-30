@@ -7,18 +7,23 @@ import Button from "focus-components/button";
 import {TopicDisplayer} from"../../../list";
 import {SearchStore} from "../../store";
 
-export interface Props {
+import {injectStyle} from "../../../theming";
+
+import * as styles from "./style/list-summary.css";
+export type ListSummaryStyle = typeof styles;
+
+export interface ListSummaryProps {
+    classNames?: ListSummaryStyle;
     exportAction?: () => void;
     scopes: {code: string, label: string}[];
     scopeLock: boolean;
     store: SearchStore;
 }
 
-import {print, sentence, summary} from "./style/list-summary.css";
-
+@injectStyle("listSummary")
 @autobind
 @observer
-export class ListSummary extends React.Component<Props, void> {
+export class ListSummary extends React.Component<ListSummaryProps, void> {
     static defaultProps = {
         totalCount: 0,
         query: ""
@@ -36,7 +41,7 @@ export class ListSummary extends React.Component<Props, void> {
         const {store, scopes} = this.props;
         const selectedScope = scopes.find(sc => sc.code === store.scope);
         return selectedScope && selectedScope.label || store.scope;
-}
+    }
 
     private get resultSentence() {
         const {totalCount, query} = this.props.store;
@@ -50,7 +55,7 @@ export class ListSummary extends React.Component<Props, void> {
     }
 
     render() {
-        const {store, exportAction} = this.props;
+        const {store, exportAction, classNames} = this.props;
         const scope = store.scope && store.scope !== "ALL" ? {scope: {
             code: store.scope,
             label: "Scope",
@@ -58,13 +63,13 @@ export class ListSummary extends React.Component<Props, void> {
         }} : undefined;
 
         return (
-            <div className={summary}>
+            <div className={`${styles.summary} ${classNames!.summary || ""}`}>
                 {exportAction ?
-                    <div className={print}>
+                    <div className={`${styles.print} ${classNames!.print || ""}`}>
                         <Button handleOnClick={exportAction} icon="print" label="result.export"  />
                     </div>
                 : null}
-                <span className={sentence}>{this.resultSentence}</span>
+                <span className={`${styles.sentence} ${classNames!.sentence || ""}`}>{this.resultSentence}</span>
                 <span>
                     <TopicDisplayer
                         topicClickAction={this.onScopeClick}

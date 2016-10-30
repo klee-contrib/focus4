@@ -5,18 +5,20 @@ import Icon from "focus-components/icon";
 
 import {requestStore} from "./store";
 
-import {bar} from "./style/loading-bar.css";
+import * as styles from "./style/loading-bar.css";
+export type LoadingBarStyle = typeof styles;
 
 export interface LoadingBarProps {
+    classNames?: LoadingBarStyle;
     displayDevBar?: boolean;
     ProgressBar: ReactComponent<{completed: number}>;
 }
 
-export const LoadingBar = observer(({displayDevBar, ProgressBar}: LoadingBarProps) => {
+export const LoadingBar = observer(({classNames, displayDevBar, ProgressBar}: LoadingBarProps) => {
     const {count, error, pending, success} = requestStore;
     const completed = +((count.total - count.pending) / count.total) * 100;
     return (
-        <div className={bar}>
+        <div className={`${styles.bar} ${classNames!.bar || ""}`}>
             {completed < 100 ? <ProgressBar completed={completed} /> : null}
             {displayDevBar ?
                 <ul>

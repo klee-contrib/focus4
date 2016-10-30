@@ -7,12 +7,17 @@ import {findDOMNode} from "react-dom";
 import Button from "focus-components/button";
 import InputText from "focus-components/input-text";
 
+import {injectStyle} from "../../../theming";
+
 import {SearchStore} from "../../store";
-import {Scope, ScopeSelect} from "./scope-select";
+import {Scope, ScopeSelect, ScopeSelectStyle} from "./scope-select";
+export {ScopeSelectStyle};
 
-import {bar, input, spinner} from "./style/index.css";
+import * as styles from "./style/index.css";
+export type SearchBarStyle = typeof styles;
 
-export interface Props {
+export interface SearchBarProps {
+    classNames?: SearchBarStyle;
     hasScopes?: boolean;
     helpTranslationPath?: string;
     minChar?: number;
@@ -22,9 +27,10 @@ export interface Props {
     store: SearchStore;
 }
 
+@injectStyle("searchBar")
 @autobind
 @observer
-export class SearchBar extends React.Component<Props, void> {
+export class SearchBar extends React.Component<SearchBarProps, void> {
 
     componentDidMount() {
         this.focusQuery();
@@ -73,17 +79,17 @@ export class SearchBar extends React.Component<Props, void> {
     }
 
     render() {
-        let {hasScopes, placeholder, store, scopes} = this.props;
+        let {hasScopes, placeholder, store, scopes, classNames} = this.props;
         if (store.query && 0 < store.query.length) {
             placeholder = "";
         }
         return (
             <div style={{display: "flex"}}>
-                <div className={bar}>
+                <div className={`${styles.bar} ${classNames!.bar || ""}`}>
                     {hasScopes ?
                         <ScopeSelect list={scopes} onScopeSelection={this.onScopeSelection} ref="scope" value={store.scope} />
                     : null}
-                    <div className={input}>
+                    <div className={`${styles.input} ${classNames!.input || ""}`}>
                         <InputText
                             name="searchbarinput"
                             onChange={this.onInputChange}
@@ -92,7 +98,7 @@ export class SearchBar extends React.Component<Props, void> {
                             value={store.query}
                         />
                     {store.isLoading ?
-                        <div className={`three-quarters-loader ${spinner}`} />
+                        <div className={`three-quarters-loader ${styles.spinner} ${classNames!.spinner || ""}`} />
                     : null}
                 </div>
             </div>

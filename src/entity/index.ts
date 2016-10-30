@@ -1,5 +1,5 @@
 export {AutoForm} from "./auto-form";
-export {Field} from "./field";
+export {Field, FieldStyle} from "./field";
 export {
     autocompleteSelectFor,
     autocompleteTextFor,

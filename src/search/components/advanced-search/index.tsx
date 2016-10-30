@@ -7,16 +7,21 @@ import * as React from "react";
 import BackToTop from "focus-components/button-back-to-top";
 import {DropdownItem} from "focus-components/dropdown";
 
+import {injectStyle} from "../../../theming";
+
 import {SearchStore} from "../../store";
 import {Results} from "../results";
 import {SearchActionBar} from "./search-action-bar";
-import {FacetBox} from "./facet-box";
-import {GroupComponent} from "./group";
-import {ListSummary} from "./list-summary";
+import {FacetBox, FacetBoxStyle, FacetStyle} from "./facet-box";
+import {GroupComponent, GroupComponentStyle} from "./group-component";
+import {ListSummary, ListSummaryStyle} from "./list-summary";
+export {FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle};
 
-import {facetContainer, resultContainer} from "./style/index.css";
+import * as styles from "./style/index.css";
+export type AdvancedSearchStyle = typeof styles;
 
 export interface AdvancedSearchProps {
+    classNames?: AdvancedSearchStyle;
     /** Default: true */
     hasBackToTop?: boolean;
     /** Default: true */
@@ -39,6 +44,7 @@ export interface AdvancedSearchProps {
     store: SearchStore;
 }
 
+@injectStyle("advancedSearch")
 @autobind
 @observer
 export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
@@ -178,19 +184,20 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     render() {
+        const {store, hasBackToTop, classNames} = this.props;
         return (
             <div>
-                {this.props.store.scope !== "ALL" ?
-                    <div className={facetContainer}>
+                {store.scope !== "ALL" ?
+                    <div className={`${styles.facetContainer} ${classNames!.facetContainer || ""}`}>
                         {this.renderFacetBox()}
                     </div>
                 : null}
-                <div className={resultContainer}>
+                <div className={`${styles.resultContainer} ${classNames!.resultContainer || ""}`}>
                     {this.renderListSummary()}
                     {this.renderActionBar()}
                     {this.renderResults()}
                 </div>
-                {this.props.hasBackToTop && <BackToTop />}
+                {hasBackToTop && <BackToTop />}
             </div>
         );
     }

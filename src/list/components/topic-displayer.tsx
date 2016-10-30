@@ -4,24 +4,27 @@ import * as React from "react";
 
 import Button from "focus-components/button";
 
-import {topicDisplayer, button} from "./style/topic-displayer.css";
+import {injectStyle} from "../../theming";
+
+import * as styles from "./style/topic-displayer.css";
+export type TopicDisplayerStyle = typeof styles;
 
 function topicClickHandler(key: string, topicClickAction: (key: string) => void) {
     topicClickAction(key);
 }
 
-export function TopicDisplayer({displayLabels = false, topicList = {}, topicClickAction = () => null}: {
+export const TopicDisplayer = injectStyle("topicDisplayer", ({classNames, displayLabels = false, topicList = {}, topicClickAction = () => null}: {
+    classNames?: TopicDisplayerStyle,
     displayLabels?: boolean,
     topicList?: {[key: string]: {code: string, label: string, value: string}},
     topicClickAction?: (key: string) => void
-}) {
-    return (
-        <div className={topicDisplayer}>
+}) => (
+        <div className={`${styles.topicDisplayer} ${classNames!.topicDisplayer || ""}`}>
             {map(topicList, (topic, key) => {
                 const text = displayLabels ? `${i18n.t(topic.label)}: ${i18n.t(topic.value)}` : i18n.t(topic.value);
                 return (
                     <Button
-                        className={button}
+                        className={`${styles.button} ${classNames!.button || ""}`}
                         handleOnClick={() => {topicClickHandler(key!, topicClickAction);}}
                         icon="clear"
                         key={key!}
@@ -30,5 +33,5 @@ export function TopicDisplayer({displayLabels = false, topicList = {}, topicClic
                 );
             })}
         </div>
-    );
-}
+    )
+);

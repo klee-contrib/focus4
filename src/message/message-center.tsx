@@ -4,11 +4,15 @@ import {observable, reaction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
+import {injectStyle} from "../theming";
+
 import {messageStore, Message} from "./store";
 
-import {center, error, success, warning} from "./style/message-center.css";
+import * as styles from "./style/message-center.css";
+export type MessageCenterStyle = typeof styles;
 
 export interface MessageCenterProps {
+    classNames?: MessageCenterStyle;
     error?: number;
     info?: number;
     success?: number;
@@ -19,6 +23,7 @@ const ANIMATION_LENGTH = 250;
 
 type Notification = {type?: string, content: string, timeout: number};
 
+@injectStyle("messageCenter")
 @autobind
 @observer
 export class MessageCenter extends React.Component<MessageCenterProps, void> {
@@ -80,10 +85,11 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     }
 
     render() {
+        const {classNames} = this.props;
         const {content = "", type = undefined} = this.currentNotification || {};
         const otherProps = { "aria-hidden": this.active, "aria-live": "assertive", "aria-atomic": "true", "aria-relevant": "text" };
         return (
-            <div className={`${center} mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""} ${type === "error" ? error : type === "success" ? success : type === "warning" ? warning : ""}`} {...otherProps}>
+            <div className={`${styles.center} ${classNames!.center || ""} mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""} ${type === "error" ? `${styles.error} ${classNames!.error || ""}` : type === "success" ? `${styles.success} ${classNames!.success || ""}` : type === "warning" ? `${styles.warning} ${classNames!.warning || ""}` : ""}`} {...otherProps}>
                 <div className="mdl-snackbar__text">{i18n.t(content)}</div>
                 <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><i className="material-icons">clear</i></button>
             </div>

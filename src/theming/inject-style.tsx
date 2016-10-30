@@ -14,7 +14,7 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
 export function injectStyle<P extends {classNames?: {[key: string]: any}}>(classContainerName: string, Component: ReactComponent<P>): React.ComponentClass<P>
 export function injectStyle<P extends {classNames?: {[key: string]: any}}>(classContainerName: string, Component?: ReactComponent<P>): any {
     function makeInjectedComponent(Comp: ReactComponent<P>) {
-        return class StyleInjector extends React.Component<P, void> {
+        class StyleInjector extends React.Component<P, void> {
             static contextTypes = {classNames: React.PropTypes.object};
             static wrappedComponent = Comp;
 
@@ -33,7 +33,9 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
                     return <Comp {...this.props} classNames={contextClassNames || classNames} ref={(instance: any) => this.wrappedInstance = instance} />;
                 }
             }
-        };
+        }
+
+        return Object.assign(StyleInjector, Comp, {isMobXReactObserver: false});
     }
 
     if (Component) {

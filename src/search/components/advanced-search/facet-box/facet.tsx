@@ -5,11 +5,15 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
+import {injectStyle} from "../../../../theming";
+
 import {FacetData, FacetValue} from "./facet-data";
 
-import {collapsed, expanded, list, selected, showAll, title} from "./style/facet.css";
+import * as styles from "./style/facet.css";
+export type FacetStyle = typeof styles;
 
 export interface FacetProps {
+    classNames?: FacetStyle;
     expandHandler: (facetKey: string, expand: boolean) => void;
     facet: {code: string, label: string, values: FacetValue[]};
     facetKey: string;
@@ -19,6 +23,7 @@ export interface FacetProps {
     selectHandler: (facetKey: string, dataKey: string | undefined, data: FacetValue | undefined) => void;
 }
 
+@injectStyle("facet")
 @autobind
 @observer
 export class Facet extends React.Component<FacetProps, void> {
@@ -45,15 +50,16 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     private renderFacetTitle() {
-        let facetTitle = i18n.t("live.filter.facets." + this.props.facetKey); // Default facet translation path is live.filter.facets.
-        if (this.props.selectedDataKey) {
-            const selectedFacet = this.props.facet.values.filter(value => value.code === this.props.selectedDataKey);
+        const {facetKey, selectedDataKey, facet, classNames} = this.props;
+        let facetTitle = i18n.t("live.filter.facets." + facetKey); // Default facet translation path is live.filter.facets.
+        if (selectedDataKey) {
+            const selectedFacet = facet.values.filter(value => value.code === selectedDataKey);
             const facetLabel = selectedFacet.length ? selectedFacet[0].label : "";
             facetTitle = `${facetTitle} : ${facetLabel}`;
         }
 
         return (
-            <div className={title} onClick={this.facetTitleClickHandler}>
+            <div className={`${styles.title} ${classNames!.title || ""}`} onClick={this.facetTitleClickHandler}>
                 <h3>{facetTitle}</h3>
             </div>
         );
@@ -72,13 +78,14 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     private renderFacetDataList() {
-        if (!this.props.isExpanded || this.props.selectedDataKey) {
+        const {isExpanded, selectedDataKey, facet, nbDefaultDataList, classNames} = this.props;
+        if (!isExpanded || selectedDataKey) {
             return null;
         }
 
-        const facetValues = this.isShowAll ? this.props.facet.values : this.props.facet.values.slice(0, this.props.nbDefaultDataList);
+        const facetValues = this.isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList);
         return (
-            <div className={list}>
+            <div className={`${styles.list} ${classNames!.list}`}>
                 <ul>
                     {facetValues.map(facetValue => {
                         return (
@@ -92,7 +99,7 @@ export class Facet extends React.Component<FacetProps, void> {
                         );
                     })}
                 </ul>
-                <div className={showAll}>
+                <div className={`${styles.showAll} ${classNames!.showAll}`}>
                     {this.renderShowAllDataList()}
                 </div>
             </div>
@@ -100,9 +107,9 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     render() {
-        const {selectedDataKey, isExpanded} = this.props;
+        const {selectedDataKey, isExpanded, classNames} = this.props;
         return (
-            <div className={selectedDataKey ? selected : isExpanded ? expanded : collapsed}>
+            <div className={selectedDataKey ? `${styles.selected} ${classNames!.selected}` : isExpanded ? `${styles.expanded} ${classNames!.expanded}` : `${styles.collapsed} ${classNames!.collapsed}`}>
                 {this.renderFacetTitle()}
                 {this.renderFacetDataList()}
             </div>
