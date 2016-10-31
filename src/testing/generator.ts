@@ -169,7 +169,7 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
             return `${name}={dum.component}`;
         }
 
-        if (type.flags === ts.TypeFlags.Anonymous || type.flags === ts.TypeFlags.Interface) {
+        if ((type as ts.ObjectType).objectFlags & ts.ObjectFlags.Anonymous || (type as ts.ObjectType).objectFlags & ts.ObjectFlags.Interface) {
             return `${name}={{${
                 type.getProperties()
                     .filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken))
@@ -177,7 +177,7 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
             }}}`;
         }
 
-        if (type.flags & ts.TypeFlags.Class || type.flags & ts.TypeFlags.Reference) {
+        if ((type as ts.ObjectType).objectFlags & ts.ObjectFlags.Class || (type as ts.ObjectType).objectFlags & ts.ObjectFlags.Reference) {
             return `${name}={dumClass.${typeName.replace(/<(.+)>/, "")}}`;
         }
 

@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-beta5",
+  "version": "1.0.0-beta6",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -11,9 +11,9 @@
   "license": "MIT",
   "homepage": "https://github.com/JabX/autofocus",
   "scripts": {
-    "prepublish": "in-publish && tsc --outDir ./ && cd src && %AppData%\\..\\Local\\Programs\\Git\\usr\\bin\\find.exe . -name '*.css' -type f -exec cp --parents {} ../ ; || true",
-    "postpublish": "rm -rf *.js index.d.ts reference.d.ts user.d.ts && rm -rf application entity list message network router search testing",
-    "start": "tsc && cd src && %AppData%\\..\\Local\\Programs\\Git\\usr\\bin\\find.exe . -name '*.css' -type f -exec cp --parents {} ../dist ;",
+    "prepublish": "in-publish && tsc --outDir ./ && node copy-css.js ./ || true",
+    "postpublish": "rm -rf index.js index.d.ts reference.js reference.d.ts user.js user.d.ts && rm -rf application entity list message network router search testing theming",
+    "start": "tsc && node copy-css.js dist",
     "tcm": "tcm src",
     "tcm:watch": "tcm -w src",
     "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
@@ -50,11 +50,13 @@
     "tape": "^4.6.2"
   },
   "devDependencies": {
+    "@types/shelljs": "0.3.32",
     "in-publish": "2.0.0",
+    "shelljs": "0.7.5",
     "tap-spec": "4.1.1",
     "ts-node": "1.6.0",
     "tslint": "3.15.1",
     "typed-css-modules": "0.1.13",
-    "typescript": "2.1.0-dev.20161024"
+    "typescript": "2.1.0-dev.20161031"
   }
 }
