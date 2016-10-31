@@ -85,10 +85,10 @@ export interface LayoutStyleProviderProps {
     topicDisplayer?: TopicDisplayerStyle;
 }
 
-export function Layout(props: LayoutProps & {classNames?: LayoutStyleProviderProps}) {
+export function Layout(props: LayoutProps & {injectedStyle?: LayoutStyleProviderProps}) {
     return (
-        <StyleProvider {...props.classNames}>
-            <LayoutBase {...omit(props, "classNames")}>
+        <StyleProvider {...props.injectedStyle}>
+            <LayoutBase {...omit(props, "injectedStyle")}>
                 {props.children}
             </LayoutBase>
         </StyleProvider>
