@@ -92,10 +92,10 @@ export class Field extends React.Component<FieldProps, void> {
     }
 
     label() {
-        const {name, label, LabelComponent, domain, labelCellPosition, labelSize, labelOffset, classNames} = this.props;
+        const {name, label, LabelComponent, domain, labelCellPosition, labelSize = 4, labelOffset = 0, classNames} = this.props;
         const FinalLabel = LabelComponent || Label;
         return (
-            <div className ={`${getCellGridClassName(labelCellPosition || "top", labelSize || 4, labelOffset || 0)} ${styles.label} ${classNames!.label || ""}`}>
+            <div className ={`${getCellGridClassName(labelCellPosition || "top", labelSize, labelOffset)} ${styles.label} ${classNames!.label || ""}`}>
                 <FinalLabel
                     domain={domain}
                     name={name}
