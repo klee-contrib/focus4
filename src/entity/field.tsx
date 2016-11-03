@@ -138,13 +138,13 @@ export class Field extends React.Component<FieldProps, void> {
     }
 
     render() {
-        const {FieldComponent, contentCellPosition, contentSize, labelSize = 4, contentOffset = 0, error, isRequired, hasLabel, isEdit, domain, classNames} = this.props;
+        const {FieldComponent, contentCellPosition = "top", contentSize = 12, labelSize = 4, contentOffset = 0, error, isRequired, hasLabel, isEdit, domain, classNames} = this.props;
         return (
             <div className={`mdl-grid ${styles.field} ${classNames!.field || ""} ${isEdit ? `${styles.edit} ${classNames!.edit || ""}` : ""} ${error ? `${styles.invalid} ${classNames!.invalid || ""}` : ""} ${isRequired ? `${styles.required} ${classNames!.required || ""}` : ""} ${domain && domain.className ? domain.className : ""}`}>
                 {FieldComponent ? this.field() : null}
                 {!FieldComponent && hasLabel ? this.label() : null}
                 {!FieldComponent ?
-                    <div className ={`${getCellGridClassName(contentCellPosition || "top", contentSize || 12 - labelSize, contentOffset)} ${styles.value} ${classNames!.value || ""}`}>
+                    <div className ={`${getCellGridClassName(contentCellPosition, contentSize - labelSize, contentOffset)} ${styles.value} ${classNames!.value || ""}`}>
                         {isEdit ? this.input() : this.display()}
                     </div>
                 : null}
