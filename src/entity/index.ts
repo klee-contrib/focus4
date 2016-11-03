@@ -5,6 +5,7 @@ export {
     autocompleteTextFor,
     displayFor,
     fieldFor,
+    fieldForWith,
     listFor,
     listForWith,
     selectFor,
