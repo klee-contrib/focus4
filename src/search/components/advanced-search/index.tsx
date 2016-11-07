@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import {forEach} from "lodash";
 import {observable, computed, reaction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -89,7 +90,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         if (this.results) {
             const {lists} = this.results;
             if (lists) {
-                Object.keys(lists).forEach(list => selectedItems.push(...lists[list].getSelectedItems()));
+                forEach(lists, list => {
+                    if (list) {
+                        selectedItems.push(...list.getSelectedItems());
+                    }
+                });
             }
         }
         return selectedItems;

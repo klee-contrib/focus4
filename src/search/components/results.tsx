@@ -50,7 +50,7 @@ export class Results extends React.Component<ResultsProps, void> {
         showMoreAdditionalRows: 5
     };
 
-    lists: {[key: string]: ListSelection<any, any>} = {};
+    lists: {[key: string]: ListSelection<any, any> | null} = {};
 
     private get key() {
         const {groupingKey, scopeFacetKey} = this.props;
