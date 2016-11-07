@@ -1,5 +1,4 @@
 import {autobind} from "core-decorators";
-import {isFunction, reduce} from "lodash";
 import {observable, computed, reaction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -58,6 +57,8 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         scopesConfig: {}
     };
 
+    results?: Results;
+
     @observable private selectionStatus?: "none" | "partial" | "selected";
     private reaction: () => void;
 
@@ -83,23 +84,15 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         this.reaction();
     }
 
-    /** Cette fonction est le diable incarné. C'est vraiment laid. */
     getSelectedItems() {
-        const results = this.refs["resultList"] as Results;
-        const outSelectedItems = reduce(results.refs, (selectedItems, ref) => {
-            if (isFunction((ref as any).getSelectedItems)) { // ListSelection dans le Results, cas sans groupes.
-                selectedItems = selectedItems.concat((ref as any).getSelectedItems());
-            } else if ((ref as any).refs) { // Groupes.
-                selectedItems = selectedItems.concat(reduce((ref as any).refs, (subSelectedItems, subRef) => {
-                    if (isFunction((subRef as any).getSelectedItems)) { // ListSection dans les Groupes.
-                        subSelectedItems = subSelectedItems.concat((subRef as any).getSelectedItems());
-                    }
-                    return subSelectedItems;
-                }, [] as any[]));
+        const selectedItems: {}[] = [];
+        if (this.results) {
+            const {lists} = this.results;
+            if (lists) {
+                Object.keys(lists).forEach(list => selectedItems.push(...lists[list].getSelectedItems()));
             }
-            return selectedItems;
-        }, [] as any[]);
-        return outSelectedItems;
+        }
+        return selectedItems;
     }
 
     private renderFacetBox() {
@@ -107,7 +100,6 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         return (
             <FacetBox
                 openedFacetList={openedFacetList || {}}
-                ref="facetBox"
                 scopesConfig={scopesConfig!}
                 store={store}
             />
@@ -118,7 +110,6 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         const {scopes, scopeLock, store} = this.props;
         return (
             <ListSummary
-                ref="summary"
                 scopes={scopes}
                 scopeLock={!!scopeLock}
                 store={store}
@@ -142,7 +133,6 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                 hasSelection={isSelection}
                 operationList={store.totalCount > 0 ? lineOperationList : []}
                 orderableColumnList={orderableColumnList}
-                ref="actionBar"
                 selectionAction={this.selectionAction}
                 selectionStatus={this.selectionStatus}
                 store={store}
@@ -160,7 +150,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                 lineComponentMapper={lineComponentMapper}
                 lineOperationList={lineOperationList}
                 lineSelectionHandler={this.selectItem}
-                ref="resultList"
+                ref={results => this.results = results}
                 renderSingleGroupDecoration={false}
                 scrollParentSelector={scrollParentSelector}
                 selectionStatus={this.selectionStatus}

@@ -219,6 +219,10 @@ declare module "focus-components/input-text" {
         unformatter?: (text: string) => string | number;
         value?: string | number;
     }, {}> {
+        refs: {
+            inputText: HTMLDivElement;
+            htmlInput: HTMLInputElement;
+        }
         getValue(): string | number;
     }
 }

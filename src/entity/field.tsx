@@ -66,6 +66,8 @@ const omittedProps = [
 @observer
 export class Field extends React.Component<FieldProps, void> {
 
+    inputField?: {validate?: () => {isValid: boolean, message?: string}};
+
     display() {
         const {valueKey, labelKey, values, value: rawValue, DisplayComponent} = this.props;
         const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
@@ -88,7 +90,7 @@ export class Field extends React.Component<FieldProps, void> {
         const {InputComponent} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
-        return <FinalInput ref="input" {...props} />;
+        return <FinalInput ref={(input: any) => this.inputField = input} {...props} />;
     }
 
     label() {
@@ -125,8 +127,8 @@ export class Field extends React.Component<FieldProps, void> {
     validate() {
         const domainValidation = this.validateDomain();
         if (domainValidation === true) {
-            if (this.refs && this.refs["input"] && isFunction((this.refs["input"] as any).validate)) {
-                const componentValidation: {isValid: boolean, message?: string} = (this.refs["input"] as any).validate();
+            if (this.inputField && isFunction(this.inputField.validate)) {
+                const componentValidation = this.inputField.validate();
                 if (!componentValidation.isValid) {
                     return i18n.t(componentValidation.message!);
                 }

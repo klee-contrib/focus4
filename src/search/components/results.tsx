@@ -50,6 +50,8 @@ export class Results extends React.Component<ResultsProps, void> {
         showMoreAdditionalRows: 5
     };
 
+    lists: {[key: string]: ListSelection<any, any>} = {};
+
     private get key() {
         const {groupingKey, scopeFacetKey} = this.props;
         return groupingKey || scopeFacetKey!;
@@ -72,7 +74,6 @@ export class Results extends React.Component<ResultsProps, void> {
                         initialRowsCount={initialRowsCount!}
                         isUnique={true}
                         list={list}
-                        ref={"group-" + key}
                         renderResultsList={this.renderResultsList}
                     />
                 );
@@ -88,7 +89,6 @@ export class Results extends React.Component<ResultsProps, void> {
                     groupLabel={label}
                     initialRowsCount={initialRowsCount!}
                     list={list}
-                    ref={"group-" + key}
                     renderResultsList={this.renderResultsList}
                     showAllHandler={this.showAllHandler}
                 />
@@ -121,7 +121,7 @@ export class Results extends React.Component<ResultsProps, void> {
                     lineProps: {operationList: lineOperationList, onLineClick: lineClickHandler},
                     onSelection: lineSelectionHandler,
                     parentSelector: scrollParentSelector,
-                    ref: "list-" + key,
+                    ref: l => this.lists[key] = l,
                     selectionStatus
                 })}
                 {isLoading &&

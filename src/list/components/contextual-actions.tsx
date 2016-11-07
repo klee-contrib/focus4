@@ -16,9 +16,9 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     @autobind
     private handleAction(key: number) {
         const {operationList, operationParam} = this.props;
-        return () => {
-            event.preventDefault();
-            event.stopPropagation();
+        return (e: React.SyntheticEvent<any>) => {
+            e.preventDefault();
+            e.stopPropagation();
             if (operationParam) {
                 operationList[key].action(operationParam);
             } else {
