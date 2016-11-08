@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 export interface CommonListProps {
-    ref?: string;
+    ref?: (list: any) => void;
     fetchNextPage?: () => void;
     hasMoreData?: boolean;
     isManualFetch?: boolean;
@@ -27,6 +27,8 @@ export class MemoryList<T, P extends CommonListProps> extends React.Component<Me
     @observable page = 1;
     @observable maxElements = this.props.perPage || 5;
 
+    list?: ReactComponent<WithData<P, T>>;
+
     /** Instancie une version typée du MemoryList. */
     static create<T, L extends CommonListProps>(props: MemoryListProps<T, L>) {
         const List = MemoryList as any;
@@ -47,7 +49,7 @@ export class MemoryList<T, P extends CommonListProps> extends React.Component<Me
         const hasMoreData = data.length > this.maxElements;
         return (
             <ListComponent
-                ref="list"
+                ref={list => this.list = list}
                 data={this.getDataToUse()}
                 hasMoreData={hasMoreData}
                 isManualFetch={true}

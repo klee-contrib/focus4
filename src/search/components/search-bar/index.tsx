@@ -2,7 +2,6 @@ import {autobind} from "core-decorators";
 import * as i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
 
 import Button from "focus-components/button";
 import InputText from "focus-components/input-text";
@@ -31,6 +30,8 @@ export interface SearchBarProps {
 @autobind
 @observer
 export class SearchBar extends React.Component<SearchBarProps, void> {
+
+    private input?: InputText;
 
     componentDidMount() {
         this.focusQuery();
@@ -67,7 +68,9 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     }
 
     focusQuery() {
-        (findDOMNode(this.refs["query"]) as HTMLInputElement).focus();
+        if (this.input) {
+            this.input.refs.htmlInput.focus();
+        }
     }
 
     reset() {
@@ -94,7 +97,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                             name="searchbarinput"
                             onChange={this.onInputChange}
                             placeholder={i18n.t(placeholder || "")}
-                            ref="query"
+                            ref={input => this.input = input}
                             value={store.query}
                         />
                     {store.isLoading ?

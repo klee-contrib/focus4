@@ -19,6 +19,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     @observable isDeployed = true;
     @observable placeholderHeight: number;
 
+    private header?: Element;
     private reaction: any;
     private scrollTargetNode: Element | Window;
 
@@ -80,9 +81,8 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
 
     handleScroll(event?: Event, canDeploy?: boolean) {
         if (this.isDeployed) {
-            const content = this.refs ? this.refs["header"] as Element : undefined;
-            this.deployThreshold = content ? content.clientHeight - 60 : 1000;
-            this.placeholderHeight = content ? content.clientHeight : 1000;
+            this.deployThreshold = this.header ? this.header.clientHeight - 60 : 1000;
+            this.placeholderHeight = this.header ? this.header.clientHeight : 1000;
         }
 
         const {top} = this.scrollPosition();
@@ -99,7 +99,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         const {canDeploy, route} = applicationStore;
         const {scrolling, deployed, undeployed} = this.props.classNames;
         return (
-            <header ref="header" className={`${scrolling} ${isDeployed ? deployed : undeployed}`} data-route={route}>
+            <header ref={header => this.header = header} className={`${scrolling} ${isDeployed ? deployed : undeployed}`} data-route={route}>
                 {this.props.children}
                 {!isDeployed ? <div style={{height: canDeploy ? placeholderHeight : 60, width: "100%"}} /> : null}
             </header>

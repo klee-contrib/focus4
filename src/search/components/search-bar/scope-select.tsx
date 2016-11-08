@@ -43,7 +43,7 @@ export class ScopeSelect extends React.Component<ScopeSelectProps, void> {
     render() {
         const {icon: bIcon = undefined, label: bLabel = undefined} = this.getActiveScope() || {};
         return (
-            <div className={`${styles.scope} ${this.props.classNames!.scope || ""}`} ref="parent">
+            <div className={`${styles.scope} ${this.props.classNames!.scope || ""}`}>
                 <Dropdown
                     button={{icon: bIcon, label: bLabel}}
                     operations={this.props.list.map(({code, label, icon, iconLibrary}) => ({
