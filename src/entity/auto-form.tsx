@@ -76,9 +76,9 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
 
     private isCustomEntity: boolean;
     private services: ServiceConfig;
-    private storeData: E;
 
     entity: E & ViewModel;
+    storeData: E;
 
     @observable errors: FieldErrors = {};
     @observable isEdit = this.props.isEdit || false;
