@@ -32,15 +32,13 @@ export function startRouter(config: RouterConfig, ...stores: ViewStore<any>[]) {
                 if (currentPath !== window.location.pathname) {
                     window.history.pushState(null, "", (prefix ? `${prefix}/` : "") + currentPath);
                     store.isActive = true;
-                } else {
-                    store.isActive = false;
+                    stores.filter(s => s !== store).forEach(s => s.isActive = false);
                 }
             } else {
                 if (currentPath !== window.location.hash) {
                     window.location.hash = (prefix ? `${prefix}/` : "") + currentPath;
                     store.isActive = true;
-                } else {
-                    store.isActive = false;
+                    stores.filter(s => s !== store).forEach(s => s.isActive = false);
                 }
             }
         });
