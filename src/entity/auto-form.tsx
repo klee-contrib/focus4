@@ -109,6 +109,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
             runInAction(() => {
                 this.storeData.set(data);
                 this.isLoading = false;
+                this.onFormLoaded();
             });
         }
     }
@@ -142,6 +143,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
             runInAction(() => {
                 this.isLoading = false;
                 this.storeData = {} as E;
+                this.onFormDeleted();
             });
         }
     }
@@ -159,12 +161,25 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
                     this.isLoading = false;
                     this.isEdit = false;
                     this.storeData.set(data);
+                    this.onFormSaved();
                 });
             } catch (e) {
                 messageStore.addErrorMessage("detail.error");
                 runInAction(() => this.errors = e.fields);
             }
         }
+    }
+
+    onFormDeleted() {
+        // A éventuellement surcharger.
+    }
+
+    onFormLoaded() {
+        // A éventuellement surcharger.
+    }
+
+    onFormSaved() {
+        // A éventuellement surcharger.
     }
 
     /** Valide les différents champs du formulaire. */
