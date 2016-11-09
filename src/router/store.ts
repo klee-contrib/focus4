@@ -9,6 +9,9 @@ export class ViewStore<V> {
     /** Représente l'état courant de l'URL. */
     @observable currentView: V;
 
+    /** Précise si le store courant est celui en activité. */
+    isActive = false;
+
     readonly paramNames: string[];
     readonly prefix?: string;
 
@@ -41,9 +44,12 @@ export class ViewStore<V> {
     @action
     updateView(prefix?: string, params: string[] = []) {
         if (prefix === this.prefix) {
+            this.isActive = true;
             for (let i = 0; i < this.paramNames.length; i++) {
                 (this.currentView as any)[this.paramNames[i]] = params[i];
             }
+        } else {
+            this.isActive = false;
         }
     }
 }
