@@ -78,7 +78,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
     private services: ServiceConfig;
 
     entity: E & ViewModel;
-    storeData: E;
+    readonly storeData: E;
 
     @observable errors: FieldErrors = {};
     @observable isEdit = this.props.isEdit || false;
@@ -141,7 +141,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
             messageStore.addSuccessMessage("detail.deleted");
             runInAction(() => {
                 this.isLoading = false;
-                this.storeData = {} as E;
+                this.storeData.clear();
             });
         }
     }
