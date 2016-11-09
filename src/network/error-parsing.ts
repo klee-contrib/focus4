@@ -1,4 +1,4 @@
-import * as i18n from "i18next";
+import i18n from "i18next";
 import {isArray} from "lodash";
 
 import {messageStore} from "../message";
