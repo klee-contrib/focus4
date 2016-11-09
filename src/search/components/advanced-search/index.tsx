@@ -61,24 +61,20 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     results?: Results;
 
     @observable private selectionStatus?: "none" | "partial" | "selected";
-    private reaction: () => void;
+
+    private reaction = reaction(() => [
+        this.props.store.groupingKey,
+        this.props.store.query,
+        this.props.store.scope,
+        this.props.store.selectedFacets,
+        this.props.store.sortAsc,
+        this.props.store.sortBy
+    ], () => this.props.store.search, true, 100);
 
     @computed
     private get hasGrouping() {
         const {scope} = this.props.store;
         return scope !== undefined && scope !== "ALL";
-    }
-
-    componentWillMount() {
-        const {store} = this.props;
-        this.reaction = reaction(() => [
-            store.groupingKey,
-            store.query,
-            store.scope,
-            store.selectedFacets,
-            store.sortAsc,
-            store.sortBy
-        ], () => store.search, true, 100);
     }
 
     componentWillUnmount() {

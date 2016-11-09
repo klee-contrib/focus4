@@ -40,11 +40,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     private cleanupTimeout: any = null;
     private currentNotification?: Notification;
     private queuedNotifications: Notification[] = [];
-    private reaction: any;
-
-    componentWillMount() {
-        this.reaction = reaction(() => messageStore.latestMessage, this.handlePushMessage);
-    }
+    private reaction = reaction(() => messageStore.latestMessage, this.handlePushMessage);
 
     componentWillUnmount() {
         this.reaction();
