@@ -2,7 +2,7 @@
 // Il n'a pas du tout vocation a être exhaustif.
 
 export {autobind} from "core-decorators";
-export {default as i18n} from "i18next";
+import * as i18n from "i18next"; export {i18n};
 export {observable, action} from "mobx";
 export {observer} from "mobx-react";
 import * as React from "react"; export {React};

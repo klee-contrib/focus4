@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import * as i18n from "i18next";
 import * as React from "react";
 
 import Button from "focus-components/button";

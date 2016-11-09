@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-beta11",
+  "version": "1.0.0-beta13",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -34,7 +34,7 @@
     "@types/tape": "^4.2.28",
     "core-decorators": "^0.14.0",
     "focus-components": "3.0.0-rc18",
-    "i18next": "^3.4.4",
+    "i18next": "3.4.4",
     "ignore-styles": "^5.0.1",
     "lodash": "^4.16.6",
     "material-design-icons-iconfont": "^3.0.2",

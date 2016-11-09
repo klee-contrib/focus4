@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import * as i18n from "i18next";
 import {isNull, isNumber, isUndefined} from "lodash";
 import moment from "moment";
 
