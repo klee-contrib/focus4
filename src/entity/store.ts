@@ -13,7 +13,7 @@ export interface Clearer {
 
 export interface ClearSet<T> extends Setter<T>, Clearer {}
 
-export type EntityArray<T> = IObservableArray<T> & {$entity: Entity} & Setter<{}>;
+export type EntityArray<T> = IObservableArray<T> & {$entity: Entity} & Setter<T[]>;
 function isEntityArray(data: StoreTypes): data is EntityArray<any> {
     return isObservableArray(data);
 }
