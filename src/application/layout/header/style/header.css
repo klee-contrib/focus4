@@ -107,14 +107,12 @@
     z-index: 1001;
 }
 
-@media (max-width: 480px) {
-    .scrolling .actions {
-        margin-right: 20px;
-    }
+.scrolling .actions {
+    margin-right: 20px;
 }
 
 @media (min-width: 840px) {
-    scrolling .actions {
+    .scrolling .actions {
         margin-right: 200px;
     }
 }

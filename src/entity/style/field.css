@@ -32,3 +32,7 @@
 .edit .value .field > div {
     width: 250px;
 }
+
+:global([data-focus="label"]) {
+    font-weight: bold;
+}
