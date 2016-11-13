@@ -8,7 +8,7 @@ type DataType = "json" | "string";
 
 async function coreFetch<RS>(url: string, method: string, responseType: DataType, data?: any, contentType?: DataType): Promise<any> {
     const body = data ? JSON.stringify(data) : undefined;
-    const headers = contentType ? {"Content-Type": contentType === "json" ? "application/json" : "text/plain"} : undefined;
+    const headers = contentType && data ? {"Content-Type": contentType === "json" ? "application/json" : "text/plain"} : undefined;
     const id = v4();
     requestStore.updateRequest({id, url, status: "pending"});
     try {
@@ -23,7 +23,11 @@ async function coreFetch<RS>(url: string, method: string, responseType: DataType
         } else {
             requestStore.updateRequest({id, url, status: "error"});
             console.error(`${response.status} error when calling ${url}`);
-            return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
+            if (response.headers.get("content-type").includes("json")) {
+                return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
+            } else {
+                return Promise.reject<string>(response.text());
+            }
         }
     } catch (e) {
         requestStore.updateRequest({id, url, status: "error"});

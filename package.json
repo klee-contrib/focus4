@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-beta14",
+  "version": "1.0.0-beta15",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
