@@ -202,5 +202,5 @@ function buildFieldProps<T>(field: EntityField<T>, options: FieldProps = {}): Fi
         unformatter: dom.unformatter || (x => x)
     };
 
-    return Object.assign({}, domain, props, options);
+    return {...(domain || {}), ...props, ...options};
 }

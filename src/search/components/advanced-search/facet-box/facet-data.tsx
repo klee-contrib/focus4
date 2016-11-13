@@ -7,15 +7,15 @@ export {FacetValue};
 export interface FacetDataProps {
     data: FacetValue;
     dataKey: string;
-    selectHandler: (dataKey: string, data: FacetValue) => void;
+    selectHandler: (dataKey: string) => void;
 }
 
 export class FacetData extends React.Component<FacetDataProps, void> {
 
     @autobind
     private selectFacetData() {
-        const {data, dataKey, selectHandler} = this.props;
-        selectHandler(dataKey, data);
+        const {dataKey, selectHandler} = this.props;
+        selectHandler(dataKey);
     }
 
     render() {

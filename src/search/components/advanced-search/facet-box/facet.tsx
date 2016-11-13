@@ -20,7 +20,7 @@ export interface FacetProps {
     isExpanded: boolean;
     nbDefaultDataList: number;
     selectedDataKey: string | undefined;
-    selectHandler: (facetKey: string, dataKey: string | undefined, data: FacetValue | undefined) => void;
+    selectHandler: (facetKey: string, dataKey: string | undefined) => void;
 }
 
 @injectStyle("facet")
@@ -31,15 +31,15 @@ export class Facet extends React.Component<FacetProps, void> {
     @observable private isExpanded: boolean;
     @observable private isShowAll = false;
 
-    private facetDataSelectionHandler(dataKey: string, data: FacetValue) {
+    private facetDataSelectionHandler(dataKey: string) {
         this.props.expandHandler(this.props.facetKey, false);
-        this.props.selectHandler(this.props.facetKey, dataKey, data);
+        this.props.selectHandler(this.props.facetKey, dataKey);
     }
 
     private facetTitleClickHandler() {
         this.props.expandHandler(this.props.facetKey, !this.props.isExpanded);
         if (this.props.selectedDataKey) {
-            this.props.selectHandler(this.props.facetKey, undefined, undefined);
+            this.props.selectHandler(this.props.facetKey, undefined);
         }
         this.isExpanded = !this.props.isExpanded;
         this.isShowAll = false;

@@ -9,7 +9,6 @@ import {DropdownItem} from "focus-components/dropdown";
 import {ActionBar} from "../../../list";
 
 import {SearchStore} from "../../store";
-import {InputFacet} from "../../types";
 
 export interface Props {
     /** Default: {} */
@@ -38,11 +37,11 @@ export class SearchActionBar extends React.Component<Props, void> {
 
     private filterFacetList() {
         const {selectedFacets} = this.props.store;
-        return reduce(selectedFacets!, (result, facet, facetKey) => {
+        return reduce(selectedFacets!, (result, facetValue, facetKey) => {
             result[facetKey] = {
                 code: facetKey,
                 label: i18n.t(`live.filter.facets.${facetKey}`),
-                value: facet.value
+                value: facetValue
             };
             return result;
         }, {} as {[facet: string]: {code: string, label: string, value: string}});
@@ -50,7 +49,7 @@ export class SearchActionBar extends React.Component<Props, void> {
 
     private onFacetClick(key: string) {
         const {store} = this.props;
-        store.setProperties({selectedFacets: omit(store.selectedFacets!, key) as {[facet: string]: InputFacet}});
+        store.setProperties({selectedFacets: omit(store.selectedFacets!, key) as {[facet: string]: string}});
     }
 
     private orderAction(key: string, order: boolean) {

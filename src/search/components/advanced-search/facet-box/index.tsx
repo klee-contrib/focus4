@@ -1,6 +1,5 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
-import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -8,7 +7,7 @@ import * as React from "react";
 import {injectStyle} from "../../../../theming";
 
 import {SearchStore} from "../../../store";
-import {InputFacet, FacetValue, StoreFacet} from "../../../types";
+import {StoreFacet} from "../../../types";
 import {Facet, FacetStyle} from "./facet";
 export {FacetStyle};
 
@@ -49,27 +48,23 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
         this.isExpanded = !this.isExpanded;
     }
 
-    private facetSelectionHandler(facetKey: string, dataKey: string | undefined, data: FacetValue | undefined) {
-        const {selectedFacets} = this.props.store;
-        const selectedFacetList = (dataKey === undefined ? omit(selectedFacets || {}, facetKey) : Object.assign(selectedFacets || {}, {[facetKey]: {key: dataKey, data: data}})) as {[facet: string]: InputFacet};
-        this.onFacetSelection({selectedFacetList});
+    private facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
+        let {selectedFacets = {}} = this.props.store;
+        if (!dataKey) {
+            delete selectedFacets[facetKey];
+        } else {
+            selectedFacets = {...selectedFacets, [facetKey]: dataKey};
+        }
+        this.onFacetSelection(selectedFacets);
     }
 
-    private onFacetSelection(facetComponentData: {selectedFacetList: {[facet: string]: InputFacet}}, isDisableGroup?: boolean) {
-        const {store} = this.props;
-        if (Object.keys(facetComponentData.selectedFacetList).length === 1 && facetComponentData.selectedFacetList["FCT_SCOPE"]) {
-            store.setProperties({
-                scope: this.props.scopesConfig[facetComponentData.selectedFacetList["FCT_SCOPE"].key]
-            });
+    private onFacetSelection(selectedFacets: {[facet: string]: string}) {
+        const {store, scopesConfig} = this.props;
+        if (Object.keys(selectedFacets).length === 1 && selectedFacets["FCT_SCOPE"]) {
+            store.setProperties({scope: scopesConfig[selectedFacets["FCT_SCOPE"]]});
         } else {
-            delete facetComponentData.selectedFacetList["FCT_SCOPE"];
-            const newProperties: {selectedFacets: any, groupingKey?: any} = {
-                selectedFacets: facetComponentData.selectedFacetList
-            };
-            if (isDisableGroup) {
-                newProperties.groupingKey = undefined;
-            }
-            store.setProperties(newProperties);
+            delete selectedFacets["FCT_SCOPE"];
+            store.setProperties({selectedFacets});
         }
     }
 
@@ -90,18 +85,17 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
         if (!this.isExpanded) {
             return null;
         }
-        const {facets, selectedFacets} = this.props.store;
+        const {facets, selectedFacets = {}} = this.props.store;
         return (
             <div>
                 {facets.map(facet => {
-                    let selectedDataKey = (selectedFacets || {})[facet.code] ? (selectedFacets || {})[facet.code].key : undefined;
-                    if (selectedDataKey || Object.keys(facet).length > 1) {
+                    if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                         return (
                             <Facet
                                 key={facet.code}
                                 facetKey={facet.code}
                                 facet={facet}
-                                selectedDataKey={selectedDataKey}
+                                selectedDataKey={selectedFacets[facet.code]}
                                 isExpanded={this.openedFacetList[facet.code]}
                                 expandHandler={this.facetExpansionHandler}
                                 selectHandler={this.facetSelectionHandler}

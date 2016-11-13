@@ -147,18 +147,10 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private facetSelectionHandler(key: string, value: string) {
-        let selectedFacets = Object.assign({}, this.props.store.selectedFacets || {}, {
-            [key]: {
-                key: value,
-                data: {
-                    label: value,
-                    count: 0
-                }
-            }
-        });
-        this.props.store.setProperties({
+        const {selectedFacets = {}, setProperties} = this.props.store;
+        setProperties({
             groupingKey: undefined,
-            selectedFacets
+            selectedFacets: {...selectedFacets, [key]: value}
         });
     }
 

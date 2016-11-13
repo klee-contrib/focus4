@@ -1,8 +1,3 @@
-export interface InputFacet {
-    key: string;
-    value: string;
-}
-
 export interface FacetValue {
     code: string;
     label: string;

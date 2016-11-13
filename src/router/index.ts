@@ -1,4 +1,4 @@
-import {autorun} from "mobx";
+import {reaction, observable, runInAction, asReference} from "mobx";
 
 import {Router, RouterConfig} from "./director";
 import {ViewStore} from "./store";
@@ -9,38 +9,80 @@ export {ViewStore};
  * @param config La config du routeur ([director](https://github.com/flatiron/director)).
  * @param stores Des ViewStore précédemment créé. S'il y a plus d'un ViewStore, tous doivent avoir un préfixe.
  */
-export function startRouter(config: RouterConfig, ...stores: ViewStore<any>[]) {
+export function startRouter<Store extends ViewStore<any, any>>(config: RouterConfig, stores: Store[]) {
+    if (stores.length === 0) {
+        throw new Error("Au moins un store doit être spécifié.");
+    }
+
+    const storeActivity = observable(stores.map(store => false));
+    let routingEnabled = true;
+
+    function updateActivity(i: number) {
+        routingEnabled = false;
+        runInAction(() => stores.forEach((store, j) => {
+            storeActivity[j] = i === j;
+            if (i !== j) {
+                for (const key in store.currentView) {
+                    store.currentView[key] = undefined;
+                }
+            }
+        }));
+        routingEnabled = true;
+    }
+
+    function reset() {
+        stores[0].updateView();
+        if (config.html5history) {
+            window.history.pushState(null, "", stores[0].prefix);
+        } else {
+            window.location.hash = stores[0].prefix;
+        }
+        updateActivity(0);
+    }
+
     if (stores.length > 1 && stores.some(store => !store.prefix)) {
         throw new Error("Tous les stores doivent avoir un préfixe.");
     }
 
-    // Le premier store est le store par défaut, il est donc actif à l'initialisation.
-    stores[0].isActive = true;
-
-    new Router(stores.reduce((routes, store) => {
-        routes[`/${store.prefix ? `${store.prefix}/` : ""}${store.paramNames.map(p => `([^\/]*)?`).join("/?")}`] = (...params: string[]) => store.updateView(store.prefix, params);
+    new Router(stores.reduce((routes, store, i) => {
+        routes[`/?${store.prefix ? `${store.prefix}/?` : ""}${store.paramNames.map(p => `([^\/]*)?`).join("/?")}`] = (...params: string[]) => {
+            updateActivity(i);
+            store.updateView(store.prefix, params);
+        };
         return routes;
-    }, {} as {[route: string]: (...params: string[]) => void})).configure(
-        Object.assign({}, {
-        notfound: () => stores[0].updateView(),
-    }, config)).init();
+    }, {} as {[route: string]: (...params: string[]) => void}))
+        .configure({notfound: reset, ...config})
+        .init();
 
-    for (const store of stores) {
-        autorun(() => {
-            const {currentPath, prefix} = store;
-            if (config.html5history) {
-                if (currentPath !== window.location.pathname) {
-                    window.history.pushState(null, "", (prefix ? `${prefix}/` : "") + currentPath);
-                    store.isActive = true;
-                    stores.filter(s => s !== store).forEach(s => s.isActive = false);
-                }
-            } else {
-                if (currentPath !== window.location.hash) {
-                    window.location.hash = (prefix ? `${prefix}/` : "") + currentPath;
-                    store.isActive = true;
-                    stores.filter(s => s !== store).forEach(s => s.isActive = false);
+    if (config.html5history && !window.location.pathname || !config.html5history && !window.location.hash) {
+        reset();
+    }
+
+    stores.forEach((store, i) => {
+        reaction(() => store.currentPath, currentPath => {
+            if (routingEnabled) {
+                if (config.html5history) {
+                    if (currentPath !== window.location.pathname) {
+                        window.history.pushState(null, "", currentPath);
+                        updateActivity(i);
+                    }
+                } else {
+                    if (currentPath !== window.location.hash) {
+                        window.location.hash = currentPath;
+                        updateActivity(i);
+                    }
                 }
             }
         });
-    }
+    });
+
+    return observable({
+        stores: asReference(stores),
+        get currentStore() {
+            return stores[storeActivity.findIndex(Boolean)];
+        }
+    }) as {
+        readonly currentStore: Store;
+        stores: Store[];
+    };
 }

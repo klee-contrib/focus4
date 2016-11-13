@@ -1,8 +1,8 @@
 import {autobind} from "core-decorators";
-import {mapValues, isArray} from "lodash";
+import {isArray} from "lodash";
 import {observable, action, computed} from "mobx";
 
-import {Results, StoreFacet, QueryInput, QueryOutput, UnscopedQueryOutput, InputFacet, OutputFacet} from "./types";
+import {Results, StoreFacet, QueryInput, QueryOutput, UnscopedQueryOutput, OutputFacet} from "./types";
 
 export interface SearchActionService {
     scoped: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
@@ -15,7 +15,7 @@ export class SearchStore {
     @observable scope = "ALL";
 
     @observable groupingKey: string | undefined;
-    @observable selectedFacets: {[facet: string]: InputFacet} | undefined;
+    @observable selectedFacets: {[facet: string]: string} | undefined;
     @observable sortAsc: boolean | undefined;
     @observable sortBy: string | undefined;
 
@@ -49,13 +49,14 @@ export class SearchStore {
             query = "*";
         }
 
-        const data = Object.assign({}, buildPagination({results, totalCount, isScroll, nbSearchElement}), {
+        const data = {
+            ...buildPagination({results, totalCount, isScroll, nbSearchElement}),
             sortFieldName: sortBy,
             sortDesc: sortAsc === undefined ? false : !sortAsc,
             criteria: {query, scope},
-            facets: selectedFacets ? mapValues(selectedFacets, facetData => facetData.key) : {},
+            facets: selectedFacets || {},
             group: groupingKey || ""
-        });
+        };
 
         let response: {facets: StoreFacet[], results: Results<{}>, totalCount: number};
 
@@ -73,7 +74,7 @@ export class SearchStore {
     }
 
     @action
-    setProperties(props: {query?: string, scope?: string, groupingKey?: string, selectedFacets?: {[facet: string]: InputFacet}, sortAsc?: boolean, sortBy?: string}) {
+    setProperties(props: {query?: string, scope?: string, groupingKey?: string, selectedFacets?: {[facet: string]: string}, sortAsc?: boolean, sortBy?: string}) {
         if (props.scope && props.scope !== this.scope) {
             this.selectedFacets = {};
             this.groupingKey = props.groupingKey;
@@ -117,7 +118,7 @@ function parseFacets(serverFacets: OutputFacet[]) {
 }
 
 function scopedResponse<T>(data: QueryOutput<T>, context: {results: Results<T>, isScroll?: boolean, scope: string}) {
-    // Results are stored as an object if their is no groups.
+    // Results are stored as an object if there is no group.
     if (context.isScroll && !isArray(context.results)) {
         let resultsKeys = Object.keys(context.results);
         let key = resultsKeys[0];

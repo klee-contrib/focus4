@@ -71,7 +71,7 @@ export class Field extends React.Component<FieldProps, void> {
     display() {
         const {valueKey, labelKey, values, value: rawValue, DisplayComponent} = this.props;
         const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
-        const props = Object.assign({}, omit(this.props, omittedProps), {value});
+        const props = {...omit(this.props, omittedProps), value};
         const FinalDisplay = DisplayComponent || DisplayText;
         return <FinalDisplay {...props}/>;
     }
