@@ -2,6 +2,7 @@ import fetch from "isomorphic-fetch";
 import {v4} from "node-uuid";
 
 import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
+import {messageStore} from "../message";
 import {requestStore} from "./store";
 
 type DataType = "json" | "string";
@@ -22,18 +23,21 @@ async function coreFetch<RS>(url: string, method: string, responseType: DataType
             }
         } else {
             requestStore.updateRequest({id, url, status: "error"});
-            console.error(`${response.status} error when calling ${url}`);
+            const errorMessage = `${response.status} error when calling ${url}`;
+            console.error(errorMessage);
             if (response.headers.get("content-type").includes("json")) {
                 return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
             } else {
-                return Promise.reject<string>(response.text());
+                messageStore.addErrorMessage(errorMessage);
+                return Promise.reject<string>(await response.text());
             }
         }
     } catch (e) {
         requestStore.updateRequest({id, url, status: "error"});
-        const error = `"${e.message}" error when calling ${url}`;
-        console.error(error);
-        return Promise.reject<string>(error);
+        const errorMessage = `"${e.message}" error when calling ${url}`;
+        console.error(errorMessage);
+        messageStore.addErrorMessage(errorMessage);
+        return Promise.reject<string>(errorMessage);
     }
 }
 
