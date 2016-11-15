@@ -1,5 +1,6 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import Button from "focus-components/button";
@@ -22,6 +23,7 @@ export interface ListTimelineProps<T, P extends LineProps<T>> extends ListBasePr
 
 @injectStyle("listTimeline")
 @autobind
+@observer
 export class ListTimeline<T, P extends LineProps<T>> extends ListBase<T, WithData<ListTimelineProps<T, P>, T>> {
 
     /** Instancie une version typée du ListTimeline. */

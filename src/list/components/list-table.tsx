@@ -1,5 +1,6 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import Button from "focus-components/button";
@@ -21,6 +22,7 @@ export interface ListTableProps<T, P extends LineProps<T>> extends ListBaseProps
 }
 
 @autobind
+@observer
 export class ListTable<T, P extends LineProps<T>> extends ListBase<T, WithData<ListTableProps<T, P>, T>> {
 
     /** Instancie une version typée du ListTable. */
