@@ -2,19 +2,19 @@ import {isArray, intersection} from "lodash";
 import {observable} from "mobx";
 
 export interface Login {
-    login: string;
-    password: string;
+    login?: string;
+    password?: string;
 }
 
 export interface Profile {
-    id: string;
-    provider: string;
-    displayName: string;
-    culture: string;
-    email: string;
-    photo: string;
-    firstName: string;
-    lastName: string;
+    id?: string;
+    provider?: string;
+    displayName?: string;
+    culture?: string;
+    email?: string;
+    photo?: string;
+    firstName?: string;
+    lastName?: string;
 }
 
 export class UserStore {
