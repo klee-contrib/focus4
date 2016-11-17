@@ -20,6 +20,7 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
             static wrappedComponent = Comp;
 
             context: {classNames: {[key: string]: {[key: string]: any}}};
+            instance: React.Component<P, React.ComponentState>;
 
             render() {
                 const contextClassNames = this.context && this.context.classNames && this.context.classNames[classContainerName];
@@ -30,7 +31,7 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
                 if (!isStateful(Comp)) {
                     return <Comp {...this.props} classNames={contextClassNames || classNames} />;
                 } else {
-                    return <Comp {...this.props} classNames={contextClassNames || classNames} ref={i => Object.assign(this, omit(i, "context", "state", "props"))} />;
+                    return <Comp {...this.props} classNames={contextClassNames || classNames} ref={i => this.instance = i} />;
                 }
             }
         }

@@ -185,7 +185,7 @@ export function textFor<T>(field: EntityField<T>, options: TextOptions = {}) {
     return <div name={field.$entity.translationKey} style={options.style}>{stringFor(field, options)}</div>;
 }
 
-function buildFieldProps<T>(field: EntityField<T>, options: FieldProps = {}): FieldProps {
+export function buildFieldProps<T>(field: EntityField<T>, options: FieldProps = {}): FieldProps {
     const {value, $entity: {domain, translationKey, isRequired}} = field;
     const hasLabel = options.hasLabel || true;
     const dom = domain || {};

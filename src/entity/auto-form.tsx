@@ -188,7 +188,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
         for (const ref in this.refs) {
             const field = this.refs[ref];
             if (field instanceof Field) {
-                let validationRes = field.validate();
+                let validationRes = field.validate ? field.validate() : (field as any).instance && (field as any).instance.validate ? (field as any).instance.validate() : true;
                 if (validationRes !== true) {
                     this.errors[ref] = validationRes;
                 }
