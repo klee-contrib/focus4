@@ -52,8 +52,6 @@ const omittedProps = [
     "labelCellPosition",
     "labelOffset",
     "labelSize",
-    "formatter",
-    "unformatter",
     "validator",
     "DisplayComponent",
     "FieldComponent",
