@@ -23,11 +23,11 @@ async function coreFetch<RS>(url: string, method: string, responseType: DataType
             }
         } else {
             requestStore.updateRequest({id, url, status: "error"});
-            const errorMessage = `${response.status} error when calling ${url}`;
-            console.error(errorMessage);
-            if (response.headers.get("content-type").includes("json")) {
+            if (response.status === 500) {
                 return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
             } else {
+                const errorMessage = `${response.status} error when calling ${url}`;
+                console.error(errorMessage);
                 messageStore.addErrorMessage(errorMessage);
                 return Promise.reject<string>(await response.text());
             }
