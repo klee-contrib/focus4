@@ -77,6 +77,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
     private isCustomEntity: boolean;
 
     readonly entity: E & ViewModel;
+    hasForm = this.props.hasForm || true;
     readonly services: ServiceConfig;
     readonly storeData: E;
 
@@ -212,14 +213,14 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
 
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        const {hasForm = true, formClassName = ""} = this.props;
+        const {formClassName = ""} = this.props;
         const contextClassName = this.context && this.context.classNames && this.context.classNames["form"] || "";
-        if (hasForm) {
+        if (this.hasForm) {
             return (
                 <form
                     className={`${form} ${contextClassName} ${formClassName}`}
                     noValidate={true}
-                    onSubmit={e => { e.preventDefault(); this.save(); }}
+                    onSubmit={e => { e.preventDefault(); this.save() }}
                 >
                     <fieldset>{this.renderContent()}</fieldset>
                 </form>
