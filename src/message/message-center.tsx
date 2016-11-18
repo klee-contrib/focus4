@@ -86,7 +86,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
         const otherProps = { "aria-hidden": this.active, "aria-live": "assertive", "aria-atomic": "true", "aria-relevant": "text" };
         return (
             <div className={`${styles.center} ${classNames!.center || ""} mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""} ${type === "error" ? `${styles.error} ${classNames!.error || ""}` : type === "success" ? `${styles.success} ${classNames!.success || ""}` : type === "warning" ? `${styles.warning} ${classNames!.warning || ""}` : ""}`} {...otherProps}>
-                <div className="mdl-snackbar__text">{i18n.t(content)}</div>
+                <div className="mdl-snackbar__text">{content.includes(" ") ? content : i18n.t(content)}</div>
                 <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><i className="material-icons">clear</i></button>
             </div>
         );

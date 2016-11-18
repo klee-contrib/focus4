@@ -28,6 +28,13 @@ export interface ViewModel {
 export function createViewModel<T extends ClearSet<{}>>(model: T) {
     const viewModel = observable(toJS(model)) as any as T & ViewModel;
 
+    if (!(viewModel as any).$entity && (model as any).$entity) {
+        (viewModel as any).$entity = (model as any).$entity;
+    }
+    if (!viewModel.set) {
+        viewModel.set = model.set;
+    }
+
     const reset = () => viewModel.set(toFlatValues(model as any));
 
     viewModel.reset = action(reset);

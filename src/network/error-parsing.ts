@@ -47,12 +47,7 @@ const errorTypes = {
 };
 
 function dispatchMessages(messages: string[], type: ErrorType) {
-    messages.forEach(message =>
-        messageStore.addMessage({
-            type,
-            content: i18n.t(message)
-        })
-    );
+    messages.forEach(content => messageStore.addMessage({type, content}));
 }
 
 function treatFieldErrors(response: ErrorResponse) {

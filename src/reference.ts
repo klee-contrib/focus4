@@ -1,4 +1,4 @@
-import {observable, action} from "mobx";
+import {observable, action, untracked} from "mobx";
 
 export type ReferenceConfig = {[key: string]: {}[]};
 export type ServiceFactory = (refName: string) => () => Promise<{}[]>;
@@ -27,11 +27,11 @@ export function makeReferenceStore<T extends ReferenceConfig>(serviceFactory: Se
         referenceStore[ref] = () => {
             if (!referenceStore[`_${ref}_loading`] && !(cache[ref] && (getTimeStamp() - cache[ref].timeStamp) < CACHE_DURATION)) {
                 referenceStore[`_${ref}_loading`] = true;
-                serviceFactory(ref)().then(action((refList: {}[]) => {
+                untracked(() => serviceFactory(ref)().then(action((refList: {}[]) => {
                     cacheData(ref, refList);
                     referenceStore[`_${ref}`] = refList;
                     delete referenceStore[`_${ref}_loading`];
-                }));
+                })));
             }
 
             return referenceStore[`_${ref}`];
