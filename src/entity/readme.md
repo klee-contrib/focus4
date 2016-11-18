@@ -42,7 +42,7 @@ Une `EntityStoreData` est conçue pour être utilisé par les `fieldHelpers` (`f
 
 La modification du store ou de l'une de ses entrées n'est pas limitée à l'usage des méthodes `set()` ou `clear()`. Etant toujours une observable MobX, il est tout à fait possible d'affecter des valeurs directement, comme `store.operation.id.value = undefined` par exemple. Ca peut être utile car `set()` ne mettra à jour que les valeurs qu'il reçoit. Pour un array, la méthode `set()` va remplacer tous les éléments de l'array par ceux fournis à la méthode. Il est donc intéressant de pouvoir appeler directement des méthodes comme `push()` pour y ajouter des éléments, quitte à construire les `EntityStoreData` à la main.
 
-**Attention** : Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, mais il ne peut contenir que des arrays d'objets simples (c'est-à-dire des objets qui ne dépendent d'aucune autre entité).
+**Attention** : Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, mais cette hiérarchie ne peut pas contenir des arrays dans des arrays.
 
 ### API
 #### `makeEntityStore<T>(entityConfig, entities)`

@@ -63,7 +63,7 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
             if (!entity) {
                 throw new Error(`"${entry}" n'existe pas dans ce store.`);
             }
-            setEntityEntry(entity, setConfig[entry], entry);
+            setEntityEntry(entity, entityMap, setConfig[entry], entry);
         }
     });
 
@@ -81,7 +81,7 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
     if (isArray(entity) && isArray(entity[0])) {
         const output: EntityArray<EntityStoreData> = observable([]) as any;
         output.$entity = entityMap[entity[1]];
-        output.set = action(function set(this: typeof output, values: {}[]) { setEntityEntry(this, values, entity[1]); });
+        output.set = action(function set(this: typeof output, values: {}[]) { setEntityEntry(this, entityMap, values, entity[1]); });
         return output;
     }
 
@@ -95,16 +95,16 @@ function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Enti
             value: v.entityName ? buildEntityEntry({[v.entityName]: [v.type === "list" ? [] : {}, v.entityName!]}, entityMap, v.entityName!) : undefined,
         };
     }) as any;
-    output.set = action(function set(this: typeof output, entityValue: any) { setEntityEntry(this, entityValue, trueEntry); });
+    output.set = action(function set(this: typeof output, entityValue: any) { setEntityEntry(this, entityMap, entityValue, trueEntry); });
     output.clear = asReference(action(function clear(this: typeof output) { clearEntity(this); }));
     return output;
 }
 
-function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry: string) {
+function setEntityEntry(entity: EntityStoreEntry, entityMap: {[name: string]: Entity}, entityValue: any, entry: string) {
     if (isArray(entityValue) && isEntityArray(entity)) {
-        entity.replace(entityValue.map((item: {}) => buildEntityEntry({[entry]: [{}, entry]}, {[entry]: entity.$entity}, entry) as EntityStoreData));
+        entity.replace(entityValue.map((item: {}) => buildEntityEntry({[entry]: [{}, entry]}, {...entityMap, [entry]: entity.$entity}, entry) as EntityStoreData));
         for (let i = 0; i < entityValue.length; i++) {
-            setEntityEntry(entity[i], entityValue[i], entity.$entity.name);
+            setEntityEntry(entity[i], entityMap, entityValue[i], entity.$entity.name);
         }
     } else {
         const entity2 = entity as EntityStoreData;
@@ -112,7 +112,7 @@ function setEntityEntry(entity: EntityStoreEntry, entityValue: any, entry: strin
             if (!entity2[item]) {
                 throw new Error(`"${entry}" n'a pas de propriété "${item}".`);
             }
-            entity2[item].value = isObject(entityValue[item]) ? setEntityEntry(entity2[item].value as EntityStoreEntry, entityValue[item], item) : entityValue[item];
+            entity2[item].value = isObject(entityValue[item]) ? setEntityEntry(entity2[item].value as EntityStoreEntry, entityMap, entityValue[item], item) : entityValue[item];
         }
     }
 

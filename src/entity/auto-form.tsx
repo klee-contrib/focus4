@@ -75,9 +75,9 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
     context: {classNames: {[key: string]: {[key: string]: any}}};
 
     private isCustomEntity: boolean;
-    private services: ServiceConfig;
 
-    entity: E & ViewModel;
+    readonly entity: E & ViewModel;
+    readonly services: ServiceConfig;
     readonly storeData: E;
 
     @observable errors: FieldErrors = {};
