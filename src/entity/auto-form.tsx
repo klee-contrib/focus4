@@ -220,7 +220,7 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
                 <form
                     className={`${form} ${contextClassName} ${formClassName}`}
                     noValidate={true}
-                    onSubmit={e => { e.preventDefault(); this.save() }}
+                    onSubmit={e => { e.preventDefault(); this.save(); }}
                 >
                     <fieldset>{this.renderContent()}</fieldset>
                 </form>
@@ -298,7 +298,9 @@ export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Componen
     textFor<T>(field: EntityField<T>, options: TextOptions = {}) { return textFor(field, options); }
 
     private setFieldOptions<T>(field: EntityField<T>, options: {[key: string]: any}) {
-        options["isEdit"] = this.isEdit;
+        if (options["isEdit"] === undefined) {
+            options["isEdit"] = this.isEdit;
+        }
         options["error"] = this.errors[field.$entity.translationKey];
         options["onChange"] = options["onChange"] || action((value: any) => (this.entity as any)[field.$entity.name].value = value);
         return options as any;

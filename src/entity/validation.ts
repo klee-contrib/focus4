@@ -16,6 +16,7 @@ export interface TrKey {
 export interface NumberOptions extends TrKey {
     min?: number;
     max?: number;
+    isInteger?: boolean;
 }
 
 export interface StringOptions extends TrKey {
@@ -95,6 +96,10 @@ export function numberValidator(text: string, options?: NumberOptions) {
 
     if (!options) {
         return true;
+    }
+
+    if (options.isInteger && !Number.isInteger(n)) {
+        return false;
     }
 
     let isMin = options.min !== undefined ? n >= options.min : true;
