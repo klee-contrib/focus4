@@ -130,14 +130,14 @@ function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, en
 }
 
 function clearEntity(entity: EntityStoreItem) {
-    if (isStoreListNode(entity)) {
+    if (isObservableArray(entity)) {
         entity.replace([]);
     } else {
         for (const entry in entity) {
             const {value} = entity[entry];
-            if (isEntityStoreData(value)) {
+            if (isEntityStoreNode(value)) {
                 clearEntity(value);
-            } else if (isStoreListNode(value)) {
+            } else if (isObservableArray(value)) {
                 value.replace([]);
             } else if (value !== undefined) {
                 entity[entry].value = undefined;
@@ -158,8 +158,9 @@ export function toFlatValues(entityStoreItem: EntityStoreItem): {} {
             const {value} = item;
             if (isStoreListNode(value)) {
                 return value.map(toFlatValues);
-            }
-            if (isEntityStoreData(value)) {
+            } else if (isObservableArray(value)) {
+                return value.slice();
+            } else if (isEntityStoreNode(value)) {
                 return toFlatValues(value);
             }
             return value;
@@ -168,8 +169,8 @@ export function toFlatValues(entityStoreItem: EntityStoreItem): {} {
 }
 
 function isStoreListNode(data: StoreType): data is StoreListNode<any> {
-    return isObservableArray(data);
+    return isObservableArray(data) && !!data.$entity;
 }
-function isEntityStoreData(data: StoreType): data is EntityStoreNode {
+function isEntityStoreNode(data: StoreType): data is EntityStoreNode {
     return !isObservableArray(data) && isObject(data) && !isAction(data);
 }

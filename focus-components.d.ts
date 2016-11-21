@@ -302,7 +302,7 @@ declare module "focus-components/panel/edit-save-buttons" {
         save?: (data: {}) => void;
     }
 
-    export function PanelButtons(props: PanelButtonsProps): React.ReactElement<any>
+    export default function PanelButtons(props: PanelButtonsProps): React.ReactElement<any>
 }
 
 declare module "focus-components/scrollspy-container" {
