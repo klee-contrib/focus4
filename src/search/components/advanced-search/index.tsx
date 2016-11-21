@@ -18,7 +18,7 @@ import {ListSummary, ListSummaryStyle} from "./list-summary";
 export {FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle};
 
 import * as styles from "./style/index.css";
-export type AdvancedSearchStyle = typeof styles;
+export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {
     classNames?: AdvancedSearchStyle;

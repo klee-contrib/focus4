@@ -7,7 +7,7 @@ import Button from "focus-components/button";
 import {injectStyle} from "../../theming";
 
 import * as styles from "./style/topic-displayer.css";
-export type TopicDisplayerStyle = typeof styles;
+export type TopicDisplayerStyle = Partial<typeof styles>;
 
 function topicClickHandler(key: string, topicClickAction: (key: string) => void) {
     topicClickAction(key);

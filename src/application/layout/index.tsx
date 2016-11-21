@@ -14,7 +14,7 @@ import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupComponentStyle, Lis
 import {injectStyle, StyleProvider} from "../../theming";
 
 import styles from "./style/index.css";
-export type LayoutStyle = typeof styles;
+export type LayoutStyle = Partial<typeof styles>;
 
 export {DefaultErrorCenter as ErrorCenter}
 export {Header, HeaderStyle};

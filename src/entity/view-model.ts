@@ -1,7 +1,7 @@
 import {merge} from "lodash";
 import {autorun, action, observable, toJS} from "mobx";
 
-import {ClearSet, toFlatValues} from "./store";
+import {StoreNode, toFlatValues} from "./store";
 
 export interface ViewModel {
     /** Précise l'état de la synchronisation entre le model et le viewModel. */
@@ -25,7 +25,7 @@ export interface ViewModel {
  * Le ViewModel est un clone d'un model qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du model réinitialise le viewModel.
  */
-export function createViewModel<T extends ClearSet<{}>>(model: T) {
+export function createViewModel<T extends StoreNode<{}>>(model: T) {
     const viewModel = observable(toJS(model)) as any as T & ViewModel;
 
     if (!(viewModel as any).$entity && (model as any).$entity) {

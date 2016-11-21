@@ -1,10 +1,10 @@
-import {EntityField, ClearSet} from "../";
+import {EntityField, StoreNode} from "../";
 
 export interface Ligne {
     id?: number;
 }
 
-export interface LigneData extends ClearSet<Ligne> {
+export interface LigneNode extends StoreNode<Ligne> {
     id: EntityField<number>;
 }
 

@@ -10,7 +10,7 @@ import {SearchStore} from "../../store";
 import {injectStyle} from "../../../theming";
 
 import * as styles from "./style/list-summary.css";
-export type ListSummaryStyle = typeof styles;
+export type ListSummaryStyle = Partial<typeof styles>;
 
 export interface ListSummaryProps {
     classNames?: ListSummaryStyle;

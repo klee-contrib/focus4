@@ -11,50 +11,59 @@ export interface Clearer {
     clear(): void;
 }
 
-export interface ClearSet<T> extends Setter<T>, Clearer {}
+export interface StoreNode<T> extends Setter<T>, Clearer {}
 
-export type EntityArray<T> = IObservableArray<T> & {$entity: Entity} & Setter<{}[]>;
-function isEntityArray(data: StoreTypes): data is EntityArray<any> {
-    return isObservableArray(data);
-}
-function isEntityStoreData(data: StoreTypes): data is EntityStoreData {
-    return !isObservableArray(data) && isObject(data) && !isAction(data);
+export interface StoreListNode<T> extends IObservableArray<T> {
+    $entity: Entity;
+    set(array: {}[]): void;
 }
 
 export type EntityValue<T> = EntityField<T> | EntityList<T>;
-export type StoreTypes = undefined | null | number | boolean | string | EntityStoreEntry;
+export type StoreType = undefined | null | number | boolean | string | EntityStoreItem;
 
-export type EntityStoreData = {[key: string]: EntityStoreValue} & ClearSet<{}>;
-export type EntityStoreEntry = EntityStoreData | EntityArray<EntityStoreData>;
-export type EntityStoreValue = EntityValue<StoreTypes>;
+export type EntityStoreNode = {[key: string]: EntityValue<StoreType>} & StoreNode<{}>;
+export type EntityStoreItem = EntityStoreNode | StoreListNode<EntityStoreNode>;
 
-export type EntityStoreConfig = {[key: string]: EntityStoreEntry}
-export type EntityConfig = {[key: string]: {[field: string]: EntityValue<{}>} | [{[field: string]: EntityStoreValue}, string] | [{[field: string]: EntityStoreValue}[], string]};
-export type EntityStore = EntityStoreConfig & ClearSet<{}>;
+export type EntityMapping<T> = {
+    [P in keyof T]?: string;
+}
+
+export type AsStoreListNode<T> = {
+    [P in keyof T]: StoreListNode<T[P]>;
+}
+
+interface EntityStoreConfig {
+    [key: string]: EntityStoreItem;
+}
+
+type EntityStore = EntityStoreConfig & StoreNode<{}>;
 
 /**
  * Construit un store d'entité à partir de la config et les entités données.
  * Le store d'entité inclut les métadonnées pour tous les champs des entités utilsées.
- * @param config L'objet constituant du store, dont chaque propriété doit correspondre à une entité. Les valeurs possibles sont "{}", [{}, "entityName"] ou [[], "entityName"] (pour une liste).
- * @param entityList La liste des toutes les entités utilisées par les propriétés du store (y compris les composées).
+ * @param simpleNodes Un objet dont les propriétés décrivent tous les noeuds "simples" du store.
+ * @param listNodes Un objet dont les propriétés décrivent tous les noeuds "listes" du store.
+ * @param entityList La liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
+ * @param entityMapping Un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
  */
-export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfig, entityList: Entity[]): T & ClearSet<{}> {
+export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[key: string]: any}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {}): T1 & AsStoreListNode<T2> & StoreNode<{}> {
+    const config = Object.assign({}, mapValues(simpleNodes, n => ({})), mapValues(listNodes, n => [])) as EntityStoreConfig;
+
     const entityMap = entityList.reduce((entities, entity) => {
         entities[entity.name] = entity;
         return entities;
     }, {} as {[name: string]: Entity});
 
-    for (const item in config) {
-        const entity = config[item];
-        if (!entityMap[isArray(entity) ? entity[1] : item]) {
-            throw new Error(`La propriété "${item}" n'a pas été trouvée dans la liste d'entités`);
+    for (const entry in config) {
+        if (!entityMap[entityMapping[entry] || entry]) {
+            throw new Error(`La propriété "${entry}" n'a pas été trouvée dans la liste d'entités. Vous manque-t'il une correspondance ?`);
         }
     }
 
     const entityStore: EntityStore = {} as any;
 
     for (const entry in config) {
-        entityStore[entry] = buildEntityEntry(config, entityMap, entry);
+        entityStore[entry] = buildEntityEntry(config, entityMap, entityMapping, entry);
     }
 
     entityStore.set = action(function set(this: typeof entityStore, setConfig: {[key: string]: any}) {
@@ -63,7 +72,7 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
             if (!entity) {
                 throw new Error(`"${entry}" n'existe pas dans ce store.`);
             }
-            setEntityEntry(entity, entityMap, setConfig[entry], entry);
+            setEntityEntry(entity, entityMap, entityMapping, setConfig[entry], entry);
         }
     });
 
@@ -76,58 +85,59 @@ export function makeEntityStore<T extends EntityStoreConfig>(config: EntityConfi
     return observable(entityStore) as any;
 }
 
-function buildEntityEntry(config: EntityConfig, entityMap: {[name: string]: Entity}, entry: string): EntityStoreEntry {
+function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStoreConfig, entityMap: {[name: string]: Entity}, entityMapping: EntityMapping<T>, entry: string): EntityStoreItem {
     const entity = config[entry];
-    if (isArray(entity) && isArray(entity[0])) {
-        const output: EntityArray<EntityStoreData> = observable([]) as any;
-        output.$entity = entityMap[entity[1]];
-        output.set = action(function set(this: typeof output, values: {}[]) { setEntityEntry(this, entityMap, values, entity[1]); });
+    const trueEntry = entityMapping[entry] || entry;
+
+    if (isArray(entity)) {
+        const output: StoreListNode<EntityStoreNode> = observable([]) as any;
+        output.$entity = entityMap[trueEntry];
+        output.set = action(function set(this: typeof output, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
         return output;
     }
 
-    const trueEntry = isArray(entity) ? entity[1] : entry;
-    const output: EntityStoreData & Setter<{}> = mapValues(entityMap[trueEntry].fields, (v, key) => {
+    const output: EntityStoreNode & Setter<{}> = mapValues(entityMap[trueEntry].fields, (v, key) => {
         if (v.entityName && !entityMap[v.entityName]) {
             throw new Error(`L'entité "${trueEntry}" dépend de l'entité "${v.entityName}" qui n'a pas été trouvée dans la liste.`);
         }
         return {
             $entity: asReference(entityMap[trueEntry].fields[key!]),
-            value: v.entityName ? buildEntityEntry({[v.entityName]: [v.type === "list" ? [] : {}, v.entityName!]}, entityMap, v.entityName!) : undefined,
+            value: v.entityName ? buildEntityEntry({[v.entityName]: v.type === "list" ? [] : {}} as EntityStoreConfig, entityMap, entityMapping, v.entityName!) : undefined,
         };
     }) as any;
-    output.set = action(function set(this: typeof output, entityValue: any) { setEntityEntry(this, entityMap, entityValue, trueEntry); });
+    output.set = action(function set(this: typeof output, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); });
     output.clear = asReference(action(function clear(this: typeof output) { clearEntity(this); }));
     return output;
 }
 
-function setEntityEntry(entity: EntityStoreEntry, entityMap: {[name: string]: Entity}, entityValue: any, entry: string) {
-    if (isArray(entityValue) && isEntityArray(entity)) {
-        entity.replace(entityValue.map((item: {}) => buildEntityEntry({[entry]: [{}, entry]}, {...entityMap, [entry]: entity.$entity}, entry) as EntityStoreData));
+function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, entityMap: {[name: string]: Entity}, entityMapping: EntityMapping<T>, entityValue: any, entry: string) {
+    if (isArray(entityValue) && isStoreListNode(entity)) {
+        entity.replace(entityValue.map((item: {}) => buildEntityEntry({[entry]: {}} as EntityStoreConfig, {...entityMap, [entry]: entity.$entity}, entityMapping, entry) as EntityStoreNode));
         for (let i = 0; i < entityValue.length; i++) {
-            setEntityEntry(entity[i], entityMap, entityValue[i], entity.$entity.name);
+            setEntityEntry(entity[i], entityMap, entityMapping, entityValue[i], entity.$entity.name);
         }
     } else {
-        const entity2 = entity as EntityStoreData;
+        const entity2 = entity as EntityStoreNode;
         for (const item in entityValue) {
             if (!entity2[item]) {
                 throw new Error(`"${entry}" n'a pas de propriété "${item}".`);
             }
-            entity2[item].value = isObject(entityValue[item]) ? setEntityEntry(entity2[item].value as EntityStoreEntry, entityMap, entityValue[item], item) : entityValue[item];
+            entity2[item].value = isObject(entityValue[item]) ? setEntityEntry(entity2[item].value as EntityStoreItem, entityMap, entityMapping, entityValue[item], item) : entityValue[item];
         }
     }
 
     return entity;
 }
 
-function clearEntity(entity: EntityStoreEntry) {
-    if (isEntityArray(entity)) {
+function clearEntity(entity: EntityStoreItem) {
+    if (isStoreListNode(entity)) {
         entity.replace([]);
     } else {
         for (const entry in entity) {
             const {value} = entity[entry];
             if (isEntityStoreData(value)) {
                 clearEntity(value);
-            } else if (isEntityArray(value)) {
+            } else if (isStoreListNode(value)) {
                 value.replace([]);
             } else if (value !== undefined) {
                 entity[entry].value = undefined;
@@ -136,14 +146,17 @@ function clearEntity(entity: EntityStoreEntry) {
     }
 }
 
-/** Met à plat une entité / liste d'entité pour récupèrer sa valeur "brute". */
-export function toFlatValues(entityStoreItem: EntityStoreEntry): {} {
-    if (isEntityArray(entityStoreItem)) {
+/**
+ * Met à plat un noeud de store pour récupèrer sa valeur "brute".
+ * @param entityStoreItem Le noeud de store à mettre à plat.
+ */
+export function toFlatValues(entityStoreItem: EntityStoreItem): {} {
+    if (isStoreListNode(entityStoreItem)) {
         return entityStoreItem.map(toFlatValues);
     } else {
         return omitBy(mapValues(entityStoreItem, item => {
             const {value} = item;
-            if (isEntityArray(value)) {
+            if (isStoreListNode(value)) {
                 return value.map(toFlatValues);
             }
             if (isEntityStoreData(value)) {
@@ -152,4 +165,11 @@ export function toFlatValues(entityStoreItem: EntityStoreEntry): {} {
             return value;
         }), isUndefined);
     }
+}
+
+function isStoreListNode(data: StoreType): data is StoreListNode<any> {
+    return isObservableArray(data);
+}
+function isEntityStoreData(data: StoreType): data is EntityStoreNode {
+    return !isObservableArray(data) && isObject(data) && !isAction(data);
 }

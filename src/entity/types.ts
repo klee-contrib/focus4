@@ -1,6 +1,7 @@
 import {Validator} from "./validation";
 
 export interface Domain {
+    [key: string]: any;
     formatter?: (value: any, options?: {isEdit: boolean}) => string;
     unformatter?: (text: string, options?: {isEdit: boolean}) => any;
     validator?: Validator[];

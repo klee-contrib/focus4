@@ -6,7 +6,7 @@ import Dropdown from "focus-components/dropdown";
 import {injectStyle} from "../../../theming";
 
 import * as styles from "./style/scope-select.css";
-export type ScopeSelectStyle = typeof styles;
+export type ScopeSelectStyle = Partial<typeof styles>;
 
 export interface Scope {
     code: string;

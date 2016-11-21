@@ -1,4 +1,3 @@
-import {omit} from "lodash";
 import * as React from "react";
 
 /**

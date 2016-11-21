@@ -6,7 +6,7 @@ import Button from "focus-components/button";
 import {injectStyle} from "../../../theming";
 
 import * as styles from "./style/group.css";
-export type GroupComponentStyle = typeof styles;
+export type GroupComponentStyle = Partial<typeof styles>;
 
 export interface GroupComponentProps {
     canShowMore: boolean;

@@ -6,7 +6,7 @@ import Icon from "focus-components/icon";
 import {requestStore} from "./store";
 
 import * as styles from "./style/loading-bar.css";
-export type LoadingBarStyle = typeof styles;
+export type LoadingBarStyle = Partial<typeof styles>;
 
 export interface LoadingBarProps {
     classNames?: LoadingBarStyle;

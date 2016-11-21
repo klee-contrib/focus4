@@ -10,7 +10,7 @@ import {messageStore} from "../message";
 import {FieldErrors} from "../network";
 
 import {Field} from "./field";
-import {ClearSet, toFlatValues} from "./store";
+import {StoreNode, toFlatValues} from "./store";
 import {EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
 
@@ -68,7 +68,7 @@ export interface ServiceConfig {
 
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
-export abstract class AutoForm<P, E extends ClearSet<{}>> extends React.Component<P & AutoFormProps, void> {
+export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Component<P & AutoFormProps, void> {
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement.
     static contextTypes = {classNames: React.PropTypes.object};

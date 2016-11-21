@@ -13,7 +13,7 @@ import {Scope, ScopeSelect, ScopeSelectStyle} from "./scope-select";
 export {ScopeSelectStyle};
 
 import * as styles from "./style/index.css";
-export type SearchBarStyle = typeof styles;
+export type SearchBarStyle = Partial<typeof styles>;
 
 export interface SearchBarProps {
     classNames?: SearchBarStyle;

@@ -10,7 +10,7 @@ import {injectStyle} from "../../../../theming";
 import {FacetData, FacetValue} from "./facet-data";
 
 import * as styles from "./style/facet.css";
-export type FacetStyle = typeof styles;
+export type FacetStyle = Partial<typeof styles>;
 
 export interface FacetProps {
     classNames?: FacetStyle;

@@ -14,7 +14,7 @@ import {Domain} from "./types";
 import {validate} from "./validation";
 
 import * as styles from "./style/field.css";
-export type FieldStyle = typeof styles;
+export type FieldStyle = Partial<typeof styles>;
 
 export interface FieldProps extends Domain {
 

@@ -1,4 +1,4 @@
-import {EntityField, ClearSet} from "../";
+import {EntityField, StoreNode} from "../";
 
 export interface Structure {
     id?: number;
@@ -6,7 +6,7 @@ export interface Structure {
     siret?: string;
 }
 
-export interface StructureData extends ClearSet<Structure> {
+export interface StructureNode extends StoreNode<Structure> {
     id: EntityField<number>;
     nom: EntityField<string>;
     siret: EntityField<string>;

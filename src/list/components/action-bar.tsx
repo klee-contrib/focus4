@@ -12,7 +12,7 @@ import {ContextualActions} from "./contextual-actions";
 import {TopicDisplayer} from "./topic-displayer";
 
 import * as styles from "./style/action-bar.css";
-export type ActionBarStyle = typeof styles;
+export type ActionBarStyle = Partial<typeof styles>;
 
 export interface ActionBarProps {
     classNames?: ActionBarStyle;

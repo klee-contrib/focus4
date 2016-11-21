@@ -11,7 +11,7 @@ import {LineProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
 
 import * as styles from "./style/list-timeline.css";
-export type ListTimelineStyle = typeof styles;
+export type ListTimelineStyle = Partial<typeof styles>;
 
 export interface ListTimelineProps<T, P extends LineProps<T>> extends ListBaseProps<T, P> {
     classNames?: ListTimelineStyle;

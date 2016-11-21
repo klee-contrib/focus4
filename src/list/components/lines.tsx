@@ -8,7 +8,7 @@ import {injectStyle} from "../../theming";
 import {ContextualActions} from "./contextual-actions";
 
 import * as styles from "./style/lines.css";
-export type LineStyle = typeof styles;
+export type LineStyle = Partial<typeof styles>;
 
 export interface OperationListItem {
     action: (data?: {}) => void;

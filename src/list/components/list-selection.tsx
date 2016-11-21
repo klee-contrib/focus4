@@ -12,7 +12,7 @@ import {LineSelectionProps} from "./lines";
 import {ListBase, ListBaseProps, WithData} from "./list-base";
 
 import * as styles from "./style/list-selection.css";
-export type ListSelectionStyle = typeof styles;
+export type ListSelectionStyle = Partial<typeof styles>;
 
 export interface ListSelectionProps<T, P extends LineSelectionProps<T>> extends ListBaseProps<T, P> {
     classNames?: ListSelectionStyle;

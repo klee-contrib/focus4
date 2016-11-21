@@ -1,5 +1,5 @@
-import {EntityField, ClearSet} from "../";
-import {Structure, StructureData} from "./structure";
+import {EntityField, StoreNode} from "../";
+import {Structure, StructureNode} from "./structure";
 
 export interface Operation {
     id?: number;
@@ -8,11 +8,11 @@ export interface Operation {
     structure?: Structure;
 }
 
-export interface OperationData extends ClearSet<Operation> {
+export interface OperationNode extends StoreNode<Operation> {
     id: EntityField<number>;
     numero: EntityField<string>;
     montant: EntityField<number>;
-    structure: EntityField<StructureData>;
+    structure: EntityField<StructureNode>;
 }
 
 export const OperationEntity = {

@@ -1,14 +1,14 @@
-import {EntityField, EntityList, EntityArray, ClearSet} from "../";
-import {Ligne, LigneData} from "./ligne";
+import {EntityField, EntityList, StoreListNode, StoreNode} from "../";
+import {Ligne, LigneNode} from "./ligne";
 
 export interface Projet {
     id?: number;
     ligneList?: Ligne[];
 }
 
-export interface ProjetData extends ClearSet<Projet>  {
+export interface ProjetNode extends StoreNode<Projet>  {
     id: EntityField<number>;
-    ligneList: EntityList<EntityArray<LigneData>>;
+    ligneList: EntityList<StoreListNode<LigneNode>>;
 }
 
 export const ProjetEntity = {

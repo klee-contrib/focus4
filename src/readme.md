@@ -13,8 +13,8 @@ Un `referenceStore` d'autofocus est construit par la fonction `makeReferenceStor
 
 ```ts
 const referenceStore = makeReferenceStore(serviceFactory, {
-    product: [] as Product[],
-    line: [] as Line[]
+    product: {} as Product,
+    line: {} as Line
 });
 ```
 
