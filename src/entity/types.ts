@@ -33,10 +33,10 @@ export interface Entity {
 
 export interface EntityField<T> {
     readonly $entity: FieldEntry;
-    value: T;
+    value: T | undefined;
 }
 
 export interface EntityList<T> {
     readonly $entity: ListEntry;
-    value: T;
+    value: T | undefined;
 }

@@ -294,6 +294,17 @@ declare module "focus-components/panel" {
     } & PanelButtonsProps, {}> {}
 }
 
+declare module "focus-components/panel/edit-save-buttons" {
+    export interface PanelButtonsProps {
+        editing?: boolean;
+        getUserInput?: () => {};
+        toggleEdit?: (edit: boolean) => void;
+        save?: (data: {}) => void;
+    }
+
+    export function PanelButtons(props: PanelButtonsProps): React.ReactElement<any>
+}
+
 declare module "focus-components/scrollspy-container" {
     export default class ScrollspyContainer extends React.Component<{
         hasBackToTop?: boolean;

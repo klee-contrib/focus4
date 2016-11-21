@@ -19,7 +19,7 @@ export interface StoreListNode<T> extends IObservableArray<T> {
 }
 
 export type EntityValue<T> = EntityField<T> | EntityList<T>;
-export type StoreType = undefined | null | number | boolean | string | EntityStoreItem;
+export type StoreType = undefined | null | number | number[] | boolean | boolean[] | string | string[] | EntityStoreItem;
 
 export type EntityStoreNode = {[key: string]: EntityValue<StoreType>} & StoreNode<{}>;
 export type EntityStoreItem = EntityStoreNode | StoreListNode<EntityStoreNode>;
@@ -122,7 +122,7 @@ function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, en
             if (!entity2[item]) {
                 throw new Error(`"${entry}" n'a pas de propriété "${item}".`);
             }
-            entity2[item].value = isObject(entityValue[item]) ? setEntityEntry(entity2[item].value as EntityStoreItem, entityMap, entityMapping, entityValue[item], item) : entityValue[item];
+            entity2[item].value = isObject(entityValue[item]) && !(isArray(entityValue[item]) && entity2[item].$entity.type === "field") ? setEntityEntry(entity2[item].value as EntityStoreItem, entityMap, entityMapping, entityValue[item], item) : entityValue[item];
         }
     }
 
