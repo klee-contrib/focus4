@@ -1,6 +1,6 @@
 import {observable, action, untracked, IObservableArray} from "mobx";
 
-export type ReferenceConfig = {[key: string]: {}[]};
+export type ReferenceConfig = {[key: string]: {}};
 export type ServiceFactory = (refName: string) => () => Promise<{}[]>;
 
 const CACHE_DURATION = 1000 * 60 * 60;
