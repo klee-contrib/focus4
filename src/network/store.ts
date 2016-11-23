@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {computed, map, action, ObservableMap} from "mobx";
-import {v4} from "node-uuid";
+import {v4} from "uuid";
 
 export {ObservableMap};
 

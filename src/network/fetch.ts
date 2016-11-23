@@ -1,5 +1,5 @@
 import fetch from "isomorphic-fetch";
-import {v4} from "node-uuid";
+import {v4} from "uuid";
 
 import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
 import {messageStore} from "../message";

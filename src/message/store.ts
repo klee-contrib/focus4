@@ -1,7 +1,7 @@
 import {autobind} from "core-decorators";
 import {isString} from "lodash";
 import {observable, action} from "mobx";
-import {v4} from "node-uuid";
+import {v4} from "uuid";
 
 export interface Message {
     id?: string;
