@@ -1,4 +1,4 @@
-import {isObservableArray} from "mobx";
+import {isObservableArray, isObservable} from "mobx";
 import test = require("tape");
 
 import {makeEntityStore, toFlatValues, createViewModel} from "../";
@@ -148,8 +148,16 @@ test("ViewModel: Création", t => {
     const entry = getStore().operation;
     const viewModel = createViewModel(entry);
 
+    const entry2 = getStore().projetTest;
+    const viewModel2 = createViewModel(entry2);
+
     t.deepEqual(viewModel.numero, entry.numero, "Les champs simples du viewModel sont bien identiques à ceux du model.");
     t.deepEqual(viewModel.structure, entry.structure, "Les champs composites du viewModel sont bien identiques à ceux du model.");
+    t.assert(!isObservable(viewModel.structure.$entity), "Le champ '$entity' d'un sous-objet n'est bien pas observable");
+    t.assert(isObservableArray(viewModel2.ligneList.value), "Une sous liste est bien toujours observable");
+    t.deepEqual(viewModel2.ligneList.value.$entity, entry2.ligneList.value.$entity, "Une sous liste a bien toujours son entité attachée.");
+    t.assert(!isObservable(viewModel2.ligneList.value.$entity), "Le champ '$entity' d'une sous liste n'est bien pas observable");
+    t.assert(viewModel2.ligneList.value.set, "Une sous liste a bien toujours sa méthode 'set' attachée");
 
     t.comment("ViewModel: Modification de model.");
     entry.set(operation);
@@ -169,8 +177,8 @@ test("ViewModel: Création", t => {
     t.equal(viewModel.structure.value.nom.value, "yolo", "Champ composite via set local: le viewModel a bien été modifié.");
     t.equal(entry.structure.value.nom.value, operation.structure.nom, "Champ composite via set local: le model est bien toujours identique.");
 
-    t.comment("ViewModel: submit");
-    viewModel.submit();
+    t.comment("ViewModel: model.set(toFlatValues(viewModel))");
+    entry.set(toFlatValues(viewModel));
 
     t.equal(viewModel.montant.value, 1000, "Champ simple: le viewModel est bien toujours identique.");
     t.equal(entry.montant.value, 1000, "Champ simple: le model a bien été mis à jour.");

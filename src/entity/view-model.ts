@@ -1,5 +1,4 @@
-import {merge} from "lodash";
-import {autorun, action, observable, toJS} from "mobx";
+import {autorun, action, observable, asReference, isObservableObject, isObservableArray} from "mobx";
 
 import {StoreNode, toFlatValues} from "./store";
 
@@ -9,9 +8,6 @@ export interface ViewModel {
 
     /** Réinitialise le viewModel à partir du model. */
     reset(): void;
-
-    /** Met à jour le model à partir du viewModel. */
-    submit(): void;
 
     /** Active la synchronisation model -> viewModel. La fonction est appelée à la création. */
     subscribe(): void;
@@ -26,19 +22,11 @@ export interface ViewModel {
  * Toute mise à jour du model réinitialise le viewModel.
  */
 export function createViewModel<T extends StoreNode<{}>>(model: T) {
-    const viewModel = observable(toJS(model)) as any as T & ViewModel;
-
-    if (!(viewModel as any).$entity && (model as any).$entity) {
-        (viewModel as any).$entity = (model as any).$entity;
-    }
-    if (!viewModel.set) {
-        viewModel.set = model.set;
-    }
+    const viewModel = clone(model) as any as T & ViewModel;
 
     const reset = () => viewModel.set(toFlatValues(model as any));
 
     viewModel.reset = action(reset);
-    viewModel.submit = action(() => merge(model, viewModel));
     viewModel.subscribe = () => {
         if (!viewModel.isSubscribed) {
             const disposer = autorun(reset);
@@ -52,4 +40,39 @@ export function createViewModel<T extends StoreNode<{}>>(model: T) {
 
     viewModel.subscribe();
     return viewModel;
+}
+
+/** Version adaptée de `toJS` de MobX. */
+function clone(source: any): any {
+    if (isObservableArray(source)) {
+        let res = [];
+        const toAdd = source.map(value => clone(value));
+        res.length = toAdd.length;
+        for (let i = 0, l = toAdd.length; i < l; i++) {
+            res[i] = toAdd[i];
+        }
+
+        res = observable(res);
+
+        if ((source as any).$entity) {
+            (res as any).$entity = (source as any).$entity;
+        }
+        if ((source as any).set) {
+            (res as any).set = (source as any).set;
+        }
+
+        return res;
+    } else if (isObservableObject(source)) {
+        const res: any = {};
+        for (let key in source) {
+            if (key === "$entity") {
+                res[key] = asReference(source[key]);
+            } else {
+                res[key] = clone(source[key]);
+            }
+        }
+        return observable(res);
+    }
+
+    return source;
 }

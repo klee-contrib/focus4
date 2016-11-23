@@ -150,6 +150,7 @@ function clearEntity(entity: EntityStoreItem) {
  * Met à plat un noeud de store pour récupèrer sa valeur "brute".
  * @param entityStoreItem Le noeud de store à mettre à plat.
  */
+export function toFlatValues(entityStoreItem: StoreNode<{}>): {}
 export function toFlatValues(entityStoreItem: EntityStoreItem): {} {
     if (isStoreListNode(entityStoreItem)) {
         return entityStoreItem.map(toFlatValues);
