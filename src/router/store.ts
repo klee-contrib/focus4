@@ -10,7 +10,7 @@ export class ViewStore<V, N extends string> {
     /** Représente l'état courant de l'URL. */
     @observable currentView: V;
 
-    readonly paramNames: string[];
+    readonly paramNames: (keyof V)[];
     readonly prefix?: N;
 
     /**
@@ -19,7 +19,7 @@ export class ViewStore<V, N extends string> {
      * @param prefix Le préfixe éventuel des URLs de ce ViewStore (obligatoire pour avoir plusieurs stores).
      */
     constructor(paramNames: V, prefix?: N) {
-        this.paramNames = Object.keys(paramNames);
+        this.paramNames = Object.keys(paramNames) as (keyof V)[];
         this.prefix = prefix;
         this.currentView = mapValues(paramNames, () => undefined);
     }
@@ -27,11 +27,31 @@ export class ViewStore<V, N extends string> {
     /** Calcule l'URL en fonction de l'état courant. */
     @computed
     get currentPath() {
-        const url = `${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => (this.currentView as any)[p]).join("/")}`.replace(/\/+$/, "");
+        const url = this.getUrlFromView(this.currentView);
         if (url.includes("//")) {
             throw new Error("La vue courante n'est pas convertible en une URL car des paramètres sont manquants. Par exemple, pour l'URL '/:param1/:param2', si 'param2' est spécifié alors 'param1' doit l'être aussi.");
         }
         return url;
+    }
+
+    /**
+     * Récupère l'URL pour la vue donnée.
+     * @param view La vue à récupérer.
+     */
+    getUrl(view: V) {
+        return this.getUrlFromView(view);
+    }
+
+    /**
+     * Met à jour la vue courante avec les paramètres donnés.
+     * Utile pour mettre à jour plusieurs paramètres à la fois.
+     * @param view Les paramètres.
+     */
+    @action
+    setView(view: V) {
+        for (const param in view) {
+            this.currentView[param] = view[param];
+        }
     }
 
     /**
@@ -43,8 +63,12 @@ export class ViewStore<V, N extends string> {
     updateView(prefix?: string, params: string[] = []) {
         if (prefix === this.prefix) {
             for (let i = 0; i < this.paramNames.length; i++) {
-                (this.currentView as any)[this.paramNames[i]] = params[i];
+                this.currentView[this.paramNames[i]] = params[i] as any;
             }
         }
+    }
+
+    private getUrlFromView(view: V) {
+        return `${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => view[p]).join("/")}`.replace(/\/+$/, "");
     }
 }

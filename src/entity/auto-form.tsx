@@ -139,7 +139,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     async delete() {
         if (this.services.delete) {
             this.isLoading = true;
-            await this.services.delete(toFlatValues(this.entity as any));
+            await this.services.delete(toFlatValues(this.entity));
             messageStore.addSuccessMessage("detail.deleted");
             runInAction(() => {
                 this.isLoading = false;
@@ -156,7 +156,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         if (this.validate()) {
             this.isLoading = true;
             try {
-                const data = await this.services.save(toFlatValues(this.entity as any));
+                const data = await this.services.save(toFlatValues(this.entity));
                 messageStore.addSuccessMessage("detail.saved");
                 runInAction(() => {
                     this.isLoading = false;
