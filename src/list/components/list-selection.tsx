@@ -67,7 +67,7 @@ export class ListSelection<T, P extends LineSelectionProps<T>> extends ListBase<
 
     getSelectedItems() {
         const selectedItems: {}[] = [];
-        this.items.forEach((item, key) => {
+        this.items.forEach(item => {
             if (item.selected) {
                 selectedItems.push(item.item);
             }

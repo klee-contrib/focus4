@@ -26,11 +26,11 @@ export type EntityStoreItem = EntityStoreNode | StoreListNode<EntityStoreNode>;
 
 export type EntityMapping<T> = {
     [P in keyof T]?: string;
-}
+};
 
 export type AsStoreListNode<T> = {
     [P in keyof T]: StoreListNode<T[P]>;
-}
+};
 
 interface EntityStoreConfig {
     [key: string]: EntityStoreItem;
@@ -47,7 +47,7 @@ type EntityStore = EntityStoreConfig & StoreNode<{}>;
  * @param entityMapping Un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
  */
 export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[key: string]: any}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {}): T1 & AsStoreListNode<T2> & StoreNode<{}> {
-    const config = Object.assign({}, mapValues(simpleNodes, n => ({})), mapValues(listNodes, n => [])) as EntityStoreConfig;
+    const config = Object.assign({}, mapValues(simpleNodes, _ => ({})), mapValues(listNodes, _ => [])) as EntityStoreConfig;
 
     const entityMap = entityList.reduce((entities, entity) => {
         entities[entity.name] = entity;
@@ -112,7 +112,7 @@ function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStoreConfig
 
 function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, entityMap: {[name: string]: Entity}, entityMapping: EntityMapping<T>, entityValue: any, entry: string) {
     if (isArray(entityValue) && isStoreListNode(entity)) {
-        entity.replace(entityValue.map((item: {}) => buildEntityEntry({[entry]: {}} as EntityStoreConfig, {...entityMap, [entry]: entity.$entity}, entityMapping, entry) as EntityStoreNode));
+        entity.replace(entityValue.map((_: {}) => buildEntityEntry({[entry]: {}} as EntityStoreConfig, {...entityMap, [entry]: entity.$entity}, entityMapping, entry) as EntityStoreNode));
         for (let i = 0; i < entityValue.length; i++) {
             setEntityEntry(entity[i], entityMap, entityMapping, entityValue[i], entity.$entity.name);
         }
@@ -150,7 +150,7 @@ function clearEntity(entity: EntityStoreItem) {
  * Met à plat un noeud de store pour récupèrer sa valeur "brute".
  * @param entityStoreItem Le noeud de store à mettre à plat.
  */
-export function toFlatValues(entityStoreItem: StoreNode<{}>): {}
+export function toFlatValues(entityStoreItem: StoreNode<{}>): {};
 export function toFlatValues(entityStoreItem: EntityStoreItem): {} {
     if (isStoreListNode(entityStoreItem)) {
         return entityStoreItem.map(toFlatValues);

@@ -28,7 +28,6 @@ export interface LayoutProps {
     LoadingBar?: ReactComponent<any>;
     MenuLeft?: ReactComponent<any>;
     MessageCenter?: ReactComponent<any>;
-    LoadingStatusBar?: ReactComponent<any>;
     DevTools?: ReactComponent<any>;
     OtherRootComponent?: ReactComponent<any>;
 }
@@ -42,7 +41,6 @@ const LayoutBase = injectStyle("layout", ({
     LoadingBar,
     MenuLeft,
     MessageCenter = DefaultMessageCenter,
-    LoadingStatusBar,
     DevTools,
     OtherRootComponent
 }: LayoutProps) => (

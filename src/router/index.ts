@@ -16,7 +16,7 @@ export function startRouter<Store extends ViewStore<any, any>>(config: RouterCon
         throw new Error("Au moins un store doit être spécifié.");
     }
 
-    const storeActivity = observable(stores.map(store => false));
+    const storeActivity = observable(stores.map(_ => false));
     let routingEnabled = true;
 
     function updateActivity(i: number) {
@@ -47,7 +47,7 @@ export function startRouter<Store extends ViewStore<any, any>>(config: RouterCon
     }
 
     new Router(stores.reduce((routes, store, i) => {
-        routes[`/?${store.prefix ? `${store.prefix}/?` : ""}${store.paramNames.map(p => `([^\/]*)?`).join("/?")}`] = (...params: string[]) => {
+        routes[`/?${store.prefix ? `${store.prefix}/?` : ""}${store.paramNames.map(_ => `([^\/]*)?`).join("/?")}`] = (...params: string[]) => {
             applicationStore.route = store.prefix;
             updateActivity(i);
             store.updateView(store.prefix, params);

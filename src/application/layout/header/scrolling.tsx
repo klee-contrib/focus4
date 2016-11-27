@@ -33,10 +33,6 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         return {left: nodeRect.left + x, top: nodeRect.top + y};
     }
 
-    isAtPageBottom(domNode: Element) {
-        return this.scrollPosition().top >= this.getScrollingElement().scrollHeight - window.innerHeight;
-    }
-
     getScrollingElement() {
         if (document.scrollingElement) {
             return document.scrollingElement;
@@ -46,7 +42,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         return document.querySelector("body")!;
     }
 
-    scrollTo(element: Element, to: number, duration = 500) {
+    scrollTo(element: Element, to: number) {
         if (element === undefined) {
             window.scrollTo(0, to);
             return;
@@ -79,7 +75,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         }
     }
 
-    handleScroll(event?: Event, canDeploy?: boolean) {
+    handleScroll(_?: Event, canDeploy?: boolean) {
         if (this.isDeployed) {
             this.deployThreshold = this.header ? this.header.clientHeight - 60 : 1000;
             this.placeholderHeight = this.header ? this.header.clientHeight : 1000;

@@ -59,8 +59,8 @@ export function renderLineActions({classNames, data, operationList}: LineProps<a
  * @param selectionnableInitializer Définit si la ligne est sélectionnable à l'initialisation.
  */
 export function lineSelection<P extends LineSelectionProps<E>, E>(
-    selectedInitializer = (data?: E) => false,
-    selectionnableInitializer = (data?: E) => true
+    selectedInitializer: (data?: E) => boolean = () => false,
+    selectionnableInitializer: (data?: E) => boolean = () => true
 ): (Component: ReactComponent<P>) => React.ComponentClass<P> {
     return (Component: ReactComponent<P>) => injectStyle("line", class extends React.Component<P, void> {
         private isSelectionnable: boolean;

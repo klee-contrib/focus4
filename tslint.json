@@ -24,24 +24,17 @@
             "variables-before-functions"
         ],
         "no-arg": true,
-        "no-consecutive-blank-lines": true,
+        "no-consecutive-blank-lines": [true],
         "no-construct": true,
-        "no-constructor-vars": true,
         "no-debugger": true,
-        "no-duplicate-key": true,
         "no-duplicate-variable": true,
         "no-empty": true,
         "no-eval": true,
-        "no-inferrable-types": true,
+        "no-inferrable-types": [true],
         "no-internal-module": true,
         "no-shadowed-variable": true,
         "no-trailing-whitespace": true,
-        "no-unreachable": true,
         "no-unused-expression": true,
-        "no-unused-variable": [
-            "check-parameters",
-            "react"
-        ],
         "no-use-before-declare": true,
         "no-var-keyword": true,
         "no-var-requires": true,
@@ -71,10 +64,6 @@
                 "property-declaration": "nospace",
                 "variable-declaration": "nospace"
             }
-        ],
-        "use-strict": [
-            "check-function",
-            "check-module"
         ],
         "variable-name": [
             true,

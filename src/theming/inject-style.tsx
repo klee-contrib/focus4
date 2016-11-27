@@ -4,14 +4,14 @@ import * as React from "react";
  * Décorateur qui fusionnne le contenu de `this.props.classNames` avec celui du `classContainerName` passé en props d'un StyleProvider parent.
  * @param classContainerName Le nom du conteneur de classes CSS.
  */
-export function injectStyle<P extends {classNames?: {[key: string]: any}}>(classContainerName: string): (Component: React.ComponentClass<P>) => void
+export function injectStyle<P extends {classNames?: {[key: string]: any}}>(classContainerName: string): (Component: React.ComponentClass<P>) => void;
 
 /**
  * Fusionnne le contenu de `props.classNames` avec celui du `classContainerName` passé en props d'un StyleProvider parent.
  * @param classContainerName Le nom du conteneur de classes CSS.
  * @param Component Le composant cible.
  */
-export function injectStyle<P extends {classNames?: {[key: string]: any}}>(classContainerName: string, Component: ReactComponent<P>): React.ComponentClass<P>
+export function injectStyle<P extends {classNames?: {[key: string]: any}}>(classContainerName: string, Component: ReactComponent<P>): React.ComponentClass<P>;
 export function injectStyle<P extends {classNames?: {[key: string]: any}}>(classContainerName: string, Component?: ReactComponent<P>): any {
     function makeInjectedComponent(Comp: ReactComponent<P>) {
         class StyleInjector extends React.Component<P, void> {

@@ -14,7 +14,9 @@
         "strictNullChecks": true,
         "experimentalDecorators": true,
         "noFallthroughCasesInSwitch": true,
-        "inlineSourceMap": true
+        "inlineSourceMap": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     },
     "exclude": [
         "dist",

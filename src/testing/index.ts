@@ -16,14 +16,14 @@ export const dum = {
     array: [],
     boolean: true,
     component: class extends Component<any, any> { render() { return null; }} as ComponentClass<any>,
-    function: (...args: any[]) => null as any,
+    function: (..._: any[]) => null as any,
     number: 1,
     string: "yolo"
 };
 
 export const dumClass = {
-    ListStore: new ListStore((data: any) => Promise.resolve({dataList: [], totalCount: 0})),
-    SearchStore: new SearchStore({scoped: (data: any) => Promise.resolve({}), unscoped: (data: any) => Promise.resolve({})})
+    ListStore: new ListStore((_: any) => Promise.resolve({dataList: [], totalCount: 0})),
+    SearchStore: new SearchStore({scoped: (_: any) => Promise.resolve({}), unscoped: (_: any) => Promise.resolve({})})
 };
 
 export function test(name: string, Element: ReactElement<any>) {

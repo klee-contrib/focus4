@@ -29,10 +29,6 @@ interface ThisRoutes {
     [key: string]: any;
 }
 
-interface Params {
-    [key: string]: (param: string) => string;
-}
-
 interface ThisArray extends Array<any> {
     after?: any[];
     matched?: boolean;
@@ -237,7 +233,7 @@ export class Router {
         return pathname;
     }
 
-    private dispatch(method: "on", path: string, callback?: Function) {
+    private dispatch(method: "on", path: string) {
         let fns = this.traverse(method, path.replace(QUERY_SEPARATOR, ""), this.routes, "");
         let invoked = this._invoked;
         this._invoked = true;
@@ -247,7 +243,7 @@ export class Router {
                 this.invoke([this.notfound], {
                     method: method,
                     path: path
-                }, callback);
+                });
             }
             return false;
         }
@@ -256,7 +252,7 @@ export class Router {
         }
         const updateAndInvoke = () => {
             this.last = (fns as ThisArray).after!;
-            this.invoke(this.runlist((fns as ThisArray)), this, callback);
+            this.invoke(this.runlist((fns as ThisArray)), this);
         };
         const after = this.every && this.every.after ? [this.every.after].concat(this.last) : [this.last];
         if (after && after.length > 0 && invoked) {
@@ -354,7 +350,7 @@ export class Router {
         return false;
     }
 
-    private invoke(fns: ThisArray, thisArg: any, callback?: Function) {
+    private invoke(fns: ThisArray, thisArg: any) {
         let apply: (d: any) => boolean;
         apply = (fn: any) => {
             if (Array.isArray(fn)) {

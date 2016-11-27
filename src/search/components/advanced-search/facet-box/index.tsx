@@ -30,7 +30,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     @observable private openedFacetList = this.generateOpenedFacetList(this.props.openedFacetList, this.props.store.facets);
 
     componentWillReceiveProps({store, openedFacetList}: FacetBoxProps) {
-        this.openedFacetList = this.generateOpenedFacetList(this.props.openedFacetList, this.props.store.facets);
+        this.openedFacetList = this.generateOpenedFacetList(openedFacetList, store.facets);
     }
 
     private generateOpenedFacetList(openedFacetList: {[facet: string]: boolean}, facetList: StoreFacet[]) {

@@ -16,7 +16,7 @@ function cacheData(key: string, value: {}[]) {
 
 export type AsList<T> = {
     [P in keyof T]: IObservableArray<T[P]>
-}
+};
 
 /**
  * Construit un store de référence à partir de la config donnée.

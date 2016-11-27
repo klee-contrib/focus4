@@ -59,7 +59,7 @@ function getImport(comp: TestedComponent) {
     return `import ${comp.importName || comp.name} from "..${fileName.substring(srcIndex + appRoot.length)}";`;
 }
 
-glob(`${appRoot}/**/*.tsx`, (error, fileNames) => {
+glob(`${appRoot}/**/*.tsx`, (_, fileNames) => {
     const program = ts.createProgram(fileNames, {target: ts.ScriptTarget.ES5, module: ts.ModuleKind.CommonJS});
     const checker = program.getTypeChecker();
 
