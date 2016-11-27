@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as glob from "glob";
-import {upperFirst, camelCase} from "lodash";
+import {camelCase, upperFirst} from "lodash";
 import * as ts from "typescript";
 
 const appRoot = process.argv[2] || "src";
@@ -11,9 +11,10 @@ const imports =
     Ce fichier à été généré automatiquement.
     Toute modification sera perdue.
 */
+/* tslint:disable */
 
-import {test, dum, dumClass} from "${testingRoot}/testing";
-import * as React from "react";`;
+import * as React from "react";
+import {dum, dumClass, test} from "${testingRoot}/testing";`;
 
 interface NamedComponent {
     fileName: string;

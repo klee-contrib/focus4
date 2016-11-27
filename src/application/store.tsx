@@ -1,4 +1,4 @@
-import {observable, action, asFlat} from "mobx";
+import {action, asFlat, observable} from "mobx";
 import * as React from "react";
 
 export type Mode = "consult" | "edit";

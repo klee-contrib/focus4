@@ -1,4 +1,4 @@
-import {autorun, action, observable, asReference, isObservableObject, isObservableArray} from "mobx";
+import {action, asReference, autorun, isObservableArray, isObservableObject, observable} from "mobx";
 
 import {StoreNode, toFlatValues} from "./store";
 

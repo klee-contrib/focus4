@@ -1,4 +1,4 @@
-import {observable, action, untracked, IObservableArray} from "mobx";
+import {action, IObservableArray, observable, untracked} from "mobx";
 
 export type ReferenceConfig = {[key: string]: {}};
 export type ServiceFactory = (refName: string) => () => Promise<{}[]>;

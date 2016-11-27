@@ -55,11 +55,11 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
         const {store, onSearchCriteriaChange} = this.props;
 
         store.setProperties({
+            groupingKey: undefined,
             scope,
             selectedFacets: {},
-            groupingKey: undefined,
-            sortBy: undefined,
-            sortAsc: true
+            sortAsc: true,
+            sortBy: undefined
         });
 
         if (onSearchCriteriaChange) {

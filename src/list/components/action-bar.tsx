@@ -80,8 +80,8 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                 });
                 return operationList;
             }, [] as DropdownItem[]).concat([{
-                label: i18n.t("list.actionBar.ungroup"),
-                action: () => groupAction()
+                action: () => groupAction(),
+                label: i18n.t("list.actionBar.ungroup")
             }]);
 
             return <Dropdown button={{icon: "folder_open"}} operations={groupOperationList} />;

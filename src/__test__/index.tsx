@@ -2,6 +2,7 @@
     Ce fichier à été généré automatiquement.
     Toute modification sera perdue.
 */
+/* tslint:disable */
 
 import {test, dum, dumClass} from "../testing";
 import * as React from "react";

@@ -4,8 +4,8 @@
 (global as any)["Element"] = {prototype: {}};
 
 import "ignore-styles";
-import {createRenderer} from "react-addons-test-utils";
 import {Component, ComponentClass, ReactElement} from "react";
+import {createRenderer} from "react-addons-test-utils";
 import * as tape from "tape";
 
 import {ListStore} from "../list";

@@ -1,8 +1,9 @@
 import fetch from "isomorphic-fetch";
 import {v4} from "uuid";
 
-import {manageResponseErrors, ManagedErrorResponse} from "./error-parsing";
 import {messageStore} from "../message";
+
+import {ManagedErrorResponse, manageResponseErrors} from "./error-parsing";
 import {requestStore} from "./store";
 
 type DataType = "json" | "string";

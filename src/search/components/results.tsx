@@ -1,14 +1,14 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
-import {omit, isArray, isEmpty} from "lodash";
+import {isArray, isEmpty, omit} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ListSelection, OperationListItem} from "../../list";
 
-import {Results as ResultsType} from "../types";
 import {SearchStore} from "../store";
-import {GroupWrapper, GroupComponent} from "./group-wrapper";
+import {Results as ResultsType} from "../types";
+import {GroupComponent, GroupWrapper} from "./group-wrapper";
 
 function DefaultEmpty() {
     return (

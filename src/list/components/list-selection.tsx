@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
-import {observable, asMap, isObservableArray} from "mobx";
+import {asMap, isObservableArray, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 

@@ -28,21 +28,21 @@ export interface ManagedErrorResponse {
 type ErrorType = "error" | "warning" | "success";
 
 const globalErrorTypes: {[key: string]: ErrorType} = {
-    globalErrors: "error",
-    globalSuccess: "success",
-    globalWarnings: "warning",
-    globalInfos: "error",
+    errors: "error",
     globalErrorMessages: "error",
+    globalErrors: "error",
+    globalInfoMessages: "error",
+    globalInfos: "error",
+    globalSuccess: "success",
     globalSuccessMessages: "success",
     globalWarningMessages: "warning",
-    globalInfoMessages: "error",
-    errors: "error",
+    globalWarnings: "warning"
 };
 
 const errorTypes = {
-    entity: "entity",
     collection: "collection",
-    composite: "composite"
+    composite: "composite",
+    entity: "entity"
 };
 
 function dispatchMessages(messages: string[], type: ErrorType) {
@@ -71,7 +71,7 @@ function treatGlobalErrors(response: ErrorResponse) {
 
 export function manageResponseErrors(response: ErrorResponse): ManagedErrorResponse {
     return {
-        globals: treatGlobalErrors(response),
-        fields: treatFieldErrors(response)
+        fields: treatFieldErrors(response),
+        globals: treatGlobalErrors(response)
     };
 }

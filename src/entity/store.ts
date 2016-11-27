@@ -1,5 +1,5 @@
 import {isArray, isObject, isUndefined, mapValues, omitBy} from "lodash";
-import {asReference, isObservableArray, observable, IObservableArray, action, isAction} from "mobx";
+import {action, asReference, IObservableArray, isAction, isObservableArray, observable} from "mobx";
 
 import {Entity, EntityField, EntityList} from "./types";
 

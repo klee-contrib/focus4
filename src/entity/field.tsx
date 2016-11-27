@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
-import {omit, find, result, isFunction} from "lodash";
+import {find, isFunction, omit, result} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -113,7 +113,7 @@ export class Field extends React.Component<FieldProps, void> {
         }
 
         if (validator && value !== undefined && value !== null) {
-            let validStat = validate({value: value, name: i18n.t(label)}, validator);
+            let validStat = validate({value, name: i18n.t(label)}, validator);
             if (validStat.errors.length) {
                 return i18n.t(validStat.errors.join(", "));
             }

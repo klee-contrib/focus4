@@ -1,5 +1,5 @@
 import {mapValues} from "lodash";
-import {observable, computed, action} from "mobx";
+import {action, computed, observable} from "mobx";
 
 /**
  * Le ViewStore est une classe servant d'intermédiaire entre le routeur et le reste de l'application.

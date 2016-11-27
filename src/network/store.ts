@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import {computed, map, action, ObservableMap} from "mobx";
+import {action, computed, map, ObservableMap} from "mobx";
 import {v4} from "uuid";
 
 export {ObservableMap};
@@ -19,9 +19,9 @@ export class RequestStore {
     @computed
     get count() {
         return {
+            error: this.error.size,
             pending: this.pending.size,
             success: this.success.size,
-            error: this.error.size,
             total: this.pending.size + this.success.size + this.error.size
         };
     }

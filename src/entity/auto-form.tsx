@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {isEmpty} from "lodash";
-import {observable, action, runInAction} from "mobx";
+import {action, observable, runInAction} from "mobx";
 import * as React from "react";
 
 import {PanelButtonsProps} from "focus-components/panel";
@@ -15,20 +15,20 @@ import {EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
 
 import {
+    autocompleteSelectFor,
     AutocompleteSelectOptions,
+    autocompleteTextFor,
     AutocompleteTextOptions,
     BaseOptions,
-    FieldOptions,
-    SelectOptions,
-    TextOptions,
-    autocompleteSelectFor,
-    autocompleteTextFor,
     displayFor,
     fieldFor,
     fieldForWith,
+    FieldOptions,
     selectFor,
+    SelectOptions,
     stringFor,
-    textFor
+    textFor,
+    TextOptions
 } from "./field-helpers";
 
 import {form} from "./style/auto-form.css";
@@ -206,8 +206,8 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         return {
             editing: this.isEdit,
             getUserInput: () => ({}), // Pas besoin de passer l'input il est déjà dans le state du formulaire.
+            save: this.save,
             toggleEdit: this.toggleEdit,
-            save: this.save
         };
     }
 

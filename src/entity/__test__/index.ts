@@ -1,7 +1,9 @@
-import {isObservableArray, isObservable} from "mobx";
+/* tslint:disable */
+
+import {isObservable, isObservableArray} from "mobx";
 import test = require("tape");
 
-import {makeEntityStore, toFlatValues, createViewModel} from "../";
+import {createViewModel, makeEntityStore, toFlatValues} from "../";
 import {LigneEntity} from "./ligne";
 import {OperationEntity, OperationNode} from "./operation";
 import {ProjetEntity, ProjetNode} from "./projet";

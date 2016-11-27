@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import {observable, action, computed} from "mobx";
+import {action, computed, observable} from "mobx";
 
 export interface ListServiceParams {
     criteria?: {};
@@ -45,12 +45,12 @@ export class ListStore<T> {
     async load(isScroll: boolean) {
         this.pendingCount++;
         const response = await this.service({
-            top: this.nbElement,
-            skip: isScroll && this.dataList.length < this.totalCount ? this.dataList.length : 0,
-            sortFieldName: this.sortBy,
-            sortDesc: this.sortAsc === undefined ? false : !this.sortAsc,
             criteria: this.criteria,
-            group: this.groupingKey || ""
+            group: this.groupingKey || "",
+            skip: isScroll && this.dataList.length < this.totalCount ? this.dataList.length : 0,
+            sortDesc: this.sortAsc === undefined ? false : !this.sortAsc,
+            sortFieldName: this.sortBy,
+            top: this.nbElement
         });
         this.pendingCount--;
 

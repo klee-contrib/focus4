@@ -1,10 +1,15 @@
 {
     "rules": {
+        "adjacent-overload-signatures": true,
         "align": [
             "arguments",
             "parameters",
             "statements"
         ],
+        "array-type": [
+            "array"
+        ],
+        "arrow-parens": false,
         "ban": true,
         "curly": true,
         "class-name": true,
@@ -17,27 +22,58 @@
             true,
             "spaces"
         ],
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
         "jsdoc-format": true,
+        "linebreak-style": [
+            true,
+            "CRLF"
+        ],
         "member-ordering": [
             "public-before-private",
             "static-before-instance",
             "variables-before-functions"
         ],
+        "new-parens": true,
+        "no-angle-bracket-type-assertion": true,
         "no-arg": true,
         "no-consecutive-blank-lines": [true],
+        "no-console": [
+            true,
+            "log"
+        ],
         "no-construct": true,
         "no-debugger": true,
+        "no-default-export": true,
         "no-duplicate-variable": true,
         "no-empty": true,
         "no-eval": true,
         "no-inferrable-types": [true],
         "no-internal-module": true,
+        "no-mergeable-namespace": true,
+        "no-namespace": true,
+        "no-parameter-properties": true,
+        "no-require-imports": true,
         "no-shadowed-variable": true,
         "no-trailing-whitespace": true,
+
+        "no-unsafe-finally": true,
         "no-unused-expression": true,
+        "no-unused-new": true,
         "no-use-before-declare": true,
         "no-var-keyword": true,
         "no-var-requires": true,
+        "object-literal-key-quotes": [
+            true,
+            "as-needed"
+        ],
+        "object-literal-shorthand": true,
+        "object-literal-sort-keys": true,
+        "ordered-imports": [
+            true
+        ],
         "one-line": [
             true,
             "check-open-brace",
@@ -46,6 +82,10 @@
             "check-else",
             "check-finally"
         ],
+        "one-variable-per-declaration": [
+            true,
+            "ignore-for-loop"
+        ],
         "quotemark": [
             true,
             "double"
@@ -53,6 +93,9 @@
         "semicolon": [
             true,
             "always"
+        ],
+        "trailing-comma": [
+            false
         ],
         "triple-equals": true,
         "typedef-whitespace": [
@@ -65,6 +108,7 @@
                 "variable-declaration": "nospace"
             }
         ],
+        "use-isnan": true,
         "variable-name": [
             true,
             "ban-keywords"

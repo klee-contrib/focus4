@@ -1,8 +1,8 @@
 import {autobind} from "core-decorators";
 import {isArray} from "lodash";
-import {observable, action, computed} from "mobx";
+import {action, computed, observable} from "mobx";
 
-import {Results, StoreFacet, QueryInput, QueryOutput, UnscopedQueryOutput, OutputFacet} from "./types";
+import {OutputFacet, QueryInput, QueryOutput, Results, StoreFacet, UnscopedQueryOutput} from "./types";
 
 export interface SearchActionService {
     scoped: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
@@ -51,11 +51,11 @@ export class SearchStore {
 
         const data = {
             ...buildPagination({results, totalCount, isScroll, nbSearchElement}),
-            sortFieldName: sortBy,
-            sortDesc: sortAsc === undefined ? false : !sortAsc,
             criteria: {query, scope},
             facets: selectedFacets || {},
-            group: groupingKey || ""
+            group: groupingKey || "",
+            sortDesc: sortAsc === undefined ? false : !sortAsc,
+            sortFieldName: sortBy
         };
 
         let response: {facets: StoreFacet[], results: Results<{}>, totalCount: number};
@@ -98,8 +98,8 @@ function buildPagination(opts: {results: Results<{}>, totalCount: number, isScro
         const key = resultsKeys[0];
         const previousRes = opts.results[key];
         return {
-            top: opts.nbSearchElement || 0,
-            skip: previousRes.length
+            skip: previousRes.length,
+            top: opts.nbSearchElement || 0
         };
     } else {
         return {
@@ -125,8 +125,8 @@ function scopedResponse<T>(data: QueryOutput<T>, context: {results: Results<T>, 
         data.list = [...context.results[key], ...(data.list ? data.list : [])];
     }
     return ({
-        results: data.groups || {[context.scope]: data.list || []},
         facets: parseFacets(data.facets),
+        results: data.groups || {[context.scope]: data.list || []},
         totalCount: data.totalCount
     });
 }
@@ -134,8 +134,8 @@ function scopedResponse<T>(data: QueryOutput<T>, context: {results: Results<T>, 
 function unscopedResponse(data: UnscopedQueryOutput) {
     // Results are always stored as an array.
     return ({
-        results: data.groups,
         facets: parseFacets(data.facets),
+        results: data.groups,
         totalCount: data.totalCount
     });
 }

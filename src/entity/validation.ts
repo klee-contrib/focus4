@@ -183,9 +183,9 @@ export function validate(property: ValidationProperty, validators?: Validator[])
     }
 
     return {
-        name: property.name,
-        value: property.value,
+        errors,
         isValid: 0 === errors.length,
-        errors
+        name: property.name,
+        value: property.value
     };
 }

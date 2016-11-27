@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
-import {reduce, omit} from "lodash";
+import {omit, reduce} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -54,8 +54,8 @@ export class SearchActionBar extends React.Component<Props, void> {
 
     private orderAction(key: string, order: boolean) {
         this.props.store.setProperties({
-            sortBy: key,
-            sortAsc: order
+            sortAsc: order,
+            sortBy: key
         });
     }
 

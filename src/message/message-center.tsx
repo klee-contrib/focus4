@@ -6,7 +6,7 @@ import * as React from "react";
 
 import {injectStyle} from "../theming";
 
-import {messageStore, Message} from "./store";
+import {Message, messageStore} from "./store";
 
 import * as styles from "./style/message-center.css";
 export type MessageCenterStyle = Partial<typeof styles>;

@@ -1,4 +1,4 @@
-import {isArray, intersection} from "lodash";
+import {intersection, isArray} from "lodash";
 import {observable} from "mobx";
 
 export interface Login {

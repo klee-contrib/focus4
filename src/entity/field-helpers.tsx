@@ -1,4 +1,4 @@
-import {find, result, omit} from "lodash";
+import {find, omit, result} from "lodash";
 import * as React from "react";
 
 import AutocompleteSelect, {AutoCompleteResult} from "focus-components/autocomplete-select";
@@ -6,7 +6,7 @@ import AutocompleteText from "focus-components/autocomplete-text/field";
 import Select from "focus-components/select";
 
 import {EntityField} from "../entity";
-import {CommonListProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList, LineProps, LineSelectionProps} from "../list";
+import {CommonListProps, LineProps, LineSelectionProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList} from "../list";
 
 import {Field, FieldProps} from "./field";
 
@@ -139,8 +139,8 @@ export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComp
     return MemoryList.create({
         data: options.data,
         ListComponent,
-        perPage: options.perPage,
-        listProps: omit(options, "data", "perPage")
+        listProps: omit(options, "data", "perPage"),
+        perPage: options.perPage
     });
 }
 
@@ -191,14 +191,14 @@ export function buildFieldProps<T>(field: EntityField<T>, options: FieldProps = 
     const dom = domain || {};
 
     const props = {
-        ref: translationKey,
         domain,
-        hasLabel,
-        label: translationKey,
-        isRequired,
-        name,
-        value,
         formatter: dom.formatter || (x => x),
+        hasLabel,
+        isRequired,
+        label: translationKey,
+        name,
+        ref: translationKey,
+        value,
         unformatter: dom.unformatter || (x => x)
     };
 

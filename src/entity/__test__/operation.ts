@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 import {EntityField, StoreNode} from "../";
 import {Structure, StructureNode} from "./structure";
 

@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {forEach} from "lodash";
-import {observable, computed, reaction} from "mobx";
+import {computed, observable, reaction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -11,10 +11,10 @@ import {injectStyle} from "../../../theming";
 
 import {SearchStore} from "../../store";
 import {Results} from "../results";
-import {SearchActionBar} from "./search-action-bar";
 import {FacetBox, FacetBoxStyle, FacetStyle} from "./facet-box";
 import {GroupComponent, GroupComponentStyle} from "./group-component";
 import {ListSummary, ListSummaryStyle} from "./list-summary";
+import {SearchActionBar} from "./search-action-bar";
 export {FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle};
 
 import * as styles from "./style/index.css";
@@ -53,8 +53,8 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         hasBackToTop: true,
         isSelection: true,
         lineOperationList: [],
-        orderableColumnList: [],
         openedFacetList: {},
+        orderableColumnList: [],
         scopesConfig: {}
     };
 

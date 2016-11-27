@@ -1,4 +1,4 @@
-import {reaction, observable, runInAction, asReference} from "mobx";
+import {asReference, observable, reaction, runInAction} from "mobx";
 
 import {Router, RouterConfig} from "./director";
 import {ViewStore} from "./store";

@@ -241,8 +241,8 @@ export class Router {
             this.last = [];
             if (typeof this.notfound === "function") {
                 this.invoke([this.notfound], {
-                    method: method,
-                    path: path
+                    method,
+                    path
                 });
             }
             return false;
@@ -404,7 +404,9 @@ function regifyString(str: string) {
 }
 
 function terminator(routes: string[], delimiter: string, start = "(", stop = ")") {
-    let last = 0, left = 0, right = 0;
+    let last = 0;
+    let left = 0;
+    let right = 0;
     for (let i = 0; i < routes.length; i++) {
         let chunk = routes[i];
         if (chunk.indexOf(start, last) > chunk.indexOf(stop, last) || ~chunk.indexOf(start, last) && !~chunk.indexOf(stop, last) || !~chunk.indexOf(start, last) && ~chunk.indexOf(stop, last)) {

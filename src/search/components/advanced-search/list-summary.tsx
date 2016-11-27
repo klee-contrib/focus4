@@ -25,15 +25,15 @@ export interface ListSummaryProps {
 @observer
 export class ListSummary extends React.Component<ListSummaryProps, void> {
     static defaultProps = {
-        totalCount: 0,
-        query: ""
+        query: "",
+        totalCount: 0
     };
 
     private onScopeClick() {
         this.props.store.setProperties({
+            groupingKey: undefined,
             scope: "ALL",
-            selectedFacets: {},
-            groupingKey: undefined
+            selectedFacets: {}
         });
     }
 

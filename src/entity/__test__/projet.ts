@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 import {EntityField, EntityList, StoreListNode, StoreNode} from "../";
 import {Ligne, LigneNode} from "./ligne";
 
