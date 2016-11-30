@@ -9,7 +9,7 @@ import * as React from "react"; export {React};
 
 export {applicationStore} from "./application";
 export {AutoForm, displayFor, fieldFor, listFor, selectFor} from "./entity";
-export {connectToListStore, renderLineActions} from "./list";
+export {connectToListStore, LineProps, renderLineActions} from "./list";
 export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";

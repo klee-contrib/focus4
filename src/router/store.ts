@@ -48,9 +48,9 @@ export class ViewStore<V, N extends string> {
      * @param view Les paramètres.
      */
     @action
-    setView(view: V) {
+    setView(view: Partial<V>) {
         for (const param in view) {
-            this.currentView[param] = view[param];
+            this.currentView[param] = view[param]!;
         }
     }
 
