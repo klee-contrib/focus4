@@ -1,3 +1,5 @@
+### Puisque un exemple parle souvent mieux que des mots dans le vent, le [starter kit](http://www.github.com/JabX/autofocus-starter-kit) fait également office de démo et présente les usages les plus simples d'`autofocus`.
+
 # Référence d'API
 ## [Module `application`](application)
 ## [Module `entity`](entity)
@@ -7,9 +9,9 @@
 
 ## Module `reference`
 ### `ReferenceStore`
-Un `referenceStore` d'autofocus est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
+Un `ReferenceStore` d'autofocus est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
 * `serviceFactory` est une fonction qui prend en paramètre un nom de référence et renvoie un service (sans paramètre) permettant de récupérer la liste de référence (qui renvoie donc une Promise)
-* `refConfig` est un objet dont les propriétés seront les listes de références à charger. Pour typer le store de référence, il suffit de typer ces propriétés avec le type correspondant :
+* `refConfig` est un objet dont les propriétés seront les noms des listes de références à charger. Pour typer le store de référence, il suffit de typer ces propriétés avec le type correspondant :
 
 ```ts
 const referenceStore = makeReferenceStore(serviceFactory, {
@@ -18,7 +20,7 @@ const referenceStore = makeReferenceStore(serviceFactory, {
 });
 ```
 
-Le `referenceStore` résultant peut êtere utilisé tel quel dans un `observer`: lorsqu'on veut récupérer une liste de références, le store regarde dans le cache et renvoie la valeur s'il la trouve. Sinon, il lance le service de chargement qui mettra à jour le cache et renvoie une liste vide. Une fois la liste chargée, l'observable sera modifiée et les composants mis à jour automatiquement.
+Le `referenceStore` résultant peut êtere utilisé tel quel dans un composant `observer`: lorsqu'on veut récupérer une liste de références, le store regarde dans le cache et renvoie la valeur s'il la trouve. Sinon, il lance le service de chargement qui mettra à jour le cache et renvoie une liste vide. Une fois la liste chargée, l'observable sera modifiée et les composants mis à jour automatiquement.
 
 Exemple d'usage :
 
@@ -45,7 +47,7 @@ Les fois suivantes (dans la mesure que les listes sont toujours en cache), il n'
 
 Et voilà, ça marche tout seul.
 
-(Note: Du coup, tout ce qui avait attrait au fonctionnement des références dans `focus-components` est obsolète (car inutile). `selectFor` prend simplement la liste de référence en paramètre à la place de son nom.)
+*Note: Du coup, tout ce qui avait attrait au fonctionnement des références dans `focus-components` est obsolète (car plus nécessaire). `selectFor` prend simplement la liste de référence en paramètre à la place de son nom.*
 
 ## [Module `router`](router)
 ## [Module `search`](search)

@@ -19,16 +19,16 @@ Je vous renvoie à l'excellente [documentation](http://www.typescriptlang.org/do
 MobX, c'est le futur, dès aujourd'hui dans votre assiette. La communauté React a encore le nez plein dans `redux` (ils sont occupés à écrire des actions, des reducers et des sélecteurs à n'en plus finir, il faut les comprendre) et n'a pas encore eu le temps de réagir (la première "vraie" release date de mars dernier après tout), mais là c'est le moment de s'y mettre.
 
 ### En 2 phrases
-MobX permet de définir des **observables**, qui peuvent être observées par des **observers** (un component React par exemple). Cet observer va réexécuter la fonction qu'on lui donne (pour un composant React, sa fonction `render`) a chaque fois qu'une observable utilisée dans cette fonction a été modifiée, n'importe où.
+MobX permet de définir des objets JS (objet, array, map...) comme **observables**, qui seront ensuite observés par des fonctions agissant comme des **observers** (par exemple la fonction `render()` d'un composant React). Ces fonctions vont déduire automatiquement, à l'exécution, de quelles observables elles dépendent, ce qui permettra à MobX de les réexécuter à chaque fois que l'une d'entre-elle à été modifiée dans l'ensemble de l'application.
 
 ### C'est magique
 Ce qu'il faut bien comprendre, pour l'intégration avec React, c'est que ces réactions se produisent indépendamment des `props` ou du `state` du composant !
 
 **Ca veut dire qu'on n'a plus besoin :**
-* de **mixins/classes de base** pour injecter de l'état dans le `state`, ou de **composants d'ordre supérieur** pour injecter dans les `props`. Un simple décorateur (ou fonction) `@observer` suffit. Plus besoin donc de sélecteur pour récupérer l'état qu'on veut depuis un store.
-* de **`state` React local** dans un composant. Une simple propriété de classe marquée d'un `@observable` suffit. Fini le `setState` asynchrone (et [c'est mieux comme ça](https://medium.com/@mweststrate/3-reasons-why-i-stopped-using-react-setstate-ab73fc67a42e#.97vfrg1k0)). Cela veut dire que l'intégralité du `state` dans l'application peut être stockée dans des observables MobX.
-* de **dispatcher**: on modifie directement l'observable (qui est peut être un objet, un array, une map ou une primitive boxée) et tout sera mis à jour automatiquement. Du coup, on peut toujours avoir des actions, mais ce sont simplement des fonctions qui mettent à jour une observable.
-* d'une **structure rigide** pour contenir le state. Que ça soit un `CoreStore` de `focus` ou le store `redux`, plus besoin, on a des observables et on les range où on veut comme on veut.
+* de **mixins/classes de base** pour injecter de l'état dans le `state`, ou de **composants d'ordre supérieur** pour injecter dans les `props` : on peut utiliser directement cet état dans un composant et l'abonnement est automatique, au prix d'un misérable petit décorateur (ou fonction) `@observer` sur le composant.
+* de **`state` React local** dans un composant. Une simple propriété de classe marquée d'un `@observable` suffit. Fini le `setState` asynchrone (et [c'est mieux comme ça](https://medium.com/@mweststrate/3-reasons-why-i-stopped-using-react-setstate-ab73fc67a42e#.97vfrg1k0)). Cela veut dire que l'intégralité du `state` d'une application peut (et devrait) être stocké dans des observables MobX, ce qui permet de tout gérer de la même manière.
+* de **dispatcher**: on modifie directement l'observable (qui est peut être un objet, un array, une map ou une primitive boxée) et tout sera mis à jour automatiquement. Du coup, on pourrait définir des actions, mais ce ne serait que de bêtes fonctions dans lesquelles on effectuerait des modifications de state.
+* d'une **structure rigide** centralisée pour contenir le state. Que ça soit un `CoreStore` de `focus-core` ou le store `redux`, plus besoin, les observables sont trackées par MobX quelque soit la manière ou l'endroit où elles ont été définies.
 
 La doc est **[ici](http://mobxjs.github.io/mobx)**.
 
@@ -37,6 +37,6 @@ Pour résumé, `autofocus`, c'est :
 - Une version modifiée de `focus-core v2` pour Typescript et MobX
 - Les composants "dépréciés" de `focus-components v2` (layout, listes et recherche), modifiés pour Typescript et MobX (ces composants ont été réécrits de zéro pour Focus v3 et se trouvent dans les modules correspondants)
 - Une nouvelle gestion de l'état des formulaires (le reste fonctionne à peu près comme Focus V2), réalisée grâce à MobX, qui facilite beaucoup l’usage et réduit la configuration nécessaire. Ce nouveau module est entièrement testé unitairement.
-- Un nouveau routeur
+- Un nouveau routeur, qui simplifie et synchronise l'état de l'application avec l'URL, réalisé avec MobX.
 
 La doc est disponible [ici](src)
