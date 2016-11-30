@@ -12,11 +12,11 @@
     font-size: 13px;
 }
 
-.edit .invalid .label > div {
+.edit.invalid .label {
     color: rgb(222, 50, 38);
 }
 
-.edit .required .label > div:after {
+.edit.required .label:after {
     content: "*";
     margin-left: 3px;
 }
