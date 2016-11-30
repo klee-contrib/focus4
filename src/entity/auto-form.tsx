@@ -165,7 +165,6 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
                     this.onFormSaved();
                 });
             } catch (e) {
-                messageStore.addErrorMessage("detail.error");
                 runInAction(() => this.errors = e.fields);
             }
         }
