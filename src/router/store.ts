@@ -38,7 +38,7 @@ export class ViewStore<V, N extends string> {
      * Récupère l'URL pour la vue donnée.
      * @param view La vue à récupérer.
      */
-    getUrl(view: V) {
+    getUrl(view: Partial<V>) {
         return this.getUrlFromView(view);
     }
 
@@ -68,7 +68,7 @@ export class ViewStore<V, N extends string> {
         }
     }
 
-    private getUrlFromView(view: V) {
+    private getUrlFromView(view: Partial<V>) {
         return `${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => view[p]).join("/")}`.replace(/\/+$/, "");
     }
 }
