@@ -108,7 +108,7 @@ export class Field extends React.Component<FieldProps, void> {
     validateDomain() {
         const {value} = this.props;
         let {isRequired, validator, label = ""} = this.props;
-        if (isRequired && (undefined === value || null === value)) {
+        if (isRequired && (undefined === value || null === value || "" === value)) {
             return i18n.t("field.required");
         }
 
