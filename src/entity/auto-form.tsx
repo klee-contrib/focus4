@@ -31,7 +31,7 @@ import {
     TextOptions
 } from "./field-helpers";
 
-import {form} from "./style/auto-form.css";
+import {form, loading} from "./style/auto-form.css";
 
 /** Props propre à AutoForm. */
 export interface AutoFormProps {
@@ -167,7 +167,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
             } catch (e) {
                 runInAction(() => {
                     this.isLoading = false;
-                    this.errors = e.fields
+                    this.errors = e.fields;
                 });
             }
         }
@@ -220,7 +220,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         if (this.hasForm) {
             return (
                 <form
-                    className={`${form} ${contextClassName} ${formClassName}`}
+                    className={`${form} ${contextClassName} ${formClassName} ${this.isLoading ? loading : ""}`}
                     noValidate={true}
                     onSubmit={e => { e.preventDefault(); this.save(); }}
                 >
