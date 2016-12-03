@@ -1,2 +1,2 @@
-export {injectStyle} from "./inject-style";
+export {injectStyle, StyleInjector} from "./inject-style";
 export {StyleProvider} from "./style-provider";

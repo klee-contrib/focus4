@@ -17,6 +17,7 @@ export interface BaseOptions {
     labelKey?: string;
     name?: string;
     value?: any;
+    ref?: (field: Field) => void;
     contentCellPosition?: string;
     contentOffset?: number;
     contentSize?: number;
@@ -118,7 +119,7 @@ export function fieldFor<T>(field: EntityField<T>, options: BaseOptions & {[key:
  */
 export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
     const props = buildFieldProps(field, options);
-    return <Field {...props} />;
+    return <Field {...props as any} />;
 }
 
 /**
@@ -185,22 +186,22 @@ export function textFor<T>(field: EntityField<T>, options: TextOptions = {}) {
     return <div name={field.$entity.translationKey} style={options.style}>{stringFor(field, options)}</div>;
 }
 
-export function buildFieldProps<T>(field: EntityField<T>, options: FieldProps = {}): FieldProps {
+export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions = {}): FieldProps {
     const {value, $entity: {domain, translationKey, isRequired}} = field;
-    const hasLabel = options.hasLabel || true;
+    const {hasLabel = true, ref, ...otherOptions} = options;
     const dom = domain || {};
 
-    const props = {
+    const props: FieldProps = {
         domain,
         formatter: dom.formatter || (x => x),
         hasLabel,
         isRequired,
         label: translationKey,
         name,
-        ref: translationKey,
+        ref: i => ref && ref(i.instance),
         value,
         unformatter: dom.unformatter || (x => x)
     };
 
-    return {...(domain || {}), ...props, ...options};
+    return {...(domain || {}), ...props, ...otherOptions};
 }

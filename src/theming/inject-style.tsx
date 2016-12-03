@@ -1,5 +1,9 @@
 import * as React from "react";
 
+export interface StyleInjector<C> {
+    instance: C;
+}
+
 /**
  * Décorateur qui fusionnne le contenu de `this.props.classNames` avec celui du `classContainerName` passé en props d'un StyleProvider parent.
  * @param classContainerName Le nom du conteneur de classes CSS.

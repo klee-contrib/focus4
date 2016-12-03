@@ -56,7 +56,7 @@ Du coup, ce qu'on va faire, c'est construire des stores à partir des `entityDef
 
 Et on retrouve le même fonctionnement d'avant.
 
-*Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange` et `error`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans autofocus doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus.*
+*Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange` et `ref`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans autofocus doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus.*
 
 ### Description
 
@@ -128,7 +128,7 @@ Au risque de se répeter, **si vous ne faites pas un écran de formulaire, n'uti
 ### Configuration
 La config d'un formulaire se fait intégralement dans son constructeur via l'appel à `super`, qui appelle le constructeur d'`AutoForm`, ses paramètres sont :
 * `props`, les props du composants, nécessaires pour React.
-* `storeData`, le noeud de store sur lequel on veut créer un formulaire. La seule contrainte sur `storeData` est qu'il doit respecter l'interface `StoreNode`, c'est-à-dire posséder les méthodes `set()` et `clear()`. On peut donc faire des formulaires sur des objets, des arrays, avec le degré de composition qu'on veut. Attention tout de même, l'utilisation de `this.fieldFor` est restrainte pour des formulaires sur des objets simples. L'apport de `this.fieldFor` par rapport à `fieldFor` étant minimal (pour rappel: `onChange`, `error` et `isEdit`), il est facilement possible de faire des folies sur un formulaire car tout le boulot est fait par MobX et l'EntityStore. En Typescript, le type de `storeData` doit être spécifié en tant que deuxième paramètre de la classe parente.
+* `storeData`, le noeud de store sur lequel on veut créer un formulaire. La seule contrainte sur `storeData` est qu'il doit respecter l'interface `StoreNode`, c'est-à-dire posséder les méthodes `set()` et `clear()`. On peut donc faire des formulaires sur des objets, des arrays, avec le degré de composition qu'on veut. Attention tout de même, l'utilisation de `this.fieldFor` est restrainte pour des formulaires sur des objets simples. L'apport de `this.fieldFor` par rapport à `fieldFor` étant minimal (pour rappel: `onChange`, `ref` et `isEdit`), il est facilement possible de faire des folies sur un formulaire car tout le boulot est fait par MobX et l'EntityStore. En Typescript, le type de `storeData` doit être spécifié en tant que deuxième paramètre de la classe parente.
 * `serviceConfig`, qui est un objet contenant **les services** de `load` et de `save` (les actions n'existant plus en tant que telles, on saute l'étape).
 
 ### this.entity et ViewModel

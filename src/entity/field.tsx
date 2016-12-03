@@ -1,6 +1,7 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
 import {find, isFunction, omit, result} from "lodash";
+import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -8,7 +9,7 @@ import DisplayText from "focus-components/input-display/text";
 import InputText from "focus-components/input-text";
 import Label from "focus-components/label";
 
-import {injectStyle} from "../theming";
+import {injectStyle, StyleInjector} from "../theming";
 
 import {Domain} from "./types";
 import {validate} from "./validation";
@@ -20,7 +21,6 @@ export interface FieldProps extends Domain {
 
     // Props passées aux composants Display/Field/Input.
     domain?: Domain;
-    error?: string;
     isEdit?: boolean;
     labelKey?: string;
     name?: string;
@@ -39,6 +39,7 @@ export interface FieldProps extends Domain {
     labelCellPosition?: string;
     labelOffset?: number;
     labelSize?: number;
+    ref?: (field: StyleInjector<Field>) => void;
 }
 
 const omittedProps = [
@@ -64,6 +65,8 @@ const omittedProps = [
 @observer
 export class Field extends React.Component<FieldProps, void> {
 
+    @observable error?: string;
+
     inputField?: {validate?: () => {isValid: boolean, message?: string}};
 
     display() {
@@ -71,14 +74,14 @@ export class Field extends React.Component<FieldProps, void> {
         const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
         const props = {...omit(this.props, omittedProps), value};
         const FinalDisplay = DisplayComponent || DisplayText;
-        return <FinalDisplay {...props}/>;
+        return <FinalDisplay {...props} />;
     }
 
     field() {
         const {FieldComponent} = this.props;
         if (FieldComponent) {
             const props = omit(this.props, omittedProps);
-            return <FieldComponent {...props} />;
+            return <FieldComponent {...props} error={this.error} />;
         } else {
             return null;
         }
@@ -88,7 +91,7 @@ export class Field extends React.Component<FieldProps, void> {
         const {InputComponent} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
-        return <FinalInput ref={(input: any) => this.inputField = input} {...props} />;
+        return <FinalInput ref={(input: any) => this.inputField = input} {...props} error={this.error} />;
     }
 
     label() {
@@ -109,13 +112,15 @@ export class Field extends React.Component<FieldProps, void> {
         const {value} = this.props;
         let {isRequired, validator, label = ""} = this.props;
         if (isRequired && (undefined === value || null === value || "" === value)) {
-            return i18n.t("field.required");
+            this.error = i18n.t("field.required");
+            return false;
         }
 
         if (validator && value !== undefined && value !== null) {
             let validStat = validate({value, name: i18n.t(label)}, validator);
             if (validStat.errors.length) {
-                return i18n.t(validStat.errors.join(", "));
+                this.error = i18n.t(validStat.errors.join(", "));
+                return false;
             }
         }
 
@@ -124,17 +129,19 @@ export class Field extends React.Component<FieldProps, void> {
 
     validate() {
         const domainValidation = this.validateDomain();
-        if (domainValidation === true) {
-            if (this.inputField && isFunction(this.inputField.validate)) {
-                const componentValidation = this.inputField.validate();
-                if (!componentValidation.isValid) {
-                    return i18n.t(componentValidation.message!);
-                }
-            }
-            return true;
-        } else {
-            return domainValidation;
+        if (!domainValidation) {
+            return false;
         }
+
+        if (this.inputField && isFunction(this.inputField.validate)) {
+            const componentValidation = this.inputField.validate();
+            if (!componentValidation.isValid) {
+                this.error = i18n.t(componentValidation.message!);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     render() {
