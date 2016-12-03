@@ -309,7 +309,10 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
             options["isEdit"] = this.isEdit;
         }
         options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
-        options["onChange"] = options["onChange"] || action((value: any) => (this.entity as any)[field.$entity.name].value = value);
+        options["onChange"] = options["onChange"] || action((value: any) => {
+            this.fields[field.$entity.translationKey]!.error = undefined;
+            (this.entity as any)[field.$entity.name].value = value;
+        });
         return options as any;
     }
 }

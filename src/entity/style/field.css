@@ -6,7 +6,7 @@
     text-align: right;
 }
 
-.label > div {
+.label {
     display: block;
     font-weight: bold;
     font-size: 13px;
@@ -21,8 +21,8 @@
     margin-left: 3px;
 }
 
-.edit .label > div {
-    margin: 4px 0;
+.edit .label {
+    line-height: 1.8;
 }
 
 .edit .value select {

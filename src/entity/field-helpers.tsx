@@ -153,7 +153,7 @@ export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComp
  */
 export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
     (options as FieldProps).InputComponent = Select;
-    (options as FieldProps).values = values;
+    (options as FieldProps).values = values.slice();
     return fieldForWith(field, options);
 }
 
@@ -198,7 +198,7 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions =
         isRequired,
         label: translationKey,
         name,
-        ref: i => ref && ref(i.instance),
+        ref: i => ref && ref(i && i.instance || null),
         value,
         unformatter: dom.unformatter || (x => x)
     };
