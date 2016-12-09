@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-beta34",
+  "version": "1.0.0-beta36",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -47,6 +47,7 @@
     "react-addons-test-utils": "15.4.1",
     "react-dom": "15.4.1",
     "tape": "4.6.3",
+    "tslib": "1.2.0",
     "uuid": "3.0.0"
   },
   "devDependencies": {
@@ -57,6 +58,6 @@
     "ts-node": "1.7.0",
     "tslint": "4.0.2",
     "typed-css-modules": "0.1.13",
-    "typescript": "next"
+    "typescript": "2.1.4"
   }
 }

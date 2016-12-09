@@ -14,8 +14,8 @@ body {
 }
 
 .content {
-    margin-left: 0;
-    padding: 10px 25px;
+    margin-left: 10px;
+    padding: 10px 20px 20px;
 }
 
 .hasMenu .content {
