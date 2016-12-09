@@ -39,7 +39,6 @@ export interface FieldProps extends Domain {
     labelCellPosition?: string;
     labelOffset?: number;
     labelSize?: number;
-    ref?: (field: StyleInjector<Field>) => void;
 }
 
 const omittedProps = [
@@ -63,7 +62,7 @@ const omittedProps = [
 @injectStyle("field")
 @autobind
 @observer
-export class Field extends React.Component<FieldProps, void> {
+export class Field extends React.Component<FieldProps & {ref: (field: StyleInjector<Field>) => void}, void> {
 
     @observable error?: string;
 

@@ -5,8 +5,9 @@
 }
 
 .button {
-    background-color: transparent;
     position: relative;
+    height: 36px;
+    margin-top: 15px;
 }
 
 .button a,

@@ -7,6 +7,7 @@ import Select from "focus-components/select";
 
 import {EntityField} from "../entity";
 import {CommonListProps, LineProps, LineSelectionProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList} from "../list";
+import {StyleInjector} from "../theming";
 
 import {Field, FieldProps} from "./field";
 
@@ -198,7 +199,7 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions =
         isRequired,
         label: translationKey,
         name,
-        ref: i => ref && ref(i && i.instance || null),
+        ref: (i: StyleInjector<Field>) => ref && ref(i && i.instance || null),
         value,
         unformatter: dom.unformatter || (x => x)
     };

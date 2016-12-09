@@ -46,7 +46,7 @@ type EntityStore = EntityStoreConfig & StoreNode<{}>;
  * @param entityList La liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
  * @param entityMapping Un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
  */
-export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[key: string]: any}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {}): T1 & AsStoreListNode<T2> & StoreNode<{}> {
+export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[key: string]: any}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode<{}> {
     const config = Object.assign({}, mapValues(simpleNodes, _ => ({})), mapValues(listNodes, _ => [])) as EntityStoreConfig;
 
     const entityMap = entityList.reduce((entities, entity) => {
@@ -55,7 +55,7 @@ export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[ke
     }, {} as {[name: string]: Entity});
 
     for (const entry in config) {
-        if (!entityMap[entityMapping[entry] || entry]) {
+        if (!entityMap[entityMapping[entry as keyof T1 & T2] || entry]) {
             throw new Error(`La propriété "${entry}" n'a pas été trouvée dans la liste d'entités. Vous manque-t'il une correspondance ?`);
         }
     }
