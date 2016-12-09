@@ -199,7 +199,7 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions =
         isRequired,
         label: translationKey,
         name,
-        ref: (i: StyleInjector<Field>) => ref && ref(i.instance),
+        ref: (i: StyleInjector<Field>) => ref && ref(i && i.instance || null),
         value,
         unformatter: dom.unformatter || (x => x)
     };
