@@ -12,6 +12,10 @@
     font-size: 13px;
 }
 
+.value {
+    white-space: pre;
+}
+
 .edit.invalid .label {
     color: rgb(222, 50, 38);
 }
