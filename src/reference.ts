@@ -1,4 +1,4 @@
-import {action, IObservableArray, observable, untracked} from "mobx";
+import {action, computed, IObservableArray, observable, untracked} from "mobx";
 
 export type ReferenceConfig = {[key: string]: {}};
 export type ServiceFactory = (refName: string) => () => Promise<{}[]>;
@@ -28,7 +28,7 @@ export function makeReferenceStore<T extends ReferenceConfig>(serviceFactory: Se
     const referenceStore: any = {};
     for (const ref in config) {
         referenceStore[`_${ref}`] = [];
-        referenceStore[ref] = () => {
+        referenceStore[ref] = computed(() => {
             if (!referenceStore[`_${ref}_loading`] && !(cache[ref] && (getTimeStamp() - cache[ref].timeStamp) < CACHE_DURATION)) {
                 referenceStore[`_${ref}_loading`] = true;
                 untracked(() => serviceFactory(ref)().then(action((refList: {}[]) => {
@@ -39,7 +39,7 @@ export function makeReferenceStore<T extends ReferenceConfig>(serviceFactory: Se
             }
 
             return referenceStore[`_${ref}`];
-        };
+        });
     }
 
     return observable(referenceStore) as any;
