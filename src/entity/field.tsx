@@ -5,7 +5,6 @@ import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import DisplayText from "focus-components/input-display/text";
 import InputText from "focus-components/input-text";
 import Label from "focus-components/label";
 
@@ -21,7 +20,7 @@ export interface FieldProps extends Domain {
 
     // Props passées aux composants Display/Field/Input.
     domain?: Domain;
-    error?: string;
+    error?: string | null;
     isEdit?: boolean;
     labelKey?: string;
     name?: string;
@@ -69,8 +68,8 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
     get error(): string | undefined {
         const {error, value} = this.props;
 
-        if (error) {
-            return error;
+        if (error !== undefined) {
+            return error || undefined;
         }
 
         let {isRequired, validator, label = ""} = this.props;
@@ -92,7 +91,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const {valueKey, labelKey, values, value: rawValue, DisplayComponent} = this.props;
         const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
         const props = {...omit(this.props, omittedProps), value};
-        const FinalDisplay = DisplayComponent || DisplayText;
+        const FinalDisplay = DisplayComponent || (() => <div>{value}</div>);
         return <FinalDisplay {...props} />;
     }
 
