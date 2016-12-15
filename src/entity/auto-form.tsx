@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import {some, values} from "lodash";
 import {action, observable, runInAction} from "mobx";
 import * as React from "react";
 
@@ -80,7 +81,8 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     readonly services: ServiceConfig;
     readonly storeData: E;
 
-    @observable fields: {[key: string]: Field | null} = {};
+    @observable errors: FieldErrors = {};
+    @observable fields: Record<string, Field | null> = {};
     @observable isEdit = this.props.isEdit || false;
     @observable isLoading = false;
 
@@ -120,21 +122,10 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         }
     }
 
-    /** Rempli les erreurs des fields. */
-    @action
-    setErrors(errors: FieldErrors = {}) {
-        for (const field in this.fields) {
-            if (this.fields[field]) {
-                this.fields[field]!.error = errors[field];
-            }
-        }
-    }
-
     /** Change le mode du formulaire. */
     @action
     toggleEdit(isEdit: boolean) {
         this.isEdit = isEdit;
-        this.setErrors();
         if (isEdit) {
             applicationStore.changeMode("edit", "consult");
         } else {
@@ -161,7 +152,6 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     /** Appelle le service de sauvegarde. */
     @action
     async save() {
-        this.setErrors();
         if (this.validate()) {
             this.isLoading = true;
             try {
@@ -177,7 +167,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
                 runInAction(() => {
                     this.isLoading = false;
                     if (e.fields) {
-                        this.setErrors(e.fields);
+                        this.errors = e.fields || {};
                     }
                 });
             }
@@ -199,13 +189,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     /** Valide les différents champs du formulaire. */
     @action
     validate() {
-        let validation = true;
-        for (const field in this.fields) {
-            if (this.fields[field]) {
-                validation = validation && this.fields[field]!.validate();
-            }
-        }
-        return validation;
+        return !some(values(this.fields), field => field && field.error);
     }
 
     /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */
@@ -305,14 +289,19 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     textFor<T>(field: EntityField<T>, options: TextOptions = {}) { return textFor(field, options); }
 
     private setFieldOptions<T>(field: EntityField<T>, options: {[key: string]: any}) {
+        options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
+        options["error"] = this.errors[field.$entity.name];
+
         if (options["isEdit"] === undefined) {
             options["isEdit"] = this.isEdit;
         }
-        options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
-        options["onChange"] = options["onChange"] || action((value: any) => {
-            this.fields[field.$entity.translationKey]!.error = undefined;
-            (this.entity as any)[field.$entity.name].value = value;
-        });
+
+        if ((this.entity as any)[field.$entity.name]) {
+            options["onChange"] = options["onChange"] || action((value: any) =>
+                (this.entity as any)[field.$entity.name].value = value
+            );
+        }
+
         return options as any;
     }
 }

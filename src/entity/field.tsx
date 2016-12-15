@@ -1,7 +1,7 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
-import {find, isFunction, omit, result} from "lodash";
-import {observable} from "mobx";
+import {find, omit, result} from "lodash";
+import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -21,6 +21,7 @@ export interface FieldProps extends Domain {
 
     // Props passées aux composants Display/Field/Input.
     domain?: Domain;
+    error?: string;
     isEdit?: boolean;
     labelKey?: string;
     name?: string;
@@ -64,9 +65,28 @@ const omittedProps = [
 @observer
 export class Field extends React.Component<FieldProps & {ref: (field: StyleInjector<Field>) => void}, void> {
 
-    @observable error?: string;
+    @computed
+    get error(): string | undefined {
+        const {error, value} = this.props;
 
-    inputField?: {validate?: () => {isValid: boolean, message?: string}};
+        if (error) {
+            return error;
+        }
+
+        let {isRequired, validator, label = ""} = this.props;
+        if (isRequired && (undefined === value || null === value || "" === value)) {
+            return i18n.t("field.required");
+        }
+
+        if (validator && value !== undefined && value !== null) {
+            let validStat = validate({value, name: i18n.t(label)}, validator);
+            if (validStat.errors.length) {
+                return i18n.t(validStat.errors.join(", "));
+            }
+        }
+
+        return undefined;
+    }
 
     display() {
         const {valueKey, labelKey, values, value: rawValue, DisplayComponent} = this.props;
@@ -90,7 +110,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const {InputComponent} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
-        return <FinalInput ref={(input: any) => this.inputField = input} {...props} error={this.error} />;
+        return <FinalInput {...props} error={this.error} />;
     }
 
     label() {
@@ -105,42 +125,6 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
                 />
             </div>
         );
-    }
-
-    validateDomain() {
-        const {value} = this.props;
-        let {isRequired, validator, label = ""} = this.props;
-        if (isRequired && (undefined === value || null === value || "" === value)) {
-            this.error = i18n.t("field.required");
-            return false;
-        }
-
-        if (validator && value !== undefined && value !== null) {
-            let validStat = validate({value, name: i18n.t(label)}, validator);
-            if (validStat.errors.length) {
-                this.error = i18n.t(validStat.errors.join(", "));
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    validate() {
-        const domainValidation = this.validateDomain();
-        if (!domainValidation) {
-            return false;
-        }
-
-        if (this.inputField && isFunction(this.inputField.validate)) {
-            const componentValidation = this.inputField.validate();
-            if (!componentValidation.isValid) {
-                this.error = i18n.t(componentValidation.message!);
-                return false;
-            }
-        }
-
-        return true;
     }
 
     render() {
