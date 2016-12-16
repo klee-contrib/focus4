@@ -4,8 +4,8 @@ import {action, computed, IObservableArray, isObservableArray, observable} from 
 import {OutputFacet, QueryInput, QueryOutput, Results, StoreFacet, UnscopedQueryOutput} from "./types";
 
 export interface SearchActionService {
-    scoped: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
-    unscoped: (query: QueryInput) => Promise<UnscopedQueryOutput>;
+    scoped?: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
+    unscoped?: (query: QueryInput) => Promise<UnscopedQueryOutput>;
 }
 
 @autobind
@@ -57,9 +57,17 @@ export class SearchStore {
 
         this.pendingCount++;
         if (scope.toUpperCase() === "ALL") {
-            response = unscopedResponse(await this.service.unscoped(data));
+            if (this.service.unscoped) {
+                response = unscopedResponse(await this.service.unscoped(data));
+            } else {
+                throw new Error("Impossible de lancer une recherche non scopée puisque le service correspondant n'a pas été défini.");
+            }
         } else {
-            response = scopedResponse(await this.service.scoped(data), {isScroll, scope, results});
+            if (this.service.scoped) {
+                response = scopedResponse(await this.service.scoped(data), {isScroll, scope, results});
+            } else {
+                throw new Error("Impossible de lancer une recherche scopée puisque le service correspondant n'a pas été défini.");
+            }
         }
         this.pendingCount--;
 

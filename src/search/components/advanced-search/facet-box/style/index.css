@@ -20,11 +20,11 @@
 }
 
 .collapsed .heading h2:after {
-    content: "\E5CB";
+    content: "\E5CC";
 }
 
 .expanded .heading h2:after {
-    content: "\E5CC";
+    content: "\E5CB";
 }
 
 .heading {

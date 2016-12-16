@@ -116,7 +116,6 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                 </div>
                 <div className={`mdl-cell mdl-cell--hide-tablet mdl-cell--hide-phone ${styles.facets} ${classNames!.facets}`}>
                     <TopicDisplayer
-                        displayLabels
                         topicClickAction={facetClickAction}
                         topicList={facetList}
                     />

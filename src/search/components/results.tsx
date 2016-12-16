@@ -66,6 +66,7 @@ export class Results extends React.Component<ResultsProps, void> {
             if (renderSingleGroupDecoration && groupComponent) {
                 return (
                     <GroupWrapper
+                        key={key}
                         count={count}
                         groupComponent={groupComponent}
                         groupKey={key}

@@ -36,12 +36,14 @@ export class SearchActionBar extends React.Component<Props, void> {
     };
 
     private filterFacetList() {
-        const {selectedFacets} = this.props.store;
+        const {selectedFacets, facets} = this.props.store;
         return reduce(selectedFacets!, (result, facetValue, facetKey) => {
+            const resultFacet = facets.find(facet => facetKey === facet.code);
+            const resultFacetValue = resultFacet && resultFacet.values.find(facet => facet.code === facetValue);
             result[facetKey] = {
                 code: facetKey,
                 label: i18n.t(`live.filter.facets.${facetKey}`),
-                value: facetValue
+                value: resultFacetValue && resultFacetValue.label || facetValue
             };
             return result;
         }, {} as {[facet: string]: {code: string, label: string, value: string}});
