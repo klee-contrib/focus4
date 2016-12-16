@@ -24,8 +24,8 @@ export interface AdvancedSearchProps {
     classNames?: AdvancedSearchStyle;
     /** Default: true */
     hasBackToTop?: boolean;
-    /** Default: true */
-    isSelection?: boolean;
+    /** Default: false */
+    hasSelection?: boolean;
     lineComponentMapper: (...args: any[]) => ReactComponent<any>;
     /** Default: [] */
     lineOperationList?: DropdownItem[];
@@ -51,7 +51,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
 
     static defaultProps = {
         hasBackToTop: true,
-        isSelection: true,
+        hasSelection: false,
         lineOperationList: [],
         openedFacetList: {},
         orderableColumnList: [],
@@ -69,7 +69,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         this.props.store.selectedFacets,
         this.props.store.sortAsc,
         this.props.store.sortBy
-    ], () => this.props.store.search, true, 100);
+    ], () => this.props.store.search(), true);
 
     @computed
     private get hasGrouping() {
@@ -119,7 +119,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderActionBar() {
-        const {isSelection, lineOperationList, orderableColumnList, store} = this.props;
+        const {hasSelection, lineOperationList, orderableColumnList, store} = this.props;
         const groupableColumnList = store.facets ? store.facets.reduce((result, facet) => {
             if (facet.values.length > 1) {
                 result[facet.code] = facet.label;
@@ -131,7 +131,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
             <SearchActionBar
                 groupableColumnList={groupableColumnList}
                 hasGrouping={this.hasGrouping}
-                hasSelection={isSelection}
+                hasSelection={hasSelection}
                 operationList={store.totalCount > 0 ? lineOperationList : []}
                 orderableColumnList={orderableColumnList}
                 selectionAction={this.selectionAction}
@@ -142,11 +142,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {isSelection, onLineClick, lineComponentMapper, lineOperationList, scrollParentSelector, store} = this.props;
+        const {hasSelection, onLineClick, lineComponentMapper, lineOperationList, scrollParentSelector, store} = this.props;
         return (
             <Results
                 groupComponent={GroupComponent}
-                isSelection={!!isSelection}
+                hasSelection={!!hasSelection}
                 lineClickHandler={onLineClick}
                 lineComponentMapper={lineComponentMapper}
                 lineOperationList={lineOperationList}

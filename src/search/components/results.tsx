@@ -1,13 +1,13 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
-import {isArray, isEmpty, omit} from "lodash";
+import {isArray, isEmpty, omitBy} from "lodash";
+import {IObservableArray, isObservableArray} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ListSelection, OperationListItem} from "../../list";
 
 import {SearchStore} from "../store";
-import {Results as ResultsType} from "../types";
 import {GroupComponent, GroupWrapper} from "./group-wrapper";
 
 function DefaultEmpty() {
@@ -22,10 +22,9 @@ export interface ResultsProps {
     /** Default: DefaultEmpty */
     emptyComponent?: () => React.ReactElement<any>;
     groupComponent: GroupComponent;
-    groupingKey?: string;
     /** Default: 3 */
     initialRowsCount?: number;
-    isSelection: boolean;
+    hasSelection: boolean;
     lineClickHandler?: (item: any) => void;
     lineComponentMapper: (key: string, list: any[]) => ReactComponent<any>;
     lineOperationList?: OperationListItem[];
@@ -53,8 +52,8 @@ export class Results extends React.Component<ResultsProps, void> {
     lists: {[key: string]: ListSelection<any, any> | null} = {};
 
     private get key() {
-        const {groupingKey, scopeFacetKey} = this.props;
-        return groupingKey || scopeFacetKey!;
+        const {store, scopeFacetKey} = this.props;
+        return store.groupingKey || scopeFacetKey!;
     }
 
     private renderSingleGroup(list: any[], key: string, label: string | undefined, count: number, isUnique?: boolean) {
@@ -105,7 +104,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderResultsList(list: any[], key: string, count: number, isUnique: boolean) {
-        const {lineComponentMapper, isSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
+        const {lineComponentMapper, hasSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
         const {scope, isLoading} = store;
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
@@ -116,7 +115,7 @@ export class Results extends React.Component<ResultsProps, void> {
                     data: list,
                     fetchNextPage: this.onScrollReachedBottom,
                     hasMoreData,
-                    isSelection,
+                    isSelection: hasSelection,
                     LineComponent,
                     lineProps: {operationList: lineOperationList, onLineClick: lineClickHandler},
                     onSelection: lineSelectionHandler,
@@ -134,11 +133,11 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private showAllHandler(key: string) {
-        const {store, scopeFacetKey, groupingKey} = this.props;
+        const {store, scopeFacetKey} = this.props;
         if (store.facets.find(facet => facet.code === scopeFacetKey)) {
             this.scopeSelectionHandler(key);
         } else {
-            this.facetSelectionHandler(groupingKey!, key);
+            this.facetSelectionHandler(store.groupingKey!, key);
         }
     }
 
@@ -162,9 +161,9 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private getGroupCounts() {
-        const {store, groupingKey, scopeFacetKey} = this.props;
+        const {store, scopeFacetKey} = this.props;
 
-        let scopeFacet = store.facets.filter(facet => facet.code === groupingKey);
+        let scopeFacet = store.facets.filter(facet => facet.code === store.groupingKey);
         if (scopeFacet.length === 0) {
             scopeFacet = store.facets.filter(facet => facet.code === scopeFacetKey);
         }
@@ -187,21 +186,17 @@ export class Results extends React.Component<ResultsProps, void> {
             return this.renderEmptyResults();
         }
 
-        let resultsMap: ResultsType< {[key: string]: any} >;
+        let resultsMap;
 
         // resultsMap est un objet avec une seule propriété (le scope) dans si on est dans une recherche scopée sans groupes, sinon c'est un array.
-        if (isArray(results)) {
+        if (isObservableArray(results)) {
             resultsMap = results.filter(resultGroup => {
                 const propertyGroupName = Object.keys(resultGroup)[0]; // group property name
                 const list = resultGroup[propertyGroupName];
                 return 0 !== list.length;
             });
         } else {
-            resultsMap = omit(results || {}, (resultGroup: {[key: string]: any}) => {
-                const propertyGroupName = Object.keys(resultGroup)[0]; // group property name
-                const list = resultGroup[propertyGroupName];
-                return 0 === list.length;
-            }) as any;
+            resultsMap = omitBy(results || {}, (resultGroup: {}[]) => !resultGroup.length) as {[group: string]: IObservableArray<{}>};
         }
 
         if (isEmpty(resultsMap)) {

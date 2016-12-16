@@ -60,7 +60,7 @@ export class SearchActionBar extends React.Component<Props, void> {
     }
 
     private groupAction(groupingKey: string) {
-        this.props.store.setProperties({groupingKey});
+        this.props.store.groupingKey = groupingKey;
     }
 
     render() {

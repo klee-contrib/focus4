@@ -1,5 +1,4 @@
 import {autobind} from "core-decorators";
-import {clone} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -43,7 +42,7 @@ export class GroupWrapper extends React.Component<Props, void> {
 
     render() {
         const {groupComponent, isUnique, list, count, groupKey, groupLabel, showAllHandler, renderResultsList} = this.props;
-        const listClone = clone(list);
+        const listClone = list.slice();
         const listToRender = isUnique ? listClone : listClone.splice(0, this.resultsDisplayedCount);
         const Group = groupComponent as React.ComponentClass<GroupComponentProps>;
         return (

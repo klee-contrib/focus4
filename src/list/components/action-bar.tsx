@@ -71,7 +71,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
 
     getGroupObject() {
         const {hasGrouping, groupLabelPrefix = "", groupSelectedKey, groupableColumnList, groupAction} = this.props;
-        if (hasGrouping && groupSelectedKey && groupableColumnList && groupAction) {
+        if (hasGrouping && groupableColumnList && groupAction) {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
                     action: () => groupAction(key),
@@ -84,15 +84,15 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                 label: i18n.t("list.actionBar.ungroup")
             }]);
 
-            return <Dropdown button={{icon: "folder_open"}} operations={groupOperationList} />;
+            return <Dropdown button={{icon: "folder_open", shape: "icon"}} operations={groupOperationList} />;
         } else if (hasGrouping) {
-            console.warn("Pour utiliser la fonction de groupe de l'ActionBar, il est nécessaire de spécifier les props 'groupSelectedKey', 'groupableColumnList' et 'groupAction'.");
+            console.warn("Pour utiliser la fonction de groupe de l'ActionBar, il est nécessaire de spécifier les props 'groupableColumnList' et 'groupAction'.");
         }
 
         return null;
     }
 
-    getSelectedStyle(currentKey: string, selectedKey: string) {
+    getSelectedStyle(currentKey: string, selectedKey?: string) {
         return currentKey === selectedKey ? " selected " : "";
     }
 
@@ -121,9 +121,11 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                         topicList={facetList}
                     />
                 </div>
-                <div className={`mdl-cell ${styles.contextualActions} ${classNames!.contextualActions}`}>
-                    <ContextualActions operationList={operationList || []}/>
-                </div>
+                {operationList && operationList.length ?
+                    <div className={`mdl-cell ${styles.contextualActions} ${classNames!.contextualActions}`}>
+                        <ContextualActions operationList={operationList}/>
+                    </div>
+                : null}
             </div>
         );
     }

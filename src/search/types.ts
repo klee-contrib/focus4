@@ -1,3 +1,5 @@
+import {IObservableArray} from "mobx";
+
 export interface FacetValue {
     code: string;
     label: string;
@@ -33,5 +35,5 @@ export interface UnscopedQueryOutput {
     query: QueryInput;
 }
 
-export type Results<T extends {}> = {[group: string]: T[]} | {[group: string]: T[]}[];
+export type Results<T extends {}> = {[group: string]: IObservableArray<T>} | IObservableArray<{[group: string]: IObservableArray<T>}>;
 export type StoreFacet = {code: string, label: string, values: {code: string, label: string, count: number}[]};

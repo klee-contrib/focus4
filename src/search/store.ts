@@ -1,6 +1,5 @@
 import {autobind} from "core-decorators";
-import {isArray} from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, IObservableArray, isObservableArray, observable} from "mobx";
 
 import {OutputFacet, QueryInput, QueryOutput, Results, StoreFacet, UnscopedQueryOutput} from "./types";
 
@@ -19,8 +18,8 @@ export class SearchStore {
     @observable sortAsc: boolean | undefined;
     @observable sortBy: string | undefined;
 
-    @observable facets: StoreFacet[] = [];
-    @observable results: Results<{}> = [];
+    @observable facets: IObservableArray<StoreFacet> = [] as any;
+    @observable results: Results<{}> = [] as any;
     @observable totalCount = 0;
 
     @observable private pendingCount = 0;
@@ -41,10 +40,6 @@ export class SearchStore {
     async search(isScroll?: boolean) {
         let {scope, query, selectedFacets, groupingKey, sortBy, sortAsc, results, totalCount, nbSearchElement} = this;
 
-        if (!results || isScroll === undefined || !scope) {
-            return;
-        }
-
         if (!query || "" === query) {
             query = "*";
         }
@@ -58,7 +53,7 @@ export class SearchStore {
             sortFieldName: sortBy
         };
 
-        let response: {facets: StoreFacet[], results: Results<{}>, totalCount: number};
+        let response;
 
         this.pendingCount++;
         if (scope.toUpperCase() === "ALL") {
@@ -68,8 +63,8 @@ export class SearchStore {
         }
         this.pendingCount--;
 
-        this.facets = response.facets;
-        this.results = response.results;
+        this.facets = response.facets as IObservableArray<StoreFacet>;
+        this.results = response.results as Results<{}>;
         this.totalCount = response.totalCount;
     }
 
@@ -94,7 +89,7 @@ export class SearchStore {
 
 function buildPagination(opts: {results: Results<{}>, totalCount: number, isScroll?: boolean, nbSearchElement?: number}) {
     const resultsKeys = Object.keys(opts.results);
-    if (opts.isScroll && !isArray(opts.results) && resultsKeys.length === 1) {
+    if (opts.isScroll && !isObservableArray(opts.results) && resultsKeys.length === 1) {
         const key = resultsKeys[0];
         const previousRes = opts.results[key];
         return {
@@ -119,7 +114,7 @@ function parseFacets(serverFacets: OutputFacet[]) {
 
 function scopedResponse<T>(data: QueryOutput<T>, context: {results: Results<T>, isScroll?: boolean, scope: string}) {
     // Results are stored as an object if there is no group.
-    if (context.isScroll && !isArray(context.results)) {
+    if (context.isScroll && !isObservableArray(context.results)) {
         let resultsKeys = Object.keys(context.results);
         let key = resultsKeys[0];
         data.list = [...context.results[key], ...(data.list ? data.list : [])];

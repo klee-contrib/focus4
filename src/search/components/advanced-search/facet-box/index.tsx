@@ -1,5 +1,6 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
+import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -51,7 +52,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     private facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
         let {selectedFacets = {}} = this.props.store;
         if (!dataKey) {
-            delete selectedFacets[facetKey];
+            selectedFacets = omit(selectedFacets, facetKey) as typeof selectedFacets;
         } else {
             selectedFacets = {...selectedFacets, [facetKey]: dataKey};
         }

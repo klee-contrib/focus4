@@ -7,5 +7,6 @@
     "relativePath.ignore": [
         "**/node_modules/**",
         "**/dist/**"
-    ]
+    ],
+    "tslint.autoFixOnSave": true
 }

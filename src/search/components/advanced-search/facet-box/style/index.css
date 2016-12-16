@@ -39,7 +39,7 @@
     border-bottom: 1px solid #e2e2e2;
 }
 
-.heading h2 :after {
+.heading h2:after {
     font-family: 'Material Icons';
     display: inline-block;
     vertical-align: middle;
