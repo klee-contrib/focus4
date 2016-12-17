@@ -24,10 +24,6 @@ export interface ListSummaryProps {
 @autobind
 @observer
 export class ListSummary extends React.Component<ListSummaryProps, void> {
-    static defaultProps = {
-        query: "",
-        totalCount: 0
-    };
 
     private onScopeClick() {
         this.props.store.setProperties({

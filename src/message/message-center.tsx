@@ -28,13 +28,6 @@ type Notification = {type?: string, content: string, timeout: number};
 @observer
 export class MessageCenter extends React.Component<MessageCenterProps, void> {
 
-    static defaultProps = {
-        error: 8000,
-        info: 3000,
-        success: 3000,
-        warning: 3000
-    };
-
     @observable active = false;
 
     private cleanupTimeout: any = null;
@@ -65,8 +58,8 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
 
     handlePushMessage(message: Message) {
         const {content, type} = message;
-        const {error, info, success, warning} = this.props;
-        const timeout = type === "error" ? error! : type === "info" ? info! : type === "success" ? success! : warning!;
+        const {error = 8000, info = 3000, success = 3000, warning = 3000} = this.props;
+        const timeout = type === "error" ? error : type === "info" ? info : type === "success" ? success : warning;
         this.showSnackbar({type, content, timeout});
     }
 

@@ -29,9 +29,6 @@ export interface Props {
 @autobind
 @observer
 export class GroupWrapper extends React.Component<Props, void> {
-    static defaultProps = {
-        isUnique: false
-    };
 
     @observable
     private resultsDisplayedCount = this.props.initialRowsCount || 3;

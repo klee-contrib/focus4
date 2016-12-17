@@ -15,8 +15,7 @@ export class SearchStore extends ListStoreBase<any> {
     @observable query = "";
     @observable scope = "ALL";
 
-    @observable groupingKey: string | undefined;
-    @observable selectedFacets: {[facet: string]: string} | undefined;
+    @observable selectedFacets: {[facet: string]: string} = {};
 
     @observable facets: IObservableArray<StoreFacet> = [] as any;
     @observable results: Results<{}> = [] as any;

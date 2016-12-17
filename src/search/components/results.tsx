@@ -10,16 +10,9 @@ import {ListSelection, OperationListItem} from "../../list";
 import {SearchStore} from "../store";
 import {GroupComponent, GroupWrapper} from "./group-wrapper";
 
-function DefaultEmpty() {
-    return (
-        <div>
-            {i18n.t("search.empty")}
-        </div>
-    );
-}
+const FCT_SCOPE = "FCT_SCOPE";
 
 export interface ResultsProps {
-    /** Default: DefaultEmpty */
     emptyComponent?: () => React.ReactElement<any>;
     groupComponent: GroupComponent;
     /** Default: 3 */
@@ -32,32 +25,23 @@ export interface ResultsProps {
     /** Default: FCT_SCOPE */
     scopeFacetKey?: string;
     scrollParentSelector?: any;
-    selectionStatus?: "none" | "partial" | "selected";
     renderSingleGroupDecoration: boolean;
-    /** Default: 5 */
-    showMoreAdditionalRows?: number;
     store: SearchStore;
 }
 
 @autobind
 @observer
 export class Results extends React.Component<ResultsProps, void> {
-    static defaultProps = {
-        emptyComponent: DefaultEmpty,
-        initialRowsCount: 3,
-        scopeFacetKey: "FCT_SCOPE",
-        showMoreAdditionalRows: 5
-    };
 
     lists: {[key: string]: ListSelection<any, any> | null} = {};
 
     private get key() {
-        const {store, scopeFacetKey} = this.props;
-        return store.groupingKey || scopeFacetKey!;
+        const {store, scopeFacetKey = FCT_SCOPE} = this.props;
+        return store.groupingKey || scopeFacetKey;
     }
 
     private renderSingleGroup(list: any[], key: string, label: string | undefined, count: number, isUnique?: boolean) {
-        const {initialRowsCount, renderSingleGroupDecoration, groupComponent} = this.props;
+        const {initialRowsCount = 3, renderSingleGroupDecoration, groupComponent} = this.props;
         if (renderSingleGroupDecoration && !groupComponent) {
             console.warn("You are trying to wrap your list in a group without a groupComponent. Please give one or set 'renderSingleGroupDecoration' to false.");
         }
@@ -71,7 +55,7 @@ export class Results extends React.Component<ResultsProps, void> {
                         groupComponent={groupComponent}
                         groupKey={key}
                         groupLabel={label}
-                        initialRowsCount={initialRowsCount!}
+                        initialRowsCount={initialRowsCount}
                         isUnique={true}
                         list={list}
                         renderResultsList={this.renderResultsList}
@@ -87,7 +71,7 @@ export class Results extends React.Component<ResultsProps, void> {
                     groupComponent={groupComponent}
                     groupKey={key}
                     groupLabel={label}
-                    initialRowsCount={initialRowsCount!}
+                    initialRowsCount={initialRowsCount}
                     list={list}
                     renderResultsList={this.renderResultsList}
                     showAllHandler={this.showAllHandler}
@@ -100,12 +84,12 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderEmptyResults() {
-        const Empty = this.props.emptyComponent!;
+        const Empty = this.props.emptyComponent || (() => <div>{i18n.t("search.empty")}</div>);
         return <Empty />;
     }
 
     private renderResultsList(list: any[], key: string, count: number, isUnique: boolean) {
-        const {lineComponentMapper, hasSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, selectionStatus, store} = this.props;
+        const {lineComponentMapper, hasSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, store} = this.props;
         const {scope, isLoading} = store;
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
@@ -122,7 +106,7 @@ export class Results extends React.Component<ResultsProps, void> {
                     onSelection: lineSelectionHandler,
                     parentSelector: scrollParentSelector,
                     ref: l => this.lists[key] = l,
-                    selectionStatus
+                    selectionStatus: store.selectionStatus
                 })}
                 {isLoading &&
                     <div style={{padding: "15px"}}>
@@ -134,7 +118,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private showAllHandler(key: string) {
-        const {store, scopeFacetKey} = this.props;
+        const {store, scopeFacetKey = FCT_SCOPE} = this.props;
         if (store.facets.find(facet => facet.code === scopeFacetKey)) {
             this.scopeSelectionHandler(key);
         } else {
@@ -162,7 +146,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private getGroupCounts() {
-        const {store, scopeFacetKey} = this.props;
+        const {store, scopeFacetKey = FCT_SCOPE} = this.props;
 
         let scopeFacet = store.facets.filter(facet => facet.code === store.groupingKey);
         if (scopeFacet.length === 0) {
