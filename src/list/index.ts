@@ -21,4 +21,5 @@ export {
     ListTimelineStyle,
     TopicDisplayerStyle
 } from "./components";
-export {connectToListStore, ListStore, ListServiceParams, ListServiceResponse} from "./store";
+export {ListStoreBase} from "./store-base";
+export {ListStore, ListServiceParams, ListServiceResponse} from "./store";

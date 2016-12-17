@@ -1,3 +1,10 @@
+# Branche list-search-revamp
+L'idée derrière le travail (à?) réalis(é|er) dans cette branche est d'unifier le `ListStore` et le `SearchStore` via un store abstrait commun et d'y regrouper toutes les actions (et états) de listes: principalement le tri et la sélection.
+
+Cela va permettre de simplifier grandement l'usage des listes (la recherche étant déjà un composant tout intégré, son API ne changera pas) et de marquer une vraie distinction entre les listes "simples" (à priori posées par des `listFor` à partir d'un bête array) et les listes "complexes" avec tri + sélection, qui seront forcément dans un `ListStore`. Ce dernier aura maintenant un deuxième mode de fonctionnement dans lequel on lui donne une liste à la place d'un service de chargement. Ainsi, on pourra bénéficier d'un tri local intégré (et de la sélection qui monte dans le store) au lieu de faire des requêtes au serveur pour le faire.
+
+Les différents composants de listes suivront le même traitement de consolidation (à voir dans le détail). En particulier, `listFor` ne pourra plus sortir une complète `ListSelection`.
+
 # (auto)focus
 *(on peut toujours espérer)*
 

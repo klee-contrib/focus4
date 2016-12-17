@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {forEach} from "lodash";
-import {computed, observable, reaction} from "mobx";
+import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -62,23 +62,14 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
 
     @observable private selectionStatus?: "none" | "partial" | "selected";
 
-    private reaction = reaction(() => [
-        this.props.store.groupingKey,
-        this.props.store.query,
-        this.props.store.scope,
-        this.props.store.selectedFacets,
-        this.props.store.sortAsc,
-        this.props.store.sortBy
-    ], () => this.props.store.search(), true);
+    componentWillMount() {
+        this.props.store.search();
+    }
 
     @computed
     private get hasGrouping() {
         const {scope} = this.props.store;
         return scope !== undefined && scope !== "ALL";
-    }
-
-    componentWillUnmount() {
-        this.reaction();
     }
 
     getSelectedItems() {

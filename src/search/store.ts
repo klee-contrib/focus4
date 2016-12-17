@@ -1,5 +1,7 @@
 import {autobind} from "core-decorators";
-import {action, computed, IObservableArray, isObservableArray, observable} from "mobx";
+import {action, computed, IObservableArray, isObservableArray, observable, reaction} from "mobx";
+
+import {ListStoreBase} from "../list";
 
 import {OutputFacet, QueryInput, QueryOutput, Results, StoreFacet, UnscopedQueryOutput} from "./types";
 
@@ -9,44 +11,49 @@ export interface SearchActionService {
 }
 
 @autobind
-export class SearchStore {
+export class SearchStore extends ListStoreBase<any> {
     @observable query = "";
     @observable scope = "ALL";
 
     @observable groupingKey: string | undefined;
     @observable selectedFacets: {[facet: string]: string} | undefined;
-    @observable sortAsc: boolean | undefined;
-    @observable sortBy: string | undefined;
 
     @observable facets: IObservableArray<StoreFacet> = [] as any;
     @observable results: Results<{}> = [] as any;
-    @observable totalCount = 0;
 
-    @observable private pendingCount = 0;
     private service: SearchActionService;
-    private nbSearchElement: number;
 
-    constructor(service: SearchActionService, nbSearchElement?: number) {
+    constructor(service: SearchActionService) {
+        super();
         this.service = service;
-        this.nbSearchElement = nbSearchElement || 50;
+
+        // Relance la recherche à chaque modification de propriété.
+        reaction(() => [
+            this.groupingKey,
+            this.query,
+            this.scope,
+            this.selectedFacets,
+            this.sortAsc,
+            this.sortBy
+        ], () => this.search());
     }
 
     @computed
-    get isLoading() {
-        return this.pendingCount > 0;
+    get totalCount() {
+        return this.serverCount;
     }
 
     @action
     async search(isScroll?: boolean) {
         let {query} = this;
-        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, totalCount, nbSearchElement} = this;
+        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, totalCount, top} = this;
 
         if (!query || "" === query) {
             query = "*";
         }
 
         const data = {
-            ...buildPagination({results, totalCount, isScroll, nbSearchElement}),
+            ...buildPagination({results, totalCount, isScroll, top}),
             criteria: {query, scope},
             facets: selectedFacets || {},
             group: groupingKey || "",
@@ -74,7 +81,17 @@ export class SearchStore {
 
         this.facets = response.facets as IObservableArray<StoreFacet>;
         this.results = response.results as Results<{}>;
-        this.totalCount = response.totalCount;
+        this.serverCount = response.totalCount;
+    }
+
+    @action
+    toggleAll() {
+        if (this.selectedItems.size) {
+            // TODO
+            // this.selectedList.replace(this.results);
+        } else {
+            this.selectedList.clear();
+        }
     }
 
     @action
@@ -82,7 +99,7 @@ export class SearchStore {
         if (props.scope && props.scope !== this.scope) {
             this.selectedFacets = {};
             this.groupingKey = props.groupingKey;
-            this.sortAsc = props.sortAsc;
+            this.sortAsc = props.sortAsc || false;
             this.sortBy = props.sortBy;
         } else {
             this.groupingKey = props.groupingKey || this.groupingKey;
@@ -96,19 +113,19 @@ export class SearchStore {
     }
 }
 
-function buildPagination(opts: {results: Results<{}>, totalCount: number, isScroll?: boolean, nbSearchElement?: number}) {
+function buildPagination(opts: {results: Results<{}>, totalCount: number, isScroll?: boolean, top?: number}) {
     const resultsKeys = Object.keys(opts.results);
     if (opts.isScroll && !isObservableArray(opts.results) && resultsKeys.length === 1) {
         const key = resultsKeys[0];
         const previousRes = opts.results[key];
         return {
             skip: previousRes.length,
-            top: opts.nbSearchElement || 0
+            top: opts.top || 0
         };
     } else {
         return {
             skip: 0,
-            top: opts.nbSearchElement || 0
+            top: opts.top || 0
         };
     }
 };

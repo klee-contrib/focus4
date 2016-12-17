@@ -1,9 +1,10 @@
 import {autobind} from "core-decorators";
-import {action, computed, observable} from "mobx";
+import {orderBy} from "lodash";
+import {action, computed, observable, reaction} from "mobx";
+
+import {ListStoreBase} from "./store-base";
 
 export interface ListServiceParams {
-    criteria?: {};
-    group?: string;
     skip?: number;
     sortDesc?: boolean;
     sortFieldName?: string;
@@ -18,56 +19,73 @@ export interface ListServiceResponse<T> {
 export type ListService<T> = (data: ListServiceParams) => Promise<ListServiceResponse<T>>;
 
 @autobind
-export class ListStore<T> {
-    @observable criteria = {};
-    @observable groupingKey: string | undefined;
-    @observable sortAsc = true;
-    @observable sortBy: string | undefined;
+export class ListStore<T> extends ListStoreBase<T> {
 
     @observable dataList: T[] = [];
-    @observable totalCount = 0;
 
-    @observable private pendingCount = 0;
-    private service: ListService<T>;
-    private nbElement: number;
+    private service?: ListService<T>;
 
-    constructor(service: ListService<T>, nbElement?: number) {
+    constructor(service?: ListService<T>) {
+        super();
         this.service = service;
-        this.nbElement = nbElement || 50;
+
+        // Tri.
+        reaction(() => [this.sortAsc, this.sortBy], () => {
+            if (this.service) {
+                this.load();
+            } else if (this.sortBy) {
+                this.dataList = orderBy(this.dataList, item => item[this.sortBy!], this.sortAsc);
+            }
+        });
+
+        // Tri à la saisie manuelle de la liste.
+        if (!this.service) {
+            reaction(() => this.dataList, () => {
+                this.dataList = orderBy(this.dataList, item => item[this.sortBy!], this.sortAsc);
+            });
+        }
     }
 
     @computed
-    get isLoading() {
-        return this.pendingCount > 0;
+    get totalCount() {
+        if (this.service) {
+            return this.serverCount;
+        } else {
+            return this.dataList.length;
+        }
     }
 
     @action
-    async load(isScroll: boolean) {
-        this.pendingCount++;
-        const response = await this.service({
-            criteria: this.criteria,
-            group: this.groupingKey || "",
-            skip: isScroll && this.dataList.length < this.totalCount ? this.dataList.length : 0,
-            sortDesc: this.sortAsc === undefined ? false : !this.sortAsc,
-            sortFieldName: this.sortBy,
-            top: this.nbElement
-        });
-        this.pendingCount--;
+    async load(fetchNext?: boolean) {
+        if (this.service) {
+            this.pendingCount++;
+            const response = await this.service({
+                skip: fetchNext && this.dataList.length < this.totalCount ? this.dataList.length : 0,
+                sortDesc: this.sortAsc === undefined ? false : !this.sortAsc,
+                sortFieldName: this.sortBy,
+                top: this.top
+            });
+            this.pendingCount--;
 
-        this.dataList = (isScroll ? [...this.dataList, ...response.dataList] : response.dataList) || [];
-        this.totalCount = response.totalCount;
+            this.dataList = (fetchNext ? [...this.dataList, ...response.dataList] : response.dataList) || [];
+            this.serverCount = response.totalCount;
+        }
     }
 
     @action
-    setProperties(props: {criteria?: {}, groupingKey?: string, sortAsc?: boolean, sortBy?: string}) {
-        this.criteria = props.criteria || this.criteria;
-        this.groupingKey = props.groupingKey || this.groupingKey;
+    toggleAll() {
+        if (this.selectedItems.size) {
+            this.selectedList.replace(this.dataList);
+        } else {
+            this.selectedList.clear();
+        }
+    }
+
+    @action
+    setProperties(props: {dataList?: T[], sortAsc?: boolean, sortBy?: keyof T, top?: number}) {
+        this.dataList = props.dataList || this.dataList;
         this.sortAsc = props.sortAsc || this.sortAsc;
         this.sortBy = props.sortBy || this.sortBy;
+        this.top = props.top || this.top;
     }
-}
-
-/** Retourne les props à fournir à un composant de liste pour se connecter à un ListStore. */
-export function connectToListStore<T>({dataList, totalCount, load}: ListStore<T>) {
-    return {data: dataList, fetchNextPage: () => load(false), hasMoreData: dataList.length < totalCount};
 }
