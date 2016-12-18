@@ -1,19 +1,115 @@
 import {autobind} from "core-decorators";
-import {Component} from "react";
+import {computed, observable} from "mobx";
+import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {LineProps} from "./lines";
-import {CommonListProps, WithData} from "./memory-list";
-export {WithData};
+import Button from "focus-components/button";
 
-export interface ListBaseProps<T, P extends LineProps<T>> extends CommonListProps {
+import {LineProps} from "./line";
+
+import * as styles from "./style/list.css";
+export type ListStyle = Partial<typeof styles>;
+
+export interface ListBaseProps<T, P extends LineProps<T>> {
+    classNames?: ListStyle;
     LineComponent: ReactComponent<P>;
     lineProps?: P;
-    isInfiniteScroll?: boolean;
-    isLoading?: boolean;
-    /** Default: 250 */
+    isManualFetch?: boolean;
     offset?: number;
-    parentSelector?: string;
+    perPage?: number;
+}
+
+@autobind
+export abstract class ListBase<T, P extends ListBaseProps<T, LineProps<T>>> extends React.Component<P, void> {
+
+    @observable private maxElements = this.props.perPage;
+    private page = 1;
+
+    protected abstract get data(): T[];
+
+    @computed
+    protected get displayedData() {
+        if (this.maxElements) {
+            return this.data.slice(0, this.maxElements);
+        } else {
+            return this.data;
+        }
+    }
+
+    @computed
+    protected get hasMoreData() {
+        if (this.maxElements) {
+            return this.data.length > this.maxElements;
+        } else {
+            return false;
+        }
+    }
+
+    componentDidMount() {
+        const {isManualFetch, perPage} = this.props;
+        if (!isManualFetch && perPage) {
+            this.attachScrollListener();
+        }
+    }
+
+    componentDidUpdate() {
+        this.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        const {isManualFetch, perPage} = this.props;
+        if (!isManualFetch && perPage) {
+            this.detachScrollListener();
+        }
+    }
+
+    protected renderManualFetch() {
+        const {isManualFetch, classNames} = this.props;
+        if (isManualFetch && this.hasMoreData) {
+            return (
+                <span className={`${styles.button} ${classNames!.button || ""}`}>
+                    <Button
+                        color="primary"
+                        handleOnClick={this.handleShowMore}
+                        label="list.button.showMore"
+                        type="button"
+                    />
+                </span>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    protected handleShowMore() {
+        if (this.hasMoreData) {
+            this.page = this.page + 1;
+            this.maxElements = (this.props.perPage || 5) * this.page;
+        }
+    }
+
+    private attachScrollListener() {
+        if (!this.hasMoreData) {
+            return;
+        }
+        window.addEventListener("scroll", this.scrollListener);
+        window.addEventListener("resize", this.scrollListener);
+        this.scrollListener();
+    }
+
+    private detachScrollListener() {
+        window.removeEventListener("scroll", this.scrollListener);
+        window.removeEventListener("resize", this.scrollListener);
+    }
+
+    private scrollListener() {
+        const el = findDOMNode(this) as HTMLElement;
+        const scrollTop = window.pageYOffset;
+        if (topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < (this.props.offset || 250)) {
+            this.detachScrollListener();
+            this.handleShowMore();
+        }
+    }
 }
 
 function topOfElement(element: HTMLElement): number {
@@ -22,59 +118,3 @@ function topOfElement(element: HTMLElement): number {
     }
     return element.offsetTop + topOfElement((element.offsetParent as HTMLElement));
 };
-
-@autobind
-export abstract class ListBase<T, P extends WithData<ListBaseProps<T, LineProps<T>>, T>> extends Component<P, void> {
-    parentNode: Element | Window;
-
-    componentWillUnmount() {
-        if (!this.props.isManualFetch) {
-            this.detachScrollListener();
-        }
-    }
-
-    componentDidMount() {
-        this.parentNode = this.props.parentSelector ? document.querySelector(this.props.parentSelector)! : window;
-        if (!this.props.isManualFetch) {
-            this.attachScrollListener();
-        }
-    }
-
-    componentDidUpdate() {
-        if (!this.props.isLoading && !this.props.isManualFetch) {
-            this.attachScrollListener();
-        }
-    }
-
-    attachScrollListener() {
-        if (!this.props.hasMoreData) {
-            return;
-        }
-        this.parentNode.addEventListener("scroll", this.scrollListener);
-        this.parentNode.addEventListener("resize", this.scrollListener);
-        this.scrollListener();
-    }
-
-    detachScrollListener() {
-        this.parentNode.removeEventListener("scroll", this.scrollListener);
-        this.parentNode.removeEventListener("resize", this.scrollListener);
-    }
-
-    scrollListener() {
-        const el = findDOMNode(this) as HTMLElement;
-        const scrollTop = ((this.parentNode as Window).pageYOffset !== undefined) ? (this.parentNode as Window).pageYOffset : (this.parentNode as Element).scrollTop;
-        if (topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight || (this.parentNode as HTMLElement).offsetHeight) < (this.props.offset || 250)) {
-            this.detachScrollListener();
-            this.handleShowMore();
-        }
-    }
-
-    handleShowMore() {
-        if (!this.props.hasMoreData) {
-            return;
-        }
-        if (this.props.fetchNextPage) {
-            return this.props.fetchNextPage();
-        }
-    }
-}

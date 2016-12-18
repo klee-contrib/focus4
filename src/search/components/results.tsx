@@ -4,8 +4,9 @@ import {isArray, isEmpty, omitBy} from "lodash";
 import {IObservableArray, isObservableArray} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {findDOMNode} from "react-dom";
 
-import {ListSelection, OperationListItem} from "../../list";
+import {OperationListItem, StoreList} from "../../list";
 
 import {SearchStore} from "../store";
 import {GroupComponent, GroupWrapper} from "./group-wrapper";
@@ -15,16 +16,16 @@ const FCT_SCOPE = "FCT_SCOPE";
 export interface ResultsProps {
     emptyComponent?: () => React.ReactElement<any>;
     groupComponent: GroupComponent;
-    /** Default: 3 */
+    /** Par défaut: 3 */
     initialRowsCount?: number;
     hasSelection: boolean;
     lineClickHandler?: (item: any) => void;
     lineComponentMapper: (key: string, list: any[]) => ReactComponent<any>;
     lineOperationList?: OperationListItem[];
-    lineSelectionHandler?: (data?: any, isSelected?: boolean) => void;
-    /** Default: FCT_SCOPE */
+    /** Par défaut : 250 */
+    offset?: number;
+    /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
-    scrollParentSelector?: any;
     renderSingleGroupDecoration: boolean;
     store: SearchStore;
 }
@@ -33,11 +34,44 @@ export interface ResultsProps {
 @observer
 export class Results extends React.Component<ResultsProps, void> {
 
-    lists: {[key: string]: ListSelection<any, any> | null} = {};
-
     private get key() {
         const {store, scopeFacetKey = FCT_SCOPE} = this.props;
         return store.groupingKey || scopeFacetKey;
+    }
+
+    componentDidMount() {
+        this.attachScrollListener();
+    }
+
+    componentDidUpdate() {
+        this.attachScrollListener();
+    }
+
+    componentWillUnmount() {
+        this.detachScrollListener();
+    }
+
+    private attachScrollListener() {
+        window.addEventListener("scroll", this.scrollListener);
+        window.addEventListener("resize", this.scrollListener);
+        this.scrollListener();
+    }
+
+    private detachScrollListener() {
+        window.removeEventListener("scroll", this.scrollListener);
+        window.removeEventListener("resize", this.scrollListener);
+    }
+
+    private scrollListener() {
+        const el = findDOMNode(this) as HTMLElement;
+        const scrollTop = window.pageYOffset;
+        if (topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < (this.props.offset || 250)) {
+            this.detachScrollListener();
+            const {isLoading, search} = this.props.store;
+            if (!isLoading) {
+                search(true);
+            }
+        }
     }
 
     private renderSingleGroup(list: any[], key: string, label: string | undefined, count: number, isUnique?: boolean) {
@@ -62,7 +96,7 @@ export class Results extends React.Component<ResultsProps, void> {
                     />
                 );
             } else {
-                return this.renderResultsList(list, key, count, true);
+                return this.renderResultsList(list, key);
             }
         } else if (groupComponent) {
             return (
@@ -88,26 +122,20 @@ export class Results extends React.Component<ResultsProps, void> {
         return <Empty />;
     }
 
-    private renderResultsList(list: any[], key: string, count: number, isUnique: boolean) {
-        const {lineComponentMapper, hasSelection, lineSelectionHandler, lineClickHandler, lineOperationList, scrollParentSelector, store} = this.props;
+    private renderResultsList(list: any[], key: string) {
+        const {lineComponentMapper, hasSelection, lineClickHandler, lineOperationList, store} = this.props;
         const {scope, isLoading} = store;
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
-        const hasMoreData = isUnique !== undefined && isUnique && list.length < count;
         return (
             <div>
-                {ListSelection.create({
-                    data: list,
-                    fetchNextPage: this.onScrollReachedBottom,
-                    hasMoreData,
-                    isSelection: hasSelection,
-                    LineComponent,
-                    lineProps: {operationList: lineOperationList, onLineClick: lineClickHandler},
-                    onSelection: lineSelectionHandler,
-                    parentSelector: scrollParentSelector,
-                    ref: l => this.lists[key] = l,
-                    selectionStatus: store.selectionStatus
-                })}
+                <StoreList
+                    data={list}
+                    hasSelection={hasSelection}
+                    LineComponent={LineComponent}
+                    lineProps={{operationList: lineOperationList, onLineClick: lineClickHandler} as any}
+                    store={store as any}
+                />
                 {isLoading &&
                     <div style={{padding: "15px"}}>
                         {i18n.t("search.loadingMore")}
@@ -136,13 +164,6 @@ export class Results extends React.Component<ResultsProps, void> {
             groupingKey: undefined,
             selectedFacets: {...selectedFacets, [key]: value}
         });
-    }
-
-    private onScrollReachedBottom() {
-        const {isLoading, search} = this.props.store;
-        if (!isLoading) {
-            search(true);
-        }
     }
 
     private getGroupCounts() {
@@ -221,3 +242,10 @@ export class Results extends React.Component<ResultsProps, void> {
         }
     }
 }
+
+function topOfElement(element: HTMLElement): number {
+    if (!element) {
+        return 0;
+    }
+    return element.offsetTop + topOfElement((element.offsetParent as HTMLElement));
+};

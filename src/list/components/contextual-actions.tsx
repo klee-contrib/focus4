@@ -4,7 +4,7 @@ import * as React from "react";
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
 
-import {OperationListItem} from "./lines";
+import {OperationListItem} from "./line";
 
 export interface ContextualActionsProps {
     operationList: OperationListItem[];

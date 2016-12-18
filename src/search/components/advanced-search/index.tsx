@@ -1,5 +1,4 @@
 import {autobind} from "core-decorators";
-import {forEach} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -31,10 +30,7 @@ export interface AdvancedSearchProps {
     openedFacetList?: {};
     scopes: {code: string, label: string}[];
     scopesConfig?: {[key: string]: string};
-    scrollParentSelector?: string;
     scopeLock?: boolean;
-    selectItem?: (data?: any, isSelected?: boolean) => void;
-    selectionAction?: (status: string) => void;
     store: SearchStore;
 }
 
@@ -43,25 +39,8 @@ export interface AdvancedSearchProps {
 @observer
 export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
 
-    results?: Results;
-
     componentWillMount() {
         this.props.store.search();
-    }
-
-    getSelectedItems() {
-        const selectedItems: {}[] = [];
-        if (this.results) {
-            const {lists} = this.results;
-            if (lists) {
-                forEach(lists, list => {
-                    if (list) {
-                        selectedItems.push(...list.getSelectedItems());
-                    }
-                });
-            }
-        }
-        return selectedItems;
     }
 
     private renderFacetBox() {
@@ -107,7 +86,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {hasSelection, onLineClick, lineComponentMapper, lineOperationList, scrollParentSelector, selectItem, store} = this.props;
+        const {hasSelection, onLineClick, lineComponentMapper, lineOperationList, store} = this.props;
         return (
             <Results
                 groupComponent={GroupComponent}
@@ -115,10 +94,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                 lineClickHandler={onLineClick}
                 lineComponentMapper={lineComponentMapper}
                 lineOperationList={lineOperationList}
-                lineSelectionHandler={selectItem}
-                ref={results => this.results = results}
                 renderSingleGroupDecoration={false}
-                scrollParentSelector={scrollParentSelector}
                 store={store}
             />
         );

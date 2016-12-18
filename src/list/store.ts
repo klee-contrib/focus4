@@ -23,7 +23,7 @@ export class ListStore<T> extends ListStoreBase<T> {
 
     @observable dataList: T[] = [];
 
-    private service?: ListService<T>;
+    service?: ListService<T>;
 
     constructor(service?: ListService<T>) {
         super();

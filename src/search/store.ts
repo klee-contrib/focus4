@@ -5,7 +5,7 @@ import {ListStoreBase} from "../list";
 
 import {OutputFacet, QueryInput, QueryOutput, Results, StoreFacet, UnscopedQueryOutput} from "./types";
 
-export interface SearchActionService {
+export interface SearchActionServices {
     scoped?: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
     unscoped?: (query: QueryInput) => Promise<UnscopedQueryOutput>;
 }
@@ -20,11 +20,11 @@ export class SearchStore extends ListStoreBase<any> {
     @observable facets: IObservableArray<StoreFacet> = [] as any;
     @observable results: Results<{}> = [] as any;
 
-    private service: SearchActionService;
+    services: SearchActionServices;
 
-    constructor(service: SearchActionService) {
+    constructor(services: SearchActionServices) {
         super();
-        this.service = service;
+        this.services = services;
 
         // Relance la recherche à chaque modification de propriété.
         reaction(() => [
@@ -64,14 +64,14 @@ export class SearchStore extends ListStoreBase<any> {
 
         this.pendingCount++;
         if (scope.toUpperCase() === "ALL") {
-            if (this.service.unscoped) {
-                response = unscopedResponse(await this.service.unscoped(data));
+            if (this.services.unscoped) {
+                response = unscopedResponse(await this.services.unscoped(data));
             } else {
                 throw new Error("Impossible de lancer une recherche non scopée puisque le service correspondant n'a pas été défini.");
             }
         } else {
-            if (this.service.scoped) {
-                response = scopedResponse(await this.service.scoped(data), {isScroll, scope, results});
+            if (this.services.scoped) {
+                response = scopedResponse(await this.services.scoped(data), {isScroll, scope, results});
             } else {
                 throw new Error("Impossible de lancer une recherche scopée puisque le service correspondant n'a pas été défini.");
             }

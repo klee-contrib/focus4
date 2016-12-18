@@ -23,7 +23,7 @@ export interface Props {
     isUnique?: boolean;
     showAllHandler?: (key: string) => void;
     list: any[];
-    renderResultsList: (list: any[], groupKey: string, count: number, isUnique: boolean) => React.ReactElement<any>;
+    renderResultsList: (list: any[], groupKey: string) => React.ReactElement<any>;
 }
 
 @autobind
@@ -51,7 +51,7 @@ export class GroupWrapper extends React.Component<Props, void> {
                 showAllHandler={showAllHandler}
                 showMoreHandler={this.showMoreHandler}
             >
-                {renderResultsList(listToRender, groupKey, count, isUnique || false)}
+                {renderResultsList(listToRender, groupKey)}
             </Group>
         );
     }
