@@ -88,10 +88,10 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
     }
 
     display() {
-        const {valueKey, labelKey, values, value: rawValue, DisplayComponent} = this.props;
+        const {valueKey, labelKey, values, value: rawValue, formatter, DisplayComponent} = this.props;
         const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
         const props = {...omit(this.props, omittedProps), value};
-        const FinalDisplay = DisplayComponent || (() => <div>{value}</div>);
+        const FinalDisplay = DisplayComponent || (() => <div>{formatter && formatter(value) || value}</div>);
         return <FinalDisplay {...props} />;
     }
 
