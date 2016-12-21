@@ -1,7 +1,7 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
 import {find, omit, result} from "lodash";
-import {computed} from "mobx";
+import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -64,6 +64,14 @@ const omittedProps = [
 @observer
 export class Field extends React.Component<FieldProps & {ref: (field: StyleInjector<Field>) => void}, void> {
 
+    @observable showError = false;
+
+    componentWillUpdate({value}: FieldProps) {
+        if (value) {
+            this.showError = true;
+        }
+    }
+
     @computed
     get error(): string | undefined {
         const {error, value} = this.props;
@@ -99,7 +107,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const {FieldComponent} = this.props;
         if (FieldComponent) {
             const props = omit(this.props, omittedProps);
-            return <FieldComponent {...props} error={this.error} />;
+            return <FieldComponent {...props} error={this.showError && this.error} />;
         } else {
             return null;
         }
@@ -109,7 +117,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const {InputComponent} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
-        return <FinalInput {...props} error={this.error} />;
+        return <FinalInput {...props} error={this.showError && this.error} />;
     }
 
     label() {
@@ -129,7 +137,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
     render() {
         const {FieldComponent, contentCellPosition = "top", contentSize = 12, labelSize = 4, contentOffset = 0, isRequired, hasLabel, isEdit, domain, classNames, className = ""} = this.props;
         return (
-            <div className={`mdl-grid ${styles.field} ${classNames!.field || ""} ${isEdit ? `${styles.edit} ${classNames!.edit || ""}` : ""} ${this.error ? `${styles.invalid} ${classNames!.invalid || ""}` : ""} ${isRequired ? `${styles.required} ${classNames!.required || ""}` : ""} ${domain && domain.className ? domain.className : ""}`}>
+            <div className={`mdl-grid ${styles.field} ${classNames!.field || ""} ${isEdit ? `${styles.edit} ${classNames!.edit || ""}` : ""} ${this.error && this.showError ? `${styles.invalid} ${classNames!.invalid || ""}` : ""} ${isRequired ? `${styles.required} ${classNames!.required || ""}` : ""} ${domain && domain.className ? domain.className : ""}`}>
                 {FieldComponent ? this.field() : null}
                 {!FieldComponent && hasLabel ? this.label() : null}
                 {!FieldComponent ?

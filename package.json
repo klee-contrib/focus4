@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.0.0-rc7",
+  "version": "1.0.0-rc12",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {
@@ -25,7 +25,7 @@
     "@types/glob": "5.0.30",
     "@types/i18next": "2.3.34",
     "@types/isomorphic-fetch": "0.0.31",
-    "@types/lodash": "4.14.43",
+    "@types/lodash": "4.14.44",
     "@types/numeral": "0.0.18",
     "@types/react": "0.14.55",
     "@types/react-addons-test-utils": "0.14.15",

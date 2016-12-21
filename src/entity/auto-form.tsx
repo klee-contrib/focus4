@@ -189,6 +189,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     /** Valide les différents champs du formulaire. */
     @action
     validate() {
+        for (const field in this.fields) {
+            this.fields[field]!.showError = true;
+        }
         return !some(values(this.fields), field => field && field.error);
     }
 
@@ -290,7 +293,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
 
     private setFieldOptions<T>(field: EntityField<T>, options: {[key: string]: any}) {
         options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
-        options["error"] = this.errors[field.$entity.name];
+        options["error"] = this.errors[field.$entity.translationKey];
 
         if (options["isEdit"] === undefined) {
             options["isEdit"] = this.isEdit;
