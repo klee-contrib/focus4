@@ -60,7 +60,7 @@ function treatFieldErrors(response: ErrorResponse) {
 function treatGlobalErrors(response: ErrorResponse) {
     let globals: string[] = [];
     Object.keys(globalErrorTypes).forEach(errorName => {
-        let messages = response[errorName];
+        const messages = response[errorName];
         if (isArray(messages)) {
             globals = [...globals, ...messages];
             dispatchMessages(messages, globalErrorTypes[errorName]);

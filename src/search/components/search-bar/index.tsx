@@ -82,7 +82,8 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     }
 
     render() {
-        let {hasScopes, placeholder, store, scopes, classNames} = this.props;
+        let {placeholder} = this.props;
+        const {hasScopes, store, scopes, classNames} = this.props;
         if (store.query && 0 < store.query.length) {
             placeholder = "";
         }

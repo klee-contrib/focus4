@@ -48,7 +48,7 @@ function clone(source: any): any {
         let res = [];
         const toAdd = source.map(value => clone(value));
         res.length = toAdd.length;
-        for (let i = 0, l = toAdd.length; i < l; i++) {
+        for (let i = 0; i < toAdd.length; i++) {
             res[i] = toAdd[i];
         }
 
@@ -64,7 +64,7 @@ function clone(source: any): any {
         return res;
     } else if (isObservableObject(source)) {
         const res: any = {};
-        for (let key in source) {
+        for (const key in source) {
             if (key === "$entity") {
                 res[key] = asReference(source[key]);
             } else {

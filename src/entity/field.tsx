@@ -72,13 +72,13 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
             return error || undefined;
         }
 
-        let {isRequired, validator, label = ""} = this.props;
+        const {isRequired, validator, label = ""} = this.props;
         if (isRequired && (undefined === value || null === value || "" === value)) {
             return i18n.t("field.required");
         }
 
         if (validator && value !== undefined && value !== null) {
-            let validStat = validate({value, name: i18n.t(label)}, validator);
+            const validStat = validate({value, name: i18n.t(label)}, validator);
             if (validStat.errors.length) {
                 return i18n.t(validStat.errors.join(", "));
             }

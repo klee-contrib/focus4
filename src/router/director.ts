@@ -113,7 +113,7 @@ export class Router {
             }
         };
 
-        for (let route in routes) {
+        for (const route in routes) {
             if (routes.hasOwnProperty(route)) {
                 insertOrMount(route, path.slice(0));
             }
@@ -181,15 +181,15 @@ export class Router {
 
     init(r?: string) {
         const handler = (onChangeEvent?: PopStateEvent | HashChangeEvent) => {
-            let newURL = onChangeEvent && (onChangeEvent as HashChangeEvent).newURL || window.location.hash;
-            let url = this.history === true ? this.getPath : newURL.replace(/.*#/, "");
+            const newURL = onChangeEvent && (onChangeEvent as HashChangeEvent).newURL || window.location.hash;
+            const url = this.history === true ? this.getPath : newURL.replace(/.*#/, "");
             this.dispatch("on", url.charAt(0) === "/" ? url : "/" + url);
         };
 
         this.listeners.push(handler);
 
         const onChange = (onChangeEvent: PopStateEvent | HashChangeEvent) => {
-            for (let i = 0, l = this.listeners.length; i < l; i++) {
+            for (let i = 0; i < this.listeners.length; i++) {
                 this.listeners[i](onChangeEvent);
             }
         };
@@ -235,7 +235,7 @@ export class Router {
 
     private dispatch(method: "on", path: string) {
         let fns = this.traverse(method, path.replace(QUERY_SEPARATOR, ""), this.routes, "");
-        let invoked = this._invoked;
+        const invoked = this._invoked;
         this._invoked = true;
         if (!fns || fns.length === 0) {
             this.last = [];
@@ -270,7 +270,7 @@ export class Router {
                 return r;
             }
             function deepCopy(source: any[]) {
-                let result: any[] = [];
+                const result: any[] = [];
                 for (let i = 0; i < source.length; i++) {
                     result[i] = Array.isArray(source[i]) ? deepCopy(source[i]) : source[i];
                 }
@@ -290,7 +290,7 @@ export class Router {
                     }
                 }
             }
-            let newRoutes = deepCopy(r);
+            const newRoutes = deepCopy(r);
             newRoutes.matched = r.matched;
             newRoutes.captures = r.captures;
             newRoutes.after = r.after!.filter(filter);
@@ -304,7 +304,7 @@ export class Router {
             next.captures = [];
             return filterRoutes(next);
         }
-        for (let r in routes) {
+        for (const r in routes) {
             if (routes.hasOwnProperty(r) && (!this._methods[r] || this._methods[r] && typeof routes[r] === "object" && !Array.isArray(routes[r]))) {
                 const current = regexp + this.delimiter + r;
                 let exact = current;
@@ -365,7 +365,7 @@ export class Router {
     }
 
     private runlist(fns: ThisArray) {
-        let runlist = (this.every && this.every.before ? [this.every.before].concat(flatten(fns)) : flatten(fns)) as any as ThisArray;
+        const runlist = (this.every && this.every.before ? [this.every.before].concat(flatten(fns)) : flatten(fns)) as any as ThisArray;
         if (this.every && this.every.on) {
             runlist.push(this.every.on);
         }
@@ -389,7 +389,7 @@ function regifyString(str: string) {
         out += str.substr(0, matches.index) + matches[0];
     }
     str = out += str.substr(last);
-    let captures = str.match(/:([^\/]+)/ig);
+    const captures = str.match(/:([^\/]+)/ig);
     if (captures) {
         for (let i = 0; i < captures.length; i++) {
             const capture = captures[i];
@@ -408,12 +408,12 @@ function terminator(routes: string[], delimiter: string, start = "(", stop = ")"
     let left = 0;
     let right = 0;
     for (let i = 0; i < routes.length; i++) {
-        let chunk = routes[i];
+        const chunk = routes[i];
         if (chunk.indexOf(start, last) > chunk.indexOf(stop, last) || ~chunk.indexOf(start, last) && !~chunk.indexOf(stop, last) || !~chunk.indexOf(start, last) && ~chunk.indexOf(stop, last)) {
             left = chunk.indexOf(start, last);
             right = chunk.indexOf(stop, last);
             if (~left && !~right || !~left && ~right) {
-                let tmp = routes.slice(0, (i || 1) + 1).join(delimiter);
+                const tmp = routes.slice(0, (i || 1) + 1).join(delimiter);
                 routes = [tmp].concat(routes.slice((i || 1) + 1));
             }
             last = (right > left ? right : left) + 1;

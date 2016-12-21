@@ -58,7 +58,6 @@
         "no-require-imports": true,
         "no-shadowed-variable": true,
         "no-trailing-whitespace": true,
-
         "no-unsafe-finally": true,
         "no-unused-expression": true,
         "no-unused-new": true,
@@ -86,6 +85,7 @@
             true,
             "ignore-for-loop"
         ],
+        "prefer-const": true,
         "quotemark": [
             true,
             "double"

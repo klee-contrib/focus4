@@ -89,7 +89,7 @@ export function numberValidator(text: string, options?: NumberOptions) {
     if (isUndefined(text) || isNull(text)) {
         return true;
     }
-    let n = +text;
+    const n = +text;
     if (isNaN(n) || !isNumber(n)) {
         return false;
     }
@@ -102,8 +102,8 @@ export function numberValidator(text: string, options?: NumberOptions) {
         return false;
     }
 
-    let isMin = options.min !== undefined ? n >= options.min : true;
-    let isMax = options.max !== undefined ? n <= options.max : true;
+    const isMin = options.min !== undefined ? n >= options.min : true;
+    const isMax = options.max !== undefined ? n <= options.max : true;
     return isMin && isMax;
 }
 
@@ -172,7 +172,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
  * @param validators Les validateurs.
  */
 export function validate(property: ValidationProperty, validators?: Validator[]) {
-    let errors: string[] = [];
+    const errors: string[] = [];
     if (validators) {
         for (const validator of validators) {
             const res = validateProperty(property, validator);

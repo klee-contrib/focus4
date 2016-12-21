@@ -23,12 +23,12 @@ export class StyleProvider<P> extends React.Component<P, void> {
         const classNames = {};
         const {classNames: parentClassNames} = this.context;
         if (parentClassNames) {
-            for (let key in parentClassNames) {
+            for (const key in parentClassNames) {
                 (classNames as any)[key] = (parentClassNames as any)[key];
             }
         }
 
-        for (let key in this.props) {
+        for (const key in this.props) {
             if (!(key in specialReactKeys)) {
                 (classNames as any)[key] = (this.props as any)[key];
             }

@@ -38,7 +38,8 @@ export class SearchStore {
 
     @action
     async search(isScroll?: boolean) {
-        let {scope, query, selectedFacets, groupingKey, sortBy, sortAsc, results, totalCount, nbSearchElement} = this;
+        let {query} = this;
+        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, totalCount, nbSearchElement} = this;
 
         if (!query || "" === query) {
             query = "*";
@@ -123,8 +124,8 @@ function parseFacets(serverFacets: OutputFacet[]) {
 function scopedResponse<T>(data: QueryOutput<T>, context: {results: Results<T>, isScroll?: boolean, scope: string}) {
     // Results are stored as an object if there is no group.
     if (context.isScroll && !isObservableArray(context.results)) {
-        let resultsKeys = Object.keys(context.results);
-        let key = resultsKeys[0];
+        const resultsKeys = Object.keys(context.results);
+        const key = resultsKeys[0];
         data.list = [...context.results[key], ...(data.list ? data.list : [])];
     }
     return ({

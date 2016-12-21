@@ -104,7 +104,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     @action
     async componentWillMount() {
         this.entity.subscribe();
-        let {hasLoad = true, id} = this.props;
+        const {hasLoad = true, id} = this.props;
         if (hasLoad && id) {
             this.isLoading = true;
             const data = await this.services.load(id);
