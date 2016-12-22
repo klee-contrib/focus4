@@ -107,7 +107,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const {FieldComponent} = this.props;
         if (FieldComponent) {
             const props = omit(this.props, omittedProps);
-            return <FieldComponent {...props} error={this.showError && this.error} />;
+            return <FieldComponent {...props} error={this.showError && this.error || undefined} />;
         } else {
             return null;
         }
@@ -117,7 +117,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const {InputComponent} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
-        return <FinalInput {...props} error={this.showError && this.error} />;
+        return <FinalInput {...props} error={this.showError && this.error || undefined} />;
     }
 
     label() {
