@@ -53,7 +53,7 @@ export class StoreList<T, P extends LineProps<T>> extends List<T, P, StoreListPr
     }
 
     protected renderLines() {
-        const {LineComponent, hasSelection, selectionnableInitializer = () => true, lineProps, store} = this.props;
+        const {LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, store} = this.props;
         return this.displayedData.map((value, i) => lineSelection(
             <LineComponent
                 key={i}
@@ -61,7 +61,7 @@ export class StoreList<T, P extends LineProps<T>> extends List<T, P, StoreListPr
                 {...lineProps}
             />,
             store.selectedItems.has(value),
-            hasSelection && selectionnableInitializer(value) || false,
+            hasSelection && selectionnableInitializer(value),
             () => store.toggle(value)
         ));
     }
