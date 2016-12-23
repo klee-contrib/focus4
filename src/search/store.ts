@@ -1,71 +1,84 @@
 import {autobind} from "core-decorators";
-import {action, computed, IObservableArray, isObservableArray, observable} from "mobx";
+import {flatten, sumBy, values} from "lodash";
+import {action, computed, IObservableArray, isObservableArray, observable, reaction} from "mobx";
+
+import {ListStoreBase} from "../list";
 
 import {OutputFacet, QueryInput, QueryOutput, Results, StoreFacet, UnscopedQueryOutput} from "./types";
 
-export interface SearchActionService {
+export interface SearchActionServices {
     scoped?: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
     unscoped?: (query: QueryInput) => Promise<UnscopedQueryOutput>;
 }
 
 @autobind
-export class SearchStore {
+export class SearchStore extends ListStoreBase<any> {
     @observable query = "";
     @observable scope = "ALL";
 
-    @observable groupingKey: string | undefined;
-    @observable selectedFacets: {[facet: string]: string} | undefined;
-    @observable sortAsc: boolean | undefined;
-    @observable sortBy: string | undefined;
+    @observable selectedFacets: {[facet: string]: string} = {};
 
     @observable facets: IObservableArray<StoreFacet> = [] as any;
     @observable results: Results<{}> = [] as any;
-    @observable totalCount = 0;
 
-    @observable private pendingCount = 0;
-    private service: SearchActionService;
-    private nbSearchElement: number;
+    services: SearchActionServices;
 
-    constructor(service: SearchActionService, nbSearchElement?: number) {
-        this.service = service;
-        this.nbSearchElement = nbSearchElement || 50;
+    constructor(services: SearchActionServices) {
+        super();
+        this.services = services;
+
+        // Relance la recherche à chaque modification de propriété.
+        reaction(() => [
+            this.groupingKey,
+            this.query,
+            this.scope,
+            this.selectedFacets,
+            this.sortAsc,
+            this.sortBy
+        ], () => this.search());
     }
 
     @computed
-    get isLoading() {
-        return this.pendingCount > 0;
+    get currentCount() {
+        return this.flatResultList.length;
+    }
+
+    @computed
+    get totalCount() {
+        return this.serverCount;
     }
 
     @action
-    async search(isScroll?: boolean) {
+    async search(isScroll = false) {
         let {query} = this;
-        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, totalCount, nbSearchElement} = this;
+        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
 
         if (!query || "" === query) {
             query = "*";
         }
 
         const data = {
-            ...buildPagination({results, totalCount, isScroll, nbSearchElement}),
             criteria: {query, scope},
             facets: selectedFacets || {},
             group: groupingKey || "",
+            skip: buildPagination(isScroll, results),
             sortDesc: sortAsc === undefined ? false : !sortAsc,
-            sortFieldName: sortBy
+            sortFieldName: sortBy,
+            top
         };
 
         let response;
 
         this.pendingCount++;
         if (scope.toUpperCase() === "ALL") {
-            if (this.service.unscoped) {
-                response = unscopedResponse(await this.service.unscoped(data));
+            if (this.services.unscoped) {
+                response = unscopedResponse(await this.services.unscoped(data));
             } else {
                 throw new Error("Impossible de lancer une recherche non scopée puisque le service correspondant n'a pas été défini.");
             }
         } else {
-            if (this.service.scoped) {
-                response = scopedResponse(await this.service.scoped(data), {isScroll, scope, results});
+            if (this.services.scoped) {
+                response = scopedResponse(await this.services.scoped(data), {isScroll, scope, results});
             } else {
                 throw new Error("Impossible de lancer une recherche scopée puisque le service correspondant n'a pas été défini.");
             }
@@ -74,7 +87,16 @@ export class SearchStore {
 
         this.facets = response.facets as IObservableArray<StoreFacet>;
         this.results = response.results as Results<{}>;
-        this.totalCount = response.totalCount;
+        this.serverCount = response.totalCount;
+    }
+
+    @action
+    toggleAll() {
+        if (this.selectedItems.size) {
+            this.selectedList.replace(this.flatResultList);
+        } else {
+            this.selectedList.clear();
+        }
     }
 
     @action
@@ -82,7 +104,7 @@ export class SearchStore {
         if (props.scope && props.scope !== this.scope) {
             this.selectedFacets = {};
             this.groupingKey = props.groupingKey;
-            this.sortAsc = props.sortAsc;
+            this.sortAsc = props.sortAsc || false;
             this.sortBy = props.sortBy;
         } else {
             this.groupingKey = props.groupingKey || this.groupingKey;
@@ -94,23 +116,22 @@ export class SearchStore {
         this.query = props.query || this.query;
         this.scope = props.scope || this.scope;
     }
+
+    @computed
+    private get flatResultList() {
+        if (isObservableArray(this.results)) {
+            return flatten(this.results.map(values).map(g => g.slice()));
+        } else {
+            return flatten(values(this.results).map(g => g.slice()));
+        }
+    }
 }
 
-function buildPagination(opts: {results: Results<{}>, totalCount: number, isScroll?: boolean, nbSearchElement?: number}) {
-    const resultsKeys = Object.keys(opts.results);
-    if (opts.isScroll && !isObservableArray(opts.results) && resultsKeys.length === 1) {
-        const key = resultsKeys[0];
-        const previousRes = opts.results[key];
-        return {
-            skip: previousRes.length,
-            top: opts.nbSearchElement || 0
-        };
-    } else {
-        return {
-            skip: 0,
-            top: opts.nbSearchElement || 0
-        };
+function buildPagination(isScroll: boolean, results: Results<{}>) {
+    if (isScroll && !isObservableArray(results)) {
+        return sumBy(values(results), group => group.length);
     }
+    return 0;
 };
 
 function parseFacets(serverFacets: OutputFacet[]) {

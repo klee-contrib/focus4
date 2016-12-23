@@ -1,6 +1,7 @@
 import {autobind} from "core-decorators";
 import * as i18n from "i18next";
 import {reduce} from "lodash";
+import {action} from "mobx";
 import * as React from "react";
 
 import Button from "focus-components/button";
@@ -8,6 +9,7 @@ import Dropdown, {DropdownItem} from "focus-components/dropdown";
 
 import {injectStyle} from "../../theming";
 
+import {ListStoreBase} from "../store-base";
 import {ContextualActions} from "./contextual-actions";
 import {TopicDisplayer} from "./topic-displayer";
 
@@ -16,93 +18,81 @@ export type ActionBarStyle = Partial<typeof styles>;
 
 export interface ActionBarProps {
     classNames?: ActionBarStyle;
-    hasSelection?: boolean;
-    hasGrouping?: boolean;
-    selectionStatus?: "none" | "partial" | "selected";
-    selectionAction?: (selectionStatus?: "none" | "partial" | "selected") => void;
-    orderableColumnList?: {key: string, label: string, order: boolean}[];
-    orderAction?: (key: string, order: boolean) => void;
-    orderSelected?: {key?: string, order?: boolean};
     facetClickAction?: (key: string) => void;
     facetList?: {[facet: string]: {code: string, label: string, value: string}};
     groupableColumnList?: {[column: string]: string};
-    groupAction?: (key?: string) => void;
-    groupSelectedKey?: string;
-    operationList?: DropdownItem[];
     groupLabelPrefix?: string;
+    hasSelection?: boolean;
+    orderableColumnList?: {key: string, label: string, order: boolean}[];
+    operationList?: DropdownItem[];
+    store: ListStoreBase<any>;
 }
 
 @injectStyle("actionBar")
 @autobind
 export class ActionBar extends React.Component<ActionBarProps, void> {
 
-    getSelectionObject() {
-        const {hasSelection, selectionAction, selectionStatus} = this.props;
-        if (hasSelection && selectionAction) {
-            const onIconClick = () => {
-                const newSelectionStatus = selectionStatus === "none" ? "selected" : "none";
-                selectionAction(newSelectionStatus);
-            };
-            return <Button shape="icon" icon={this.getSelectionObjectIcon()} handleOnClick={onIconClick} />;
-        } else if (hasSelection) {
-            console.warn("Pour utiliser la fonction de sélection de l'ActionBar, il est nécessaire de spécifier les props 'selectionAction' et 'selectionStatus'.");
+    private getSelectionObject() {
+        const {hasSelection, store} = this.props;
+        if (hasSelection) {
+            return <Button shape="icon" icon={this.getSelectionObjectIcon()} handleOnClick={store.toggleAll} />;
+        } else {
+            return null;
         }
-
-        return null;
     }
 
-    getOrderObject() {
-        const {orderableColumnList, orderSelected, orderAction} = this.props;
-        if (orderableColumnList && orderSelected && orderSelected.key && orderSelected.order !== undefined && orderAction) {
+    private getOrderObject() {
+        const {orderableColumnList, store} = this.props;
+        if (orderableColumnList) {
             const orderOperationList: DropdownItem[] = []; // [{key:'columnKey', order:'asc', label:'columnLabel'}]
             for (const key in orderableColumnList) {
                 const description = orderableColumnList[key];
                 orderOperationList.push({
-                    action: () => orderAction(description.key, description.order),
+                    action: action(() => {
+                        store.sortBy = description.key;
+                        store.sortAsc = description.order;
+                    }),
                     label: description.label,
-                    style: this.getSelectedStyle(description.key + description.order, orderSelected.key + (orderSelected.order ? "asc" : "desc"))
+                    style: this.getSelectedStyle(description.key + description.order, store.sortBy + (store.sortAsc ? "asc" : "desc"))
                 });
             }
-            return <Dropdown button={{icon: "sort_by_alpha"}} key="down" operations={orderOperationList} />;
+            return <Dropdown button={{icon: "sort_by_alpha", shape: "icon"}} key="down" operations={orderOperationList} />;
         }
 
         return null;
     }
 
-    getGroupObject() {
-        const {hasGrouping, groupLabelPrefix = "", groupSelectedKey, groupableColumnList, groupAction} = this.props;
-        if (hasGrouping && groupableColumnList && groupAction) {
+    private getGroupObject() {
+        const {groupLabelPrefix = "", groupableColumnList, store} = this.props;
+        if (groupableColumnList) {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
-                    action: () => groupAction(key),
+                    action: () => store.groupingKey = key,
                     label: i18n.t(groupLabelPrefix + label),
-                    style: this.getSelectedStyle(key, groupSelectedKey)
+                    style: this.getSelectedStyle(key, store.groupingKey)
                 });
                 return operationList;
             }, [] as DropdownItem[]).concat([{
-                action: () => groupAction(),
+                action: () => store.groupingKey = undefined,
                 label: i18n.t("list.actionBar.ungroup")
             }]);
 
             return <Dropdown button={{icon: "folder_open", shape: "icon"}} operations={groupOperationList} />;
-        } else if (hasGrouping) {
-            console.warn("Pour utiliser la fonction de groupe de l'ActionBar, il est nécessaire de spécifier les props 'groupableColumnList' et 'groupAction'.");
+        } else {
+            return null;
         }
-
-        return null;
     }
 
-    getSelectedStyle(currentKey: string, selectedKey?: string) {
+    private getSelectedStyle(currentKey: string, selectedKey?: string) {
         return currentKey === selectedKey ? " selected " : "";
     }
 
-    getSelectionObjectIcon() {
-        if ("none" === this.props.selectionStatus) {
-            return "check_box_outline_blank";
-        } else if ("selected" === this.props.selectionStatus) {
-            return "check_box";
+    private getSelectionObjectIcon() {
+        switch (this.props.store.selectionStatus) {
+            case "none": return "check_box_outline_blank";
+            case "selected": return "check_box";
+            default: return "indeterminate_check_box";
         }
-        return "indeterminate_check_box";
     }
 
     render() {

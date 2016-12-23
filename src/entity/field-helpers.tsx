@@ -1,4 +1,4 @@
-import {find, omit, result} from "lodash";
+import {find, result} from "lodash";
 import * as React from "react";
 
 import AutocompleteSelect, {AutoCompleteResult} from "focus-components/autocomplete-select";
@@ -6,7 +6,6 @@ import AutocompleteText from "focus-components/autocomplete-text/field";
 import Select from "focus-components/select";
 
 import {EntityField} from "../entity";
-import {CommonListProps, LineProps, LineSelectionProps, ListSelection, ListSelectionProps, ListTable, ListTableProps, MemoryList} from "../list";
 import {StyleInjector} from "../theming";
 
 import {Field, FieldProps} from "./field";
@@ -124,29 +123,6 @@ export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: Ent
 }
 
 /**
- * Crée un composant de liste (par défaut) à partir de la liste fournie.
- * @param data La liste.
- * @param options Les options.
- */
-export function listFor<T, P extends LineSelectionProps<T>>(data: T[], options: ListSelectionProps<T, P> & {perPage?: number}) {
-    return listForWith(ListSelection, Object.assign({}, options, {data}));
-}
-
-/**
- * Crée un composant de liste personnalisé à partir de la liste fournie.
- * @param ListComponent Le component de liste.
- * @param options Les options (dont les données de la liste).
- */
-export function listForWith<T, P extends CommonListProps & {data: T[]}>(ListComponent: ReactComponent<P>, options: P & {perPage?: number}) {
-    return MemoryList.create({
-        data: options.data,
-        ListComponent,
-        listProps: omit(options, "data", "perPage"),
-        perPage: options.perPage
-    });
-}
-
-/**
  * Crée un champ avec résolution de référence.
  * @param field La définition de champ.
  * @param listName Le nom de la liste de référence.
@@ -167,15 +143,6 @@ export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): 
     const {formatter, valueKey, labelKey, values, value} = buildFieldProps(field, options);
     const processedValue = values ? result(find(values, {[valueKey || "code"]: value}), labelKey || "label") : value;
     return formatter!(processedValue);
-}
-
-/**
- * Crée un composant de tableau à partir de la liste fournie.
- * @param data La liste.
- * @param options Les options.
- */
-export function tableFor<T, P extends LineProps<T>>(data: T[], options: ListTableProps<T, P> & {perPage?: number}) {
-    return listForWith(ListTable, Object.assign({}, options, {data}));
 }
 
 /**
