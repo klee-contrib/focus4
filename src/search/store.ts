@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import {flatten, sumBy, values} from "lodash";
 import {action, computed, IObservableArray, isObservableArray, observable, reaction} from "mobx";
 
 import {ListStoreBase} from "../list";
@@ -38,26 +39,32 @@ export class SearchStore extends ListStoreBase<any> {
     }
 
     @computed
+    get currentCount() {
+        return this.flatResultList.length;
+    }
+
+    @computed
     get totalCount() {
         return this.serverCount;
     }
 
     @action
-    async search(isScroll?: boolean) {
+    async search(isScroll = false) {
         let {query} = this;
-        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, totalCount, top} = this;
+        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
 
         if (!query || "" === query) {
             query = "*";
         }
 
         const data = {
-            ...buildPagination({results, totalCount, isScroll, top}),
             criteria: {query, scope},
             facets: selectedFacets || {},
             group: groupingKey || "",
+            skip: buildPagination(isScroll, results),
             sortDesc: sortAsc === undefined ? false : !sortAsc,
-            sortFieldName: sortBy
+            sortFieldName: sortBy,
+            top
         };
 
         let response;
@@ -86,8 +93,7 @@ export class SearchStore extends ListStoreBase<any> {
     @action
     toggleAll() {
         if (this.selectedItems.size) {
-            // TODO
-            // this.selectedList.replace(this.results);
+            this.selectedList.replace(this.flatResultList);
         } else {
             this.selectedList.clear();
         }
@@ -110,23 +116,22 @@ export class SearchStore extends ListStoreBase<any> {
         this.query = props.query || this.query;
         this.scope = props.scope || this.scope;
     }
+
+    @computed
+    private get flatResultList() {
+        if (isObservableArray(this.results)) {
+            return flatten(this.results.map(values).map(g => g.slice()));
+        } else {
+            return flatten(values(this.results).map(g => g.slice()));
+        }
+    }
 }
 
-function buildPagination(opts: {results: Results<{}>, totalCount: number, isScroll?: boolean, top?: number}) {
-    const resultsKeys = Object.keys(opts.results);
-    if (opts.isScroll && !isObservableArray(opts.results) && resultsKeys.length === 1) {
-        const key = resultsKeys[0];
-        const previousRes = opts.results[key];
-        return {
-            skip: previousRes.length,
-            top: opts.top || 0
-        };
-    } else {
-        return {
-            skip: 0,
-            top: opts.top || 0
-        };
+function buildPagination(isScroll: boolean, results: Results<{}>) {
+    if (isScroll && !isObservableArray(results)) {
+        return sumBy(values(results), group => group.length);
     }
+    return 0;
 };
 
 function parseFacets(serverFacets: OutputFacet[]) {

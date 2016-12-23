@@ -52,6 +52,16 @@ export class StoreList<T, P extends LineProps<T>> extends List<T, P, StoreListPr
         return data;
     }
 
+    @computed
+    protected get hasMoreData() {
+        const {store} = this.props;
+        if (this.maxElements) {
+            return this.data.length > this.maxElements;
+        } else {
+            return store.totalCount > store.currentCount;
+        }
+    }
+
     protected renderLines() {
         const {LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, store} = this.props;
         return this.displayedData.map((value, i) => lineSelection(

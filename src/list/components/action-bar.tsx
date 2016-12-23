@@ -56,7 +56,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                     style: this.getSelectedStyle(description.key + description.order, store.sortBy + (store.sortAsc ? "asc" : "desc"))
                 });
             }
-            return <Dropdown button={{icon: "sort_by_alpha"}} key="down" operations={orderOperationList} />;
+            return <Dropdown button={{icon: "sort_by_alpha", shape: "icon"}} key="down" operations={orderOperationList} />;
         }
 
         return null;

@@ -34,6 +34,7 @@ export abstract class ListStoreBase<T> {
         }
     }
 
+    abstract get currentCount(): number;
     abstract get totalCount(): number;
 
     @action

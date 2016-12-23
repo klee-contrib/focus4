@@ -22,7 +22,7 @@ export interface ListBaseProps<T, P extends LineProps<T>> {
 @autobind
 export abstract class ListBase<T, P extends ListBaseProps<T, LineProps<T>>> extends React.Component<P, void> {
 
-    @observable private maxElements = this.props.perPage;
+    @observable maxElements = this.props.perPage;
     private page = 1;
 
     protected abstract get data(): T[];

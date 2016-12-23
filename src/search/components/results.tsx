@@ -44,7 +44,10 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     componentDidUpdate() {
-        this.attachScrollListener();
+        const {store} = this.props;
+        if (store.currentCount < store.totalCount) {
+            this.attachScrollListener();
+        }
     }
 
     componentWillUnmount() {
@@ -84,7 +87,6 @@ export class Results extends React.Component<ResultsProps, void> {
             if (renderSingleGroupDecoration && groupComponent) {
                 return (
                     <GroupWrapper
-                        key={key}
                         count={count}
                         groupComponent={groupComponent}
                         groupKey={key}
@@ -101,6 +103,7 @@ export class Results extends React.Component<ResultsProps, void> {
         } else if (groupComponent) {
             return (
                 <GroupWrapper
+                    key={key}
                     count={count}
                     groupComponent={groupComponent}
                     groupKey={key}

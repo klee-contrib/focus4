@@ -47,6 +47,11 @@ export class ListStore<T> extends ListStoreBase<T> {
     }
 
     @computed
+    get currentCount() {
+        return this.dataList.length;
+    }
+
+    @computed
     get totalCount() {
         if (this.service) {
             return this.serverCount;
