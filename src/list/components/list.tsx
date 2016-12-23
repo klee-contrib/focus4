@@ -2,7 +2,7 @@ import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {injectStyle} from "../../theming";
+import {injectStyle, StyleInjector} from "../../theming";
 
 import {LineProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
@@ -13,10 +13,9 @@ export interface ListProps<T, P extends LineProps<T>> extends ListBaseProps<T, P
     data?: T[];
 }
 
-@injectStyle("list")
 @autobind
 @observer
-export class List<T, P extends LineProps<T>, AP> extends ListBase<T, ListProps<T, P> & AP> {
+export class ListWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T, ListProps<T, P> & AP> {
 
     protected get data() {
         return this.props.data || [];
@@ -42,6 +41,8 @@ export class List<T, P extends LineProps<T>, AP> extends ListBase<T, ListProps<T
         );
     }
 }
+
+export const List: StyleInjector<ListWithoutStyle<{}, LineProps<{}>, {}>> = injectStyle("list", ListWithoutStyle) as any;
 
 export function listFor<T, P extends LineProps<T>>(props: ListProps<T, P>) {
     const List2 = List as any;

@@ -10,7 +10,7 @@ import {injectStyle} from "../../theming";
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
 import {LineProps} from "./line";
-import {List} from "./list";
+import {ListWithoutStyle} from "./list";
 
 import * as styles from "./style/line.css";
 
@@ -41,7 +41,7 @@ function lineSelection(
 @injectStyle("list")
 @autobind
 @observer
-export class StoreList<T, P extends LineProps<T>> extends List<T, P, StoreListProps<T>> {
+export class StoreList<T, P extends LineProps<T>> extends ListWithoutStyle<T, P, StoreListProps<T>> {
 
     @computed
     protected get data() {

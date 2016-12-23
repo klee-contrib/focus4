@@ -21,7 +21,19 @@ export type ListService<T> = (data: ListServiceParams) => Promise<ListServiceRes
 @autobind
 export class ListStore<T> extends ListStoreBase<T> {
 
-    @observable dataList: T[] = [];
+    @observable private innerDataList: T[] = [];
+    @computed
+    get dataList() {
+        return this.innerDataList;
+    }
+
+    set dataList(list) {
+        if (!this.service && this.sortBy) {
+            this.innerDataList = orderBy(list, this.sortBy, this.sortAsc ? "asc" : "desc");
+        } else {
+            this.innerDataList = list;
+        }
+    }
 
     service?: ListService<T>;
 
@@ -34,16 +46,9 @@ export class ListStore<T> extends ListStoreBase<T> {
             if (this.service) {
                 this.load();
             } else if (this.sortBy) {
-                this.dataList = orderBy(this.dataList, item => item[this.sortBy!], this.sortAsc);
+                this.innerDataList = orderBy(this.innerDataList, this.sortBy, this.sortAsc ? "asc" : "desc");
             }
         });
-
-        // Tri à la saisie manuelle de la liste.
-        if (!this.service) {
-            reaction(() => this.dataList, () => {
-                this.dataList = orderBy(this.dataList, item => item[this.sortBy!], this.sortAsc);
-            });
-        }
     }
 
     @computed
@@ -56,7 +61,7 @@ export class ListStore<T> extends ListStoreBase<T> {
         if (this.service) {
             return this.serverCount;
         } else {
-            return this.dataList.length;
+            return this.innerDataList.length;
         }
     }
 
@@ -72,7 +77,7 @@ export class ListStore<T> extends ListStoreBase<T> {
             });
             this.pendingCount--;
 
-            this.dataList = (fetchNext ? [...this.dataList, ...response.dataList] : response.dataList) || [];
+            this.innerDataList = (fetchNext ? [...this.dataList, ...response.dataList] : response.dataList) || [];
             this.serverCount = response.totalCount;
         }
     }

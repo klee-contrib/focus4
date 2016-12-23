@@ -4,7 +4,7 @@ import {values} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {injectStyle} from "../../theming";
+import {injectStyle, StyleInjector} from "../../theming";
 
 import {LineProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
@@ -17,10 +17,9 @@ export interface TableProps<T, P extends LineProps<T>> extends ListBaseProps<T, 
     data?: T[];
 }
 
-@injectStyle("list")
 @autobind
 @observer
-export class Table<T, P extends LineProps<T>, AP> extends ListBase<T, TableProps<T, P> & AP> {
+export class TableWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T, TableProps<T, P> & AP> {
 
     protected get data() {
         return this.props.data || [];
@@ -63,6 +62,8 @@ export class Table<T, P extends LineProps<T>, AP> extends ListBase<T, TableProps
         );
     }
 }
+
+export const Table: StyleInjector<TableWithoutStyle<{}, LineProps<{}>, {}>> = injectStyle("list", TableWithoutStyle) as any;
 
 export function tableFor<T, P extends LineProps<T>>(props: TableProps<T, P>) {
     const List = Table as any;

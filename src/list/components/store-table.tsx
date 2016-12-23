@@ -9,7 +9,7 @@ import {injectStyle} from "../../theming";
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
 import {LineProps} from "./line";
-import {Table, TABLE_CELL_CLASS} from "./table";
+import {TABLE_CELL_CLASS, TableWithoutStyle} from "./table";
 
 export interface StoreTableProps<T> {
     sortableColumns?: {[field: string]: {sortAsc?: boolean, sortDesc?: boolean}};
@@ -19,7 +19,7 @@ export interface StoreTableProps<T> {
 @injectStyle("list")
 @autobind
 @observer
-export class StoreTable<T, P extends LineProps<T>> extends Table<T, P, StoreTableProps<T>> {
+export class StoreTable<T, P extends LineProps<T>> extends TableWithoutStyle<T, P, StoreTableProps<T>> {
 
     @computed
     protected get data() {
@@ -37,7 +37,7 @@ export class StoreTable<T, P extends LineProps<T>> extends Table<T, P, StoreTabl
                 <tr>
                     {Object.keys(columns).map(col => (
                         <th className={TABLE_CELL_CLASS} key={col}>
-                            {i18n.t(col)}
+                            {i18n.t(columns[col])}
                             {sortableColumns[col] && sortableColumns[col].sortAsc ?
                                 <span onClick={() => this.sort(col, true)}><i className="material-icons">{"arrow_drop_up"}</i></span>
                             : null}
