@@ -4,6 +4,8 @@ import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
+import Button from "focus-components/button";
+
 import {injectStyle} from "../../theming";
 
 import {ListStore} from "../store";
@@ -12,7 +14,7 @@ import {LineProps} from "./line";
 import {TABLE_CELL_CLASS, TableWithoutStyle} from "./table";
 
 export interface StoreTableProps<T> {
-    sortableColumns?: {[field: string]: {sortAsc?: boolean, sortDesc?: boolean}};
+    sortableColumns?: (keyof T)[];
     store: ListStoreBase<T>;
 }
 
@@ -31,19 +33,21 @@ export class StoreTable<T, P extends LineProps<T>> extends TableWithoutStyle<T, 
     }
 
     protected renderTableHeader() {
-        const {columns, sortableColumns = {}} = this.props;
+        const {columns, sortableColumns = [], store: {sortAsc, sortBy}} = this.props;
         return (
             <thead>
                 <tr>
                     {Object.keys(columns).map(col => (
                         <th className={TABLE_CELL_CLASS} key={col}>
-                            {i18n.t(columns[col])}
-                            {sortableColumns[col] && sortableColumns[col].sortAsc ?
-                                <span onClick={() => this.sort(col, true)}><i className="material-icons">{"arrow_drop_up"}</i></span>
-                            : null}
-                            {sortableColumns[col] && sortableColumns[col].sortDesc ?
-                                <span onClick={() => this.sort(col, false)}><i className="material-icons">{"arrow_drop_down"}</i></span>
-                            : null}
+                            <div style={{display: "flex", alignItems: "center", marginBottom: sortableColumns.find(c => c === col) ? -3 : 0}}>
+                                <div>{i18n.t(columns[col])}</div>
+                                {sortableColumns.find(c => c === col) ?
+                                    <div style={{marginLeft: 3}}>
+                                        <Button disabled={sortAsc && sortBy === col} handleOnClick={() => this.sort(col, true)} shape="icon" type="button" icon="arrow_drop_up" />
+                                        <Button disabled={!sortAsc && sortBy === col} handleOnClick={() => this.sort(col, false)} shape="icon" type="button" icon="arrow_drop_down" />
+                                    </div>
+                                : null}
+                            </div>
                         </th>
                     ))}
                 </tr>

@@ -92,10 +92,10 @@ export class SearchStore extends ListStoreBase<any> {
 
     @action
     toggleAll() {
-        if (this.selectedItems.size) {
-            this.selectedList.replace(this.flatResultList);
-        } else {
+        if (this.selectedItems.size === this.currentCount) {
             this.selectedList.clear();
+        } else {
+            this.selectedList.replace(this.flatResultList);
         }
     }
 

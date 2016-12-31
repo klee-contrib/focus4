@@ -84,10 +84,10 @@ export class ListStore<T> extends ListStoreBase<T> {
 
     @action
     toggleAll() {
-        if (this.selectedItems.size) {
-            this.selectedList.replace(this.dataList);
-        } else {
+        if (this.selectedItems.size === this.dataList.length) {
             this.selectedList.clear();
+        } else {
+            this.selectedList.replace(this.dataList);
         }
     }
 

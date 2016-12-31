@@ -16,16 +16,16 @@ export interface TimelineProps<T, P extends LineProps<T>> extends ListBaseProps<
     dateSelector: (data: T) => EntityField<string>;
 }
 
-function lineTimeline(component: React.ReactElement<any>, dateField: EntityField<string>) {
-    return React.createElement(injectStyle("line", ({classNames}: {classNames: typeof styles}) => (
+function lineTimeline(key: number, component: React.ReactElement<any>, dateField: EntityField<string>) {
+    return React.createElement(injectStyle("line", ({classNames}: {classNames?: typeof styles}) => (
         <li>
-            <div className={`${styles.timelineDate} ${classNames.timelineDate || ""}`}>{textFor(dateField)}</div>
-            <div className={`${styles.timelineBadge} ${classNames.timelineBadge || ""}`}></div>
-            <div className={`${styles.timelinePanel} ${classNames.timelinePanel || ""}`}>
+            <div className={`${styles.timelineDate} ${classNames!.timelineDate || ""}`}>{textFor(dateField)}</div>
+            <div className={`${styles.timelineBadge} ${classNames!.timelineBadge || ""}`}></div>
+            <div className={`${styles.timelinePanel} ${classNames!.timelinePanel || ""}`}>
                 {component}
             </div>
         </li>
-    )));
+    )), {key});
 }
 
 @injectStyle("list")
@@ -39,11 +39,11 @@ export class Timeline<T, P extends LineProps<T>> extends ListBase<T, TimelinePro
 
     private renderLines() {
         const {LineComponent, lineProps, dateSelector} = this.props;
-        return this.displayedData.map((line, idx) =>
+        return this.displayedData.map((line, i) =>
             lineTimeline(
+                i,
                 <LineComponent
                     data={line}
-                    key={idx}
                     {...lineProps}
                 />,
                 dateSelector(line)

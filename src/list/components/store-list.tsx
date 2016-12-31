@@ -21,13 +21,15 @@ export interface StoreListProps<T> {
 }
 
 function lineSelection(
+    key: number,
     component: React.ReactElement<any>,
+    isSelection: boolean,
     isSelected: boolean,
     isSelectionnable: boolean,
     onSelection: () => void
 ) {
-    return React.createElement(injectStyle("line", ({classNames}: {classNames: typeof styles}) => (
-        <li className={`${styles.selection} ${classNames!.selection || ""}`}>
+    return React.createElement(injectStyle("line", ({classNames}: {classNames?: typeof styles}) => (
+        <li className={isSelection ? `${styles.selection} ${classNames!.selection || ""}` : undefined}>
             {isSelectionnable ?
                 <div className={`${styles.checkbox} ${classNames!.checkbox || ""} ${isSelected ? `${styles.selected} ${classNames!.selected || ""}` : `${styles.unselected} ${classNames!.unselected || ""}`}`}>
                     <Checkbox onChange={onSelection} value={isSelected} />
@@ -35,7 +37,7 @@ function lineSelection(
             : null}
             {component}
         </li>
-    )));
+    )), {key});
 }
 
 @injectStyle("list")
@@ -65,11 +67,12 @@ export class StoreList<T, P extends LineProps<T>> extends ListWithoutStyle<T, P,
     protected renderLines() {
         const {LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, store} = this.props;
         return this.displayedData.map((value, i) => lineSelection(
+            i,
             <LineComponent
-                key={i}
                 data={value}
                 {...lineProps}
             />,
+            hasSelection,
             store.selectedItems.has(value),
             hasSelection && selectionnableInitializer(value),
             () => store.toggle(value)

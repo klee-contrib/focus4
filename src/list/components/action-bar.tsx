@@ -2,6 +2,7 @@ import {autobind} from "core-decorators";
 import * as i18n from "i18next";
 import {reduce} from "lodash";
 import {action} from "mobx";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import Button from "focus-components/button";
@@ -29,6 +30,7 @@ export interface ActionBarProps {
 }
 
 @injectStyle("actionBar")
+@observer
 @autobind
 export class ActionBar extends React.Component<ActionBarProps, void> {
 
