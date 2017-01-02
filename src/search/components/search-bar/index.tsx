@@ -99,7 +99,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                             onChange={this.onInputChange}
                             placeholder={i18n.t(placeholder || "")}
                             ref={input => this.input = input}
-                            value={store.query}
+                            rawInputValue={store.query}
                         />
                     {store.isLoading ?
                         <div className={`three-quarters-loader ${styles.spinner} ${classNames!.spinner || ""}`} />

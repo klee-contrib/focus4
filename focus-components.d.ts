@@ -14,19 +14,20 @@ declare module "focus-components/autocomplete-select" {
     }
 
     export default class AutocompleteSelectField extends React.Component<{
+        editing: boolean;
         error?: string;
+        formattedInputValue?: string | number;
         inputTimeout?: number;
-        isEdit?: boolean;
         keyName?: string;
         keyResolver: (code: string | number) => Promise<string>;
         label?: string;
         labelName?: string;
         name?: string;
-        onChange?: (code: string) => void;
+        onChange: (code: string) => void;
         placeholder?: string;
         querySearcher: (text: string) => Promise<AutoCompleteResult>;
+        rawInputValue?: string | number;
         type?: string;
-        value?: string;
     }, {}> {}
 }
 
@@ -44,12 +45,14 @@ declare module "focus-components/autocomplete-text/field" {
     export default class AutocompleteTextField extends React.Component<{
         emptyShowAll?: boolean;
         error?: string;
-        isEdit?: boolean;
+        inputTimeout?: number;
+        isEdit: boolean;
         label?: string;
         name?: string;
         onChange?: (code: string) => void;
         placeholder?: string;
         querySearcher: (text: string) => Promise<AutoCompleteResult>;
+        rawInputValue?: string;
         showAtFocus?: boolean;
         type?: string;
         value?: string;
@@ -157,7 +160,7 @@ declare module "focus-components/input-checkbox" {
         label?: string;
         name?: string;
         onChange: () => void;
-        value?: boolean;
+        rawInputValue?: boolean;
     }, {}> {
         getValue(): boolean
     }
@@ -173,9 +176,9 @@ declare module "focus-components/input-date" {
         name: string;
         onChange: (date: string) => void;
         placeholder?: string;
+        rawInputValue?: string;
         showDropdowns?: boolean;
         validate?: (date: string) => boolean;
-        value?: string;
     }, {}> {
         getValue(): string
     }
@@ -183,9 +186,8 @@ declare module "focus-components/input-date" {
 
 declare module "focus-components/input-display/text" {
     export default function DisplayText(props: {
-        formatter?: (text: string) => string;
-        style?: string;
-        value?: string | number;
+        className?: string;
+        formattedInputValue?: string | number;
     }): React.ReactElement<any>
 }
 
@@ -194,7 +196,7 @@ declare module "focus-components/input-radio" {
         label: string;
         name?: string;
         onChange?: (checked: boolean) => void;
-        value?: boolean;
+        rawInputValue?: boolean;
     }, {}> {
         getValue(): boolean
     }
@@ -214,10 +216,9 @@ declare module "focus-components/input-text" {
         onKeyDown?: (e: React.SyntheticEvent<HTMLInputElement>) => void;
         onKeyPress?: (e: React.SyntheticEvent<HTMLInputElement>) => void;
         placeholder?: string;
+        rawInputValue?: string | number;
         size?: number;
         type?: string;
-        unformatter?: (text: string) => string | number;
-        value?: string | number;
     }, {}> {
         refs: {
             inputText: HTMLDivElement;
@@ -242,11 +243,10 @@ declare module "focus-components/input-textarea" {
         onFocus?: (e: React.SyntheticEvent<HTMLTextAreaElement>) => void;
         onKeyPress?: (e: React.SyntheticEvent<HTMLTextAreaElement>) => void;
         placeholder?: string;
+        rawInputValue?: string;
         rows?: number;
         size?: number;
         type?: string;
-        unformatter?: (text: string) => string;
-        value?: string;
         wrap?: string;
     }, {}> {
         getValue(): string;
@@ -257,23 +257,6 @@ declare module "focus-components/label" {
     export default function Label(props: {
         name: string;
         text?: string;
-    }): React.ReactElement<any>
-}
-
-declare module "focus-components/menu" {
-    export interface MenuItem {
-        icon?: string;
-        label?: string;
-        route?: string;
-        subMenus?: MenuItem[];
-    }
-
-    export default function MenuLeft(props: {
-        handleBrandClick?: () => void;
-        LinkComponent?: ReactComponent<{to: string}>;
-        menus: MenuItem[];
-        showLabels?: boolean;
-        showPanel?: boolean;
     }): React.ReactElement<any>
 }
 
@@ -290,6 +273,7 @@ declare module "focus-components/panel" {
         Buttons?: ReactComponent<PanelButtonsProps> | null;
         buttonsPosition?: "both" | "bottom" | "top";
         showHelp?: boolean;
+        Spinner?: ReactComponent<{}> | null;
         title?: string;
     } & PanelButtonsProps, {}> {}
 }
@@ -327,10 +311,11 @@ declare module "focus-components/select" {
         name: string;
         onChange: (value: string | number) => void;
         placeholder?: string;
+        rawInputValue?: string | number;
         size?: number;
         style?: React.CSSProperties;
         unSelectedLabel?: string;
-        value?: string | number;
+        valid?: boolean;
         valueKey?: string;
         values: {}[];
     }, {}> {
@@ -350,10 +335,11 @@ declare module "focus-components/select-mdl" {
         name: string;
         onChange: (value: string | number) => void;
         placeholder?: string;
+        rawInputValue?: string | number;
         size?: number;
         style?: React.CSSProperties;
         unSelectedLabel?: string;
-        value?: string | number;
+        valid?: boolean;
         valueKey?: string;
         values: {}[];
     }, {}> {
@@ -366,7 +352,7 @@ declare module "focus-components/select-radio" {
         disabled?: boolean;
         labelKey?: string;
         onChange?: (value: string | number) => void;
-        value?: string | number;
+        rawInputValue?: string | number;
         valueKey?: string;
         values: {}[];
     }, {}> {
@@ -378,8 +364,10 @@ declare module "focus-components/snackbar" {
     export interface SnackbarProps {
         actionHandler?: (props?: SnackbarProps) => void;
         actionText?: string;
-        content: string;
         deleteMessage: () => void;
+        messageId: string;
+        message: string;
+        type: string;
     }
 
     export default function Snackbar(props: SnackbarProps): React.ReactElement<any>

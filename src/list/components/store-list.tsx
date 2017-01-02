@@ -32,7 +32,7 @@ function lineSelection(
         <li className={isSelection ? `${styles.selection} ${classNames!.selection || ""}` : undefined}>
             {isSelectionnable ?
                 <div className={`${styles.checkbox} ${classNames!.checkbox || ""} ${isSelected ? `${styles.selected} ${classNames!.selected || ""}` : `${styles.unselected} ${classNames!.unselected || ""}`}`}>
-                    <Checkbox onChange={onSelection} value={isSelected} />
+                    <Checkbox onChange={onSelection} rawInputValue={isSelected} />
                 </div>
             : null}
             {component}

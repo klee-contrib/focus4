@@ -114,10 +114,10 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
     }
 
     input() {
-        const {InputComponent} = this.props;
+        const {InputComponent, formatter, value} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
-        return <FinalInput {...props} error={this.showError && this.error || undefined} />;
+        return <FinalInput {...props} formattedInputValue={formatter && formatter(value) || value} rawInputValue={value} error={this.showError && this.error || undefined} />;
     }
 
     label() {
