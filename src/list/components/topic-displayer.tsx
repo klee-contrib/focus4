@@ -1,4 +1,4 @@
-import * as i18n from "i18next";
+import i18n from "i18next";
 import {map} from "lodash";
 import * as React from "react";
 

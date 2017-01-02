@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import * as i18n from "i18next";
+import i18n from "i18next";
 import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";

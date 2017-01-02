@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import * as i18n from "i18next";
+import i18n from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";

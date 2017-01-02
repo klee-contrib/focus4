@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import * as i18n from "i18next";
+import i18n from "i18next";
 import {find, omit, result} from "lodash";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -105,9 +105,10 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
 
     field() {
         const {FieldComponent} = this.props;
+        const valid = !(this.showError && this.error);
         if (FieldComponent) {
             const props = omit(this.props, omittedProps);
-            return <FieldComponent {...props} error={this.showError && this.error || undefined} />;
+            return <FieldComponent {...props} valid={valid} error={valid ? undefined : this.error} />;
         } else {
             return null;
         }
@@ -117,7 +118,8 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const {InputComponent, formatter, value} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
-        return <FinalInput {...props} formattedInputValue={formatter && formatter(value) || value} rawInputValue={value} error={this.showError && this.error || undefined} />;
+        const valid = !(this.showError && this.error);
+        return <FinalInput {...props} formattedInputValue={formatter && formatter(value) || value} rawInputValue={value} valid={valid} error={valid ? undefined : this.error} />;
     }
 
     label() {

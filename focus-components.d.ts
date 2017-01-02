@@ -178,6 +178,7 @@ declare module "focus-components/input-date" {
         placeholder?: string;
         rawInputValue?: string;
         showDropdowns?: boolean;
+        valid?: boolean;
         validate?: (date: string) => boolean;
     }, {}> {
         getValue(): string
@@ -219,6 +220,7 @@ declare module "focus-components/input-text" {
         rawInputValue?: string | number;
         size?: number;
         type?: string;
+        valid?: boolean;
     }, {}> {
         refs: {
             inputText: HTMLDivElement;
