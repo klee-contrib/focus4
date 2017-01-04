@@ -108,7 +108,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const valid = !(this.showError && this.error);
         if (FieldComponent) {
             const props = omit(this.props, omittedProps);
-            return <FieldComponent {...props} valid={valid} error={valid ? undefined : this.error} />;
+            return <FieldComponent {...props} valid={valid} error={valid ? null : this.error} />;
         } else {
             return null;
         }
@@ -119,7 +119,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
         const valid = !(this.showError && this.error);
-        return <FinalInput {...props} formattedInputValue={formatter && formatter(value) || value} rawInputValue={value} valid={valid} error={valid ? undefined : this.error} />;
+        return <FinalInput {...props} formattedInputValue={formatter && formatter(value) || value} rawInputValue={value} valid={valid} error={valid ? null : this.error} />;
     }
 
     label() {

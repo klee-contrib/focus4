@@ -45,7 +45,7 @@ export class Results extends React.Component<ResultsProps, void> {
 
     componentDidUpdate() {
         const {store} = this.props;
-        if (store.currentCount < store.totalCount) {
+        if (store.currentCount < store.totalCount && (!store.groupingKey || !isEmpty(store.selectedFacets))) {
             this.attachScrollListener();
         }
     }

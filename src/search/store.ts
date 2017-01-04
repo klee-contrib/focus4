@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import {flatten, sumBy, values} from "lodash";
+import {flatten, flattenDeep, sumBy, values} from "lodash";
 import {action, computed, IObservableArray, isObservableArray, observable, reaction} from "mobx";
 
 import {ListStoreBase} from "../list";
@@ -120,7 +120,7 @@ export class SearchStore extends ListStoreBase<any> {
     @computed
     private get flatResultList() {
         if (isObservableArray(this.results)) {
-            return flatten(this.results.map(values).map(g => g.slice()));
+            return flattenDeep(this.results.map(g => values(g).map(h => h.slice())).map(g => g.slice()));
         } else {
             return flatten(values(this.results).map(g => g.slice()));
         }

@@ -1,4 +1,4 @@
-import {action, asReference, autorun, isObservableArray, isObservableObject, observable} from "mobx";
+import {action, asReference, autorun, isObservableArray, isObservableObject, observable, untracked} from "mobx";
 
 import {StoreNode, toFlatValues} from "./store";
 
@@ -24,7 +24,10 @@ export interface ViewModel {
 export function createViewModel<T extends StoreNode<{}>>(model: T) {
     const viewModel = clone(model) as any as T & ViewModel;
 
-    const reset = () => viewModel.set(toFlatValues(model as any));
+    const reset = () => {
+        untracked(() => viewModel.clear());
+        viewModel.set(toFlatValues(model as any));
+    };
 
     viewModel.reset = action(reset);
     viewModel.subscribe = () => {
