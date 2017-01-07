@@ -1,6 +1,5 @@
 import {action, computed, IObservableArray, observable, untracked} from "mobx";
 
-export type ReferenceConfig = {[key: string]: {}};
 export type ServiceFactory = (refName: string) => () => Promise<{}[]>;
 
 const CACHE_DURATION = 1000 * 60 * 60;
@@ -24,7 +23,7 @@ export type AsList<T> = {
  * @param serviceFactory Une fonction qui pour un nom de référence donné renvoie une fonction sans paramètre qui effectue la requête serveur.
  * @param config Un objet dont les propriétés représentent les noms des listes de référence.
  */
-export function makeReferenceStore<T extends ReferenceConfig>(serviceFactory: ServiceFactory, config: T): AsList<T> {
+export function makeReferenceStore<T extends Record<string, {}>>(serviceFactory: ServiceFactory, config: T): AsList<T> {
     const referenceStore: any = {};
     for (const ref in config) {
         referenceStore[`_${ref}`] = [];

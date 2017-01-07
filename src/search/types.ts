@@ -36,4 +36,13 @@ export interface UnscopedQueryOutput {
 }
 
 export type Results<T extends {}> = {[group: string]: IObservableArray<T>} | IObservableArray<{[group: string]: IObservableArray<T>}>;
-export type StoreFacet = {code: string, label: string, values: {code: string, label: string, count: number}[]};
+
+export interface StoreFacet {
+    code: string;
+    label: string;
+    values: {
+        code: string;
+        label: string;
+        count: number;
+    }[];
+}

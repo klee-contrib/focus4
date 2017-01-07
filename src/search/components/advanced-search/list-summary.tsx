@@ -4,7 +4,7 @@ import * as React from "react";
 
 import Button from "focus-components/button";
 
-import {TopicDisplayer} from"../../../list";
+import {TopicDisplayer} from "../../../list";
 import {SearchStore} from "../../store";
 
 import {injectStyle} from "../../../theming";

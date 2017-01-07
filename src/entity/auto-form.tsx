@@ -7,7 +7,6 @@ import {PanelButtonsProps} from "focus-components/panel";
 
 import {applicationStore} from "../application";
 import {messageStore} from "../message";
-import {FieldErrors} from "../network";
 
 import {Field} from "./field";
 import {StoreNode, toFlatValues} from "./store";
@@ -81,7 +80,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     readonly services: ServiceConfig;
     readonly storeData: E;
 
-    @observable errors: FieldErrors = {};
+    @observable errors: Record<string, string> = {};
     @observable fields: Record<string, Field | null> = {};
     @observable isEdit = this.props.isEdit || false;
     @observable isLoading = false;

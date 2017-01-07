@@ -2,13 +2,11 @@ import {isArray} from "lodash";
 
 import {messageStore} from "../message";
 
-export type FieldErrors = {[key: string]: string};
-
 export interface ErrorResponse {
-    [key: string]: string[] | string | number | FieldErrors | undefined;
+    [key: string]: string[] | string | number | Record<string, string> | undefined;
     status: number;
     type?: string;
-    fieldErrors?: FieldErrors;
+    fieldErrors?: Record<string, string>;
     globalErrors?: string[];
     globalSuccess?: string[];
     globalWarnings?: string[];
@@ -22,7 +20,7 @@ export interface ErrorResponse {
 
 export interface ManagedErrorResponse {
     globals: string[];
-    fields?: FieldErrors;
+    fields?: Record<string, string>;
 }
 
 type ErrorType = "error" | "warning" | "success";

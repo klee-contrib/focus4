@@ -30,7 +30,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     render() {
         const {operationList, operationParam} = this.props;
         const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {priority, icon, iconLibrary, label, buttonShape, style}, key) => {
-            let {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
+            const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
             if (1 === priority) {
                 primaryActions.push(
                     <Button

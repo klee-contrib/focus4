@@ -21,7 +21,11 @@ export interface MessageCenterProps {
 
 const ANIMATION_LENGTH = 250;
 
-type Notification = {type?: string, content: string, timeout: number};
+interface Notification {
+    type?: string;
+    content: string;
+    timeout: number;
+}
 
 @injectStyle("messageCenter")
 @autobind
