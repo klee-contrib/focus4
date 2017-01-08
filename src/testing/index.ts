@@ -22,7 +22,7 @@ export const dum = {
 };
 
 export const dumClass = {
-    ListStore: new ListStore((_: any) => Promise.resolve({dataList: [], totalCount: 0})),
+    ListStoreBase: new ListStore(),
     SearchStore: new SearchStore({scoped: (_: any) => Promise.resolve({}), unscoped: (_: any) => Promise.resolve({})})
 };
 

@@ -1,4 +1,4 @@
-import {action, asFlat, observable} from "mobx";
+import {action, observable} from "mobx";
 import * as React from "react";
 
 export type Mode = "consult" | "edit";
@@ -19,7 +19,7 @@ export class ApplicationStore implements ApplicationAction {
     @observable actions: {
         primary: {className?: string, icon: string, iconLibrary?: "material" | "font-awesome" | "font-custom", label?: string, action: () => void}[],
         secondary: {className?: string, label: string, action: () => void}[],
-    } = {primary: asFlat([]), secondary: asFlat([])};
+    } = {primary: [], secondary: []};
     @observable canDeploy = true;
     @observable mode: {[mode: string]: number} = {};
     @observable route: string;

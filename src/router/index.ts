@@ -1,4 +1,4 @@
-import {asReference, observable, reaction, runInAction} from "mobx";
+import {observable, reaction, runInAction} from "mobx";
 
 import {Router, RouterConfig} from "./director";
 import {ViewStore} from "./store";
@@ -80,7 +80,7 @@ export function startRouter<Store extends ViewStore<any, any>>(config: RouterCon
     });
 
     return observable({
-        stores: asReference(stores),
+        stores: observable.ref(stores),
         get currentStore() {
             return stores[storeActivity.findIndex(Boolean)];
         }
