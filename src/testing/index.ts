@@ -13,7 +13,6 @@ import {SearchStore} from "../search";
 
 export const dum = {
     any: {} as any,
-    array: [],
     boolean: true,
     component: class extends Component<any, any> { render() { return null; }} as ComponentClass<any>,
     function: (..._: any[]) => null as any,
