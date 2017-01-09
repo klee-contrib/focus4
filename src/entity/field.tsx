@@ -96,10 +96,10 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
     }
 
     display() {
-        const {valueKey, labelKey, values, value: rawValue, formatter, DisplayComponent} = this.props;
+        const {valueKey, labelKey, values, value: rawValue, formatter, DisplayComponent, isEdit = false} = this.props;
         const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
         const props = {...omit(this.props, omittedProps), value};
-        const FinalDisplay = DisplayComponent || (() => <div>{formatter && formatter(value) || value}</div>);
+        const FinalDisplay = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
         return <FinalDisplay {...props} />;
     }
 
@@ -115,11 +115,11 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
     }
 
     input() {
-        const {InputComponent, formatter, value} = this.props;
+        const {InputComponent, formatter, value, isEdit = false} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
         const valid = !(this.showError && this.error);
-        return <FinalInput {...props} formattedInputValue={formatter && formatter(value) || value} rawInputValue={value} valid={valid} error={valid ? null : this.error} />;
+        return <FinalInput {...props} formattedInputValue={formatter && formatter(value, {isEdit}) || value} rawInputValue={value} valid={valid} error={valid ? null : this.error} />;
     }
 
     label() {
