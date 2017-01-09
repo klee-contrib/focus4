@@ -27,7 +27,7 @@ export const HeaderActions = observer<{className: string}>(
                     );
                 })}
                 {actions.secondary && actions.secondary.length > 0 ?
-                    <Dropdown operations={actions.secondary} />
+                    <Dropdown button={{shape: "fab", icon: "more_vert"}} operations={actions.secondary} />
                 : null}
             </div>
         );

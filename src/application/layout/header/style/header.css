@@ -102,7 +102,7 @@
 
 .undeployed .actions {
     position: fixed;
-    top: 60px;
+    top: 30px;
     right: 0;
     z-index: 1001;
 }
