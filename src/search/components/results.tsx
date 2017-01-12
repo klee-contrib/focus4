@@ -68,7 +68,7 @@ export class Results extends React.Component<ResultsProps, void> {
     private scrollListener() {
         const el = findDOMNode(this) as HTMLElement;
         const scrollTop = window.pageYOffset;
-        if (topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < (this.props.offset || 250)) {
+        if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < (this.props.offset || 250)) {
             this.detachScrollListener();
             const {isLoading, search} = this.props.store;
             if (!isLoading) {
