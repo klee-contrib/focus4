@@ -29,7 +29,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
 
     render() {
         const {operationList, operationParam} = this.props;
-        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {priority, icon, iconLibrary, label, buttonShape, style}, key) => {
+        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {action, priority, icon, iconLibrary, label, buttonShape, style}, key) => {
             const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
             if (1 === priority) {
                 primaryActions.push(
@@ -46,7 +46,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                 );
             } else {
                 secondaryActions.push({
-                    action: this.handleAction(key),
+                    action,
                     label,
                     style: typeof style === "string" ? style : ""
                 });
@@ -59,6 +59,10 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                 <Dropdown
                     operations={secondaryActionList}
                     operationParam={operationParam}
+                    position={{
+                        horizontal: "right",
+                        vertical: "bottom"
+                    }}
                 />
             </div>
         );
