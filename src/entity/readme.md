@@ -136,7 +136,7 @@ Le formulaire construit un `ViewModel` qu'il place dans la propriété `this.ent
 
 Le ViewModel possède une méthode `reset` (qui s'ajoute en plus de tout ce que contient déjà `storeData` en tant que `StoreNode`) qui lui permet de se resynchroniser sur les valeurs de `storeData`. Une réaction MobX est enregistrée à la création qui va appeler cette fonction à chaque modification de store. En attendant, `this.entity` est librement modifiable et est synchronisé avec l'état des champs (via le `onChange` passé par le `this.fieldFor` si on l'utilise, sinon on peut le faire à la main).
 
-L'appel de `load()` (dans `componentWillMount` ou à la main) va appeler le service et mettre le résultat dans le store, qui via la réaction mettra à jour `this.entity`.
+L'appel de `load()` va appeler le service et mettre le résultat dans le store, qui via la réaction mettra à jour `this.entity`.
 
 L'appel de `save()` sur le formulaire va appeler le service avec la valeur courante de `this.entity` et récupérer le résultat dans le store, qui via la réaction mettra à jour `this.entity`.
 
@@ -164,7 +164,7 @@ import {referenceStore} from "../../stores/reference";
 export class Form extends AutoForm<{}, StructureNode> {
 
     constructor(props: {}) {
-        super(props, mainStore.structure, {load: loadStructure, save: saveStructure});
+        super(props, mainStore.structure, {getLoadParams: () => [], load: loadStructure, save: saveStructure});
     }
 
     renderContent() {

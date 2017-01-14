@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {some, values} from "lodash";
-import {action, observable, runInAction} from "mobx";
+import {action, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
 
 import {PanelButtonsProps} from "focus-components/panel";
@@ -32,92 +32,86 @@ import {
 
 import {form, loading} from "./style/auto-form.css";
 
-/** Props propre à AutoForm. */
-export interface AutoFormProps {
+/** Options additionnelles de l'AutoForm. */
+export interface AutoFormOptions<E> {
 
     /** Pour ajouter une classe particulière sur le formulaire. */
-    formClassName?: string;
+    className?: string;
 
-    /** Défaut: true */
-    hasEdit?: boolean;
+    /** ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
+    entity?: E & ViewModel;
 
-    /** Défaut: false */
-    hasDelete?: boolean;
-
-    /** Défaut: true */
+    /** Par défaut: true */
     hasForm?: boolean;
 
-    /** Défaut: true */
-    hasLoad?: boolean;
-
-    /** L'id ne sera utilisé que par le service de chargement. */
-    id?: number | string;
-
     /** Défaut: false */
-    isEdit?: boolean;
+    initiallyEditing?: boolean;
 }
 
 /** Config de services à fournir à AutoForm. */
 export interface ServiceConfig {
-    [x: string]: any;
     delete?: (entity: {}) => Promise<void | number | boolean>;
-    load: (id: number | string) => Promise<{}>;
+    getLoadParams?: () => any[];
+    load?: (...args: any[]) => Promise<{}>;
     save: (entity: {}) => Promise<{}>;
 }
 
 /** Classe de base pour un composant Focus avec un formulaire. */
 @autobind
-export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Component<P & AutoFormProps, void> {
+export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Component<P, void> {
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement.
     static contextTypes = {classNames: React.PropTypes.object};
     context: {classNames: {[key: string]: {[key: string]: any}}};
 
-    private isCustomEntity: boolean;
-
     readonly entity: E & ViewModel;
-    hasForm = this.props.hasForm || true;
     readonly services: ServiceConfig;
     readonly storeData: E;
 
     @observable errors: Record<string, string> = {};
     @observable fields: Record<string, Field | null> = {};
-    @observable isEdit = this.props.isEdit || false;
+    @observable isEdit: boolean;
     @observable isLoading = false;
+
+    private className: string;
+    private hasForm: boolean;
+    private isCustomEntity: boolean;
+
+    private loadDisposer?: Lambda;
 
     /**
      * Initialise le formulaire.
      * @param props Les props du composant.
      * @param storeData L'EntityStoreData de base du formulaire.
-     * @param services La config de services pour le formulaire ({delete?, load, save}).
-     * @param entity ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire.
+     * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
+     * @param options Options additionnelles.
      */
-    constructor(props: P, storeData: E, services: ServiceConfig, entity?: E & ViewModel) {
+    constructor(props: P, storeData: E, services: ServiceConfig, {entity, className, hasForm, initiallyEditing}: AutoFormOptions<E> = {}) {
         super(props);
         this.storeData = storeData;
         this.services = services;
         this.entity = entity || createViewModel(storeData);
         this.isCustomEntity = entity !== undefined;
+        this.isEdit = initiallyEditing || false;
+        this.hasForm = hasForm !== undefined ? hasForm : true;
+        this.className = className || "";
+
+        if (services.getLoadParams) {
+            this.loadDisposer = reaction(services.getLoadParams, this.load);
+        }
     }
 
-    @action
-    async componentWillMount() {
+    componentWillMount() {
         this.entity.subscribe();
-        const {hasLoad = true, id} = this.props;
-        if (hasLoad && id) {
-            this.isLoading = true;
-            const data = await this.services.load(id);
-            runInAction(() => {
-                this.storeData.set(data);
-                this.isLoading = false;
-                this.onFormLoaded();
-            });
-        }
+        this.load();
     }
 
     componentWillUnmount() {
         if (!this.isCustomEntity) {
             this.entity.unsubscribe();
+        }
+        if (this.loadDisposer) {
+            this.loadDisposer();
         }
     }
 
@@ -145,6 +139,24 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
                 this.storeData.clear();
                 this.onFormDeleted();
             });
+        }
+    }
+
+    /** Appele le service de chargement */
+    @action
+    async load() {
+        const {getLoadParams, load} = this.services;
+        if (getLoadParams && load) {
+            const params = getLoadParams();
+            if (params) {
+                this.isLoading = true;
+                const data = await load(...params);
+                runInAction(() => {
+                    this.storeData.set(data);
+                    this.isLoading = false;
+                    this.onFormLoaded();
+                });
+            }
         }
     }
 
@@ -206,12 +218,11 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
 
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        const {formClassName = ""} = this.props;
         const contextClassName = this.context && this.context.classNames && this.context.classNames["form"] || "";
         if (this.hasForm) {
             return (
                 <form
-                    className={`${form} ${contextClassName} ${formClassName} ${this.isLoading ? loading : ""}`}
+                    className={`${form} ${contextClassName} ${this.className} ${this.isLoading ? loading : ""}`}
                     noValidate={true}
                     onSubmit={e => { e.preventDefault(); this.save(); }}
                 >

@@ -1,4 +1,4 @@
-export {AutoForm, AutoFormProps, ServiceConfig} from "./auto-form";
+export {AutoForm, ServiceConfig} from "./auto-form";
 export {Field, FieldProps, FieldStyle} from "./field";
 export {
     autocompleteSelectFor,
