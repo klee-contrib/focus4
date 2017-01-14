@@ -1,9 +1,11 @@
 # Module `entity`
 
 ## EntityStore
-Il remplace à l'usage l'ancien `CoreStore` de `focus-core`, mais il gère beaucoup plus de choses. Toute la partie "store" étant de toute façon déjà couverte par MobX, il n'y avait donc rien à faire pour retrouver les mêmes fonctionnalités.
+Un `EntityStore` sert à stocker des **entités**, c'est-à-dire des objets structurés (mappés sur les beans et DTOs du serveur) avec leurs *métadonnées*.
 
-A la place, on utilise des `EntityStore`s, dont le but est de stocker des **entités**, c'est-à-dire des objets structurés (mappés sur les beans et DTOs renvoyés par le serveur) avec leurs *métadonnées*. Si vous cherchez à stocker des primitives, des objets non structurés ou des arrays de ceux-ci, vous n'avez pas besoin de tout ça et vous pouvez directement utiliser des observables.
+Si vous cherchez à stocker des primitives ou des objets pour lesquels vous n'avez pas besoin de métadonnées, vous n'avez pas besoin de ce store et vous pouvez directement utiliser des observables pour stocker vos valeurs. MobX s'occupe déjà automatiquement de tous les abonnements des observables utilisées ; l'`EntityStore` n'en est qu'une surcouche spécialisée dans l'usage avec les métadonnées.
+
+Il remplace à l'usage le `CoreStore` de `focus-core`, mais ne doit donc pas être utilisé systématiquement.
 
 Par exemple, un objet `operation` de la forme:
 
@@ -56,7 +58,7 @@ Du coup, ce qu'on va faire, c'est construire des stores à partir des `entityDef
 
 Et on retrouve le même fonctionnement d'avant.
 
-*Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange` et `ref` et `error`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans autofocus doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus.*
+*Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange`, `ref` et `error`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans autofocus doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus.*
 
 ### Description
 
@@ -128,11 +130,12 @@ Au risque de se répeter, **si vous ne faites pas un écran de formulaire, n'uti
 ### Configuration
 La config d'un formulaire se fait intégralement dans son constructeur via l'appel à `super`, qui appelle le constructeur d'`AutoForm`, ses paramètres sont :
 * `props`, les props du composants, nécessaires pour React.
-* `storeData`, le noeud de store sur lequel on veut créer un formulaire. La seule contrainte sur `storeData` est qu'il doit respecter l'interface `StoreNode`, c'est-à-dire posséder les méthodes `set()` et `clear()`. On peut donc faire des formulaires sur des objets, des arrays, avec le degré de composition qu'on veut. Attention tout de même, l'utilisation de `this.fieldFor` est restrainte pour des formulaires sur des objets simples. L'apport de `this.fieldFor` par rapport à `fieldFor` étant minimal, il est facilement possible de faire des folies sur un formulaire car tout le boulot est fait par MobX, l'EntityStore. En Typescript, le type de `storeData` doit être spécifié en tant que deuxième paramètre de la classe parente.
-* `serviceConfig`, qui est un objet contenant **les services** de `load` et de `save` (les actions n'existant plus en tant que telles, on saute l'étape).
+* `storeData`, le noeud de store sur lequel on veut créer un formulaire. La seule contrainte sur `storeData` est qu'il doit respecter l'interface `StoreNode`, c'est-à-dire posséder les méthodes `set()` et `clear()`. On peut donc faire des formulaires sur des objets, des arrays, avec le degré de composition qu'on veut. Attention tout de même, l'utilisation de `this.fieldFor` est restrainte pour des formulaires sur des objets simples. L'apport de `this.fieldFor` par rapport à `fieldFor` étant minimal, il est facilement possible de faire des folies sur un formulaire car tout le boulot est fait par MobX et l'EntityStore. En Typescript, le type de `storeData` doit être spécifié en tant que deuxième paramètre de la classe parente.
+* `serviceConfig`, qui est un objet contenant **les services** de `load` et de `save` (les actions n'existant plus en tant que telles, on saute l'étape), ainsi que la fonction `getLoadParams()` qui doit retourner les paramètres du `load`. Cette fonction sera appelée pendant `componentWillMount` puis une réaction MobX sera construite sur cette fonction : à chaque fois qu'une des observables utilisées dans la fonction est modifiée et que la valeur retournée à structurellement changée, le formulaire sera rechargé. Cela permet de synchroniser le formulaire sur une autre observable (en particulier un `ViewStore`) et de ne pas avoir à passer par une prop pour charger le formulaire. Rien n'empêche par contre de définir `getLoadParams` comme `() => [this.props.id]` et par conséquent de ne pas bénéficier de la réaction. C'est une moins bonne solution.
+* `options?`, un objet qui contient des options de configuration secondaires.
 
 ### this.entity et ViewModel
-Le formulaire construit un `ViewModel` qu'il place dans la propriété `this.entity` à partir de `storeData`. C'est une copie conforme de `storeData` et fera office de state interne au formulaire (il est possible de passer son propre `ViewModel` en 4ème paramètre du constructeur si on veut externaliser le state du formulaire).
+Le formulaire construit un `ViewModel` qu'il place dans la propriété `this.entity` à partir de `storeData`. C'est une copie conforme de `storeData` et fera office de state interne au formulaire (il est possible de passer son propre `ViewModel` dans les options du constructeur si on veut externaliser le state du formulaire).
 
 Le ViewModel possède une méthode `reset` (qui s'ajoute en plus de tout ce que contient déjà `storeData` en tant que `StoreNode`) qui lui permet de se resynchroniser sur les valeurs de `storeData`. Une réaction MobX est enregistrée à la création qui va appeler cette fonction à chaque modification de store. En attendant, `this.entity` est librement modifiable et est synchronisé avec l'état des champs (via le `onChange` passé par le `this.fieldFor` si on l'utilise, sinon on peut le faire à la main).
 

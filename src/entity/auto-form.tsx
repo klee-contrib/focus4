@@ -97,7 +97,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         this.className = className || "";
 
         if (services.getLoadParams) {
-            this.loadDisposer = reaction(services.getLoadParams, this.load);
+            this.loadDisposer = reaction(services.getLoadParams, this.load, {compareStructural: true});
         }
     }
 
