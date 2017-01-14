@@ -13,7 +13,6 @@ import {SearchStore} from "../search";
 
 export const dum = {
     any: {} as any,
-    array: [],
     boolean: true,
     component: class extends Component<any, any> { render() { return null; }} as ComponentClass<any>,
     function: (..._: any[]) => null as any,
@@ -22,7 +21,7 @@ export const dum = {
 };
 
 export const dumClass = {
-    ListStore: new ListStore((_: any) => Promise.resolve({dataList: [], totalCount: 0})),
+    ListStoreBase: new ListStore(),
     SearchStore: new SearchStore({scoped: (_: any) => Promise.resolve({}), unscoped: (_: any) => Promise.resolve({})})
 };
 

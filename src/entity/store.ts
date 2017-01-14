@@ -1,5 +1,5 @@
 import {isArray, isObject, isUndefined, mapValues, omitBy} from "lodash";
-import {action, asReference, IObservableArray, isAction, isObservableArray, observable} from "mobx";
+import {action, IObservableArray, isAction, isObservableArray, observable} from "mobx";
 
 import {Entity, EntityField, EntityList} from "./types";
 
@@ -76,7 +76,7 @@ export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[ke
         }
     });
 
-    entityStore.clear = asReference(function clear(this: typeof entityStore) {
+    entityStore.clear = action(function clear(this: typeof entityStore) {
         for (const entry in this) {
             clearEntity(this[entry]);
         }
@@ -101,12 +101,12 @@ function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStoreConfig
             throw new Error(`L'entité "${trueEntry}" dépend de l'entité "${v.entityName}" qui n'a pas été trouvée dans la liste.`);
         }
         return {
-            $entity: asReference(entityMap[trueEntry].fields[key!]),
+            $entity: observable.ref(entityMap[trueEntry].fields[key!]),
             value: v.entityName ? buildEntityEntry({[v.entityName]: v.type === "list" ? [] : {}} as EntityStoreConfig, entityMap, entityMapping, v.entityName!) : undefined,
         };
     }) as any;
     output.set = action(function set(this: typeof output, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); });
-    output.clear = asReference(action(function clear(this: typeof output) { clearEntity(this); }));
+    output.clear = action(function clear(this: typeof output) { clearEntity(this); });
     return output;
 }
 

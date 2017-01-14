@@ -1,4 +1,4 @@
-import {action, asReference, autorun, isObservableArray, isObservableObject, observable, untracked} from "mobx";
+import {action, autorun, isObservableArray, isObservableObject, observable, untracked} from "mobx";
 
 import {StoreNode, toFlatValues} from "./store";
 
@@ -69,9 +69,9 @@ function clone(source: any): any {
         const res: any = {};
         for (const key in source) {
             if (key === "$entity") {
-                res[key] = asReference(source[key]);
+                res[key] = observable.ref((source as any)[key]);
             } else {
-                res[key] = clone(source[key]);
+                res[key] = clone((source as any)[key]);
             }
         }
         return observable(res);

@@ -6,22 +6,19 @@ import * as React from "react";
 
 import Button from "focus-components/button";
 
-import {injectStyle} from "../../theming";
-
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
 import {LineProps} from "./line";
-import {TABLE_CELL_CLASS, TableWithoutStyle} from "./table";
+import {Table, TABLE_CELL_CLASS} from "./table";
 
 export interface StoreTableProps<T> {
     sortableColumns?: (keyof T)[];
     store: ListStoreBase<T>;
 }
 
-@injectStyle("list")
 @autobind
 @observer
-export class StoreTable<T, P extends LineProps<T>> extends TableWithoutStyle<T, P, StoreTableProps<T>> {
+export class StoreTable<T, P extends LineProps<T>> extends Table<T, P, StoreTableProps<T>> {
 
     @computed
     protected get data() {

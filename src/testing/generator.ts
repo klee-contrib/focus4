@@ -20,7 +20,6 @@ interface NamedComponent {
     fileName: string;
     importName?: string;
     name?: string;
-    isCreate?: boolean;
 }
 
 interface TestedComponent extends NamedComponent {
@@ -81,14 +80,7 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
 `);
 
     function getComponent(c: TestedComponent) {
-        if (c.isCreate) {
-            return `${c.name}.create({${c.props.map(getProp)
-                .filter(p => p !== undefined)
-                .map(p => p!.replace("{", "").replace("}", "").replace("=", ": "))
-                .join(", ")}})`;
-        } else {
-            return `<${c.name} ${c.props.map(getProp).filter(p => p !== undefined).join(" ")} />`;
-        }
+        return `<${c.name} ${c.props.map(getProp).filter(p => p !== undefined).join(" ")} />`;
     }
 
     function visit(node: ts.Node) {
@@ -104,15 +96,13 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
                     const {types} = heritageClauses[0];
                     if (types) {
                         const {typeArguments} = types[0];
-                        if (typeArguments && node.members.find(member => !!(member.name && member.name.getText() === "create" && member.modifiers && member.modifiers.find(modifier => modifier.kind === ts.SyntaxKind.StaticKeyword)))) {
-                            pushToOutput(node, type, checker.getTypeAtLocation(typeArguments[0]), true);
-                        } else if (typeArguments) {
+                        if (typeArguments) {
                             pushToOutput(node, type, checker.getTypeAtLocation(typeArguments[0]));
                         }
                     }
                 }
             }
-        } else if (isFunction(node) && node.modifiers && node.modifiers.find(m => m.kind === ts.SyntaxKind.ExportKeyword) && node.parameters.length <= 1) {
+        } else if (isFunction(node) && node.name && node.name.text[0] === node.name.text[0].toUpperCase() && node.modifiers && node.modifiers.find(m => m.kind === ts.SyntaxKind.ExportKeyword) && node.parameters.length <= 1) {
             const type = checker.getTypeAtLocation(node);
             const callSignature = type.getCallSignatures()[0];
             const returnType = callSignature.getReturnType();
@@ -125,10 +115,9 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
         }
     }
 
-    function pushToOutput(node: ts.Node, type: ts.Type, propTypes: ts.Type, isCreate = false) {
+    function pushToOutput(node: ts.Node, type: ts.Type, propType: ts.Type) {
         const c = getName(node, type) as TestedComponent;
-        c.isCreate = isCreate;
-        c.props = propTypes
+        c.props = propType
             .getProperties()
             .filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken))
             .sort((a, b) => a.getName() > b.getName() ? 1 : -1);
@@ -162,7 +151,7 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
         }
 
         if (type.getNumberIndexType()) {
-            return `${name}={dum.array}`;
+            return `${name}={[]}`;
         }
 
         const constructSignatures = type.getConstructSignatures();

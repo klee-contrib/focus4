@@ -33,8 +33,9 @@ export class ListWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T,
     }
 
     render() {
+        const {classNames} = this.props;
         return (
-            <ul className={`${selection} ${this.props.classNames!.selection || ""}`}>
+            <ul className={`${selection} ${classNames && classNames.selection || ""}`}>
                 {this.renderLines()}
                 {this.renderManualFetch()}
             </ul>

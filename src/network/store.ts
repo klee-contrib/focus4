@@ -12,11 +12,11 @@ export interface Request {
 
 @autobind
 export class RequestStore {
-    error = map<Request>({});
-    pending = map<Request>({});
-    success = map<Request>({});
+    readonly error = map<Request>({});
+    readonly pending = map<Request>({});
+    readonly success = map<Request>({});
 
-    @computed
+    @computed.struct
     get count() {
         return {
             error: this.error.size,
