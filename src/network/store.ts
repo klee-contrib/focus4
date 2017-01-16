@@ -1,8 +1,6 @@
 import {autobind} from "core-decorators";
-import {action, computed, map, ObservableMap} from "mobx";
+import {action, computed, ObservableMap} from "mobx";
 import {v4} from "uuid";
-
-export {ObservableMap};
 
 export interface Request {
     id?: string;
@@ -12,9 +10,9 @@ export interface Request {
 
 @autobind
 export class RequestStore {
-    readonly error = map<Request>({});
-    readonly pending = map<Request>({});
-    readonly success = map<Request>({});
+    readonly error = new ObservableMap<Request>({});
+    readonly pending = new ObservableMap<Request>({});
+    readonly success = new ObservableMap<Request>({});
 
     @computed.struct
     get count() {
