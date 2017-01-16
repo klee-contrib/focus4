@@ -26,13 +26,13 @@ export type AsList<T> = {
 export function makeReferenceStore<T extends Record<string, {}>>(serviceFactory: ServiceFactory, config: T): AsList<T> {
     const referenceStore: any = {};
     for (const ref in config) {
-        referenceStore[`_${ref}`] = [];
+        referenceStore[`_${ref}`] = observable.shallowArray();
         referenceStore[ref] = computed(() => {
             if (!referenceStore[`_${ref}_loading`] && !(cache[ref] && (getTimeStamp() - cache[ref].timeStamp) < CACHE_DURATION)) {
                 referenceStore[`_${ref}_loading`] = true;
                 untracked(() => serviceFactory(ref)().then(action((refList: {}[]) => {
                     cacheData(ref, refList);
-                    referenceStore[`_${ref}`] = refList;
+                    referenceStore[`_${ref}`].replace(refList);
                     delete referenceStore[`_${ref}_loading`];
                 })));
             }
