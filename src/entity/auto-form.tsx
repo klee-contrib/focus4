@@ -150,6 +150,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
             const params = getLoadParams();
             if (params) {
                 this.isLoading = true;
+                this.storeData.clear();
                 const data = await load(...params);
                 runInAction(() => {
                     this.storeData.set(data);
