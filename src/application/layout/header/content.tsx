@@ -3,12 +3,8 @@ import * as React from "react";
 
 import {applicationStore} from "../../store";
 
-export const HeaderContent = observer<{className: string}>(
-    ({className}) => {
-        return (
-            <div className={className}>
-                {applicationStore.cartridge}
-            </div>
-        );
-    }
-);
+export const HeaderContent = observer<{className: string}>(({className}) => (
+    <div className={className}>
+        {applicationStore.cartridge}
+    </div>
+));

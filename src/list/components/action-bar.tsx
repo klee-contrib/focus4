@@ -55,7 +55,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                         store.sortAsc = description.order;
                     }),
                     label: description.label,
-                    style: this.getSelectedStyle(description.key + description.order, store.sortBy + (store.sortAsc ? "asc" : "desc"))
+                    style: getSelectedStyle(description.key + description.order, store.sortBy + (store.sortAsc ? "asc" : "desc"))
                 });
             }
             return <Dropdown button={{icon: "sort_by_alpha", shape: "icon"}} key="down" operations={orderOperationList} />;
@@ -71,7 +71,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                 operationList.push({
                     action: () => store.groupingKey = key,
                     label: i18n.t(groupLabelPrefix + label),
-                    style: this.getSelectedStyle(key, store.groupingKey)
+                    style: getSelectedStyle(key, store.groupingKey)
                 });
                 return operationList;
             }, [] as DropdownItem[]).concat([{
@@ -83,10 +83,6 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         } else {
             return null;
         }
-    }
-
-    private getSelectedStyle(currentKey: string, selectedKey?: string) {
-        return currentKey === selectedKey ? " selected " : "";
     }
 
     private getSelectionObjectIcon() {
@@ -120,4 +116,8 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
             </div>
         );
     }
+}
+
+function getSelectedStyle(currentKey: string, selectedKey?: string) {
+    return currentKey === selectedKey ? " selected " : "";
 }

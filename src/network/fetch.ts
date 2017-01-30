@@ -16,14 +16,16 @@ export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE
         const response = await fetch(url, {method, body, headers, credentials: "include"});
         if (response.status >= 200 && response.status < 300) {
             requestStore.updateRequest({id, url, status: "success"});
-            if (response.headers.get("Content-Type").includes("application/json")) {
+            const contentType = response.headers.get("Content-Type");
+            if (contentType && contentType.includes("application/json")) {
                 return await response.json<RS>();
             } else {
                 return await response.text();
             }
         } else {
             requestStore.updateRequest({id, url, status: "error"});
-            if (response.headers.get("Content-Type").includes("application/json")) {
+            const contentType = response.headers.get("Content-Type");
+            if (contentType && contentType.includes("application/json")) {
                 return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
             } else {
                 const errorMessage = `${response.status} error when calling ${url}`;

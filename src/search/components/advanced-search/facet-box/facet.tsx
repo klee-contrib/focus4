@@ -87,17 +87,15 @@ export class Facet extends React.Component<FacetProps, void> {
         return (
             <div className={`${styles.list} ${classNames!.list}`}>
                 <ul>
-                    {facetValues.map(facetValue => {
-                        return (
-                            <li key={uniqueId("facet-item")}>
-                                <FacetData
-                                    dataKey={facetValue.code}
-                                    data={facetValue}
-                                    selectHandler={this.facetDataSelectionHandler}
-                                />
-                            </li>
-                        );
-                    })}
+                    {facetValues.map(facetValue => (
+                        <li key={uniqueId("facet-item")}>
+                            <FacetData
+                                dataKey={facetValue.code}
+                                data={facetValue}
+                                selectHandler={this.facetDataSelectionHandler}
+                            />
+                        </li>
+                    ))}
                 </ul>
                 <div className={`${styles.showAll} ${classNames!.showAll}`}>
                     {this.renderShowAllDataList()}

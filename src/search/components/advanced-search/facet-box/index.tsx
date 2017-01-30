@@ -28,21 +28,10 @@ export interface FacetBoxProps {
 export class FacetBox extends React.Component<FacetBoxProps, void> {
 
     @observable private isExpanded = true;
-    @observable private openedFacetList = this.generateOpenedFacetList(this.props.openedFacetList, this.props.store.facets);
+    @observable private openedFacetList = generateOpenedFacetList(this.props.openedFacetList, this.props.store.facets);
 
     componentWillReceiveProps({store, openedFacetList}: FacetBoxProps) {
-        this.openedFacetList = this.generateOpenedFacetList(openedFacetList, store.facets);
-    }
-
-    private generateOpenedFacetList(openedFacetList: {[facet: string]: boolean}, facetList: StoreFacet[]) {
-        if (Object.keys(openedFacetList).length === 0) {
-            return facetList.reduce((list, facet) => {
-                list[facet.code] = true;
-                return list;
-            }, {} as {[facet: string]: boolean});
-        }
-
-        return openedFacetList;
+        this.openedFacetList = generateOpenedFacetList(openedFacetList, store.facets);
     }
 
     private facetBoxTitleClickHandler() {
@@ -119,4 +108,15 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
             </div>
         );
     }
+}
+
+function generateOpenedFacetList(openedFacetList: {[facet: string]: boolean}, facetList: StoreFacet[]) {
+    if (Object.keys(openedFacetList).length === 0) {
+        return facetList.reduce((list, facet) => {
+            list[facet.code] = true;
+            return list;
+        }, {} as {[facet: string]: boolean});
+    }
+
+    return openedFacetList;
 }

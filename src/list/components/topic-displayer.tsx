@@ -25,7 +25,7 @@ export const TopicDisplayer = injectStyle("topicDisplayer", ({classNames, displa
                 return (
                     <Button
                         className={`${styles.button} ${classNames!.button || ""}`}
-                        handleOnClick={() => {topicClickHandler(key!, topicClickAction);}}
+                        handleOnClick={() => topicClickHandler(key!, topicClickAction)}
                         icon="clear"
                         key={key!}
                         label={text}

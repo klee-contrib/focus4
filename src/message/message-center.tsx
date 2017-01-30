@@ -79,7 +79,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
 
     render() {
         const {classNames} = this.props;
-        const {content = "", type = undefined} = this.currentNotification || {};
+        const {content = "", type = ""} = this.currentNotification || {};
         const otherProps = { "aria-hidden": this.active, "aria-live": "assertive", "aria-atomic": "true", "aria-relevant": "text" };
         return (
             <div className={`${styles.center} ${classNames!.center || ""} mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""} ${type === "error" ? `${styles.error} ${classNames!.error || ""}` : type === "success" ? `${styles.success} ${classNames!.success || ""}` : type === "warning" ? `${styles.warning} ${classNames!.warning || ""}` : ""}`} {...otherProps}>
