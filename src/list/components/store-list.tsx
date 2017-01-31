@@ -21,7 +21,7 @@ export interface StoreListProps<T> {
 }
 
 interface LineSelectionProps<T, P extends LineProps<T>> {
-    classNames?: typeof styles;
+    classNames?: Partial<typeof styles>;
     data: T;
     isSelection: boolean;
     LineComponent: ReactComponent<P>;
@@ -86,6 +86,7 @@ export class StoreList<T, P extends LineProps<T>> extends ListWithoutStyle<T, P,
         return this.displayedData.map((data, i) =>
             <Line
                 key={i}
+                classNames={lineProps && lineProps.classNames}
                 data={data}
                 isSelection={hasSelection}
                 LineComponent={LineComponent}

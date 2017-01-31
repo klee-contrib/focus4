@@ -16,17 +16,23 @@ export interface TimelineProps<T, P extends LineProps<T>> extends ListBaseProps<
     dateSelector: (data: T) => EntityField<string>;
 }
 
-function lineTimeline(key: number, component: React.ReactElement<any>, dateField: EntityField<string>) {
-    return React.createElement(injectStyle("line", ({classNames}: {classNames?: typeof styles}) => (
-        <li>
-            <div className={`${styles.timelineDate} ${classNames!.timelineDate || ""}`}>{textFor(dateField)}</div>
-            <div className={`${styles.timelineBadge} ${classNames!.timelineBadge || ""}`}></div>
-            <div className={`${styles.timelinePanel} ${classNames!.timelinePanel || ""}`}>
-                {component}
-            </div>
-        </li>
-    )), {key});
+interface LineTimelineProps<T, P extends LineProps<T>> {
+    classNames?: Partial<typeof styles>;
+    data: T;
+    dateSelector: (data: T) => EntityField<string>;
+    LineComponent: ReactComponent<P>;
+    lineProps?: P;
 }
+
+const LineTimeline = injectStyle("line", ({classNames, data, dateSelector, LineComponent, lineProps}: LineTimelineProps<any, any>) => (
+    <li>
+        <div className={`${styles.timelineDate} ${classNames!.timelineDate || ""}`}>{textFor(dateSelector(data))}</div>
+        <div className={`${styles.timelineBadge} ${classNames!.timelineBadge || ""}`}></div>
+        <div className={`${styles.timelinePanel} ${classNames!.timelinePanel || ""}`}>
+            <LineComponent data={data} {...lineProps} />
+        </div>
+    </li>
+));
 
 @injectStyle("list")
 @autobind
@@ -40,14 +46,14 @@ export class Timeline<T, P extends LineProps<T>> extends ListBase<T, TimelinePro
     private renderLines() {
         const {LineComponent, lineProps, dateSelector} = this.props;
         return this.displayedData.map((line, i) =>
-            lineTimeline(
-                i,
-                <LineComponent
-                    data={line}
-                    {...lineProps}
-                />,
-                dateSelector(line)
-            )
+            <LineTimeline
+                key={i}
+                classNames={lineProps && lineProps.classNames}
+                data={line}
+                dateSelector={dateSelector}
+                LineComponent={LineComponent}
+                lineProps={lineProps}
+            />
         );
     }
 
