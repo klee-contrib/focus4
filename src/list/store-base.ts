@@ -9,7 +9,8 @@ export abstract class ListStoreBase<T> {
     @observable sortBy: keyof T | undefined;
     @observable top = 50;
 
-    @observable protected selectedList: IObservableArray<T> = [] as any;
+    @observable readonly selectedList: IObservableArray<T> = [] as any;
+
     @observable protected serverCount = 0;
     @observable protected pendingCount = 0;
 
