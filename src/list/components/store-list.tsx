@@ -20,24 +20,40 @@ export interface StoreListProps<T> {
     store: ListStoreBase<T>;
 }
 
-function lineSelection(
-    key: number,
-    component: React.ReactElement<any>,
-    isSelection: boolean,
-    isSelected: boolean,
-    isSelectionnable: boolean,
-    onSelection: () => void
-) {
-    return React.createElement(injectStyle("line", ({classNames}: {classNames?: typeof styles}) => (
-        <li className={isSelection ? `${styles.selection} ${classNames!.selection || ""}` : undefined}>
-            {isSelectionnable ?
-                <div className={`${styles.checkbox} ${classNames!.checkbox || ""} ${isSelected ? `${styles.selected} ${classNames!.selected || ""}` : `${styles.unselected} ${classNames!.unselected || ""}`}`}>
-                    <Checkbox onChange={onSelection} rawInputValue={isSelected} />
-                </div>
-            : null}
-            {component}
-        </li>
-    )), {key});
+interface LineSelectionProps<T, P extends LineProps<T>> {
+    classNames?: typeof styles;
+    data: T;
+    isSelection: boolean;
+    LineComponent: ReactComponent<P>;
+    lineProps?: P;
+    selectionnableInitializer: (data: T) => boolean;
+    store: ListStoreBase<T>;
+}
+
+@injectStyle("line")
+@observer
+class LineSelection<T, P extends LineProps<T>> extends React.Component<LineSelectionProps<T, P>, void> {
+
+    @computed
+    get isSelected() {
+        return this.props.store.selectedItems.has(this.props.data);
+    }
+
+    onSelection = () => this.props.store.toggle(this.props.data);
+
+    render() {
+        const {LineComponent, data, lineProps, isSelection, selectionnableInitializer, classNames} = this.props;
+        return (
+            <li className={isSelection ? `${styles.selection} ${classNames!.selection || ""}` : undefined}>
+                {isSelection && selectionnableInitializer(data) ?
+                    <div className={`${styles.checkbox} ${classNames!.checkbox || ""} ${this.isSelected ? `${styles.selected} ${classNames!.selected || ""}` : `${styles.unselected} ${classNames!.unselected || ""}`}`}>
+                        <Checkbox onChange={this.onSelection} rawInputValue={this.isSelected} />
+                    </div>
+                : null}
+                <LineComponent data={data} {...lineProps} />
+            </li>
+        );
+    }
 }
 
 @injectStyle("list")
@@ -66,17 +82,18 @@ export class StoreList<T, P extends LineProps<T>> extends ListWithoutStyle<T, P,
 
     protected renderLines() {
         const {LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, store} = this.props;
-        return this.displayedData.map((value, i) => lineSelection(
-            i,
-            <LineComponent
-                data={value}
-                {...lineProps}
-            />,
-            hasSelection,
-            store.selectedItems.has(value),
-            hasSelection && selectionnableInitializer(value),
-            () => store.toggle(value)
-        ));
+        const Line = LineSelection as new() => LineSelection<T, P>;
+        return this.displayedData.map((data, i) =>
+            <Line
+                key={i}
+                data={data}
+                isSelection={hasSelection}
+                LineComponent={LineComponent}
+                lineProps={lineProps}
+                selectionnableInitializer={selectionnableInitializer}
+                store={store}
+            />
+        );
     }
 
     protected handleShowMore() {
