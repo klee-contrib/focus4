@@ -185,6 +185,14 @@ declare module "focus-components/input-date" {
     }
 }
 
+declare module "focus-components/input-display/checkbox" {
+    export default function DisplayCheckbox(props: {
+        className?: string;
+        name?: string;
+        rawInputValue?: boolean;
+    }): React.ReactElement<any>
+}
+
 declare module "focus-components/input-display/text" {
     export default function DisplayText(props: {
         className?: string;
