@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
   "main": "index.js",
   "repository": {

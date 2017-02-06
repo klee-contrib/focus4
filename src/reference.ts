@@ -1,4 +1,4 @@
-import {action, computed, IObservableArray, observable, untracked} from "mobx";
+import {action, computed, IObservableArray, observable} from "mobx";
 
 export type ServiceFactory = (refName: string) => () => Promise<{}[]>;
 
@@ -30,11 +30,11 @@ export function makeReferenceStore<T extends Record<string, {}>>(serviceFactory:
         referenceStore[ref] = computed(() => {
             if (!referenceStore[`_${ref}_loading`] && !(cache[ref] && (getTimeStamp() - cache[ref].timeStamp) < CACHE_DURATION)) {
                 referenceStore[`_${ref}_loading`] = true;
-                untracked(() => serviceFactory(ref)().then(action((refList: {}[]) => {
+                setTimeout(() => serviceFactory(ref)().then(action((refList: {}[]) => {
                     cacheData(ref, refList);
                     referenceStore[`_${ref}`].replace(refList);
                     delete referenceStore[`_${ref}_loading`];
-                })));
+                })), 0);
             }
 
             return referenceStore[`_${ref}`];
