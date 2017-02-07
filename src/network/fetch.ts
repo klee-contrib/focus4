@@ -2,8 +2,6 @@ import fetch from "isomorphic-fetch";
 import {isObject} from "lodash";
 import {v4} from "uuid";
 
-import {messageStore} from "../message";
-
 import {ManagedErrorResponse, manageResponseErrors} from "./error-parsing";
 import {requestStore} from "./store";
 
@@ -28,18 +26,14 @@ export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE
             if (contentType && contentType.includes("application/json")) {
                 return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
             } else {
-                const errorMessage = `${response.status} error when calling ${url}`;
-                console.error(errorMessage);
-                messageStore.addErrorMessage(errorMessage);
+                console.error(`${response.status} error when calling ${url}`);
                 return Promise.reject<string>(await response.text());
             }
         }
-    } catch (e) {
+    } catch (error) {
         requestStore.updateRequest({id, url, status: "error"});
-        const errorMessage = `"${e.message}" error when calling ${url}`;
-        console.error(errorMessage);
-        messageStore.addErrorMessage(errorMessage);
-        return Promise.reject<string>(errorMessage);
+        console.error(`"${error.message}" error when calling ${url}`);
+        return Promise.reject(error);
     }
 }
 
