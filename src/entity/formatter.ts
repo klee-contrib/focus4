@@ -16,5 +16,5 @@ export function formatNumber(n: string, format?: string) {
  * @param numeralConf La conf de numeral.js.
  */
 export function setLanguage(key: string, numeralConf: any) {
-    return numeral.language(key, numeralConf);
+    return numeral.register("locale", key, numeralConf);
 }

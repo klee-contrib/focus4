@@ -336,12 +336,14 @@ declare module "focus-components/select" {
 declare module "focus-components/select-mdl" {
     export default class Select extends React.Component<{
         autoFocus?: boolean;
+        defaultValue?: string | number;
         disabled?: boolean;
         error?: string;
         hasUndefined?: boolean;
         isActiveProperty?: string;
         isRequired?: boolean;
         labelKey?: string;
+        multiple?: boolean;
         name: string;
         onChange: (value: string | number) => void;
         placeholder?: string;
@@ -351,7 +353,8 @@ declare module "focus-components/select-mdl" {
         unSelectedLabel?: string;
         valid?: boolean;
         valueKey?: string;
-        values: {}[];
+        valueParser?: (propsValue: string | number, rawValue: string) => number | string;
+        values: (string | number)[];
     }, {}> {
         getValue(): string | number;
     }
