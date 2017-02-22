@@ -69,7 +69,7 @@ glob(`${appRoot}/**/*.tsx`, (_, fileNames) => {
         ts.forEachChild(sourceFile, visit);
     }
 
-    const sortedOutput = output.sort((a, b) => a.name > b.name ? 1 : -1);
+    const sortedOutput = output.sort((a, b) => a.name! > b.name! ? 1 : -1);
 
     fs.writeFileSync(`${appRoot}/__test__/index.tsx`,
 `${imports}

@@ -38,7 +38,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     }
 
     onInputChange(query: string) {
-        const {store, minChar, onSearchCriteriaChange} = this.props;
+        const {store, minChar = 0, onSearchCriteriaChange} = this.props;
 
         if (query.length >= minChar) {
             store.setProperties({query});

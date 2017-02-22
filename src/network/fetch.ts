@@ -1,6 +1,6 @@
-import fetch from "isomorphic-fetch";
 import {isObject} from "lodash";
 import {v4} from "uuid";
+import "whatwg-fetch";
 
 import {ManagedErrorResponse, manageResponseErrors} from "./error-parsing";
 import {requestStore} from "./store";
@@ -11,12 +11,12 @@ export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE
     const id = v4();
     requestStore.updateRequest({id, url, status: "pending"});
     try {
-        const response = await fetch(url, {method, body, headers, credentials: "include"});
+        const response = await window.fetch(url, {method, body, headers, credentials: "include"});
         if (response.status >= 200 && response.status < 300) {
             requestStore.updateRequest({id, url, status: "success"});
             const contentType = response.headers.get("Content-Type");
             if (contentType && contentType.includes("application/json")) {
-                return await response.json<RS>();
+                return await response.json() as RS;
             } else {
                 return await response.text();
             }

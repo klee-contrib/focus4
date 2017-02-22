@@ -384,7 +384,7 @@ function regifyString(str: string) {
     let last = 0;
     let out = "";
     while (matches = str.substr(last).match(/[^\w\d\- %@&]*\*[^\w\d\- %@&]*/)) {
-        last = matches.index + matches[0].length;
+        last = (matches.index || 0) + matches[0].length;
         matches[0] = matches[0].replace(/^\*/, "([_.()!\\ %@&a-zA-Z0-9-]+)");
         out += str.substr(0, matches.index) + matches[0];
     }
