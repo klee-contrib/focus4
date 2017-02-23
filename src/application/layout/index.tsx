@@ -23,7 +23,7 @@ export interface LayoutProps {
     AppHeader?: ReactComponent<any>;
     children?: React.ReactChildren;
     classNames?: LayoutStyle;
-    ErrorCenter?: ReactComponent<any> | undefined;
+    ErrorCenter?: ReactComponent<any> | null;
     Footer?: ReactComponent<any>;
     LoadingBar?: ReactComponent<any>;
     MenuLeft?: ReactComponent<any>;
