@@ -9,7 +9,7 @@ Un [module CSS](https://github.com/css-modules/css-modules) est un fichier CSS q
 Il est également possible de générer automatiquement des types pour ces imports CSS (un fichier *.d.ts contenant le nom de toutes les classes globalement) avec [`typed-css-modules`](https://github.com/Quramy/typed-css-modules), ce qui permet de contrôler le nom des classes que l'on importe et de planter à la compilation si on se trompe/on supprime/on refactore du CSS. C'est quasiment gratuit (une commande `tcm` à lancer régulièrement) et c'est pratique.
 
 ## Injection de classes CSS
-Si le scoping des classes est une fonctionnalité à double tranchant, car elle va nous empêcher de surcharger directement le CSS de la librairie. Pour résoudre ce problème, en prenant l'inspiration de [`material-ui`](http://www.materialui.com) qui lui le fait avec de styles inline, `autofocus` propose un mécanisme de "Provider" / "Injecter" (HoC) pour injecter des classes CSS additionnelles dans des composants. Par exemple, cela fonctionne ainsi :
+Le scoping des classes est une fonctionnalité à double tranchant, car elle va nous empêcher de surcharger directement le CSS des composants de la librairie. Pour résoudre ce problème, en prenant inspiration de [`material-ui`](http://www.materialui.com) qui lui le fait avec de styles inline, `autofocus` propose un mécanisme de "Provider" / "Injecter" (HoC) pour injecter des classes CSS additionnelles dans des composants. Par exemple, cela fonctionne ainsi :
 
 ```tsx
 import {StyleProvider, injectStyle} from "autofocus/theming";

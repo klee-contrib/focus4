@@ -69,7 +69,34 @@ class MyViewStore extends ViewStore<{id: string}, "objet"> {
 }
 ```
 
-Ainsi, à chaque fois que je change l'id de la `currentView`, mon résumé est rechargé et le reste du module pourra toujours compter sur ces informations à jour. Cela veut dire également qu'il vaut mieux, dans la mesure du possible, faire dépendre tous les composants directement du `ViewStore`, quitte à devoir l'importer (ou injecter si on veut vraiment être rigoureux) partout. Si l'id de l'objet métier (ou tout autre propriété qui en dérive fonctionnellement) doit être utilisé quelque part, alors il est très souhaitable de le récupérer directement depuis le `ViewStore`.
+Ainsi, à chaque fois que je change l'id de la `currentView`, mon résumé est rechargé et le reste du module pourra toujours compter sur ces informations à jour.
+
+## Synchroniser un composant sur un `ViewStore`
+
+Puisque l'on vient d'établir un `ViewStore` comme étant l'unique source de vérité sur les informations de base du module courant, il faudrait donc faire dépendre tous les composants directement du `ViewStore`, quitte à devoir l'importer (ou l'injecter si on veut vraiment être rigoureux) partout.
+
+Par exemple, si je veux charger des données qui dépendent de l'ID courant dans un composant, alors il serait idéal de faire comme ceci :
+
+```tsx
+class Component extends React.Component {
+    loadDisposer = autorun(async () => this.data = await loadData(+viewStore.currentView.id));
+    componentWillUnmount() {
+        this.loadDisposer();
+    }
+}
+```
+
+à la place d'un `componentWillMount` classique.
+
+On est d'accord pour dire que ce n'est pas la chose la plus simple à écrire (en [attendant](https://github.com/mobxjs/mobx/issues/835) de [pouvoir](https://github.com/mobxjs/mobx-react/issues/181) [utiliser](https://github.com/mobxjs/mobx-react/issues/122) [`@autorun`](https://github.com/mobxjs/mobx/pull/559) un jour), mais ce fonctionnement permet d'assurer la synchronisation du composant avec le store sans passer par une prop `id` et gère directement l'initialisation comme la mise à jour (on aurait eu besoin d'à la fois `componentWillMount` et `componentWillReceiveProps` pour obtenir le même comportement sans réaction, du coup ça fait relativiser la syntaxe).
+
+Le gros point fort en faisant ça, c'est qu'on peut librement modifier l'id dans le `ViewStore` (via l'URL ou dans le code) et voir tous nos composants se remettre à jour sans remonter le moindre composant, sans effort supplémentaire.
+
+L'`AutoForm` créé nativement une réaction pour le chargement à partir de la fonction `getLoadParams` qu'on lui passe dans la configuration. Donc si cette fonction ressemble à quelque chose comme `() => [+viewStore.currentView.id]`, alors il bénificiera de la synchronisation.
+
+*Note : la synchronisation par réaction n'est pas à faire en toute circonstances. Par exemple, si un module affiche des composants différents selon un état global qui peut changer avec l'ID, alors ces composants ne doivent pas être synchronisés. Dans ce cas, la meilleure solution est de synchroniser le composant racine et de s'assurer que l'on remonte tous les composants enfants à chaque changement d'ID. [fromPromise](https://github.com/mobxjs/mobx-utils#frompromise) est pratique pour ça.*
+
+## A propos de ce qu'on vient de faire
 
 Cela veut dire que l'on va utiliser de moins en moins de `props` à nos composants et que l'on va d'avantage s'appuyer directement sur l'état de stores définis globalement. Il faut bien comprendre que MobX est infiniment meilleur que React pour décrire et déterminer comment un composant doit réagir à des changements de state ou de props, donc on va essayer de l'utiliser le plus possible. Rien n'empêche de définir des stores spécialisés dérivés pour restreindre l'accès au state global pour des composants spécialisés si on veut être plus propre, l'important est bien de n'avoir aucun intermédiaire entre la source de vérité (le store) et son usage.
 
