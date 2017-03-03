@@ -1,7 +1,7 @@
 {
   "name": "autofocus",
   "version": "1.2.0",
-  "description": "Réimagine Focus dans une version plus simple, plus efficace et plus robuste.",
+  "description": "Focus en Typescript avec MobX",
   "main": "index.js",
   "repository": {
     "type": "git",
