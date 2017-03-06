@@ -20,6 +20,16 @@
     color: rgb(222, 50, 38);
 }
 
+/* Corrige problème MDL qui affiche pas l'erreur */
+.edit.invalid :global(.mdl-textfield__error) {
+    visibility: visible;
+}
+
+/* Corrige problème MDL qui affiche pas l'erreur */
+.edit.invalid :global(.mdl-textfield__label)::after {
+    background-color: rgb(213,0,0);
+}
+
 .edit.required .label:after {
     content: "*";
     margin-left: 3px;

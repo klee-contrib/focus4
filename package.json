@@ -1,6 +1,6 @@
 {
   "name": "autofocus",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Focus en Typescript avec MobX",
   "main": "index.js",
   "repository": {
