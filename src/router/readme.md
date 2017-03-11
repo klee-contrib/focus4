@@ -25,9 +25,8 @@ Le constructeur du store prend un deuxième paramètre, le `prefix`, qui représ
 
 La fonction `startRouter` prend un array de `ViewStore` comme second paramètre pour cette usage-là. Le premier store de la liste sera le store par défaut : c'est sur ce store-là que l'application va démarrer et c'est sur celui-là que les routes non trouvées vont rediriger.
 
-Un routeur avec plusieurs stores gère la notion de "store actif", c'est-à-dire qu'il va déterminer quel store est actif automatiquement. La règle est très simple : c'est le dernier store modifié qui est actif, et tous les autres stores sont réinitialisés (tous les paramètres de vues sont passés à `undefined`) lorsqu'on change de store. La fonction `startRouter` retourne un objet contenant la listes des stores et un propriété observable `currentStore` qui contient le store actif.
+Un routeur avec plusieurs stores gère la notion de "store actif", c'est-à-dire qu'il va déterminer quel store est actif automatiquement. La règle est très simple : c'est le dernier store modifié qui est actif, et tous les autres stores sont réinitialisés (tous les paramètres de vues sont passés à `undefined`) lorsqu'on change de store. La fonction `startRouter` retourne un objet contenant la listes des stores, une propriété observable `currentStore` qui contient le store actif, et une méthode `to(prefix)` permettant de naviguer vers l'état par défaut du `ViewStore` choisi (cette navigation n'entraînant pas de modification d'état, on est forcé de l'effectuer via le routeur au lieu d'une interaction avec un store).
 
-*Note : Il n'est actuellement pas possible de changer le store actif sans changer l'état de sa vue sans passer par l'URL, c'est-à-dire en faisant quelque chose comme `<a href="#home">` ou `window.location.hash = "#home"`. Je n'ai pas trouvé de solution sans couplage router <-> store ou router <-> vue, mais le problème reste ouvert.*
 
 Exemple d'usage :
 ```tsx

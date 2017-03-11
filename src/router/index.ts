@@ -83,9 +83,19 @@ export function startRouter<Store extends ViewStore<any, any>>(config: RouterCon
         stores: observable.ref(stores),
         get currentStore() {
             return stores[storeActivity.findIndex(Boolean)];
+        },
+        to(prefix: Store["prefix"]) {
+            if (prefix) {
+                if (config.html5history) {
+                    window.history.pushState(null, "", prefix);
+                } else {
+                    window.location.hash = prefix;
+                }
+            }
         }
     }) as {
         readonly currentStore: Store;
         stores: Store[];
+        to(prefix: Store["prefix"]): void;
     };
 }
