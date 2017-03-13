@@ -205,7 +205,7 @@ export class Results extends React.Component<ResultsProps, void> {
                 return 0 !== list.length;
             });
         } else {
-            resultsMap = omitBy(results || {}, (resultGroup: {}[]) => !resultGroup.length) as {[group: string]: IObservableArray<{}>};
+            resultsMap = omitBy(results || {}, (resultGroup: {}[]) => resultGroup && !resultGroup.length) as {[group: string]: IObservableArray<{}>};
         }
 
         if (isEmpty(resultsMap)) {

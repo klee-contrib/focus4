@@ -107,10 +107,10 @@ export class SearchStore extends ListStoreBase<any> {
             this.sortAsc = props.sortAsc || false;
             this.sortBy = props.sortBy;
         } else {
-            this.groupingKey = props.groupingKey || this.groupingKey;
+            this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
             this.selectedFacets = props.selectedFacets || this.selectedFacets;
             this.sortAsc = props.sortAsc || this.sortAsc;
-            this.sortBy = props.sortBy || this.sortBy;
+            this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         }
 
         this.query = props.query || this.query;
