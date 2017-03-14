@@ -4,7 +4,7 @@ import {camelCase, upperFirst} from "lodash";
 import * as ts from "typescript";
 
 const appRoot = process.argv[2] || "src";
-const testingRoot = process.argv[3] || "autofocus";
+const testingRoot = process.argv[3] || "focus4";
 
 const imports =
 `/*

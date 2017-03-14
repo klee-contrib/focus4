@@ -58,7 +58,7 @@ Du coup, ce qu'on va faire, c'est construire des stores à partir des `entityDef
 
 Et on retrouve le même fonctionnement d'avant.
 
-*Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange`, `ref` et `error`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans autofocus doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus.*
+*Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange`, `ref` et `error`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans Focus V4 doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus.*
 
 ### Description
 
@@ -125,7 +125,7 @@ C'est un "vestige" de Focus v2 qui fait le travail qu'on lui demande de façon t
 
 En somme, **un formulaire**.
 
-Au risque de se répeter, **si vous ne faites pas un écran de formulaire, n'utilisez pas `AutoForm`**. Les fonctions `fieldFor` et co. sont disponibles dans la librairie et utilisables directement avec des stores, les composants sont synchronisés automatiquement avec les stores avec `@observer`, donc tous les cas de "non formulaire" sont gérés de façon beaucoup plus élégante, simple et souple qu'avec l'`AutoForm`. N'oubliez pas que le [starter kit](http://www.github.com/JabX/autofocus-starter-kit) fait également office de démo et présente les cas d'usages les plus courants.
+Au risque de se répeter, **si vous ne faites pas un écran de formulaire, n'utilisez pas `AutoForm`**. Les fonctions `fieldFor` et co. sont disponibles dans la librairie et utilisables directement avec des stores, les composants sont synchronisés automatiquement avec les stores avec `@observer`, donc tous les cas de "non formulaire" sont gérés de façon beaucoup plus élégante, simple et souple qu'avec l'`AutoForm`. N'oubliez pas que le [starter kit](http://www.github.com/get-focus/focus4-starter-kit) fait également office de démo et présente les cas d'usages les plus courants.
 
 ### Configuration
 La config d'un formulaire se fait intégralement dans son constructeur via l'appel à `super`, qui appelle le constructeur d'`AutoForm`, ses paramètres sont :
@@ -155,7 +155,7 @@ Il est important de noter que puisque les valeurs de stores sont toutes stockée
 ### Exemple de formulaire (issu du starter kit)
 
 ```tsx
-import {AutoForm, i18n, observer, React} from "autofocus";
+import {AutoForm, i18n, observer, React} from "focus4";
 import Panel from  "focus-components/panel";
 
 import {StructureNode} from "../../model/main/structure";

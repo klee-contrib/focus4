@@ -1,4 +1,4 @@
-### Puisque un exemple parle souvent mieux que des mots dans le vent, le [starter kit](http://www.github.com/JabX/autofocus-starter-kit) fait également office de démo et présente les usages les plus simples d'`autofocus`.
+### Puisque un exemple parle souvent mieux que des mots dans le vent, le [starter kit](http://www.github.com/get-focus/focus4-starter-kit) fait également office de démo et présente les usages les plus simples de `focus4`.
 
 # Référence d'API
 ## [Module `application`](application)
@@ -9,7 +9,7 @@
 
 ## Module `reference`
 ### `ReferenceStore`
-Un `ReferenceStore` d'autofocus est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
+Un `ReferenceStore` de Focus V4 est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
 * `serviceFactory` est une fonction qui prend en paramètre un nom de référence et renvoie un service (sans paramètre) permettant de récupérer la liste de référence (qui renvoie donc une Promise)
 * `refConfig` est un objet dont les propriétés seront les noms des listes de références à charger. Pour typer le store de référence, il suffit de typer ces propriétés avec le type correspondant :
 

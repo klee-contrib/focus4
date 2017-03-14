@@ -1,15 +1,15 @@
 {
-  "name": "autofocus",
+  "name": "focus4",
   "version": "1.2.3",
-  "description": "Focus en Typescript avec MobX",
+  "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JabX/autofocus.git"
+    "url": "https://github.com/get-focus/focus4.git"
   },
   "author": "damien.frikha@kleegroup.com",
   "license": "MIT",
-  "homepage": "https://github.com/JabX/autofocus",
+  "homepage": "https://github.com/get-focus/focus4",
   "scripts": {
     "prepublish": "in-publish && tsc --outDir ./ && node copy-css.js ./ || true",
     "postpublish": "rm -rf index.js index.d.ts reference.js reference.d.ts user.js user.d.ts && rm -rf application entity list message network router search testing theming",
