@@ -24,6 +24,7 @@ export interface ViewModel {
 export function createViewModel<T extends StoreNode<{}>>(model: T) {
     const viewModel = clone(model) as any as T & ViewModel;
 
+    // La fonction `reset` va simplement vider et reremplir le viewModel avec les valeurs du model.
     const reset = () => {
         untracked(() => viewModel.clear());
         viewModel.set(toFlatValues(model as any));
@@ -32,7 +33,7 @@ export function createViewModel<T extends StoreNode<{}>>(model: T) {
     viewModel.reset = action(reset);
     viewModel.subscribe = () => {
         if (!viewModel.isSubscribed) {
-            const disposer = autorun(reset);
+            const disposer = autorun(reset); // On crée la réaction de synchronisation.
             viewModel.unsubscribe = () => {
                 disposer();
                 viewModel.isSubscribed = false;
@@ -41,11 +42,11 @@ export function createViewModel<T extends StoreNode<{}>>(model: T) {
         }
     };
 
-    viewModel.subscribe();
+    viewModel.subscribe(); // On s'abonne par défaut, puisque c'est à priori le comportement souhaité la plupart du temps.
     return viewModel;
 }
 
-/** Version adaptée de `toJS` de MobX. */
+/** Version adaptée de `toJS` de MobX pour prendre en compte `$entity` et les fonctions `set` et `clear`. */
 function clone(source: any): any {
     if (isObservableArray(source)) {
         let res = [];

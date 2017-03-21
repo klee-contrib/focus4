@@ -44,39 +44,65 @@ export interface AutoFormOptions<E> {
     /** Par défaut: true */
     hasForm?: boolean;
 
-    /** Défaut: false */
+    /** Par défaut: false */
     initiallyEditing?: boolean;
 }
 
 /** Config de services à fournir à AutoForm. */
 export interface ServiceConfig {
+
+    /** Service de suppression. */
     delete?: (entity: {}) => Promise<void | number | boolean>;
+
+    /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
     getLoadParams?: () => any[];
+
+    /** Service de chargement. */
     load?: (...args: any[]) => Promise<{}>;
+
+    /** Service de sauvegarde. Obligatoire. */
     save: (entity: {}) => Promise<{}>;
 }
 
-/** Classe de base pour un composant Focus avec un formulaire. */
+/** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
 export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Component<P, void> {
 
-    // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement.
+    // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
     static contextTypes = {classNames: React.PropTypes.object};
     context: {classNames: {[key: string]: {[key: string]: any}}};
 
+    /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
     readonly entity: E & ViewModel;
+
+    /** Services. */
     readonly services: ServiceConfig;
+
+    /** Noeud de store à partir du quel le formulaire a été créé. */
     readonly storeData: E;
 
+    /** Erreurs sur les champs issues du serveur. */
     @observable errors: Record<string, string> = {};
+
+    /** Reférences vers les champs placés par `this.fieldFor` (pour la validation). */
     @observable fields: Record<string, Field | null> = {};
+
+    /** Formulaire en édition. */
     @observable isEdit: boolean;
+
+    /** Formulaire en chargement. */
     @observable isLoading = false;
 
+    /** Classe CSS additionnelle (passée en options). */
     private className: string;
+
+    /** Insère ou non un formulaire HTML. */
     private hasForm: boolean;
+
+    /** Utilise ou non un ViewModel personnalisé, passé en options. */
     private isCustomEntity: boolean;
 
+    /** Disposer de la réaction de chargement. */
     private loadDisposer?: Lambda;
 
     /**
@@ -96,13 +122,14 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         this.hasForm = hasForm !== undefined ? hasForm : true;
         this.className = className || "";
 
+        // On met en place la réaction de chargement.
         if (services.getLoadParams) {
             this.loadDisposer = reaction(services.getLoadParams, this.load, {compareStructural: true});
         }
     }
 
     componentWillMount() {
-        this.entity.subscribe();
+        this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.
         this.load();
     }
 
@@ -142,10 +169,12 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         }
     }
 
-    /** Appele le service de chargement */
+    /** Appelle le service de chargement (appelé par la réaction de chargement). */
     @action
     async load() {
         const {getLoadParams, load} = this.services;
+
+        // On n'effectue le chargement que si on a un service de chargement et des paramètres pour le service.
         if (getLoadParams && load) {
             const params = getLoadParams();
             if (params) {
@@ -164,6 +193,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     /** Appelle le service de sauvegarde. */
     @action
     async save() {
+        // On ne sauvegarde que si la validation est en succès.
         if (this.validate()) {
             this.isLoading = true;
             try {
@@ -172,7 +202,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
                 runInAction(() => {
                     this.isLoading = false;
                     this.isEdit = false;
-                    this.storeData.set(data);
+                    this.storeData.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                     this.onFormSaved();
                 });
             } catch (e) {
@@ -186,24 +216,34 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         }
     }
 
+    /** Est appelé après la suppression. */
     onFormDeleted() {
         // A éventuellement surcharger.
     }
 
+    /** Est appelé après le chargement. */
     onFormLoaded() {
         // A éventuellement surcharger.
     }
 
+    /** Est appelé après la sauvegarde. */
     onFormSaved() {
         // A éventuellement surcharger.
     }
 
-    /** Valide les différents champs du formulaire. */
+    /**
+     * Valide les différents champs du formulaire.
+     *
+     * Surcharger la méthode pour ajouter une validation personnalisée.
+     */
     @action
     validate() {
+        // On force en premier lieu l'affichage des erreurs sur tous les champs.
         for (const field in this.fields) {
             this.fields[field]!.showError = true;
         }
+
+        // La validation est en succès si chaque champ n'est pas en erreur.
         return !some(values(this.fields), field => field && field.error);
     }
 
@@ -211,12 +251,13 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     getPanelButtonProps(): PanelButtonsProps {
         return {
             editing: this.isEdit,
-            getUserInput: () => ({}), // Pas besoin de passer l'input il est déjà dans le state du formulaire.
+            getUserInput: () => ({}), // Pas besoin de passer l'input car il est déjà dans le state du formulaire.
             save: this.save,
             toggleEdit: this.toggleEdit,
         };
     }
 
+    /** Fonction de rendu du formulaire à préciser. */
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
         const contextClassName = this.context && this.context.classNames && this.context.classNames["form"] || "";
@@ -302,6 +343,11 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      */
     textFor<T>(field: EntityField<T>, options: TextOptions = {}) { return textFor(field, options); }
 
+    /**
+     * Ajoute les options aux champs pour les lier au formulaire (`ref`, `error`, `isEdit` et `onChange`).
+     * @param field La définition du champ.
+     * @param options Les options du champ.
+     */
     private setFieldOptions<T>(field: EntityField<T>, options: {[key: string]: any}) {
         options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
         options["error"] = this.errors[field.$entity.translationKey];

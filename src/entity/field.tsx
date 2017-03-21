@@ -16,10 +16,10 @@ import {validate} from "./validation";
 import * as styles from "./style/field.css";
 export type FieldStyle = Partial<typeof styles>;
 
+/** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps extends Domain {
 
     // Props passées aux composants Display/Field/Input.
-    domain?: Domain;
     error?: string | null;
     isEdit?: boolean;
     labelKey?: string;
@@ -41,6 +41,7 @@ export interface FieldProps extends Domain {
     labelSize?: number;
 }
 
+/** Liste de toutes les props qu'on ne passera pas aux composants d'input ou display. */
 const omittedProps = [
     "classNames",
     "contentCellPosition",
@@ -59,32 +60,39 @@ const omittedProps = [
     "LabelComponent"
 ];
 
+/** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 @injectStyle("field")
 @autobind
 @observer
 export class Field extends React.Component<FieldProps & {ref: (field: StyleInjector<Field>) => void}, void> {
 
+    /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = false;
 
     componentWillUpdate({value}: FieldProps) {
+        // On affiche l'erreur dès que et à chaque fois que l'utilisateur modifie la valeur (et à priori pas avant).
         if (value) {
             this.showError = true;
         }
     }
 
+    /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
     @computed
     get error(): string | undefined {
         const {error, value} = this.props;
 
+        // On priorise l'éventuelle erreur passée en props.
         if (error !== undefined) {
             return error || undefined;
         }
 
+        // On vérifie que le champ n'est pas vide et obligatoire.
         const {isRequired, validator, label = ""} = this.props;
         if (isRequired && (undefined === value || null === value || "" === value)) {
             return i18n.t("field.required");
         }
 
+        // On applique le validateur du domaine.
         if (validator && value !== undefined && value !== null) {
             const validStat = validate({value, name: i18n.t(label)}, validator);
             if (validStat.errors.length) {
@@ -92,17 +100,20 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
             }
         }
 
+        // Pas d'erreur.
         return undefined;
     }
 
+    /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
         const {valueKey, labelKey, values, value: rawValue, formatter, DisplayComponent, isEdit = false} = this.props;
-        const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue;
+        const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue; // Résout la valeur dans le cas d'une liste de référence.
         const props = omit(this.props, omittedProps);
         const FinalDisplay = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
         return <FinalDisplay {...props} formattedInputValue={formatter && formatter(value, {isEdit}) || value} rawInputValue={value} />;
     }
 
+    /** Affiche un composant de champ entièrement personnalisé (`FieldComponent`). */
     field() {
         const {FieldComponent} = this.props;
         const valid = !(this.showError && this.error);
@@ -114,32 +125,32 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         }
     }
 
+    /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {InputComponent, formatter, value, isEdit = false} = this.props;
         const props = omit(this.props, omittedProps);
         const FinalInput = InputComponent || InputText;
         const valid = !(this.showError && this.error);
+
+        // On renseigne `formattedInputValue`, `value` et `rawInputValue` pour être sûr de prendre en compte tous les types de composants.
         return <FinalInput {...props} formattedInputValue={formatter && formatter(value, {isEdit}) || value} rawInputValue={value} valid={valid} error={valid ? null : this.error} />;
     }
 
+    /** Affiche le composant de libellé (`LabelComponent`). */
     label() {
-        const {name, label, LabelComponent, domain, labelCellPosition = "top", labelSize = 4, labelOffset = 0, classNames} = this.props;
+        const {name, label, LabelComponent, labelCellPosition = "top", labelSize = 4, labelOffset = 0, classNames} = this.props;
         const FinalLabel = LabelComponent || Label;
         return (
             <div className ={`${getCellGridClassName(labelCellPosition, labelSize, labelOffset)} ${styles.label} ${classNames!.label || ""}`}>
-                <FinalLabel
-                    domain={domain}
-                    name={name}
-                    text={label}
-                />
+                <FinalLabel name={name} text={label} />
             </div>
         );
     }
 
     render() {
-        const {FieldComponent, contentCellPosition = "top", contentSize = 12, labelSize = 4, contentOffset = 0, isRequired, hasLabel, isEdit, domain, classNames, className = ""} = this.props;
+        const {FieldComponent, contentCellPosition = "top", contentSize = 12, labelSize = 4, contentOffset = 0, isRequired, hasLabel, isEdit, classNames, className = ""} = this.props;
         return (
-            <div className={`mdl-grid ${styles.field} ${classNames!.field || ""} ${isEdit ? `${styles.edit} ${classNames!.edit || ""}` : ""} ${this.error && this.showError ? `${styles.invalid} ${classNames!.invalid || ""}` : ""} ${isRequired ? `${styles.required} ${classNames!.required || ""}` : ""} ${domain && domain.className ? domain.className : ""}`}>
+            <div className={`mdl-grid ${styles.field} ${classNames!.field || ""} ${isEdit ? `${styles.edit} ${classNames!.edit || ""}` : ""} ${this.error && this.showError ? `${styles.invalid} ${classNames!.invalid || ""}` : ""} ${isRequired ? `${styles.required} ${classNames!.required || ""}` : ""} ${className}`}>
                 {FieldComponent ? this.field() : null}
                 {!FieldComponent && hasLabel ? this.label() : null}
                 {!FieldComponent ?

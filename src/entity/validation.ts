@@ -126,6 +126,11 @@ function getErrorLabel(type: string, options?: TrKey): string {
     return i18n.t(options && options.translationKey ? options.translationKey : `domain.validation.${type}`);
 }
 
+/**
+ * Valide une propriété avec un validateur.
+ * @param property La propriété à valider.
+ * @param validator Le validateur à utiliser.
+ */
 function validateProperty(property: ValidationProperty, validator: Validator) {
     const {value} = property;
     const isValueNullOrUndefined = isNull(value) || isUndefined(value);
@@ -158,7 +163,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
     })();
 
     if (isValid === undefined) {
-        console.warn(`The validator of type: ${validator.type} is not defined`);
+        console.warn(`Le validateur de type : ${validator.type} n'existe pas.`);
     } else if (isValid === false) {
         return getErrorLabel(validator.type, validator.options);
     }

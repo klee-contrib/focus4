@@ -31,12 +31,16 @@ export interface BaseOptions {
 
 /** Options pour `autocompleteSelectFor`. */
 export interface AutocompleteSelectOptions extends AutocompleteTextOptions {
+
+    /** Service de résolution d'une clé. Doit renvoyer le libellé. */
     keyResolver: (code: string | number) => Promise<string>;
 }
 
 /** Options pour `autocompleteTextFor`. */
 export interface AutocompleteTextOptions extends BaseOptions {
     onChange?: (code: string) => void;
+
+    /** Service de recherche textuelle. */
     querySearcher: (text: string) => Promise<AutoCompleteResult>;
 }
 
@@ -64,13 +68,6 @@ export interface TextOptions {
     value?: any;
     valueKey?: string;
     values?: {}[];
-}
-
-/** State propre à ComponentWithEntity. */
-export interface CWEState<E> {
-    isEdit?: boolean;
-    error?: {[x: string]: string};
-    entity?: E;
 }
 
 /**
@@ -125,12 +122,12 @@ export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: Ent
 /**
  * Crée un champ avec résolution de référence.
  * @param field La définition de champ.
- * @param listName Le nom de la liste de référence.
+ * @param values La liste de référence.
  * @param options Les options du champ.
  */
 export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
     (options as FieldProps).InputComponent = Select;
-    (options as FieldProps).values = values.slice();
+    (options as FieldProps).values = values.slice(); // On s'assure que la liste de référence passée au composant ne soit pas observable.
     return fieldForWith(field, options);
 }
 
@@ -140,8 +137,8 @@ export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[]
  * @param options Les options du champ.
  */
 export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): string {
-    const {formatter, valueKey, labelKey, values, value} = buildFieldProps(field, options);
-    const processedValue = values ? result(find(values, {[valueKey || "code"]: value}), labelKey || "label") : value;
+    const {formatter, valueKey = "code", labelKey = "label", values, value} = buildFieldProps(field, options);
+    const processedValue = values ? result(find(values, {[valueKey]: value}), labelKey) : value;
     return formatter!(processedValue);
 }
 
@@ -154,6 +151,13 @@ export function textFor<T>(field: EntityField<T>, options: TextOptions = {}) {
     return <div name={field.$entity.translationKey} style={options.style}>{stringFor(field, options)}</div>;
 }
 
+/**
+ * Construit les props à passer au composant Field.
+ *
+ * Les props seront récupérées depuis, dans l'ordre, (1) le domaine, (2) l'entité, et (3) les options.
+ * @param field La définition du champ.
+ * @param options Les options du champ.
+ */
 export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions = {}): FieldProps {
     const {value, $entity: {domain, translationKey, isRequired}} = field;
     const {hasLabel = true, ref, ...otherOptions} = options;
@@ -166,7 +170,7 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions =
         isRequired,
         label: translationKey,
         name,
-        ref: (i: StyleInjector<Field>) => ref && ref(i && i.instance || null),
+        ref: (i: StyleInjector<Field>) => ref && ref(i && i.instance || null), // On s'arrange pour que la ref renvoie bien le composant Field et non le HoC StyleInjector qui l'enveloppe.
         value,
         unformatter: dom.unformatter || (x => x)
     };
