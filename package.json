@@ -12,7 +12,7 @@
   "homepage": "https://github.com/get-focus/focus4",
   "scripts": {
     "prepublish": "in-publish && tsc --outDir ./ && node copy-css.js ./ || true",
-    "postpublish": "rm -rf index.js index.d.ts reference.js reference.d.ts user.js user.d.ts && rm -rf application entity list message network router search testing theming",
+    "postpublish": "rm -rf index.js index.d.ts ioc.js ioc.d.ts reference.js reference.d.ts user.js user.d.ts && rm -rf application entity list message network router search testing theming",
     "start": "tsc && node copy-css.js dist",
     "tcm": "tcm src",
     "tcm:watch": "tcm -w src",
@@ -35,6 +35,8 @@
     "focus-components": "3.2.5",
     "i18next": "7.1.2",
     "ignore-styles": "5.0.1",
+    "inversify": "3.1.0",
+    "inversify-inject-decorators": "3.0.1",
     "lodash": "4.17.4",
     "material-design-icons-iconfont": "3.0.3",
     "material-design-lite": "1.2.1",
@@ -45,6 +47,7 @@
     "react": "15.4.2",
     "react-addons-test-utils": "15.4.2",
     "react-dom": "15.4.2",
+    "reflect-metadata": "0.1.10",
     "tape": "4.6.3",
     "tslib": "1.6.0",
     "uuid": "3.0.1"
