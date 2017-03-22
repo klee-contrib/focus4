@@ -9,3 +9,7 @@ const {lazyInject} = getDecorators(container);
 export function inject(name: string) {
     return lazyInject(name);
 }
+
+export function resolve(name: string) {
+    return container.get(name);
+}
