@@ -73,13 +73,13 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     context: {classNames: {[key: string]: {[key: string]: any}}};
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
-    readonly entity: E & ViewModel;
+    entity: E & ViewModel;
 
     /** Services. */
-    readonly services: ServiceConfig;
+    services: ServiceConfig;
 
     /** Noeud de store à partir du quel le formulaire a été créé. */
-    readonly storeData: E;
+    storeData: E;
 
     /** Erreurs sur les champs issues du serveur. */
     @observable errors: Record<string, string> = {};
@@ -106,14 +106,19 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     private loadDisposer?: Lambda;
 
     /**
+     * A implémenter pour initialiser le formulaire. Il faut appeler `this.formInit` à l'intérieur.
+     *
+     * Sera appelé pendant `componentWillMount` avant le chargement.
+     */
+    abstract init(): void;
+
+    /**
      * Initialise le formulaire.
-     * @param props Les props du composant.
      * @param storeData L'EntityStoreData de base du formulaire.
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    constructor(props: P, storeData: E, services: ServiceConfig, {entity, className, hasForm, initiallyEditing}: AutoFormOptions<E> = {}) {
-        super(props);
+    formInit(storeData: E, services: ServiceConfig, {entity, className, hasForm, initiallyEditing}: AutoFormOptions<E> = {}) {
         this.storeData = storeData;
         this.services = services;
         this.entity = entity || createViewModel(storeData);
@@ -129,6 +134,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     }
 
     componentWillMount() {
+        this.init();
         this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.
         this.load();
     }
