@@ -55,3 +55,6 @@ Et voilà, ça marche tout seul.
 
 ## Module `user`
 Le store d'utilisateur est le même que `focus-core`, à la différence près que la fonction `hasRole` est située sur l'instance du `UserStore` (ce qui est plus logique).
+
+## Module `util`
+Ce module contient deux décorateurs `@classAutorun` et `@classReaction` pour créer un `autorun`/`reaction` sur une méthode de classe React (en attendant que ça soit nativement supporté par MobX ?).
