@@ -12,15 +12,12 @@ import {injectStyle} from "../../theming";
 
 import {ListStoreBase} from "../store-base";
 import {ContextualActions} from "./contextual-actions";
-import {TopicDisplayer} from "./topic-displayer";
 
 import * as styles from "./style/action-bar.css";
 export type ActionBarStyle = Partial<typeof styles>;
 
 export interface ActionBarProps {
     classNames?: ActionBarStyle;
-    facetClickAction?: (key: string) => void;
-    facetList?: {[facet: string]: {code: string, label: string, value: string}};
     groupableColumnList?: {[column: string]: string};
     groupLabelPrefix?: string;
     hasSelection?: boolean;
@@ -34,7 +31,7 @@ export interface ActionBarProps {
 @autobind
 export class ActionBar extends React.Component<ActionBarProps, void> {
 
-    private getSelectionObject() {
+    private getSelectionButton() {
         const {hasSelection, store} = this.props;
         if (hasSelection) {
             return <Button shape="icon" icon={this.getSelectionObjectIcon()} handleOnClick={store.toggleAll} />;
@@ -43,10 +40,10 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         }
     }
 
-    private getOrderObject() {
+    private getSortButton() {
         const {orderableColumnList, store} = this.props;
         if (orderableColumnList) {
-            const orderOperationList: DropdownItem[] = []; // [{key:'columnKey', order:'asc', label:'columnLabel'}]
+            const orderOperationList: DropdownItem[] = [];
             for (const key in orderableColumnList) {
                 const description = orderableColumnList[key];
                 orderOperationList.push({
@@ -58,13 +55,23 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                     style: getSelectedStyle(description.key + description.order, store.sortBy + (store.sortAsc ? "asc" : "desc"))
                 });
             }
-            return <Dropdown button={{icon: "sort_by_alpha", shape: "icon"}} key="down" operations={orderOperationList} />;
+
+            const currentItem = orderableColumnList.find(o => o.key === store.sortBy && o.order === store.sortAsc);
+            return (
+                <Dropdown
+                    button={{
+                        label: currentItem ? `${i18n.t("list.actionBar.sortBy")} ${currentItem.label}` : "list.actionBar.sort",
+                        shape: null
+                    }}
+                    operations={orderOperationList}
+                />
+            );
         }
 
         return null;
     }
 
-    private getGroupObject() {
+    private getGroupButton() {
         const {groupLabelPrefix = "", groupableColumnList, store} = this.props;
         if (groupableColumnList) {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
@@ -74,12 +81,13 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                     style: getSelectedStyle(key, store.groupingKey)
                 });
                 return operationList;
-            }, [] as DropdownItem[]).concat([{
-                action: () => store.groupingKey = undefined,
-                label: i18n.t("list.actionBar.ungroup")
-            }]);
+            }, [] as DropdownItem[]);
 
-            return <Dropdown button={{icon: "folder_open", shape: "icon"}} operations={groupOperationList} />;
+            if (store.groupingKey) {
+                return <Button onClick={() => store.groupingKey = undefined} label={i18n.t("list.actionBar.ungroup")} shape={null} />;
+            } else  {
+                return <Dropdown button={{label: "list.actionBar.group", shape: null}} operations={groupOperationList} />;
+            }
         } else {
             return null;
         }
@@ -94,22 +102,16 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     render() {
-        const {facetClickAction, facetList, operationList, classNames} = this.props;
+        const {classNames, operationList} = this.props;
         return (
-            <div className={`mdl-grid ${styles.actionBar} ${classNames!.actionBar}`}>
-                <div className={`mdl-cell ${styles.buttons} ${classNames!.buttons}`}>
-                    {this.getSelectionObject()}
-                    {this.getOrderObject()}
-                    {this.getGroupObject()}
-                </div>
-                <div className={`mdl-cell mdl-cell--hide-tablet mdl-cell--hide-phone ${styles.facets} ${classNames!.facets}`}>
-                    <TopicDisplayer
-                        topicClickAction={facetClickAction}
-                        topicList={facetList}
-                    />
+            <div className={`${styles.actionBar} ${classNames!.actionBar}`}>
+                <div className={`${styles.buttons} ${classNames!.buttons}`}>
+                    {this.getSelectionButton()}
+                    {this.getSortButton()}
+                    {this.getGroupButton()}
                 </div>
                 {operationList && operationList.length ?
-                    <div className={`mdl-cell ${styles.contextualActions} ${classNames!.contextualActions}`}>
+                    <div className={`${styles.contextualActions} ${classNames!.contextualActions}`}>
                         <ContextualActions operationList={operationList}/>
                     </div>
                 : null}

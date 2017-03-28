@@ -1,20 +1,18 @@
 .actionBar {
     box-shadow: 1px 1px 4px 1px #e7e7e7;
     background-color: #FFF;
+    display: flex;
+    padding: 10px;
     margin-bottom: 10px;
 }
 
-.buttons {
-    width: 120px;
-}
-
-.buttons > div {
+.buttons > * {
     display: inline-block;
     position: relative;
 }
 
-.facets {
-    width: calc(100% - 120px - 200px - 8px * 2 * 3);
+.buttons button {
+    font-weight: bold;
 }
 
 .contextualActions {

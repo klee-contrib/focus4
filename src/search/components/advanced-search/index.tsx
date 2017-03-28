@@ -5,6 +5,7 @@ import * as React from "react";
 import BackToTop from "focus-components/button-back-to-top";
 import {DropdownItem} from "focus-components/dropdown";
 
+import {ActionBar} from "../../../list";
 import {injectStyle} from "../../../theming";
 
 import {SearchStore} from "../../store";
@@ -12,7 +13,6 @@ import {Results} from "../results";
 import {FacetBox, FacetBoxStyle, FacetStyle} from "./facet-box";
 import {GroupComponent, GroupComponentStyle} from "./group-component";
 import {ListSummary, ListSummaryStyle} from "./list-summary";
-import {SearchActionBar} from "./search-action-bar";
 export {FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle};
 
 import * as styles from "./style/advanced-search.css";
@@ -23,14 +23,14 @@ export interface AdvancedSearchProps {
     /** Par défault: true */
     hasBackToTop?: boolean;
     hasSelection?: boolean;
+    isSingleScope?: boolean;
     lineComponentMapper: (...args: any[]) => ReactComponent<any>;
     lineOperationList?: DropdownItem[];
     onLineClick?: (...args: any[]) => void;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     openedFacetList?: {};
-    scopes: {code: string, label: string}[];
+    scopes: {code: string, label?: string}[];
     scopesConfig?: {[key: string]: string};
-    scopeLock?: boolean;
     store: SearchStore;
 }
 
@@ -55,11 +55,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderListSummary() {
-        const {scopes, scopeLock, store} = this.props;
+        const {isSingleScope, scopes, store} = this.props;
         return (
             <ListSummary
+                isSingleScope={!!isSingleScope}
                 scopes={scopes}
-                scopeLock={!!scopeLock}
                 store={store}
             />
         );
@@ -75,8 +75,9 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         }, {} as {[facet: string]: string}) : {};
 
         return (
-            <SearchActionBar
+            <ActionBar
                 groupableColumnList={groupableColumnList}
+                groupLabelPrefix="live.filter.facets."
                 hasSelection={hasSelection}
                 operationList={store.totalCount > 0 ? lineOperationList : []}
                 orderableColumnList={orderableColumnList}

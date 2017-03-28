@@ -1,16 +1,4 @@
-.topicDisplayer {
-    display: inline-block;
-}
-
-.button {
-    font-size: 12px;
-    margin: 0 5px;
-    text-transform: capitalize;
-    padding: 3px 10px;
-    height: auto;
-    line-height: 25px;
-}
-
-.button i {
-    font-size: 16px;
+.container {
+    display: flex;
+    align-items: center;
 }

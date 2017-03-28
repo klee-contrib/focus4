@@ -64,13 +64,14 @@ declare module "focus-components/button" {
         className?: string;
         color?: "colored" | "primary" | "accent";
         disabled?: boolean;
-        handleOnClick: (e?: React.SyntheticEvent<any>) => void;
+        handleOnClick?: (e?: React.SyntheticEvent<any>) => void;
         hasRipple?: boolean;
         icon?: string;
         iconLibrary?: "material" | "font-awesome" | "font-custom";
         id?: string;
         isJs?: boolean;
         label?: string;
+        onClick?: (e?: React.SyntheticEvent<any>) => void;
         shape?: "raised" | "fab" | "icon" | "mini-fab" | null;
         style?: React.CSSProperties;
         type?: "button" | "submit";
@@ -87,6 +88,14 @@ declare module "focus-components/button-back" {
 
 declare module "focus-components/button-back-to-top" {
     export default class ButtonBackToTop extends React.Component<{}, {}> {}
+}
+
+declare module "focus-components/chips" {
+    export default function Chips(props: {
+        label: string;
+        letter?: string;
+        onDeleteClick?: () => void;
+    }): React.ReactElement<any>;
 }
 
 declare module "focus-components/confirmation-popin" {
@@ -124,6 +133,9 @@ declare module "focus-components/draggable-iframe" {
 }
 
 declare module "focus-components/dropdown" {
+
+    import {ButtonProps} from "focus-components/button";
+
     export interface DropdownItem {
         action: (data?: {}) => void;
         label?: string;
@@ -131,11 +143,7 @@ declare module "focus-components/dropdown" {
     }
 
     export default class Dropdown extends React.Component<{
-        button?: {
-            icon?: string;
-            label?: string;
-            shape?: "raised" | "fab" | "icon" | "mini-fab"
-        };
+        button?: ButtonProps;
         operationParam?: {};
         operations: DropdownItem[];
         position?: {

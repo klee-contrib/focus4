@@ -1,4 +1,7 @@
 import {autobind} from "core-decorators";
+import i18n from "i18next";
+import {omit} from "lodash";
+import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -15,30 +18,67 @@ export type ListSummaryStyle = Partial<typeof styles>;
 export interface ListSummaryProps {
     classNames?: ListSummaryStyle;
     exportAction?: () => void;
-    scopes: {code: string, label: string}[];
-    scopeLock: boolean;
+    isSingleScope?: boolean;
+    scopes: {code: string, label?: string}[];
     store: SearchStore;
 }
 
+/** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
 @injectStyle("listSummary")
 @autobind
 @observer
 export class ListSummary extends React.Component<ListSummaryProps, void> {
 
-    private onScopeClick() {
-        this.props.store.setProperties({
-            groupingKey: undefined,
-            scope: "ALL",
-            selectedFacets: {}
-        });
+    /**
+     * Handler de suppression d'un filtre (scope ou facette).
+     * @param key Le code du filtre sélectionné.
+     */
+    private onRemoveFilter(key: string) {
+        const {store: {setProperties, selectedFacets}} = this.props;
+        if (key === "scope") {
+            setProperties({
+                groupingKey: undefined,
+                scope: "ALL",
+                selectedFacets: {}
+            });
+        } else {
+            setProperties({selectedFacets: omit(selectedFacets, key) as {[facet: string]: string}});
+        }
     }
 
-    private get scopeLabel() {
-        const {store, scopes} = this.props;
-        const selectedScope = scopes.find(sc => sc.code === store.scope);
-        return selectedScope && selectedScope.label || store.scope;
+    /** Liste des filtres à afficher. */
+    @computed.struct
+    private get filterList() {
+        const {store: {selectedFacets, facets, scope}, isSingleScope, scopes} = this.props;
+
+        const topicList: {[facet: string]: {code: string, label?: string, value: string}} = {};
+
+        // Si on a un scope et qu'on l'affiche, alors on ajoute le scope à la liste en premier.
+        if (scope && scope !== "ALL" && !isSingleScope) {
+            const selectedScope = scopes.find(sc => sc.code === scope);
+            topicList.scope = {
+                code: scope,
+                value: selectedScope && selectedScope.label || scope
+            };
+        }
+
+        // On ajoute à la liste toutes les facettes sélectionnées.
+        for (const facetKey in selectedFacets) {
+            const facetValue = selectedFacets[facetKey];
+            const resultFacet = facets.find(facet => facetKey === facet.code);
+            const resultFacetValue = resultFacet && resultFacet.values.find(facet => facet.code === facetValue);
+            topicList[facetKey] = {
+                code: facetKey,
+                label: i18n.t(`live.filter.facets.${facetKey}`),
+                value: resultFacetValue && resultFacetValue.label || facetValue
+            };
+        }
+
+        return topicList;
     }
 
+    /** Affiche le nombre de résultats. */
+    @computed
     private get resultSentence() {
         const {totalCount, query} = this.props.store;
         const hasText = query && query.trim().length > 0;
@@ -51,13 +91,7 @@ export class ListSummary extends React.Component<ListSummaryProps, void> {
     }
 
     render() {
-        const {store, exportAction, classNames} = this.props;
-        const scope = store.scope && store.scope !== "ALL" ? {scope: {
-            code: store.scope,
-            label: "Scope",
-            value: this.scopeLabel
-        }} : undefined;
-
+        const {classNames, exportAction} = this.props;
         return (
             <div className={`${styles.summary} ${classNames!.summary || ""}`}>
                 {exportAction ?
@@ -66,12 +100,10 @@ export class ListSummary extends React.Component<ListSummaryProps, void> {
                     </div>
                 : null}
                 <span className={`${styles.sentence} ${classNames!.sentence || ""}`}>{this.resultSentence}</span>
-                <span>
-                    <TopicDisplayer
-                        topicClickAction={this.onScopeClick}
-                        topicList={!this.props.scopeLock ? scope : undefined}
-                    />
-                </span>
+                <TopicDisplayer
+                    topicClickAction={this.onRemoveFilter}
+                    topicList={this.filterList}
+                />
             </div>
         );
     }
