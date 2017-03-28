@@ -60,7 +60,7 @@ declare module "focus-components/autocomplete-text/field" {
 }
 
 declare module "focus-components/button" {
-    interface ButtonProps {
+    export interface ButtonProps {
         className?: string;
         color?: "colored" | "primary" | "accent";
         disabled?: boolean;
@@ -71,7 +71,7 @@ declare module "focus-components/button" {
         id?: string;
         isJs?: boolean;
         label?: string;
-        shape?: "raised" | "fab" | "icon" | "mini-fab";
+        shape?: "raised" | "fab" | "icon" | "mini-fab" | null;
         style?: React.CSSProperties;
         type?: "button" | "submit";
     }
