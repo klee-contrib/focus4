@@ -12,8 +12,10 @@ import {injectStyle} from "../../theming";
 
 import {ListStoreBase} from "../store-base";
 import {ContextualActions} from "./contextual-actions";
+import {OperationListItem} from "./line";
 
 import * as styles from "./style/action-bar.css";
+
 export type ActionBarStyle = Partial<typeof styles>;
 
 export interface ActionBarProps {
@@ -22,7 +24,7 @@ export interface ActionBarProps {
     groupLabelPrefix?: string;
     hasSelection?: boolean;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    operationList?: DropdownItem[];
+    operationList?: OperationListItem[];
     store: ListStoreBase<any>;
 }
 
@@ -32,9 +34,15 @@ export interface ActionBarProps {
 export class ActionBar extends React.Component<ActionBarProps, void> {
 
     private getSelectionButton() {
-        const {hasSelection, store} = this.props;
+        const {classNames, hasSelection, store} = this.props;
+        const {length} = store.selectedList;
         if (hasSelection) {
-            return <Button shape="icon" icon={this.getSelectionObjectIcon()} handleOnClick={store.toggleAll} />;
+            return (
+                <div className={`${styles.selectionText} ${classNames!.selectionText || ""}`}>
+                    <Button shape="icon" icon={this.getSelectionObjectIcon()} handleOnClick={store.toggleAll} />
+                    {length ? <strong>{`${length} ${i18n.t(length === 1 ? "list.actionBar.selectedItem" : "list.actionBar.selectedItems")}`}</strong> : null}
+                </div>
+            );
         } else {
             return null;
         }
@@ -42,6 +50,11 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
 
     private getSortButton() {
         const {orderableColumnList, store} = this.props;
+
+        if (store.selectedItems.size) {
+            return null;
+        }
+
         if (orderableColumnList) {
             const orderOperationList: DropdownItem[] = [];
             for (const key in orderableColumnList) {
@@ -73,6 +86,11 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
 
     private getGroupButton() {
         const {groupLabelPrefix = "", groupableColumnList, store} = this.props;
+
+        if (store.selectedItems.size) {
+            return null;
+        }
+
         if (groupableColumnList) {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
@@ -102,18 +120,16 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     render() {
-        const {classNames, operationList} = this.props;
+        const {classNames, operationList, store} = this.props;
         return (
-            <div className={`${styles.actionBar} ${classNames!.actionBar}`}>
-                <div className={`${styles.buttons} ${classNames!.buttons}`}>
+            <div className={`${styles.actionBar} ${classNames!.actionBar || ""}`}>
+                <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
                     {this.getSelectionButton()}
                     {this.getSortButton()}
                     {this.getGroupButton()}
                 </div>
-                {operationList && operationList.length ?
-                    <div className={`${styles.contextualActions} ${classNames!.contextualActions}`}>
-                        <ContextualActions operationList={operationList}/>
-                    </div>
+                {store.selectedItems.size && operationList && operationList.length ?
+                    <ContextualActions operationList={operationList} operationParam={store.selectedList} />
                 : null}
             </div>
         );

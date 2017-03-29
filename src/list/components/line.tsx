@@ -6,12 +6,12 @@ import * as styles from "./style/line.css";
 export type LineStyle = Partial<typeof styles>;
 
 export interface OperationListItem {
-    action: (data?: {}) => void;
-    buttonShape?: "raised" | "fab" | "icon" | "mini-fab";
+    action: (data?: {} | {}[]) => void;
+    buttonShape?: "raised" | "fab" | "icon" | "mini-fab" | null;
     label?: string;
     icon?: string;
     iconLibrary?: "material" | "font-awesome" | "font-custom";
-    priority?: number;
+    isSecondary?: boolean;
     style?: string | React.CSSProperties;
 }
 

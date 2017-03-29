@@ -2,20 +2,38 @@
     box-shadow: 1px 1px 4px 1px #e7e7e7;
     background-color: #FFF;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
     padding: 10px;
     margin-bottom: 10px;
-}
-
-.buttons > * {
-    display: inline-block;
-    position: relative;
+    box-sizing: border-box;
 }
 
 .buttons button {
     font-weight: bold;
 }
 
+.buttons, .selectionText {
+    display: flex;
+    align-items: center;
+}
+
+.selectionText strong {
+    font-size: 15px;
+    margin-left: 5px;
+}
+
 .contextualActions {
     text-align: right;
-    width: 200px;
+    display: flex;
+    align-items: center;
+}
+
+.contextualActions button {
+    font-weight: bold;
+}
+
+.contextualActions :global([data-focus="dropdown"]) {
+    height: 32px;
 }

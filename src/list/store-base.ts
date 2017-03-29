@@ -26,10 +26,10 @@ export abstract class ListStoreBase<T> {
 
     @computed
     get selectionStatus() {
-        if (this.selectedItems.size === this.totalCount) {
-            return "selected";
-        } else if (this.selectedItems.size === 0) {
+        if (this.selectedItems.size === 0) {
             return "none";
+        } else if (this.selectedItems.size === this.totalCount) {
+            return "selected";
         } else {
             return "partial";
         }

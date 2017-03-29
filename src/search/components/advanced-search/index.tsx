@@ -3,9 +3,8 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import BackToTop from "focus-components/button-back-to-top";
-import {DropdownItem} from "focus-components/dropdown";
 
-import {ActionBar} from "../../../list";
+import { ActionBar, OperationListItem } from "../../../list";
 import {injectStyle} from "../../../theming";
 
 import {SearchStore} from "../../store";
@@ -25,7 +24,7 @@ export interface AdvancedSearchProps {
     hasSelection?: boolean;
     isSingleScope?: boolean;
     lineComponentMapper: (...args: any[]) => ReactComponent<any>;
-    lineOperationList?: DropdownItem[];
+    lineOperationList?: OperationListItem[];
     onLineClick?: (...args: any[]) => void;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     openedFacetList?: {};

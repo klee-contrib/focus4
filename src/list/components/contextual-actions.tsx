@@ -4,13 +4,19 @@ import * as React from "react";
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
 
+import {injectStyle} from "../../theming";
+
 import {OperationListItem} from "./line";
 
+import * as styles from "./style/action-bar.css";
+
 export interface ContextualActionsProps {
+    classNames?: typeof styles;
     operationList: OperationListItem[];
     operationParam?: {};
 }
 
+@injectStyle("actionBar")
 export class ContextualActions extends React.Component<ContextualActionsProps, void> {
 
     @autobind
@@ -28,10 +34,10 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     }
 
     render() {
-        const {operationList, operationParam} = this.props;
-        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {action, priority, icon, iconLibrary, label, buttonShape, style}, key) => {
+        const {classNames, operationList, operationParam} = this.props;
+        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {action, isSecondary, icon, iconLibrary, label, buttonShape = null, style}, key) => {
             const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
-            if (1 === priority) {
+            if (!isSecondary) {
                 primaryActions.push(
                     <Button
                         handleOnClick={this.handleAction(key)}
@@ -39,7 +45,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                         iconLibrary={iconLibrary}
                         key={key}
                         label={label}
-                        shape={buttonShape || "icon"}
+                        shape={buttonShape}
                         style={typeof style === "object" ? style : {}}
                         type="button"
                     />
@@ -54,16 +60,18 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
             return actionLists;
         }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as DropdownItem[]});
         return (
-            <div>
-                <span>{primaryActionList}</span>
-                <Dropdown
-                    operations={secondaryActionList}
-                    operationParam={operationParam}
-                    position={{
-                        horizontal: "right",
-                        vertical: "bottom"
-                    }}
-                />
+            <div className={`${styles.contextualActions} ${classNames!.contextualActions}`}>
+                {primaryActionList}
+                {secondaryActionList.length ?
+                    <Dropdown
+                        operations={secondaryActionList}
+                        operationParam={operationParam}
+                        position={{
+                            horizontal: "right",
+                            vertical: "bottom"
+                        }}
+                    />
+                : null}
             </div>
         );
     }
