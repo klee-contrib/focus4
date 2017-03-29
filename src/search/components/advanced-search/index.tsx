@@ -15,7 +15,7 @@ import {ListSummary, ListSummaryStyle} from "./list-summary";
 import {SearchActionBar} from "./search-action-bar";
 export {FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle};
 
-import * as styles from "./style/index.css";
+import * as styles from "./style/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {

@@ -12,7 +12,7 @@ import {StoreFacet} from "../../../types";
 import {Facet, FacetStyle} from "./facet";
 export {FacetStyle};
 
-import * as styles from "./style/index.css";
+import * as styles from "./style/facet-box.css";
 export type FacetBoxStyle = Partial<typeof styles>;
 
 export interface FacetBoxProps {

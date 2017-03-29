@@ -13,7 +13,7 @@ import {LoadingBarStyle} from "../../network";
 import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle} from "../../search";
 import {injectStyle, StyleProvider} from "../../theming";
 
-import styles from "./style/index.css";
+import styles from "./style/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 
 export {DefaultErrorCenter as ErrorCenter}

@@ -12,7 +12,7 @@ import {SearchStore} from "../../store";
 import {Scope, ScopeSelect, ScopeSelectStyle} from "./scope-select";
 export {ScopeSelectStyle};
 
-import * as styles from "./style/index.css";
+import * as styles from "./style/search-bar.css";
 export type SearchBarStyle = Partial<typeof styles>;
 
 export interface SearchBarProps {
