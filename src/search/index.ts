@@ -1,2 +1,2 @@
 export {SearchStore} from "./store";
-export {AdvancedSearch, GroupWrapper, Results, SearchBar, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle} from "./components";
+export {AdvancedSearch, Results, SearchBar, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, ListSummaryStyle} from "./components";

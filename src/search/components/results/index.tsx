@@ -6,16 +6,16 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {OperationListItem, StoreList} from "../../list";
+import {OperationListItem} from "../../../list";
 
-import {SearchStore} from "../store";
-import {GroupComponent, GroupWrapper} from "./group-wrapper";
+import {SearchStore} from "../../store";
+import {GroupStyle, GroupWrapper} from "./group";
+export {GroupStyle};
 
 const FCT_SCOPE = "FCT_SCOPE";
 
 export interface ResultsProps {
     emptyComponent?: () => React.ReactElement<any>;
-    groupComponent: GroupComponent;
     /** Par défaut: 3 */
     initialRowsCount?: number;
     hasSelection: boolean;
@@ -26,7 +26,6 @@ export interface ResultsProps {
     offset?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
-    renderSingleGroupDecoration: boolean;
     store: SearchStore;
 }
 
@@ -66,11 +65,11 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private scrollListener() {
+        const {store: {isLoading, search}, offset = 250} = this.props;
         const el = findDOMNode(this) as HTMLElement;
         const scrollTop = window.pageYOffset;
-        if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < (this.props.offset || 250)) {
+        if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
             this.detachScrollListener();
-            const {isLoading, search} = this.props.store;
             if (!isLoading) {
                 search(true);
             }
@@ -78,73 +77,25 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(list: any[], key: string, label: string | undefined, count: number, isUnique?: boolean) {
-        const {initialRowsCount = 3, renderSingleGroupDecoration, groupComponent} = this.props;
-        if (renderSingleGroupDecoration && !groupComponent) {
-            console.warn("You are trying to wrap your list in a group without a groupComponent. Please give one or set 'renderSingleGroupDecoration' to false.");
-        }
-
-        if (isUnique) {
-            if (renderSingleGroupDecoration && groupComponent) {
-                return (
-                    <GroupWrapper
-                        count={count}
-                        groupComponent={groupComponent}
-                        groupKey={key}
-                        groupLabel={label}
-                        initialRowsCount={initialRowsCount}
-                        isUnique={true}
-                        list={list}
-                        renderResultsList={this.renderResultsList}
-                    />
-                );
-            } else {
-                return this.renderResultsList(list, key);
-            }
-        } else if (groupComponent) {
-            return (
-                <GroupWrapper
-                    key={key}
-                    count={count}
-                    groupComponent={groupComponent}
-                    groupKey={key}
-                    groupLabel={label}
-                    initialRowsCount={initialRowsCount}
-                    list={list}
-                    renderResultsList={this.renderResultsList}
-                    showAllHandler={this.showAllHandler}
-                />
-            );
-        } else {
-            console.warn("Il vous manque un groupComponent pour afficher des groupes.");
-            return <div />;
-        }
-    }
-
-    private renderEmptyResults() {
-        const Empty = this.props.emptyComponent || (() => <div>{i18n.t("search.empty")}</div>);
-        return <Empty />;
-    }
-
-    private renderResultsList(list: any[], key: string) {
-        const {lineComponentMapper, hasSelection, lineClickHandler, lineOperationList, store} = this.props;
-        const {scope, isLoading} = store;
+        const {initialRowsCount = 3, hasSelection, lineClickHandler, lineComponentMapper, lineOperationList, store} = this.props;
+        const {scope} = store;
         const lineKey = scope === undefined || scope === "ALL" ? key : scope;
         const LineComponent = lineComponentMapper(lineKey, list);
         return (
-            <div>
-                <StoreList
-                    data={list}
-                    hasSelection={hasSelection}
-                    LineComponent={LineComponent}
-                    lineProps={{operationList: lineOperationList, onLineClick: lineClickHandler} as any}
-                    store={store as any}
-                />
-                {isLoading &&
-                    <div style={{padding: "15px"}}>
-                        {i18n.t("search.loadingMore")}
-                    </div>
-                }
-            </div>
+            <GroupWrapper
+                count={count}
+                hasSelection={hasSelection}
+                groupKey={key}
+                groupLabel={label}
+                initialRowsCount={initialRowsCount}
+                isUnique={isUnique}
+                LineComponent={LineComponent}
+                lineClickHandler={lineClickHandler}
+                lineOperationList={lineOperationList}
+                list={list}
+                showAllHandler={this.showAllHandler}
+                store={store}
+            />
         );
     }
 
@@ -192,7 +143,8 @@ export class Results extends React.Component<ResultsProps, void> {
 
         // If there is no result, render the given empty component
         if (0 === totalCount) {
-            return this.renderEmptyResults();
+            const Empty = this.props.emptyComponent || (() => <div>{i18n.t("search.empty")}</div>);
+            return <Empty />;
         }
 
         let resultsMap;

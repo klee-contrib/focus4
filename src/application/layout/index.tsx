@@ -10,7 +10,7 @@ import {FieldStyle} from "../../entity";
 import {ActionBarStyle, LineStyle, ListStyle, TopicDisplayerStyle} from "../../list";
 import {MessageCenterStyle} from "../../message";
 import {LoadingBarStyle} from "../../network";
-import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle} from "../../search";
+import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, ListSummaryStyle} from "../../search";
 import {injectStyle, StyleProvider} from "../../theming";
 
 import styles from "./style/layout.css";
@@ -71,7 +71,7 @@ export interface LayoutStyleProviderProps {
     facetBox?: FacetBoxStyle;
     field?: FieldStyle;
     form?: string;
-    groupComponent?: GroupComponentStyle;
+    group?: GroupStyle;
     header?: HeaderStyle;
     layout?: LayoutStyle;
     line?: LineStyle;

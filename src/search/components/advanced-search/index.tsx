@@ -10,9 +10,8 @@ import {injectStyle} from "../../../theming";
 import {SearchStore} from "../../store";
 import {Results} from "../results";
 import {FacetBox, FacetBoxStyle, FacetStyle} from "./facet-box";
-import {GroupComponent, GroupComponentStyle} from "./group-component";
 import {ListSummary, ListSummaryStyle} from "./list-summary";
-export {FacetBoxStyle, FacetStyle, GroupComponentStyle, ListSummaryStyle};
+export {FacetBoxStyle, FacetStyle, ListSummaryStyle};
 
 import * as styles from "./style/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
@@ -89,12 +88,10 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         const {hasSelection, onLineClick, lineComponentMapper, lineOperationList, store} = this.props;
         return (
             <Results
-                groupComponent={GroupComponent}
                 hasSelection={!!hasSelection}
                 lineClickHandler={onLineClick}
                 lineComponentMapper={lineComponentMapper}
                 lineOperationList={lineOperationList}
-                renderSingleGroupDecoration={false}
                 store={store}
             />
         );
