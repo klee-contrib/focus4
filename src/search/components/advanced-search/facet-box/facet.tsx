@@ -7,7 +7,8 @@ import * as React from "react";
 
 import {injectStyle} from "../../../../theming";
 
-import {FacetData, FacetValue} from "./facet-data";
+import {FacetOutput} from "../../../types";
+import {FacetData} from "./facet-data";
 
 import * as styles from "./style/facet.css";
 export type FacetStyle = Partial<typeof styles>;
@@ -15,7 +16,7 @@ export type FacetStyle = Partial<typeof styles>;
 export interface FacetProps {
     classNames?: FacetStyle;
     expandHandler: (facetKey: string, expand: boolean) => void;
-    facet: {code: string, label: string, values: FacetValue[]};
+    facet: FacetOutput;
     facetKey: string;
     isExpanded: boolean;
     nbDefaultDataList: number;
@@ -50,8 +51,8 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     private renderFacetTitle() {
-        const {facetKey, selectedDataKey, facet, classNames} = this.props;
-        let facetTitle = i18n.t("live.filter.facets." + facetKey); // Default facet translation path is live.filter.facets.
+        const {selectedDataKey, facet, classNames} = this.props;
+        let facetTitle = i18n.t(facet.label);
         if (selectedDataKey) {
             const selectedFacet = facet.values.filter(value => value.code === selectedDataKey);
             const facetLabel = selectedFacet.length ? selectedFacet[0].label : "";

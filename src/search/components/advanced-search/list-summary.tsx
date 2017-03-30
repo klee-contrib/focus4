@@ -65,12 +65,12 @@ export class ListSummary extends React.Component<ListSummaryProps, void> {
         // On ajoute à la liste toutes les facettes sélectionnées.
         for (const facetKey in selectedFacets) {
             const facetValue = selectedFacets[facetKey];
-            const resultFacet = facets.find(facet => facetKey === facet.code);
-            const resultFacetValue = resultFacet && resultFacet.values.find(facet => facet.code === facetValue);
+            const facetOutput = facets.find(facet => facetKey === facet.code);
+            const facetItem = facetOutput && facetOutput.values.find(facet => facet.code === facetValue);
             topicList[facetKey] = {
                 code: facetKey,
-                label: i18n.t(`live.filter.facets.${facetKey}`),
-                value: resultFacetValue && resultFacetValue.label || facetValue
+                label: i18n.t(facetOutput.label),
+                value: facetItem && facetItem.label || facetValue
             };
         }
 

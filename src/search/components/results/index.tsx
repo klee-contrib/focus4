@@ -1,7 +1,5 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
-import {isArray, isEmpty, omitBy} from "lodash";
-import {IObservableArray, isObservableArray} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -9,7 +7,8 @@ import {findDOMNode} from "react-dom";
 import {OperationListItem} from "../../../list";
 
 import {SearchStore} from "../../store";
-import {GroupStyle, GroupWrapper} from "./group";
+import {GroupResult} from "../../types";
+import {Group, GroupStyle} from "./group";
 export {GroupStyle};
 
 const FCT_SCOPE = "FCT_SCOPE";
@@ -19,9 +18,9 @@ export interface ResultsProps {
     /** Par défaut: 3 */
     initialRowsCount?: number;
     hasSelection: boolean;
-    lineClickHandler?: (item: any) => void;
-    lineComponentMapper: (key: string, list: any[]) => ReactComponent<any>;
-    lineOperationList?: OperationListItem[];
+    onLineClick?: (item: any) => void;
+    lineComponentMapper: (groupKey?: string) => ReactComponent<any>;
+    operationList?: OperationListItem[];
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */
@@ -39,60 +38,40 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     componentDidMount() {
-        this.attachScrollListener();
-    }
-
-    componentDidUpdate() {
-        const {store} = this.props;
-        if (store.currentCount < store.totalCount && (!store.groupingKey || !isEmpty(store.selectedFacets))) {
-            this.attachScrollListener();
-        }
+        window.addEventListener("scroll", this.scrollListener);
+        window.addEventListener("resize", this.scrollListener);
     }
 
     componentWillUnmount() {
-        this.detachScrollListener();
-    }
-
-    private attachScrollListener() {
-        window.addEventListener("scroll", this.scrollListener);
-        window.addEventListener("resize", this.scrollListener);
-        this.scrollListener();
-    }
-
-    private detachScrollListener() {
         window.removeEventListener("scroll", this.scrollListener);
         window.removeEventListener("resize", this.scrollListener);
     }
 
     private scrollListener() {
-        const {store: {isLoading, search}, offset = 250} = this.props;
-        const el = findDOMNode(this) as HTMLElement;
-        const scrollTop = window.pageYOffset;
-        if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
-            this.detachScrollListener();
-            if (!isLoading) {
-                search(true);
+        const {store: {currentCount, totalCount, groupingKey, isLoading, search}, offset = 250} = this.props;
+        if (currentCount < totalCount && !groupingKey) {
+            const el = findDOMNode(this) as HTMLElement;
+            const scrollTop = window.pageYOffset;
+            if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
+                if (!isLoading) {
+                    search(true);
+                }
             }
         }
     }
 
-    private renderSingleGroup(list: any[], key: string, label: string | undefined, count: number, isUnique?: boolean) {
-        const {initialRowsCount = 3, hasSelection, lineClickHandler, lineComponentMapper, lineOperationList, store} = this.props;
-        const {scope} = store;
-        const lineKey = scope === undefined || scope === "ALL" ? key : scope;
-        const LineComponent = lineComponentMapper(lineKey, list);
+    private renderSingleGroup(group: GroupResult<{}>, isUnique?: boolean) {
+        const {initialRowsCount = 3, hasSelection, onLineClick, lineComponentMapper, operationList, store} = this.props;
         return (
-            <GroupWrapper
-                count={count}
+            <Group
+                key={group.code}
                 hasSelection={hasSelection}
-                groupKey={key}
-                groupLabel={label}
+                group={group}
                 initialRowsCount={initialRowsCount}
                 isUnique={isUnique}
-                LineComponent={LineComponent}
-                lineClickHandler={lineClickHandler}
-                lineOperationList={lineOperationList}
-                list={list}
+                LineComponent={lineComponentMapper(group.code || store.scope)}
+                onLineClick={onLineClick}
+                operationList={operationList}
                 showAllHandler={this.showAllHandler}
                 store={store}
             />
@@ -120,80 +99,21 @@ export class Results extends React.Component<ResultsProps, void> {
         });
     }
 
-    private getGroupCounts() {
-        const {store, scopeFacetKey = FCT_SCOPE} = this.props;
-
-        let scopeFacet = store.facets.filter(facet => facet.code === store.groupingKey);
-        if (scopeFacet.length === 0) {
-            scopeFacet = store.facets.filter(facet => facet.code === scopeFacetKey);
-        }
-        if (scopeFacet.length) {
-            return scopeFacet[0].values.reduce((result, facetData) => {
-                const {code, label, count} = facetData;
-                result[code] = {label, count};
-                return result;
-            }, {} as {[group: string]: {label: string, count: number}});
-        } else {
-            return undefined;
-        }
-    }
-
     render() {
         const {results, totalCount} = this.props.store;
 
-        // If there is no result, render the given empty component
         if (0 === totalCount) {
             const Empty = this.props.emptyComponent || (() => <div>{i18n.t("search.empty")}</div>);
             return <Empty />;
         }
 
-        let resultsMap;
-
-        // resultsMap est un objet avec une seule propriété (le scope) dans si on est dans une recherche scopée sans groupes, sinon c'est un array.
-        if (isObservableArray(results)) {
-            resultsMap = results.filter(resultGroup => {
-                const propertyGroupName = Object.keys(resultGroup)[0]; // group property name
-                const list = resultGroup[propertyGroupName];
-                return 0 !== list.length;
-            });
-        } else {
-            resultsMap = omitBy(results || {}, (resultGroup: {}[]) => resultGroup && !resultGroup.length) as {[group: string]: IObservableArray<{}>};
-        }
-
-        if (isEmpty(resultsMap)) {
+        const filteredResults = results.filter(result => result.totalCount !== 0);
+        if (!filteredResults.length) {
             return null;
-        }
-
-        if (!isArray(resultsMap)) {
-            const keys = Object.keys(resultsMap);
-            if (keys.length > 0) {
-                const key = Object.keys(resultsMap)[0];
-                const list = resultsMap[key];
-                const count = totalCount;
-                return this.renderSingleGroup(list, key, undefined, count, true);
-            } else {
-                return null;
-            }
-        } else if (isArray(resultsMap) && 1 === resultsMap.length) {
-            const key = Object.keys(resultsMap[0])[0];
-            const list = resultsMap[0][key];
-            const count = totalCount;
-            return this.renderSingleGroup(list, key, undefined, count, true);
+        } else if (filteredResults.length === 1) {
+            return this.renderSingleGroup(filteredResults[0], true);
         } else {
-            const groupCounts = this.getGroupCounts();
-            return (
-                <div>
-                    {groupCounts ?
-                        resultsMap.map(resultGroup  => {
-                            const key = Object.keys(resultGroup)[0]; // group property name
-                            const list = resultGroup[key];
-                            const label = groupCounts[key] && groupCounts[key].label;
-                            const count = groupCounts[key] && groupCounts[key].count;
-                            return this.renderSingleGroup(list, key, label, count);
-                        })
-                    : null}
-                </div>
-            );
+            return <div>{filteredResults.map(group => this.renderSingleGroup(group))}</div>;
         }
     }
 }

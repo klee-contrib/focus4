@@ -9,22 +9,21 @@ import Button from "focus-components/button";
 import {ListStoreBase, OperationListItem, StoreList} from "../../../list";
 import {injectStyle} from "../../../theming";
 
+import {GroupResult} from "../../types";
+
 import * as styles from "./style/group.css";
 
 export type GroupStyle = Partial<typeof styles>;
 
 export interface Props {
     classNames?: GroupStyle;
-    count: number;
     initialRowsCount: number;
-    groupKey: string;
-    groupLabel?: string;
+    group: GroupResult<{}>;
     hasSelection?: boolean;
     isUnique?: boolean;
     LineComponent: ReactComponent<any>;
-    lineClickHandler?: (item: any) => void;
-    lineOperationList?: OperationListItem[];
-    list: any[];
+    onLineClick?: (item: any) => void;
+    operationList?: OperationListItem[];
     showAllHandler?: (key: string) => void;
     store: ListStoreBase<any>;
 }
@@ -32,26 +31,27 @@ export interface Props {
 @injectStyle("group")
 @autobind
 @observer
-export class GroupWrapper extends React.Component<Props, void> {
+export class Group extends React.Component<Props, void> {
 
     @observable
     private resultsDisplayedCount = this.props.initialRowsCount || 3;
 
     private showMoreHandler() {
-        this.resultsDisplayedCount = this.resultsDisplayedCount + 3 <= this.props.list.length ? this.resultsDisplayedCount + 3 : this.props.list.length;
+        const {list} = this.props.group;
+        this.resultsDisplayedCount = this.resultsDisplayedCount + 3 <= list.length ? this.resultsDisplayedCount + 3 : list.length;
     }
 
     private renderList() {
-        const {hasSelection, isUnique, LineComponent, lineClickHandler, lineOperationList, list, store} = this.props;
-        const listClone = list.slice();
+        const {group, hasSelection, isUnique, LineComponent, onLineClick, operationList, store} = this.props;
+        const listClone = group.list.slice();
         const listToRender = isUnique ? listClone : listClone.splice(0, this.resultsDisplayedCount);
         return (
             <div>
                 <StoreList
-                    data={listToRender}
+                    data={listToRender as any}
                     hasSelection={hasSelection}
                     LineComponent={LineComponent}
-                    lineProps={{operationList: lineOperationList, onLineClick: lineClickHandler} as any}
+                    lineProps={{operationList, onLineClick} as any}
                     store={store}
                 />
                 {store.isLoading ?
@@ -64,24 +64,26 @@ export class GroupWrapper extends React.Component<Props, void> {
     }
 
     render() {
-        const {classNames, count, groupKey, groupLabel, isUnique, list, showAllHandler} = this.props;
+        const {classNames, group, isUnique, showAllHandler} = this.props;
         if (isUnique) {
             return this.renderList();
-        } else {
+        } else if (group.code && group.label && group.totalCount) {
             return (
                 <div className={`${styles.container} ${classNames!.container || ""}`}>
-                    <h3>{`${groupLabel} (${count})`}</h3>
+                    <h3>{`${group.label} (${group.totalCount})`}</h3>
                     {this.renderList()}
                     <div className={`${styles.actions} ${classNames!.actions || ""}`}>
-                        {list.length > this.resultsDisplayedCount ?
+                        {group.list.length > this.resultsDisplayedCount ?
                             <Button icon="add" handleOnClick={this.showMoreHandler} label={i18n.t("show.more")} />
                         : null}
                         {showAllHandler ?
-                            <Button icon="arrow_forward" handleOnClick={() => showAllHandler && showAllHandler(groupKey)} label={i18n.t("show.all")} />
+                            <Button icon="arrow_forward" handleOnClick={() => showAllHandler && showAllHandler(group.code!)} label={i18n.t("show.all")} />
                         : null}
                     </div>
                 </div>
             );
+        } else {
+            return null;
         }
     }
 }

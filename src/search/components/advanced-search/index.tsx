@@ -23,10 +23,10 @@ export interface AdvancedSearchProps {
     hasSelection?: boolean;
     isSingleScope?: boolean;
     lineComponentMapper: (...args: any[]) => ReactComponent<any>;
-    lineOperationList?: OperationListItem[];
     onLineClick?: (...args: any[]) => void;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     openedFacetList?: {};
+    operationList?: OperationListItem[];
     scopes: {code: string, label?: string}[];
     scopesConfig?: {[key: string]: string};
     store: SearchStore;
@@ -64,7 +64,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderActionBar() {
-        const {hasSelection, lineOperationList, orderableColumnList, store} = this.props;
+        const {hasSelection, operationList, orderableColumnList, store} = this.props;
         const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
             if (facet.values.length > 1) {
                 result[facet.code] = facet.label;
@@ -75,9 +75,8 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         return (
             <ActionBar
                 groupableColumnList={groupableColumnList}
-                groupLabelPrefix="live.filter.facets."
                 hasSelection={hasSelection}
-                operationList={store.totalCount > 0 ? lineOperationList : []}
+                operationList={store.totalCount > 0 ? operationList : []}
                 orderableColumnList={orderableColumnList}
                 store={store}
             />
@@ -85,13 +84,13 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {hasSelection, onLineClick, lineComponentMapper, lineOperationList, store} = this.props;
+        const {hasSelection, onLineClick, lineComponentMapper, operationList, store} = this.props;
         return (
             <Results
                 hasSelection={!!hasSelection}
-                lineClickHandler={onLineClick}
+                onLineClick={onLineClick}
                 lineComponentMapper={lineComponentMapper}
-                lineOperationList={lineOperationList}
+                operationList={operationList}
                 store={store}
             />
         );

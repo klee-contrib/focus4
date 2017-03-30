@@ -8,7 +8,7 @@ import * as React from "react";
 import {injectStyle} from "../../../../theming";
 
 import {SearchStore} from "../../../store";
-import {StoreFacet} from "../../../types";
+import {FacetOutput} from "../../../types";
 import {Facet, FacetStyle} from "./facet";
 export {FacetStyle};
 
@@ -110,7 +110,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     }
 }
 
-function generateOpenedFacetList(openedFacetList: {[facet: string]: boolean}, facetList: StoreFacet[]) {
+function generateOpenedFacetList(openedFacetList: {[facet: string]: boolean}, facetList: FacetOutput[]) {
     if (Object.keys(openedFacetList).length === 0) {
         return facetList.reduce((list, facet) => {
             list[facet.code] = true;

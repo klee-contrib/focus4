@@ -1,11 +1,10 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
-import {FacetValue} from "../../../types";
-export {FacetValue};
+import {FacetItem} from "../../../types";
 
 export interface FacetDataProps {
-    data: FacetValue;
+    data: FacetItem;
     dataKey: string;
     selectHandler: (dataKey: string) => void;
 }
@@ -20,7 +19,7 @@ export class FacetData extends React.Component<FacetDataProps, void> {
 
     render() {
         const {label, count} = this.props.data;
-        return(
+        return (
             <div onClick={this.selectFacetData}>
                 {`${label} (${count})`}
             </div>

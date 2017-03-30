@@ -1,13 +1,20 @@
-import {IObservableArray} from "mobx";
-
-export interface FacetValue {
+export interface FacetItem {
     code: string;
     label: string;
     count: number;
 }
 
-export interface OutputFacet {
-    [facet: string]: FacetValue[];
+export interface FacetOutput {
+    code: string;
+    label: string;
+    values: FacetItem[];
+}
+
+export interface GroupResult<T> {
+    code?: string;
+    label?: string;
+    list: T[];
+    totalCount?: number;
 }
 
 export interface QueryInput {
@@ -22,27 +29,15 @@ export interface QueryInput {
 
 export interface QueryOutput<T> {
     list?: T[];
-    groups?: {[name: string]: T[]}[];
-    facets: OutputFacet[];
+    groups?: GroupResult<T>[];
+    facets: FacetOutput[];
     totalCount: number;
     query: QueryInput;
 }
 
 export interface UnscopedQueryOutput {
-    facets: OutputFacet[];
-    groups: {[name: string]: {}[]}[];
+    groups: GroupResult<{}>[];
+    facets: FacetOutput[];
     totalCount: number;
     query: QueryInput;
-}
-
-export type Results<T extends {}> = {[group: string]: IObservableArray<T>} | IObservableArray<{[group: string]: IObservableArray<T>}>;
-
-export interface StoreFacet {
-    code: string;
-    label: string;
-    values: {
-        code: string;
-        label: string;
-        count: number;
-    }[];
 }

@@ -21,7 +21,6 @@ export type ActionBarStyle = Partial<typeof styles>;
 export interface ActionBarProps {
     classNames?: ActionBarStyle;
     groupableColumnList?: {[column: string]: string};
-    groupLabelPrefix?: string;
     hasSelection?: boolean;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     operationList?: OperationListItem[];
@@ -85,7 +84,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     private getGroupButton() {
-        const {groupLabelPrefix = "", groupableColumnList, store} = this.props;
+        const {groupableColumnList, store} = this.props;
 
         if (store.selectedItems.size) {
             return null;
@@ -95,7 +94,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
                     action: () => store.groupingKey = key,
-                    label: i18n.t(groupLabelPrefix + label),
+                    label: i18n.t(label),
                     style: getSelectedStyle(key, store.groupingKey)
                 });
                 return operationList;
