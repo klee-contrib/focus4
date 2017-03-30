@@ -1,9 +1,8 @@
 .selection {
-    padding: 15px;
     background-color: #FFF;
     border-bottom:1px solid #E1E1E1;
     cursor: pointer;
-    padding-left: 75px;
+    padding-left: 45px;
     position: relative;
 }
 
@@ -23,6 +22,19 @@
     height: 100%;
     width: 60px;
     display: none;
+    align-items: center;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.checkbox > div {
+    height: 26px;
+}
+
+.checkbox :global(.mdl-checkbox__focus-helper),
+.checkbox :global(.mdl-checkbox__box-outline) {
+    width: 18px;
+    height: 18px;
 }
 
 .actions {
@@ -38,7 +50,7 @@
 }
 
 .selection:hover .checkbox {
-    display: block;
+    display: flex;
 }
 
 .selection:hover .unselected {
@@ -50,14 +62,8 @@
 }
 
 .selected {
-    display: block;
+    display: flex;
     border-left: 5px solid #36b6b8;
-}
-
-.selected,
-.unselected {
-    padding: 15px;
-    box-sizing: border-box;
 }
 
 .timelineDate {

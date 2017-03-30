@@ -98,4 +98,8 @@ export class ListStore<T> extends ListStoreBase<T> {
         this.sortBy = props.sortBy || this.sortBy;
         this.top = props.top || this.top;
     }
+
+    getListByGroupCode() {
+        return this.dataList;
+    }
 }

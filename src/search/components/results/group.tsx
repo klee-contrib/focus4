@@ -6,7 +6,7 @@ import * as React from "react";
 
 import Button from "focus-components/button";
 
-import {ListStoreBase, OperationListItem, StoreList} from "../../../list";
+import {ActionBar, ListStoreBase, OperationListItem, StoreList} from "../../../list";
 import {injectStyle} from "../../../theming";
 
 import {GroupResult} from "../../types";
@@ -20,7 +20,6 @@ export interface Props {
     initialRowsCount: number;
     group: GroupResult<{}>;
     hasSelection?: boolean;
-    isUnique?: boolean;
     LineComponent: ReactComponent<any>;
     onLineClick?: (item: any) => void;
     operationList?: OperationListItem[];
@@ -42,9 +41,9 @@ export class Group extends React.Component<Props, void> {
     }
 
     private renderList() {
-        const {group, hasSelection, isUnique, LineComponent, onLineClick, operationList, store} = this.props;
+        const {group, hasSelection, LineComponent, onLineClick, operationList, store} = this.props;
         const listClone = group.list.slice();
-        const listToRender = isUnique ? listClone : listClone.splice(0, this.resultsDisplayedCount);
+        const listToRender = !group.code ? listClone : listClone.splice(0, this.resultsDisplayedCount);
         return (
             <div>
                 <StoreList
@@ -64,13 +63,18 @@ export class Group extends React.Component<Props, void> {
     }
 
     render() {
-        const {classNames, group, isUnique, showAllHandler} = this.props;
-        if (isUnique) {
+        const {classNames, group, hasSelection, operationList, showAllHandler, store} = this.props;
+        if (!group.code) {
             return this.renderList();
         } else if (group.code && group.label && group.totalCount) {
             return (
                 <div className={`${styles.container} ${classNames!.container || ""}`}>
-                    <h3>{`${group.label} (${group.totalCount})`}</h3>
+                    <ActionBar
+                        group={{code: group.code, label: group.label, totalCount: group.totalCount}}
+                        hasSelection={hasSelection}
+                        operationList={operationList}
+                        store={store}
+                    />
                     {this.renderList()}
                     <div className={`${styles.actions} ${classNames!.actions || ""}`}>
                         {group.list.length > this.resultsDisplayedCount ?

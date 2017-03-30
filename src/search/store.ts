@@ -44,6 +44,11 @@ export class SearchStore extends ListStoreBase<any> {
     }
 
     @computed
+    get groupingLabel() {
+        return this.facets.find(facet => facet.code === this.groupingKey).label;
+    }
+
+    @computed
     get totalCount() {
         return this.serverCount;
     }
@@ -85,6 +90,7 @@ export class SearchStore extends ListStoreBase<any> {
         }
         this.pendingCount--;
 
+        this.selectedList.clear();
         this.facets.replace(response.facets);
         this.results.replace(response.groups);
         this.serverCount = response.totalCount;
@@ -115,6 +121,11 @@ export class SearchStore extends ListStoreBase<any> {
 
         this.query = props.query || this.query;
         this.scope = props.scope || this.scope;
+    }
+
+    getListByGroupCode(groupCode: string) {
+        const resultGroup = this.results.find(result => result.code === groupCode);
+        return resultGroup && resultGroup.list || [];
     }
 
     @computed

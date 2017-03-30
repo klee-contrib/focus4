@@ -1,7 +1,7 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
-import {reduce} from "lodash";
-import {action} from "mobx";
+import {isEmpty, reduce} from "lodash";
+import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -20,6 +20,7 @@ export type ActionBarStyle = Partial<typeof styles>;
 
 export interface ActionBarProps {
     classNames?: ActionBarStyle;
+    group?: {code: string, label: string, totalCount: number};
     groupableColumnList?: {[column: string]: string};
     hasSelection?: boolean;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
@@ -32,14 +33,41 @@ export interface ActionBarProps {
 @autobind
 export class ActionBar extends React.Component<ActionBarProps, void> {
 
+    @computed.struct
+    get selectedList() {
+        const {group, store} = this.props;
+        if (!group) {
+            return store.selectedList;
+        } else {
+            const list = store.getListByGroupCode(group.code);
+            return list.filter(item => store.selectedItems.has(item));
+        }
+    }
+
+    @computed
+    get selectionStatus() {
+        const {group, store} = this.props;
+        if (!group) {
+            return store.selectionStatus;
+        } else {
+            if (this.selectedList.length === 0) {
+                return "none";
+            } else if (this.selectedList.length === group.totalCount) {
+                return "selected";
+            } else {
+                return "partial";
+            }
+        }
+    }
+
     private getSelectionButton() {
-        const {classNames, hasSelection, store} = this.props;
-        const {length} = store.selectedList;
-        if (hasSelection) {
+        const {classNames, group, hasSelection, store} = this.props;
+        const {length} = this.selectedList;
+        if (hasSelection && (!store.groupingKey || group)) {
             return (
                 <div className={`${styles.selectionText} ${classNames!.selectionText || ""}`}>
-                    <Button shape="icon" icon={this.getSelectionObjectIcon()} handleOnClick={store.toggleAll} />
-                    {length ? <strong>{`${length} ${i18n.t(length === 1 ? "list.actionBar.selectedItem" : "list.actionBar.selectedItems")}`}</strong> : null}
+                    <Button shape="icon" icon={this.getSelectionObjectIcon()} handleOnClick={() => store.groupingKey && group ? store.toggleMany(store.getListByGroupCode(group!.code)) : store.toggleAll()} />
+                    {length ? <strong>{`${length} ${i18n.t(`list.actionBar.selectedItem${length > 1 ? "s" : ""}`)}`}</strong> : null}
                 </div>
             );
         } else {
@@ -50,7 +78,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     private getSortButton() {
         const {orderableColumnList, store} = this.props;
 
-        if (store.selectedItems.size) {
+        if (store.selectedItems.size || store.groupingKey) {
             return null;
         }
 
@@ -102,8 +130,10 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
 
             if (store.groupingKey) {
                 return <Button onClick={() => store.groupingKey = undefined} label={i18n.t("list.actionBar.ungroup")} shape={null} />;
-            } else  {
+            } else if (!isEmpty(groupOperationList)) {
                 return <Dropdown button={{label: "list.actionBar.group", shape: null}} operations={groupOperationList} />;
+            } else {
+                return null;
             }
         } else {
             return null;
@@ -111,7 +141,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     private getSelectionObjectIcon() {
-        switch (this.props.store.selectionStatus) {
+        switch (this.selectionStatus) {
             case "none": return "check_box_outline_blank";
             case "selected": return "check_box";
             default: return "indeterminate_check_box";
@@ -119,16 +149,22 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     render() {
-        const {classNames, operationList, store} = this.props;
+        const {classNames, group, operationList, store} = this.props;
         return (
             <div className={`${styles.actionBar} ${classNames!.actionBar || ""}`}>
                 <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
                     {this.getSelectionButton()}
+                    {store.groupingKey && !group ?
+                        <strong>{`${i18n.t("list.actionBar.groupBy")} ${store.groupingLabel}`}</strong>
+                    : null}
                     {this.getSortButton()}
                     {this.getGroupButton()}
+                    {group ?
+                        <strong>{`${group.label} (${group.totalCount})`}</strong>
+                    : null}
                 </div>
-                {store.selectedItems.size && operationList && operationList.length ?
-                    <ContextualActions operationList={operationList} operationParam={store.selectedList} />
+                {this.selectedList.length && operationList && operationList.length && (!store.groupingKey || group) ?
+                    <ContextualActions operationList={operationList} operationParam={this.selectedList} />
                 : null}
             </div>
         );

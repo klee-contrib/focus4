@@ -60,7 +60,7 @@ export class Results extends React.Component<ResultsProps, void> {
         }
     }
 
-    private renderSingleGroup(group: GroupResult<{}>, isUnique?: boolean) {
+    private renderSingleGroup(group: GroupResult<{}>) {
         const {initialRowsCount = 3, hasSelection, onLineClick, lineComponentMapper, operationList, store} = this.props;
         return (
             <Group
@@ -68,7 +68,6 @@ export class Results extends React.Component<ResultsProps, void> {
                 hasSelection={hasSelection}
                 group={group}
                 initialRowsCount={initialRowsCount}
-                isUnique={isUnique}
                 LineComponent={lineComponentMapper(group.code || store.scope)}
                 onLineClick={onLineClick}
                 operationList={operationList}
@@ -111,9 +110,9 @@ export class Results extends React.Component<ResultsProps, void> {
         if (!filteredResults.length) {
             return null;
         } else if (filteredResults.length === 1) {
-            return this.renderSingleGroup(filteredResults[0], true);
+            return this.renderSingleGroup(filteredResults[0]);
         } else {
-            return <div>{filteredResults.map(group => this.renderSingleGroup(group))}</div>;
+            return <div>{filteredResults.map(this.renderSingleGroup)}</div>;
         }
     }
 }

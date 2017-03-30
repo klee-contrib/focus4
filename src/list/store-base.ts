@@ -20,6 +20,11 @@ export abstract class ListStoreBase<T> {
     }
 
     @computed
+    get groupingLabel() {
+        return this.groupingKey;
+    }
+
+    @computed
     get selectedItems() {
         return new Set(this.selectedList);
     }
@@ -38,12 +43,29 @@ export abstract class ListStoreBase<T> {
     abstract get currentCount(): number;
     abstract get totalCount(): number;
 
+    abstract getListByGroupCode(groupCode: string): T[];
+
     @action
     toggle(item: T) {
         if (this.selectedItems.has(item)) {
             this.selectedList.remove(item);
         } else {
             this.selectedList.push(item);
+        }
+    }
+
+    @action
+    toggleMany(items: T[]) {
+        const areAllItemsIn = items.every(item => this.selectedItems.has(item));
+
+        items.forEach(item => {
+            if (this.selectedItems.has(item)) {
+                this.selectedList.remove(item);
+            }
+        });
+
+        if (!areAllItemsIn) {
+            this.selectedList.push(...items);
         }
     }
 
