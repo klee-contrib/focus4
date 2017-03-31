@@ -45,14 +45,18 @@
     clear: both;
 }
 
-.button {
-    position: relative;
-    height: 36px;
-    margin-top: 15px;
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
 }
 
-.button a,
-.button button {
-    position: absolute;
-    right: 0px;
+.buttons button {
+    margin: 0;
+}
+
+.buttons button:global(:not(.mdl-button--raised)) {
+    font-weight: bold;
+    text-transform: none;
 }

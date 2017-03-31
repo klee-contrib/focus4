@@ -1,4 +1,4 @@
-.container {
+.container:not(:last-child) {
     margin-bottom: 30px;
 }
 
@@ -15,14 +15,4 @@
 
 .container p {
     margin-bottom: 8px;
-}
-
-.actions {
-    display: flex;
-    padding: 10px 0;
-}
-
-.actions > div {
-    width: 50%;
-    text-align: right;
 }

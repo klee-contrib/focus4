@@ -55,7 +55,7 @@ export class Table<T, P extends LineProps<T>, AP> extends ListBase<T, TableProps
             <table className={TABLE_CSS_CLASS}>
                 {this.renderTableHeader()}
                 {this.renderTableBody()}
-                {this.renderManualFetch()}
+                {this.renderButtons()}
             </table>
         );
     }

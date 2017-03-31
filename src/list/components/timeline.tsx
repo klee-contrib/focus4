@@ -61,7 +61,7 @@ export class Timeline<T, P extends LineProps<T>> extends ListBase<T, TimelinePro
         return (
             <ul className={`${timeline} ${this.props.classNames!.timeline || ""}`}>
                 {this.renderLines()}
-                {this.renderManualFetch()}
+                {this.renderButtons()}
             </ul>
         );
     }

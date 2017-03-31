@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18n from "i18next";
 import {computed, observable} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -17,6 +18,7 @@ export interface ListBaseProps<T, P extends LineProps<T>> {
     isManualFetch?: boolean;
     offset?: number;
     perPage?: number;
+    showAllHandler?: () => void;
 }
 
 @autobind
@@ -63,22 +65,27 @@ export abstract class ListBase<T, P extends ListBaseProps<T, LineProps<T>>> exte
         }
     }
 
-    protected renderManualFetch() {
-        const {isManualFetch, classNames} = this.props;
-        if (isManualFetch && this.hasMoreData) {
-            return (
-                <span className={`${styles.button} ${classNames!.button || ""}`}>
+    protected renderButtons() {
+        const {classNames, isManualFetch, showAllHandler} = this.props;
+        return (
+            <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
+                {isManualFetch && this.hasMoreData ?
                     <Button
-                        color="primary"
                         handleOnClick={this.handleShowMore}
-                        label="list.button.showMore"
-                        type="button"
+                        icon="add"
+                        shape={null}
+                        label={`${i18n.t("show.more")} (${this.displayedData.length} / ${this.data.length} ${i18n.t("show.count")})`}
                     />
-                </span>
-            );
-        } else {
-            return null;
-        }
+                : <div />}
+                {showAllHandler ?
+                    <Button
+                        handleOnClick={showAllHandler}
+                        icon="arrow_forward"
+                        label="show.all"
+                    />
+                : null}
+            </div>
+        );
     }
 
     protected handleShowMore() {
