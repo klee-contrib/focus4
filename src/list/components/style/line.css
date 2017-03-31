@@ -63,7 +63,7 @@
 
 .selected {
     display: flex;
-    border-left: 5px solid #36b6b8;
+    border-left: 5px solid rgb(63, 81, 181);
 }
 
 .timelineDate {

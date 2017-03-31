@@ -63,7 +63,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     }
 
     private renderFacetBoxTitle() {
-        const title = this.isExpanded ? i18n.t("live.filter.title") : "";
+        const title = this.isExpanded ? i18n.t("search.facets.title") : "";
         return (
             <div className={`${styles.heading} ${this.props.classNames!.heading || ""}`} onClick={this.facetBoxTitleClickHandler}>
                 <h2>{title}</h2>

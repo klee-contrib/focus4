@@ -1,4 +1,4 @@
-.actionBar {
+.bar {
     box-shadow: 1px 1px 4px 1px #e7e7e7;
     background-color: #FFF;
     display: flex;
@@ -8,25 +8,30 @@
     padding: 10px;
     margin-bottom: 10px;
     box-sizing: border-box;
+    transition: background-color 0.1s ease-out;
+}
+
+.selection {
+    background-color: rgb(63, 81, 181);
+    color: #F0F0F0;
+}
+
+.selection button {
+    color: #F0F0F0;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
 }
 
 .buttons button {
     font-weight: bold;
 }
 
-.buttons, .selectionText {
-    display: flex;
-    align-items: center;
-}
-
 .buttons > strong {
     font-size: 15px;
     margin: 0 10px;
-}
-
-.selectionText strong {
-    font-size: 15px;
-    margin-left: 5px;
 }
 
 .contextualActions {

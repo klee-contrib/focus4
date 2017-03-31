@@ -9,7 +9,7 @@ import Button from "focus-components/button";
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
 import {LineProps} from "./line";
-import {Table, TABLE_CELL_CLASS} from "./table";
+import {TABLE_CELL_CLASS, TableWithoutStyle} from "./table";
 
 export interface StoreTableProps<T> {
     sortableColumns?: (keyof T)[];
@@ -18,7 +18,7 @@ export interface StoreTableProps<T> {
 
 @autobind
 @observer
-export class StoreTable<T, P extends LineProps<T>> extends Table<T, P, StoreTableProps<T>> {
+export class StoreTable<T, P extends LineProps<T>> extends TableWithoutStyle<T, P, StoreTableProps<T>> {
 
     @computed
     protected get data() {

@@ -7,10 +7,10 @@ import {ErrorCenter as DefaultErrorCenter, ErrorCenterStyle} from "./error-cente
 import {Header, HeaderStyle} from "./header";
 
 import {FieldStyle} from "../../entity";
-import {ActionBarStyle, LineStyle, ListStyle, TopicDisplayerStyle} from "../../list";
+import {ActionBarStyle, LineStyle, ListStyle} from "../../list";
 import {MessageCenterStyle} from "../../message";
 import {LoadingBarStyle} from "../../network";
-import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, ListSummaryStyle} from "../../search";
+import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SummaryStyle} from "../../search";
 import {injectStyle, StyleProvider} from "../../theming";
 
 import styles from "./style/layout.css";
@@ -76,10 +76,9 @@ export interface LayoutStyleProviderProps {
     layout?: LayoutStyle;
     line?: LineStyle;
     list?: ListStyle;
-    listSummary?: ListSummaryStyle;
+    summary?: SummaryStyle;
     loadingBar?: LoadingBarStyle;
     messageCenter?: MessageCenterStyle;
-    topicDisplayer?: TopicDisplayerStyle;
 }
 
 export function Layout(props: LayoutProps & {injectedStyle?: LayoutStyleProviderProps}) {

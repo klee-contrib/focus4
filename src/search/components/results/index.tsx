@@ -15,7 +15,7 @@ const FCT_SCOPE = "FCT_SCOPE";
 
 export interface ResultsProps {
     emptyComponent?: () => React.ReactElement<any>;
-    /** Par défaut: 3 */
+    /** Par défaut: 5 */
     groupPageSize?: number;
     hasSelection: boolean;
     onLineClick?: (item: any) => void;
@@ -61,7 +61,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {groupPageSize = 3, hasSelection, onLineClick, lineComponentMapper, operationList, store} = this.props;
+        const {groupPageSize = 5, hasSelection, onLineClick, lineComponentMapper, operationList, store} = this.props;
         return (
             <Group
                 key={group.code}

@@ -15,9 +15,7 @@ export {
     Table,
     tableFor,
     Timeline,
-    timelineFor,
-    TopicDisplayer,
-    TopicDisplayerStyle
+    timelineFor
 } from "./components";
 export {ListServiceParams, ListServiceResponse, ListStore} from "./store";
 export {ListStoreBase} from "./store-base";

@@ -10,8 +10,8 @@ import {injectStyle} from "../../../theming";
 import {SearchStore} from "../../store";
 import {Results} from "../results";
 import {FacetBox, FacetBoxStyle, FacetStyle} from "./facet-box";
-import {ListSummary, ListSummaryStyle} from "./list-summary";
-export {FacetBoxStyle, FacetStyle, ListSummaryStyle};
+import {Summary, SummaryStyle} from "./summary";
+export {FacetBoxStyle, FacetStyle, SummaryStyle};
 
 import * as styles from "./style/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
@@ -55,7 +55,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     private renderListSummary() {
         const {isSingleScope, scopes, store} = this.props;
         return (
-            <ListSummary
+            <Summary
                 isSingleScope={!!isSingleScope}
                 scopes={scopes}
                 store={store}
@@ -65,6 +65,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
 
     private renderActionBar() {
         const {hasSelection, operationList, orderableColumnList, store} = this.props;
+
+        if (store.groupingKey) {
+            return null;
+        }
+
         const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
             if (facet.values.length > 1) {
                 result[facet.code] = facet.label;

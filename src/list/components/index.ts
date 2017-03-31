@@ -7,4 +7,3 @@ export {StoreList} from "./store-list";
 export {StoreTable} from "./store-table";
 export {Table, tableFor} from "./table";
 export {Timeline, timelineFor} from "./timeline";
-export {TopicDisplayer, TopicDisplayerStyle} from "./topic-displayer";
