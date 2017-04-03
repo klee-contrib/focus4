@@ -81,7 +81,7 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                     <strong>{totalCount}&nbsp;</strong>{i18n.t(`search.summary.result${plural}`)}
                 </span>
                 {query && query.trim().length > 0 ?
-                    <span className={sentence}> {`${i18n.t("search.summary.for")} "${query}"`}`}</span>
+                    <span className={sentence}> {`${i18n.t("search.summary.for")} "${query}"`}</span>
                 : null}
                 {this.filterList.length ?
                     <div className={`${styles.chips} ${classNames!.chips || ""}`}>

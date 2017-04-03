@@ -41,12 +41,13 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
     }
 
     protected renderLines() {
-        const {itemKey, LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store} = this.props;
+        const {itemKey, lineClassNames, LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
         return this.displayedData.map((item, idx) =>
             <Line
-               key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
+                key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 data={item}
+                classNames={lineClassNames}
                 hasSelection={hasSelection}
                 LineComponent={LineComponent}
                 lineProps={lineProps}

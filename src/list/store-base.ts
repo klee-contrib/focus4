@@ -5,6 +5,7 @@ import {action, computed, IObservableArray, observable} from "mobx";
 @autobind
 export abstract class ListStoreBase<T> {
     @observable groupingKey: string | undefined;
+    @observable query = "";
     @observable sortAsc = true;
     @observable sortBy: keyof T | undefined;
     @observable top = 50;

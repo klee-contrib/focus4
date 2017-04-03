@@ -13,9 +13,7 @@ export interface SearchActionServices {
 
 @autobind
 export class SearchStore extends ListStoreBase<any> {
-    @observable query = "";
     @observable scope = "ALL";
-
     @observable selectedFacets: {[facet: string]: string} = {};
 
     readonly facets: IObservableArray<FacetOutput> = observable([]);

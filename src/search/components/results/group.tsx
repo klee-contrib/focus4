@@ -3,9 +3,10 @@ import i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ActionBar, GroupOperationListItem, LineOperationListItem, ListStoreBase, StoreList} from "../../../list";
+import {ActionBar, GroupOperationListItem, LineOperationListItem, StoreList} from "../../../list";
 import {injectStyle} from "../../../theming";
 
+import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
 
 import * as styles from "./style/group.css";
@@ -22,7 +23,7 @@ export interface Props {
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
     perPage: number;
     showAllHandler?: (key: string) => void;
-    store: ListStoreBase<any>;
+    store: SearchStore;
 }
 
 @injectStyle("group")
@@ -32,14 +33,15 @@ export class Group extends React.Component<Props, void> {
 
     private renderList() {
         const {group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, showAllHandler, store} = this.props;
+        const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
-                <StoreList
-                    data={group.list as any}
+                <List
+                    data={group.list}
                     hasSelection={hasSelection}
                     isManualFetch={!!group.code}
                     LineComponent={LineComponent}
-                    lineProps={lineProps as any}
+                    lineProps={lineProps}
                     operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}
                     showAllHandler={showAllHandler && group.code ? () => showAllHandler(group.code!) : undefined}

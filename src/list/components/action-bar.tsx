@@ -7,6 +7,7 @@ import * as React from "react";
 
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
+import InputText from "focus-components/input-text";
 
 import {injectStyle} from "../../theming";
 
@@ -21,10 +22,12 @@ export type ActionBarStyle = Partial<typeof styles>;
 export interface ActionBarProps {
     classNames?: ActionBarStyle;
     group?: {code: string, label: string, totalCount: number};
-    groupableColumnList?: {[column: string]: string};
+    groupableColumnList?: {[facet: string]: string};
+    hasSearchBar?: boolean;
     hasSelection?: boolean;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     operationList?: GroupOperationListItem<{}>[];
+    searchBarPlaceholder?: string;
     store: ListStoreBase<any>;
 }
 
@@ -78,11 +81,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     private getSortButton() {
         const {orderableColumnList, store} = this.props;
 
-        if (store.selectedItems.size || store.groupingKey) {
-            return null;
-        }
-
-        if (orderableColumnList) {
+        if (!(store.selectedItems.size || store.groupingKey) && orderableColumnList) {
             const orderOperationList: DropdownItem[] = [];
             for (const key in orderableColumnList) {
                 const description = orderableColumnList[key];
@@ -113,11 +112,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     private getGroupButton() {
         const {groupableColumnList, store} = this.props;
 
-        if (store.selectedItems.size) {
-            return null;
-        }
-
-        if (groupableColumnList) {
+        if (!store.selectedItems.size && groupableColumnList) {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
                     action: () => store.groupingKey = key,
@@ -129,6 +124,25 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
             if (!isEmpty(groupOperationList)) {
                 return <Dropdown button={{label: "list.actionBar.group", shape: null}} operations={groupOperationList} />;
             }
+        }
+
+        return null;
+    }
+
+    private getSearchBar() {
+        const {classNames, hasSearchBar, searchBarPlaceholder, store} = this.props;
+
+        if (!store.selectedItems.size && hasSearchBar) {
+            return (
+                <div className={`${styles.searchBar} ${classNames!.searchBar || ""}`}>
+                    <InputText
+                        name="search-bar"
+                        rawInputValue={store.query}
+                        onChange={text => store.query = text}
+                        placeholder={searchBarPlaceholder}
+                    />
+                </div>
+            );
         }
 
         return null;
@@ -156,6 +170,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                      {this.selectedList.length ?
                         <strong>{`${this.selectedList.length} ${i18n.t(`list.actionBar.selectedItem${this.selectedList.length > 1 ? "s" : ""}`)}`}</strong>
                     : null}
+                    {this.getSearchBar()}
                 </div>
                 {this.selectedList.length && operationList && operationList.length && (!store.groupingKey || group) ?
                     <ContextualActions operationList={operationList} operationParam={this.selectedList} />

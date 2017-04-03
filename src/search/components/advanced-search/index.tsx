@@ -21,6 +21,7 @@ export interface AdvancedSearchProps {
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défault: true */
     hasBackToTop?: boolean;
+    hasSearchBar?: boolean;
     hasSelection?: boolean;
     isSingleScope?: boolean;
     lineComponentMapper: (scope: string) => ReactComponent<any>;
@@ -30,6 +31,7 @@ export interface AdvancedSearchProps {
     openedFacetList?: {};
     scopes: {code: string, label?: string}[];
     scopesConfig?: {[key: string]: string};
+    searchBarPlaceholder?: string;
     store: SearchStore;
 }
 
@@ -65,7 +67,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderActionBar() {
-        const {hasSelection, groupOperationLists, orderableColumnList, store} = this.props;
+        const {hasSearchBar, hasSelection, groupOperationLists, orderableColumnList, searchBarPlaceholder, store} = this.props;
 
         if (store.groupingKey) {
             return null;
@@ -81,9 +83,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         return (
             <ActionBar
                 groupableColumnList={groupableColumnList}
+                hasSearchBar={hasSearchBar}
                 hasSelection={hasSelection}
                 operationList={store.scope !== "ALL" && groupOperationLists && store.totalCount > 0 ? groupOperationLists[store.scope] : []}
                 orderableColumnList={orderableColumnList}
+                searchBarPlaceholder={searchBarPlaceholder}
                 store={store}
             />
         );
@@ -104,14 +108,12 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     render() {
-        const {store, hasBackToTop = true, classNames} = this.props;
+        const {hasBackToTop = true, classNames} = this.props;
         return (
             <div>
-                {store.scope !== "ALL" ?
-                    <div className={`${styles.facetContainer} ${classNames!.facetContainer || ""}`}>
-                        {this.renderFacetBox()}
-                    </div>
-                : null}
+                <div className={`${styles.facetContainer} ${classNames!.facetContainer || ""}`}>
+                    {this.renderFacetBox()}
+                </div>
                 <div className={`${styles.resultContainer} ${classNames!.resultContainer || ""}`}>
                     {this.renderListSummary()}
                     {this.renderActionBar()}
