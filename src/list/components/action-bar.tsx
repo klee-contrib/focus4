@@ -12,7 +12,7 @@ import {injectStyle} from "../../theming";
 
 import {ListStoreBase} from "../store-base";
 import {ContextualActions} from "./contextual-actions";
-import {OperationListItem} from "./line";
+import {GroupOperationListItem} from "./line";
 
 import * as styles from "./style/action-bar.css";
 
@@ -24,7 +24,7 @@ export interface ActionBarProps {
     groupableColumnList?: {[column: string]: string};
     hasSelection?: boolean;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    operationList?: OperationListItem[];
+    operationList?: GroupOperationListItem<{}>[];
     store: ListStoreBase<any>;
 }
 

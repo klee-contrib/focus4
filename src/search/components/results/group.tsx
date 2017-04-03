@@ -3,7 +3,7 @@ import i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ActionBar, ListStoreBase, OperationListItem, StoreList} from "../../../list";
+import {ActionBar, GroupOperationListItem, LineOperationListItem, ListStoreBase, StoreList} from "../../../list";
 import {injectStyle} from "../../../theming";
 
 import {GroupResult} from "../../types";
@@ -15,10 +15,11 @@ export type GroupStyle = Partial<typeof styles>;
 export interface Props {
     classNames?: GroupStyle;
     group: GroupResult<{}>;
+    groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;
     LineComponent: ReactComponent<any>;
-    onLineClick?: (item: any) => void;
-    operationList?: OperationListItem[];
+    lineProps?: {};
+    lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
     perPage: number;
     showAllHandler?: (key: string) => void;
     store: ListStoreBase<any>;
@@ -30,7 +31,7 @@ export interface Props {
 export class Group extends React.Component<Props, void> {
 
     private renderList() {
-        const {group, hasSelection, perPage, LineComponent, onLineClick, operationList, showAllHandler, store} = this.props;
+        const {group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, showAllHandler, store} = this.props;
         return (
             <div>
                 <StoreList
@@ -38,7 +39,8 @@ export class Group extends React.Component<Props, void> {
                     hasSelection={hasSelection}
                     isManualFetch={!!group.code}
                     LineComponent={LineComponent}
-                    lineProps={{operationList, onLineClick} as any}
+                    lineProps={lineProps as any}
+                    operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}
                     showAllHandler={showAllHandler && group.code ? () => showAllHandler(group.code!) : undefined}
                     store={store}
@@ -53,7 +55,7 @@ export class Group extends React.Component<Props, void> {
     }
 
     render() {
-        const {classNames, group, hasSelection, operationList, store} = this.props;
+        const {classNames, group, hasSelection, groupOperationList, store} = this.props;
         if (!store.groupingKey) {
             return this.renderList();
         } else if (group.code && group.label && group.totalCount) {
@@ -62,7 +64,7 @@ export class Group extends React.Component<Props, void> {
                     <ActionBar
                         group={{code: group.code, label: group.label, totalCount: group.totalCount}}
                         hasSelection={hasSelection}
-                        operationList={operationList}
+                        operationList={groupOperationList}
                         store={store}
                     />
                     {this.renderList()}

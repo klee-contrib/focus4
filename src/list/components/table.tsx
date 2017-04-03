@@ -6,20 +6,20 @@ import * as React from "react";
 
 import {injectStyle, StyleInjector} from "../../theming";
 
-import {LineProps} from "./line";
+import {LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 export const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 
-export interface TableProps<T, P extends LineProps<T>> extends ListBaseProps<T, P> {
+export interface TableProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     columns: {[field: string]: string};
     data?: T[];
 }
 
 @autobind
 @observer
-export class TableWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T, TableProps<T, P> & AP> {
+export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T, P> & AP> {
 
     protected get data() {
         return this.props.data || [];
@@ -39,13 +39,15 @@ export class TableWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T
 
     private renderTableBody() {
         const {LineComponent, lineProps} = this.props;
+        const Line = LineWrapper as new() => LineWrapper<T, P>;
         return (
             <tbody>
                 {this.displayedData.map((item, idx) => (
-                    <LineComponent
-                        data={item}
+                    <Line
                         key={idx}
-                        {...lineProps}
+                        data={item}
+                        LineComponent={LineComponent}
+                        lineProps={lineProps}
                     />
                 ))}
             </tbody>
@@ -65,9 +67,9 @@ export class TableWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T
     }
 }
 
-export const Table: StyleInjector<TableWithoutStyle<{}, LineProps<{}>, {}>> = injectStyle("list", TableWithoutStyle) as any;
+export const Table: StyleInjector<TableWithoutStyle<{}, {data?: {}}, {}>> = injectStyle("list", TableWithoutStyle) as any;
 
-export function tableFor<T, P extends LineProps<T>>(props: TableProps<T, P>) {
+export function tableFor<T, P extends {data?: T}>(props: TableProps<T, P>) {
     const Table2 = Table as any;
     return <Table2 {...props} />;
 };

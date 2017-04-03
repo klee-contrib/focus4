@@ -6,12 +6,10 @@ import {findDOMNode} from "react-dom";
 
 import Button from "focus-components/button";
 
-import {LineProps} from "./line";
-
 import * as styles from "./style/list.css";
 export type ListStyle = Partial<typeof styles>;
 
-export interface ListBaseProps<T, P extends LineProps<T>> {
+export interface ListBaseProps<T, P extends {data?: T}> {
     classNames?: ListStyle;
     LineComponent: ReactComponent<P>;
     lineProps?: P;
@@ -22,7 +20,7 @@ export interface ListBaseProps<T, P extends LineProps<T>> {
 }
 
 @autobind
-export abstract class ListBase<T, P extends ListBaseProps<T, LineProps<T>>> extends React.Component<P, void> {
+export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extends React.Component<P, void> {
 
     @observable maxElements = this.props.perPage;
     private page = 1;

@@ -1,0 +1,13 @@
+.actions {
+    text-align: right;
+    display: flex;
+    align-items: center;
+}
+
+.actions button {
+    font-weight: bold;
+}
+
+.actions :global([data-focus="dropdown"]) {
+    height: 32px;
+}

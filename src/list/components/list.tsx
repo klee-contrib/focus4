@@ -4,30 +4,34 @@ import * as React from "react";
 
 import {injectStyle, StyleInjector} from "../../theming";
 
-import {LineProps} from "./line";
+import {LineOperationListItem, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
-import {selection} from "./style/list.css";
+import {list} from "./style/list.css";
 
-export interface ListProps<T, P extends LineProps<T>> extends ListBaseProps<T, P> {
+export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     data?: T[];
+    operationList?: (data: T) => LineOperationListItem<T>[];
 }
 
 @autobind
 @observer
-export class ListWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T, ListProps<T, P> & AP> {
+export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, P> & AP> {
 
     protected get data() {
         return this.props.data || [];
     }
 
     protected renderLines() {
-        const {LineComponent, lineProps} = this.props;
+        const {LineComponent, lineProps, operationList} = this.props;
+        const Line = LineWrapper as new() => LineWrapper<T, P>;
         return this.displayedData.map((item, idx) => (
-            <LineComponent
-                data={item}
+            <Line
                 key={idx}
-                {...lineProps}
+                data={item}
+                LineComponent={LineComponent}
+                lineProps={lineProps}
+                operationList={operationList}
             />
         ));
     }
@@ -36,7 +40,7 @@ export class ListWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T,
         const {classNames} = this.props;
         return (
             <div>
-                <ul className={`${selection} ${classNames!.selection || ""}`}>
+                <ul className={`${list} ${classNames!.list || ""}`}>
                     {this.renderLines()}
                 </ul>
                 {this.renderButtons()}
@@ -45,9 +49,9 @@ export class ListWithoutStyle<T, P extends LineProps<T>, AP> extends ListBase<T,
     }
 }
 
-export const List: StyleInjector<ListWithoutStyle<{}, LineProps<{}>, {}>> = injectStyle("list", ListWithoutStyle) as any;
+export const List: StyleInjector<ListWithoutStyle<{}, {data?: {}}, {}>> = injectStyle("list", ListWithoutStyle) as any;
 
-export function listFor<T, P extends LineProps<T>>(props: ListProps<T, P>) {
+export function listFor<T, P extends {data?: T}>(props: ListProps<T, P>) {
     const List2 = List as any;
     return <List2 {...props} />;
 };

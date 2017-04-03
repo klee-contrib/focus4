@@ -8,15 +8,16 @@ import {injectStyle} from "../../theming";
 
 import {OperationListItem} from "./line";
 
-import * as styles from "./style/action-bar.css";
+import * as styles from "./style/contextual-actions.css";
+export type ContextualActionsStyle = Partial<typeof styles>;
 
 export interface ContextualActionsProps {
-    classNames?: typeof styles;
-    operationList: OperationListItem[];
-    operationParam?: {};
+    classNames?: ContextualActionsStyle;
+    operationList: OperationListItem<{}>[];
+    operationParam: {} | {}[];
 }
 
-@injectStyle("actionBar")
+@injectStyle("contextualActions")
 export class ContextualActions extends React.Component<ContextualActionsProps, void> {
 
     @autobind
@@ -25,11 +26,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
         return (e: React.SyntheticEvent<any>) => {
             e.preventDefault();
             e.stopPropagation();
-            if (operationParam) {
-                operationList[key].action(operationParam);
-            } else {
-                operationList[key].action();
-            }
+            operationList[key].action(operationParam);
         };
     }
 
@@ -60,7 +57,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
             return actionLists;
         }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as DropdownItem[]});
         return (
-            <div className={`${styles.contextualActions} ${classNames!.contextualActions}`}>
+            <div className={`${styles.actions} ${classNames!.actions}`}>
                 {primaryActionList}
                 {secondaryActionList.length ?
                     <Dropdown

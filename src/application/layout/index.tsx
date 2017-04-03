@@ -7,7 +7,7 @@ import {ErrorCenter as DefaultErrorCenter, ErrorCenterStyle} from "./error-cente
 import {Header, HeaderStyle} from "./header";
 
 import {FieldStyle} from "../../entity";
-import {ActionBarStyle, LineStyle, ListStyle} from "../../list";
+import {ActionBarStyle, ContextualActionsStyle, LineStyle, ListStyle} from "../../list";
 import {MessageCenterStyle} from "../../message";
 import {LoadingBarStyle} from "../../network";
 import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SummaryStyle} from "../../search";
@@ -66,6 +66,7 @@ const LayoutBase = injectStyle("layout", ({
 export interface LayoutStyleProviderProps {
     actionBar?: ActionBarStyle;
     advancedSearch?: AdvancedSearchStyle;
+    contextualActions?: ContextualActionsStyle;
     errorCenter?: ErrorCenterStyle;
     facet?: FacetStyle;
     facetBox?: FacetBoxStyle;

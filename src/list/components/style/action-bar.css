@@ -33,17 +33,3 @@
     font-size: 15px;
     margin: 0 10px;
 }
-
-.contextualActions {
-    text-align: right;
-    display: flex;
-    align-items: center;
-}
-
-.contextualActions button {
-    font-weight: bold;
-}
-
-.contextualActions :global([data-focus="dropdown"]) {
-    height: 32px;
-}

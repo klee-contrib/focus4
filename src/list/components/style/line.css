@@ -1,13 +1,16 @@
-.selection {
-    background-color: #FFF;
-    border-bottom:1px solid #E1E1E1;
-    cursor: pointer;
-    padding-left: 45px;
+.line {
     position: relative;
 }
 
+.selection {
+    background-color: #FFF;
+    border-bottom: 1px solid #E1E1E1;
+    cursor: pointer;
+    padding-left: 45px;
+}
+
 .selection:first-child {
-    border-top:1px solid #E1E1E1;
+    border-top: 1px solid #E1E1E1;
 }
 
 .selection:hover {
@@ -39,10 +42,14 @@
 
 .actions {
     position: absolute;
-    top: 25%;
+    top: calc(50% - 17px);
     right: 0;
-    display: none;
     z-index: 1;
+    display: none;
+}
+
+.line:hover .actions {
+    display: block;
 }
 
 .selection:hover {
@@ -55,10 +62,6 @@
 
 .selection:hover .unselected {
     border-left: 5px solid #ffd657;
-}
-
-.selection:hover .actions {
-    display: inline-block;
 }
 
 .selected {

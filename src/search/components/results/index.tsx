@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {OperationListItem} from "../../../list";
+import {GroupOperationListItem, LineOperationListItem} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -15,12 +15,13 @@ const FCT_SCOPE = "FCT_SCOPE";
 
 export interface ResultsProps {
     emptyComponent?: () => React.ReactElement<any>;
+    groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
     hasSelection: boolean;
-    onLineClick?: (item: any) => void;
-    lineComponentMapper: (groupKey?: string) => ReactComponent<any>;
-    operationList?: OperationListItem[];
+    lineComponentMapper: (scope: string) => ReactComponent<any>;
+    lineProps?: {};
+    lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */
@@ -61,15 +62,17 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {groupPageSize = 5, hasSelection, onLineClick, lineComponentMapper, operationList, store} = this.props;
+        const {groupOperationLists = {}, groupPageSize = 5, hasSelection, lineComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
+        const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
                 key={group.code}
                 group={group}
+                groupOperationList={groupOperationLists[groupKey]}
                 hasSelection={hasSelection}
-                LineComponent={lineComponentMapper(group.code || store.scope)}
-                onLineClick={onLineClick}
-                operationList={operationList}
+                LineComponent={lineComponentMapper(groupKey)}
+                lineProps={lineProps}
+                lineOperationList={lineOperationLists[groupKey]}
                 perPage={groupPageSize}
                 showAllHandler={this.showAllHandler}
                 store={store}

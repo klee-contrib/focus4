@@ -4,7 +4,7 @@ import * as React from "react";
 
 import BackToTop from "focus-components/button-back-to-top";
 
-import { ActionBar, OperationListItem } from "../../../list";
+import {ActionBar, GroupOperationListItem, LineOperationListItem} from "../../../list";
 import {injectStyle} from "../../../theming";
 
 import {SearchStore} from "../../store";
@@ -18,15 +18,16 @@ export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {
     classNames?: AdvancedSearchStyle;
+    groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défault: true */
     hasBackToTop?: boolean;
     hasSelection?: boolean;
     isSingleScope?: boolean;
-    lineComponentMapper: (...args: any[]) => ReactComponent<any>;
-    onLineClick?: (...args: any[]) => void;
+    lineComponentMapper: (scope: string) => ReactComponent<any>;
+    lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
+    lineProps?: {};
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     openedFacetList?: {};
-    operationList?: OperationListItem[];
     scopes: {code: string, label?: string}[];
     scopesConfig?: {[key: string]: string};
     store: SearchStore;
@@ -64,7 +65,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderActionBar() {
-        const {hasSelection, operationList, orderableColumnList, store} = this.props;
+        const {hasSelection, groupOperationLists, orderableColumnList, store} = this.props;
 
         if (store.groupingKey) {
             return null;
@@ -81,7 +82,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
             <ActionBar
                 groupableColumnList={groupableColumnList}
                 hasSelection={hasSelection}
-                operationList={store.totalCount > 0 ? operationList : []}
+                operationList={store.scope !== "ALL" && groupOperationLists && store.totalCount > 0 ? groupOperationLists[store.scope] : []}
                 orderableColumnList={orderableColumnList}
                 store={store}
             />
@@ -89,13 +90,14 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {hasSelection, onLineClick, lineComponentMapper, operationList, store} = this.props;
+        const {groupOperationLists, hasSelection, lineComponentMapper, lineProps, lineOperationLists, store} = this.props;
         return (
             <Results
+                groupOperationLists={groupOperationLists}
                 hasSelection={!!hasSelection}
-                onLineClick={onLineClick}
                 lineComponentMapper={lineComponentMapper}
-                operationList={operationList}
+                lineProps={lineProps}
+                lineOperationLists={lineOperationLists}
                 store={store}
             />
         );

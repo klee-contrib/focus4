@@ -11,7 +11,7 @@ import * as React from "react"; export {React};
 export {applicationStore} from "./application";
 export {AutoForm, displayFor, fieldFor, selectFor, stringFor} from "./entity";
 export {injectByName, injectByPropName} from "./ioc";
-export {LineProps, listFor, renderLineActions, tableFor, timelineFor} from "./list";
+export {listFor, tableFor, timelineFor} from "./list";
 export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
