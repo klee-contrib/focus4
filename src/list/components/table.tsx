@@ -38,16 +38,17 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
     }
 
     private renderTableBody() {
-        const {LineComponent, lineProps} = this.props;
+        const {itemKey, LineComponent, lineProps} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
         return (
             <tbody>
                 {this.displayedData.map((item, idx) => (
                     <Line
-                        key={idx}
+                        key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                         data={item}
                         LineComponent={LineComponent}
                         lineProps={lineProps}
+                        type="table"
                     />
                 ))}
             </tbody>

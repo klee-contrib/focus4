@@ -25,15 +25,16 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
     }
 
     private renderLines() {
-        const {LineComponent, lineProps, dateSelector} = this.props;
+        const {itemKey, LineComponent, lineProps, dateSelector} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
-        return this.displayedData.map((line, i) =>
+        return this.displayedData.map((item, idx) =>
             <Line
-                key={i}
-                data={line}
+                key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
+                data={item}
                 dateSelector={dateSelector}
                 LineComponent={LineComponent}
                 lineProps={lineProps}
+                type="timeline"
             />
         );
     }

@@ -14,6 +14,7 @@ export interface ListBaseProps<T, P extends {data?: T}> {
     LineComponent: ReactComponent<P>;
     lineProps?: P;
     isManualFetch?: boolean;
+    itemKey?: keyof T;
     offset?: number;
     perPage?: number;
     showAllHandler?: () => void;

@@ -23,11 +23,11 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     protected renderLines() {
-        const {LineComponent, lineProps, operationList} = this.props;
+        const {itemKey, LineComponent, lineProps, operationList} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
         return this.displayedData.map((item, idx) => (
             <Line
-                key={idx}
+                key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 data={item}
                 LineComponent={LineComponent}
                 lineProps={lineProps}
