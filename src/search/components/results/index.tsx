@@ -13,6 +13,9 @@ export {GroupStyle};
 
 export interface ResultsProps {
     emptyComponent?: () => React.ReactElement<any>;
+    extraItems?: React.ReactElement<any>[];
+    /** Par défaut : "after" */
+    extraItemsPosition?: "before" | "after";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
@@ -60,11 +63,13 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {groupOperationLists = {}, groupPageSize = 5, hasSelection, lineComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
+        const {groupOperationLists = {}, groupPageSize = 5, hasSelection, lineComponentMapper, lineProps, lineOperationLists = {}, store, extraItems, extraItemsPosition} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
                 key={group.code}
+                extraItems={extraItems}
+                extraItemsPosition={extraItemsPosition}
                 group={group}
                 groupOperationList={groupOperationLists[groupKey]}
                 hasSelection={hasSelection}

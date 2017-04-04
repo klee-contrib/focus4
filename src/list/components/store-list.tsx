@@ -41,9 +41,10 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
     }
 
     protected renderLines() {
-        const {itemKey, lineClassNames, LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store} = this.props;
+        const {itemKey, lineClassNames, LineComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store, extraItems = [], extraItemsPosition = "after"} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
-        return this.displayedData.map((item, idx) =>
+
+        const items = this.displayedData.map((item, idx) =>
             <Line
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 data={item}
@@ -56,6 +57,12 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
                 store={store}
             />
         );
+
+        if (extraItemsPosition === "after") {
+            return [...items, ...extraItems];
+        } else {
+            return [...extraItems, ...items];
+        }
     }
 
     protected handleShowMore() {

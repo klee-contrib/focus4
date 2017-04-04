@@ -13,6 +13,9 @@ export type ListStyle = Partial<typeof styles>;
 
 export interface ListBaseProps<T, P extends {data?: T}> {
     classNames?: ListStyle;
+    extraItems?: React.ReactElement<any>[];
+    /** Par défaut : "after" */
+    extraItemsPosition?: "before" | "after";
     lineClassNames?: LineStyle;
     LineComponent: ReactComponent<P>;
     lineProps?: P;

@@ -15,6 +15,9 @@ export type GroupStyle = Partial<typeof styles>;
 
 export interface Props {
     classNames?: GroupStyle;
+    extraItems?: React.ReactElement<any>[];
+    /** Par défaut : "after" */
+    extraItemsPosition?: "before" | "after";
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;
@@ -32,12 +35,14 @@ export interface Props {
 export class Group extends React.Component<Props, void> {
 
     private renderList() {
-        const {group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, showAllHandler, store} = this.props;
+        const {group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, showAllHandler, store, extraItems, extraItemsPosition} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
                 <List
                     data={group.list}
+                    extraItems={!group.code ? extraItems : undefined}
+                    extraItemsPosition={extraItemsPosition}
                     hasSelection={hasSelection}
                     isManualFetch={!!group.code}
                     LineComponent={LineComponent}

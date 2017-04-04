@@ -18,6 +18,9 @@ export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {
     classNames?: AdvancedSearchStyle;
+    extraItems?: React.ReactElement<any>[];
+    /** Par défaut : "after" */
+    extraItemsPosition?: "before" | "after";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défault: true */
     hasBackToTop?: boolean;
@@ -96,9 +99,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {groupOperationLists, hasSelection, lineComponentMapper, lineProps, lineOperationLists, scopeFacetKey, store} = this.props;
+        const {groupOperationLists, hasSelection, lineComponentMapper, lineProps, lineOperationLists, scopeFacetKey, store, extraItems, extraItemsPosition} = this.props;
         return (
             <Results
+                extraItems={extraItems}
+                extraItemsPosition={extraItemsPosition}
                 groupOperationLists={groupOperationLists}
                 hasSelection={!!hasSelection}
                 lineComponentMapper={lineComponentMapper}

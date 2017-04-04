@@ -23,9 +23,10 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     protected renderLines() {
-        const {itemKey, lineClassNames, LineComponent, lineProps, operationList} = this.props;
+        const {itemKey, lineClassNames, LineComponent, lineProps, operationList, extraItems = [], extraItemsPosition = "after"} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
-        return this.displayedData.map((item, idx) => (
+
+        const items = this.displayedData.map((item, idx) => (
             <Line
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 classNames={lineClassNames}
@@ -35,6 +36,12 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
                 operationList={operationList}
             />
         ));
+
+        if (extraItemsPosition === "after") {
+            return [...items, ...extraItems];
+        } else {
+            return [...extraItems, ...items];
+        }
     }
 
     render() {
