@@ -24,7 +24,7 @@ export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE
             requestStore.updateRequest({id, url, status: "error"});
             const contentType = response.headers.get("Content-Type");
             if (contentType && contentType.includes("application/json")) {
-                return Promise.reject<ManagedErrorResponse>(manageResponseErrors(await response.json()));
+                return Promise.reject<ManagedErrorResponse>(manageResponseErrors(response.status, await response.json()));
             } else {
                 console.error(`${response.status} error when calling ${url}`);
                 return Promise.reject<string>(await response.text());

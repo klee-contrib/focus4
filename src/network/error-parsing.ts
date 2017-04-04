@@ -3,24 +3,18 @@ import {isArray} from "lodash";
 import {messageStore} from "../message";
 
 export interface ErrorResponse {
-    [key: string]: string[] | string | number | Record<string, string> | undefined;
+    [key: string]: any;
     status: number;
     type?: string;
     fieldErrors?: Record<string, string>;
-    globalErrors?: string[];
-    globalSuccess?: string[];
-    globalWarnings?: string[];
-    globalInfos?: string[];
-    globalErrorMessages?: string[];
-    globalSuccessMessages?: string[];
-    globalWarningMessages?: string[];
-    globalInfoMessages?: string[];
-    errors?: string[];
 }
 
 export interface ManagedErrorResponse {
-    globals: string[];
-    fields?: Record<string, string>;
+    [key: string]: any;
+    $parsedErrors: {
+        globals: string[];
+        fields?: Record<string, string>;
+    };
 }
 
 type ErrorType = "error" | "warning" | "success";
@@ -43,10 +37,6 @@ const errorTypes = {
     entity: "entity"
 };
 
-function dispatchMessages(messages: string[], type: ErrorType) {
-    messages.forEach(content => messageStore.addMessage({type, content}));
-}
-
 function treatFieldErrors(response: ErrorResponse) {
     if ([400, 401, 422].find(x => x === response.status) && response.type || errorTypes.entity === errorTypes.entity) {
         return response.fieldErrors || {};
@@ -58,18 +48,22 @@ function treatFieldErrors(response: ErrorResponse) {
 function treatGlobalErrors(response: ErrorResponse) {
     let globals: string[] = [];
     Object.keys(globalErrorTypes).forEach(errorName => {
-        const messages = response[errorName];
+        const messages: string[] = response[errorName];
         if (isArray(messages)) {
             globals = [...globals, ...messages];
-            dispatchMessages(messages, globalErrorTypes[errorName]);
+            messages.forEach(content => messageStore.addMessage({type: globalErrorTypes[errorName], content}));
         }
     });
     return globals;
 }
 
-export function manageResponseErrors(response: ErrorResponse): ManagedErrorResponse {
+export function manageResponseErrors($status: number, response: ErrorResponse): ManagedErrorResponse {
     return {
-        fields: treatFieldErrors(response),
-        globals: treatGlobalErrors(response)
+        ...response,
+        $status,
+        $parsedErrors: {
+            fields: treatFieldErrors(response),
+            globals: treatGlobalErrors(response)
+        }
     };
 }

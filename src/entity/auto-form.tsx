@@ -214,8 +214,8 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
             } catch (e) {
                 runInAction(() => {
                     this.isLoading = false;
-                    if (e.fields) {
-                        this.errors = e.fields || {};
+                    if (e.$parsedErrors && e.$parsedErrors.fields) {
+                        this.errors = e.$parsedErrors.fields || {};
                     }
                 });
             }
