@@ -5,20 +5,18 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
+import Chips from "focus-components/chips";
+
 import {injectStyle} from "../../../../theming";
 
 import {FacetOutput} from "../../../types";
-import {FacetData} from "./facet-data";
 
 import * as styles from "./style/facet.css";
 export type FacetStyle = Partial<typeof styles>;
 
 export interface FacetProps {
     classNames?: FacetStyle;
-    expandHandler: (facetKey: string, expand: boolean) => void;
     facet: FacetOutput;
-    facetKey: string;
-    isExpanded: boolean;
     nbDefaultDataList: number;
     selectedDataKey: string | undefined;
     selectHandler: (facetKey: string, dataKey: string | undefined) => void;
@@ -29,89 +27,56 @@ export interface FacetProps {
 @observer
 export class Facet extends React.Component<FacetProps, void> {
 
-    @observable private isExpanded: boolean;
     @observable private isShowAll = false;
 
-    private facetDataSelectionHandler(dataKey: string) {
-        this.props.expandHandler(this.props.facetKey, false);
-        this.props.selectHandler(this.props.facetKey, dataKey);
-    }
+    private renderFacetDataList() {
+        const {classNames, selectedDataKey, facet, nbDefaultDataList, selectHandler} = this.props;
 
-    private facetTitleClickHandler() {
-        this.props.expandHandler(this.props.facetKey, !this.props.isExpanded);
-        if (this.props.selectedDataKey) {
-            this.props.selectHandler(this.props.facetKey, undefined);
-        }
-        this.isExpanded = !this.props.isExpanded;
-        this.isShowAll = false;
-    }
-
-    private showAllHandler() {
-        this.isShowAll = !this.isShowAll;
-    }
-
-    private renderFacetTitle() {
-        const {selectedDataKey, facet, classNames} = this.props;
-        let facetTitle = i18n.t(facet.label);
         if (selectedDataKey) {
             const selectedFacet = facet.values.filter(value => value.code === selectedDataKey);
             const facetLabel = selectedFacet.length ? selectedFacet[0].label : "";
-            facetTitle = `${facetTitle} : ${facetLabel}`;
+            return (
+                <Chips
+                    label={facetLabel}
+                    onDeleteClick={() => selectHandler(this.props.facet.code, undefined)}
+                />
+            );
         }
 
+        const facetValues = this.isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList);
         return (
-            <div className={`${styles.title} ${classNames!.title || ""}`} onClick={this.facetTitleClickHandler}>
-                <h3>{facetTitle}</h3>
-            </div>
+            <ul>
+                {facetValues.map(facetValue => (
+                    <li key={uniqueId("facet-item")} onClick={() => this.props.selectHandler(this.props.facet.code, facetValue.code)}>
+                        <div>{facetValue.label}</div>
+                        <div className={`${styles.count} ${classNames!.count || ""}`}>{facetValue.count}</div>
+                    </li>
+                ))}
+            </ul>
         );
     }
 
     private renderShowAllDataList() {
-        if (!this.isShowAll && this.props.facet.values.length > this.props.nbDefaultDataList) {
+        const {facet, nbDefaultDataList, classNames} = this.props;
+        if (facet.values.length > nbDefaultDataList) {
             return (
-                <a href="javascript:void(0);" onClick={this.showAllHandler}>
-                    {i18n.t("show.all")}
-                </a>
+                <div className={`${styles.show} ${classNames!.show || ""}`} onClick={() => this.isShowAll = !this.isShowAll}>
+                    {i18n.t(this.isShowAll ? "show.less" : "show.all")}
+                </div>
             );
         } else {
             return null;
         }
     }
 
-    private renderFacetDataList() {
-        const {isExpanded, selectedDataKey, facet, nbDefaultDataList, classNames} = this.props;
-        if (!isExpanded || selectedDataKey) {
-            return null;
-        }
-
-        const facetValues = this.isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList);
-        return (
-            <div className={`${styles.list} ${classNames!.list}`}>
-                <ul>
-                    {facetValues.map(facetValue => (
-                        <li key={uniqueId("facet-item")}>
-                            <FacetData
-                                dataKey={facetValue.code}
-                                data={facetValue}
-                                selectHandler={this.facetDataSelectionHandler}
-                            />
-                        </li>
-                    ))}
-                </ul>
-                <div className={`${styles.showAll} ${classNames!.showAll}`}>
-                    {this.renderShowAllDataList()}
-                </div>
-            </div>
-        );
-    }
-
     render() {
-        const {selectedDataKey, isExpanded, classNames} = this.props;
+        const {classNames, facet} = this.props;
         return (
-            <div className={selectedDataKey ? `${styles.selected} ${classNames!.selected}` : isExpanded ? `${styles.expanded} ${classNames!.expanded}` : `${styles.collapsed} ${classNames!.collapsed}`}>
-                {this.renderFacetTitle()}
+            <div className={`${styles.facet} ${classNames!.facet || ""}`}>
+                <h4>{i18n.t(facet.label)}</h4>
                 {this.renderFacetDataList()}
+                {this.renderShowAllDataList()}
             </div>
         );
     }
-};
+}

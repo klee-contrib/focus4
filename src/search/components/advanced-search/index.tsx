@@ -27,10 +27,12 @@ export interface AdvancedSearchProps {
     lineComponentMapper: (scope: string) => ReactComponent<any>;
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
     lineProps?: {};
+    /** Par défaut : 6 */
+    nbDefaultDataListFacet?: number;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    openedFacetList?: {};
+    /** Par défaut : FCT_SCOPE */
+    scopeFacetKey?: string;
     scopes: {code: string, label?: string}[];
-    scopesConfig?: {[key: string]: string};
     searchBarPlaceholder?: string;
     store: SearchStore;
 }
@@ -45,11 +47,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderFacetBox() {
-        const {scopesConfig = {}, openedFacetList = {}, store} = this.props;
+        const {nbDefaultDataListFacet = 6, scopeFacetKey = "FCT_SCOPE", store} = this.props;
         return (
             <FacetBox
-                openedFacetList={openedFacetList}
-                scopesConfig={scopesConfig}
+                nbDefaultDataList={nbDefaultDataListFacet}
+                scopeFacetKey={scopeFacetKey}
                 store={store}
             />
         );
@@ -94,7 +96,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {groupOperationLists, hasSelection, lineComponentMapper, lineProps, lineOperationLists, store} = this.props;
+        const {groupOperationLists, hasSelection, lineComponentMapper, lineProps, lineOperationLists, scopeFacetKey, store} = this.props;
         return (
             <Results
                 groupOperationLists={groupOperationLists}
@@ -102,6 +104,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                 lineComponentMapper={lineComponentMapper}
                 lineProps={lineProps}
                 lineOperationLists={lineOperationLists}
+                scopeFacetKey={scopeFacetKey}
                 store={store}
             />
         );

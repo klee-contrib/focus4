@@ -1,49 +1,10 @@
 .facetBox {
     padding: 10px;
     width: 275px;
-    background-color: #FFF;
-    box-shadow: 2px 0px 3px 0px #dadada;
-    opacity: .99;
 }
 
-.collapsed {
-    width: 30px;
-    height: 100px;
-}
-
-.collapsed:before {
-    width: 95px;
-}
-
-.collapsed .heading h2 {
-    border: 0;
-}
-
-.collapsed .heading h2:after {
-    content: "\E5CC";
-}
-
-.expanded .heading h2:after {
-    content: "\E5CB";
-}
-
-.heading {
-    cursor: pointer;
-    position: relative;
-}
-
-.heading h2 {
-    font-size: 34px;
-    margin: 0;
-    padding: 15px 0;
-    border-bottom: 1px solid #e2e2e2;
-}
-
-.heading h2:after {
-    font-family: 'Material Icons';
-    display: inline-block;
-    vertical-align: middle;
-    position: absolute;
-    right: 0;
-    font-size: 30px;
+.facetBox > h3 {
+    font-size: 24px;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
 }

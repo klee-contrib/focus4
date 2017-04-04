@@ -11,8 +11,6 @@ import {GroupResult} from "../../types";
 import {Group, GroupStyle} from "./group";
 export {GroupStyle};
 
-const FCT_SCOPE = "FCT_SCOPE";
-
 export interface ResultsProps {
     emptyComponent?: () => React.ReactElement<any>;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
@@ -34,7 +32,7 @@ export interface ResultsProps {
 export class Results extends React.Component<ResultsProps, void> {
 
     private get key() {
-        const {store, scopeFacetKey = FCT_SCOPE} = this.props;
+        const {store, scopeFacetKey = "FCT_SCOPE"} = this.props;
         return store.groupingKey || scopeFacetKey;
     }
 
@@ -81,7 +79,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private showAllHandler(key: string) {
-        const {store, scopeFacetKey = FCT_SCOPE} = this.props;
+        const {store, scopeFacetKey = "FCT_SCOPE"} = this.props;
         if (store.facets.find(facet => facet.code === scopeFacetKey)) {
             this.scopeSelectionHandler(key);
         } else {
@@ -94,7 +92,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private facetSelectionHandler(key: string, value: string) {
-        const {selectedFacets = {}, setProperties} = this.props.store;
+        const {selectedFacets, setProperties} = this.props.store;
         setProperties({
             groupingKey: undefined,
             selectedFacets: {...selectedFacets, [key]: value}

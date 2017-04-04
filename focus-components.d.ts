@@ -362,7 +362,7 @@ declare module "focus-components/select-mdl" {
         valid?: boolean;
         valueKey?: string;
         valueParser?: (propsValue: string | number, rawValue: string) => number | string;
-        values: (string | number)[];
+        values: {}[];
     }, {}> {
         getValue(): string | number;
     }
