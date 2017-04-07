@@ -27,6 +27,8 @@ export interface FacetBoxProps {
 @observer
 export class FacetBox extends React.Component<FacetBoxProps, void> {
 
+    div?: HTMLDivElement;
+
     private facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
         const {scopeFacetKey = "FCT_SCOPE", store} = this.props;
         let {selectedFacets} = store;
@@ -48,7 +50,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     render() {
         const {classNames, nbDefaultDataList = 6, store: {facets, selectedFacets}} = this.props;
         return (
-            <div className={`${styles.facetBox} ${classNames!.facetBox || ""}`}>
+            <div className={`${styles.facetBox} ${classNames!.facetBox || ""}`} ref={i => this.div = i}>
                 <h3>{i18n.t("search.facets.title")}</h3>
                 {facets.map(facet => {
                     if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {

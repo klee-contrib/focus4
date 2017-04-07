@@ -13,6 +13,7 @@ export interface SearchActionServices {
 
 @autobind
 export class SearchStore extends ListStoreBase<any> {
+    @observable groupingKey: string | undefined;
     @observable scope = "ALL";
     @observable selectedFacets: {[facet: string]: string} = {};
 

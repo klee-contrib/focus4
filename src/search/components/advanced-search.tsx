@@ -24,6 +24,7 @@ export interface AdvancedSearchProps {
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défault: true */
     hasBackToTop?: boolean;
+    hasFacetBox?: boolean;
     hasSearchBar?: boolean;
     hasSelection?: boolean;
     isSingleScope?: boolean;
@@ -72,27 +73,22 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderActionBar() {
-        const {hasSearchBar, hasSelection, groupOperationLists, orderableColumnList, searchBarPlaceholder, store} = this.props;
+        const {hasFacetBox, hasSearchBar, hasSelection, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
 
         if (store.groupingKey) {
             return null;
         }
 
-        const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
-            if (facet.values.length > 1) {
-                result[facet.code] = facet.label;
-            }
-            return result;
-        }, {} as {[facet: string]: string}) : {};
-
         return (
             <ActionBar
-                groupableColumnList={groupableColumnList}
+                hasFacetBox={hasFacetBox}
                 hasSearchBar={hasSearchBar}
                 hasSelection={hasSelection}
+                nbDefaultDataListFacet={nbDefaultDataListFacet}
                 operationList={store.scope !== "ALL" && groupOperationLists && store.totalCount > 0 ? groupOperationLists[store.scope] : []}
                 orderableColumnList={orderableColumnList}
                 searchBarPlaceholder={searchBarPlaceholder}
+                scopeFacetKey={scopeFacetKey}
                 store={store}
             />
         );

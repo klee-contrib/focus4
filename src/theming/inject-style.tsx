@@ -25,16 +25,24 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
             context: {classNames: {[key: string]: {[key: string]: any}}};
             instance: React.Component<P, React.ComponentState>;
 
-            render() {
+            classNames: any;
+
+            componentWillMount() {
                 const contextClassNames = this.context && this.context.classNames && this.context.classNames[classContainerName];
                 const {classNames = {}} = this.props;
                 if (contextClassNames) {
                     fillClassNames(contextClassNames, classNames);
                 }
+
+                this.classNames = contextClassNames;
+            }
+
+            render() {
+                const classNames = this.classNames || this.props.classNames || {};
                 if (!isStateful(Comp)) {
-                    return <Comp {...this.props} classNames={contextClassNames || classNames} />;
+                    return <Comp {...this.props} classNames={classNames} />;
                 } else {
-                    return <Comp {...this.props} classNames={contextClassNames || classNames} ref={i => this.instance = i} />;
+                    return <Comp {...this.props} classNames={classNames} ref={i => this.instance = i} />;
                 }
             }
         }

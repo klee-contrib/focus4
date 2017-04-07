@@ -1,4 +1,11 @@
+.container {
+    margin-bottom: 10px;
+    position: relative;
+}
+
 .bar {
+    position: relative;
+    z-index: 2;
     box-shadow: 1px 1px 4px 1px #e7e7e7;
     background-color: white;
     display: flex;
@@ -6,7 +13,6 @@
     align-items: center;
     height: 56px;
     padding: 10px;
-    margin-bottom: 10px;
     box-sizing: border-box;
     transition: background-color 0.1s ease-out;
 }
@@ -52,4 +58,28 @@
 .searchBar :global(.mdl-textfield__input) {
     text-transform: uppercase;
     font-weight: bold;
+}
+
+.container .facetBox {
+    width: auto;
+    display: flex;
+    flex-wrap: wrap;
+    background: #eee;
+    position: relative;
+}
+
+.container .facetBox > h3 {
+    display: none;
+}
+
+.container .facetBox > div {
+    width: 275px;
+    flex-shrink: 0;
+    padding: 0 10px 5px;
+    margin-bottom: 0;
+    margin-top: -5px;
+}
+
+.container .facetBox ul {
+    padding-left: 0;
 }

@@ -4,7 +4,6 @@ import {action, computed, IObservableArray, observable} from "mobx";
 /** Socle commun entre le store de liste et de recherche. */
 @autobind
 export abstract class ListStoreBase<T> {
-    @observable groupingKey: string | undefined;
     @observable query = "";
     @observable sortAsc = true;
     @observable sortBy: keyof T | undefined;
@@ -18,11 +17,6 @@ export abstract class ListStoreBase<T> {
     @computed
     get isLoading() {
         return this.pendingCount > 0;
-    }
-
-    @computed
-    get groupingLabel() {
-        return this.groupingKey;
     }
 
     @computed
@@ -43,8 +37,6 @@ export abstract class ListStoreBase<T> {
 
     abstract get currentCount(): number;
     abstract get totalCount(): number;
-
-    abstract getListByGroupCode(groupCode: string): T[];
 
     @action
     toggle(item: T) {

@@ -10,7 +10,10 @@ import Dropdown, {DropdownItem} from "focus-components/dropdown";
 import InputText from "focus-components/input-text";
 
 import {ContextualActions, GroupOperationListItem, ListStoreBase} from "../../list";
-import {injectStyle} from "../../theming";
+import {injectStyle, StyleInjector} from "../../theming";
+
+import {SearchStore} from "../store";
+import {FacetBox} from "./facet-box";
 
 import * as styles from "./__style__/action-bar.css";
 
@@ -19,11 +22,15 @@ export type ActionBarStyle = Partial<typeof styles>;
 export interface ActionBarProps {
     classNames?: ActionBarStyle;
     group?: {code: string, label: string, totalCount: number};
-    groupableColumnList?: {[facet: string]: string};
+    hasFacetBox?: boolean;
     hasSearchBar?: boolean;
     hasSelection?: boolean;
+    /** Par défaut : 6 */
+    nbDefaultDataListFacet?: number;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     operationList?: GroupOperationListItem<{}>[];
+    /** Par défaut : FCT_SCOPE */
+    scopeFacetKey?: string;
     searchBarPlaceholder?: string;
     store: ListStoreBase<any>;
 }
@@ -31,12 +38,16 @@ export interface ActionBarProps {
 @injectStyle("actionBar")
 @observer
 @autobind
-export class ActionBar extends React.Component<ActionBarProps, void> {
+export class ActionBar extends React.Component<ActionBarProps, {}> {
+
+    private facetBox?: StyleInjector<FacetBox>;
+
+    state = {facetBoxDisplay: false};
 
     @computed.struct
-    get selectedList() {
+    private get selectedList() {
         const {group, store} = this.props;
-        if (!group) {
+        if (!group || !isSearch(store)) {
             return store.selectedList;
         } else {
             const list = store.getListByGroupCode(group.code);
@@ -45,7 +56,16 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     @computed
-    get selectionStatus() {
+    private get selectionIcon() {
+        switch (this.selectionStatus) {
+            case "none": return "check_box_outline_blank";
+            case "selected": return "check_box";
+            default: return "indeterminate_check_box";
+        }
+    }
+
+    @computed
+    private get selectionStatus() {
         const {group, store} = this.props;
         if (!group) {
             return store.selectionStatus;
@@ -60,14 +80,15 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         }
     }
 
-    private getSelectionButton() {
+    @computed
+    private get selectionButton() {
         const {group, hasSelection, store} = this.props;
-        if (hasSelection && (!store.groupingKey || group)) {
+        if (hasSelection) {
             return (
                 <Button
                     shape="icon"
-                    icon={this.getSelectionObjectIcon()}
-                    handleOnClick={() => store.groupingKey && group ? store.toggleMany(store.getListByGroupCode(group!.code)) : store.toggleAll()}
+                    icon={this.selectionIcon}
+                    onClick={() => isSearch(store) && store.groupingKey && group ? store.toggleMany(store.getListByGroupCode(group!.code)) : store.toggleAll()}
                 />
             );
         } else {
@@ -75,10 +96,27 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         }
     }
 
-    private getSortButton() {
+    private get filterButton() {
+        const {hasFacetBox, store} = this.props;
+        if (hasFacetBox && isSearch(store)) {
+            return (
+                <Button
+                    color={this.state.facetBoxDisplay ? "colored" : undefined}
+                    onClick={() => this.setState({facetBoxDisplay: !this.state.facetBoxDisplay})}
+                    label="list.actionBar.filter"
+                    shape={null}
+                />
+            );
+        } else {
+            return null;
+        }
+    }
+
+    @computed
+    private get sortButton() {
         const {orderableColumnList, store} = this.props;
 
-        if (!(store.selectedItems.size || store.groupingKey) && orderableColumnList) {
+        if (!store.selectedItems.size && !(isSearch(store) && store.groupingKey) && orderableColumnList) {
             const orderOperationList: DropdownItem[] = [];
             for (const key in orderableColumnList) {
                 const description = orderableColumnList[key];
@@ -106,10 +144,18 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         return null;
     }
 
-    private getGroupButton() {
-        const {groupableColumnList, store} = this.props;
+    @computed
+    private get groupButton() {
+        const {store} = this.props;
 
-        if (!store.selectedItems.size && groupableColumnList) {
+        if (isSearch(store) && !store.selectedItems.size && !this.state.facetBoxDisplay) {
+            const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
+                if (facet.values.length > 1) {
+                    result[facet.code] = facet.label;
+                }
+                return result;
+            }, {} as {[facet: string]: string}) : {};
+
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
                     action: () => store.groupingKey = key,
@@ -126,7 +172,8 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         return null;
     }
 
-    private getSearchBar() {
+    @computed
+    private get searchBar() {
         const {classNames, hasSearchBar, searchBarPlaceholder, store} = this.props;
 
         if (!store.selectedItems.size && hasSearchBar) {
@@ -145,34 +192,63 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         return null;
     }
 
-    private getSelectionObjectIcon() {
-        switch (this.selectionStatus) {
-            case "none": return "check_box_outline_blank";
-            case "selected": return "check_box";
-            default: return "indeterminate_check_box";
+    componentDidMount() {
+        this.toggleFacetBox(false);
+    }
+
+    componentDidUpdate(_: {}, {facetBoxDisplay}: ActionBar["state"]) {
+        this.toggleFacetBox(facetBoxDisplay);
+    }
+
+    private toggleFacetBox(facetBoxDisplayPrev: boolean) {
+        if (this.facetBox && this.facetBox.instance.div) {
+            if (facetBoxDisplayPrev !== this.state.facetBoxDisplay) {
+                this.facetBox.instance.div.style.transition = "margin 0.15s ease-out";
+            } else {
+                this.facetBox.instance.div.style.transition = null;
+            }
+            this.facetBox.instance.div.style.marginTop = `${this.state.facetBoxDisplay ? 0 : -this.facetBox.instance.div.clientHeight}px`;
         }
     }
 
     render() {
-        const {classNames, group, operationList, store} = this.props;
+        const {classNames, group, hasFacetBox, nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", store} = this.props;
         return (
-            <div className={`${styles.bar} ${classNames!.bar || ""} ${this.selectedList.length ? `${styles.selection} ${classNames!.selection || ""}` : ""}`}>
-                <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
-                    {this.getSelectionButton()}
-                    {this.getSortButton()}
-                    {this.getGroupButton()}
-                    {group ?
-                        <strong>{`${group.label} (${group.totalCount})`}</strong>
+            <div className={`${styles.container} ${classNames!.container || ""}`}>
+                <div className={`${styles.bar} ${classNames!.bar || ""} ${this.selectedList.length ? `${styles.selection} ${classNames!.selection || ""}` : ""}`}>
+                    <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
+                        {this.selectionButton}
+                        {this.filterButton}
+                        {this.sortButton}
+                        {this.groupButton}
+                        {group ?
+                            <strong>{`${group.label} (${group.totalCount})`}</strong>
+                        : null}
+                        {this.selectedList.length ?
+                            <strong>{`${this.selectedList.length} ${i18n.t(`list.actionBar.selectedItem${this.selectedList.length > 1 ? "s" : ""}`)}`}</strong>
+                        : null}
+                        {this.searchBar}
+                    </div>
+                    {this.selectedList.length && operationList && operationList.length ?
+                        <ContextualActions operationList={operationList} operationParam={this.selectedList} />
                     : null}
-                     {this.selectedList.length ?
-                        <strong>{`${this.selectedList.length} ${i18n.t(`list.actionBar.selectedItem${this.selectedList.length > 1 ? "s" : ""}`)}`}</strong>
-                    : null}
-                    {this.getSearchBar()}
                 </div>
-                {this.selectedList.length && operationList && operationList.length && (!store.groupingKey || group) ?
-                    <ContextualActions operationList={operationList} operationParam={this.selectedList} />
+                {hasFacetBox && isSearch(store) ?
+                    <div style={{overflow: "hidden"}}>
+                        <FacetBox
+                            ref={(i: any) => this.facetBox = i}
+                            classNames={{facetBox: `${styles.facetBox} ${classNames!.facetBox || ""}`}}
+                            nbDefaultDataList={nbDefaultDataListFacet}
+                            scopeFacetKey={scopeFacetKey}
+                            store={store}
+                        />
+                    </div>
                 : null}
             </div>
         );
     }
+}
+
+function isSearch(store: ListStoreBase<any>): store is SearchStore {
+    return (store as SearchStore).hasOwnProperty("groupingKey");
 }
