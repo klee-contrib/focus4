@@ -7,13 +7,13 @@
 }
 
 .facet h4 {
-    margin: 5px 0 5px 0;
+    margin: 5px 0;
     font-size: 17px;
     font-weight: bold;
 }
 
-.facet h4:after {
-    font-family: 'Material Icons';
+.facet h4::after {
+    font-family: "Material Icons";
     position: absolute;
     right: 0;
     font-size: 30px;
@@ -35,20 +35,6 @@
     line-height: 1.6;
 }
 
-.facet li:last-child {
-    padding-bottom: 0;
-}
-
-.facet :global([data-focus="chips"]) {
-    margin-left: 15px;
-}
-
-.count {
-    font-weight: bold;
-    margin-right: 10px;
-    padding-left: 5px;
-}
-
 .show {
     text-align: right;
     margin: 5px 10px 0 0;
@@ -64,4 +50,18 @@
 .facet li:hover,
 .show:hover {
     color: black;
+}
+
+.facet li:last-child {
+    padding-bottom: 0;
+}
+
+.facet :global([data-focus="chips"]) {
+    margin-left: 15px;
+}
+
+.count {
+    font-weight: bold;
+    margin-right: 10px;
+    padding-left: 5px;
 }

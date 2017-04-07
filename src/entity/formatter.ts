@@ -8,4 +8,4 @@ import numeral from "numeral";
 export function formatNumber(n: string | number, format?: string) {
     format = format || "0,0";
     return numeral(n).format(format);
-};
+}

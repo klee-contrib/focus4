@@ -2,11 +2,12 @@
     padding: 0;
 }
 
-.label {
-    text-align: right;
+:global([data-focus="label"]) {
+    font-weight: bold;
 }
 
 .label {
+    text-align: right;
     display: block;
     font-weight: bold;
     font-size: 13px;
@@ -16,21 +17,7 @@
     white-space: pre;
 }
 
-.edit.invalid .label {
-    color: rgb(222, 50, 38);
-}
-
-/* Corrige problème MDL qui affiche pas l'erreur */
-.edit.invalid :global(.mdl-textfield__error) {
-    visibility: visible;
-}
-
-/* Corrige problème MDL qui affiche pas l'erreur */
-.edit.invalid :global(.mdl-textfield__label)::after {
-    background-color: rgb(213,0,0);
-}
-
-.edit.required .label:after {
+.edit.required .label::after {
     content: "*";
     margin-left: 3px;
 }
@@ -47,6 +34,16 @@
     width: 250px;
 }
 
-:global([data-focus="label"]) {
-    font-weight: bold;
+.edit.invalid .label {
+    color: rgb(222, 50, 38);
+}
+
+/* Corrige problème MDL qui affiche pas l'erreur */
+.edit.invalid :global(.mdl-textfield__error) {
+    visibility: visible;
+}
+
+/* Corrige problème MDL qui affiche pas l'erreur */
+.edit.invalid :global(.mdl-textfield__label)::after {
+    background-color: rgb(213, 0, 0);
 }

@@ -96,7 +96,7 @@ export class Router {
             const isRoute = parts[0] === "" || !this._methods[parts[0]];
             const event = isRoute ? "on" : rename;
             if (isRoute) {
-                rename = rename.slice((rename.match(new RegExp("^" + this.delimiter)) || [""])[0].length);
+                rename = rename.slice((rename.match(new RegExp(`^${this.delimiter}`)) || [""])[0].length);
                 parts.shift();
             }
             const routeObject = routes[route];
@@ -176,14 +176,14 @@ export class Router {
             parent[part!] = {[method]: route};
             return;
         }
-        throw new Error("Invalid route context: " + typeof parent[part!]);
+        throw new Error(`Invalid route context: ${typeof parent[part!]}`);
     }
 
     init(r?: string) {
         const handler = (onChangeEvent?: PopStateEvent | HashChangeEvent) => {
             const newURL = onChangeEvent && (onChangeEvent as HashChangeEvent).newURL || window.location.hash;
             const url = this.history === true ? this.getPath : newURL.replace(/.*#/, "");
-            this.dispatch("on", url.charAt(0) === "/" ? url : "/" + url);
+            this.dispatch("on", url.charAt(0) === "/" ? url : `/${url}`);
         };
 
         this.listeners.push(handler);
@@ -204,7 +204,7 @@ export class Router {
             if (dlocHashEmpty() && r) {
                 document.location.hash = r;
             } else if (!dlocHashEmpty()) {
-                this.dispatch("on", "/" + document.location.hash.replace(/^(#\/|#|\/)/, ""));
+                this.dispatch("on", `/${document.location.hash.replace(/^(#\/|#|\/)/, "")}`);
             }
         } else {
             let routeTo: string | null;
@@ -228,7 +228,7 @@ export class Router {
     private get getPath() {
         let {pathname} = window.location;
         if (pathname.substr(0, 1) !== "/") {
-            pathname = "/" + pathname;
+            pathname = `/${pathname}`;
         }
         return pathname;
     }
@@ -309,9 +309,9 @@ export class Router {
                 const current = regexp + this.delimiter + r;
                 let exact = current;
                 if (!this.strict) {
-                    exact += "[" + this.delimiter + "]?";
+                    exact += `[${this.delimiter}]?`;
                 }
-                const match = path.match(new RegExp("^" + exact));
+                const match = path.match(new RegExp(`^${exact}`));
                 if (!match) {
                     continue;
                 }

@@ -164,12 +164,12 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
 }
 
 function buildGridClassName(prop: string | number, suffix?: string) {
-    return " mdl-cell--" + prop + (suffix ? suffix : "");
+    return `mdl-cell--${prop}${suffix ? suffix : ""}`;
 }
 
 function getCellGridClassName(position: string, size: number, offset: number) {
     const cellPosition = buildGridClassName(position);
     const cellSize = buildGridClassName(size, "-col");
     const cellOffset = buildGridClassName(offset, "-offset");
-    return "mdl-cell" + cellPosition + cellSize + cellOffset;
+    return `mdl-cell ${cellPosition} ${cellSize} ${cellOffset}`;
 }

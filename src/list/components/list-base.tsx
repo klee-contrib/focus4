@@ -133,4 +133,4 @@ function topOfElement(element: HTMLElement): number {
         return 0;
     }
     return element.offsetTop + topOfElement((element.offsetParent as HTMLElement));
-};
+}

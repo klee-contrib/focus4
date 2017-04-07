@@ -10,38 +10,28 @@
     position: relative;
 }
 
-.timeline:before {
+.timeline::before {
     top: 0;
     bottom: 0;
     position: absolute;
     content: " ";
     width: 3px;
-    background-color: #EEE;
+    background-color: #eee;
 }
 
 .timeline > li {
     margin-bottom: 10px;
-    margin-left : 38px;
+    margin-left: 38px;
     position: relative;
 }
 
-.timeline > li:before,
-.timeline > li:after {
+.timeline > li::before,
+.timeline > li::after {
     content: " ";
     display: table;
 }
 
-.timeline > li:after {
-    clear: both;
-}
-
-.timeline > li:before,
-.timeline > li:after {
-    content: " ";
-    display: table;
-}
-
-.timeline > li:after {
+.timeline > li::after {
     clear: both;
 }
 

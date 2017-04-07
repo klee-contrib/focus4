@@ -8,7 +8,7 @@ body {
 }
 
 .layout {
-    background-color: #FAFAFA;
+    background-color: #fafafa;
     height: auto;
     min-height: 100%;
 }
@@ -16,15 +16,6 @@ body {
 .content {
     margin-left: 10px;
     padding: 10px 20px 20px;
-}
-
-.hasMenu .content {
-    padding-left: 70px;
-}
-
-.hasMenu footer,
-.hasMenu header {
-    padding-left: 60px;
 }
 
 footer {
@@ -35,4 +26,13 @@ footer {
     text-align: center;
     padding-left: 70px;
     width: 100%;
+}
+
+.hasMenu .content {
+    padding-left: 70px;
+}
+
+.hasMenu footer,
+.hasMenu header {
+    padding-left: 60px;
 }

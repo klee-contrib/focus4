@@ -50,7 +50,7 @@ export function createViewModel<T extends StoreNode<{}>>(model: T) {
 function clone(source: any): any {
     if (isObservableArray(source)) {
         let res = [];
-        const toAdd = source.map(value => clone(value));
+        const toAdd = source.map(clone);
         res.length = toAdd.length;
         for (let i = 0; i < toAdd.length; i++) {
             res[i] = toAdd[i];

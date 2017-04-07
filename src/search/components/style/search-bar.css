@@ -1,10 +1,10 @@
 .bar {
     display: flex;
-    background-color: #fff;
+    background-color: white;
     border-radius: 2px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0,   0,0,0.08);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
     margin: 10px auto;
-    transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bar:hover {
@@ -13,21 +13,6 @@
 
 .bar > div {
     padding: 8px 0;
-}
-
-.bar :global([data-focus="select-mdl"]) {
-    /* background-color: rgba(0,0,0,0.10); */
-    border-right: 1px solid rgba(0, 0, 0, 0.16);
-    margin-right: 10px;
-}
-
-.bar :global([data-focus="select-mdl"]) input {
-    border: 1px solid transparent;
-    padding-left: 20px;
-}
-
-.bar :global([data-focus="select-mdl"]) :global(.mdl-icon-toggle__label) {
-    margin-top: -28px;
 }
 
 .input {
@@ -45,12 +30,25 @@
 .input input {
     text-shadow: none;
     border: none;
-    padding: 0px;
-    margin: 0px;
-    height: auto;
+    padding: 0;
+    margin: 0;
     width: 100%;
     height: 100%;
-    left: 0px;
+    left: 0;
     outline: none;
     font-size: 16px;
+}
+
+.bar :global([data-focus="select-mdl"]) {
+    border-right: 1px solid rgba(0, 0, 0, 0.16);
+    margin-right: 10px;
+}
+
+.bar :global([data-focus="select-mdl"]) input {
+    border: 1px solid transparent;
+    padding-left: 20px;
+}
+
+.bar :global([data-focus="select-mdl"]) :global(.mdl-icon-toggle__label) {
+    margin-top: -28px;
 }

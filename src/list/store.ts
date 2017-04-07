@@ -14,7 +14,7 @@ export interface ListServiceParams {
 export interface ListServiceResponse<T> {
     dataList: T[];
     totalCount: number;
-};
+}
 export type ListService<T> = (data: ListServiceParams) => Promise<ListServiceResponse<T>>;
 
 @autobind

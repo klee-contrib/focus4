@@ -16,7 +16,7 @@ import {injectStyle, StyleProvider} from "../../theming";
 import styles from "./style/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 
-export {DefaultErrorCenter as ErrorCenter}
+export {DefaultErrorCenter as ErrorCenter};
 export {Header, HeaderStyle};
 
 export interface LayoutProps {

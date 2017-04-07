@@ -77,4 +77,4 @@ export const Table: StyleInjector<TableWithoutStyle<{}, {data?: {}}, {}>> = inje
 export function tableFor<T, P extends {data?: T}>(props: TableProps<T, P>) {
     const Table2 = Table as any;
     return <Table2 {...props} />;
-};
+}

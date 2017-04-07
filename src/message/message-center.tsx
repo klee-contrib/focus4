@@ -87,5 +87,5 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
                 <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><i className="material-icons">clear</i></button>
             </div>
         );
-    };
+    }
 }

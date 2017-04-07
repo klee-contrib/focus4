@@ -57,7 +57,7 @@ function fillClassNames(contextContainer: {[key: string]: any}, propsContainer: 
     for (const className in contextContainer) {
         if (propsContainer[className]) {
             if (typeof contextContainer[className] === "string" && typeof propsContainer[className] === "string") {
-                contextContainer[className] += " " + propsContainer[className];
+                contextContainer[className] += ` ${propsContainer[className]}`;
             } else if (typeof contextContainer[className] === "object" && typeof propsContainer[className] === "object") {
                 fillClassNames(contextContainer[className], propsContainer[className]);
             } else if (typeof contextContainer[className] !== typeof propsContainer[className]) {

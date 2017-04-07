@@ -62,4 +62,4 @@ export const List: StyleInjector<ListWithoutStyle<{}, {data?: {}}, {}>> = inject
 export function listFor<T, P extends {data?: T}>(props: ListProps<T, P>) {
     const List2 = List as any;
     return <List2 {...props} />;
-};
+}

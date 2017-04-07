@@ -3,24 +3,24 @@
 }
 
 .error {
-    background-color: #DE3226;
+    background-color: #de3226;
 }
 
 .success {
-    background-color: #2AC955;
+    background-color: #2ac955;
 }
 
 .warning {
-    background-color: #FFAE00;
+    background-color: #ffae00;
 }
 
 .center :global(.mdl-snackbar__close) {
-    cursor:pointer;
+    cursor: pointer;
     background: transparent;
     float: right;
-    border:none;
+    border: none;
     text-transform: uppercase;
-    padding: 14px 14px;
+    padding: 14px;
     line-height: 1;
     letter-spacing: 0;
     outline: none;
@@ -29,6 +29,6 @@
 }
 
 .center :global(.mdl-snackbar__close) i {
-    color: FFF;
+    color: white;
     font-size: 12px;
 }

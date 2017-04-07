@@ -3,18 +3,22 @@
 }
 
 .selection {
-    background-color: #FFF;
-    border-bottom: 1px solid #E1E1E1;
+    background-color: white;
+    border-bottom: 1px solid #e1e1e1;
     cursor: pointer;
     padding-left: 45px;
 }
 
 .selection:first-child {
-    border-top: 1px solid #E1E1E1;
+    border-top: 1px solid #e1e1e1;
 }
 
 .selection:hover {
     background-color: rgba(0, 0, 0, 0.06);
+}
+
+.selection:hover .unselected {
+    border-left: 5px solid #ffd657;
 }
 
 .checkbox {
@@ -40,6 +44,10 @@
     height: 18px;
 }
 
+.selection:hover .checkbox {
+    display: flex;
+}
+
 .actions {
     position: absolute;
     top: calc(50% - 17px);
@@ -52,25 +60,13 @@
     display: block;
 }
 
-.selection:hover {
-    background-color: rgba(0, 0, 0, 0.06);
-}
-
-.selection:hover .checkbox {
-    display: flex;
-}
-
-.selection:hover .unselected {
-    border-left: 5px solid #ffd657;
-}
-
 .selected {
     display: flex;
     border-left: 5px solid rgb(63, 81, 181);
 }
 
 .timelineDate {
-    color: #000;
+    color: black;
     position: absolute;
     top: 23px;
     margin-left: -130px;
@@ -78,7 +74,7 @@
 }
 
 .timelineBadge {
-    color: #fff;
+    color: white;
     width: 15px;
     height: 15px;
     line-height: 50px;
@@ -87,35 +83,28 @@
     position: absolute;
     top: 25px;
     margin-left: -45px;
-    background-color: #999999;
+    background-color: #999;
     z-index: 100;
-    border-top-right-radius: 50%;
-    border-top-left-radius: 50%;
-    border-bottom-right-radius: 50%;
-    border-bottom-left-radius: 50%;
+    border-radius: 50%;
 }
 
 .timelinePanel {
     float: left;
     border: 1px solid #d4d4d4;
     border-radius: 2px;
-    padding: 10px 20px 10px 20px;
+    padding: 10px 20px;
     position: relative;
-    -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
     width: 100%;
     box-sizing: border-box;
-    background: #fff;
+    background: white;
 }
 
-.timelinePanel:before {
-    border-left-width: 0;
-    border-right-width: 15px;
+.timelinePanel::before {
     left: -15px;
     right: auto;
     position: absolute;
     top: 16px;
-    left: -15px;
     display: inline-block;
     border-top: 15px solid transparent;
     border-left: 0 solid #ccc;
@@ -124,18 +113,15 @@
     content: " ";
 }
 
-.timelinePanel:after {
-    border-left-width: 0;
-    border-right-width: 14px;
+.timelinePanel::after {
     left: -14px;
     right: auto;
     position: absolute;
     top: 17px;
-    left: -14px;
     display: inline-block;
     border-top: 14px solid transparent;
-    border-left: 0 solid #fff;
-    border-right: 15px solid #fff;
+    border-left: 0 solid white;
+    border-right: 15px solid white;
     border-bottom: 14px solid transparent;
     content: " ";
 }
