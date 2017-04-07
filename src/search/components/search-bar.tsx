@@ -10,7 +10,7 @@ import {injectStyle} from "../../theming";
 
 import {SearchStore} from "../store";
 
-import * as styles from "./style/search-bar.css";
+import * as styles from "./__style__/search-bar.css";
 
 export type SearchBarStyle = Partial<typeof styles>;
 

@@ -13,7 +13,7 @@ import {injectStyle, StyleInjector} from "../theming";
 import {Domain} from "./types";
 import {validate} from "./validation";
 
-import * as styles from "./style/field.css";
+import * as styles from "./__style__/field.css";
 export type FieldStyle = Partial<typeof styles>;
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */

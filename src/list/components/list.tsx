@@ -7,7 +7,7 @@ import {injectStyle, StyleInjector} from "../../theming";
 import {LineOperationListItem, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
-import {list} from "./style/list.css";
+import {list} from "./__style__/list.css";
 
 export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     data?: T[];

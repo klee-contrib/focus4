@@ -5,7 +5,7 @@ import * as React from "react";
 
 import {injectStyle} from "../../theming";
 
-import style from "./style/error-center.css";
+import style from "./__style__/error-center.css";
 export type ErrorCenterStyle = Partial<typeof style>;
 
 export interface ErrorCenterProps {

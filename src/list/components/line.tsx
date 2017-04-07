@@ -11,7 +11,7 @@ import {injectStyle} from "../../theming";
 import {ListStoreBase} from "../store-base";
 import {ContextualActions} from "./contextual-actions";
 
-import * as styles from "./style/line.css";
+import * as styles from "./__style__/line.css";
 export type LineStyle = Partial<typeof styles>;
 
 export interface OperationListItem<T> {

@@ -8,7 +8,7 @@ import {injectStyle} from "../theming";
 
 import {Message, messageStore} from "./store";
 
-import * as styles from "./style/message-center.css";
+import * as styles from "./__style__/message-center.css";
 export type MessageCenterStyle = Partial<typeof styles>;
 
 export interface MessageCenterProps {

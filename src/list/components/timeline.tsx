@@ -8,7 +8,7 @@ import {injectStyle} from "../../theming";
 import {LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
-import {timeline} from "./style/list.css";
+import {timeline} from "./__style__/list.css";
 
 export interface TimelineProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     data: T[];

@@ -7,11 +7,11 @@ import * as React from "react";
 
 import Chips from "focus-components/chips";
 
-import {injectStyle} from "../../../../theming";
+import {injectStyle} from "../../../theming";
 
-import {FacetOutput} from "../../../types";
+import {FacetOutput} from "../../types";
 
-import * as styles from "./style/facet.css";
+import * as styles from "./__style__/facet.css";
 export type FacetStyle = Partial<typeof styles>;
 
 export interface FacetProps {

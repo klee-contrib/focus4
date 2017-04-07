@@ -3,13 +3,14 @@ import i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ActionBar, GroupOperationListItem, LineOperationListItem, StoreList} from "../../../list";
+import {GroupOperationListItem, LineOperationListItem, StoreList} from "../../../list";
 import {injectStyle} from "../../../theming";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
+import {ActionBar} from "../action-bar";
 
-import * as styles from "./style/group.css";
+import * as styles from "./__style__/group.css";
 
 export type GroupStyle = Partial<typeof styles>;
 

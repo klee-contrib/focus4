@@ -7,13 +7,13 @@ import {ErrorCenter as DefaultErrorCenter, ErrorCenterStyle} from "./error-cente
 import {Header, HeaderStyle} from "./header";
 
 import {FieldStyle} from "../../entity";
-import {ActionBarStyle, ContextualActionsStyle, LineStyle, ListStyle} from "../../list";
+import { ContextualActionsStyle, LineStyle, ListStyle} from "../../list";
 import {MessageCenterStyle} from "../../message";
 import {LoadingBarStyle} from "../../network";
-import {AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../../search";
+import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../../search";
 import {injectStyle, StyleProvider} from "../../theming";
 
-import styles from "./style/layout.css";
+import styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 
 export {DefaultErrorCenter as ErrorCenter};

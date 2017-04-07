@@ -4,13 +4,13 @@ import {omit} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {injectStyle} from "../../../../theming";
+import {injectStyle} from "../../../theming";
 
-import {SearchStore} from "../../../store";
+import {SearchStore} from "../../store";
 import {Facet, FacetStyle} from "./facet";
 export {FacetStyle};
 
-import * as styles from "./style/facet-box.css";
+import * as styles from "./__style__/facet-box.css";
 export type FacetBoxStyle = Partial<typeof styles>;
 
 export interface FacetBoxProps {

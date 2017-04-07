@@ -8,11 +8,11 @@ import * as React from "react";
 import Button from "focus-components/button";
 import Chips from "focus-components/chips";
 
-import {SearchStore} from "../../store";
+import {injectStyle} from "../../theming";
 
-import {injectStyle} from "../../../theming";
+import {SearchStore} from "../store";
 
-import * as styles from "./style/list-summary.css";
+import * as styles from "./__style__/summary.css";
 
 export type SummaryStyle = Partial<typeof styles>;
 

@@ -30,7 +30,7 @@ import {
     TextOptions
 } from "./field-helpers";
 
-import {form, loading} from "./style/auto-form.css";
+import {form, loading} from "./__style__/auto-form.css";
 
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions<E> {

@@ -1,4 +1,3 @@
-export {ActionBar, ActionBarStyle} from "./action-bar";
 export {ContextualActions, ContextualActionsStyle} from "./contextual-actions";
 export {GroupOperationListItem, LineOperationListItem, LineStyle} from "./line";
 export {List, listFor} from "./list";

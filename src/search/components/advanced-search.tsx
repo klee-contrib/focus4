@@ -4,16 +4,16 @@ import * as React from "react";
 
 import BackToTop from "focus-components/button-back-to-top";
 
-import {ActionBar, GroupOperationListItem, LineOperationListItem} from "../../../list";
-import {injectStyle} from "../../../theming";
+import {GroupOperationListItem, LineOperationListItem} from "../../list";
+import {injectStyle} from "../../theming";
 
-import {SearchStore} from "../../store";
-import {Results} from "../results";
-import {FacetBox, FacetBoxStyle, FacetStyle} from "./facet-box";
-import {Summary, SummaryStyle} from "./summary";
-export {FacetBoxStyle, FacetStyle, SummaryStyle};
+import {SearchStore} from "../store";
+import {ActionBar} from "./action-bar";
+import {FacetBox} from "./facet-box";
+import {Results} from "./results";
+import {Summary} from "./summary";
 
-import * as styles from "./style/advanced-search.css";
+import * as styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {

@@ -7,7 +7,7 @@ import {HeaderTopRow} from "./top-row";
 
 import {injectStyle} from "../../../theming/inject-style";
 
-import styles from "./style/header.css";
+import styles from "./__style__/header.css";
 export type HeaderStyle = Partial<typeof styles>;
 
 export const Header = injectStyle("header", ({classNames}: {classNames?: HeaderStyle}) => (

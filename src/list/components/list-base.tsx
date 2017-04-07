@@ -8,7 +8,7 @@ import Button from "focus-components/button";
 
 import {LineStyle} from "./line";
 
-import * as styles from "./style/list.css";
+import * as styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
 export interface ListBaseProps<T, P extends {data?: T}> {

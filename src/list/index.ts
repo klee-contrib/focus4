@@ -1,6 +1,4 @@
 export {
-    ActionBar,
-    ActionBarStyle,
     ContextualActions,
     ContextualActionsStyle,
     GroupOperationListItem,

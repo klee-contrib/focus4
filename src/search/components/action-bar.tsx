@@ -9,13 +9,10 @@ import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
 import InputText from "focus-components/input-text";
 
+import {ContextualActions, GroupOperationListItem, ListStoreBase} from "../../list";
 import {injectStyle} from "../../theming";
 
-import {ListStoreBase} from "../store-base";
-import {ContextualActions} from "./contextual-actions";
-import {GroupOperationListItem} from "./line";
-
-import * as styles from "./style/action-bar.css";
+import * as styles from "./__style__/action-bar.css";
 
 export type ActionBarStyle = Partial<typeof styles>;
 

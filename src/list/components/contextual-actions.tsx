@@ -8,7 +8,7 @@ import {injectStyle} from "../../theming";
 
 import {OperationListItem} from "./line";
 
-import * as styles from "./style/contextual-actions.css";
+import * as styles from "./__style__/contextual-actions.css";
 export type ContextualActionsStyle = Partial<typeof styles>;
 
 export interface ContextualActionsProps {
