@@ -17,7 +17,6 @@ export interface ListBaseProps<T, P extends {data?: T}> {
     /** Par défaut : "after" */
     extraItemsPosition?: "before" | "after";
     lineClassNames?: LineStyle;
-    LineComponent: ReactComponent<P>;
     lineProps?: P;
     isManualFetch?: boolean;
     itemKey?: keyof T;
@@ -70,11 +69,11 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
         }
     }
 
-    protected renderButtons() {
+    protected renderBottomRow() {
         const {classNames, isManualFetch, showAllHandler} = this.props;
         if (isManualFetch && this.hasMoreData || showAllHandler) {
             return (
-                <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
+                <div className={`${styles.bottomRow} ${classNames!.bottomRow || ""}`}>
                     {isManualFetch && this.hasMoreData ?
                         <Button
                             handleOnClick={this.handleShowMore}

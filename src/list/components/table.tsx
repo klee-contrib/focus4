@@ -15,6 +15,7 @@ export const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 export interface TableProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     columns: {[field: string]: string};
     data?: T[];
+    RowComponent: ReactComponent<P>;
 }
 
 @autobind
@@ -38,7 +39,7 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
     }
 
     private renderTableBody() {
-        const {lineClassNames, itemKey, LineComponent, lineProps, extraItems = [], extraItemsPosition = "after"} = this.props;
+        const {lineClassNames, itemKey, RowComponent, lineProps, extraItems = [], extraItemsPosition = "after"} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
 
         const items = this.displayedData.map((item, idx) => (
@@ -46,7 +47,7 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 classNames={lineClassNames}
                 data={item}
-                LineComponent={LineComponent}
+                LineComponent={RowComponent}
                 lineProps={lineProps}
                 type="table"
             />
@@ -66,7 +67,7 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
                     {this.renderTableHeader()}
                     {this.renderTableBody()}
                 </table>
-                {this.renderButtons()}
+                {this.renderBottomRow()}
             </div>
         );
     }

@@ -13,6 +13,7 @@ import {timeline} from "./__style__/list.css";
 export interface TimelineProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     data: T[];
     dateSelector: (data: T) => EntityField<string>;
+    TimelineComponent: ReactComponent<P>;
 }
 
 @injectStyle("list")
@@ -25,7 +26,7 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
     }
 
     private renderLines() {
-        const {lineClassNames, itemKey, LineComponent, lineProps, dateSelector, extraItems = [], extraItemsPosition = "after"} = this.props;
+        const {lineClassNames, itemKey, TimelineComponent, lineProps, dateSelector, extraItems = [], extraItemsPosition = "after"} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
 
         const items = this.displayedData.map((item, idx) =>
@@ -34,7 +35,7 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
                 classNames={lineClassNames}
                 data={item}
                 dateSelector={dateSelector}
-                LineComponent={LineComponent}
+                LineComponent={TimelineComponent}
                 lineProps={lineProps}
                 type="timeline"
             />
@@ -51,7 +52,7 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
         return (
             <ul className={`${timeline} ${this.props.classNames!.timeline || ""}`}>
                 {this.renderLines()}
-                {this.renderButtons()}
+                {this.renderBottomRow()}
             </ul>
         );
     }

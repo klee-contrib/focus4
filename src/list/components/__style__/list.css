@@ -1,7 +1,12 @@
-.list {
+.list,
+.mosaic {
     list-style: none;
     padding: 0;
     margin: 0;
+}
+
+.mosaic {
+    display: flex;
 }
 
 .timeline {
@@ -35,18 +40,23 @@
     clear: both;
 }
 
-.buttons {
+.topRow {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.bottomRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
 }
 
-.buttons button {
+.bottomRow button {
     margin: 0;
 }
 
-.buttons button:global(:not(.mdl-button--raised)) {
+.bottomRow button:global(:not(.mdl-button--raised)) {
     font-weight: bold;
     text-transform: none;
 }
