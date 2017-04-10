@@ -7,7 +7,7 @@ import {ErrorCenter as DefaultErrorCenter, ErrorCenterStyle} from "./error-cente
 import {Header, HeaderStyle} from "./header";
 
 import {FieldStyle} from "../../entity";
-import { ContextualActionsStyle, LineStyle, ListStyle} from "../../list";
+import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
 import {MessageCenterStyle} from "../../message";
 import {LoadingBarStyle} from "../../network";
 import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../../search";
@@ -77,6 +77,7 @@ export interface LayoutStyleProviderProps {
     layout?: LayoutStyle;
     line?: LineStyle;
     list?: ListStyle;
+    listWrapper?: ListWrapperStyle;
     summary?: SummaryStyle;
     searchBar?: SearchBarStyle;
     loadingBar?: LoadingBarStyle;

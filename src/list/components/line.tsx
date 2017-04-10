@@ -39,6 +39,7 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     hasSelection?: boolean;
     LineComponent: ReactComponent<P>;
     lineProps?: P;
+    mosaic?: {width: number, height: number};
     operationList?: (data: T) => LineOperationListItem<T>[];
     selectionnableInitializer?: (data: T) => boolean;
     store?: ListStoreBase<T>;
@@ -64,7 +65,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     }
 
     render() {
-        const {LineComponent, data, dateSelector, lineProps, hasSelection, selectionnableInitializer, classNames, operationList, type} = this.props;
+        const {LineComponent, data, dateSelector, lineProps, hasSelection, mosaic, selectionnableInitializer, classNames, operationList, type} = this.props;
 
         if (type === "table") {
             return <LineComponent data={data} {...lineProps} />;
@@ -81,7 +82,10 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
         } else {
             const opList = operationList && operationList(data);
             return (
-                <li className={`${styles.line} ${classNames!.line || ""} ${hasSelection ? `${styles.selection} ${classNames!.selection || ""}` : ""}`}>
+                <li
+                    className={`${mosaic ? `${styles.mosaic} ${classNames!.mosaic || ""}` : `${styles.line} ${classNames!.line || ""}`} ${hasSelection ? `${styles.selection} ${classNames!.selection || ""}` : ""}`}
+                    style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+                >
                     {hasSelection && selectionnableInitializer!(data) ?
                         <div className={`${styles.checkbox} ${classNames!.checkbox || ""} ${this.isSelected ? `${styles.selected} ${classNames!.selected || ""}` : `${styles.unselected} ${classNames!.unselected || ""}`}`}>
                             <Checkbox onChange={this.onSelection} rawInputValue={this.isSelected} />

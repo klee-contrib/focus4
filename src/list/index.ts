@@ -8,6 +8,8 @@ export {
     ListBase,
     listFor,
     ListStyle,
+    ListWrapper,
+    ListWrapperStyle,
     StoreList,
     StoreTable,
     Table,

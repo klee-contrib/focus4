@@ -4,7 +4,7 @@ import * as React from "react";
 
 import BackToTop from "focus-components/button-back-to-top";
 
-import {GroupOperationListItem, LineOperationListItem} from "../../list";
+import {GroupOperationListItem, LineOperationListItem, ListWrapper} from "../../list";
 import {injectStyle} from "../../theming";
 
 import {SearchStore} from "../store";
@@ -17,10 +17,8 @@ import * as styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {
-    classNames?: AdvancedSearchStyle;
-    extraItems?: React.ReactElement<any>[];
-    /** Par défaut : "after" */
-    extraItemsPosition?: "before" | "after";
+    addItemHandler?: () => void;
+    classNames?: AdvancedSearchStyle & {mosaicAdd?: string};
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défault: true */
     hasBackToTop?: boolean;
@@ -28,9 +26,13 @@ export interface AdvancedSearchProps {
     hasSearchBar?: boolean;
     hasSelection?: boolean;
     isSingleScope?: boolean;
-    lineComponentMapper: (scope: string) => ReactComponent<any>;
+    lineComponentMapper?: (scope: string) => ReactComponent<any>;
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
     lineProps?: {};
+    mode?: "list" | "mosaic";
+    mosaicComponentMapper?: (scope: string) => ReactComponent<any>;
+    mosaicWidth?: number;
+    mosaicHeight?: number;
     /** Par défaut : 6 */
     nbDefaultDataListFacet?: number;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
@@ -51,7 +53,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderFacetBox() {
-        const {nbDefaultDataListFacet = 6, scopeFacetKey = "FCT_SCOPE", store} = this.props;
+        const {nbDefaultDataListFacet, scopeFacetKey, store} = this.props;
         return (
             <FacetBox
                 nbDefaultDataList={nbDefaultDataListFacet}
@@ -95,14 +97,14 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {groupOperationLists, hasSelection, lineComponentMapper, lineProps, lineOperationLists, scopeFacetKey, store, extraItems, extraItemsPosition} = this.props;
+        const {classNames, groupOperationLists, hasSelection, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store} = this.props;
         return (
             <Results
-                extraItems={extraItems}
-                extraItemsPosition={extraItemsPosition}
+                classNames={{mosaicAdd: classNames && classNames.mosaicAdd}}
                 groupOperationLists={groupOperationLists}
                 hasSelection={!!hasSelection}
                 lineComponentMapper={lineComponentMapper}
+                mosaicComponentMapper={mosaicComponentMapper}
                 lineProps={lineProps}
                 lineOperationLists={lineOperationLists}
                 scopeFacetKey={scopeFacetKey}
@@ -112,16 +114,24 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     render() {
-        const {hasBackToTop = true, classNames} = this.props;
+        const {addItemHandler, lineComponentMapper, mosaicComponentMapper, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, classNames} = this.props;
         return (
             <div>
                 <div className={`${styles.facetContainer} ${classNames!.facetContainer || ""}`}>
                     {this.renderFacetBox()}
                 </div>
                 <div className={`${styles.resultContainer} ${classNames!.resultContainer || ""}`}>
-                    {this.renderListSummary()}
-                    {this.renderActionBar()}
-                    {this.renderResults()}
+                    <ListWrapper
+                        addItemHandler={addItemHandler}
+                        canChangeMode={!!(lineComponentMapper && mosaicComponentMapper)}
+                        mode={mode || mosaicComponentMapper && !lineComponentMapper ? "mosaic" : "list"}
+                        mosaicHeight={mosaicHeight}
+                        mosaicWidth={mosaicWidth}
+                    >
+                        {this.renderListSummary()}
+                        {this.renderActionBar()}
+                        {this.renderResults()}
+                    </ListWrapper>
                 </div>
                 {hasBackToTop ? <BackToTop /> : null}
             </div>

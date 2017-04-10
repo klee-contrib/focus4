@@ -12,17 +12,16 @@ import {Group, GroupStyle} from "./group";
 export {GroupStyle};
 
 export interface ResultsProps {
+    classNames?: {mosaicAdd?: string};
     emptyComponent?: () => React.ReactElement<any>;
-    extraItems?: React.ReactElement<any>[];
-    /** Par défaut : "after" */
-    extraItemsPosition?: "before" | "after";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
     hasSelection: boolean;
-    lineComponentMapper: (scope: string) => ReactComponent<any>;
+    lineComponentMapper?: (scope: string) => ReactComponent<any>;
     lineProps?: {};
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
+    mosaicComponentMapper?: (scope: string) => ReactComponent<any>;
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */
@@ -63,17 +62,17 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {groupOperationLists = {}, groupPageSize = 5, hasSelection, lineComponentMapper, lineProps, lineOperationLists = {}, store, extraItems, extraItemsPosition} = this.props;
+        const {classNames, groupOperationLists = {}, groupPageSize = 5, hasSelection, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
                 key={group.code}
-                extraItems={extraItems}
-                extraItemsPosition={extraItemsPosition}
+                classNames={classNames}
                 group={group}
                 groupOperationList={groupOperationLists[groupKey]}
                 hasSelection={hasSelection}
-                LineComponent={lineComponentMapper(groupKey)}
+                LineComponent={lineComponentMapper && lineComponentMapper(groupKey)}
+                MosaicComponent={mosaicComponentMapper && mosaicComponentMapper(groupKey)}
                 lineProps={lineProps}
                 lineOperationList={lineOperationLists[groupKey]}
                 perPage={groupPageSize}

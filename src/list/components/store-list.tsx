@@ -40,24 +40,14 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
         }
     }
 
-    protected renderLines() {
-        const {itemKey, lineClassNames, LineComponent, MosaicComponent, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store, extraItems = [], extraItemsPosition = "after"} = this.props;
-        const Line = LineWrapper as new() => LineWrapper<T, P>;
-
-        let Component: ReactComponent<P>;
-        if (this.displayMode === "list" && LineComponent) {
-            Component = LineComponent;
-        } else if (this.displayMode === "mosaic" && MosaicComponent) {
-            Component = MosaicComponent;
-        } else {
-            throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
-        }
-
-        const items = this.displayedData.map((item, idx) =>
+    protected getItems(Line: new() => LineWrapper<T, P>, Component: ReactComponent<P>) {
+        const {itemKey, lineClassNames, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store} = this.props;
+        return this.displayedData.map((item, idx) =>
             <Line
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 data={item}
                 classNames={lineClassNames}
+                mosaic={this.mosaic}
                 hasSelection={hasSelection}
                 LineComponent={Component}
                 lineProps={lineProps}
@@ -66,12 +56,6 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
                 store={store}
             />
         );
-
-        if (extraItemsPosition === "after") {
-            return [...items, ...extraItems];
-        } else {
-            return [...extraItems, ...items];
-        }
     }
 
     protected handleShowMore() {

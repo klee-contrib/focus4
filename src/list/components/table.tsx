@@ -39,10 +39,10 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
     }
 
     private renderTableBody() {
-        const {lineClassNames, itemKey, RowComponent, lineProps, extraItems = [], extraItemsPosition = "after"} = this.props;
+        const {lineClassNames, itemKey, RowComponent, lineProps} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
 
-        const items = this.displayedData.map((item, idx) => (
+        return this.displayedData.map((item, idx) => (
             <Line
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 classNames={lineClassNames}
@@ -52,12 +52,6 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
                 type="table"
             />
         ));
-
-        if (extraItemsPosition === "after") {
-            return <tbody>{[...items, ...extraItems]}</tbody>;
-        } else {
-            return <tbody>{[...extraItems, ...items]}</tbody>;
-        }
     }
 
     render() {

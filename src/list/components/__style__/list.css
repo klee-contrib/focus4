@@ -7,6 +7,7 @@
 
 .mosaic {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .timeline {
@@ -40,11 +41,6 @@
     clear: both;
 }
 
-.topRow {
-    display: flex;
-    flex-direction: row-reverse;
-}
-
 .bottomRow {
     display: flex;
     justify-content: space-between;
@@ -59,4 +55,25 @@
 .bottomRow button:global(:not(.mdl-button--raised)) {
     font-weight: bold;
     text-transform: none;
+}
+
+.mosaicAdd {
+    border: 1px dashed #ccc;
+    padding: 65px 0;
+    margin: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 18px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.mosaicAdd:hover {
+    background: #eee;
+}
+
+.mosaicAdd i {
+    display: block;
+    text-align: center;
+    font-size: 24px;
 }

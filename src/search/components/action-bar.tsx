@@ -148,7 +148,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     private get groupButton() {
         const {store} = this.props;
 
-        if (isSearch(store) && !store.selectedItems.size && !this.state.facetBoxDisplay) {
+        if (isSearch(store) && !store.selectedItems.size && !store.groupingKey && !this.state.facetBoxDisplay) {
             const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
                 if (facet.values.length > 1) {
                     result[facet.code] = facet.label;

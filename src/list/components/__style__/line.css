@@ -2,19 +2,10 @@
     position: relative;
 }
 
-.selection {
-    background-color: white;
-    border-bottom: 1px solid #e1e1e1;
-    cursor: pointer;
-    padding-left: 45px;
-}
-
-.selection:first-child {
-    border-top: 1px solid #e1e1e1;
-}
-
-.selection:hover {
-    background-color: rgba(0, 0, 0, 0.06);
+.mosaic {
+    position: relative;
+    margin: 5px;
+    box-sizing: border-box;
 }
 
 .selection:hover .unselected {
@@ -56,7 +47,8 @@
     display: none;
 }
 
-.line:hover .actions {
+.line:hover .actions,
+.mosaic:hover .actions {
     display: block;
 }
 

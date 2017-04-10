@@ -26,10 +26,10 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
     }
 
     private renderLines() {
-        const {lineClassNames, itemKey, TimelineComponent, lineProps, dateSelector, extraItems = [], extraItemsPosition = "after"} = this.props;
+        const {lineClassNames, itemKey, TimelineComponent, lineProps, dateSelector} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
 
-        const items = this.displayedData.map((item, idx) =>
+        return this.displayedData.map((item, idx) =>
             <Line
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 classNames={lineClassNames}
@@ -40,12 +40,6 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
                 type="timeline"
             />
         );
-
-        if (extraItemsPosition === "after") {
-            return [...items, ...extraItems];
-        } else {
-            return [...extraItems, ...items];
-        }
     }
 
     render() {

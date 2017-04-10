@@ -15,16 +15,14 @@ import * as styles from "./__style__/group.css";
 export type GroupStyle = Partial<typeof styles>;
 
 export interface Props {
-    classNames?: GroupStyle;
-    extraItems?: React.ReactElement<any>[];
-    /** Par défaut : "after" */
-    extraItemsPosition?: "before" | "after";
+    classNames?: GroupStyle & {mosaicAdd?: string};
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;
-    LineComponent: ReactComponent<any>;
+    LineComponent?: ReactComponent<any>;
     lineProps?: {};
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
+    MosaicComponent?: ReactComponent<any>;
     perPage: number;
     showAllHandler?: (key: string) => void;
     store: SearchStore;
@@ -36,17 +34,18 @@ export interface Props {
 export class Group extends React.Component<Props, void> {
 
     private renderList() {
-        const {group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, showAllHandler, store, extraItems, extraItemsPosition} = this.props;
+        const {classNames, group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
                 <List
+                    classNames={{mosaicAdd: classNames && classNames.mosaicAdd}}
                     data={group.list}
-                    extraItems={!group.code ? extraItems : undefined}
-                    extraItemsPosition={extraItemsPosition}
                     hasSelection={hasSelection}
+                    hideAddItemHandler={!!group.code}
                     isManualFetch={!!group.code}
                     LineComponent={LineComponent}
+                    MosaicComponent={MosaicComponent}
                     lineProps={lineProps}
                     operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}

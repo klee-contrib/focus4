@@ -13,9 +13,6 @@ export type ListStyle = Partial<typeof styles>;
 
 export interface ListBaseProps<T, P extends {data?: T}> {
     classNames?: ListStyle;
-    extraItems?: React.ReactElement<any>[];
-    /** Par défaut : "after" */
-    extraItemsPosition?: "before" | "after";
     lineClassNames?: LineStyle;
     lineProps?: P;
     isManualFetch?: boolean;
@@ -87,6 +84,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
                             handleOnClick={showAllHandler}
                             icon="arrow_forward"
                             label="show.all"
+                            shape={null}
                         />
                     : null}
                 </div>
