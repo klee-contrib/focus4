@@ -8,7 +8,8 @@ import Icon from "focus-components/icon";
 
 import {injectStyle, StyleInjector} from "../../theming";
 
-import {LineOperationListItem, LineWrapper} from "./line";
+import {LineOperationListItem} from "./contextual-actions";
+import {LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import {list, mosaic, mosaicAdd} from "./__style__/list.css";

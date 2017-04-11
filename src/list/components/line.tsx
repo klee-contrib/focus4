@@ -3,34 +3,17 @@ import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import Checkbox from "focus-components/input-checkbox";
+import Button from "focus-components/button";
 
 import {EntityField, textFor} from "../../entity";
 import {injectStyle} from "../../theming";
 
-import {ListStoreBase} from "../store-base";
-import {ContextualActions} from "./contextual-actions";
+import {MiniListStore} from "../store-base";
+import {ContextualActions, LineOperationListItem} from "./contextual-actions";
 
 import * as styles from "./__style__/line.css";
+
 export type LineStyle = Partial<typeof styles>;
-
-export interface OperationListItem<T> {
-    action: (data: T | T[]) => void;
-    buttonShape?: "raised" | "fab" | "icon" | "mini-fab" | null;
-    label?: string;
-    icon?: string;
-    iconLibrary?: "material" | "font-awesome" | "font-custom";
-    isSecondary?: boolean;
-    style?: string | React.CSSProperties;
-}
-
-export interface GroupOperationListItem<T> extends OperationListItem<T> {
-    action: (data: T[]) => void;
-}
-
-export interface LineOperationListItem<T> extends OperationListItem<T> {
-    action: (data: T) => void;
-}
 
 export interface LineWrapperProps<T, P extends {data?: T}> {
     classNames?: LineStyle;
@@ -42,7 +25,7 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     mosaic?: {width: number, height: number};
     operationList?: (data: T) => LineOperationListItem<T>[];
     selectionnableInitializer?: (data: T) => boolean;
-    store?: ListStoreBase<T>;
+    store?: MiniListStore<T>;
     type?: "table" | "timeline";
 }
 
@@ -65,7 +48,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     }
 
     render() {
-        const {LineComponent, data, dateSelector, lineProps, hasSelection, mosaic, selectionnableInitializer, classNames, operationList, type} = this.props;
+        const {LineComponent, data, dateSelector, lineProps, hasSelection, mosaic, selectionnableInitializer, classNames, operationList, type, store} = this.props;
 
         if (type === "table") {
             return <LineComponent data={data} {...lineProps} />;
@@ -83,18 +66,26 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
             const opList = operationList && operationList(data);
             return (
                 <li
-                    className={`${mosaic ? `${styles.mosaic} ${classNames!.mosaic || ""}` : `${styles.line} ${classNames!.line || ""}`} ${hasSelection ? `${styles.selection} ${classNames!.selection || ""}` : ""}`}
+                    className={`${mosaic ? `${styles.mosaic} ${classNames!.mosaic || ""}` : `${styles.line} ${classNames!.line || ""}`}`}
                     style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                 >
-                    {hasSelection && selectionnableInitializer!(data) ?
-                        <div className={`${styles.checkbox} ${classNames!.checkbox || ""} ${this.isSelected ? `${styles.selected} ${classNames!.selected || ""}` : `${styles.unselected} ${classNames!.unselected || ""}`}`}>
-                            <Checkbox onChange={this.onSelection} rawInputValue={this.isSelected} />
-                        </div>
+                    {hasSelection && selectionnableInitializer!(data) && store ?
+                        <Button
+                            className={`${styles.checkbox} ${classNames!.checkbox || ""} ${store.selectedItems.size ? `${styles.isSelection} ${classNames!.isSelection || ""}` : ""}`}
+                            shape="icon"
+                            icon={this.isSelected ? "check_box" : "check_box_outline_blank"}
+                            onClick={this.onSelection}
+                            color={this.isSelected ? "primary" : undefined}
+                        />
                     : null}
                     <LineComponent data={data} {...lineProps} />
                     {opList && opList.length > 0 ?
-                        <div className={`${styles.actions} ${classNames!.actions || ""}`}>
+                        <div
+                            className={`${styles.actions} ${classNames!.actions || ""}`}
+                            style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+                        >
                             <ContextualActions
+                                buttonShape={mosaic ? "mini-fab" : null}
                                 operationList={opList}
                                 operationParam={data}
                             />

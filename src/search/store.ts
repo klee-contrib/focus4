@@ -2,7 +2,7 @@ import {autobind} from "core-decorators";
 import {flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction} from "mobx";
 
-import {ListStoreBase} from "../list";
+import {ListStoreBase, MiniListStore} from "../list";
 
 import {FacetOutput, GroupResult, QueryInput, QueryOutput, UnscopedQueryOutput} from "./types";
 
@@ -122,9 +122,54 @@ export class SearchStore extends ListStoreBase<any> {
         this.scope = props.scope || this.scope;
     }
 
-    getListByGroupCode(groupCode: string) {
-        const resultGroup = this.results.find(result => result.code === groupCode);
-        return resultGroup && resultGroup.list || [];
+    getSearchGroupStore(groupCode: string): MiniListStore<any> {
+        const store = this;
+        const searchGroupStore = {
+            get currentCount() {
+                return store.results.find(result => result.code === groupCode).totalCount || 0;
+            },
+            get totalCount() {
+                return store.results.find(result => result.code === groupCode).totalCount || 0;
+            },
+            toggle(item: any) {
+                store.toggle(item);
+            },
+            get list() {
+                const resultGroup = store.results.find(result => result.code === groupCode);
+                return resultGroup && resultGroup.list || [];
+            }
+        } as any as MiniListStore<any>;
+
+        searchGroupStore.toggleAll = action(function() {
+            const areAllItemsIn = searchGroupStore.list!.every(item => store.selectedItems.has(item));
+
+            searchGroupStore.list!.forEach(item => {
+                if (store.selectedItems.has(item)) {
+                    store.selectedList.remove(item);
+                }
+            });
+
+            if (!areAllItemsIn) {
+                store.selectedList.push(...searchGroupStore.list!);
+            }
+        });
+
+        const selectedItems = computed(() =>
+            new Set(store.selectedList.filter(item => searchGroupStore.list!.find(i => i === item))));
+
+        const selectionStatus = computed(() => {
+             if (selectedItems.get().size === 0) {
+                return "none";
+            } else if (selectedItems.get().size === searchGroupStore.totalCount) {
+                return "selected";
+            } else {
+                return "partial";
+            }
+        });
+
+        searchGroupStore.selectedItems = selectedItems as any;
+        searchGroupStore.selectionStatus = selectionStatus as any;
+        return observable(searchGroupStore);
     }
 
     @computed

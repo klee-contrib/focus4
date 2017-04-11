@@ -20,9 +20,9 @@ export interface AdvancedSearchProps {
     addItemHandler?: () => void;
     classNames?: AdvancedSearchStyle & {mosaicAdd?: string};
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
+    hasActionBarFacetBox?: boolean;
     /** Par défault: true */
     hasBackToTop?: boolean;
-    hasFacetBox?: boolean;
     hasSearchBar?: boolean;
     hasSelection?: boolean;
     isSingleScope?: boolean;
@@ -75,7 +75,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderActionBar() {
-        const {hasFacetBox, hasSearchBar, hasSelection, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
+        const {hasActionBarFacetBox, hasSearchBar, hasSelection, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
 
         if (store.groupingKey) {
             return null;
@@ -83,7 +83,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
 
         return (
             <ActionBar
-                hasFacetBox={hasFacetBox}
+                hasFacetBox={hasActionBarFacetBox}
                 hasSearchBar={hasSearchBar}
                 hasSelection={hasSelection}
                 nbDefaultDataListFacet={nbDefaultDataListFacet}

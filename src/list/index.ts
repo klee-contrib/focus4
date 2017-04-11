@@ -18,4 +18,4 @@ export {
     timelineFor
 } from "./components";
 export {ListServiceParams, ListServiceResponse, ListStore} from "./store";
-export {ListStoreBase} from "./store-base";
+export {ListStoreBase, MiniListStore} from "./store-base";

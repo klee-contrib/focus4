@@ -10,6 +10,7 @@ import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
 import {ActionBar} from "../action-bar";
 
+import {computed} from "mobx";
 import * as styles from "./__style__/group.css";
 
 export type GroupStyle = Partial<typeof styles>;
@@ -33,6 +34,12 @@ export interface Props {
 @observer
 export class Group extends React.Component<Props, void> {
 
+    @computed
+    private get store() {
+        const {group, store} = this.props;
+        return group.code ? store.getSearchGroupStore(group.code) : store;
+    }
+
     private renderList() {
         const {classNames, group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
@@ -50,7 +57,7 @@ export class Group extends React.Component<Props, void> {
                     operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}
                     showAllHandler={showAllHandler && group.code ? () => showAllHandler(group.code!) : undefined}
-                    store={store}
+                    store={this.store}
                 />
                 {store.isLoading ?
                     <div style={{padding: "15px"}}>
@@ -72,7 +79,7 @@ export class Group extends React.Component<Props, void> {
                         group={{code: group.code, label: group.label, totalCount: group.totalCount}}
                         hasSelection={hasSelection}
                         operationList={groupOperationList}
-                        store={store}
+                        store={this.store}
                     />
                     {this.renderList()}
                 </div>

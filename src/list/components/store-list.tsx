@@ -6,14 +6,14 @@ import * as React from "react";
 import {injectStyle} from "../../theming";
 
 import {ListStore} from "../store";
-import {ListStoreBase} from "../store-base";
+import {MiniListStore} from "../store-base";
 import {LineWrapper} from "./line";
 import {ListWithoutStyle} from "./list";
 
 export interface StoreListProps<T> {
     hasSelection?: boolean;
     selectionnableInitializer?: (data?: T) => boolean;
-    store: ListStoreBase<T>;
+    store: MiniListStore<T>;
 }
 
 @injectStyle("list")
@@ -59,8 +59,8 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
     }
 
     protected handleShowMore() {
-        if ((this.props.store as ListStore<T>).service) {
-            (this.props.store as ListStore<T>).load(true);
+        if ((this.props.store as any).service) {
+            (this.props.store as any).load(true);
         } else {
             super.handleShowMore();
         }

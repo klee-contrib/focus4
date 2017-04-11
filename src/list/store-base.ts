@@ -47,20 +47,15 @@ export abstract class ListStoreBase<T> {
         }
     }
 
-    @action
-    toggleMany(items: T[]) {
-        const areAllItemsIn = items.every(item => this.selectedItems.has(item));
-
-        items.forEach(item => {
-            if (this.selectedItems.has(item)) {
-                this.selectedList.remove(item);
-            }
-        });
-
-        if (!areAllItemsIn) {
-            this.selectedList.push(...items);
-        }
-    }
-
     abstract toggleAll(): void;
+}
+
+export interface MiniListStore<T> {
+    readonly currentCount: number;
+    readonly list?: T[];
+    selectedItems: Set<T>;
+    selectionStatus: "none" | "partial" | "selected";
+    toggle(item: T): void;
+    toggleAll(): void;
+    readonly totalCount: number;
 }

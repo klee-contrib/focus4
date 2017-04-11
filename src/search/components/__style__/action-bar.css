@@ -26,20 +26,6 @@
     color: #f0f0f0;
 }
 
-.buttons {
-    display: flex;
-    align-items: center;
-}
-
-.buttons button {
-    font-weight: bold;
-}
-
-.buttons > strong {
-    font-size: 15px;
-    margin: 0 10px;
-}
-
 .searchBar {
     margin-left: 10px;
     position: relative;
@@ -60,11 +46,41 @@
     font-weight: bold;
 }
 
+.buttons {
+    display: flex;
+    align-items: center;
+}
+
+.buttons button {
+    font-weight: bold;
+}
+
+.buttons > strong {
+    font-size: 15px;
+    margin: 0 10px;
+}
+
+.buttons :global(.mdl-button--raised[disabled][disabled]) {
+    background: transparent;
+    border: none;
+}
+
+.triangle {
+    position: absolute;
+    bottom: -15px;
+    left: calc(50% - 7.5px);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 15px 15px;
+    border-color: transparent transparent #e8e8e8;
+}
+
 .container .facetBox {
     width: auto;
     display: flex;
     flex-wrap: wrap;
-    background: #eee;
+    background: #e8e8e8;
     position: relative;
 }
 

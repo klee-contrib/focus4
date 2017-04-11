@@ -1,5 +1,5 @@
-export {ContextualActions, ContextualActionsStyle} from "./contextual-actions";
-export {GroupOperationListItem, LineOperationListItem, LineStyle} from "./line";
+export {ContextualActions, ContextualActionsStyle, GroupOperationListItem, LineOperationListItem} from "./contextual-actions";
+export {LineStyle} from "./line";
 export {List, listFor} from "./list";
 export {ListBase, ListStyle} from "./list-base";
 export {ListWrapper, ListWrapperStyle} from "./list-wrapper";

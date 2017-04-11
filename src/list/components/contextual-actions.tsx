@@ -1,17 +1,34 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
 
-import Button from "focus-components/button";
+import Button, {ButtonProps} from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
 
 import {injectStyle} from "../../theming";
 
-import {OperationListItem} from "./line";
-
 import * as styles from "./__style__/contextual-actions.css";
 export type ContextualActionsStyle = Partial<typeof styles>;
 
+export interface OperationListItem<T> {
+    action: (data: T | T[]) => void;
+    label?: string;
+    icon?: string;
+    iconLibrary?: "material" | "font-awesome" | "font-custom";
+    isSecondary?: boolean;
+    showIcon?: boolean;
+    style?: string | React.CSSProperties;
+}
+
+export interface GroupOperationListItem<T> extends OperationListItem<T> {
+    action: (data: T[]) => void;
+}
+
+export interface LineOperationListItem<T> extends OperationListItem<T> {
+    action: (data: T) => void;
+}
+
 export interface ContextualActionsProps {
+    buttonShape?: ButtonProps["shape"];
     classNames?: ContextualActionsStyle;
     operationList: OperationListItem<{}>[];
     operationParam: {} | {}[];
@@ -31,14 +48,16 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     }
 
     render() {
-        const {classNames, operationList, operationParam} = this.props;
-        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {action, isSecondary, icon, iconLibrary, label, buttonShape = null, style}, key) => {
+        const {buttonShape = null, classNames, operationList, operationParam} = this.props;
+        const isTextButton = buttonShape === null || buttonShape === "raised";
+        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {action, isSecondary, icon, iconLibrary, label, showIcon, style}, key) => {
             const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
             if (!isSecondary) {
                 primaryActions.push(
                     <Button
+                        color={!isTextButton ? "primary" : undefined}
                         handleOnClick={this.handleAction(key)}
-                        icon={icon}
+                        icon={(isTextButton && showIcon || !isTextButton) && icon || undefined}
                         iconLibrary={iconLibrary}
                         key={key}
                         label={label}
@@ -57,10 +76,11 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
             return actionLists;
         }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as DropdownItem[]});
         return (
-            <div className={`${styles.actions} ${classNames!.actions}`}>
+            <div className={isTextButton ? `${styles.text} ${classNames!.text || ""}` : `${styles.fab} ${classNames!.fab || ""}`}>
                 {primaryActionList}
                 {secondaryActionList.length ?
                     <Dropdown
+                        button={{shape: isTextButton && "icon" || buttonShape, icon: "more_vert", color: !isTextButton ? "primary" : undefined}}
                         operations={secondaryActionList}
                         operationParam={operationParam}
                         position={{
