@@ -1,11 +1,13 @@
 import {intersection, isArray} from "lodash";
 import {observable} from "mobx";
 
+/** Description du login de l'utilisateur connecté. */
 export interface Login {
     login?: string;
     password?: string;
 }
 
+/** Description du profil de l'utilisateur connecté. */
 export interface Profile {
     id?: string;
     provider?: string;
@@ -18,8 +20,14 @@ export interface Profile {
 }
 
 export class UserStore {
+
+    /** Objet contenant les infos de login de l'utilisateur connecté. */
     @observable login = {} as Login;
+
+    /** Objet contenant les infos de profil de l'utilisateur connecté. */
     @observable profile = {} as Profile;
+
+    /** Liste des roles de l'utilisateur connecté. */
     @observable roles = [] as string[];
 
     /**
