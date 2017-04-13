@@ -10,7 +10,10 @@ export class ViewStore<V, N extends string> {
     /** Représente l'état courant de l'URL. */
     @observable currentView: V;
 
+    /** Liste des paramètres de l'URL, dans l'ordre. */
     readonly paramNames: (keyof V)[];
+
+    /** Préfixe éventuel du store. */
     readonly prefix?: N;
 
     /**
@@ -61,6 +64,7 @@ export class ViewStore<V, N extends string> {
      */
     @action
     updateView(prefix?: string, params: string[] = []) {
+        // La vue n'est mise à jour que si le préfixe est le bon.
         if (prefix === this.prefix) {
             for (let i = 0; i < this.paramNames.length; i++) {
                 this.currentView[this.paramNames[i]] = params[i] as any;
@@ -68,6 +72,10 @@ export class ViewStore<V, N extends string> {
         }
     }
 
+    /**
+     * Génère l'URL depuis une vue.
+     * @param view La vue.
+     */
     private getUrlFromView(view: Partial<V>) {
         return `${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => view[p]).join("/")}`.replace(/\/+$/, "");
     }

@@ -14,6 +14,7 @@ export interface LoadingBarProps {
     ProgressBar: ReactComponent<{completed: number}>;
 }
 
+/** Composant standard pour afficher une barre de chargement sur l'état des requêtes en cours. */
 export const LoadingBar = observer(({classNames, displayDevBar, ProgressBar}: LoadingBarProps) => {
     const {count, error, pending, success} = requestStore;
     const completed = +((count.total - count.pending) / count.total) * 100;

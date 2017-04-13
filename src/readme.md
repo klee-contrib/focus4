@@ -3,6 +3,35 @@
 # Référence d'API
 ## [Module `application`](application)
 ## [Module `entity`](entity)
+
+## Module `ioc`
+Ce module contient un container d'injection de dépendances ([InversifyJS](https://github.com/inversify/InversifyJS)) ainsi que deux décorateurs pour injecter une dépendance par propriété dans une classe.
+
+Exemple d'usage :
+
+```ts
+import {container} from "focus4/ioc";
+import {adminService} from "../services";
+
+container.bind("adminService").toConstantValue(adminService);
+
+//////////////////////////////////
+
+import {injectByName, injectByPropName} from "focus4/ioc";
+import {AdminService} from "../services";
+
+class Component {
+
+    @injectByName("adminService")
+    monService: AdminService;
+
+    @injectByPropName
+    adminService: AdminService;
+}
+```
+
+Comme son nom l'indique, le décorateur `@injectByPropName` utilise le nom de la propriété comme identifiant de l'objet à injecter.
+
 ## [Module `list`](list)
 ## [Module `message`](message)
 ## [Module `network`](network)

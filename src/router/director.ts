@@ -1,3 +1,10 @@
+/*
+    Ce fichier contient une réécriture de `director` en Typescript, parce que je n'ai pas réussi à intégrer la librarie normalement.
+    Certaines fonctionnalités à priori inutiles ont été retirées.
+    Ne vous attendez pas à de la documentation dans le fichier parce que je serai bien incapable d'expliquer tout ce qui est fait dedans.
+    Déso.
+*/
+
 import {autobind} from "core-decorators";
 import {flatten} from "lodash";
 
