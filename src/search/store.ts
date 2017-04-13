@@ -1,18 +1,21 @@
-import {autobind} from "core-decorators";
+import {autobind, debounce} from "core-decorators";
 import {flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction} from "mobx";
 
+import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues, validate} from "../entity";
 import {ListStoreBase, MiniListStore} from "../list";
 
 import {FacetOutput, GroupResult, QueryInput, QueryOutput, UnscopedQueryOutput} from "./types";
 
 export interface SearchActionServices {
-    scoped?: <T>(query: QueryInput) => Promise<QueryOutput<T>>;
-    unscoped?: (query: QueryInput) => Promise<UnscopedQueryOutput>;
+    scoped?: <T>(query: QueryInput<{}>) => Promise<QueryOutput<T, {}>>;
+    unscoped?: (query: QueryInput<{}>) => Promise<UnscopedQueryOutput<{}>>;
 }
 
 @autobind
-export class SearchStore extends ListStoreBase<any> {
+export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
+
+    @observable readonly criteria?: C;
     @observable groupingKey: string | undefined;
     @observable scope = "ALL";
     @observable selectedFacets: {[facet: string]: string} = {};
@@ -22,12 +25,16 @@ export class SearchStore extends ListStoreBase<any> {
 
     services: SearchActionServices;
 
-    constructor(services: SearchActionServices) {
+    constructor(services: SearchActionServices, criteriaEntity?: Entity) {
         super();
         this.services = services;
+        if (criteriaEntity) {
+            this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteriaEntity}, {}, "criteria") as any;
+        }
 
         // Relance la recherche à chaque modification de propriété.
         reaction(() => [
+            this.flatCriteria,
             this.groupingKey,
             this.query,
             this.scope,
@@ -52,7 +59,48 @@ export class SearchStore extends ListStoreBase<any> {
         return this.serverCount;
     }
 
+    @computed.struct
+    get criteriaErrors() {
+        const errors: {[key: string]: boolean} = {};
+        const {criteria = {}} = this;
+        for (const key in criteria) {
+            if (key !== "set" && key !== "clear") {
+                const entry = ((criteria as any)[key] as EntityField<any>);
+                const {$entity: {domain}, value} = entry;
+                if (domain && domain.validator && value !== undefined && value !== null) {
+                    const validStat = validate({value, name: ""}, domain.validator);
+                    if (validStat.errors.length) {
+                        errors[key] = true;
+                        continue;
+                    }
+                }
+                errors[key] = false;
+            }
+        }
+        return errors;
+    }
+
+    @computed.struct
+    get flatCriteria() {
+        const criteria = this.criteria && toFlatValues(this.criteria);
+        if (criteria) {
+            for (const error in this.criteriaErrors) {
+                if (this.criteriaErrors[error]) {
+                    delete (criteria as any)[error];
+                }
+            }
+
+            for (const criteriaKey in criteria) {
+                if (!(criteria as any)[criteriaKey]) {
+                    delete (criteria as any)[criteriaKey];
+                }
+            }
+        }
+        return criteria || {};
+    }
+
     @action
+    @debounce(200)
     async search(isScroll = false) {
         let {query} = this;
         const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
@@ -62,7 +110,7 @@ export class SearchStore extends ListStoreBase<any> {
         }
 
         const data = {
-            criteria: {query, scope},
+            criteria: {...this.flatCriteria, query, scope} as QueryInput<C>["criteria"],
             facets: selectedFacets || {},
             group: groupingKey || "",
             skip: isScroll && results.length === 1 ? results[0].list.length : 0,
@@ -178,7 +226,7 @@ export class SearchStore extends ListStoreBase<any> {
     }
 }
 
-function scopedResponse<T>(data: QueryOutput<T>, results: GroupResult<T>[], isScroll?: boolean) {
+function scopedResponse<T, C>(data: QueryOutput<T, C>, results: GroupResult<T>[], isScroll?: boolean) {
     if (isScroll && data.list) {
         data.list = [...results[0].list, ...data.list];
     }

@@ -19,7 +19,7 @@ export interface FacetBoxProps {
     nbDefaultDataList?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
-    store: SearchStore;
+    store: SearchStore<any>;
 }
 
 @injectStyle("facetBox")
@@ -52,7 +52,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
         return (
             <div className={`${styles.facetBox} ${classNames!.facetBox || ""}`} ref={i => this.div = i}>
                 <h3>{i18n.t("search.facets.title")}</h3>
-                {facets.map(facet => {
+                {facets.filter(facet => facet.values.length).map(facet => {
                     if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                         return (
                             <Facet

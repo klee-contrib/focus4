@@ -26,7 +26,7 @@ export interface Props {
     MosaicComponent?: ReactComponent<any>;
     perPage: number;
     showAllHandler?: (key: string) => void;
-    store: SearchStore;
+    store: SearchStore<any>;
 }
 
 @injectStyle("group")

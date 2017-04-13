@@ -51,7 +51,7 @@ export type AsStoreListNode<T> = {
 };
 
 /** Config du store. */
-interface EntityStoreConfig {
+export interface EntityStoreConfig {
     [key: string]: EntityStoreItem;
 }
 
@@ -123,7 +123,7 @@ export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[ke
  * @param entityMapping Le mapping éventuel entre le nom de l'entrée et l'entité associée.
  * @param entry Le nom de l'entrée.
  */
-function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStoreConfig, entityMap: {[name: string]: Entity}, entityMapping: EntityMapping<T>, entry: string): EntityStoreItem {
+export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStoreConfig, entityMap: {[name: string]: Entity}, entityMapping: EntityMapping<T>, entry: string): EntityStoreItem {
     const entity = config[entry]; // {} ou [] selon que l'entrée soit une liste ou pas.
     const trueEntry = entityMapping[entry] || entry; // On récupère le nom de l'entité.
 

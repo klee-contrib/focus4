@@ -40,7 +40,7 @@ export interface AdvancedSearchProps {
     scopeFacetKey?: string;
     scopes: {code: string, label?: string}[];
     searchBarPlaceholder?: string;
-    store: SearchStore;
+    store: SearchStore<any>;
 }
 
 @injectStyle("advancedSearch")

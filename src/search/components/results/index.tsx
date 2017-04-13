@@ -26,7 +26,7 @@ export interface ResultsProps {
     offset?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
-    store: SearchStore;
+    store: SearchStore<any>;
 }
 
 @autobind

@@ -228,7 +228,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     }
 }
 
-function isSearch(store: any): store is SearchStore {
+function isSearch(store: any): store is SearchStore<any> {
     return store.hasOwnProperty("groupingKey");
 }
 

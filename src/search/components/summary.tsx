@@ -21,7 +21,7 @@ export interface ListSummaryProps {
     exportAction?: () => void;
     isSingleScope?: boolean;
     scopes: {code: string, label?: string}[];
-    store: SearchStore;
+    store: SearchStore<any>;
 }
 
 /** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
@@ -62,6 +62,17 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                 onDeleteClick: () => store.setProperties({
                     selectedFacets: omit(store.selectedFacets, facetKey) as {[facet: string]: string}
                 })
+            });
+        }
+
+        // On ajoute la liste des critères.
+        for (const criteriaKey in store.flatCriteria) {
+            const {translationKey, domain} = store.criteria[criteriaKey].$entity;
+            const value = (store.flatCriteria as any)[criteriaKey];
+            topicList.push({
+                key: criteriaKey,
+                label: `${i18n.t(translationKey)} : ${domain && domain.formatter && domain.formatter(value) || value}`,
+                onDeleteClick: () => store.criteria[criteriaKey].value = undefined
             });
         }
 

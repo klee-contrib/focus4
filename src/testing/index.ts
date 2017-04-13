@@ -8,8 +8,10 @@ import {Component, ComponentClass, ReactElement} from "react";
 import {createRenderer} from "react-addons-test-utils";
 import * as tape from "tape";
 
+import {StoreNode} from "../entity";
 import {ListStore} from "../list";
 import {SearchStore} from "../search";
+export {StoreNode};
 
 export const dum = {
     any: {} as any,

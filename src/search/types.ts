@@ -17,9 +17,9 @@ export interface GroupResult<T> {
     totalCount?: number;
 }
 
-export interface QueryInput {
+export interface QueryInput<C> {
     facets: {[facet: string]: string};
-    criteria: {query: string, scope: string};
+    criteria: C & {query: string, scope: string};
     group: string;
     sortFieldName?: string;
     sortDesc: boolean;
@@ -27,17 +27,17 @@ export interface QueryInput {
     top: number;
 }
 
-export interface QueryOutput<T> {
+export interface QueryOutput<T, C> {
     list?: T[];
     groups?: GroupResult<T>[];
     facets: FacetOutput[];
     totalCount: number;
-    query: QueryInput;
+    query: QueryInput<C>;
 }
 
-export interface UnscopedQueryOutput {
+export interface UnscopedQueryOutput<C> {
     groups: GroupResult<{}>[];
     facets: FacetOutput[];
     totalCount: number;
-    query: QueryInput;
+    query: QueryInput<C>;
 }

@@ -12,6 +12,7 @@ export {
     textFor
 } from "./field-helpers";
 export {formatNumber} from "./formatter";
-export {makeEntityStore, toFlatValues, StoreListNode, StoreNode, StoreType} from "./store";
+export {buildEntityEntry, makeEntityStore, toFlatValues, StoreListNode, StoreNode, StoreType} from "./store";
 export {Domain, Entity, FieldEntry, ListEntry, EntityField, EntityList} from "./types";
+export {validate} from "./validation";
 export {createViewModel, ViewModel} from "./view-model";
