@@ -1,54 +1,37 @@
 import {autobind} from "core-decorators";
-import {observable, reaction} from "mobx";
+import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+
+import {classReaction} from "../../../util";
 
 import {applicationStore} from "../../store";
 
 export interface HeaderScrollingProps {
+    /** Classes CSS. */
     classNames: {scrolling: string; deployed: string; undeployed: string};
+    /** Handler qui sera appelé à chaque dépliement/repliement. */
     notifySizeChange?: (isDeployed?: boolean) => void;
+    /** Sélecteur de l'élément de DOM sur lequel on écoute le scroll (par défaut : window) */
     scrollTargetSelector?: string;
 }
 
+/** Conteneur du header, gérant en particulier le dépliement et le repliement. */
 @autobind
 @observer
 export class HeaderScrolling extends React.Component<HeaderScrollingProps, void> {
 
+    /** Seuil de déploiement, calculé à partir de la hauteur du header. */
     @observable deployThreshold: number;
+    /** Header déployé. */
     @observable isDeployed = true;
+    /** Hauteur du div vide à placer sous le header en mode replié, pour conserver la continuité. */
     @observable placeholderHeight: number;
 
+    /** Header dans le DOM. */
     private header?: Element;
-    private reaction: any;
+    /** Elément de DOM sur lequel on écoute le scroll */
     private scrollTargetNode: Element | Window;
-
-    scrollPosition(domNode?: Element) {
-        const y = window.pageYOffset || document.documentElement.scrollTop;
-        const x = window.pageXOffset || document.documentElement.scrollLeft;
-        if (domNode === undefined) {
-            return { top: y, left: x };
-        }
-        const nodeRect = domNode.getBoundingClientRect();
-        return {left: nodeRect.left + x, top: nodeRect.top + y};
-    }
-
-    getScrollingElement() {
-        if (document.scrollingElement) {
-            return document.scrollingElement;
-        } else if (document.documentElement) {
-            return document.documentElement;
-        }
-        return document.querySelector("body")!;
-    }
-
-    scrollTo(element: Element, to: number) {
-        if (element === undefined) {
-            window.scrollTo(0, to);
-            return;
-        }
-        element.scrollTop = to;
-    }
 
     componentWillMount() {
         this.handleScroll();
@@ -57,36 +40,40 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     componentDidMount() {
-        this.scrollTargetNode.addEventListener("scroll", this.handleScroll);
-        this.scrollTargetNode.addEventListener("resize", this.handleScroll);
-        this.reaction = reaction(() => applicationStore.canDeploy, canDeploy => this.handleScroll(undefined, canDeploy));
+        this.scrollTargetNode.addEventListener("scroll", this.listener);
+        this.scrollTargetNode.addEventListener("resize", this.listener);
     }
 
     componentWillUnmount() {
-        this.scrollTargetNode.removeEventListener("scroll", this.handleScroll);
-        this.scrollTargetNode.removeEventListener("resize", this.handleScroll);
-        this.reaction();
+        this.scrollTargetNode.removeEventListener("scroll", this.listener);
+        this.scrollTargetNode.removeEventListener("resize", this.listener);
     }
 
-    notifySizeChange() {
-        const {notifySizeChange} = this.props;
-        if (notifySizeChange) {
-            notifySizeChange(this.isDeployed);
-        }
+    listener() {
+        this.handleScroll();
     }
 
-    handleScroll(_?: Event, canDeploy?: boolean) {
+    /** Recalcule l'état du header, appelé à chaque scroll, resize ou changement de `canDeploy`. */
+    @classReaction(() => applicationStore.canDeploy)
+    handleScroll(canDeploy?: boolean) {
+
+        // Si on est déployé, on recalcule le seuil de déploiement.
         if (this.isDeployed) {
             this.deployThreshold = this.header ? this.header.clientHeight - 60 : 1000;
             this.placeholderHeight = this.header ? this.header.clientHeight : 1000;
         }
 
-        const {top} = this.scrollPosition();
+        // On détermine si on a dépassé le seuil.
+        const top = window.pageYOffset || document.documentElement.scrollTop;
         const isDeployed = (canDeploy !== undefined ? canDeploy : applicationStore.canDeploy) ? top <= this.deployThreshold : false;
 
+        // Et on se met à jour.
         if (isDeployed !== this.isDeployed) {
             this.isDeployed = isDeployed;
-            this.notifySizeChange();
+            const {notifySizeChange} = this.props;
+            if (notifySizeChange) {
+                notifySizeChange(this.isDeployed);
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import {injectStyle} from "../../../theming/inject-style";
 import styles from "./__style__/header.css";
 export type HeaderStyle = Partial<typeof styles>;
 
+/** Le header, posé par défaut par le Layout. */
 export const Header = injectStyle("header", ({classNames}: {classNames?: HeaderStyle}) => (
     <HeaderScrolling classNames={{
         deployed: `${styles.deployed} ${classNames!.deployed || ""}`,

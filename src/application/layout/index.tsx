@@ -19,6 +19,7 @@ export type LayoutStyle = Partial<typeof styles>;
 export {DefaultErrorCenter as ErrorCenter};
 export {Header, HeaderStyle};
 
+/** Props du Layout, comportant les différents composants injectables. */
 export interface LayoutProps {
     AppHeader?: ReactComponent<any>;
     children?: React.ReactChildren;
@@ -32,6 +33,7 @@ export interface LayoutProps {
     OtherRootComponent?: ReactComponent<any>;
 }
 
+/** Composant de Layout sans le provider de style. */
 const LayoutBase = injectStyle("layout", ({
     AppHeader = Header,
     children,
@@ -63,6 +65,7 @@ const LayoutBase = injectStyle("layout", ({
     </div>
 ));
 
+/** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
     actionBar?: ActionBarStyle;
     advancedSearch?: AdvancedSearchStyle;
@@ -84,6 +87,11 @@ export interface LayoutStyleProviderProps {
     messageCenter?: MessageCenterStyle;
 }
 
+/**
+ * Composant racine d'une application Focus, contient les composants transverses comme le header, le menu ou le centre de message.
+ *
+ * C'est également le point d'entrée pour la surcharge de CSS via la prop `injectedStyle`.
+ */
 export function Layout(props: LayoutProps & {injectedStyle?: LayoutStyleProviderProps}) {
     return (
         <StyleProvider {...props.injectedStyle}>

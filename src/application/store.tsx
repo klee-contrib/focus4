@@ -1,40 +1,81 @@
 import {action, observable} from "mobx";
 import * as React from "react";
 
+import {DropdownItem} from "focus-components/dropdown";
+
+/** Mode de l'application (consultation ou édition) */
 export type Mode = "consult" | "edit";
 
-export interface ApplicationAction {
-    summary?: React.ReactElement<any>;
-    barLeft?: React.ReactElement<any>;
-    barRight?: React.ReactElement<any>;
-    cartridge?: React.ReactElement<any>;
-    actions?: {
-        primary?: {className?: string, icon: string, iconLibrary?: "material" | "font-awesome" | "font-custom", label?: string, action: () => void}[];
-        secondary?: {className?: string, label: string, action: () => void}[];
-    };
-    canDeploy?: boolean;
+export interface PrimaryAction {
+    /** Action au clic sur le bouton. */
+    action: () => void;
+    /** Classe CSS additionnelle. */
+    className?: string;
+    /** Icône du bouton. */
+    icon: string;
+    /** Bibliothèque d'icône (par défaut: "material") */
+    iconLibrary?: "material" | "font-awesome" | "font-custom";
+    /** Nom du bouton. */
+    label?: string;
 }
 
+export interface ApplicationAction {
+    /** Actions transverses. */
+    actions?: {
+        /** Actions principales, affichées directement. */
+        primary?: PrimaryAction[];
+        /** Actions secondaires, affichées dans une dropdown. */
+        secondary?: DropdownItem[];
+    };
+    /** Précise si le header peut se déployer ou non. */
+    canDeploy?: boolean;
+    /** Composant de header gauche. */
+    barLeft?: React.ReactElement<any>;
+    /** Composant de header droit. */
+    barRight?: React.ReactElement<any>;
+    /** Composant de cartridge, affiché en mode déployé. */
+    cartridge?: React.ReactElement<any>;
+    /** Composant de résumé, affiché en mode replié. */
+    summary?: React.ReactElement<any>;
+}
+
+/** Store applicatif, regroupant des informations tranverses, et en particulier la gestion du header. */
 export class ApplicationStore implements ApplicationAction {
+    /** Actions transverses. */
     @observable actions: {
-        primary: {className?: string, icon: string, iconLibrary?: "material" | "font-awesome" | "font-custom", label?: string, action: () => void}[],
-        secondary: {className?: string, label: string, action: () => void}[],
+        /** Actions principales, affichées directement. */
+        primary: PrimaryAction[];
+        /** Actions secondaires, affichées dans une dropdown. */
+        secondary: DropdownItem[];
     } = {primary: [], secondary: []};
+    /** Précise si le header peut se déployer ou non. */
     @observable canDeploy = true;
-    @observable mode: {[mode: string]: number} = {};
+    /** Nombre de formulaires en consultation ou en édition. */
+    @observable mode: {consult?: number, edit?: number} = {};
+    /** Préfixe de la route courante. */
     @observable route: string;
 
+    /** Composant de header gauche. */
     @observable barLeft = <div />;
+    /** Composant de header droit. */
     @observable barRight = <div />;
+    /** Composant de cartridge, affiché en mode déployé. */
     @observable cartridge = <div />;
+    /** Composant de résumé, affiché en mode replié. */
     @observable summary = <div />;
 
+    /**
+     * Prend en compte un changement de mode sur un formulaire.
+     * @param newMode Nouveau mode.
+     * @param previousMode Ancien mode.
+     */
     @action
     changeMode(newMode: Mode, previousMode: Mode) {
-        this.mode[newMode] = this.mode[newMode] ? (this.mode[newMode] + 1) : 1;
-        this.mode[previousMode] = this.mode[previousMode] ? (this.mode[previousMode] - 1) : 0;
+        this.mode[newMode] = this.mode[newMode] ? (this.mode[newMode]! + 1) : 1;
+        this.mode[previousMode] = this.mode[previousMode] ? (this.mode[previousMode]! - 1) : 0;
     }
 
+    /** Réinitialise tous les composants et les actions du header. */
     @action
     clearHeader() {
         this.cartridge = <div />;
@@ -43,6 +84,11 @@ export class ApplicationStore implements ApplicationAction {
         this.actions = {primary: [], secondary: []};
     }
 
+    /**
+     * Met à jour plusieurs composants de header.
+     * @param action Etat du header.
+     * @param isPartial Mise à jour partielle.
+     */
     @action
     setHeader({cartridge, summary, actions, barLeft, canDeploy, barRight}: ApplicationAction, isPartial?: boolean) {
         if (!isPartial) {

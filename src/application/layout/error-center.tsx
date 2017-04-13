@@ -9,13 +9,19 @@ import style from "./__style__/error-center.css";
 export type ErrorCenterStyle = Partial<typeof style>;
 
 export interface ErrorCenterProps {
+    /** Déploie le centre d'erreur à l'initialisation. */
     areErrorsVisible?: boolean;
+    /** Classes CSS. */
     classNames?: ErrorCenterStyle;
+    /** Erreurs à ajouter à l'initilisation. */
     errors?: string[];
+    /** Nombre d'erreurs affiché (par défaut : 3). */
     numberDisplayed?: number;
+    /** Source des erreurs (par défaut : window). */
     source?: {onerror: (e: string) => void};
 }
 
+/** Centre d'erreurs Javascript, pour afficher toutes les erreurs directement dans l'application. */
 @injectStyle("errorCenter")
 @autobind
 @observer
@@ -24,6 +30,7 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
     @observable areErrorsVisible = this.props.areErrorsVisible || false;
     @observable errors = this.props.errors || [];
 
+    // Ajoute un listener sur la source pour enregistrer les erreurs.
     componentWillMount() {
         (this.props.source || window).onerror = (e => this.errors.push(e));
     }

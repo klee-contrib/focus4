@@ -6,6 +6,7 @@ import Dropdown from "focus-components/dropdown";
 
 import {applicationStore} from "../../store";
 
+/** Barre d'actions du header. */
 export const HeaderActions = observer<{className: string}>(
     ({className: cName}) => {
         const {actions} = applicationStore;
