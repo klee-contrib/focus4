@@ -19,8 +19,9 @@ export type AdvancedSearchStyle = Partial<typeof styles>;
 export interface AdvancedSearchProps {
     addItemHandler?: () => void;
     classNames?: AdvancedSearchStyle & {mosaicAdd?: string};
+    /** Par défaut : "left" */
+    facetBoxPosition?: "action-bar" | "left" | "none";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
-    hasActionBarFacetBox?: boolean;
     /** Par défault: true */
     hasBackToTop?: boolean;
     hasSearchBar?: boolean;
@@ -53,14 +54,21 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderFacetBox() {
-        const {nbDefaultDataListFacet, scopeFacetKey, store} = this.props;
-        return (
-            <FacetBox
-                nbDefaultDataList={nbDefaultDataListFacet}
-                scopeFacetKey={scopeFacetKey}
-                store={store}
-            />
-        );
+        const {classNames, facetBoxPosition = "left", nbDefaultDataListFacet, scopeFacetKey, store} = this.props;
+
+        if (facetBoxPosition === "left") {
+            return (
+                 <div className={`${styles.facetContainer} ${classNames!.facetContainer || ""}`}>
+                    <FacetBox
+                        nbDefaultDataList={nbDefaultDataListFacet}
+                        scopeFacetKey={scopeFacetKey}
+                        store={store}
+                    />
+                </div>
+            );
+        } else {
+            return null;
+        }
     }
 
     private renderListSummary() {
@@ -75,7 +83,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderActionBar() {
-        const {hasActionBarFacetBox, hasSearchBar, hasSelection, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
+        const {facetBoxPosition = "left", hasSearchBar, hasSelection, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
 
         if (store.groupingKey) {
             return null;
@@ -83,7 +91,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
 
         return (
             <ActionBar
-                hasFacetBox={hasActionBarFacetBox}
+                hasFacetBox={facetBoxPosition === "action-bar"}
                 hasSearchBar={hasSearchBar}
                 hasSelection={hasSelection}
                 nbDefaultDataListFacet={nbDefaultDataListFacet}
@@ -117,9 +125,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         const {addItemHandler, lineComponentMapper, mosaicComponentMapper, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, classNames} = this.props;
         return (
             <div>
-                <div className={`${styles.facetContainer} ${classNames!.facetContainer || ""}`}>
-                    {this.renderFacetBox()}
-                </div>
+                {this.renderFacetBox()}
                 <div className={`${styles.resultContainer} ${classNames!.resultContainer || ""}`}>
                     <ListWrapper
                         addItemHandler={addItemHandler}
