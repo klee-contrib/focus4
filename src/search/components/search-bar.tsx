@@ -9,7 +9,7 @@ import Button from "focus-components/button";
 import Icon from "focus-components/icon";
 import Select from "focus-components/select-mdl";
 
-import {toFlatValues} from "../../entity";
+import { fieldFor, StoreNode, toFlatValues } from "../../entity";
 import {injectStyle} from "../../theming";
 
 import {SearchStore} from "../store";
@@ -20,11 +20,11 @@ export type SearchBarStyle = Partial<typeof styles>;
 
 export interface SearchBarProps {
     classNames?: SearchBarStyle;
-    CriteriaComponent?: React.ReactElement<any>;
+    criteriaComponent?: React.ReactElement<any>;
     disableInputCriteria?: boolean;
     placeholder?: string;
     scopes?: {code: string; label?: string}[];
-    store: SearchStore<any>;
+    store: SearchStore<StoreNode<{}>>;
 }
 
 @injectStyle("searchBar")
@@ -39,7 +39,12 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
 
     @computed
     get flatCriteria() {
-        return toPairs(toFlatValues(this.props.store.criteria));
+        const {criteria} = this.props.store;
+        if (criteria) {
+            return toPairs(toFlatValues(criteria));
+        } else {
+            return [];
+        }
     }
 
     @computed
@@ -61,6 +66,19 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
         }
     }
 
+    @computed
+    get error() {
+        const error = toPairs(this.props.store.criteriaErrors)
+            .filter(([_, isError]) => isError)
+            .map(([crit]) => crit)
+            .join(", ");
+        if (error) {
+            return `${i18n.t("search.bar.error")} : ${error}`;
+        } else {
+            return undefined;
+        }
+    }
+
     componentDidMount() {
         this.focusQuery();
     }
@@ -74,16 +92,16 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     @action
     onInputChange({currentTarget}: {currentTarget: HTMLInputElement}) {
         const {disableInputCriteria, store} = this.props;
-        if (disableInputCriteria) {
+        if (disableInputCriteria || !store.criteria) {
             store.query = currentTarget.value.trim();
-        } else {
+        } else if (store.criteria) {
             const tokens = currentTarget.value.trim().split(" ");
             let token = tokens[0];
             let skip = 0;
             this.criteriaList = [];
             while (1) {
                 const [crit = "", value = ""] = token && token.split(/:(.+)/) || [];
-                if (crit && value && store.criteria[crit] && !this.criteriaList.find(u => u === crit)) {
+                if (crit && value && (store.criteria as any)[crit] && !this.criteriaList.find(u => u === crit)) {
                     (store.criteria as any)[crit].value = value;
                     skip++;
                     this.criteriaList.push(crit);
@@ -109,11 +127,24 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
         });
     }
 
+    @action
+    clear() {
+        const {store} = this.props;
+        store.query = "";
+        if (store.criteria) {
+            store.criteria.clear();
+        }
+    }
+
+    toggleCriteria() {
+        this.showCriteriaComponent = !this.showCriteriaComponent;
+    }
+
     render() {
-        const {placeholder, store, scopes, classNames, CriteriaComponent} = this.props;
+        const {placeholder, store, scopes, classNames, criteriaComponent} = this.props;
         return (
-            <div>
-                <div className={`${styles.bar} ${classNames!.bar || ""}`}>
+            <div style={{position: "relative"}}>
+                <div className={`${styles.bar} ${classNames!.bar || ""} ${this.error ? `${styles.error} ${classNames!.error || ""}` : ""}`}>
                     {scopes ?
                         <Select
                             hasUndefined={true}
@@ -133,9 +164,27 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                             value={this.text}
                         />
                     </div>
-                    {CriteriaComponent ? <Button icon={`keyboard_arrow_${this.showCriteriaComponent ? "up" : "down"}`} onClick={() => this.showCriteriaComponent = !this.showCriteriaComponent} shape="icon" /> : null}
+                    {this.text && !this.showCriteriaComponent ? <Button icon="clear" onClick={this.clear} shape="icon" /> : null}
+                    {store.criteria && criteriaComponent && !this.showCriteriaComponent ?
+                        <Button icon={`keyboard_arrow_${this.showCriteriaComponent ? "up" : "down"}`} onClick={this.toggleCriteria} shape="icon" />
+                    : null}
                 </div>
-                {this.showCriteriaComponent ? CriteriaComponent : null}
+                {!this.showCriteriaComponent && this.error ?
+                    <span className={`${styles.errors} ${classNames!.errors || ""}`}>
+                        {this.error}
+                    </span>
+                : null}
+                {this.showCriteriaComponent ?
+                    <div className={`${styles.criteria} ${classNames!.criteria || ""}`}>
+                        <Button icon="clear" onClick={this.toggleCriteria} shape="icon" />
+                        {fieldFor(store.query, {label: "search.bar.query", onChange: query => store.query = query})}
+                        {criteriaComponent}
+                        <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
+                            <Button color="primary" onClick={this.toggleCriteria} label="search.bar.close" />
+                            <Button onClick={this.clear} shape={null} label="search.bar.reset" />
+                        </div>
+                    </div>
+                : null}
             </div>
         );
     }

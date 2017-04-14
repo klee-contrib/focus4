@@ -11,16 +11,18 @@ import {StyleInjector} from "../theming";
 import {Field, FieldProps} from "./field";
 
 /** Options communes à tous les champs. */
-export interface BaseOptions {
+export interface BaseOptions<T> {
     error?: string;
     isEdit?: boolean;
     labelKey?: string;
     name?: string;
+    onChange?: (value: T) => void;
     value?: any;
     ref?: (field: Field) => void;
     contentCellPosition?: string;
     contentOffset?: number;
     contentSize?: number;
+    forceErrorDisplay?: boolean;
     hasLabel?: boolean;
     isRequired?: boolean;
     label?: string;
@@ -37,15 +39,14 @@ export interface AutocompleteSelectOptions extends AutocompleteTextOptions {
 }
 
 /** Options pour `autocompleteTextFor`. */
-export interface AutocompleteTextOptions extends BaseOptions {
-    onChange?: (code: string) => void;
+export interface AutocompleteTextOptions extends BaseOptions<string> {
 
     /** Service de recherche textuelle. */
     querySearcher: (text: string) => Promise<AutoCompleteResult>;
 }
 
 /** Options pour `fieldForWith` */
-export interface FieldOptions<DisplayProps, FieldProps, InputProps> extends BaseOptions {
+export interface FieldOptions<T, DisplayProps, FieldProps, InputProps> extends BaseOptions<T> {
     DisplayComponent?: ReactComponent<DisplayProps>;
     FieldComponent?: ReactComponent<FieldProps>;
     InputComponent?: ReactComponent<InputProps>;
@@ -53,8 +54,7 @@ export interface FieldOptions<DisplayProps, FieldProps, InputProps> extends Base
 }
 
 /** Options pour `selectFor`. */
-export interface SelectOptions<T> extends BaseOptions {
-    onChange?: (code: T) => void;
+export interface SelectOptions<T> extends BaseOptions<T> {
     labelKey?: string;
     valueKey?: string;
     values?: {code?: T, id?: T}[];
@@ -70,6 +70,9 @@ export interface TextOptions {
     values?: {}[];
 }
 
+/** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */
+const $entity = {domain: {}, type: "field" as "field", isRequired: false, name: "", translationKey: ""};
+
 /**
  * Crée un champ de type AutocompleteSelect.
  * @param field La définition de champ.
@@ -77,7 +80,7 @@ export interface TextOptions {
  */
 export function autocompleteSelectFor<T>(field: EntityField<T>, options: AutocompleteSelectOptions) {
     (options as FieldProps).InputComponent = AutocompleteSelect;
-    return fieldForWith(field, options);
+    return fieldForWith<T, any, any, any>(field, options);
 }
 
 /**
@@ -87,7 +90,7 @@ export function autocompleteSelectFor<T>(field: EntityField<T>, options: Autocom
  */
 export function autocompleteTextFor<T>(field: EntityField<T>, options: AutocompleteTextOptions) {
     (options as FieldProps).InputComponent = AutocompleteText;
-    return fieldForWith(field, options);
+    return fieldForWith<T, any, any, any>(field, options);
 }
 
 /**
@@ -95,9 +98,11 @@ export function autocompleteTextFor<T>(field: EntityField<T>, options: Autocompl
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function displayFor<T>(field: EntityField<T>, options: BaseOptions & {[key: string]: any} = {}) {
+export function displayFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+export function displayFor<T>(field: T, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+export function displayFor<T>(field: EntityField<T> | T, options: BaseOptions<T> & {[key: string]: any} = {}) {
     options.isEdit = false;
-    return fieldForWith(field, options);
+    return fieldFor(field, options);
 }
 
 /**
@@ -105,8 +110,14 @@ export function displayFor<T>(field: EntityField<T>, options: BaseOptions & {[ke
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<T>(field: EntityField<T>, options: BaseOptions & {[key: string]: any} = {}) {
-    return fieldForWith(field, options);
+export function fieldFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+export function fieldFor<T>(field: T, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+export function fieldFor<T>(field: EntityField<T> | T, options: BaseOptions<T> & {[key: string]: any} = {}) {
+    if (isField(field)) {
+        return fieldForWith(field, options);
+    } else {
+        return fieldForWith({$entity, value: field}, options);
+    }
 }
 
 /**
@@ -114,7 +125,18 @@ export function fieldFor<T>(field: EntityField<T>, options: BaseOptions & {[key:
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
+export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<T, DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
+
+    // Si on ne pose pas de ref, on considère qu'on n'a pas de formulaire et donc qu'on attend un comportement par défaut un peu différent.
+    if (!options.ref) {
+        if (options.isEdit === undefined) {
+            options.isEdit = true;
+        }
+        if (options.forceErrorDisplay === undefined) {
+            options.forceErrorDisplay = true;
+        }
+    }
+
     const props = buildFieldProps(field, options);
     return <Field {...props as any} />;
 }
@@ -125,10 +147,16 @@ export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: Ent
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
+export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
+export function selectFor<T>(field: T, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
+export function selectFor<T>(field: EntityField<T> | T, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
     (options as FieldProps).InputComponent = Select;
     (options as FieldProps).values = values.slice(); // On s'assure que la liste de référence passée au composant ne soit pas observable.
-    return fieldForWith(field, options);
+    if (isField(field)) {
+        return fieldForWith(field, options);
+    } else {
+        return fieldForWith({$entity, value: field}, options);
+    }
 }
 
 /**
@@ -158,7 +186,7 @@ export function textFor<T>(field: EntityField<T>, options: TextOptions = {}) {
  * @param field La définition du champ.
  * @param options Les options du champ.
  */
-export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions = {}): FieldProps {
+export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions<T> = {}): FieldProps {
     const {value, $entity: {domain, translationKey, isRequired}} = field;
     const {hasLabel = true, ref, ...otherOptions} = options;
     const dom = domain || {};
@@ -176,4 +204,12 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions =
     };
 
     return {...(domain || {}), ...props, ...otherOptions};
+}
+
+/**
+ * Vérifie que l'entrée est un champ.
+ * @param field Le champ ou la valeur.
+ */
+function isField<T>(field: EntityField<T> | T): field is EntityField<T> {
+    return !!(field as EntityField<T>).$entity;
 }

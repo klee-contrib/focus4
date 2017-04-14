@@ -74,6 +74,21 @@ Un `EntityStore` peut contenir des objets avec autant de niveau de composition q
 
 
 ### API
+
+#### `fieldFor(field, options?)`
+La fonction `fieldFor`, ainsi que ses variantes spécialisées **`autocompleteSelectFor`**, **`autocompleteTextFor`**, **`displayFor`**, **`stringFor`** et **`textFor`**, permettent de créer un champ d'entrée ou d'affichage avec un libellé, en utilisant les composants du domaine ou par défaut. Elle prend comme paramètres :
+- `field`, l'`EntityField` contenant la valeur et les métadonnées du champ à afficher. La plupart du temps, `field` est une propriété dans un `EntityStore`, mais il est également possible de le créer à la volée. Il est également possible de passer directement une valeur s'il n'y a pas de métadonnées associées (elles seront toutes vides du coup).
+- `options`, les différentes options à passer au champ. Les options disponibles dépendent de la fonction utilisée et certaines sont conservées par le composant `Field` qui wrappe la logique du champ.
+
+#### `fieldForWith(field, options?)`
+La fonction `fieldForWith` est la même fonction que `fieldFor`, à l'exception du fait qu'elle gère la surcharge manuelle des composants d'input, de label, d'affichage, ou carrément un composant qui remplace les 3.
+
+#### `selectFor(field, values, options?)`
+La fonction `selectFor` affiche un champ contenant un code de liste de référence. Elle prend comme paramètres :
+- `field`, comme `fieldFor`
+- `values`, la liste des valeurs de la liste de référence à utilise pour résoudre le code.
+- `options`, les différentes options à passer au champ.
+
 #### `makeEntityStore(simpleNodes, listNodes, entities, entityMapping?)`
 La fonction `makeEntityStore` permet de créer un nouvel `EntityStore`. Elle prend comme paramètres :
 - `simpleNodes`, un objet dont les propriétés décrivent tous les noeuds "simples" du store (la valeur n'importe peu, mais il convient de la typer avec le type de noeud).

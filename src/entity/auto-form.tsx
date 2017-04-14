@@ -305,14 +305,14 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    displayFor<T>(field: EntityField<T>, options?: BaseOptions & {[key: string]: any}) { return displayFor(field, options); }
+    displayFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}) { return displayFor(field, options); }
 
     /**
      * Crée un champ standard.
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldFor<T>(field: EntityField<T>, options: BaseOptions & {[key: string]: any} = {}) {
+    fieldFor<T>(field: EntityField<T>, options: BaseOptions<T> & {[key: string]: any} = {}) {
         return fieldFor(field, this.setFieldOptions(field, options));
     }
 
@@ -321,7 +321,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
+    fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<T, DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
         return fieldForWith(field, this.setFieldOptions(field, options));
     }
 

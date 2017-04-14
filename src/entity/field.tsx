@@ -33,6 +33,7 @@ export interface FieldProps extends Domain {
     contentCellPosition?: string;
     contentOffset?: number;
     contentSize?: number;
+    forceErrorDisplay?: boolean;
     hasLabel?: boolean;
     isRequired?: boolean;
     label?: string;
@@ -47,6 +48,7 @@ const omittedProps = [
     "contentCellPosition",
     "contentOffset",
     "contentSize",
+    "forceErrorDisplay",
     "hasLabel",
     "isRequired",
     "label",
@@ -67,7 +69,7 @@ const omittedProps = [
 export class Field extends React.Component<FieldProps & {ref: (field: StyleInjector<Field>) => void}, void> {
 
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
-    @observable showError = false;
+    @observable showError = this.props.forceErrorDisplay || false;
 
     componentWillUpdate({value}: FieldProps) {
         // On affiche l'erreur dès que et à chaque fois que l'utilisateur modifie la valeur (et à priori pas avant).
