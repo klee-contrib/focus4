@@ -23,6 +23,7 @@ import {
     fieldFor,
     fieldForWith,
     FieldOptions,
+    isField,
     selectFor,
     SelectOptions,
     stringFor,
@@ -124,7 +125,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    formInit(storeData: E, services: ServiceConfig, {entity, className, hasForm, initiallyEditing}: AutoFormOptions<E> = {}) {
+    formInit(storeData: E, services: ServiceConfig, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
         this.storeData = storeData;
         this.services = services;
         this.entity = entity || createViewModel(storeData);
@@ -132,6 +133,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         this.isEdit = initiallyEditing || false;
         this.hasForm = hasForm !== undefined ? hasForm : true;
         this.className = className || "";
+        this.i18nPrefix = i18nPrefix || "focus";
 
         // On met en place la réaction de chargement.
         if (services.getLoadParams) {
@@ -311,14 +313,20 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    displayFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}) { return displayFor(field, options); }
+    displayFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+    displayFor<T>(field: T, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+    displayFor<T>(field: EntityField<T> | T, options: BaseOptions<T> & {[key: string]: any} = {}) {
+        return displayFor(field, options);
+    }
 
     /**
      * Crée un champ standard.
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldFor<T>(field: EntityField<T>, options: BaseOptions<T> & {[key: string]: any} = {}) {
+    fieldFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+    fieldFor<T>(field: T, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
+    fieldFor<T>(field: EntityField<T> | T, options: BaseOptions<T> & {[key: string]: any} = {}) {
         return fieldFor(field, this.setFieldOptions(field, options));
     }
 
@@ -337,7 +345,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
+    selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
+    selectFor<T>(field: T, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
+    selectFor<T>(field: EntityField<T> | T, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
         return selectFor(field, values, this.setFieldOptions(field, options));
     }
 
@@ -360,18 +370,20 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition du champ.
      * @param options Les options du champ.
      */
-    private setFieldOptions<T>(field: EntityField<T>, options: {[key: string]: any}) {
-        options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
-        options["error"] = this.errors[field.$entity.translationKey];
-
+    private setFieldOptions<T>(field: EntityField<T> | T, options: {[key: string]: any}) {
         if (options["isEdit"] === undefined) {
             options["isEdit"] = this.isEdit;
         }
 
-        if ((this.entity as any)[field.$entity.name]) {
-            options["onChange"] = options["onChange"] || action((value: any) =>
-                (this.entity as any)[field.$entity.name].value = value
-            );
+        if (isField(field)) {
+            options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
+            options["error"] = this.errors[field.$entity.translationKey];
+
+            if ((this.entity as any)[field.$entity.name]) {
+                options["onChange"] = options["onChange"] || action((value: any) =>
+                    (this.entity as any)[field.$entity.name].value = value
+                );
+            }
         }
 
         return options as any;

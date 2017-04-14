@@ -71,7 +71,13 @@ export interface TextOptions {
 }
 
 /** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */
-const $entity = {domain: {}, type: "field" as "field", isRequired: false, name: "", translationKey: ""};
+export const $entity = {
+    domain: {},
+    type: "field" as "field",
+    isRequired: false,
+    name: "",
+    translationKey: ""
+};
 
 /**
  * Crée un champ de type AutocompleteSelect.
@@ -210,6 +216,6 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions<T
  * Vérifie que l'entrée est un champ.
  * @param field Le champ ou la valeur.
  */
-function isField<T>(field: EntityField<T> | T): field is EntityField<T> {
-    return !!(field as EntityField<T>).$entity;
+export function isField<T>(field: EntityField<T> | T): field is EntityField<T> {
+    return !!(field && (field as EntityField<T>).$entity);
 }
