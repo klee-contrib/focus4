@@ -17,6 +17,8 @@ export type FacetStyle = Partial<typeof styles>;
 export interface FacetProps {
     classNames?: FacetStyle;
     facet: FacetOutput;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     nbDefaultDataList: number;
     selectedDataKey: string | undefined;
     selectHandler: (facetKey: string, dataKey: string | undefined) => void;
@@ -57,11 +59,11 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     private renderShowAllDataList() {
-        const {facet, nbDefaultDataList, classNames} = this.props;
+        const {classNames, facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
         if (facet.values.length > nbDefaultDataList) {
             return (
                 <div className={`${styles.show} ${classNames!.show || ""}`} onClick={() => this.isShowAll = !this.isShowAll}>
-                    {i18n.t(this.isShowAll ? "show.less" : "show.all")}
+                    {i18n.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                 </div>
             );
         } else {

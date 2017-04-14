@@ -123,7 +123,7 @@ export function stringValidator(text: string, options?: StringOptions) {
 }
 
 function getErrorLabel(type: string, options?: TrKey): string {
-    return i18n.t(options && options.translationKey ? options.translationKey : `domain.validation.${type}`);
+    return i18n.t(options && options.translationKey ? options.translationKey : `focus.validation.${type}`);
 }
 
 /**

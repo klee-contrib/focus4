@@ -1,5 +1,6 @@
 .vscode
 dist
+.stylelintrc.json
 tsconfig.json
 tslint.json
 copy-css.js

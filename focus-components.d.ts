@@ -393,3 +393,7 @@ declare module "focus-components/snackbar" {
 
     export default function Snackbar(props: SnackbarProps): React.ReactElement<any>
 }
+
+declare module "focus-components/translation/resources/fr-FR" {
+    export default {focus: {components: {}}}
+}

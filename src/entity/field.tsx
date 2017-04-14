@@ -91,7 +91,7 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
         // On vérifie que le champ n'est pas vide et obligatoire.
         const {isRequired, validator, label = ""} = this.props;
         if (isRequired && (undefined === value || null === value || "" === value)) {
-            return i18n.t("field.required");
+            return i18n.t("focus.validation.required");
         }
 
         // On applique le validateur du domaine.

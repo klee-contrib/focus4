@@ -50,6 +50,11 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
     }
 
     @computed
+    get flatResultList() {
+        return flatten(this.results.map(g => g.list.slice()));
+    }
+
+    @computed
     get groupingLabel() {
         return this.facets.find(facet => facet.code === this.groupingKey).label;
     }
@@ -218,11 +223,6 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
         searchGroupStore.selectedItems = selectedItems as any;
         searchGroupStore.selectionStatus = selectionStatus as any;
         return observable(searchGroupStore);
-    }
-
-    @computed
-    private get flatResultList() {
-        return flatten(this.results.map(g => g.list.slice()));
     }
 }
 

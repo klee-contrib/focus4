@@ -79,7 +79,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     private renderLines() {
-        const {classNames, hideAddItemHandler, LineComponent, MosaicComponent} = this.props;
+        const {classNames, hideAddItemHandler, i18nPrefix = "focus", LineComponent, MosaicComponent} = this.props;
 
         let Component;
         if (this.mode === "list" && LineComponent) {
@@ -100,7 +100,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
                     onClick={this.addItemHandler}
                 >
                     <Icon name="add" />
-                    {i18n.t("list.add")}
+                    {i18n.t(`${i18nPrefix}.list.add`)}
                 </div>
             ), ...items];
         }

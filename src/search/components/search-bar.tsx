@@ -22,6 +22,8 @@ export interface SearchBarProps {
     classNames?: SearchBarStyle;
     criteriaComponent?: React.ReactElement<any>;
     disableInputCriteria?: boolean;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     placeholder?: string;
     scopes?: {code: string; label?: string}[];
     store: SearchStore<StoreNode<{}>>;
@@ -68,12 +70,13 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
 
     @computed
     get error() {
-        const error = toPairs(this.props.store.criteriaErrors)
+        const {i18nPrefix = "focus", store} = this.props;
+        const error = toPairs(store.criteriaErrors)
             .filter(([_, isError]) => isError)
             .map(([crit]) => crit)
             .join(", ");
         if (error) {
-            return `${i18n.t("search.bar.error")} : ${error}`;
+            return `${i18n.t(`${i18nPrefix}.search.bar.error`)} : ${error}`;
         } else {
             return undefined;
         }
@@ -141,7 +144,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     }
 
     render() {
-        const {placeholder, store, scopes, classNames, criteriaComponent} = this.props;
+        const {i18nPrefix = "focus", placeholder, store, scopes, classNames, criteriaComponent} = this.props;
         return (
             <div style={{position: "relative"}}>
                 <div className={`${styles.bar} ${classNames!.bar || ""} ${this.error ? `${styles.error} ${classNames!.error || ""}` : ""}`}>
@@ -177,11 +180,11 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                 {this.showCriteriaComponent ?
                     <div className={`${styles.criteria} ${classNames!.criteria || ""}`}>
                         <Button icon="clear" onClick={this.toggleCriteria} shape="icon" />
-                        {fieldFor(store.query, {label: "search.bar.query", onChange: query => store.query = query})}
+                        {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: query => store.query = query})}
                         {criteriaComponent}
                         <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
-                            <Button color="primary" onClick={this.toggleCriteria} label="search.bar.close" />
-                            <Button onClick={this.clear} shape={null} label="search.bar.reset" />
+                            <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.close`} />
+                            <Button onClick={this.clear} shape={null} label={`${i18nPrefix}.search.bar.reset`} />
                         </div>
                     </div>
                 : null}

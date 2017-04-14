@@ -19,6 +19,8 @@ export type SummaryStyle = Partial<typeof styles>;
 export interface ListSummaryProps {
     classNames?: SummaryStyle;
     exportAction?: () => void;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     isSingleScope?: boolean;
     scopes: {code: string, label?: string}[];
     store: SearchStore<any>;
@@ -80,7 +82,7 @@ export class Summary extends React.Component<ListSummaryProps, void> {
     }
 
     render() {
-        const {classNames, exportAction, store} = this.props;
+        const {classNames, exportAction, i18nPrefix = "focus", store} = this.props;
         const {groupingKey, totalCount, query} = store;
 
         const plural = totalCount > 1 ? "s" : "";
@@ -89,20 +91,20 @@ export class Summary extends React.Component<ListSummaryProps, void> {
         return (
             <div className={`${styles.summary} ${classNames!.summary || ""}`}>
                 <span className={sentence}>
-                    <strong>{totalCount}&nbsp;</strong>{i18n.t(`search.summary.result${plural}`)}
+                    <strong>{totalCount}&nbsp;</strong>{i18n.t(`${i18nPrefix}.search.summary.result${plural}`)}
                 </span>
                 {query && query.trim().length > 0 ?
-                    <span className={sentence}> {`${i18n.t("search.summary.for")} "${query}"`}</span>
+                    <span className={sentence}> {`${i18n.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
                 : null}
                 {this.filterList.length ?
                     <div className={`${styles.chips} ${classNames!.chips || ""}`}>
-                        <span className={sentence}>{i18n.t("search.summary.by")}</span>
+                        <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.by`)}</span>
                         {this.filterList.map(chip => <Chips {...chip}/>)}
                     </div>
                 : null}
                 {groupingKey ?
                     <div className={`${styles.chips} ${classNames!.chips || ""}`}>
-                        <span className={sentence}>{i18n.t(`search.summary.group${plural}`)}</span>
+                        <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
                         <Chips
                             key={groupingKey}
                             label={store.facets.find(facet => store.groupingKey === facet.code).label}
@@ -112,7 +114,7 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                 : null}
                 {exportAction ?
                     <div className={`${styles.print} ${classNames!.print || ""}`}>
-                        <Button handleOnClick={exportAction} icon="print" label="result.export"  />
+                        <Button handleOnClick={exportAction} icon="print" label={`${i18nPrefix}.search.summary.export`}  />
                     </div>
                 : null}
             </div>

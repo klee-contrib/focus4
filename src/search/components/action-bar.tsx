@@ -25,6 +25,8 @@ export interface ActionBarProps {
     hasFacetBox?: boolean;
     hasSearchBar?: boolean;
     hasSelection?: boolean;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     /** Par défaut : 6 */
     nbDefaultDataListFacet?: number;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
@@ -70,13 +72,13 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     }
 
     private get filterButton() {
-        const {classNames, hasFacetBox, store} = this.props;
+        const {classNames, hasFacetBox, i18nPrefix = "focus", store} = this.props;
         if (hasFacetBox && isSearch(store)) {
             return (
                 <div style={{position: "relative"}}>
                     <Button
                         onClick={() => this.setState({facetBoxDisplay: !this.state.facetBoxDisplay})}
-                        label="list.actionBar.filter"
+                        label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
                     />
                     {this.state.facetBoxDisplay ? <div className={`${styles.triangle} ${classNames!.triangle || ""}`} /> : null}
@@ -89,7 +91,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
 
     @computed
     private get sortButton() {
-        const {orderableColumnList, store} = this.props;
+        const {i18nPrefix = "focus", orderableColumnList, store} = this.props;
 
         if (!store.selectedItems.size && (isSearch(store) || isList(store)) && orderableColumnList) {
             const orderOperationList: DropdownItem[] = [];
@@ -108,7 +110,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
             return (
                 <Dropdown
                     button={{
-                        label: currentItem ? `${i18n.t("list.actionBar.sortBy")} ${currentItem.label}` : "list.actionBar.sort",
+                        label: currentItem ? `${i18n.t(`${i18nPrefix}.search.action.sortBy`)} ${i18n.t(currentItem.label)}` : `${i18nPrefix}.search.action.sort`,
                         shape: null
                     }}
                     operations={orderOperationList}
@@ -121,7 +123,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
 
     @computed
     private get groupButton() {
-        const {store} = this.props;
+        const {i18nPrefix = "focus", store} = this.props;
 
         if (isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
             const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
@@ -141,9 +143,9 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
 
             if (!isEmpty(groupOperationList)) {
                 if (!this.state.facetBoxDisplay) {
-                    return <Dropdown button={{label: "list.actionBar.group", shape: null}} operations={groupOperationList} />;
+                    return <Dropdown button={{label: `${i18nPrefix}.search.action.group`, shape: null}} operations={groupOperationList} />;
                 } else {
-                    return <Button disabled={true} label="list.actionBar.group" />;
+                    return <Button disabled={true} label={`${i18nPrefix}.search.action.filter`} />;
                 }
             }
         }
@@ -191,7 +193,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     }
 
     render() {
-        const {classNames, group, hasFacetBox, nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", store} = this.props;
+        const {classNames, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", store} = this.props;
         return (
             <div className={`${styles.container} ${classNames!.container || ""}`}>
                 <div className={`${styles.bar} ${classNames!.bar || ""} ${store.selectedItems.size ? `${styles.selection} ${classNames!.selection || ""}` : ""}`}>
@@ -201,7 +203,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                             <strong>{`${group.label} (${group.totalCount})`}</strong>
                         : null}
                         {store.selectedItems.size ?
-                            <strong>{`${store.selectedItems.size} ${i18n.t(`list.actionBar.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`)}`}</strong>
+                            <strong>{`${store.selectedItems.size} ${i18n.t(`${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`)}`}</strong>
                         : null}
                         {this.filterButton}
                         {this.sortButton}

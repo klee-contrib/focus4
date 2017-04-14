@@ -18,6 +18,8 @@ export interface ResultsProps {
     /** Par défaut: 5 */
     groupPageSize?: number;
     hasSelection: boolean;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     lineComponentMapper?: (scope: string) => ReactComponent<any>;
     lineProps?: {};
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
@@ -62,7 +64,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {classNames, groupOperationLists = {}, groupPageSize = 5, hasSelection, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
+        const {classNames, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
@@ -71,6 +73,7 @@ export class Results extends React.Component<ResultsProps, void> {
                 group={group}
                 groupOperationList={groupOperationLists[groupKey]}
                 hasSelection={hasSelection}
+                i18nPrefix={i18nPrefix}
                 LineComponent={lineComponentMapper && lineComponentMapper(groupKey)}
                 MosaicComponent={mosaicComponentMapper && mosaicComponentMapper(groupKey)}
                 lineProps={lineProps}
@@ -104,10 +107,11 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     render() {
-        const {results, totalCount} = this.props.store;
+        const {i18nPrefix = "focus", store} = this.props;
+        const {results, totalCount} = store;
 
         if (0 === totalCount) {
-            const Empty = this.props.emptyComponent || (() => <div>{i18n.t("search.empty")}</div>);
+            const Empty = this.props.emptyComponent || (() => <div>{i18n.t(`${i18nPrefix}.search.empty`)}</div>);
             return <Empty />;
         }
 

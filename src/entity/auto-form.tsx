@@ -44,6 +44,9 @@ export interface AutoFormOptions<E> {
     /** Par défaut: true */
     hasForm?: boolean;
 
+    /** Préfixe i18n pour les messages du formulaire (par défaut: "focus") */
+    i18nPrefix?: string;
+
     /** Par défaut: false */
     initiallyEditing?: boolean;
 }
@@ -98,6 +101,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
 
     /** Insère ou non un formulaire HTML. */
     private hasForm: boolean;
+
+    /** Préfixe i18n pour les messages du formulaire */
+    private i18nPrefix: string;
 
     /** Utilise ou non un ViewModel personnalisé, passé en options. */
     private isCustomEntity: boolean;
@@ -166,7 +172,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         if (this.services.delete) {
             this.isLoading = true;
             await this.services.delete(toFlatValues(this.entity));
-            messageStore.addSuccessMessage("detail.deleted");
+            messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.deleted`);
             runInAction(() => {
                 this.isLoading = false;
                 this.storeData.clear();
@@ -204,7 +210,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
             this.isLoading = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity));
-                messageStore.addSuccessMessage("detail.saved");
+                messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.saved`);
                 runInAction(() => {
                     this.isLoading = false;
                     this.isEdit = false;

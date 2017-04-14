@@ -15,6 +15,8 @@ export interface ListBaseProps<T, P extends {data?: T}> {
     classNames?: ListStyle;
     lineClassNames?: LineStyle;
     lineProps?: P;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     isManualFetch?: boolean;
     itemKey?: keyof T;
     offset?: number;
@@ -67,7 +69,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
     }
 
     protected renderBottomRow() {
-        const {classNames, isManualFetch, showAllHandler} = this.props;
+        const {classNames, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
         if (isManualFetch && this.hasMoreData || showAllHandler) {
             return (
                 <div className={`${styles.bottomRow} ${classNames!.bottomRow || ""}`}>
@@ -76,14 +78,14 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
                             handleOnClick={this.handleShowMore}
                             icon="add"
                             shape={null}
-                            label={`${i18n.t("show.more")} (${this.displayedData.length} / ${this.data.length} ${i18n.t("show.count")})`}
+                            label={`${i18n.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18n.t(`${i18nPrefix}.list.show.displayed`)})`}
                         />
                     : <div />}
                     {showAllHandler ?
                         <Button
                             handleOnClick={showAllHandler}
                             icon="arrow_forward"
-                            label="show.all"
+                            label={`${i18nPrefix}.list.show.all`}
                             shape={null}
                         />
                     : null}

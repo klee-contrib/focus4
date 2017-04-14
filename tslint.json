@@ -64,6 +64,7 @@
         "no-eval": true,
         "no-inferrable-types": [true],
         "no-internal-module": true,
+        "no-invalid-template-strings": true,
         "no-mergeable-namespace": true,
         "no-misused-new": true,
         "no-namespace": true,
@@ -99,6 +100,7 @@
             true,
             "ignore-for-loop"
         ],
+        "no-sparse-arrays": true,
         "prefer-const": true,
         "prefer-function-over-method": [
             true,

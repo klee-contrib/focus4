@@ -16,6 +16,8 @@ export interface ListWrapperProps {
     canChangeMode?: boolean;
     classNames?: ListWrapperStyle;
     hideAddItemHandler?: boolean;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     mode?: "list" | "mosaic";
     mosaicWidth?: number;
     mosaicHeight?: number;
@@ -60,7 +62,7 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
     }
 
     render() {
-        const {classNames, children, canChangeMode, hideAddItemHandler} = this.props;
+        const {classNames, children, canChangeMode, hideAddItemHandler, i18nPrefix = "focus"} = this.props;
         const {mode, addItemHandler} = this.childContext;
         return (
             <div className={`${styles.wrapper} ${classNames!.wrapper || ""}`}>
@@ -71,7 +73,7 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                             onClick={() => this.childContext.mode = "list"}
                             icon="list"
                             shape="icon"
-                            label= "list.list"
+                            label={`${i18nPrefix}.list.mode.list`}
                         />
                     : null}
                     {canChangeMode ?
@@ -80,14 +82,14 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                             onClick={() => this.childContext.mode = "mosaic"}
                             icon="apps"
                             shape="icon"
-                            label= "list.mosaic"
+                            label={`${i18nPrefix}.list.mode.mosaic`}
                         />
                     : null}
                     {!hideAddItemHandler && addItemHandler && mode === "list" ?
                         <Button
                             onClick={addItemHandler}
                             icon="add"
-                            label="list.add"
+                            label={`${i18nPrefix}.list.add`}
                             shape={null}
                         />
                     : null}

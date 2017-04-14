@@ -20,6 +20,8 @@ export interface Props {
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;
+    /** Par défaut : "focus" */
+    i18nPrefix?: string;
     LineComponent?: ReactComponent<any>;
     lineProps?: {};
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
@@ -41,7 +43,7 @@ export class Group extends React.Component<Props, void> {
     }
 
     private renderList() {
-        const {classNames, group, hasSelection, perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store} = this.props;
+        const {classNames, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
@@ -50,6 +52,7 @@ export class Group extends React.Component<Props, void> {
                     data={group.list}
                     hasSelection={hasSelection}
                     hideAddItemHandler={!!group.code}
+                    i18nPrefix={i18nPrefix}
                     isManualFetch={!!group.code}
                     LineComponent={LineComponent}
                     MosaicComponent={MosaicComponent}
@@ -61,7 +64,7 @@ export class Group extends React.Component<Props, void> {
                 />
                 {store.isLoading ?
                     <div style={{padding: "15px"}}>
-                        {i18n.t("search.loadingMore")}
+                        {i18n.t(`${i18nPrefix}.search.loading`)}
                     </div>
                 : null}
             </div>
