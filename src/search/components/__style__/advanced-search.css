@@ -1,9 +1,15 @@
 .facetContainer {
     float: left;
+    width: 275px;
+    box-sizing: border-box;
 }
 
 .resultContainer {
-    display: table-cell;
-    padding-left: 10px;
-    width: 5000px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.facetContainer + .resultContainer {
+    width: calc(100% - 285px);
+    margin-left: 285px;
 }

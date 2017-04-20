@@ -145,7 +145,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                 if (!this.state.facetBoxDisplay) {
                     return <Dropdown button={{label: `${i18nPrefix}.search.action.group`, shape: null}} operations={groupOperationList} />;
                 } else {
-                    return <Button disabled={true} label={`${i18nPrefix}.search.action.filter`} />;
+                    return <Button disabled={true} label={`${i18nPrefix}.search.action.group`} />;
                 }
             }
         }
