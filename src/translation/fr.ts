@@ -36,7 +36,6 @@ export const fr = {
                 query: "Contient les mots",
                 reset: "Réinitialiser"
             },
-            empty: "Aucun résultat",
             facets: {
                 title: "Filtrer"
             },

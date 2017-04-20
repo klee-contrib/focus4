@@ -1,5 +1,4 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -13,7 +12,6 @@ export {GroupStyle};
 
 export interface ResultsProps {
     classNames?: {mosaicAdd?: string};
-    emptyComponent?: () => React.ReactElement<any>;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
@@ -107,15 +105,11 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     render() {
-        const {i18nPrefix = "focus", store} = this.props;
-        const {results, totalCount} = store;
+        const {results} = this.props.store;
 
-        if (0 === totalCount) {
-            const Empty = this.props.emptyComponent || (() => <div>{i18n.t(`${i18nPrefix}.search.empty`)}</div>);
-            return <Empty />;
-        }
-
+        // result.totalCount pour une liste seule est undefined, donc il est bien gardé.
         const filteredResults = results.filter(result => result.totalCount !== 0);
+
         if (!filteredResults.length) {
             return null;
         } else if (filteredResults.length === 1) {
