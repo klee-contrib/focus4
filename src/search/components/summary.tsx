@@ -17,11 +17,14 @@ import * as styles from "./__style__/summary.css";
 export type SummaryStyle = Partial<typeof styles>;
 
 export interface ListSummaryProps {
+    /** Par défaut : true */
+    canRemoveSort?: boolean;
     classNames?: SummaryStyle;
     exportAction?: () => void;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     isSingleScope?: boolean;
+    orderableColumnList?: {key: string, label: string, order: boolean}[];
     scopes: {code: string, label?: string}[];
     store: SearchStore<any>;
 }
@@ -81,8 +84,18 @@ export class Summary extends React.Component<ListSummaryProps, void> {
         return topicList;
     }
 
+    @computed.struct
+    get currentSort() {
+        const {orderableColumnList, store} = this.props;
+        if (orderableColumnList && store.sortBy) {
+            return orderableColumnList.find(o => o.key === store.sortBy && o.order === store.sortAsc) || null;
+        } else {
+            return null;
+        }
+    }
+
     render() {
-        const {classNames, exportAction, i18nPrefix = "focus", store} = this.props;
+        const {canRemoveSort = true, classNames, exportAction, i18nPrefix = "focus", store} = this.props;
         const {groupingKey, totalCount, query} = store;
 
         const plural = totalCount > 1 ? "s" : "";
@@ -106,9 +119,17 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                     <div className={`${styles.chips} ${classNames!.chips || ""}`}>
                         <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
                         <Chips
-                            key={groupingKey}
                             label={store.facets.find(facet => store.groupingKey === facet.code).label}
                             onDeleteClick={() => store.groupingKey = undefined}
+                        />
+                    </div>
+                : null}
+                {this.currentSort && !groupingKey && totalCount > 1 ?
+                    <div className={`${styles.chips} ${classNames!.chips || ""}`}>
+                        <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
+                        <Chips
+                            label={i18n.t(this.currentSort.label)}
+                            onDeleteClick={canRemoveSort ? () => store.sortBy = undefined : undefined}
                         />
                     </div>
                 : null}

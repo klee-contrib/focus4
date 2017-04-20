@@ -28,7 +28,6 @@ export const fr = {
                 selectedItem: "élement sélectionné",
                 selectedItems: "élements sélectionnés",
                 sort: "Trier",
-                sortBy: "Trié par"
             },
             bar: {
                 close: "Fermer",
@@ -47,7 +46,8 @@ export const fr = {
                 group: "groupé par",
                 groups: "groupés par",
                 result: "résultat",
-                results: "résultats"
+                results: "résultats",
+                sortBy: "triés par"
             }
         },
         validation: {

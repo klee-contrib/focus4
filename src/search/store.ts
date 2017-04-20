@@ -104,8 +104,8 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
         return criteria || {};
     }
 
-    @action
     @debounce(200)
+    @action
     async search(isScroll = false) {
         let {query} = this;
         const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;

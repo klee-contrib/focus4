@@ -18,6 +18,8 @@ export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {
     addItemHandler?: () => void;
+    /** Par défaut : true */
+    canRemoveSort?: boolean;
     classNames?: AdvancedSearchStyle & {mosaicAdd?: string};
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
@@ -75,11 +77,13 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderListSummary() {
-        const {i18nPrefix, isSingleScope, scopes, store} = this.props;
+        const {canRemoveSort, i18nPrefix, isSingleScope, orderableColumnList, scopes, store} = this.props;
         return (
             <Summary
+                canRemoveSort={canRemoveSort}
                 i18nPrefix={i18nPrefix}
                 isSingleScope={!!isSingleScope}
+                orderableColumnList={orderableColumnList}
                 scopes={scopes}
                 store={store}
             />

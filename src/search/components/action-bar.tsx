@@ -93,7 +93,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     private get sortButton() {
         const {i18nPrefix = "focus", orderableColumnList, store} = this.props;
 
-        if (!store.selectedItems.size && (isSearch(store) || isList(store)) && orderableColumnList) {
+        if (store.totalCount > 1 && !store.selectedItems.size && (isSearch(store) || isList(store)) && orderableColumnList) {
             const orderOperationList: DropdownItem[] = [];
             for (const key in orderableColumnList) {
                 const description = orderableColumnList[key];
@@ -106,11 +106,10 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                 });
             }
 
-            const currentItem = orderableColumnList.find(o => o.key === store.sortBy && o.order === store.sortAsc);
             return (
                 <Dropdown
                     button={{
-                        label: currentItem ? `${i18n.t(`${i18nPrefix}.search.action.sortBy`)} ${i18n.t(currentItem.label)}` : `${i18nPrefix}.search.action.sort`,
+                        label: `${i18nPrefix}.search.action.sort`,
                         shape: null
                     }}
                     operations={orderOperationList}
