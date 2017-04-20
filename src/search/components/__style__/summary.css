@@ -1,7 +1,8 @@
 .summary {
-    line-height: 55px;
-    height: 55px;
     display: flex;
+    flex-wrap: wrap;
+    line-height: 37px;
+    padding: 9px 0;
 }
 
 .sentence {
@@ -15,6 +16,11 @@
 
 .chips {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     margin-right: 6px;
+}
+
+.chips :global([data-focus="chips"]) {
+    margin: 2.5px 3px;
 }

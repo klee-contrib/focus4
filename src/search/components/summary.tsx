@@ -21,9 +21,11 @@ export interface ListSummaryProps {
     canRemoveSort?: boolean;
     classNames?: SummaryStyle;
     exportAction?: () => void;
+    hideCriteria?: boolean;
+    hideFacets?: boolean;
+    hideScope?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    isSingleScope?: boolean;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     scopes: {code: string, label?: string}[];
     store: SearchStore<any>;
@@ -38,12 +40,12 @@ export class Summary extends React.Component<ListSummaryProps, void> {
     /** Liste des filtres à afficher. */
     @computed.struct
     private get filterList() {
-        const {store, isSingleScope, scopes} = this.props;
+        const {hideCriteria, hideFacets, hideScope, scopes, store} = this.props;
 
         const topicList = [];
 
         // Si on a un scope et qu'on l'affiche, alors on ajoute le scope à la liste en premier.
-        if (store.scope && store.scope !== "ALL" && !isSingleScope) {
+        if (store.scope && store.scope !== "ALL" && !hideScope) {
             const selectedScope = scopes.find(sc => sc.code === store.scope);
             topicList.push({
                 key: store.scope,
@@ -57,28 +59,32 @@ export class Summary extends React.Component<ListSummaryProps, void> {
         }
 
         // On ajoute à la liste toutes les facettes sélectionnées.
-        for (const facetKey in store.selectedFacets) {
-            const facetValue = store.selectedFacets[facetKey];
-            const facetOutput = store.facets.find(facet => facetKey === facet.code);
-            const facetItem = facetOutput && facetOutput.values.find(facet => facet.code === facetValue);
-            topicList.push({
-                key: facetKey,
-                label: `${i18n.t(facetOutput.label)}: ${facetItem && facetItem.label || facetValue}`,
-                onDeleteClick: () => store.setProperties({
-                    selectedFacets: omit(store.selectedFacets, facetKey) as {[facet: string]: string}
-                })
-            });
+        if (!hideFacets) {
+            for (const facetKey in store.selectedFacets) {
+                const facetValue = store.selectedFacets[facetKey];
+                const facetOutput = store.facets.find(facet => facetKey === facet.code);
+                const facetItem = facetOutput && facetOutput.values.find(facet => facet.code === facetValue);
+                topicList.push({
+                    key: facetKey,
+                    label: `${i18n.t(facetOutput.label)}: ${facetItem && facetItem.label || facetValue}`,
+                    onDeleteClick: () => store.setProperties({
+                        selectedFacets: omit(store.selectedFacets, facetKey) as {[facet: string]: string}
+                    })
+                });
+            }
         }
 
         // On ajoute la liste des critères.
-        for (const criteriaKey in store.flatCriteria) {
-            const {translationKey, domain} = store.criteria[criteriaKey].$entity;
-            const value = (store.flatCriteria as any)[criteriaKey];
-            topicList.push({
-                key: criteriaKey,
-                label: `${i18n.t(translationKey)} : ${domain && domain.formatter && domain.formatter(value) || value}`,
-                onDeleteClick: () => store.criteria[criteriaKey].value = undefined
-            });
+        if (!hideCriteria) {
+            for (const criteriaKey in store.flatCriteria) {
+                const {translationKey, domain} = store.criteria[criteriaKey].$entity;
+                const value = (store.flatCriteria as any)[criteriaKey];
+                topicList.push({
+                    key: criteriaKey,
+                    label: `${i18n.t(translationKey)} : ${domain && domain.formatter && domain.formatter(value) || value}`,
+                    onDeleteClick: () => store.criteria[criteriaKey].value = undefined
+                });
+            }
         }
 
         return topicList;

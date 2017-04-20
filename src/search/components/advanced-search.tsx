@@ -28,9 +28,11 @@ export interface AdvancedSearchProps {
     hasBackToTop?: boolean;
     hasSearchBar?: boolean;
     hasSelection?: boolean;
+    hideSummaryCriteria?: boolean;
+    hideSummaryFacets?: boolean;
+    hideSummaryScope?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    isSingleScope?: boolean;
     lineComponentMapper?: (scope: string) => ReactComponent<any>;
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
     lineProps?: {};
@@ -77,12 +79,14 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderListSummary() {
-        const {canRemoveSort, i18nPrefix, isSingleScope, orderableColumnList, scopes, store} = this.props;
+        const {canRemoveSort, hideSummaryCriteria, hideSummaryFacets, hideSummaryScope, i18nPrefix, orderableColumnList, scopes, store} = this.props;
         return (
             <Summary
                 canRemoveSort={canRemoveSort}
                 i18nPrefix={i18nPrefix}
-                isSingleScope={!!isSingleScope}
+                hideCriteria={hideSummaryCriteria}
+                hideFacets={hideSummaryFacets}
+                hideScope={hideSummaryScope}
                 orderableColumnList={orderableColumnList}
                 scopes={scopes}
                 store={store}
