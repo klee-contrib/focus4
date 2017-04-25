@@ -125,7 +125,7 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                     <div className={`${styles.chips} ${classNames!.chips || ""}`}>
                         <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
                         <Chips
-                            label={store.facets.find(facet => store.groupingKey === facet.code).label}
+                            label={i18n.t(store.facets.find(facet => store.groupingKey === facet.code).label)}
                             onDeleteClick={() => store.groupingKey = undefined}
                         />
                     </div>
