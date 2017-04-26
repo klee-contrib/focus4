@@ -1,6 +1,8 @@
 import {autobind} from "core-decorators";
 import {action, computed, IObservableArray, observable} from "mobx";
 
+export type SelectionStatus = "none" | "partial" | "selected";
+
 /** Socle commun entre le store de liste et de recherche. */
 @autobind
 export abstract class ListStoreBase<T> {
@@ -25,7 +27,7 @@ export abstract class ListStoreBase<T> {
     }
 
     @computed
-    get selectionStatus() {
+    get selectionStatus(): SelectionStatus {
         if (this.selectedItems.size === 0) {
             return "none";
         } else if (this.selectedItems.size === this.totalCount) {
@@ -54,7 +56,7 @@ export interface MiniListStore<T> {
     readonly currentCount: number;
     readonly list?: T[];
     selectedItems: Set<T>;
-    selectionStatus: "none" | "partial" | "selected";
+    selectionStatus: SelectionStatus;
     toggle(item: T): void;
     toggleAll(): void;
     readonly totalCount: number;
