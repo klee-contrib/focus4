@@ -48,7 +48,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     }
 
     render() {
-        const {LineComponent, data, dateSelector, lineProps, hasSelection, mosaic, selectionnableInitializer, classNames, operationList, type, store} = this.props;
+        const {LineComponent, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, classNames, operationList, type, store} = this.props;
 
         if (type === "table") {
             return <LineComponent data={data} {...lineProps} />;

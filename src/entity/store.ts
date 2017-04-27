@@ -33,10 +33,10 @@ export interface StoreListNode<T> extends IObservableArray<T> {
 /** `EntityField` ou `EntityList`. */
 export type EntityValue<T> = EntityField<T> | EntityList<T>;
 /** Types possible pour le `T` de `EntityField<T>`. */
-export type StoreType = undefined | null | number | number[] | boolean | boolean[] | string | string[] | EntityStoreItem;
+export type StoreType = undefined | number | number[] | boolean | boolean[] | string | string[] | EntityStoreItem;
 
 /** Noeud de store simple. Véritable définition de `StoreNode`. */
-export type EntityStoreNode = {[key: string]: EntityValue<StoreType>} & StoreNode<{}>;
+export type EntityStoreNode = {[key: string]: EntityValue<any /* StoreType */>} & StoreNode<{}>;
 /** Noeud de store (simple ou liste). */
 export type EntityStoreItem = EntityStoreNode | StoreListNode<EntityStoreNode>;
 
@@ -69,7 +69,7 @@ type EntityStore = EntityStoreConfig & StoreNode<{}>;
 export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[key: string]: any}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode<{}> {
 
     // On construit une config unique pour les noeuds simples ({}) et les noeuds de listes ([].)
-    const config = Object.assign({}, mapValues(simpleNodes, _ => ({})), mapValues(listNodes, _ => [])) as EntityStoreConfig;
+    const config = Object.assign({}, mapValues(simpleNodes, _ => ({})), mapValues(listNodes, _ => [] as any[])) as EntityStoreConfig;
 
     // On construit une map avec les entités à partir de la liste fournie.
     const entityMap = entityList.reduce((entities, entity) => {
@@ -244,7 +244,7 @@ export function toFlatValues(entityStoreItem: EntityStoreItem): {} {
 }
 
 function isStoreListNode(data: StoreType): data is StoreListNode<any> {
-    return isObservableArray(data) && !!data.$entity;
+    return isObservableArray(data) && !!(data as StoreListNode<any>).$entity;
 }
 function isEntityStoreNode(data: StoreType): data is EntityStoreNode {
     return !isObservableArray(data) && isObject(data) && !isAction(data);

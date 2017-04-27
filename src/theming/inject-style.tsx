@@ -43,17 +43,15 @@ export function injectStyle<P extends {classNames?: {[key: string]: any}}>(class
                     fillClassNames(contextClassNames, classNames);
                 }
 
-                this.classNames = contextClassNames;
+                this.classNames = contextClassNames || classNames;
             }
 
             render() {
-                const classNames = this.classNames || this.props.classNames || {};
-
                 // Si le composant est une fonction, alors on ne peut pas poser de ref dessus.
                 if (!isStateful(Comp)) {
-                    return <Comp {...this.props} classNames={classNames} />;
+                    return <Comp {...this.props as any} classNames={this.classNames} />;
                 } else {
-                    return <Comp {...this.props} classNames={classNames} ref={i => this.instance = i} />;
+                    return <Comp {...this.props as any} classNames={this.classNames} ref={i => this.instance = i} />;
                 }
             }
         }
