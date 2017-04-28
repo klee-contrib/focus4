@@ -1,5 +1,6 @@
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import Icon from "focus-components/icon";
 
@@ -9,17 +10,17 @@ import * as styles from "./__style__/loading-bar.css";
 export type LoadingBarStyle = Partial<typeof styles>;
 
 export interface LoadingBarProps {
-    classNames?: LoadingBarStyle;
     displayDevBar?: boolean;
     ProgressBar: ReactComponent<{completed: number}>;
+    theme?: LoadingBarStyle;
 }
 
 /** Composant standard pour afficher une barre de chargement sur l'état des requêtes en cours. */
-export const LoadingBar = observer(({classNames, displayDevBar, ProgressBar}: LoadingBarProps) => {
+export const LoadingBar = themr("loadingBar", styles)(observer(({theme, displayDevBar, ProgressBar}: LoadingBarProps) => {
     const {count, error, pending, success} = requestStore;
     const completed = +((count.total - count.pending) / count.total) * 100;
     return (
-        <div className={`${styles.bar} ${classNames!.bar || ""}`}>
+        <div className={theme!.bar!}>
             {completed < 100 ? <ProgressBar completed={completed} /> : null}
             {displayDevBar ?
                 <ul>
@@ -31,4 +32,4 @@ export const LoadingBar = observer(({classNames, displayDevBar, ProgressBar}: Lo
             : null}
         </div>
     );
-});
+}));

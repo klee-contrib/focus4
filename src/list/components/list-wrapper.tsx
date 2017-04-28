@@ -2,8 +2,7 @@ import {autobind} from "core-decorators";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-
-import {injectStyle} from "../../theming";
+import {themr} from "react-css-themr";
 
 import Button from "focus-components/button";
 
@@ -14,16 +13,16 @@ export type ListWrapperStyle = Partial<typeof styles>;
 export interface ListWrapperProps {
     addItemHandler?: () => void;
     canChangeMode?: boolean;
-    classNames?: ListWrapperStyle;
     hideAddItemHandler?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     mode?: "list" | "mosaic";
     mosaicWidth?: number;
     mosaicHeight?: number;
+    theme?: ListWrapperStyle;
 }
 
-@injectStyle("listWrapper")
+@themr("listWrapper", styles)
 @autobind
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps, void> {
@@ -62,11 +61,11 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
     }
 
     render() {
-        const {classNames, children, canChangeMode, hideAddItemHandler, i18nPrefix = "focus"} = this.props;
+        const {theme, children, canChangeMode, hideAddItemHandler, i18nPrefix = "focus"} = this.props;
         const {mode, addItemHandler} = this.childContext;
         return (
-            <div className={`${styles.wrapper} ${classNames!.wrapper || ""}`}>
-                <div className={`${styles.bar} ${classNames!.bar || ""}`}>
+            <div className={theme!.wrapper!}>
+                <div className={theme!.bar!}>
                     {canChangeMode ?
                         <Button
                             color={mode === "list" ? "accent" : undefined}

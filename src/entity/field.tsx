@@ -4,11 +4,10 @@ import {find, omit, result} from "lodash";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import InputText from "focus-components/input-text";
 import Label from "focus-components/label";
-
-import {injectStyle, StyleInjector} from "../theming";
 
 import {Domain} from "./types";
 import {validate} from "./validation";
@@ -29,22 +28,22 @@ export interface FieldProps extends Domain {
     values?: any[];
 
     // Props propres au Field.
-    classNames?: FieldStyle;
     contentCellPosition?: string;
     contentOffset?: number;
     contentSize?: number;
     forceErrorDisplay?: boolean;
     hasLabel?: boolean;
+    innerRef?: (i: Field) => void;
     isRequired?: boolean;
     label?: string;
     labelCellPosition?: string;
     labelOffset?: number;
     labelSize?: number;
+    theme?: FieldStyle;
 }
 
 /** Liste de toutes les props qu'on ne passera pas aux composants d'input ou display. */
 const omittedProps = [
-    "classNames",
     "contentCellPosition",
     "contentOffset",
     "contentSize",
@@ -55,6 +54,7 @@ const omittedProps = [
     "labelCellPosition",
     "labelOffset",
     "labelSize",
+    "theme",
     "validator",
     "DisplayComponent",
     "FieldComponent",
@@ -63,10 +63,10 @@ const omittedProps = [
 ];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-@injectStyle("field")
+@themr("field", styles)
 @autobind
 @observer
-export class Field extends React.Component<FieldProps & {ref: (field: StyleInjector<Field>) => void}, void> {
+export class Field extends React.Component<FieldProps, void> {
 
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = this.props.forceErrorDisplay || false;
@@ -140,23 +140,23 @@ export class Field extends React.Component<FieldProps & {ref: (field: StyleInjec
 
     /** Affiche le composant de libellé (`LabelComponent`). */
     label() {
-        const {name, label, LabelComponent, labelCellPosition = "top", labelSize = 4, labelOffset = 0, classNames} = this.props;
+        const {name, label, LabelComponent, labelCellPosition = "top", labelSize = 4, labelOffset = 0, theme} = this.props;
         const FinalLabel = LabelComponent || Label;
         return (
-            <div className ={`${getCellGridClassName(labelCellPosition, labelSize, labelOffset)} ${styles.label} ${classNames!.label || ""}`}>
+            <div className ={`${getCellGridClassName(labelCellPosition, labelSize, labelOffset)} ${theme!.label!}`}>
                 <FinalLabel name={name} text={label} />
             </div>
         );
     }
 
     render() {
-        const {FieldComponent, contentCellPosition = "top", contentSize = 12, labelSize = 4, contentOffset = 0, isRequired, hasLabel, isEdit, classNames, className = ""} = this.props;
+        const {FieldComponent, contentCellPosition = "top", contentSize = 12, labelSize = 4, contentOffset = 0, isRequired, hasLabel, isEdit, theme, className = ""} = this.props;
         return (
-            <div className={`mdl-grid ${styles.field} ${classNames!.field || ""} ${isEdit ? `${styles.edit} ${classNames!.edit || ""}` : ""} ${this.error && this.showError ? `${styles.invalid} ${classNames!.invalid || ""}` : ""} ${isRequired ? `${styles.required} ${classNames!.required || ""}` : ""} ${className}`}>
+            <div className={`mdl-grid ${theme!.field!} ${isEdit ? theme!.edit! : ""} ${this.error && this.showError ? theme!.invalid! : ""} ${isRequired ? theme!.required! : ""} ${className}`}>
                 {FieldComponent ? this.field() : null}
                 {!FieldComponent && hasLabel ? this.label() : null}
                 {!FieldComponent ?
-                    <div className ={`${getCellGridClassName(contentCellPosition, contentSize - labelSize, contentOffset)} ${styles.value} ${classNames!.value || ""} ${className}`}>
+                    <div className ={`${getCellGridClassName(contentCellPosition, contentSize - labelSize, contentOffset)} ${theme!.value!} ${className}`}>
                         {isEdit ? this.input() : this.display()}
                     </div>
                 : null}

@@ -2,11 +2,11 @@ import {autobind} from "core-decorators";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import Button from "focus-components/button";
 
 import {EntityField, textFor} from "../../entity";
-import {injectStyle} from "../../theming";
 
 import {MiniListStore} from "../store-base";
 import {ContextualActions, LineOperationListItem} from "./contextual-actions";
@@ -16,7 +16,6 @@ import * as styles from "./__style__/line.css";
 export type LineStyle = Partial<typeof styles>;
 
 export interface LineWrapperProps<T, P extends {data?: T}> {
-    classNames?: LineStyle;
     data: T;
     dateSelector?: (data: T) => EntityField<string>;
     hasSelection?: boolean;
@@ -26,10 +25,11 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     operationList?: (data: T) => LineOperationListItem<T>[];
     selectionnableInitializer?: (data: T) => boolean;
     store?: MiniListStore<T>;
+    theme?: LineStyle;
     type?: "table" | "timeline";
 }
 
-@injectStyle("line")
+@themr("line", styles)
 @autobind
 @observer
 export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWrapperProps<T, P>, void> {
@@ -48,16 +48,16 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     }
 
     render() {
-        const {LineComponent, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, classNames, operationList, type, store} = this.props;
+        const {LineComponent, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
 
         if (type === "table") {
             return <LineComponent data={data} {...lineProps} />;
         } else if (type === "timeline") {
             return (
                 <li>
-                    <div className={`${styles.timelineDate} ${classNames!.timelineDate || ""}`}>{textFor(dateSelector!(data))}</div>
-                    <div className={`${styles.timelineBadge} ${classNames!.timelineBadge || ""}`}></div>
-                    <div className={`${styles.timelinePanel} ${classNames!.timelinePanel || ""}`}>
+                    <div className={theme!.timelineDate!}>{textFor(dateSelector!(data))}</div>
+                    <div className={theme!.timelineBadge!}></div>
+                    <div className={theme!.timelinePanel!}>
                         <LineComponent data={data} {...lineProps} />
                     </div>
                 </li>
@@ -66,12 +66,12 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
             const opList = operationList && operationList(data);
             return (
                 <li
-                    className={`${mosaic ? `${styles.mosaic} ${classNames!.mosaic || ""}` : `${styles.line} ${classNames!.line || ""}`}`}
+                    className={mosaic ? theme!.mosaic! : theme!.line!}
                     style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                 >
                     {hasSelection && selectionnableInitializer!(data) && store ?
                         <Button
-                            className={`${styles.checkbox} ${classNames!.checkbox || ""} ${store.selectedItems.size ? `${styles.isSelection} ${classNames!.isSelection || ""}` : ""}`}
+                            className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
                             shape="icon"
                             icon={this.isSelected ? "check_box" : "check_box_outline_blank"}
                             onClick={this.onSelection}
@@ -81,7 +81,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                     <LineComponent data={data} {...lineProps} />
                     {opList && opList.length > 0 ?
                         <div
-                            className={`${styles.actions} ${classNames!.actions || ""}`}
+                            className={theme!.actions!}
                             style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                         >
                             <ContextualActions

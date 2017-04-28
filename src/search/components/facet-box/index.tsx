@@ -3,8 +3,7 @@ import i18n from "i18next";
 import {omit} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
-
-import {injectStyle} from "../../../theming";
+import {themr} from "react-css-themr";
 
 import {SearchStore} from "../../store";
 import {Facet, FacetStyle} from "./facet";
@@ -14,17 +13,18 @@ import * as styles from "./__style__/facet-box.css";
 export type FacetBoxStyle = Partial<typeof styles>;
 
 export interface FacetBoxProps {
-    classNames?: FacetBoxStyle;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
+    innerRef?: (i: FacetBox) => void;
     /** Par défaut : 6 */
     nbDefaultDataList?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
     store: SearchStore<any>;
+    theme?: FacetBoxStyle;
 }
 
-@injectStyle("facetBox")
+@themr("facetBox", styles)
 @autobind
 @observer
 export class FacetBox extends React.Component<FacetBoxProps, void> {
@@ -50,9 +50,9 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     }
 
     render() {
-        const {classNames, i18nPrefix = "focus", nbDefaultDataList = 6, store: {facets, selectedFacets}} = this.props;
+        const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, store: {facets, selectedFacets}} = this.props;
         return (
-            <div className={`${styles.facetBox} ${classNames!.facetBox || ""}`} ref={i => this.div = i}>
+            <div className={theme!.facetBox!} ref={i => this.div = i}>
                 <h3>{i18n.t(`${i18nPrefix}.search.facets.title`)}</h3>
                 {facets.filter(facet => facet.values.length).map(facet => {
                     if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {

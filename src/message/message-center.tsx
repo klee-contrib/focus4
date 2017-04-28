@@ -3,8 +3,8 @@ import i18n from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
-import {injectStyle} from "../theming";
 import {classReaction} from "../util";
 
 import {Message, messageStore} from "./store";
@@ -14,14 +14,14 @@ import * as styles from "./__style__/message-center.css";
 export type MessageCenterStyle = Partial<typeof styles>;
 
 export interface MessageCenterProps {
-    /** Classes CSS. */
-    classNames?: MessageCenterStyle;
     /** Temps en ms d'affichage des messages d'erreur (par défaut: 8000). */
     error?: number;
     /** Temps en ms d'affichage des messages d'information (par défaut: 3000). */
     info?: number;
     /** Temps en ms d'affichage des messages de succès (par défaut: 3000). */
     success?: number;
+    /** Classes CSS. */
+    theme?: MessageCenterStyle;
     /** Temps en ms d'affichage des messages d'avertissement (par défaut: 3000). */
     warning?: number;
 }
@@ -36,7 +36,7 @@ interface Notification {
 }
 
 /** Centre de message. Affiche les messages lorsqu'ils sont ajoutés dans le MessageStore. */
-@injectStyle("messageCenter")
+@themr("messageCenter", styles)
 @autobind
 @observer
 export class MessageCenter extends React.Component<MessageCenterProps, void> {
@@ -95,11 +95,11 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     }
 
     render() {
-        const {classNames} = this.props;
+        const {theme} = this.props;
         const {content = "", type = ""} = this.currentNotification || {};
         const otherProps = { "aria-hidden": this.active, "aria-live": "assertive", "aria-atomic": "true", "aria-relevant": "text" };
         return (
-            <div className={`${styles.center} ${classNames!.center || ""} mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""} ${type === "error" ? `${styles.error} ${classNames!.error || ""}` : type === "success" ? `${styles.success} ${classNames!.success || ""}` : type === "warning" ? `${styles.warning} ${classNames!.warning || ""}` : ""}`} {...otherProps}>
+            <div className={`${theme!.center!} mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""} ${type === "error" ? theme!.error! : type === "success" ? theme!.success! : type === "warning" ? theme!.warning! : ""}`} {...otherProps}>
                 <div className="mdl-snackbar__text">{content.includes(" ") ? content : i18n.t(content)}</div>
                 <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><i className="material-icons">clear</i></button>
             </div>

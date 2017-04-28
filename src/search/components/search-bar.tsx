@@ -4,13 +4,13 @@ import {difference, toPairs} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import Button from "focus-components/button";
 import Icon from "focus-components/icon";
 import Select from "focus-components/select-mdl";
 
-import { fieldFor, StoreNode, toFlatValues } from "../../entity";
-import {injectStyle} from "../../theming";
+import {fieldFor, StoreNode, toFlatValues} from "../../entity";
 
 import {SearchStore} from "../store";
 
@@ -19,7 +19,6 @@ import * as styles from "./__style__/search-bar.css";
 export type SearchBarStyle = Partial<typeof styles>;
 
 export interface SearchBarProps {
-    classNames?: SearchBarStyle;
     criteriaComponent?: React.ReactElement<any>;
     disableInputCriteria?: boolean;
     /** Par défaut : "focus" */
@@ -27,9 +26,10 @@ export interface SearchBarProps {
     placeholder?: string;
     scopes?: {code: string; label?: string}[];
     store: SearchStore<StoreNode<{}>>;
+    theme?: SearchBarStyle;
 }
 
-@injectStyle("searchBar")
+@themr("searchBar", styles)
 @autobind
 @observer
 export class SearchBar extends React.Component<SearchBarProps, void> {
@@ -144,10 +144,10 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     }
 
     render() {
-        const {i18nPrefix = "focus", placeholder, store, scopes, classNames, criteriaComponent} = this.props;
+        const {i18nPrefix = "focus", placeholder, store, scopes, theme, criteriaComponent} = this.props;
         return (
             <div style={{position: "relative"}}>
-                <div className={`${styles.bar} ${classNames!.bar || ""} ${this.error ? `${styles.error} ${classNames!.error || ""}` : ""}`}>
+                <div className={`${theme!.bar!} ${this.error ? theme!.error! : ""}`}>
                     {scopes ?
                         <Select
                             hasUndefined={true}
@@ -157,7 +157,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                             values={scopes}
                         />
                     : null}
-                    <div className={`${styles.input} ${classNames!.input || ""}`}>
+                    <div className={theme!.input!}>
                         <Icon name="search" />
                         <input
                             name="search-bar-input"
@@ -173,16 +173,16 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                     : null}
                 </div>
                 {!this.showCriteriaComponent && this.error ?
-                    <span className={`${styles.errors} ${classNames!.errors || ""}`}>
+                    <span className={theme!.errors!}>
                         {this.error}
                     </span>
                 : null}
                 {this.showCriteriaComponent ?
-                    <div className={`${styles.criteria} ${classNames!.criteria || ""}`}>
+                    <div className={theme!.criteria!}>
                         <Button icon="clear" onClick={this.toggleCriteria} shape="icon" />
                         {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: query => store.query = query})}
                         {criteriaComponent}
-                        <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
+                        <div className={theme!.buttons!}>
                             <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.close`} />
                             <Button onClick={this.clear} shape={null} label={`${i18nPrefix}.search.bar.reset`} />
                         </div>

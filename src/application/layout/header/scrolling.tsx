@@ -8,12 +8,12 @@ import {classReaction} from "../../../util";
 import {applicationStore} from "../../store";
 
 export interface HeaderScrollingProps {
-    /** Classes CSS. */
-    classNames: {scrolling: string; deployed: string; undeployed: string};
     /** Handler qui sera appelé à chaque dépliement/repliement. */
     notifySizeChange?: (isDeployed?: boolean) => void;
     /** Sélecteur de l'élément de DOM sur lequel on écoute le scroll (par défaut : window) */
     scrollTargetSelector?: string;
+    /** Classes CSS. */
+    theme: {scrolling: string; deployed: string; undeployed: string};
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
@@ -80,7 +80,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     render() {
         const {isDeployed, placeholderHeight} = this;
         const {canDeploy} = applicationStore;
-        const {scrolling, deployed, undeployed} = this.props.classNames;
+        const {scrolling, deployed, undeployed} = this.props.theme;
         return (
             <header ref={header => this.header = header} className={`${scrolling} ${isDeployed ? deployed : undeployed}`}>
                 {this.props.children}

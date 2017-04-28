@@ -1,5 +1,6 @@
 import {omit} from "lodash";
 import * as React from "react";
+import {ThemeProvider, themr} from "react-css-themr";
 
 import {MessageCenter as DefaultMessageCenter} from "../../message";
 
@@ -11,7 +12,6 @@ import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "..
 import {MessageCenterStyle} from "../../message";
 import {LoadingBarStyle} from "../../network";
 import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../../search";
-import {injectStyle, StyleProvider} from "../../theming";
 
 import styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
@@ -23,36 +23,36 @@ export {Header, HeaderStyle};
 export interface LayoutProps {
     AppHeader?: ReactComponent<any>;
     children?: React.ReactChildren;
-    classNames?: LayoutStyle;
+    DevTools?: ReactComponent<any>;
     ErrorCenter?: ReactComponent<any> | null;
     Footer?: ReactComponent<any>;
     LoadingBar?: ReactComponent<any>;
     MenuLeft?: ReactComponent<any>;
     MessageCenter?: ReactComponent<any>;
-    DevTools?: ReactComponent<any>;
     OtherRootComponent?: ReactComponent<any>;
+    theme?: LayoutStyle;
 }
 
 /** Composant de Layout sans le provider de style. */
-const LayoutBase = injectStyle("layout", ({
+const LayoutBase = themr("layout", styles)(({
     AppHeader = Header,
     children,
-    classNames,
+    DevTools,
     ErrorCenter = DefaultErrorCenter,
     Footer,
     LoadingBar,
     MenuLeft,
     MessageCenter = DefaultMessageCenter,
-    DevTools,
-    OtherRootComponent
+    OtherRootComponent,
+    theme
 }: LayoutProps) => (
-    <div className={`${styles.layout} ${classNames!.layout || ""} ${MenuLeft ? `${styles.hasMenu} ${classNames!.hasMenu || ""}` : ""}`}>
+    <div className={`${theme!.layout!} ${MenuLeft ? theme!.hasMenu! : ""}`}>
         {LoadingBar ? <LoadingBar /> : null}
         <MessageCenter />
         {ErrorCenter ? <ErrorCenter /> : null}
         <AppHeader />
         {MenuLeft ? <MenuLeft /> : null}
-        <div className={`${styles.content} ${classNames!.content || ""}`}>
+        <div className={theme!.content!}>
             {children}
         </div>
         {Footer ?
@@ -78,13 +78,13 @@ export interface LayoutStyleProviderProps {
     group?: GroupStyle;
     header?: HeaderStyle;
     layout?: LayoutStyle;
+    loadingBar?: LoadingBarStyle;
     line?: LineStyle;
     list?: ListStyle;
     listWrapper?: ListWrapperStyle;
-    summary?: SummaryStyle;
-    searchBar?: SearchBarStyle;
-    loadingBar?: LoadingBarStyle;
     messageCenter?: MessageCenterStyle;
+    searchBar?: SearchBarStyle;
+    summary?: SummaryStyle;
 }
 
 /**
@@ -94,10 +94,10 @@ export interface LayoutStyleProviderProps {
  */
 export function Layout(props: LayoutProps & {injectedStyle?: LayoutStyleProviderProps}) {
     return (
-        <StyleProvider {...props.injectedStyle}>
+        <ThemeProvider theme={props.injectedStyle || {}}>
             <LayoutBase {...omit(props, "injectedStyle")}>
                 {props.children}
             </LayoutBase>
-        </StyleProvider>
+        </ThemeProvider>
     );
 }

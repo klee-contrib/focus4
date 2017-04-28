@@ -6,7 +6,6 @@ import AutocompleteText from "focus-components/autocomplete-text/field";
 import Select from "focus-components/select";
 
 import {EntityField} from "../entity";
-import {StyleInjector} from "../theming";
 
 import {Field, FieldProps} from "./field";
 
@@ -204,7 +203,7 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions<T
         isRequired,
         label: translationKey,
         name,
-        ref: (i: StyleInjector<Field>) => ref && ref(i && i.instance || null), // On s'arrange pour que la ref renvoie bien le composant Field et non le HoC StyleInjector qui l'enveloppe.
+        innerRef: i => ref && ref(i),
         value,
         unformatter: dom.unformatter || (x => x)
     };

@@ -11,7 +11,6 @@ import {Group, GroupStyle} from "./group";
 export {GroupStyle};
 
 export interface ResultsProps {
-    classNames?: {mosaicAdd?: string};
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
@@ -27,6 +26,7 @@ export interface ResultsProps {
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
     store: SearchStore<any>;
+    theme?: {mosaicAdd?: string};
 }
 
 @autobind
@@ -62,12 +62,12 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {classNames, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
+        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
                 key={group.code}
-                classNames={classNames}
+                theme={theme}
                 group={group}
                 groupOperationList={groupOperationLists[groupKey]}
                 hasSelection={hasSelection}

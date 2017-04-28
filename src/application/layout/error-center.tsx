@@ -2,27 +2,26 @@ import {autobind} from "core-decorators";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
-import {injectStyle} from "../../theming";
-
-import style from "./__style__/error-center.css";
-export type ErrorCenterStyle = Partial<typeof style>;
+import styles from "./__style__/error-center.css";
+export type ErrorCenterStyle = Partial<typeof styles>;
 
 export interface ErrorCenterProps {
     /** Déploie le centre d'erreur à l'initialisation. */
     areErrorsVisible?: boolean;
-    /** Classes CSS. */
-    classNames?: ErrorCenterStyle;
     /** Erreurs à ajouter à l'initilisation. */
     errors?: string[];
     /** Nombre d'erreurs affiché (par défaut : 3). */
     numberDisplayed?: number;
     /** Source des erreurs (par défaut : window). */
     source?: {onerror: (e: string) => void};
+    /** Classes CSS. */
+    theme?: ErrorCenterStyle;
 }
 
 /** Centre d'erreurs Javascript, pour afficher toutes les erreurs directement dans l'application. */
-@injectStyle("errorCenter")
+@themr("errorCenter", styles)
 @autobind
 @observer
 export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
@@ -40,19 +39,19 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
     }
 
     renderErrors() {
-        const {numberDisplayed = 3, classNames} = this.props;
+        const {numberDisplayed = 3, theme} = this.props;
         const errorLength = this.errors.length;
         return (
-            <div className={`${style.center} ${classNames!.center || ""}`}>
-                <div className={`${style.counter} ${classNames!.counter || ""}`}>
+            <div className={theme!.center!}>
+                <div className={theme!.counter!}>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "28px", padding: "15px 5px 5px 5px"}}>error</i>{errorLength}
                 </div>
-                <div className={`${style.actions} ${classNames!.actions || ""}`}>
+                <div className={theme!.actions!}>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "36px", padding: "10px"}} onClick={() => {window.location.reload(); }}>refresh</i>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "36px", padding: "10px"}} onClick={this.toggleVisible}>{`keyboard_arrow_${this.areErrorsVisible ? "down" : "up"}`}</i>
                     <i className="material-icons" style={{cursor: "pointer", fontSize: "36px", padding: "10px"}} onClick={() => this.errors = []}>delete</i>
                 </div>
-                <ul className={`${style.stack} ${classNames!.stack || ""}`}>
+                <ul className={theme!.stack!}>
                     {this.areErrorsVisible ?
                         this.errors.slice(errorLength - numberDisplayed, errorLength).map((e, i) => <li key={i}>{e}</li>)
                     : null}

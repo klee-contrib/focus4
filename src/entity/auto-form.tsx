@@ -76,7 +76,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
     static contextTypes = {classNames: React.PropTypes.object};
-    context: {classNames: {[key: string]: {[key: string]: any}}};
+    context: {theme: {[key: string]: {[key: string]: any}}};
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
     entity: E & ViewModel;
@@ -282,7 +282,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     /** Fonction de rendu du formulaire à préciser. */
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        const contextClassName = this.context && this.context.classNames && this.context.classNames["form"] || "";
+        const contextClassName = this.context && this.context.theme && this.context.theme["form"] || "";
         if (this.hasForm) {
             return (
                 <form

@@ -3,16 +3,15 @@ import i18n from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import Icon from "focus-components/icon";
-
-import {injectStyle, StyleInjector} from "../../theming";
 
 import {LineOperationListItem} from "./contextual-actions";
 import {LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
-import {list, mosaic, mosaicAdd} from "./__style__/list.css";
+import * as styles from "./__style__/list.css";
 
 export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     addItemHandler?: () => void;
@@ -64,11 +63,11 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     protected getItems(Line: new() => LineWrapper<T, P>, Component: ReactComponent<P>) {
-        const {itemKey, lineClassNames, lineProps, operationList} = this.props;
+        const {itemKey, lineTheme, lineProps, operationList} = this.props;
         return this.displayedData.map((item, idx) => (
             <Line
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
-                classNames={lineClassNames}
+                theme={lineTheme}
                 data={item}
                 mosaic={this.mosaic}
                 LineComponent={Component}
@@ -79,7 +78,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     private renderLines() {
-        const {classNames, hideAddItemHandler, i18nPrefix = "focus", LineComponent, MosaicComponent} = this.props;
+        const {theme, hideAddItemHandler, i18nPrefix = "focus", LineComponent, MosaicComponent} = this.props;
 
         let Component;
         if (this.mode === "list" && LineComponent) {
@@ -95,7 +94,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
         if (!hideAddItemHandler && this.addItemHandler && this.mode === "mosaic" && this.mosaic) {
             items = [(
                 <div
-                    className={`${mosaicAdd} ${classNames!.mosaicAdd || ""}`}
+                    className={theme!.mosaicAdd!}
                     style={{width: this.mosaic.width, height: this.mosaic.height}}
                     onClick={this.addItemHandler}
                 >
@@ -109,10 +108,10 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     render() {
-        const {classNames} = this.props;
+        const {theme} = this.props;
         return (
             <div>
-                <ul className={`${this.mode === "list" ? `${list} ${classNames!.list || ""}` : `${mosaic} ${classNames!.mosaic || ""}`}`}>
+                <ul className={this.mode === "list" ? theme!.list! : theme!.mosaic!}>
                     {this.renderLines()}
                 </ul>
                 {this.renderBottomRow()}
@@ -121,7 +120,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 }
 
-export const List: StyleInjector<ListWithoutStyle<{}, {data?: {}}, {}>> = injectStyle("list", ListWithoutStyle) as any;
+export const List = themr("list", styles)(ListWithoutStyle);
 
 export function listFor<T, P extends {data?: T}>(props: ListProps<T, P>) {
     const List2 = List as any;

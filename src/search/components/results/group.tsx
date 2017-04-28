@@ -2,9 +2,9 @@ import {autobind} from "core-decorators";
 import i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import {GroupOperationListItem, LineOperationListItem, StoreList} from "../../../list";
-import {injectStyle} from "../../../theming";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -16,7 +16,6 @@ import * as styles from "./__style__/group.css";
 export type GroupStyle = Partial<typeof styles>;
 
 export interface Props {
-    classNames?: GroupStyle & {mosaicAdd?: string};
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;
@@ -29,9 +28,10 @@ export interface Props {
     perPage: number;
     showAllHandler?: (key: string) => void;
     store: SearchStore<any>;
+    theme?: GroupStyle & {mosaicAdd?: string};
 }
 
-@injectStyle("group")
+@themr("group", styles)
 @autobind
 @observer
 export class Group extends React.Component<Props, void> {
@@ -43,12 +43,12 @@ export class Group extends React.Component<Props, void> {
     }
 
     private renderList() {
-        const {classNames, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store} = this.props;
+        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
                 <List
-                    classNames={{mosaicAdd: classNames && classNames.mosaicAdd}}
+                    theme={{mosaicAdd: theme && theme.mosaicAdd}}
                     data={group.list}
                     hasSelection={hasSelection}
                     hideAddItemHandler={!!group.code}
@@ -72,12 +72,12 @@ export class Group extends React.Component<Props, void> {
     }
 
     render() {
-        const {classNames, group, hasSelection, groupOperationList, store} = this.props;
+        const {theme, group, hasSelection, groupOperationList, store} = this.props;
         if (!store.groupingKey) {
             return this.renderList();
         } else if (group.code && group.label && group.totalCount) {
             return (
-                <div className={`${styles.container} ${classNames!.container || ""}`}>
+                <div className={theme!.container!}>
                     <ActionBar
                         group={{code: group.code, label: group.label, totalCount: group.totalCount}}
                         hasSelection={hasSelection}

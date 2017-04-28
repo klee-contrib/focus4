@@ -1,11 +1,11 @@
 import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import BackToTop from "focus-components/button-back-to-top";
 
 import {GroupOperationListItem, LineOperationListItem, ListWrapper} from "../../list";
-import {injectStyle} from "../../theming";
 
 import {SearchStore} from "../store";
 import {ActionBar} from "./action-bar";
@@ -20,7 +20,6 @@ export interface AdvancedSearchProps {
     addItemHandler?: () => void;
     /** Par défaut : true */
     canRemoveSort?: boolean;
-    classNames?: AdvancedSearchStyle & {mosaicAdd?: string};
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
@@ -48,9 +47,10 @@ export interface AdvancedSearchProps {
     scopes: {code: string, label?: string}[];
     searchBarPlaceholder?: string;
     store: SearchStore<any>;
+    theme?: AdvancedSearchStyle & {mosaicAdd?: string};
 }
 
-@injectStyle("advancedSearch")
+@themr("advancedSearch", styles)
 @autobind
 @observer
 export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
@@ -60,11 +60,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderFacetBox() {
-        const {classNames, facetBoxPosition = "left", i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, store} = this.props;
+        const {theme, facetBoxPosition = "left", i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, store} = this.props;
 
         if (facetBoxPosition === "left") {
             return (
-                 <div className={`${styles.facetContainer} ${classNames!.facetContainer || ""}`}>
+                 <div className={theme!.facetContainer!}>
                     <FacetBox
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
@@ -118,10 +118,10 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {classNames, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store} = this.props;
+        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store} = this.props;
         return (
             <Results
-                classNames={{mosaicAdd: classNames && classNames.mosaicAdd}}
+                theme={{mosaicAdd: theme && theme.mosaicAdd}}
                 groupOperationLists={groupOperationLists}
                 hasSelection={!!hasSelection}
                 i18nPrefix={i18nPrefix}
@@ -136,11 +136,11 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     render() {
-        const {addItemHandler, i18nPrefix, lineComponentMapper, mosaicComponentMapper, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, classNames} = this.props;
+        const {addItemHandler, i18nPrefix, lineComponentMapper, mosaicComponentMapper, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, theme} = this.props;
         return (
             <div>
                 {this.renderFacetBox()}
-                <div className={`${styles.resultContainer} ${classNames!.resultContainer || ""}`}>
+                <div className={theme!.resultContainer!}>
                     <ListWrapper
                         addItemHandler={addItemHandler}
                         canChangeMode={!!(lineComponentMapper && mosaicComponentMapper)}

@@ -4,13 +4,13 @@ import {isEmpty, reduce} from "lodash";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
 import InputText from "focus-components/input-text";
 
 import {ContextualActions, GroupOperationListItem, ListStore, MiniListStore} from "../../list";
-import {injectStyle, StyleInjector} from "../../theming";
 
 import {SearchStore} from "../store";
 import {FacetBox} from "./facet-box";
@@ -20,7 +20,6 @@ import * as styles from "./__style__/action-bar.css";
 export type ActionBarStyle = Partial<typeof styles>;
 
 export interface ActionBarProps {
-    classNames?: ActionBarStyle;
     group?: {code: string, label: string, totalCount: number};
     hasFacetBox?: boolean;
     hasSearchBar?: boolean;
@@ -35,14 +34,15 @@ export interface ActionBarProps {
     scopeFacetKey?: string;
     searchBarPlaceholder?: string;
     store: MiniListStore<any>;
+    theme?: ActionBarStyle;
 }
 
-@injectStyle("actionBar")
+@themr("actionBar", styles)
 @observer
 @autobind
 export class ActionBar extends React.Component<ActionBarProps, {}> {
 
-    private facetBox?: StyleInjector<FacetBox>;
+    private facetBox?: FacetBox;
 
     state = {facetBoxDisplay: false};
 
@@ -72,7 +72,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     }
 
     private get filterButton() {
-        const {classNames, hasFacetBox, i18nPrefix = "focus", store} = this.props;
+        const {theme, hasFacetBox, i18nPrefix = "focus", store} = this.props;
         if (hasFacetBox && isSearch(store)) {
             return (
                 <div style={{position: "relative"}}>
@@ -81,7 +81,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                         label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
                     />
-                    {this.state.facetBoxDisplay ? <div className={`${styles.triangle} ${classNames!.triangle || ""}`} /> : null}
+                    {this.state.facetBoxDisplay ? <div className={theme!.triangle!} /> : null}
                 </div>
             );
         } else {
@@ -154,11 +154,11 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
 
     @computed
     private get searchBar() {
-        const {classNames, hasSearchBar, searchBarPlaceholder, store} = this.props;
+        const {theme, hasSearchBar, searchBarPlaceholder, store} = this.props;
 
         if (!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store))) {
             return (
-                <div className={`${styles.searchBar} ${classNames!.searchBar || ""}`}>
+                <div className={theme!.searchBar!}>
                     <InputText
                         name="search-bar"
                         rawInputValue={store.query}
@@ -181,22 +181,22 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     }
 
     private toggleFacetBox(facetBoxDisplayPrev: boolean) {
-        if (this.facetBox && this.facetBox.instance.div) {
+        if (this.facetBox && this.facetBox.div) {
             if (facetBoxDisplayPrev !== this.state.facetBoxDisplay) {
-                this.facetBox.instance.div.style.transition = "margin 0.15s ease-out";
+                this.facetBox.div.style.transition = "margin 0.15s ease-out";
             } else {
-                this.facetBox.instance.div.style.transition = null;
+                this.facetBox.div.style.transition = null;
             }
-            this.facetBox.instance.div.style.marginTop = `${this.state.facetBoxDisplay ? 5 : -this.facetBox.instance.div.clientHeight}px`;
+            this.facetBox.div.style.marginTop = `${this.state.facetBoxDisplay ? 5 : -this.facetBox.div.clientHeight}px`;
         }
     }
 
     render() {
-        const {classNames, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", store} = this.props;
+        const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", store} = this.props;
         return (
-            <div className={`${styles.container} ${classNames!.container || ""}`}>
-                <div className={`${styles.bar} ${classNames!.bar || ""} ${store.selectedItems.size ? `${styles.selection} ${classNames!.selection || ""}` : ""}`}>
-                    <div className={`${styles.buttons} ${classNames!.buttons || ""}`}>
+            <div className={theme!.container!}>
+                <div className={`${theme!.bar!} ${store.selectedItems.size ? theme!.selection! : ""}`}>
+                    <div className={theme!.buttons!}>
                         {this.selectionButton}
                         {group ?
                             <strong>{`${group.label} (${group.totalCount})`}</strong>
@@ -216,8 +216,8 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                 {hasFacetBox && isSearch(store) ?
                     <div style={{overflow: "hidden"}}>
                         <FacetBox
-                            ref={(i: any) => this.facetBox = i}
-                            classNames={{facetBox: `${styles.facetBox} ${classNames!.facetBox || ""}`}}
+                            innerRef={i => this.facetBox = i}
+                            theme={{facetBox: theme!.facetBox!}}
                             nbDefaultDataList={nbDefaultDataListFacet}
                             scopeFacetKey={scopeFacetKey}
                             store={store}

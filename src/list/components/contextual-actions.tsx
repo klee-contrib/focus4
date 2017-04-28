@@ -1,10 +1,9 @@
 import {autobind} from "core-decorators";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import Button, {ButtonProps} from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
-
-import {injectStyle} from "../../theming";
 
 import * as styles from "./__style__/contextual-actions.css";
 export type ContextualActionsStyle = Partial<typeof styles>;
@@ -29,12 +28,12 @@ export interface LineOperationListItem<T> extends OperationListItem<T> {
 
 export interface ContextualActionsProps {
     buttonShape?: ButtonProps["shape"];
-    classNames?: ContextualActionsStyle;
     operationList: OperationListItem<{}>[];
     operationParam: {} | {}[];
+    theme?: ContextualActionsStyle;
 }
 
-@injectStyle("contextualActions")
+@themr("contextualActions", styles)
 export class ContextualActions extends React.Component<ContextualActionsProps, void> {
 
     @autobind
@@ -48,7 +47,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     }
 
     render() {
-        const {buttonShape = null, classNames, operationList, operationParam} = this.props;
+        const {buttonShape = null, operationList, operationParam, theme} = this.props;
         const isTextButton = buttonShape === null || buttonShape === "raised";
         const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {action, isSecondary, icon, iconLibrary, label, showIcon, style}, key) => {
             const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
@@ -76,7 +75,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
             return actionLists;
         }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as DropdownItem[]});
         return (
-            <div className={isTextButton ? `${styles.text} ${classNames!.text || ""}` : `${styles.fab} ${classNames!.fab || ""}`}>
+            <div className={isTextButton ? theme!.text! : theme!.fab!}>
                 {primaryActionList}
                 {secondaryActionList.length ?
                     <Dropdown

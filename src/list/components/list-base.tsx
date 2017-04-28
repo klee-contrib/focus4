@@ -12,8 +12,7 @@ import * as styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
 export interface ListBaseProps<T, P extends {data?: T}> {
-    classNames?: ListStyle;
-    lineClassNames?: LineStyle;
+    lineTheme?: LineStyle;
     lineProps?: P;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
@@ -22,6 +21,7 @@ export interface ListBaseProps<T, P extends {data?: T}> {
     offset?: number;
     perPage?: number;
     showAllHandler?: () => void;
+    theme?: ListStyle;
 }
 
 @autobind
@@ -69,10 +69,10 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
     }
 
     protected renderBottomRow() {
-        const {classNames, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
+        const {theme, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
         if (isManualFetch && this.hasMoreData || showAllHandler) {
             return (
-                <div className={`${styles.bottomRow} ${classNames!.bottomRow || ""}`}>
+                <div className={theme!.bottomRow!}>
                     {isManualFetch && this.hasMoreData ?
                         <Button
                             handleOnClick={this.handleShowMore}

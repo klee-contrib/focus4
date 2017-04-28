@@ -1,14 +1,14 @@
 import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import {EntityField} from "../../entity";
-import {injectStyle} from "../../theming";
 
 import {LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
-import {timeline} from "./__style__/list.css";
+import * as styles from "./__style__/list.css";
 
 export interface TimelineProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     data: T[];
@@ -16,7 +16,7 @@ export interface TimelineProps<T, P extends {data?: T}> extends ListBaseProps<T,
     TimelineComponent: ReactComponent<P>;
 }
 
-@injectStyle("list")
+@themr("list", styles)
 @autobind
 @observer
 export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps<T, P>> {
@@ -26,13 +26,13 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
     }
 
     private renderLines() {
-        const {lineClassNames, itemKey, TimelineComponent, lineProps, dateSelector} = this.props;
+        const {lineTheme, itemKey, TimelineComponent, lineProps, dateSelector} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
 
         return this.displayedData.map((item, idx) =>
             <Line
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
-                classNames={lineClassNames}
+                theme={lineTheme}
                 data={item}
                 dateSelector={dateSelector}
                 LineComponent={TimelineComponent}
@@ -44,7 +44,7 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
 
     render() {
         return (
-            <ul className={`${timeline} ${this.props.classNames!.timeline || ""}`}>
+            <ul className={this.props.theme!.timeline}>
                 {this.renderLines()}
                 {this.renderBottomRow()}
             </ul>

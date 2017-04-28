@@ -3,6 +3,7 @@ import i18n from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 
 import Button from "focus-components/button";
 
@@ -10,11 +11,14 @@ import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
 import {TABLE_CELL_CLASS, TableWithoutStyle} from "./table";
 
+import * as styles from "./__style__/list.css";
+
 export interface StoreTableProps<T> {
     sortableColumns?: (keyof T)[];
     store: ListStoreBase<T>;
 }
 
+@themr("list", styles)
 @autobind
 @observer
 export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P, StoreTableProps<T>> {
