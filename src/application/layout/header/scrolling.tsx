@@ -79,10 +79,10 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
 
     render() {
         const {isDeployed, placeholderHeight} = this;
-        const {canDeploy, route} = applicationStore;
+        const {canDeploy} = applicationStore;
         const {scrolling, deployed, undeployed} = this.props.classNames;
         return (
-            <header ref={header => this.header = header} className={`${scrolling} ${isDeployed ? deployed : undeployed}`} data-route={route}>
+            <header ref={header => this.header = header} className={`${scrolling} ${isDeployed ? deployed : undeployed}`}>
                 {this.props.children}
                 {!isDeployed ? <div style={{height: canDeploy ? placeholderHeight : 60, width: "100%"}} /> : null}
             </header>

@@ -8,8 +8,8 @@ import {ListStoreBase, MiniListStore} from "../list";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput, UnscopedQueryOutput} from "./types";
 
 export interface SearchActionServices {
-    scoped?: <T, C = {}>(query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
-    unscoped?: <C = {}>(query: QueryInput<C>) => Promise<UnscopedQueryOutput<C>>;
+    scoped?: <T>(query: QueryInput<{}>) => Promise<QueryOutput<T, {}>>;
+    unscoped?: (query: QueryInput<{}>) => Promise<UnscopedQueryOutput<{}>>;
 }
 
 @autobind

@@ -1,4 +1,4 @@
-import {action, observable} from "mobx";
+import { action, computed, observable, ObservableMap } from "mobx";
 import * as React from "react";
 
 import {DropdownItem} from "focus-components/dropdown";
@@ -50,10 +50,9 @@ export class ApplicationStore implements ApplicationAction {
     } = {primary: [], secondary: []};
     /** Précise si le header peut se déployer ou non. */
     @observable canDeploy = true;
-    /** Nombre de formulaires en consultation ou en édition. */
-    @observable mode: {consult?: number, edit?: number} = {};
-    /** Préfixe de la route courante. */
-    @observable route: string;
+
+    /** Map de tous les formulaires actuellement affichés avec leur état en édition */
+    readonly forms: ObservableMap<boolean> = observable.map<boolean>();
 
     /** Composant de header gauche. */
     @observable barLeft = <div />;
@@ -64,15 +63,10 @@ export class ApplicationStore implements ApplicationAction {
     /** Composant de résumé, affiché en mode replié. */
     @observable summary = <div />;
 
-    /**
-     * Prend en compte un changement de mode sur un formulaire.
-     * @param newMode Nouveau mode.
-     * @param previousMode Ancien mode.
-     */
-    @action
-    changeMode(newMode: Mode, previousMode: Mode) {
-        this.mode[newMode] = this.mode[newMode] ? (this.mode[newMode]! + 1) : 1;
-        this.mode[previousMode] = this.mode[previousMode] ? (this.mode[previousMode]! - 1) : 0;
+    /** Précise si au moins un formulaire de l'application est en édition. */
+    @computed
+    get isEdit() {
+        return this.forms.values().some(x => x);
     }
 
     /** Réinitialise tous les composants et les actions du header. */

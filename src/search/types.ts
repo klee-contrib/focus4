@@ -17,7 +17,7 @@ export interface GroupResult<T> {
     totalCount?: number;
 }
 
-export interface QueryInput<C = {}> {
+export interface QueryInput<C> {
     facets: {[facet: string]: string};
     criteria: C & {query: string, scope: string};
     group: string;
@@ -27,7 +27,7 @@ export interface QueryInput<C = {}> {
     top: number;
 }
 
-export interface QueryOutput<T, C = {}> {
+export interface QueryOutput<T, C> {
     list?: T[];
     groups?: GroupResult<T>[];
     facets: FacetOutput[];
@@ -35,7 +35,7 @@ export interface QueryOutput<T, C = {}> {
     query: QueryInput<C>;
 }
 
-export interface UnscopedQueryOutput<C = {}> {
+export interface UnscopedQueryOutput<C> {
     groups: GroupResult<{}>[];
     facets: FacetOutput[];
     totalCount: number;

@@ -2,11 +2,13 @@ import {autobind} from "core-decorators";
 import {some, values} from "lodash";
 import {action, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
+import {v4} from "uuid";
 
 import {PanelButtonsProps} from "focus-components/panel";
 
 import {applicationStore} from "../application";
 import {messageStore} from "../message";
+import {classAutorun} from "../util";
 
 import {Field} from "./field";
 import {StoreNode, toFlatValues} from "./store";
@@ -100,6 +102,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     /** Classe CSS additionnelle (passée en options). */
     private className: string;
 
+    /** Identifiant unique du formulaire, pour l'ApplicationStore. */
+    private formId = v4();
+
     /** Insère ou non un formulaire HTML. */
     private hasForm: boolean;
 
@@ -143,11 +148,13 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
 
     componentWillMount() {
         this.init();
+        applicationStore.forms.set(this.formId, this.isEdit);
         this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.
         this.load();
     }
 
     componentWillUnmount() {
+        applicationStore.forms.delete(this.formId);
         if (!this.isCustomEntity) {
             this.entity.unsubscribe();
         }
@@ -160,12 +167,13 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     @action
     toggleEdit(isEdit: boolean) {
         this.isEdit = isEdit;
-        if (isEdit) {
-            applicationStore.changeMode("edit", "consult");
-        } else {
+        if (!isEdit) {
             this.entity.reset();
-            applicationStore.changeMode("consult", "edit");
         }
+    }
+
+    @classAutorun protected updateApplicationStore() {
+        applicationStore.forms.set(this.formId, this.isEdit);
     }
 
     /** Appelle le service de suppression. */

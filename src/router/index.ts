@@ -4,8 +4,6 @@ import {Router, RouterConfig} from "./director";
 import {ViewStore} from "./store";
 export {ViewStore};
 
-import {applicationStore} from "../application";
-
 /**
  * Crée un routeur et le lance.
  * @param config La config du routeur ([director](https://github.com/flatiron/director)).
@@ -64,7 +62,6 @@ export function startRouter<Store extends ViewStore<any, any>>(config: RouterCon
     new Router(stores.reduce((routes, store, i) => {
         routes[`/?${store.prefix ? `${store.prefix}/?` : ""}${store.paramNames.map(_ => `([^\/]*)?`).join("/?")}`] = (...params: string[]) => {
             // Pour chaque navigation :
-            applicationStore.route = store.prefix; // On met à jour le store applicatif.
             updateActivity(i); // On note le store comme actif.
             store.updateView(store.prefix, params); // On met à jour la vue avec les paramètres d'URL.s
         };
