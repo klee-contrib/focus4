@@ -2,6 +2,8 @@
     display: flex;
     align-items: center;
     background-color: white;
+    z-index: 2200;
+    position: relative;
     height: 41px;
     border-radius: 2px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
@@ -77,7 +79,7 @@
 .criteria {
     position: absolute;
     top: 43px;
-    z-index: 1200;
+    z-index: 2200;
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 100%;
@@ -85,6 +87,16 @@
     border-top-color: #d9d9d9;
     box-sizing: border-box;
     padding-top: 18px;
+}
+
+.criteriaWrapper {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2199;
+    background: rgba(0, 0, 0, 0.15);
 }
 
 .criteria > button:first-child {

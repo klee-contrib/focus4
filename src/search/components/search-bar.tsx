@@ -141,12 +141,14 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
 
     toggleCriteria() {
         this.showCriteriaComponent = !this.showCriteriaComponent;
+        this.props.store.blockSearch = !this.props.store.blockSearch;
     }
 
     render() {
         const {i18nPrefix = "focus", placeholder, store, scopes, theme, criteriaComponent} = this.props;
         return (
             <div style={{position: "relative"}}>
+                {this.showCriteriaComponent ? <div className={theme!.criteriaWrapper} onClick={this.toggleCriteria} /> : null}
                 <div className={`${theme!.bar!} ${this.error ? theme!.error! : ""}`}>
                     {scopes ?
                         <Select
@@ -183,7 +185,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                         {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: query => store.query = query})}
                         {criteriaComponent}
                         <div className={theme!.buttons!}>
-                            <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.close`} />
+                            <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.search`} />
                             <Button onClick={this.clear} shape={null} label={`${i18nPrefix}.search.bar.reset`} />
                         </div>
                     </div>

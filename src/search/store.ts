@@ -15,6 +15,8 @@ export interface SearchActionServices {
 @autobind
 export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
 
+    @observable blockSearch = false;
+
     @observable readonly criteria?: C;
     @observable groupingKey: string | undefined;
     @observable scope = "ALL";
@@ -34,6 +36,7 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
 
         // Relance la recherche à chaque modification de propriété.
         reaction(() => [
+            this.blockSearch,
             this.flatCriteria,
             this.groupingKey,
             this.query,
@@ -107,6 +110,10 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
     @debounce(200)
     @action
     async search(isScroll = false) {
+        if (this.blockSearch) {
+            return;
+        }
+
         let {query} = this;
         const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
 

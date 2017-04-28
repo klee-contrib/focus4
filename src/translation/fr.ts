@@ -30,10 +30,10 @@ export const fr = {
                 sort: "Trier",
             },
             bar: {
-                close: "Fermer",
                 error: "Les critères suivants sont en erreur",
                 query: "Contient les mots",
-                reset: "Réinitialiser"
+                reset: "Réinitialiser",
+                search: "Rechercher"
             },
             facets: {
                 title: "Filtrer"
