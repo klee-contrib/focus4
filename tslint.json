@@ -18,6 +18,7 @@
             true,
             "multiline"
         ],
+        "await-promise": true,
         "ban": true,
         "callable-types": true,
         "curly": true,
@@ -42,6 +43,7 @@
             true,
             "CRLF"
         ],
+        "match-default-export-name": true,
         "member-ordering": [
             "public-before-private",
             "static-before-instance",
@@ -50,6 +52,7 @@
         "new-parens": true,
         "no-angle-bracket-type-assertion": true,
         "no-arg": true,
+        "no-boolean-literal-compare": true,
         "no-consecutive-blank-lines": [true],
         "no-console": [
             true,
@@ -62,6 +65,7 @@
         "no-empty": true,
         "no-empty-interface": true,
         "no-eval": true,
+        "no-for-in-array": true,
         "no-inferrable-types": [true],
         "no-internal-module": true,
         "no-invalid-template-strings": true,
@@ -76,6 +80,7 @@
         "no-trailing-whitespace": true,
         "no-unnecessary-callback-wrapper": true,
         "no-unnecessary-initializer": true,
+        "no-unnecessary-qualifier": true,
         "no-unsafe-finally": true,
         "no-unused-expression": true,
         "no-var-keyword": true,
@@ -112,6 +117,7 @@
             true,
             "double"
         ],
+        "return-undefined": true,
         "semicolon": [
             true,
             "always"

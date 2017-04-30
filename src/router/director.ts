@@ -81,8 +81,8 @@ export class Router {
         this.notfound = options.notfound;
         this.resource = options.resource;
         this.history = options.html5history && this.historySupport || false;
-        this.run_in_init = this.history === true && options.run_handler_in_init !== false;
-        this.convert_hash_in_init = this.history === true && options.convert_hash_in_init !== false;
+        this.run_in_init = this.history && options.run_handler_in_init !== false;
+        this.convert_hash_in_init = this.history && options.convert_hash_in_init !== false;
         this.every = {
             after: options.after,
             before: options.before,
@@ -189,7 +189,7 @@ export class Router {
     init(r?: string) {
         const handler = (onChangeEvent?: PopStateEvent | HashChangeEvent) => {
             const newURL = onChangeEvent && (onChangeEvent as HashChangeEvent).newURL || window.location.hash;
-            const url = this.history === true ? this.getPath : newURL.replace(/.*#/, "");
+            const url = this.history ? this.getPath : newURL.replace(/.*#/, "");
             this.dispatch("on", url.charAt(0) === "/" ? url : `/${url}`);
         };
 
@@ -201,13 +201,13 @@ export class Router {
             }
         };
 
-        if (this.history === true) {
+        if (this.history) {
             window.onpopstate = onChange;
         } else {
             window.onhashchange = onChange;
         }
 
-        if (this.history === false) {
+        if (!this.history) {
             if (dlocHashEmpty() && r) {
                 document.location.hash = r;
             } else if (!dlocHashEmpty()) {
@@ -224,7 +224,7 @@ export class Router {
                 routeTo = this.getPath;
             }
 
-            if (routeTo || this.run_in_init === true) {
+            if (routeTo || this.run_in_init) {
                 handler();
             }
         }

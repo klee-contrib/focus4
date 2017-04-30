@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import BackToTop from "focus-components/button-back-to-top";
+import ButtonBackToTop from "focus-components/button-back-to-top";
 
 import {GroupOperationListItem, LineOperationListItem, ListWrapper} from "../../list";
 
@@ -154,7 +154,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                         {this.renderResults()}
                     </ListWrapper>
                 </div>
-                {hasBackToTop ? <BackToTop /> : null}
+                {hasBackToTop ? <ButtonBackToTop /> : null}
             </div>
         );
     }

@@ -95,8 +95,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
 
         if (store.totalCount > 1 && !store.selectedItems.size && (isSearch(store) || isList(store)) && orderableColumnList) {
             const orderOperationList: DropdownItem[] = [];
-            for (const key in orderableColumnList) {
-                const description = orderableColumnList[key];
+            orderableColumnList.forEach(description => {
                 orderOperationList.push({
                     action: action(() => {
                         store.sortBy = description.key;
@@ -104,7 +103,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                     }),
                     label: description.label
                 });
-            }
+            });
 
             return (
                 <Dropdown

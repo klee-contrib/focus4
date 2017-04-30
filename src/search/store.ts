@@ -111,7 +111,7 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
     @action
     async search(isScroll = false) {
         if (this.blockSearch) {
-            return;
+            /* tslint:disable */ return; /* tslint:enable */
         }
 
         let {query} = this;

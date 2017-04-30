@@ -1,8 +1,8 @@
 import {find, result} from "lodash";
 import * as React from "react";
 
-import AutocompleteSelect, {AutoCompleteResult} from "focus-components/autocomplete-select";
-import AutocompleteText from "focus-components/autocomplete-text/field";
+import AutocompleteSelectField, {AutoCompleteResult} from "focus-components/autocomplete-select";
+import AutocompleteTextField from "focus-components/autocomplete-text/field";
 import Select from "focus-components/select";
 
 import {EntityField} from "../entity";
@@ -84,7 +84,7 @@ export const $entity = {
  * @param options Les options du champ.
  */
 export function autocompleteSelectFor<T>(field: EntityField<T>, options: AutocompleteSelectOptions) {
-    (options as FieldProps).InputComponent = AutocompleteSelect;
+    (options as FieldProps).InputComponent = AutocompleteSelectField;
     return fieldForWith<T, any, any, any>(field, options);
 }
 
@@ -94,7 +94,7 @@ export function autocompleteSelectFor<T>(field: EntityField<T>, options: Autocom
  * @param options Les options du champ.
  */
 export function autocompleteTextFor<T>(field: EntityField<T>, options: AutocompleteTextOptions) {
-    (options as FieldProps).InputComponent = AutocompleteText;
+    (options as FieldProps).InputComponent = AutocompleteTextField;
     return fieldForWith<T, any, any, any>(field, options);
 }
 

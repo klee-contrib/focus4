@@ -19,7 +19,7 @@
     "tcm:watch": "tcm -w src",
     "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
     "testgen": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node src/testing/generator.ts src ..",
-    "tslint": "tslint src/**/*.ts src/**/*.tsx --force"
+    "tslint": "tslint --project tsconfig.json --type-check --force"
   },
   "dependencies": {
     "@types/core-decorators": "0.10.32",

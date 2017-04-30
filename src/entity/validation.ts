@@ -138,7 +138,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
         switch (validator.type) {
             case "required":
                 const prevalidString = "" === property.value ? false : true;
-                return true === validator.value ? (!isNull(value) && !isUndefined(value) && prevalidString) : true;
+                return validator.value ? (!isNull(value) && !isUndefined(value) && prevalidString) : true;
             case "regex":
                 if (isValueNullOrUndefined) {
                     return true;
@@ -164,7 +164,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
 
     if (isValid === undefined) {
         console.warn(`Le validateur de type : ${validator.type} n'existe pas.`);
-    } else if (isValid === false) {
+    } else if (!isValid) {
         return getErrorLabel(validator.type, validator.options);
     }
 
