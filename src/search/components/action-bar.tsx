@@ -78,6 +78,8 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                 <div style={{position: "relative"}}>
                     <Button
                         onClick={() => this.setState({facetBoxDisplay: !this.state.facetBoxDisplay})}
+                        icon="arrow_drop_down"
+                        iconPosition="right"
                         label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
                     />
@@ -109,6 +111,8 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                 <Dropdown
                     button={{
                         label: `${i18nPrefix}.search.action.sort`,
+                        icon: "arrow_drop_down",
+                        iconPosition: "right",
                         shape: null
                     }}
                     operations={orderOperationList}
@@ -141,7 +145,17 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
 
             if (!isEmpty(groupOperationList)) {
                 if (!this.state.facetBoxDisplay) {
-                    return <Dropdown button={{label: `${i18nPrefix}.search.action.group`, shape: null}} operations={groupOperationList} />;
+                    return (
+                        <Dropdown
+                            button={{
+                                label: `${i18nPrefix}.search.action.group`,
+                                icon: "arrow_drop_down",
+                                iconPosition: "right",
+                                shape: null
+                            }}
+                            operations={groupOperationList}
+                        />
+                    );
                 } else {
                     return <Button disabled={true} label={`${i18nPrefix}.search.action.group`} />;
                 }

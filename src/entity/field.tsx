@@ -44,6 +44,7 @@ export interface FieldProps extends Domain {
 
 /** Liste de toutes les props qu'on ne passera pas aux composants d'input ou display. */
 const omittedProps = [
+    "className",
     "contentCellPosition",
     "contentOffset",
     "contentSize",

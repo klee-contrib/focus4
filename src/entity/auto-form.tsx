@@ -4,7 +4,7 @@ import {action, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
 import {v4} from "uuid";
 
-import {PanelButtonsProps} from "focus-components/panel";
+import {PanelButtonsProps} from "focus-components/panel/edit-save-buttons";
 
 import {applicationStore} from "../application";
 import {messageStore} from "../message";
@@ -33,7 +33,7 @@ import {
     TextOptions
 } from "./field-helpers";
 
-import {form, loading} from "./__style__/auto-form.css";
+import {form} from "./__style__/auto-form.css";
 
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions<E> {
@@ -98,6 +98,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
 
     /** Formulaire en chargement. */
     @observable isLoading = false;
+
+    /** Formulaire en sauvegarde.  */
+    @observable isSaving = false;
 
     /** Classe CSS additionnelle (passée en options). */
     private className: string;
@@ -217,19 +220,19 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     async save() {
         // On ne sauvegarde que si la validation est en succès.
         if (this.validate()) {
-            this.isLoading = true;
+            this.isSaving = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity));
                 messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.saved`);
                 runInAction(() => {
-                    this.isLoading = false;
+                    this.isSaving = false;
                     this.isEdit = false;
                     this.storeData.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                     this.onFormSaved();
                 });
             } catch (e) {
                 runInAction(() => {
-                    this.isLoading = false;
+                    this.isSaving = false;
                     if (e.$parsedErrors && e.$parsedErrors.fields) {
                         this.errors = e.$parsedErrors.fields || {};
                     }
@@ -274,7 +277,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         return {
             editing: this.isEdit,
             getUserInput: () => ({}), // Pas besoin de passer l'input car il est déjà dans le state du formulaire.
+            loading: this.isLoading,
             save: this.save,
+            saving: this.isSaving,
             toggleEdit: this.toggleEdit,
         };
     }
@@ -286,7 +291,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         if (this.hasForm) {
             return (
                 <form
-                    className={`${form} ${contextClassName} ${this.className} ${this.isLoading ? loading : ""}`}
+                    className={`${form} ${contextClassName} ${this.className}`}
                     noValidate={true}
                     onSubmit={e => { e.preventDefault(); this.save(); }}
                 >
