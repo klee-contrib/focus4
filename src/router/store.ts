@@ -30,7 +30,7 @@ export class ViewStore<V, N extends string> {
     /** Calcule l'URL en fonction de l'état courant. */
     @computed
     get currentPath() {
-        const url = this.getUrlFromView(this.currentView);
+        const url = this.getUrl(this.currentView);
         if (url.includes("//")) {
             throw new Error("La vue courante n'est pas convertible en une URL car des paramètres sont manquants. Par exemple, pour l'URL '/:param1/:param2', si 'param2' est spécifié alors 'param1' doit l'être aussi.");
         }
@@ -42,7 +42,7 @@ export class ViewStore<V, N extends string> {
      * @param view La vue à récupérer.
      */
     getUrl(view: Partial<V>) {
-        return this.getUrlFromView(view);
+        return `/${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => view[p]).join("/")}`.replace(/\/+$/, "");
     }
 
     /**
@@ -55,28 +55,5 @@ export class ViewStore<V, N extends string> {
         for (const param in view) {
             this.currentView[param] = view[param]!;
         }
-    }
-
-    /**
-     * Calcule l'état en fonction de l'URL courante.
-     * @param prefix Le préfixe de l'URL courante.
-     * @param params Les paramètres de l'URL.
-     */
-    @action
-    updateView(prefix?: string, params: string[] = []) {
-        // La vue n'est mise à jour que si le préfixe est le bon.
-        if (prefix === this.prefix) {
-            for (let i = 0; i < this.paramNames.length; i++) {
-                this.currentView[this.paramNames[i]] = params[i] as any;
-            }
-        }
-    }
-
-    /**
-     * Génère l'URL depuis une vue.
-     * @param view La vue.
-     */
-    private getUrlFromView(view: Partial<V>) {
-        return `${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => view[p]).join("/")}`.replace(/\/+$/, "");
     }
 }

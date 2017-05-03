@@ -9,7 +9,7 @@ Il s'articule autour d'un ou plusieurs store(s) (le `ViewStore`) qui sert d'inte
 Exemple :
 ```ts
 const viewStore = new ViewStore({page: "", id: "", subPage: "", subId: ""});
-startRouter({}, [viewStore]);
+startRouter([viewStore]);
 ```
 ```
 navigation vers "/structure/1/detail" -> viewStore.currentView = {page: "structure", id: "1", subPage: "detail"}
@@ -33,7 +33,7 @@ Exemple d'usage :
 export const homeView = new ViewStore({page: "" as undefined | "test" | "list", id: "" as string | undefined}, "home");
 export const testView = new ViewStore({lol: ""}, "test");
 
-const router = startRouter({}, [homeView, testView]);
+const router = startRouter([homeView, testView]);
 
 const Main = observer(() => {
     const {currentStore} = router;

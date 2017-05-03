@@ -1,15 +1,15 @@
 import {observable, reaction, runInAction} from "mobx";
+import {Router, RouterConfig} from "yester";
 
-import {Router, RouterConfig} from "./director";
 import {ViewStore} from "./store";
 export {ViewStore};
 
 /**
  * Crée un routeur et le lance.
- * @param config La config du routeur ([director](https://github.com/flatiron/director)).
  * @param stores Des ViewStore précédemment créé. S'il y a plus d'un ViewStore, tous doivent avoir un préfixe.
+ * @param config La config du routeur ([yester](https://github.com/basarat/yester)).
  */
-export function startRouter<Store extends ViewStore<any, any>>(config: RouterConfig, stores: Store[]) {
+export function startRouter<Store extends ViewStore<any, any>>(stores: Store[], config: RouterConfig = {type: "hash"}) {
     if (stores.length === 0) {
         throw new Error("Au moins un store doit avoir été spécifié.");
     }
@@ -20,77 +20,86 @@ export function startRouter<Store extends ViewStore<any, any>>(config: RouterCon
     /** Routing activé ou non. On désactive le routing lorsqu'on change de store pour réinitialiser les autres. */
     let routingEnabled = true;
 
+    /** Récupère l'URL courante. */
+    function getUrl() {
+        if (config.type === "browser") {
+            return window.location.pathname;
+        } else {
+            return window.location.hash.substring(1); // On enlève le #.
+        }
+    }
+
     /**
-     * Rend le store `i` actif.
-     * @param i L'index du store à rendre actif.
+     * Met à jour l'URL courante.
+     * @param url L'url à renseigner.
+     */
+    function updateUrl(url: string) {
+        if (config.type === "browser") {
+            window.history.pushState(null, "", url);
+        } else {
+            window.location.hash = url;
+        }
+    }
+
+    /**
+     * Enregistre le store i comme actif.
+     * @param i L'index du store.
      */
     function updateActivity(i: number) {
-        // On désactive le routing.
+        // Si le store est déjà actif, on ne fait rien.
+        if (storeActivity.findIndex(Boolean) === i) {
+            return;
+        }
+
+        // On désactive le routing pendant la mise à jour pour ne pas déclencher de navigation pendant le reset.
         routingEnabled = false;
 
         // On parcourt tous les stores :
-        runInAction(() => stores.forEach((store, j) => {
+        runInAction(() => stores.forEach((s, j) => {
             storeActivity[j] = i === j; // Seul le store `i` est actif.
             // On met tous les états des autres stores à `undefined`.
             if (i !== j) {
-                for (const key in store.currentView) {
-                    store.currentView[key] = undefined;
+                for (const key in s.currentView) {
+                    s.currentView[key] = undefined;
                 }
             }
         }));
 
-        // On réactive le routing.
         routingEnabled = true;
-    }
-
-    /** Reset le routeur en mettant le premier store actif et son état à `undefined`. */
-    function reset() {
-        stores[0].updateView();
-        if (config.html5history) {
-            window.history.pushState(null, "", stores[0].prefix);
-        } else {
-            window.location.hash = stores[0].prefix;
-        }
-        updateActivity(0);
     }
 
     if (stores.length > 1 && stores.some(store => !store.prefix)) {
         throw new Error("Tous les stores doivent avoir un préfixe.");
     }
 
-    // On initilialise le router `director` en créant une route par ViewStore, qui contient le prefix + tous les paramètres dans la Regex de route en facultatif.
-    new Router(stores.reduce((routes, store, i) => {
-        routes[`/?${store.prefix ? `${store.prefix}/?` : ""}${store.paramNames.map(_ => `([^\/]*)?`).join("/?")}`] = (...params: string[]) => {
-            // Pour chaque navigation :
-            updateActivity(i); // On note le store comme actif.
-            store.updateView(store.prefix, params); // On met à jour la vue avec les paramètres d'URL.s
-        };
-        return routes;
-    }, {} as {[route: string]: (...params: string[]) => void}))
-        .configure({notfound: reset, ...config}) // On appelle `reset()` en cas de route non trouvée.
-        .init();
+    // On construit le router.
+    new Router([
+        ...stores.map((store, i) => ({
+            /** Route sur laquelle matcher. */
+            $: `/${store.prefix ? `${store.prefix}` : ""}${store.paramNames.map(param => `(/:${param})`).join("")}`,
+            /** Handler de navigation. */
+            enter: ({params}: any) => {
+                updateActivity(i); // On met à jour l'activité.
+                store.setView(params); // On met à jour la vue avec les paramètres d'URL.
+            }
+        })),
+        // On ajoute un wildcard pour gérer les routes non trouvées, et on les fait pointer à la route principale
+        {$: "*", enter: () => updateUrl(`/${stores[0].prefix}`)}
+    ], config).init();
 
-    // On initialise le retour à la page principale (via `reset()`).
-    if (config.html5history && !window.location.pathname || !config.html5history && !window.location.hash) {
-        reset();
+    // Le routeur spécifie la route par défaut si on ne fournit pas de route, sans appeler tout de suite le handler `enter`. On doit donc faire cette initialisation en plus.
+    if (getUrl() === `/${stores[0].prefix}`) {
+        updateActivity(0);
     }
 
-    // On met en place les réactions sur le currentPath de chaque ViewStore
-    stores.forEach((store, i) => {
+    // On met en place les réactions sur le currentPath de chaque ViewStore.
+    stores.forEach(store => {
         reaction(() => store.currentPath, currentPath => {
             // On vérifie que le routing est bien activé.
             if (routingEnabled) {
-                // Si le chemin à effectivement changé, alors on met à jour l'URL et l'activité du store.
-                if (config.html5history) {
-                    if (currentPath !== window.location.pathname) {
-                        window.history.pushState(null, "", currentPath);
-                        updateActivity(i);
-                    }
-                } else {
-                    if (currentPath !== window.location.hash) {
-                        window.location.hash = currentPath;
-                        updateActivity(i);
-                    }
+                // Si le chemin à effectivement changé, alors on met à jour l'URL.
+                if (currentPath !== getUrl()) {
+                    updateUrl(currentPath);
                 }
             }
         });
@@ -104,11 +113,7 @@ export function startRouter<Store extends ViewStore<any, any>>(config: RouterCon
         },
         to(prefix: Store["prefix"]) {
             if (prefix) {
-                if (config.html5history) {
-                    window.history.pushState(null, "", prefix);
-                } else {
-                    window.location.hash = prefix;
-                }
+                updateUrl(`/${prefix}`);
             }
         }
     }) as {

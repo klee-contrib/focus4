@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "1.5.7",
+  "version": "1.5.8-preview1",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -52,7 +52,8 @@
     "reflect-metadata": "0.1.10",
     "tape": "4.6.3",
     "tslib": "1.6.1",
-    "uuid": "3.0.1"
+    "uuid": "3.0.1",
+    "yester": "0.10.0-dev.13"
   },
   "devDependencies": {
     "@types/shelljs": "0.7.0",
