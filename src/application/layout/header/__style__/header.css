@@ -1,6 +1,5 @@
 .actions {
-    text-align: right;
-    display: inline;
+    display: flex;
 }
 
 .actions button {
@@ -13,10 +12,6 @@
 
 .actions button:hover {
     background-color: #f9f9f9 !important;
-}
-
-.actions div {
-    float: right;
 }
 
 .content {

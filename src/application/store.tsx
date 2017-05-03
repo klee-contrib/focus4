@@ -16,7 +16,7 @@ export interface PrimaryAction {
     /** Bibliothèque d'icône (par défaut: "material") */
     iconLibrary?: "material" | "font-awesome" | "font-custom";
     /** Nom du bouton. */
-    label?: string;
+    label: string;
 }
 
 export interface ApplicationAction {
