@@ -45,17 +45,21 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
 
     @computed
     protected get addItemHandler() {
-        return this.props.addItemHandler || this.context.listWrapper && this.context.listWrapper.addItemHandler;
+        const {listWrapper} = this.context;
+        return this.props.addItemHandler || listWrapper && listWrapper.addItemHandler;
     }
 
     @computed
     protected get mode() {
-        return this.props.mode || this.context.listWrapper && this.context.listWrapper.mode || "list";
+        const {mode, MosaicComponent, LineComponent} = this.props;
+        const {listWrapper} = this.context;
+        return mode || listWrapper && listWrapper.mode || MosaicComponent && !LineComponent && "mosaic" || "list";
     }
 
     @computed
     protected get mosaic() {
-        return this.mode === "list" ? undefined : this.props.mosaic || this.context.listWrapper && this.context.listWrapper.mosaic || {width: 200, height: 200};
+        const {listWrapper} = this.context;
+        return this.mode === "list" ? undefined : this.props.mosaic || listWrapper && listWrapper.mosaic || {width: 200, height: 200};
     }
 
     protected get data() {
