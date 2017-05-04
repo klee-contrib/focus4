@@ -95,6 +95,20 @@ export function startRouter<Store extends ViewStore<any, any>, E = "error">(stor
         ...stores.map((store, i) => ({
             /** Route sur laquelle matcher. */
             $: `/${store.prefix ? `${store.prefix}` : ""}${store.paramNames.map(param => `(/:${param})`).join("")}`,
+            beforeEnter: store.beforeEnter && (({params}) => {
+                const {errorCode: err = "", redirect = {}} = store.beforeEnter!(params) || {};
+                if (err) {
+                    updateActivity(stores.length);
+                    return {redirect: `/${errorPageName}/${err}`, replace: true};
+                } else if (redirect) {
+                    const url = typeof redirect === "string" ? redirect : store.getUrl(redirect);
+                    updateActivity(i);
+                    if (url !== getUrl()) {
+                        return {redirect: url, replace: true};
+                    }
+                }
+                return;
+            }),
             /** Handler de navigation. */
             enter: ({params}) => {
                 updateActivity(i); // On met à jour l'activité.

@@ -1,11 +1,23 @@
 import {mapValues} from "lodash";
 import {action, computed, observable} from "mobx";
 
+export interface ViewStoreConfig<V, N> {
+    /** Est appelé avant la navigation vers une nouvelle route. */
+    beforeEnter?: (view: V) => {redirect?: Partial<V> | string, errorCode?: string} | undefined;
+    /** Le préfixe du store. */
+    prefix?: N;
+    /** Objet de vue, représenté dans l'URL. L'ordre des paramètres compte. */
+    view: V;
+}
+
 /**
  * Le ViewStore est une classe servant d'intermédiaire entre le routeur et le reste de l'application.
  * La propriété `currentView` est une observable en bijection avec l'URL. Son type est à spécifier en tant que paramètre de type de la classe.
  */
 export class ViewStore<V, N extends string> {
+
+    /** Est appelé avant la navigation vers une nouvelle route. */
+    readonly beforeEnter?: (view: V) => {redirect?: Partial<V> | string, errorCode?: string} | undefined;
 
     /** Représente l'état courant de l'URL. */
     @observable currentView: V;
@@ -18,13 +30,13 @@ export class ViewStore<V, N extends string> {
 
     /**
      * Construit un nouveau ViewStore.
-     * @param paramNames Le nom des paramètres de l'URL, dans l'ordre. Ils doivent correspondre avec les clés de `currentView`.
-     * @param prefix Le préfixe éventuel des URLs de ce ViewStore (obligatoire pour avoir plusieurs stores).
+     * @param config La configuration du store.
      */
-    constructor(paramNames: V, prefix?: N) {
-        this.paramNames = Object.keys(paramNames) as (keyof V)[];
+    constructor({beforeEnter, view, prefix}: ViewStoreConfig<V, N>) {
+        this.beforeEnter = beforeEnter;
+        this.paramNames = Object.keys(view) as (keyof V)[];
         this.prefix = prefix;
-        this.currentView = mapValues(paramNames, () => undefined);
+        this.currentView = mapValues(view, () => undefined);
     }
 
     /** Calcule l'URL en fonction de l'état courant. */
@@ -49,9 +61,14 @@ export class ViewStore<V, N extends string> {
      * Met à jour la vue courante avec les paramètres donnés.
      * Utile pour mettre à jour plusieurs paramètres à la fois.
      * @param view Les paramètres.
+     * @param replace Remplace tout.
      */
     @action
-    setView(view: Partial<V>) {
+    setView(view: Partial<V>, replace?: boolean) {
+        if (replace) {
+            this.paramNames.forEach(param => this.currentView[param] = undefined as any);
+        }
+
         for (const param in view) {
             this.currentView[param] = view[param]!;
         }
