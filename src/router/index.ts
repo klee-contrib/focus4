@@ -1,28 +1,41 @@
 import {observable, reaction, runInAction} from "mobx";
-import {Router, RouterConfig} from "yester";
+import {RouteConfig, Router} from "yester";
 
 import {ViewStore} from "./store";
 export {ViewStore};
+
+export interface RouterConfig<E = "error"> {
+    /** Mode du routeur. Par défaut: "hash" */
+    routerMode?: "hash" | "browser";
+    /** Nom du préfixe pour la page d'erreur. Par défaut : "error" */
+    errorPageName?: E;
+    /** Nom du code pour une page non trouvée. Par défaut : "notfound" */
+    notfoundCode?: string;
+}
 
 /**
  * Crée un routeur et le lance.
  * @param stores Des ViewStore précédemment créé. S'il y a plus d'un ViewStore, tous doivent avoir un préfixe.
  * @param config La config du routeur ([yester](https://github.com/basarat/yester)).
  */
-export function startRouter<Store extends ViewStore<any, any>>(stores: Store[], config: RouterConfig = {type: "hash"}) {
+export function startRouter<Store extends ViewStore<any, any>, E = "error">(stores: Store[], config: RouterConfig<E> = {}) {
+    const {routerMode = "hash", errorPageName = "error", notfoundCode = "notfound"} = config;
+
     if (stores.length === 0) {
         throw new Error("Au moins un store doit avoir été spécifié.");
     }
 
     /** Liste contenant l'activité de chaque store. Un seul store peut être actif à la fois. */
-    const storeActivity = observable(stores.map(_ => false));
+    const storeActivity = observable([...stores.map(_ => false), false]); // On ajoute la page d'erreur comme activité supplémentaire.
+
+    const errorCode = observable<string>(undefined);
 
     /** Routing activé ou non. On désactive le routing lorsqu'on change de store pour réinitialiser les autres. */
     let routingEnabled = true;
 
     /** Récupère l'URL courante. */
     function getUrl() {
-        if (config.type === "browser") {
+        if (routerMode === "browser") {
             return window.location.pathname;
         } else {
             return window.location.hash.substring(1); // On enlève le #.
@@ -34,7 +47,7 @@ export function startRouter<Store extends ViewStore<any, any>>(stores: Store[], 
      * @param url L'url à renseigner.
      */
     function updateUrl(url: string) {
-        if (config.type === "browser") {
+        if (routerMode === "browser") {
             window.history.pushState(null, "", url);
         } else {
             window.location.hash = url;
@@ -55,15 +68,18 @@ export function startRouter<Store extends ViewStore<any, any>>(stores: Store[], 
         routingEnabled = false;
 
         // On parcourt tous les stores :
-        runInAction(() => stores.forEach((s, j) => {
-            storeActivity[j] = i === j; // Seul le store `i` est actif.
-            // On met tous les états des autres stores à `undefined`.
-            if (i !== j) {
-                for (const key in s.currentView) {
-                    s.currentView[key] = undefined;
+        runInAction(() => {
+            storeActivity[stores.length] = i === stores.length;
+            stores.forEach((s, j) => {
+                storeActivity[j] = i === j; // Seul le store `i` est actif.
+                // On met tous les états des autres stores à `undefined`.
+                if (i !== j) {
+                    for (const key in s.currentView) {
+                        s.currentView[key] = undefined;
+                    }
                 }
-            }
-        }));
+            });
+        });
 
         routingEnabled = true;
     }
@@ -74,23 +90,40 @@ export function startRouter<Store extends ViewStore<any, any>>(stores: Store[], 
 
     // On construit le router.
     new Router([
+
+        // On construit une route par store.
         ...stores.map((store, i) => ({
             /** Route sur laquelle matcher. */
             $: `/${store.prefix ? `${store.prefix}` : ""}${store.paramNames.map(param => `(/:${param})`).join("")}`,
             /** Handler de navigation. */
-            enter: ({params}: any) => {
+            enter: ({params}) => {
                 updateActivity(i); // On met à jour l'activité.
                 store.setView(params); // On met à jour la vue avec les paramètres d'URL.
             }
-        })),
-        // On ajoute un wildcard pour gérer les routes non trouvées, et on les fait pointer à la route principale
-        {$: "*", enter: () => updateUrl(`/${stores[0].prefix}`)}
-    ], config).init();
+        } as RouteConfig)),
 
-    // Le routeur spécifie la route par défaut si on ne fournit pas de route, sans appeler tout de suite le handler `enter`. On doit donc faire cette initialisation en plus.
-    if (getUrl() === `/${stores[0].prefix}`) {
-        updateActivity(0);
-    }
+        // On ajoute la route d'erreur.
+        {
+            $: `/${errorPageName}/:code`,
+            enter: ({params}) => {
+                updateActivity(stores.length);
+                errorCode.set(params.code);
+            }
+        },
+
+        // On ajoute le wildcard pour les URLs non matchées.
+        {
+            $: "*",
+            beforeEnter: ({newPath}) => {
+                if (newPath === "/") { // Si on a pas de route initiale, on redirige vers le store principal.
+                    updateActivity(0);
+                    return {redirect: `/${stores[0].prefix}`, replace: true};
+                } else { // Sinon on redirige vers la page d'erreur.
+                    return {redirect: `/${errorPageName}/${notfoundCode}`, replace: true};
+                }
+            }
+        }
+    ], {type: routerMode}).init();
 
     // On met en place les réactions sur le currentPath de chaque ViewStore.
     stores.forEach(store => {
@@ -109,7 +142,12 @@ export function startRouter<Store extends ViewStore<any, any>>(stores: Store[], 
     return observable({
         stores: observable.ref(stores),
         get currentStore() {
-            return stores[storeActivity.findIndex(Boolean)];
+            const i = storeActivity.findIndex(Boolean);
+            if (i < stores.length) {
+                return stores[storeActivity.findIndex(Boolean)];
+            } else {
+                return {prefix: errorPageName, errorCode: errorCode.get()};
+            }
         },
         to(prefix: Store["prefix"]) {
             if (prefix) {
@@ -118,7 +156,7 @@ export function startRouter<Store extends ViewStore<any, any>>(stores: Store[], 
         }
     }) as {
         /** Store actif dans le routeur. */
-        readonly currentStore: Store;
+        readonly currentStore: Store | {prefix: E, errorCode: string};
 
         /** La liste des ViewStores enregistrés dans le routeur. */
         stores: Store[];

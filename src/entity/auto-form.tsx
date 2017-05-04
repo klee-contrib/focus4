@@ -64,7 +64,7 @@ export interface ServiceConfig {
     getLoadParams?: () => any[];
 
     /** Service de chargement. */
-    load?: (...args: any[]) => Promise<{}>;
+    load?: (...args: any[]) => Promise<{} | undefined>;
 
     /** Service de sauvegarde. Obligatoire. */
     save: (entity: {}) => Promise<{}>;
@@ -207,7 +207,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
                 this.storeData.clear();
                 const data = await load(...params);
                 runInAction(() => {
-                    this.storeData.set(data);
+                    this.storeData.set(data || {});
                     this.isLoading = false;
                     this.onFormLoaded();
                 });
