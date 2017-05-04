@@ -6,7 +6,7 @@ import {themr} from "react-css-themr";
 
 import Button from "focus-components/button";
 
-import {EntityField, textFor} from "../../entity";
+import {EntityField, stringFor} from "../../entity";
 
 import {MiniListStore} from "../store-base";
 import {ContextualActions, LineOperationListItem} from "./contextual-actions";
@@ -55,7 +55,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
         } else if (type === "timeline") {
             return (
                 <li>
-                    <div className={theme!.timelineDate!}>{textFor(dateSelector!(data))}</div>
+                    <div className={theme!.timelineDate!}>{stringFor(dateSelector!(data))}</div>
                     <div className={theme!.timelineBadge!}></div>
                     <div className={theme!.timelinePanel!}>
                         <LineComponent data={data} {...lineProps} />

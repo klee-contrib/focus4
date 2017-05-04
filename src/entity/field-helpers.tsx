@@ -13,7 +13,6 @@ import {Field, FieldProps} from "./field";
 export interface BaseOptions<T> {
     error?: string;
     isEdit?: boolean;
-    labelKey?: string;
     name?: string;
     onChange?: (value: T) => void;
     value?: any;
@@ -53,20 +52,20 @@ export interface FieldOptions<T, DisplayProps, FieldProps, InputProps> extends B
 }
 
 /** Options pour `selectFor`. */
-export interface SelectOptions<T> extends BaseOptions<T> {
-    labelKey?: string;
-    valueKey?: string;
-    values?: {code?: T, id?: T}[];
+export interface SelectOptions<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label"> extends BaseOptions<T> {
+    labelKey?: LabelKey;
+    valueKey?: ValueKey;
+    values?: R[];
 }
 
 /** Options pour `stringFor` et `textFor`. */
-export interface TextOptions {
+export interface TextOptions<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label"> {
     formatter?: (data: any) => string;
-    labelKey?: string;
+    labelKey?: LabelKey;
     style?: React.CSSProperties;
     value?: any;
-    valueKey?: string;
-    values?: {}[];
+    valueKey?: ValueKey;
+    values?: R[];
 }
 
 /** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */
@@ -152,16 +151,10 @@ export function fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: Ent
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
-export function selectFor<T>(field: T, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
-export function selectFor<T>(field: EntityField<T> | T, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
+export function selectFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label">(field: EntityField<T>, values: R[], options: SelectOptions<T, R, ValueKey, LabelKey> = {}) {
     (options as FieldProps).InputComponent = Select;
     (options as FieldProps).values = values.slice(); // On s'assure que la liste de référence passée au composant ne soit pas observable.
-    if (isField(field)) {
-        return fieldForWith(field, options);
-    } else {
-        return fieldForWith({$entity, value: field}, options);
-    }
+    return fieldForWith(field, options);
 }
 
 /**
@@ -169,19 +162,10 @@ export function selectFor<T>(field: EntityField<T> | T, values: {code?: T, id?: 
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function stringFor<T>(field: EntityField<T>, options: TextOptions = {}): string {
+export function stringFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label">(field: EntityField<T>, options: TextOptions<T, R, ValueKey, LabelKey> = {}): string {
     const {formatter, valueKey = "code", labelKey = "label", values, value} = buildFieldProps(field, options);
     const processedValue = values ? result(find(values, {[valueKey]: value}), labelKey) : value;
     return formatter!(processedValue);
-}
-
-/**
- * Affiche un champ sous format texte.
- * @param field La définition de champ.
- * @param options Les options du champ.
- */
-export function textFor<T>(field: EntityField<T>, options: TextOptions = {}) {
-    return <div name={field.$entity.translationKey} style={options.style}>{stringFor(field, options)}</div>;
 }
 
 /**

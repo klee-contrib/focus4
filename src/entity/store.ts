@@ -5,7 +5,7 @@ import {Entity, EntityField, EntityList} from "./types";
 
 /** Fonction `set`. */
 export interface Setter<T> {
-    set(config: T): void;
+    set(config: Partial<T>): void;
 }
 
 /** Fonction `clear`. */

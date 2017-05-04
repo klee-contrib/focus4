@@ -8,8 +8,7 @@ export {
     fieldFor,
     fieldForWith,
     selectFor,
-    stringFor,
-    textFor
+    stringFor
 } from "./field-helpers";
 export {formatNumber} from "./formatter";
 export {buildEntityEntry, makeEntityStore, toFlatValues, StoreListNode, StoreNode, StoreType} from "./store";

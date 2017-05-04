@@ -29,7 +29,6 @@ import {
     selectFor,
     SelectOptions,
     stringFor,
-    textFor,
     TextOptions
 } from "./field-helpers";
 
@@ -358,10 +357,8 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T>(field: EntityField<T>, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
-    selectFor<T>(field: T, values: {code?: T, id?: T}[], options?: SelectOptions<T>): JSX.Element;
-    selectFor<T>(field: EntityField<T> | T, values: {code?: T, id?: T}[], options: SelectOptions<T> = {}) {
-        return selectFor(field, values, this.setFieldOptions(field, options));
+    selectFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label">(field: EntityField<T>, values: R[], options: SelectOptions<T, R, ValueKey, LabelKey> = {}) {
+        return selectFor<T, R, ValueKey, LabelKey>(field, values, this.setFieldOptions(field, options));
     }
 
     /**
@@ -369,14 +366,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    stringFor<T>(field: EntityField<T>, options: TextOptions = {}) { return stringFor(field, options); }
-
-    /**
-     * Affiche un champ sous format texte.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    textFor<T>(field: EntityField<T>, options: TextOptions = {}) { return textFor(field, options); }
+    stringFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label">(field: EntityField<T>, options: TextOptions<T, R, ValueKey, LabelKey> = {}): string {
+        return stringFor(field, options);
+    }
 
     /**
      * Ajoute les options aux champs pour les lier au formulaire (`ref`, `error`, `isEdit` et `onChange`).
