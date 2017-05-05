@@ -64,6 +64,6 @@
     "ts-node": "3.0.4",
     "tslint": "5.2.0",
     "typed-css-modules": "0.2.0",
-    "typescript": "2.3.2"
+    "typescript": "2.4.0-dev.20170504"
   }
 }

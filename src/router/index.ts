@@ -95,14 +95,12 @@ export function startRouter<Store extends ViewStore<any, any>, E = "error">(stor
         ...stores.map((store, i) => ({
             /** Route sur laquelle matcher. */
             $: `/${store.prefix ? `${store.prefix}` : ""}${store.paramNames.map(param => `(/:${param})`).join("")}`,
-            beforeEnter: store.beforeEnter && (({params}) => {
-                const {errorCode: err = "", redirect = {}} = store.beforeEnter!(params) || {};
+            beforeEnter: store.beforeEnter && (async({params}) => {
+                const {errorCode: err, redirect} = await store.beforeEnter!(params) || {errorCode: undefined, redirect: undefined};
                 if (err) {
-                    updateActivity(stores.length);
                     return {redirect: `/${errorPageName}/${err}`, replace: true};
                 } else if (redirect) {
-                    const url = typeof redirect === "string" ? redirect : store.getUrl(redirect);
-                    updateActivity(i);
+                    const url = typeof redirect === "string" ? redirect : store.getUrl({...params, ...redirect});
                     if (url !== getUrl()) {
                         return {redirect: url, replace: true};
                     }
@@ -130,7 +128,6 @@ export function startRouter<Store extends ViewStore<any, any>, E = "error">(stor
             $: "*",
             beforeEnter: ({newPath}) => {
                 if (newPath === "/") { // Si on a pas de route initiale, on redirige vers le store principal.
-                    updateActivity(0);
                     return {redirect: `/${stores[0].prefix}`, replace: true};
                 } else { // Sinon on redirige vers la page d'erreur.
                     return {redirect: `/${errorPageName}/${notfoundCode}`, replace: true};
@@ -170,7 +167,7 @@ export function startRouter<Store extends ViewStore<any, any>, E = "error">(stor
         }
     }) as {
         /** Store actif dans le routeur. */
-        readonly currentStore: Store | {prefix: E, errorCode: string};
+        readonly currentStore?: Store | {prefix: E, errorCode: string};
 
         /** La liste des ViewStores enregistrés dans le routeur. */
         stores: Store[];
