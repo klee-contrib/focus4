@@ -49,50 +49,50 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
 
     render() {
         const {LineComponent, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
-
-        if (type === "table") {
-            return <LineComponent data={data} {...lineProps} />;
-        } else if (type === "timeline") {
-            return (
-                <li>
-                    <div className={theme!.timelineDate!}>{stringFor(dateSelector!(data))}</div>
-                    <div className={theme!.timelineBadge!}></div>
-                    <div className={theme!.timelinePanel!}>
-                        <LineComponent data={data} {...lineProps} />
-                    </div>
-                </li>
-            );
-        } else {
-            const opList = operationList && operationList(data);
-            return (
-                <li
-                    className={mosaic ? theme!.mosaic! : theme!.line!}
-                    style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
-                >
-                    {hasSelection && selectionnableInitializer!(data) && store ?
-                        <Button
-                            className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
-                            shape="icon"
-                            icon={this.isSelected ? "check_box" : "check_box_outline_blank"}
-                            onClick={this.onSelection}
-                            color={this.isSelected ? "primary" : undefined}
-                        />
-                    : null}
-                    <LineComponent data={data} {...lineProps} />
-                    {opList && opList.length > 0 ?
-                        <div
-                            className={theme!.actions!}
-                            style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
-                        >
-                            <ContextualActions
-                                buttonShape={mosaic ? "mini-fab" : null}
-                                operationList={opList}
-                                operationParam={data}
-                            />
+        switch (type) {
+            case "table":
+                return <LineComponent data={data} {...lineProps} />;
+            case "timeline":
+                return (
+                    <li>
+                        <div className={theme!.timelineDate!}>{stringFor(dateSelector!(data))}</div>
+                        <div className={theme!.timelineBadge!}></div>
+                        <div className={theme!.timelinePanel!}>
+                            <LineComponent data={data} {...lineProps} />
                         </div>
-                    : null}
-                </li>
-            );
+                    </li>
+                );
+            default:
+                const opList = operationList && operationList(data);
+                return (
+                    <li
+                        className={mosaic ? theme!.mosaic! : theme!.line!}
+                        style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+                    >
+                        {hasSelection && selectionnableInitializer!(data) && store ?
+                            <Button
+                                className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
+                                shape="icon"
+                                icon={this.isSelected ? "check_box" : "check_box_outline_blank"}
+                                onClick={this.onSelection}
+                                color={this.isSelected ? "primary" : undefined}
+                            />
+                        : null}
+                        <LineComponent data={data} {...lineProps} />
+                        {opList && opList.length > 0 ?
+                            <div
+                                className={theme!.actions!}
+                                style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+                            >
+                                <ContextualActions
+                                    buttonShape={mosaic ? "mini-fab" : null}
+                                    operationList={opList}
+                                    operationParam={data}
+                                />
+                            </div>
+                        : null}
+                    </li>
+                );
         }
     }
 }

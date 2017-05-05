@@ -52,5 +52,5 @@ export function makeReferenceStore<T extends Record<string, {}>>(serviceFactory:
         });
     }
 
-    return observable(referenceStore) as any;
+    return observable(referenceStore);
 }

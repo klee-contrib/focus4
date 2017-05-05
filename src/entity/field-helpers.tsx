@@ -71,6 +71,7 @@ export interface TextOptions<T, R extends {[P in ValueKey]: T} & {[P in LabelKey
 /** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */
 export const $entity = {
     domain: {},
+    // tslint:disable-next-line:no-unnecessary-type-assertion
     type: "field" as "field",
     isRequired: false,
     name: "",

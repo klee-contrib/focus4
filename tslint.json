@@ -4,6 +4,8 @@
         "adjacent-overload-signatures": true,
         "align": [
             "arguments",
+            "elements",
+            "members",
             "parameters",
             "statements"
         ],
@@ -27,6 +29,7 @@
             true,
             "check-space"
         ],
+        "deprecation": true,
         "eofline": true,
         "indent": [
             true,
@@ -69,6 +72,7 @@
         "no-inferrable-types": [true],
         "no-internal-module": true,
         "no-invalid-template-strings": true,
+        "no-irregular-whitespace": true,
         "no-mergeable-namespace": true,
         "no-misused-new": true,
         "no-namespace": true,
@@ -81,10 +85,12 @@
         "no-unnecessary-callback-wrapper": true,
         "no-unnecessary-initializer": true,
         "no-unnecessary-qualifier": true,
+        "no-unnecessary-type-assertion": true,
         "no-unsafe-finally": true,
         "no-unused-expression": true,
         "no-var-keyword": true,
         "no-var-requires": true,
+        "number-literal-format": true,
         "object-literal-key-quotes": [
             true,
             "as-needed"
@@ -112,6 +118,7 @@
             "allow-public",
             "allow-protected"
         ],
+        "prefer-switch": true,
         "prefer-template": true,
         "quotemark": [
             true,

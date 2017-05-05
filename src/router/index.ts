@@ -107,7 +107,7 @@ export function startRouter<Store extends ViewStore<any, any>, E = "error">(stor
                         return {redirect: url, replace: true};
                     }
                 }
-                return;
+                return undefined;
             }),
             /** Handler de navigation. */
             enter: ({params}) => {

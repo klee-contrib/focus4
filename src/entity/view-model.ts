@@ -22,7 +22,7 @@ export interface ViewModel {
  * Toute mise à jour du model réinitialise le viewModel.
  */
 export function createViewModel<T extends StoreNode<{}>>(model: T) {
-    const viewModel = clone(model) as any as T & ViewModel;
+    const viewModel = clone(model) as T & ViewModel;
 
     // La fonction `reset` va simplement vider et reremplir le viewModel avec les valeurs du model.
     const reset = () => {

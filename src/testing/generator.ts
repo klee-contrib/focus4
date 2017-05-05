@@ -142,6 +142,7 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
             return `${name}=${typeName}`;
         }
 
+        // tslint:disable-next-line:prefer-switch
         if (type.flags === ts.TypeFlags.BooleanLiteral || type.flags === ts.TypeFlags.NumberLiteral || type.flags === ts.TypeFlags.EnumLiteral) {
             return `${name}={${typeName}}`;
         }
