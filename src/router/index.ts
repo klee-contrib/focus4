@@ -1,4 +1,5 @@
-import {observable, reaction, runInAction} from "mobx";
+import {isEmpty} from "lodash";
+import {action, observable, reaction, runInAction} from "mobx";
 import {RouteConfig, Router} from "yester";
 
 import {ViewStore} from "./store";
@@ -25,13 +26,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         throw new Error("Au moins un store doit avoir été spécifié.");
     }
 
-    /** Liste contenant l'activité de chaque store. Un seul store peut être actif à la fois. */
-    const storeActivity = observable([...stores.map(_ => false), false]); // On ajoute la page d'erreur comme activité supplémentaire.
-
     const errorCode = observable<string>(undefined);
-
-    /** Routing activé ou non. On désactive le routing lorsqu'on change de store pour réinitialiser les autres. */
-    let routingEnabled = true;
 
     /** Récupère l'URL courante. */
     function getUrl() {
@@ -59,29 +54,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
      * @param i L'index du store.
      */
     function updateActivity(i: number) {
-        // Si le store est déjà actif, on ne fait rien.
-        if (storeActivity.findIndex(Boolean) === i) {
-            return;
-        }
-
-        // On désactive le routing pendant la mise à jour pour ne pas déclencher de navigation pendant le reset.
-        routingEnabled = false;
-
-        // On parcourt tous les stores :
-        runInAction(() => {
-            storeActivity[stores.length] = i === stores.length;
-            stores.forEach((s, j) => {
-                storeActivity[j] = i === j; // Seul le store `i` est actif.
-                // On met tous les états des autres stores à `undefined`.
-                if (i !== j) {
-                    for (const key in s.currentView) {
-                        s.currentView[key] = undefined;
-                    }
-                }
-            });
-        });
-
-        routingEnabled = true;
+        runInAction(() => stores.forEach((s, j) => s.isActive = i === j));
     }
 
     if (stores.length > 1 && stores.some(store => !store.prefix)) {
@@ -101,15 +74,17 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
                     if (err) {
                         return {redirect: `/${errorPageName}/${err}`, replace: true};
                     } else if (redirect) {
-                        const url = typeof redirect === "string" ? redirect : store.getUrl({...params, ...redirect});
+                        const url = store.getUrl({...params, ...redirect});
                         if (url !== getUrl()) {
                             return {redirect: url, replace: true};
                         }
                     }
                 }
 
-                updateActivity(i); // On met à jour l'activité.
-                store.setView(params); // On met à jour la vue avec les paramètres d'URL.
+                runInAction(() => {
+                    store.setView(params, true); // On met à jour la vue avec les paramètres d'URL.
+                    updateActivity(i); // On met à jour l'activité.
+                });
 
                 return undefined;
             }),
@@ -119,10 +94,10 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         // On ajoute la route d'erreur.
         {
             $: `/${errorPageName}/:code`,
-            beforeEnter: ({params}) => {
-                updateActivity(stores.length);
+            beforeEnter: action(({params}) => {
                 errorCode.set(params.code);
-            }
+                updateActivity(stores.length);
+            })
         },
 
         // On ajoute le wildcard pour les URLs non matchées.
@@ -140,13 +115,12 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
 
     // On met en place les réactions sur le currentPath de chaque ViewStore.
     stores.forEach(store => {
+        store.handleError = errCode => router.navigate(`/${errorPageName}/${errCode}`);
+
         reaction(() => store.currentPath, currentPath => {
-            // On vérifie que le routing est bien activé.
-            if (routingEnabled) {
-                // Si le chemin à effectivement changé, alors on met à jour l'URL.
-                if (currentPath !== getUrl()) {
-                    updateUrl(currentPath);
-                }
+            // Si le chemin à effectivement changé, alors on met à jour l'URL.
+            if (!isEmpty(currentPath) && currentPath !== getUrl()) {
+                updateUrl(currentPath);
             }
         });
     });
@@ -154,9 +128,9 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
     /** L'objet de retour. */
     return observable({
         get currentStore() {
-            const i = storeActivity.findIndex(Boolean);
-            if (i < stores.length) {
-                return stores[storeActivity.findIndex(Boolean)];
+            const store = stores.find(s => s.isActive === true);
+            if (store) {
+                return store;
             } else {
                 return {prefix: errorPageName, errorCode: errorCode.get()};
             }

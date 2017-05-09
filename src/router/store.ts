@@ -1,13 +1,17 @@
-import {mapValues} from "lodash";
+import {isEqual, mapValues} from "lodash";
 import {action, computed, observable} from "mobx";
+
+export type View<T> = {
+    readonly [P in keyof T]: T[P] | undefined;
+};
 
 export interface ViewStoreConfig<V, N> {
     /** Est appelé avant la navigation vers une nouvelle route. */
-    beforeEnter?: (view: V) => {redirect?: Partial<V> | string, errorCode?: string} | undefined;
+    beforeEnter?: (view: View<V>) => {redirect?: Partial<V>, errorCode?: string} | undefined;
     /** Le préfixe du store. */
     prefix?: N;
     /** Objet de vue, représenté dans l'URL. L'ordre des paramètres compte. */
-    view: V;
+    view: View<V>;
 }
 
 /**
@@ -17,16 +21,19 @@ export interface ViewStoreConfig<V, N> {
 export class ViewStore<V, N extends string> {
 
     /** Est appelé avant la navigation vers une nouvelle route. */
-    readonly beforeEnter?: (view: V) => {redirect?: Partial<V> | string, errorCode?: string} | undefined;
+    readonly beforeEnter?: (view: View<V>) => {redirect?: Partial<V>, errorCode?: string} | undefined;
 
-    /** Représente l'état courant de l'URL. */
-    @observable currentView: V;
+    handleError: (code: string) => void;
+    @observable isActive = false;
 
     /** Liste des paramètres de l'URL, dans l'ordre. */
     readonly paramNames: (keyof V)[];
 
     /** Préfixe éventuel du store. */
     readonly prefix?: N;
+
+    /** Représente l'état courant de l'URL. */
+    @observable private view: View<V>;
 
     /**
      * Construit un nouveau ViewStore.
@@ -36,17 +43,23 @@ export class ViewStore<V, N extends string> {
         this.beforeEnter = beforeEnter;
         this.paramNames = Object.keys(view) as (keyof V)[];
         this.prefix = prefix;
-        this.currentView = mapValues(view, () => undefined);
+        this.view = mapValues(view, () => undefined);
     }
 
     /** Calcule l'URL en fonction de l'état courant. */
     @computed
     get currentPath() {
-        const url = this.getUrl(this.currentView);
+        const url = this.getUrl(this.view);
         if (url.includes("//")) {
             throw new Error("La vue courante n'est pas convertible en une URL car des paramètres sont manquants. Par exemple, pour l'URL '/:param1/:param2', si 'param2' est spécifié alors 'param1' doit l'être aussi.");
         }
         return url;
+    }
+
+    /** Représente l'état courant de l'URL. */
+    @computed
+    get currentView() {
+        return this.isActive && this.view || {} as View<V>;
     }
 
     /**
@@ -59,18 +72,27 @@ export class ViewStore<V, N extends string> {
 
     /**
      * Met à jour la vue courante avec les paramètres donnés.
-     * Utile pour mettre à jour plusieurs paramètres à la fois.
      * @param view Les paramètres.
      * @param replace Remplace tout.
      */
     @action
     setView(view: Partial<V>, replace?: boolean) {
-        if (replace) {
-            this.paramNames.forEach(param => this.currentView[param] = undefined as any);
+        const params = (replace ? view : {...this.currentView as {}, ...view as {}}) as V;
+
+        if (this.beforeEnter) {
+            const {errorCode, redirect} = this.beforeEnter(params) || {errorCode: undefined, redirect: undefined};
+            if (errorCode) {
+                this.handleError(errorCode);
+                return;
+            } else if (redirect) {
+                const newParams = {...params as {}, ...redirect as {}};
+                if (!isEqual(params, newParams)) {
+                    this.setView(newParams);
+                    return;
+                }
+            }
         }
 
-        for (const param in view) {
-            this.currentView[param] = view[param]!;
-        }
+        this.view = params;
     }
 }
