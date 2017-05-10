@@ -144,7 +144,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
         }
         return {
             // On s'assure que les métadonnées du champ ne soient pas observables.
-            $entity: observable.ref(entityMap[trueEntry].fields[key!]),
+            $entity: observable.ref(entityMap[trueEntry].fields[key]),
 
             // On appelle `buildEntityEntry` de façon récursive si c'est un champ composé/liste, sinon on initialise la valeur à undefined.
             value: v.entityName ? buildEntityEntry({[v.entityName]: v.type === "list" ? [] : {}} as EntityStoreConfig, entityMap, entityMapping, v.entityName!) : undefined,

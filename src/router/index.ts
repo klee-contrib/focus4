@@ -26,6 +26,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         throw new Error("Au moins un store doit avoir été spécifié.");
     }
 
+    /** Code d'erreur en cours. */
     const errorCode = observable<string>(undefined);
 
     /** Récupère l'URL courante. */
@@ -50,11 +51,13 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
     }
 
     /**
-     * Enregistre le store i comme actif.
+     * Enregistre le store i comme actif (et les autres comme inactifs.)
+     *
+     * Si i est plus grand que le nombre de stores, alors ils sont tous inactifs et on se retrouve sur la page d'erreur.
      * @param i L'index du store.
      */
     function updateActivity(i: number) {
-        runInAction(() => stores.forEach((s, j) => s.isActive = i === j));
+        runInAction(() => stores.forEach((s, j) => s.isActiveInRouter = i === j));
     }
 
     if (stores.length > 1 && stores.some(store => !store.prefix)) {
@@ -66,14 +69,17 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
 
         // On construit une route par store.
         ...stores.map((store, i) => ({
-            /** Route sur laquelle matcher. */
+            // Route sur laquelle matcher, construite à partir du préfixe et des paramètres.
             $: `/${store.prefix ? `${store.prefix}` : ""}${store.paramNames.map(param => `(/:${param})`).join("")}`,
+            // Appelé à chaque navigation vers la route.
             beforeEnter: (({params}) => {
+
+                // On applique le `beforeEnter` du store s'il y en a un.
                 if (store.beforeEnter) {
                     const {errorCode: err, redirect} = store.beforeEnter(params) || {errorCode: undefined, redirect: undefined};
-                    if (err) {
+                    if (err) { // Cas de l'erreur : on redirige vers la page d'erreur avec le code.
                         return {redirect: `/${errorPageName}/${err}`, replace: true};
-                    } else if (redirect) {
+                    } else if (redirect) { // Cas de la redirection : on récupère la nouvelle URL et on redirige dessus, si on n'y est pas déjà.
                         const url = store.getUrl({...params, ...redirect});
                         if (url !== getUrl()) {
                             return {redirect: url, replace: true};
@@ -113,13 +119,14 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         }
     ], {type: routerMode});
 
-    // On met en place les réactions sur le currentPath de chaque ViewStore.
     stores.forEach(store => {
+        // On donne le handler d'erreur à chaque store.
         store.handleError = errCode => router.navigate(`/${errorPageName}/${errCode}`);
 
+        // On met en place les réactions sur le currentPath de chaque ViewStore.
         reaction(() => store.currentPath, currentPath => {
             // Si le chemin à effectivement changé, alors on met à jour l'URL.
-            if (!isEmpty(currentPath) && currentPath !== getUrl()) {
+            if (!isEmpty(store.currentView) && currentPath !== getUrl()) {
                 updateUrl(currentPath);
             }
         });
@@ -128,7 +135,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
     /** L'objet de retour. */
     return observable({
         get currentStore() {
-            const store = stores.find(s => s.isActive === true);
+            const store = stores.find(s => s.isActive);
             if (store) {
                 return store;
             } else {

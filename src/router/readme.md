@@ -8,12 +8,17 @@ Il s'articule autour d'un ou plusieurs store(s) (le `ViewStore`) qui sert d'inte
 
 Exemple :
 ```ts
-const viewStore = new ViewStore({page: "", id: "", subPage: "", subId: ""});
-startRouter([viewStore]);
-```
-```
-navigation vers "/structure/1/detail" -> viewStore.currentView = {page: "structure", id: "1", subPage: "detail"}
-action utilisateur viewStore.currentView.id = 5 -> URL = "/structure/5/detail"
+const viewStore = new ViewStore({view: {page: "", id: "", subPage: "", subId: ""}});
+const router = makeRouter([viewStore]);
+
+// Démarrage
+async function preload() {
+    await router.start();
+}
+
+// navigation vers "/structure/1/detail" -> viewStore.currentView = {page: "structure", id: "1", subPage: "detail"}
+// action utilisateur
+viewStore.setView({id: 5}) // -> URL = "/structure/5/detail"
 ```
 Il est ensuite très facile dans des composants de se synchroniser au `ViewStore` en utilisant `store.currentView` comme n'importe quelle autre observable. Ainsi, on abstrait entièrement le routing des vues et on interagit à la place avec un store (= de l'état), ce qu'on fait déjà pour tout le reste.
 
@@ -23,17 +28,17 @@ Pour pouvoir découpler les différentes parties d'une application, on va vite r
 
 Le constructeur du store prend un deuxième paramètre, le `prefix`, qui représente le nom du store et sera le préfixe de toutes les routes liés à un store. Naturellement, il est obligatoire de spécifier tous les préfixes à partir du moment où on a plusieurs stores.
 
-La fonction `startRouter` prend un array de `ViewStore` comme second paramètre pour cette usage-là. Le premier store de la liste sera le store par défaut : c'est sur ce store-là que l'application va démarrer et c'est sur celui-là que les routes non trouvées vont rediriger.
+La fonction `makeRouter` prend un array de `ViewStore` comme second paramètre pour cette usage-là. Le premier store de la liste sera le store par défaut : c'est sur ce store-là que l'application va démarrer.
 
-Un routeur avec plusieurs stores gère la notion de "store actif", c'est-à-dire qu'il va déterminer quel store est actif automatiquement. La règle est très simple : c'est le dernier store modifié qui est actif, et tous les autres stores sont réinitialisés (tous les paramètres de vues sont passés à `undefined`) lorsqu'on change de store. La fonction `startRouter` retourne un objet contenant la listes des stores, une propriété observable `currentStore` qui contient le store actif, et une méthode `to(prefix)` permettant de naviguer vers l'état par défaut du `ViewStore` choisi (cette navigation n'entraînant pas de modification d'état, on est forcé de l'effectuer via le routeur au lieu d'une interaction avec un store).
+Un routeur avec plusieurs stores gère la notion de "store actif", c'est-à-dire qu'il va déterminer quel store est actif automatiquement. La règle est très simple : c'est le dernier store modifié qui est actif. Chaque store possède une propriété `isActive` pour savoir s'il est actif. La fonction `makeRouter` retourne un objet contenant la listes des stores, la méthode `start()`, une propriété observable `currentStore` qui contient le store actif, et une méthode `to(prefix)` permettant de naviguer vers l'état par défaut du `ViewStore` choisi (cette navigation n'entraînant pas de modification d'état, on est forcé de l'effectuer via le routeur au lieu d'une interaction avec un store).
 
 
 Exemple d'usage :
 ```tsx
-export const homeView = new ViewStore({page: "" as undefined | "test" | "list", id: "" as string | undefined}, "home");
-export const testView = new ViewStore({lol: ""}, "test");
+export const homeView = new ViewStore({prefix: "home", view: {page: "" as undefined | "test" | "list", id: "" as string | undefined}});
+export const testView = new ViewStore({prefix: "test", view: {lol: ""}});
 
-const router = startRouter([homeView, testView]);
+const router = makeRouter([homeView, testView]);
 
 const Main = observer(() => {
     const {currentStore} = router;
@@ -52,6 +57,57 @@ const Main = observer(() => {
 ```
 (oui oui, le `currentStore` est statiquement typé avec le bon store lorsqu'on distingue par préfixe !)
 
+## `beforeEnter`
+Il est possible de définir un hook `beforeEnter` sur un `ViewStore` (dans le constructeur) qui va s'exécuter juste avant une navigation (que ça soit par URL ou par `setView()`), qui peut retourner 3 choses :
+- `{redirect: view}`, pour rediriger vers la vue retournée. Par exemple : `{redirect: {page: "home"}}`.
+- `{errorCode: "code"}`, pour rediriger vers la page d'erreur avec le code demandé (voir plus bas).
+- `undefined`, pour ne rien faire.
+Ce hook permet d'ajouter de la logique pour par exemple bloquer l'accès à certaines pages si l'utilisateur n'a pas les droits, ou pour combler une URL qui n'existe pas.
+
+## Page d'erreur
+Le routeur gère, en plus des différents `ViewStores`, une page spéciale destinée aux erreurs. Cela correspond au cas ou aucun store n'est actif : dans ce cas, `currentStore` vaut `{prefix: "error", errorCode: "your_code"}`. On y accède soit par une erreur personnalisée retournée dans un `beforeEnter`, soit lorsqu'une route n'est pas matchée (`errorCode = "notfound"`). C'est donc a l'utilisateur, dans le switch principal de l'application, de concevoir ses propres pages d'erreurs en fonction du code. (le nom de la page "error" et le code "notfound" sont configurables)
+
+## API du `ViewStore`
+
+```ts
+export declare class ViewStore<V, N extends string> {
+
+    /** Préfixe éventuel du store. */
+    readonly prefix?: N;
+
+    /**
+     * Construit un nouveau ViewStore.
+     * @param config La configuration du store.
+     */
+    constructor({beforeEnter, view, prefix}: ViewStoreConfig<V, N>);
+
+    /** Calcule l'URL en fonction de l'état courant. */
+    readonly currentPath: string;
+
+    /** Représente l'état courant de l'URL. */
+    readonly currentView: View<V>;
+
+    /** Précise si le store est actuellement actif dans le router. */
+    readonly isActive: boolean;
+
+    /**
+     * Récupère l'URL pour la vue donnée.
+     * @param view La vue à récupérer.
+     * @param replace Ne fusionne pas la vue demandée avec la vue courante.
+     */
+    getUrl(view?: Partial<V>, replace?: boolean): string;
+
+    /**
+     * Met à jour la vue courante.
+     * @param view La vue souhaitée.
+     * @param replace Ne fusionne pas la vue souhaitée avec la vue courante.
+     */
+    setView(view: Partial<V>, replace?: boolean): void;
+}
+```
+
+Il est important de noter que `currentView` est totalement **immutable** et que la seule manière de modifier l'état de la vue est de passer par la fonction `setView()` (ou bien de passer par l'URL directement).
+
 ## Etendre un `ViewStore`
 
 Un `ViewStore` représente l'état global du module de l'application auquel il est associé, et est par conséquent visible et utilisable par tous les composants de ce module. Par défaut, il ne contient que l'état stocké dans l'URL, mais il peut être intéressant d'y stocker également d'autres informations liées, qui dérivent fonctionnellement de l'état de la vue courante.
@@ -62,7 +118,7 @@ Par exemple, si le `ViewStore` gère un module qui concerne un objet métier en 
 class MyViewStore extends ViewStore<{id: string}, "objet"> {
     @observable resume: ObjetResume = {};
     constructor() {
-        super({id: ""}; "objet");
+        super({prefix: "objet", view: {id: ""}});
         reaction(() => +this.currentView.id, async id => this.resume = await loadObjetResume(id));
     }
 }
@@ -78,16 +134,13 @@ Par exemple, si je veux charger des données qui dépendent de l'ID courant dans
 
 ```tsx
 class Component extends React.Component {
-    loadDisposer = autorun(async () => this.data = await loadData(+viewStore.currentView.id));
-    componentWillUnmount() {
-        this.loadDisposer();
+    @classAutorun async load() {
+        this.data = await loadData(+viewStore.currentView.id!));
     }
 }
 ```
 
-à la place d'un `componentWillMount` classique.
-
-On est d'accord pour dire que ce n'est pas la chose la plus simple à écrire (en [attendant](https://github.com/mobxjs/mobx/issues/835) de [pouvoir](https://github.com/mobxjs/mobx-react/issues/181) [utiliser](https://github.com/mobxjs/mobx-react/issues/122) [`@autorun`](https://github.com/mobxjs/mobx/pull/559) un jour), mais ce fonctionnement permet d'assurer la synchronisation du composant avec le store sans passer par une prop `id` et gère directement l'initialisation comme la mise à jour (on aurait eu besoin d'à la fois `componentWillMount` et `componentWillReceiveProps` pour obtenir le même comportement sans réaction, du coup ça fait relativiser la syntaxe).
+à la place d'un `componentWillMount` classique. Ce fonctionnement permet d'assurer la synchronisation du composant avec le store sans passer par une prop `id` et gère directement l'initialisation comme la mise à jour (on aurait eu besoin d'à la fois `componentWillMount` et `componentWillReceiveProps` pour obtenir le même comportement sans réaction, du coup ça fait relativiser la syntaxe).
 
 Le gros point fort en faisant ça, c'est qu'on peut librement modifier l'id dans le `ViewStore` (via l'URL ou dans le code) et voir tous nos composants se remettre à jour sans remonter le moindre composant, sans effort supplémentaire.
 
@@ -116,7 +169,5 @@ render() {
     return <MyComponent view={+viewStore.currentView} />;
 }
 ```
-
-`currentView` est à priori immutable (elle est au moins définie comme `readonly`, après ce n'est pas enforcé à l'exécution), donc cette prop est fixe et délègue l'utilisation de la vue au composant qui en fera ce qu'il veut.
 
 Ces recommandations ne sont pas absolues et à utiliser en tout circonstances, mais ce sont des idées qu'il faut avoir en tête.

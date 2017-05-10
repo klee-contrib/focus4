@@ -49,7 +49,7 @@ export class Facet extends React.Component<FacetProps, void> {
             <ul>
                 {facetValues.map(facetValue => (
                     <li key={uniqueId("facet-item")} onClick={() => this.props.selectHandler(this.props.facet.code, facetValue.code)}>
-                        <div>{facetValue.label}</div>
+                        <div>{i18n.t(facetValue.label)}</div>
                         <div className={theme!.count!}>{facetValue.count}</div>
                     </li>
                 ))}

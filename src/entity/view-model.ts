@@ -3,6 +3,7 @@ import {action, autorun, isObservableArray, isObservableObject, observable, untr
 import {StoreNode, toFlatValues} from "./store";
 
 export interface ViewModel {
+    /** @internal */
     /** Précise l'état de la synchronisation entre le model et le viewModel. */
     isSubscribed: boolean;
 
