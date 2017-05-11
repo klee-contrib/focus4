@@ -27,12 +27,3 @@ footer {
     padding-left: 70px;
     width: 100%;
 }
-
-.hasMenu .content {
-    padding-left: 70px;
-}
-
-.hasMenu footer,
-.hasMenu header {
-    padding-left: 60px;
-}

@@ -10,13 +10,13 @@ import styles from "./__style__/header.css";
 export type HeaderStyle = Partial<typeof styles>;
 
 /** Le header, posé par défaut par le Layout. */
-export const Header = themr("header", styles)(({theme}: {theme?: HeaderStyle}) => (
+export const Header = themr("header", styles)(({marginLeft, theme}: {marginLeft: number, theme?: HeaderStyle}) => (
     <HeaderScrolling theme={{
         deployed: theme!.deployed!,
         scrolling: theme!.scrolling!,
         undeployed: theme!.undeployed!
     }}>
-        <HeaderTopRow theme={{
+        <HeaderTopRow marginLeft={marginLeft} theme={{
             item: theme!.item!,
             left: theme!.left!,
             middle: theme!.middle!,

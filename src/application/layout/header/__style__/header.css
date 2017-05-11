@@ -85,10 +85,6 @@
     width: 100%;
 }
 
-.undeployed .topRow > div {
-    margin-left: 60px;
-}
-
 .undeployed .content {
     display: none;
 }

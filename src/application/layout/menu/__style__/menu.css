@@ -1,0 +1,86 @@
+.animate {
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+}
+
+@keyframes a-open {
+    0% {
+        opacity: 0;
+        transform: translate3d(-500px, 0, 0);
+    }
+
+    5% { opacity: 1; }
+    to { transform: none; }
+}
+
+@keyframes a-close {
+    0% { transform: none; }
+    95% { opacity: 0; }
+
+    to {
+        opacity: 0;
+        transform: translate3d(-500px, 0, 0);
+    }
+}
+
+.open {
+    animation-name: a-open;
+}
+
+.close {
+    animation-name: a-close;
+}
+
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1800;
+}
+
+.list {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    position: relative;
+    background-color: #fafafa;
+    height: 100%;
+    z-index: 1801;
+}
+
+.item {
+    display: flex;
+    color: white;
+    flex-direction: column;
+    width: 100%;
+}
+
+.item > button {
+    height: 60px;
+    color: black;
+    min-width: 60px;
+}
+
+.item > button > i {
+    width: 24px;
+}
+
+.panel {
+    position: absolute;
+    z-index: 1799;
+    transition: top 0.1s ease-out;
+}
+
+.panelWrapper {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+}
+
+.active {
+    background: rgba(0, 0, 0, 0.15);
+}

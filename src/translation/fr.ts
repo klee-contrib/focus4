@@ -4,6 +4,10 @@ import focusComponents from "focus-components/translation/resources/fr-FR";
 export const fr = {
     focus: {
         components: focusComponents.focus.components,
+        confirmation: {
+            cancel: "Annuler",
+            confirm: "Confirmer"
+        },
         detail: {
             deleted: "Élement supprimé avec succès",
             saved: "Élement enregistré avec succès"
