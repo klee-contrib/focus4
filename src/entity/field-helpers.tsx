@@ -182,7 +182,6 @@ export function buildFieldProps<T>(field: EntityField<T>, options: BaseOptions<T
     const dom = domain || {};
 
     const props: FieldProps = {
-        domain,
         formatter: dom.formatter || (x => x),
         hasLabel,
         isRequired,

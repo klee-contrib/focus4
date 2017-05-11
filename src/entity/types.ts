@@ -1,8 +1,9 @@
 import {Validator} from "./validation";
 
 /** Définition de base d'un domaine. */
-export interface Domain {
-    [key: string]: any;
+export interface Domain<DCProps = {}, ICProps = {}, LCProps = {}> {
+    /** Classe CSS pour le champ. */
+    className?: string;
 
     /** Formatteur pour l'affichage du champ (en édition ou non) */
     formatter?: (value: any, options?: {isEdit: boolean}) => string;
@@ -14,19 +15,19 @@ export interface Domain {
     validator?: Validator[];
 
     /** Composant personnalisé pour l'affichage. */
-    DisplayComponent?: ReactComponent<any>;
-
-    /** Composant personnalisé de champ, remplace les trois autres. */
-    FieldComponent?: ReactComponent<any>;
+    DisplayComponent?: ReactComponent<DCProps>;
+    /** Props pour le composant d'affichage */
+    displayProps?: Partial<DCProps>;
 
     /** Composant personnalisé pour l'entrée utilisateur. */
-    InputComponent?: ReactComponent<any>;
+    InputComponent?: ReactComponent<ICProps>;
+    /** Props pour le composant d'entrée utilisateur. */
+    inputProps?: Partial<ICProps>;
 
     /** Composant personnalisé pour le libellé. */
-    LabelComponent?: ReactComponent<any>;
-
-    /** Classe CSS pour le champ. */
-    className?: string;
+    LabelComponent?: ReactComponent<LCProps>;
+    /** Props pour le composant de libellé. */
+    labelProps?: Partial<LCProps>;
 }
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */

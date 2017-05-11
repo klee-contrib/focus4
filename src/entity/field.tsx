@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
-import {find, omit, result} from "lodash";
+import {result} from "lodash";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -15,59 +15,53 @@ import {validate} from "./validation";
 import * as styles from "./__style__/field.css";
 export type FieldStyle = Partial<typeof styles>;
 
+export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} & {[P in LK]: string};
+
 /** Props pour le Field, se base sur le contenu d'un domaine. */
-export interface FieldProps extends Domain {
-
-    // Props passées aux composants Display/Field/Input.
-    error?: string | null;
-    isEdit?: boolean;
-    labelKey?: string;
-    name?: string;
-    value?: any;
-    valueKey?: string;
-    values?: any[];
-
-    // Props propres au Field.
+export interface FieldProps<
+    T = any,
+    DCProps = any,
+    ICProps = any,
+    LCProps = any,
+    R extends RefValues<T, VK, LK> = any,
+    VK extends string = "code",
+    LK extends string = "value"
+> extends Domain<DCProps, ICProps, LCProps> {
     contentCellPosition?: string;
     contentOffset?: number;
     contentSize?: number;
+    error?: string | null;
     forceErrorDisplay?: boolean;
     hasLabel?: boolean;
     innerRef?: (i: Field) => void;
+    isEdit?: boolean;
     isRequired?: boolean;
     label?: string;
     labelCellPosition?: string;
+    labelKey?: LK;
     labelOffset?: number;
     labelSize?: number;
+    name?: string;
+    onChange?: (value: T) => void;
     theme?: FieldStyle;
+    value: any;
+    valueKey?: VK;
+    values?: R[];
 }
-
-/** Liste de toutes les props qu'on ne passera pas aux composants d'input ou display. */
-const omittedProps = [
-    "className",
-    "contentCellPosition",
-    "contentOffset",
-    "contentSize",
-    "forceErrorDisplay",
-    "hasLabel",
-    "isRequired",
-    "label",
-    "labelCellPosition",
-    "labelOffset",
-    "labelSize",
-    "theme",
-    "validator",
-    "DisplayComponent",
-    "FieldComponent",
-    "InputComponent",
-    "LabelComponent"
-];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 @themr("field", styles)
 @autobind
 @observer
-export class Field extends React.Component<FieldProps, void> {
+export class Field<
+    T = any,
+    DCProps = any,
+    ICProps = any,
+    LCProps = any,
+    R extends RefValues<T, VK, LK> = any,
+    VK extends string = "code",
+    LK extends string = "value"
+> extends React.Component<FieldProps<T, DCProps, ICProps, LCProps, R, VK, LK>, void> {
 
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = this.props.forceErrorDisplay || false;
@@ -109,58 +103,61 @@ export class Field extends React.Component<FieldProps, void> {
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {valueKey, labelKey, values, value: rawValue, formatter, DisplayComponent, isEdit = false} = this.props;
-        const value = values ? result(find(values, {[valueKey || "code"]: rawValue}), labelKey || "label") : rawValue; // Résout la valeur dans le cas d'une liste de référence.
-        const props = omit(this.props, omittedProps);
-        const FinalDisplay = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
-        return <FinalDisplay {...props} formattedInputValue={formatter && formatter(value, {isEdit}) || value} rawInputValue={value} />;
-    }
-
-    /** Affiche un composant de champ entièrement personnalisé (`FieldComponent`). */
-    field() {
-        const {FieldComponent} = this.props;
-        const valid = !(this.showError && this.error);
-        if (FieldComponent) {
-            const props = omit(this.props, omittedProps);
-            return <FieldComponent {...props} valid={valid} error={valid ? null : this.error} />;
-        } else {
-            return null;
-        }
+        const {valueKey = "code", labelKey = "label", values, value: rawValue, formatter, DisplayComponent, displayProps = {}, isEdit = false} = this.props;
+        const value = values ? result(values.find(v => v[valueKey as keyof R] === rawValue), labelKey) : rawValue; // Résout la valeur dans le cas d'une liste de référence.
+        const FinalDisplay: ReactComponent<any> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
+        return (
+            <FinalDisplay
+                {...displayProps as {}}
+                formattedInputValue={formatter && formatter(value, {isEdit}) || value}
+                rawInputValue={value}
+                value={value}
+            />
+        );
     }
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {InputComponent, formatter, value, isEdit = false} = this.props;
-        const props = omit(this.props, omittedProps);
-        const FinalInput = InputComponent || InputText;
+        const {InputComponent, formatter, value, isEdit = false, valueKey = "code", labelKey = "label", values, inputProps, name, onChange} = this.props;
+        const FinalInput: ReactComponent<any> = InputComponent || InputText;
         const valid = !(this.showError && this.error);
 
         // On renseigne `formattedInputValue`, `value` et `rawInputValue` pour être sûr de prendre en compte tous les types de composants.
-        return <FinalInput {...props} formattedInputValue={formatter && formatter(value, {isEdit}) || value} rawInputValue={value} valid={valid} error={valid ? null : this.error} />;
+        return (
+            <FinalInput
+                {...inputProps as {}}
+                error={valid ? null : this.error}
+                formattedInputValue={formatter && formatter(value, {isEdit}) || value}
+                labelKey={labelKey}
+                name={name}
+                onChange={onChange}
+                rawInputValue={value}
+                valid={valid}
+                valueKey={valueKey}
+                values={values}
+            />
+        );
     }
 
     /** Affiche le composant de libellé (`LabelComponent`). */
     label() {
-        const {name, label, LabelComponent, labelCellPosition = "top", labelSize = 4, labelOffset = 0, theme} = this.props;
-        const FinalLabel = LabelComponent || Label;
-        return (
-            <div className ={`${getCellGridClassName(labelCellPosition, labelSize, labelOffset)} ${theme!.label!}`}>
-                <FinalLabel name={name} text={label} />
-            </div>
-        );
+        const {name, label, LabelComponent} = this.props;
+        const FinalLabel: ReactComponent<any> = LabelComponent || Label;
+        return <FinalLabel name={name} text={label} />;
     }
 
     render() {
-        const {FieldComponent, contentCellPosition = "top", contentSize = 12, labelSize = 4, contentOffset = 0, isRequired, hasLabel, isEdit, theme, className = ""} = this.props;
+        const {contentCellPosition = "top", contentSize = 12, labelSize = 4, labelCellPosition = "top", contentOffset = 0, labelOffset = 0, isRequired, hasLabel, isEdit, theme, className = ""} = this.props;
         return (
             <div className={`mdl-grid ${theme!.field!} ${isEdit ? theme!.edit! : ""} ${this.error && this.showError ? theme!.invalid! : ""} ${isRequired ? theme!.required! : ""} ${className}`}>
-                {FieldComponent ? this.field() : null}
-                {!FieldComponent && hasLabel ? this.label() : null}
-                {!FieldComponent ?
-                    <div className ={`${getCellGridClassName(contentCellPosition, contentSize - labelSize, contentOffset)} ${theme!.value!} ${className}`}>
-                        {isEdit ? this.input() : this.display()}
+                {hasLabel ?
+                    <div className ={`${getCellGridClassName(labelCellPosition, labelSize, labelOffset)} ${theme!.label!}`}>
+                        {this.label()}
                     </div>
                 : null}
+                <div className ={`${getCellGridClassName(contentCellPosition, contentSize - labelSize, contentOffset)} ${theme!.value!} ${className}`}>
+                    {isEdit ? this.input() : this.display()}
+                </div>
             </div>
         );
     }
