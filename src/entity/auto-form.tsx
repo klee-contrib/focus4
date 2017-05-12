@@ -4,32 +4,27 @@ import {action, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
 import {v4} from "uuid";
 
+import {DisplayTextProps} from "focus-components/input-display/text";
+import {InputTextProps} from "focus-components/input-text";
+import {LabelProps} from "focus-components/label";
 import {PanelButtonsProps} from "focus-components/panel/edit-save-buttons";
+import {SelectProps} from "focus-components/select";
 
 import {applicationStore} from "../application";
 import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
-import {Field} from "./field";
+import {Field, FieldProps} from "./field";
 import {StoreNode, toFlatValues} from "./store";
-import {EntityField} from "./types";
+import {BaseDisplayProps, BaseInputProps, Domain, EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
 
 import {
-    autocompleteSelectFor,
-    AutocompleteSelectOptions,
-    autocompleteTextFor,
-    AutocompleteTextOptions,
-    BaseOptions,
     displayFor,
     fieldFor,
-    fieldForWith,
-    FieldOptions,
     isField,
     selectFor,
-    SelectOptions,
     stringFor,
-    TextOptions
 } from "./field-helpers";
 
 import {form} from "./__style__/auto-form.css";
@@ -90,7 +85,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     @observable errors: Record<string, string> = {};
 
     /** Reférences vers les champs placés par `this.fieldFor` (pour la validation). */
-    @observable fields: Record<string, Field | null> = {};
+    @observable fields: Record<string, Field<any, any, any, any, any, any, any> | null> = {};
 
     /** Formulaire en édition. */
     @observable isEdit: boolean;
@@ -303,32 +298,23 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     }
 
     /**
-     * Crée un champ de type AutocompleteSelect.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    autocompleteSelectFor<T>(field: EntityField<T>, options: AutocompleteSelectOptions) {
-        return autocompleteSelectFor(field, this.setFieldOptions(field, options));
-    }
-
-    /**
-     * Crée un champ de type AutocompleteText.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    autocompleteTextFor<T>(field: EntityField<T>, options: AutocompleteTextOptions) {
-        return autocompleteTextFor(field, this.setFieldOptions(field, options));
-    }
-
-    /**
      * Crée un champ standard en lecture seule.
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    displayFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
-    displayFor<T>(field: T, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
-    displayFor<T>(field: EntityField<T> | T, options: BaseOptions<T> & {[key: string]: any} = {}) {
-        return displayFor(field, options);
+    displayFor<DCProps extends BaseDisplayProps<string | number> = DisplayTextProps, LCProps = Partial<LabelProps>>(
+    field: string | number,
+        options?: Partial<FieldProps<string | number, DCProps, {}, LCProps, {}, string, string>>
+    ): JSX.Element;
+    displayFor<T, DCProps extends BaseDisplayProps<T>, LCProps extends Partial<LabelProps>>(
+        field: EntityField<T, Domain<{}, DCProps, LCProps>>,
+        options?: Partial<FieldProps<T, DCProps, {}, LCProps, {}, string, string>>
+    ): JSX.Element;
+    displayFor<T, DCProps extends BaseDisplayProps<T>, LCProps extends Partial<LabelProps>>(
+        field: EntityField<T, Domain<{}, DCProps, LCProps>> | T,
+        options: Partial<FieldProps<T, DCProps, {}, LCProps, {}, string, string>> = {}
+    ) {
+        return displayFor(field as any, options);
     }
 
     /**
@@ -336,19 +322,19 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldFor<T>(field: EntityField<T>, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
-    fieldFor<T>(field: T, options?: BaseOptions<T> & {[key: string]: any}): JSX.Element;
-    fieldFor<T>(field: EntityField<T> | T, options: BaseOptions<T> & {[key: string]: any} = {}) {
-        return fieldFor(field, this.setFieldOptions(field, options));
-    }
-
-    /**
-     * Crée un champ avec des composants personnalisés.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    fieldForWith<T, DisplayProps, FieldProps, InputProps>(field: EntityField<T>, options: FieldOptions<T, DisplayProps, FieldProps, InputProps> & DisplayProps & FieldProps & InputProps) {
-        return fieldForWith(field, this.setFieldOptions(field, options));
+    fieldFor<DCProps extends BaseDisplayProps<string | number> = DisplayTextProps, ICProps extends BaseInputProps<string | number> = InputTextProps, LCProps = Partial<LabelProps>>(
+        field: string | number,
+        options?: Partial<FieldProps<string | number, DCProps, ICProps, LCProps, {}, string, string> & {onChange: (value: string) => void}>
+    ): JSX.Element;
+    fieldFor<T, DCProps extends BaseDisplayProps<T>, ICProps extends BaseInputProps<T>, LCProps extends Partial<LabelProps>>(
+        field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
+        options?: Partial<FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>>
+    ): JSX.Element;
+    fieldFor<T, DCProps extends BaseDisplayProps<T>, ICProps extends BaseInputProps<T>, LCProps extends Partial<LabelProps>>(
+        field: EntityField<T, Domain<ICProps, DCProps, LCProps>> | T,
+        options: Partial<FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>> = {}
+    ) {
+        return fieldFor(field as any, this.setFieldOptions(field, options));
     }
 
     /**
@@ -357,8 +343,12 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label">(field: EntityField<T>, values: R[], options: SelectOptions<T, R, ValueKey, LabelKey> = {}) {
-        return selectFor<T, R, ValueKey, LabelKey>(field, values, this.setFieldOptions(field, options));
+    selectFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label", DCProps extends BaseDisplayProps<string | number> = DisplayTextProps, LCProps = Partial<LabelProps>>(
+        field: EntityField<T, Domain<{}, DCProps, LCProps>>,
+        values: R[],
+        options: Partial<FieldProps<string | number, DCProps, Partial<SelectProps>, LCProps, any, ValueKey, LabelKey>> = {}
+    ) {
+        return selectFor(field, values as any, this.setFieldOptions<T>(field, options as any) as any);
     }
 
     /**
@@ -366,7 +356,10 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    stringFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label">(field: EntityField<T>, options: TextOptions<T, R, ValueKey, LabelKey> = {}): string {
+    stringFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label">(
+        field: EntityField<T>,
+        options: Partial<FieldProps<T, {}, {}, {}, R, ValueKey, LabelKey>> = {}
+    ) {
         return stringFor(field, options);
     }
 
@@ -375,22 +368,22 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition du champ.
      * @param options Les options du champ.
      */
-    private setFieldOptions<T>(field: EntityField<T> | T, options: {[key: string]: any}) {
-        if (options["isEdit"] === undefined) {
-            options["isEdit"] = this.isEdit;
+    private setFieldOptions<T>(field: EntityField<T> | T, options: Partial<FieldProps<T, {}, {}, {}, {}, string, string>>) {
+        if (options.isEdit === undefined) {
+            options.isEdit = this.isEdit;
         }
 
         if (isField(field)) {
-            options["ref"] = (f: Field) => this.fields[field.$entity.translationKey] = f;
-            options["error"] = this.errors[field.$entity.translationKey];
+            options.innerRef = f => this.fields[field.$entity.translationKey] = f;
+            options.error = this.errors[field.$entity.translationKey];
 
             if ((this.entity as any)[field.$entity.name]) {
-                options["onChange"] = options["onChange"] || action((value: any) =>
+                options.onChange = options.onChange || action((value: any) =>
                     (this.entity as any)[field.$entity.name].value = value
                 );
             }
         }
 
-        return options as any;
+        return options;
     }
 }

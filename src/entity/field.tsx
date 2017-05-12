@@ -7,9 +7,9 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 
 import InputText from "focus-components/input-text";
-import Label from "focus-components/label";
+import Label, {LabelProps} from "focus-components/label";
 
-import {Domain} from "./types";
+import {BaseDisplayProps, BaseInputProps, Domain} from "./types";
 import {validate} from "./validation";
 
 import * as styles from "./__style__/field.css";
@@ -19,21 +19,21 @@ export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} 
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
-    T = any,
-    DCProps = any,
-    ICProps = any,
-    LCProps = any,
-    R extends RefValues<T, VK, LK> = any,
-    VK extends string = "code",
-    LK extends string = "value"
-> extends Domain<DCProps, ICProps, LCProps> {
+    T,
+    DCProps extends BaseDisplayProps<T>,
+    ICProps extends BaseInputProps<T>,
+    LCProps extends Partial<LabelProps>,
+    R extends RefValues<T, VK, LK>,
+    VK extends string,
+    LK extends string
+> extends Domain<ICProps, DCProps, LCProps> {
     contentCellPosition?: string;
     contentOffset?: number;
     contentSize?: number;
     error?: string | null;
     forceErrorDisplay?: boolean;
     hasLabel?: boolean;
-    innerRef?: (i: Field) => void;
+    innerRef?: (i: Field<T, DCProps, ICProps, LCProps, R, VK, LK>) => void;
     isEdit?: boolean;
     isRequired?: boolean;
     label?: string;
@@ -41,7 +41,7 @@ export interface FieldProps<
     labelKey?: LK;
     labelOffset?: number;
     labelSize?: number;
-    name?: string;
+    name: string;
     onChange?: (value: T) => void;
     theme?: FieldStyle;
     value: any;
@@ -54,19 +54,19 @@ export interface FieldProps<
 @autobind
 @observer
 export class Field<
-    T = any,
-    DCProps = any,
-    ICProps = any,
-    LCProps = any,
-    R extends RefValues<T, VK, LK> = any,
-    VK extends string = "code",
-    LK extends string = "value"
+    T,
+    DCProps extends BaseDisplayProps<T>,
+    ICProps extends BaseInputProps<T>,
+    LCProps extends Partial<LabelProps>,
+    R extends RefValues<T, VK, LK> ,
+    VK extends string,
+    LK extends string
 > extends React.Component<FieldProps<T, DCProps, ICProps, LCProps, R, VK, LK>, void> {
 
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = this.props.forceErrorDisplay || false;
 
-    componentWillUpdate({value}: FieldProps) {
+    componentWillUpdate({value}: FieldProps<T, DCProps, ICProps, LCProps, R, VK, LK>) {
         // On affiche l'erreur dès que et à chaque fois que l'utilisateur modifie la valeur (et à priori pas avant).
         if (value) {
             this.showError = true;
@@ -105,7 +105,7 @@ export class Field<
     display() {
         const {valueKey = "code", labelKey = "label", values, value: rawValue, formatter, DisplayComponent, displayProps = {}, isEdit = false} = this.props;
         const value = values ? result(values.find(v => v[valueKey as keyof R] === rawValue), labelKey) : rawValue; // Résout la valeur dans le cas d'une liste de référence.
-        const FinalDisplay: ReactComponent<any> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
+        const FinalDisplay: ReactComponent<BaseDisplayProps<T>> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
         return (
             <FinalDisplay
                 {...displayProps as {}}
@@ -119,7 +119,7 @@ export class Field<
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {InputComponent, formatter, value, isEdit = false, valueKey = "code", labelKey = "label", values, inputProps, name, onChange} = this.props;
-        const FinalInput: ReactComponent<any> = InputComponent || InputText;
+        const FinalInput: ReactComponent<BaseInputProps<any>> = InputComponent || InputText;
         const valid = !(this.showError && this.error);
 
         // On renseigne `formattedInputValue`, `value` et `rawInputValue` pour être sûr de prendre en compte tous les types de composants.
@@ -142,7 +142,7 @@ export class Field<
     /** Affiche le composant de libellé (`LabelComponent`). */
     label() {
         const {name, label, LabelComponent} = this.props;
-        const FinalLabel: ReactComponent<any> = LabelComponent || Label;
+        const FinalLabel = LabelComponent || Label;
         return <FinalLabel name={name} text={label} />;
     }
 

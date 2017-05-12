@@ -1,12 +1,9 @@
 export {AutoForm, ServiceConfig} from "./auto-form";
 export {Field, FieldProps, FieldStyle} from "./field";
 export {
-    autocompleteSelectFor,
-    autocompleteTextFor,
     buildFieldProps,
     displayFor,
     fieldFor,
-    fieldForWith,
     selectFor,
     stringFor
 } from "./field-helpers";

@@ -22,7 +22,7 @@ export class Menu extends React.Component<MenuProps, void> {
     @observable yPosition = 0;
     @observable showPanel = false;
 
-    private readonly subMenus = observable<MenuItemConfig>([])
+    private readonly subMenus = observable<MenuItemConfig>([]);
 
     @classAutorun updateSubMenus() {
         const {menus} = this.props;

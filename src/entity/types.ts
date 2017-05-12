@@ -1,7 +1,30 @@
+import {DisplayTextProps} from "focus-components/input-display/text";
+import {InputTextProps} from "focus-components/input-text";
+import {LabelProps} from "focus-components/label";
+
 import {Validator} from "./validation";
 
+export interface BaseDisplayProps<T> {
+    formattedInputValue?: string | number;
+    rawInputValue?: T;
+    value?: T;
+}
+
+export interface BaseInputProps<T> {
+    error?: string | null;
+    formattedInputValue?: string | number;
+    labelKey?: string;
+    name?: string;
+    onChange?: (value: T) => void;
+    rawInputValue?: T;
+    valid?: boolean;
+    value?: T;
+    valueKey?: string;
+    values?: any[];
+}
+
 /** Définition de base d'un domaine. */
-export interface Domain<DCProps = {}, ICProps = {}, LCProps = {}> {
+export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
     /** Classe CSS pour le champ. */
     className?: string;
 
@@ -30,12 +53,14 @@ export interface Domain<DCProps = {}, ICProps = {}, LCProps = {}> {
     labelProps?: Partial<LCProps>;
 }
 
+export interface Domain<ICProps extends BaseInputProps<any> = Partial<InputTextProps>, DCProps extends BaseDisplayProps<any> = Partial<DisplayTextProps>, LCProps = Partial<LabelProps>> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
+
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry {
+export interface FieldEntry<DCProps = {}, ICProps = {}, LCProps = {}> {
     readonly type: "field";
 
     /** Domaine du champ. N'est pas renseigné pour un objet composé. */
-    readonly domain?: Domain;
+    readonly domain?: Domain<DCProps, ICProps, LCProps>;
 
     /** Entité de l'entrée pour un objet composé. */
     readonly entityName?: string;
@@ -69,10 +94,10 @@ export interface Entity {
 }
 
 /** Entrée de type "field" pour une entité. */
-export interface EntityField<T> {
+export interface EntityField<T, D extends DomainNoDefault = {}> {
 
     /** Métadonnées. */
-    readonly $entity: FieldEntry;
+    readonly $entity: FieldEntry<D["displayProps"], D["inputProps"], D["labelProps"]>;
 
     /** Valeur. */
     value: T;

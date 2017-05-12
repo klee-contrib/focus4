@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "1.6.1-preview",
+  "version": "1.6.1-preview6",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -33,7 +33,7 @@
     "@types/tape": "4.2.30",
     "@types/uuid": "2.0.29",
     "core-decorators": "0.18.0",
-    "focus-components": "3.3.2",
+    "focus-components": "3.3.3-preview3",
     "i18next": "8.1.0",
     "ignore-styles": "5.0.1",
     "inversify": "4.1.0",
