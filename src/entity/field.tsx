@@ -20,8 +20,8 @@ export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
     T,
-    DCProps extends BaseDisplayProps<T>,
-    ICProps extends BaseInputProps<T>,
+    DCProps extends BaseDisplayProps,
+    ICProps extends BaseInputProps,
     LCProps extends Partial<LabelProps>,
     R extends RefValues<T, VK, LK>,
     VK extends string,
@@ -42,7 +42,7 @@ export interface FieldProps<
     labelOffset?: number;
     labelSize?: number;
     name: string;
-    onChange?: (value: T) => void;
+    onChange?: ICProps["onChange"];
     theme?: FieldStyle;
     value: any;
     valueKey?: VK;
@@ -55,8 +55,8 @@ export interface FieldProps<
 @observer
 export class Field<
     T,
-    DCProps extends BaseDisplayProps<T>,
-    ICProps extends BaseInputProps<T>,
+    DCProps extends BaseDisplayProps,
+    ICProps extends BaseInputProps,
     LCProps extends Partial<LabelProps>,
     R extends RefValues<T, VK, LK> ,
     VK extends string,
@@ -105,7 +105,7 @@ export class Field<
     display() {
         const {valueKey = "code", labelKey = "label", values, value: rawValue, formatter, DisplayComponent, displayProps = {}, isEdit = false} = this.props;
         const value = values ? result(values.find(v => v[valueKey as keyof R] === rawValue), labelKey) : rawValue; // Résout la valeur dans le cas d'une liste de référence.
-        const FinalDisplay: ReactComponent<BaseDisplayProps<T>> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
+        const FinalDisplay: ReactComponent<BaseDisplayProps> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
         return (
             <FinalDisplay
                 {...displayProps as {}}
@@ -119,7 +119,7 @@ export class Field<
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {InputComponent, formatter, value, isEdit = false, valueKey = "code", labelKey = "label", values, inputProps, name, onChange} = this.props;
-        const FinalInput: ReactComponent<BaseInputProps<any>> = InputComponent || InputText;
+        const FinalInput: ReactComponent<BaseInputProps> = InputComponent || InputText;
         const valid = !(this.showError && this.error);
 
         // On renseigne `formattedInputValue`, `value` et `rawInputValue` pour être sûr de prendre en compte tous les types de composants.

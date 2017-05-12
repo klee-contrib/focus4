@@ -182,7 +182,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                 {this.showCriteriaComponent ?
                     <div className={theme!.criteria!}>
                         <Button icon="clear" onClick={this.toggleCriteria} shape="icon" />
-                        {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: query => store.query = query})}
+                        {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: (query: string) => store.query = query})}
                         {criteriaComponent}
                         <div className={theme!.buttons!}>
                             <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.search`} />

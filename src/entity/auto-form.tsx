@@ -302,15 +302,15 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    displayFor<DCProps extends BaseDisplayProps<string | number> = DisplayTextProps, LCProps = Partial<LabelProps>>(
+    displayFor<DCProps extends BaseDisplayProps = DisplayTextProps, LCProps = Partial<LabelProps>>(
     field: string | number,
         options?: Partial<FieldProps<string | number, DCProps, {}, LCProps, {}, string, string>>
     ): JSX.Element;
-    displayFor<T, DCProps extends BaseDisplayProps<T>, LCProps extends Partial<LabelProps>>(
+    displayFor<T, DCProps extends BaseDisplayProps, LCProps extends Partial<LabelProps>>(
         field: EntityField<T, Domain<{}, DCProps, LCProps>>,
         options?: Partial<FieldProps<T, DCProps, {}, LCProps, {}, string, string>>
     ): JSX.Element;
-    displayFor<T, DCProps extends BaseDisplayProps<T>, LCProps extends Partial<LabelProps>>(
+    displayFor<T, DCProps extends BaseDisplayProps, LCProps extends Partial<LabelProps>>(
         field: EntityField<T, Domain<{}, DCProps, LCProps>> | T,
         options: Partial<FieldProps<T, DCProps, {}, LCProps, {}, string, string>> = {}
     ) {
@@ -322,15 +322,15 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldFor<DCProps extends BaseDisplayProps<string | number> = DisplayTextProps, ICProps extends BaseInputProps<string | number> = InputTextProps, LCProps = Partial<LabelProps>>(
+    fieldFor<DCProps extends BaseDisplayProps = DisplayTextProps, ICProps extends BaseInputProps = InputTextProps, LCProps = Partial<LabelProps>>(
         field: string | number,
-        options?: Partial<FieldProps<string | number, DCProps, ICProps, LCProps, {}, string, string> & {onChange: (value: string) => void}>
+        options?: Partial<FieldProps<string | number, DCProps, ICProps, LCProps, {}, string, string>>
     ): JSX.Element;
-    fieldFor<T, DCProps extends BaseDisplayProps<T>, ICProps extends BaseInputProps<T>, LCProps extends Partial<LabelProps>>(
+    fieldFor<T, DCProps extends BaseDisplayProps, ICProps extends BaseInputProps, LCProps extends Partial<LabelProps>>(
         field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
         options?: Partial<FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>>
     ): JSX.Element;
-    fieldFor<T, DCProps extends BaseDisplayProps<T>, ICProps extends BaseInputProps<T>, LCProps extends Partial<LabelProps>>(
+    fieldFor<T, DCProps extends BaseDisplayProps, ICProps extends BaseInputProps, LCProps extends Partial<LabelProps>>(
         field: EntityField<T, Domain<ICProps, DCProps, LCProps>> | T,
         options: Partial<FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>> = {}
     ) {
@@ -343,7 +343,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label", DCProps extends BaseDisplayProps<string | number> = DisplayTextProps, LCProps = Partial<LabelProps>>(
+    selectFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label", DCProps extends BaseDisplayProps = DisplayTextProps, LCProps = Partial<LabelProps>>(
         field: EntityField<T, Domain<{}, DCProps, LCProps>>,
         values: R[],
         options: Partial<FieldProps<string | number, DCProps, Partial<SelectProps>, LCProps, any, ValueKey, LabelKey>> = {}

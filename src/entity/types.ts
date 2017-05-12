@@ -4,21 +4,21 @@ import {LabelProps} from "focus-components/label";
 
 import {Validator} from "./validation";
 
-export interface BaseDisplayProps<T> {
+export interface BaseDisplayProps {
     formattedInputValue?: string | number;
-    rawInputValue?: T;
-    value?: T;
+    rawInputValue?: any;
+    value?: any;
 }
 
-export interface BaseInputProps<T> {
+export interface BaseInputProps {
     error?: string | null;
     formattedInputValue?: string | number;
     labelKey?: string;
     name?: string;
-    onChange?: (value: T) => void;
-    rawInputValue?: T;
+    onChange?: (value: any) => void;
+    rawInputValue?: any;
     valid?: boolean;
-    value?: T;
+    value?: any;
     valueKey?: string;
     values?: any[];
 }
@@ -53,14 +53,14 @@ export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
     labelProps?: Partial<LCProps>;
 }
 
-export interface Domain<ICProps extends BaseInputProps<any> = Partial<InputTextProps>, DCProps extends BaseDisplayProps<any> = Partial<DisplayTextProps>, LCProps = Partial<LabelProps>> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
+export interface Domain<ICProps extends BaseInputProps = Partial<InputTextProps>, DCProps extends BaseDisplayProps = Partial<DisplayTextProps>, LCProps = Partial<LabelProps>> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry<DCProps = {}, ICProps = {}, LCProps = {}> {
+export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {
     readonly type: "field";
 
     /** Domaine du champ. N'est pas renseigné pour un objet composé. */
-    readonly domain?: Domain<DCProps, ICProps, LCProps>;
+    readonly domain?: Domain<ICProps, DCProps, LCProps>;
 
     /** Entité de l'entrée pour un objet composé. */
     readonly entityName?: string;
@@ -97,7 +97,7 @@ export interface Entity {
 export interface EntityField<T, D extends DomainNoDefault = {}> {
 
     /** Métadonnées. */
-    readonly $entity: FieldEntry<D["displayProps"], D["inputProps"], D["labelProps"]>;
+    readonly $entity: FieldEntry<D["inputProps"], D["displayProps"], D["labelProps"]>;
 
     /** Valeur. */
     value: T;
