@@ -42,6 +42,10 @@ export class ViewStore<V, N extends string> {
     readonly prefix?: N;
 
     /** @internal */
+    /** Renseigné par le routeur. Permet de mettre le store actif dans le routeur. */
+    updateActivity: () => void;
+
+    /** @internal */
     /** Représente l'état courant de l'URL. */
     @observable private view: View<V>;
 
@@ -112,6 +116,9 @@ export class ViewStore<V, N extends string> {
                 }
             }
         }
+
+        // On met à jour l'activité dans le routeur.
+        this.updateActivity();
 
         // Et on affecte.
         this.view = newView;

@@ -119,9 +119,10 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         }
     ], {type: routerMode});
 
-    stores.forEach(store => {
-        // On donne le handler d'erreur à chaque store.
+    stores.forEach((store, i) => {
+        // On donne les handlers d'erreur et d'activité à chaque store.
         store.handleError = errCode => router.navigate(`/${errorPageName}/${errCode}`);
+        store.updateActivity = () => updateActivity(i);
 
         // On met en place les réactions sur le currentPath de chaque ViewStore.
         reaction(() => store.currentPath, currentPath => {
