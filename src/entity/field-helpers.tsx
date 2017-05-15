@@ -1,4 +1,5 @@
 import {find, result} from "lodash";
+import {action} from "mobx";
 import * as React from "react";
 
 import {DisplayTextProps} from "focus-components/input-display/text";
@@ -61,6 +62,7 @@ export function fieldFor<T, ICDomainProps extends BaseInputProps = InputTextProp
     let trueField;
     if (isField(field)) {
         trueField = field;
+        options.onChange = options.onChange || action(((value: T) => field.value = value)) as any;
     } else {
         trueField = {$entity, value: field};
     }

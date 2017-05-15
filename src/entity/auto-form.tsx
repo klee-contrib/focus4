@@ -376,12 +376,6 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         if (isField(field)) {
             options.innerRef = f => this.fields[field.$entity.translationKey] = f;
             options.error = this.errors[field.$entity.translationKey];
-
-            if ((this.entity as any)[field.$entity.name]) {
-                options.onChange = options.onChange || action((value: any) =>
-                    (this.entity as any)[field.$entity.name].value = value
-                );
-            }
         }
 
         return options;

@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "1.6.1-preview7",
+  "version": "6.1.0-preview",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
