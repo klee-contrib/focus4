@@ -27,15 +27,15 @@ export const $entity = {
  */
 export function displayFor<DCProps extends BaseDisplayProps = DisplayTextProps, LCProps = Partial<LabelProps>>(
     field: string | number,
-    options?: Partial<FieldProps<string | number, DCProps, {}, LCProps, {}, string, string>>
+    options?: Partial<FieldProps<string | number, {}, DCProps, LCProps, {}, string, string>>
 ): JSX.Element;
 export function displayFor<T, DCProps extends BaseDisplayProps, LCProps extends Partial<LabelProps>>(
     field: EntityField<T, Domain<{}, DCProps, LCProps>>,
-    options?: Partial<FieldProps<T, DCProps, {}, LCProps, {}, string, string>>
+    options?: Partial<FieldProps<T, {}, DCProps, LCProps, {}, string, string>>
 ): JSX.Element;
 export function displayFor<T, DCProps extends BaseDisplayProps, LCProps extends Partial<LabelProps>>(
     field: EntityField<T, Domain<{}, DCProps, LCProps>> | T,
-    options: Partial<FieldProps<T, DCProps, {}, LCProps, {}, string, string>> = {}
+    options: Partial<FieldProps<T, {}, DCProps, LCProps, {}, string, string>> = {}
 ) {
     options.isEdit = false;
     return fieldFor(field as any, options);
@@ -46,17 +46,17 @@ export function displayFor<T, DCProps extends BaseDisplayProps, LCProps extends 
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<DCProps extends BaseDisplayProps = DisplayTextProps, ICProps extends BaseInputProps = InputTextProps, LCProps = Partial<LabelProps>>(
+export function fieldFor<ICProps extends BaseInputProps = InputTextProps, DCProps extends BaseDisplayProps = DisplayTextProps, LCProps = Partial<LabelProps>>(
     field: string | number,
-    options?: Partial<FieldProps<string | number, DCProps, ICProps, LCProps, {}, string, string>>
+    options?: Partial<FieldProps<string | number, ICProps, DCProps, LCProps, {}, string, string>>
 ): JSX.Element;
-export function fieldFor<T, DCProps extends BaseDisplayProps, ICProps extends BaseInputProps, LCProps extends Partial<LabelProps>>(
+export function fieldFor<T, ICProps extends BaseInputProps, DCProps extends BaseDisplayProps, LCProps extends Partial<LabelProps>>(
     field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
-    options?: Partial<FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>>
+    options?: Partial<FieldProps<T, ICProps, DCProps, LCProps, {}, string, string>>
 ): JSX.Element;
-export function fieldFor<T, DCProps extends BaseDisplayProps, ICProps extends BaseInputProps, LCProps extends Partial<LabelProps>>(
+export function fieldFor<T, ICProps extends BaseInputProps, DCProps extends BaseDisplayProps, LCProps extends Partial<LabelProps>>(
     field: EntityField<T, Domain<ICProps, DCProps, LCProps>> | T,
-    options: Partial<FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>> = {}
+    options: Partial<FieldProps<T, ICProps, DCProps, LCProps, {}, string, string>> = {}
 ) {
     let trueField;
     if (isField(field)) {
@@ -88,7 +88,7 @@ export function fieldFor<T, DCProps extends BaseDisplayProps, ICProps extends Ba
 export function selectFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: string}, ValueKey extends string = "code", LabelKey extends string = "label", DCProps extends BaseDisplayProps = DisplayTextProps, LCProps = Partial<LabelProps>>(
     field: EntityField<T, Domain<{}, DCProps, LCProps>>,
     values: R[],
-    options: Partial<FieldProps<string | number, DCProps, Partial<SelectProps>, LCProps, any, ValueKey, LabelKey>> = {}
+    options: Partial<FieldProps<string | number, Partial<SelectProps>, DCProps, LCProps, any, ValueKey, LabelKey>> = {}
 ) {
     options.InputComponent = Select;
     options.values = values.slice(); // On s'assure que la liste de référence passée au composant ne soit pas observable.
@@ -116,9 +116,9 @@ export function stringFor<T, R extends {[P in ValueKey]: T} & {[P in LabelKey]: 
  * @param field La définition du champ.
  * @param options Les options du champ.
  */
-export function buildFieldProps<T, DCProps extends BaseDisplayProps, ICProps extends BaseInputProps, LCProps extends Partial<LabelProps>>(
+export function buildFieldProps<T, ICProps extends BaseInputProps, DCProps extends BaseDisplayProps, LCProps extends Partial<LabelProps>>(
     field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
-    options: Partial<FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>>
+    options: Partial<FieldProps<T, ICProps, DCProps, LCProps, {}, string, string>>
 ) {
     const {value, $entity: {domain = {}, translationKey, isRequired}} = field;
     const {hasLabel = true, innerRef, inputProps = {}, displayProps = {}, labelProps = {},  ...otherOptions} = options;
@@ -138,7 +138,7 @@ export function buildFieldProps<T, DCProps extends BaseDisplayProps, ICProps ext
         displayProps: {...displayPropsD as {}, ...displayProps as {}},
         labelProps: {...labelPropsD as {}, ...labelPropsD as {}},
         ...otherOptions
-    } as FieldProps<T, DCProps, ICProps, LCProps, {}, string, string>;
+    } as FieldProps<T, ICProps, DCProps, LCProps, {}, string, string>;
 }
 
 /**

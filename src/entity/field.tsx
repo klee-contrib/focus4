@@ -20,8 +20,8 @@ export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
     T,
-    DCProps extends BaseDisplayProps,
     ICProps extends BaseInputProps,
+    DCProps extends BaseDisplayProps,
     LCProps extends Partial<LabelProps>,
     R extends RefValues<T, VK, LK>,
     VK extends string,
@@ -33,7 +33,7 @@ export interface FieldProps<
     error?: string | null;
     forceErrorDisplay?: boolean;
     hasLabel?: boolean;
-    innerRef?: (i: Field<T, DCProps, ICProps, LCProps, R, VK, LK>) => void;
+    innerRef?: (i: Field<T, ICProps, DCProps, LCProps, R, VK, LK>) => void;
     isEdit?: boolean;
     isRequired?: boolean;
     label?: string;
@@ -55,18 +55,18 @@ export interface FieldProps<
 @observer
 export class Field<
     T,
-    DCProps extends BaseDisplayProps,
     ICProps extends BaseInputProps,
+    DCProps extends BaseDisplayProps,
     LCProps extends Partial<LabelProps>,
     R extends RefValues<T, VK, LK> ,
     VK extends string,
     LK extends string
-> extends React.Component<FieldProps<T, DCProps, ICProps, LCProps, R, VK, LK>, void> {
+> extends React.Component<FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>, void> {
 
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = this.props.forceErrorDisplay || false;
 
-    componentWillUpdate({value}: FieldProps<T, DCProps, ICProps, LCProps, R, VK, LK>) {
+    componentWillUpdate({value}: FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>) {
         // On affiche l'erreur dès que et à chaque fois que l'utilisateur modifie la valeur (et à priori pas avant).
         if (value) {
             this.showError = true;
