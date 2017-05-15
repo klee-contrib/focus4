@@ -17,10 +17,10 @@ export interface ResultsProps {
     hasSelection: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    lineComponentMapper?: (scope: string) => ReactComponent<any>;
+    lineComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
     lineProps?: {};
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
-    mosaicComponentMapper?: (scope: string) => ReactComponent<any>;
+    mosaicComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */

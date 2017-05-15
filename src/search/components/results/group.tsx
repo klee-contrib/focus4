@@ -21,10 +21,10 @@ export interface Props {
     hasSelection?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    LineComponent?: ReactComponent<any>;
+    LineComponent?: React.ComponentClass<any> | React.SFC<any>;
     lineProps?: {};
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
-    MosaicComponent?: ReactComponent<any>;
+    MosaicComponent?: React.ComponentClass<any> | React.SFC<any>;
     perPage: number;
     showAllHandler?: (key: string) => void;
     store: SearchStore<any>;

@@ -8,7 +8,7 @@ import Select, {SelectProps} from "focus-components/select";
 
 import {EntityField} from "../entity";
 
-import {Field, FieldProps} from "./field";
+import {Field, FieldProps, RefValues} from "./field";
 import {BaseDisplayProps, BaseInputProps, Domain} from "./types";
 
 /** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */
@@ -77,6 +77,18 @@ export function fieldFor<T, ICProps extends BaseInputProps, DCProps extends Base
 
     const props = buildFieldProps(trueField, options);
     return <Field {...props} />;
+}
+
+export function fieldForWith<T, ICProps extends BaseInputProps = InputTextProps, DCProps extends BaseDisplayProps = DisplayTextProps, LCProps = Partial<LabelProps>, IC = ICProps, DC = DCProps, LC = LCProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">(
+    components: {
+        InputComponent?: React.ComponentClass<IC> | React.SFC<IC>;
+        DisplayComponent?: React.ComponentClass<DC> | React.SFC<DC>;
+        LabelComponent?: React.ComponentClass<LC> | React.SFC<LC>;
+    },
+    field: EntityField<T, Domain<ICProps, DCProps, LCProps>> | T,
+    options: Partial<FieldProps<T, IC, DC, LC, R, ValueKey, LabelKey>> = {}
+) {
+    return fieldFor(field as any, {...options, ...components});
 }
 
 /**

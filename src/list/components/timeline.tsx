@@ -13,7 +13,7 @@ import * as styles from "./__style__/list.css";
 export interface TimelineProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     data: T[];
     dateSelector: (data: T) => EntityField<string>;
-    TimelineComponent: ReactComponent<P>;
+    TimelineComponent: React.ComponentClass<P> | React.SFC<P>;
 }
 
 @themr("list", styles)

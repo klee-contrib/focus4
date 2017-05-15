@@ -105,7 +105,7 @@ export class Field<
     display() {
         const {valueKey = "code", labelKey = "label", values, value: rawValue, formatter, DisplayComponent, displayProps = {}, isEdit = false} = this.props;
         const value = values ? result(values.find(v => v[valueKey as keyof R] === rawValue), labelKey) : rawValue; // Résout la valeur dans le cas d'une liste de référence.
-        const FinalDisplay: ReactComponent<BaseDisplayProps> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
+        const FinalDisplay: React.ComponentClass<BaseDisplayProps> | React.SFC<BaseDisplayProps> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
         return (
             <FinalDisplay
                 {...displayProps as {}}
@@ -119,7 +119,7 @@ export class Field<
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {InputComponent, formatter, value, isEdit = false, valueKey = "code", labelKey = "label", values, inputProps, name, onChange} = this.props;
-        const FinalInput: ReactComponent<BaseInputProps> = InputComponent || InputText;
+        const FinalInput: React.ComponentClass<BaseInputProps> | React.SFC<BaseInputProps> = InputComponent || InputText;
         const valid = !(this.showError && this.error);
 
         // On renseigne `formattedInputValue`, `value` et `rawInputValue` pour être sûr de prendre en compte tous les types de composants.

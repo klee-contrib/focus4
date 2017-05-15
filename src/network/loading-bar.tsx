@@ -11,7 +11,7 @@ export type LoadingBarStyle = Partial<typeof styles>;
 
 export interface LoadingBarProps {
     displayDevBar?: boolean;
-    ProgressBar: ReactComponent<{completed: number}>;
+    ProgressBar: React.ComponentClass<{completed: number}> | React.SFC<{completed: number}>;
     theme?: LoadingBarStyle;
 }
 

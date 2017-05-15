@@ -17,10 +17,10 @@ export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> 
     addItemHandler?: () => void;
     data?: T[];
     hideAddItemHandler?: boolean;
-    LineComponent?: ReactComponent<P>;
+    LineComponent?: React.ComponentClass<P> | React.SFC<P>;
     mode?: "list" | "mosaic";
     mosaic?: {width: number, height: number};
-    MosaicComponent?: ReactComponent<P>;
+    MosaicComponent?: React.ComponentClass<P> | React.SFC<P>;
     operationList?: (data: T) => LineOperationListItem<T>[];
 }
 
@@ -66,7 +66,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
         return this.props.data || [];
     }
 
-    protected getItems(Line: new() => LineWrapper<T, P>, Component: ReactComponent<P>) {
+    protected getItems(Line: new() => LineWrapper<T, P>, Component: React.ComponentClass<P> | React.SFC<P>) {
         const {itemKey, lineTheme, lineProps, operationList} = this.props;
         return this.displayedData.map((item, idx) => (
             <Line

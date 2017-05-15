@@ -16,7 +16,7 @@ export const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 export interface TableProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     columns: {[field: string]: string};
     data?: T[];
-    RowComponent: ReactComponent<P>;
+    RowComponent: React.ComponentClass<P> | React.SFC<P>;
 }
 
 @autobind

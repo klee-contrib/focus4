@@ -19,7 +19,7 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     data: T;
     dateSelector?: (data: T) => EntityField<string>;
     hasSelection?: boolean;
-    LineComponent: ReactComponent<P>;
+    LineComponent: React.ComponentClass<P> | React.SFC<P>;
     lineProps?: P;
     mosaic?: {width: number, height: number};
     operationList?: (data: T) => LineOperationListItem<T>[];

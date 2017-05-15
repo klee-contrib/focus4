@@ -41,7 +41,7 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
         }
     }
 
-    protected getItems(Line: new() => LineWrapper<T, P>, Component: ReactComponent<P>) {
+    protected getItems(Line: new() => LineWrapper<T, P>, Component: React.ComponentClass<P> | React.SFC<P>) {
         const {itemKey, lineTheme, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store} = this.props;
         return this.displayedData.map((item, idx) =>
             <Line

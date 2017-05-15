@@ -26,15 +26,15 @@ export {DefaultErrorCenter as ErrorCenter, Header, HeaderStyle, Menu, MenuItemCo
 
 /** Props du Layout, comportant les différents composants injectables. */
 export interface LayoutProps {
-    AppHeader?: ReactComponent<any>;
+    AppHeader?: React.ComponentClass<any> | React.SFC<any>;
     children?: React.ReactChildren;
-    DevTools?: ReactComponent<any>;
-    ErrorCenter?: ReactComponent<any> | null;
-    Footer?: ReactComponent<any>;
-    LoadingBar?: ReactComponent<any>;
-    MenuLeft?: ReactComponent<any>;
-    MessageCenter?: ReactComponent<any>;
-    OtherRootComponent?: ReactComponent<any>;
+    DevTools?: React.ComponentClass<any> | React.SFC<any>;
+    ErrorCenter?: React.ComponentClass<any> | React.SFC<any> | null;
+    Footer?: React.ComponentClass<any> | React.SFC<any>;
+    LoadingBar?: React.ComponentClass<any> | React.SFC<any>;
+    MenuLeft?: React.ComponentClass<any> | React.SFC<any>;
+    MessageCenter?: React.ComponentClass<any> | React.SFC<any>;
+    OtherRootComponent?: React.ComponentClass<any> | React.SFC<any>;
     theme?: LayoutStyle;
 }
 

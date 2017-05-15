@@ -32,11 +32,11 @@ export interface AdvancedSearchProps {
     hideSummaryScope?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    lineComponentMapper?: (scope: string) => ReactComponent<any>;
+    lineComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
     lineProps?: {};
     mode?: "list" | "mosaic";
-    mosaicComponentMapper?: (scope: string) => ReactComponent<any>;
+    mosaicComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
     mosaicWidth?: number;
     mosaicHeight?: number;
     /** Par défaut : 6 */
