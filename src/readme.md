@@ -83,7 +83,7 @@ Et voilà, ça marche tout seul.
 ## [Module `testing`](testing)
 
 ## Module `user`
-Le store d'utilisateur est le même que `focus-core`, à la différence près que la fonction `hasRole` est située sur l'instance du `UserStore` (ce qui est plus logique).
+Ce module propose une base de store utilisateur, pour y stocker les données de la session. La seule fonctionnalité prévue est la gestion des rôles / permissions (avec `roles` et `hasRole()`), et c'est à chaque application d'y rajouter leurs informations métiers pertinentes.
 
 ## Module `util`
 Ce module contient deux décorateurs `@classAutorun` et `@classReaction` pour créer un `autorun`/`reaction` sur une méthode de classe React (en attendant que ça soit nativement supporté par MobX ?).

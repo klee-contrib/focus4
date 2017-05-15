@@ -16,5 +16,4 @@ export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
 export {AdvancedSearch, SearchBar} from "./search";
-export {userStore} from "./user";
 export {classAutorun} from "./util";
