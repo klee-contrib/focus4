@@ -19,33 +19,53 @@ export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} 
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
-    T,
-    ICProps extends BaseInputProps,
-    DCProps extends BaseDisplayProps,
-    LCProps extends Partial<LabelProps>,
-    R extends RefValues<T, VK, LK>,
-    VK extends string,
-    LK extends string
+    T,                                   // Type de la valeur.
+    ICProps extends BaseInputProps,      // Props du composant d'input.
+    DCProps extends BaseDisplayProps,    // Props du component d'affichage.
+    LCProps extends Partial<LabelProps>, // Props du component de libellé.
+    R extends RefValues<T, VK, LK>,      // Type de la liste de référence associée.
+    VK extends string,                   // Nom de la propriété de valeur (liste de référence).
+    LK extends string                    // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
+    /** Par défaut: "top". */
     contentCellPosition?: string;
+    /** Par défaut : 0. */
     contentOffset?: number;
+    /** Par défaut : 12. */
     contentSize?: number;
+    /** Surcharge l'erreur du field. */
     error?: string | null;
+    /** Force l'affichage de l'erreur, même si le champ n'a pas encore été modifié. */
     forceErrorDisplay?: boolean;
+    /** Affiche le label. */
     hasLabel?: boolean;
+    /** A utiliser à la place de `ref`. */
     innerRef?: (i: Field<T, ICProps, DCProps, LCProps, R, VK, LK>) => void;
+    /** Champ en édition. */
     isEdit?: boolean;
+    /** Champ requis. */
     isRequired?: boolean;
+    /** Libellé du champ. */
     label?: string;
+    /** Par défaut : "top". */
     labelCellPosition?: string;
+    /** Nom de la propriété de libellé. Doit être casté en lui-même (ex: `{labelKey: "label" as "label"}`). Par défaut: "label". */
     labelKey?: LK;
+    /** Par défaut : 0. */
     labelOffset?: number;
+    /** Par défaut : 4. */
     labelSize?: number;
+    /** Nom du champ. */
     name: string;
+    /** Handler de modification de la valeur. */
     onChange?: ICProps["onChange"];
+    /** CSS. */
     theme?: FieldStyle;
+    /** Valeur. */
     value: any;
+    /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */
     valueKey?: VK;
+    /** Liste des valeurs de la liste de référence. Doit contenir les propriétés `valueKey` et `labelKey`. */
     values?: R[];
 }
 

@@ -75,19 +75,28 @@ Un `EntityStore` peut contenir des objets avec autant de niveau de composition q
 
 ### API
 
-#### `fieldFor(field, options?)`
-La fonction `fieldFor`, ainsi que ses variantes spécialisées **`autocompleteSelectFor`**, **`autocompleteTextFor`**, **`displayFor`**, **`stringFor`** et **`textFor`**, permettent de créer un champ d'entrée ou d'affichage avec un libellé, en utilisant les composants du domaine ou par défaut. Elle prend comme paramètres :
-- `field`, l'`EntityField` contenant la valeur et les métadonnées du champ à afficher. La plupart du temps, `field` est une propriété dans un `EntityStore`, mais il est également possible de le créer à la volée. Il est également possible de passer directement une valeur s'il n'y a pas de métadonnées associées (elles seront toutes vides du coup).
-- `options`, les différentes options à passer au champ. Les options disponibles dépendent de la fonction utilisée et certaines sont conservées par le composant `Field` qui wrappe la logique du champ.
+#### `displayFor(field, options?)`
+Même chose que `fieldFor` mais avec `isEdit = false`.
 
-#### `fieldForWith(field, options?)`
-La fonction `fieldForWith` est la même fonction que `fieldFor`, à l'exception du fait qu'elle gère la surcharge manuelle des composants d'input, de label, d'affichage, ou carrément un composant qui remplace les 3.
+#### `fieldFor(field, options?)`
+La fonction `fieldFor`, permettent de créer un champ d'entrée ou d'affichage avec un libellé, en utilisant les composants du domaine ou par défaut. Elle prend comme paramètres :
+- `field`, l'`EntityField` contenant la valeur et les métadonnées du champ à afficher. La plupart du temps, `field` est une propriété dans un `EntityStore`, mais il est également possible de le créer à la volée. Il est également possible de passer directement une valeur s'il n'y a pas de métadonnées associées (elles seront toutes vides du coup).
+- `options`, les différentes options à passer au champ. On y retrouve les props du `Field`, comportant entre autres les propriétés `inputProps`, `displayProps` et `labelProps` qui seront les props supplémentaires à passer aux différents composants du `Field`.
+
+Par défaut, `fieldFor` utilise les composants `InputComponent`, `DisplayComponent` et `LabelComponent` définis dans le domaine. Si ces composants ne sont pas renseignés, alors il utilisera les composants par défaut (en particulier, un `InputText` pour l'input). Il est possible de surcharger localement ces composants en les respécifiant dans les options. Si le typage des domaines et des entités est bien fait, alors `inputProps` et consorts seront bien typés avec les props du composant qui sera utilisé.
 
 #### `selectFor(field, values, options?)`
-La fonction `selectFor` affiche un champ contenant un code de liste de référence. Elle prend comme paramètres :
-- `field`, comme `fieldFor`
+La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une liste de référence. Elle utilise un composant `Select` par défaut comme composant d'input et renseigne `options.values` avec le paramètre `values`.
+- `field`, comme `fieldFor`, à la différence près qu'on accepte que des `EntityField`.
 - `values`, la liste des valeurs de la liste de référence à utilise pour résoudre le code.
-- `options`, les différentes options à passer au champ.
+- `options`, comme `fieldfor`.
+
+`selectFor` vérifie également le type de la liste de référence en fonction du type du champ et de la présence des propriétés de bon type `valueKey` et `labelKey`. Par défaut, il cherche des propriétés `code` et `label`, qui sont surchargeables dans les options. Attention de bien caster `valueKey` et `labelKey` en eux-même (par exemple `{valueKey: "id" as "id}`) pour que l'inférence de type cherche bien la propriété `id` et non toutes les propriétés de l'objet.
+
+### `stringFor(field, options?)`
+La fonction `stringFor` affiche la représentation textuelle d'un champ de store, en utilisant si besoin le formatteur et une liste de référence. Les paramètres sont :
+- `field`, comme `selectFor`
+- `options`, comme `fieldFor`, même si finalement très peu d'options sont réellement utilisées.
 
 #### `makeEntityStore(simpleNodes, listNodes, entities, entityMapping?)`
 La fonction `makeEntityStore` permet de créer un nouvel `EntityStore`. Elle prend comme paramètres :

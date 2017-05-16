@@ -4,12 +4,14 @@ import {LabelProps} from "focus-components/label";
 
 import {Validator} from "./validation";
 
+/** Props de base pour un composant d'affichage. */
 export interface BaseDisplayProps {
     formattedInputValue?: string | number;
     rawInputValue?: any;
     value?: any;
 }
 
+/** Props de base pour un composant d'input. */
 export interface BaseInputProps {
     error?: string | null;
     formattedInputValue?: string | number;
@@ -23,7 +25,7 @@ export interface BaseInputProps {
     values?: any[];
 }
 
-/** Définition de base d'un domaine. */
+/** Définition de base d'un domaine, sans valeurs par défaut (sinon ça pose problème avec les EntityField). */
 export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
     /** Classe CSS pour le champ. */
     className?: string;
@@ -53,6 +55,7 @@ export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
     labelProps?: Partial<LCProps>;
 }
 
+/** Définition de base d'un domaine. */
 export interface Domain<ICProps extends BaseInputProps = Partial<InputTextProps>, DCProps extends BaseDisplayProps = Partial<DisplayTextProps>, LCProps = Partial<LabelProps>> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */

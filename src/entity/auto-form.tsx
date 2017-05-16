@@ -69,7 +69,7 @@ export interface ServiceConfig {
 export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Component<P, void> {
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
-    static contextTypes = {classNames: React.PropTypes.object};
+    static contextTypes = {theme: React.PropTypes.object};
     context: {theme: {[key: string]: {[key: string]: any}}};
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
@@ -364,7 +364,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     }
 
     /**
-     * Ajoute les options aux champs pour les lier au formulaire (`ref`, `error`, `isEdit` et `onChange`).
+     * Ajoute les options aux champs pour les lier au formulaire (`ref`, `error`, `isEdit`).
      * @param field La définition du champ.
      * @param options Les options du champ.
      */

@@ -62,6 +62,7 @@ export function fieldFor<T, ICDomainProps extends BaseInputProps = InputTextProp
     let trueField;
     if (isField(field)) {
         trueField = field;
+        // On renseigne `onChange` si on est dans un field avec le comportement attendu la plupart du temps.
         options.onChange = options.onChange || action(((value: T) => field.value = value)) as any;
     } else {
         trueField = {$entity, value: field};
