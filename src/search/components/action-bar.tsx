@@ -212,7 +212,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                     <div className={theme!.buttons!}>
                         {this.selectionButton}
                         {group ?
-                            <strong>{`${group.label} (${group.totalCount})`}</strong>
+                            <strong>{`${i18n.t(group.label)} (${group.totalCount})`}</strong>
                         : null}
                         {store.selectedItems.size ?
                             <strong>{`${store.selectedItems.size} ${i18n.t(`${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`)}`}</strong>
