@@ -12,27 +12,40 @@ import {MenuPanel} from "./panel";
 
 export {MenuItemConfig, MenuStyle};
 
+/** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 @themr("menu", styles)
 @observer
 @autobind
 export class Menu extends React.Component<MenuProps, void> {
 
+    /** Index du sous-menu actif. */
     @observable activeMenuIndex?: number;
+    /** Largeur du menu, sera déterminé après le montage. */
     @observable menuWidth = 0;
+    /** Position du sous-menu actif */
     @observable yPosition = 0;
+    /** Affiche le sous menu (ou pas) */
     @observable showPanel = false;
 
+    /** Eléments du sous-menu actif. */
     private readonly subMenus = observable<MenuItemConfig>([]);
 
+    /** Met à jour les éléments du sous-menu actif. */
     @classAutorun updateSubMenus() {
         const {menus} = this.props;
+        // Si le menu actif à un sous-menu, alors on enregistre ses éléments.
         if (this.activeMenuIndex && menus[this.activeMenuIndex].subMenus) {
             this.subMenus.replace(menus[this.activeMenuIndex].subMenus!);
         } else {
-            this.subMenus.clear();
+            this.subMenus.clear(); // Sinon on vide.
         }
     }
 
+    /**
+     * Handler de clic sur un menu pour ouvrir (ou pas) le sous-menu associé.
+     * @param evt Evènement HTML.
+     * @param menuIndex Index du menu.
+     */
     @action
     private onSelectMenu(evt: React.SyntheticEvent<HTMLDivElement>, menuIndex: number) {
         const targetPosition = evt.currentTarget.getBoundingClientRect();
@@ -41,6 +54,7 @@ export class Menu extends React.Component<MenuProps, void> {
         this.yPosition = targetPosition.top;
     }
 
+    // Permet de récupérer et d'actualiser la largeur du menu à l'exécution.
     componentDidMount() { this.getMenuWidth(); }
     componentDidUpdate() { this.getMenuWidth(); }
     getMenuWidth() {

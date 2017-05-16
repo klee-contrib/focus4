@@ -44,8 +44,10 @@ export interface LayoutProps {
 @observer
 class LayoutBase extends React.Component<LayoutProps, void> {
 
+    /** Largeur du menu. */
     @observable menuWidth = 0;
 
+    // Permet de récupérer et d'actualiser la largeur du menu à l'exécution.
     componentDidMount() { this.getMenuWidth(); }
     componentDidUpdate() { this.getMenuWidth(); }
     getMenuWidth() {

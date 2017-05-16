@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -10,29 +9,31 @@ export {styles};
 
 export type MenuStyle = Partial<typeof styles>;
 
+/** Description d'un item de menu. */
 export interface MenuItemConfig extends ButtonProps {
+    /** La route associée, utilisée comme clé et comparée à la route active. */
     route: string;
+    /** Affiche le libellé de l'item. */
     showLabel?: boolean;
+    /** Sous-menu. */
     subMenus?: MenuItemConfig[];
 }
 
+/** Props du MenuItem. */
 export interface MenuItemProps extends MenuItemConfig {
+    /** Route active. */
     activeRoute?: string;
+    /** CSS. */
     theme?: MenuStyle;
 }
 
-@themr("menu", styles)
-@observer
-@autobind
-export class MenuItem extends React.Component<MenuItemProps, void> {
-
-    render(): JSX.Element {
-        const {activeRoute, label, icon, iconLibrary, showLabel, onClick, route, theme} = this.props;
-        const buttonProps = {...{icon: "link", shape: showLabel ? null : "icon" as "icon"}, label, icon, iconLibrary, onClick};
-        return (
-            <li className={`${theme!.item} ${route === activeRoute ? theme!.active! : ""}`}>
-                <Button {...buttonProps} color={route === activeRoute ? "primary" : undefined} />
-            </li>
-        );
-    }
-}
+/** Elément de menu. */
+export const MenuItem = themr("menu", styles)(observer<MenuItemProps>(props => {
+    const {activeRoute, label, icon, iconLibrary, showLabel, onClick, route, theme} = props;
+    const buttonProps = {...{icon: "link", shape: showLabel ? null : "icon" as "icon"}, label, icon, iconLibrary, onClick};
+    return (
+        <li className={`${theme!.item} ${route === activeRoute ? theme!.active! : ""}`}>
+            <Button {...buttonProps} color={route === activeRoute ? "primary" : undefined} />
+        </li>
+    );
+}));

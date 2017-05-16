@@ -3,6 +3,8 @@
 ## `Layout`
 Le Layout a été globablement repris de Focus v2 et est censé fonctionner de la même façon, à la gestion du CSS près.
 
+Il contient également les composants de `Menu`, `Popin` et `PopinConfirmation`.
+
 ## `ApplicationStore`
 Le store expose des observables pour les **composants** `barLeft`, `cartridge`, `summary`, etc. qu'il est possible de modifier directement, à effet immédiat, ou bien de passer par la méthode `setHeader` pour en modifier plusieurs à la fois (ce qui était le seul moyen dans la V2).
 

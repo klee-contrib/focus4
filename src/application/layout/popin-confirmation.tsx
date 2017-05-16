@@ -7,15 +7,23 @@ import Button from "focus-components/button";
 
 import {Popin, PopinStyle, styles} from "./popin";
 
+/** Props de la popin de confirmation. */
 export interface PopinConfirmationProps {
+    /** Handler d'annulation, sera appelé en plus de la fermeture de la popin. */
     cancelHandler?: () => void;
+    /** Handler de confirmation. */
     confirmHandler: () => void;
+    /** Handler de fermeture de la popin. */
     closePopin: () => void;
+    /** Par défaut : "focus" */
     i18nPrefix?: string;
+    /** Popin ouverte (ou fermée). */
     opened: boolean;
+    /** CSS. */
     theme?: PopinStyle;
 }
 
+/** Affiche une popin de confirmation avec des boutons de confirmation et d'annulation. */
 export const PopinConfirmation = themr("popin", styles)(observer<PopinConfirmationProps>(
     ({children, closePopin, cancelHandler, confirmHandler, i18nPrefix = "focus", opened, theme}) => (
         <Popin closePopin={closePopin} opened={opened} type="center">

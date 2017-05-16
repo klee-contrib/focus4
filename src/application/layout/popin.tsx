@@ -12,23 +12,34 @@ export {styles};
 
 export type PopinStyle = Partial<typeof styles>;
 
+/** Props de la popin. */
 export interface PopinProps {
-    level?: number;
+    /** Handler de fermeture de la popin. */
     closePopin: () => void;
+    /** Niveau de la popin, pour savoir dans combien d'autres popins elle se trouve. Par défaut : 0 */
+    level?: number;
+    /** Popin ouverte (ou fermée). */
     opened: boolean;
+    /** CSS. */
     theme?: PopinStyle;
+    /** Type de popin. Par défaut : "from-right" */
     type?: "from-right" | "from-left" | "center";
 }
 
+/** Affiche son contenu dans une popin, dont l'ouverture est contrôlée par ses props. */
 @themr("popin", styles)
 @autobind
 @observer
 export class Popin extends React.Component<PopinProps, {}> {
 
+    /** ID du timeout d'ouverture/fermeture en cours. */
     private openTimeoutID: any;
 
+    /** Popin ouverte. N'est pas directement lié à `this.props.opened` à cause des états intermédiaires. */
     @observable opened = false;
+    /** Popin en cours d'ouverture. */
     @observable willOpen = false;
+    /** Popin en cours de fermeture. */
     @observable willClose = false;
 
     componentWillUnmount() {
@@ -50,10 +61,14 @@ export class Popin extends React.Component<PopinProps, {}> {
         }
     }
 
+    /**
+     * Ouvre ou ferme la popin.
+     * @param opened Nouvel état de la popin.
+     */
     private toggleOpen(opened: boolean) {
         if (opened) {
             this.willOpen = true;
-            this.openTimeoutID = setTimeout(() => this.willOpen = false, 200);
+            this.openTimeoutID = setTimeout(() => this.willOpen = false, 200); // La popin s'ouvre en 200ms.
             this.opened = true;
             this.hideBodyOverflow();
         } else {
@@ -66,12 +81,16 @@ export class Popin extends React.Component<PopinProps, {}> {
         }
     }
 
+    /** Masque l'overflow (selon l'axe Y) du body et de l'éventuelle popin parente. */
     private hideBodyOverflow() {
+        // Si level > 0, alors on a une popin parente et on va la chercher.
         if (this.props.level) {
             let parentPopin = findDOMNode(this) as HTMLElement | null;
+            // La popin qu'on cherche est celle de niveau n - 1.
             while (parentPopin && parentPopin.getAttribute("data-level") !== `${this.props.level - 1}`) {
                 parentPopin = parentPopin.parentElement;
             }
+            // Si on l'a trouvée, alors on masque son overflow.
             if (parentPopin) {
                 parentPopin.style.overflowY = "hidden";
                 return;
@@ -81,6 +100,7 @@ export class Popin extends React.Component<PopinProps, {}> {
         document.body.style.overflowY = "hidden";
     }
 
+    /** Restore l'overflow (selon l'axe Y) du body et de l'éventuelle popin parente */
     private restoreBodyOverflow() {
         if (this.props.level) {
             let parentPopin = findDOMNode(this) as HTMLElement | null;
@@ -96,6 +116,7 @@ export class Popin extends React.Component<PopinProps, {}> {
         document.body.style.overflowY = "auto";
     }
 
+    /** Récupère les deux animations d'ouverture et de fermeture selon le type de popin. */
     private get animations() {
         const {type = "from-right"} = this.props;
         switch (type) {
