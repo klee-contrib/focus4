@@ -23,7 +23,7 @@ export const Header = themr("header", styles)(({marginLeft, theme}: {marginLeft:
             right: theme!.right!,
             topRow: theme!.topRow!
         }} />
-        <HeaderContent className={theme!.content!} />
+        <HeaderContent className={theme!.content!} marginLeft={marginLeft} />
         <HeaderActions className={theme!.actions!} />
     </HeaderScrolling>
 ));
