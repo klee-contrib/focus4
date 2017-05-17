@@ -259,7 +259,9 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     validate() {
         // On force en premier lieu l'affichage des erreurs sur tous les champs.
         for (const field in this.fields) {
-            this.fields[field]!.showError = true;
+            if (this.fields[field]) {
+                this.fields[field]!.showError = true;
+            }
         }
 
         // La validation est en succès si chaque champ n'est pas en erreur.
