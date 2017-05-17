@@ -3,7 +3,7 @@
     animation-fill-mode: both;
 }
 
-@keyframes a-open {
+@keyframes aOpen {
     0% {
         opacity: 0;
         transform: translate3d(-500px, 0, 0);
@@ -13,7 +13,7 @@
     to { transform: none; }
 }
 
-@keyframes a-close {
+@keyframes aClose {
     0% { transform: none; }
     95% { opacity: 0; }
 
@@ -24,11 +24,11 @@
 }
 
 .open {
-    animation-name: a-open;
+    animation-name: aOpen;
 }
 
 .close {
-    animation-name: a-close;
+    animation-name: aClose;
 }
 
 .menu {
