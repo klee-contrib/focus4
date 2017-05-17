@@ -20,6 +20,7 @@ export interface AdvancedSearchProps {
     addItemHandler?: () => void;
     /** Par défaut : true */
     canRemoveSort?: boolean;
+    DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
@@ -118,9 +119,10 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store} = this.props;
+        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, DetailComponent} = this.props;
         return (
             <Results
+                DetailComponent={DetailComponent}
                 theme={{mosaicAdd: theme && theme.mosaicAdd}}
                 groupOperationLists={groupOperationLists}
                 hasSelection={!!hasSelection}

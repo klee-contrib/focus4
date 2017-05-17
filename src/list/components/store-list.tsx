@@ -52,6 +52,7 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
                 hasSelection={hasSelection}
                 LineComponent={Component}
                 lineProps={lineProps}
+                onLineClick={() => this.onLineClick(idx)}
                 operationList={operationList}
                 selectionnableInitializer={selectionnableInitializer}
                 store={store}

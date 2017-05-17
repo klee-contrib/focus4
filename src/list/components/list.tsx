@@ -1,11 +1,15 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
-import {computed} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {findDOMNode} from "react-dom";
 
+import Button from "focus-components/button";
 import Icon from "focus-components/icon";
+
+import {classAutorun} from "../../util";
 
 import {LineOperationListItem} from "./contextual-actions";
 import {LineWrapper} from "./line";
@@ -16,6 +20,7 @@ import * as styles from "./__style__/list.css";
 export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     addItemHandler?: () => void;
     data?: T[];
+    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
     hideAddItemHandler?: boolean;
     LineComponent?: React.ComponentClass<P> | React.SFC<P>;
     mode?: "list" | "mosaic";
@@ -43,6 +48,30 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
         }
     };
 
+    @observable private byLine: number;
+    @observable private displayedIdx?: number;
+
+    componentDidMount() {
+        super.componentDidMount();
+        window.addEventListener("resize", this.updateByLine);
+        this.updateByLine();
+    }
+
+    componentDidUpdate() {
+        super.componentDidUpdate();
+        this.updateByLine();
+    }
+
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        window.removeEventListener("resize", this.updateByLine);
+    }
+
+    @classAutorun
+    private updateByLine() {
+        this.byLine = this.mode === "mosaic" ? Math.floor(findDOMNode(this).clientWidth / (this.mosaic!.width + 10)) : 1;
+    }
+
     @computed
     protected get addItemHandler() {
         const {listWrapper} = this.context;
@@ -66,6 +95,11 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
         return this.props.data || [];
     }
 
+    @computed
+    private get isAddItemShown() {
+        return !!(!this.props.hideAddItemHandler && this.addItemHandler && this.mode === "mosaic" && this.mosaic);
+    }
+
     protected getItems(Line: new() => LineWrapper<T, P>, Component: React.ComponentClass<P> | React.SFC<P>) {
         const {itemKey, lineTheme, lineProps, operationList} = this.props;
         return this.displayedData.map((item, idx) => (
@@ -77,12 +111,18 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
                 LineComponent={Component}
                 lineProps={lineProps}
                 operationList={operationList}
+                onLineClick={() => this.onLineClick(idx)}
             />
         ));
     }
 
+    @action
+    protected onLineClick(idx: number) {
+        this.displayedIdx = this.displayedIdx !== idx ? idx : undefined;
+    }
+
     private renderLines() {
-        const {theme, hideAddItemHandler, i18nPrefix = "focus", LineComponent, MosaicComponent} = this.props;
+        const {theme, i18nPrefix = "focus", LineComponent, MosaicComponent, DetailComponent, itemKey} = this.props;
 
         let Component;
         if (this.mode === "list" && LineComponent) {
@@ -95,11 +135,29 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
 
         let items = this.getItems(LineWrapper, Component);
 
-        if (!hideAddItemHandler && this.addItemHandler && this.mode === "mosaic" && this.mosaic) {
+        if (DetailComponent && this.displayedIdx !== undefined) {
+            let idx = this.displayedIdx + (this.isAddItemShown || this.mode === "list" ? 1 : 0);
+
+            if (this.mode === "mosaic") {
+                idx += this.byLine - idx % this.byLine - (this.isAddItemShown ? 1 : 0);
+            }
+            const item = this.displayedData[this.displayedIdx];
+
+            items.splice(idx, 0, (
+                <li key={`detail-${itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || this.displayedIdx}`} className={theme!.detail!}>
+                    <div className={theme!.triangle!} style={this.mode === "mosaic" ? {left: -8.25 + this.mosaic!.width / 2 + ((this.displayedIdx + (this.isAddItemShown ? 1 : 0)) % this.byLine) * (10 + this.mosaic!.width)} : {}} />
+                    <Button icon="clear" onClick={() => this.displayedIdx = undefined} shape="icon" />
+                    <DetailComponent data={item} />
+                </li>
+            ));
+        }
+
+        if (this.isAddItemShown) {
             items = [(
                 <div
+                    key="mosaic-add"
                     className={theme!.mosaicAdd!}
-                    style={{width: this.mosaic.width, height: this.mosaic.height}}
+                    style={{width: this.mosaic!.width, height: this.mosaic!.height}}
                     onClick={this.addItemHandler}
                 >
                     <Icon name="add" />

@@ -41,22 +41,6 @@
     clear: both;
 }
 
-.bottomRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-}
-
-.bottomRow button {
-    margin: 0;
-}
-
-.bottomRow button:global(:not(.mdl-button--raised)) {
-    font-weight: bold;
-    text-transform: none;
-}
-
 .mosaicAdd {
     border: 1px dashed #ccc;
     padding: 65px 20px;
@@ -76,4 +60,45 @@
     display: block;
     text-align: center;
     font-size: 24px;
+}
+
+.detail {
+    width: calc(100% - 20px);
+    background: #e8e8e8;
+    padding: 10px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.detail > button {
+    position: absolute;
+    right: 4px;
+    top: 5px;
+}
+
+.triangle {
+    position: absolute;
+    top: -15px;
+    left: calc(50% - 7.5px);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 15px 15px;
+    border-color: transparent transparent #e8e8e8;
+}
+
+.bottomRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.bottomRow button {
+    margin: 0;
+}
+
+.bottomRow button:global(:not(.mdl-button--raised)) {
+    font-weight: bold;
+    text-transform: none;
 }

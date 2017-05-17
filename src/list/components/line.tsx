@@ -22,6 +22,7 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     LineComponent: React.ComponentClass<P> | React.SFC<P>;
     lineProps?: P;
     mosaic?: {width: number, height: number};
+    onLineClick?: () => void;
     operationList?: (data: T) => LineOperationListItem<T>[];
     selectionnableInitializer?: (data: T) => boolean;
     store?: MiniListStore<T>;
@@ -48,7 +49,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     }
 
     render() {
-        const {LineComponent, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
+        const {LineComponent, onLineClick, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table":
                 return <LineComponent data={data} {...lineProps} />;
@@ -79,7 +80,9 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                                 color={this.isSelected ? "primary" : undefined}
                             />
                         : null}
-                        <LineComponent data={data} {...lineProps} />
+                        <div onClick={onLineClick}>
+                            <LineComponent data={data} {...lineProps} />
+                        </div>
                         {opList && opList.length > 0 ?
                             <div
                                 className={theme!.actions!}

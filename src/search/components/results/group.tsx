@@ -16,6 +16,7 @@ import * as styles from "./__style__/group.css";
 export type GroupStyle = Partial<typeof styles>;
 
 export interface Props {
+    DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;
@@ -43,13 +44,14 @@ export class Group extends React.Component<Props, void> {
     }
 
     private renderList() {
-        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store} = this.props;
+        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, DetailComponent} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
                 <List
                     theme={{mosaicAdd: theme && theme.mosaicAdd}}
                     data={group.list}
+                    DetailComponent={DetailComponent}
                     hasSelection={hasSelection}
                     hideAddItemHandler={!!group.code}
                     i18nPrefix={i18nPrefix}

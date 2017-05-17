@@ -11,6 +11,7 @@ import {Group, GroupStyle} from "./group";
 export {GroupStyle};
 
 export interface ResultsProps {
+    DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
@@ -62,7 +63,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store} = this.props;
+        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store, DetailComponent} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
@@ -72,6 +73,7 @@ export class Results extends React.Component<ResultsProps, void> {
                 groupOperationList={groupOperationLists[groupKey]}
                 hasSelection={hasSelection}
                 i18nPrefix={i18nPrefix}
+                DetailComponent={DetailComponent}
                 LineComponent={lineComponentMapper && lineComponentMapper(groupKey)}
                 MosaicComponent={mosaicComponentMapper && mosaicComponentMapper(groupKey)}
                 lineProps={lineProps}
