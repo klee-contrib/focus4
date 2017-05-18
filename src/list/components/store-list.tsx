@@ -6,8 +6,8 @@ import {themr} from "react-css-themr";
 
 import {ListStore} from "../store";
 import {MiniListStore} from "../store-base";
-import {LineWrapper} from "./line";
-import {ListWithoutStyle} from "./list";
+import {LineWrapperProps} from "./line";
+import {LineItem, ListWithoutStyle} from "./list";
 
 import * as styles from "./__style__/list.css";
 
@@ -41,23 +41,21 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
         }
     }
 
-    protected getItems(Line: new() => LineWrapper<T, P>, Component: React.ComponentClass<P> | React.SFC<P>) {
-        const {itemKey, lineTheme, hasSelection = false, selectionnableInitializer = () => true, lineProps, operationList, store} = this.props;
-        return this.displayedData.map((item, idx) =>
-            <Line
-                key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
-                data={item}
-                theme={lineTheme}
-                mosaic={this.mosaic}
-                hasSelection={hasSelection}
-                LineComponent={Component}
-                lineProps={lineProps}
-                onLineClick={() => this.onLineClick(idx)}
-                operationList={operationList}
-                selectionnableInitializer={selectionnableInitializer}
-                store={store}
-            />
-        );
+    protected getItems(Component: React.ComponentClass<P> | React.SFC<P>): LineItem<LineWrapperProps<T, P>>[] {
+        const {hasSelection = false, selectionnableInitializer = () => true, store} = this.props;
+        return super.getItems(Component).map(({key, data}) => ({
+            key,
+            data: {
+                Component: data.Component,
+                props: {
+                    ...data.props,
+                    hasSelection,
+                    selectionnableInitializer,
+                    store
+                }
+            },
+            style: {}
+        }));
     }
 
     protected handleShowMore() {

@@ -62,12 +62,22 @@
     font-size: 24px;
 }
 
-.detail {
-    width: calc(100% - 20px);
-    background: #e8e8e8;
-    padding: 10px;
-    margin: 20px 0;
+.detailWrapper {
+    width: 100%;
     position: relative;
+    overflow: hidden;
+}
+
+.detail {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background: #e8e8e8;
+    margin: 20px 0;
+    overflow: hidden;
 }
 
 .detail > button {
@@ -78,7 +88,7 @@
 
 .triangle {
     position: absolute;
-    top: -15px;
+    top: 5px;
     left: calc(50% - 7.5px);
     width: 0;
     height: 0;
