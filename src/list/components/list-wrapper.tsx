@@ -72,6 +72,7 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                             onClick={() => this.childContext.mode = "list"}
                             icon="list"
                             shape="icon"
+                            type="button"
                             label={`${i18nPrefix}.list.mode.list`}
                         />
                     : null}
@@ -81,6 +82,7 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                             onClick={() => this.childContext.mode = "mosaic"}
                             icon="apps"
                             shape="icon"
+                            type="button"
                             label={`${i18nPrefix}.list.mode.mosaic`}
                         />
                     : null}
@@ -90,6 +92,7 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                             icon="add"
                             label={`${i18nPrefix}.list.add`}
                             shape={null}
+                            type="button"
                         />
                     : null}
                 </div>

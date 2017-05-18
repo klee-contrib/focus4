@@ -64,6 +64,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                     shape="icon"
                     icon={this.selectionIcon}
                     onClick={store.toggleAll}
+                    type="button"
                 />
             );
         } else {
@@ -82,6 +83,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                         iconPosition="right"
                         label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
+                        type="button"
                     />
                     {this.state.facetBoxDisplay ? <div className={theme!.triangle!} /> : null}
                 </div>
@@ -157,7 +159,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                         />
                     );
                 } else {
-                    return <Button disabled={true} label={`${i18nPrefix}.search.action.group`} />;
+                    return <Button disabled={true} label={`${i18nPrefix}.search.action.group`} type="button" />;
                 }
             }
         }

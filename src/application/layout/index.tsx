@@ -3,7 +3,7 @@ import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {ThemeProvider, themr} from "react-css-themr";
+import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
 
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
@@ -123,7 +123,7 @@ export interface LayoutStyleProviderProps {
  */
 export function Layout(props: LayoutProps & {injectedStyle?: LayoutStyleProviderProps}) {
     return (
-        <ThemeProvider theme={props.injectedStyle || {}}>
+        <ThemeProvider theme={(props.injectedStyle || {}) as TReactCSSThemrTheme}>
             <LayoutBase {...omit(props, "injectedStyle")}>
                 {props.children}
             </LayoutBase>

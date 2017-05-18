@@ -36,6 +36,7 @@ export const PopinConfirmation = themr("popin", styles)(observer<PopinConfirmati
                         }
                         closePopin();
                     }}
+                    type="button"
                     label={i18n.t(`${i18nPrefix}.confirmation.cancel`)}
                 />
                 <Button
@@ -44,6 +45,7 @@ export const PopinConfirmation = themr("popin", styles)(observer<PopinConfirmati
                         closePopin();
                     }}
                     label={i18n.t(`${i18nPrefix}.confirmation.confirm`)}
+                    type="button"
                     color="primary"
                 />
             </div>

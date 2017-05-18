@@ -169,9 +169,9 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                             value={this.text}
                         />
                     </div>
-                    {this.text && !this.showCriteriaComponent ? <Button icon="clear" onClick={this.clear} shape="icon" /> : null}
+                    {this.text && !this.showCriteriaComponent ? <Button icon="clear" onClick={this.clear} shape="icon" type="button" /> : null}
                     {store.criteria && criteriaComponent && !this.showCriteriaComponent ?
-                        <Button icon={`keyboard_arrow_${this.showCriteriaComponent ? "up" : "down"}`} onClick={this.toggleCriteria} shape="icon" />
+                        <Button icon={`keyboard_arrow_${this.showCriteriaComponent ? "up" : "down"}`} onClick={this.toggleCriteria} shape="icon" type="button" />
                     : null}
                 </div>
                 {!this.showCriteriaComponent && this.error ?
@@ -181,12 +181,12 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                 : null}
                 {this.showCriteriaComponent ?
                     <div className={theme!.criteria!}>
-                        <Button icon="clear" onClick={this.toggleCriteria} shape="icon" />
+                        <Button icon="clear" onClick={this.toggleCriteria} shape="icon" type="button" />
                         {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: (query: string) => store.query = query})}
                         {criteriaComponent}
                         <div className={theme!.buttons!}>
-                            <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.search`} />
-                            <Button onClick={this.clear} shape={null} label={`${i18nPrefix}.search.bar.reset`} />
+                            <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.search`} type="button" />
+                            <Button onClick={this.clear} shape={null} label={`${i18nPrefix}.search.bar.reset`} type="button" />
                         </div>
                     </div>
                 : null}

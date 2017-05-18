@@ -155,7 +155,7 @@ export class Popin extends React.Component<PopinProps, {}> {
                     className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : type === "center" ? theme!.center! : ""} animated ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
-                    {type !== "center" ? <Button icon="close" shape="mini-fab" onClick={closePopin} /> : null}
+                    {type !== "center" ? <Button icon="close" shape="mini-fab" type="button" onClick={closePopin} /> : null}
                     <div>{children}</div>
                 </div>
             </div>

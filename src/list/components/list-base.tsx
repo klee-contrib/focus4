@@ -78,6 +78,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
                             handleOnClick={this.handleShowMore}
                             icon="add"
                             shape={null}
+                            type="button"
                             label={`${i18n.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18n.t(`${i18nPrefix}.list.show.displayed`)})`}
                         />
                     : <div />}
@@ -86,6 +87,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
                             handleOnClick={showAllHandler}
                             icon="arrow_forward"
                             label={`${i18nPrefix}.list.show.all`}
+                            type="button"
                             shape={null}
                         />
                     : null}

@@ -33,7 +33,7 @@ export const MenuItem = themr("menu", styles)(observer<MenuItemProps>(props => {
     const buttonProps = {...{icon: "link", shape: showLabel ? null : "icon" as "icon"}, label, icon, iconLibrary, onClick};
     return (
         <li className={`${theme!.item} ${route === activeRoute ? theme!.active! : ""}`}>
-            <Button {...buttonProps} color={route === activeRoute ? "primary" : undefined} />
+            <Button {...buttonProps} type="button" color={route === activeRoute ? "primary" : undefined} />
         </li>
     );
 }));

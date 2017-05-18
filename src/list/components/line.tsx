@@ -73,6 +73,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                             <Button
                                 className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
                                 shape="icon"
+                                type="button"
                                 icon={this.isSelected ? "check_box" : "check_box_outline_blank"}
                                 onClick={this.onSelection}
                                 color={this.isSelected ? "primary" : undefined}
