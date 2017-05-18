@@ -1,5 +1,6 @@
-import {autobind, debounce} from "core-decorators";
+import {autobind} from "core-decorators";
 import {flatten} from "lodash";
+import {debounce} from "lodash-decorators";
 import {action, computed, IObservableArray, observable, reaction} from "mobx";
 
 import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues, validate} from "../entity";

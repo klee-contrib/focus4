@@ -55,7 +55,7 @@ export interface ServiceConfig {
     delete?: (entity: {}) => Promise<void | number | boolean>;
 
     /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
-    getLoadParams?: () => any[];
+    getLoadParams?: () => any[] | undefined;
 
     /** Service de chargement. */
     load?: (...args: any[]) => Promise<{} | undefined>;
