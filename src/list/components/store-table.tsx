@@ -13,16 +13,21 @@ import {TABLE_CELL_CLASS, TableWithoutStyle} from "./table";
 
 import * as styles from "./__style__/list.css";
 
+/** Props additionnelles pour un StoreTable. */
 export interface StoreTableProps<T> {
+    /** Les colonnes sur lesquelles on peut trier. */
     sortableColumns?: (keyof T)[];
+    /** Le store contenant la liste. */
     store: ListStoreBase<T>;
 }
 
+/** Composant de tableau lié à un store, qui permet le tri de ses colonnes. */
 @themr("list", styles)
 @autobind
 @observer
 export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P, StoreTableProps<T>> {
 
+    /** Les données. */
     @computed
     protected get data() {
         const data = this.props.data || (this.props.store as ListStore<T>).dataList;
@@ -32,6 +37,7 @@ export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P,
         return data;
     }
 
+    /** On modifie le header pour y ajouter les boutons de tri. */
     protected renderTableHeader() {
         const {columns, sortableColumns = [], store: {sortAsc, sortBy}} = this.props;
         return (
@@ -55,6 +61,7 @@ export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P,
         );
     }
 
+    /** Fonction de tri, modifie les critères du store. */
     @action
     private sort(sortBy: string, sortAsc: boolean) {
         const {store} = this.props;

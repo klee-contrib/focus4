@@ -12,9 +12,9 @@ Le `ListStore` à maintenant un deuxième mode de fonctionnement dans lequel on 
 Les composants de listes sont maintenant tous basés sur `ListBase`, qui regroupe les fonctionnalités de `MemoryList` + tout ce qui est commun à toutes les listes (affichage partiel et scroll princiapelement).
 
 On a donc, pour les composants de base :
-* `List`, posable par `listFor` (les deux font exactement la même chose), qui est une bête liste qui prend les données en props.
-* `Table`, posable par `tableFor` (les deux font exactement la même chose), qui est un bête tableau qui prend les données en props.
-* `Timeline`, posable par `timelineFor` (les deux font exactement la même chose), qui est un bête timeline qui prend les données en props.
+* `List`, posable par `listFor` (les deux font exactement la même chose), qui est une liste qui prend les données en props. Plus de détail sur la liste dans le paragraphe suivant.
+* `Table`, posable par `tableFor` (les deux font exactement la même chose), qui est un tableau qui prend les données en props.
+* `Timeline`, posable par `timelineFor` (les deux font exactement la même chose), qui est une timeline qui prend les données en props.
 
 Et pour les composants liés à un `ListStoreBase`:
 * `StoreList`, équivalent de l'ancien `ListSelection`, qui est lié à un store et peut gérer de la sélection (ou pas) (le tri est géré par une `ActionBar`).
@@ -22,6 +22,10 @@ Et pour les composants liés à un `ListStoreBase`:
 
 Pour les deux précédents, la liste utilisée est passable en props (obligatoire pour le `SearchStore`, override `ListStore.dataList` sinon).
 
-**Il n'y a plus de composants/HOC/mixin pour les lignes.** Tout est directement intégré aux composants de listes : le `StoreList` wrappe dans le container de séléction si on active la sélection, le `Timeline` wrappe dans le container de timeline. `renderLineActions` est toujours disponible séparément. S'il y a besoin de comportements particuliers sur certaines lignes, il est toujours possible d'interagir avec le store directement.
+## La liste
+Si les composants de tableau et de timeline sont assez simples, la liste possède quelques fonctionnalités supplémentaires :
+- La gestion d'un mode liste et d'un mode mosaïque, avec deux composants séparés.
+- La gestion d'un détail d'élément, dont l'affichage se fait par accordéon.
+- La gestion d'un handler d'ajout d'élément.
 
-Pour faire un composant de liste personnalisé qui reprend tout de même les fonctionalités de `MemoryList`/`ListBase`, il suffit de dériver de `ListBase` et d'implémenter au moins un `render()` (et `get data()`). `List`, `Table` et `Timeline` sont des exemples à suivre. Cela remplace `listFor(data, {ListComponent})`, qui est maintenant uniquement réservé à une liste simple.
+Un composant transverse **`ListWrapper`** permet de centraliser les paramètres de mode, de taille de mosaïque et d'handler d'ajout d'élément pour partager cet état entre plusieurs listes (c'est déja nativement utilisé par la recherche groupée). Il suffit de poser toutes les listes dans un `ListWrapper` et elles récupéreront l'état via le contexte.

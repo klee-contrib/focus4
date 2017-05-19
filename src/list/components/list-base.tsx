@@ -11,27 +11,41 @@ import {LineStyle} from "./line";
 import * as styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
+/** Props de base pour un composant de liste. */
 export interface ListBaseProps<T, P extends {data?: T}> {
+    /** CSS de la ligne. */
     lineTheme?: LineStyle;
+    /** Props propre à la ligne (hors `data`). */
     lineProps?: P;
-    /** Par défaut : "focus" */
+    /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Affiche le bouton "Voir plus" au lieu d'un scroll infini. */
     isManualFetch?: boolean;
+    /** Champ de l'objet à utiliser pour la key des lignes. */
     itemKey?: keyof T;
+    /** Décalage entre le scroll et le bas de la page en dessous du quel on déclenche le chargement en scroll infini. Par défaut : 250. */
     offset?: number;
+    /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
     perPage?: number;
+    /** Affiche un bouton "Voir tout" qui effectue cette action. */
     showAllHandler?: () => void;
+    /** CSS */
     theme?: ListStyle;
 }
 
+/** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
 @autobind
 export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extends React.Component<P, void> {
 
+    /** Nombre d'éléments affichés. */
     @observable maxElements = this.props.perPage;
+    /** Nombre de page chargées. */
     private page = 1;
 
+    /** Les données. */
     protected abstract get data(): T[];
 
+    /** Les données affichées. */
     @computed
     protected get displayedData() {
         if (this.maxElements) {
@@ -41,6 +55,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
         }
     }
 
+    /** Détermine s'il y a encore des données non affichées. */
     @computed
     protected get hasMoreData() {
         if (this.maxElements) {
@@ -68,6 +83,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
         }
     }
 
+    /** Affiche les éventuels boutons "Voir plus" et "Voir tout" en fin de liste. */
     protected renderBottomRow() {
         const {theme, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
         if (isManualFetch && this.hasMoreData || showAllHandler) {
@@ -98,6 +114,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
         }
     }
 
+    /** Charge la page suivante. */
     protected handleShowMore() {
         if (this.hasMoreData) {
             this.page = this.page + 1;
@@ -105,6 +122,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
         }
     }
 
+    /** Enregistre un listener sur le scroll pour le scroll infini. */
     private attachScrollListener() {
         if (!this.hasMoreData) {
             return;
@@ -114,11 +132,13 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
         this.scrollListener();
     }
 
+    /** Retire les listeners. */
     private detachScrollListener() {
         window.removeEventListener("scroll", this.scrollListener);
         window.removeEventListener("resize", this.scrollListener);
     }
 
+    /** Gère le scroll infini. */
     private scrollListener() {
         const el = findDOMNode(this) as HTMLElement;
         const scrollTop = window.pageYOffset;
@@ -129,6 +149,10 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
     }
 }
 
+/**
+ * Détermine le sommet de l'élément choisi.
+ * @param element L'élément.
+ */
 function topOfElement(element: HTMLElement): number {
     if (!element) {
         return 0;

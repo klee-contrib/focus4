@@ -13,20 +13,27 @@ import * as styles from "./__style__/list.css";
 const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 export const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 
+/** Props du tableau de base. */
 export interface TableProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
+    /** La description des colonnes du tableau avec leur libellés. */
     columns: {[field: string]: string};
+    /** Les données. */
     data?: T[];
+    /** Le composant de ligne. */
     RowComponent: React.ComponentClass<P> | React.SFC<P>;
 }
 
+/** Tableau standard, sans CSS, pour l'héritage avec StoreTable. */
 @autobind
 @observer
 export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T, P> & AP> {
 
+    /** Les données. */
     protected get data() {
         return this.props.data || [];
     }
 
+    /** Affiche le header du tableau. */
     protected renderTableHeader() {
         return (
             <thead>
@@ -39,6 +46,7 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
         );
     }
 
+    /** Affiche le corps du tableau. */
     private renderTableBody() {
         const {lineTheme, itemKey, RowComponent, lineProps} = this.props;
         const Line = LineWrapper as new() => LineWrapper<T, P>;
@@ -72,8 +80,13 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
     }
 }
 
+/** Composant de tableau standard. */
 export const Table = themr("list", styles)(TableWithoutStyle);
 
+/**
+ * Crée un composant de tableau standard.
+ * @param props Les props du tableau.
+ */
 export function tableFor<T, P extends {data?: T}>(props: TableProps<T, P>) {
     const Table2 = Table as any;
     return <Table2 {...props} />;

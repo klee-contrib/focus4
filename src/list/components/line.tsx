@@ -15,6 +15,7 @@ import * as styles from "./__style__/line.css";
 
 export type LineStyle = Partial<typeof styles>;
 
+/** Props du wrapper autour des lignes de liste. */
 export interface LineWrapperProps<T, P extends {data?: T}> {
     data: T;
     dateSelector?: (data: T) => EntityField<string>;
@@ -30,17 +31,20 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     type?: "table" | "timeline";
 }
 
+/** Wrapper de ligne dans une liste. */
 @themr("line", styles)
 @autobind
 @observer
 export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWrapperProps<T, P>, void> {
 
+    /** Etat de sélection de l'item courant. */
     @computed
     get isSelected() {
         const {store} = this.props;
         return store && store.selectedItems.has(this.props.data) || false;
     }
 
+    /** Handler de clic sur la case de sélection. */
     onSelection() {
         const {store} = this.props;
         if (store) {
@@ -51,9 +55,9 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     render() {
         const {LineComponent, onLineClick, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
         switch (type) {
-            case "table":
+            case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} {...lineProps} />;
-            case "timeline":
+            case "timeline": // Pour une timeline, on wrappe simplement la ligne dans le conteneur de timeline qui affiche la date et la décoration de timeline.
                 return (
                     <li>
                         <div className={theme!.timelineDate!}>{stringFor(dateSelector!(data))}</div>
@@ -63,7 +67,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                         </div>
                     </li>
                 );
-            default:
+            default: // Pour une liste, on ajoute éventuellement la case à cocher et les actions de ligne.
                 const opList = operationList && operationList(data);
                 return (
                     <li
