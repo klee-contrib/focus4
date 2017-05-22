@@ -17,7 +17,7 @@ export type GroupStyle = Partial<typeof styles>;
 
 export interface Props {
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
-    detailHeight?: number;
+    detailHeight?: number | ((data: {}) => number);
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;

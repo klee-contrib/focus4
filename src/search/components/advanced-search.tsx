@@ -21,7 +21,7 @@ export interface AdvancedSearchProps {
     /** Par défaut : true */
     canRemoveSort?: boolean;
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
-    detailHeight?: number;
+    detailHeight?: number | ((data: {}) => number);
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};

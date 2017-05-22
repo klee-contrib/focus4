@@ -27,7 +27,7 @@ export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> 
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
     /** Hauteur du composant de détail. Par défaut : 200. */
-    detailHeight?: number;
+    detailHeight?: number | ((data: T) => number);
     /** Cache le bouton "Ajouter." */
     hideAddItemHandler?: boolean;
     /** Composant de ligne. */
@@ -227,7 +227,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
                         </li>
                     )
                 },
-                style: {height: spring(detailHeight + 40)} // On indique l'animation d'ouverture. Le +40 permet de prendre en compte les marges de 20px en haut et en bas.
+                style: {height: spring((typeof detailHeight === "number" ? detailHeight : detailHeight(item)) + 40)} // On indique l'animation d'ouverture. Le +40 permet de prendre en compte les marges de 20px en haut et en bas.
             });
         }
 

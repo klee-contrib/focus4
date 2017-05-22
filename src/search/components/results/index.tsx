@@ -12,7 +12,7 @@ export {GroupStyle};
 
 export interface ResultsProps {
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
-    detailHeight?: number;
+    detailHeight?: number | ((data: {}) => number);
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
