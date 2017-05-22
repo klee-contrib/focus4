@@ -9,6 +9,7 @@ import {classReaction} from "../util";
 
 import {Message, messageStore} from "./store";
 
+import Icon from "focus-components/icon";
 import * as styles from "./__style__/message-center.css";
 
 export type MessageCenterStyle = Partial<typeof styles>;
@@ -16,6 +17,8 @@ export type MessageCenterStyle = Partial<typeof styles>;
 export interface MessageCenterProps {
     /** Temps en ms d'affichage des messages d'erreur (par défaut: 8000). */
     error?: number;
+    /** Préfixe i18n pour l'icône. Par défaut : "focus". */
+    i18nPrefix?: string;
     /** Temps en ms d'affichage des messages d'information (par défaut: 3000). */
     info?: number;
     /** Temps en ms d'affichage des messages de succès (par défaut: 3000). */
@@ -95,13 +98,13 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     }
 
     render() {
-        const {theme} = this.props;
+        const {i18nPrefix = "focus", theme} = this.props;
         const {content = "", type = ""} = this.currentNotification || {};
         const otherProps = { "aria-hidden": this.active, "aria-live": "assertive", "aria-atomic": "true", "aria-relevant": "text" };
         return (
             <div className={`${theme!.center!} mdl-snackbar ${this.active ? "mdl-snackbar--active" :  ""} ${type === "error" ? theme!.error! : type === "success" ? theme!.success! : type === "warning" ? theme!.warning! : ""}`} {...otherProps}>
                 <div className="mdl-snackbar__text">{content.includes(" ") ? content : i18n.t(content)}</div>
-                <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><i className="material-icons">clear</i></button>
+                <button className="mdl-snackbar__close" type="button" onClick={this.forceCleanup}><Icon name={i18n.t(`${i18nPrefix}.icons.messageCenter.clear.name`)} library={i18n.t(`${i18nPrefix}.icons.messageCenter.clear.library` as "material")} /></button>
             </div>
         );
     }

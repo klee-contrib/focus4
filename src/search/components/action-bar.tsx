@@ -47,22 +47,14 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     state = {facetBoxDisplay: false};
 
     @computed
-    private get selectionIcon() {
-        switch (this.props.store.selectionStatus) {
-            case "none": return "check_box_outline_blank";
-            case "selected": return "check_box";
-            default: return "indeterminate_check_box";
-        }
-    }
-
-    @computed
     private get selectionButton() {
-        const {hasSelection, store} = this.props;
+        const {hasSelection, i18nPrefix = "focus", store} = this.props;
         if (hasSelection) {
             return (
                 <Button
                     shape="icon"
-                    icon={this.selectionIcon}
+                    icon={i18n.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.name`)}
+                    iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.library`)}
                     onClick={store.toggleAll}
                     type="button"
                 />
@@ -79,7 +71,8 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                 <div style={{position: "relative"}}>
                     <Button
                         onClick={() => this.setState({facetBoxDisplay: !this.state.facetBoxDisplay})}
-                        icon="arrow_drop_down"
+                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`)}
+                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`)}
                         iconPosition="right"
                         label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
@@ -113,7 +106,8 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                 <Dropdown
                     button={{
                         label: `${i18nPrefix}.search.action.sort`,
-                        icon: "arrow_drop_down",
+                        icon: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
+                        iconLibrary: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
                         iconPosition: "right",
                         shape: null
                     }}
@@ -151,7 +145,8 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                         <Dropdown
                             button={{
                                 label: `${i18nPrefix}.search.action.group`,
-                                icon: "arrow_drop_down",
+                                icon: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
+                                iconLibrary: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
                                 iconPosition: "right",
                                 shape: null
                             }}

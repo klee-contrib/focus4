@@ -146,6 +146,13 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
 
     render() {
         const {i18nPrefix = "focus", placeholder, store, scopes, theme, criteriaComponent} = this.props;
+        const icon = (name: string) => {
+            const pre = `${i18nPrefix}.icons.searchBar.${name}`;
+            return {
+                icon: i18n.t(`${pre}.name`),
+                iconLibrary: i18n.t(`${pre}.library`)
+            };
+        };
         return (
             <div style={{position: "relative"}}>
                 {this.showCriteriaComponent ? <div className={theme!.criteriaWrapper} onClick={this.toggleCriteria} /> : null}
@@ -160,7 +167,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                         />
                     : null}
                     <div className={theme!.input!}>
-                        <Icon name="search" />
+                        <Icon name={icon("search").icon} library={icon("search").iconLibrary} />
                         <input
                             name="search-bar-input"
                             onChange={this.onInputChange}
@@ -169,9 +176,9 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                             value={this.text}
                         />
                     </div>
-                    {this.text && !this.showCriteriaComponent ? <Button icon="clear" onClick={this.clear} shape="icon" type="button" /> : null}
+                    {this.text && !this.showCriteriaComponent ? <Button {...icon("clear")} onClick={this.clear} shape="icon" type="button" /> : null}
                     {store.criteria && criteriaComponent && !this.showCriteriaComponent ?
-                        <Button icon={`keyboard_arrow_${this.showCriteriaComponent ? "up" : "down"}`} onClick={this.toggleCriteria} shape="icon" type="button" />
+                        <Button {...icon(`toggle${this.showCriteriaComponent ? "Up" : "Down"}`)} onClick={this.toggleCriteria} shape="icon" type="button" />
                     : null}
                 </div>
                 {!this.showCriteriaComponent && this.error ?
@@ -181,7 +188,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                 : null}
                 {this.showCriteriaComponent ?
                     <div className={theme!.criteria!}>
-                        <Button icon="clear" onClick={this.toggleCriteria} shape="icon" type="button" />
+                        <Button {...icon("close")} onClick={this.toggleCriteria} shape="icon" type="button" />
                         {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: (query: string) => store.query = query})}
                         {criteriaComponent}
                         <div className={theme!.buttons!}>

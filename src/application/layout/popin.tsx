@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18n from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -16,6 +17,8 @@ export type PopinStyle = Partial<typeof styles>;
 export interface PopinProps {
     /** Handler de fermeture de la popin. */
     closePopin: () => void;
+    /** Préfixe i18n pour l'icône de fermeture. Par défaut : "focus". */
+    i18nPrefix?: string;
     /** Niveau de la popin, pour savoir dans combien d'autres popins elle se trouve. Par défaut : 0 */
     level?: number;
     /** Popin ouverte (ou fermée). */
@@ -141,7 +144,7 @@ export class Popin extends React.Component<PopinProps, {}> {
     }
 
     render() {
-        const {level = 0, children, closePopin, theme, type = "from-right"} = this.props;
+        const {i18nPrefix = "focus", level = 0, children, closePopin, theme, type = "from-right"} = this.props;
         const {open, close} = this.animations;
         return this.opened ?
             <div>
@@ -155,7 +158,7 @@ export class Popin extends React.Component<PopinProps, {}> {
                     className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : type === "center" ? theme!.center! : ""} animated ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
-                    {type !== "center" ? <Button icon="close" shape="mini-fab" type="button" onClick={closePopin} /> : null}
+                    {type !== "center" ? <Button icon={i18n.t(`${i18nPrefix}.icons.popin.close.name`)} iconLibrary={i18n.t(`${i18nPrefix}.icons.popin.close.library`)} shape="mini-fab" type="button" onClick={closePopin} /> : null}
                     <div>{children}</div>
                 </div>
             </div>

@@ -1,3 +1,4 @@
+import i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 
@@ -7,8 +8,8 @@ import Dropdown from "focus-components/dropdown";
 import {applicationStore} from "../../store";
 
 /** Barre d'actions du header. */
-export const HeaderActions = observer<{className: string}>(
-    ({className: cName}) => {
+export const HeaderActions = observer<{className: string, i18nPrefix?: string}>(
+    ({className: cName, i18nPrefix = "focus"}) => {
         const {actions} = applicationStore;
         return (
             <div className={cName}>
@@ -28,7 +29,11 @@ export const HeaderActions = observer<{className: string}>(
                     );
                 })}
                 {actions.secondary && actions.secondary.length > 0 ?
-                    <Dropdown button={{shape: "fab", icon: "more_vert"}} operations={actions.secondary.slice()} />
+                    <Dropdown button={{
+                        shape: "fab",
+                        icon: i18n.t(`${i18nPrefix}.icons.headerActions.secondary.name`),
+                        iconLibrary: i18n.t(`${i18nPrefix}.icons.headerActions.secondary.library`),
+                    }} operations={actions.secondary.slice()} />
                 : null}
             </div>
         );

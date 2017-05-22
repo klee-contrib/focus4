@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18n from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -20,6 +21,7 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     data: T;
     dateSelector?: (data: T) => EntityField<string>;
     hasSelection?: boolean;
+    i18nPrefix?: string;
     LineComponent: React.ComponentClass<P> | React.SFC<P>;
     lineProps?: P;
     mosaic?: {width: number, height: number};
@@ -53,7 +55,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     }
 
     render() {
-        const {LineComponent, onLineClick, data, dateSelector, lineProps = {} as any, hasSelection, mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
+        const {LineComponent, onLineClick, data, dateSelector, lineProps = {} as any, hasSelection, i18nPrefix = "focus", mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} {...lineProps} />;
@@ -79,7 +81,8 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                                 className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
                                 shape="icon"
                                 type="button"
-                                icon={this.isSelected ? "check_box" : "check_box_outline_blank"}
+                                icon={i18n.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.name`)}
+                                iconLibrary={i18n.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.library` )}
                                 onClick={this.onSelection}
                                 color={this.isSelected ? "primary" : undefined}
                             />

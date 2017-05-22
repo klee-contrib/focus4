@@ -10,7 +10,7 @@ import styles from "./__style__/header.css";
 export type HeaderStyle = Partial<typeof styles>;
 
 /** Le header, posé par défaut par le Layout. */
-export const Header = themr("header", styles)(({marginLeft, theme}: {marginLeft: number, theme?: HeaderStyle}) => (
+export const Header = themr("header", styles)(({i18nPrefix, marginLeft, theme}: {i18nPrefix?: string, marginLeft: number, theme?: HeaderStyle}) => (
     <HeaderScrolling theme={{
         deployed: theme!.deployed!,
         scrolling: theme!.scrolling!,
@@ -24,6 +24,6 @@ export const Header = themr("header", styles)(({marginLeft, theme}: {marginLeft:
             topRow: theme!.topRow!
         }} />
         <HeaderContent className={theme!.content!} marginLeft={marginLeft} />
-        <HeaderActions className={theme!.actions!} />
+        <HeaderActions className={theme!.actions!} i18nPrefix={i18nPrefix} />
     </HeaderScrolling>
 ));

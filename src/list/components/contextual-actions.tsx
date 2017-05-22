@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18n from "i18next";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
@@ -42,6 +43,8 @@ export interface LineOperationListItem<T> extends OperationListItem<T> {
 export interface ContextualActionsProps {
     /** Le format des boutons. */
     buttonShape?: ButtonProps["shape"];
+    /** Préfixe i18n pour l'icône de dropdown. Par défaut : "focus". */
+    i18nPrefix?: string;
     /** La liste d'actions. */
     operationList: OperationListItem<{}>[];
     /** Le paramètre à passer aux actions. */
@@ -70,7 +73,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     }
 
     render() {
-        const {buttonShape = null, operationList, operationParam, theme} = this.props;
+        const {buttonShape = null, operationList, operationParam, i18nPrefix = "focus", theme} = this.props;
         const isTextButton = buttonShape === null || buttonShape === "raised";
         const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {action, isSecondary, icon, iconLibrary, label, showIcon, style}, key) => {
             const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
@@ -102,7 +105,12 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                 {primaryActionList}
                 {secondaryActionList.length ?
                     <Dropdown
-                        button={{shape: isTextButton && "icon" || buttonShape, icon: "more_vert", color: !isTextButton ? "primary" : undefined}}
+                        button={{
+                            shape: isTextButton && "icon" || buttonShape,
+                            icon: i18n.t(`${i18nPrefix}.icons.contextualActions.secondary.name`),
+                            iconLibrary: i18n.t(`${i18nPrefix}.icons.contextualActions.secondary.library`),
+                            color: !isTextButton ? "primary" : undefined
+                        }}
                         operations={secondaryActionList}
                         operationParam={operationParam}
                         position={{

@@ -92,7 +92,8 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
                     {isManualFetch && this.hasMoreData ?
                         <Button
                             handleOnClick={this.handleShowMore}
-                            icon="add"
+                            icon={i18n.t(`${i18nPrefix}.icons.list.add.name`)}
+                            iconLibrary={i18n.t(`${i18nPrefix}.icons.list.add.library`)}
                             shape={null}
                             type="button"
                             label={`${i18n.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18n.t(`${i18nPrefix}.list.show.displayed`)})`}
@@ -101,7 +102,8 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
                     {showAllHandler ?
                         <Button
                             handleOnClick={showAllHandler}
-                            icon="arrow_forward"
+                            icon={i18n.t(`${i18nPrefix}.icons.list.showAll.name`)}
+                            iconLibrary={i18n.t(`${i18nPrefix}.icons.list.showAll.library`)}
                             label={`${i18nPrefix}.list.show.all`}
                             type="button"
                             shape={null}

@@ -153,20 +153,22 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
      * @param Component Le composant de ligne.
      */
     protected getItems(Component: React.ComponentClass<P> | React.SFC<P>): LineItem<LineWrapperProps<T, P>>[] {
-        const {canOpenDetail = () => true, itemKey, lineTheme, lineProps, operationList} = this.props;
+        const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, lineProps, operationList} = this.props;
+
         return this.displayedData.map((item, idx) => ({
             // On essaie de couvrir toutes les possibilités pour la clé, en tenant compte du faite qu'on a potentiellement une liste de StoreNode.
             key: `${itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}`,
             data: {
                 Component: LineWrapper,
                 props: {
-                    theme: lineTheme,
                     data: item,
+                    i18nPrefix,
                     mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
                     LineComponent: Component,
                     lineProps,
                     operationList,
-                    onLineClick: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined
+                    onLineClick: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
+                    theme: lineTheme
                 }
             },
             style: {}

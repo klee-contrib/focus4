@@ -39,7 +39,7 @@ export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P,
 
     /** On modifie le header pour y ajouter les boutons de tri. */
     protected renderTableHeader() {
-        const {columns, sortableColumns = [], store: {sortAsc, sortBy}} = this.props;
+        const {columns, i18nPrefix = "focus", sortableColumns = [], store: {sortAsc, sortBy}} = this.props;
         return (
             <thead>
                 <tr>
@@ -49,8 +49,22 @@ export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P,
                                 <div>{i18n.t(columns[col])}</div>
                                 {sortableColumns.find(c => c === col) ?
                                     <div style={{marginLeft: 3}}>
-                                        <Button disabled={sortAsc && sortBy === col} handleOnClick={() => this.sort(col, true)} shape="icon" type="button" icon="arrow_drop_up" />
-                                        <Button disabled={!sortAsc && sortBy === col} handleOnClick={() => this.sort(col, false)} shape="icon" type="button" icon="arrow_drop_down" />
+                                        <Button
+                                            disabled={sortAsc && sortBy === col}
+                                            handleOnClick={() => this.sort(col, true)}
+                                            shape="icon"
+                                            type="button"
+                                            icon={i18n.t(`${i18nPrefix}.icons.table.sortAsc.name`)}
+                                            iconLibrary={i18n.t(`${i18nPrefix}.icons.table.sortAsc.library`)}
+                                        />
+                                        <Button
+                                            disabled={!sortAsc && sortBy === col}
+                                            handleOnClick={() => this.sort(col, false)}
+                                            shape="icon"
+                                            type="button"
+                                            icon={i18n.t(`${i18nPrefix}.icons.table.sortDesc.name`)}
+                                            iconLibrary={i18n.t(`${i18nPrefix}.icons.table.sortDesc.library`)}
+                                        />
                                     </div>
                                 : null}
                             </div>

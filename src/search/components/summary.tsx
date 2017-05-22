@@ -140,7 +140,13 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                 : null}
                 {exportAction ?
                     <div className={theme!.print!}>
-                        <Button handleOnClick={exportAction} icon="print" label={`${i18nPrefix}.search.summary.export`} type="button" />
+                        <Button
+                            handleOnClick={exportAction}
+                            icon={i18n.t(`${i18nPrefix}.icons.summary.export.name`)}
+                            iconLibrary={i18n.t(`${i18nPrefix}.icons.summary.export.library`)}
+                            label={`${i18nPrefix}.search.summary.export`}
+                            type="button"
+                        />
                     </div>
                 : null}
             </div>
