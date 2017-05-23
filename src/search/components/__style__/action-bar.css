@@ -1,49 +1,51 @@
+@import "../../../style/action-bar.css";
+
 .container {
-    margin-bottom: 10px;
     position: relative;
+    margin: var(--action-bar-margin);
 }
 
 .bar {
-    position: relative;
-    z-index: 2;
-    box-shadow: 1px 1px 4px 1px #e7e7e7;
-    background-color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 56px;
-    padding: 10px;
     box-sizing: border-box;
-    transition: background-color 0.1s ease-out;
+    position: relative;
+    z-index: 2;
+    background-color: var(--action-bar-background);
+    box-shadow: var(--action-bar-shadow);
+    height: var(--action-bar-height);
+    padding: var(--action-bar-padding);
+    transition: background-color var(--action-bar-transition);
 }
 
 .selection {
-    background-color: rgb(63, 81, 181);
-    color: #f0f0f0;
+    background: var(--action-bar-selection-background);
+    color: var(--action-bar-selection-color);
 }
 
 .selection button {
-    color: #f0f0f0;
+    color: var(--action-bar-selection-color);
 }
 
 .searchBar {
-    margin-left: 10px;
     position: relative;
+    margin-left: 10px;
     padding-left: 30px;
 }
 
 .searchBar::before {
-    font-family: "Material Icons";
-    content: "\E8B6";
-    font-size: 24px;
     position: absolute;
-    top: 3px;
-    left: 0;
+    left: var(--action-bar-search-icon-left);
+    top: var(--action-bar-search-icon-top);
+    font-family: var(--action-bar-search-icon-font);
+    content: var(--action-bar-search-icon-content);
+    font-size: var(--action-bar-search-icon-size);
 }
 
 .searchBar :global(.mdl-textfield__input) {
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: var(--action-bar-font-weight);
 }
 
 .buttons {
@@ -52,10 +54,11 @@
 }
 
 .buttons button {
-    font-weight: bold;
+    font-weight: var(--action-bar-font-weight);
 }
 
 .buttons > strong {
+    font-weight: var(--action-bar-font-weight);
     font-size: 15px;
     margin: 0 10px;
 }
@@ -67,21 +70,21 @@
 
 .triangle {
     position: absolute;
-    bottom: -15px;
-    left: calc(50% - 7.5px);
+    bottom: -calc(5px + var(--action-bar-padding));
+    left: calc(50% - var(--action-bar-facetbox-triangle-width) / 2);
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 0 15px 15px;
-    border-color: transparent transparent #e8e8e8;
+    border-width: 0 calc(var(--action-bar-facetbox-triangle-width) / 2) var(--action-bar-facetbox-triangle-height);
+    border-color: transparent transparent var(--action-bar-facetbox-background);
 }
 
 .container .facetBox {
-    width: auto;
     display: flex;
     flex-wrap: wrap;
-    background: #e8e8e8;
     position: relative;
+    width: auto;
+    background: var(--action-bar-facetbox-background);
 }
 
 .container .facetBox > h3 {

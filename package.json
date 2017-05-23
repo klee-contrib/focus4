@@ -15,8 +15,7 @@
     "postpublish": "rm -rf index.js index.d.ts ioc.js ioc.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf application entity list message network router search testing translation",
     "start": "tsc && node copy-css.js dist",
     "stylelint": "stylelint src/**/*.css",
-    "tcm": "tcm src",
-    "tcm:watch": "tcm -w src",
+    "tcm": "node tcm.js",
     "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
     "testgen": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node src/testing/generator.ts src ..",
     "tslint": "tslint --project tsconfig.json --type-check --force"

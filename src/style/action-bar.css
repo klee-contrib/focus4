@@ -1,0 +1,19 @@
+:root {
+    --action-bar-background: white;
+    --action-bar-facetbox-background: #e8e8e8;
+    --action-bar-facetbox-triangle-height: 15px;
+    --action-bar-facetbox-triangle-width: 30px;
+    --action-bar-font-weight: bold;
+    --action-bar-height: 56px;
+    --action-bar-margin: 0 0 10px 0;
+    --action-bar-padding: 10px;
+    --action-bar-search-icon-content: "\E8B6";
+    --action-bar-search-icon-font: "Material Icons";
+    --action-bar-search-icon-left: 0;
+    --action-bar-search-icon-top: 3px;
+    --action-bar-search-icon-size: 24px;
+    --action-bar-selection-background: rgb(63, 81, 181);
+    --action-bar-selection-color: #f0f0f0;
+    --action-bar-shadow: 1px 1px 4px 1px #e7e7e7;
+    --action-bar-transition: 0.1s ease-out;
+}
