@@ -101,7 +101,10 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     /** Met à jour `byLine`. */
     @classAutorun
     private updateByLine() {
-        this.byLine = this.mode === "mosaic" ? Math.floor(findDOMNode(this).clientWidth / (this.mosaic.width + 10)) : 1;
+        const node = findDOMNode(this);
+        if (node) {
+            this.byLine = this.mode === "mosaic" ? Math.floor(node.clientWidth / (this.mosaic.width + 10)) : 1;
+        }
     }
 
     /** Réaction pour fermer le détail si la liste change. */
