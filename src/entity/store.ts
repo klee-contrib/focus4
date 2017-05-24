@@ -69,7 +69,7 @@ type EntityStore = EntityStoreConfig & StoreNode<{}>;
 export function makeEntityStore<T1 extends {[key: string]: any}, T2 extends {[key: string]: any}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode<{}> {
 
     // On construit une config unique pour les noeuds simples ({}) et les noeuds de listes ([].)
-    const config = Object.assign({}, mapValues(simpleNodes, _ => ({})), mapValues(listNodes, _ => [] as any[])) as EntityStoreConfig;
+    const config = {...mapValues(simpleNodes, _ => ({})), ...mapValues(listNodes, _ => [] as any[])} as EntityStoreConfig;
 
     // On construit une map avec les entités à partir de la liste fournie.
     const entityMap = entityList.reduce((entities, entity) => {

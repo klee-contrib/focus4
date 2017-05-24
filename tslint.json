@@ -30,6 +30,7 @@
             "check-space"
         ],
         "deprecation": true,
+        "encoding": true,
         "eofline": true,
         "indent": [
             true,
@@ -116,6 +117,7 @@
             "allow-public",
             "allow-protected"
         ],
+        "prefer-object-spread": true,
         "prefer-switch": true,
         "prefer-template": true,
         "quotemark": [

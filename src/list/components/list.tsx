@@ -268,7 +268,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
                         if (style.height) { // `height` n'existe que pour le détail
                             return {height: spring(0)}; // On ajoute l'animation de fermeture.
                         }
-                        return; // Pour les autres éléments, on les retire immédiatement.
+                        return undefined; // Pour les autres éléments, on les retire immédiatement.
                     }}
                     styles={this.lines.slice()}
                 >
