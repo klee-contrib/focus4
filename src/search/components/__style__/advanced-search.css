@@ -1,6 +1,8 @@
+@import "../../../style/advanced-search.css";
+
 .facetContainer {
     float: left;
-    width: 275px;
+    width: var(--advanced-search-facets-width);
     box-sizing: border-box;
 }
 
@@ -10,6 +12,6 @@
 }
 
 .facetContainer + .resultContainer {
-    width: calc(100% - 285px);
-    margin-left: 285px;
+    width: calc(100% - var(--advanced-search-facets-width) - var(--advanced-search-facets-margin-right));
+    margin-left: calc(var(--advanced-search-facets-width) + var(--advanced-search-facets-margin-right));
 }

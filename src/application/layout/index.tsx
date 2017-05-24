@@ -81,7 +81,7 @@ class LayoutBase extends React.Component<LayoutProps, void> {
                     {children}
                 </div>
                 {Footer ?
-                    <footer>
+                    <footer style={{marginLeft: this.menuWidth}}>
                         <Footer />
                     </footer>
                 : null}

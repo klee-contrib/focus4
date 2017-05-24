@@ -12,13 +12,6 @@
     font-weight: bold;
 }
 
-.facet h4::after {
-    font-family: "Material Icons";
-    position: absolute;
-    right: 0;
-    font-size: 30px;
-}
-
 .facet ul {
     margin: 0;
     padding-left: 20px;

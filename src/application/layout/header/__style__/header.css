@@ -1,3 +1,5 @@
+@import "../../../../style/header.css";
+
 .actions {
     display: flex;
 }
@@ -7,25 +9,25 @@
 }
 
 .actions :global(.mdl-button--fab) {
-    background-color: white !important;
+    background-color: var(--header-actions-button-color);
 }
 
 .actions button:hover {
-    background-color: #f9f9f9 !important;
+    background-color: var(--header-actions-button-hover-color);
 }
 
 .content {
-    background-color: white;
-    padding: 20px 10px;
+    background-color: var(--header-content-background);
+    padding: var(--header-content-padding);
 }
 
 .topRow {
-    z-index: 1001;
-    background-color: white;
+    z-index: var(--header-z-index);
+    background-color: var(--header-toprow-background);
 }
 
 .topRow > div {
-    padding: 10px;
+    padding: var(--header-toprow-padding);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -35,7 +37,7 @@
 }
 
 .topRow > div .item {
-    height: 40px;
+    height: calc(var(--header-toprow-height) - 2 * var(--header-toprow-padding));
     padding: 0 15px;
 }
 
@@ -57,8 +59,9 @@
 
 .scrolling {
     position: relative;
-    box-shadow: 0 1px 10px 2px rgba(0, 0, 0, 0.2);
-    margin-bottom: 50px;
+    color: var(--header-color);
+    box-shadow: var(--header-shadow);
+    margin-bottom: var(--header-margin-bottom);
 }
 
 .deployed .topRow .item.middle {
@@ -78,7 +81,7 @@
 }
 
 .undeployed .topRow {
-    box-shadow: 0 1px 10px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--header-shadow);
     position: fixed;
     top: 0;
     left: 0;
@@ -93,15 +96,15 @@
     position: fixed;
     top: 30px;
     right: 0;
-    z-index: 1001;
+    z-index: var(--header-z-index);
 }
 
 .scrolling .actions {
-    margin-right: 20px;
+    margin-right: var(--header-actions-margin-right-mobile);
 }
 
 @media (min-width: 840px) {
     .scrolling .actions {
-        margin-right: 200px;
+        margin-right: var(--header-actions-margin-right);
     }
 }

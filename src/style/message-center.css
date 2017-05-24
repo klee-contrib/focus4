@@ -1,0 +1,7 @@
+:root {
+    --message-center-color: white;
+    --message-center-error-color: #de3226;
+    --message-center-success-color: #2ac955;
+    --message-center-warning-color: #ffae00;
+    --message-center-z-index: 1002;
+}

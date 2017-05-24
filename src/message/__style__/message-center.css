@@ -1,17 +1,23 @@
+@import "../../style/message-center.css";
+
 .center {
-    z-index: 1002;
+    z-index: var(--message-center-z-index);
+}
+
+.center :global(.mdl-snackbar__text) {
+    color: var(--message-center-color);
 }
 
 .error {
-    background-color: #de3226;
+    background-color: var(--message-center-error-color);
 }
 
 .success {
-    background-color: #2ac955;
+    background-color: var(--message-center-success-color);
 }
 
 .warning {
-    background-color: #ffae00;
+    background-color: var(--message-center-warning-color);
 }
 
 .center :global(.mdl-snackbar__close) {
@@ -29,6 +35,6 @@
 }
 
 .center :global(.mdl-snackbar__close) i {
-    color: white;
+    color: var(--message-center-color);
     font-size: 12px;
 }

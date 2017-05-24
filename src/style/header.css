@@ -1,0 +1,15 @@
+:root {
+    --header-actions-button-color: white !important;
+    --header-actions-button-hover-color: #f9f9f9 !important;
+    --header-actions-margin-right: 200px;
+    --header-actions-margin-right-mobile: 80px;
+    --header-color: black;
+    --header-content-background: white;
+    --header-content-padding: 20px 10px;
+    --header-margin-bottom: 50px;
+    --header-toprow-background: white;
+    --header-toprow-height: 60px;
+    --header-toprow-padding: 10px;
+    --header-shadow: 0 1px 10px 2px rgba(0, 0, 0, 0.2);
+    --header-z-index: 1001;
+}

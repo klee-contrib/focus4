@@ -1,0 +1,8 @@
+:root {
+    --menu-background: #fafafa;
+    --menu-item-active-background: rgba(0, 0, 0, 0.15);
+    --menu-item-active-color: black;
+    --menu-item-color: black;
+    --menu-item-height: 60px;
+    --menu-z-index: 1800;
+}
