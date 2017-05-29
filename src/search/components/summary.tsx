@@ -6,8 +6,8 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import Button from "focus-components/button";
-import Chips from "focus-components/chips";
+import {Button} from "react-toolbox/lib/button";
+import {Chip} from "react-toolbox/lib/chip";
 
 import {SearchStore} from "../store";
 
@@ -116,33 +116,35 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                 {this.filterList.length ?
                     <div className={theme!.chips!}>
                         <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.by`)}</span>
-                        {this.filterList.map(chip => <Chips {...chip}/>)}
+                        {this.filterList.map(chip => <Chip deletable {...chip}>{chip.label}</Chip>)}
                     </div>
                 : null}
                 {groupingKey ?
                     <div className={theme!.chips!}>
                         <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
-                        <Chips
-                            label={i18n.t(store.facets.find(facet => store.groupingKey === facet.code).label)}
+                        <Chip
+                            deletable
                             onDeleteClick={() => store.groupingKey = undefined}
-                        />
+                        >
+                            {i18n.t(store.facets.find(facet => store.groupingKey === facet.code).label)}
+                        </Chip>
                     </div>
                 : null}
                 {this.currentSort && !groupingKey && totalCount > 1 ?
                     <div className={theme!.chips!}>
                         <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
-                        <Chips
-                            label={i18n.t(this.currentSort.label)}
+                        <Chip
+                            deletable={canRemoveSort}
                             onDeleteClick={canRemoveSort ? () => store.sortBy = undefined : undefined}
-                        />
+                        >
+                        {i18n.t(this.currentSort.label)}</Chip>
                     </div>
                 : null}
                 {exportAction ?
                     <div className={theme!.print!}>
                         <Button
-                            handleOnClick={exportAction}
+                            onClick={exportAction}
                             icon={i18n.t(`${i18nPrefix}.icons.summary.export.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.summary.export.library`)}
                             label={`${i18nPrefix}.search.summary.export`}
                             type="button"
                         />
@@ -154,3 +156,5 @@ export class Summary extends React.Component<ListSummaryProps, void> {
 }
 
 export default themr("summary", styles)(Summary);
+
+// iconLibrary={i18n.t(`${i18nPrefix}.icons.summary.export.library`)}

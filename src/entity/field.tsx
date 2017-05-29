@@ -5,9 +5,9 @@ import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {Input} from "react-toolbox/lib/input";
 
-import InputText from "focus-components/input-text";
-import Label, {LabelProps} from "focus-components/label";
+import {LabelProps} from "focus-components/label";
 
 import {BaseDisplayProps, BaseInputProps, Domain} from "./types";
 import {validate} from "./validation";
@@ -27,10 +27,6 @@ export interface FieldProps<
     VK extends string,                   // Nom de la propriété de valeur (liste de référence).
     LK extends string                    // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
-    /** Par défaut: "top". */
-    contentCellPosition?: string;
-    /** Par défaut : 0. */
-    contentOffset?: number;
     /** Par défaut : 12. */
     contentSize?: number;
     /** Surcharge l'erreur du field. */
@@ -51,8 +47,6 @@ export interface FieldProps<
     labelCellPosition?: string;
     /** Nom de la propriété de libellé. Doit être casté en lui-même (ex: `{labelKey: "label" as "label"}`). Par défaut: "label". */
     labelKey?: LK;
-    /** Par défaut : 0. */
-    labelOffset?: number;
     /** Par défaut : 4. */
     labelSize?: number;
     /** Nom du champ. */
@@ -122,9 +116,9 @@ export class Field<
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {valueKey = "code", labelKey = "label", values, value: rawValue, formatter, DisplayComponent, displayProps = {}, isEdit = false} = this.props;
+        const {valueKey = "code", labelKey = "label", values, value: rawValue, formatter, DisplayComponent, displayProps = {}, isEdit = false, theme} = this.props;
         const value = values ? result(values.find(v => v[valueKey as keyof R] === rawValue), labelKey) : rawValue; // Résout la valeur dans le cas d'une liste de référence.
-        const FinalDisplay: React.ComponentClass<BaseDisplayProps> | React.SFC<BaseDisplayProps> = DisplayComponent || (() => <div>{formatter && formatter(value, {isEdit}) || value}</div>);
+        const FinalDisplay: React.ComponentClass<BaseDisplayProps> | React.SFC<BaseDisplayProps> = DisplayComponent || (() => <div className={theme!.display}>{formatter && formatter(value, {isEdit}) || value}</div>);
         return (
             <FinalDisplay
                 {...displayProps as {}}
@@ -137,21 +131,19 @@ export class Field<
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {InputComponent, formatter, value, isEdit = false, valueKey = "code", labelKey = "label", values, inputProps, name, onChange} = this.props;
-        const FinalInput: React.ComponentClass<BaseInputProps> | React.SFC<BaseInputProps> = InputComponent || InputText;
+        const {InputComponent, value, valueKey = "code", labelKey = "label", values, inputProps, name, onChange, theme} = this.props;
+        const FinalInput: React.ComponentClass<any> | React.SFC<any> = InputComponent || Input;
         const valid = !(this.showError && this.error);
 
         // On renseigne `formattedInputValue`, `value` et `rawInputValue` pour être sûr de prendre en compte tous les types de composants.
         return (
             <FinalInput
                 {...inputProps as {}}
+                theme={{input: theme!.input!, errored: theme!.errored!, inputElement: theme!.inputElement}}
                 error={valid ? null : this.error}
-                formattedInputValue={formatter && formatter(value, {isEdit}) || value}
                 labelKey={labelKey}
                 name={name}
                 onChange={onChange}
-                rawInputValue={value}
-                valid={valid}
                 value={value}
                 valueKey={valueKey}
                 values={values}
@@ -162,20 +154,20 @@ export class Field<
     /** Affiche le composant de libellé (`LabelComponent`). */
     label() {
         const {name, label, LabelComponent} = this.props;
-        const FinalLabel = LabelComponent || Label;
+        const FinalLabel = LabelComponent || (() => <label htmlFor={name}>{label && i18n.t(label) || ""}</label>);
         return <FinalLabel name={name} text={label} />;
     }
 
     render() {
-        const {contentCellPosition = "top", contentSize = 12, labelSize = 4, labelCellPosition = "top", contentOffset = 0, labelOffset = 0, isRequired, hasLabel, isEdit, theme, className = ""} = this.props;
+        const {contentSize = 12, labelSize = 4, isRequired, hasLabel, isEdit, theme, className = ""} = this.props;
         return (
-            <div className={`mdl-grid ${theme!.field!} ${isEdit ? theme!.edit! : ""} ${this.error && this.showError ? theme!.invalid! : ""} ${isRequired ? theme!.required! : ""} ${className}`}>
+            <div className={`${theme!.field!} ${isEdit ? theme!.edit! : ""} ${this.error && this.showError ? theme!.invalid! : ""} ${isRequired ? theme!.required! : ""} ${className}`}>
                 {hasLabel ?
-                    <div className ={`${getCellGridClassName(labelCellPosition, labelSize, labelOffset)} ${theme!.label!}`}>
+                    <div style={{width: `${100 * labelSize / 12}%`}} className={theme!.label!}>
                         {this.label()}
                     </div>
                 : null}
-                <div className ={`${getCellGridClassName(contentCellPosition, contentSize - labelSize, contentOffset)} ${theme!.value!} ${className}`}>
+                <div style={{width: `${100 * (contentSize - labelSize) / 12}%`}} className ={`${theme!.value!} ${className}`}>
                     {isEdit ? this.input() : this.display()}
                 </div>
             </div>
@@ -184,14 +176,3 @@ export class Field<
 }
 
 export default themr("field", styles)(Field);
-
-function buildGridClassName(prop: string | number, suffix?: string) {
-    return `mdl-cell--${prop}${suffix ? suffix : ""}`;
-}
-
-function getCellGridClassName(position: string, size: number, offset: number) {
-    const cellPosition = buildGridClassName(position);
-    const cellSize = buildGridClassName(size, "-col");
-    const cellOffset = buildGridClassName(offset, "-offset");
-    return `mdl-cell ${cellPosition} ${cellSize} ${cellOffset}`;
-}

@@ -1,16 +1,23 @@
 .field {
-    padding: 0;
-}
-
-:global([data-focus="label"]) {
-    font-weight: bold;
+    display: flex;
+    align-items: stretch;
 }
 
 .label {
     text-align: right;
-    display: block;
     font-weight: bold;
     font-size: 13px;
+    line-height: 19px;
+}
+
+.display {
+    font-size: 16px;
+}
+
+.label,
+.display {
+    padding: 8px;
+    box-sizing: border-box;
 }
 
 .value {
@@ -23,7 +30,7 @@
 }
 
 .edit .label {
-    line-height: 1.8;
+    line-height: 23px;
 }
 
 .edit .value select {
@@ -38,12 +45,14 @@
     color: rgb(222, 50, 38);
 }
 
-/* Corrige problème MDL qui affiche pas l'erreur */
-.edit.invalid :global(.mdl-textfield__error) {
-    visibility: visible;
+.input {
+    padding: 0 0 20px 8px;
 }
 
-/* Corrige problème MDL qui affiche pas l'erreur */
-.edit.invalid :global(.mdl-textfield__label)::after {
-    background-color: rgb(213, 0, 0);
+.errored {
+    padding: 0 0 0 8px;
+}
+
+.errored .inputElement {
+    margin-top: 0;
 }

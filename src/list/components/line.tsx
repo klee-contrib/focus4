@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import Button from "focus-components/button";
+import {IconButton} from "react-toolbox/lib/button";
 
 import {EntityField, stringFor} from "../../entity";
 
@@ -76,14 +76,11 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                     >
                         {hasSelection && selectionnableInitializer!(data) && store ?
-                            <Button
+                            <IconButton
                                 className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
-                                shape="icon"
-                                type="button"
                                 icon={i18n.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.name`)}
-                                iconLibrary={i18n.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.library` )}
                                 onClick={this.onSelection}
-                                color={this.isSelected ? "primary" : undefined}
+                                primary={this.isSelected}
                             />
                         : null}
                         <div onClick={onLineClick}>
@@ -108,3 +105,5 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
 }
 
 export default themr("line", styles)(LineWrapper);
+
+// iconLibrary={i18n.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.library` )}

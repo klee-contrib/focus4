@@ -2,12 +2,12 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import Button, {ButtonProps} from "focus-components/button";
+import {ButtonProps, IconButton, IconButtonTheme} from "react-toolbox/lib/button";
 
 import * as styles from "./__style__/menu.css";
 export {styles};
 
-export type MenuStyle = Partial<typeof styles>;
+export type MenuStyle = Partial<typeof styles> & IconButtonTheme;
 
 /** Description d'un item de menu. */
 export interface MenuItemConfig extends ButtonProps {
@@ -29,13 +29,15 @@ export interface MenuItemProps extends MenuItemConfig {
 
 /** Elément de menu. */
 export const MenuItem = observer<MenuItemProps>(props => {
-    const {activeRoute, label, icon, iconLibrary, showLabel, onClick, route, theme} = props;
-    const buttonProps = {...{icon: "link", shape: showLabel ? null : "icon" as "icon"}, label, icon, iconLibrary, onClick};
+    const {activeRoute, label, icon, showLabel, onClick, route, theme} = props;
+    const buttonProps = {...{icon: "link", shape: showLabel ? null : "icon" as "icon"}, label, icon, onClick};
     return (
         <li className={`${theme!.item} ${route === activeRoute ? theme!.active! : ""}`}>
-            <Button {...buttonProps} type="button" color={route === activeRoute ? "primary" : undefined} />
+            <IconButton {...buttonProps} type="button" primary={route === activeRoute} theme={{toggle: theme!.toggle, icon: theme!.icon!, neutral: theme!.neutral!, primary: theme!.primary!}} />
         </li>
     );
 });
 
 export default themr("menu", styles)(MenuItem);
+
+// iconLibrary

@@ -59,14 +59,16 @@
     width: 100%;
 }
 
-.item > button {
+.toggle,
+.toggle.neutral:not([disabled]) {
     height: var(--menu-item-height);
     color: var(--menu-item-color);
     min-width: var(--menu-item-height);
 }
 
-.item > button > i {
+.toggle > .icon {
     width: 24px;
+    font-size: 24px;
 }
 
 .panel {
@@ -86,6 +88,6 @@
     background: var(--menu-item-active-background);
 }
 
-.active > button {
+.active > .toggle {
     color: var(--menu-item-active-color);
 }

@@ -34,3 +34,6 @@ export const HeaderActions = observer<{className: string, i18nPrefix?: string}>(
         );
     }
 );
+
+// iconLibrary={iconLibrary}
+// iconLibrary: i18n.t(`${i18nPrefix}.icons.headerActions.secondary.library`)
