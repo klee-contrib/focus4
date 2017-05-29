@@ -16,6 +16,8 @@ import * as styles from "./__style__/group.css";
 export type GroupStyle = Partial<typeof styles>;
 
 export interface Props {
+    /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
+    canOpenDetail?: (data?: {}) => boolean;
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     detailHeight?: number | ((data: {}) => number);
     group: GroupResult<{}>;
@@ -45,12 +47,13 @@ export class Group extends React.Component<Props, void> {
     }
 
     private renderList() {
-        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, DetailComponent, detailHeight} = this.props;
+        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
                 <List
                     theme={{mosaicAdd: theme && theme.mosaicAdd}}
+                    canOpenDetail={canOpenDetail}
                     data={group.list}
                     detailHeight={detailHeight}
                     DetailComponent={DetailComponent}

@@ -22,6 +22,8 @@ import * as styles from "./__style__/list.css";
 export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
+    /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
+    canOpenDetail?: (data?: T) => boolean;
     /** La liste. */
     data?: T[];
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
@@ -151,7 +153,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
      * @param Component Le composant de ligne.
      */
     protected getItems(Component: React.ComponentClass<P> | React.SFC<P>): LineItem<LineWrapperProps<T, P>>[] {
-        const {itemKey, lineTheme, lineProps, operationList} = this.props;
+        const {canOpenDetail = () => true, itemKey, lineTheme, lineProps, operationList} = this.props;
         return this.displayedData.map((item, idx) => ({
             // On essaie de couvrir toutes les possibilités pour la clé, en tenant compte du faite qu'on a potentiellement une liste de StoreNode.
             key: `${itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}`,
@@ -164,7 +166,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
                     LineComponent: Component,
                     lineProps,
                     operationList,
-                    onLineClick: () => this.onLineClick(idx)
+                    onLineClick: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined
                 }
             },
             style: {}

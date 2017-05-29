@@ -18,6 +18,8 @@ export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps {
     addItemHandler?: () => void;
+    /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
+    canOpenDetail?: (data?: {}) => boolean;
     /** Par défaut : true */
     canRemoveSort?: boolean;
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
@@ -120,9 +122,10 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     private renderResults() {
-        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, DetailComponent, detailHeight} = this.props;
+        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <Results
+                canOpenDetail={canOpenDetail}
                 detailHeight={detailHeight}
                 DetailComponent={DetailComponent}
                 theme={{mosaicAdd: theme && theme.mosaicAdd}}

@@ -11,6 +11,8 @@ import {Group, GroupStyle} from "./group";
 export {GroupStyle};
 
 export interface ResultsProps {
+    /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
+    canOpenDetail?: (data?: {}) => boolean;
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     detailHeight?: number | ((data: {}) => number);
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
@@ -64,10 +66,11 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store, DetailComponent, detailHeight} = this.props;
+        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
+                canOpenDetail={canOpenDetail}
                 key={group.code}
                 theme={theme}
                 group={group}
