@@ -1,22 +1,20 @@
-import { action, computed, observable, ObservableMap } from "mobx";
+import {action, computed, observable, ObservableMap} from "mobx";
 import * as React from "react";
 
-import {DropdownItem} from "focus-components/dropdown";
+import {ButtonProps} from "react-toolbox/lib/button";
+import {MenuItemProps} from "react-toolbox/lib/menu";
 
 /** Mode de l'application (consultation ou édition) */
 export type Mode = "consult" | "edit";
 
-export interface PrimaryAction {
-    /** Action au clic sur le bouton. */
-    action: () => void;
-    /** Classe CSS additionnelle. */
-    className?: string;
-    /** Icône du bouton. */
-    icon: string;
-    /** Bibliothèque d'icône (par défaut: "material") */
-    iconLibrary?: "material" | "font-awesome" | "font-custom";
-    /** Nom du bouton. */
-    label: string;
+export interface PrimaryAction extends ButtonProps {
+    /** Icône custom (non material). */
+    iconCustom?: boolean;
+}
+
+export interface SecondaryAction extends MenuItemProps {
+    /** Icône custom (non material). */
+    iconCustom?: boolean;
 }
 
 export interface ApplicationAction {
@@ -25,7 +23,7 @@ export interface ApplicationAction {
         /** Actions principales, affichées directement. */
         primary?: PrimaryAction[];
         /** Actions secondaires, affichées dans une dropdown. */
-        secondary?: DropdownItem[];
+        secondary?: SecondaryAction[];
     };
     /** Précise si le header peut se déployer ou non. */
     canDeploy?: boolean;
@@ -46,7 +44,7 @@ export class ApplicationStore implements ApplicationAction {
         /** Actions principales, affichées directement. */
         primary: PrimaryAction[];
         /** Actions secondaires, affichées dans une dropdown. */
-        secondary: DropdownItem[];
+        secondary: SecondaryAction[];
     } = {primary: [], secondary: []};
     /** Précise si le header peut se déployer ou non. */
     @observable canDeploy = true;

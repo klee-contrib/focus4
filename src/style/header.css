@@ -2,8 +2,6 @@
 @import "react-toolbox/lib/variables.css";
 
 :root {
-    --header-actions-button-color: var(--color-white) !important;
-    --header-actions-button-hover-color: var(--palette-grey-50) !important;
     --header-actions-margin-right: 200px;
     --header-actions-margin-right-mobile: 80px;
     --header-color: var(--color-black);

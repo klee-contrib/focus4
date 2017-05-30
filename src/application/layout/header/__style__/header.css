@@ -1,19 +1,7 @@
 @import "../../../../style/header.css";
 
-.actions {
-    display: flex;
-}
-
 .actions button {
     margin: 0 5px;
-}
-
-.actions :global(.mdl-button--fab) {
-    background-color: var(--header-actions-button-color);
-}
-
-.actions button:hover {
-    background-color: var(--header-actions-button-hover-color);
 }
 
 .content {
