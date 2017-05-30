@@ -5,6 +5,10 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
 
+import {ButtonTheme} from "react-toolbox/lib/button";
+import {MenuTheme} from "react-toolbox/lib/menu";
+import {TabsTheme} from "react-toolbox/lib/tabs";
+
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
 import {MessageCenter as DefaultMessageCenter} from "../../message";
@@ -114,6 +118,10 @@ export interface LayoutStyleProviderProps {
     popin?: PopinStyle;
     searchBar?: SearchBarStyle;
     summary?: SummaryStyle;
+
+    RTButton?: ButtonTheme;
+    RTMenu?: MenuTheme;
+    RTTabs?: TabsTheme;
 }
 
 /**
