@@ -1,6 +1,9 @@
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+
 :root {
-    --action-bar-background: white;
-    --action-bar-facetbox-background: #e8e8e8;
+    --action-bar-background: var(--color-white);
+    --action-bar-facetbox-background: var(--palette-grey-200);
     --action-bar-facetbox-triangle-height: 15px;
     --action-bar-facetbox-triangle-width: 30px;
     --action-bar-font-weight: bold;
@@ -12,8 +15,8 @@
     --action-bar-search-icon-left: 0;
     --action-bar-search-icon-top: 3px;
     --action-bar-search-icon-size: 24px;
-    --action-bar-selection-background: rgb(63, 81, 181);
-    --action-bar-selection-color: #f0f0f0;
-    --action-bar-shadow: 1px 1px 4px 1px #e7e7e7;
+    --action-bar-selection-background: var(--color-primary);
+    --action-bar-selection-color: var(--palette-grey-200);
+    --action-bar-shadow: var(--shadow-2p);
     --action-bar-transition: 0.1s ease-out;
 }

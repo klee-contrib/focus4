@@ -2,6 +2,7 @@
 
 # Référence d'API
 ## [Module `application`](application)
+## [Module `components`](components)
 ## [Module `entity`](entity)
 
 ## Module `ioc`

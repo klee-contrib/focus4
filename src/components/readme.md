@@ -1,0 +1,3 @@
+# Module `components`
+
+Contient quelques composants génériques...

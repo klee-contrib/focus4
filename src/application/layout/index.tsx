@@ -6,9 +6,12 @@ import * as React from "react";
 import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
 
 import {ButtonTheme} from "react-toolbox/lib/button";
+import {CheckboxTheme} from "react-toolbox/lib/checkbox";
+import {ChipTheme} from "react-toolbox/lib/chip";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
+import {PopinStyle} from "../../components";
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
 import {MessageCenter as DefaultMessageCenter} from "../../message";
@@ -19,14 +22,12 @@ import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupSty
 import {ErrorCenter as DefaultErrorCenter, ErrorCenterStyle} from "./error-center";
 import {Header, HeaderStyle} from "./header";
 import {Menu, MenuItemConfig, MenuStyle} from "./menu";
-import {Popin, PopinStyle} from "./popin";
-import {PopinConfirmation} from "./popin-confirmation";
 
 import styles from "./__style__/layout.css";
 
 export type LayoutStyle = Partial<typeof styles>;
 
-export {DefaultErrorCenter as ErrorCenter, Header, HeaderStyle, Menu, MenuItemConfig, Popin, PopinConfirmation};
+export {DefaultErrorCenter as ErrorCenter, Header, HeaderStyle, Menu, MenuItemConfig};
 
 /** Props du Layout, comportant les différents composants injectables. */
 export interface LayoutProps {
@@ -120,6 +121,8 @@ export interface LayoutStyleProviderProps {
     summary?: SummaryStyle;
 
     RTButton?: ButtonTheme;
+    RTCheckbox?: CheckboxTheme;
+    RTChip?: ChipTheme;
     RTMenu?: MenuTheme;
     RTTabs?: TabsTheme;
 }
@@ -129,10 +132,10 @@ export interface LayoutStyleProviderProps {
  *
  * C'est également le point d'entrée pour la surcharge de CSS via la prop `injectedStyle`.
  */
-export function Layout(props: LayoutProps & {injectedStyle?: LayoutStyleProviderProps}) {
+export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     return (
-        <ThemeProvider theme={(props.injectedStyle || {}) as TReactCSSThemrTheme}>
-            <LayoutBase {...omit(props, "injectedStyle")}>
+        <ThemeProvider theme={(props.appTheme || {}) as TReactCSSThemrTheme}>
+            <LayoutBase {...omit(props, "appTheme")}>
                 {props.children}
             </LayoutBase>
         </ThemeProvider>

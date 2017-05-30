@@ -1,8 +1,11 @@
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+
 :root {
-    --menu-background: #fafafa;
+    --menu-background: var(--palette-color-50);
     --menu-item-active-background: rgba(0, 0, 0, 0.15);
-    --menu-item-active-color: black;
-    --menu-item-color: black;
+    --menu-item-active-color: var(--color-black);
+    --menu-item-color: var(--color-black);
     --menu-item-height: 60px;
     --menu-z-index: 1800;
 }
