@@ -26,7 +26,7 @@ export interface PopinProps {
     /** CSS. */
     theme?: PopinStyle;
     /** Type de popin. Par défaut : "from-right" */
-    type?: "from-right" | "from-left" | "center";
+    type?: "from-right" | "from-left";
 }
 
 /** Affiche son contenu dans une popin, dont l'ouverture est contrôlée par ses props. */
@@ -133,11 +133,6 @@ export class Popin extends React.Component<PopinProps, {}> {
                     open: "slideInLeft",
                     close: "slideOutLeft"
                 };
-            case "center":
-                return {
-                    open: "zoomIn",
-                    close: "zoomOut"
-                };
             default:
                 return {open: "", close: ""};
         }
@@ -155,10 +150,10 @@ export class Popin extends React.Component<PopinProps, {}> {
                 />
                 <div
                     data-level={level}
-                    className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : type === "center" ? theme!.center! : ""} animated ${this.willClose ? close : this.willOpen ? open : ""}`}
+                    className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : ""} animated ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
-                    {type !== "center" ? <Button icon={i18n.t(`${i18nPrefix}.icons.popin.close.name`)} iconLibrary={i18n.t(`${i18nPrefix}.icons.popin.close.library`)} shape="mini-fab" type="button" onClick={closePopin} /> : null}
+                    <Button icon={i18n.t(`${i18nPrefix}.icons.popin.close.name`)} iconLibrary={i18n.t(`${i18nPrefix}.icons.popin.close.library`)} shape="mini-fab" type="button" onClick={closePopin} />
                     <div>{children}</div>
                 </div>
             </div>

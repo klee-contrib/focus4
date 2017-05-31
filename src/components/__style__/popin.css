@@ -1,3 +1,5 @@
+@import "../../style/popin.css";
+
 .overlay {
     animation-duration: 0.2s;
     z-index: 1001;
@@ -6,7 +8,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .popin {
@@ -17,9 +19,8 @@
     width: 50vw;
     height: 100vh;
     padding: 20px;
-    background: #e8e8e8;
-    box-shadow: 0 -2px 2px #404040;
-    border-left: 1px solid #404040;
+    background: var(--popin-background);
+    box-shadow: var(--shadow-4p);
     overflow-x: hidden;
 }
 
@@ -29,26 +30,6 @@
 
 .right {
     right: 0;
-}
-
-.buttonStack {
-    position: absolute;
-    bottom: 0;
-    width: calc(100% - 40px);
-    display: flex;
-    justify-content: center;
-}
-
-.buttonStack button {
-    margin: 20px 10px;
-}
-
-.center {
-    background: white;
-    left: 25vw;
-    top: 100px;
-    height: inherit;
-    min-height: 100px;
 }
 
 .popin > button {
