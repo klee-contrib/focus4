@@ -22,6 +22,7 @@ export type ActionBarStyle = Partial<typeof styles>;
 export interface ActionBarProps {
     group?: {code: string, label: string, totalCount: number};
     hasFacetBox?: boolean;
+    hasGrouping?: boolean;
     hasSearchBar?: boolean;
     hasSelection?: boolean;
     /** Par défaut : "focus" */
@@ -121,9 +122,9 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
 
     @computed
     private get groupButton() {
-        const {i18nPrefix = "focus", store} = this.props;
+        const {hasGrouping, i18nPrefix = "focus", store} = this.props;
 
-        if (isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
+        if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
             const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
                 if (facet.values.length > 1) {
                     result[facet.code] = facet.label;

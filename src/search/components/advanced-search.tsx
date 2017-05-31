@@ -29,6 +29,7 @@ export interface AdvancedSearchProps {
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défault: true */
     hasBackToTop?: boolean;
+    hasGrouping?: boolean;
     hasSearchBar?: boolean;
     hasSelection?: boolean;
     hideSummaryCriteria?: boolean;
@@ -63,7 +64,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         this.props.store.search();
     }
 
-    private renderFacetBox() {
+    protected renderFacetBox() {
         const {theme, facetBoxPosition = "left", i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, store} = this.props;
 
         if (facetBoxPosition === "left") {
@@ -82,7 +83,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         }
     }
 
-    private renderListSummary() {
+    protected renderListSummary() {
         const {canRemoveSort, hideSummaryCriteria, hideSummaryFacets, hideSummaryScope, i18nPrefix, orderableColumnList, scopes, store} = this.props;
         return (
             <Summary
@@ -98,8 +99,8 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         );
     }
 
-    private renderActionBar() {
-        const {facetBoxPosition = "left", hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
+    protected renderActionBar() {
+        const {facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
 
         if (store.groupingKey) {
             return null;
@@ -108,6 +109,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         return (
             <ActionBar
                 hasFacetBox={facetBoxPosition === "action-bar"}
+                hasGrouping={hasGrouping}
                 hasSearchBar={hasSearchBar}
                 hasSelection={hasSelection}
                 i18nPrefix={i18nPrefix}
@@ -121,7 +123,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         );
     }
 
-    private renderResults() {
+    protected renderResults() {
         const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <Results
