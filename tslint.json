@@ -22,6 +22,7 @@
         ],
         "await-promise": true,
         "ban": true,
+        "binary-expression-operand-order": true,
         "callable-types": true,
         "curly": true,
         "class-name": true,
@@ -133,6 +134,7 @@
             true,
             "never"
         ],
+        "switch-final-break": [true, "always"],
         "trailing-comma": [
             false
         ],
@@ -148,6 +150,7 @@
             }
         ],
         "typeof-compare": true,
+        "use-default-type-parameter": true,
         "use-isnan": true,
         "variable-name": [
             true,

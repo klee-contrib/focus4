@@ -226,7 +226,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
                             }}
                         >
                             {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident... et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}
-                            <div className={theme!.triangle!} style={this.displayedIdx === undefined && this.mode === "mosaic" ? {left: -1000} : this.mode === "mosaic" ? {left: -8.25 + this.mosaic.width / 2 + ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) % this.byLine) * (10 + this.mosaic.width)} : {}} />
+                            <div className={theme!.triangle!} style={this.displayedIdx === undefined && this.mode === "mosaic" ? {left: -1000} : this.mode === "mosaic" ? {left: this.mosaic.width / 2 - 8.25 + ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) % this.byLine) * (this.mosaic.width + 10)} : {}} />
                             <div className={theme!.detail}>
                                 <Button icon="clear" onClick={() => this.displayedIdx = undefined} shape="icon" />
                                 <DetailComponent data={item} />

@@ -74,6 +74,6 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
     }
 
     render() {
-        return 0 < this.errors.length ? this.renderErrors() : null;
+        return this.errors.length > 0 ? this.renderErrors() : null;
     }
 }

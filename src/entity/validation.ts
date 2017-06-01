@@ -137,7 +137,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
     const isValid = (() => {
         switch (validator.type) {
             case "required":
-                const prevalidString = "" === property.value ? false : true;
+                const prevalidString = property.value === "" ? false : true;
                 return validator.value ? (!isNull(value) && !isUndefined(value) && prevalidString) : true;
             case "regex":
                 if (isValueNullOrUndefined) {
@@ -189,7 +189,7 @@ export function validate(property: ValidationProperty, validators?: Validator[])
 
     return {
         errors,
-        isValid: 0 === errors.length,
+        isValid: errors.length === 0,
         name: property.name,
         value: property.value
     };

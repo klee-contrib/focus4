@@ -12,6 +12,6 @@ export class UserStore<Role extends string = string> {
      * @param roles Les rôles proposés.
      */
     hasRole(...roles: Role[]) {
-        return 0 < intersection(roles, this.roles || []).length;
+        return intersection(roles, this.roles || []).length > 0;
     }
 }

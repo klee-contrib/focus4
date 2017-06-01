@@ -105,7 +105,7 @@ export class Field<
 
         // On vérifie que le champ n'est pas vide et obligatoire.
         const {isRequired, validator, label = ""} = this.props;
-        if (isRequired && (undefined === value || null === value || "" === value)) {
+        if (isRequired && (value === undefined || value === null || value === "")) {
             return i18n.t("focus.validation.required");
         }
 

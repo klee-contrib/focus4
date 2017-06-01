@@ -118,7 +118,7 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
         let {query} = this;
         const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
 
-        if (!query || "" === query) {
+        if (!query || query === "") {
             query = "*";
         }
 

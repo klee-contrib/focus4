@@ -3,7 +3,7 @@ import {action, computed, IObservableArray, observable} from "mobx";
 /** Description de la factory de services de chargement de listes de référence. */
 export type ServiceFactory = (refName: string) => () => Promise<{}[]>;
 
-const CACHE_DURATION = 1000 * 60 * 60;
+const CACHE_DURATION = 3600000; // 1h
 
 /** Cache des listes de références */
 const cache: {[key: string]: {timeStamp: number, value: {}[]}} = {};
