@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "6.3.1",
+  "version": "6.3.3",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -11,11 +11,12 @@
   "license": "MIT",
   "homepage": "https://github.com/get-focus/focus4",
   "scripts": {
-    "prepublish": "in-publish && tsc --outDir ./ && node copy-css.js ./ || true",
+    "clean": "node scripts/clean.js",
+    "prepublish": "in-publish && node scripts/clean.js && node scripts/tcm.js && tsc --outDir ./ && node scripts/copy-css.js ./ || true",
     "postpublish": "rm -rf index.js index.d.ts ioc.js ioc.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf application entity list message network router search style testing translation",
-    "start": "tsc && node copy-css.js dist",
+    "start": "tsc && node scripts/copy-css.js dist",
     "stylelint": "stylelint src/**/*.css",
-    "tcm": "node tcm.js",
+    "tcm": "node scripts/tcm.js",
     "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
     "testgen": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node src/testing/generator.ts src ..",
     "tslint": "tslint --project tsconfig.json --type-check --force"
