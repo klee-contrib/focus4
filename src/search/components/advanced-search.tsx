@@ -24,6 +24,8 @@ export interface AdvancedSearchProps {
     canRemoveSort?: boolean;
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     detailHeight?: number | ((data: {}) => number);
+    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
@@ -127,12 +129,13 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     protected renderResults() {
-        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
                 detailHeight={detailHeight}
                 DetailComponent={DetailComponent}
+                EmptyComponent={EmptyComponent}
                 theme={{mosaicAdd: theme && theme.mosaicAdd}}
                 groupOperationLists={groupOperationLists}
                 hasSelection={!!hasSelection}

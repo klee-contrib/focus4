@@ -30,8 +30,10 @@ export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> 
     DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
-    /** Cache le bouton "Ajouter." */
-    hideAddItemHandler?: boolean;
+    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
+    /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
+    hideAdditionalItems?: boolean;
     /** Composant de ligne. */
     LineComponent?: React.ComponentClass<P> | React.SFC<P>;
     /** Mode des listes dans le wrapper. Par défaut : celui du composant fourni, ou "list". */
@@ -145,7 +147,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
     @computed
     private get isAddItemShown() {
-        return !!(!this.props.hideAddItemHandler && this.addItemHandler && this.mode === "mosaic");
+        return !!(!this.props.hideAdditionalItems && this.addItemHandler && this.mode === "mosaic");
     }
 
     /**
@@ -262,8 +264,12 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     render() {
-        const {theme} = this.props;
-        return (
+        const {EmptyComponent, hideAdditionalItems, i18nPrefix = "focus", theme} = this.props;
+        return !hideAdditionalItems && !this.displayedData.length && EmptyComponent ?
+            <EmptyComponent addItemHandler={this.addItemHandler} />
+        : !hideAdditionalItems && !this.displayedData.length ?
+            <div>{i18n.t(`${i18nPrefix}.list.empty`)}</div>
+        : (
             <div>
                 <TransitionMotion
                     willEnter={() => ({height: 0})}

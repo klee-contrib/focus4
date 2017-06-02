@@ -13,6 +13,7 @@ export const fr = {
     },
     list: {
         add: "Ajouter",
+        empty: "Aucun élément",
         mode: {
             list: "Liste",
             mosaic: "Mosaïque"

@@ -15,6 +15,8 @@ export interface ResultsProps {
     canOpenDetail?: (data?: {}) => boolean;
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     detailHeight?: number | ((data: {}) => number);
+    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
@@ -66,7 +68,7 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private renderSingleGroup(group: GroupResult<{}>) {
-        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
@@ -79,6 +81,7 @@ export class Results extends React.Component<ResultsProps, void> {
                 i18nPrefix={i18nPrefix}
                 DetailComponent={DetailComponent}
                 detailHeight={detailHeight}
+                EmptyComponent={EmptyComponent}
                 LineComponent={lineComponentMapper && lineComponentMapper(groupKey)}
                 MosaicComponent={mosaicComponentMapper && mosaicComponentMapper(groupKey)}
                 lineProps={lineProps}

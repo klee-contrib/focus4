@@ -20,6 +20,8 @@ export interface Props {
     canOpenDetail?: (data?: {}) => boolean;
     DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
     detailHeight?: number | ((data: {}) => number);
+    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<{}>[];
     hasSelection?: boolean;
@@ -47,7 +49,7 @@ export class Group extends React.Component<Props, void> {
     }
 
     private renderList() {
-        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
@@ -57,8 +59,9 @@ export class Group extends React.Component<Props, void> {
                     data={group.list}
                     detailHeight={detailHeight}
                     DetailComponent={DetailComponent}
+                    EmptyComponent={EmptyComponent}
                     hasSelection={hasSelection}
-                    hideAddItemHandler={!!group.code}
+                    hideAdditionalItems={!!group.code}
                     i18nPrefix={i18nPrefix}
                     isManualFetch={!!group.code}
                     LineComponent={LineComponent}
