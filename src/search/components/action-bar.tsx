@@ -1,10 +1,11 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
 import {isEmpty, reduce} from "lodash";
-import {action, computed} from "mobx";
+import { action, computed, observable } from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import { Motion, spring } from "react-motion";
 
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
@@ -17,6 +18,9 @@ import {SearchStore} from "../store";
 import {FacetBox, shouldDisplayFacet} from "./facet-box";
 
 import * as styles from "./__style__/action-bar.css";
+
+const MIN_FACETBOX_HEIGHT = 80;
+const DEFAULT_FACETBOX_MARGIN = 1000;
 
 export type ActionBarStyle = Partial<typeof styles>;
 
@@ -43,22 +47,12 @@ export interface ActionBarProps {
 @themr("actionBar", styles)
 @observer
 @autobind
-export class ActionBar extends React.Component<ActionBarProps, {}> {
+export class ActionBar extends React.Component<ActionBarProps, void> {
 
-    private facetBox?: FacetBox;
+    @observable displayFacetBox = false;
+    @observable facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
 
-    state = {facetBoxDisplay: false};
-
-    @classReaction<ActionBar>(that => () => {
-        const {hasFacetBox, store} = that.props;
-        return hasFacetBox && isSearch(store) && store.facets.length && store.facets[0] || false;
-    })
-    protected closeFacetBox() {
-        const {store, showSingleValuedFacets} = this.props;
-        if (this.state.facetBoxDisplay && isSearch(store) && store.facets.every(facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
-            this.setState({facetBoxDisplay: false});
-        }
-    }
+    private facetBox?: HTMLDivElement;
 
     @computed
     private get selectionButton() {
@@ -84,15 +78,15 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
             return (
                 <div style={{position: "relative"}}>
                     <Button
-                        onClick={() => this.setState({facetBoxDisplay: !this.state.facetBoxDisplay})}
-                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.state.facetBoxDisplay ? "up" : "down"}.name`)}
-                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.state.facetBoxDisplay ? "up" : "down"}.library`)}
+                        onClick={() => this.displayFacetBox = !this.displayFacetBox}
+                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.name`)}
+                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.library`)}
                         iconPosition="right"
                         label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
                         type="button"
                     />
-                    {this.state.facetBoxDisplay ? <div className={theme!.triangle!} /> : null}
+                    {this.displayFacetBox ? <div className={theme!.triangle!} /> : null}
                 </div>
             );
         } else {
@@ -160,8 +154,8 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                     iconLibrary: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
                     iconPosition: "right" as "right",
                     shape: null
-                }
-                if (!this.state.facetBoxDisplay) {
+                };
+                if (!this.displayFacetBox) {
                     return (
                         <Dropdown
                             button={button}
@@ -203,22 +197,33 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
         return null;
     }
 
+    @classReaction<ActionBar>(that => () => {
+        const {hasFacetBox, store} = that.props;
+        return hasFacetBox && isSearch(store) && store.facets.length && store.facets[0] || false;
+    })
+    protected closeFacetBox() {
+        const {store, showSingleValuedFacets} = this.props;
+
+        if (this.displayFacetBox === false) {
+            this.facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
+        }
+
+        if (this.displayFacetBox && isSearch(store) && store.facets.every(facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
+            this.displayFacetBox = false;
+        }
+    }
+
     componentDidMount() {
-        this.toggleFacetBox(false);
+        this.updateFacetBoxHeight();
     }
 
-    componentDidUpdate(_: {}, {facetBoxDisplay}: ActionBar["state"]) {
-        this.toggleFacetBox(facetBoxDisplay);
+    componentDidUpdate() {
+        this.updateFacetBoxHeight();
     }
 
-    private toggleFacetBox(facetBoxDisplayPrev: boolean) {
-        if (this.facetBox && this.facetBox.div) {
-            if (facetBoxDisplayPrev !== this.state.facetBoxDisplay) {
-                this.facetBox.div.style.transition = "margin 0.15s ease-out";
-            } else {
-                this.facetBox.div.style.transition = null;
-            }
-            this.facetBox.div.style.marginTop = `${this.state.facetBoxDisplay ? 5 : -this.facetBox.div.clientHeight}px`;
+    private updateFacetBoxHeight() {
+        if (this.facetBox && this.facetBox.clientHeight > MIN_FACETBOX_HEIGHT) {
+            this.facetBoxHeight = this.facetBox.clientHeight;
         }
     }
 
@@ -245,22 +250,26 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                     : null}
                 </div>
                 {hasFacetBox && isSearch(store) ?
-                    <div style={{overflow: "hidden", position: "relative"}}>
-                        <Button
-                            style={{position: "absolute", right: "5px", top: "10px", zIndex: 1}}
-                            icon={i18n.t(`${i18nPrefix}.icons.actionBar.close.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.close.library`)}
-                            shape="icon"
-                            onClick={() => this.setState({facetBoxDisplay: false})}
-                        />
-                        <FacetBox
-                            innerRef={i => this.facetBox = i}
-                            theme={{facetBox: theme!.facetBox!}}
-                            nbDefaultDataList={nbDefaultDataListFacet}
-                            scopeFacetKey={scopeFacetKey}
-                            showSingleValuedFacets={showSingleValuedFacets}
-                            store={store}
-                        />
+                    <div className={theme!.facetBoxContainer}>
+                        <Motion style={{marginTop: this.facetBoxHeight === DEFAULT_FACETBOX_MARGIN ? -this.facetBoxHeight : spring(this.displayFacetBox ? 5 : -this.facetBoxHeight)}}>
+                            {(style: {marginTop: number}) => (
+                                <div style={style} ref={i => this.facetBox = i}>
+                                    <Button
+                                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.close.name`)}
+                                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.close.library`)}
+                                        shape="icon"
+                                        onClick={() => this.displayFacetBox = false}
+                                    />
+                                    <FacetBox
+                                        theme={{facetBox: theme!.facetBox!}}
+                                        nbDefaultDataList={nbDefaultDataListFacet}
+                                        scopeFacetKey={scopeFacetKey}
+                                        showSingleValuedFacets={showSingleValuedFacets}
+                                        store={store}
+                                    />
+                                </div>
+                            )}
+                        </Motion>
                     </div>
                 : null}
             </div>

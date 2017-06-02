@@ -79,6 +79,21 @@
     border-color: transparent transparent var(--action-bar-facetbox-background);
 }
 
+.facetBoxContainer {
+    overflow: hidden;
+
+    & > div {
+        position: relative;
+
+        & > button {
+            position: absolute;
+            right: 5px;
+            top: 10px;
+            z-index: 1;
+        }
+    }
+}
+
 .container .facetBox {
     display: flex;
     flex-wrap: wrap;
@@ -93,7 +108,7 @@
     & > div {
         width: 275px;
         flex-shrink: 0;
-        padding: 0 10px 5px;
+        padding: 0 15px 5px;
         margin-bottom: 0;
         margin-top: -5px;
     }

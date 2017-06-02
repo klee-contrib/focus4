@@ -8,5 +8,8 @@
         "**/node_modules/**",
         "**/dist/**"
     ],
-    "tslint.autoFixOnSave": true
+    "tslint.autoFixOnSave": true,
+    "files.associations": {
+        "*.css": "postcss"
+    }
 }

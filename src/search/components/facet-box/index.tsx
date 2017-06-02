@@ -16,7 +16,6 @@ export type FacetBoxStyle = Partial<typeof styles>;
 export interface FacetBoxProps {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    innerRef?: (i: FacetBox) => void;
     /** Par défaut : 6 */
     nbDefaultDataList?: number;
     /** Par défaut : FCT_SCOPE */
@@ -30,8 +29,6 @@ export interface FacetBoxProps {
 @autobind
 @observer
 export class FacetBox extends React.Component<FacetBoxProps, void> {
-
-    div?: HTMLDivElement;
 
     private facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
         const {scopeFacetKey = "FCT_SCOPE", store} = this.props;
@@ -53,7 +50,7 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
     render() {
         const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store: {facets, selectedFacets}} = this.props;
         return (
-            <div className={theme!.facetBox!} ref={i => this.div = i}>
+            <div className={theme!.facetBox!}>
                 <h3>{i18n.t(`${i18nPrefix}.search.facets.title`)}</h3>
                 {facets.filter(facet => shouldDisplayFacet(facet, selectedFacets, showSingleValuedFacets)).map(facet => {
                     if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {
