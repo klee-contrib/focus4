@@ -11,9 +11,10 @@ import Dropdown, {DropdownItem} from "focus-components/dropdown";
 import InputText from "focus-components/input-text";
 
 import {ContextualActions, GroupOperationListItem, ListStore, MiniListStore} from "../../list";
+import {classReaction} from "../../util";
 
 import {SearchStore} from "../store";
-import {FacetBox} from "./facet-box";
+import {FacetBox, shouldDisplayFacet} from "./facet-box";
 
 import * as styles from "./__style__/action-bar.css";
 
@@ -34,6 +35,7 @@ export interface ActionBarProps {
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
     searchBarPlaceholder?: string;
+    showSingleValuedFacets?: boolean;
     store: MiniListStore<any>;
     theme?: ActionBarStyle;
 }
@@ -46,6 +48,17 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     private facetBox?: FacetBox;
 
     state = {facetBoxDisplay: false};
+
+    @classReaction<ActionBar>(that => () => {
+        const {hasFacetBox, store} = that.props;
+        return hasFacetBox && isSearch(store) && store.facets.length && store.facets[0] || false;
+    })
+    protected closeFacetBox() {
+        const {store, showSingleValuedFacets} = this.props;
+        if (this.state.facetBoxDisplay && isSearch(store) && store.facets.every(facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
+            this.setState({facetBoxDisplay: false});
+        }
+    }
 
     @computed
     private get selectionButton() {
@@ -66,14 +79,14 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     }
 
     private get filterButton() {
-        const {theme, hasFacetBox, i18nPrefix = "focus", store} = this.props;
-        if (hasFacetBox && isSearch(store)) {
+        const {theme, hasFacetBox, showSingleValuedFacets, i18nPrefix = "focus", store} = this.props;
+        if (hasFacetBox && isSearch(store) && store.facets.some(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
             return (
                 <div style={{position: "relative"}}>
                     <Button
                         onClick={() => this.setState({facetBoxDisplay: !this.state.facetBoxDisplay})}
-                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`)}
-                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`)}
+                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.state.facetBoxDisplay ? "up" : "down"}.name`)}
+                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.state.facetBoxDisplay ? "up" : "down"}.library`)}
                         iconPosition="right"
                         label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
@@ -141,21 +154,28 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
             }, [] as DropdownItem[]);
 
             if (!isEmpty(groupOperationList)) {
+                const button = {
+                    label: `${i18nPrefix}.search.action.group`,
+                    icon: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
+                    iconLibrary: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
+                    iconPosition: "right" as "right",
+                    shape: null
+                }
                 if (!this.state.facetBoxDisplay) {
                     return (
                         <Dropdown
-                            button={{
-                                label: `${i18nPrefix}.search.action.group`,
-                                icon: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
-                                iconLibrary: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
-                                iconPosition: "right",
-                                shape: null
-                            }}
+                            button={button}
                             operations={groupOperationList}
                         />
                     );
                 } else {
-                    return <Button disabled={true} label={`${i18nPrefix}.search.action.group`} type="button" />;
+                    return (
+                        <Button
+                            disabled={true}
+                            type="button"
+                            {...button}
+                        />
+                    );
                 }
             }
         }
@@ -203,7 +223,7 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
     }
 
     render() {
-        const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", store} = this.props;
+        const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", showSingleValuedFacets, store} = this.props;
         return (
             <div className={theme!.container!}>
                 <div className={`${theme!.bar!} ${store.selectedItems.size ? theme!.selection! : ""}`}>
@@ -225,12 +245,20 @@ export class ActionBar extends React.Component<ActionBarProps, {}> {
                     : null}
                 </div>
                 {hasFacetBox && isSearch(store) ?
-                    <div style={{overflow: "hidden"}}>
+                    <div style={{overflow: "hidden", position: "relative"}}>
+                        <Button
+                            style={{position: "absolute", right: "5px", top: "10px", zIndex: 1}}
+                            icon={i18n.t(`${i18nPrefix}.icons.actionBar.close.name`)}
+                            iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.close.library`)}
+                            shape="icon"
+                            onClick={() => this.setState({facetBoxDisplay: false})}
+                        />
                         <FacetBox
                             innerRef={i => this.facetBox = i}
                             theme={{facetBox: theme!.facetBox!}}
                             nbDefaultDataList={nbDefaultDataListFacet}
                             scopeFacetKey={scopeFacetKey}
+                            showSingleValuedFacets={showSingleValuedFacets}
                             store={store}
                         />
                     </div>

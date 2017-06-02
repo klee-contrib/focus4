@@ -1,9 +1,17 @@
 /** Description des icônes par défaut. */
 export const icons = {
     actionBar: {
+        close: {
+            library: "material",
+            name: "clear"
+        },
         dropdown: {
             library: "material",
             name: "arrow_drop_down"
+        },
+        dropup: {
+            library: "material",
+            name: "arrow_drop_up"
         },
         none: {
             library: "material",

@@ -1,11 +1,12 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
-import {omit} from "lodash";
+import {omit, values} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
 import {SearchStore} from "../../store";
+import {FacetOutput} from "../../types";
 import {Facet, FacetStyle} from "./facet";
 export {FacetStyle};
 
@@ -20,6 +21,7 @@ export interface FacetBoxProps {
     nbDefaultDataList?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
+    showSingleValuedFacets?: boolean;
     store: SearchStore<any>;
     theme?: FacetBoxStyle;
 }
@@ -48,13 +50,12 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
             store.selectedFacets = selectedFacets;
         }
     }
-
     render() {
-        const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, store: {facets, selectedFacets}} = this.props;
+        const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store: {facets, selectedFacets}} = this.props;
         return (
             <div className={theme!.facetBox!} ref={i => this.div = i}>
                 <h3>{i18n.t(`${i18nPrefix}.search.facets.title`)}</h3>
-                {facets.filter(facet => facet.values.length).map(facet => {
+                {facets.filter(facet => shouldDisplayFacet(facet, selectedFacets, showSingleValuedFacets)).map(facet => {
                     if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                         return (
                             <Facet
@@ -73,4 +74,8 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
             </div>
         );
     }
+}
+
+export function shouldDisplayFacet(facet: FacetOutput, selectedFacets: {[key: string]: string}, showSingleValuedFacets?: boolean) {
+    return !(!facet.values.length || !showSingleValuedFacets && facet.values.length === 1 && !values(selectedFacets).find(v => facet.values[0].code === v));
 }

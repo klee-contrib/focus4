@@ -51,6 +51,7 @@ export interface AdvancedSearchProps {
     scopeFacetKey?: string;
     scopes: {code: string, label?: string}[];
     searchBarPlaceholder?: string;
+    showSingleValuedFacets?: boolean;
     store: SearchStore<any>;
     theme?: AdvancedSearchStyle & {mosaicAdd?: string};
 }
@@ -65,7 +66,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     protected renderFacetBox() {
-        const {theme, facetBoxPosition = "left", i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, store} = this.props;
+        const {theme, facetBoxPosition = "left", i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, store} = this.props;
 
         if (facetBoxPosition === "left") {
             return (
@@ -74,6 +75,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
                         scopeFacetKey={scopeFacetKey}
+                        showSingleValuedFacets={showSingleValuedFacets}
                         store={store}
                     />
                 </div>
@@ -100,7 +102,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     protected renderActionBar() {
-        const {facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, searchBarPlaceholder, store} = this.props;
+        const {facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
 
         if (store.groupingKey) {
             return null;
@@ -118,6 +120,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                 orderableColumnList={orderableColumnList}
                 searchBarPlaceholder={searchBarPlaceholder}
                 scopeFacetKey={scopeFacetKey}
+                showSingleValuedFacets={showSingleValuedFacets}
                 store={store}
             />
         );

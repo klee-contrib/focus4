@@ -85,20 +85,24 @@
     position: relative;
     width: auto;
     background: var(--action-bar-facetbox-background);
-}
 
-.container .facetBox > h3 {
-    display: none;
-}
+    & > h3 {
+        display: none;
+    }
 
-.container .facetBox > div {
-    width: 275px;
-    flex-shrink: 0;
-    padding: 0 10px 5px;
-    margin-bottom: 0;
-    margin-top: -5px;
-}
+    & > div {
+        width: 275px;
+        flex-shrink: 0;
+        padding: 0 10px 5px;
+        margin-bottom: 0;
+        margin-top: -5px;
+    }
 
-.container .facetBox ul {
-    padding-left: 0;
+    & > div:not(:last-child) {
+        border-right: 1px solid var(--palette-grey-400);
+    }
+
+    ul {
+        padding-left: 0;
+    }
 }
