@@ -55,13 +55,13 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     private scrollListener() {
-        const {store: {currentCount, totalCount, groupingKey, isLoading, search}, offset = 250} = this.props;
-        if (currentCount < totalCount && !groupingKey) {
+        const {store, offset = 250} = this.props;
+        if (store.currentCount < store.totalCount && !store.groupingKey) {
             const el = findDOMNode(this) as HTMLElement;
             const scrollTop = window.pageYOffset;
             if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
-                if (!isLoading) {
-                    search(true);
+                if (!store.isLoading) {
+                    store.search(true);
                 }
             }
         }
