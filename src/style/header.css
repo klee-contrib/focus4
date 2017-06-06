@@ -11,6 +11,6 @@
     --header-toprow-background: var(--color-white);
     --header-toprow-height: 60px;
     --header-toprow-padding: 10px;
-    --header-shadow: var(--shadow-1p);
+    --header-shadow: var(--shadow-2p);
     --header-z-index: 1001;
 }

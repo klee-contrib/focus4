@@ -2,7 +2,7 @@
 @import "react-toolbox/lib/variables.css";
 
 :root {
-    --layout-background: var(--palette-gray-50);
+    --layout-background: var(--palette-grey-50);
     --layout-content-margin: 0 10px 0 0;
     --layout-content-padding: 10px 20px 20px;
     --layout-footer-margin: 30px 0 0 0;
