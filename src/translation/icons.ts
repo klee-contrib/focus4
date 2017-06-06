@@ -116,12 +116,6 @@ export const icons = {
             name: "functions"
         }
     },
-    messageCenter: {
-        clear: {
-            library: "material",
-            name: "clear"
-        }
-    },
     popin: {
         close: {
             library: "material",

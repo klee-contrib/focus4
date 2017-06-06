@@ -25,6 +25,9 @@ export const fr = {
             more: "Voir plus"
         }
     },
+    messageCenter: {
+        dismiss: "Fermer"
+    },
     search: {
         action: {
             filter: "Filtrer",

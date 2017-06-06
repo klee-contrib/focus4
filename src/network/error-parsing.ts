@@ -66,7 +66,7 @@ function treatGlobalErrors(response: ErrorResponse) {
             globals = [...globals, ...messages];
 
             // On enregistre chaque message dans le store de messages.
-            messages.forEach(content => messageStore.addMessage({type: globalErrorTypes[errorName], content}));
+            messages.forEach(content => messageStore.addMessage({type: globalErrorTypes[errorName] as "info", content}));
         }
     });
     return globals;

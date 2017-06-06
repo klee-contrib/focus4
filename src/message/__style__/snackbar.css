@@ -1,0 +1,25 @@
+@import "../../style/snackbar.css";
+
+.snackbar {
+    width: var(--snackbar-width);
+
+    &.cancel {
+        background-color: var(--snackbar-color-cancel);
+    }
+
+    &.warning {
+        background-color: var(--snackbar-color-warning);
+    }
+
+    &.accept {
+        background-color: var(--snackbar-color-accept);
+    }
+}
+
+.snackbar .button:not([disabled]),
+.snackbar.cancel .button:not([disabled]),
+.snackbar.warning .button:not([disabled]),
+.snackbar.accept .button:not([disabled]) {
+    color: var(--snackbar-color);
+    min-width: auto;
+}

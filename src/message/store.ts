@@ -7,7 +7,7 @@ import {v4} from "uuid";
 export interface Message {
     id?: string;
     content: string;
-    type?: string;
+    type?: "success" | "error" | "warning" | "info";
 }
 
 /** Store de messages */

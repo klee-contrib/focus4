@@ -14,7 +14,7 @@ import {TabsTheme} from "react-toolbox/lib/tabs";
 import {PopinStyle} from "../../components";
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
-import {MessageCenter as DefaultMessageCenter, MessageCenterStyle} from "../../message";
+import {MessageCenter as DefaultMessageCenter} from "../../message";
 import {LoadingBarStyle} from "../../network";
 import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../../search";
 
@@ -114,7 +114,6 @@ export interface LayoutStyleProviderProps {
     list?: ListStyle;
     listWrapper?: ListWrapperStyle;
     menu?: MenuStyle;
-    messageCenter?: MessageCenterStyle;
     popin?: PopinStyle;
     searchBar?: SearchBarStyle;
     summary?: SummaryStyle;
