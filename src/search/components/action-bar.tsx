@@ -190,7 +190,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
                         value={store.query}
                         onChange={(text: string) => store.query = text}
                         hint={searchBarPlaceholder}
-                        theme={{input: theme!.searchBarField, icon: theme!.searchBarIcon}}
+                        theme={{input: theme!.searchBarField, icon: theme!.searchBarIcon, hint: theme!.searchBarHint}}
                     />
                     {store.query ?
                         <IconButton
