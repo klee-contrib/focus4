@@ -14,7 +14,7 @@ import {applicationStore} from "../application";
 import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
-import { Field, FieldProps, RefValues } from "./field";
+import {Field, FieldProps, RefValues} from "./field";
 import {StoreNode, toFlatValues} from "./store";
 import {BaseDisplayProps, BaseInputProps, Domain, EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
@@ -383,3 +383,5 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         return options;
     }
 }
+
+export default AutoForm;

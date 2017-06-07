@@ -7,7 +7,7 @@ import {GroupOperationListItem, LineOperationListItem} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
-import {Group, GroupStyle} from "./group";
+import Group, {GroupStyle} from "./group";
 export {GroupStyle};
 
 export interface ResultsProps {
@@ -129,6 +129,8 @@ export class Results extends React.Component<ResultsProps, void> {
         }
     }
 }
+
+export default Results;
 
 function topOfElement(element: HTMLElement): number {
     if (!element) {

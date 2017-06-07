@@ -54,7 +54,6 @@ export interface ContextualActionsProps {
 }
 
 /** Affiche une liste d'actions contextuelles. */
-@themr("contextualActions", styles)
 export class ContextualActions extends React.Component<ContextualActionsProps, void> {
 
     /**
@@ -123,3 +122,5 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
         );
     }
 }
+
+export default themr("contextualActions", styles)(ContextualActions);

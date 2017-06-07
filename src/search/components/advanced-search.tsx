@@ -8,10 +8,10 @@ import ButtonBackToTop from "focus-components/button-back-to-top";
 import {GroupOperationListItem, LineOperationListItem, ListWrapper} from "../../list";
 
 import {SearchStore} from "../store";
-import {ActionBar} from "./action-bar";
-import {FacetBox} from "./facet-box";
-import {Results} from "./results";
-import {Summary} from "./summary";
+import ActionBar from "./action-bar";
+import FacetBox from "./facet-box";
+import Results from "./results";
+import Summary from "./summary";
 
 import * as styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
@@ -58,7 +58,6 @@ export interface AdvancedSearchProps {
     theme?: AdvancedSearchStyle & {mosaicAdd?: string};
 }
 
-@themr("advancedSearch", styles)
 @autobind
 @observer
 export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
@@ -174,3 +173,5 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
         );
     }
 }
+
+export default themr("advancedSearch", styles)(AdvancedSearch);

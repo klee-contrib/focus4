@@ -7,13 +7,12 @@ import {themr} from "react-css-themr";
 import {classAutorun} from "../../../util";
 
 import {MenuItemConfig} from "./item";
-import {MenuList, MenuProps, MenuStyle, styles} from "./list";
-import {MenuPanel} from "./panel";
+import MenuList, {MenuProps, MenuStyle, styles} from "./list";
+import MenuPanel from "./panel";
 
 export {MenuItemConfig, MenuStyle};
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
-@themr("menu", styles)
 @observer
 @autobind
 export class Menu extends React.Component<MenuProps, void> {
@@ -87,3 +86,5 @@ export class Menu extends React.Component<MenuProps, void> {
         );
     }
 }
+
+export default themr("menu", styles)(Menu);

@@ -18,7 +18,7 @@ export interface LoadingBarProps {
 }
 
 /** Composant standard pour afficher une barre de chargement sur l'état des requêtes en cours. */
-export const LoadingBar = themr("loadingBar", styles)(observer(({i18nPrefix = "focus", theme, displayDevBar, ProgressBar}: LoadingBarProps) => {
+export const LoadingBar = observer(({i18nPrefix = "focus", theme, displayDevBar, ProgressBar}: LoadingBarProps) => {
     const {count, error, pending, success} = requestStore;
     const completed = +((count.total - count.pending) / count.total) * 100;
     const icon = (name: string) => {
@@ -41,4 +41,6 @@ export const LoadingBar = themr("loadingBar", styles)(observer(({i18nPrefix = "f
             : null}
         </div>
     );
-}));
+});
+
+export default themr("loadingBar", styles)(LoadingBar);

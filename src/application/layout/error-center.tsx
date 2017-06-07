@@ -26,7 +26,6 @@ export interface ErrorCenterProps {
 }
 
 /** Centre d'erreurs Javascript, pour afficher toutes les erreurs directement dans l'application. */
-@themr("errorCenter", styles)
 @autobind
 @observer
 export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
@@ -77,3 +76,5 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
         return this.errors.length > 0 ? this.renderErrors() : null;
     }
 }
+
+export default themr("errorCenter", styles)(ErrorCenter);

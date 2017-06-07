@@ -10,7 +10,7 @@ import Button from "focus-components/button";
 import {EntityField, stringFor} from "../../entity";
 
 import {MiniListStore} from "../store-base";
-import {ContextualActions, LineOperationListItem} from "./contextual-actions";
+import ContextualActions, {LineOperationListItem} from "./contextual-actions";
 
 import * as styles from "./__style__/line.css";
 
@@ -34,7 +34,6 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
 }
 
 /** Wrapper de ligne dans une liste. */
-@themr("line", styles)
 @autobind
 @observer
 export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWrapperProps<T, P>, void> {
@@ -107,3 +106,5 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
         }
     }
 }
+
+export default themr("line", styles)(LineWrapper);

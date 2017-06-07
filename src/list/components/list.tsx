@@ -13,7 +13,7 @@ import Icon from "focus-components/icon";
 import {classAutorun, classReaction} from "../../util";
 
 import {LineOperationListItem} from "./contextual-actions";
-import {LineWrapper, LineWrapperProps} from "./line";
+import LineWrapper, {LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
@@ -59,10 +59,10 @@ export interface LineItem<P> {
     style: Style;
 }
 
-/** Composant de liste standard, sans le CSS. Est nécessaire pour le StoreList qui en dérive. */
+/** Composant de liste standard */
 @autobind
 @observer
-export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, P> & AP> {
+export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, P> & AP> {
 
     // On récupère les infos du ListWrapper dans le contexte.
     static contextTypes = {
@@ -112,7 +112,7 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 
     /** Réaction pour fermer le détail si la liste change. */
-    @classReaction((that: ListWithoutStyle<any, any, any>) => () => that.displayedData.length)
+    @classReaction((that: List<any, any, any>) => () => that.displayedData.length)
     protected closeDetail() {
         this.displayedIdx = undefined;
     }
@@ -294,14 +294,13 @@ export class ListWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, L
     }
 }
 
-/** Composant de liste standard. */
-export const List = themr("list", styles)(ListWithoutStyle);
+export default themr("list", styles)(List);
 
 /**
  * Crée un composant de liste standard.
  * @param props Les props de la liste.
  */
 export function listFor<T, P extends {data?: T}>(props: ListProps<T, P>) {
-    const List2 = List as any;
+    const List2 = themr("list", styles)(List) as any;
     return <List2 {...props} />;
 }

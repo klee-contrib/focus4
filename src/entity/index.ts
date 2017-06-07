@@ -1,5 +1,5 @@
-export {AutoForm, ServiceConfig} from "./auto-form";
-export {Field, FieldProps, FieldStyle} from "./field";
+export {default as AutoForm, ServiceConfig} from "./auto-form";
+export {default as Field, FieldProps, FieldStyle} from "./field";
 export {
     buildFieldProps,
     displayFor,

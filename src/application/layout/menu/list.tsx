@@ -2,7 +2,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {MenuItem, MenuItemConfig, MenuStyle, styles} from "./item";
+import MenuItem, {MenuItemConfig, MenuStyle, styles} from "./item";
 export {MenuStyle, styles};
 
 /** Props du Menu. */
@@ -24,7 +24,6 @@ export interface MenuListProps extends MenuProps {
 }
 
 /** Liste d'item de menu. */
-@themr("menu", styles)
 @observer
 export class MenuList extends React.Component<MenuListProps, void> {
 
@@ -56,3 +55,5 @@ export class MenuList extends React.Component<MenuListProps, void> {
         );
     }
 }
+
+export default themr("menu", styles)(MenuList);

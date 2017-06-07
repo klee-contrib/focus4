@@ -9,7 +9,7 @@ import Select, {SelectProps} from "focus-components/select";
 
 import {EntityField} from "../entity";
 
-import {Field, FieldProps, RefValues} from "./field";
+import Field, {FieldProps, RefValues} from "./field";
 import {BaseDisplayProps, BaseInputProps, Domain} from "./types";
 
 /** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */

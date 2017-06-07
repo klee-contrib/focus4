@@ -151,6 +151,8 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
     }
 }
 
+export default ListBase;
+
 /**
  * Détermine le sommet de l'élément choisi.
  * @param element L'élément.

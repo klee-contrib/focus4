@@ -65,7 +65,6 @@
         ],
         "no-construct": true,
         "no-debugger": true,
-        "no-default-export": true,
         "no-duplicate-variable": true,
         "no-empty": true,
         "no-eval": true,

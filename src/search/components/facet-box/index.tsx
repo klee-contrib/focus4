@@ -7,7 +7,7 @@ import {themr} from "react-css-themr";
 
 import {SearchStore} from "../../store";
 import {FacetOutput} from "../../types";
-import {Facet, FacetStyle} from "./facet";
+import Facet, {FacetStyle} from "./facet";
 export {FacetStyle};
 
 import * as styles from "./__style__/facet-box.css";
@@ -25,7 +25,6 @@ export interface FacetBoxProps {
     theme?: FacetBoxStyle;
 }
 
-@themr("facetBox", styles)
 @autobind
 @observer
 export class FacetBox extends React.Component<FacetBoxProps, void> {
@@ -72,6 +71,8 @@ export class FacetBox extends React.Component<FacetBoxProps, void> {
         );
     }
 }
+
+export default themr("facetBox", styles)(FacetBox);
 
 export function shouldDisplayFacet(facet: FacetOutput, selectedFacets: {[key: string]: string}, showSingleValuedFacets?: boolean) {
     return !(!facet.values.length || !showSingleValuedFacets && facet.values.length === 1 && !values(selectedFacets).find(v => facet.values[0].code === v));

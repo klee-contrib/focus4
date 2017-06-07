@@ -44,7 +44,6 @@ export interface ActionBarProps {
     theme?: ActionBarStyle;
 }
 
-@themr("actionBar", styles)
 @observer
 @autobind
 export class ActionBar extends React.Component<ActionBarProps, void> {
@@ -204,7 +203,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     protected closeFacetBox() {
         const {store, showSingleValuedFacets} = this.props;
 
-        if (this.displayFacetBox === false) {
+        if (!this.displayFacetBox) {
             this.facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
         }
 
@@ -276,6 +275,8 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         );
     }
 }
+
+export default themr("actionBar", styles)(ActionBar);
 
 function isSearch(store: any): store is SearchStore<any> {
     return store.hasOwnProperty("groupingKey");

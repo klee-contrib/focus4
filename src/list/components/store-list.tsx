@@ -7,7 +7,7 @@ import {themr} from "react-css-themr";
 import {ListStore} from "../store";
 import {MiniListStore} from "../store-base";
 import {LineWrapperProps} from "./line";
-import {LineItem, ListWithoutStyle} from "./list";
+import {LineItem, List} from "./list";
 
 import * as styles from "./__style__/list.css";
 
@@ -22,10 +22,9 @@ export interface StoreListProps<T> {
 }
 
 /** Composant de liste lié à un store, qui permet la sélection de ses éléments. */
-@themr("list", styles)
 @autobind
 @observer
-export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, StoreListProps<T>> {
+export class StoreList<T, P extends {data?: T}> extends List<T, P, StoreListProps<T>> {
 
     /** Les données. */
     @computed
@@ -78,3 +77,5 @@ export class StoreList<T, P extends {data?: T}> extends ListWithoutStyle<T, P, S
         }
     }
 }
+
+export default themr("list", styles)(StoreList);

@@ -23,10 +23,10 @@ export interface TableProps<T, P extends {data?: T}> extends ListBaseProps<T, P>
     RowComponent: React.ComponentClass<P> | React.SFC<P>;
 }
 
-/** Tableau standard, sans CSS, pour l'héritage avec StoreTable. */
+/** Tableau standard */
 @autobind
 @observer
-export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T, P> & AP> {
+export class Table<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T, P> & AP> {
 
     /** Les données. */
     protected get data() {
@@ -80,14 +80,13 @@ export class TableWithoutStyle<T, P extends {data?: T}, AP> extends ListBase<T, 
     }
 }
 
-/** Composant de tableau standard. */
-export const Table = themr("list", styles)(TableWithoutStyle);
+export default themr("list", styles)(Table);
 
 /**
  * Crée un composant de tableau standard.
  * @param props Les props du tableau.
  */
 export function tableFor<T, P extends {data?: T}>(props: TableProps<T, P>) {
-    const Table2 = Table as any;
+    const Table2 = themr("list", styles)(Table) as any;
     return <Table2 {...props} />;
 }

@@ -32,7 +32,6 @@ export interface ListWrapperProps {
 }
 
 /** Wrapper de liste permettant de partager le mode d'affichage de toutes les listes qu'il contient. */
-@themr("listWrapper", styles)
 @autobind
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps, void> {
@@ -120,3 +119,5 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
         );
     }
 }
+
+export default themr("listWrapper", styles)(ListWrapper);

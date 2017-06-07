@@ -70,7 +70,6 @@ export interface FieldProps<
 }
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-@themr("field", styles)
 @autobind
 @observer
 export class Field<
@@ -182,6 +181,8 @@ export class Field<
         );
     }
 }
+
+export default themr("field", styles)(Field);
 
 function buildGridClassName(prop: string | number, suffix?: string) {
     return `mdl-cell--${prop}${suffix ? suffix : ""}`;

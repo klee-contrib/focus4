@@ -9,7 +9,7 @@ import Button from "focus-components/button";
 
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
-import {TABLE_CELL_CLASS, TableWithoutStyle} from "./table";
+import {Table, TABLE_CELL_CLASS} from "./table";
 
 import * as styles from "./__style__/list.css";
 
@@ -22,10 +22,9 @@ export interface StoreTableProps<T> {
 }
 
 /** Composant de tableau lié à un store, qui permet le tri de ses colonnes. */
-@themr("list", styles)
 @autobind
 @observer
-export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P, StoreTableProps<T>> {
+export class StoreTable<T, P extends {data?: T}> extends Table<T, P, StoreTableProps<T>> {
 
     /** Les données. */
     @computed
@@ -83,3 +82,5 @@ export class StoreTable<T, P extends {data?: T}> extends TableWithoutStyle<T, P,
         store.sortBy = sortBy as keyof T;
     }
 }
+
+export default themr("list", styles)(Table);

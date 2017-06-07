@@ -14,14 +14,13 @@ import {TabsTheme} from "react-toolbox/lib/tabs";
 import {PopinStyle} from "../../components";
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
-import {MessageCenter as DefaultMessageCenter} from "../../message";
-import {MessageCenterStyle} from "../../message";
+import {MessageCenter as DefaultMessageCenter, MessageCenterStyle} from "../../message";
 import {LoadingBarStyle} from "../../network";
 import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../../search";
 
-import {ErrorCenter as DefaultErrorCenter, ErrorCenterStyle} from "./error-center";
-import {Header, HeaderStyle} from "./header";
-import {Menu, MenuItemConfig, MenuStyle} from "./menu";
+import DefaultErrorCenter, {ErrorCenterStyle} from "./error-center";
+import Header, {HeaderStyle} from "./header";
+import Menu, {MenuItemConfig, MenuStyle} from "./menu";
 
 import styles from "./__style__/layout.css";
 

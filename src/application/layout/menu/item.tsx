@@ -28,7 +28,7 @@ export interface MenuItemProps extends MenuItemConfig {
 }
 
 /** Elément de menu. */
-export const MenuItem = themr("menu", styles)(observer<MenuItemProps>(props => {
+export const MenuItem = observer<MenuItemProps>(props => {
     const {activeRoute, label, icon, iconLibrary, showLabel, onClick, route, theme} = props;
     const buttonProps = {...{icon: "link", shape: showLabel ? null : "icon" as "icon"}, label, icon, iconLibrary, onClick};
     return (
@@ -36,4 +36,6 @@ export const MenuItem = themr("menu", styles)(observer<MenuItemProps>(props => {
             <Button {...buttonProps} type="button" color={route === activeRoute ? "primary" : undefined} />
         </li>
     );
-}));
+});
+
+export default themr("menu", styles)(MenuItem);

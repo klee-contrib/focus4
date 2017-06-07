@@ -31,7 +31,6 @@ export interface ListSummaryProps {
 }
 
 /** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
-@themr("summary", styles)
 @autobind
 @observer
 export class Summary extends React.Component<ListSummaryProps, void> {
@@ -153,3 +152,5 @@ export class Summary extends React.Component<ListSummaryProps, void> {
         );
     }
 }
+
+export default themr("summary", styles)(Summary);

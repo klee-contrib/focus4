@@ -23,7 +23,6 @@ export interface FacetProps {
     theme?: FacetStyle;
 }
 
-@themr("facet", styles)
 @autobind
 @observer
 export class Facet extends React.Component<FacetProps, void> {
@@ -81,3 +80,5 @@ export class Facet extends React.Component<FacetProps, void> {
         );
     }
 }
+
+export default themr("facet", styles)(Facet);

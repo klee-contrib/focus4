@@ -30,7 +30,6 @@ export interface PopinProps {
 }
 
 /** Affiche son contenu dans une popin, dont l'ouverture est contrôlée par ses props. */
-@themr("popin", styles)
 @autobind
 @observer
 export class Popin extends React.Component<PopinProps, {}> {
@@ -160,3 +159,5 @@ export class Popin extends React.Component<PopinProps, {}> {
         : <div />;
     }
 }
+
+export default themr("popin", styles)(Popin);

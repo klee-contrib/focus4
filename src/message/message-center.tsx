@@ -39,7 +39,6 @@ interface Notification {
 }
 
 /** Centre de message. Affiche les messages lorsqu'ils sont ajoutés dans le MessageStore. */
-@themr("messageCenter", styles)
 @autobind
 @observer
 export class MessageCenter extends React.Component<MessageCenterProps, void> {
@@ -109,3 +108,5 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
         );
     }
 }
+
+export default themr("messageCenter", styles)(MessageCenter);

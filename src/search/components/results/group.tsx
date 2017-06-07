@@ -37,7 +37,6 @@ export interface Props {
     theme?: GroupStyle & {mosaicAdd?: string};
 }
 
-@themr("group", styles)
 @autobind
 @observer
 export class Group extends React.Component<Props, void> {
@@ -50,10 +49,9 @@ export class Group extends React.Component<Props, void> {
 
     private renderList() {
         const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
-        const List = StoreList as new () => StoreList<any, any>;
         return (
             <div>
-                <List
+                <StoreList
                     theme={{mosaicAdd: theme && theme.mosaicAdd}}
                     canOpenDetail={canOpenDetail}
                     data={group.list}
@@ -102,3 +100,5 @@ export class Group extends React.Component<Props, void> {
         }
     }
 }
+
+export default themr("group", styles)(Group);

@@ -20,7 +20,7 @@ export interface MenuPanelProps {
 }
 
 /** Panel contenant une sous liste de menu. */
-export const MenuPanel = themr("menu", styles)((props: MenuPanelProps) => {
+export const MenuPanel = (props: MenuPanelProps) => {
     const {children, close, opened, xOffset, yOffset, theme} = props;
     return (
         <div className={opened && theme!.panelWrapper || ""} onClick={close}>
@@ -29,4 +29,6 @@ export const MenuPanel = themr("menu", styles)((props: MenuPanelProps) => {
             </div>
         </div>
     );
-});
+};
+
+export default themr("menu", styles)(MenuPanel);

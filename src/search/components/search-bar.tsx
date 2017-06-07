@@ -29,7 +29,6 @@ export interface SearchBarProps {
     theme?: SearchBarStyle;
 }
 
-@themr("searchBar", styles)
 @autobind
 @observer
 export class SearchBar extends React.Component<SearchBarProps, void> {
@@ -201,3 +200,5 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
         );
     }
 }
+
+export default themr("searchBar", styles)(SearchBar);
