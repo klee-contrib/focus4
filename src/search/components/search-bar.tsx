@@ -177,7 +177,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
                     </div>
                     {this.text && !this.showCriteriaComponent ? <Button {...icon("clear")} onClick={this.clear} shape="icon" type="button" /> : null}
                     {store.criteria && criteriaComponent && !this.showCriteriaComponent ?
-                        <Button {...icon(`toggle${this.showCriteriaComponent ? "Up" : "Down"}`)} onClick={this.toggleCriteria} shape="icon" type="button" />
+                        <Button {...icon("open")} onClick={this.toggleCriteria} shape="icon" type="button" />
                     : null}
                 </div>
                 {!this.showCriteriaComponent && this.error ?

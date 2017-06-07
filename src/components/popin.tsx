@@ -9,7 +9,6 @@ import {findDOMNode} from "react-dom";
 import Button from "focus-components/button";
 
 import * as styles from "./__style__/popin.css";
-export {styles};
 
 export type PopinStyle = Partial<typeof styles>;
 
@@ -120,17 +119,17 @@ export class Popin extends React.Component<PopinProps, {}> {
 
     /** Récupère les deux animations d'ouverture et de fermeture selon le type de popin. */
     private get animations() {
-        const {type = "from-right"} = this.props;
+        const {type = "from-right", theme} = this.props;
         switch (type) {
             case "from-right":
                 return {
-                    open: "slideInRight",
-                    close: "slideOutRight"
+                    open: theme!.slideInRight!,
+                    close: theme!.slideOutRight!
                 };
             case "from-left":
                 return {
-                    open: "slideInLeft",
-                    close: "slideOutLeft"
+                    open: theme!.slideInLeft!,
+                    close: theme!.slideOutLeft!
                 };
             default:
                 return {open: "", close: ""};
@@ -143,13 +142,13 @@ export class Popin extends React.Component<PopinProps, {}> {
         return this.opened ?
             <div>
                 <div
-                    className={`${theme!.overlay!} animated ${this.willClose ? "fadeOut" : this.willOpen ? "fadeIn" : ""}`}
+                    className={`${theme!.overlay!} ${this.willClose ? theme!.fadeOut! : this.willOpen ? theme!.fadeIn! : ""}`}
                     onClick={closePopin}
                     style={level > 0 ? {background: "none"} : {}}
                 />
                 <div
                     data-level={level}
-                    className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : ""} animated ${this.willClose ? close : this.willOpen ? open : ""}`}
+                    className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
                     <Button icon={i18n.t(`${i18nPrefix}.icons.popin.close.name`)} iconLibrary={i18n.t(`${i18nPrefix}.icons.popin.close.library`)} shape="mini-fab" type="button" onClick={closePopin} />

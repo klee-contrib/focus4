@@ -3,18 +3,18 @@
 .bar {
     display: flex;
     align-items: center;
-    background-color: white;
-    z-index: var(--z-index-high);
+    background-color: var(--color-white);
+    z-index: var(--z-index-higher);
     position: relative;
     height: 41px;
     border-radius: 2px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-2p);
     margin: 10px 0;
-    transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow var(--animation-duration) var(--animation-curve-fast-out-slow-in);
 }
 
 .bar:hover {
-    box-shadow: 0 4px 4px 1px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-4p);
 }
 
 .bar > div {
@@ -26,7 +26,7 @@
 }
 
 .error {
-    border: 1px solid rgb(213, 0, 0);
+    border: 1px solid var(--palette-red-500);
     margin: 9px -1px;
 }
 
@@ -55,11 +55,11 @@
 }
 
 .errors {
-    color: rgb(213, 0, 0);
+    color: var(--palette-red-500);
     position: absolute;
     font-size: 12px;
     display: block;
-    z-index: var(--z-index-high);
+    z-index: var(--z-index-higher);
     bottom: -20px;
     left: 43px;
 }
@@ -81,12 +81,12 @@
 .criteria {
     position: absolute;
     top: 43px;
-    z-index: var(--z-index-high);
+    z-index: var(--z-index-higher);
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 100%;
-    border: 1px solid #ccc;
-    border-top-color: #d9d9d9;
+    border: 1px solid var(--palette-grey-400);
+    border-top-color: var(--palette-grey-300);
     box-sizing: border-box;
     padding-top: 18px;
 }
@@ -97,7 +97,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: calc(var(--z-index-high) - 1);
+    z-index: calc(var(--z-index-higher) - 1);
     background: rgba(0, 0, 0, 0.15);
 }
 

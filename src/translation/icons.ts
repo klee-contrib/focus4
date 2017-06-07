@@ -131,18 +131,14 @@ export const icons = {
             library: "material",
             name: "clear"
         },
-        search: {
-            library: "material",
-            name: "search"
-        },
-        toggleDown: {
-            library: "material",
-            name: "keyboard_arrow_up"
-        },
-        toggleUp: {
+        open: {
             library: "material",
             name: "keyboard_arrow_down"
         },
+        search: {
+            library: "material",
+            name: "search"
+        }
     },
     summary: {
         print: {

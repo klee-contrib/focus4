@@ -94,4 +94,4 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     }
 }
 
-export default themr("messageCenter", styles)(MessageCenter);
+export default MessageCenter;
