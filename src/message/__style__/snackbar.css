@@ -2,6 +2,7 @@
 
 .snackbar {
     width: var(--snackbar-width);
+    z-index: var(--z-index-highest);
 
     &.cancel {
         background-color: var(--snackbar-color-cancel);

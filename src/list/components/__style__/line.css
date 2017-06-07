@@ -1,3 +1,5 @@
+@import "../../../style/line.css";
+
 .line {
     position: relative;
 }
@@ -10,7 +12,7 @@
 
 .checkbox,
 .actions {
-    z-index: 1;
+    z-index: var(--z-index-normal);
     display: none;
     position: absolute;
 }
@@ -23,7 +25,7 @@
 .mosaic .checkbox {
     bottom: 5px;
     right: 5px;
-    z-index: 1;
+    z-index: var(--z-index-normal);
 }
 
 .line .actions {
@@ -65,7 +67,7 @@
     top: 25px;
     margin-left: -45px;
     background-color: #999;
-    z-index: 100;
+    z-index: var(--z-index-high);
     border-radius: 50%;
 }
 

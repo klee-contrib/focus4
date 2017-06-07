@@ -10,7 +10,7 @@
 }
 
 .topRow {
-    z-index: var(--header-z-index);
+    z-index: var(--z-index-high);
     background-color: var(--header-toprow-background);
 }
 
@@ -84,7 +84,7 @@
     position: fixed;
     top: 30px;
     right: 0;
-    z-index: var(--header-z-index);
+    z-index: var(--z-index-high);
 }
 
 .scrolling .actions {

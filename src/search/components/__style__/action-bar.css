@@ -11,7 +11,7 @@
     align-items: center;
     box-sizing: border-box;
     position: relative;
-    z-index: 2;
+    z-index: calc(var(--z-index-normal) + 1);
     background-color: var(--action-bar-background);
     box-shadow: var(--action-bar-shadow);
     height: var(--action-bar-height);
@@ -92,7 +92,7 @@
             position: absolute;
             right: 5px;
             top: 10px;
-            z-index: 1;
+            z-index: var(--z-index-normal);
         }
     }
 }

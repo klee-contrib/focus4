@@ -1,8 +1,10 @@
+@import "../../../style/search-bar.css";
+
 .bar {
     display: flex;
     align-items: center;
     background-color: white;
-    z-index: 2200;
+    z-index: var(--z-index-high);
     position: relative;
     height: 41px;
     border-radius: 2px;
@@ -57,7 +59,7 @@
     position: absolute;
     font-size: 12px;
     display: block;
-    z-index: 1200;
+    z-index: var(--z-index-high);
     bottom: -20px;
     left: 43px;
 }
@@ -79,7 +81,7 @@
 .criteria {
     position: absolute;
     top: 43px;
-    z-index: 2200;
+    z-index: var(--z-index-high);
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 100%;
@@ -95,7 +97,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 2199;
+    z-index: calc(var(--z-index-high) - 1);
     background: rgba(0, 0, 0, 0.15);
 }
 

@@ -38,7 +38,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: var(--menu-z-index);
+    z-index: var(--z-index-high);
 }
 
 .list {
@@ -50,7 +50,7 @@
     position: relative;
     background: var(--menu-background);
     height: 100%;
-    z-index: calc(var(--menu-z-index) + 1);
+    z-index: calc(var(--z-index-high) + 1);
 }
 
 .item {
@@ -71,7 +71,7 @@
 
 .panel {
     position: absolute;
-    z-index: calc(var(--menu-z-index) - 1);
+    z-index: calc(var(--z-index-high) - 1);
     transition: top 0.1s ease-out;
 }
 
