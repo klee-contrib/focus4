@@ -21,6 +21,10 @@ export const icons = {
             library: "material",
             name: "indeterminate_check_box"
         },
+        search: {
+            library: "material",
+            name: "search"
+        },
         selected: {
             library: "material",
             name: "check_box"

@@ -1,16 +1,18 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
 import {isEmpty, reduce} from "lodash";
-import { action, computed, observable } from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
-import { Motion, spring } from "react-motion";
+import {Motion, spring} from "react-motion";
+import {IconButton} from "react-toolbox/lib/button";
 
 import Button from "focus-components/button";
 import Dropdown, {DropdownItem} from "focus-components/dropdown";
-import InputText from "focus-components/input-text";
+import {Input} from "react-toolbox/lib/input";
 
+import {getIcon} from "../../components";
 import {ContextualActions, GroupOperationListItem, ListStore, MiniListStore} from "../../list";
 import {classReaction} from "../../util";
 
@@ -178,17 +180,24 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
 
     @computed
     private get searchBar() {
-        const {theme, hasSearchBar, searchBarPlaceholder, store} = this.props;
+        const {theme, i18nPrefix = "focus", hasSearchBar, searchBarPlaceholder, store} = this.props;
 
         if (!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store))) {
             return (
                 <div className={theme!.searchBar!}>
-                    <InputText
-                        name="search-bar"
-                        rawInputValue={store.query}
-                        onChange={text => store.query = text}
-                        placeholder={searchBarPlaceholder}
+                    <Input
+                        icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
+                        value={store.query}
+                        onChange={(text: string) => store.query = text}
+                        hint={searchBarPlaceholder}
+                        theme={{input: theme!.searchBarField, icon: theme!.searchBarIcon}}
                     />
+                    {store.query ?
+                        <IconButton
+                            icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
+                            onClick={() => store.query = ""}
+                        />
+                    : null}
                 </div>
             );
         }

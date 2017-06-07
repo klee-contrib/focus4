@@ -29,23 +29,18 @@
 }
 
 .searchBar {
-    position: relative;
-    margin-left: 10px;
-    padding-left: 30px;
+    display: flex;
 }
 
-.searchBar::before {
-    position: absolute;
-    left: var(--action-bar-search-icon-left);
-    top: var(--action-bar-search-icon-top);
-    font-family: var(--action-bar-search-icon-font);
-    content: var(--action-bar-search-icon-content);
-    font-size: var(--action-bar-search-icon-size);
+.searchBarField {
+    margin-left: 42px !important;
+    width: var(--action-bar-search-bar-width);
+    padding: 0;
 }
 
-.searchBar :global(.mdl-textfield__input) {
-    text-transform: uppercase;
-    font-weight: var(--action-bar-font-weight);
+.searchBarIcon {
+    top: -6px;
+    left: -48px;
 }
 
 .buttons {
