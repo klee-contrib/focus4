@@ -7,10 +7,10 @@ import {v4} from "uuid";
 import {DisplayTextProps} from "focus-components/input-display/text";
 import {InputTextProps} from "focus-components/input-text";
 import {LabelProps} from "focus-components/label";
-import {PanelButtonsProps} from "focus-components/panel/edit-save-buttons";
 import {SelectProps} from "focus-components/select";
 
 import {applicationStore} from "../application";
+import {PanelProps} from "../components";
 import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
@@ -269,7 +269,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
     }
 
     /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */
-    getPanelButtonProps(): PanelButtonsProps {
+    getPanelProps(): PanelProps & {getUserInput?: any} {
         return {
             editing: this.isEdit,
             getUserInput: () => ({}), // Pas besoin de passer l'input car il est déjà dans le state du formulaire.
