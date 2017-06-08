@@ -152,6 +152,7 @@ export class Field<
                 onChange={onChange}
                 rawInputValue={value}
                 valid={valid}
+                value={value}
                 valueKey={valueKey}
                 values={values}
             />

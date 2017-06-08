@@ -1,0 +1,21 @@
+@import "../../style/input-date.css";
+
+.input {
+    position: relative;
+}
+
+.calendar {
+    position: absolute;
+    top: 60px;
+    z-index: var(--z-index-high);
+    width: var(--input-date-width);
+    box-shadow: var(--input-date-shadow);
+    background: var(--color-white);
+}
+
+.toggle {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    color: var(--color-white) !important;
+}
