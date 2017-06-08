@@ -12,27 +12,39 @@ import * as styles from "../__style__/panel.css";
 
 export type PanelStyle = Partial<typeof styles>;
 
+/** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {
+    /** Nom du bloc pour le bouton d'aide. Par défaut : premier mot du titre. */
     blockName?: string;
+    /** Boutons à afficher dans le Panel. Par défaut : les boutons de formulaire (edit / save / cancel). */
+    Buttons?: React.ComponentClass<PanelButtonsProps> | React.SFC<PanelButtonsProps>;
+    /** Position des boutons. Par défaut : "top". */
     buttonsPosition?: "both" | "bottom" | "top" | "none";
+    /** Masque le panel dans le ScrollspyContainer. */
     hideOnScrollspy?: boolean;
+    /** Masque la progress bar lors du chargement/sauvegarde. */
     hideProgressBar?: boolean;
+    /** Etat de chargement. */
     loading?: boolean;
+    /** Affiche le bouton d'aide. */
     showHelp?: boolean;
+    /** CSS. */
     theme?: PanelStyle;
+    /** Titre du panel. */
     title?: string;
 }
 
+/** Construit un Panel avec un titre et des actions. */
 export class Panel extends React.Component<PanelProps, void> {
 
     spyId = uniqueId("panel_");
 
     render() {
-        const {blockName, buttonsPosition = "top", children, loading, saving, title, showHelp, editing, toggleEdit, save, hideOnScrollspy, hideProgressBar, theme} = this.props;
+        const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, saving, title, showHelp, editing, toggleEdit, save, hideOnScrollspy, hideProgressBar, theme} = this.props;
 
         const buttons = (
             <div className={theme!.actions!}>
-                <PanelButtons saving={saving} editing={editing} toggleEdit={toggleEdit} save={save}/>
+                <Buttons editing={editing} i18nPrefix={i18nPrefix} save={save} saving={saving} toggleEdit={toggleEdit} />
             </div>
         );
 
@@ -50,7 +62,7 @@ export class Panel extends React.Component<PanelProps, void> {
                             <h3 data-spy-title>
                                 {i18n.t(title)}
                                 {showHelp ?
-                                    <ButtonHelp blockName={blockName || snakeCase(i18n.t(title)).split("_")[0]} />
+                                    <ButtonHelp blockName={blockName || snakeCase(i18n.t(title)).split("_")[0]} i18nPrefix={i18nPrefix} />
                                 : null}
                             </h3>
                         : null}

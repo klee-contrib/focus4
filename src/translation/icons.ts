@@ -30,6 +30,24 @@ export const icons = {
             name: "check_box"
         }
     },
+    button: {
+        cancel: {
+            library: "material",
+            name: "clear"
+        },
+        edit: {
+            library: "material",
+            name: "edit"
+        },
+        help: {
+            library: "material",
+            name: "help_outline"
+        },
+        save: {
+            library: "material",
+            name: "save"
+        }
+    },
     contextualActions: {
         secondary: {
             library: "material",
