@@ -8,7 +8,7 @@ import {GroupOperationListItem, LineOperationListItem, StoreList} from "../../..
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
-import {ActionBar} from "../action-bar";
+import ActionBar from "../action-bar";
 
 import {computed} from "mobx";
 import * as styles from "./__style__/group.css";
