@@ -1,0 +1,7 @@
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+@import "react-toolbox/lib/input/config.css";
+
+:root {
+    --select-height: 36px;
+}

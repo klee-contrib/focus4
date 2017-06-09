@@ -1,20 +1,28 @@
-.field {
-    padding: 0;
-}
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+@import "react-toolbox/lib/input/config.css";
 
-:global([data-focus="label"]) {
-    font-weight: bold;
+.field {
+    display: flex;
+    align-items: stretch;
 }
 
 .label {
     text-align: right;
-    display: block;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 21px;
 }
 
+.display {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.label,
 .value {
-    white-space: pre;
+    padding: 8px;
+    box-sizing: border-box;
 }
 
 .edit.required .label::after {
@@ -23,27 +31,19 @@
 }
 
 .edit .label {
-    line-height: 1.8;
+    line-height: 23px;
 }
 
-.edit .value select {
-    margin: 2px 0;
+.edit .value {
+    margin-top: -27px;
+    margin-bottom: -15px;
 }
 
-.edit .value .field > div {
-    width: 250px;
+.edit.invalid [data-react-toolbox="input"] {
+    margin-bottom: -1px;
+    margin-top: -1px;
 }
 
 .edit.invalid .label {
-    color: rgb(222, 50, 38);
-}
-
-/* Corrige problème MDL qui affiche pas l'erreur */
-.edit.invalid :global(.mdl-textfield__error) {
-    visibility: visible;
-}
-
-/* Corrige problème MDL qui affiche pas l'erreur */
-.edit.invalid :global(.mdl-textfield__label)::after {
-    background-color: rgb(213, 0, 0);
+    color: var(--input-text-error-color);
 }

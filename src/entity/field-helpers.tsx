@@ -5,8 +5,8 @@ import * as React from "react";
 import {DisplayTextProps} from "focus-components/input-display/text";
 import {InputTextProps} from "focus-components/input-text";
 import {LabelProps} from "focus-components/label";
-import Select, {SelectProps} from "focus-components/select";
 
+import {Select, SelectProps} from "../components";
 import {EntityField} from "../entity";
 
 import Field, {FieldProps, RefValues} from "./field";

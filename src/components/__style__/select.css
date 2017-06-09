@@ -1,0 +1,28 @@
+@import "../../style/select.css";
+
+.select {
+    display: inline-block;
+    padding: var(--input-padding) 0;
+
+    & select {
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--input-text-bottom-border-color);
+        color: var(--color-text);
+        height: var(--select-height);
+        font-size: var(--input-field-font-size);
+    }
+}
+
+.error {
+    & select {
+        border-bottom: 1px solid var(--input-text-error-color);
+    }
+
+    & .errorLabel {
+        color: var(--input-text-error-color);
+        position: absolute;
+        font-size: var(--input-label-font-size);
+    }
+}
