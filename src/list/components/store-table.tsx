@@ -47,7 +47,7 @@ export class StoreTable<T, P extends {data?: T}> extends Table<T, P, StoreTableP
                             <div style={{display: "flex", alignItems: "center", marginBottom: sortableColumns.find(c => c === col) ? -3 : 0}}>
                                 <div>{i18n.t(columns[col])}</div>
                                 {sortableColumns.find(c => c === col) ?
-                                    <div style={{marginLeft: 3}}>
+                                    <div style={{marginLeft: 3, display: "flex"}}>
                                         <Button
                                             disabled={sortAsc && sortBy === col}
                                             handleOnClick={() => this.sort(col, true)}
@@ -83,4 +83,4 @@ export class StoreTable<T, P extends {data?: T}> extends Table<T, P, StoreTableP
     }
 }
 
-export default themr("list", styles)(Table);
+export default themr("list", styles)(StoreTable);

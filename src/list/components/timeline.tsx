@@ -5,7 +5,7 @@ import {themr} from "react-css-themr";
 
 import {EntityField} from "../../entity";
 
-import {LineWrapper} from "./line";
+import LineWrapper from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
@@ -31,10 +31,8 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
 
     private renderLines() {
         const {lineTheme, itemKey, TimelineComponent, lineProps, dateSelector} = this.props;
-        const Line = LineWrapper as new() => LineWrapper<T, P>;
-
         return this.displayedData.map((item, idx) =>
-            <Line
+            <LineWrapper
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
                 theme={lineTheme}
                 data={item}

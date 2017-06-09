@@ -59,8 +59,8 @@ export class Panel extends React.Component<PanelProps, void> {
                 {title || areButtonsTop ?
                     <div className={`${theme!.title!} ${theme!.top!}`}>
                         {title ?
-                            <h3 data-spy-title>
-                                {i18n.t(title)}
+                            <h3>
+                                <span data-spy-title>{i18n.t(title)}</span>
                                 {showHelp ?
                                     <ButtonHelp blockName={blockName || snakeCase(i18n.t(title)).split("_")[0]} i18nPrefix={i18nPrefix} />
                                 : null}
