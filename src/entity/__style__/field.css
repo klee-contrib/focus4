@@ -34,7 +34,8 @@
     line-height: 23px;
 }
 
-.edit [data-react-toolbox="input"] {
+.edit [data-react-toolbox="input"],
+.edit [data-focus="select"] {
     margin-top: -27px;
     margin-bottom: -15px;
 }

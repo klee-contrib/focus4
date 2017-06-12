@@ -89,7 +89,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     formatDate(isoDate?: string) {
         const {inputFormat = "MM/DD/YYYY"} = this.props;
         if (isISOString(isoDate)) {
-            return moment.utc(isoDate, moment.ISO_8601).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
+            return moment.utc(isoDate, moment.ISO_8601).minute(0).second(0).hour(0).utcOffset(0).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
         } else {
             return isoDate;
         }

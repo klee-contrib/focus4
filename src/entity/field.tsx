@@ -141,7 +141,7 @@ export class Field<
         let props = {
             ...inputProps as {},
             value: inputFormatter && inputFormatter(value) || value,
-            error: this.error,
+            error: this.showError && this.error || undefined,
             name,
             onChange: this.onChange
         };
