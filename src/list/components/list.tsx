@@ -251,7 +251,7 @@ export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, 
                             style={{width: this.mosaic.width, height: this.mosaic.height}}
                             onClick={this.addItemHandler}
                         >
-                            <Icon name="add" />
+                            <Icon name={i18n.t(`${i18nPrefix}.icons.list.add.name`)} library={i18n.t(`${i18nPrefix}.icons.list.add.library` as "material")} />
                             {i18n.t(`${i18nPrefix}.list.add`)}
                         </div>
                     )
