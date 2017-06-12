@@ -39,7 +39,7 @@ export interface ResultsProps {
 @observer
 export class Results extends React.Component<ResultsProps, void> {
 
-    private get key() {
+    protected get key() {
         const {store, scopeFacetKey = "FCT_SCOPE"} = this.props;
         return store.groupingKey || scopeFacetKey;
     }
@@ -54,7 +54,7 @@ export class Results extends React.Component<ResultsProps, void> {
         window.removeEventListener("resize", this.scrollListener);
     }
 
-    private scrollListener() {
+    protected scrollListener() {
         const {store, offset = 250} = this.props;
         if (store.currentCount < store.totalCount && !store.groupingKey) {
             const el = findDOMNode(this) as HTMLElement;
@@ -67,7 +67,7 @@ export class Results extends React.Component<ResultsProps, void> {
         }
     }
 
-    private renderSingleGroup(group: GroupResult<{}>) {
+    protected renderSingleGroup(group: GroupResult<{}>) {
         const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
@@ -93,7 +93,7 @@ export class Results extends React.Component<ResultsProps, void> {
         );
     }
 
-    private showAllHandler(key: string) {
+    protected showAllHandler(key: string) {
         const {store, scopeFacetKey = "FCT_SCOPE"} = this.props;
         if (store.facets.find(facet => facet.code === scopeFacetKey)) {
             this.scopeSelectionHandler(key);
@@ -102,11 +102,11 @@ export class Results extends React.Component<ResultsProps, void> {
         }
     }
 
-    private scopeSelectionHandler(scope: string) {
+    protected scopeSelectionHandler(scope: string) {
         this.props.store.setProperties({scope});
     }
 
-    private facetSelectionHandler(key: string, value: string) {
+    protected facetSelectionHandler(key: string, value: string) {
         const {selectedFacets, setProperties} = this.props.store;
         setProperties({
             groupingKey: undefined,

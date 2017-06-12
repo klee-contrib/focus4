@@ -27,9 +27,9 @@ export interface FacetProps {
 @observer
 export class Facet extends React.Component<FacetProps, void> {
 
-    @observable private isShowAll = false;
+    @observable protected isShowAll = false;
 
-    private renderFacetDataList() {
+    protected renderFacetDataList() {
         const {theme, selectedDataKey, facet, nbDefaultDataList, selectHandler} = this.props;
 
         if (selectedDataKey) {
@@ -56,7 +56,7 @@ export class Facet extends React.Component<FacetProps, void> {
         );
     }
 
-    private renderShowAllDataList() {
+    protected renderShowAllDataList() {
         const {theme, facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
         if (facet.values.length > nbDefaultDataList) {
             return (

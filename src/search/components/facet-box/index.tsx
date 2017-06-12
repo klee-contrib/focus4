@@ -29,7 +29,7 @@ export interface FacetBoxProps {
 @observer
 export class FacetBox extends React.Component<FacetBoxProps, void> {
 
-    private facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
+    protected facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
         const {scopeFacetKey = "FCT_SCOPE", store} = this.props;
         let {selectedFacets} = store;
 

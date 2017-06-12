@@ -33,13 +33,13 @@ export interface SearchBarProps {
 @observer
 export class SearchBar extends React.Component<SearchBarProps, void> {
 
-    private input?: HTMLInputElement;
+    protected input?: HTMLInputElement;
 
-    @observable private criteriaList: string[] = [];
-    @observable private showCriteriaComponent = false;
+    @observable protected criteriaList: string[] = [];
+    @observable protected showCriteriaComponent = false;
 
     @computed
-    get flatCriteria() {
+    protected get flatCriteria() {
         const {criteria} = this.props.store;
         if (criteria) {
             return toPairs(toFlatValues(criteria));
@@ -49,7 +49,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     }
 
     @computed
-    get criteria() {
+    protected get criteria() {
         return this.criteriaList.filter(crit => this.flatCriteria.map(([c, _]) => c).find(c => c === crit));
     }
 
@@ -85,14 +85,14 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
         this.focusQuery();
     }
 
-    focusQuery() {
+    protected focusQuery() {
         if (this.input) {
             this.input.focus();
         }
     }
 
     @action
-    onInputChange({currentTarget}: {currentTarget: HTMLInputElement}) {
+    protected onInputChange({currentTarget}: {currentTarget: HTMLInputElement}) {
         const {disableInputCriteria, store} = this.props;
         if (disableInputCriteria || !store.criteria) {
             store.query = currentTarget.value.trim();
@@ -118,7 +118,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
         }
     }
 
-    onScopeSelection(scope: string) {
+    protected onScopeSelection(scope: string) {
         this.focusQuery();
         this.props.store.setProperties({
             groupingKey: undefined,
@@ -130,7 +130,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     }
 
     @action
-    clear() {
+    protected clear() {
         const {store} = this.props;
         store.query = "";
         if (store.criteria) {
@@ -138,7 +138,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
         }
     }
 
-    toggleCriteria() {
+    protected toggleCriteria() {
         this.showCriteriaComponent = !this.showCriteriaComponent;
         this.props.store.blockSearch = !this.props.store.blockSearch;
     }

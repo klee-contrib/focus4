@@ -53,10 +53,10 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     @observable displayFacetBox = false;
     @observable facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
 
-    private facetBox?: HTMLDivElement;
+    protected facetBox?: HTMLDivElement;
 
     @computed
-    private get selectionButton() {
+    protected get selectionButton() {
         const {hasSelection, i18nPrefix = "focus", store} = this.props;
         if (hasSelection) {
             return (
@@ -73,7 +73,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         }
     }
 
-    private get filterButton() {
+    protected get filterButton() {
         const {theme, hasFacetBox, showSingleValuedFacets, i18nPrefix = "focus", store} = this.props;
         if (hasFacetBox && isSearch(store) && store.facets.some(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
             return (
@@ -96,7 +96,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     @computed
-    private get sortButton() {
+    protected get sortButton() {
         const {i18nPrefix = "focus", orderableColumnList, store} = this.props;
 
         if (store.totalCount > 1 && !store.selectedItems.size && (isSearch(store) || isList(store)) && orderableColumnList) {
@@ -129,7 +129,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     @computed
-    private get groupButton() {
+    protected get groupButton() {
         const {hasGrouping, i18nPrefix = "focus", store} = this.props;
 
         if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
@@ -179,7 +179,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     @computed
-    private get searchBar() {
+    protected get searchBar() {
         const {theme, i18nPrefix = "focus", hasSearchBar, searchBarPlaceholder, store} = this.props;
 
         if (!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store))) {
@@ -229,7 +229,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         this.updateFacetBoxHeight();
     }
 
-    private updateFacetBoxHeight() {
+    protected updateFacetBoxHeight() {
         if (this.facetBox && this.facetBox.clientHeight > MIN_FACETBOX_HEIGHT) {
             this.facetBoxHeight = this.facetBox.clientHeight;
         }

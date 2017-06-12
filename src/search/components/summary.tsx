@@ -37,7 +37,7 @@ export class Summary extends React.Component<ListSummaryProps, void> {
 
     /** Liste des filtres à afficher. */
     @computed.struct
-    private get filterList() {
+    protected get filterList() {
         const {hideCriteria, hideFacets, hideScope, scopes, store} = this.props;
 
         const topicList = [];
@@ -89,7 +89,7 @@ export class Summary extends React.Component<ListSummaryProps, void> {
     }
 
     @computed.struct
-    get currentSort() {
+    protected get currentSort() {
         const {orderableColumnList, store} = this.props;
         if (orderableColumnList && store.sortBy) {
             return orderableColumnList.find(o => o.key === store.sortBy && o.order === store.sortAsc) || null;

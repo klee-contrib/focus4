@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {GroupOperationListItem, LineOperationListItem, StoreList} from "../../../list";
+import {GroupOperationListItem, LineOperationListItem, MiniListStore, StoreList} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -42,12 +42,12 @@ export interface Props {
 export class Group extends React.Component<Props, void> {
 
     @computed
-    private get store() {
+    protected get store(): MiniListStore<any> {
         const {group, store} = this.props;
         return group.code ? store.getSearchGroupStore(group.code) : store;
     }
 
-    private renderList() {
+    protected renderList() {
         const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <div>
