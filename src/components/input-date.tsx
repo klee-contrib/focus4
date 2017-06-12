@@ -119,6 +119,8 @@ export class InputDate extends React.Component<InputDateProps, void> {
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
+        } else {
+            this.showCalendar = false;
         }
     }
 

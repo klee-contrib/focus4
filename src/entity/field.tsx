@@ -7,9 +7,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {Input} from "react-toolbox/lib/input";
 
-import {LabelProps} from "focus-components/label";
-
-import {BaseDisplayProps, BaseInputProps, Domain} from "./types";
+import {BaseDisplayProps, BaseInputProps, BaseLabelProps, Domain} from "./types";
 import {validate} from "./validation";
 
 import * as styles from "./__style__/field.css";
@@ -19,13 +17,13 @@ export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} 
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
-    T,                                   // Type de la valeur.
-    ICProps extends BaseInputProps,      // Props du composant d'input.
-    DCProps extends BaseDisplayProps,    // Props du component d'affichage.
-    LCProps extends Partial<LabelProps>, // Props du component de libellé.
-    R extends RefValues<T, VK, LK>,      // Type de la liste de référence associée.
-    VK extends string,                   // Nom de la propriété de valeur (liste de référence).
-    LK extends string                    // Nom de la propriété de libellé (liste de référence).
+    T,                                  // Type de la valeur.
+    ICProps extends BaseInputProps,     // Props du composant d'input.
+    DCProps extends BaseDisplayProps,   // Props du component d'affichage.
+    LCProps extends BaseLabelProps,     // Props du component de libellé.
+    R extends RefValues<T, VK, LK>,     // Type de la liste de référence associée.
+    VK extends string,                  // Nom de la propriété de valeur (liste de référence).
+    LK extends string                   // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
     /** Par défaut : 12. */
     contentSize?: number;
@@ -70,7 +68,7 @@ export class Field<
     T,
     ICProps extends BaseInputProps,
     DCProps extends BaseDisplayProps,
-    LCProps extends Partial<LabelProps>,
+    LCProps extends BaseLabelProps,
     R extends RefValues<T, VK, LK> ,
     VK extends string,
     LK extends string
@@ -114,40 +112,45 @@ export class Field<
         return undefined;
     }
 
+    /** Appelé lors d'un changement sur l'input. */
+    onChange(value: any) {
+        const {onChange, unformatter} = this.props;
+        if (onChange) {
+            (onChange as any)(unformatter && unformatter(value) || value);
+        }
+    }
+
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {valueKey = "code", labelKey = "label", values, value: rawValue, formatter, DisplayComponent, displayProps = {}, isEdit = false, theme} = this.props;
+        const {valueKey = "code", labelKey = "label", values, value: rawValue, displayFormatter, DisplayComponent, displayProps = {}, theme} = this.props;
         const value = values ? result(values.find(v => v[valueKey as keyof R] === rawValue), labelKey) : rawValue; // Résout la valeur dans le cas d'une liste de référence.
-        const FinalDisplay: React.ComponentClass<BaseDisplayProps> | React.SFC<BaseDisplayProps> = DisplayComponent || (() => <div className={theme!.display}>{formatter && formatter(value, {isEdit}) || value}</div>);
+        const FinalDisplay: React.ComponentClass<BaseDisplayProps> | React.SFC<BaseDisplayProps> = DisplayComponent || (({text}) => <div className={theme!.display}>{text}</div>);
         return (
             <FinalDisplay
                 {...displayProps as {}}
-                formattedInputValue={formatter && formatter(value, {isEdit}) || value}
-                rawInputValue={value}
-                value={value}
+                text={displayFormatter && displayFormatter(value) || value}
             />
         );
     }
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {InputComponent, value, valueKey = "code", labelKey = "label", values, inputProps, name, onChange} = this.props;
+        const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, inputProps, name} = this.props;
         const FinalInput: React.ComponentClass<any> | React.SFC<any> = InputComponent || Input;
-        const valid = !(this.showError && this.error);
 
-        // On renseigne `formattedInputValue`, `value` et `rawInputValue` pour être sûr de prendre en compte tous les types de composants.
-        return (
-            <FinalInput
-                {...inputProps as {}}
-                error={valid ? null : this.error}
-                labelKey={labelKey}
-                name={name}
-                onChange={onChange}
-                value={value}
-                valueKey={valueKey}
-                values={values}
-            />
-        );
+        let props = {
+            ...inputProps as {},
+            value: inputFormatter && inputFormatter(value) || value,
+            error: this.error,
+            name,
+            onChange: this.onChange
+        };
+
+        if (values) {
+            props = {...props, values, labelKey, valueKey};
+        }
+
+        return <FinalInput {...props} />;
     }
 
     /** Affiche le composant de libellé (`LabelComponent`). */

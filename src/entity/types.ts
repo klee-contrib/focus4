@@ -1,28 +1,27 @@
-import {DisplayTextProps} from "focus-components/input-display/text";
-import {InputTextProps} from "focus-components/input-text";
-import {LabelProps} from "focus-components/label";
+import {InputProps} from "react-toolbox/lib/input";
 
 import {Validator} from "./validation";
 
 /** Props de base pour un composant d'affichage. */
 export interface BaseDisplayProps {
-    formattedInputValue?: string | number;
-    rawInputValue?: any;
-    value?: any;
+    text?: string;
 }
 
 /** Props de base pour un composant d'input. */
 export interface BaseInputProps {
-    error?: string | null;
-    formattedInputValue?: string | number;
+    error?: React.ReactNode;
     labelKey?: string;
     name?: string;
-    onChange?: (value: any) => void;
-    rawInputValue?: any;
-    valid?: boolean;
+    onChange?: Function;
     value?: any;
     valueKey?: string;
     values?: any[];
+}
+
+/** Props de base pour un composant de libellé. */
+export interface BaseLabelProps {
+    name?: string;
+    text?: string;
 }
 
 /** Définition de base d'un domaine, sans valeurs par défaut (sinon ça pose problème avec les EntityField). */
@@ -30,11 +29,14 @@ export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
     /** Classe CSS pour le champ. */
     className?: string;
 
-    /** Formatteur pour l'affichage du champ (en édition ou non) */
-    formatter?: (value: any, options?: {isEdit: boolean}) => string;
+    /** Formatteur pour l'affichage du champ en consulation. */
+    displayFormatter?: (value: any) => string;
 
-    /** Formatteur inverse pour convertir l'affichage du champ en la valeur. (en édition ou non) */
-    unformatter?: (text: string, options?: {isEdit: boolean}) => any;
+    /** Formatteur pour l'affichage du champ en édition. */
+    inputFormatter?: (value: any) => string;
+
+    /** Formatteur inverse pour convertir l'affichage du champ en la valeur (édition uniquement) */
+    unformatter?: (text: string) => any;
 
     /** Liste des validateurs. */
     validator?: Validator[];
@@ -56,7 +58,7 @@ export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
 }
 
 /** Définition de base d'un domaine. */
-export interface Domain<ICProps extends BaseInputProps = Partial<InputTextProps>, DCProps extends BaseDisplayProps = Partial<DisplayTextProps>, LCProps = Partial<LabelProps>> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
+export interface Domain<ICProps extends BaseInputProps = Partial<InputProps>, DCProps extends BaseDisplayProps = BaseDisplayProps, LCProps extends BaseLabelProps = BaseLabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {

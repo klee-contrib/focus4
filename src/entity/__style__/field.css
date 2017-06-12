@@ -34,16 +34,16 @@
     line-height: 23px;
 }
 
-.edit .value {
+.edit [data-react-toolbox="input"] {
     margin-top: -27px;
     margin-bottom: -15px;
 }
 
 .edit.invalid [data-react-toolbox="input"] {
-    margin-bottom: -1px;
-    margin-top: -1px;
+    margin-top: -28px;
+    margin-bottom: -16px;
 }
 
-.edit.invalid .label {
+.invalid .label {
     color: var(--input-text-error-color);
 }
