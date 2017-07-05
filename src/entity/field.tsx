@@ -138,7 +138,7 @@ export class Field<
         const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, inputProps, name} = this.props;
         const FinalInput: React.ComponentClass<any> | React.SFC<any> = InputComponent || Input;
 
-        let props = {
+        let props: any = {
             ...inputProps as {},
             value: inputFormatter && inputFormatter(value) || value,
             error: this.showError && this.error || undefined,

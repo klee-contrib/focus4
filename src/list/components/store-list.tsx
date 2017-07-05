@@ -51,7 +51,7 @@ export class StoreList<T, P extends {data?: T}> extends List<T, P, StoreListProp
      * Quelques props supplémentaires à ajouter pour la sélection.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentClass<P> | React.SFC<P>): LineItem<LineWrapperProps<T, P>>[] {
+    protected getItems(Component: React.ComponentClass<P> | React.SFC<P>) {
         const {hasSelection = false, selectionnableInitializer = () => true, store} = this.props;
         return super.getItems(Component).map(({key, data}) => ({
             key,
@@ -65,7 +65,7 @@ export class StoreList<T, P extends {data?: T}> extends List<T, P, StoreListProp
                 }
             },
             style: {}
-        }));
+        })) as LineItem<LineWrapperProps<T, P>>[];
     }
 
     /** `handleShowMore` appelle le store de liste serveur si c'est le cas. */

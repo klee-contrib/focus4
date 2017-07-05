@@ -1,9 +1,9 @@
 import {isEmpty} from "lodash";
-import {action, observable, reaction, runInAction} from "mobx";
+import {action, IObservableObject, observable, reaction, runInAction} from "mobx";
 import {RouteConfig, Router} from "yester";
 
 import {ViewStore} from "./store";
-export {ViewStore};
+export {IObservableObject, ViewStore};
 
 export interface RouterConfig<E = "error"> {
     /** Mode du routeur. Par défaut: "hash" */
@@ -135,35 +135,31 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
 
     /** L'objet de retour. */
     return observable({
+
+        /** Store actif dans le routeur. */
         get currentStore() {
             const store = stores.find(s => s.isActive);
             if (store) {
                 return store;
             } else {
-                return {prefix: errorPageName, errorCode: errorCode.get()};
+                return {prefix: errorPageName as E, errorCode: errorCode.get()};
             }
         },
-        start: router.init.bind(router),
-        stores: observable.ref(stores),
-        to(prefix: Store["prefix"]) {
-            if (prefix) {
-                updateUrl(`/${prefix}`);
-            }
-        }
-    }) as {
-        /** Store actif dans le routeur. */
-        readonly currentStore: Store | {prefix: E, errorCode: string};
 
         /** Lance le routeur. */
-        start(): Promise<void>;
+        start: router.init.bind(router) as Promise<void>,
 
         /** La liste des ViewStores enregistrés dans le routeur. */
-        stores: Store[];
+        stores: observable.ref(stores),
 
         /**
          * Navigue vers la racine du store du préfixe donné.
          * @param prefix Le préfixe.
          */
-        to(prefix: Store["prefix"]): void;
-    };
+        to(prefix: Store["prefix"]) {
+            if (prefix) {
+                updateUrl(`/${prefix}`);
+            }
+        }
+    });
 }
