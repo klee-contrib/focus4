@@ -147,7 +147,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         },
 
         /** Lance le routeur. */
-        start: router.init.bind(router) as Promise<void>,
+        start: router.init.bind(router) as () => Promise<void>,
 
         /** La liste des ViewStores enregistrés dans le routeur. */
         stores: observable.ref(stores),
