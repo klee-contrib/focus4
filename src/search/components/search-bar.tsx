@@ -95,7 +95,7 @@ export class SearchBar extends React.Component<SearchBarProps, void> {
     protected onInputChange({currentTarget}: {currentTarget: HTMLInputElement}) {
         const {disableInputCriteria, store} = this.props;
         if (disableInputCriteria || !store.criteria) {
-            store.query = currentTarget.value.trim();
+            store.query = currentTarget.value;
         } else if (store.criteria) {
             const tokens = currentTarget.value.trim().split(" ");
             let token = tokens[0];
