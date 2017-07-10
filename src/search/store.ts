@@ -1,8 +1,8 @@
 import {autobind} from "core-decorators";
-import {flatten} from "lodash";
-import {debounce} from "lodash-decorators";
+import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction} from "mobx";
 
+import {config} from "../config";
 import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues, validate} from "../entity";
 import {ListStoreBase, MiniListStore} from "../list";
 
@@ -38,14 +38,18 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
         // Relance la recherche à chaque modification de propriété.
         reaction(() => [
             this.blockSearch,
-            this.flatCriteria,
             this.groupingKey,
-            this.query,
             this.scope,
             this.selectedFacets,
             this.sortAsc,
             this.sortBy
         ], () => this.search());
+
+        // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
+        reaction(() => [
+            this.flatCriteria,
+            this.query
+        ], debounce(() => this.search(), config.textSearchDelay));
     }
 
     @computed
@@ -107,8 +111,6 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
         }
         return criteria || {};
     }
-
-    @debounce(200)
     @action
     async search(isScroll = false) {
         if (this.blockSearch) {
