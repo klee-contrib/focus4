@@ -177,7 +177,7 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
         } else {
             this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
             this.selectedFacets = props.selectedFacets || this.selectedFacets;
-            this.sortAsc = props.sortAsc || this.sortAsc;
+            this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
             this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         }
 
