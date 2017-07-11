@@ -28,6 +28,10 @@
     z-index: var(--z-index-normal);
 }
 
+.selected {
+    cursor: pointer;
+}
+
 .line .actions {
     top: calc(50% - 18px);
     right: 0;

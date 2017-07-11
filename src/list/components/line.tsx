@@ -72,7 +72,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                 const opList = operationList && operationList(data);
                 return (
                     <li
-                        className={mosaic ? theme!.mosaic! : theme!.line!}
+                        className={`${mosaic ? theme!.mosaic! : theme!.line!} ${this.isSelected ? theme!.selected! : ""}`}
                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                     >
                         {hasSelection && selectionnableInitializer!(data) && store ?
