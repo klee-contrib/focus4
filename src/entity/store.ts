@@ -129,10 +129,10 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
 
     // Cas d'une entrée de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
-        const output: StoreListNode<EntityStoreNode> = observable([]) as any;
-        output.$entity = entityMap[trueEntry];
-        output.set = action(function set(this: typeof output, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
-        return output;
+        const outputEntry: StoreListNode<EntityStoreNode> = observable([]) as any;
+        outputEntry.$entity = entityMap[trueEntry];
+        outputEntry.set = action(function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
+        return outputEntry;
     }
 
     // Cas d'une entrée simple : On parcourt tous les champs de l'entité.

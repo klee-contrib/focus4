@@ -206,6 +206,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
     }
 
     @classReaction<ActionBar>(that => () => {
+        // tslint:disable-next-line:no-shadowed-variable
         const {hasFacetBox, store} = that.props;
         return hasFacetBox && isSearch(store) && store.facets.length && store.facets[0] || false;
     })

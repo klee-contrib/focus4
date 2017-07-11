@@ -81,6 +81,10 @@
         "no-require-imports": true,
         "no-shadowed-variable": true,
         "no-string-throw": true,
+        "no-this-assignment": [
+            true,
+            {"allow-destructuring": true}
+        ],
         "no-trailing-whitespace": true,
         "no-unnecessary-callback-wrapper": true,
         "no-unnecessary-initializer": true,

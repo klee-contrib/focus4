@@ -186,6 +186,7 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
     }
 
     getSearchGroupStore(groupCode: string): MiniListStore<any> {
+        // tslint:disable-next-line:no-this-assignment
         const store = this;
         const searchGroupStore = {
             get currentCount() {

@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import {some, values} from "lodash";
+import {some, values as _values} from "lodash";
 import {action, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
 import {InputProps} from "react-toolbox/lib/input";
@@ -261,7 +261,7 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
         }
 
         // La validation est en succès si chaque champ n'est pas en erreur.
-        return !some(values(this.fields), field => field && field.error);
+        return !some(_values(this.fields), field => field && field.error);
     }
 
     /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */

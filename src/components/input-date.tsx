@@ -10,7 +10,7 @@ import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {Input} from "react-toolbox/lib/input";
 
-import * as theme from "react-toolbox/lib/date_picker/theme.css";
+import * as styles from "react-toolbox/lib/date_picker/theme.css";
 import {calendar, input, toggle} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
@@ -175,7 +175,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 }
 
-export default themr("RTDialog", theme)(InputDate);
+export default themr("RTDialog", styles)(InputDate);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
