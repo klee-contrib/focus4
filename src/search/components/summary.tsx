@@ -79,7 +79,7 @@ export class Summary extends React.Component<ListSummaryProps, void> {
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
                     key: criteriaKey,
-                    label: `${i18n.t(translationKey)} : ${domain && domain.formatter && domain.formatter(value) || value}`,
+                    label: `${i18n.t(translationKey)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
                     onDeleteClick: () => store.criteria[criteriaKey].value = undefined
                 });
             }
