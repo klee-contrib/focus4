@@ -27,7 +27,7 @@ export interface InputDateProps {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé au clic sur le calendrier ou au blur (n'est pas synchronisé avec le texte). */
-    onChange: (date: string) => void;
+    onChange: (date?: string) => void;
     /** Placeholder. */
     placeholder?: string;
     /** CSS. */
@@ -99,7 +99,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     @action
     onInputBlur() {
         const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
-        const text = (this.dateText || "").trim();
+        const text = (this.dateText || "").trim() || undefined;
 
         const date = moment.utc(text, inputFormat, true);
 
