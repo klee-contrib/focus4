@@ -39,6 +39,7 @@ export interface AdvancedSearchProps {
     hideSummaryScope?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
+    isManualFetch?: boolean;
     lineComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
     lineProps?: {};
@@ -128,7 +129,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
     }
 
     protected renderResults() {
-        const {theme, groupOperationLists, hasSelection, i18nPrefix, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {theme, groupOperationLists, hasSelection, i18nPrefix, isManualFetch, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
@@ -139,6 +140,7 @@ export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
                 groupOperationLists={groupOperationLists}
                 hasSelection={!!hasSelection}
                 i18nPrefix={i18nPrefix}
+                isManualFetch={isManualFetch}
                 lineComponentMapper={lineComponentMapper}
                 mosaicComponentMapper={mosaicComponentMapper}
                 lineProps={lineProps}

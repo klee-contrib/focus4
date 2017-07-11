@@ -1,7 +1,10 @@
 import {autobind} from "core-decorators";
+import i18n from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
+
+import Button from "focus-components/button";
 
 import {GroupOperationListItem, LineOperationListItem} from "../../../list";
 
@@ -9,6 +12,8 @@ import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
 import Group, {GroupStyle} from "./group";
 export {GroupStyle};
+
+import {bottomRow} from "../../../list/components/__style__/list.css";
 
 export interface ResultsProps {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
@@ -23,6 +28,7 @@ export interface ResultsProps {
     hasSelection: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
+    isManualFetch?: boolean;
     lineComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
     lineProps?: {};
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
@@ -55,8 +61,8 @@ export class Results extends React.Component<ResultsProps, void> {
     }
 
     protected scrollListener() {
-        const {store, offset = 250} = this.props;
-        if (store.currentCount < store.totalCount && !store.groupingKey) {
+        const {store, offset = 250, isManualFetch} = this.props;
+        if (!isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
             const el = findDOMNode(this) as HTMLElement;
             const scrollTop = window.pageYOffset;
             if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
@@ -65,6 +71,26 @@ export class Results extends React.Component<ResultsProps, void> {
                 }
             }
         }
+    }
+
+    protected get showMoreButton() {
+        const {store, isManualFetch, i18nPrefix = "focus"} = this.props;
+        if (isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
+            return (
+                <div className={bottomRow}>
+                    <Button
+                        onClick={() => !store.isLoading && store.search(true)}
+                        icon={i18n.t(`${i18nPrefix}.icons.list.add.name`)}
+                        iconLibrary={i18n.t(`${i18nPrefix}.icons.list.add.library`)}
+                        shape={null}
+                        type="button"
+                        label={`${i18n.t(`${i18nPrefix}.list.show.more`)}`}
+                    />
+                </div>
+            );
+        }
+
+        return null;
     }
 
     protected renderSingleGroup(group: GroupResult<{}>) {
@@ -123,7 +149,12 @@ export class Results extends React.Component<ResultsProps, void> {
         if (!filteredResults.length) {
             return null;
         } else if (filteredResults.length === 1) {
-            return this.renderSingleGroup(filteredResults[0]);
+            return (
+                <div>
+                    {this.renderSingleGroup(filteredResults[0])}
+                    {this.showMoreButton}
+                </div>
+            );
         } else {
             return <div>{filteredResults.map(this.renderSingleGroup)}</div>;
         }
