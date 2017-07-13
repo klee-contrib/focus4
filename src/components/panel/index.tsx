@@ -37,7 +37,7 @@ export interface PanelProps extends PanelButtonsProps {
 /** Construit un Panel avec un titre et des actions. */
 export class Panel extends React.Component<PanelProps, void> {
 
-    spyId = uniqueId("panel_");
+    spyId = uniqueId("panel-");
 
     render() {
         const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, saving, title, showHelp, editing, toggleEdit, save, hideOnScrollspy, hideProgressBar, theme} = this.props;

@@ -16,19 +16,19 @@ import Summary from "./summary";
 import * as styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 
-export interface AdvancedSearchProps {
+export interface AdvancedSearchProps<T> {
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data?: {}) => boolean;
+    canOpenDetail?: (data?: T) => boolean;
     /** Par défaut : true */
     canRemoveSort?: boolean;
-    DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
-    detailHeight?: number | ((data: {}) => number);
+    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
+    detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
-    groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
+    groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
     /** Par défault: true */
     hasBackToTop?: boolean;
     hasGrouping?: boolean;
@@ -40,11 +40,11 @@ export interface AdvancedSearchProps {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     isManualFetch?: boolean;
-    lineComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
-    lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
+    lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
+    lineOperationLists?: {[scope: string]: (data: T) => LineOperationListItem<T>[]};
     lineProps?: {};
     mode?: "list" | "mosaic";
-    mosaicComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
+    mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     mosaicWidth?: number;
     mosaicHeight?: number;
     /** Par défaut : 6 */
@@ -55,13 +55,13 @@ export interface AdvancedSearchProps {
     scopes: {code: string, label?: string}[];
     searchBarPlaceholder?: string;
     showSingleValuedFacets?: boolean;
-    store: SearchStore<any>;
+    store: SearchStore<T>;
     theme?: AdvancedSearchStyle & {mosaicAdd?: string};
 }
 
 @autobind
 @observer
-export class AdvancedSearch extends React.Component<AdvancedSearchProps, void> {
+export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, void> {
 
     componentWillMount() {
         this.props.store.search();

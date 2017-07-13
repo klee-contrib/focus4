@@ -15,35 +15,35 @@ export {GroupStyle};
 
 import {bottomRow} from "../../../list/components/__style__/list.css";
 
-export interface ResultsProps {
+export interface ResultsProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data?: {}) => boolean;
-    DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
-    detailHeight?: number | ((data: {}) => number);
+    canOpenDetail?: (data?: T) => boolean;
+    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
+    detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
-    groupOperationLists?: {[scope: string]: GroupOperationListItem<{}>[]};
+    groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
     hasSelection: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     isManualFetch?: boolean;
-    lineComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
+    lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     lineProps?: {};
-    lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<{}>[]};
-    mosaicComponentMapper?: (scope: string) => React.ComponentClass<any> | React.SFC<any>;
+    lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<T>[]};
+    mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
-    store: SearchStore<any>;
+    store: SearchStore<T>;
     theme?: {mosaicAdd?: string};
 }
 
 @autobind
 @observer
-export class Results extends React.Component<ResultsProps, void> {
+export class Results<T> extends React.Component<ResultsProps<T>, void> {
 
     protected get key() {
         const {store, scopeFacetKey = "FCT_SCOPE"} = this.props;

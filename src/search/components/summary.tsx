@@ -15,7 +15,7 @@ import * as styles from "./__style__/summary.css";
 
 export type SummaryStyle = Partial<typeof styles>;
 
-export interface ListSummaryProps {
+export interface ListSummaryProps<T> {
     /** Par défaut : true */
     canRemoveSort?: boolean;
     exportAction?: () => void;
@@ -26,14 +26,14 @@ export interface ListSummaryProps {
     i18nPrefix?: string;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     scopes: {code: string, label?: string}[];
-    store: SearchStore<any>;
+    store: SearchStore<T>;
     theme?: SummaryStyle;
 }
 
 /** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
 @autobind
 @observer
-export class Summary extends React.Component<ListSummaryProps, void> {
+export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
 
     /** Liste des filtres à afficher. */
     @computed.struct

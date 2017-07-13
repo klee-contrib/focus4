@@ -24,7 +24,7 @@ export const dum = {
 
 export const dumClass = {
     MiniListStore: new ListStore(),
-    SearchStore: new SearchStore({scoped: (_: any) => Promise.resolve({} as any), unscoped: (_: any) => Promise.resolve({} as any)})
+    SearchStore: new SearchStore((_: any) => Promise.resolve({} as any), {})
 };
 
 export function test(name: string, Element: ReactElement<any>) {

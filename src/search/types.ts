@@ -27,16 +27,9 @@ export interface QueryInput<C = {}> {
     top: number;
 }
 
-export interface QueryOutput<T, C = {}> {
+export interface QueryOutput<T = any, C = {}> {
     list?: T[];
     groups?: GroupResult<T>[];
-    facets: FacetOutput[];
-    totalCount: number;
-    query: QueryInput<C>;
-}
-
-export interface UnscopedQueryOutput<C = {}> {
-    groups: GroupResult<{}>[];
     facets: FacetOutput[];
     totalCount: number;
     query: QueryInput<C>;

@@ -26,7 +26,7 @@ const DEFAULT_FACETBOX_MARGIN = 1000;
 
 export type ActionBarStyle = Partial<typeof styles>;
 
-export interface ActionBarProps {
+export interface ActionBarProps<T> {
     group?: {code: string, label: string, totalCount: number};
     hasFacetBox?: boolean;
     hasGrouping?: boolean;
@@ -37,18 +37,18 @@ export interface ActionBarProps {
     /** Par défaut : 6 */
     nbDefaultDataListFacet?: number;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    operationList?: GroupOperationListItem<{}>[];
+    operationList?: GroupOperationListItem<T>[];
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
     searchBarPlaceholder?: string;
     showSingleValuedFacets?: boolean;
-    store: MiniListStore<any>;
+    store: MiniListStore<T>;
     theme?: ActionBarStyle;
 }
 
 @observer
 @autobind
-export class ActionBar extends React.Component<ActionBarProps, void> {
+export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
     @observable displayFacetBox = false;
     @observable facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
@@ -205,7 +205,7 @@ export class ActionBar extends React.Component<ActionBarProps, void> {
         return null;
     }
 
-    @classReaction<ActionBar>(that => () => {
+    @classReaction<ActionBar<T>>(that => () => {
         // tslint:disable-next-line:no-shadowed-variable
         const {hasFacetBox, store} = that.props;
         return hasFacetBox && isSearch(store) && store.facets.length && store.facets[0] || false;

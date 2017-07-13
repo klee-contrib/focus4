@@ -15,31 +15,31 @@ import * as styles from "./__style__/group.css";
 
 export type GroupStyle = Partial<typeof styles>;
 
-export interface Props {
+export interface GroupProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data?: {}) => boolean;
-    DetailComponent?: React.ComponentClass<any> | React.SFC<any>;
+    canOpenDetail?: (data?: T) => boolean;
+    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
     detailHeight?: number | ((data: {}) => number);
     /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     group: GroupResult<{}>;
-    groupOperationList?: GroupOperationListItem<{}>[];
+    groupOperationList?: GroupOperationListItem<T>[];
     hasSelection?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    LineComponent?: React.ComponentClass<any> | React.SFC<any>;
+    LineComponent?: React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     lineProps?: {};
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
-    MosaicComponent?: React.ComponentClass<any> | React.SFC<any>;
+    MosaicComponent?: React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     perPage: number;
     showAllHandler?: (key: string) => void;
-    store: SearchStore<any>;
+    store: SearchStore<T>;
     theme?: GroupStyle & {mosaicAdd?: string};
 }
 
 @autobind
 @observer
-export class Group extends React.Component<Props, void> {
+export class Group<T> extends React.Component<GroupProps<T>, void> {
 
     @computed
     protected get store(): MiniListStore<any> {

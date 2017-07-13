@@ -6,31 +6,39 @@ import {config} from "../config";
 import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues, validate} from "../entity";
 import {ListStoreBase, MiniListStore} from "../list";
 
-import {FacetOutput, GroupResult, QueryInput, QueryOutput, UnscopedQueryOutput} from "./types";
+import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
 
-export interface SearchActionServices {
-    scoped?: <T, C = {}>(query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
-    unscoped?: <C = {}>(query: QueryInput<C>) => Promise<UnscopedQueryOutput<C>>;
+export type SearchService<T = any> = (query: QueryInput) => Promise<QueryOutput<T>>;
+
+export interface SearchProperties {
+    query?: string;
+    scope?: string;
+    groupingKey?: string;
+    selectedFacets?: {[facet: string]: string};
+    sortAsc?: boolean;
+    sortBy?: string;
+    top?: number;
 }
 
 @autobind
-export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
+export class SearchStore<T = any, C extends StoreNode<{}> = any> extends ListStoreBase<T> {
 
     @observable blockSearch = false;
 
-    @observable readonly criteria?: C;
+    @observable readonly criteria: C;
     @observable groupingKey: string | undefined;
     @observable scope = "ALL";
     @observable selectedFacets: {[facet: string]: string} = {};
 
     readonly facets: IObservableArray<FacetOutput> = observable([]);
-    readonly results: IObservableArray<GroupResult<{}>> = observable([]);
+    readonly results: IObservableArray<GroupResult<T>> = observable([]);
 
-    services: SearchActionServices;
+    service: SearchService<T>;
 
-    constructor(services: SearchActionServices, criteriaEntity?: Entity) {
+    constructor(service: SearchService<T>, initialProperties: SearchProperties, criteriaEntity?: Entity) {
         super();
-        this.services = services;
+        this.service = service;
+        this.setProperties(initialProperties);
         if (criteriaEntity) {
             this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteriaEntity}, {}, "criteria") as any;
         }
@@ -134,27 +142,19 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
             top
         };
 
-        let response;
-
         this.pendingCount++;
-        if (scope.toUpperCase() === "ALL") {
-            if (this.services.unscoped) {
-                response = await this.services.unscoped(data);
-            } else {
-                throw new Error("Impossible de lancer une recherche non scopée puisque le service correspondant n'a pas été défini.");
-            }
-        } else {
-            if (this.services.scoped) {
-                response = scopedResponse(await this.services.scoped(data), results, isScroll);
-            } else {
-                throw new Error("Impossible de lancer une recherche scopée puisque le service correspondant n'a pas été défini.");
-            }
-        }
+
+        const response = await this.service(data);
+
         this.pendingCount--;
+
+        if (isScroll && response.list) {
+            response.list = [...results[0].list, ...response.list];
+        }
 
         this.selectedList.clear();
         this.facets.replace(response.facets);
-        this.results.replace(response.groups);
+        this.results.replace(response.groups || [{list: response.list || []}]);
         this.serverCount = response.totalCount;
     }
 
@@ -168,21 +168,22 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
     }
 
     @action
-    setProperties(props: {query?: string, scope?: string, groupingKey?: string, selectedFacets?: {[facet: string]: string}, sortAsc?: boolean, sortBy?: string}) {
+    setProperties(props: SearchProperties) {
         if (props.scope && props.scope !== this.scope) {
             this.selectedFacets = {};
             this.groupingKey = props.groupingKey;
-            this.sortAsc = props.sortAsc || false;
-            this.sortBy = props.sortBy;
+            this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : true;
+            this.sortBy = props.sortBy as keyof T;
         } else {
             this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
             this.selectedFacets = props.selectedFacets || this.selectedFacets;
             this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
-            this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
+            this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy as keyof T : this.sortBy;
         }
 
         this.query = props.query || this.query;
         this.scope = props.scope || this.scope;
+        this.top = props.top || this.top;
     }
 
     getSearchGroupStore(groupCode: string): MiniListStore<any> {
@@ -235,15 +236,4 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
         searchGroupStore.selectionStatus = selectionStatus as any;
         return observable(searchGroupStore);
     }
-}
-
-function scopedResponse<T, C>(data: QueryOutput<T, C>, results: GroupResult<T>[], isScroll?: boolean) {
-    if (isScroll && data.list) {
-        data.list = [...results[0].list, ...data.list];
-    }
-    return ({
-        facets: data.facets,
-        groups: data.groups || [{list: data.list} as GroupResult<T>],
-        totalCount: data.totalCount
-    });
 }

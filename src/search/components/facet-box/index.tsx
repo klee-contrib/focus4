@@ -13,7 +13,7 @@ export {FacetStyle};
 import * as styles from "./__style__/facet-box.css";
 export type FacetBoxStyle = Partial<typeof styles>;
 
-export interface FacetBoxProps {
+export interface FacetBoxProps<T> {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     /** Par défaut : 6 */
@@ -21,13 +21,13 @@ export interface FacetBoxProps {
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
     showSingleValuedFacets?: boolean;
-    store: SearchStore<any>;
+    store: SearchStore<T>;
     theme?: FacetBoxStyle;
 }
 
 @autobind
 @observer
-export class FacetBox extends React.Component<FacetBoxProps, void> {
+export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
 
     protected facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
         const {scopeFacetKey = "FCT_SCOPE", store} = this.props;

@@ -18,20 +18,20 @@ import * as styles from "./__style__/search-bar.css";
 
 export type SearchBarStyle = Partial<typeof styles>;
 
-export interface SearchBarProps {
+export interface SearchBarProps<T, C extends StoreNode<{}>> {
     criteriaComponent?: React.ReactElement<any>;
     disableInputCriteria?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     placeholder?: string;
     scopes?: {code: string; label?: string}[];
-    store: SearchStore<StoreNode<{}>>;
+    store: SearchStore<T, C>;
     theme?: SearchBarStyle;
 }
 
 @autobind
 @observer
-export class SearchBar extends React.Component<SearchBarProps, void> {
+export class SearchBar<T, C extends StoreNode<{}>> extends React.Component<SearchBarProps<T, C>, void> {
 
     protected input?: HTMLInputElement;
 
