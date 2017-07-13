@@ -104,7 +104,7 @@ export class SearchStore<C extends StoreNode<{}>> extends ListStoreBase<any> {
             }
 
             for (const criteriaKey in criteria) {
-                if (!(criteria as any)[criteriaKey]) {
+                if ((criteria as any)[criteriaKey] === "" || (criteria as any)[criteriaKey] === undefined) {
                     delete (criteria as any)[criteriaKey];
                 }
             }
