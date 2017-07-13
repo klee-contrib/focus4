@@ -34,7 +34,7 @@
 
 .line .actions {
     top: calc(50% - 18px);
-    right: 0;
+    right: 10px;
 }
 
 .mosaic .actions {

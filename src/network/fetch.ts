@@ -11,11 +11,7 @@ import {requestStore} from "./store";
  * @param url L'url à requêter.
  * @param data Le corps du message.
  */
-export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE", url: string, data?: RQ): Promise<any> {
-
-    // On détermine le body et les headers en fonction des entrées.
-    const body = data ? JSON.stringify(data) : undefined;
-    const headers = data ? {"Content-Type": isObject(data) ? "application/json" : "text/plain"} : undefined;
+export async function coreFetch(url: string, options: RequestInit): Promise<any> {
 
     // On crée la requête dans le store de requête.
     const id = v4();
@@ -23,7 +19,7 @@ export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE
 
     // On lance la requête.
     try {
-        const response = await window.fetch(url, {method, body, headers, credentials: "include"});
+        const response = await window.fetch(url, options);
 
         if (response.status >= 200 && response.status < 300) { // Retour en succès.
 
@@ -33,7 +29,7 @@ export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE
             // On détermine le type de retour en fonction du Content-Type dans le header.
             const contentType = response.headers.get("Content-Type");
             if (contentType && contentType.includes("application/json")) {
-                return await response.json() as RS;
+                return await response.json();
             } else {
                 return await response.text();
             }
@@ -67,7 +63,7 @@ export async function coreFetch<RQ, RS>(method: "GET" | "POST" | "PUT" | "DELETE
  * @param url L'url à requêter.
  */
 export async function httpDelete<RS>(url: string): Promise<RS> {
-    return coreFetch("DELETE", url);
+    return coreFetch(url, {method: "DELETE", credentials: "include"});
 }
 
 /**
@@ -75,7 +71,7 @@ export async function httpDelete<RS>(url: string): Promise<RS> {
  * @param url L'url à requêter.
  */
 export async function httpGet<RS>(url: string): Promise<RS> {
-    return coreFetch("GET", url);
+    return coreFetch(url, {method: "GET", credentials: "include"});
 }
 
 /**
@@ -84,7 +80,12 @@ export async function httpGet<RS>(url: string): Promise<RS> {
  * @param data Le corps du message.
  */
 export async function httpPost<RQ, RS>(url: string, data: RQ): Promise<RS> {
-    return coreFetch("POST", url, data);
+    return coreFetch(url, {
+        method: "POST",
+        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"},
+        body: JSON.stringify(data),
+        credentials: "include"
+    });
 }
 
 /**
@@ -93,5 +94,10 @@ export async function httpPost<RQ, RS>(url: string, data: RQ): Promise<RS> {
  * @param data Le corps du message.
  */
 export async function httpPut<RQ, RS>(url: string, data: RQ): Promise<RS> {
-    return coreFetch("PUT", url, data);
+    return coreFetch(url, {
+        method: "PUT",
+        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"},
+        body: JSON.stringify(data),
+        credentials: "include"
+    });
 }
