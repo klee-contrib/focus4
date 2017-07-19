@@ -35,12 +35,12 @@ export class SearchStore<T = any, C extends StoreNode<{}> = any> extends ListSto
 
     service: SearchService<T>;
 
-    constructor(service: SearchService<T>, initialProperties: SearchProperties, criteriaEntity?: Entity) {
+    constructor(service: SearchService<T>, initialProperties: SearchProperties, criteria?: [C, Entity]) {
         super();
         this.service = service;
         this.setProperties(initialProperties);
-        if (criteriaEntity) {
-            this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteriaEntity}, {}, "criteria") as any;
+        if (criteria) {
+            this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteria[1]}, {}, "criteria") as any;
         }
 
         // Relance la recherche à chaque modification de propriété.
