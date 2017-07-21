@@ -64,7 +64,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                 const facetItem = facetOutput && facetOutput.values.find(facet => facet.code === facetValue);
                 topicList.push({
                     key: facetKey,
-                    label: `${i18n.t(facetOutput.label)} : ${i18n.t(facetItem && facetItem.label || facetValue)}`,
+                    label: `${i18n.t(facetOutput && facetOutput.label || facetKey)} : ${i18n.t(facetItem && facetItem.label || facetValue)}`,
                     onDeleteClick: () => store.setProperties({
                         selectedFacets: omit(store.selectedFacets, facetKey) as {[facet: string]: string}
                     })
