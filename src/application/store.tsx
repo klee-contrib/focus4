@@ -3,14 +3,15 @@ import * as React from "react";
 
 import {ButtonProps} from "react-toolbox/lib/button";
 import {MenuItemProps} from "react-toolbox/lib/menu";
+import {TooltipProps} from "react-toolbox/lib/tooltip";
 
 /** Mode de l'application (consultation ou édition) */
 export type Mode = "consult" | "edit";
 
-export interface PrimaryAction extends ButtonProps {
+export type PrimaryAction = ButtonProps & TooltipProps & {
     /** Icône custom (non material). */
     iconCustom?: boolean;
-}
+};
 
 export interface SecondaryAction extends MenuItemProps {
     /** Icône custom (non material). */
