@@ -3,11 +3,10 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {classReaction} from "../../../util";
-
-import {applicationStore} from "../../store";
-
+/** Props du conteneur de header. */
 export interface HeaderScrollingProps {
+    /** Précise si le header peut se déployer ou non. */
+    canDeploy: boolean;
     /** Handler qui sera appelé à chaque dépliement/repliement. */
     notifySizeChange?: (isDeployed?: boolean) => void;
     /** Sélecteur de l'élément de DOM sur lequel on écoute le scroll (par défaut : window) */
@@ -44,6 +43,12 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         this.scrollTargetNode.addEventListener("resize", this.listener);
     }
 
+    componentWillReceiveProps({canDeploy}: HeaderScrollingProps) {
+        if (this.props.canDeploy !== canDeploy) {
+            this.handleScroll(canDeploy);
+        }
+    }
+
     componentWillUnmount() {
         this.scrollTargetNode.removeEventListener("scroll", this.listener);
         this.scrollTargetNode.removeEventListener("resize", this.listener);
@@ -54,7 +59,6 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     /** Recalcule l'état du header, appelé à chaque scroll, resize ou changement de `canDeploy`. */
-    @classReaction(() => applicationStore.canDeploy)
     handleScroll(canDeploy?: boolean) {
 
         // Si on est déployé, on recalcule le seuil de déploiement.
@@ -65,7 +69,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
 
         // On détermine si on a dépassé le seuil.
         const top = window.pageYOffset || document.documentElement.scrollTop;
-        const isDeployed = (canDeploy !== undefined ? canDeploy : applicationStore.canDeploy) ? top <= this.deployThreshold : false;
+        const isDeployed = (canDeploy !== undefined ? canDeploy : this.props.canDeploy) ? top <= this.deployThreshold : false;
 
         // Et on se met à jour.
         if (isDeployed !== this.isDeployed) {
@@ -79,8 +83,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
 
     render() {
         const {isDeployed, placeholderHeight} = this;
-        const {canDeploy} = applicationStore;
-        const {scrolling, deployed, undeployed} = this.props.theme;
+        const {canDeploy, theme: {scrolling, deployed, undeployed}} = this.props;
         return (
             <header ref={header => this.header = header} className={`${scrolling} ${isDeployed ? deployed : undeployed}`}>
                 {this.props.children}
