@@ -80,13 +80,14 @@ export class Table<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T
     }
 }
 
-export default themr("list", styles)(Table);
+const ThemedTable = themr("list", styles)(Table);
+export default ThemedTable;
 
 /**
  * Crée un composant de tableau standard.
  * @param props Les props du tableau.
  */
 export function tableFor<T, P extends {data?: T}>(props: TableProps<T, P>) {
-    const Table2 = themr("list", styles)(Table) as any;
+    const Table2 = ThemedTable as any;
     return <Table2 {...props} />;
 }

@@ -294,13 +294,14 @@ export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, 
     }
 }
 
-export default themr("list", styles)(List);
+const ThemedList = themr("list", styles)(List);
+export default ThemedList;
 
 /**
  * Crée un composant de liste standard.
  * @param props Les props de la liste.
  */
 export function listFor<T, P extends {data?: T}>(props: ListProps<T, P>) {
-    const List2 = themr("list", styles)(List) as any;
+    const List2 = ThemedList as any;
     return <List2 {...props} />;
 }

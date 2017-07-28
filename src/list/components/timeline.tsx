@@ -54,13 +54,14 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
     }
 }
 
-export default themr("list", styles)(Timeline);
+const ThemedTimeline = themr("list", styles)(Timeline);
+export default ThemedTimeline;
 
 /**
  * Crée un composant affichant une liste sous forme de Timeline.
  * @param props Les props de la timeline.
  */
 export function timelineFor<T, P extends {data?: T}>(props: TimelineProps<T, P>) {
-    const List = themr("list", styles)(Timeline) as any;
+    const List = ThemedTimeline as any;
     return <List {...props} />;
 }
