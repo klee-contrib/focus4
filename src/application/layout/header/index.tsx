@@ -1,6 +1,7 @@
 import * as React from "react";
 import {themr} from "react-css-themr";
 
+import {applicationStore} from "../../store";
 import {HeaderActions} from "./actions";
 import {HeaderContent} from "./content";
 import {HeaderScrolling} from "./scrolling";
@@ -11,20 +12,38 @@ export type HeaderStyle = Partial<typeof styles>;
 
 /** Le header, posé par défaut par le Layout. */
 export const Header = ({i18nPrefix, marginLeft, theme}: {i18nPrefix?: string, marginLeft: number, theme?: HeaderStyle}) => (
-    <HeaderScrolling theme={{
-        deployed: theme!.deployed!,
-        scrolling: theme!.scrolling!,
-        undeployed: theme!.undeployed!
-    }}>
-        <HeaderTopRow marginLeft={marginLeft} theme={{
-            item: theme!.item!,
-            left: theme!.left!,
-            middle: theme!.middle!,
-            right: theme!.right!,
-            topRow: theme!.topRow!
-        }} />
-        <HeaderContent className={theme!.content!} marginLeft={marginLeft} />
-        <HeaderActions className={theme!.actions!} i18nPrefix={i18nPrefix} />
+    <HeaderScrolling
+        canDeploy={applicationStore.canDeploy}
+        theme={{
+            deployed: theme!.deployed!,
+            scrolling: theme!.scrolling!,
+            undeployed: theme!.undeployed!
+        }}
+    >
+        <HeaderTopRow
+            barLeft={applicationStore.barLeft}
+            barRight={applicationStore.barRight}
+            marginLeft={marginLeft}
+            summary={applicationStore.summary}
+            theme={{
+                item: theme!.item!,
+                left: theme!.left!,
+                middle: theme!.middle!,
+                right: theme!.right!,
+                topRow: theme!.topRow!
+            }}
+        />
+        <HeaderContent
+            cartridge={applicationStore.cartridge}
+            className={theme!.content!}
+            marginLeft={marginLeft}
+        />
+        <HeaderActions
+            className={theme!.actions!}
+            i18nPrefix={i18nPrefix}
+            primary={applicationStore.actions.primary}
+            secondary={applicationStore.actions.secondary}
+        />
     </HeaderScrolling>
 );
 
