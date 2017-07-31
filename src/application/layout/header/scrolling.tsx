@@ -2,17 +2,20 @@ import {autobind} from "core-decorators";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
+
+import {HeaderStyle, styles} from "./types";
 
 /** Props du conteneur de header. */
 export interface HeaderScrollingProps {
     /** Précise si le header peut se déployer ou non. */
-    canDeploy: boolean;
+    canDeploy?: boolean;
     /** Handler qui sera appelé à chaque dépliement/repliement. */
     notifySizeChange?: (isDeployed?: boolean) => void;
     /** Sélecteur de l'élément de DOM sur lequel on écoute le scroll (par défaut : window) */
     scrollTargetSelector?: string;
     /** Classes CSS. */
-    theme: {scrolling: string; deployed: string; undeployed: string};
+    theme?: HeaderStyle;
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
@@ -82,13 +85,14 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     render() {
-        const {isDeployed, placeholderHeight} = this;
-        const {canDeploy, theme: {scrolling, deployed, undeployed}} = this.props;
+        const {canDeploy, theme} = this.props;
         return (
-            <header ref={header => this.header = header} className={`${scrolling} ${isDeployed ? deployed : undeployed}`}>
+            <header ref={header => this.header = header} className={`${theme!.scrolling!} ${this.isDeployed ? theme!.deployed! : theme!.undeployed!}`}>
                 {this.props.children}
-                {!isDeployed ? <div style={{height: canDeploy ? placeholderHeight : 60, width: "100%"}} /> : null}
+                {!this.isDeployed ? <div style={{height: canDeploy ? this.placeholderHeight : 60, width: "100%"}} /> : null}
             </header>
         );
     }
 }
+
+export default themr("header", styles)(HeaderScrolling);

@@ -19,14 +19,14 @@ import {LoadingBarStyle} from "../../network";
 import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../../search";
 
 import DefaultErrorCenter, {ErrorCenterStyle} from "./error-center";
-import Header, {HeaderStyle} from "./header";
+import Header, {HeaderActions, HeaderBarLeft, HeaderBarRight, HeaderContent, HeaderScrolling, HeaderStyle, HeaderSummary, HeaderTopRow} from "./header";
 import Menu, {MenuItemConfig, MenuStyle} from "./menu";
 
 import styles from "./__style__/layout.css";
 
 export type LayoutStyle = Partial<typeof styles>;
 
-export {DefaultErrorCenter as ErrorCenter, Header, HeaderStyle, Menu, MenuItemConfig};
+export {DefaultErrorCenter as ErrorCenter, Header, HeaderActions, HeaderBarLeft, HeaderBarRight, HeaderContent, HeaderScrolling, HeaderStyle, HeaderSummary, HeaderTopRow, Menu, MenuItemConfig};
 
 /** Props du Layout, comportant les différents composants injectables. */
 export interface LayoutProps {
@@ -38,7 +38,6 @@ export interface LayoutProps {
     LoadingBar?: React.ComponentClass<any> | React.SFC<any>;
     MenuLeft?: React.ComponentClass<any> | React.SFC<any>;
     MessageCenter?: React.ComponentClass<any> | React.SFC<any>;
-    OtherRootComponent?: React.ComponentClass<any> | React.SFC<any>;
     theme?: LayoutStyle;
 }
 
@@ -48,15 +47,26 @@ export interface LayoutProps {
 @observer
 class LayoutBase extends React.Component<LayoutProps, void> {
 
-    /** Largeur du menu. */
-    @observable menuWidth = 0;
+    // On utilise le contexte React pour partager la taille du menu.
+    static childContextTypes = {
+        layout: React.PropTypes.object
+    };
+
+    /** Objet passé en contexte pour la taille du menu.. */
+    @observable childContext = {
+        menuWidth: 0
+    };
+
+    getChildContext() {
+        return {layout: this.childContext};
+    }
 
     // Permet de récupérer et d'actualiser la largeur du menu à l'exécution.
     componentDidMount() { this.getMenuWidth(); }
     componentDidUpdate() { this.getMenuWidth(); }
     getMenuWidth() {
         if (this.props.MenuLeft) {
-            this.menuWidth = document.getElementsByTagName("nav")[0].clientWidth;
+            this.childContext.menuWidth = document.getElementsByTagName("nav")[0].clientWidth;
         }
     }
 
@@ -70,7 +80,6 @@ class LayoutBase extends React.Component<LayoutProps, void> {
             LoadingBar,
             MenuLeft,
             MessageCenter = DefaultMessageCenter,
-            OtherRootComponent,
             theme
         } = this.props;
 
@@ -79,18 +88,17 @@ class LayoutBase extends React.Component<LayoutProps, void> {
                 {LoadingBar ? <LoadingBar /> : null}
                 <MessageCenter />
                 {ErrorCenter ? <ErrorCenter /> : null}
-                <AppHeader marginLeft={this.menuWidth} />
+                <AppHeader />
                 {MenuLeft ? <MenuLeft /> : null}
-                <div className={theme!.content!} style={{marginLeft: this.menuWidth}}>
+                <div className={theme!.content!} style={{marginLeft: this.childContext.menuWidth}}>
                     {children}
                 </div>
                 {Footer ?
-                    <footer style={{marginLeft: this.menuWidth}}>
+                    <footer style={{marginLeft: this.childContext.menuWidth}}>
                         <Footer />
                     </footer>
                 : null}
                 {DevTools ? <DevTools /> : null}
-                {OtherRootComponent ? <OtherRootComponent /> : null}
             </div>
         );
     }
