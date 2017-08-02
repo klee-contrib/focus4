@@ -10,7 +10,7 @@ export type DisplayStyle = Partial<typeof styles>;
 /** Props du composant d'affichage. */
 export interface DisplayProps {
     /** Formatteur. */
-    formatter?: (value: string | number) => string;
+    formatter?: (value: any) => string;
     /** Service de résolution de code. */
     keyResolver?: (key: number | string) => Promise<string | undefined>;
     /** Nom de la propriété de libellé, pour liste de référence. */
@@ -29,7 +29,7 @@ export interface DisplayProps {
 @observer
 export class Display extends React.Component<DisplayProps, void> {
 
-    @observable text = "";
+    @observable value?: any;
 
     componentWillMount() {
         this.load(this.props);
@@ -43,18 +43,18 @@ export class Display extends React.Component<DisplayProps, void> {
 
     async load({value, keyResolver}: DisplayProps) {
         if (value && keyResolver) {
-            this.text = await keyResolver(value) || `${value || ""}`;
+            this.value = await keyResolver(value) || value;
         } else {
-            this.text = `${value || ""}`;
+            this.value = value;
         }
     }
 
     render() {
         const {valueKey = "code", labelKey = "label", values, value, formatter, theme} = this.props;
-        const text = values ? get<string>(values.find(v => (v as any)[valueKey] === value), labelKey) : this.text;
+        const displayed: any = values && get(values.find(v => (v as any)[valueKey] === value), labelKey) || this.value;
         return (
             <div data-focus="display" className={theme!.display}>
-                {formatter && formatter(text) || value}
+                {formatter && formatter(displayed) || displayed}
             </div>
         );
     }
