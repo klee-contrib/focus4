@@ -1,6 +1,5 @@
 import {autobind} from "core-decorators";
 import i18n from "i18next";
-import {result} from "lodash";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -10,6 +9,7 @@ import {Input} from "react-toolbox/lib/input";
 import {BaseDisplayProps, BaseInputProps, BaseLabelProps, Domain} from "./types";
 import {validate} from "./validation";
 
+import { Display } from "../components/index";
 import * as styles from "./__style__/field.css";
 export type FieldStyle = Partial<typeof styles>;
 
@@ -31,6 +31,8 @@ export interface FieldProps<
     error?: string | null;
     /** Force l'affichage de l'erreur, même si le champ n'a pas encore été modifié. */
     forceErrorDisplay?: boolean;
+    /** Service de résolution de code. */
+    keyResolver?: (key: number | string) => Promise<string | undefined>;
     /** Affiche le label. */
     hasLabel?: boolean;
     /** A utiliser à la place de `ref`. */
@@ -122,20 +124,24 @@ export class Field<
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {valueKey = "code", labelKey = "label", values, value: rawValue, displayFormatter, DisplayComponent, displayProps = {}, theme} = this.props;
-        const value = values ? result(values.find(v => v[valueKey as keyof R] === rawValue), labelKey) : rawValue; // Résout la valeur dans le cas d'une liste de référence.
-        const FinalDisplay: React.ComponentClass<BaseDisplayProps> | React.SFC<BaseDisplayProps> = DisplayComponent || (({text}) => <div className={theme!.display}>{text}</div>);
+        const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}} = this.props;
+        const FinalDisplay: React.ComponentClass<any> | React.SFC<any> = DisplayComponent || Display;
         return (
             <FinalDisplay
                 {...displayProps as {}}
-                text={displayFormatter && displayFormatter(value) || value}
+                formatter={displayFormatter}
+                keyResolver={keyResolver}
+                labelKey={labelKey}
+                value={value}
+                valueKey={valueKey}
+                values={values}
             />
         );
     }
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, inputProps, name} = this.props;
+        const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps, name} = this.props;
         const FinalInput: React.ComponentClass<any> | React.SFC<any> = InputComponent || Input;
 
         let props: any = {
@@ -148,6 +154,10 @@ export class Field<
 
         if (values) {
             props = {...props, values, labelKey, valueKey};
+        }
+
+        if (keyResolver) {
+            props = {...props, keyResolver};
         }
 
         return <FinalInput {...props} />;

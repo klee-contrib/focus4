@@ -25,7 +25,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
     render() {
         const {button, ...menuProps} = this.props;
         return (
-            <div style={{position: "relative", display: "inline-block"}}>
+            <div data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
                 <Button {...button} onClick={() => this.isOpened = !this.isOpened} />
                 <Menu {...menuProps} active={this.isOpened} onHide={() => this.isOpened = false}>
                     {menuProps.children}

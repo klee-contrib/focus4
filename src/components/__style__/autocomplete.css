@@ -1,0 +1,14 @@
+.autocomplete {
+    padding: 0;
+}
+
+.suggestions:not(.up) {
+    margin-top: -5px;
+}
+
+.progressBar {
+    margin-top: -22px;
+    margin-bottom: 5px;
+    display: block;
+    height: 2px;
+}

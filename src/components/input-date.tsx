@@ -136,7 +136,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     render() {
         const {error, name, placeholder, disabled, theme, calendarFormat = "ddd, MMM D"} = this.props;
         return (
-            <div data-id={this._inputDateId} className={input}>
+            <div data-focus="input-date" data-id={this._inputDateId} className={input}>
                 <Input
                     disabled={disabled}
                     error={error}

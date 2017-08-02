@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "7.1.8",
+  "version": "7.2.0",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -40,6 +40,7 @@
     "inversify": "4.2.0",
     "inversify-inject-decorators": "3.0.1",
     "lodash": "4.17.4",
+    "lodash-decorators": "4.3.5",
     "material-design-icons-iconfont": "3.0.3",
     "material-design-lite": "1.2.1",
     "mobx": "3.2.1",

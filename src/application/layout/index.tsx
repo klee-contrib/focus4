@@ -11,7 +11,7 @@ import {ChipTheme} from "react-toolbox/lib/chip";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
-import {PanelStyle, PopinStyle} from "../../components";
+import {AutocompleteStyle, DisplayStyle, PanelStyle, PopinStyle} from "../../components";
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
 import {MessageCenter as DefaultMessageCenter} from "../../message";
@@ -108,7 +108,9 @@ class LayoutBase extends React.Component<LayoutProps, void> {
 export interface LayoutStyleProviderProps {
     actionBar?: ActionBarStyle;
     advancedSearch?: AdvancedSearchStyle;
+    autocomplete?: AutocompleteStyle;
     contextualActions?: ContextualActionsStyle;
+    display?: DisplayStyle;
     errorCenter?: ErrorCenterStyle;
     facet?: FacetStyle;
     facetBox?: FacetBoxStyle;
