@@ -71,7 +71,7 @@ export class ViewStore<V, N extends string> {
     }
 
     /** Représente l'état courant de l'URL. */
-    @computed
+    @computed.struct
     get currentView() {
         return this.isActive && this.view || {} as View<V>;
     }
