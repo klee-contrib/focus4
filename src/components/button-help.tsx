@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import i18next from "i18next";
 import * as React from "react";
 import {IconButton} from "react-toolbox/lib/button";
 import Tooltip from "react-toolbox/lib/tooltip";
@@ -21,7 +21,7 @@ export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string
         <Button
             onClick={() => openHelpCenter(url, blockName)}
             icon={getIcon(`${i18nPrefix}.icons.button.help`)}
-            tooltip={`${i18n.t(`${i18nPrefix}.components.button.help`)} : ${blockName}`}
+            tooltip={`${i18next.t(`${i18nPrefix}.components.button.help`)} : ${blockName}`}
         />
     );
 }

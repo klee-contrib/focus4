@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -80,8 +80,8 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                                 className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
                                 shape="icon"
                                 type="button"
-                                icon={i18n.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.name`)}
-                                iconLibrary={i18n.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.library` )}
+                                icon={i18next.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.name`)}
+                                iconLibrary={i18next.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.library`)}
                                 onClick={this.onSelection}
                                 color={this.isSelected ? "primary" : undefined}
                             />

@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
@@ -106,8 +106,8 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                     <Dropdown
                         button={{
                             shape: isTextButton && "icon" || buttonShape,
-                            icon: i18n.t(`${i18nPrefix}.icons.contextualActions.secondary.name`),
-                            iconLibrary: i18n.t(`${i18nPrefix}.icons.contextualActions.secondary.library`),
+                            icon: i18next.t(`${i18nPrefix}.icons.contextualActions.secondary.name`),
+                            iconLibrary: i18next.t(`${i18nPrefix}.icons.contextualActions.secondary.library`),
                             color: !isTextButton ? "primary" : undefined
                         }}
                         operations={secondaryActionList}

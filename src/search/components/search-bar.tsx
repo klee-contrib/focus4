@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {difference, toPairs} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -75,7 +75,7 @@ export class SearchBar<T, C extends StoreNode<{}>> extends React.Component<Searc
             .map(([crit]) => crit)
             .join(", ");
         if (error) {
-            return `${i18n.t(`${i18nPrefix}.search.bar.error`)} : ${error}`;
+            return `${i18next.t(`${i18nPrefix}.search.bar.error`)} : ${error}`;
         } else {
             return undefined;
         }
@@ -148,8 +148,8 @@ export class SearchBar<T, C extends StoreNode<{}>> extends React.Component<Searc
         const icon = (name: string) => {
             const pre = `${i18nPrefix}.icons.searchBar.${name}`;
             return {
-                icon: i18n.t(`${pre}.name`),
-                iconLibrary: i18n.t(`${pre}.library`)
+                icon: i18next.t(`${pre}.name`),
+                iconLibrary: i18next.t(`${pre}.library`)
             };
         };
         return (
@@ -170,7 +170,7 @@ export class SearchBar<T, C extends StoreNode<{}>> extends React.Component<Searc
                         <input
                             name="search-bar-input"
                             onChange={this.onInputChange}
-                            placeholder={i18n.t(placeholder || "")}
+                            placeholder={i18next.t(placeholder || "")}
                             ref={input => this.input = input}
                             value={this.text}
                         />

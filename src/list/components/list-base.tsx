@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {computed, observable} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -92,18 +92,18 @@ export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extend
                     {isManualFetch && this.hasMoreData ?
                         <Button
                             handleOnClick={this.handleShowMore}
-                            icon={i18n.t(`${i18nPrefix}.icons.list.add.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.list.add.library`)}
+                            icon={i18next.t(`${i18nPrefix}.icons.list.add.name`)}
+                            iconLibrary={i18next.t(`${i18nPrefix}.icons.list.add.library`)}
                             shape={null}
                             type="button"
-                            label={`${i18n.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18n.t(`${i18nPrefix}.list.show.displayed`)})`}
+                            label={`${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`}
                         />
                     : <div />}
                     {showAllHandler ?
                         <Button
                             handleOnClick={showAllHandler}
-                            icon={i18n.t(`${i18nPrefix}.icons.list.showAll.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.list.showAll.library`)}
+                            icon={i18next.t(`${i18nPrefix}.icons.list.showAll.name`)}
+                            iconLibrary={i18next.t(`${i18nPrefix}.icons.list.showAll.library`)}
                             label={`${i18nPrefix}.list.show.all`}
                             type="button"
                             shape={null}

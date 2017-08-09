@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {omit, values} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -50,7 +50,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
         const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store: {facets, selectedFacets}} = this.props;
         return (
             <div className={theme!.facetBox!}>
-                <h3>{i18n.t(`${i18nPrefix}.search.facets.title`)}</h3>
+                <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
                 {facets.filter(facet => shouldDisplayFacet(facet, selectedFacets, showSingleValuedFacets)).map(facet => {
                     if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                         return (

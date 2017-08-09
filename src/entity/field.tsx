@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -99,14 +99,14 @@ export class Field<
         // On vérifie que le champ n'est pas vide et obligatoire.
         const {isRequired, validator, label = ""} = this.props;
         if (isRequired && (value === undefined || value === null || value === "")) {
-            return i18n.t("focus.validation.required");
+            return i18next.t("focus.validation.required");
         }
 
         // On applique le validateur du domaine.
         if (validator && value !== undefined && value !== null) {
-            const validStat = validate({value, name: i18n.t(label)}, validator);
+            const validStat = validate({value, name: i18next.t(label)}, validator);
             if (validStat.errors.length) {
-                return i18n.t(validStat.errors.join(", "));
+                return i18next.t(validStat.errors.join(", "));
             }
         }
 
@@ -166,7 +166,7 @@ export class Field<
     /** Affiche le composant de libellé (`LabelComponent`). */
     label() {
         const {name, label, LabelComponent} = this.props;
-        const FinalLabel = LabelComponent || (() => <label htmlFor={name}>{label && i18n.t(label) || ""}</label>);
+        const FinalLabel = LabelComponent || (() => <label htmlFor={name}>{label && i18next.t(label) || ""}</label>);
         return <FinalLabel name={name} text={label} />;
     }
 

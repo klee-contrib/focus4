@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -20,7 +20,7 @@ export interface GroupProps<T> {
     canOpenDetail?: (data?: T) => boolean;
     DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
     detailHeight?: number | ((data: {}) => number);
-    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
+    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<T>[];
@@ -72,7 +72,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                 />
                 {store.isLoading ?
                     <div style={{padding: "15px"}}>
-                        {i18n.t(`${i18nPrefix}.search.loading`)}
+                        {i18next.t(`${i18nPrefix}.search.loading`)}
                     </div>
                 : null}
             </div>

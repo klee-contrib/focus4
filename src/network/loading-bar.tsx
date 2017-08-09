@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import i18next from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -24,8 +24,8 @@ export const LoadingBar = observer(({i18nPrefix = "focus", theme, displayDevBar,
     const icon = (name: string) => {
         const pre = `${i18nPrefix}.icons.loadingBar.${name}`;
         return {
-            name: i18n.t(`${pre}.name`),
-            library: i18n.t(`${pre}.library`)
+            name: i18next.t(`${pre}.name`),
+            library: i18next.t(`${pre}.library`)
         };
     };
     return (

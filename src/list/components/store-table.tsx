@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -45,7 +45,7 @@ export class StoreTable<T, P extends {data?: T}> extends Table<T, P, StoreTableP
                     {Object.keys(columns).map(col => (
                         <th className={TABLE_CELL_CLASS} key={col}>
                             <div style={{display: "flex", alignItems: "center", marginBottom: sortableColumns.find(c => c === col) ? -3 : 0}}>
-                                <div>{i18n.t(columns[col])}</div>
+                                <div>{i18next.t(columns[col])}</div>
                                 {sortableColumns.find(c => c === col) ?
                                     <div style={{marginLeft: 3, display: "flex"}}>
                                         <Button
@@ -53,16 +53,16 @@ export class StoreTable<T, P extends {data?: T}> extends Table<T, P, StoreTableP
                                             handleOnClick={() => this.sort(col, true)}
                                             shape="icon"
                                             type="button"
-                                            icon={i18n.t(`${i18nPrefix}.icons.table.sortAsc.name`)}
-                                            iconLibrary={i18n.t(`${i18nPrefix}.icons.table.sortAsc.library`)}
+                                            icon={i18next.t(`${i18nPrefix}.icons.table.sortAsc.name`)}
+                                            iconLibrary={i18next.t(`${i18nPrefix}.icons.table.sortAsc.library`)}
                                         />
                                         <Button
                                             disabled={!sortAsc && sortBy === col}
                                             handleOnClick={() => this.sort(col, false)}
                                             shape="icon"
                                             type="button"
-                                            icon={i18n.t(`${i18nPrefix}.icons.table.sortDesc.name`)}
-                                            iconLibrary={i18n.t(`${i18nPrefix}.icons.table.sortDesc.library`)}
+                                            icon={i18next.t(`${i18nPrefix}.icons.table.sortDesc.name`)}
+                                            iconLibrary={i18next.t(`${i18nPrefix}.icons.table.sortDesc.library`)}
                                         />
                                     </div>
                                 : null}

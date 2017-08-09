@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {isEmpty, reduce} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -62,8 +62,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
             return (
                 <Button
                     shape="icon"
-                    icon={i18n.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.name`)}
-                    iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.library`)}
+                    icon={i18next.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.name`)}
+                    iconLibrary={i18next.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.library`)}
                     onClick={store.toggleAll}
                     type="button"
                 />
@@ -80,8 +80,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                 <div style={{position: "relative"}}>
                     <Button
                         onClick={() => this.displayFacetBox = !this.displayFacetBox}
-                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.name`)}
-                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.library`)}
+                        icon={i18next.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.name`)}
+                        iconLibrary={i18next.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.library`)}
                         iconPosition="right"
                         label={`${i18nPrefix}.search.action.filter`}
                         shape={null}
@@ -115,8 +115,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                 <Dropdown
                     button={{
                         label: `${i18nPrefix}.search.action.sort`,
-                        icon: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
-                        iconLibrary: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
+                        icon: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
+                        iconLibrary: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
                         iconPosition: "right",
                         shape: null
                     }}
@@ -143,7 +143,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
             const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
                 operationList.push({
                     action: () => store.groupingKey = key,
-                    label: i18n.t(label)
+                    label: i18next.t(label)
                 });
                 return operationList;
             }, [] as DropdownItem[]);
@@ -151,8 +151,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
             if (!isEmpty(groupOperationList)) {
                 const button = {
                     label: `${i18nPrefix}.search.action.group`,
-                    icon: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
-                    iconLibrary: i18n.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
+                    icon: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
+                    iconLibrary: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
                     iconPosition: "right" as "right",
                     shape: null
                 };
@@ -244,10 +244,10 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                     <div className={theme!.buttons!}>
                         {this.selectionButton}
                         {group ?
-                            <strong>{`${i18n.t(group.label)} (${group.totalCount})`}</strong>
+                            <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>
                         : null}
                         {store.selectedItems.size ?
-                            <strong>{`${store.selectedItems.size} ${i18n.t(`${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`)}`}</strong>
+                            <strong>{`${store.selectedItems.size} ${i18next.t(`${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`)}`}</strong>
                         : null}
                         {this.filterButton}
                         {this.sortButton}
@@ -264,8 +264,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                             {(style: {marginTop: number}) => (
                                 <div style={style} ref={i => this.facetBox = i}>
                                     <Button
-                                        icon={i18n.t(`${i18nPrefix}.icons.actionBar.close.name`)}
-                                        iconLibrary={i18n.t(`${i18nPrefix}.icons.actionBar.close.library`)}
+                                        icon={i18next.t(`${i18nPrefix}.icons.actionBar.close.name`)}
+                                        iconLibrary={i18next.t(`${i18nPrefix}.icons.actionBar.close.library`)}
                                         shape="icon"
                                         onClick={() => this.displayFacetBox = false}
                                     />
@@ -288,7 +288,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
 export default themr("actionBar", styles)(ActionBar);
 
-function isSearch(store: any): store is SearchStore<any> {
+function isSearch(store: any): store is SearchStore {
     return store.hasOwnProperty("groupingKey");
 }
 

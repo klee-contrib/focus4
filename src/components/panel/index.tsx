@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import i18next from "i18next";
 import {snakeCase, uniqueId} from "lodash";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -60,9 +60,9 @@ export class Panel extends React.Component<PanelProps, void> {
                     <div className={`${theme!.title!} ${theme!.top!}`}>
                         {title ?
                             <h3>
-                                <span data-spy-title>{i18n.t(title)}</span>
+                                <span data-spy-title>{i18next.t(title)}</span>
                                 {showHelp ?
-                                    <ButtonHelp blockName={blockName || snakeCase(i18n.t(title)).split("_")[0]} i18nPrefix={i18nPrefix} />
+                                    <ButtonHelp blockName={blockName || snakeCase(i18next.t(title)).split("_")[0]} i18nPrefix={i18nPrefix} />
                                 : null}
                             </h3>
                         : null}

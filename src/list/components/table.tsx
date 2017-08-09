@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {values} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -39,7 +39,7 @@ export class Table<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T
             <thead>
                 <tr>
                     {values(this.props.columns).map(col => (
-                        <th className={TABLE_CELL_CLASS} key={col}>{i18n.t(col)}</th>
+                        <th className={TABLE_CELL_CLASS} key={col}>{i18next.t(col)}</th>
                     ))}
                 </tr>
             </thead>

@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import i18next from "i18next";
 import {isNull, isNumber, isUndefined} from "lodash";
 import moment from "moment";
 
@@ -123,7 +123,7 @@ export function stringValidator(text: string, options?: StringOptions) {
 }
 
 function getErrorLabel(type: string, options?: TrKey): string {
-    return i18n.t(options && options.translationKey ? options.translationKey : `focus.validation.${type}`);
+    return i18next.t(options && options.translationKey ? options.translationKey : `focus.validation.${type}`);
 }
 
 /**

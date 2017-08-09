@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -30,7 +30,7 @@ export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> 
     DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
-    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
+    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
@@ -251,8 +251,8 @@ export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, 
                             style={{width: this.mosaic.width, height: this.mosaic.height}}
                             onClick={this.addItemHandler}
                         >
-                            <Icon name={i18n.t(`${i18nPrefix}.icons.list.add.name`)} library={i18n.t(`${i18nPrefix}.icons.list.add.library` as "material")} />
-                            {i18n.t(`${i18nPrefix}.list.add`)}
+                            <Icon name={i18next.t(`${i18nPrefix}.icons.list.add.name`)} library={i18next.t(`${i18nPrefix}.icons.list.add.library` as "material")} />
+                            {i18next.t(`${i18nPrefix}.list.add`)}
                         </div>
                     )
                 },
@@ -268,7 +268,7 @@ export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, 
         return !hideAdditionalItems && !this.displayedData.length && EmptyComponent ?
             <EmptyComponent addItemHandler={this.addItemHandler} />
         : !hideAdditionalItems && !this.displayedData.length ?
-            <div>{i18n.t(`${i18nPrefix}.list.empty`)}</div>
+            <div>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
         : (
             <div>
                 <TransitionMotion

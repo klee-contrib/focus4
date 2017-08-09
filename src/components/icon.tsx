@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import i18next from "i18next";
 import * as React from "react";
 
 /**
@@ -14,8 +14,8 @@ export function getIcon(name: React.ReactNode, isCustom: boolean): JSX.Element |
 export function getIcon(i18nKey: string): JSX.Element | string;
 export function getIcon(name?: React.ReactNode, isCustom?: boolean) {
     if (isCustom === undefined) {
-        isCustom = i18n.t(`${name}.library`) !== "material";
-        name = i18n.t(`${name}.name`);
+        isCustom = i18next.t(`${name}.library`) !== "material";
+        name = i18next.t(`${name}.name`);
     }
 
     if (isCustom) {

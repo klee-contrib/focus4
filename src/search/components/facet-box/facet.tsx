@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {uniqueId} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
@@ -48,7 +48,7 @@ export class Facet extends React.Component<FacetProps, void> {
             <ul>
                 {facetValues.map(facetValue => (
                     <li key={uniqueId("facet-item")} onClick={() => this.props.selectHandler(this.props.facet.code, facetValue.code)}>
-                        <div>{i18n.t(facetValue.label)}</div>
+                        <div>{i18next.t(facetValue.label)}</div>
                         <div className={theme!.count!}>{facetValue.count}</div>
                     </li>
                 ))}
@@ -61,7 +61,7 @@ export class Facet extends React.Component<FacetProps, void> {
         if (facet.values.length > nbDefaultDataList) {
             return (
                 <div className={theme!.show!} onClick={() => this.isShowAll = !this.isShowAll}>
-                    {i18n.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
+                    {i18next.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                 </div>
             );
         } else {
@@ -73,7 +73,7 @@ export class Facet extends React.Component<FacetProps, void> {
         const {theme, facet} = this.props;
         return (
             <div className={theme!.facet!}>
-                <h4>{i18n.t(facet.label)}</h4>
+                <h4>{i18next.t(facet.label)}</h4>
                 {this.renderFacetDataList()}
                 {this.renderShowAllDataList()}
             </div>

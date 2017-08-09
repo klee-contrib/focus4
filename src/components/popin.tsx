@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -151,7 +151,7 @@ export class Popin extends React.Component<PopinProps, {}> {
                     className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
-                    <Button icon={i18n.t(`${i18nPrefix}.icons.popin.close.name`)} iconLibrary={i18n.t(`${i18nPrefix}.icons.popin.close.library`)} shape="mini-fab" type="button" onClick={closePopin} />
+                    <Button icon={i18next.t(`${i18nPrefix}.icons.popin.close.name`)} iconLibrary={i18next.t(`${i18nPrefix}.icons.popin.close.library`)} shape="mini-fab" type="button" onClick={closePopin} />
                     <div>{children}</div>
                 </div>
             </div>

@@ -198,7 +198,7 @@ export class Form extends AutoForm<{}, StructureNode> {
         const {denominationSociale, capitalSocial, statutJuridiqueCode} = this.entity;
         return (
             <Panel title="form.title" {...this.getPanelButtonProps()}>
-                {i18n.t("form.content")}
+                {i18next.t("form.content")}
                 {this.fieldFor(denominationSociale)}
                 {this.fieldFor(capitalSocial)}
                 {this.selectFor(statutJuridiqueCode, referenceStore.statutJuridique, {labelKey: "libelle"})}

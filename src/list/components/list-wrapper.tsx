@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -85,8 +85,8 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                         <Button
                             color={mode === "list" ? "accent" : undefined}
                             onClick={() => this.childContext.mode = "list"}
-                            icon={i18n.t(`${i18nPrefix}.icons.listWrapper.list.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.listWrapper.list.library`)}
+                            icon={i18next.t(`${i18nPrefix}.icons.listWrapper.list.name`)}
+                            iconLibrary={i18next.t(`${i18nPrefix}.icons.listWrapper.list.library`)}
                             shape="icon"
                             type="button"
                             label={`${i18nPrefix}.list.mode.list`}
@@ -96,8 +96,8 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                         <Button
                             color={mode === "mosaic" ? "accent" : undefined}
                             onClick={() => this.childContext.mode = "mosaic"}
-                            icon={i18n.t(`${i18nPrefix}.icons.listWrapper.mosaic.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.listWrapper.mosaic.library`)}
+                            icon={i18next.t(`${i18nPrefix}.icons.listWrapper.mosaic.name`)}
+                            iconLibrary={i18next.t(`${i18nPrefix}.icons.listWrapper.mosaic.library`)}
                             shape="icon"
                             type="button"
                             label={`${i18nPrefix}.list.mode.mosaic`}
@@ -106,8 +106,8 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
                     {!hideAddItemHandler && addItemHandler && mode === "list" ?
                         <Button
                             onClick={addItemHandler}
-                            icon={i18n.t(`${i18nPrefix}.icons.listWrapper.add.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.listWrapper.add.library`)}
+                            icon={i18next.t(`${i18nPrefix}.icons.listWrapper.add.name`)}
+                            iconLibrary={i18next.t(`${i18nPrefix}.icons.listWrapper.add.library`)}
                             label={`${i18nPrefix}.list.add`}
                             shape={null}
                             type="button"

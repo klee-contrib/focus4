@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {isNull, isUndefined, union} from "lodash";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -37,7 +37,7 @@ export class Select extends React.Component<SelectProps, void> {
         const isRequiredAndNoValue = isRequired && (isUndefined(value) || isNull(value));
         if (hasUndefined || isRequiredAndNoValue) {
             values = union(
-                [{[labelKey]: i18n.t(unSelectedLabel), [valueKey]: ""}],
+                [{[labelKey]: i18next.t(unSelectedLabel), [valueKey]: ""}],
                 values
             );
         }
@@ -45,7 +45,7 @@ export class Select extends React.Component<SelectProps, void> {
             .map((val, idx) => {
                 const optVal = `${(val as any)[valueKey]}`;
                 const elementValue = (val as any)[labelKey];
-                const optLabel = isUndefined(elementValue) || isNull(elementValue) ? i18n.t("focus.components.input.select.noLabel") : elementValue;
+                const optLabel = isUndefined(elementValue) || isNull(elementValue) ? i18next.t("focus.components.input.select.noLabel") : elementValue;
                 return (<option key={idx} value={optVal}>{optLabel}</option>);
             });
     }

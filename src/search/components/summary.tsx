@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {omit} from "lodash";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
@@ -64,7 +64,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                 const facetItem = facetOutput && facetOutput.values.find(facet => facet.code === facetValue);
                 topicList.push({
                     key: facetKey,
-                    label: `${i18n.t(facetOutput && facetOutput.label || facetKey)} : ${i18n.t(facetItem && facetItem.label || facetValue)}`,
+                    label: `${i18next.t(facetOutput && facetOutput.label || facetKey)} : ${i18next.t(facetItem && facetItem.label || facetValue)}`,
                     onDeleteClick: () => store.setProperties({
                         selectedFacets: omit(store.selectedFacets, facetKey) as {[facet: string]: string}
                     })
@@ -79,7 +79,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
                     key: criteriaKey,
-                    label: `${i18n.t(translationKey)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
+                    label: `${i18next.t(translationKey)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
                     onDeleteClick: () => store.criteria[criteriaKey].value = undefined
                 });
             }
@@ -108,31 +108,31 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
         return (
             <div className={theme!.summary!}>
                 <span className={sentence}>
-                    <strong>{totalCount}&nbsp;</strong>{i18n.t(`${i18nPrefix}.search.summary.result${plural}`)}
+                    <strong>{totalCount}&nbsp;</strong>{i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
                 </span>
                 {query && query.trim().length > 0 ?
-                    <span className={sentence}> {`${i18n.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
+                    <span className={sentence}> {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
                 : null}
                 {this.filterList.length ?
                     <div className={theme!.chips!}>
-                        <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.by`)}</span>
+                        <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
                         {this.filterList.map(chip => <Chips {...chip}/>)}
                     </div>
                 : null}
                 {groupingKey ?
                     <div className={theme!.chips!}>
-                        <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
+                        <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
                         <Chips
-                            label={i18n.t(store.facets.find(facet => store.groupingKey === facet.code).label)}
+                            label={i18next.t(store.facets.find(facet => store.groupingKey === facet.code).label)}
                             onDeleteClick={() => store.groupingKey = undefined}
                         />
                     </div>
                 : null}
                 {this.currentSort && !groupingKey && totalCount > 1 ?
                     <div className={theme!.chips!}>
-                        <span className={sentence}>{i18n.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
+                        <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <Chips
-                            label={i18n.t(this.currentSort.label)}
+                            label={i18next.t(this.currentSort.label)}
                             onDeleteClick={canRemoveSort ? () => store.sortBy = undefined : undefined}
                         />
                     </div>
@@ -141,8 +141,8 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                     <div className={theme!.print!}>
                         <Button
                             handleOnClick={exportAction}
-                            icon={i18n.t(`${i18nPrefix}.icons.summary.export.name`)}
-                            iconLibrary={i18n.t(`${i18nPrefix}.icons.summary.export.library`)}
+                            icon={i18next.t(`${i18nPrefix}.icons.summary.export.name`)}
+                            iconLibrary={i18next.t(`${i18nPrefix}.icons.summary.export.library`)}
                             label={`${i18nPrefix}.search.summary.export`}
                             type="button"
                         />

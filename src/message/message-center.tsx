@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -81,9 +81,9 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
         const {content, timeout, type} = this.currentNotification || {content: "", type: undefined, timeout: 0};
         return (
             <Snackbar
-                action={i18n.t(`${i18nPrefix}.messageCenter.dismiss`)}
+                action={i18next.t(`${i18nPrefix}.messageCenter.dismiss`)}
                 active={this.active}
-                label={i18n.t(content)}
+                label={i18next.t(content)}
                 onClick={this.closeSnackbar}
                 onTimeout={this.closeSnackbar}
                 timeout={timeout}

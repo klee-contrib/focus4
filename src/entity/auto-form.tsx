@@ -179,8 +179,8 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
             runInAction(() => {
                 this.isLoading = false;
                 this.storeData.clear();
-                this.onFormDeleted();
             });
+            this.onFormDeleted();
         }
     }
 
@@ -199,8 +199,8 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
                 runInAction(() => {
                     this.storeData.set(data || {});
                     this.isLoading = false;
-                    this.onFormLoaded();
                 });
+                this.onFormLoaded();
             }
         }
     }
@@ -218,8 +218,8 @@ export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Compone
                     this.isSaving = false;
                     this.isEdit = false;
                     this.storeData.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                    this.onFormSaved();
                 });
+                this.onFormSaved();
             } catch (e) {
                 runInAction(() => {
                     this.isSaving = false;

@@ -65,6 +65,7 @@
         ],
         "no-construct": true,
         "no-debugger": true,
+        "no-duplicate-imports": true,
         "no-duplicate-variable": true,
         "no-empty": true,
         "no-eval": true,
@@ -81,6 +82,11 @@
         "no-require-imports": true,
         "no-shadowed-variable": true,
         "no-string-throw": true,
+        "no-submodule-imports": [
+            true,
+            "focus-components",
+            "react-toolbox"
+        ],
         "no-this-assignment": [
             true,
             {"allow-destructuring": true}
@@ -137,6 +143,7 @@
             true,
             "never"
         ],
+        "space-within-parens": 0,
         "switch-final-break": [true, "always"],
         "trailing-comma": [
             false

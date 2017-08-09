@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import i18n from "i18next";
+import i18next from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -20,7 +20,7 @@ export interface ResultsProps<T> {
     canOpenDetail?: (data?: T) => boolean;
     DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
     detailHeight?: number | ((data: T) => number);
-    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18n.t("focus.list.empty")}</div> */
+    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
     /** Par défaut: 5 */
@@ -80,11 +80,11 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                 <div className={bottomRow}>
                     <Button
                         onClick={() => !store.isLoading && store.search(true)}
-                        icon={i18n.t(`${i18nPrefix}.icons.list.add.name`)}
-                        iconLibrary={i18n.t(`${i18nPrefix}.icons.list.add.library`)}
+                        icon={i18next.t(`${i18nPrefix}.icons.list.add.name`)}
+                        iconLibrary={i18next.t(`${i18nPrefix}.icons.list.add.library`)}
                         shape={null}
                         type="button"
-                        label={`${i18n.t(`${i18nPrefix}.list.show.more`)}`}
+                        label={`${i18next.t(`${i18nPrefix}.list.show.more`)}`}
                     />
                 </div>
             );
