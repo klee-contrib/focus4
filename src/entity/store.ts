@@ -33,7 +33,7 @@ export interface StoreListNode<T> extends IObservableArray<T> {
 /** `EntityField` ou `EntityList`. */
 export type EntityValue<T> = EntityField<T> | EntityList<T>;
 /** Types possible pour le `T` de `EntityField<T>`. */
-export type StoreType = undefined | number | number[] | boolean | boolean[] | string | string[] | EntityStoreItem;
+export type StoreType = undefined | number | number[] | boolean | boolean[] | string | string[] | EntityStoreItem | StoreNode<{}> | StoreListNode<StoreNode<{}>>;
 
 /** Noeud de store simple. Véritable définition de `StoreNode`. */
 export type EntityStoreNode = {[key: string]: EntityValue<any /* StoreType */>} & StoreNode<{}>;
@@ -222,8 +222,9 @@ function clearEntity(entity: EntityStoreItem) {
  * Met à plat un noeud de store pour récupèrer sa valeur "brute".
  * @param entityStoreItem Le noeud de store à mettre à plat.
  */
-export function toFlatValues(entityStoreItem: StoreNode<{}>): {};
-export function toFlatValues(entityStoreItem: EntityStoreItem): {} {
+export function toFlatValues<T>(entityStoreItem: StoreListNode<StoreNode<T>>): T[];
+export function toFlatValues<T>(entityStoreItem: StoreNode<T>): T;
+export function toFlatValues(entityStoreItem: StoreNode<{}> | StoreListNode<StoreNode<{}>>): {} | {}[] {
     // Cas entrée liste : on appelle `toFlatValues` sur chaque élément.
     if (isStoreListNode(entityStoreItem)) {
         return entityStoreItem.map(toFlatValues);
