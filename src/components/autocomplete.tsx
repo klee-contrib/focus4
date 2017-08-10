@@ -79,10 +79,11 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
     }
 
     render() {
+        const {keyResolver, querySearcher, ...props} = this.props;
         return (
             <div data-focus="autocomplete">
                 <RTAutocomplete
-                    {...this.props}
+                    {...props}
                     multiple={false}
                     source={this.values.toJS()}
                     query={this.query || " "}
@@ -91,7 +92,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
                     suggestionMatch="disabled"
                 />
                 {this.isLoading ?
-                    <ProgressBar type="linear" mode="indeterminate" theme={{linear: this.props.theme!.progressBar}} />
+                    <ProgressBar type="linear" mode="indeterminate" theme={{linear: props.theme!.progressBar}} />
                 : null}
             </div>
         );
