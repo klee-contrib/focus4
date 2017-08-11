@@ -11,7 +11,7 @@ import {ChipTheme} from "react-toolbox/lib/chip";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
-import {AutocompleteStyle, DisplayStyle, PanelStyle, PopinStyle} from "../../components";
+import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, PanelStyle, PopinStyle} from "../../components";
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
 import {MessageCenter as DefaultMessageCenter} from "../../message";
@@ -109,6 +109,7 @@ export interface LayoutStyleProviderProps {
     actionBar?: ActionBarStyle;
     advancedSearch?: AdvancedSearchStyle;
     autocomplete?: AutocompleteStyle;
+    buttonBTT?: ButtonBackToTopStyle;
     contextualActions?: ContextualActionsStyle;
     display?: DisplayStyle;
     errorCenter?: ErrorCenterStyle;

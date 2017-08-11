@@ -1,4 +1,5 @@
 export {default as Autocomplete, AutocompleteProps, AutocompleteStyle} from "./autocomplete";
+export {default as ButtonBackToTop, ButtonBackToTopProps, ButtonBackToTopStyle} from "./button-back-to-top";
 export {default as ButtonMenu, IconMenu, MenuItem} from "./button-menu";
 export {default as Checkbox, CheckboxProps} from "./checkbox";
 export {default as Display, DisplayProps, DisplayStyle} from "./display";
