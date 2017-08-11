@@ -7,7 +7,7 @@ import {themr} from "react-css-themr";
 import {ListStore} from "../store";
 import {MiniListStore} from "../store-base";
 import {LineWrapperProps} from "./line";
-import {LineItem, List} from "./list";
+import {LineItem, List, ListProps} from "./list";
 
 import * as styles from "./__style__/list.css";
 
@@ -78,4 +78,14 @@ export class StoreList<T, P extends {data?: T}> extends List<T, P, StoreListProp
     }
 }
 
-export default themr("list", styles)(StoreList);
+const ThemedStoreList = themr("list", styles)(StoreList);
+export default ThemedStoreList;
+
+/**
+ * Crée un composant de liste avec store.
+ * @param props Les props de la liste.
+ */
+export function storeListFor<T, P extends {data?: T}>(props: ListProps<T, P> & StoreListProps<T>) {
+    const List2 = ThemedStoreList as any;
+    return <List2 {...props} />;
+}

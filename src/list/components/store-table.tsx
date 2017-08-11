@@ -9,7 +9,7 @@ import Button from "focus-components/button";
 
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
-import {Table, TABLE_CELL_CLASS} from "./table";
+import {Table, TABLE_CELL_CLASS, TableProps} from "./table";
 
 import * as styles from "./__style__/list.css";
 
@@ -83,4 +83,14 @@ export class StoreTable<T, P extends {data?: T}> extends Table<T, P, StoreTableP
     }
 }
 
-export default themr("list", styles)(StoreTable);
+const ThemedStoreTable = themr("list", styles)(StoreTable);
+export default ThemedStoreTable;
+
+/**
+ * Crée un composant de tableau avec store.
+ * @param props Les props du tableau.
+ */
+export function storeTableFor<T, P extends {data?: T}>(props: TableProps<T, P> & StoreTableProps<T>) {
+    const Table2 = ThemedStoreTable as any;
+    return <Table2 {...props} />;
+}
