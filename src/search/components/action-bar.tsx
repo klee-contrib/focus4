@@ -293,5 +293,5 @@ function isSearch(store: any): store is SearchStore {
 }
 
 function isList(store: any): store is ListStore<any> {
-    return store.hasOwnProperty("dataList");
+    return store.hasOwnProperty("innerDataList");
 }
