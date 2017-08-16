@@ -45,6 +45,9 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
     /** Liste des valeurs. */
     private readonly values = observable.map<string>();
 
+    /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
+    private value: string;
+
     async componentWillMount() {
         const {value, keyResolver} = this.props;
         if (value) {
@@ -57,11 +60,27 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * @param query Le champ texte.
      */
     onQueryChange(query: string) {
-        const formattedQuery = query && query.replace(/^\s*/, "");
-        if (formattedQuery !== this.query) {
-            this.search(formattedQuery);
+        if (query !== this.query) {
+            this.search(query);
         }
-        this.query = formattedQuery;
+        this.query = query;
+
+        // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
+        const label = this.value && this.values.get(this.value);
+        if (label !== query && this.props.onChange) {
+            this.props.onChange(undefined);
+        }
+    }
+
+    /**
+     * Est appelé lorsque l'on sélectionne une valeur.
+     * @param value La valeur sélectionnée.
+     */
+    onValueChange(value: string) {
+        this.value = value;
+        if (this.props.onChange) {
+            this.props.onChange(value);
+        }
     }
 
     /**
@@ -84,9 +103,10 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
             <div data-focus="autocomplete">
                 <RTAutocomplete
                     {...props}
+                    onChange={this.onValueChange}
                     multiple={false}
                     source={this.values.toJS()}
-                    query={this.query || " "}
+                    query={this.query}
                     onQueryChange={this.onQueryChange}
                     maxLength={undefined}
                     suggestionMatch="disabled"
