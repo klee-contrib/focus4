@@ -1,9 +1,10 @@
 import i18next from "i18next";
-import {snakeCase, uniqueId} from "lodash";
+import {snakeCase} from "lodash";
 import * as React from "react";
 import {themr} from "react-css-themr";
-
+import {findDOMNode} from "react-dom";
 import {ProgressBar} from "react-toolbox/lib/progress_bar";
+
 import ButtonHelp from "../button-help";
 import {PanelButtons, PanelButtonsProps} from "./buttons";
 export {PanelButtons};
@@ -34,13 +35,49 @@ export interface PanelProps extends PanelButtonsProps {
     title?: string;
 }
 
+export interface PanelDescriptor {
+    node: HTMLDivElement;
+    title?: string;
+}
+
 /** Construit un Panel avec un titre et des actions. */
 export class Panel extends React.Component<PanelProps, void> {
 
-    spyId = uniqueId("panel-");
+    private id: string;
+
+    static contextTypes = {
+        scrollspy: React.PropTypes.object
+    };
+
+    context: {
+        scrollspy: {
+            registerPanel(panel: PanelDescriptor): string;
+            removePanel(id: string): void;
+            updatePanel(id: string, panel: PanelDescriptor): void;
+        }
+    };
+
+    componentDidMount() {
+        const {hideOnScrollspy, title} = this.props;
+        if (this.context.scrollspy && !hideOnScrollspy) {
+            this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this)});
+        }
+    }
+
+    componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
+         if (this.context.scrollspy && !hideOnScrollspy) {
+            this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this)});
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.context.scrollspy) {
+            this.context.scrollspy.removePanel(this.id);
+        }
+    }
 
     render() {
-        const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, saving, title, showHelp, editing, toggleEdit, save, hideOnScrollspy, hideProgressBar, theme} = this.props;
+        const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, saving, title, showHelp, editing, toggleEdit, save, hideProgressBar, theme} = this.props;
 
         const buttons = (
             <div className={theme!.actions!}>
@@ -51,10 +88,8 @@ export class Panel extends React.Component<PanelProps, void> {
         const areButtonsTop = ["top", "both"].find(i => i === buttonsPosition);
         const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
-        const spy = hideOnScrollspy ? {} : {"data-spy": this.spyId};
-
         return (
-            <div className={`${theme!.panel!} ${loading || saving ? theme!.busy! : ""}`} {...spy}>
+            <div className={`${theme!.panel!} ${loading || saving ? theme!.busy! : ""}`}>
                 {!hideProgressBar && (loading || saving) ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme!.progress!}} /> : null}
                 {title || areButtonsTop ?
                     <div className={`${theme!.title!} ${theme!.top!}`}>
