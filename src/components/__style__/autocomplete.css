@@ -6,6 +6,10 @@
     margin-top: -5px;
 }
 
+.suggestions.up {
+    bottom: 60px;
+}
+
 .progressBar {
     margin-top: -22px;
     margin-bottom: 5px;
