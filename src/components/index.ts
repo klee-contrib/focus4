@@ -7,6 +7,6 @@ export {getIcon} from "./icon";
 export {default as InputDate, InputDateProps} from "./input-date";
 export {default as Panel, PanelButtons, PanelProps, PanelStyle} from "./panel";
 export {default as Popin, PopinStyle} from "./popin";
-export {default as ScrollspyContainer} from "./scrollspy-container";
+export {default as ScrollspyContainer, ScrollspyContainerProps, ScrollspyStyle} from "./scrollspy-container";
 export {default as Select, SelectProps} from "./select";
 export {default as Switch, SwitchProps} from "./switch";

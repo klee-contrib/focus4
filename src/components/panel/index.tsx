@@ -49,6 +49,7 @@ export class Panel extends React.Component<PanelProps, void> {
         scrollspy: React.PropTypes.object
     };
 
+    /** On récupère le contexte posé par le scrollspy parent. */
     context: {
         scrollspy: {
             registerPanel(panel: PanelDescriptor): string;
@@ -57,6 +58,7 @@ export class Panel extends React.Component<PanelProps, void> {
         }
     };
 
+    /** On s'enregistre dans le scrollspy. */
     componentDidMount() {
         const {hideOnScrollspy, title} = this.props;
         if (this.context.scrollspy && !hideOnScrollspy) {
@@ -64,14 +66,16 @@ export class Panel extends React.Component<PanelProps, void> {
         }
     }
 
+    /** On se met à jour dans le scrollspy. */
     componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
          if (this.context.scrollspy && !hideOnScrollspy) {
             this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this)});
         }
     }
 
+    /** On se retire du scrollspy. */
     componentWillUnmount() {
-        if (this.context.scrollspy) {
+        if (this.context.scrollspy && !this.props.hideOnScrollspy) {
             this.context.scrollspy.removePanel(this.id);
         }
     }

@@ -1,4 +1,6 @@
 
+declare module "smoothscroll-polyfill";
+
 declare module "react-toolbox/lib/date_picker/theme.css";
 
 declare module "react-toolbox/lib/date_picker/Calendar" {

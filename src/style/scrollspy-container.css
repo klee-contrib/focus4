@@ -1,0 +1,7 @@
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+
+:root {
+    --scrollspy-active-border-color: var(--color-primary);
+    --scrollspy-active-color: var(--color-accent);
+}

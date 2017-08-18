@@ -11,7 +11,7 @@ import {ChipTheme} from "react-toolbox/lib/chip";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
-import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, PanelStyle, PopinStyle} from "../../components";
+import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, PanelStyle, PopinStyle, ScrollspyStyle} from "../../components";
 import {FieldStyle} from "../../entity";
 import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../../list";
 import {MessageCenter as DefaultMessageCenter} from "../../message";
@@ -127,6 +127,7 @@ export interface LayoutStyleProviderProps {
     menu?: MenuStyle;
     panel?: PanelStyle;
     popin?: PopinStyle;
+    scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
     summary?: SummaryStyle;
 

@@ -1,3 +1,6 @@
+import scroll from "smoothscroll-polyfill";
+scroll.polyfill();
+
 import {autobind} from "core-decorators";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
@@ -12,8 +15,8 @@ export type ButtonBackToTopStyle = Partial<typeof styles>;
 export interface ButtonBackToTopProps {
     /** Offset avant l'apparition du bouton. Par défaut : 100. */
     offset?: number;
-    /** Vitesse de remontée. Par défaut : 30. */
-    speed?: number;
+    /** Comportement du scroll. Par défaut : "smooth" */
+    scrollBehaviour?: ScrollBehavior;
     /** CSS. */
     theme?: ButtonTheme & ButtonBackToTopStyle;
 }
@@ -44,11 +47,10 @@ export class ButtonBackToTop extends React.Component<ButtonBackToTopProps, void>
 
     /** Remonte la page, de façon fluide. */
     scrollToTop() {
-        const {speed = 30} = this.props;
-        if (document.body.scrollTop !== 0 || document.documentElement.scrollTop !== 0) {
-            window.scrollBy(0, -speed);
-            requestAnimationFrame(this.scrollToTop);
-        }
+        window.scrollTo({
+            top: 0,
+            behavior: this.props.scrollBehaviour || "smooth"
+        });
     }
 
     /** @inheritdoc */

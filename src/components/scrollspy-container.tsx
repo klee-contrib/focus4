@@ -1,30 +1,42 @@
+import scroll from "smoothscroll-polyfill";
+scroll.polyfill();
+
 import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {uniqueId} from "lodash";
-import { action, computed, observable } from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
-import {ButtonBackToTop} from "./button-back-to-top";
+import ButtonBackToTop from "./button-back-to-top";
 import {PanelDescriptor} from "./panel";
 
-export interface ScrollsyContainerProps {
+import * as styles from "./__style__/scrollspy-container.css";
+
+export type ScrollspyStyle = Partial<typeof styles>;
+
+export interface ScrollspyContainerProps {
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
+    /** Offset de scroll à partir du moment ou le menu devient fixe. Par défaut : 100. */
+    menuOffset?: number;
     /** Largeur du menu. Par défaut : 250. */
     menuWidth?: boolean;
+    /** Comportement du scroll. Par défaut : "smooth" */
+    scrollBehaviour?: ScrollBehavior;
     /** Offset entre la position du panel et la position de scroll au clic sur le menu. Par défaut : 150. */
     scrollToOffset?: number;
-    /** Vitesse de scroll. Par défaut : 40. */
-    speed?: number;
+    /** CSS. */
+    theme?: ScrollspyStyle;
 }
 
 @autobind
 @observer
-export class ScrollspyContainer extends React.Component<ScrollsyContainerProps, void> {
+export class ScrollspyContainer extends React.Component<ScrollspyContainerProps, void> {
 
-    @observable private menuTop = 0;
+    @observable private offsetTop = 0;
     @observable private scrollTop = 0;
 
     private readonly panels = observable.map<PanelDescriptor>();
@@ -75,7 +87,7 @@ export class ScrollspyContainer extends React.Component<ScrollsyContainerProps, 
     @action
     private onScroll() {
         this.scrollTop = document.body.scrollTop;
-        this.menuTop = this.getOffsetTop(findDOMNode(this), true);
+        this.offsetTop = findDOMNode(this).getBoundingClientRect().top;
     }
 
     @computed
@@ -93,6 +105,16 @@ export class ScrollspyContainer extends React.Component<ScrollsyContainerProps, 
         return active && active[0] || this.panels.entries()[0] && this.panels.entries()[0][0];
     }
 
+    @computed
+    private get menuPosition() {
+        const {menuOffset = 100} = this.props;
+        const isFixed = this.offsetTop < menuOffset;
+        return {
+            position: isFixed ? "fixed" : "absolute",
+            top: isFixed ? menuOffset : 0
+        };
+    }
+
     private getOffsetTop(node: HTMLElement, removeOffset?: boolean) {
         let distance = 0;
         if (node.offsetParent) {
@@ -105,32 +127,30 @@ export class ScrollspyContainer extends React.Component<ScrollsyContainerProps, 
     }
 
     private scrollTo(node: HTMLDivElement) {
-        const {speed = 40} = this.props;
-        const diff = document.body.scrollTop - this.getOffsetTop(node);
-        if (document.body.scrollTop !== this.getOffsetTop(node) && (diff <= 0 && window.pageYOffset < document.body.scrollHeight - window.innerHeight || diff >= 0 && document.body.scrollHeight !== 0)) {
-            window.scrollBy(0, -Math.sign(diff) * Math.min(Math.abs(diff), speed));
-            requestAnimationFrame(() => this.scrollTo(node));
-        }
+        window.scrollTo({
+            top: this.getOffsetTop(node),
+            behavior: this.props.scrollBehaviour || "smooth"
+        });
     }
 
     render() {
-        const {children, hideBackToTop, menuWidth = 250} = this.props;
+        const {children, hideBackToTop, menuWidth = 250, scrollBehaviour = "smooth", theme} = this.props;
         return (
-            <div>
-                <nav style={{position: "fixed", top: this.menuTop}}>
+            <div className={theme!.scrollspy}>
+                <nav style={this.menuPosition}>
                     <ul>
                         {this.menuItems.map(({label, id, onClick}) =>
-                            <li key={id} onClick={onClick}>{label} {this.activeItem === id ? "ok" : "déso"}</li>
+                            <li className={this.activeItem === id ? theme!.active! : undefined} key={id} onClick={onClick}>{label}</li>
                         )}
                     </ul>
                 </nav>
                 <div style={{marginLeft: menuWidth}}>
                     {children}
                 </div>
-                {!hideBackToTop ? <ButtonBackToTop /> : null}
+                {!hideBackToTop ? <ButtonBackToTop scrollBehaviour={scrollBehaviour} /> : null}
             </div>
         );
     }
 }
 
-export default ScrollspyContainer;
+export default themr("scrollspy", styles)(ScrollspyContainer);
