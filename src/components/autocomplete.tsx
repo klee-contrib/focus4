@@ -15,7 +15,7 @@ export type AutocompleteStyle = Partial<typeof styles> & AutocompleteTheme & Inp
 /** Résultat du service de recherche. */
 export interface AutocompleteResult {
     /** Données. */
-    data: {
+    data?: {
         key: string;
         label: string;
     }[];
@@ -92,7 +92,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
         this.isLoading = true;
         const result = await this.props.querySearcher(query);
         runInAction(() => {
-            this.values.replace(result && result.data.reduce((acc, next) => ({...acc, [next.key]: next.label}), {}) || {});
+            this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: next.label}), {}) || {});
             this.isLoading = false;
         });
     }
