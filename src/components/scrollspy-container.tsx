@@ -90,7 +90,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         this.offsetTop = findDOMNode(this).getBoundingClientRect().top;
     }
 
-    @computed
+    @computed.struct
     private get menuItems() {
         return this.panels.entries().map(([id, {node, title}]) => ({
             id,
@@ -99,13 +99,13 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         }));
     }
 
-    @computed
+    @computed.struct
     private get activeItem() {
         const active = this.panels.entries().reverse().find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
         return active && active[0] || this.panels.entries()[0] && this.panels.entries()[0][0];
     }
 
-    @computed
+    @computed.struct
     private get menuPosition() {
         const {menuOffset = 100} = this.props;
         const isFixed = this.offsetTop < menuOffset;

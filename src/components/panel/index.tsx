@@ -68,7 +68,7 @@ export class Panel extends React.Component<PanelProps, void> {
 
     /** On se met à jour dans le scrollspy. */
     componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
-         if (this.context.scrollspy && !hideOnScrollspy) {
+         if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title) {
             this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this)});
         }
     }
