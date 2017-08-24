@@ -17,6 +17,7 @@ import * as styles from "./__style__/scrollspy-container.css";
 
 export type ScrollspyStyle = Partial<typeof styles>;
 
+/** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
@@ -32,19 +33,24 @@ export interface ScrollspyContainerProps {
     theme?: ScrollspyStyle;
 }
 
+/** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
 @autobind
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps, void> {
 
+    /** Offset entre le container et le haut du document. */
     @observable private offsetTop = 0;
+    /** Scroll courant. */
     @observable private scrollTop = 0;
 
+    /** Map des panels qui se sont enregistrés dans le container. */
     private readonly panels = observable.map<PanelDescriptor>();
 
     static childContextTypes = {
         scrollspy: React.PropTypes.object
     };
 
+    /** On définit les méthodes que l'on passe aux enfants. */
     getChildContext() {
         return {
             scrollspy: {
@@ -55,16 +61,29 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         };
     }
 
+    /**
+     * Enregistre un panel dans le container et retourne son id.
+     * @param panel La description d'un panel
+     */
     private registerPanel(panel: PanelDescriptor) {
         const id = uniqueId("ssc-panel");
         this.panels.set(id, panel);
         return id;
     }
 
+    /**
+     * Retire un panel du container.
+     * @param id L'id du panel.
+     */
     private removePanel(id: string) {
         this.panels.delete(id);
     }
 
+    /**
+     * Met à jour un panel.
+     * @param id L'id du panel.
+     * @param panel La description du panel.
+     */
     private updatePanel(id: string, panel: PanelDescriptor) {
         this.panels.set(id, panel);
     }
@@ -84,12 +103,14 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         window.removeEventListener("resize", this.onScroll);
     }
 
+    /** Synchronise le scroll/resize de la page avec les observables qui les représentent. */
     @action
     private onScroll() {
         this.scrollTop = document.body.scrollTop;
         this.offsetTop = findDOMNode(this).getBoundingClientRect().top;
     }
 
+    /** Récupère les items du menu à partir des panels enregistrés. */
     @computed.struct
     private get menuItems() {
         return this.panels.entries().map(([id, {node, title}]) => ({
@@ -99,12 +120,14 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         }));
     }
 
+    /** Détermine le panel actif dans le menu */
     @computed.struct
     private get activeItem() {
         const active = this.panels.entries().reverse().find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
         return active && active[0] || this.panels.entries()[0] && this.panels.entries()[0][0];
     }
 
+    /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
     @computed.struct
     private get menuPosition() {
         const {menuOffset = 100} = this.props;
@@ -115,7 +138,11 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         };
     }
 
-    private getOffsetTop(node: HTMLElement, removeOffset?: boolean) {
+    /**
+     * Récupère l'offset d'un noeud HTML (un panel) par rapport au top du document.
+     * @param node Le noeud HTML.
+     */
+    private getOffsetTop(node: HTMLElement) {
         let distance = 0;
         if (node.offsetParent) {
             do {
@@ -123,9 +150,13 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
                 node = node.offsetParent as HTMLElement;
             } while (node);
         }
-        return (distance < 0 ? 0 : distance) - (!removeOffset ? (this.props.scrollToOffset || 150) : 0);
+        return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
     }
 
+    /**
+     * Scrolle la page vers le noeud demandé.
+     * @param node Le noeud cible.
+     */
     private scrollTo(node: HTMLDivElement) {
         window.scrollTo({
             top: this.getOffsetTop(node),
