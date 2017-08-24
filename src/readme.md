@@ -39,12 +39,12 @@ Comme son nom l'indique, le décorateur `@injectByPropName` utilise le nom de la
 
 ## Module `reference`
 ### `ReferenceStore`
-Un `ReferenceStore` de Focus V4 est construit par la fonction `makeReferenceStore(serviceFactory, refConfig)` :
-* `serviceFactory` est une fonction qui prend en paramètre un nom de référence et renvoie un service (sans paramètre) permettant de récupérer la liste de référence (qui renvoie donc une Promise)
+Un `ReferenceStore` de Focus V4 est construit par la fonction `makeReferenceStore(referenceLoader, refConfig)` :
+* `referenceLoader` est une fonction qui prend en paramètre un nom de référence et la liste de référence (qui renvoie donc une Promise)
 * `refConfig` est un objet dont les propriétés seront les noms des listes de références à charger. Pour typer le store de référence, il suffit de typer ces propriétés avec le type correspondant :
 
 ```ts
-const referenceStore = makeReferenceStore(serviceFactory, {
+const referenceStore = makeReferenceStore(referenceLoader, {
     product: {} as Product,
     line: {} as Line
 });
