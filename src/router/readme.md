@@ -119,7 +119,7 @@ class MyViewStore extends ViewStore<{id: string}, "objet"> {
     @observable resume: ObjetResume = {};
     constructor() {
         super({prefix: "objet", view: {id: ""}});
-        reaction(() => +this.currentView.id, async id => this.resume = await loadObjetResume(id));
+        autorun(() => this.withView(async ({id}) => id && (this.resume = await loadObjetResume(+id))));
     }
 }
 ```
@@ -134,8 +134,8 @@ Par exemple, si je veux charger des données qui dépendent de l'ID courant dans
 
 ```tsx
 class Component extends React.Component {
-    @classAutorun async load() {
-        this.data = await loadData(+viewStore.currentView.id!));
+    @classAutorun load() {
+        viewStore.withView(async ({id}) => id && (this.data = await loadData(+id)));
     }
 }
 ```
@@ -144,7 +144,7 @@ class Component extends React.Component {
 
 Le gros point fort en faisant ça, c'est qu'on peut librement modifier l'id dans le `ViewStore` (via l'URL ou dans le code) et voir tous nos composants se remettre à jour sans remonter le moindre composant, sans effort supplémentaire.
 
-L'`AutoForm` créé nativement une réaction pour le chargement à partir de la fonction `getLoadParams` qu'on lui passe dans la configuration. Donc si cette fonction ressemble à quelque chose comme `() => [+viewStore.currentView.id]`, alors il bénificiera de la synchronisation.
+L'`AutoForm` créé nativement une réaction pour le chargement à partir de la fonction `getLoadParams` qu'on lui passe dans la configuration. Donc si cette fonction ressemble à quelque chose comme `() => viewStore.withView(({id}) => id && [+id])`, alors il bénificiera de la synchronisation.
 
 *Note : la synchronisation par réaction n'est pas à faire en toute circonstances. Par exemple, si un module affiche des composants différents selon un état global qui peut changer avec l'ID, alors ces composants ne doivent pas être synchronisés. Dans ce cas, la meilleure solution est de synchroniser le composant racine et de s'assurer que l'on remonte tous les composants enfants à chaque changement d'ID. [fromPromise](https://github.com/mobxjs/mobx-utils#frompromise) est pratique pour ça.*
 

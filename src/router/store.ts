@@ -123,4 +123,17 @@ export class ViewStore<V, N extends string> {
         // Et on affecte.
         this.view = newView;
     }
+
+    /**
+     * Effectue l'action fournie à partir de la vue courante et filtre les résultats "faux".
+     * @param block L'action à effectuer.
+     */
+    withView<T>(block: (view: View<V>) => T | undefined | "" | false) {
+        const p = block(this.currentView);
+        if (p !== undefined && p !== "" && p !== false) {
+            return p;
+        } else {
+            return undefined;
+        }
+    }
 }
