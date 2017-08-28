@@ -6,7 +6,7 @@ import {findDOMNode} from "react-dom";
 
 import Button from "focus-components/button";
 
-import {GroupOperationListItem, LineOperationListItem} from "../../../list";
+import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -25,20 +25,23 @@ export interface ResultsProps<T> {
     groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
+    groupTheme?: GroupStyle;
     hasSelection: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     isManualFetch?: boolean;
     lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
-    lineProps?: {};
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<T>[]};
+    lineProps?: {};
+    lineTheme?: LineStyle;
+    listTheme?: ListStyle;
     mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
+    selectionnableInitializer?: () => boolean;
     store: SearchStore<T>;
-    theme?: {mosaicAdd?: string};
 }
 
 @autobind
@@ -94,13 +97,12 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     }
 
     protected renderSingleGroup(group: GroupResult<{}>) {
-        const {theme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {lineTheme, listTheme, groupTheme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, selectionnableInitializer, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         return (
             <Group
                 canOpenDetail={canOpenDetail}
                 key={group.code}
-                theme={theme}
                 group={group}
                 groupOperationList={groupOperationLists[groupKey]}
                 hasSelection={hasSelection}
@@ -109,12 +111,16 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                 detailHeight={detailHeight}
                 EmptyComponent={EmptyComponent}
                 LineComponent={lineComponentMapper && lineComponentMapper(groupKey)}
-                MosaicComponent={mosaicComponentMapper && mosaicComponentMapper(groupKey)}
                 lineProps={lineProps}
                 lineOperationList={lineOperationLists[groupKey]}
+                lineTheme={lineTheme}
+                listTheme={listTheme}
+                MosaicComponent={mosaicComponentMapper && mosaicComponentMapper(groupKey)}
                 perPage={groupPageSize}
+                selectionnableInitializer={selectionnableInitializer}
                 showAllHandler={this.showAllHandler}
                 store={store}
+                theme={groupTheme}
             />
         );
     }

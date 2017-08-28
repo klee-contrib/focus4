@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {GroupOperationListItem, LineOperationListItem, MiniListStore, StoreList} from "../../../list";
+import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, MiniListStore, StoreList} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -28,13 +28,16 @@ export interface GroupProps<T> {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     LineComponent?: React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
-    lineProps?: {};
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
+    lineProps?: {};
+    lineTheme?: LineStyle;
+    listTheme?: ListStyle;
     MosaicComponent?: React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     perPage: number;
+    selectionnableInitializer?: () => boolean;
     showAllHandler?: (key: string) => void;
     store: SearchStore<T>;
-    theme?: GroupStyle & {mosaicAdd?: string};
+    theme?: GroupStyle;
 }
 
 @autobind
@@ -48,11 +51,10 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     protected renderList() {
-        const {theme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, selectionnableInitializer, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <div>
                 <StoreList
-                    theme={{mosaicAdd: theme && theme.mosaicAdd}}
                     canOpenDetail={canOpenDetail}
                     data={group.list}
                     detailHeight={detailHeight}
@@ -63,12 +65,15 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     i18nPrefix={i18nPrefix}
                     isManualFetch={!!group.code}
                     LineComponent={LineComponent}
+                    lineTheme={lineTheme}
                     MosaicComponent={MosaicComponent}
                     lineProps={lineProps}
                     operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}
+                    selectionnableInitializer={selectionnableInitializer}
                     showAllHandler={showAllHandler && group.code ? () => showAllHandler(group.code!) : undefined}
                     store={this.store}
+                    theme={listTheme}
                 />
                 {store.isLoading ?
                     <div style={{padding: "15px"}}>

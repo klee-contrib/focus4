@@ -5,18 +5,19 @@ import {themr} from "react-css-themr";
 
 import ButtonBackToTop from "focus-components/button-back-to-top";
 
-import {GroupOperationListItem, LineOperationListItem, ListWrapper} from "../../list";
+import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, ListWrapper} from "../../list";
 
 import {SearchStore} from "../store";
-import ActionBar from "./action-bar";
-import FacetBox from "./facet-box";
-import Results from "./results";
-import Summary from "./summary";
+import ActionBar, {ActionBarStyle} from "./action-bar";
+import FacetBox, {FacetBoxStyle} from "./facet-box";
+import Results, {GroupStyle} from "./results";
+import Summary, {SummaryStyle} from "./summary";
 
 import * as styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 
 export interface AdvancedSearchProps<T> {
+    actionBarTheme?: ActionBarStyle;
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
@@ -28,7 +29,9 @@ export interface AdvancedSearchProps<T> {
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
+    facetBoxTheme?: FacetBoxStyle;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
+    groupTheme?: GroupStyle;
     /** Par défault: true */
     hasBackToTop?: boolean;
     hasGrouping?: boolean;
@@ -43,6 +46,8 @@ export interface AdvancedSearchProps<T> {
     lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     lineOperationLists?: {[scope: string]: (data: T) => LineOperationListItem<T>[]};
     lineProps?: {};
+    lineTheme?: LineStyle;
+    listTheme?: ListStyle;
     mode?: "list" | "mosaic";
     mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     mosaicWidth?: number;
@@ -54,9 +59,11 @@ export interface AdvancedSearchProps<T> {
     scopeFacetKey?: string;
     scopes: {code: string, label?: string}[];
     searchBarPlaceholder?: string;
+    selectionnableInitializer?: () => boolean;
     showSingleValuedFacets?: boolean;
     store: SearchStore<T>;
-    theme?: AdvancedSearchStyle & {mosaicAdd?: string};
+    summaryTheme?: SummaryStyle;
+    theme?: AdvancedSearchStyle;
 }
 
 @autobind
@@ -68,7 +75,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderFacetBox() {
-        const {theme, facetBoxPosition = "left", i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, store} = this.props;
+        const {theme, facetBoxPosition = "left", facetBoxTheme, i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, store} = this.props;
 
         if (facetBoxPosition === "left") {
             return (
@@ -79,6 +86,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                         scopeFacetKey={scopeFacetKey}
                         showSingleValuedFacets={showSingleValuedFacets}
                         store={store}
+                        theme={facetBoxTheme}
                     />
                 </div>
             );
@@ -88,7 +96,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderListSummary() {
-        const {canRemoveSort, hideSummaryCriteria, hideSummaryFacets, hideSummaryScope, i18nPrefix, orderableColumnList, scopes, store} = this.props;
+        const {canRemoveSort, hideSummaryCriteria, hideSummaryFacets, hideSummaryScope, i18nPrefix, orderableColumnList, scopes, store, summaryTheme} = this.props;
         return (
             <Summary
                 canRemoveSort={canRemoveSort}
@@ -99,12 +107,13 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 orderableColumnList={orderableColumnList}
                 scopes={scopes}
                 store={store}
+                theme={summaryTheme}
             />
         );
     }
 
     protected renderActionBar() {
-        const {facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
+        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
 
         if (store.groupingKey) {
             return null;
@@ -124,28 +133,32 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 scopeFacetKey={scopeFacetKey}
                 showSingleValuedFacets={showSingleValuedFacets}
                 store={store}
+                theme={actionBarTheme}
             />
         );
     }
 
     protected renderResults() {
-        const {theme, groupOperationLists, hasSelection, i18nPrefix, isManualFetch, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {groupTheme, listTheme, lineTheme, groupOperationLists, hasSelection, i18nPrefix, isManualFetch, lineComponentMapper, lineProps, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, selectionnableInitializer, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
                 detailHeight={detailHeight}
                 DetailComponent={DetailComponent}
                 EmptyComponent={EmptyComponent}
-                theme={{mosaicAdd: theme && theme.mosaicAdd}}
                 groupOperationLists={groupOperationLists}
+                groupTheme={groupTheme}
                 hasSelection={!!hasSelection}
                 i18nPrefix={i18nPrefix}
                 isManualFetch={isManualFetch}
                 lineComponentMapper={lineComponentMapper}
-                mosaicComponentMapper={mosaicComponentMapper}
                 lineProps={lineProps}
                 lineOperationLists={lineOperationLists}
+                lineTheme={lineTheme}
+                listTheme={listTheme}
+                mosaicComponentMapper={mosaicComponentMapper}
                 scopeFacetKey={scopeFacetKey}
+                selectionnableInitializer={selectionnableInitializer}
                 store={store}
             />
         );
