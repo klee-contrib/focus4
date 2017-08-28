@@ -24,6 +24,12 @@
     color: var(--action-bar-selection-color);
 }
 
+.selectionToggle > .selectionIcon:not([data-react-toolbox="tooltip"]) {
+    font-size: 24px;
+    vertical-align: initial;
+}
+
+.selection .selectionToggle > .selectionIcon,
 .selection button {
     color: var(--action-bar-selection-color);
 }
@@ -123,4 +129,10 @@
     ul {
         padding-left: 0;
     }
+}
+
+.dropdown {
+    float: right;
+    margin-left: 6px;
+    margin-right: 0;
 }

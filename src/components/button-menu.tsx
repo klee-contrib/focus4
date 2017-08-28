@@ -1,35 +1,77 @@
-import {observable} from "mobx";
+import {autobind} from "core-decorators";
+import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
+import {findDOMNode} from "react-dom";
 import {Button, ButtonProps} from "react-toolbox/lib/button";
 import {IconMenu, Menu, MenuItem, MenuProps} from "react-toolbox/lib/menu";
+
 export {MenuItem, IconMenu};
 
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
 export interface ButtonMenuProps extends MenuProps {
     /** Les props du bouton. */
-    button?: ButtonProps;
+    button: ButtonProps & {
+        /** L'icône à afficher quand le bouton est ouvert. */
+        openedIcon?: React.ReactNode;
+    };
 }
 
 /** Menu React-Toolbox avec un bouton personnalisable. */
+@autobind
 @observer
 export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
 
-    static defaultProps = {
-        position: "auto"
-    };
-
     /** Menu ouvert. */
     @observable isOpened = false;
+    @observable buttonHeight = 0;
+
+    private button?: Button;
+
+    componentDidMount() {
+        if (this.button) {
+            this.buttonHeight = findDOMNode(this.button).clientHeight;
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.button) {
+            this.buttonHeight = findDOMNode(this.button).clientHeight;
+        }
+    }
+
+    @computed.struct
+    private get menuStyle() {
+        const {position = "topLeft"} = this.props;
+        if (position === "auto") {
+            return;
+        }
+        return {
+            position: "absolute",
+            top: position.startsWith("top") ? this.buttonHeight : undefined,
+            bottom: position.startsWith("bottom") ? this.buttonHeight : undefined,
+            right: position.endsWith("Right") ? 0 : undefined
+        };
+    }
+
+    private onClick() {
+        this.isOpened = !this.isOpened;
+        const {onClick} = this.props;
+        if (onClick) {
+            onClick();
+        }
+    }
 
     render() {
-        const {button, ...menuProps} = this.props;
+        const {button: {icon, openedIcon, ...buttonProps}, position = "topLeft", ...menuProps} = this.props;
         return (
             <div data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
-                <Button {...button} onClick={() => this.isOpened = !this.isOpened} />
-                <Menu {...menuProps} active={this.isOpened} onHide={() => this.isOpened = false}>
-                    {menuProps.children}
-                </Menu>
+                <Button ref={i => this.button = i} {...buttonProps} onClick={this.onClick} icon={this.isOpened && openedIcon ? openedIcon : icon}/>
+                <div style={this.menuStyle}>
+                    <Menu {...menuProps} position={position} active={this.isOpened} onHide={() => this.isOpened = false}>
+                        {menuProps.children}
+                    </Menu>
+                </div>
             </div>
         );
     }

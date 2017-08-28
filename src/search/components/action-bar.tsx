@@ -1,18 +1,15 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {isEmpty, reduce} from "lodash";
+import {reduce} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 import {Motion, spring} from "react-motion";
-import {IconButton} from "react-toolbox/lib/button";
-
-import Button from "focus-components/button";
-import Dropdown, {DropdownItem} from "focus-components/dropdown";
+import {Button, IconButton} from "react-toolbox/lib/button";
 import {Input} from "react-toolbox/lib/input";
 
-import {getIcon} from "../../components";
+import {ButtonMenu, getIcon, MenuItem} from "../../components";
 import {ContextualActions, GroupOperationListItem, ListStore, MiniListStore} from "../../list";
 import {classReaction} from "../../util";
 
@@ -57,15 +54,13 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
     @computed
     protected get selectionButton() {
-        const {hasSelection, i18nPrefix = "focus", store} = this.props;
+        const {hasSelection, i18nPrefix = "focus", store, theme} = this.props;
         if (hasSelection) {
             return (
-                <Button
-                    shape="icon"
-                    icon={i18next.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.name`)}
-                    iconLibrary={i18next.t(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}.library`)}
+                <IconButton
+                    icon={getIcon(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}`)}
                     onClick={store.toggleAll}
-                    type="button"
+                    theme={{toggle: theme!.selectionToggle, icon: theme!.selectionIcon}}
                 />
             );
         } else {
@@ -80,12 +75,9 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                 <div style={{position: "relative"}}>
                     <Button
                         onClick={() => this.displayFacetBox = !this.displayFacetBox}
-                        icon={i18next.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.name`)}
-                        iconLibrary={i18next.t(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}.library`)}
-                        iconPosition="right"
-                        label={`${i18nPrefix}.search.action.filter`}
-                        shape={null}
-                        type="button"
+                        icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}`)}
+                        theme={{icon: theme!.dropdown!}}
+                        label={i18next.t(`${i18nPrefix}.search.action.filter`)}
                     />
                     {this.displayFacetBox ? <div className={theme!.triangle!} /> : null}
                 </div>
@@ -97,31 +89,29 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
     @computed
     protected get sortButton() {
-        const {i18nPrefix = "focus", orderableColumnList, store} = this.props;
+        const {i18nPrefix = "focus", orderableColumnList, store, theme} = this.props;
 
         if (store.totalCount > 1 && !store.selectedItems.size && (isSearch(store) || isList(store)) && orderableColumnList) {
-            const orderOperationList: DropdownItem[] = [];
-            orderableColumnList.forEach(description => {
-                orderOperationList.push({
-                    action: action(() => {
-                        store.sortBy = description.key;
-                        store.sortAsc = description.order;
-                    }),
-                    label: description.label
-                });
-            });
-
             return (
-                <Dropdown
+                <ButtonMenu
                     button={{
-                        label: `${i18nPrefix}.search.action.sort`,
-                        icon: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
-                        iconLibrary: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
-                        iconPosition: "right",
-                        shape: null
+                        label: i18next.t(`${i18nPrefix}.search.action.sort`),
+                        icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
+                        openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
+                        theme: {icon: theme!.dropdown!}
                     }}
-                    operations={orderOperationList}
-                />
+                    onClick={() => this.displayFacetBox = false}
+                >
+                    {orderableColumnList.map(description => (
+                        <MenuItem
+                            onClick={action(() => {
+                                store.sortBy = description.key;
+                                store.sortAsc = description.order;
+                            })}
+                            caption={description.label}
+                        />
+                    ))}
+                </ButtonMenu>
             );
         }
 
@@ -130,7 +120,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
     @computed
     protected get groupButton() {
-        const {hasGrouping, i18nPrefix = "focus", store} = this.props;
+        const {hasGrouping, i18nPrefix = "focus", store, theme} = this.props;
 
         if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
             const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
@@ -140,38 +130,28 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                 return result;
             }, {} as {[facet: string]: string}) : {};
 
-            const groupOperationList = reduce(groupableColumnList, (operationList, label, key) => {
-                operationList.push({
-                    action: () => store.groupingKey = key,
-                    label: i18next.t(label)
-                });
-                return operationList;
-            }, [] as DropdownItem[]);
+            const menuItems = reduce(groupableColumnList, (operationList, label, key) => [
+                ...operationList,
+                <MenuItem
+                    onClick={() => store.groupingKey = key}
+                    caption={i18next.t(label)}
+                />
+            ], []);
 
-            if (!isEmpty(groupOperationList)) {
-                const button = {
-                    label: `${i18nPrefix}.search.action.group`,
-                    icon: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.name`),
-                    iconLibrary: i18next.t(`${i18nPrefix}.icons.actionBar.dropdown.library`),
-                    iconPosition: "right" as "right",
-                    shape: null
-                };
-                if (!this.displayFacetBox) {
-                    return (
-                        <Dropdown
-                            button={button}
-                            operations={groupOperationList}
-                        />
-                    );
-                } else {
-                    return (
-                        <Button
-                            disabled={true}
-                            type="button"
-                            {...button}
-                        />
-                    );
-                }
+            if (menuItems.length) {
+                return (
+                    <ButtonMenu
+                        button={{
+                            label: i18next.t(`${i18nPrefix}.search.action.group`),
+                            icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
+                            openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
+                            theme: {icon: theme!.dropdown!}
+                        }}
+                        onClick={() => this.displayFacetBox = false}
+                    >
+                        {menuItems}
+                    </ButtonMenu>
+                );
             }
         }
 
@@ -263,10 +243,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                         <Motion style={{marginTop: this.facetBoxHeight === DEFAULT_FACETBOX_MARGIN ? -this.facetBoxHeight : spring(this.displayFacetBox ? 5 : -this.facetBoxHeight)}}>
                             {(style: {marginTop: number}) => (
                                 <div style={style} ref={i => this.facetBox = i}>
-                                    <Button
-                                        icon={i18next.t(`${i18nPrefix}.icons.actionBar.close.name`)}
-                                        iconLibrary={i18next.t(`${i18nPrefix}.icons.actionBar.close.library`)}
-                                        shape="icon"
+                                    <IconButton
+                                        icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
                                         onClick={() => this.displayFacetBox = false}
                                     />
                                     <FacetBox

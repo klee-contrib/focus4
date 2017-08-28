@@ -44,6 +44,7 @@ export const HeaderActions = observer<HeaderActionsProps>(({i18nPrefix = "focus"
                     floating: true,
                     icon: getIcon(`${i18nPrefix}.icons.headerActions.secondary`)
                 }}
+                position="topRight"
             >
                 {secondary.map((action, i) => <MenuItem key={`${i}`} {...action} icon={getIcon(action.icon, action.iconCustom || false)}  />)}
             </ButtonMenu>
