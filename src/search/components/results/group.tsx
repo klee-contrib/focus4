@@ -34,7 +34,7 @@ export interface GroupProps<T> {
     listTheme?: ListStyle;
     MosaicComponent?: React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
     perPage: number;
-    selectionnableInitializer?: () => boolean;
+    selectionnableInitializer?: (data?: T) => boolean;
     showAllHandler?: (key: string) => void;
     store: SearchStore<T>;
     theme?: GroupStyle;

@@ -59,7 +59,7 @@ export interface AdvancedSearchProps<T> {
     scopeFacetKey?: string;
     scopes: {code: string, label?: string}[];
     searchBarPlaceholder?: string;
-    selectionnableInitializer?: () => boolean;
+    selectionnableInitializer?: (data?: T) => boolean;
     showSingleValuedFacets?: boolean;
     store: SearchStore<T>;
     summaryTheme?: SummaryStyle;

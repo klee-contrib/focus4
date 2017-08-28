@@ -40,7 +40,7 @@ export interface ResultsProps<T> {
     offset?: number;
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
-    selectionnableInitializer?: () => boolean;
+    selectionnableInitializer?: (data?: T) => boolean;
     store: SearchStore<T>;
 }
 
