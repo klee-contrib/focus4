@@ -3,8 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import ButtonBackToTop from "focus-components/button-back-to-top";
-
+import {ButtonBackToTop} from "../../components";
 import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, ListWrapper} from "../../list";
 
 import {SearchStore} from "../store";

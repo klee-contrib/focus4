@@ -3,7 +3,7 @@ scroll.polyfill();
 
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {uniqueId} from "lodash";
+import {sortBy, uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -110,10 +110,16 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         this.offsetTop = findDOMNode(this).getBoundingClientRect().top;
     }
 
+    /** Récupère les panels triés par position dans la page. */
+    @computed.struct
+    private get sortedPanels() {
+        return sortBy(this.panels.entries(), (([_, {node}]) => this.getOffsetTop(node)));
+    }
+
     /** Récupère les items du menu à partir des panels enregistrés. */
     @computed.struct
     private get menuItems() {
-        return this.panels.entries().map(([id, {node, title}]) => ({
+        return this.sortedPanels.map(([id, {node, title}]) => ({
             id,
             label: title && i18next.t(title),
             onClick: () => this.scrollTo(node)
@@ -123,8 +129,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     /** Détermine le panel actif dans le menu */
     @computed.struct
     private get activeItem() {
-        const active = this.panels.entries().reverse().find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
-        return active && active[0] || this.panels.entries()[0] && this.panels.entries()[0][0];
+        const active = this.sortedPanels.slice().reverse().find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
+        return active && active[0] || this.sortedPanels[0] && this.sortedPanels[0][0];
     }
 
     /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
@@ -167,7 +173,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     render() {
         const {children, hideBackToTop, menuWidth = 250, scrollBehaviour = "smooth", theme} = this.props;
         return (
-            <div className={theme!.scrollspy}>
+            <div className={theme!.scrollspy!}>
                 <nav style={this.menuPosition}>
                     <ul>
                         {this.menuItems.map(({label, id, onClick}) =>
@@ -175,7 +181,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
                         )}
                     </ul>
                 </nav>
-                <div style={{marginLeft: menuWidth}}>
+                <div className={theme!.content!} style={{marginLeft: menuWidth}}>
                     {children}
                 </div>
                 {!hideBackToTop ? <ButtonBackToTop scrollBehaviour={scrollBehaviour} /> : null}

@@ -108,7 +108,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                                 store.sortBy = description.key;
                                 store.sortAsc = description.order;
                             })}
-                            caption={description.label}
+                            caption={i18next.t(description.label)}
                         />
                     ))}
                 </ButtonMenu>

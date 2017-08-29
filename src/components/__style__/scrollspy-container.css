@@ -25,3 +25,6 @@
         color: var(--scrollspy-active-color);
     }
 }
+
+/* stylelint-disable */
+.content {}
