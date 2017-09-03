@@ -1,6 +1,7 @@
 /* tslint:disable */
 
-import {EntityField, StoreNode} from "../";
+import {StoreNode} from "../store";
+import {EntityField} from "../types";
 import {Structure, StructureNode} from "./structure";
 
 export interface Operation {
@@ -14,7 +15,7 @@ export interface OperationNode extends StoreNode<Operation> {
     id: EntityField<number>;
     numero: EntityField<string>;
     montant: EntityField<number>;
-    structure: EntityField<StructureNode>;
+    structure: StructureNode;
 }
 
 export const OperationEntity = {
@@ -42,12 +43,8 @@ export const OperationEntity = {
             translationKey: "operation.montant"
         },
         structure: {
-            type: "field" as "field",
-            domain: {},
-            entityName: "structure",
-            isRequired: false,
-            name: "structure",
-            translationKey: "operation.structure"
+            type: "object" as "object",
+            entityName: "structure"
         }
     }
 };

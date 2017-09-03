@@ -66,11 +66,8 @@ export interface Domain<ICProps extends BaseInputProps = Partial<InputProps>, DC
 export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {
     readonly type: "field";
 
-    /** Domaine du champ. N'est pas renseigné pour un objet composé. */
-    readonly domain?: Domain<ICProps, DCProps, LCProps>;
-
-    /** Entité de l'entrée pour un objet composé. */
-    readonly entityName?: string;
+    /** Domaine du champ. */
+    readonly domain: Domain<ICProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -80,6 +77,14 @@ export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {
 
     /** Identifiant unique de l'entrée. */
     readonly translationKey: string;
+}
+
+/** Métadonnées d'une entrée de type "object" pour une entité. */
+export interface ObjectEntry {
+    readonly type: "object";
+
+    /** Entité de l'entrée */
+    readonly entityName: string;
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
@@ -94,7 +99,7 @@ export interface ListEntry {
 export interface Entity {
 
     /** Liste des champs de l'entité. */
-    readonly fields: {readonly [name: string]: FieldEntry | ListEntry};
+    readonly fields: {readonly [name: string]: FieldEntry | ObjectEntry | ListEntry};
 
     /** Nom de l'entité. */
     readonly name: string;
@@ -107,15 +112,5 @@ export interface EntityField<T, D extends DomainNoDefault = {}> {
     readonly $entity: FieldEntry<D["inputProps"], D["displayProps"], D["labelProps"]>;
 
     /** Valeur. */
-    value: T;
-}
-
-/** Entrée de type "list" pour une entité. */
-export interface EntityList<T> {
-
-    /** Métadonnées. */
-    readonly $entity: ListEntry;
-
-    /** Valeur. */
-    value: T;
+    value: T | undefined;
 }

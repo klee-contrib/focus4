@@ -1,6 +1,7 @@
 /* tslint:disable */
 
-import {EntityField, EntityList, StoreListNode, StoreNode} from "../";
+import {StoreListNode, StoreNode} from "../store";
+import {EntityField} from "../types";
 import {Ligne, LigneNode} from "./ligne";
 
 export interface Projet {
@@ -10,7 +11,7 @@ export interface Projet {
 
 export interface ProjetNode extends StoreNode<Projet>  {
     id: EntityField<number>;
-    ligneList: EntityList<StoreListNode<LigneNode>>;
+    ligneList: StoreListNode<LigneNode>;
 }
 
 export const ProjetEntity = {

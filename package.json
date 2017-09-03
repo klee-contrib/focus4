@@ -17,14 +17,14 @@
     "start": "tsc && node scripts/copy-css.js dist",
     "stylelint": "stylelint src/**/*.css",
     "tcm": "node scripts/tcm.js",
-    "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node ./node_modules/tape/bin/tape src/**/__test__/index.* | tap-spec",
+    "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node ./node_modules/tape/bin/tape src/entity/__test__/index.ts | tap-spec",
     "testgen": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && ts-node src/testing/generator.ts src ..",
     "tslint": "tslint --project tsconfig.json --type-check --force"
   },
   "dependencies": {
     "@types/core-decorators": "0.10.32",
     "@types/glob": "5.0.32",
-    "@types/i18next": "8.4.1",
+    "@types/i18next": "8.4.2",
     "@types/lodash": "4.14.74",
     "@types/numeral": "0.0.22",
     "@types/react": "15.0.1",
@@ -51,7 +51,7 @@
     "react-addons-test-utils": "15.6.0",
     "react-css-themr": "2.1.2",
     "react-dom": "15.6.1",
-    "react-motion": "0.5.0",
+    "react-motion": "0.5.1",
     "react-toolbox": "2.0.0-beta.12",
     "reflect-metadata": "0.1.10",
     "smoothscroll-polyfill": "0.3.6",
@@ -69,6 +69,6 @@
     "ts-node": "3.3.0",
     "tslint": "5.7.0",
     "typed-css-modules": "0.3.0",
-    "typescript": "2.4.2"
+    "typescript": "2.5.2"
   }
 }

@@ -1,6 +1,7 @@
 /* tslint:disable */
 
-import {EntityField, StoreNode} from "../";
+import {StoreNode} from "../store";
+import {EntityField} from "../types";
 
 export interface Structure {
     id?: number;
