@@ -62,7 +62,7 @@ export interface ServiceConfig {
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
-export abstract class AutoForm<P, E extends StoreNode<{}>> extends React.Component<P, void> {
+export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P, void> {
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
     static contextTypes = {theme: React.PropTypes.object};

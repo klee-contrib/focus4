@@ -44,7 +44,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
     private get menuStyle() {
         const {position = "topLeft"} = this.props;
         if (position === "auto") {
-            return;
+            return undefined;
         }
         return {
             position: "absolute",

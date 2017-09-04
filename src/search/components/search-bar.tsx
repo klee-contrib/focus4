@@ -18,7 +18,7 @@ import * as styles from "./__style__/search-bar.css";
 
 export type SearchBarStyle = Partial<typeof styles>;
 
-export interface SearchBarProps<T, C extends StoreNode<{}>> {
+export interface SearchBarProps<T, C extends StoreNode> {
     criteriaComponent?: React.ReactElement<any>;
     disableInputCriteria?: boolean;
     /** Par défaut : "focus" */
@@ -31,7 +31,7 @@ export interface SearchBarProps<T, C extends StoreNode<{}>> {
 
 @autobind
 @observer
-export class SearchBar<T, C extends StoreNode<{}>> extends React.Component<SearchBarProps<T, C>, void> {
+export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>, void> {
 
     protected input?: HTMLInputElement;
 

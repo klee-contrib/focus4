@@ -18,14 +18,14 @@ export interface Clearer {
  *
  * En pratique, tous les autres éléments d'un `StoreNode` doivent être des `EntityValue`.
  */
-export interface StoreNode<T> extends Setter<T>, Clearer {}
+export interface StoreNode<T = {}> extends Setter<T>, Clearer {}
 
 /**
  * Noeud de store de liste. C'est un array avec les métadonnées de l'entité du noeud.
  *
  * `T` doit être un `StoreNode` et `StoreListNode` est également considéré comme un `StoreNode`.
  */
-export interface StoreListNode<T extends StoreNode<{}>> extends IObservableArray<T> {
+export interface StoreListNode<T extends StoreNode = StoreNode> extends IObservableArray<T> {
     $entity: Entity;
     set(array: {}[]): void;
 }
@@ -33,9 +33,9 @@ export interface StoreListNode<T extends StoreNode<{}>> extends IObservableArray
 /** Types possible pour le `T` de `EntityField<T>`. */
 export type StoreType = number | number[] | boolean | boolean[] | string | string[];
 
-export type EntityStoreNodeItem = EntityField<StoreType> | StoreNode<{}> | StoreListNode<StoreNode<{}>>;
+export type EntityStoreNodeItem = EntityField<StoreType> | StoreNode | StoreListNode;
 /** Noeud de store simple. Véritable définition de `StoreNode`. */
-export type EntityStoreNode = StoreNode<{}> & {
+export type EntityStoreNode = StoreNode & {
     [key: string]: EntityStoreNodeItem;
 };
 
@@ -48,7 +48,7 @@ export type EntityMapping<T> = {
 };
 
 /** Mapping pour convertir les noeuds de listes en listes. */
-export type AsStoreListNode<T extends {[key: string]: StoreNode<{}>}> = {
+export type AsStoreListNode<T extends {[key: string]: StoreNode}> = {
     [P in keyof T]: StoreListNode<T[P]>;
 };
 
@@ -68,7 +68,7 @@ type EntityStore = EntityStoreConfig & StoreNode<EntityStoreConfig>;
  * @param entityList La liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
  * @param entityMapping Un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
  */
-export function makeEntityStore<T1 extends {[key: string]: StoreNode<{}>}, T2 extends {[key: string]: StoreNode<{}>}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode<{}> {
+export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extends {[key: string]: StoreNode}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode {
 
     // On construit une config unique pour les noeuds simples ({}) et les noeuds de listes ([].)
     const config = {...mapValues(simpleNodes, _ => ({})), ...mapValues(listNodes, _ => [] as any[])} as EntityStoreConfig;
@@ -231,7 +231,7 @@ function clearEntity(entity: EntityStoreItem) {
  */
 export function toFlatValues<T>(entityStoreItem: StoreListNode<StoreNode<T>>): T[];
 export function toFlatValues<T>(entityStoreItem: StoreNode<T>): T;
-export function toFlatValues(entityStoreItem: StoreNode<{}> | StoreListNode<StoreNode<{}>>): {} | {}[] {
+export function toFlatValues(entityStoreItem: StoreNode | StoreListNode): {} | {}[] {
     // Cas entrée liste : on appelle `toFlatValues` sur chaque élément.
     if (isStoreListNode(entityStoreItem)) {
         return entityStoreItem.map(toFlatValues);
@@ -251,11 +251,11 @@ export function toFlatValues(entityStoreItem: StoreNode<{}> | StoreListNode<Stor
     }
 }
 
-function isStoreListNode(data: EntityStoreNodeItem): data is StoreListNode<StoreNode<{}>> {
-    return isObservableArray(data) && !!(data as StoreListNode<StoreNode<{}>>).$entity;
+function isStoreListNode(data: EntityStoreNodeItem): data is StoreListNode {
+    return isObservableArray(data) && !!(data as StoreListNode).$entity;
 }
-function isStoreNode(data: EntityStoreNodeItem): data is StoreNode<{}> {
-    return !!(data as StoreNode<{}>).set;
+function isStoreNode(data: EntityStoreNodeItem): data is StoreNode {
+    return !!(data as StoreNode).set;
 }
 function isFieldEntry(data: FieldEntry | ObjectEntry | ListEntry): data is FieldEntry {
     return !!(data as FieldEntry).name;
