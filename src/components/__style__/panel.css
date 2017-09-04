@@ -50,6 +50,7 @@
     display: none;
 }
 
+.edit .actions,
 .panel:hover .actions {
     display: block;
 }

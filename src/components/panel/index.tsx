@@ -93,7 +93,7 @@ export class Panel extends React.Component<PanelProps, void> {
         const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
         return (
-            <div className={`${theme!.panel!} ${loading || saving ? theme!.busy! : ""}`}>
+            <div className={`${theme!.panel!} ${loading || saving ? theme!.busy! : ""} ${editing ? theme!.edit! : ""}`}>
                 {!hideProgressBar && (loading || saving) ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme!.progress!}} /> : null}
                 {title || areButtonsTop ?
                     <div className={`${theme!.title!} ${theme!.top!}`}>
