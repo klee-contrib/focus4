@@ -1,9 +1,10 @@
 import {autobind} from "core-decorators";
 import {debounce} from "lodash-decorators";
-import {observable, runInAction} from "mobx";
+import {observable, ObservableMap, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+export {ObservableMap};
 
 import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps, AutocompleteTheme} from "react-toolbox/lib/autocomplete";
 import {InputTheme} from "react-toolbox/lib/input";
@@ -39,14 +40,14 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 export class Autocomplete extends React.Component<AutocompleteProps, void> {
 
     /** Composant en chargement. */
-    @observable private isLoading = false;
+    @observable protected isLoading = false;
     /** Contenu du champ texte. */
-    @observable private query = "";
+    @observable protected query = "";
     /** Liste des valeurs. */
-    private readonly values = observable.map<string>();
+    protected readonly values = observable.map<string>();
 
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
-    private value: string;
+    protected value: string;
 
     async componentWillMount() {
         const {value, keyResolver} = this.props;
@@ -59,16 +60,21 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Est appelé à chaque saisie dans le champ texte.
      * @param query Le champ texte.
      */
-    onQueryChange(query: string) {
-        if (query !== this.query) {
-            this.search(query);
-        }
-        this.query = query;
+    async onQueryChange(query: string) {
+        const {onQueryChange, onChange} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
         const label = this.value && this.values.get(this.value);
-        if (label !== query && this.props.onChange) {
-            this.props.onChange(undefined);
+        if (label !== query && onChange) {
+            onChange(undefined);
+        }
+
+        if (query !== this.query) {
+            this.query = query;
+            if (onQueryChange) {
+                onQueryChange(query);
+            }
+            this.debouncedSearch(query);
         }
     }
 
@@ -87,7 +93,6 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Effectue la recherche sur le serveur.
      * @param query Le champ texte.
      */
-    @debounce(200)
     async search(query: string) {
         this.isLoading = true;
         const result = await this.props.querySearcher(query);
@@ -95,6 +100,11 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
             this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: next.label}), {}) || {});
             this.isLoading = false;
         });
+    }
+
+    @debounce(200)
+    private debouncedSearch(query: string) {
+        this.search(query);
     }
 
     render() {
