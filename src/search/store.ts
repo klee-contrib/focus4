@@ -119,6 +119,14 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         }
         return criteria || {};
     }
+
+    @action
+    clear() {
+        this.serverCount = 0;
+        this.facets.clear();
+        this.results.clear();
+    }
+
     @action
     async search(isScroll = false) {
         if (this.blockSearch) {
