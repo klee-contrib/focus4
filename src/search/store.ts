@@ -169,18 +169,10 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
     @action
     setProperties(props: SearchProperties) {
-        if (props.scope && props.scope !== this.scope) {
-            this.selectedFacets = {};
-            this.groupingKey = props.groupingKey;
-            this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : true;
-            this.sortBy = props.sortBy as keyof T;
-        } else {
-            this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
-            this.selectedFacets = props.selectedFacets || this.selectedFacets;
-            this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
-            this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy as keyof T : this.sortBy;
-        }
-
+        this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
+        this.selectedFacets = props.selectedFacets || this.selectedFacets;
+        this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
+        this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy as keyof T : this.sortBy;
         this.query = props.query || this.query;
         this.scope = props.scope || this.scope;
         this.top = props.top || this.top;
