@@ -152,6 +152,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         this.pendingCount++;
 
+        this.selectedList.clear();
         const response = await this.service(data);
 
         this.pendingCount--;
@@ -160,7 +161,6 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             response.list = [...results[0].list, ...response.list];
         }
 
-        this.selectedList.clear();
         this.facets.replace(response.facets);
         this.results.replace(response.groups || [{list: response.list || []}]);
         this.serverCount = response.totalCount;
