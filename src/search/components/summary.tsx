@@ -128,7 +128,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                         />
                     </div>
                 : null}
-                {this.currentSort && !groupingKey && totalCount > 1 ?
+                {this.currentSort && !(groupingKey || store.scope === "ALL") && totalCount > 1 ?
                     <div className={theme!.chips!}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <Chips

@@ -86,7 +86,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
 
     render() {
         const {theme, group, hasSelection, groupOperationList, store} = this.props;
-        if (!store.groupingKey) {
+        if (!store.groupingKey && store.scope !== "ALL") {
             return this.renderList();
         } else if (group.code && group.label && group.totalCount) {
             return (

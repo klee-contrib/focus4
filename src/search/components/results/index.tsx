@@ -48,11 +48,6 @@ export interface ResultsProps<T> {
 @observer
 export class Results<T> extends React.Component<ResultsProps<T>, void> {
 
-    protected get key() {
-        const {store, scopeFacetKey = "FCT_SCOPE"} = this.props;
-        return store.groupingKey || scopeFacetKey;
-    }
-
     componentDidMount() {
         window.addEventListener("scroll", this.scrollListener);
         window.addEventListener("resize", this.scrollListener);
@@ -65,7 +60,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
 
     protected scrollListener() {
         const {store, offset = 250, isManualFetch} = this.props;
-        if (!isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
+        if (!isManualFetch && store.currentCount < store.totalCount && !(store.groupingKey || store.scope === "ALL")) {
             const el = findDOMNode(this) as HTMLElement;
             const scrollTop = window.pageYOffset;
             if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
@@ -99,30 +94,36 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     protected renderSingleGroup(group: GroupResult<{}>) {
         const {lineTheme, listTheme, groupTheme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, selectionnableInitializer, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
-        return (
-            <Group
-                canOpenDetail={canOpenDetail}
-                key={group.code}
-                group={group}
-                groupOperationList={groupOperationLists[groupKey]}
-                hasSelection={hasSelection}
-                i18nPrefix={i18nPrefix}
-                DetailComponent={DetailComponent}
-                detailHeight={detailHeight}
-                EmptyComponent={EmptyComponent}
-                LineComponent={lineComponentMapper && lineComponentMapper(groupKey)}
-                lineProps={lineProps}
-                lineOperationList={lineOperationLists[groupKey]}
-                lineTheme={lineTheme}
-                listTheme={listTheme}
-                MosaicComponent={mosaicComponentMapper && mosaicComponentMapper(groupKey)}
-                perPage={groupPageSize}
-                selectionnableInitializer={selectionnableInitializer}
-                showAllHandler={this.showAllHandler}
-                store={store}
-                theme={groupTheme}
-            />
-        );
+        const LineComponent = lineComponentMapper && lineComponentMapper(groupKey);
+        const MosaicComponent = mosaicComponentMapper && mosaicComponentMapper(groupKey);
+        if (LineComponent || MosaicComponent) {
+            return (
+                <Group
+                    canOpenDetail={canOpenDetail}
+                    key={group.code}
+                    group={group}
+                    groupOperationList={groupOperationLists[groupKey]}
+                    hasSelection={hasSelection}
+                    i18nPrefix={i18nPrefix}
+                    DetailComponent={DetailComponent}
+                    detailHeight={detailHeight}
+                    EmptyComponent={EmptyComponent}
+                    LineComponent={LineComponent}
+                    lineProps={lineProps}
+                    lineOperationList={lineOperationLists[groupKey]}
+                    lineTheme={lineTheme}
+                    listTheme={listTheme}
+                    MosaicComponent={MosaicComponent}
+                    perPage={groupPageSize}
+                    selectionnableInitializer={selectionnableInitializer}
+                    showAllHandler={this.showAllHandler}
+                    store={store}
+                    theme={groupTheme}
+                />
+            );
+        } else {
+            return null;
+        }
     }
 
     protected showAllHandler(key: string) {

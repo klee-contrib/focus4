@@ -122,7 +122,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     protected get groupButton() {
         const {hasGrouping, i18nPrefix = "focus", store, theme} = this.props;
 
-        if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
+        if (hasGrouping && isSearch(store) && !store.selectedItems.size && !(store.groupingKey || store.scope === "ALL")) {
             const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
                 if (facet.values.length > 1) {
                     result[facet.code] = facet.label;

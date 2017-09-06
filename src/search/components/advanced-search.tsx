@@ -114,7 +114,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     protected renderActionBar() {
         const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
 
-        if (store.groupingKey) {
+        if (store.groupingKey || store.scope === "ALL") {
             return null;
         }
 
