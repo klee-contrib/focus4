@@ -18,7 +18,7 @@ import {bottomRow} from "../../../list/components/__style__/list.css";
 export interface ResultsProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
-    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
+    DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
@@ -30,12 +30,12 @@ export interface ResultsProps<T> {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     isManualFetch?: boolean;
-    lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
+    lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<T>[]};
     lineProps?: {};
     lineTheme?: LineStyle;
     listTheme?: ListStyle;
-    mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
+    mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */

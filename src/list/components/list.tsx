@@ -19,7 +19,7 @@ import {ListBase, ListBaseProps} from "./list-base";
 import * as styles from "./__style__/list.css";
 
 /** Props du composant de liste standard. */
-export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
+export interface ListProps<T, P extends {data?: T, openDetail?: () => void}> extends ListBaseProps<T, P> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
@@ -27,7 +27,7 @@ export interface ListProps<T, P extends {data?: T}> extends ListBaseProps<T, P> 
     /** La liste. */
     data?: T[];
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
+    DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
@@ -62,7 +62,7 @@ export interface LineItem<P> {
 /** Composant de liste standard */
 @autobind
 @observer
-export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, P> & AP> {
+export class List<T, P extends {data?: T, openDetail?: () => void}, AP> extends ListBase<T, ListProps<T, P> & AP> {
 
     // On récupère les infos du ListWrapper dans le contexte.
     static contextTypes = {
@@ -168,8 +168,8 @@ export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, 
                     mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
                     LineComponent: Component,
                     lineProps,
+                    openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
                     operationList,
-                    onLineClick: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
                     theme: lineTheme
                 }
             },
@@ -231,7 +231,7 @@ export class List<T, P extends {data?: T}, AP> extends ListBase<T, ListProps<T, 
                             <div className={theme!.triangle!} style={this.displayedIdx === undefined && this.mode === "mosaic" ? {left: -1000} : this.mode === "mosaic" ? {left: this.mosaic.width / 2 - 8.25 + ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) % this.byLine) * (this.mosaic.width + 10)} : {}} />
                             <div className={theme!.detail}>
                                 <Button icon="clear" onClick={() => this.displayedIdx = undefined} shape="icon" />
-                                <DetailComponent data={item} />
+                                <DetailComponent data={item} closeDetail={() => this.displayedIdx = undefined} />
                             </div>
                         </li>
                     )
@@ -301,7 +301,7 @@ export default ThemedList;
  * Crée un composant de liste standard.
  * @param props Les props de la liste.
  */
-export function listFor<T, P extends {data?: T}>(props: ListProps<T, P>) {
+export function listFor<T, P extends {data?: T, openDetail?: () => void}>(props: ListProps<T, P>) {
     const List2 = ThemedList as any;
     return <List2 {...props} />;
 }

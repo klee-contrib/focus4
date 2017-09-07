@@ -24,7 +24,7 @@ export interface StoreListProps<T> {
 /** Composant de liste lié à un store, qui permet la sélection de ses éléments. */
 @autobind
 @observer
-export class StoreList<T, P extends {data?: T}> extends List<T, P, StoreListProps<T>> {
+export class StoreList<T, P extends {data?: T, openDetail?: () => void}> extends List<T, P, StoreListProps<T>> {
 
     /** Les données. */
     @computed
@@ -85,7 +85,7 @@ export default ThemedStoreList;
  * Crée un composant de liste avec store.
  * @param props Les props de la liste.
  */
-export function storeListFor<T, P extends {data?: T}>(props: ListProps<T, P> & StoreListProps<T>) {
+export function storeListFor<T, P extends {data?: T, openDetail?: () => void}>(props: ListProps<T, P> & StoreListProps<T>) {
     const List2 = ThemedStoreList as any;
     return <List2 {...props} />;
 }

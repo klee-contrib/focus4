@@ -17,7 +17,7 @@ import * as styles from "./__style__/line.css";
 export type LineStyle = Partial<typeof styles>;
 
 /** Props du wrapper autour des lignes de liste. */
-export interface LineWrapperProps<T, P extends {data?: T}> {
+export interface LineWrapperProps<T, P extends {data?: T, openDetail?: () => void}> {
     data: T;
     dateSelector?: (data: T) => EntityField<string>;
     hasSelection?: boolean;
@@ -25,7 +25,7 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
     LineComponent: React.ComponentClass<P> | React.SFC<P>;
     lineProps?: P;
     mosaic?: {width: number, height: number};
-    onLineClick?: () => void;
+    openDetail?: () => void;
     operationList?: (data: T) => LineOperationListItem<T>[];
     selectionnableInitializer?: (data: T) => boolean;
     store?: MiniListStore<T>;
@@ -36,7 +36,7 @@ export interface LineWrapperProps<T, P extends {data?: T}> {
 /** Wrapper de ligne dans une liste. */
 @autobind
 @observer
-export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWrapperProps<T, P>, void> {
+export class LineWrapper<T, P extends {data?: T, openDetail?: () => void}> extends React.Component<LineWrapperProps<T, P>, void> {
 
     /** Etat de sélection de l'item courant. */
     @computed
@@ -54,7 +54,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
     }
 
     render() {
-        const {LineComponent, onLineClick, data, dateSelector, lineProps = {} as any, hasSelection, i18nPrefix = "focus", mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
+        const {LineComponent, openDetail, data, dateSelector, lineProps = {} as any, hasSelection, i18nPrefix = "focus", mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} {...lineProps} />;
@@ -86,9 +86,7 @@ export class LineWrapper<T, P extends {data?: T}> extends React.Component<LineWr
                                 color={this.isSelected ? "primary" : undefined}
                             />
                         : null}
-                        <div onClick={onLineClick}>
-                            <LineComponent data={data} {...lineProps} />
-                        </div>
+                        <LineComponent data={data} openDetail={openDetail} {...lineProps} />
                         {opList && opList.length > 0 ?
                             <div
                                 className={theme!.actions!}

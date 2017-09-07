@@ -22,7 +22,7 @@ export interface AdvancedSearchProps<T> {
     canOpenDetail?: (data?: T) => boolean;
     /** Par défaut : true */
     canRemoveSort?: boolean;
-    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
+    DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
@@ -42,13 +42,13 @@ export interface AdvancedSearchProps<T> {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     isManualFetch?: boolean;
-    lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
+    lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
     lineOperationLists?: {[scope: string]: (data: T) => LineOperationListItem<T>[]};
     lineProps?: {};
     lineTheme?: LineStyle;
     listTheme?: ListStyle;
     mode?: "list" | "mosaic";
-    mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
+    mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
     mosaicWidth?: number;
     mosaicHeight?: number;
     /** Par défaut : 6 */

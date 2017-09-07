@@ -18,7 +18,7 @@ export type GroupStyle = Partial<typeof styles>;
 export interface GroupProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
-    DetailComponent?: React.ComponentClass<{data: T}> | React.SFC<{data: T}>;
+    DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     detailHeight?: number | ((data: {}) => number);
     /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
     EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
@@ -27,12 +27,12 @@ export interface GroupProps<T> {
     hasSelection?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    LineComponent?: React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
+    LineComponent?: React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
     lineProps?: {};
     lineTheme?: LineStyle;
     listTheme?: ListStyle;
-    MosaicComponent?: React.ComponentClass<{data?: T}> | React.SFC<{data?: T}>;
+    MosaicComponent?: React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
     perPage: number;
     selectionnableInitializer?: (data?: T) => boolean;
     showAllHandler?: (key: string) => void;
