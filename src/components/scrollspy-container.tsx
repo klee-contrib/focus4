@@ -4,7 +4,7 @@ scroll.polyfill();
 import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {sortBy, uniqueId} from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, observable, untracked} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -149,14 +149,18 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
      * @param node Le noeud HTML.
      */
     private getOffsetTop(node: HTMLElement) {
-        let distance = 0;
-        if (node.offsetParent) {
-            do {
-                distance += node.offsetTop;
-                node = node.offsetParent as HTMLElement;
-            } while (node);
-        }
-        return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
+        return untracked(() => { // Il y a un bug très bizarre qui fait planter tout MobX à cause de l'accès à la prop, donc on met un untracked pour le contourner.
+            let distance = 0;
+
+            if (node.offsetParent) {
+                do {
+                    distance += node.offsetTop;
+                    node = node.offsetParent as HTMLElement;
+                } while (node);
+            }
+
+            return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
+        });
     }
 
     /**
