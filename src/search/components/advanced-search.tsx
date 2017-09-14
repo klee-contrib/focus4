@@ -4,7 +4,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 
 import {ButtonBackToTop} from "../../components";
-import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, ListWrapper} from "../../list";
+import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, ListWrapper, MiniListStore} from "../../list";
 
 import {SearchStore} from "../store";
 import ActionBar, {ActionBarStyle} from "./action-bar";
@@ -24,8 +24,8 @@ export interface AdvancedSearchProps<T> {
     canRemoveSort?: boolean;
     DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     detailHeight?: number | ((data: T) => number);
-    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
-    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
+    /** Component à afficher lorsque la liste est vide. */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void, store?: MiniListStore<T>}> | React.SFC<{addItemHandler?: () => void, store?: MiniListStore<T>}>;
     /** Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
     facetBoxTheme?: FacetBoxStyle;

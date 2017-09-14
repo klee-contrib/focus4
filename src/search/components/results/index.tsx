@@ -6,7 +6,7 @@ import {findDOMNode} from "react-dom";
 
 import Button from "focus-components/button";
 
-import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle} from "../../../list";
+import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, MiniListStore} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -20,8 +20,8 @@ export interface ResultsProps<T> {
     canOpenDetail?: (data?: T) => boolean;
     DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     detailHeight?: number | ((data: T) => number);
-    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
-    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
+    /** Component à afficher lorsque la liste est vide. */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void, store?: MiniListStore<T>}> | React.SFC<{addItemHandler?: () => void, store?: MiniListStore<T>}>;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;

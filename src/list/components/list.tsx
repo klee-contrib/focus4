@@ -12,6 +12,7 @@ import Icon from "focus-components/icon";
 
 import {classAutorun, classReaction} from "../../util";
 
+import {MiniListStore} from "../store-base";
 import {LineOperationListItem} from "./contextual-actions";
 import LineWrapper, {LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
@@ -30,8 +31,8 @@ export interface ListProps<T, P extends {data?: T, openDetail?: () => void}> ext
     DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
-    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
-    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
+    /** Component à afficher lorsque la liste est vide. */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void, store?: MiniListStore<T>}> | React.SFC<{addItemHandler?: () => void, store?: MiniListStore<T>}>;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
@@ -266,7 +267,7 @@ export class List<T, P extends {data?: T, openDetail?: () => void}, AP> extends 
     render() {
         const {EmptyComponent, hideAdditionalItems, i18nPrefix = "focus", theme} = this.props;
         return !hideAdditionalItems && !this.displayedData.length && EmptyComponent ?
-            <EmptyComponent addItemHandler={this.addItemHandler} />
+            <EmptyComponent addItemHandler={this.addItemHandler} store={(this.props as any).store} />
         : !hideAdditionalItems && !this.displayedData.length ?
             <div>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
         : (

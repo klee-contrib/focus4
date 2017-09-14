@@ -20,8 +20,8 @@ export interface GroupProps<T> {
     canOpenDetail?: (data?: T) => boolean;
     DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
     detailHeight?: number | ((data: {}) => number);
-    /** Component à afficher lorsque la liste est vide. Par défaut () => <div>{i18next.t("focus.list.empty")}</div> */
-    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void}> | React.SFC<{addItemHandler?: () => void}>;
+    /** Component à afficher lorsque la liste est vide. */
+    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void, store?: MiniListStore<T>}> | React.SFC<{addItemHandler?: () => void, store?: MiniListStore<T>}>;
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<T>[];
     hasSelection?: boolean;
