@@ -23,6 +23,7 @@ export interface SearchBarProps<T, C extends StoreNode> {
     disableInputCriteria?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
+    innerRef?: (instance: SearchBar<T, C>) => void;
     placeholder?: string;
     scopes?: {code: string; label?: string}[];
     store: SearchStore<T, C>;
@@ -85,9 +86,10 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
         this.focusQuery();
     }
 
-    protected focusQuery() {
+    focusQuery() {
         if (this.input) {
             this.input.focus();
+            this.input.setSelectionRange(this.text.length, this.text.length);
         }
     }
 
