@@ -58,6 +58,8 @@ export interface AdvancedSearchProps<T> {
     scopeFacetKey?: string;
     scopes: {code: string, label?: string}[];
     searchBarPlaceholder?: string;
+    /** Par défaut: true. */
+    searchOnMount?: boolean;
     selectionnableInitializer?: (data?: T) => boolean;
     showSingleValuedFacets?: boolean;
     store: SearchStore<T>;
@@ -70,7 +72,10 @@ export interface AdvancedSearchProps<T> {
 export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, void> {
 
     componentWillMount() {
-        this.props.store.search();
+        const {searchOnMount = true, store} = this.props;
+        if (searchOnMount) {
+            store.search();
+        }
     }
 
     protected renderFacetBox() {

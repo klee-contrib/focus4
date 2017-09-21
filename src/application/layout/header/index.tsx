@@ -17,12 +17,12 @@ export const Header = observer(() => (
             <HeaderBarLeft>
                 {applicationStore.barLeft}
             </HeaderBarLeft>
-            <HeaderBarRight>
-                {applicationStore.barRight}
-            </HeaderBarRight>
             <HeaderSummary>
                 {applicationStore.summary}
             </HeaderSummary>
+            <HeaderBarRight>
+                {applicationStore.barRight}
+            </HeaderBarRight>
         </HeaderTopRow>
         <HeaderContent>
             {applicationStore.cartridge}
