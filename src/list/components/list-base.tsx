@@ -12,11 +12,9 @@ import * as styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
 /** Props de base pour un composant de liste. */
-export interface ListBaseProps<T, P extends {data?: T}> {
+export interface ListBaseProps<T> {
     /** CSS de la ligne. */
     lineTheme?: LineStyle;
-    /** Props propre à la ligne (hors `data`). */
-    lineProps?: P;
     /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Affiche le bouton "Voir plus" au lieu d'un scroll infini. */
@@ -35,7 +33,7 @@ export interface ListBaseProps<T, P extends {data?: T}> {
 
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
 @autobind
-export abstract class ListBase<T, P extends ListBaseProps<T, {data?: T}>> extends React.Component<P, void> {
+export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P, void> {
 
     /** Nombre d'éléments affichés. */
     @observable maxElements = this.props.perPage;

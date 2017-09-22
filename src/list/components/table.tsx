@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {LineWrapper} from "./line";
+import {LineProps, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
@@ -14,19 +14,19 @@ const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
 export const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
 
 /** Props du tableau de base. */
-export interface TableProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
+export interface TableProps<T> extends ListBaseProps<T> {
     /** La description des colonnes du tableau avec leur libellés. */
     columns: {[field: string]: string};
     /** Les données. */
     data?: T[];
     /** Le composant de ligne. */
-    RowComponent: React.ComponentClass<P> | React.SFC<P>;
+    RowComponent: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
 }
 
 /** Tableau standard */
 @autobind
 @observer
-export class Table<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T, P> & AP> {
+export class Table<T, P> extends ListBase<T, TableProps<T> & P> {
 
     /** Les données. */
     protected get data() {
@@ -48,8 +48,8 @@ export class Table<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T
 
     /** Affiche le corps du tableau. */
     private renderTableBody() {
-        const {lineTheme, itemKey, RowComponent, lineProps} = this.props;
-        const Line = LineWrapper as new() => LineWrapper<T, P>;
+        const {lineTheme, itemKey, RowComponent} = this.props;
+        const Line = LineWrapper as new() => LineWrapper<T>;
 
         return (
             <tbody>
@@ -59,7 +59,6 @@ export class Table<T, P extends {data?: T}, AP> extends ListBase<T, TableProps<T
                         theme={lineTheme}
                         data={item}
                         LineComponent={RowComponent}
-                        lineProps={lineProps}
                         type="table"
                     />
                 ))}
@@ -87,7 +86,7 @@ export default ThemedTable;
  * Crée un composant de tableau standard.
  * @param props Les props du tableau.
  */
-export function tableFor<T, P extends {data?: T}>(props: TableProps<T, P>) {
+export function tableFor<T>(props: TableProps<T>) {
     const Table2 = ThemedTable as any;
     return <Table2 {...props} />;
 }

@@ -6,7 +6,7 @@ import {themr} from "react-css-themr";
 
 import {ListStore} from "../store";
 import {MiniListStore} from "../store-base";
-import {LineWrapperProps} from "./line";
+import {LineProps, LineWrapperProps} from "./line";
 import {LineItem, List, ListProps} from "./list";
 
 import * as styles from "./__style__/list.css";
@@ -24,7 +24,7 @@ export interface StoreListProps<T> {
 /** Composant de liste lié à un store, qui permet la sélection de ses éléments. */
 @autobind
 @observer
-export class StoreList<T, P extends {data?: T, openDetail?: () => void}> extends List<T, P, StoreListProps<T>> {
+export class StoreList<T> extends List<T, StoreListProps<T>> {
 
     /** Les données. */
     @computed
@@ -51,7 +51,7 @@ export class StoreList<T, P extends {data?: T, openDetail?: () => void}> extends
      * Quelques props supplémentaires à ajouter pour la sélection.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentClass<P> | React.SFC<P>) {
+    protected getItems(Component: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>) {
         const {hasSelection = false, selectionnableInitializer = () => true, store} = this.props;
         return super.getItems(Component).map(({key, data}) => ({
             key,
@@ -65,7 +65,7 @@ export class StoreList<T, P extends {data?: T, openDetail?: () => void}> extends
                 }
             },
             style: {}
-        })) as LineItem<LineWrapperProps<T, P>>[];
+        })) as LineItem<LineWrapperProps<T>>[];
     }
 
     /** `handleShowMore` appelle le store de liste serveur si c'est le cas. */
@@ -85,7 +85,7 @@ export default ThemedStoreList;
  * Crée un composant de liste avec store.
  * @param props Les props de la liste.
  */
-export function storeListFor<T, P extends {data?: T, openDetail?: () => void}>(props: ListProps<T, P> & StoreListProps<T>) {
+export function storeListFor<T>(props: ListProps<T> & StoreListProps<T>) {
     const List2 = ThemedStoreList as any;
     return <List2 {...props} />;
 }

@@ -5,32 +5,32 @@ import {themr} from "react-css-themr";
 
 import {EntityField} from "../../entity";
 
-import LineWrapper from "./line";
+import LineWrapper, {LineProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
 
 /** Props du composant de TimeLine. */
-export interface TimelineProps<T, P extends {data?: T}> extends ListBaseProps<T, P> {
+export interface TimelineProps<T> extends ListBaseProps<T> {
     /** Les données. */
     data: T[];
     /** Le sélecteur du champ contenant la date. */
     dateSelector: (data: T) => EntityField<string>;
     /** Le composant de ligne. */
-    TimelineComponent: React.ComponentClass<P> | React.SFC<P>;
+    TimelineComponent: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
 }
 
 /** Composant affichant une liste sous forme de Timeline. */
 @autobind
 @observer
-export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps<T, P>> {
+export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
 
     get data() {
         return this.props.data;
     }
 
     private renderLines() {
-        const {lineTheme, itemKey, TimelineComponent, lineProps, dateSelector} = this.props;
+        const {lineTheme, itemKey, TimelineComponent, dateSelector} = this.props;
         return this.displayedData.map((item, idx) =>
             <LineWrapper
                 key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
@@ -38,7 +38,6 @@ export class Timeline<T, P extends {data?: T}> extends ListBase<T, TimelineProps
                 data={item}
                 dateSelector={dateSelector}
                 LineComponent={TimelineComponent}
-                lineProps={lineProps}
                 type="timeline"
             />
         );
@@ -61,7 +60,7 @@ export default ThemedTimeline;
  * Crée un composant affichant une liste sous forme de Timeline.
  * @param props Les props de la timeline.
  */
-export function timelineFor<T, P extends {data?: T}>(props: TimelineProps<T, P>) {
+export function timelineFor<T>(props: TimelineProps<T>) {
     const List = ThemedTimeline as any;
     return <List {...props} />;
 }

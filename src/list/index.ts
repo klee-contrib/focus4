@@ -1,8 +1,11 @@
 export {
     ContextualActions,
     ContextualActionsStyle,
+    DetailProps,
+    EmptyProps,
     GroupOperationListItem,
     LineOperationListItem,
+    LineProps,
     LineStyle,
     List,
     ListBase,

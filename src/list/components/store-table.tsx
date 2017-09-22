@@ -24,7 +24,7 @@ export interface StoreTableProps<T> {
 /** Composant de tableau lié à un store, qui permet le tri de ses colonnes. */
 @autobind
 @observer
-export class StoreTable<T, P extends {data?: T}> extends Table<T, P, StoreTableProps<T>> {
+export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
 
     /** Les données. */
     @computed
@@ -90,7 +90,7 @@ export default ThemedStoreTable;
  * Crée un composant de tableau avec store.
  * @param props Les props du tableau.
  */
-export function storeTableFor<T, P extends {data?: T}>(props: TableProps<T, P> & StoreTableProps<T>) {
+export function storeTableFor<T>(props: TableProps<T> & StoreTableProps<T>) {
     const Table2 = ThemedStoreTable as any;
     return <Table2 {...props} />;
 }

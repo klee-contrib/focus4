@@ -6,7 +6,7 @@ import {findDOMNode} from "react-dom";
 
 import Button from "focus-components/button";
 
-import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, MiniListStore} from "../../../list";
+import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -18,10 +18,10 @@ import {bottomRow} from "../../../list/components/__style__/list.css";
 export interface ResultsProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
-    DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
+    DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void, store?: MiniListStore<T>}> | React.SFC<{addItemHandler?: () => void, store?: MiniListStore<T>}>;
+    EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
     groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
     /** Par défaut: 5 */
     groupPageSize?: number;
@@ -30,12 +30,11 @@ export interface ResultsProps<T> {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     isManualFetch?: boolean;
-    lineComponentMapper?: (scope: string) => React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
+    lineComponentMapper?: (scope: string) => React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<T>[]};
-    lineProps?: {};
     lineTheme?: LineStyle;
     listTheme?: ListStyle;
-    mosaicComponentMapper?: (scope: string) => React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
+    mosaicComponentMapper?: (scope: string) => React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
     /** Par défaut : 250 */
     offset?: number;
     /** Par défaut : FCT_SCOPE */
@@ -92,7 +91,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     }
 
     protected renderSingleGroup(group: GroupResult<{}>) {
-        const {lineTheme, listTheme, groupTheme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, lineProps, selectionnableInitializer, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {lineTheme, listTheme, groupTheme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, selectionnableInitializer, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
         const LineComponent = lineComponentMapper && lineComponentMapper(groupKey);
         const MosaicComponent = mosaicComponentMapper && mosaicComponentMapper(groupKey);
@@ -109,7 +108,6 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                     detailHeight={detailHeight}
                     EmptyComponent={EmptyComponent}
                     LineComponent={LineComponent}
-                    lineProps={lineProps}
                     lineOperationList={lineOperationLists[groupKey]}
                     lineTheme={lineTheme}
                     listTheme={listTheme}

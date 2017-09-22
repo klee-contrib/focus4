@@ -2,7 +2,7 @@
 @import "react-toolbox/lib/variables.css";
 
 :root {
-    --menu-background: var(--palette-grey-50);
+    --menu-background: var(--color-white);
     --menu-item-active-background: rgba(0, 0, 0, 0.15);
     --menu-item-active-color: var(--color-black);
     --menu-item-color: var(--color-black);

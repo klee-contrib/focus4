@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {GroupOperationListItem, LineOperationListItem, LineStyle, ListStyle, MiniListStore, StoreList} from "../../../list";
+import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, MiniListStore, StoreList} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -18,21 +18,20 @@ export type GroupStyle = Partial<typeof styles>;
 export interface GroupProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
-    DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
+    DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
     detailHeight?: number | ((data: {}) => number);
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void, store?: MiniListStore<T>}> | React.SFC<{addItemHandler?: () => void, store?: MiniListStore<T>}>;
+    EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
     group: GroupResult<{}>;
     groupOperationList?: GroupOperationListItem<T>[];
     hasSelection?: boolean;
     /** Par défaut : "focus" */
     i18nPrefix?: string;
-    LineComponent?: React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
+    LineComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
-    lineProps?: {};
     lineTheme?: LineStyle;
     listTheme?: ListStyle;
-    MosaicComponent?: React.ComponentClass<{data?: T, openDetail?: () => void}> | React.SFC<{data?: T, openDetail?: () => void}>;
+    MosaicComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
     perPage: number;
     selectionnableInitializer?: (data?: T) => boolean;
     showAllHandler?: (key: string) => void;
@@ -51,7 +50,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     protected renderList() {
-        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineProps, lineOperationList, MosaicComponent, selectionnableInitializer, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, selectionnableInitializer, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <div>
                 <StoreList
@@ -67,7 +66,6 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     LineComponent={LineComponent}
                     lineTheme={lineTheme}
                     MosaicComponent={MosaicComponent}
-                    lineProps={lineProps}
                     operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}
                     selectionnableInitializer={selectionnableInitializer}

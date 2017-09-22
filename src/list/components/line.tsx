@@ -16,14 +16,21 @@ import * as styles from "./__style__/line.css";
 
 export type LineStyle = Partial<typeof styles>;
 
+/** Props de base d'un composant de lingne. */
+export interface LineProps<T> {
+    /** Elément de la liste. */
+    data: T;
+    /** Handler pour ouvrir le détail. */
+    openDetail?: () => void;
+}
+
 /** Props du wrapper autour des lignes de liste. */
-export interface LineWrapperProps<T, P extends {data?: T, openDetail?: () => void}> {
+export interface LineWrapperProps<T> {
     data: T;
     dateSelector?: (data: T) => EntityField<string>;
     hasSelection?: boolean;
     i18nPrefix?: string;
-    LineComponent: React.ComponentClass<P> | React.SFC<P>;
-    lineProps?: P;
+    LineComponent: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
     mosaic?: {width: number, height: number};
     openDetail?: () => void;
     operationList?: (data: T) => LineOperationListItem<T>[];
@@ -36,7 +43,7 @@ export interface LineWrapperProps<T, P extends {data?: T, openDetail?: () => voi
 /** Wrapper de ligne dans une liste. */
 @autobind
 @observer
-export class LineWrapper<T, P extends {data?: T, openDetail?: () => void}> extends React.Component<LineWrapperProps<T, P>, void> {
+export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
 
     /** Etat de sélection de l'item courant. */
     @computed
@@ -54,17 +61,17 @@ export class LineWrapper<T, P extends {data?: T, openDetail?: () => void}> exten
     }
 
     render() {
-        const {LineComponent, openDetail, data, dateSelector, lineProps = {} as any, hasSelection, i18nPrefix = "focus", mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
+        const {LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
-                return <LineComponent data={data} {...lineProps} />;
+                return <LineComponent data={data} />;
             case "timeline": // Pour une timeline, on wrappe simplement la ligne dans le conteneur de timeline qui affiche la date et la décoration de timeline.
                 return (
                     <li>
                         <div className={theme!.timelineDate!}>{stringFor(dateSelector!(data))}</div>
                         <div className={theme!.timelineBadge!}></div>
                         <div className={theme!.timelinePanel!}>
-                            <LineComponent data={data} {...lineProps} />
+                            <LineComponent data={data} />
                         </div>
                     </li>
                 );
@@ -86,7 +93,7 @@ export class LineWrapper<T, P extends {data?: T, openDetail?: () => void}> exten
                                 color={this.isSelected ? "primary" : undefined}
                             />
                         : null}
-                        <LineComponent data={data} openDetail={openDetail} {...lineProps} />
+                        <LineComponent data={data} openDetail={openDetail} />
                         {opList && opList.length > 0 ?
                             <div
                                 className={theme!.actions!}

@@ -14,13 +14,29 @@ import {classAutorun, classReaction} from "../../util";
 
 import {MiniListStore} from "../store-base";
 import {LineOperationListItem} from "./contextual-actions";
-import LineWrapper, {LineWrapperProps} from "./line";
+import LineWrapper, {LineProps, LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
 
+/** Props de base d'un composant de détail. */
+export interface DetailProps<T> {
+    /** Handler de fermeture du détail. */
+    closeDetail: () => void;
+    /** Elément de liste sélectionné. */
+    data: T;
+}
+
+/** Props de base d'un composant d'empty state. */
+export interface EmptyProps<T> {
+    /** Handler au clic sur le bouton "Ajouter". */
+    addItemHandler?: () => void;
+    /** Store de la liste. */
+    store?: MiniListStore<T>;
+}
+
 /** Props du composant de liste standard. */
-export interface ListProps<T, P extends {data?: T, openDetail?: () => void}> extends ListBaseProps<T, P> {
+export interface ListProps<T> extends ListBaseProps<T> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
@@ -28,21 +44,21 @@ export interface ListProps<T, P extends {data?: T, openDetail?: () => void}> ext
     /** La liste. */
     data?: T[];
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentClass<{closeDetail?: () => void, data?: T}> | React.SFC<{closeDetail?: () => void, data?: T}>;
+    DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentClass<{addItemHandler?: () => void, store?: MiniListStore<T>}> | React.SFC<{addItemHandler?: () => void, store?: MiniListStore<T>}>;
+    EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
-    LineComponent?: React.ComponentClass<P> | React.SFC<P>;
+    LineComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
     /** Mode des listes dans le wrapper. Par défaut : celui du composant fourni, ou "list". */
     mode?: "list" | "mosaic";
     /** Taille de la mosaïque. */
     mosaic?: {width: number, height: number};
     /** Composant de mosaïque. */
-    MosaicComponent?: React.ComponentClass<P> | React.SFC<P>;
+    MosaicComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     operationList?: (data: T) => LineOperationListItem<T>[];
 }
@@ -63,7 +79,7 @@ export interface LineItem<P> {
 /** Composant de liste standard */
 @autobind
 @observer
-export class List<T, P extends {data?: T, openDetail?: () => void}, AP> extends ListBase<T, ListProps<T, P> & AP> {
+export class List<T, P> extends ListBase<T, ListProps<T> & P> {
 
     // On récupère les infos du ListWrapper dans le contexte.
     static contextTypes = {
@@ -113,7 +129,7 @@ export class List<T, P extends {data?: T, openDetail?: () => void}, AP> extends 
     }
 
     /** Réaction pour fermer le détail si la liste change. */
-    @classReaction((that: List<any, any, any>) => () => that.displayedData.length)
+    @classReaction((that: List<any, any>) => () => that.displayedData.length)
     protected closeDetail() {
         this.displayedIdx = undefined;
     }
@@ -155,8 +171,8 @@ export class List<T, P extends {data?: T, openDetail?: () => void}, AP> extends 
      * Transforme les données en éléments de liste.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentClass<P> | React.SFC<P>): LineItem<LineWrapperProps<T, P>>[] {
-        const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, lineProps, operationList} = this.props;
+    protected getItems(Component: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>): LineItem<LineWrapperProps<T>>[] {
+        const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, operationList} = this.props;
 
         return this.displayedData.map((item, idx) => ({
             // On essaie de couvrir toutes les possibilités pour la clé, en tenant compte du faite qu'on a potentiellement une liste de StoreNode.
@@ -168,7 +184,6 @@ export class List<T, P extends {data?: T, openDetail?: () => void}, AP> extends 
                     i18nPrefix,
                     mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
                     LineComponent: Component,
-                    lineProps,
                     openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
                     operationList,
                     theme: lineTheme
@@ -302,7 +317,7 @@ export default ThemedList;
  * Crée un composant de liste standard.
  * @param props Les props de la liste.
  */
-export function listFor<T, P extends {data?: T, openDetail?: () => void}>(props: ListProps<T, P>) {
+export function listFor<T>(props: ListProps<T>) {
     const List2 = ThemedList as any;
     return <List2 {...props} />;
 }
