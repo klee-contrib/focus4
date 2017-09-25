@@ -33,7 +33,7 @@ export class Menu extends React.Component<MenuProps, void> {
     @classAutorun updateSubMenus() {
         const {menus} = this.props;
         // Si le menu actif à un sous-menu, alors on enregistre ses éléments.
-        if (this.activeMenuIndex && menus[this.activeMenuIndex].subMenus) {
+        if (this.activeMenuIndex !== undefined && menus[this.activeMenuIndex].subMenus) {
             this.subMenus.replace(menus[this.activeMenuIndex].subMenus!);
         } else {
             this.subMenus.clear(); // Sinon on vide.
@@ -71,7 +71,7 @@ export class Menu extends React.Component<MenuProps, void> {
                 />
                 <MenuPanel
                     close={() => this.showPanel = false}
-                    opened={!!(this.showPanel && this.activeMenuIndex && menus[this.activeMenuIndex].subMenus)}
+                    opened={!!(this.showPanel && this.activeMenuIndex !== undefined && menus[this.activeMenuIndex].subMenus)}
                     xOffset={this.menuWidth}
                     yOffset={this.yPosition}
                     theme={theme}

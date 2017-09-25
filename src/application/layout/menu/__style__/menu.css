@@ -11,13 +11,23 @@
         transform: translate3d(-500px, 0, 0);
     }
 
-    5% { opacity: 1; }
-    to { transform: none; }
+    5% {
+        opacity: 1;
+    }
+
+    to {
+        transform: none;
+    }
 }
 
 @keyframes aClose {
-    0% { transform: none; }
-    95% { opacity: 0; }
+    0% {
+        transform: none;
+    }
+
+    95% {
+        opacity: 0;
+    }
 
     to {
         opacity: 0;
@@ -59,14 +69,28 @@
     width: 100%;
 }
 
-.item > button {
+.toggle,
+.toggle > .rippleWrapper {
+    border-radius: 0;
+}
+
+.button,
+.button.neutral:not([disabled]),
+.toggle,
+.toggle.neutral:not([disabled]) {
     height: var(--menu-item-height);
     color: var(--menu-item-color);
     min-width: var(--menu-item-height);
 }
 
-.item > button > i {
+.button {
+    text-align: left;
+}
+
+.button > .icon,
+.toggle > .icon {
     width: 24px;
+    font-size: 24px;
 }
 
 .panel {
@@ -84,8 +108,10 @@
 
 .active {
     background: var(--menu-item-active-background);
-}
 
-.active > button {
-    color: var(--menu-item-active-color);
+    & .icon,
+    & .button.neutral:not([disabled]),
+    & .toggle {
+        color: var(--menu-item-active-color);
+    }
 }

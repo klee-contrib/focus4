@@ -4,7 +4,7 @@
 :root {
     --menu-background: var(--color-white);
     --menu-item-active-background: rgba(0, 0, 0, 0.15);
-    --menu-item-active-color: var(--color-black);
+    --menu-item-active-color: var(--color-primary);
     --menu-item-color: var(--color-black);
     --menu-item-height: 60px;
 }

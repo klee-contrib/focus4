@@ -48,7 +48,7 @@ export class MenuList extends React.Component<MenuListProps, void> {
                         key={menu.route}
                         {...menu}
                         activeRoute={this.props.activeRoute}
-                        onClick={evt => this.onClick(evt, idx)}
+                        onClick={(evt: any) => this.onClick(evt, idx)}
                     />
                 ))}
             </ul>
