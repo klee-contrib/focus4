@@ -173,13 +173,13 @@ export class Field<
     render() {
         const {contentSize = 12, labelSize = 4, isRequired, hasLabel = true, isEdit, theme, className = ""} = this.props;
         return (
-            <div className={`${theme!.field!} ${isEdit ? theme!.edit! : ""} ${this.error && this.showError ? theme!.invalid! : ""} ${isRequired ? theme!.required! : ""} ${className}`}>
+            <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${this.error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
                 {hasLabel ?
-                    <div style={{width: `${labelSize * 100 / contentSize}%`}} className={theme!.label!}>
+                    <div style={{width: `${labelSize * 100 / contentSize}%`}} className={theme!.label}>
                         {this.label()}
                     </div>
                 : null}
-                <div style={{width: `${(contentSize - (hasLabel ? labelSize : 0)) * 100 / contentSize}%`}} className ={`${theme!.value!} ${className}`}>
+                <div style={{width: `${(contentSize - (hasLabel ? labelSize : 0)) * 100 / contentSize}%`}} className ={`${theme!.value} ${className}`}>
                     {isEdit ? this.input() : this.display()}
                 </div>
             </div>

@@ -26,7 +26,7 @@ export interface HeaderActionsProps {
 
 /** Barre d'actions du header. */
 export const HeaderActions = observer<HeaderActionsProps>(({i18nPrefix = "focus", primary = [], secondary = [], theme}) => (
-    <div className={theme!.actions!}>
+    <div className={theme!.actions}>
         {primary.map((action, i) => {
             const FinalButton = action.tooltip ? TooltipButton : Button;
             return (

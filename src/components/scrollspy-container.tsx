@@ -177,15 +177,15 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     render() {
         const {children, hideBackToTop, menuWidth = 250, scrollBehaviour = "smooth", theme} = this.props;
         return (
-            <div className={theme!.scrollspy!}>
+            <div className={theme!.scrollspy}>
                 <nav style={this.menuPosition}>
                     <ul>
                         {this.menuItems.map(({label, id, onClick}) =>
-                            <li className={this.activeItem === id ? theme!.active! : undefined} key={id} onClick={onClick}>{label}</li>
+                            <li className={this.activeItem === id ? theme!.active : undefined} key={id} onClick={onClick}>{label}</li>
                         )}
                     </ul>
                 </nav>
-                <div className={theme!.content!} style={{marginLeft: menuWidth}}>
+                <div className={theme!.content} style={{marginLeft: menuWidth}}>
                     {children}
                 </div>
                 {!hideBackToTop ? <ButtonBackToTop scrollBehaviour={scrollBehaviour} /> : null}

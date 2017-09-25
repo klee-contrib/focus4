@@ -5,15 +5,15 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
-
-import Button from "focus-components/button";
-import Icon from "focus-components/icon";
-import Select from "focus-components/select-mdl";
+import {Button, IconButton} from "react-toolbox/lib/button";
+import {Dropdown} from "react-toolbox/lib/dropdown";
+import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {fieldFor, StoreNode, toFlatValues} from "../../entity";
 
 import {SearchStore} from "../store";
 
+import { getIcon } from "../../components/icon";
 import * as styles from "./__style__/search-bar.css";
 
 export type SearchBarStyle = Partial<typeof styles>;
@@ -147,28 +147,20 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
 
     render() {
         const {i18nPrefix = "focus", placeholder, store, scopes, theme, criteriaComponent} = this.props;
-        const icon = (name: string) => {
-            const pre = `${i18nPrefix}.icons.searchBar.${name}`;
-            return {
-                icon: i18next.t(`${pre}.name`),
-                iconLibrary: i18next.t(`${pre}.library`)
-            };
-        };
         return (
             <div style={{position: "relative"}}>
                 {this.showCriteriaComponent ? <div className={theme!.criteriaWrapper} onClick={this.toggleCriteria} /> : null}
-                <div className={`${theme!.bar!} ${this.error ? theme!.error! : ""}`}>
+                <div className={`${theme!.bar} ${this.error ? theme!.error : ""}`}>
                     {scopes ?
-                        <Select
-                            hasUndefined={true}
-                            name="search-scope"
+                        <Dropdown
                             onChange={this.onScopeSelection}
-                            rawInputValue={store.scope}
-                            values={scopes}
+                            value={store.scope}
+                            source={[{value: "ALL", label: ""}, ...scopes.map(({code, label}) => ({value: code, label}))]}
+                            theme={{dropdown: theme!.dropdown, values: theme!.scopes, valueKey: ""}}
                         />
                     : null}
-                    <div className={theme!.input!}>
-                        <Icon name={icon("search").icon} library={icon("search").iconLibrary} />
+                    <div className={theme!.input}>
+                        <FontIcon className={theme!.searchIcon}>{getIcon(`${i18nPrefix}.icons.searchBar.search`)}</FontIcon>
                         <input
                             name="search-bar-input"
                             onChange={this.onInputChange}
@@ -177,24 +169,24 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
                             value={this.text}
                         />
                     </div>
-                    {this.text && !this.showCriteriaComponent ? <Button {...icon("clear")} onClick={this.clear} shape="icon" type="button" /> : null}
+                    {this.text && !this.showCriteriaComponent ? <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} onClick={this.clear} /> : null}
                     {store.criteria && criteriaComponent && !this.showCriteriaComponent ?
-                        <Button {...icon("open")} onClick={this.toggleCriteria} shape="icon" type="button" />
+                        <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.open`)} onClick={this.toggleCriteria} />
                     : null}
                 </div>
                 {!this.showCriteriaComponent && this.error ?
-                    <span className={theme!.errors!}>
+                    <span className={theme!.errors}>
                         {this.error}
                     </span>
                 : null}
                 {this.showCriteriaComponent ?
-                    <div className={theme!.criteria!}>
-                        <Button {...icon("close")} onClick={this.toggleCriteria} shape="icon" type="button" />
+                    <div className={theme!.criteria}>
+                        <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.close`)} onClick={this.toggleCriteria} />
                         {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: (query: string) => store.query = query})}
                         {criteriaComponent}
-                        <div className={theme!.buttons!}>
-                            <Button color="primary" onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.search`} type="button" />
-                            <Button onClick={this.clear} shape={null} label={`${i18nPrefix}.search.bar.reset`} type="button" />
+                        <div className={theme!.buttons}>
+                            <Button primary raised onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.search`} />
+                            <Button onClick={this.clear} label={`${i18nPrefix}.search.bar.reset`} />
                         </div>
                     </div>
                 : null}

@@ -37,7 +37,7 @@
     width: 100%;
 }
 
-.input i {
+.searchIcon {
     margin: 0 10px;
     color: rgba(0, 0, 0, 0.4);
 }
@@ -64,18 +64,13 @@
     left: 43px;
 }
 
-.bar :global([data-focus="select-mdl"]) {
+.dropdown input {
     border-right: 1px solid rgba(0, 0, 0, 0.16);
-    margin-right: 10px;
+    padding: 10px;
 }
 
-.bar :global([data-focus="select-mdl"]) input {
-    border: 1px solid transparent;
-    padding-left: 20px;
-}
-
-.bar :global([data-focus="select-mdl"]) :global(.mdl-icon-toggle__label) {
-    margin-top: -28px;
+.scopes li {
+    min-height: 44px;
 }
 
 .criteria {
@@ -88,7 +83,7 @@
     border: 1px solid var(--palette-grey-400);
     border-top-color: var(--palette-grey-300);
     box-sizing: border-box;
-    padding-top: 18px;
+    padding: 25px;
 }
 
 .criteriaWrapper {
@@ -114,11 +109,11 @@
 .buttons {
     display: flex;
     flex-direction: row-reverse;
-    margin: 0 10px 10px 5px;
+    margin: 15px -15px -15px 15px;
     align-items: center;
 }
 
-.buttons button:not(:global(.mdl-button--raised)) {
+.buttons button:last-child {
     font-weight: bold;
     margin-right: 5px;
 }

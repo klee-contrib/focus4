@@ -3,9 +3,9 @@ import i18next from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
+import {Button} from "react-toolbox/lib/button";
 
-import Button from "focus-components/button";
-
+import {getIcon} from "../../../components";
 import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle} from "../../../list";
 
 import {SearchStore} from "../../store";
@@ -77,10 +77,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                 <div className={bottomRow}>
                     <Button
                         onClick={() => !store.isLoading && store.search(true)}
-                        icon={i18next.t(`${i18nPrefix}.icons.list.add.name`)}
-                        iconLibrary={i18next.t(`${i18nPrefix}.icons.list.add.library`)}
-                        shape={null}
-                        type="button"
+                        icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                         label={`${i18next.t(`${i18nPrefix}.list.show.more`)}`}
                     />
                 </div>

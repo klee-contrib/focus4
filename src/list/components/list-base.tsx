@@ -3,11 +3,11 @@ import i18next from "i18next";
 import {computed, observable} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
-
-import Button from "focus-components/button";
+import {Button} from "react-toolbox/lib/button";
 
 import {LineStyle} from "./line";
 
+import { getIcon } from "../../components/icon";
 import * as styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
@@ -86,25 +86,19 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
         const {theme, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
         if (isManualFetch && this.hasMoreData || showAllHandler) {
             return (
-                <div className={theme!.bottomRow!}>
+                <div className={theme!.bottomRow}>
                     {isManualFetch && this.hasMoreData ?
                         <Button
-                            handleOnClick={this.handleShowMore}
-                            icon={i18next.t(`${i18nPrefix}.icons.list.add.name`)}
-                            iconLibrary={i18next.t(`${i18nPrefix}.icons.list.add.library`)}
-                            shape={null}
-                            type="button"
+                            onClick={this.handleShowMore}
+                            icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                             label={`${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`}
                         />
                     : <div />}
                     {showAllHandler ?
                         <Button
-                            handleOnClick={showAllHandler}
-                            icon={i18next.t(`${i18nPrefix}.icons.list.showAll.name`)}
-                            iconLibrary={i18next.t(`${i18nPrefix}.icons.list.showAll.library`)}
-                            label={`${i18nPrefix}.list.show.all`}
-                            type="button"
-                            shape={null}
+                            onClick={showAllHandler}
+                            icon={getIcon(`${i18nPrefix}.icons.list.showAll`)}
+                            label={i18next.t(`${i18nPrefix}.list.show.all`)}
                         />
                     : null}
                 </div>

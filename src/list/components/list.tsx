@@ -6,10 +6,10 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {spring, Style, TransitionMotion} from "react-motion";
+import {IconButton} from "react-toolbox/lib/button";
+import {FontIcon} from "react-toolbox/lib/font_icon";
 
-import Button from "focus-components/button";
-import Icon from "focus-components/icon";
-
+import {getIcon} from "../../components";
 import {classAutorun, classReaction} from "../../util";
 
 import {MiniListStore} from "../store-base";
@@ -237,16 +237,16 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
                 data: {
                     Component: ({style: {height}}: {style: {height: number}}) => (
                         <li
-                            className={theme!.detailWrapper!}
+                            className={theme!.detailWrapper}
                             style={{
                                 width: height < 1 ? 0 : undefined, // react-motion prend un moment avant que la hauteur atteigne bien 0, donc on essaie de masquer le composant en avance.
                                 height: Math.round(height)
                             }}
                         >
                             {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident... et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}
-                            <div className={theme!.triangle!} style={this.displayedIdx === undefined && this.mode === "mosaic" ? {left: -1000} : this.mode === "mosaic" ? {left: this.mosaic.width / 2 - 8.25 + ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) % this.byLine) * (this.mosaic.width + 10)} : {}} />
+                            <div className={theme!.triangle} style={this.displayedIdx === undefined && this.mode === "mosaic" ? {left: -1000} : this.mode === "mosaic" ? {left: this.mosaic.width / 2 - 8.25 + ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) % this.byLine) * (this.mosaic.width + 10)} : {}} />
                             <div className={theme!.detail}>
-                                <Button icon="clear" onClick={() => this.displayedIdx = undefined} shape="icon" />
+                                <IconButton icon="clear" onClick={() => this.displayedIdx = undefined} />
                                 <DetailComponent data={item} closeDetail={() => this.displayedIdx = undefined} />
                             </div>
                         </li>
@@ -263,11 +263,11 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
                 data: {
                     Component: () => (
                         <div
-                            className={theme!.mosaicAdd!}
+                            className={theme!.mosaicAdd}
                             style={{width: this.mosaic.width, height: this.mosaic.height}}
                             onClick={this.addItemHandler}
                         >
-                            <Icon name={i18next.t(`${i18nPrefix}.icons.list.add.name`)} library={i18next.t(`${i18nPrefix}.icons.list.add.library` as "material")} />
+                            <FontIcon className={theme!.add}>{getIcon(`${i18nPrefix}.icons.list.add`)}</FontIcon>
                             {i18next.t(`${i18nPrefix}.list.add`)}
                         </div>
                     )
@@ -299,7 +299,7 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
                     styles={this.lines.slice()}
                 >
                     {(items: LineItem<any>[]) => (
-                        <ul className={this.mode === "list" ? theme!.list! : theme!.mosaic!}>
+                        <ul className={this.mode === "list" ? theme!.list : theme!.mosaic}>
                             {items.map(({key, style, data: {Component, props}}) => <Component key={key} style={style} {...props} />)}
                         </ul>
                     )}

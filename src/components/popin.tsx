@@ -125,13 +125,13 @@ export class Popin extends React.Component<PopinProps, {}> {
         switch (type) {
             case "from-right":
                 return {
-                    open: theme!.slideInRight!,
-                    close: theme!.slideOutRight!
+                    open: theme!.slideInRight,
+                    close: theme!.slideOutRight
                 };
             case "from-left":
                 return {
-                    open: theme!.slideInLeft!,
-                    close: theme!.slideOutLeft!
+                    open: theme!.slideInLeft,
+                    close: theme!.slideOutLeft
                 };
             default:
                 return {open: "", close: ""};
@@ -144,13 +144,13 @@ export class Popin extends React.Component<PopinProps, {}> {
         return this.opened ?
             <div>
                 <div
-                    className={`${theme!.overlay!} ${this.willClose ? theme!.fadeOut! : this.willOpen ? theme!.fadeIn! : ""}`}
+                    className={`${theme!.overlay} ${this.willClose ? theme!.fadeOut : this.willOpen ? theme!.fadeIn : ""}`}
                     onClick={!preventOverlayClick && closePopin || undefined}
                     style={level > 0 ? {background: "none"} : {}}
                 />
                 <div
                     data-level={level}
-                    className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
+                    className={`${theme!.popin} ${type === "from-right" ? theme!.right : type === "from-left" ? theme!.left : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
                     {!this.willOpen ?

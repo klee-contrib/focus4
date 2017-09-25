@@ -68,9 +68,9 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
             case "timeline": // Pour une timeline, on wrappe simplement la ligne dans le conteneur de timeline qui affiche la date et la décoration de timeline.
                 return (
                     <li>
-                        <div className={theme!.timelineDate!}>{stringFor(dateSelector!(data))}</div>
-                        <div className={theme!.timelineBadge!}></div>
-                        <div className={theme!.timelinePanel!}>
+                        <div className={theme!.timelineDate}>{stringFor(dateSelector!(data))}</div>
+                        <div className={theme!.timelineBadge}></div>
+                        <div className={theme!.timelinePanel}>
                             <LineComponent data={data} />
                         </div>
                     </li>
@@ -79,22 +79,22 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                 const opList = operationList && operationList(data);
                 return (
                     <li
-                        className={`${mosaic ? theme!.mosaic! : theme!.line!} ${this.isSelected ? theme!.selected! : ""}`}
+                        className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                     >
                         {hasSelection && selectionnableInitializer!(data) && store ?
                             <IconButton
-                                className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
+                                className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.isSelection : ""}`}
                                 icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
                                 onClick={this.onSelection}
                                 primary={this.isSelected}
-                                theme={{toggle: theme!.toggle!, icon: theme!.checkboxIcon!}}
+                                theme={{toggle: theme!.toggle, icon: theme!.checkboxIcon}}
                             />
                         : null}
                         <LineComponent data={data} openDetail={openDetail} />
                         {opList && opList.length > 0 ?
                             <div
-                                className={theme!.actions!}
+                                className={theme!.actions}
                                 style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                             >
                                 <ContextualActions

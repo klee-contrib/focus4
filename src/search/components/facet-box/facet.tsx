@@ -5,8 +5,7 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
-
-import Chips from "focus-components/chips";
+import {Chip} from "react-toolbox/lib/chip";
 
 import {FacetOutput} from "../../types";
 
@@ -34,12 +33,14 @@ export class Facet extends React.Component<FacetProps, void> {
 
         if (selectedDataKey) {
             const selectedFacet = facet.values.filter(value => value.code === selectedDataKey);
-            const facetLabel = selectedFacet.length ? selectedFacet[0].label : "";
             return (
-                <Chips
-                    label={facetLabel}
-                    onDeleteClick={() => selectHandler(this.props.facet.code, undefined)}
-                />
+                <Chip
+                    deletable
+                    onClick={() => selectHandler(this.props.facet.code, undefined)}
+                    theme={{chip: theme!.chip}}
+                >
+                    {selectedFacet.length ? selectedFacet[0].label : ""}
+                </Chip>
             );
         }
 
@@ -49,7 +50,7 @@ export class Facet extends React.Component<FacetProps, void> {
                 {facetValues.map(facetValue => (
                     <li key={uniqueId("facet-item")} onClick={() => this.props.selectHandler(this.props.facet.code, facetValue.code)}>
                         <div>{i18next.t(facetValue.label)}</div>
-                        <div className={theme!.count!}>{facetValue.count}</div>
+                        <div className={theme!.count}>{facetValue.count}</div>
                     </li>
                 ))}
             </ul>
@@ -60,7 +61,7 @@ export class Facet extends React.Component<FacetProps, void> {
         const {theme, facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
         if (facet.values.length > nbDefaultDataList) {
             return (
-                <div className={theme!.show!} onClick={() => this.isShowAll = !this.isShowAll}>
+                <div className={theme!.show} onClick={() => this.isShowAll = !this.isShowAll}>
                     {i18next.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                 </div>
             );
@@ -72,7 +73,7 @@ export class Facet extends React.Component<FacetProps, void> {
     render() {
         const {theme, facet} = this.props;
         return (
-            <div className={theme!.facet!}>
+            <div className={theme!.facet}>
                 <h4>{i18next.t(facet.label)}</h4>
                 {this.renderFacetDataList()}
                 {this.renderShowAllDataList()}

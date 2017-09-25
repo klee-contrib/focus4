@@ -4,10 +4,14 @@ import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {Button, IconButton as IB} from "react-toolbox/lib/button";
+import Tooltip from "react-toolbox/lib/tooltip";
 
-import Button from "focus-components/button";
+import {getIcon} from "../../components";
 
 import * as styles from "./__style__/list-wrapper.css";
+
+const IconButton = Tooltip(IB);
 
 export type ListWrapperStyle = Partial<typeof styles>;
 
@@ -79,38 +83,29 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
         const {theme, children, canChangeMode, hideAddItemHandler, i18nPrefix = "focus"} = this.props;
         const {mode, addItemHandler} = this.childContext;
         return (
-            <div className={theme!.wrapper!}>
-                <div className={theme!.bar!}>
+            <div className={theme!.wrapper}>
+                <div className={theme!.bar}>
                     {canChangeMode ?
-                        <Button
-                            color={mode === "list" ? "accent" : undefined}
+                        <IconButton
+                            accent={mode === "list"}
                             onClick={() => this.childContext.mode = "list"}
-                            icon={i18next.t(`${i18nPrefix}.icons.listWrapper.list.name`)}
-                            iconLibrary={i18next.t(`${i18nPrefix}.icons.listWrapper.list.library`)}
-                            shape="icon"
-                            type="button"
-                            label={`${i18nPrefix}.list.mode.list`}
+                            icon={getIcon(`${i18nPrefix}.icons.listWrapper.list`)}
+                            tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
                         />
                     : null}
                     {canChangeMode ?
-                        <Button
-                            color={mode === "mosaic" ? "accent" : undefined}
+                        <IconButton
+                            accent={mode === "mosaic"}
                             onClick={() => this.childContext.mode = "mosaic"}
-                            icon={i18next.t(`${i18nPrefix}.icons.listWrapper.mosaic.name`)}
-                            iconLibrary={i18next.t(`${i18nPrefix}.icons.listWrapper.mosaic.library`)}
-                            shape="icon"
-                            type="button"
-                            label={`${i18nPrefix}.list.mode.mosaic`}
+                            icon={getIcon(`${i18nPrefix}.icons.listWrapper.mosaic`)}
+                            tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
                         />
                     : null}
                     {!hideAddItemHandler && addItemHandler && mode === "list" ?
                         <Button
                             onClick={addItemHandler}
-                            icon={i18next.t(`${i18nPrefix}.icons.listWrapper.add.name`)}
-                            iconLibrary={i18next.t(`${i18nPrefix}.icons.listWrapper.add.library`)}
-                            label={`${i18nPrefix}.list.add`}
-                            shape={null}
-                            type="button"
+                            icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}
+                            label={i18next.t(`${i18nPrefix}.list.add`)}
                         />
                     : null}
                 </div>

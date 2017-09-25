@@ -14,7 +14,7 @@ export class HeaderContent extends React.Component<HeaderProps, void> {
     render() {
         const {children, theme} = this.props;
         return (
-            <div className={theme!.content!} style={{marginLeft: this.context.layout.menuWidth}}>
+            <div className={theme!.content} style={{marginLeft: this.context.layout.menuWidth}}>
                 {children}
             </div>
         );

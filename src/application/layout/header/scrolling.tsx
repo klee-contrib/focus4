@@ -87,7 +87,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     render() {
         const {canDeploy, theme} = this.props;
         return (
-            <header ref={header => this.header = header} className={`${theme!.scrolling!} ${this.isDeployed ? theme!.deployed! : theme!.undeployed!}`}>
+            <header ref={header => this.header = header} className={`${theme!.scrolling} ${this.isDeployed ? theme!.deployed : theme!.undeployed}`}>
                 {this.props.children}
                 {!this.isDeployed ? <div style={{height: canDeploy ? this.placeholderHeight : 60, width: "100%"}} /> : null}
             </header>

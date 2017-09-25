@@ -48,28 +48,28 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
         const {numberDisplayed = 3, i18nPrefix = "focus", theme} = this.props;
         const errorLength = this.errors.length;
         return (
-            <div className={theme!.center!}>
-                <div className={theme!.counter!}>
-                    <FontIcon className={theme!.icon!}>{getIcon(`${i18nPrefix}.icons.errorCenter.error`)}</FontIcon>{errorLength}
+            <div className={theme!.center}>
+                <div className={theme!.counter}>
+                    <FontIcon className={theme!.icon}>{getIcon(`${i18nPrefix}.icons.errorCenter.error`)}</FontIcon>{errorLength}
                 </div>
-                <div className={theme!.actions!}>
+                <div className={theme!.actions}>
                     <IconButton
                         icon={getIcon(`${i18nPrefix}.icons.errorCenter.refresh`)}
                         onClick={() => { window.location.reload(); }}
-                        theme={{icon: theme!.icon!, toggle: theme!.toggle!}}
+                        theme={{icon: theme!.icon, toggle: theme!.toggle}}
                     />
                     <IconButton
                         icon={getIcon(`${i18nPrefix}.icons.errorCenter.${this.areErrorsVisible ? "close" : "open"}`)}
                         onClick={this.toggleVisible}
-                        theme={{icon: theme!.icon!, toggle: theme!.toggle!}}
+                        theme={{icon: theme!.icon, toggle: theme!.toggle}}
                     />
                     <IconButton
                         icon={getIcon(`${i18nPrefix}.icons.errorCenter.clear`)}
                         onClick={() => this.errors = []}
-                        theme={{icon: theme!.icon!, toggle: theme!.toggle!}}
+                        theme={{icon: theme!.icon, toggle: theme!.toggle}}
                     />
                 </div>
-                <ul className={theme!.stack!}>
+                <ul className={theme!.stack}>
                     {this.areErrorsVisible ?
                         this.errors.slice(errorLength - numberDisplayed, errorLength).map((e, i) => <li key={i}>{e}</li>)
                     : null}

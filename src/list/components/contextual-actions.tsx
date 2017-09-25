@@ -94,7 +94,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
             return actionLists;
         }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as MenuItemProps[]});
         return (
-            <div className={!isMosaic ? theme!.text! : theme!.fab!}>
+            <div className={!isMosaic ? theme!.text : theme!.fab}>
                 {primaryActionList}
                 {secondaryActionList.length ?
                     !isMosaic ?

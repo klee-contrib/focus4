@@ -88,7 +88,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
             return this.renderList();
         } else if (group.code && group.label && group.totalCount) {
             return (
-                <div className={theme!.container!}>
+                <div className={theme!.container}>
                     <ActionBar
                         group={{code: group.code, label: group.label, totalCount: group.totalCount}}
                         hasSelection={hasSelection}

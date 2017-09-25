@@ -49,7 +49,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
     render() {
         const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store: {facets, selectedFacets}} = this.props;
         return (
-            <div className={theme!.facetBox!}>
+            <div className={theme!.facetBox}>
                 <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
                 {facets.filter(facet => shouldDisplayFacet(facet, selectedFacets, showSingleValuedFacets)).map(facet => {
                     if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {

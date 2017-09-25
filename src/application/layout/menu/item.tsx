@@ -29,7 +29,7 @@ export interface MenuItemProps extends MenuItemConfig {
 export const MenuItem = observer<MenuItemProps>(props => {
     const {activeRoute, label, icon, onClick, route, theme, subMenus, ...otherProps} = props;
     return (
-        <li className={`${theme!.item} ${route === activeRoute ? theme!.active! : ""}`}>
+        <li className={`${theme!.item} ${route === activeRoute ? theme!.active : ""}`}>
             {label ?
                 <Button
                     {...otherProps}
@@ -37,9 +37,9 @@ export const MenuItem = observer<MenuItemProps>(props => {
                     label={label}
                     onClick={onClick}
                     theme={{
-                        button: theme!.button!,
-                        icon: theme!.icon!,
-                        neutral: theme!.neutral!
+                        button: theme!.button,
+                        icon: theme!.icon,
+                        neutral: theme!.neutral
                     }}
                 />
             :
@@ -49,9 +49,9 @@ export const MenuItem = observer<MenuItemProps>(props => {
                     onClick={onClick}
                     theme={{
                         toggle: theme!.toggle,
-                        icon: theme!.icon!,
-                        neutral: theme!.neutral!,
-                        rippleWrapper: theme!.rippleWrapper!
+                        icon: theme!.icon,
+                        neutral: theme!.neutral,
+                        rippleWrapper: theme!.rippleWrapper
                     }}
                 />
             }

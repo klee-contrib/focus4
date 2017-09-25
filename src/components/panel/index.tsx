@@ -84,7 +84,7 @@ export class Panel extends React.Component<PanelProps, void> {
         const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, saving, title, showHelp, editing, toggleEdit, save, hideProgressBar, theme} = this.props;
 
         const buttons = (
-            <div className={theme!.actions!}>
+            <div className={theme!.actions}>
                 <Buttons editing={editing} i18nPrefix={i18nPrefix} save={save} saving={saving} toggleEdit={toggleEdit} />
             </div>
         );
@@ -93,10 +93,10 @@ export class Panel extends React.Component<PanelProps, void> {
         const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
         return (
-            <div className={`${theme!.panel!} ${loading || saving ? theme!.busy! : ""} ${editing ? theme!.edit! : ""}`}>
-                {!hideProgressBar && (loading || saving) ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme!.progress!}} /> : null}
+            <div className={`${theme!.panel} ${loading || saving ? theme!.busy : ""} ${editing ? theme!.edit : ""}`}>
+                {!hideProgressBar && (loading || saving) ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme!.progress}} /> : null}
                 {title || areButtonsTop ?
-                    <div className={`${theme!.title!} ${theme!.top!}`}>
+                    <div className={`${theme!.title} ${theme!.top}`}>
                         {title ?
                             <h3>
                                 <span data-spy-title>{i18next.t(title)}</span>
@@ -108,11 +108,11 @@ export class Panel extends React.Component<PanelProps, void> {
                         {areButtonsTop ? buttons : null}
                     </div>
                 : null}
-                <div className={theme!.content!}>
+                <div className={theme!.content}>
                     {children}
                 </div>
                 {areButtonsDown ?
-                    <div className={`${theme!.title!} ${theme!.bottom!}`}>
+                    <div className={`${theme!.title} ${theme!.bottom}`}>
                         {buttons}
                     </div>
                 : null}

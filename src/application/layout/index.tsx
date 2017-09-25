@@ -84,13 +84,13 @@ class LayoutBase extends React.Component<LayoutProps, void> {
         } = this.props;
 
         return (
-            <div className={theme!.layout!}>
+            <div className={theme!.layout}>
                 {LoadingBar ? <LoadingBar /> : null}
                 <MessageCenter />
                 {ErrorCenter ? <ErrorCenter /> : null}
                 <AppHeader />
                 {MenuLeft ? <MenuLeft /> : null}
-                <div className={theme!.content!} style={{marginLeft: this.childContext.menuWidth}}>
+                <div className={theme!.content} style={{marginLeft: this.childContext.menuWidth}}>
                     {children}
                 </div>
                 {Footer ?

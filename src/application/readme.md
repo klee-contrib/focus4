@@ -92,9 +92,9 @@ export const Header = themr("header", styles)(
     ({classNames}: {classNames?: HeaderStyle}) => {
         return (
             <HeaderScrolling classNames={{
-                deployed: theme!.deployed!,
-                scrolling: theme!.scrolling!,
-                undeployed: theme!.undeployed!
+                deployed: theme!.deployed,
+                scrolling: theme!.scrolling,
+                undeployed: theme!.undeployed
             }}>
     /* Suite du composant... */
 ```

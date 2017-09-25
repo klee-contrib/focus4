@@ -82,7 +82,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
 
         if (facetBoxPosition === "left") {
             return (
-                 <div className={theme!.facetContainer!}>
+                 <div className={theme!.facetContainer}>
                     <FacetBox
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
@@ -171,7 +171,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
         return (
             <div>
                 {this.renderFacetBox()}
-                <div className={theme!.resultContainer!}>
+                <div className={theme!.resultContainer}>
                     <ListWrapper
                         addItemHandler={addItemHandler}
                         canChangeMode={!!(lineComponentMapper && mosaicComponentMapper)}

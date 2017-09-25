@@ -22,7 +22,7 @@ export const LoadingBar = observer(({i18nPrefix = "focus", theme, displayDevBar,
     const {count, error, pending, success} = requestStore;
     const completed = +((count.total - count.pending) / count.total) * 100;
     return (
-        <div className={theme!.bar!}>
+        <div className={theme!.bar}>
             {completed < 100 ? <ProgressBar completed={completed} /> : null}
             {displayDevBar ?
                 <ul>

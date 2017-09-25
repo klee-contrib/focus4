@@ -76,10 +76,10 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                     <Button
                         onClick={() => this.displayFacetBox = !this.displayFacetBox}
                         icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}`)}
-                        theme={{icon: theme!.dropdown!}}
+                        theme={{icon: theme!.dropdown}}
                         label={i18next.t(`${i18nPrefix}.search.action.filter`)}
                     />
-                    {this.displayFacetBox ? <div className={theme!.triangle!} /> : null}
+                    {this.displayFacetBox ? <div className={theme!.triangle} /> : null}
                 </div>
             );
         } else {
@@ -98,7 +98,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                         label: i18next.t(`${i18nPrefix}.search.action.sort`),
                         icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
                         openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
-                        theme: {icon: theme!.dropdown!}
+                        theme: {icon: theme!.dropdown}
                     }}
                     onClick={() => this.displayFacetBox = false}
                 >
@@ -145,7 +145,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                             label: i18next.t(`${i18nPrefix}.search.action.group`),
                             icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
                             openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
-                            theme: {icon: theme!.dropdown!}
+                            theme: {icon: theme!.dropdown}
                         }}
                         onClick={() => this.displayFacetBox = false}
                     >
@@ -164,7 +164,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
         if (!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store))) {
             return (
-                <div className={theme!.searchBar!}>
+                <div className={theme!.searchBar}>
                     <Input
                         icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
                         value={store.query}
@@ -219,9 +219,9 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     render() {
         const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", showSingleValuedFacets, store} = this.props;
         return (
-            <div className={theme!.container!}>
-                <div className={`${theme!.bar!} ${store.selectedItems.size ? theme!.selection! : ""}`}>
-                    <div className={theme!.buttons!}>
+            <div className={theme!.container}>
+                <div className={`${theme!.bar} ${store.selectedItems.size ? theme!.selection : ""}`}>
+                    <div className={theme!.buttons}>
                         {this.selectionButton}
                         {group ?
                             <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>
@@ -248,7 +248,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                                         onClick={() => this.displayFacetBox = false}
                                     />
                                     <FacetBox
-                                        theme={{facetBox: theme!.facetBox!}}
+                                        theme={{facetBox: theme!.facetBox}}
                                         nbDefaultDataList={nbDefaultDataListFacet}
                                         scopeFacetKey={scopeFacetKey}
                                         showSingleValuedFacets={showSingleValuedFacets}

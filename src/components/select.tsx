@@ -54,11 +54,11 @@ export class Select extends React.Component<SelectProps, void> {
         const {autoFocus, error, name, style, value, disabled, size, theme} = this.props;
         const selectProps = {autoFocus, disabled, size};
         return (
-            <div data-focus="select" className={`${theme!.select} ${error ? theme!.error! : ""}`} style={style}>
+            <div data-focus="select" className={`${theme!.select} ${error ? theme!.error : ""}`} style={style}>
                 <select name={name} onChange={this.handleSelectChange} value={isUndefined(value) ? "" : value} {...selectProps}>
                     {this.renderOptions(this.props)}
                 </select>
-                {error ? <div className={theme!.errorLabel!}>{error}</div> : null}
+                {error ? <div className={theme!.errorLabel}>{error}</div> : null}
             </div>
         );
     }
