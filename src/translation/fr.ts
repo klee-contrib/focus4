@@ -1,8 +1,5 @@
-import focusComponents from "focus-components/translation/resources/fr-FR";
-
 /** Objet contenant les traductions i18n en français par défaut, à intégrer si besoin dans un projet. */
 export const fr = {
-    components: focusComponents.focus.components,
     confirmation: {
         cancel: "Annuler",
         confirm: "Confirmer"

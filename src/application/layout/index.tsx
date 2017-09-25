@@ -1,3 +1,6 @@
+// tslint:disable-next-line:no-submodule-imports
+import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
+
 import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import {observable} from "mobx";

@@ -84,7 +84,6 @@
         "no-string-throw": true,
         "no-submodule-imports": [
             true,
-            "focus-components",
             "react-toolbox"
         ],
         "no-this-assignment": [
