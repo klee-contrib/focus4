@@ -7,12 +7,14 @@
     min-width: 200px;
     background-color: tomato;
     color: white;
+    padding: 15px 0;
 }
 
 .counter {
     font-weight: bold;
     font-size: 3em;
     text-align: center;
+    margin-bottom: 10px;
 }
 
 .actions {
@@ -44,4 +46,10 @@
     font-weight: bold;
     font-size: 1em;
     text-align: center;
+}
+
+.icon,
+.toggle .icon {
+    color: white;
+    font-size: 28px;
 }

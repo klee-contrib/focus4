@@ -36,12 +36,10 @@ export const MenuItem = observer<MenuItemProps>(props => {
                     icon={icon}
                     label={label}
                     onClick={onClick}
-                    primary={route === activeRoute}
                     theme={{
                         button: theme!.button!,
                         icon: theme!.icon!,
-                        neutral: theme!.neutral!,
-                        primary: theme!.primary!
+                        neutral: theme!.neutral!
                     }}
                 />
             :
@@ -49,12 +47,10 @@ export const MenuItem = observer<MenuItemProps>(props => {
                     {...otherProps}
                     icon={icon}
                     onClick={onClick}
-                    primary={route === activeRoute}
                     theme={{
                         toggle: theme!.toggle,
                         icon: theme!.icon!,
                         neutral: theme!.neutral!,
-                        primary: theme!.primary!,
                         rippleWrapper: theme!.rippleWrapper!
                     }}
                 />

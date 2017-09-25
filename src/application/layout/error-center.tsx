@@ -1,13 +1,15 @@
 import {autobind} from "core-decorators";
-import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {IconButton} from "react-toolbox/lib/button";
+import {FontIcon} from "react-toolbox/lib/font_icon";
 
-import Icon from "focus-components/icon";
+import {getIcon} from "../../components";
 
 import styles from "./__style__/error-center.css";
+
 export type ErrorCenterStyle = Partial<typeof styles>;
 
 export interface ErrorCenterProps {
@@ -45,23 +47,27 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
     renderErrors() {
         const {numberDisplayed = 3, i18nPrefix = "focus", theme} = this.props;
         const errorLength = this.errors.length;
-        const icon = (name: string) => {
-            const pre = `${i18nPrefix}.icons.errorCenter.${name}`;
-            return {
-                name: i18next.t(`${pre}.name`),
-                library: i18next.t(`${pre}.library`),
-                style: {style: {cursor: "pointer", fontSize: "36px", padding: "10px"}}
-            };
-        };
         return (
             <div className={theme!.center!}>
                 <div className={theme!.counter!}>
-                    <Icon {...icon("error")} style={{style: {cursor: "pointer", fontSize: "28px", padding: "15px 5px 5px 5px"}}} />{errorLength}
+                    <FontIcon className={theme!.icon!}>{getIcon(`${i18nPrefix}.icons.errorCenter.error`)}</FontIcon>{errorLength}
                 </div>
                 <div className={theme!.actions!}>
-                    <Icon {...icon("refresh")} onClick={() => {window.location.reload(); }} />
-                    <Icon {...icon(this.areErrorsVisible ? "close" : "open")} onClick={this.toggleVisible} />
-                    <Icon {...icon("clear")} onClick={() => this.errors = []} />
+                    <IconButton
+                        icon={getIcon(`${i18nPrefix}.icons.errorCenter.refresh`)}
+                        onClick={() => { window.location.reload(); }}
+                        theme={{icon: theme!.icon!, toggle: theme!.toggle!}}
+                    />
+                    <IconButton
+                        icon={getIcon(`${i18nPrefix}.icons.errorCenter.${this.areErrorsVisible ? "close" : "open"}`)}
+                        onClick={this.toggleVisible}
+                        theme={{icon: theme!.icon!, toggle: theme!.toggle!}}
+                    />
+                    <IconButton
+                        icon={getIcon(`${i18nPrefix}.icons.errorCenter.clear`)}
+                        onClick={() => this.errors = []}
+                        theme={{icon: theme!.icon!, toggle: theme!.toggle!}}
+                    />
                 </div>
                 <ul className={theme!.stack!}>
                     {this.areErrorsVisible ?
