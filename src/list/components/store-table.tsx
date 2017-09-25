@@ -4,8 +4,9 @@ import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {IconButton} from "react-toolbox/lib/button";
 
-import Button from "focus-components/button";
+import {getIcon} from "../../components";
 
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
@@ -48,21 +49,15 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
                                 <div>{i18next.t(columns[col])}</div>
                                 {sortableColumns.find(c => c === col) ?
                                     <div style={{marginLeft: 3, display: "flex"}}>
-                                        <Button
+                                        <IconButton
                                             disabled={sortAsc && sortBy === col}
-                                            handleOnClick={() => this.sort(col, true)}
-                                            shape="icon"
-                                            type="button"
-                                            icon={i18next.t(`${i18nPrefix}.icons.table.sortAsc.name`)}
-                                            iconLibrary={i18next.t(`${i18nPrefix}.icons.table.sortAsc.library`)}
+                                            onClick={() => this.sort(col, true)}
+                                            icon={getIcon(`${i18nPrefix}.icons.table.sortAsc`)}
                                         />
-                                        <Button
+                                        <IconButton
                                             disabled={!sortAsc && sortBy === col}
-                                            handleOnClick={() => this.sort(col, false)}
-                                            shape="icon"
-                                            type="button"
-                                            icon={i18next.t(`${i18nPrefix}.icons.table.sortDesc.name`)}
-                                            iconLibrary={i18next.t(`${i18nPrefix}.icons.table.sortDesc.library`)}
+                                            onClick={() => this.sort(col, false)}
+                                            icon={getIcon(`${i18nPrefix}.icons.table.sortDesc`)}
                                         />
                                     </div>
                                 : null}

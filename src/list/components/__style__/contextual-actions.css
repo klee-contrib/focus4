@@ -8,7 +8,7 @@
     justify-content: space-around;
     pointer-events: auto;
     position: absolute;
-    top: calc(50% - 20px);
+    top: calc(50% - 28px);
     width: 100%;
 }
 
@@ -18,12 +18,4 @@
 
 .fab button {
     margin: 0;
-}
-
-.text :global([data-focus="dropdown"]) {
-    height: 32px;
-}
-
-.fab :global([data-focus="dropdown"]) {
-    height: 40px;
 }

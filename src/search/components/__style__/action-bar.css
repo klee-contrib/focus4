@@ -31,7 +31,7 @@
 
 .selection .selectionToggle > .selectionIcon,
 .selection button {
-    color: var(--action-bar-selection-color);
+    color: var(--action-bar-selection-color) !important;
 }
 
 .searchBar {
@@ -70,11 +70,6 @@
     font-weight: var(--action-bar-font-weight);
     font-size: 15px;
     margin: 0 10px;
-}
-
-.buttons :global(.mdl-button--raised[disabled][disabled]) {
-    background: transparent;
-    border: none;
 }
 
 .triangle {

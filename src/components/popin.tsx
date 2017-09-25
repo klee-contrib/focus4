@@ -1,12 +1,12 @@
 import {autobind} from "core-decorators";
-import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
+import {IconButton} from "react-toolbox/lib/button";
 
-import Button from "focus-components/button";
+import {getIcon} from "./icon";
 
 import * as styles from "./__style__/popin.css";
 
@@ -22,6 +22,8 @@ export interface PopinProps {
     level?: number;
     /** Popin ouverte (ou fermée). */
     opened: boolean;
+    /** Supprime le clic sur l'overlay pour fermer la popin. */
+    preventOverlayClick?: boolean;
     /** CSS. */
     theme?: PopinStyle;
     /** Type de popin. Par défaut : "from-right" */
@@ -137,13 +139,13 @@ export class Popin extends React.Component<PopinProps, {}> {
     }
 
     render() {
-        const {i18nPrefix = "focus", level = 0, children, closePopin, theme, type = "from-right"} = this.props;
+        const {i18nPrefix = "focus", level = 0, children, closePopin, theme, type = "from-right", preventOverlayClick} = this.props;
         const {open, close} = this.animations;
         return this.opened ?
             <div>
                 <div
                     className={`${theme!.overlay!} ${this.willClose ? theme!.fadeOut! : this.willOpen ? theme!.fadeIn! : ""}`}
-                    onClick={closePopin}
+                    onClick={!preventOverlayClick && closePopin || undefined}
                     style={level > 0 ? {background: "none"} : {}}
                 />
                 <div
@@ -151,7 +153,12 @@ export class Popin extends React.Component<PopinProps, {}> {
                     className={`${theme!.popin!} ${type === "from-right" ? theme!.right! : type === "from-left" ? theme!.left! : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
-                    <Button icon={i18next.t(`${i18nPrefix}.icons.popin.close.name`)} iconLibrary={i18next.t(`${i18nPrefix}.icons.popin.close.library`)} shape="mini-fab" type="button" onClick={closePopin} />
+                    {!this.willOpen ?
+                        <IconButton
+                            icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
+                            onClick={closePopin}
+                        />
+                    : null}
                     <div>{children}</div>
                 </div>
             </div>

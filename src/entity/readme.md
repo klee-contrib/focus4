@@ -179,8 +179,7 @@ Il est important de noter que puisque les valeurs de stores sont toutes stockée
 ### Exemple de formulaire (issu du starter kit)
 
 ```tsx
-import {AutoForm, i18n, observer, React} from "focus4";
-import Panel from  "focus-components/panel";
+import {AutoForm, i18n, observer, Panel, React} from "focus4";
 
 import {StructureNode} from "../../model/main/structure";
 import {loadStructure, saveStructure} from "../../services/main";

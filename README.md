@@ -1,7 +1,7 @@
 # Focus V4
 
 **`Focus V4`** est une libre réimplémentation de Focus V2 (`focus-core` et `focus-components`) en **[Typescript](http://www.typescriptlang.org)** qui utilise **[MobX](http://mobxjs.github.io/mobx)** comme conteneur de state (à la place de `flux` ou `redux`).
-Son but principal est de proposer le framework le plus simple, efficace et robuste pour effectuer les mêmes tâches que le Focus original, tout en restant proche au niveau de l'API et de la structure de l'application (à l'inverse de Focus V3 qui propose une approche différente). Pour ne pas non plus trop s'éparpiller, `Focus V4` dépend de `focus-components@3.0`.
+Son but principal est de proposer le framework le plus simple, efficace et robuste pour effectuer les mêmes tâches que le Focus original, tout en restant proche au niveau de l'API et de la structure de l'application (à l'inverse de Focus V3 qui propose une approche différente).
 
 ## Typescript
 Typescript est un **superset typé** du Javascript courant (ES2016+). Il vient avec son propre compilateur qui effectue, comme son nom l'indique, du **typage statique** via de l'inférence (ie. automatiquement) ou des annotations explicites. Son usage est totalement **facultatif** (il n'est pas nécessaire d'utiliser du Typescript pour consommer la librairie) et totalement "à la carte" (il n'est pas nécessaire d'utiliser du typage partout). Néanmoins, la surcouche est suffisament fine et intuitive pour ne pas causer une surcharge de travail notable (le "langage" peut s'apprendre en 2 heures) et les bénéfices peuvent être énormes, du moins si on se décide à utiliser les options les plus strictes.
@@ -31,6 +31,7 @@ La doc est **[ici](http://mobx.js.org)**.
 Pour résumé, `Focus V4`, c'est :
 - Une version modifiée de `focus-core v2` pour Typescript et MobX
 - Les composants "dépréciés" de `focus-components v2` (layout, listes et recherche), modifiés pour Typescript et MobX (ces composants ont été réécrits de zéro pour Focus v3 et se trouvent dans les modules correspondants)
+- Une surcouche fine de `react-toolbox` pour remplacer les composants "simples " de `focus-components` (v2 et 3). Cette surcouche sera à terme extraite de ce package pour usage avec d'autres versions de Focus.
 - Une nouvelle gestion de l'état des formulaires (le reste fonctionne à peu près comme Focus V2), réalisée grâce à MobX, qui facilite beaucoup l’usage et réduit la configuration nécessaire. Ce nouveau module est entièrement testé unitairement.
 - Un nouveau routeur, qui simplifie et synchronise l'état de l'application avec l'URL, réalisé avec MobX.
 

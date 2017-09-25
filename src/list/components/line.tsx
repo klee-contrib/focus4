@@ -1,12 +1,12 @@
 import {autobind} from "core-decorators";
-import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import Button from "focus-components/button";
+import {IconButton} from "react-toolbox/lib/button";
 
+import {getIcon} from "../../components";
 import {EntityField, stringFor} from "../../entity";
 
 import {MiniListStore} from "../store-base";
@@ -83,14 +83,12 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                     >
                         {hasSelection && selectionnableInitializer!(data) && store ?
-                            <Button
+                            <IconButton
                                 className={`${theme!.checkbox!} ${store.selectedItems.size ? theme!.isSelection! : ""}`}
-                                shape="icon"
-                                type="button"
-                                icon={i18next.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.name`)}
-                                iconLibrary={i18next.t(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected.library`)}
+                                icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
                                 onClick={this.onSelection}
-                                color={this.isSelected ? "primary" : undefined}
+                                primary={this.isSelected}
+                                theme={{toggle: theme!.toggle!, icon: theme!.checkboxIcon!}}
                             />
                         : null}
                         <LineComponent data={data} openDetail={openDetail} />
@@ -100,7 +98,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                                 style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                             >
                                 <ContextualActions
-                                    buttonShape={mosaic ? "mini-fab" : null}
+                                    isMosaic={!!mosaic}
                                     operationList={opList}
                                     operationParam={data}
                                 />
