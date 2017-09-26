@@ -42,6 +42,7 @@
     margin-left: 42px !important;
     width: var(--action-bar-search-bar-width);
     padding: 0;
+    height: 36px;
 }
 
 .searchBarIcon {

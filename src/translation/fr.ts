@@ -1,8 +1,9 @@
 /** Objet contenant les traductions i18n en français par défaut, à intégrer si besoin dans un projet. */
 export const fr = {
-    confirmation: {
+    button: {
         cancel: "Annuler",
-        confirm: "Confirmer"
+        edit: "Modifier",
+        save: "Enregistrer"
     },
     detail: {
         deleted: "Élement supprimé avec succès",
@@ -53,6 +54,10 @@ export const fr = {
             results: "résultats",
             sortBy: "triés par"
         }
+    },
+    select: {
+        noLabel: "",
+        unselected: ""
     },
     validation: {
         date: "La date saisie est invalide",

@@ -12,6 +12,7 @@ export interface SelectProps {
     disabled?: boolean;
     error?: string | null;
     hasUndefined?: boolean;
+    i18nPrefix?: string;
     isRequired?: boolean;
     labelKey: string;
     name: string;
@@ -33,7 +34,7 @@ export class Select extends React.Component<SelectProps, void> {
         return this.props.onChange(value ? value : undefined);
     }
 
-    renderOptions({hasUndefined = true, labelKey, isRequired, value, values = [], valueKey, unSelectedLabel = "select.unSelected"}: SelectProps) {
+    renderOptions({hasUndefined = true, i18nPrefix = "focus", labelKey, isRequired, value, values = [], valueKey, unSelectedLabel = `${i18nPrefix}.select.unselected`}: SelectProps) {
         const isRequiredAndNoValue = isRequired && (isUndefined(value) || isNull(value));
         if (hasUndefined || isRequiredAndNoValue) {
             values = union(
@@ -45,7 +46,7 @@ export class Select extends React.Component<SelectProps, void> {
             .map((val, idx) => {
                 const optVal = `${(val as any)[valueKey]}`;
                 const elementValue = (val as any)[labelKey];
-                const optLabel = isUndefined(elementValue) || isNull(elementValue) ? i18next.t("focus.components.input.select.noLabel") : elementValue;
+                const optLabel = isUndefined(elementValue) || isNull(elementValue) ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
                 return <option key={idx} value={optVal}>{optLabel}</option>;
             });
     }
