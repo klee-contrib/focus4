@@ -59,9 +59,11 @@
 .timelineDate {
     color: black;
     position: absolute;
-    top: 23px;
-    margin-left: -130px;
+    top: 24px;
+    margin-left: -155px;
     font-size: 1em;
+    width: 100px;
+    text-align: right;
 }
 
 .timelineBadge {

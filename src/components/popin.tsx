@@ -100,7 +100,7 @@ export class Popin extends React.Component<PopinProps, {}> {
             }
         }
 
-        document.body.style.overflowY = "hidden";
+        document.documentElement.style.overflowY = "hidden";
     }
 
     /** Restore l'overflow (selon l'axe Y) du body et de l'éventuelle popin parente */
@@ -116,7 +116,7 @@ export class Popin extends React.Component<PopinProps, {}> {
             }
         }
 
-        document.body.style.overflowY = "auto";
+        document.documentElement.style.overflowY = "auto";
     }
 
     /** Récupère les deux animations d'ouverture et de fermeture selon le type de popin. */
@@ -147,11 +147,6 @@ export class Popin extends React.Component<PopinProps, {}> {
                     className={`${theme!.overlay} ${this.willClose ? theme!.fadeOut : this.willOpen ? theme!.fadeIn : ""}`}
                     onClick={!preventOverlayClick && closePopin || undefined}
                     style={level > 0 ? {background: "none"} : {}}
-                />
-                <div
-                    data-level={level}
-                    className={`${theme!.popin} ${type === "from-right" ? theme!.right : type === "from-left" ? theme!.left : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
-                    onClick={e => e.stopPropagation()}
                 >
                     {!this.willOpen ?
                         <IconButton
@@ -159,7 +154,13 @@ export class Popin extends React.Component<PopinProps, {}> {
                             onClick={closePopin}
                         />
                     : null}
-                    <div>{children}</div>
+                </div>
+                <div
+                    data-level={level}
+                    className={`${theme!.popin} ${type === "from-right" ? theme!.right : type === "from-left" ? theme!.left : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
+                    onClick={e => e.stopPropagation()}
+                >
+                    {children}
                 </div>
             </div>
         : <div />;

@@ -110,9 +110,11 @@
     top: 0;
     width: 50vw;
     height: 100vh;
-    padding: 20px;
+    padding: 15px;
     background: var(--popin-background);
     box-shadow: var(--shadow-4p);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .left {
@@ -123,12 +125,12 @@
     right: 0;
 }
 
-.popin > button {
+.overlay > button {
     z-index: var(--z-index-higher);
     cursor: pointer;
     position: absolute;
     top: 5px;
-    left: -45px;
+    left: calc(50vw - 45px);
     color: white !important;
 
     & > [data-react-toolbox="font-icon"] {

@@ -16,6 +16,7 @@
     list-style: none;
     padding: 20px 0;
     position: relative;
+    margin-left: 100px;
 }
 
 .timeline::before {
