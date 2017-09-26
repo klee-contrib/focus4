@@ -10,7 +10,7 @@ import {getIcon} from "../../components";
 
 import {ListStore} from "../store";
 import {ListStoreBase} from "../store-base";
-import {Table, TABLE_CELL_CLASS, TableProps} from "./table";
+import {Table, TableProps} from "./table";
 
 import * as styles from "./__style__/list.css";
 
@@ -44,7 +44,7 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
             <thead>
                 <tr>
                     {Object.keys(columns).map(col => (
-                        <th className={TABLE_CELL_CLASS} key={col}>
+                        <th key={col}>
                             <div style={{display: "flex", alignItems: "center", marginBottom: sortableColumns.find(c => c === col) ? -3 : 0}}>
                                 <div>{i18next.t(columns[col])}</div>
                                 {sortableColumns.find(c => c === col) ?

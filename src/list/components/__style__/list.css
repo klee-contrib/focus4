@@ -1,3 +1,5 @@
+@import "react-toolbox/lib/table/theme.css";
+
 .list,
 .mosaic {
     list-style: none;
@@ -111,4 +113,60 @@
 .bottomRow button:global(:not(.mdl-button--raised)) {
     font-weight: bold;
     text-transform: none;
+}
+
+/* Ci-dessous, recopie du CSS du tableau react-toolbox */
+
+.table {
+    background-color: var(--color-white);
+    border-collapse: collapse;
+    font-size: var(--table-font-size);
+    width: 100%;
+}
+
+.table thead {
+    padding-bottom: calc(0.3 * var(--unit));
+    white-space: nowrap;
+}
+
+.table tbody tr {
+    transition-duration: 0.28s;
+    transition-property: background-color;
+    transition-timing-function: var(--animation-curve-default);
+
+    &:hover {
+        background-color: var(--table-hover-color);
+    }
+}
+
+.table td,
+.table th {
+    color: var(--table-row-color);
+    padding: 0 var(--table-column-padding);
+    text-align: left;
+}
+
+.table td {
+    border-bottom: var(--table-dividers);
+    border-top: var(--table-dividers);
+    height: var(--table-row-height);
+}
+
+.table th {
+    color: var(--table-header-color);
+    font-size: var(--table-header-font-size);
+    font-weight: var(--font-weight-bold);
+    height: var(--table-row-height);
+    line-height: calc(2.4 * var(--unit));
+    text-overflow: ellipsis;
+}
+
+.table td:first-of-type,
+.table th:first-of-type {
+    padding-left: 24px;
+}
+
+.table td:last-of-type,
+.table th:last-of-type {
+    padding-right: 24px;
 }

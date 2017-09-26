@@ -11,7 +11,6 @@
     width: 100%;
     margin-bottom: 30px;
     box-shadow: var(--panel-shadow);
-    font-size: 13px;
     background: var(--color-white);
     border-radius: 2px;
 }

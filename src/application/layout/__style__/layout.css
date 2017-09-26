@@ -1,13 +1,82 @@
 @import "../../../style/layout.css";
 
 html {
+    width: 100%;
+    height: 100%;
     position: relative;
-    min-height: 100%;
     overflow-x: hidden;
+    color: var(--color-black);
+    font-size: var(--font-size-small);
+    line-height: 1.4;
+    font-family: var(--preferred-font);
 }
 
 body {
-    height: 100%;
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 24px 0;
+    font-weight: var(--font-weight-normal);
+}
+
+h1 {
+    font-size: calc(3.5 * var(--font-size));
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: calc(2.8 * var(--font-size));
+    line-height: 48px;
+}
+
+h3 {
+    font-size: calc(2.2 * var(--font-size));
+    line-height: 40px;
+}
+
+h4 {
+    font-size: calc(1.5 * var(--font-size));
+    line-height: 32px;
+}
+
+h5 {
+    font-size: calc(1.25 * var(--font-size));
+    font-weight: var(--font-weight-semi-bold);
+    line-height: 1;
+    letter-spacing: 0.02em;
+}
+
+h6 {
+    font-size: var(--font-size);
+    line-height: 24px;
+    letter-spacing: 0.04em;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin: var(--layout-footer-margin);
+    padding: var(--layout-footer-padding);
 }
 
 .layout {
@@ -19,12 +88,4 @@ body {
 .content {
     margin: var(--layout-content-margin);
     padding: var(--layout-content-padding);
-}
-
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    margin: var(--layout-footer-margin);
-    padding: var(--layout-footer-padding);
 }

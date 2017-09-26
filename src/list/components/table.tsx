@@ -10,9 +10,6 @@ import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
 
-const TABLE_CSS_CLASS = "mdl-data-table mdl-js-data-table mdl-shadow--2dp ";
-export const TABLE_CELL_CLASS = "mdl-data-table__cell--non-numeric";
-
 /** Props du tableau de base. */
 export interface TableProps<T> extends ListBaseProps<T> {
     /** La description des colonnes du tableau avec leur libellés. */
@@ -39,7 +36,7 @@ export class Table<T, P> extends ListBase<T, TableProps<T> & P> {
             <thead>
                 <tr>
                     {values(this.props.columns).map(col => (
-                        <th className={TABLE_CELL_CLASS} key={col}>{i18next.t(col)}</th>
+                        <th key={col}>{i18next.t(col)}</th>
                     ))}
                 </tr>
             </thead>
@@ -69,7 +66,7 @@ export class Table<T, P> extends ListBase<T, TableProps<T> & P> {
     render() {
         return (
             <div>
-                <table className={TABLE_CSS_CLASS}>
+                <table className={this.props.theme!.table}>
                     {this.renderTableHeader()}
                     {this.renderTableBody()}
                 </table>
