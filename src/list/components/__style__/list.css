@@ -155,7 +155,6 @@
 
 .table th {
     color: var(--table-header-color);
-    font-size: var(--table-header-font-size);
     font-weight: var(--font-weight-bold);
     height: var(--table-row-height);
     line-height: calc(2.4 * var(--unit));
