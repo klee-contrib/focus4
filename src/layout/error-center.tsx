@@ -6,7 +6,7 @@ import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
-import {getIcon} from "../../components";
+import {getIcon} from "../components";
 
 import styles from "./__style__/error-center.css";
 

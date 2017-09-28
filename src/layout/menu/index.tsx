@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {classAutorun} from "../../../util";
+import {classAutorun} from "../../util";
 
 import {MenuItemConfig} from "./item";
 import MenuList, {MenuProps, MenuStyle, styles} from "./list";

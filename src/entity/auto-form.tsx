@@ -1,11 +1,10 @@
 import {autobind} from "core-decorators";
 import {some, values as _values} from "lodash";
-import {action, Lambda, observable, reaction, runInAction} from "mobx";
+import {action, computed, Lambda, observable, ObservableMap, reaction, runInAction} from "mobx";
 import * as React from "react";
 import {InputProps} from "react-toolbox/lib/input";
 import {v4} from "uuid";
 
-import {applicationStore} from "../application";
 import {DisplayProps, PanelProps, SelectProps} from "../components";
 import {messageStore} from "../message";
 import {classAutorun} from "../util";
@@ -64,9 +63,21 @@ export interface ServiceConfig {
 @autobind
 export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P, void> {
 
+    /** Map de tous les formulaires actuellement affichés avec leur état en édition */
+    static readonly editingMap: ObservableMap<boolean> = observable.map<boolean>();
+
+    /** Précise si au moins un formulaire de l'application est en édition. */
+    @computed
+    static get isOneEdit() {
+        return AutoForm.editingMap.values().some(x => x);
+    }
+
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
     static contextTypes = {theme: React.PropTypes.object};
     context: {theme: {[key: string]: {[key: string]: any}}};
+
+    /** Identifiant unique du formulaire. */
+    formId = v4();
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
     entity: E & ViewModel;
@@ -94,9 +105,6 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
     /** Classe CSS additionnelle (passée en options). */
     private className: string;
-
-    /** Identifiant unique du formulaire, pour l'ApplicationStore. */
-    private formId = v4();
 
     /** Insère ou non un formulaire HTML. */
     private hasForm: boolean;
@@ -141,13 +149,13 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
     componentWillMount() {
         this.init();
-        applicationStore.forms.set(this.formId, this.isEdit);
+        AutoForm.editingMap.set(this.formId, this.isEdit);
         this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.
         this.load();
     }
 
     componentWillUnmount() {
-        applicationStore.forms.delete(this.formId);
+        AutoForm.editingMap.delete(this.formId);
         if (!this.isCustomEntity) {
             this.entity.unsubscribe();
         }
@@ -166,7 +174,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     }
 
     @classAutorun protected updateApplicationStore() {
-        applicationStore.forms.set(this.formId, this.isEdit);
+        AutoForm.editingMap.set(this.formId, this.isEdit);
     }
 
     /** Appelle le service de suppression. */

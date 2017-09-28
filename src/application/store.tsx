@@ -1,22 +1,7 @@
-import {action, computed, observable, ObservableMap} from "mobx";
+import {action, observable} from "mobx";
 import * as React from "react";
 
-import {ButtonProps} from "react-toolbox/lib/button";
-import {MenuItemProps} from "react-toolbox/lib/menu";
-import {TooltipProps} from "react-toolbox/lib/tooltip";
-
-/** Mode de l'application (consultation ou édition) */
-export type Mode = "consult" | "edit";
-
-export type PrimaryAction = ButtonProps & TooltipProps & {
-    /** Icône custom (non material). */
-    iconCustom?: boolean;
-};
-
-export interface SecondaryAction extends MenuItemProps {
-    /** Icône custom (non material). */
-    iconCustom?: boolean;
-}
+import {PrimaryAction, SecondaryAction} from "../layout";
 
 export interface ApplicationAction {
     /** Actions transverses. */
@@ -50,9 +35,6 @@ export class ApplicationStore implements ApplicationAction {
     /** Précise si le header peut se déployer ou non. */
     @observable canDeploy = true;
 
-    /** Map de tous les formulaires actuellement affichés avec leur état en édition */
-    readonly forms: ObservableMap<boolean> = observable.map<boolean>();
-
     /** Composant de header gauche. */
     @observable barLeft = <div />;
     /** Composant de header droit. */
@@ -61,12 +43,6 @@ export class ApplicationStore implements ApplicationAction {
     @observable cartridge = <div />;
     /** Composant de résumé, affiché en mode replié. */
     @observable summary = <div />;
-
-    /** Précise si au moins un formulaire de l'application est en édition. */
-    @computed
-    get isEdit() {
-        return this.forms.values().some(x => x);
-    }
 
     /** Réinitialise tous les composants et les actions du header. */
     @action

@@ -1,7 +1,6 @@
 ### Puisque un exemple parle souvent mieux que des mots dans le vent, le [starter kit](http://www.github.com/get-focus/focus4-starter-kit) fait également office de démo et présente les usages les plus simples de `focus4`.
 
 # Référence d'API
-## [Module `application`](application)
 ## [Module `components`](components)
 ## [Module `entity`](entity)
 
@@ -33,6 +32,7 @@ class Component {
 
 Comme son nom l'indique, le décorateur `@injectByPropName` utilise le nom de la propriété comme identifiant de l'objet à injecter.
 
+## [Module `layout`](layout)
 ## [Module `list`](list)
 ## [Module `message`](message)
 ## [Module `network`](network)

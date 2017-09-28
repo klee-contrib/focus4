@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "8.0.0",
+  "version": "8.1.0-preview",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -13,7 +13,7 @@
   "scripts": {
     "clean": "node scripts/clean.js",
     "prepublish": "in-publish && node scripts/clean.js && node scripts/tcm.js && tsc --outDir ./ && node scripts/copy-css.js ./ || true",
-    "postpublish": "rm -rf config.js config.d.ts index.js index.d.ts ioc.js ioc.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf application components entity list message network router search style testing translation",
+    "postpublish": "rm -rf config.js config.d.ts index.js index.d.ts ioc.js ioc.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf application components entity layout list message network router search style testing translation",
     "start": "tsc && node scripts/copy-css.js dist",
     "stylelint": "stylelint src/**/*.css",
     "tcm": "node scripts/tcm.js",

@@ -1,4 +1,4 @@
-@import "../../../../style/menu.css";
+@import "../../../style/menu.css";
 
 .animate {
     animation-duration: 0.2s;

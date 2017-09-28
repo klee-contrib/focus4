@@ -1,16 +1,27 @@
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
-import {Button} from "react-toolbox/lib/button";
-import Tooltip from "react-toolbox/lib/tooltip";
+import {Button, ButtonProps} from "react-toolbox/lib/button";
+import {MenuItemProps} from "react-toolbox/lib/menu";
+import Tooltip, {TooltipProps} from "react-toolbox/lib/tooltip";
 
-import {ButtonMenu, getIcon, MenuItem} from "../../../components";
-
-import {PrimaryAction, SecondaryAction} from "../../store";
+import {ButtonMenu, getIcon, MenuItem} from "../../components";
 
 import {HeaderStyle, styles} from "./types";
 
 const TooltipButton = Tooltip(Button);
+
+/** Action principale, affichée dans son propre bouton. */
+export type PrimaryAction = ButtonProps & TooltipProps & {
+    /** Icône custom (non material). */
+    iconCustom?: boolean;
+};
+
+/** Action secondaire, affichée dans un menu. */
+export interface SecondaryAction extends MenuItemProps {
+    /** Icône custom (non material). */
+    iconCustom?: boolean;
+}
 
 /** Props des actions du header. */
 export interface HeaderActionsProps {
