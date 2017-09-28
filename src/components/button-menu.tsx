@@ -17,17 +17,19 @@ export interface ButtonMenuProps extends MenuProps {
     };
 }
 
-/** Menu React-Toolbox avec un bouton personnalisable. */
+/** Menu React-Toolbox avec un bouton personnalisable (non icône). */
 @autobind
 @observer
 export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
 
     /** Menu ouvert. */
     @observable isOpened = false;
+    /** Hauteur du bouton, pour placer le menu. */
     @observable buttonHeight = 0;
 
     private button?: Button;
 
+    // On récupère à tout instant la hauteur du bouton.
     componentDidMount() {
         if (this.button) {
             this.buttonHeight = findDOMNode(this.button).clientHeight;
@@ -40,6 +42,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
         }
     }
 
+    /** Génère le style à passer au menu pour le positionner, en fonction de la position souhaitée et de la taille du bouton. */
     @computed.struct
     private get menuStyle() {
         const {position = "topLeft"} = this.props;

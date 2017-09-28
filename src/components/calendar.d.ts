@@ -1,3 +1,4 @@
+// Définitions de styles manquants de libraries externes pour pouvoir compiler certains composants.
 
 declare module "smoothscroll-polyfill";
 

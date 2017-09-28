@@ -34,7 +34,7 @@ export interface AutocompleteProps extends RTAutocompleteProps {
     theme?: AutocompleteStyle;
 }
 
-/** Composant d'autocomplétion à partir d'une recherche serveur. */
+/** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @autobind
 @observer
 export class Autocomplete extends React.Component<AutocompleteProps, void> {

@@ -53,7 +53,6 @@ export class ButtonBackToTop extends React.Component<ButtonBackToTopProps, void>
         });
     }
 
-    /** @inheritdoc */
     render() {
         const {theme} = this.props;
         return this.isVisible ?

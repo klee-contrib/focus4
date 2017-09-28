@@ -36,7 +36,7 @@ export interface InputDateProps {
     value?: string;
 }
 
-/** Composant d'input avec un calendrier. Diffère du DatePicker car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
+/** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @autobind
 @observer
 export class InputDate extends React.Component<InputDateProps, void> {

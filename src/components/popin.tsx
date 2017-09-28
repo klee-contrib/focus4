@@ -84,7 +84,7 @@ export class Popin extends React.Component<PopinProps, {}> {
         }
     }
 
-    /** Masque l'overflow (selon l'axe Y) du body et de l'éventuelle popin parente. */
+    /** Masque l'overflow (selon l'axe Y) du <html> et de l'éventuelle popin parente. */
     private hideBodyOverflow() {
         // Si level > 0, alors on a une popin parente et on va la chercher.
         if (this.props.level) {
@@ -103,7 +103,7 @@ export class Popin extends React.Component<PopinProps, {}> {
         document.documentElement.style.overflowY = "hidden";
     }
 
-    /** Restore l'overflow (selon l'axe Y) du body et de l'éventuelle popin parente */
+    /** Restore l'overflow (selon l'axe Y) du <html> et de l'éventuelle popin parente */
     private restoreBodyOverflow() {
         if (this.props.level) {
             let parentPopin = findDOMNode(this) as HTMLElement | null;

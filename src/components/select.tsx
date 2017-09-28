@@ -1,68 +1,81 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {isNull, isUndefined, union} from "lodash";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
 import * as styles from "./__style__/select.css";
 export type SelectStyle = Partial<typeof styles>;
 
+/** Props du Select. */
 export interface SelectProps {
-    autoFocus?: boolean;
+    /** Désactive le select. */
     disabled?: boolean;
-    error?: string | null;
+    /** Message d'erreur à afficher. */
+    error?: string;
+    /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
     hasUndefined?: boolean;
+    /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
-    isRequired?: boolean;
+    /** Nom du champ de libellé. */
     labelKey: string;
+    /** Nom de l'input. */
     name: string;
+    /** Est appelé à chaque changement de valeur. */
     onChange: (value: string | number | undefined) => void;
-    size?: number;
-    style?: React.CSSProperties;
+    /** CSS. */
     theme?: SelectStyle;
+    /** Libellés des champs sans libellés. */
     unSelectedLabel?: string;
+    /** Valeur. */
     value?: string | number;
+    /** Nom du champ de valeur. */
     valueKey: string;
+    /** Liste des valeurs. */
     values: {}[];
 }
 
-@autobind
-export class Select extends React.Component<SelectProps, void> {
+/** Surcouche de <select> pour s'interfacer avec un <Field>. */
+export function Select({
+    disabled,
+    error,
+    labelKey,
+    name,
+    onChange,
+    theme,
+    value,
+    valueKey,
+    values,
+    hasUndefined = true,
+    i18nPrefix = "focus",
+    unSelectedLabel = `${i18nPrefix}.select.unselected`
+}: SelectProps) {
 
-    handleSelectChange(evt: React.SyntheticEvent<HTMLSelectElement>) {
-        const {value} = evt.currentTarget;
-        return this.props.onChange(value ? value : undefined);
+    // On ajoute l'élément vide si nécessaire.
+    let finalValues = values;
+    if (hasUndefined) {
+        finalValues = [
+            {[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)},
+            ...values
+        ];
     }
 
-    renderOptions({hasUndefined = true, i18nPrefix = "focus", labelKey, isRequired, value, values = [], valueKey, unSelectedLabel = `${i18nPrefix}.select.unselected`}: SelectProps) {
-        const isRequiredAndNoValue = isRequired && (isUndefined(value) || isNull(value));
-        if (hasUndefined || isRequiredAndNoValue) {
-            values = union(
-                [{[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)}],
-                values
-            );
-        }
-        return values
-            .map((val, idx) => {
-                const optVal = `${(val as any)[valueKey]}`;
-                const elementValue = (val as any)[labelKey];
-                const optLabel = isUndefined(elementValue) || isNull(elementValue) ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
-                return <option key={idx} value={optVal}>{optLabel}</option>;
-            });
-    }
-
-    render() {
-        const {autoFocus, error, name, style, value, disabled, size, theme} = this.props;
-        const selectProps = {autoFocus, disabled, size};
-        return (
-            <div data-focus="select" className={`${theme!.select} ${error ? theme!.error : ""}`} style={style}>
-                <select name={name} onChange={this.handleSelectChange} value={isUndefined(value) ? "" : value} {...selectProps}>
-                    {this.renderOptions(this.props)}
-                </select>
-                {error ? <div className={theme!.errorLabel}>{error}</div> : null}
-            </div>
-        );
-    }
+    return (
+        <div data-focus="select" className={`${theme!.select} ${error ? theme!.error : ""}`}>
+            <select
+                disabled={disabled}
+                name={name}
+                onChange={({currentTarget: {value: v}}) => onChange(v || undefined)}
+                value={value === undefined ? "" : value}
+            >
+                {finalValues.map((val, idx) => {
+                    const optVal = `${(val as any)[valueKey]}`;
+                    const elementValue = (val as any)[labelKey];
+                    const optLabel = elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
+                    return <option key={idx} value={optVal}>{optLabel}</option>;
+                })}
+            </select>
+            {error ? <div className={theme!.errorLabel}>{error}</div> : null}
+        </div>
+    );
 }
 
 export default themr("select", styles)(Select);
