@@ -34,12 +34,6 @@ export interface StringValidator {
     options?: StringOptions;
 }
 
-export interface RequiredValidator {
-    type: "required";
-    value: boolean;
-    options?: TrKey;
-}
-
 export interface RegexValidator {
     type: "regex";
     value: RegExp;
@@ -62,7 +56,7 @@ export interface FunctionValidator {
     options?: {isEdit?: boolean} & TrKey;
 }
 
-export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | RequiredValidator | StringValidator;
+export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator;
 
 /**
  * Vérifie que le texte est une date.
@@ -133,19 +127,15 @@ function getErrorLabel(type: string, options?: TrKey): string {
  */
 function validateProperty(property: ValidationProperty, validator: Validator) {
     const {value} = property;
-    const isValueNullOrUndefined = isNull(value) || isUndefined(value);
     const isValid = (() => {
         switch (validator.type) {
-            case "required":
-                const prevalidString = property.value === "" ? false : true;
-                return validator.value ? (!isNull(value) && !isUndefined(value) && prevalidString) : true;
             case "regex":
-                if (isValueNullOrUndefined) {
+                if (!value) {
                     return true;
                 }
                 return validator.value.test(value);
             case "email":
-                if (isValueNullOrUndefined) {
+                if (!value) {
                     return true;
                 }
                 return emailValidator(value);
