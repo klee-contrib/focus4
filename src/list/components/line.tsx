@@ -26,17 +26,29 @@ export interface LineProps<T> {
 
 /** Props du wrapper autour des lignes de liste. */
 export interface LineWrapperProps<T> {
+    /** L'élément de liste. */
     data: T;
+    /** Le sélecteur pour le champ date, pour une ligne timeline. */
     dateSelector?: (data: T) => EntityField<string>;
+    /** Affiche ou non la checkbox de sélection. */
     hasSelection?: boolean;
+    /** Préfixe i18n. Par défaut: "focus". */
     i18nPrefix?: string;
+    /** Détermine si la ligne est sélectionnable. Par défaut () => true. */
+    isSelectionnable?: (data: T) => boolean;
+    /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
     LineComponent: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    /** Configuration de la mosaïque (si applicable). */
     mosaic?: {width: number, height: number};
+    /** Handler pour ouvrir (et fermer) le détail. */
     openDetail?: () => void;
+    /** Actions de ligne. */
     operationList?: (data: T) => LineOperationListItem<T>[];
-    selectionnableInitializer?: (data: T) => boolean;
+    /** Store de liste associé à la ligne. */
     store?: MiniListStore<T>;
+    /** CSS. */
     theme?: LineStyle;
+    /** Type spécial de ligne. */
     type?: "table" | "timeline";
 }
 
@@ -61,7 +73,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
     }
 
     render() {
-        const {LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, selectionnableInitializer, theme, operationList, type, store} = this.props;
+        const {LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, isSelectionnable = () => true, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} />;
@@ -82,7 +94,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                         className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                     >
-                        {hasSelection && selectionnableInitializer!(data) && store ?
+                        {hasSelection && isSelectionnable(data) && store ?
                             <IconButton
                                 className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.isSelection : ""}`}
                                 icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}

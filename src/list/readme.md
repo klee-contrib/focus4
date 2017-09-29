@@ -9,7 +9,7 @@ Le `ListStore` à maintenant un deuxième mode de fonctionnement dans lequel on 
 
 ## Composants
 
-Les composants de listes sont maintenant tous basés sur `ListBase`, qui regroupe les fonctionnalités de `MemoryList` + tout ce qui est commun à toutes les listes (affichage partiel et scroll princiapelement).
+Les composants de listes sont maintenant tous basés sur `ListBase`, qui regroupe les fonctionnalités de `MemoryList` (v2) + tout ce qui est commun à toutes les listes (affichage partiel et scroll princiapelement).
 
 On a donc, pour les composants de base :
 * `List`, posable par `listFor` (les deux font exactement la même chose), qui est une liste qui prend les données en props. Plus de détail sur la liste dans le paragraphe suivant.
@@ -17,15 +17,15 @@ On a donc, pour les composants de base :
 * `Timeline`, posable par `timelineFor` (les deux font exactement la même chose), qui est une timeline qui prend les données en props.
 
 Et pour les composants liés à un `ListStoreBase`:
-* `StoreList`, équivalent de l'ancien `ListSelection`, qui est lié à un store et peut gérer de la sélection (ou pas) (le tri est géré par une `ActionBar`).
-* `StoreTable`, équivalent de l'ancien `ListTable`, qui est lié à un store et peut gérer du tri au niveau des colonnes.
+* `StoreList`, posable par `storeListFor`, équivalent de l'ancien `ListSelection`, qui est lié à un store et peut gérer de la sélection (ou pas) (le tri est géré par une `ActionBar`).
+* `StoreTable`, posable par `storeTableFor`, équivalent de l'ancien `ListTable`, qui est lié à un store et peut gérer du tri au niveau des colonnes.
 
 Pour les deux précédents, la liste utilisée est passable en props (obligatoire pour le `SearchStore`, override `ListStore.dataList` sinon).
 
 ## La liste
 Si les composants de tableau et de timeline sont assez simples, la liste possède quelques fonctionnalités supplémentaires :
-- La gestion d'un mode liste et d'un mode mosaïque, avec deux composants séparés.
-- La gestion d'un détail d'élément, dont l'affichage se fait par accordéon.
-- La gestion d'un handler d'ajout d'élément.
+- La gestion d'un mode liste et d'un mode mosaïque, avec deux composants séparés. (`LineComponent` et `MosaicComponent`)
+- La gestion d'un détail d'élément, dont l'affichage se fait par accordéon. (`DetailComponent` et la prop supplémentaire `openDetail` passée aux lignes.)
+- La gestion d'un handler d'ajout d'élément (affiché uniquement en mosaïque). (`addItemHandler`)
 
 Un composant transverse **`ListWrapper`** permet de centraliser les paramètres de mode, de taille de mosaïque et d'handler d'ajout d'élément pour partager cet état entre plusieurs listes (c'est déja nativement utilisé par la recherche groupée). Il suffit de poser toutes les listes dans un `ListWrapper` et elles récupéreront l'état via le contexte.

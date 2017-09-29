@@ -13,18 +13,23 @@ export {FacetStyle};
 import * as styles from "./__style__/facet-box.css";
 export type FacetBoxStyle = Partial<typeof styles>;
 
+/** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
-    /** Par défaut : "focus" */
+    /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Par défaut : 6 */
+    /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList?: number;
-    /** Par défaut : FCT_SCOPE */
+    /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
+    /** Affiche les facettes qui n'ont qu'une seule valeur. */
     showSingleValuedFacets?: boolean;
+    /** Store de recherche associé. */
     store: SearchStore<T>;
+    /** CSS. */
     theme?: FacetBoxStyle;
 }
 
+/** Composant contenant la liste des facettes retournées par une recherche. */
 @autobind
 @observer
 export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {

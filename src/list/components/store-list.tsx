@@ -16,7 +16,7 @@ export interface StoreListProps<T> {
     /** Affiche la sélection sur les lignes. */
     hasSelection?: boolean;
     /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    selectionnableInitializer?: (data?: T) => boolean;
+    isLineSelectionnable?: (data?: T) => boolean;
     /** Store contenant la liste. */
     store: MiniListStore<T>;
 }
@@ -52,7 +52,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      * @param Component Le composant de ligne.
      */
     protected getItems(Component: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>) {
-        const {hasSelection = false, selectionnableInitializer = () => true, store} = this.props;
+        const {hasSelection = false, isLineSelectionnable = () => true, store} = this.props;
         return super.getItems(Component).map(({key, data}) => ({
             key,
             data: {
@@ -60,7 +60,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
                 props: {
                     ...data.props,
                     hasSelection,
-                    selectionnableInitializer,
+                    isSelectionnable: isLineSelectionnable,
                     store
                 }
             },

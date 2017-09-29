@@ -15,30 +15,47 @@ import * as styles from "./__style__/group.css";
 
 export type GroupStyle = Partial<typeof styles>;
 
+/** Props du composant de groupe. */
 export interface GroupProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
+    /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
+    /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: {}) => number);
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
+    /** Constituion du groupe à afficher. */
     group: GroupResult<{}>;
+    /** Actions de groupe. */
     groupOperationList?: GroupOperationListItem<T>[];
+    /** Affiche la sélection sur l'ActionBar et les lignes. */
     hasSelection?: boolean;
-    /** Par défaut : "focus" */
+    /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
+    isLineSelectionnable?: (data?: T) => boolean;
+    /** Composant de ligne. */
     LineComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
+    /** CSS des lignes. */
     lineTheme?: LineStyle;
+    /** CSS de la liste. */
     listTheme?: ListStyle;
+    /** Composant de mosaïque. */
     MosaicComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
     perPage: number;
-    selectionnableInitializer?: (data?: T) => boolean;
+    /** Affiche un bouton "Voir tout" qui effectue cette action. */
     showAllHandler?: (key: string) => void;
+    /** Store contenant la liste. */
     store: SearchStore<T>;
+    /** CSS */
     theme?: GroupStyle;
 }
 
+/** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
 @autobind
 @observer
 export class Group<T> extends React.Component<GroupProps<T>, void> {
@@ -50,7 +67,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     protected renderList() {
-        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, selectionnableInitializer, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, isLineSelectionnable, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <div>
                 <StoreList
@@ -68,7 +85,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     MosaicComponent={MosaicComponent}
                     operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}
-                    selectionnableInitializer={selectionnableInitializer}
+                    isLineSelectionnable={isLineSelectionnable}
                     showAllHandler={showAllHandler && group.code ? () => showAllHandler(group.code!) : undefined}
                     store={this.store}
                     theme={listTheme}

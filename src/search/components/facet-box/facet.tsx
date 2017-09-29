@@ -12,16 +12,23 @@ import {FacetOutput} from "../../types";
 import * as styles from "./__style__/facet.css";
 export type FacetStyle = Partial<typeof styles>;
 
+/** Props de Facet. */
 export interface FacetProps {
+    /** Facette à afficher. */
     facet: FacetOutput;
-    /** Par défaut : "focus" */
+    /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList: number;
+    /** Valeur sélectionnée. */
     selectedDataKey: string | undefined;
+    /** Handler de sélection d'une facette. */
     selectHandler: (facetKey: string, dataKey: string | undefined) => void;
+    /** CSS. */
     theme?: FacetStyle;
 }
 
+/** Composant affichant le détail d'une facette avec ses valeurs. */
 @autobind
 @observer
 export class Facet extends React.Component<FacetProps, void> {

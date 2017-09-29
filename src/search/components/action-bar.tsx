@@ -23,26 +23,39 @@ const DEFAULT_FACETBOX_MARGIN = 1000;
 
 export type ActionBarStyle = Partial<typeof styles>;
 
+/** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
+    /** Constituion de l'éventuel groupe auquel est lié l'ActionBar */
     group?: {code: string, label: string, totalCount: number};
+    /** Contient une FacetBox. */
     hasFacetBox?: boolean;
+    /** Affiche le bouton de groupe. */
     hasGrouping?: boolean;
+    /** Affiche la barre de recherche. */
     hasSearchBar?: boolean;
+    /** Affiche la case pour la sélection. */
     hasSelection?: boolean;
-    /** Par défaut : "focus" */
+    /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Par défaut : 6 */
+    /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
+    /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
+    /** Actions sur les éléments sélectionnés. */
     operationList?: GroupOperationListItem<T>[];
-    /** Par défaut : FCT_SCOPE */
+    /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
+    /** Placeholder pour la barre de recherche. */
     searchBarPlaceholder?: string;
+    /** Affiche les facettes qui n'ont qu'une seule valeur. */
     showSingleValuedFacets?: boolean;
+    /** Store associé. */
     store: MiniListStore<T>;
+    /** CSS. */
     theme?: ActionBarStyle;
 }
 
+/** Barre d'actions pour une liste ou un groupe de recherche. Permet le tri, le grouping, la recherche et la sélection + actions en masse. */
 @observer
 @autobind
 export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {

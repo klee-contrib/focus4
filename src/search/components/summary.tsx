@@ -16,18 +16,27 @@ import * as styles from "./__style__/summary.css";
 
 export type SummaryStyle = Partial<typeof styles>;
 
+/** Props du ListSummary. */
 export interface ListSummaryProps<T> {
-    /** Par défaut : true */
+    /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
+    /** Handler pour le bouton d'export. */
     exportAction?: () => void;
+    /** Masque les critères de recherche. */
     hideCriteria?: boolean;
+    /** Masque les facettes. */
     hideFacets?: boolean;
+    /** Masque le scope. */
     hideScope?: boolean;
-    /** Par défaut : "focus" */
+    /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
+    /** Détail des scopes de la recherche. */
     scopes: {code: string, label?: string}[];
+    /** Store associé. */
     store: SearchStore<T>;
+    /** CSS. */
     theme?: SummaryStyle;
 }
 
@@ -103,7 +112,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
         const {canRemoveSort = true, theme, exportAction, i18nPrefix = "focus", store} = this.props;
         const {groupingKey, totalCount, query} = store;
 
-        const plural = totalCount > 1 ? "s" : "";
+        const plural = totalCount !== 1 ? "s" : "";
         const sentence = theme!.sentence;
 
         return (

@@ -103,6 +103,12 @@ export declare class ViewStore<V, N extends string> {
      * @param replace Ne fusionne pas la vue souhaitée avec la vue courante.
      */
     setView(view: Partial<V>, replace?: boolean): void;
+
+    /**
+     * Effectue l'action fournie à partir de la vue courante et filtre les résultats "faux".
+     * @param block L'action à effectuer.
+     */
+    withView<T>(block: (view: View<V>) => T | undefined | "" | false): T;
 }
 ```
 
