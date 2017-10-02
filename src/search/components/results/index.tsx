@@ -6,6 +6,7 @@ import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
+import {ReactComponent} from "../../../config";
 import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle} from "../../../list";
 
 import {SearchStore} from "../../store";
@@ -20,11 +21,11 @@ export interface ResultsProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
+    DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
+    EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Actions de groupe par scope. */
     groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
     /** Nombre d'éléments affichés par page de groupe. Par défaut: 5 */
@@ -40,7 +41,7 @@ export interface ResultsProps<T> {
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composants de ligne par scope. */
-    lineComponentMapper?: (scope: string) => React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    lineComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
     /** La liste des actions sur chaque élément de la liste, par scope. */
     lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<T>[]};
     /** CSS des lignes. */
@@ -48,7 +49,7 @@ export interface ResultsProps<T> {
     /** CSS de la liste. */
     listTheme?: ListStyle;
     /** Composants de mosaïque par scope. */
-    mosaicComponentMapper?: (scope: string) => React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    mosaicComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
     /** Offset pour le scroll inifini. Par défaut : 250 */
     offset?: number;
     /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
@@ -103,10 +104,10 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     }
 
     protected renderSingleGroup(group: GroupResult<{}>) {
-        const {lineTheme, listTheme, groupTheme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponentMapper, mosaicComponentMapper, isLineSelectionnable, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {lineTheme, listTheme, groupTheme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponents, mosaicComponents, isLineSelectionnable, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
-        const LineComponent = lineComponentMapper && lineComponentMapper(groupKey);
-        const MosaicComponent = mosaicComponentMapper && mosaicComponentMapper(groupKey);
+        const LineComponent = lineComponents && lineComponents[groupKey];
+        const MosaicComponent = mosaicComponents && mosaicComponents[groupKey];
         if (LineComponent || MosaicComponent) {
             return (
                 <Group

@@ -6,11 +6,14 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {Input} from "react-toolbox/lib/input";
 
+import {Display} from "../components";
+import {ReactComponent} from "../config";
+
 import {BaseDisplayProps, BaseInputProps, BaseLabelProps, Domain} from "./types";
 import {validate} from "./validation";
 
-import { Display } from "../components/index";
 import * as styles from "./__style__/field.css";
+
 export type FieldStyle = Partial<typeof styles>;
 
 export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} & {[P in LK]: string};
@@ -125,7 +128,7 @@ export class Field<
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
         const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}} = this.props;
-        const FinalDisplay: React.ComponentClass<any> | React.SFC<any> = DisplayComponent || Display;
+        const FinalDisplay: ReactComponent<any> = DisplayComponent || Display;
         return (
             <FinalDisplay
                 {...displayProps as {}}
@@ -142,7 +145,7 @@ export class Field<
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps, name} = this.props;
-        const FinalInput: React.ComponentClass<any> | React.SFC<any> = InputComponent || Input;
+        const FinalInput: ReactComponent<any> = InputComponent || Input;
 
         let props: any = {
             ...inputProps as {},

@@ -33,7 +33,7 @@ export interface ListSummaryProps<T> {
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     /** Détail des scopes de la recherche. */
-    scopes: {code: string, label?: string}[];
+    scopes?: {code: string, label: string}[];
     /** Store associé. */
     store: SearchStore<T>;
     /** CSS. */
@@ -48,7 +48,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
     /** Liste des filtres à afficher. */
     @computed.struct
     protected get filterList() {
-        const {hideCriteria, hideFacets, hideScope, scopes, store} = this.props;
+        const {hideCriteria, hideFacets, hideScope, scopes = [], store} = this.props;
 
         const topicList = [];
 
@@ -98,6 +98,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
         return topicList;
     }
 
+    /** Récupère le tri courant pour afficher le chip correspondant. */
     @computed.struct
     protected get currentSort() {
         const {orderableColumnList, store} = this.props;
@@ -117,18 +118,26 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
 
         return (
             <div className={theme!.summary}>
+
+                {/* Nombre de résultats. */}
                 <span className={sentence}>
                     <strong>{totalCount}&nbsp;</strong>{i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
                 </span>
+
+                {/* Texte de recherche. */}
                 {query && query.trim().length > 0 ?
                     <span className={sentence}> {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
                 : null}
+
+                {/* Liste des filtres (scope + facettes + critères) */}
                 {this.filterList.length ?
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
                         {this.filterList.map(chip => <Chip deletable {...chip}>{chip.label}</Chip>)}
                     </div>
                 : null}
+
+                {/* Groupe. */}
                 {groupingKey ?
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
@@ -140,6 +149,8 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                         </Chip>
                     </div>
                 : null}
+
+                {/* Tri. */}
                 {this.currentSort && !(groupingKey || store.scope === "ALL") && totalCount > 1 ?
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
@@ -150,6 +161,8 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                         {i18next.t(this.currentSort.label)}</Chip>
                     </div>
                 : null}
+
+                {/* Action d'export. */}
                 {exportAction ?
                     <div className={theme!.print}>
                         <Button

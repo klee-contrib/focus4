@@ -1,6 +1,7 @@
 import {InputProps} from "react-toolbox/lib/input";
 
 import {DisplayProps} from "../components";
+import {ReactComponent} from "../config";
 
 import {Validator} from "./validation";
 
@@ -44,17 +45,17 @@ export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
     validator?: Validator[];
 
     /** Composant personnalisé pour l'affichage. */
-    DisplayComponent?: React.ComponentClass<DCProps> | React.SFC<DCProps>;
+    DisplayComponent?: ReactComponent<DCProps>;
     /** Props pour le composant d'affichage */
     displayProps?: Partial<DCProps>;
 
     /** Composant personnalisé pour l'entrée utilisateur. */
-    InputComponent?: React.ComponentClass<ICProps> | React.SFC<ICProps>;
+    InputComponent?: ReactComponent<ICProps>;
     /** Props pour le composant d'entrée utilisateur. */
     inputProps?: Partial<ICProps>;
 
     /** Composant personnalisé pour le libellé. */
-    LabelComponent?: React.ComponentClass<LCProps> | React.SFC<LCProps>;
+    LabelComponent?: ReactComponent<LCProps>;
     /** Props pour le composant de libellé. */
     labelProps?: Partial<LCProps>;
 }

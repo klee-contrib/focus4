@@ -6,6 +6,8 @@ import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
+import {ReactComponent} from "../../config";
+
 import ButtonHelp from "../button-help";
 import {PanelButtons, PanelButtonsProps} from "./buttons";
 export {PanelButtons};
@@ -19,7 +21,7 @@ export interface PanelProps extends PanelButtonsProps {
     /** Nom du bloc pour le bouton d'aide. Par défaut : premier mot du titre. */
     blockName?: string;
     /** Boutons à afficher dans le Panel. Par défaut : les boutons de formulaire (edit / save / cancel). */
-    Buttons?: React.ComponentClass<PanelButtonsProps> | React.SFC<PanelButtonsProps>;
+    Buttons?: ReactComponent<PanelButtonsProps>;
     /** Position des boutons. Par défaut : "top". */
     buttonsPosition?: "both" | "bottom" | "top" | "none";
     /** Masque le panel dans le ScrollspyContainer. */

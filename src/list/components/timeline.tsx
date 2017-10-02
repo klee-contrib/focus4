@@ -3,6 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
+import {ReactComponent} from "../../config";
 import {EntityField} from "../../entity";
 
 import LineWrapper, {LineProps} from "./line";
@@ -17,7 +18,7 @@ export interface TimelineProps<T> extends ListBaseProps<T> {
     /** Le sélecteur du champ contenant la date. */
     dateSelector: (data: T) => EntityField<string>;
     /** Le composant de ligne. */
-    TimelineComponent: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    TimelineComponent: ReactComponent<LineProps<T>>;
 }
 
 /** Composant affichant une liste sous forme de Timeline. */

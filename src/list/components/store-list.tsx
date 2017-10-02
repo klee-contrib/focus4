@@ -4,6 +4,8 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
+import {ReactComponent} from "../../config";
+
 import {ListStore} from "../store";
 import {MiniListStore} from "../store-base";
 import {LineProps, LineWrapperProps} from "./line";
@@ -51,7 +53,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      * Quelques props supplémentaires à ajouter pour la sélection.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>) {
+    protected getItems(Component: ReactComponent<LineProps<T>>) {
         const {hasSelection = false, isLineSelectionnable = () => true, store} = this.props;
         return super.getItems(Component).map(({key, data}) => ({
             key,

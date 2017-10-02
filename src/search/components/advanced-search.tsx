@@ -4,6 +4,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 
 import {ButtonBackToTop} from "../../components";
+import {ReactComponent} from "../../config";
 import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, ListWrapper} from "../../list";
 
 import {SearchStore} from "../store";
@@ -13,6 +14,7 @@ import Results, {GroupStyle} from "./results";
 import Summary, {SummaryStyle} from "./summary";
 
 import * as styles from "./__style__/advanced-search.css";
+
 export type AdvancedSearchStyle = Partial<typeof styles>;
 
 /** Props de l'AdvancedSearch. */
@@ -26,11 +28,11 @@ export interface AdvancedSearchProps<T> {
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
+    DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
+    EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
     /** CSS de la FacetBox (si position = "left") */
@@ -60,7 +62,7 @@ export interface AdvancedSearchProps<T> {
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composants de ligne par scope. */
-    lineComponentMapper?: (scope: string) => React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    lineComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
     /** La liste des actions sur chaque élément de la liste, par scope. */
     lineOperationLists?: {[scope: string]: (data: T) => LineOperationListItem<T>[]};
     /** CSS des lignes. */
@@ -70,7 +72,7 @@ export interface AdvancedSearchProps<T> {
     /** Mode des listes dans le wrapper. Par défaut : "list". */
     mode?: "list" | "mosaic";
     /** Composants de mosaïque par scope. */
-    mosaicComponentMapper?: (scope: string) => React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    mosaicComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
     /** Largeur des mosaïques. Par défaut : 200. */
     mosaicWidth?: number;
     /** Hauteur des mosaïques. Par défaut : 200. */
@@ -82,7 +84,7 @@ export interface AdvancedSearchProps<T> {
     /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
     /** Détail des scopes de la recherche. */
-    scopes: {code: string, label?: string}[];
+    scopes?: {code: string, label: string}[];
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -174,7 +176,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, listTheme, lineTheme, groupOperationLists, hasSelection, i18nPrefix, isManualFetch, lineComponentMapper, lineOperationLists, mosaicComponentMapper, scopeFacetKey, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {groupTheme, listTheme, lineTheme, groupOperationLists, hasSelection, i18nPrefix, isManualFetch, lineComponents, lineOperationLists, mosaicComponents, scopeFacetKey, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
@@ -186,11 +188,11 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 hasSelection={!!hasSelection}
                 i18nPrefix={i18nPrefix}
                 isManualFetch={isManualFetch}
-                lineComponentMapper={lineComponentMapper}
+                lineComponents={lineComponents}
                 lineOperationLists={lineOperationLists}
                 lineTheme={lineTheme}
                 listTheme={listTheme}
-                mosaicComponentMapper={mosaicComponentMapper}
+                mosaicComponents={mosaicComponents}
                 scopeFacetKey={scopeFacetKey}
                 isLineSelectionnable={isLineSelectionnable}
                 store={store}
@@ -199,16 +201,16 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     render() {
-        const {addItemHandler, i18nPrefix, lineComponentMapper, mosaicComponentMapper, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, theme} = this.props;
+        const {addItemHandler, i18nPrefix, lineComponents, mosaicComponents, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, theme} = this.props;
         return (
             <div>
                 {this.renderFacetBox()}
                 <div className={theme!.resultContainer}>
                     <ListWrapper
                         addItemHandler={addItemHandler}
-                        canChangeMode={!!(lineComponentMapper && mosaicComponentMapper)}
+                        canChangeMode={!!(lineComponents && mosaicComponents)}
                         i18nPrefix={i18nPrefix}
-                        mode={mode || mosaicComponentMapper && !lineComponentMapper ? "mosaic" : "list"}
+                        mode={mode || mosaicComponents && !lineComponents ? "mosaic" : "list"}
                         mosaicHeight={mosaicHeight}
                         mosaicWidth={mosaicWidth}
                     >

@@ -11,6 +11,7 @@ import {IconButton} from "react-toolbox/lib/button";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "../../components";
+import {ReactComponent} from "../../config";
 import {classAutorun, classReaction} from "../../util";
 
 import {MiniListStore} from "../store-base";
@@ -45,21 +46,21 @@ export interface ListProps<T> extends ListBaseProps<T> {
     /** La liste. */
     data?: T[];
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
+    DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
+    EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
-    LineComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    LineComponent?: ReactComponent<LineProps<T>>;
     /** Mode des listes dans le wrapper. Par défaut : celui du composant fourni, ou "list". */
     mode?: "list" | "mosaic";
     /** Taille de la mosaïque. */
     mosaic?: {width: number, height: number};
     /** Composant de mosaïque. */
-    MosaicComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    MosaicComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     operationList?: (data: T) => LineOperationListItem<T>[];
 }
@@ -70,7 +71,7 @@ export interface LineItem<P> {
     key: string;
     /** Description du composant, avec ses props. */
     data: {
-        Component: React.ComponentClass<P> | React.SFC<P>,
+        Component: ReactComponent<P>,
         props?: P
     };
     /** Style interpolé (ou pas) par react-motion. */
@@ -172,7 +173,7 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
      * Transforme les données en éléments de liste.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>): LineItem<LineWrapperProps<T>>[] {
+    protected getItems(Component: ReactComponent<LineProps<T>>): LineItem<LineWrapperProps<T>>[] {
         const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, operationList} = this.props;
 
         return this.displayedData.map((item, idx) => ({

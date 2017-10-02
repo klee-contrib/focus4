@@ -7,6 +7,7 @@ import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../components";
+import {ReactComponent} from "../../config";
 import {EntityField, stringFor} from "../../entity";
 
 import {MiniListStore} from "../store-base";
@@ -37,7 +38,7 @@ export interface LineWrapperProps<T> {
     /** Détermine si la ligne est sélectionnable. Par défaut () => true. */
     isSelectionnable?: (data: T) => boolean;
     /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
-    LineComponent: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    LineComponent: ReactComponent<LineProps<T>>;
     /** Configuration de la mosaïque (si applicable). */
     mosaic?: {width: number, height: number};
     /** Handler pour ouvrir (et fermer) le détail. */

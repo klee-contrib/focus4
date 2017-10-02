@@ -4,16 +4,18 @@ import {themr} from "react-css-themr";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "../components";
+import {ReactComponent} from "../config";
 
 import {requestStore} from "./store";
 
 import * as styles from "./__style__/loading-bar.css";
+
 export type LoadingBarStyle = Partial<typeof styles>;
 
 export interface LoadingBarProps {
     displayDevBar?: boolean;
     i18nPrefix?: string;
-    ProgressBar: React.ComponentClass<{completed: number}> | React.SFC<{completed: number}>;
+    ProgressBar: ReactComponent<{completed: number}>;
     theme?: LoadingBarStyle;
 }
 

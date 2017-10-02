@@ -15,7 +15,16 @@ TODO
 TODO
 
 ### `ListSummary`
-TODO
+Ce composant est affiché en premier, au-dessus de l'`ActionBar` et du `Results`. Il sert à afficher le résumé de la recherche en cours en listant, dans l'ordre :
+* Le nombre de résultats
+* Le champ de recherche textuel
+* Le scope (masquable)
+* Les facettes (masquables)
+* Les critères (masquables)
+* Le groupe
+* Le tri
+
+_(Note : le tri et le groupe ne sont jamais effectifs en même temps)_
 
 ### `FacetBox`
 TODO

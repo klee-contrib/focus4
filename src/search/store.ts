@@ -21,7 +21,7 @@ export interface SearchProperties {
 }
 
 @autobind
-export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T> {
+export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T> implements SearchProperties {
 
     @observable blockSearch = false;
 

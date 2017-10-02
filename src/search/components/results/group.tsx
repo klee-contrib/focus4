@@ -1,16 +1,17 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
+import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
+import {ReactComponent} from "../../../config";
 import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, MiniListStore, StoreList} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
 import ActionBar from "../action-bar";
 
-import {computed} from "mobx";
 import * as styles from "./__style__/group.css";
 
 export type GroupStyle = Partial<typeof styles>;
@@ -20,11 +21,11 @@ export interface GroupProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data?: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentClass<DetailProps<T>> | React.SFC<DetailProps<T>>;
+    DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: {}) => number);
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentClass<EmptyProps<T>> | React.SFC<EmptyProps<T>>;
+    EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Constituion du groupe à afficher. */
     group: GroupResult<{}>;
     /** Actions de groupe. */
@@ -36,7 +37,7 @@ export interface GroupProps<T> {
     /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
     isLineSelectionnable?: (data?: T) => boolean;
     /** Composant de ligne. */
-    LineComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
     /** CSS des lignes. */
@@ -44,7 +45,7 @@ export interface GroupProps<T> {
     /** CSS de la liste. */
     listTheme?: ListStyle;
     /** Composant de mosaïque. */
-    MosaicComponent?: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    MosaicComponent?: ReactComponent<LineProps<T>>;
     /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
     perPage: number;
     /** Affiche un bouton "Voir tout" qui effectue cette action. */

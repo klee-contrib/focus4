@@ -5,6 +5,8 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
+import {ReactComponent} from "../../config";
+
 import {LineProps, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
@@ -17,7 +19,7 @@ export interface TableProps<T> extends ListBaseProps<T> {
     /** Les données. */
     data?: T[];
     /** Le composant de ligne. */
-    RowComponent: React.ComponentClass<LineProps<T>> | React.SFC<LineProps<T>>;
+    RowComponent: ReactComponent<LineProps<T>>;
 }
 
 /** Tableau standard */
