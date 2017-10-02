@@ -5,6 +5,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {IconButton} from "react-toolbox/lib/button";
+import Portal from "react-toolbox/lib/hoc/Portal";
 
 import {getIcon} from "./icon";
 
@@ -142,7 +143,7 @@ export class Popin extends React.Component<PopinProps, {}> {
         const {i18nPrefix = "focus", level = 0, children, closePopin, theme, type = "from-right", preventOverlayClick} = this.props;
         const {open, close} = this.animations;
         return this.opened ?
-            <div>
+            <Portal>
                 <div
                     className={`${theme!.overlay} ${this.willClose ? theme!.fadeOut : this.willOpen ? theme!.fadeIn : ""}`}
                     onClick={!preventOverlayClick && closePopin || undefined}
@@ -162,7 +163,7 @@ export class Popin extends React.Component<PopinProps, {}> {
                 >
                     {children}
                 </div>
-            </div>
+            </Portal>
         : <div />;
     }
 }
