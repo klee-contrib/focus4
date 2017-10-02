@@ -2,6 +2,7 @@ import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 import {Button, IconButton as IB} from "react-toolbox/lib/button";
@@ -42,7 +43,7 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
 
     // On utilise le contexte React pour partager le mode entre les listes.
     static childContextTypes = {
-        listWrapper: React.PropTypes.object
+        listWrapper: PropTypes.object
     };
 
     /** Objet passé en contexte pour les listes contenues dans le wrapper. */

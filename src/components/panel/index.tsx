@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import {snakeCase} from "lodash";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
@@ -46,7 +47,7 @@ export class Panel extends React.Component<PanelProps, void> {
     private id: string;
 
     static contextTypes = {
-        scrollspy: React.PropTypes.object
+        scrollspy: PropTypes.object
     };
 
     /** On récupère le contexte posé par le scrollspy parent. */

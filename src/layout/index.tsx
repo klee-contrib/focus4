@@ -5,6 +5,7 @@ import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
 import {findDOMNode} from "react-dom";
@@ -40,7 +41,7 @@ class LayoutBase extends React.Component<LayoutProps, void> {
 
     // On utilise le contexte React pour partager la taille du menu.
     static childContextTypes = {
-        layout: React.PropTypes.object
+        layout: PropTypes.object
     };
 
     /** Objet passé en contexte pour la taille du menu.. */

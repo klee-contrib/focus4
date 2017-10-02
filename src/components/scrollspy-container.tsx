@@ -6,6 +6,7 @@ import i18next from "i18next";
 import {sortBy, uniqueId} from "lodash";
 import {action, computed, observable, untracked} from "mobx";
 import {observer} from "mobx-react";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
@@ -47,7 +48,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     private readonly panels = observable.map<PanelDescriptor>();
 
     static childContextTypes = {
-        scrollspy: React.PropTypes.object
+        scrollspy: PropTypes.object
     };
 
     /** On définit les méthodes que l'on passe aux enfants. */

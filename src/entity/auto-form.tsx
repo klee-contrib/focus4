@@ -1,6 +1,7 @@
 import {autobind} from "core-decorators";
 import {some, values as _values} from "lodash";
 import {action, computed, Lambda, observable, ObservableMap, reaction, runInAction} from "mobx";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {InputProps} from "react-toolbox/lib/input";
 import {v4} from "uuid";
@@ -73,7 +74,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     }
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
-    static contextTypes = {theme: React.PropTypes.object};
+    static contextTypes = {theme: PropTypes.object};
     context: {theme: {[key: string]: {[key: string]: any}}};
 
     /** Identifiant unique du formulaire. */

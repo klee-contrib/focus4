@@ -1,4 +1,5 @@
 import {observer} from "mobx-react";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
@@ -8,7 +9,7 @@ import {LayoutProps, styles} from "./types";
 @observer
 export class LayoutContent extends React.Component<LayoutProps, void> {
 
-    static contextTypes = {layout: React.PropTypes.object};
+    static contextTypes = {layout: PropTypes.object};
     context: {layout: {menuWidth: number}};
 
     render() {

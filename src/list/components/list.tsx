@@ -2,6 +2,7 @@ import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
@@ -83,7 +84,7 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
 
     // On récupère les infos du ListWrapper dans le contexte.
     static contextTypes = {
-        listWrapper: React.PropTypes.object
+        listWrapper: PropTypes.object
     };
 
     context: {
