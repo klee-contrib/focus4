@@ -55,7 +55,7 @@ export interface AdvancedSearchProps<T> {
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     /** Par défaut : FCT_SCOPE */
     scopeFacetKey?: string;
-    scopes: {code: string, label?: string}[];
+    scopes?: {code: string, label: string}[];
     searchBarPlaceholder?: string;
     /** Par défaut: true. */
     searchOnMount?: boolean;

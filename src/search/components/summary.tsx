@@ -26,7 +26,7 @@ export interface ListSummaryProps<T> {
     /** Par défaut : "focus" */
     i18nPrefix?: string;
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    scopes: {code: string, label?: string}[];
+    scopes?: {code: string, label: string}[];
     store: SearchStore<T>;
     theme?: SummaryStyle;
 }
@@ -39,7 +39,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
     /** Liste des filtres à afficher. */
     @computed.struct
     protected get filterList() {
-        const {hideCriteria, hideFacets, hideScope, scopes, store} = this.props;
+        const {hideCriteria, hideFacets, hideScope, scopes = [], store} = this.props;
 
         const topicList = [];
 
@@ -48,7 +48,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
             const selectedScope = scopes.find(sc => sc.code === store.scope);
             topicList.push({
                 key: store.scope,
-                label: selectedScope && selectedScope.label || store.scope,
+                label: selectedScope && i18next.t(selectedScope.label) || store.scope,
                 onDeleteClick: () => store.setProperties({
                     groupingKey: undefined,
                     scope: "ALL",
