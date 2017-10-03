@@ -46,7 +46,7 @@ export class Facet extends React.Component<FacetProps, void> {
                     onClick={() => selectHandler(this.props.facet.code, undefined)}
                     theme={{chip: theme!.chip}}
                 >
-                    {selectedFacet.length ? selectedFacet[0].label : ""}
+                    {selectedFacet.length ? i18next.t(selectedFacet[0].label) : ""}
                 </Chip>
             );
         }

@@ -57,7 +57,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
             const selectedScope = scopes.find(sc => sc.code === store.scope);
             topicList.push({
                 key: store.scope,
-                label: selectedScope && selectedScope.label || store.scope,
+                label: selectedScope && i18next.t(selectedScope.label) || store.scope,
                 onDeleteClick: () => store.setProperties({
                     groupingKey: undefined,
                     scope: "ALL",
