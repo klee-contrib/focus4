@@ -26,14 +26,14 @@ export interface ListSummaryProps<T> {
     hideCriteria?: boolean;
     /** Masque les facettes. */
     hideFacets?: boolean;
-    /** Masque le scope. */
-    hideScope?: boolean;
+    /** Masque le groupe. */
+    hideGroup?: boolean;
+    /** Masque le tri. */
+    hideSort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    /** Détail des scopes de la recherche. */
-    scopes?: {code: string, label: string}[];
     /** Store associé. */
     store: SearchStore<T>;
     /** CSS. */
@@ -48,22 +48,21 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
     /** Liste des filtres à afficher. */
     @computed.struct
     protected get filterList() {
-        const {hideCriteria, hideFacets, hideScope, scopes = [], store} = this.props;
+        const {hideCriteria, hideFacets, store} = this.props;
 
         const topicList = [];
 
-        // Si on a un scope et qu'on l'affiche, alors on ajoute le scope à la liste en premier.
-        if (store.scope && store.scope !== "ALL" && !hideScope) {
-            const selectedScope = scopes.find(sc => sc.code === store.scope);
-            topicList.push({
-                key: store.scope,
-                label: selectedScope && i18next.t(selectedScope.label) || store.scope,
-                onDeleteClick: () => store.setProperties({
-                    groupingKey: undefined,
-                    scope: "ALL",
-                    selectedFacets: {}
-                })
-            });
+        // On ajoute la liste des critères.
+        if (!hideCriteria) {
+            for (const criteriaKey in store.flatCriteria) {
+                const {translationKey, domain} = store.criteria[criteriaKey].$entity;
+                const value = (store.flatCriteria as any)[criteriaKey];
+                topicList.push({
+                    key: criteriaKey,
+                    label: `${i18next.t(translationKey)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
+                    onDeleteClick: () => { store.criteria[criteriaKey].value = undefined; }
+                });
+            }
         }
 
         // On ajoute à la liste toutes les facettes sélectionnées.
@@ -78,19 +77,6 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                     onDeleteClick: () => store.setProperties({
                         selectedFacets: omit(store.selectedFacets, facetKey) as {[facet: string]: string}
                     })
-                });
-            }
-        }
-
-        // On ajoute la liste des critères.
-        if (!hideCriteria) {
-            for (const criteriaKey in store.flatCriteria) {
-                const {translationKey, domain} = store.criteria[criteriaKey].$entity;
-                const value = (store.flatCriteria as any)[criteriaKey];
-                topicList.push({
-                    key: criteriaKey,
-                    label: `${i18next.t(translationKey)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
-                    onDeleteClick: () => store.criteria[criteriaKey].value = undefined
                 });
             }
         }
@@ -110,7 +96,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
     }
 
     render() {
-        const {canRemoveSort = true, theme, exportAction, i18nPrefix = "focus", store} = this.props;
+        const {canRemoveSort = true, theme, exportAction, hideGroup, hideSort, i18nPrefix = "focus", store} = this.props;
         const {groupingKey, totalCount, query} = store;
 
         const plural = totalCount !== 1 ? "s" : "";
@@ -138,20 +124,23 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                 : null}
 
                 {/* Groupe. */}
-                {groupingKey ?
+                {groupingKey && !hideGroup ?
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
                         <Chip
                             deletable
                             onDeleteClick={() => store.groupingKey = undefined}
                         >
-                            {i18next.t(store.facets.find(facet => store.groupingKey === facet.code).label)}
+                            {i18next.t((() => {
+                                const f = store.facets.find(facet => store.groupingKey === facet.code);
+                                return f && f.label || "";
+                            })())}
                         </Chip>
                     </div>
                 : null}
 
                 {/* Tri. */}
-                {this.currentSort && !(groupingKey || store.scope === "ALL") && totalCount > 1 ?
+                {this.currentSort && !hideSort && !groupingKey && totalCount > 1 ?
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <Chip

@@ -8,6 +8,7 @@ import {ReactComponent} from "../../config";
 import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, ListWrapper} from "../../list";
 
 import {SearchStore} from "../store";
+import {GroupResult} from "../types";
 import ActionBar, {ActionBarStyle} from "./action-bar";
 import FacetBox, {FacetBoxStyle} from "./facet-box";
 import Results, {GroupStyle} from "./results";
@@ -24,7 +25,7 @@ export interface AdvancedSearchProps<T> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data?: T) => boolean;
+    canOpenDetail?: (data: T) => boolean;
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
@@ -38,7 +39,7 @@ export interface AdvancedSearchProps<T> {
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: FacetBoxStyle;
     /** Actions de groupe par scope. */
-    groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
+    groupOperationList?: (group: GroupResult<T>) => GroupOperationListItem<T>[];
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Ajoute un bouton de retour en haut de page. Par défault: true */
@@ -53,26 +54,28 @@ export interface AdvancedSearchProps<T> {
     hideSummaryCriteria?: boolean;
     /** Masque les facettes dans le Summary. */
     hideSummaryFacets?: boolean;
-    /** Masque le scope dans le Summary. */
-    hideSummaryScope?: boolean;
+    /** Masque le groupe dans le Summary. */
+    hideSummaryGroup?: boolean;
+    /** Masque le tri dans le Summary. */
+    hideSummarySort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    isLineSelectionnable?: (data?: T) => boolean;
+    isLineSelectionnable?: (data: T) => boolean;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
-    /** Composants de ligne par scope. */
-    lineComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
-    /** La liste des actions sur chaque élément de la liste, par scope. */
-    lineOperationLists?: {[scope: string]: (data: T) => LineOperationListItem<T>[]};
+    /** Composant de ligne. */
+    LineComponent?: ReactComponent<LineProps<T>>;
+    /** La liste des actions sur chaque élément de la liste. */
+    lineOperationList?: (data: T) => LineOperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
     /** CSS de la liste. */
     listTheme?: ListStyle;
     /** Mode des listes dans le wrapper. Par défaut : "list". */
     mode?: "list" | "mosaic";
-    /** Composants de mosaïque par scope. */
-    mosaicComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
+    /** Composants de mosaïque. */
+    MosaicComponent?: ReactComponent<LineProps<T>>;
     /** Largeur des mosaïques. Par défaut : 200. */
     mosaicWidth?: number;
     /** Hauteur des mosaïques. Par défaut : 200. */
@@ -81,10 +84,6 @@ export interface AdvancedSearchProps<T> {
     nbDefaultDataListFacet?: number;
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
-    scopeFacetKey?: string;
-    /** Détail des scopes de la recherche. */
-    scopes?: {code: string, label: string}[];
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -112,7 +111,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderFacetBox() {
-        const {theme, facetBoxPosition = "left", facetBoxTheme, i18nPrefix, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, store} = this.props;
+        const {theme, facetBoxPosition = "left", facetBoxTheme, i18nPrefix, nbDefaultDataListFacet, showSingleValuedFacets, store} = this.props;
 
         if (facetBoxPosition === "left") {
             return (
@@ -120,7 +119,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                     <FacetBox
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
-                        scopeFacetKey={scopeFacetKey}
                         showSingleValuedFacets={showSingleValuedFacets}
                         store={store}
                         theme={facetBoxTheme}
@@ -133,16 +131,16 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderListSummary() {
-        const {canRemoveSort, hideSummaryCriteria, hideSummaryFacets, hideSummaryScope, i18nPrefix, orderableColumnList, scopes, store, summaryTheme} = this.props;
+        const {canRemoveSort, hideSummaryCriteria, hideSummaryFacets, hideSummaryGroup, hideSummarySort, i18nPrefix, orderableColumnList, store, summaryTheme} = this.props;
         return (
             <Summary
                 canRemoveSort={canRemoveSort}
                 i18nPrefix={i18nPrefix}
                 hideCriteria={hideSummaryCriteria}
                 hideFacets={hideSummaryFacets}
-                hideScope={hideSummaryScope}
+                hideGroup={hideSummaryGroup}
+                hideSort={hideSummarySort}
                 orderableColumnList={orderableColumnList}
-                scopes={scopes}
                 store={store}
                 theme={summaryTheme}
             />
@@ -150,9 +148,9 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderActionBar() {
-        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationLists, orderableColumnList, nbDefaultDataListFacet, scopeFacetKey, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
+        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationList, orderableColumnList, nbDefaultDataListFacet, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
 
-        if (store.groupingKey || store.scope === "ALL") {
+        if (store.groupingKey) {
             return null;
         }
 
@@ -164,10 +162,9 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 hasSelection={hasSelection}
                 i18nPrefix={i18nPrefix}
                 nbDefaultDataListFacet={nbDefaultDataListFacet}
-                operationList={store.scope !== "ALL" && groupOperationLists && store.totalCount > 0 ? groupOperationLists[store.scope] : []}
+                operationList={groupOperationList && groupOperationList({list: store.flatResultList})}
                 orderableColumnList={orderableColumnList}
                 searchBarPlaceholder={searchBarPlaceholder}
-                scopeFacetKey={scopeFacetKey}
                 showSingleValuedFacets={showSingleValuedFacets}
                 store={store}
                 theme={actionBarTheme}
@@ -176,24 +173,23 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, listTheme, lineTheme, groupOperationLists, hasSelection, i18nPrefix, isManualFetch, lineComponents, lineOperationLists, mosaicComponents, scopeFacetKey, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {groupTheme, listTheme, lineTheme, groupOperationList, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, MosaicComponent, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
                 detailHeight={detailHeight}
                 DetailComponent={DetailComponent}
                 EmptyComponent={EmptyComponent}
-                groupOperationLists={groupOperationLists}
+                groupOperationList={groupOperationList}
                 groupTheme={groupTheme}
                 hasSelection={!!hasSelection}
                 i18nPrefix={i18nPrefix}
                 isManualFetch={isManualFetch}
-                lineComponents={lineComponents}
-                lineOperationLists={lineOperationLists}
+                LineComponent={LineComponent}
+                lineOperationList={lineOperationList}
                 lineTheme={lineTheme}
                 listTheme={listTheme}
-                mosaicComponents={mosaicComponents}
-                scopeFacetKey={scopeFacetKey}
+                MosaicComponent={MosaicComponent}
                 isLineSelectionnable={isLineSelectionnable}
                 store={store}
             />
@@ -201,16 +197,16 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     render() {
-        const {addItemHandler, i18nPrefix, lineComponents, mosaicComponents, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, theme} = this.props;
+        const {addItemHandler, i18nPrefix, LineComponent, MosaicComponent, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, theme} = this.props;
         return (
             <div>
                 {this.renderFacetBox()}
                 <div className={theme!.resultContainer}>
                     <ListWrapper
                         addItemHandler={addItemHandler}
-                        canChangeMode={!!(lineComponents && mosaicComponents)}
+                        canChangeMode={!!(LineComponent && MosaicComponent)}
                         i18nPrefix={i18nPrefix}
-                        mode={mode || mosaicComponents && !lineComponents ? "mosaic" : "list"}
+                        mode={mode || MosaicComponent && !LineComponent ? "mosaic" : "list"}
                         mosaicHeight={mosaicHeight}
                         mosaicWidth={mosaicWidth}
                     >

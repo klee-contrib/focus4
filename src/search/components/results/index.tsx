@@ -19,15 +19,15 @@ import {bottomRow} from "../../../list/components/__style__/list.css";
 /** Props de Results. */
 export interface ResultsProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data?: T) => boolean;
+    canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
-    /** Actions de groupe par scope. */
-    groupOperationLists?: {[scope: string]: GroupOperationListItem<T>[]};
+    /** Actions de groupe par groupe (code / valeur). */
+    groupOperationList?: (group: GroupResult<T>) => GroupOperationListItem<T>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut: 5 */
     groupPageSize?: number;
     /** CSS des groupes. */
@@ -37,23 +37,21 @@ export interface ResultsProps<T> {
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    isLineSelectionnable?: (data?: T) => boolean;
+    isLineSelectionnable?: (data: T) => boolean;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
-    /** Composants de ligne par scope. */
-    lineComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
-    /** La liste des actions sur chaque élément de la liste, par scope. */
-    lineOperationLists?: {[scope: string]: (data: {}) => LineOperationListItem<T>[]};
+    /** Composant de ligne. */
+    LineComponent?: ReactComponent<LineProps<T>>;
+    /** La liste des actions sur chaque élément de la liste. */
+    lineOperationList?: (data: T) => LineOperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
     /** CSS de la liste. */
     listTheme?: ListStyle;
-    /** Composants de mosaïque par scope. */
-    mosaicComponents?: {[scope: string]: ReactComponent<LineProps<T>>};
+    /** Composant de mosaïque. */
+    MosaicComponent?: ReactComponent<LineProps<T>>;
     /** Offset pour le scroll inifini. Par défaut : 250 */
     offset?: number;
-    /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
-    scopeFacetKey?: string;
     /** Store de recherche. */
     store: SearchStore<T>;
 }
@@ -75,7 +73,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
 
     protected scrollListener() {
         const {store, offset = 250, isManualFetch} = this.props;
-        if (!isManualFetch && store.currentCount < store.totalCount && !(store.groupingKey || store.scope === "ALL")) {
+        if (!isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
             const el = findDOMNode(this) as HTMLElement;
             const scrollTop = window.pageYOffset;
             if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
@@ -103,58 +101,38 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
         return null;
     }
 
-    protected renderSingleGroup(group: GroupResult<{}>) {
-        const {lineTheme, listTheme, groupTheme, groupOperationLists = {}, groupPageSize = 5, hasSelection, i18nPrefix, lineComponents, mosaicComponents, isLineSelectionnable, lineOperationLists = {}, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
-        const groupKey = store.scope === "ALL" && group.code ? group.code : store.scope;
-        const LineComponent = lineComponents && lineComponents[groupKey];
-        const MosaicComponent = mosaicComponents && mosaicComponents[groupKey];
-        if (LineComponent || MosaicComponent) {
-            return (
-                <Group
-                    canOpenDetail={canOpenDetail}
-                    DetailComponent={DetailComponent}
-                    detailHeight={detailHeight}
-                    EmptyComponent={EmptyComponent}
-                    group={group}
-                    groupOperationList={groupOperationLists[groupKey]}
-                    hasSelection={hasSelection}
-                    i18nPrefix={i18nPrefix}
-                    isLineSelectionnable={isLineSelectionnable}
-                    key={group.code}
-                    LineComponent={LineComponent}
-                    lineOperationList={lineOperationLists[groupKey]}
-                    lineTheme={lineTheme}
-                    listTheme={listTheme}
-                    MosaicComponent={MosaicComponent}
-                    perPage={groupPageSize}
-                    showAllHandler={this.showAllHandler}
-                    store={store}
-                    theme={groupTheme}
-                />
-            );
-        } else {
-            return null;
-        }
+    protected renderSingleGroup(group: GroupResult<T>) {
+        const {canOpenDetail, DetailComponent, detailHeight, EmptyComponent, groupOperationList, groupPageSize = 5, groupTheme, hasSelection, i18nPrefix, isLineSelectionnable, lineTheme, LineComponent, lineOperationList, listTheme, MosaicComponent, store} = this.props;
+        return (
+            <Group
+                canOpenDetail={canOpenDetail}
+                DetailComponent={DetailComponent}
+                detailHeight={detailHeight}
+                EmptyComponent={EmptyComponent}
+                group={group}
+                groupOperationList={groupOperationList && groupOperationList(group)}
+                hasSelection={hasSelection}
+                i18nPrefix={i18nPrefix}
+                isLineSelectionnable={isLineSelectionnable}
+                key={group.code}
+                LineComponent={LineComponent}
+                lineOperationList={lineOperationList}
+                lineTheme={lineTheme}
+                listTheme={listTheme}
+                MosaicComponent={MosaicComponent}
+                perPage={groupPageSize}
+                showAllHandler={this.showAllHandler}
+                store={store}
+                theme={groupTheme}
+            />
+        );
     }
 
-    protected showAllHandler(key: string) {
-        const {store, scopeFacetKey = "FCT_SCOPE"} = this.props;
-        if (store.facets.find(facet => facet.code === scopeFacetKey)) {
-            this.scopeSelectionHandler(key);
-        } else {
-            this.facetSelectionHandler(store.groupingKey!, key);
-        }
-    }
-
-    protected scopeSelectionHandler(scope: string) {
-        this.props.store.setProperties({scope});
-    }
-
-    protected facetSelectionHandler(key: string, value: string) {
-        const {selectedFacets, setProperties} = this.props.store;
+    protected showAllHandler(value: string) {
+        const {groupingKey, selectedFacets, setProperties} = this.props.store;
         setProperties({
             groupingKey: undefined,
-            selectedFacets: {...selectedFacets, [key]: value}
+            selectedFacets: {...selectedFacets, [groupingKey!]: value}
         });
     }
 

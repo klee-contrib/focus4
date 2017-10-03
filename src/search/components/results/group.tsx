@@ -19,11 +19,11 @@ export type GroupStyle = Partial<typeof styles>;
 /** Props du composant de groupe. */
 export interface GroupProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data?: T) => boolean;
+    canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
-    detailHeight?: number | ((data: {}) => number);
+    detailHeight?: number | ((data: T) => number);
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Constituion du groupe à afficher. */
@@ -35,11 +35,11 @@ export interface GroupProps<T> {
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    isLineSelectionnable?: (data?: T) => boolean;
+    isLineSelectionnable?: (data: T) => boolean;
     /** Composant de ligne. */
     LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
-    lineOperationList?: (data: {}) => LineOperationListItem<{}>[];
+    lineOperationList?: (data: T) => LineOperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
     /** CSS de la liste. */
@@ -102,7 +102,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
 
     render() {
         const {theme, group, hasSelection, groupOperationList, store} = this.props;
-        if (!store.groupingKey && store.scope !== "ALL") {
+        if (!store.groupingKey) {
             return this.renderList();
         } else if (group.code && group.label && group.totalCount) {
             return (

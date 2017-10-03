@@ -25,7 +25,8 @@ export interface SearchBarProps<T, C extends StoreNode> {
     i18nPrefix?: string;
     innerRef?: (instance: SearchBar<T, C>) => void;
     placeholder?: string;
-    scopes?: {code: string; label?: string}[];
+    scopeKey?: keyof C;
+    scopes?: {code: string; label: string}[];
     store: SearchStore<T, C>;
     theme?: SearchBarStyle;
 }
@@ -120,22 +121,26 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
         }
     }
 
+    @action
     protected onScopeSelection(scope: string) {
-        this.focusQuery();
-        this.props.store.setProperties({
-            groupingKey: undefined,
-            scope: scope || "ALL",
-            selectedFacets: {},
-            sortAsc: true,
-            sortBy: undefined
-        });
+        const {scopeKey, store} = this.props;
+            if (store.criteria && scopeKey) {
+            this.focusQuery();
+            store.setProperties({
+                groupingKey: undefined,
+                selectedFacets: {},
+                sortAsc: true,
+                sortBy: undefined
+            });
+           (store.criteria[scopeKey] as any).value = scope;
+        }
     }
 
     @action
     protected clear() {
-        const {store} = this.props;
+        const {disableInputCriteria, store} = this.props;
         store.query = "";
-        if (store.criteria) {
+        if (store.criteria && !disableInputCriteria) {
             store.criteria.clear();
         }
     }
@@ -146,15 +151,15 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     render() {
-        const {i18nPrefix = "focus", placeholder, store, scopes, theme, criteriaComponent} = this.props;
+        const {i18nPrefix = "focus", placeholder, store, scopeKey, scopes, theme, criteriaComponent} = this.props;
         return (
             <div style={{position: "relative"}}>
                 {this.showCriteriaComponent ? <div className={theme!.criteriaWrapper} onClick={this.toggleCriteria} /> : null}
                 <div className={`${theme!.bar} ${this.error ? theme!.error : ""}`}>
-                    {scopes ?
+                    {scopes && store.criteria && scopeKey ?
                         <Dropdown
                             onChange={this.onScopeSelection}
-                            value={store.scope}
+                            value={(store.criteria[scopeKey] as any).value}
                             source={[{value: "ALL", label: ""}, ...scopes.map(({code, label}) => ({value: code, label}))]}
                             theme={{dropdown: theme!.dropdown, values: theme!.scopes, valueKey: ""}}
                         />

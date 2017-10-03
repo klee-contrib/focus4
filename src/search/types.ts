@@ -35,7 +35,7 @@ export interface QueryInput<C = {}> {
     /** Facettes sélectionnées. */
     facets?: {[facet: string]: string};
     /** Critère de recherche. */
-    criteria?: C & {query: string, scope: string};
+    criteria?: C & {query: string};
     /** Champ sur lequel grouper. */
     group: string;
     /** Champ sur lequel trier. */

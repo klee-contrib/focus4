@@ -43,8 +43,6 @@ export interface ActionBarProps<T> {
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     /** Actions sur les éléments sélectionnés. */
     operationList?: GroupOperationListItem<T>[];
-    /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
-    scopeFacetKey?: string;
     /** Placeholder pour la barre de recherche. */
     searchBarPlaceholder?: string;
     /** Affiche les facettes qui n'ont qu'une seule valeur. */
@@ -135,8 +133,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     protected get groupButton() {
         const {hasGrouping, i18nPrefix = "focus", store, theme} = this.props;
 
-        if (hasGrouping && isSearch(store) && !store.selectedItems.size && !(store.groupingKey || store.scope === "ALL")) {
-            const groupableColumnList = store.facets && store.scope !== "ALL" ? store.facets.reduce((result, facet) => {
+        if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
+            const groupableColumnList = store.facets ? store.facets.reduce((result, facet) => {
                 if (facet.values.length > 1) {
                     result[facet.code] = facet.label;
                 }
@@ -230,7 +228,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     }
 
     render() {
-        const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, scopeFacetKey = "FCT_SCOPE", showSingleValuedFacets, store} = this.props;
+        const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, showSingleValuedFacets, store} = this.props;
         return (
             <div className={theme!.container}>
                 <div className={`${theme!.bar} ${store.selectedItems.size ? theme!.selection : ""}`}>
@@ -263,7 +261,6 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                                     <FacetBox
                                         theme={{facetBox: theme!.facetBox}}
                                         nbDefaultDataList={nbDefaultDataListFacet}
-                                        scopeFacetKey={scopeFacetKey}
                                         showSingleValuedFacets={showSingleValuedFacets}
                                         store={store}
                                     />

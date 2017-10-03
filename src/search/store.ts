@@ -12,7 +12,6 @@ export type SearchService<T = any> = (query: QueryInput) => Promise<QueryOutput<
 
 export interface SearchProperties {
     query?: string;
-    scope?: string;
     groupingKey?: string;
     selectedFacets?: {[facet: string]: string};
     sortAsc?: boolean;
@@ -27,7 +26,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
     @observable readonly criteria: C;
     @observable groupingKey: string | undefined;
-    @observable scope = "ALL";
+
     @observable selectedFacets: {[facet: string]: string} = {};
 
     readonly facets: IObservableArray<FacetOutput> = observable([]);
@@ -35,10 +34,19 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
     service: SearchService<T>;
 
-    constructor(service: SearchService<T>, initialProperties: SearchProperties, criteria?: [C, Entity]) {
+    constructor(service: SearchService<T>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
+    constructor(service: SearchService<T>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
+    constructor(service: SearchService<T>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
         super();
         this.service = service;
-        this.setProperties(initialProperties);
+
+        const initialQuery = !Array.isArray(secondParam) && secondParam || !Array.isArray(thirdParam) && thirdParam;
+        const criteria = Array.isArray(secondParam) && secondParam || Array.isArray(thirdParam) && thirdParam;
+
+        if (initialQuery) {
+            this.setProperties(initialQuery);
+        }
+
         if (criteria) {
             this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteria[1]}, {}, "criteria") as any;
         }
@@ -47,15 +55,15 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         reaction(() => [
             this.blockSearch,
             this.groupingKey,
-            this.scope,
             this.selectedFacets,
+            !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined,
             this.sortAsc,
             this.sortBy
         ], () => this.search());
 
         // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
         reaction(() => [
-            this.flatCriteria,
+            initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined,
             this.query
         ], debounce(() => this.search(), config.textSearchDelay));
     }
@@ -134,14 +142,14 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         }
 
         let {query} = this;
-        const {scope, selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
+        const {selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
 
         if (!query || query === "") {
             query = "*";
         }
 
         const data = {
-            criteria: {...this.flatCriteria, query, scope} as QueryInput<C>["criteria"],
+            criteria: {...this.flatCriteria, query} as QueryInput<C>["criteria"],
             facets: selectedFacets || {},
             group: groupingKey || "",
             skip: isScroll && results.length === 1 ? results[0].list.length : 0,
@@ -182,7 +190,6 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
         this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy as keyof T : this.sortBy;
         this.query = props.query || this.query;
-        this.scope = props.scope || this.scope;
         this.top = props.top || this.top;
     }
 

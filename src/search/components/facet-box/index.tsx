@@ -19,8 +19,6 @@ export interface FacetBoxProps<T> {
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList?: number;
-    /** Nom de la facette de scope. Par défaut : FCT_SCOPE */
-    scopeFacetKey?: string;
     /** Affiche les facettes qui n'ont qu'une seule valeur. */
     showSingleValuedFacets?: boolean;
     /** Store de recherche associé. */
@@ -35,22 +33,15 @@ export interface FacetBoxProps<T> {
 export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
 
     protected facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
-        const {scopeFacetKey = "FCT_SCOPE", store} = this.props;
-        let {selectedFacets} = store;
+        const {store} = this.props;
 
         if (!dataKey) {
-            selectedFacets = omit(selectedFacets, facetKey) as typeof selectedFacets;
+            store.selectedFacets = omit(store.selectedFacets, facetKey);
         } else {
-            selectedFacets = {...selectedFacets, [facetKey]: dataKey};
-        }
-
-        if (Object.keys(selectedFacets).length === 1 && selectedFacets[scopeFacetKey]) {
-            store.scope = selectedFacets[scopeFacetKey];
-        } else {
-            delete selectedFacets[scopeFacetKey];
-            store.selectedFacets = selectedFacets;
+            store.selectedFacets = {...store.selectedFacets, [facetKey]: dataKey};
         }
     }
+
     render() {
         const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store: {facets, selectedFacets}} = this.props;
         return (
