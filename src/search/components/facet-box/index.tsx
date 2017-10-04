@@ -70,6 +70,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
 
 export default themr("facetBox", styles)(FacetBox);
 
+/** Détermine si on doit affiche une facette dans la FacetBox ou non, pour prévoir combien on va avoir de facettes à afficher au final. */
 export function shouldDisplayFacet(facet: FacetOutput, selectedFacets: {[key: string]: string}, showSingleValuedFacets?: boolean) {
     return !(!facet.values.length || !showSingleValuedFacets && facet.values.length === 1 && !values(selectedFacets).find(v => facet.values[0].code === v));
 }

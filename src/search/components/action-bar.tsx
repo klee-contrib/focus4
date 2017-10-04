@@ -58,11 +58,15 @@ export interface ActionBarProps<T> {
 @autobind
 export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
+    /** Affiche la FacetBox. */
     @observable displayFacetBox = false;
+    /** Hauteur de la FacetBox. */
     @observable facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
 
+    /** Div contenant la facet box. */
     protected facetBox?: HTMLDivElement;
 
+    /** Bouton de sélection (case à cocher). */
     @computed
     protected get selectionButton() {
         const {hasSelection, i18nPrefix = "focus", store, theme} = this.props;
@@ -79,6 +83,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         }
     }
 
+    /** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */
     protected get filterButton() {
         const {theme, hasFacetBox, showSingleValuedFacets, i18nPrefix = "focus", store} = this.props;
         if (hasFacetBox && isSearch(store) && store.facets.some(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
@@ -98,6 +103,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         }
     }
 
+    /** Bouton de tri. */
     @computed
     protected get sortButton() {
         const {i18nPrefix = "focus", orderableColumnList, store, theme} = this.props;
@@ -129,6 +135,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         return null;
     }
 
+    /** Bouton de groupe. */
     @computed
     protected get groupButton() {
         const {hasGrouping, i18nPrefix = "focus", store, theme} = this.props;
@@ -169,6 +176,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         return null;
     }
 
+    /** Barre de recherche. */
     @computed
     protected get searchBar() {
         const {theme, i18nPrefix = "focus", hasSearchBar, searchBarPlaceholder, store} = this.props;
@@ -196,6 +204,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         return null;
     }
 
+    /** Réaction permettant de fermer la FacetBox et de mettre à jour sa hauteur à chaque fois que c'est nécessaire (changement de son contenu).  */
     @classReaction<ActionBar<T>>(that => () => {
         // tslint:disable-next-line:no-shadowed-variable
         const {hasFacetBox, store} = that.props;
@@ -204,10 +213,12 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     protected closeFacetBox() {
         const {store, showSingleValuedFacets} = this.props;
 
+        // La hauteur de la FacetBox est utilisée pour la refermer correctement, puisqu'on anime sa propriété `margin-top`.
         if (!this.displayFacetBox) {
             this.facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
         }
 
+        // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
         if (this.displayFacetBox && isSearch(store) && store.facets.every(facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
             this.displayFacetBox = false;
         }
@@ -221,6 +232,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         this.updateFacetBoxHeight();
     }
 
+    /** On maintient également la hauteur de la FacetBox en permanance.  */
     protected updateFacetBoxHeight() {
         if (this.facetBox && this.facetBox.clientHeight > MIN_FACETBOX_HEIGHT) {
             this.facetBoxHeight = this.facetBox.clientHeight;
@@ -231,6 +243,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, showSingleValuedFacets, store} = this.props;
         return (
             <div className={theme!.container}>
+
+                {/* ActionBar en tant que telle. */}
                 <div className={`${theme!.bar} ${store.selectedItems.size ? theme!.selection : ""}`}>
                     <div className={theme!.buttons}>
                         {this.selectionButton}
@@ -249,6 +263,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                         <ContextualActions operationList={operationList} operationParam={Array.from(store.selectedItems)} />
                     : null}
                 </div>
+
+                {/* FacetBox */}
                 {hasFacetBox && isSearch(store) ?
                     <div className={theme!.facetBoxContainer}>
                         <Motion style={{marginTop: this.facetBoxHeight === DEFAULT_FACETBOX_MARGIN ? -this.facetBoxHeight : spring(this.displayFacetBox ? 5 : -this.facetBoxHeight)}}>
@@ -269,6 +285,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                         </Motion>
                     </div>
                 : null}
+
             </div>
         );
     }

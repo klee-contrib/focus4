@@ -27,7 +27,7 @@ export interface GroupProps<T> {
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Constituion du groupe à afficher. */
-    group: GroupResult<{}>;
+    group: GroupResult<T>;
     /** Actions de groupe. */
     groupOperationList?: GroupOperationListItem<T>[];
     /** Affiche la sélection sur l'ActionBar et les lignes. */
@@ -48,8 +48,6 @@ export interface GroupProps<T> {
     MosaicComponent?: ReactComponent<LineProps<T>>;
     /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
     perPage: number;
-    /** Affiche un bouton "Voir tout" qui effectue cette action. */
-    showAllHandler?: (key: string) => void;
     /** Store contenant la liste. */
     store: SearchStore<T>;
     /** CSS */
@@ -67,8 +65,17 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
         return group.code ? store.getSearchGroupStore(group.code) : store;
     }
 
+    /** Action pour dégrouper et sélectionner la facette correspondant au groupe choisi. */
+    protected showAllHandler(value: string) {
+        const {groupingKey, selectedFacets, setProperties} = this.props.store;
+        setProperties({
+            groupingKey: undefined,
+            selectedFacets: {...selectedFacets, [groupingKey!]: value}
+        });
+    }
+
     protected renderList() {
-        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, isLineSelectionnable, showAllHandler, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, isLineSelectionnable, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
         return (
             <div>
                 <StoreList
@@ -87,7 +94,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     operationList={lineOperationList}
                     perPage={group.code ? perPage : undefined}
                     isLineSelectionnable={isLineSelectionnable}
-                    showAllHandler={showAllHandler && group.code ? () => showAllHandler(group.code!) : undefined}
+                    showAllHandler={group.code ? () => this.showAllHandler(group.code!) : undefined}
                     store={this.store}
                     theme={listTheme}
                 />

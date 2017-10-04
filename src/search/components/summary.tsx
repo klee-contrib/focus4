@@ -131,10 +131,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                             deletable
                             onDeleteClick={() => store.groupingKey = undefined}
                         >
-                            {i18next.t((() => {
-                                const f = store.facets.find(facet => store.groupingKey === facet.code);
-                                return f && f.label || "";
-                            })())}
+                            {i18next.t(store.groupingLabel!)}
                         </Chip>
                     </div>
                 : null}

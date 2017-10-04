@@ -71,6 +71,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
         window.removeEventListener("resize", this.scrollListener);
     }
 
+    /** Gère le scroll infini. */
     protected scrollListener() {
         const {store, offset = 250, isManualFetch} = this.props;
         if (!isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
@@ -84,6 +85,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
         }
     }
 
+    /** Bouton permettant de lancer la recherche des résultats suivants, si on n'est pas en scroll infini. */
     protected get showMoreButton() {
         const {store, isManualFetch, i18nPrefix = "focus"} = this.props;
         if (isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
@@ -101,6 +103,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
         return null;
     }
 
+    /** Affiche un groupe. */
     protected renderSingleGroup(group: GroupResult<T>) {
         const {canOpenDetail, DetailComponent, detailHeight, EmptyComponent, groupOperationList, groupPageSize = 5, groupTheme, hasSelection, i18nPrefix, isLineSelectionnable, lineTheme, LineComponent, lineOperationList, listTheme, MosaicComponent, store} = this.props;
         return (
@@ -121,19 +124,10 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                 listTheme={listTheme}
                 MosaicComponent={MosaicComponent}
                 perPage={groupPageSize}
-                showAllHandler={this.showAllHandler}
                 store={store}
                 theme={groupTheme}
             />
         );
-    }
-
-    protected showAllHandler(value: string) {
-        const {groupingKey, selectedFacets, setProperties} = this.props.store;
-        setProperties({
-            groupingKey: undefined,
-            selectedFacets: {...selectedFacets, [groupingKey!]: value}
-        });
     }
 
     render() {
