@@ -160,7 +160,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
                         <Dropdown
                             onChange={this.onScopeSelection}
                             value={(store.criteria[scopeKey] as any).value}
-                            source={[{value: "ALL", label: ""}, ...scopes.map(({code, label}) => ({value: code, label}))]}
+                            source={[{value: undefined, label: ""}, ...scopes.map(({code, label}) => ({value: code, label}))]}
                             theme={{dropdown: theme!.dropdown, values: theme!.scopes, valueKey: ""}}
                         />
                     : null}
