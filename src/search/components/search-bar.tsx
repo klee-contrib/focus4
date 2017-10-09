@@ -46,7 +46,7 @@ export interface SearchBarProps<T, C extends StoreNode> {
 export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>, void> {
 
     /** L'input HTML. */
-    protected input?: HTMLInputElement;
+    protected input?: HTMLInputElement | null;
 
     /** La liste des critères saisis dans le champ texte. */
     @observable protected criteriaList: string[] = [];

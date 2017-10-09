@@ -27,7 +27,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
     /** Hauteur du bouton, pour placer le menu. */
     @observable buttonHeight = 0;
 
-    private button?: Button;
+    private button?: Button | null;
 
     // On récupère à tout instant la hauteur du bouton.
     componentDidMount() {
@@ -50,7 +50,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
             return undefined;
         }
         return {
-            position: "absolute",
+            position: "absolute" as "absolute",
             top: position.startsWith("top") ? this.buttonHeight : undefined,
             bottom: position.startsWith("bottom") ? this.buttonHeight : undefined,
             right: position.endsWith("Right") ? 0 : undefined

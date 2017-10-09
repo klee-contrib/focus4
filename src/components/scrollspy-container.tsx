@@ -140,7 +140,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         const {menuOffset = 100} = this.props;
         const isFixed = this.offsetTop < menuOffset;
         return {
-            position: isFixed ? "fixed" : "absolute",
+            position: isFixed ? "fixed" as "fixed" : "absolute" as "absolute",
             top: isFixed ? menuOffset : 0
         };
     }

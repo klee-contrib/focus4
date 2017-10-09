@@ -64,7 +64,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     @observable facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
 
     /** Div contenant la facet box. */
-    protected facetBox?: HTMLDivElement;
+    protected facetBox?: HTMLDivElement | null;
 
     /** Bouton de sélection (case à cocher). */
     @computed

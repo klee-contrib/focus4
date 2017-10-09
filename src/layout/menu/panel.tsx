@@ -6,7 +6,7 @@ import {MenuStyle, styles} from "./item";
 /** Props du MenuPanel. */
 export interface MenuPanelProps {
     /** A priori le sous-menu. */
-    children?: React.ReactChildren;
+    children?: React.ReactChild;
     /** Handler pour fermer le panel. */
     close: () => void;
     /** Déclage sur l'axe X, pour le positionnement du panel. */

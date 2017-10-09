@@ -31,7 +31,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     @observable placeholderHeight: number;
 
     /** Header dans le DOM. */
-    private header?: Element;
+    private header?: Element | null;
     /** Elément de DOM sur lequel on écoute le scroll */
     private scrollTargetNode: Element | Window;
 
