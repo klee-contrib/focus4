@@ -24,6 +24,20 @@ export interface InputDateProps {
     error?: string | null;
     /** Format de la date dans l'input. */
     inputFormat?: string | string[];
+    /**
+     * Définit la correspondance entre une date et l'ISOString (date/heure) associé.
+     *
+     * Par exemple, pour 24/10/2017 en UTC + 2
+     *
+     * "utc-midnight" : Minuit, en UTC. (-> 2017-10-24T00:00:00Z)
+     *
+     * "local-midnight" : Minuit, au fuseau horaire local. (-> 2017-10-24T00:00:00+02:00)
+     *
+     * "local-utc-midnight" : Minuit à l'heure locale, en UTC. (-> 2017-10-23T22:00:00Z)
+     *
+     * Par défaut "utc-midnight".
+     */
+    ISOStringFormat?: "utc-midnight" | "local-midnight" | "local-utc-midnight";
     /** Nom de l'input. */
     name?: string;
     /** Est appelé au clic sur le calendrier ou au blur (n'est pas synchronisé avec le texte). */
@@ -45,7 +59,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     private _inputDateId = uniqueId("input-date-");
 
     /** Date actuelle. */
-    @observable private date = toMoment(this.props.value);
+    @observable private date = this.toMoment(this.props.value);
 
     /** Contenu du champ texte. */
     @observable private dateText = this.formatDate(this.props.value);
@@ -62,12 +76,35 @@ export class InputDate extends React.Component<InputDateProps, void> {
 
     @action
     componentWillReceiveProps({value}: InputDateProps) {
-        this.date = toMoment(value),
+        this.date = this.toMoment(value),
         this.dateText = this.formatDate(value);
     }
 
     componentWillUnmount() {
         document.removeEventListener("mousedown", this.onDocumentClick);
+    }
+
+    /** Convertit le texte en objet MomentJS. */
+    toMoment(value?: string) {
+        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const m = ISOStringFormat === "utc-midnight" ? moment.utc : moment;
+
+        if (isISOString(value)) {
+            return m(value, moment.ISO_8601);
+        } else {
+            return m().hour(0).minute(0).second(0);
+        }
+    }
+
+    /** Formatte la date (ISO String) en entrée selon le format demandé. */
+    formatDate(value?: string) {
+        const {inputFormat = "MM/DD/YYYY"} = this.props;
+        if (isISOString(value)) {
+            // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
+            return moment(value, moment.ISO_8601).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
+        } else {
+            return value;
+        }
     }
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
@@ -85,27 +122,17 @@ export class InputDate extends React.Component<InputDateProps, void> {
         }
     }
 
-    /** Formatte la date (ISO String) selon le format demandé. */
-    formatDate(isoDate?: string) {
-        const {inputFormat = "MM/DD/YYYY"} = this.props;
-        if (isISOString(isoDate)) {
-            return moment.utc(isoDate, moment.ISO_8601).minute(0).second(0).hour(0).utcOffset(0).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
-        } else {
-            return isoDate;
-        }
-    }
-
     /** Appelé lorsqu'on quitte le champ texte. */
     @action
     onInputBlur() {
         const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
         const text = (this.dateText || "").trim() || undefined;
 
-        const date = moment.utc(text, inputFormat, true);
+        const date = this.transformDate(text, inputFormat, true);
 
         if (date.isValid()) {
             this.date = date;
-            onChange(date.toISOString());
+            onChange(date.format());
         } else {
             onChange(text);
         }
@@ -115,7 +142,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     /** Au clic sur le calendrier. */
     @action
     onCalendarChange(date: Date, dayClick: boolean) {
-        const correctedDate = moment.utc(date).minute(0).second(0).hour(0).utcOffset(0).toISOString(); // Add UTC offset to get right ISO string
+        const correctedDate = this.transformDate(date).format();
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
@@ -130,6 +157,22 @@ export class InputDate extends React.Component<InputDateProps, void> {
         if (key === "Tab" || key === "Enter") {
             this.showCalendar = false;
             this.onInputBlur();
+        }
+    }
+
+    /** Transforme la date selon le format de date/timezone souhaité. */
+    transformDate(date: Date): moment.Moment; // Depuis le calendrier.
+    transformDate(date: string | undefined, inputFormat: string | string[], strict: true): moment.Moment; // Depuis la saisie manuelle.
+    transformDate(...params: any[]) {
+        const {ISOStringFormat = "utc-midnight"} = this.props;
+
+        // Dans les deux cas, la date d'entrée est bien en "local-midnight".
+        if (ISOStringFormat === "local-midnight") {
+            return moment(...params);
+        } else if (ISOStringFormat === "utc-midnight") {
+            return moment.utc(...params);
+        } else {
+            return moment(...params).utcOffset(0);
         }
     }
 
@@ -179,10 +222,5 @@ export default themr("RTDialog", styles)(InputDate);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
-    return moment.utc(value, moment.ISO_8601, true).isValid();
-}
-
-/** Convertit le texte en objet MomentJS. */
-function toMoment(value?: string) {
-    return isISOString(value) ? moment.utc(value, moment.ISO_8601) : moment.utc();
+    return moment(value, moment.ISO_8601, true).isValid();
 }
