@@ -142,6 +142,17 @@ export class InputDate extends React.Component<InputDateProps, void> {
     /** Au clic sur le calendrier. */
     @action
     onCalendarChange(date: Date, dayClick: boolean) {
+        const {ISOStringFormat = "utc-midnight"} = this.props;
+
+        // On arrange la date pour forcer le minuit demandé, au cas où la date d'entrée ne soit pas dans la même timezone.
+        if (ISOStringFormat === "utc-midnight") {
+            date.setUTCHours(0);
+        } else {
+            date.setHours(0);
+        }
+        date.setMinutes(0);
+        date.setSeconds(0);
+
         const correctedDate = this.transformDate(date).format();
         this.props.onChange(correctedDate);
         if (!dayClick) {
