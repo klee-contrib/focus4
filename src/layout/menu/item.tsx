@@ -9,54 +9,48 @@ export {styles};
 
 export type MenuStyle = Partial<typeof styles> & IconButtonTheme;
 
-/** Description d'un item de menu. */
-export interface MenuItemConfig extends ButtonProps {
-    /** La route associée, utilisée comme clé et comparée à la route active. */
-    route: string;
-    /** Sous-menu. */
-    subMenus?: MenuItemConfig[];
-}
-
 /** Props du MenuItem. */
-export interface MenuItemProps extends MenuItemConfig {
-    /** Route active. */
-    activeRoute?: string;
+export interface MenuItemProps extends ButtonProps {
+    /** Sous-menu. */
+    children?: React.ReactChildren;
+    /** La route associée, pour comparaison avec la route active. */
+    route?: string;
     /** CSS. */
     theme?: MenuStyle;
 }
 
 /** Elément de menu. */
 export const MenuItem = observer<MenuItemProps>(props => {
-    const {activeRoute, label, icon, onClick, route, theme, subMenus, ...otherProps} = props;
-    return (
-        <li className={`${theme!.item} ${route === activeRoute ? theme!.active : ""}`}>
-            {label ?
-                <Button
-                    {...otherProps}
-                    icon={icon}
-                    label={label}
-                    onClick={onClick}
-                    theme={{
-                        button: theme!.button,
-                        icon: theme!.icon,
-                        neutral: theme!.neutral
-                    }}
-                />
-            :
-                <IconButton
-                    {...otherProps}
-                    icon={icon}
-                    onClick={onClick}
-                    theme={{
-                        toggle: theme!.toggle,
-                        icon: theme!.icon,
-                        neutral: theme!.neutral,
-                        rippleWrapper: theme!.rippleWrapper
-                    }}
-                />
-            }
-        </li>
-    );
+    const {label, icon, onClick, route, theme, children, ...otherProps} = props;
+    if (label) {
+        return (
+            <Button
+                {...otherProps}
+                icon={icon}
+                label={label}
+                onClick={onClick}
+                theme={{
+                    button: theme!.button,
+                    icon: theme!.icon,
+                    neutral: theme!.neutral
+                }}
+            />
+        );
+    } else {
+        return (
+            <IconButton
+                {...otherProps}
+                icon={icon}
+                onClick={onClick}
+                theme={{
+                    toggle: theme!.toggle,
+                    icon: theme!.icon,
+                    neutral: theme!.neutral,
+                    rippleWrapper: theme!.rippleWrapper
+                }}
+            />
+        );
+    }
 });
 
 export default themr("menu", styles)(MenuItem);

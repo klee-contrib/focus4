@@ -31,7 +31,7 @@ import {LayoutProps, LayoutStyle, styles} from "./types";
 export {default as LayoutContent} from "./content";
 export {default as LayoutFooter} from "./footer";
 export {HeaderActions, HeaderBarLeft, HeaderBarRight, HeaderContent, HeaderScrolling, HeaderSummary, HeaderTopRow, PrimaryAction, SecondaryAction} from "./header";
-export {default as Menu, MenuItemConfig} from "./menu";
+export {default as Menu, MenuItem} from "./menu";
 
 /** Composant de Layout sans le provider de style. */
 @themr("layout", styles)

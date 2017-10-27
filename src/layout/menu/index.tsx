@@ -1,16 +1,14 @@
 import {autobind} from "core-decorators";
-import {action, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {classAutorun} from "../../util";
-
-import {MenuItemConfig} from "./item";
+import MenuItem, {MenuItemProps} from "./item";
 import MenuList, {MenuProps, MenuStyle, styles} from "./list";
 import MenuPanel from "./panel";
 
-export {MenuItemConfig, MenuStyle};
+export {MenuItem, MenuStyle};
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 @observer
@@ -26,18 +24,11 @@ export class Menu extends React.Component<MenuProps, void> {
     /** Affiche le sous menu (ou pas) */
     @observable showPanel = false;
 
-    /** Eléments du sous-menu actif. */
-    private readonly subMenus = observable<MenuItemConfig>([]);
-
-    /** Met à jour les éléments du sous-menu actif. */
-    @classAutorun updateSubMenus() {
-        const {menus} = this.props;
-        // Si le menu actif à un sous-menu, alors on enregistre ses éléments.
-        if (this.activeMenuIndex !== undefined && menus[this.activeMenuIndex].subMenus) {
-            this.subMenus.replace(menus[this.activeMenuIndex].subMenus!);
-        } else {
-            this.subMenus.clear(); // Sinon on vide.
-        }
+    /** Récupère le sous-menu actif. */
+    @computed
+    get subMenu() {
+        const activeMenuItem = this.activeMenuIndex && React.Children.toArray(this.props.children)[this.activeMenuIndex] as React.ReactElement<MenuItemProps> || undefined;
+        return activeMenuItem && activeMenuItem.props && activeMenuItem.props.children || undefined;
     }
 
     /**
@@ -61,26 +52,28 @@ export class Menu extends React.Component<MenuProps, void> {
     }
 
     render() {
-        const {activeRoute, brand, menus, theme} = this.props;
+        const {activeRoute, theme} = this.props;
         return (
             <nav className={theme!.menu}>
-                <div className={brand} />
                 <MenuList
                     onSelectMenu={this.onSelectMenu}
-                    {...this.props}
-                />
+                    activeRoute={activeRoute}
+                >
+                    {this.props.children}
+                </MenuList>
                 <MenuPanel
                     close={() => this.showPanel = false}
-                    opened={!!(this.showPanel && this.activeMenuIndex !== undefined && menus[this.activeMenuIndex].subMenus)}
+                    opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
                     xOffset={this.menuWidth}
                     yOffset={this.yPosition}
                     theme={theme}
                 >
                     <MenuList
                         activeRoute={activeRoute}
-                        menus={this.subMenus}
                         theme={theme}
-                    />
+                    >
+                        {this.subMenu}
+                    </MenuList>
                 </MenuPanel>
             </nav>
         );
