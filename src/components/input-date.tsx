@@ -76,7 +76,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
 
     @action
     componentWillReceiveProps({value}: InputDateProps) {
-        this.date = this.toMoment(value),
+        this.date = this.toMoment(value);
         this.dateText = this.formatDate(value);
     }
 
