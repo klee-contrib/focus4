@@ -54,8 +54,8 @@ function patchClass<T extends RCL>(type: "autorun" | "reaction" | "when", instan
     const baseCWM = instance.componentWillMount;
     const baseCWUM = instance.componentWillUnmount;
 
-    instance.componentWillMount = !baseCWM ? componentWillMount : function(this: RCL) { componentWillMount.apply(this); baseCWM.apply(this); };
-    instance.componentWillUnmount = !baseCWUM ? componentWillUnmount : function(this: RCL) { componentWillUnmount.apply(this); baseCWUM.apply(this); };
+    instance.componentWillMount = !baseCWM ? componentWillMount : function(this: RCL) { baseCWM.apply(this); componentWillMount.apply(this); };
+    instance.componentWillUnmount = !baseCWUM ? componentWillUnmount : function(this: RCL) { baseCWUM.apply(this); componentWillUnmount.apply(this); };
 }
 
 /** Permet de distinguer le type d'expression fourni à la réaction. */
