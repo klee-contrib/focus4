@@ -1,7 +1,15 @@
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {MenuStyle, styles} from "./item";
+import * as styles from "./__style__/menu.css";
+
+export interface MainMenuPanelStyle {
+    animate?: string;
+    close?: string;
+    open?: string;
+    panel?: string;
+    panelWrapper?: string;
+}
 
 /** Props du MenuPanel. */
 export interface MenuPanelProps {
@@ -16,11 +24,11 @@ export interface MenuPanelProps {
     /** Panel ouvert (ou pas). */
     opened: boolean;
     /** CSS. */
-    theme?: MenuStyle;
+    theme?: MainMenuPanelStyle;
 }
 
 /** Panel contenant une sous liste de menu. */
-export const MenuPanel = (props: MenuPanelProps) => {
+export const MainMenuPanel = (props: MenuPanelProps) => {
     const {children, close, opened, xOffset, yOffset, theme} = props;
     return (
         <div className={opened && theme!.panelWrapper || ""} onClick={close}>
@@ -31,4 +39,4 @@ export const MenuPanel = (props: MenuPanelProps) => {
     );
 };
 
-export default themr("menu", styles)(MenuPanel);
+export default themr("mainMenu", styles)(MainMenuPanel);

@@ -7,7 +7,7 @@ import Tooltip, {TooltipProps} from "react-toolbox/lib/tooltip";
 
 import {ButtonMenu, getIcon, MenuItem} from "../../components";
 
-import {HeaderStyle, styles} from "./types";
+import styles from "./__style__/header.css";
 
 const TooltipButton = Tooltip(Button);
 
@@ -32,7 +32,9 @@ export interface HeaderActionsProps {
     /** Actions secondaires. */
     secondary?: SecondaryAction[];
     /** CSS. */
-    theme?: HeaderStyle;
+    theme?: {
+        actions?: string;
+    };
 }
 
 /** Barre d'actions du header. */

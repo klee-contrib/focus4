@@ -5,22 +5,19 @@ import {themr} from "react-css-themr";
 import {Button, ButtonProps, IconButton, IconButtonTheme} from "react-toolbox/lib/button";
 
 import * as styles from "./__style__/menu.css";
-export {styles};
-
-export type MenuStyle = Partial<typeof styles> & IconButtonTheme;
 
 /** Props du MenuItem. */
-export interface MenuItemProps extends ButtonProps {
+export interface MainMenuItemProps extends ButtonProps {
     /** Sous-menu. */
     children?: React.ReactChildren;
     /** La route associée, pour comparaison avec la route active. */
     route?: string;
     /** CSS. */
-    theme?: MenuStyle;
+    theme?: IconButtonTheme;
 }
 
 /** Elément de menu. */
-export const MenuItem = observer<MenuItemProps>(props => {
+export const MainMenuItem = observer<MainMenuItemProps>(props => {
     const {label, icon, onClick, route, theme, children, ...otherProps} = props;
     if (label) {
         return (
@@ -29,11 +26,7 @@ export const MenuItem = observer<MenuItemProps>(props => {
                 icon={icon}
                 label={label}
                 onClick={onClick}
-                theme={{
-                    button: theme!.button,
-                    icon: theme!.icon,
-                    neutral: theme!.neutral
-                }}
+                theme={theme}
             />
         );
     } else {
@@ -42,15 +35,10 @@ export const MenuItem = observer<MenuItemProps>(props => {
                 {...otherProps}
                 icon={icon}
                 onClick={onClick}
-                theme={{
-                    toggle: theme!.toggle,
-                    icon: theme!.icon,
-                    neutral: theme!.neutral,
-                    rippleWrapper: theme!.rippleWrapper
-                }}
+                theme={theme}
             />
         );
     }
 });
 
-export default themr("menu", styles)(MenuItem);
+export default themr("mainMenu", styles)(MainMenuItem);

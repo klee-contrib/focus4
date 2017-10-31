@@ -4,7 +4,8 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {HeaderStyle, styles} from "./types";
+import styles from "./__style__/header.css";
+export type HeaderStyle = Partial<typeof styles>;
 
 /** Props du conteneur de header. */
 export interface HeaderScrollingProps {
@@ -15,7 +16,11 @@ export interface HeaderScrollingProps {
     /** Sélecteur de l'élément de DOM sur lequel on écoute le scroll (par défaut : window) */
     scrollTargetSelector?: string;
     /** Classes CSS. */
-    theme?: HeaderStyle;
+    theme?: {
+        deployed?: string;
+        scrolling?: string;
+        undeployed?: string;
+    };
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */

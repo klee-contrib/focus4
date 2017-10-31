@@ -3,15 +3,23 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {HeaderProps, styles} from "../types";
+import styles from "../__style__/header.css";
 
 export {default as HeaderBarLeft} from "./bar-left";
 export {default as HeaderBarRight} from "./bar-right";
 export {default as HeaderSummary} from "./summary";
 
+/** Props du HeaderBarRight. */
+export interface HeaderTopRowProps {
+    children?: React.ReactNode;
+    theme?: {
+        topRow?: string;
+    };
+}
+
 /** Barre du haut dans le header. */
 @observer
-export class HeaderTopRow extends React.Component<HeaderProps, void> {
+export class HeaderTopRow extends React.Component<HeaderTopRowProps, void> {
 
     static contextTypes = {layout: PropTypes.object};
     context: {layout: {menuWidth: number}};

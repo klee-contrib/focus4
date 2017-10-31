@@ -25,13 +25,13 @@ import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupSty
 
 import ErrorCenter, {ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
-import {MenuStyle} from "./menu";
+import {MainMenuStyle} from "./menu";
 import {LayoutProps, LayoutStyle, styles} from "./types";
 
 export {default as LayoutContent} from "./content";
 export {default as LayoutFooter} from "./footer";
 export {HeaderActions, HeaderBarLeft, HeaderBarRight, HeaderContent, HeaderScrolling, HeaderSummary, HeaderTopRow, PrimaryAction, SecondaryAction} from "./header";
-export {default as Menu, MenuItem} from "./menu";
+export {default as MainMenu, MainMenuItem} from "./menu";
 
 /** Composant de Layout sans le provider de style. */
 @themr("layout", styles)
@@ -95,7 +95,7 @@ export interface LayoutStyleProviderProps {
     line?: LineStyle;
     list?: ListStyle;
     listWrapper?: ListWrapperStyle;
-    menu?: MenuStyle;
+    mainMenu?: MainMenuStyle;
     panel?: PanelStyle;
     popin?: PopinStyle;
     scrollspy?: ScrollspyStyle;

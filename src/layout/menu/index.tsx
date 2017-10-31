@@ -3,17 +3,28 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {IconButtonTheme} from "react-toolbox/lib/button";
 
-import MenuItem, {MenuItemProps} from "./item";
-import MenuList, {MenuProps, MenuStyle, styles} from "./list";
-import MenuPanel from "./panel";
+import MainMenuItem, {MainMenuItemProps} from "./item";
+import MainMenuList, {MainMenuListStyle} from "./list";
+import MainMenuPanel, {MainMenuPanelStyle} from "./panel";
 
-export {MenuItem, MenuStyle};
+export {MainMenuItem};
+
+import * as styles from "./__style__/menu.css";
+
+export type MainMenuStyle = Partial<typeof styles> & IconButtonTheme;
+
+/** Props du Menu. */
+export interface MainMenuProps {
+    activeRoute?: string;
+    theme?: MainMenuListStyle & MainMenuPanelStyle & {menu?: string};
+}
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 @observer
 @autobind
-export class Menu extends React.Component<MenuProps, void> {
+export class MainMenu extends React.Component<MainMenuProps, void> {
 
     /** Index du sous-menu actif. */
     @observable activeMenuIndex?: number;
@@ -27,7 +38,7 @@ export class Menu extends React.Component<MenuProps, void> {
     /** Récupère le sous-menu actif. */
     @computed
     get subMenu() {
-        const activeMenuItem = this.activeMenuIndex && React.Children.toArray(this.props.children)[this.activeMenuIndex] as React.ReactElement<MenuItemProps> || undefined;
+        const activeMenuItem = this.activeMenuIndex && React.Children.toArray(this.props.children)[this.activeMenuIndex] as React.ReactElement<MainMenuItemProps> || undefined;
         return activeMenuItem && activeMenuItem.props && activeMenuItem.props.children || undefined;
     }
 
@@ -55,29 +66,30 @@ export class Menu extends React.Component<MenuProps, void> {
         const {activeRoute, theme} = this.props;
         return (
             <nav className={theme!.menu}>
-                <MenuList
-                    onSelectMenu={this.onSelectMenu}
+                <MainMenuList
                     activeRoute={activeRoute}
+                    onSelectMenu={this.onSelectMenu}
+                    theme={theme}
                 >
                     {this.props.children}
-                </MenuList>
-                <MenuPanel
+                </MainMenuList>
+                <MainMenuPanel
                     close={() => this.showPanel = false}
                     opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
                     xOffset={this.menuWidth}
                     yOffset={this.yPosition}
                     theme={theme}
                 >
-                    <MenuList
+                    <MainMenuList
                         activeRoute={activeRoute}
                         theme={theme}
                     >
                         {this.subMenu}
-                    </MenuList>
-                </MenuPanel>
+                    </MainMenuList>
+                </MainMenuPanel>
             </nav>
         );
     }
 }
 
-export default themr("menu", styles)(Menu);
+export default themr("mainMenu", styles)(MainMenu);

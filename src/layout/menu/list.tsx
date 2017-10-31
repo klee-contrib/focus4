@@ -2,28 +2,29 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {MenuStyle, styles} from "./item";
-export {MenuStyle, styles};
+import * as styles from "./__style__/menu.css";
 
-/** Props du Menu. */
-export interface MenuProps {
+export interface MainMenuListStyle {
+    active?: string;
+    item?: string;
+    list?: string;
+}
+
+/** Props du MenuList. */
+export interface MainMenuListProps {
     /** Route active. */
     activeRoute?: string;
     /** Menu. */
     children?: React.ReactChildren;
-    /** CSS. */
-    theme?: MenuStyle;
-}
-
-/** Props du MenuList. */
-export interface MenuListProps extends MenuProps {
     /** Handler de clic sur un item. */
     onSelectMenu?: (evt: React.SyntheticEvent<HTMLDivElement> | undefined, idx: number) => void;
+    /** CSS. */
+    theme?: MainMenuListStyle;
 }
 
 /** Liste d'item de menu. */
 @observer
-export class MenuList extends React.Component<MenuListProps, void> {
+export class MainMenuList extends React.Component<MainMenuListProps, void> {
 
     /** Handler de clic, appelle le handler du menu (pour ouvrir le panel) puis celui de l'item. */
     private onClick(evt: React.SyntheticEvent<HTMLDivElement> | undefined, idx: number) {
@@ -51,4 +52,4 @@ export class MenuList extends React.Component<MenuListProps, void> {
     }
 }
 
-export default themr("menu", styles)(MenuList);
+export default themr("mainMenu", styles)(MainMenuList);
