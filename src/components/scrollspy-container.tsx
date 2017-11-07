@@ -107,7 +107,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     /** Synchronise le scroll/resize de la page avec les observables qui les représentent. */
     @action
     private onScroll() {
-        this.scrollTop = document.body.scrollTop;
+        this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
         this.offsetTop = findDOMNode(this).getBoundingClientRect().top;
     }
 
