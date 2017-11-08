@@ -55,7 +55,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      */
     protected getItems(Component: ReactComponent<LineProps<T>>) {
         const {hasSelection = false, isLineSelectionnable = () => true, store} = this.props;
-        return super.getItems(Component).map(({key, data}) => ({
+        return super.getItems(Component).map(({key, data, style}) => ({
             key,
             data: {
                 Component: data.Component,
@@ -66,7 +66,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
                     store
                 }
             },
-            style: {}
+            style
         })) as LineItem<LineWrapperProps<T>>[];
     }
 

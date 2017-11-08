@@ -82,7 +82,7 @@ export async function httpGet<RS>(url: string): Promise<RS> {
 export async function httpPost<RQ, RS>(url: string, data: RQ): Promise<RS> {
     return coreFetch(url, {
         method: "POST",
-        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"},
+        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"} as any,
         body: JSON.stringify(data),
         credentials: "include"
     });
@@ -96,7 +96,7 @@ export async function httpPost<RQ, RS>(url: string, data: RQ): Promise<RS> {
 export async function httpPut<RQ, RS>(url: string, data: RQ): Promise<RS> {
     return coreFetch(url, {
         method: "PUT",
-        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"},
+        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"} as any,
         body: JSON.stringify(data),
         credentials: "include"
     });

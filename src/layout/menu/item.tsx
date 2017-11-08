@@ -17,7 +17,7 @@ export interface MainMenuItemProps extends ButtonProps {
 }
 
 /** Elément de menu. */
-export const MainMenuItem = observer<MainMenuItemProps>(props => {
+export const MainMenuItem = observer((props: MainMenuItemProps) => {
     const {label, icon, onClick, route, theme, children, ...otherProps} = props;
     if (label) {
         return (

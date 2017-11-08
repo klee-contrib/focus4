@@ -3,6 +3,7 @@ export {
     ContextualActionsStyle,
     DetailProps,
     EmptyProps,
+    getDraggedItems,
     GroupOperationListItem,
     LineOperationListItem,
     LineProps,

@@ -81,7 +81,7 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
 
     // On vérifie qu'il ne manque pas d'entité.
     for (const entry in config) {
-        if (!entityMap[entityMapping[entry as keyof T1 & T2] || entry]) {
+        if (!entityMap[entityMapping[entry as keyof T1 & T2] as string || entry]) {
             throw new Error(`La propriété "${entry}" n'a pas été trouvée dans la liste d'entités. Vous manque-t'il une correspondance ?`);
         }
     }

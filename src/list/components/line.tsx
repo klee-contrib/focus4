@@ -1,9 +1,12 @@
 import {autobind} from "core-decorators";
-import {computed} from "mobx";
-import {observer} from "mobx-react";
+import {computed, IObservableArray, observable} from "mobx";
+import {observer, Observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
-
+import {ConnectDragPreview, ConnectDragSource} from "react-dnd";
+import {getEmptyImage} from "react-dnd-html5-backend";
+import {findDOMNode} from "react-dom";
+import {Motion, spring} from "react-motion";
 import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../components";
@@ -27,10 +30,16 @@ export interface LineProps<T> {
 
 /** Props du wrapper autour des lignes de liste. */
 export interface LineWrapperProps<T> {
+    /** Connecteur vers la source de DnD. */
+    connectDragSource?: ConnectDragSource;
+    /** Connecteur vers la preview de DnD. */
+    connectDragPreview?: ConnectDragPreview;
     /** L'élément de liste. */
     data: T;
     /** Le sélecteur pour le champ date, pour une ligne timeline. */
     dateSelector?: (data: T) => EntityField<string>;
+    /** Les items en cours de drag dans la liste. */
+    draggedItems?: IObservableArray<T>;
     /** Affiche ou non la checkbox de sélection. */
     hasSelection?: boolean;
     /** Préfixe i18n. Par défaut: "focus". */
@@ -47,6 +56,8 @@ export interface LineWrapperProps<T> {
     operationList?: (data: T) => LineOperationListItem<T>[];
     /** Store de liste associé à la ligne. */
     store?: MiniListStore<T>;
+    /** Style passé par la liste pour masquer l'élement en cours de drag. */
+    style?: {opacity?: number};
     /** CSS. */
     theme?: LineStyle;
     /** Type spécial de ligne. */
@@ -57,6 +68,40 @@ export interface LineWrapperProps<T> {
 @autobind
 @observer
 export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
+
+    /** Hauteur de la ligne (en mode ligne, en mosaïque elle est fixée.) */
+    @observable private height?: number;
+
+    componentDidMount() {
+        this.updateHeight();
+
+        // Permet de masquer la preview par défaut de drag and drop HTML5.
+        if (this.props.connectDragPreview) {
+            this.props.connectDragPreview(getEmptyImage());
+        }
+    }
+
+    componentWillReceiveProps({data}: LineWrapperProps<T>) {
+        // On reset la hauteur si on change de data.
+        if (data !== this.props.data) {
+            this.height = undefined;
+        }
+    }
+
+    componentDidUpdate({data}: LineWrapperProps<T>) {
+        if (data !== this.props.data) {
+            // Puis on la recalcule.
+            this.updateHeight();
+        }
+    }
+
+    /** Met à jour la hauteur de la ligne. */
+    updateHeight() {
+        const node = findDOMNode(this) as HTMLElement;
+        if (node) {
+            this.height = node.clientHeight;
+        }
+    }
 
     /** Etat de sélection de l'item courant. */
     @computed
@@ -74,7 +119,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
     }
 
     render() {
-        const {LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, isSelectionnable = () => true, theme, operationList, type, store} = this.props;
+        const {draggedItems, style, connectDragSource = (x: any) => x, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, isSelectionnable = () => true, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} />;
@@ -90,35 +135,59 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                 );
             default: // Pour une liste, on ajoute éventuellement la case à cocher et les actions de ligne.
                 const opList = operationList && operationList(data);
-                return (
-                    <li
-                        className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
-                        style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
-                    >
-                        {hasSelection && isSelectionnable(data) && store ?
-                            <IconButton
-                                className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.isSelection : ""}`}
-                                icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
-                                onClick={this.onSelection}
-                                primary={this.isSelected}
-                                theme={{toggle: theme!.toggle, icon: theme!.checkboxIcon}}
-                            />
-                        : null}
-                        <LineComponent data={data} openDetail={openDetail} />
-                        {opList && opList.length > 0 ?
-                            <div
-                                className={theme!.actions}
-                                style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+
+                // On construit une fonction de rendu à part parce qu'on ne va pas toujours wrapper le résultat dans le Motion.
+                const lineContent = ({height, width}: {height?: number, width?: number}) =>
+                    // On a besoin de rewrapper le contenu dans un <Observer> parce que sinon on perd le contexte MobX dans la Motion.
+                    <Observer>
+                        {() =>
+                            // Si pas de drag and drop, la fonction est l'identité.
+                            connectDragSource(<li
+                                className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
+                                style={{...(mosaic ? {width: mosaic.width, height: mosaic.height} : {}), width: mosaic ? width : undefined, height, opacity: style && style.opacity}}
                             >
-                                <ContextualActions
-                                    isMosaic={!!mosaic}
-                                    operationList={opList}
-                                    operationParam={data}
-                                />
-                            </div>
-                        : null}
-                    </li>
-                );
+                                {hasSelection && isSelectionnable(data) && store ?
+                                    <IconButton
+                                        className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.isSelection : ""}`}
+                                        icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
+                                        onClick={this.onSelection}
+                                        primary={this.isSelected}
+                                        theme={{toggle: theme!.toggle, icon: theme!.checkboxIcon}}
+                                    />
+                                : null}
+                                <LineComponent data={data} openDetail={openDetail} />
+                                {opList && opList.length > 0 ?
+                                    <div
+                                        className={theme!.actions}
+                                        style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+                                    >
+                                        <ContextualActions
+                                            isMosaic={!!mosaic}
+                                            operationList={opList}
+                                            operationParam={data}
+                                        />
+                                    </div>
+                                : null}
+                            </li>)
+                        }
+                    </Observer>;
+
+                // On ne wrappe la ligne dans le Motion que si la hauteur est définie pour
+                // - ne pas avoir une animation de départ d'une valeur quelconque jusqu'à la bonne valeur.
+                // - ne pas avoir d'animation lorsque l'élément affiché change, comme par exemple lorsqu'on supprime un élément.
+                if (this.height && draggedItems) {
+                    return (
+                        <Motion
+                            defaultStyle={{height: mosaic && mosaic.height || this.height, width: mosaic && mosaic.width || 0}}
+                            style={{width: mosaic && spring(style && style.opacity === 0 ? mosaic.width : 0) || 0, height: spring(style && !style.opacity ? 0 : mosaic ? mosaic.height : this.height)}}
+                        >
+                            {lineContent}
+                        </Motion>
+                    );
+                } else {
+                    // Sinon on ne passe pas de style et ça restera à undefined.
+                    return lineContent({});
+                }
         }
     }
 }
