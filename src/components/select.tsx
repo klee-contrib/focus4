@@ -70,7 +70,7 @@ export function Select({
                     const optVal = `${(val as any)[valueKey]}`;
                     const elementValue = (val as any)[labelKey];
                     const optLabel = elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
-                    return <option key={idx} value={optVal}>{optLabel}</option>;
+                    return <option key={idx} value={optVal}>{i18next.t(optLabel)}</option>;
                 })}
             </select>
             {error ? <div className={theme!.errorLabel}>{error}</div> : null}
