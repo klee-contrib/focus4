@@ -17,7 +17,7 @@ import {classAutorun, classReaction} from "../../util";
 import {MiniListStore} from "../store-base";
 import {LineOperationListItem} from "./contextual-actions";
 import {addDragSource} from "./dnd-utils";
-import DndDragLayer from "./drag-layer";
+import DndDragLayer, {DragLayerStyle} from "./drag-layer";
 import LineWrapper, {LineProps, LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
@@ -53,6 +53,8 @@ export interface ListProps<T> extends ListBaseProps<T> {
     detailHeight?: number | ((data: T) => number);
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
+    /** CSS du DragLayer. */
+    dragLayerTheme?: DragLayerStyle;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Active le drag and drop. */
@@ -296,14 +298,14 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
     }
 
     render() {
-        const {EmptyComponent, hasDragAndDrop, hideAdditionalItems, i18nPrefix = "focus", theme} = this.props;
+        const {dragLayerTheme, EmptyComponent, hasDragAndDrop, hideAdditionalItems, i18nPrefix = "focus", theme} = this.props;
         return !hideAdditionalItems && !this.displayedData.length && EmptyComponent ?
             <EmptyComponent addItemHandler={this.addItemHandler} store={(this.props as any).store} />
         : !hideAdditionalItems && !this.displayedData.length ?
             <div>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
         : (
             <div>
-                {!navigator.userAgent.match(/Trident/) && hasDragAndDrop ? <DndDragLayer i18nPrefix={i18nPrefix} /> : null}
+                {!navigator.userAgent.match(/Trident/) && hasDragAndDrop ? <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} /> : null}
                 <div className={this.mode === "list" ? theme!.list : theme!.mosaic}>
                     <TransitionMotion
                         willEnter={() => ({height: 0, opacity: 1})}

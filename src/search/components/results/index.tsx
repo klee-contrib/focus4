@@ -7,7 +7,7 @@ import {Button} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 import {ReactComponent} from "../../../config";
-import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle} from "../../../list";
+import {DetailProps, DragLayerStyle, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -24,6 +24,10 @@ export interface ResultsProps<T> {
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
+    /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
+    dragItemType?: string;
+    /** CSS du DragLayer. */
+    dragLayerTheme?: DragLayerStyle;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Actions de groupe par groupe (code / valeur). */
@@ -32,6 +36,8 @@ export interface ResultsProps<T> {
     groupPageSize?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
+    /** Active le drag and drop. */
+    hasDragAndDrop?: boolean;
     /** Affiche la sélection sur l'ActionBar et les lignes. */
     hasSelection: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -105,15 +111,18 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
 
     /** Affiche un groupe. */
     protected renderSingleGroup(group: GroupResult<T>) {
-        const {canOpenDetail, DetailComponent, detailHeight, EmptyComponent, groupOperationList, groupPageSize = 5, groupTheme, hasSelection, i18nPrefix, isLineSelectionnable, lineTheme, LineComponent, lineOperationList, listTheme, MosaicComponent, store} = this.props;
+        const {canOpenDetail, DetailComponent, detailHeight, EmptyComponent, groupOperationList, groupPageSize = 5, groupTheme, hasSelection, i18nPrefix, isLineSelectionnable, lineTheme, LineComponent, lineOperationList, listTheme, MosaicComponent, store, dragItemType, dragLayerTheme, hasDragAndDrop} = this.props;
         return (
             <Group
                 canOpenDetail={canOpenDetail}
                 DetailComponent={DetailComponent}
                 detailHeight={detailHeight}
+                dragItemType={dragItemType}
+                dragLayerTheme={dragLayerTheme}
                 EmptyComponent={EmptyComponent}
                 group={group}
                 groupOperationList={groupOperationList && groupOperationList(group)}
+                hasDragAndDrop={hasDragAndDrop}
                 hasSelection={hasSelection}
                 i18nPrefix={i18nPrefix}
                 isLineSelectionnable={isLineSelectionnable}

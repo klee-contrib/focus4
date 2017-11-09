@@ -6,7 +6,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 
 import {ReactComponent} from "../../../config";
-import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, MiniListStore, StoreList} from "../../../list";
+import {DetailProps, DragLayerStyle, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, MiniListStore, StoreList} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -24,12 +24,18 @@ export interface GroupProps<T> {
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
+    /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
+    dragItemType?: string;
+    /** CSS du DragLayer. */
+    dragLayerTheme?: DragLayerStyle;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
     /** Actions de groupe. */
     groupOperationList?: GroupOperationListItem<T>[];
+    /** Active le drag and drop. */
+    hasDragAndDrop?: boolean;
     /** Affiche la sélection sur l'ActionBar et les lignes. */
     hasSelection?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -75,7 +81,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     protected renderList() {
-        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, isLineSelectionnable, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, isLineSelectionnable, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, dragItemType, dragLayerTheme, hasDragAndDrop} = this.props;
         return (
             <div>
                 <StoreList
@@ -83,7 +89,10 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     data={group.list}
                     detailHeight={detailHeight}
                     DetailComponent={DetailComponent}
+                    dragItemType={dragItemType}
+                    dragLayerTheme={dragLayerTheme}
                     EmptyComponent={EmptyComponent}
+                    hasDragAndDrop={hasDragAndDrop}
                     hasSelection={hasSelection}
                     hideAdditionalItems={!!group.code}
                     i18nPrefix={i18nPrefix}

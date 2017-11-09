@@ -5,7 +5,7 @@ import {themr} from "react-css-themr";
 
 import {ButtonBackToTop} from "../../components";
 import {ReactComponent} from "../../config";
-import {DetailProps, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, ListWrapper} from "../../list";
+import {DetailProps, DragLayerStyle, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, ListWrapper} from "../../list";
 
 import {SearchStore} from "../store";
 import {GroupResult} from "../types";
@@ -32,6 +32,10 @@ export interface AdvancedSearchProps<T> {
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
+    /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
+    dragItemType?: string;
+    /** CSS du DragLayer. */
+    dragLayerTheme?: DragLayerStyle;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
@@ -44,6 +48,8 @@ export interface AdvancedSearchProps<T> {
     groupTheme?: GroupStyle;
     /** Ajoute un bouton de retour en haut de page. Par défault: true */
     hasBackToTop?: boolean;
+    /** Active le drag and drop. */
+    hasDragAndDrop?: boolean;
     /** Affiche le bouton de groupe dans l'ActionBar. */
     hasGrouping?: boolean;
     /** Affiche la barre de recherche dans l'ActionBar. */
@@ -173,15 +179,18 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, listTheme, lineTheme, groupOperationList, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, MosaicComponent, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail} = this.props;
+        const {groupTheme, listTheme, lineTheme, groupOperationList, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, MosaicComponent, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
                 detailHeight={detailHeight}
                 DetailComponent={DetailComponent}
+                dragItemType={dragItemType}
+                dragLayerTheme={dragLayerTheme}
                 EmptyComponent={EmptyComponent}
                 groupOperationList={groupOperationList}
                 groupTheme={groupTheme}
+                hasDragAndDrop={hasDragAndDrop}
                 hasSelection={!!hasSelection}
                 i18nPrefix={i18nPrefix}
                 isManualFetch={isManualFetch}
