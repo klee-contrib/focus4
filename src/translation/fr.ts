@@ -9,6 +9,10 @@ export const fr = {
         deleted: "Élement supprimé avec succès",
         saved: "Élement enregistré avec succès"
     },
+    dragLayer: {
+        item: "élément",
+        items: "élements"
+    },
     list: {
         add: "Ajouter",
         empty: "Aucun élément",

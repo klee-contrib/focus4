@@ -13,12 +13,13 @@ import {findDOMNode} from "react-dom";
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox";
 import {ChipTheme} from "react-toolbox/lib/chip";
+import {InputTheme} from 'react-toolbox/lib/input';
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
 import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, PanelStyle, PopinStyle, ScrollspyStyle} from "../components";
 import {FieldStyle} from "../entity";
-import {ContextualActionsStyle, LineStyle, ListStyle, ListWrapperStyle} from "../list";
+import {ContextualActionsStyle, DragLayerStyle, LineStyle, ListStyle, ListWrapperStyle} from "../list";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
 import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../search";
@@ -77,12 +78,15 @@ class LayoutBase extends React.Component<LayoutProps, void> {
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
+    [key: string]: {} | undefined;
+
     actionBar?: ActionBarStyle;
     advancedSearch?: AdvancedSearchStyle;
     autocomplete?: AutocompleteStyle;
     buttonBTT?: ButtonBackToTopStyle;
     contextualActions?: ContextualActionsStyle;
     display?: DisplayStyle;
+    dragLayer?: DragLayerStyle;
     errorCenter?: ErrorCenterStyle;
     facet?: FacetStyle;
     facetBox?: FacetBoxStyle;
@@ -105,6 +109,7 @@ export interface LayoutStyleProviderProps {
     RTButton?: ButtonTheme;
     RTCheckbox?: CheckboxTheme;
     RTChip?: ChipTheme;
+    RTInput?: InputTheme;
     RTMenu?: MenuTheme;
     RTTabs?: TabsTheme;
 }

@@ -17,7 +17,7 @@ import {classAutorun, classReaction} from "../../util";
 import {MiniListStore} from "../store-base";
 import {LineOperationListItem} from "./contextual-actions";
 import {addDragSource} from "./dnd-utils";
-import {DndDragLayer} from "./drag-layer";
+import DndDragLayer from "./drag-layer";
 import LineWrapper, {LineProps, LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
@@ -296,15 +296,15 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
     }
 
     render() {
-        const {EmptyComponent, hideAdditionalItems, i18nPrefix = "focus", theme} = this.props;
+        const {EmptyComponent, hasDragAndDrop, hideAdditionalItems, i18nPrefix = "focus", theme} = this.props;
         return !hideAdditionalItems && !this.displayedData.length && EmptyComponent ?
             <EmptyComponent addItemHandler={this.addItemHandler} store={(this.props as any).store} />
         : !hideAdditionalItems && !this.displayedData.length ?
             <div>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
         : (
             <div>
-                <DndDragLayer />
-                <div style={{overflow: "hidden"}}>
+                {!navigator.userAgent.match(/Trident/) && hasDragAndDrop ? <DndDragLayer i18nPrefix={i18nPrefix} /> : null}
+                <div className={this.mode === "list" ? theme!.list : theme!.mosaic}>
                     <TransitionMotion
                         willEnter={() => ({height: 0, opacity: 1})}
                         willLeave={({style}: {style: Style}) => {
@@ -317,7 +317,7 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
                         styles={this.lines.slice()}
                     >
                         {(items: LineItem<any>[]) => (
-                            <ul className={this.mode === "list" ? theme!.list : theme!.mosaic}>
+                            <ul>
                                 {items.map(({key, style, data: {Component, props}}) => <Component key={key} style={style} {...props} />)}
                             </ul>
                         )}

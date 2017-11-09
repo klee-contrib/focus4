@@ -1,67 +1,50 @@
+import i18next from "i18next";
 import * as React from "react";
+import {themr} from "react-css-themr";
 import {DragLayer} from "react-dnd";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
-@DragLayer<any>(monitor => ({
-    item: monitor.getItem(),
-    currentOffset: monitor.getClientOffset(),
-    isDragging: monitor.isDragging()
-}))
-export class DndDragLayer extends React.Component<any, any> {
+import * as styles from "./__style__/drag-layer.css";
+export type DragLayerStyle = Partial<typeof styles>;
 
-    render() {
-        const {item, isDragging, currentOffset} = this.props;
-        if (!isDragging) {
-            return null;
-        }
-
-        return (
-            <div style={{
-                position: "fixed",
-                pointerEvents: "none",
-                zIndex: 100,
-                left: 0,
-                top: 0,
-                width: "100%",
-                height: "100%"
-            }}>
-                <div style={(() => {
-                    if (!currentOffset || !item) {
-                        return {
-                            display: "none"
-                        };
-                    }
-
-                    const { x, y } = currentOffset;
-                    const transform = `translate(${x - 18}px, ${y - 20}px)`;
-                    return {
-                        display: "flex",
-                        alignItems: "center",
-                        transform,
-                        height: 30,
-                        width: 130,
-                        padding: 5,
-                        background: "white",
-                        borderRadius: 2,
-                        boxShadow: `0 2px 2px 0 rgba(0, 0, 0, 0.14),
-                                0 3px 1px -2px rgba(0, 0, 0, 0.2),
-                                0 1px 5px 0 rgba(0, 0, 0, 0.12)`
-                    };
-                })()}>
-                    <FontIcon>drag_handle</FontIcon>
-                    <div style={{
-                        background: "rebeccapurple",
-                        borderRadius: 50,
-                        color: "white",
-                        padding: 5,
-                        height: 30,
-                        width: 30,
-                        boxSizing: "border-box",
-                        textAlign: "center",
-                        margin: "0 5px"
-                    }}>{item.dragged.length}</div><div>élément{item.dragged.length !== 1 ? "s" : ""}</div>
-                </div>
-            </div>
-        );
-    }
+/** Props du layer de drag an drop. */
+export interface DndDragLayerProps {
+    /** L'offset courant. */
+    currentOffset?: {x: number, y: number};
+    /** Préfixe i18n. */
+    i18nPrefix?: string;
+    /** Drag en cours. */
+    isDragging?: boolean;
+    /** La liste en cours de drag. */
+    item?: {dragged: {}[]};
+    /** CSS. */
+    theme?: DragLayerStyle;
 }
+
+export const DndDragLayer = DragLayer<DndDragLayerProps>(monitor => ({
+    currentOffset: monitor.getClientOffset(),
+    isDragging: monitor.isDragging(),
+    item: monitor.getItem()
+}))(({currentOffset, i18nPrefix = "focus", isDragging, item, theme}: DndDragLayerProps) => {
+
+    if (!isDragging) {
+        return <div />;
+    }
+
+    return (
+        <div className={theme!.container}>
+            <div
+                className={theme!.layer}
+                style={!currentOffset || !item ? {display: "none"} : {transform: `translate(${currentOffset.x - 18}px, ${currentOffset.y - 20}px)`}}
+            >
+                <FontIcon>drag_handle</FontIcon>
+                <div className={theme!.count}>
+                    {item!.dragged.length}
+                </div>
+                <div>{i18next.t(`${i18nPrefix}.dragLayer.item${item!.dragged.length !== 1 ? "s" : ""}`)}</div>
+            </div>
+        </div>
+    );
+});
+
+export default themr("dragLayer", styles)(DndDragLayer);

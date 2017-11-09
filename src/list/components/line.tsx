@@ -144,7 +144,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                             // Si pas de drag and drop, la fonction est l'identité.
                             connectDragSource(<li
                                 className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
-                                style={{...(mosaic ? {width: mosaic.width, height: mosaic.height} : {}), width: mosaic ? width : undefined, height, opacity: style && style.opacity}}
+                                style={{width: mosaic ? width || mosaic.width : undefined, height: mosaic ? height || mosaic.height : height, opacity: style && style.opacity}}
                             >
                                 {hasSelection && isSelectionnable(data) && store ?
                                     <IconButton
@@ -179,7 +179,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                     return (
                         <Motion
                             defaultStyle={{height: mosaic && mosaic.height || this.height, width: mosaic && mosaic.width || 0}}
-                            style={{width: mosaic && spring(style && style.opacity === 0 ? mosaic.width : 0) || 0, height: spring(style && !style.opacity ? 0 : mosaic ? mosaic.height : this.height)}}
+                            style={{width: mosaic && spring(style && style.opacity ? mosaic.width : 0) || 0, height: spring(style && !style.opacity ? 0 : mosaic ? mosaic.height : this.height)}}
                         >
                             {lineContent}
                         </Motion>

@@ -2,12 +2,17 @@
 
 .list,
 .mosaic {
+    overflow: hidden;
+}
+
+.list ul,
+.mosaic ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.mosaic {
+.mosaic ul {
     display: flex;
     flex-wrap: wrap;
 }

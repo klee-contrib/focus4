@@ -2,6 +2,7 @@ export {
     ContextualActions,
     ContextualActionsStyle,
     DetailProps,
+    DragLayerStyle,
     EmptyProps,
     getDraggedItems,
     GroupOperationListItem,
