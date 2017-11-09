@@ -184,7 +184,6 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         if (this.services.delete) {
             this.isLoading = true;
             await this.services.delete(toFlatValues(this.entity));
-            messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.deleted`);
             runInAction(() => {
                 this.isLoading = false;
                 this.storeData.clear();
@@ -222,7 +221,6 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
             this.isSaving = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity));
-                messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.saved`);
                 runInAction(() => {
                     this.isSaving = false;
                     this.isEdit = false;
@@ -242,7 +240,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
     /** Est appelé après la suppression. */
     onFormDeleted() {
-        // A éventuellement surcharger.
+        messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.deleted`);
     }
 
     /** Est appelé après le chargement. */
@@ -252,7 +250,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
     /** Est appelé après la sauvegarde. */
     onFormSaved() {
-        // A éventuellement surcharger.
+        messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.saved`);
     }
 
     /**
@@ -310,8 +308,8 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param options Les options du champ.
      */
     displayFor<DCProps extends BaseDisplayProps = DisplayProps, LCProps extends BaseLabelProps = BaseLabelProps>(
-        field: string | number,
-        options?: Partial<FieldProps<string | number, {}, DCProps, LCProps, {}, string, string>>
+        field: string | number | boolean,
+        options?: Partial<FieldProps<string | number | boolean, {}, DCProps, LCProps, {}, string, string>>
     ): JSX.Element;
     displayFor<T, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
         field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>>,
@@ -330,8 +328,8 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param options Les options du champ.
      */
     fieldFor<ICProps extends BaseInputProps = InputProps, DCProps extends BaseDisplayProps = DisplayProps, LCProps extends BaseLabelProps = BaseLabelProps>(
-        field: string | number,
-        options?: Partial<FieldProps<string | number, ICProps, DCProps, LCProps, {}, string, string>>
+        field: string | number | boolean,
+        options?: Partial<FieldProps<string | number | boolean, ICProps, DCProps, LCProps, {}, string, string>>
     ): JSX.Element;
     fieldFor<T, ICDomainProps extends BaseInputProps = InputProps, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
         field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,

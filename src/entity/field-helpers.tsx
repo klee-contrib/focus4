@@ -24,8 +24,8 @@ export const $entity = {
  * @param options Les options du champ.
  */
 export function displayFor<DCProps extends BaseDisplayProps = DisplayProps, LCProps extends BaseLabelProps = BaseLabelProps>(
-    field: string | number,
-    options?: Partial<FieldProps<string | number, {}, DCProps, LCProps, {}, string, string>>
+    field: string | number | boolean,
+    options?: Partial<FieldProps<string | number | boolean, {}, DCProps, LCProps, {}, string, string>>
 ): JSX.Element;
 export function displayFor<T, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
     field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>>,
@@ -45,8 +45,8 @@ export function displayFor<T, DCDomainProps extends BaseDisplayProps = DisplayPr
  * @param options Les options du champ.
  */
 export function fieldFor<ICProps extends BaseInputProps = InputProps, DCProps extends BaseDisplayProps = DisplayProps, LCProps extends BaseLabelProps = BaseLabelProps>(
-    field: string | number,
-    options?: Partial<FieldProps<string | number, ICProps, DCProps, LCProps, {}, string, string>>
+    field: string | number | boolean,
+    options?: Partial<FieldProps<string | number | boolean, ICProps, DCProps, LCProps, {}, string, string>>
 ): JSX.Element;
 export function fieldFor<T, ICDomainProps extends BaseInputProps = InputProps, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
     field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,

@@ -1,11 +1,12 @@
 @import "../../../style/line.css";
 
-.line {
+.line,
+.mosaic {
     position: relative;
+    overflow: hidden;
 }
 
 .mosaic {
-    position: relative;
     margin: 5px;
     box-sizing: border-box;
 }
