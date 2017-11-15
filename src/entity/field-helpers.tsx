@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import {find, result} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
@@ -126,7 +127,7 @@ export function buildFieldProps<T, ICDomainProps extends BaseInputProps = InputP
         inputProps: inputPropsD = {},
         displayProps: displayPropsD = {},
         labelProps: labelPropsD = {},
-        displayFormatter = ((x: any) => x),
+        displayFormatter = (t: string) => i18next.t(t),
         inputFormatter = ((x: any) => x),
         unformatter = ((x: any) => x),
         ...otherDomain
