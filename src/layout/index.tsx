@@ -8,12 +8,11 @@ import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
-import {findDOMNode} from "react-dom";
 
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox";
 import {ChipTheme} from "react-toolbox/lib/chip";
-import {InputTheme} from 'react-toolbox/lib/input';
+import {InputTheme} from "react-toolbox/lib/input";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
@@ -40,28 +39,29 @@ export {default as MainMenu, MainMenuItem} from "./menu";
 @observer
 class LayoutBase extends React.Component<LayoutProps, void> {
 
-    // On utilise le contexte React pour partager la taille du menu.
+    // On utilise le contexte React pour partager la taille du menu et du header.
     static childContextTypes = {
+        header: PropTypes.object,
         layout: PropTypes.object
     };
 
-    /** Objet passé en contexte pour la taille du menu.. */
-    @observable childContext = {
+    /** Objet passé en contexte pour la hauteur du header top row. */
+    @observable headerContext = {
+        marginBottom: 50,
+        topRowHeight: 60
+    };
+
+    /** Objet passé en contexte pour la taille du menu. */
+    @observable layoutContext = {
+        contentPaddingTop: 10,
         menuWidth: undefined as number | undefined
     };
 
     getChildContext() {
-        return {layout: this.childContext};
-    }
-
-    // Permet de récupérer et d'actualiser la largeur du menu à l'exécution.
-    componentDidMount() { this.getMenuWidth(); }
-    componentDidUpdate() { this.getMenuWidth(); }
-    getMenuWidth() {
-        const menuNode = Array.from(findDOMNode(this).children).find(item => item.tagName === "NAV");
-        if (menuNode) {
-            this.childContext.menuWidth = menuNode.clientWidth;
-        }
+        return {
+            header: this.headerContext,
+            layout: this.layoutContext
+        };
     }
 
     render() {

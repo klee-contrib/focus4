@@ -22,7 +22,7 @@ export type ScrollspyStyle = Partial<typeof styles>;
 export interface ScrollspyContainerProps {
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
-    /** Offset de scroll à partir du moment ou le menu devient fixe. Par défaut : 100. */
+    /** Offset de scroll à partir du moment ou le menu devient fixe, par rapport au header. Par défaut : toutes les marges qui vont bien. */
     menuOffset?: number;
     /** Largeur du menu. Par défaut : 250. */
     menuWidth?: boolean;
@@ -48,12 +48,31 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     private readonly panels = observable.map<PanelDescriptor>();
 
     static childContextTypes = {
+        header: PropTypes.object,
+        layout: PropTypes.object,
         scrollspy: PropTypes.object
+    };
+
+    static contextTypes = {
+        layout: PropTypes.object,
+        header: PropTypes.object
+    };
+
+    context: {
+        layout: {
+            contentPaddingTop: number
+        }
+        header: {
+            marginBottom: number,
+            topRowHeight: number
+        }
     };
 
     /** On définit les méthodes que l'on passe aux enfants. */
     getChildContext() {
         return {
+            header: this.context.header,
+            layout: this.context.layout,
             scrollspy: {
                 registerPanel: this.registerPanel,
                 removePanel: this.removePanel,
@@ -137,7 +156,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
     @computed.struct
     private get menuPosition() {
-        const {menuOffset = 100} = this.props;
+        const {menuOffset = this.context.header.topRowHeight + this.context.header.marginBottom + this.context.layout.contentPaddingTop} = this.props;
         const isFixed = this.offsetTop < menuOffset;
         return {
             position: isFixed ? "fixed" as "fixed" : "absolute" as "absolute",

@@ -1,8 +1,10 @@
 import {autobind} from "core-decorators";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {findDOMNode} from "react-dom";
 import {IconButtonTheme} from "react-toolbox/lib/button";
 
 import MainMenuItem, {MainMenuItemProps} from "./item";
@@ -26,10 +28,16 @@ export interface MainMenuProps {
 @autobind
 export class MainMenu extends React.Component<MainMenuProps, void> {
 
+    static contextTypes = {
+        layout: PropTypes.object
+    };
+
+    context: {
+        layout: {menuWidth: number};
+    };
+
     /** Index du sous-menu actif. */
     @observable activeMenuIndex?: number;
-    /** Largeur du menu, sera déterminé après le montage. */
-    @observable menuWidth = 0;
     /** Position du sous-menu actif */
     @observable yPosition = 0;
     /** Affiche le sous menu (ou pas) */
@@ -59,7 +67,7 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
     componentDidMount() { this.getMenuWidth(); }
     componentDidUpdate() { this.getMenuWidth(); }
     getMenuWidth() {
-        this.menuWidth = document.getElementsByTagName("nav")[0].clientWidth;
+        this.context.layout.menuWidth = findDOMNode(this).clientWidth;
     }
 
     render() {
@@ -76,7 +84,7 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
                 <MainMenuPanel
                     close={() => this.showPanel = false}
                     opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
-                    xOffset={this.menuWidth}
+                    xOffset={this.context.layout.menuWidth}
                     yOffset={this.yPosition}
                     theme={theme}
                 >

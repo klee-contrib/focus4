@@ -1,10 +1,12 @@
 import {autobind} from "core-decorators";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
 import styles from "./__style__/header.css";
+
 export type HeaderStyle = Partial<typeof styles>;
 
 /** Props du conteneur de header. */
@@ -28,6 +30,17 @@ export interface HeaderScrollingProps {
 @observer
 export class HeaderScrolling extends React.Component<HeaderScrollingProps, void> {
 
+    static contextTypes = {
+        header: PropTypes.object
+    };
+
+    context: {
+        header: {
+            marginBottom: number,
+            topRowHeight: number
+        }
+    };
+
     /** Seuil de déploiement, calculé à partir de la hauteur du header. */
     @observable deployThreshold: number;
     /** Header déployé. */
@@ -49,6 +62,9 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     componentDidMount() {
         this.scrollTargetNode.addEventListener("scroll", this.listener);
         this.scrollTargetNode.addEventListener("resize", this.listener);
+
+        const marginBottom = window.getComputedStyle(this.header!).marginBottom;
+        this.context.header.marginBottom = marginBottom && marginBottom.endsWith("px") && +marginBottom.replace("px", "") || 0;
     }
 
     componentWillReceiveProps({canDeploy}: HeaderScrollingProps) {
@@ -71,7 +87,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
 
         // Si on est déployé, on recalcule le seuil de déploiement.
         if (this.isDeployed) {
-            this.deployThreshold = this.header ? this.header.clientHeight - 60 : 1000;
+            this.deployThreshold = this.header ? this.header.clientHeight - this.context.header.topRowHeight : 1000;
             this.placeholderHeight = this.header ? this.header.clientHeight : 1000;
         }
 
@@ -94,7 +110,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         return (
             <header ref={header => this.header = header} className={`${theme!.scrolling} ${this.isDeployed ? theme!.deployed : theme!.undeployed}`}>
                 {this.props.children}
-                {!this.isDeployed ? <div style={{height: canDeploy ? this.placeholderHeight : 60, width: "100%"}} /> : null}
+                {!this.isDeployed ? <div style={{height: canDeploy ? this.placeholderHeight : this.context.header.topRowHeight, width: "100%"}} /> : null}
             </header>
         );
     }
