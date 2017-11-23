@@ -94,12 +94,14 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * @param query Le champ texte.
      */
     async search(query: string) {
-        this.isLoading = true;
-        const result = await this.props.querySearcher(query);
-        runInAction(() => {
-            this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: next.label}), {}) || {});
-            this.isLoading = false;
-        });
+        if (query && query.trim().length) {
+            this.isLoading = true;
+            const result = await this.props.querySearcher(query.trim());
+            runInAction(() => {
+                this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: next.label}), {}) || {});
+                this.isLoading = false;
+            });
+        }
     }
 
     @debounce(200)
