@@ -62,6 +62,9 @@ function clone(source: any): any {
         if ((source as any).$entity) {
             (res as any).$entity = (source as any).$entity;
         }
+        if ((source as any).pushNode) {
+            (res as any).pushNode = (source as any).pushNode;
+        }
         if ((source as any).set) {
             (res as any).set = (source as any).set;
         }

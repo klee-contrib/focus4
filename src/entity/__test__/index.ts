@@ -120,6 +120,18 @@ test("EntityStore: Clear global", t => {
     t.end();
 });
 
+test("EntityStore: Ajout élément dans une liste", t => {
+    const store = getStore();
+
+    store.structureList.set(structureList);
+    store.structureList.pushNode({id: 8});
+    t.assert(store.structureList.length === 4, "La liste 'structureList' possède bien un élément de plus.");
+    t.deepEqual(store.structureList[3].id.$entity, StructureEntity.fields.id, "L'élément ajouté est bien un node avec les bonnes métadonnées.");
+    t.equal(store.structureList[3].id.value, 8, "L'élement ajouté possède bien les valeurs attendues");
+
+    t.end();
+})
+
 test("EntityStore: Clear locaux", t => {
     const store = getStore();
 

@@ -5,11 +5,13 @@ import { Entity, EntityField, FieldEntry, ListEntry, ObjectEntry } from "./types
 
 /** Fonction `set`. */
 export interface Setter<T> {
+    /** Renseigne les valeurs du noeud à partir des champs fournis. */
     set(config: Partial<T>): void;
 }
 
 /** Fonction `clear`. */
 export interface Clearer {
+    /** Vide l'objet (récursivement). */
     clear(): void;
 }
 
@@ -26,7 +28,11 @@ export interface StoreNode<T = {}> extends Setter<T>, Clearer {}
  * `T` doit être un `StoreNode` et `StoreListNode` est également considéré comme un `StoreNode`.
  */
 export interface StoreListNode<T extends StoreNode = StoreNode> extends IObservableArray<T> {
+    /** Métadonnées. */
     $entity: Entity;
+    /** Ajoute un élément à la liste. */
+    pushNode(item: {}): void;
+    /** Reconstruit la liste à partir des données fournies. */
     set(array: {}[]): void;
 }
 
@@ -133,6 +139,11 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
     if (isArray(entity)) {
         const outputEntry: StoreListNode<EntityStoreNode> = observable([]) as any;
         outputEntry.$entity = entityMap[trueEntry];
+        outputEntry.pushNode = action(function pushNode(this: typeof outputEntry, item: {}) {
+            const itemNode = buildEntityEntry({[trueEntry]: {}} as EntityStoreConfig, {...entityMap, item: entity.$entity}, entityMapping, trueEntry) as EntityStoreNode;
+            itemNode.set(item);
+            this.push(itemNode);
+        });
         outputEntry.set = action(function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
         return outputEntry;
     }
