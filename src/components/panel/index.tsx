@@ -28,8 +28,6 @@ export interface PanelProps extends PanelButtonsProps {
     hideOnScrollspy?: boolean;
     /** Masque la progress bar lors du chargement/sauvegarde. */
     hideProgressBar?: boolean;
-    /** Etat de chargement. */
-    loading?: boolean;
     /** Affiche le bouton d'aide. */
     showHelp?: boolean;
     /** CSS. */
@@ -84,11 +82,11 @@ export class Panel extends React.Component<PanelProps, void> {
     }
 
     render() {
-        const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, saving, title, showHelp, editing, toggleEdit, save, hideProgressBar, theme} = this.props;
+        const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, title, showHelp, editing, toggleEdit, save, hideProgressBar, theme} = this.props;
 
         const buttons = (
             <div className={theme!.actions}>
-                <Buttons editing={editing} i18nPrefix={i18nPrefix} save={save} saving={saving} toggleEdit={toggleEdit} />
+                <Buttons editing={editing} i18nPrefix={i18nPrefix} loading={loading} save={save} toggleEdit={toggleEdit} />
             </div>
         );
 
@@ -96,8 +94,8 @@ export class Panel extends React.Component<PanelProps, void> {
         const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
         return (
-            <div className={`${theme!.panel} ${loading || saving ? theme!.busy : ""} ${editing ? theme!.edit : ""}`}>
-                {!hideProgressBar && (loading || saving) ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme!.progress}} /> : null}
+            <div className={`${theme!.panel} ${loading ? theme!.busy : ""} ${editing ? theme!.edit : ""}`}>
+                {!hideProgressBar && loading ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme!.progress}} /> : null}
                 {title || areButtonsTop ?
                     <div className={`${theme!.title} ${theme!.top}`}>
                         {title ?

@@ -101,9 +101,6 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     /** Formulaire en chargement. */
     @observable isLoading = false;
 
-    /** Formulaire en sauvegarde.  */
-    @observable isSaving = false;
-
     /** Classe CSS additionnelle (passée en options). */
     private className: string;
 
@@ -218,18 +215,18 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     async save() {
         // On ne sauvegarde que si la validation est en succès.
         if (this.validate()) {
-            this.isSaving = true;
+            this.isLoading = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity));
                 runInAction(() => {
-                    this.isSaving = false;
+                    this.isLoading = false;
                     this.isEdit = false;
                     this.storeData.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                 });
                 this.onFormSaved();
             } catch (e) {
                 runInAction(() => {
-                    this.isSaving = false;
+                    this.isLoading = false;
                     if (e.$parsedErrors && e.$parsedErrors.fields) {
                         this.errors = e.$parsedErrors.fields || {};
                     }
@@ -272,13 +269,11 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     }
 
     /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */
-    getPanelProps(): PanelProps & {getUserInput?: any} {
+    getPanelProps(): PanelProps {
         return {
             editing: this.isEdit,
-            getUserInput: () => ({}), // Pas besoin de passer l'input car il est déjà dans le state du formulaire.
             loading: this.isLoading,
             save: this.save,
-            saving: this.isSaving,
             toggleEdit: this.toggleEdit,
         };
     }

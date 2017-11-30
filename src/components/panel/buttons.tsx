@@ -10,16 +10,16 @@ export interface PanelButtonsProps {
     editing?: boolean;
     /** Préfixe i18n. Par défaut : "focus" */
     i18nPrefix?: string;
+    /** En cours de chargement */
+    loading?: boolean;
     /** Fonction pour changer de mode. */
     toggleEdit?: (edit: boolean) => void;
     /** Handler du bouton save. */
     save?: () => void;
-    /** Etat de sauvegarde. */
-    saving?: boolean;
 }
 
 /** Buttons par défaut du panel : edit / save / cancel. */
-export function PanelButtons({editing, i18nPrefix = "focus", toggleEdit, save, saving}: PanelButtonsProps) {
+export function PanelButtons({editing, i18nPrefix = "focus", loading, toggleEdit, save}: PanelButtonsProps) {
     if (toggleEdit) {
         if (editing) {
             return (
@@ -29,13 +29,13 @@ export function PanelButtons({editing, i18nPrefix = "focus", toggleEdit, save, s
                         label={i18next.t(`${i18nPrefix}.button.save`)}
                         primary={true}
                         onClick={save}
-                        disabled={saving}
+                        disabled={loading}
                     />
                     <Button
                         icon={getIcon(`${i18nPrefix}.icons.button.cancel`)}
                         label={i18next.t(`${i18nPrefix}.button.cancel`)}
                         onClick={() => toggleEdit(false)}
-                        disabled={saving}
+                        disabled={loading}
                     />
                 </span>
             );
