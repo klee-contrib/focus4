@@ -5,7 +5,8 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themeable, themr} from "react-css-themr";
 
-import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
+import {DisplayProps, InputProps, Label, LabelProps} from "../components";
+import {ReactComponent} from "../config";
 
 import {Domain} from "./types";
 import {validate} from "./validation";
@@ -14,20 +15,33 @@ import * as styles from "./__style__/field.css";
 
 export type FieldStyle = Partial<typeof styles>;
 
-export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} & {[P in LK]: string};
+export type RefValues<T, ValueKey extends string, LabelKey extends string> = {[P in ValueKey]: T} & {[P in LabelKey]: string};
 
-/** Props pour le Field, se base sur le contenu d'un domaine. */
-export interface FieldProps<
-    T = any,                                        // Type de la valeur.
-    ICProps extends {theme?: {}} = InputProps,      // Props du composant d'input.
-    DCProps extends {theme?: {}} = DisplayProps,    // Props du component d'affichage.
-    LCProps = LabelProps,                           // Props du component de libellé.
-    R extends RefValues<T, VK, LK> = any,           // Type de la liste de référence associée.
-    VK extends string = any,                        // Nom de la propriété de valeur (liste de référence).
-    LK extends string = any                         // Nom de la propriété de libellé (liste de référence).
-> extends Domain<ICProps, DCProps, LCProps> {
-    /** Commentaire à afficher dans la tooltip. */
-    comment?: string;
+/** Options pour gérer une liste de référence. */
+export interface ReferenceOptions<
+    T,
+    R extends RefValues<T, ValueKey, LabelKey>,
+    ValueKey extends string,
+    LabelKey extends string
+> {
+    /** Nom de la propriété de libellé. Doit être casté en lui-même (ex: `{labelKey: "label" as "label"}`). Par défaut: "label". */
+    labelKey?: LabelKey;
+    /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */
+    valueKey?: ValueKey;
+    /** Liste des valeurs de la liste de référence. Doit contenir les propriétés `valueKey` et `labelKey`. */
+    values?: R[];
+}
+
+/** Options pour un champ défini à partir de `fieldFor` et consorts. */
+export interface FieldOptions<
+    T,
+    ICProps extends {theme?: {}} = InputProps,
+    DCProps extends {theme?: {}} = DisplayProps,
+    LCProps = LabelProps,
+    R extends RefValues<T, ValueKey, LabelKey> = any,
+    ValueKey extends string = "code",
+    LabelKey extends string = "label"
+> extends ReferenceOptions<T, R, ValueKey, LabelKey> {
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
     /** Surcharge l'erreur du field. */
@@ -35,41 +49,56 @@ export interface FieldProps<
     /** Force l'affichage de l'erreur, même si le champ n'a pas encore été modifié. */
     forceErrorDisplay?: boolean;
     /** Service de résolution de code. */
-    keyResolver?: (key: number | string) => Promise<string | undefined>;
+    keyResolver?: (key: number | string) => Promise<string>;
     /** Affiche le label. */
     hasLabel?: boolean;
     /** Pour l'icône de la Tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
     /** A utiliser à la place de `ref`. */
-    innerRef?: (i: Field<T, ICProps, DCProps, LCProps, R, VK, LK>) => void;
+    innerRef?: (i: Field<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>) => void;
     /** Champ en édition. */
     isEdit?: boolean;
-    /** Champ requis. */
-    isRequired?: boolean;
-    /** Libellé du champ. */
-    label?: string;
     /** Par défaut : "top". */
     labelCellPosition?: string;
-    /** Nom de la propriété de libellé. Doit être casté en lui-même (ex: `{labelKey: "label" as "label"}`). Par défaut: "label". */
-    labelKey?: LK;
     /** Largeur en % du label. Par défaut : 33. */
     labelRatio?: number;
-    /** Nom du champ. */
-    name: string;
     /** Handler de modification de la valeur. */
     onChange?: (value: T) => void;
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** CSS. */
     theme?: FieldStyle & {display?: DCProps["theme"], input?: ICProps["theme"]};
-    /** Valeur. */
-    value: any;
-    /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */
-    valueKey?: VK;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
     valueRatio?: number;
-    /** Liste des valeurs de la liste de référence. Doit contenir les propriétés `valueKey` et `labelKey`. */
-    values?: R[];
+}
+
+/** Props pour le Field, se base sur le contenu d'un domaine (éventuellement patché) et des options de champ. */
+export interface FieldProps<T, ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">
+    extends
+        Domain<ICProps, DCProps, LCProps>,
+        FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey> {
+    /** Commentaire sur le champ. */
+    comment?: string;
+    /** Composant pour l'affichage. */
+    DisplayComponent: ReactComponent<DCProps>;
+    /** Formatteur pour l'affichage du champ en consulation. */
+    displayFormatter: (value: T) => string;
+    /** Composant pour l'entrée utilisateur. */
+    InputComponent: ReactComponent<ICProps>;
+    /** Formatteur pour l'affichage du champ en édition. */
+    inputFormatter: (value: T) => string;
+    /** Champ requis. */
+    isRequired?: boolean;
+    /** Libellé du champ. */
+    label?: string;
+    /** Composant pour le libellé. */
+    LabelComponent: ReactComponent<LCProps>;
+    /** Nom du champ. */
+    name: string;
+    /** Formatteur inverse pour convertir l'affichage du champ en la valeur (édition uniquement) */
+    unformatter: (text: string) => T;
+    /** Valeur. */
+    value: T;
 }
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
@@ -107,7 +136,7 @@ export class Field<
 
         // On vérifie que le champ n'est pas vide et obligatoire.
         const {isRequired, validator, label = ""} = this.props;
-        if (isRequired && (value === undefined || value === null || value === "")) {
+        if (isRequired && (value as any) !== 0 && !value) {
             return i18next.t("focus.validation.required");
         }
 
@@ -134,15 +163,14 @@ export class Field<
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
         const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}, theme} = this.props;
-        const FinalDisplay = DisplayComponent || Display;
         return (
-            <FinalDisplay
+            <DisplayComponent
                 {...displayProps as {}}
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
                 labelKey={labelKey}
                 theme={themeable(displayProps.theme || {} as any, theme!.display as any)}
-                value={value}
+                value={value as any}
                 valueKey={valueKey}
                 values={values}
             />
@@ -152,11 +180,10 @@ export class Field<
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps = {}, name, theme} = this.props;
-        const FinalInput = InputComponent || Input;
 
         let props: any = {
             ...inputProps as {},
-            value: inputFormatter && inputFormatter(value) || value,
+            value: inputFormatter(value),
             error: this.showError && this.error || undefined,
             name,
             id: name,
@@ -172,7 +199,7 @@ export class Field<
             props = {...props, keyResolver};
         }
 
-        return <FinalInput {...props} />;
+        return <InputComponent {...props} />;
     }
 
     render() {
