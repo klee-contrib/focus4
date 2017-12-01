@@ -167,7 +167,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
 
             // On s'assure que les métadonnées du champ ne soient pas observables.
             return {
-                $entity: observable.ref(entityMap[trueEntry].fields[key]),
+                $field: observable.ref(entityMap[trueEntry].fields[key]),
                 value: undefined
             };
         }),

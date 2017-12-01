@@ -156,7 +156,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         for (const key in criteria) {
             if (key !== "set" && key !== "clear") {
                 const entry = ((criteria as any)[key] as EntityField<any>);
-                const {$entity: {domain}, value} = entry;
+                const {$field: {domain}, value} = entry;
                 if (domain && domain.validator && value !== undefined && value !== null) {
                     const validStat = validate({value, name: ""}, domain.validator);
                     if (validStat.errors.length) {
