@@ -40,11 +40,11 @@ export interface DomainNoDefault<ICProps = any, DCProps = any, LCProps = any> {
 export interface Domain<ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry<ICProps = any, DCProps = any, LCProps = any> {
+export interface FieldEntry<D extends DomainNoDefault = DomainNoDefault> {
     readonly type: "field";
 
     /** Domaine du champ. */
-    readonly domain: Domain<ICProps, DCProps, LCProps>;
+    readonly domain: D;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -86,10 +86,10 @@ export interface Entity {
 }
 
 /** Entrée de type "field" pour une entité. */
-export interface EntityField<T, D extends DomainNoDefault = {}> {
+export interface EntityField<T, D extends DomainNoDefault = DomainNoDefault> {
 
     /** Métadonnées. */
-    readonly $field: FieldEntry<D["inputProps"], D["displayProps"], D["labelProps"]>;
+    readonly $field: FieldEntry<D>;
 
     /** Valeur. */
     value: T | undefined;

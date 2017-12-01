@@ -11,7 +11,7 @@ export interface DisplayProps {
     /** Formatteur. */
     formatter?: (value: any) => string;
     /** Service de résolution de code. */
-    keyResolver?: (key: number | string) => Promise<string | undefined>;
+    keyResolver?: (key: number | string) => Promise<string>;
     /** Nom de la propriété de libellé, pour liste de référence. */
     labelKey?: string;
     /** CSS. */
