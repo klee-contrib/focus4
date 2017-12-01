@@ -55,7 +55,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
         // On ajoute la liste des critères.
         if (!hideCriteria) {
             for (const criteriaKey in store.flatCriteria) {
-                const {translationKey, domain} = store.criteria[criteriaKey].$entity;
+                const {translationKey, domain} = store.criteria[criteriaKey].$field;
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
                     key: criteriaKey,

@@ -10,9 +10,9 @@ import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
 import {Field, FieldProps, RefValues} from "./field";
+import {FormNode, makeFormNode} from "./form-node";
 import {StoreNode, toFlatValues} from "./store";
 import {Domain, EntityField} from "./types";
-import {createViewModel, ViewModel} from "./view-model";
 
 import {
     displayFor,
@@ -30,8 +30,8 @@ export interface AutoFormOptions<E> {
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
 
-    /** ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
-    entity?: E & ViewModel;
+    /** FormNode externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
+    entity?: E & FormNode;
 
     /** Par défaut: true */
     hasForm?: boolean;
@@ -81,7 +81,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     formId = v4();
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
-    entity!: E & ViewModel;
+    entity!: E & FormNode;
 
     /** Services. */
     services!: ServiceConfig<any, any>;
@@ -132,7 +132,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     formInit(storeData: E, services: ServiceConfig<any, any>, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
         this.storeData = storeData;
         this.services = services;
-        this.entity = entity || createViewModel(storeData);
+        this.entity = entity || makeFormNode(storeData);
         this.isCustomEntity = entity !== undefined;
         this.isEdit = initiallyEditing || false;
         this.hasForm = hasForm !== undefined ? hasForm : true;
@@ -373,9 +373,9 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         }
 
         if (isField(field)) {
-            options.innerRef = f => this.fields[field.$entity.translationKey] = f;
+            options.innerRef = f => this.fields[field.$field.translationKey] = f;
             if (!options.error) {
-                options.error = this.errors[field.$entity.translationKey];
+                options.error = this.errors[field.$field.translationKey];
             }
         }
 

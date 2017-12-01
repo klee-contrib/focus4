@@ -2,52 +2,52 @@ import {action, autorun, isObservableArray, isObservableObject, observable, untr
 
 import {StoreNode, toFlatValues} from "./store";
 
-export interface ViewModel {
+export interface FormNode {
     /** @internal */
-    /** Précise l'état de la synchronisation entre le model et le viewModel. */
+    /** Précise l'état de la synchronisation entre le StoreNode et le FormNode. */
     isSubscribed: boolean;
 
-    /** Réinitialise le viewModel à partir du model. */
+    /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
 
-    /** Active la synchronisation model -> viewModel. La fonction est appelée à la création. */
+    /** Active la synchronisation StoreNode -> FormNode. La fonction est appelée à la création. */
     subscribe(): void;
 
-    /** Désactive la synchronisation model -> viewModel. */
+    /** Désactive la synchronisation StoreNode -> FormNode. */
     unsubscribe(): void;
 }
 
 /**
- * Construit un ViewModel à partir d'une entrée d'entityStore.
- * Le ViewModel est un clone d'un model qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
- * Toute mise à jour du model réinitialise le viewModel.
+ * Construit un FormNode à partir d'un StoreNode.
+ * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
+ * Toute mise à jour du StoreNode réinitialise le FormNode.
  */
-export function createViewModel<T extends StoreNode>(model: T) {
-    const viewModel = clone(model) as T & ViewModel;
+export function makeFormNode<T extends StoreNode>(node: T) {
+    const formNode = clone(node) as T & FormNode;
 
-    // La fonction `reset` va simplement vider et reremplir le viewModel avec les valeurs du model.
+    // La fonction `reset` va simplement vider et reremplir le FormNode avec les valeurs du StoreNode.
     const reset = () => {
-        untracked(() => viewModel.clear());
-        viewModel.set(toFlatValues(model as any));
+        untracked(() => formNode.clear());
+        formNode.set(toFlatValues(node as any));
     };
 
-    viewModel.reset = action(reset);
-    viewModel.subscribe = () => {
-        if (!viewModel.isSubscribed) {
+    formNode.reset = action(reset);
+    formNode.subscribe = () => {
+        if (!formNode.isSubscribed) {
             const disposer = autorun(reset); // On crée la réaction de synchronisation.
-            viewModel.unsubscribe = () => {
+            formNode.unsubscribe = () => {
                 disposer();
-                viewModel.isSubscribed = false;
+                formNode.isSubscribed = false;
             };
-            viewModel.isSubscribed = true;
+            formNode.isSubscribed = true;
         }
     };
 
-    viewModel.subscribe(); // On s'abonne par défaut, puisque c'est à priori le comportement souhaité la plupart du temps.
-    return viewModel;
+    formNode.subscribe(); // On s'abonne par défaut, puisque c'est à priori le comportement souhaité la plupart du temps.
+    return formNode;
 }
 
-/** Version adaptée de `toJS` de MobX pour prendre en compte `$entity` et les fonctions `set` et `clear`. */
+/** Version adaptée de `toJS` de MobX pour prendre en compte `$entity` et les fonctions `set` et `pushNode` pour les arrays. */
 function clone(source: any): any {
     if (isObservableArray(source)) {
         let res = [];
@@ -73,7 +73,7 @@ function clone(source: any): any {
     } else if (isObservableObject(source)) {
         const res: any = {};
         for (const key in source) {
-            if (key === "$entity") {
+            if (key === "$entity" || key === "$field") {
                 res[key] = observable.ref((source as any)[key]);
             } else {
                 res[key] = clone((source as any)[key]);

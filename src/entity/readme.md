@@ -23,15 +23,15 @@ sera stocké dans un `EntityStore` sous la forme :
 {
     operation: {
         id: {
-            $entity: {type: "field", isRequired: true, domain: DO_ID, translationKey: "operation.id"},
+            $field: {type: "field", isRequired: true, domain: DO_ID, translationKey: "operation.id"},
             value: 1
         },
         number: {
-            $entity: {type: "field", isRequired: false, domain: DO_NUMBER, translationKey: "operation.number"},
+            $field: {type: "field", isRequired: false, domain: DO_NUMBER, translationKey: "operation.number"},
             value: "1.3"
         },
         amount: {
-            $entity: {type: "field", isRequired: true, domain: DO_AMOUNT, translationKey: "operation.amount"},
+            $field: {type: "field", isRequired: true, domain: DO_AMOUNT, translationKey: "operation.amount"},
             value: 34.3
         }
     }
@@ -62,15 +62,16 @@ Et on retrouve le même fonctionnement d'avant.
 
 ### Description
 
-Un `EntityStore` contient des *items* (`EntityStoreItem`) qui peuvent être soit un noeud (`EntityStoreNode`), soit une liste de noeuds (`StoreListNode<EntityStoreNode>`). Un `EntityStoreNode` contient des *valeurs* (`EntityValue`) qui peuvent être soit des *primitives*, soit un autre *item*. Chaque `EntityValue` se présente sous la forme `{$entity, value}` où `$entity` est la métadonnée associée à la valeur. Chaque *item* (objet ou liste), ainsi que le store lui-même, est également muni de deux méthodes `set(data)` et `clear()`, permettant respectivement de les remplir ou de les vider.
+Un `EntityStore` contient des *items* (`EntityStoreItem`) qui peuvent être soit un noeud (`EntityStoreNode`), soit une liste de noeuds (`StoreListNode<EntityStoreNode>`). Un `EntityStoreNode` contient des *valeurs* (`EntityValue`) qui peuvent être soit des *primitives*, soit un autre *item*. Chaque `EntityValue` se présente sous la forme `{$field, value}` où `$field` est la métadonnée associée à la valeur. Chaque *item* (objet ou liste), ainsi que le store lui-même, est également muni de deux méthodes `set(data)` et `clear()`, permettant respectivement de les remplir ou de les vider.
 
-Un `StoreNode`, qui est la partie commune à tous les *items* (objet ou liste) d'un store, est conçu pour être utilisé par les `fieldHelpers` (`fieldFor`, `selectFor`...) et par extension par l'`AutoForm`, qui sont des composants qui consomment des métadonnées. Le `fieldHelper` prend en entrée une `EntityValue` (`{$entity, value}`) qui vient à priori d'un `StoreNode`, mais peut également être construite à la main sur place.
+Un `StoreNode`, qui est la partie commune à tous les *items* (objet ou liste) d'un store, est conçu pour être utilisé par les `fieldHelpers` (`fieldFor`, `selectFor`...) et par extension par l'`AutoForm`, qui sont des composants qui consomment des métadonnées. Le `fieldHelper` prend en entrée une `EntityValue` (`{$field, value}`) qui vient à priori d'un `StoreNode`, mais peut également être construite à la main sur place.
 
 La modification du store ou de l'une de ses entrées n'est pas limitée à l'usage des méthodes `set()` ou `clear()`. Etant toujours une observable MobX, il est tout à fait possible d'affecter des valeurs directement, comme `store.operation.id.value = undefined` par exemple. Ca peut être utile car **`set()` ne mettra à jour que les valeurs qu'il reçoit**. Pour un array, la méthode `set()` prend un array en paramètre qui remplacera toutes les valeurs courantes.
 
-Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, que ça soit des objets dans des objets ou des dans arrays ou des arrays dans des objets... L'arbre des entités et propriétés est généré à la création du store pour les objets, et la méthode `set` de l'array (`StoreListNode`) va construire l'arbre de chaque entité dans l'array à l'insertion. A noter du coup que pour des listes, on ne gère que le remplacement de toutes les valeurs de la liste à chaque fois. Pour ajouter un seul élément (par exemple), il est nécessaire de reconstruire à la main le noeud lié à l'objet de l'array. Pour une primitive, ça serait simplement un `{$entity: Entity.fields.field, value: 2}` par exemple à ajouter. Pour un objet, le plus simple serait de reprendre un noeud issu d'une autre entrée de store pour l'ajouter (et éventuellement d'en faire un `deepClone`). Cette utilisation semble néanmoins marginale : la plupart du temps, on va récupérer la liste entière du serveur et la `set` directement dans le store.
+Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, que ça soit des objets dans des objets ou des dans arrays ou des arrays dans des objets... L'arbre des entités et propriétés est généré à la création du store pour les objets, et la méthode `set` de l'array (`StoreListNode`) va construire l'arbre de chaque entité dans l'array à l'insertion. Pour les listes, la méthode `set` vide l'array et remplace tous les éléments par les nouveaux éléments fournis (en interne, elle appelle la méthode `replace` définie sur les arrays observables MobX). Pour ajouter un élément dans un array, la méthode `push` attend le `StoreNode` équivalent en entrée, ce qui n'est rarement pratique. Un `StoreListNode` possède donc une méthode supplémentaire `pushNode` qui permet d'ajouter un élement "brut" dans une liste et qui va se charger de créer sur `StoreNode` associé.
 
-**Remarque importante** : Cela a été précisé à de nombreuses reprises dans la présentation mais l'accent jamais mis dessus : **`store.operation.id` n'est *pas* la valeur dans le store**, c'est **`store.operation.id.value`**. En particulier, quelque soit la valeur de `id`, **`store.operation.id` est toujours défini et vaut `{$entity, value}`**, même si `value` vaut `undefined`.
+
+**Remarque importante** : Cela a été précisé à de nombreuses reprises dans la présentation mais l'accent jamais mis dessus : **`store.operation.id` n'est *pas* la valeur dans le store**, c'est **`store.operation.id.value`**. En particulier, quelque soit la valeur de `id`, **`store.operation.id` est toujours défini et vaut `{$field, value}`**, même si `value` vaut `undefined`.
 
 
 ### API
@@ -141,7 +142,7 @@ const store = makeEntityStore({
 L'`AutoForm` est une classe dont un composant de formulaire doit hériter. C'est le remplacant du `formMixin` de la v2.
 
 C'est un "vestige" de Focus v2 qui fait le travail qu'on lui demande de façon très simple et les comportements qu'il apporte ne sont pas reproductibles simplement d'une autre manière. Focus v3 en est un excellent exemple. C'est la seule classe de base (ou seul équivalent "mixin") de la librairie (la v2 possède une 20taine de mixins et la v3 5 ou 6 connecteurs, à titre de comparaison), et son usage est très précis : **c'est pour faire un formulaire**, avec :
-* un service de chargement
+* un service de chargement (ou pas, si formulaire de création)
 * un service de sauvegarde
 * un état consulation/modification
 * un state interne initialisé par un store, miroir synchrone de l'état des champs qu'on l'on saisit
@@ -157,10 +158,10 @@ La config d'un formulaire se fait intégralement dans la méthode `init()` dans 
 * `serviceConfig`, qui est un objet contenant **les services** de `load` et de `save` (les actions n'existant plus en tant que telles, on saute l'étape), ainsi que la fonction `getLoadParams()` qui doit retourner les paramètres du `load`. Cette fonction sera appelée pendant `componentWillMount` puis une réaction MobX sera construite sur cette fonction : à chaque fois qu'une des observables utilisées dans la fonction est modifiée et que la valeur retournée à structurellement changée, le formulaire sera rechargé. Cela permet de synchroniser le formulaire sur une autre observable (en particulier un `ViewStore`) et de ne pas avoir à passer par une prop pour charger le formulaire. Rien n'empêche par contre de définir `getLoadParams` comme `() => [this.props.id]` et par conséquent de ne pas bénéficier de la réaction. C'est une moins bonne solution.
 * `options?`, un objet qui contient des options de configuration secondaires.
 
-### this.entity et ViewModel
-Le formulaire construit un `ViewModel` qu'il place dans la propriété `this.entity` à partir de `storeData`. C'est une copie conforme de `storeData` et fera office de state interne au formulaire (il est possible de passer son propre `ViewModel` dans les options du constructeur si on veut externaliser le state du formulaire).
+### this.entity et FormNode
+Le formulaire construit un `FormNode` qu'il place dans la propriété `this.entity` à partir de `storeData`. C'est une copie conforme de `storeData` et fera office de state interne au formulaire (il est possible de passer son propre `FormNode` dans les options du constructeur si on veut externaliser le state du formulaire).
 
-Le ViewModel possède une méthode `reset` (qui s'ajoute en plus de tout ce que contient déjà `storeData` en tant que `StoreNode`) qui lui permet de se resynchroniser sur les valeurs de `storeData`. Une réaction MobX est enregistrée à la création qui va appeler cette fonction à chaque modification de store. En attendant, `this.entity` est librement modifiable et est synchronisé avec l'état des champs (via le `onChange` passé par le `this.fieldFor` si on l'utilise, sinon on peut le faire à la main).
+Le FormNode possède une méthode `reset` (qui s'ajoute en plus de tout ce que contient déjà `storeData` en tant que `StoreNode`) qui lui permet de se resynchroniser sur les valeurs de `storeData`. Une réaction MobX est enregistrée à la création qui va appeler cette fonction à chaque modification de store. En attendant, `this.entity` est librement modifiable et est synchronisé avec l'état des champs (via le `onChange` passé par le `this.fieldFor` si on l'utilise, sinon on peut le faire à la main).
 
 L'appel de `load()` va appeler le service et mettre le résultat dans le store, qui via la réaction mettra à jour `this.entity`.
 
@@ -168,7 +169,7 @@ L'appel de `save()` sur le formulaire va appeler le service avec la valeur coura
 
 L'appel de `cancel()` sur le formulaire appelle simplement `this.entity.reset()`.
 
-Il est important de noter que puisque les valeurs de stores sont toutes stockées dans un objet `{$entity, value}`, copier cette objet puis modifier `value` va modifier la valeur initiale. C'est très pratique lorsque le contenu du store ne correspond pas à ce qu'on veut afficher, puisqu'il n'y a pas besoin de se soucier de mettre à jour le store lorsque l'on modifier sa transformée. `createViewModel` construit une copie profonde du store, ce qui veut dire que ceci ne s'applique pas de `this.entity` vers `storeData` (heureusement !).
+Il est important de noter que puisque les valeurs de stores sont toutes stockées dans un objet `{$field, value}`, copier cette objet puis modifier `value` va modifier la valeur initiale. C'est très pratique lorsque le contenu du store ne correspond pas à ce qu'on veut afficher, puisqu'il n'y a pas besoin de se soucier de mettre à jour le store lorsque l'on modifier sa transformée. `createFormNode` construit une copie profonde du store, ce qui veut dire que ceci ne s'applique pas de `this.entity` vers `storeData` (heureusement !).
 
 ### Autres fonctionnalités
 * Chaque `Field` gère ses erreurs et expose un champ dérivé `error` qui contient le message d'erreur courant (ou `undefined` du coup s'il n'y en a pas), surchargeable par la prop `error` (passée au `Field` par `this.fieldFor` dans le cas d'une erreur serveur). Pour la validation du formulaire, on parcourt tous les champs (d'où la `ref` passée par `this.fieldFor`) et on regarde s'il y a des erreurs.

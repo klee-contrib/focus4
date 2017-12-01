@@ -3,8 +3,8 @@
 import {isObservable, isObservableArray} from "mobx";
 import test = require("tape");
 
+import {makeFormNode} from "../form-node";
 import {makeEntityStore, toFlatValues} from "../store";
-import {createViewModel} from "../view-model";
 import {LigneEntity} from "./ligne";
 import {OperationEntity, OperationNode} from "./operation";
 import {ProjetEntity, ProjetNode} from "./projet";
@@ -57,13 +57,13 @@ test("EntityStore: Création", t => {
 
     const {id, numero, montant} = OperationEntity.fields;
     t.deepEqual(store.operation, {
-        id: {$entity: id, value: undefined},
-        numero: {$entity: numero, value: undefined},
-        montant: {$entity: montant, value: undefined},
+        id: {$field: id, value: undefined},
+        numero: {$field: numero, value: undefined},
+        montant: {$field: montant, value: undefined},
         structure: {
-            id: {$entity: StructureEntity.fields.id, value: undefined},
-            nom: {$entity: StructureEntity.fields.nom, value: undefined},
-            siret: {$entity: StructureEntity.fields.siret, value: undefined},
+            id: {$field: StructureEntity.fields.id, value: undefined},
+            nom: {$field: StructureEntity.fields.nom, value: undefined},
+            siret: {$field: StructureEntity.fields.siret, value: undefined},
             set: store.operation.structure.set,
             clear: store.operation.structure.clear
         },
@@ -147,7 +147,7 @@ test("EntityStore: Ajout élément dans une liste", t => {
     store.structureList.set(structureList);
     store.structureList.pushNode({id: 8});
     t.assert(store.structureList.length === 4, "La liste 'structureList' possède bien un élément de plus.");
-    t.deepEqual(store.structureList[3].id.$entity, StructureEntity.fields.id, "L'élément ajouté est bien un node avec les bonnes métadonnées.");
+    t.deepEqual(store.structureList[3].id.$field, StructureEntity.fields.id, "L'élément ajouté est bien un node avec les bonnes métadonnées.");
     t.equal(store.structureList[3].id.value, 8, "L'élement ajouté possède bien les valeurs attendues");
 
     t.end();
@@ -180,70 +180,70 @@ test("toFlatValues", t => {
     t.end();
 });
 
-test("ViewModel: Création", t => {
+test("FormNode: Création", t => {
     const entry = getStore().operation;
-    const viewModel = createViewModel(entry);
+    const formNode = makeFormNode(entry);
 
     const entry2 = getStore().projetTest;
-    const viewModel2 = createViewModel(entry2);
+    const formNode2 = makeFormNode(entry2);
 
-    t.deepEqual(viewModel.numero, entry.numero, "Les champs simples du viewModel sont bien identiques à ceux du model.");
-    t.deepEqual(viewModel.structure, entry.structure, "Les champs composites du viewModel sont bien identiques à ceux du model.");
-    t.assert(isObservableArray(viewModel2.ligneList), "Une sous liste est bien toujours observable");
-    t.deepEqual(viewModel2.ligneList.$entity, entry2.ligneList.$entity, "Une sous liste a bien toujours son entité attachée.");
-    t.assert(!isObservable(viewModel2.ligneList.$entity), "Le champ '$entity' d'une sous liste n'est bien pas observable");
-    t.assert(viewModel2.ligneList.set, "Une sous liste a bien toujours sa méthode 'set' attachée");
+    t.deepEqual(formNode.numero, entry.numero, "Les champs simples du FormNode sont bien identiques à ceux du StoreNode.");
+    t.deepEqual(formNode.structure, entry.structure, "Les champs composites du FormNode sont bien identiques à ceux du StoreNode.");
+    t.assert(isObservableArray(formNode2.ligneList), "Une sous liste est bien toujours observable");
+    t.deepEqual(formNode2.ligneList.$entity, entry2.ligneList.$entity, "Une sous liste a bien toujours son entité attachée.");
+    t.assert(!isObservable(formNode2.ligneList.$entity), "Le champ '$entity' d'une sous liste n'est bien pas observable");
+    t.assert(formNode2.ligneList.set, "Une sous liste a bien toujours sa méthode 'set' attachée");
 
-    t.comment("ViewModel: Modification de model.");
+    t.comment("FormNode: Modification de StoreNode.");
     entry.set(operation);
 
-    t.equal(viewModel.id.value, entry.id.value, "Les modifications du model sont bien répercutées sur les champs simples.");
-    t.deepEqual(viewModel.structure, entry.structure, "Les modifications du model sont bien répercutées sur les champs composites.");
+    t.equal(formNode.id.value, entry.id.value, "Les modifications du StoreNode sont bien répercutées sur les champs simples.");
+    t.deepEqual(formNode.structure, entry.structure, "Les modifications du StoreNode sont bien répercutées sur les champs composites.");
 
-    t.comment("ViewModel: Modification de viewModel");
-    viewModel.montant.value = 1000;
-    viewModel.set({structure: {id: 26}});
-    viewModel.structure.set({nom: "yolo"});
+    t.comment("FormNode: Modification de FormNode");
+    formNode.montant.value = 1000;
+    formNode.set({structure: {id: 26}});
+    formNode.structure.set({nom: "yolo"});
 
-    t.equal(viewModel.montant.value, 1000, "Champ simple: le viewModel a bien été modifié.");
-    t.equal(entry.montant.value, operation.montant, "Champ simple: le model est bien toujours identique.");
-    t.equal(viewModel.structure.id.value, 26, "Champ composite via set global: le viewModel a bien été modifié.");
-    t.equal(entry.structure.id.value, operation.structure.id, "Champ composite via set global: le model est bien toujours identique.");
-    t.equal(viewModel.structure.nom.value, "yolo", "Champ composite via set local: le viewModel a bien été modifié.");
-    t.equal(entry.structure.nom.value, operation.structure.nom, "Champ composite via set local: le model est bien toujours identique.");
+    t.equal(formNode.montant.value, 1000, "Champ simple: le FormNode a bien été modifié.");
+    t.equal(entry.montant.value, operation.montant, "Champ simple: le StoreNode est bien toujours identique.");
+    t.equal(formNode.structure.id.value, 26, "Champ composite via set global: le FormNode a bien été modifié.");
+    t.equal(entry.structure.id.value, operation.structure.id, "Champ composite via set global: le StoreNode est bien toujours identique.");
+    t.equal(formNode.structure.nom.value, "yolo", "Champ composite via set local: le FormNode a bien été modifié.");
+    t.equal(entry.structure.nom.value, operation.structure.nom, "Champ composite via set local: le StoreNode est bien toujours identique.");
 
-    t.comment("ViewModel: model.set(toFlatValues(viewModel))");
-    entry.set(toFlatValues(viewModel));
+    t.comment("FormNode: StoreNode.set(toFlatValues(FormNode))");
+    entry.set(toFlatValues(formNode));
 
-    t.equal(viewModel.montant.value, 1000, "Champ simple: le viewModel est bien toujours identique.");
-    t.equal(entry.montant.value, 1000, "Champ simple: le model a bien été mis à jour.");
-    t.equal(viewModel.structure.id.value, 26, "Champ composite via set global: le viewModel est bien toujours identique.");
-    t.equal(entry.structure.id.value, 26, "Champ composite via set global: le model a bien été mis à jour.");
-    t.equal(viewModel.structure.nom.value, "yolo", "Champ composite via set local: le viewModel est bien toujours identique.");
-    t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le model a bien été mis à jour.");
+    t.equal(formNode.montant.value, 1000, "Champ simple: le FormNode est bien toujours identique.");
+    t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode a bien été mis à jour.");
+    t.equal(formNode.structure.id.value, 26, "Champ composite via set global: le FormNode est bien toujours identique.");
+    t.equal(entry.structure.id.value, 26, "Champ composite via set global: le StoreNode a bien été mis à jour.");
+    t.equal(formNode.structure.nom.value, "yolo", "Champ composite via set local: le FormNode est bien toujours identique.");
+    t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le StoreNode a bien été mis à jour.");
 
-    t.comment("ViewModel: reset");
-    viewModel.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
-    viewModel.reset();
+    t.comment("FormNode: reset");
+    formNode.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
+    formNode.reset();
 
-    t.equal(viewModel.montant.value, 1000, "Champ simple: le viewModel a bien été réinitialisé.");
-    t.equal(entry.montant.value, 1000, "Champ simple: le model est bien toujours identique.");
-    t.equal(viewModel.structure.id.value, 26, "Champ composite via set global: le viewModel a bien été réinitialisé.");
-    t.equal(entry.structure.id.value, 26, "Champ composite via set global: le model est bien toujours identique.");
-    t.equal(viewModel.structure.nom.value, "yolo", "Champ composite via set local: le viewModel a bien été réinitialisé.");
-    t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le model est bien toujours identique.");
+    t.equal(formNode.montant.value, 1000, "Champ simple: le FormNode a bien été réinitialisé.");
+    t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode est bien toujours identique.");
+    t.equal(formNode.structure.id.value, 26, "Champ composite via set global: le FormNode a bien été réinitialisé.");
+    t.equal(entry.structure.id.value, 26, "Champ composite via set global: le StoreNode est bien toujours identique.");
+    t.equal(formNode.structure.nom.value, "yolo", "Champ composite via set local: le FormNode a bien été réinitialisé.");
+    t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le StoreNode est bien toujours identique.");
 
-    t.comment("ViewModel: unsubscribe");
-    viewModel.unsubscribe();
+    t.comment("FormNode: unsubscribe");
+    formNode.unsubscribe();
     entry.montant.value = 2;
 
-    t.equal(viewModel.montant.value, 1000, "Le viewModel n'a pas été mis à jour.");
+    t.equal(formNode.montant.value, 1000, "Le FormNode n'a pas été mis à jour.");
 
-    t.comment("ViewModel: subscribe");
-    viewModel.subscribe();
+    t.comment("FormNode: subscribe");
+    formNode.subscribe();
     entry.montant.value = 5;
 
-    t.equal(viewModel.montant.value, 5, "Le viewModel a bien été mis à jour.");
+    t.equal(formNode.montant.value, 5, "Le FormNode a bien été mis à jour.");
 
     t.end();
 });
