@@ -22,7 +22,7 @@ export const ProjetEntity = {
             domain: {},
             isRequired: true,
             name: "id",
-            translationKey: "projet.id"
+            label: "projet.id"
         },
         ligneList: {
             type: "list" as "list",

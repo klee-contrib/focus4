@@ -120,7 +120,7 @@ export function buildFieldProps<
     field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
     options: Partial<FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
 ) {
-    const {value, $field: {name = "", domain = {}, translationKey: label = "", isRequired = false, comment}} = field;
+    const {value, $field: {name = "", domain = {}, label = "", isRequired = false, comment}} = field;
     const {hasLabel = true, ...otherOptions} = options;
     const {
         className,

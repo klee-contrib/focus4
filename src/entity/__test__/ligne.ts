@@ -19,7 +19,7 @@ export const LigneEntity = {
             domain: {},
             isRequired: true,
             name: "id",
-            translationKey: "ligne.id"
+            label: "ligne.id"
         }
     }
 };
