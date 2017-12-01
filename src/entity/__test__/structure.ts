@@ -23,21 +23,21 @@ export const StructureEntity = {
             domain: {},
             isRequired: true,
             name: "id",
-            translationKey: "structure.id"
+            label: "structure.id"
         },
         nom: {
             type: "field" as "field",
             domain: {},
             isRequired: true,
             name: "nom",
-            translationKey: "structure.nom"
+            label: "structure.nom"
         },
         siret: {
             type: "field" as "field",
             domain: {},
             isRequired: false,
             name: "siret",
-            translationKey: "structure.siret"
+            label: "structure.siret"
         }
     }
 };

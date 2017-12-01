@@ -23,15 +23,15 @@ sera stocké dans un `EntityStore` sous la forme :
 {
     operation: {
         id: {
-            $field: {type: "field", isRequired: true, domain: DO_ID, translationKey: "operation.id"},
+            $field: {type: "field", isRequired: true, domain: DO_ID, label: "operation.id"},
             value: 1
         },
         number: {
-            $field: {type: "field", isRequired: false, domain: DO_NUMBER, translationKey: "operation.number"},
+            $field: {type: "field", isRequired: false, domain: DO_NUMBER, label: "operation.number"},
             value: "1.3"
         },
         amount: {
-            $field: {type: "field", isRequired: true, domain: DO_AMOUNT, translationKey: "operation.amount"},
+            $field: {type: "field", isRequired: true, domain: DO_AMOUNT, label: "operation.amount"},
             value: 34.3
         }
     }

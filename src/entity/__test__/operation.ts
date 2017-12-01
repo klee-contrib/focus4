@@ -26,21 +26,21 @@ export const OperationEntity = {
             domain: {},
             isRequired: true,
             name: "id",
-            translationKey: "operation.id"
+            label: "operation.id"
         },
         numero: {
             type: "field" as "field",
             domain: {},
             isRequired: true,
             name: "numero",
-            translationKey: "operation.numero"
+            label: "operation.numero"
         },
         montant: {
             type: "field" as "field",
             domain: {},
             isRequired: true,
             name: "montant",
-            translationKey: "operation.montant"
+            label: "operation.montant"
         },
         structure: {
             type: "object" as "object",

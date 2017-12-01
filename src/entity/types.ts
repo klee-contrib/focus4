@@ -52,8 +52,8 @@ export interface FieldEntry<D extends DomainNoDefault = DomainNoDefault> {
     /** Nom de l'entrée. */
     readonly name: string;
 
-    /** Identifiant unique de l'entrée. */
-    readonly translationKey: string;
+    /** Libellé de l'entrée. */
+    readonly label: string;
 
     /** Commentaire de l'entrée */
     readonly comment?: string;

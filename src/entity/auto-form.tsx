@@ -375,9 +375,9 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
             options.isEdit = this.isEdit;
         }
 
-        options.innerRef = f => this.fields[field.$field.translationKey] = f;
+        options.innerRef = f => this.fields[field.$field.label] = f;
         if (!options.error) {
-            options.error = this.errors[field.$field.translationKey];
+            options.error = this.errors[field.$field.label];
         }
 
         return options;
