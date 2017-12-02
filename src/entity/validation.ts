@@ -9,17 +9,17 @@ export interface ValidationProperty {
     value: any;
 }
 
-export interface TrKey {
-    translationKey?: string;
+export interface Error {
+    errorMessage?: string;
 }
 
-export interface NumberOptions extends TrKey {
+export interface NumberOptions extends Error {
     min?: number;
     max?: number;
     isInteger?: boolean;
 }
 
-export interface StringOptions extends TrKey {
+export interface StringOptions extends Error {
     minLength?: number;
     maxLength?: number;
 }
@@ -37,23 +37,23 @@ export interface StringValidator {
 export interface RegexValidator {
     type: "regex";
     value: RegExp;
-    options?: TrKey;
+    options?: Error;
 }
 
 export interface EmailValidator {
     type: "email";
-    options?: TrKey;
+    options?: Error;
 }
 
 export interface DateValidator {
     type: "date";
-    options?: TrKey;
+    options?: Error;
 }
 
 export interface FunctionValidator {
     type: "function";
     value: (param: any, options?: {isEdit?: boolean}) => boolean;
-    options?: {isEdit?: boolean} & TrKey;
+    options?: {isEdit?: boolean} & Error;
 }
 
 export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator;
@@ -117,8 +117,8 @@ export function stringValidator(text: string, options?: StringOptions) {
     return isMinLength && isMaxLength;
 }
 
-function getErrorLabel(type: string, options?: TrKey): string {
-    return i18next.t(options && options.translationKey ? options.translationKey : `focus.validation.${type}`);
+function getErrorLabel(type: string, options?: Error): string {
+    return i18next.t(options && options.errorMessage ? options.errorMessage : `focus.validation.${type}`);
 }
 
 /**

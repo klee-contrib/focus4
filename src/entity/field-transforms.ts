@@ -2,6 +2,11 @@ import {InputProps} from "react-toolbox/lib/input";
 import {DisplayProps, LabelProps} from "../components";
 import {Domain, EntityField, FieldEntry} from "./types";
 
+/**
+ * Construit un `EntityField` à partir d'une valeur quelconque.
+ * @param value La valeur.
+ * @param $field Les métadonnées pour le champ à créer.
+ */
 export function makeField<
     T,
     ICProps = InputProps,
@@ -14,6 +19,11 @@ export function makeField<
     return {$field, value} as EntityField<T, Domain<ICProps, DCProps, LCProps>>;
 }
 
+/**
+ * Patche un `EntityField` pour modifier ses métadonnées (inclus tout ce qui est définit dans le domaine).
+ * @param field Le champ.
+ * @param $field Les métadonnées à remplacer.
+ */
 export function patchField<
     T,
     ICDomainProps = InputProps,
@@ -24,25 +34,36 @@ export function patchField<
     LCProps = LCDomainProps
 >(
     field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
-    $field: Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>>>
+    $field: Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>
 ) {
+    const {
+        domain = field.$field.domain,
+        isRequired = field.$field.isRequired,
+        label = field.$field.label,
+        name = field.$field.name,
+        type = field.$field.type,
+        ...domainOverrides
+    } = $field;
     return {
         $field: {
-            ...field.$field,
+            isRequired,
+            label,
+            name,
+            type,
             domain: {
-                ...field.$field.domain,
-                ...$field.domain,
+                ...domain,
+                ...domainOverrides,
                 inputProps: {
-                    ...(field.$field.domain.inputProps as any),
-                    ...($field.domain && $field.domain.inputProps as any)
+                    ...(domain.inputProps as any),
+                    ...(domainOverrides.inputProps as any)
                 },
                 displayProps: {
-                    ...(field.$field.domain.displayProps as any),
-                    ...($field.domain && $field.domain.displayProps as any)
+                    ...(domain.displayProps as any),
+                    ...(domainOverrides.displayProps as any)
                 },
                 labelProps: {
-                    ...(field.$field.domain.labelProps as any),
-                    ...($field.domain && $field.domain.labelProps as any)
+                    ...(domain.labelProps as any),
+                    ...(domainOverrides.labelProps as any)
                 }
             },
         },
