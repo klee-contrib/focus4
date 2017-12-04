@@ -111,8 +111,9 @@ export function stringValidator(text: string, options?: StringOptions) {
     if (!options) {
         return true;
     }
-    options.minLength = options.minLength || 0;
-    const isMinLength = options.minLength !== undefined ? text.length >= options.minLength : true;
+
+    text = `${text || ""}`;
+    const isMinLength = text.length >= (options.minLength || 0);
     const isMaxLength = options.maxLength !== undefined ? text.length <= options.maxLength : true;
     return isMinLength && isMaxLength;
 }

@@ -11,7 +11,7 @@ import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
 import {Field, FieldOptions, FieldProps, ReferenceOptions, RefValues} from "./field";
-import {FormNode, makeFormNode} from "./form-node";
+import {FormNode} from "./form-node";
 import {StoreNode, toFlatValues} from "./store";
 import {Domain, EntityField} from "./types";
 
@@ -20,13 +20,10 @@ import {displayFor, fieldFor, selectFor, stringFor} from "./field-helpers";
 import {form} from "./__style__/auto-form.css";
 
 /** Options additionnelles de l'AutoForm. */
-export interface AutoFormOptions<E> {
+export interface AutoFormOptions {
 
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
-
-    /** FormNode externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
-    entity?: E & FormNode;
 
     /** Par défaut: true */
     hasForm?: boolean;
@@ -56,7 +53,7 @@ export interface ServiceConfig<T, LP> {
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
-export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P, void> {
+export abstract class AutoForm<P = {}> extends React.Component<P, void> {
 
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap: ObservableMap<boolean> = observable.map<boolean>();
@@ -75,14 +72,11 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     /** Identifiant unique du formulaire. */
     formId = v4();
 
-    /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
-    entity!: E & FormNode;
+    /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
+    abstract entity: StoreNode & FormNode;
 
     /** Services. */
     services!: ServiceConfig<any, any>;
-
-    /** Noeud de store à partir du quel le formulaire a été créé. */
-    storeData!: E;
 
     /** Erreurs sur les champs issues du serveur. */
     @observable errors: Record<string, string> = {};
@@ -105,9 +99,6 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     /** Préfixe i18n pour les messages du formulaire */
     private i18nPrefix!: string;
 
-    /** Utilise ou non un ViewModel personnalisé, passé en options. */
-    private isCustomEntity!: boolean;
-
     /** Disposer de la réaction de chargement. */
     private loadDisposer?: Lambda;
 
@@ -124,11 +115,8 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    formInit(storeData: E, services: ServiceConfig<any, any>, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
-        this.storeData = storeData;
+    formInit(services: ServiceConfig<any, any>, {className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions = {}) {
         this.services = services;
-        this.entity = entity || makeFormNode(storeData);
-        this.isCustomEntity = entity !== undefined;
         this.isEdit = initiallyEditing || false;
         this.hasForm = hasForm !== undefined ? hasForm : true;
         this.className = className || "";
@@ -143,15 +131,13 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     componentWillMount() {
         this.init();
         AutoForm.editingMap.set(this.formId, this.isEdit);
-        this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.
+        this.entity.subscribe();
         this.load();
     }
 
     componentWillUnmount() {
         AutoForm.editingMap.delete(this.formId);
-        if (!this.isCustomEntity) {
-            this.entity.unsubscribe();
-        }
+        this.entity.unsubscribe();
         if (this.loadDisposer) {
             this.loadDisposer();
         }
@@ -178,7 +164,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
             await this.services.delete(toFlatValues(this.entity));
             runInAction(() => {
                 this.isLoading = false;
-                this.storeData.clear();
+                this.entity.sourceNode.clear();
             });
             this.onFormDeleted();
         }
@@ -194,10 +180,10 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
             const params = getLoadParams();
             if (params) {
                 this.isLoading = true;
-                this.storeData.clear();
+                this.entity.sourceNode.clear();
                 const data = await load(...params);
                 runInAction(() => {
-                    this.storeData.set(data || {});
+                    this.entity.sourceNode.set(data);
                     this.isLoading = false;
                 });
                 this.onFormLoaded();
@@ -216,7 +202,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
                 runInAction(() => {
                     this.isLoading = false;
                     this.isEdit = false;
-                    this.storeData.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
+                    this.entity.sourceNode.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                 });
                 this.onFormSaved();
             } catch (e) {
