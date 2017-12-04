@@ -264,8 +264,8 @@ export class List<T, P> extends ListBase<T, ListProps<T> & P> {
                             {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident... et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}
                             <div className={theme!.triangle} style={this.displayedIdx === undefined && this.mode === "mosaic" ? {left: -1000} : this.mode === "mosaic" ? {left: this.mosaic.width / 2 - 8.25 + ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) % this.byLine) * (this.mosaic.width + 10)} : {}} />
                             <div className={theme!.detail}>
-                                <IconButton icon="clear" onClick={() => this.displayedIdx = undefined} />
-                                <DetailComponent data={item} closeDetail={() => this.displayedIdx = undefined} />
+                                <IconButton icon="clear" onClick={this.closeDetail} />
+                                <DetailComponent data={item} closeDetail={this.closeDetail} />
                             </div>
                         </li>
                     )
