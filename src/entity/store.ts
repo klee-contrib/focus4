@@ -1,5 +1,5 @@
 import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
-import {action, IObservableArray, isObservableArray, observable} from "mobx";
+import {action, IObservableArray, isComputed, isObservableArray, observable} from "mobx";
 
 import {Entity, EntityField, FieldEntry, ListEntry, ObjectEntry} from "./types";
 
@@ -36,10 +36,7 @@ export interface StoreListNode<T extends StoreNode = StoreNode> extends IObserva
     set(array: {}[]): void;
 }
 
-/** Types possible pour le `T` de `EntityField<T>`. */
-export type StoreType = number | number[] | boolean | boolean[] | string | string[];
-
-export type EntityStoreNodeItem = EntityField<StoreType> | StoreNode | StoreListNode;
+export type EntityStoreNodeItem = EntityField | StoreNode | StoreListNode;
 /** Noeud de store simple. Véritable définition de `StoreNode`. */
 export type EntityStoreNode = StoreNode & {
     [key: string]: EntityStoreNodeItem;
@@ -228,12 +225,15 @@ function clearEntity(entity: EntityStoreItem) {
     } else {
         // Cas de l'entrée simple, on parcourt chaque champ.
         for (const entry in entity) {
+            if (entry === "sourceNode") {
+                continue; // Pas touche.
+            }
             const entryItem = entity[entry];
             if (isStoreListNode(entryItem)) { // Cas noeud de liste -> on vide la liste.
                 entryItem.clear();
             } else if (isStoreNode(entryItem)) { // Cas noeud de store -> `clearEntity`.
                 clearEntity(entryItem as EntityStoreNode);
-            } else if (entryItem.value !== undefined) { // Cas primitive -> on met à `undefined`.
+            } else if (entryItem.value !== undefined && !isComputed(entryItem, "value")) { // Cas primitive -> on met à `undefined`.
                 entryItem.value = undefined;
             }
         }
@@ -252,26 +252,32 @@ export function toFlatValues(entityStoreItem: StoreNode | StoreListNode): {} | {
         return entityStoreItem.map(toFlatValues);
     } else {
         // Cas entrée simple : on parcourt chaque champ et on enlève les valeurs `undefined`.
-        return omitBy(mapValues(entityStoreItem, (item: EntityStoreNodeItem) => {
-            if (isStoreListNode(item)) { // Cas entrée liste -> `toFlatValues` sur chaque élément.
+        return omitBy(mapValues(entityStoreItem, (item: EntityStoreNodeItem, entry) => {
+            if (entry === "sourceNode") { // On ne récupère pas le `sourceNode` d'un FormNode.
+                return undefined;
+            } else if (isStoreListNode(item)) { // Cas entrée liste -> `toFlatValues` sur chaque élément.
                 return item.map(toFlatValues);
             } else if (isStoreNode(item)) { // Cas entrée simple -> `toFlatValues`.
                 return toFlatValues(item);
             } else if (isObservableArray(item.value)) { // Cas array de primitive -> array simple.
                 return item.value.slice();
+            } else if (!isComputed(item, "value")) { // Cas `EntityField` simple.
+                return item.value;
             } else {
-                return item.value; // Sinon, on renvoie la valeur.
+                return undefined; // Cas champ calculé : on le retire.
             }
         }), isUndefined);
     }
 }
 
-function isStoreListNode(data: EntityStoreNodeItem): data is StoreListNode {
+export function isStoreListNode<T>(data: EntityStoreNodeItem): data is StoreListNode<StoreNode<T>> {
     return isObservableArray(data) && !!(data as StoreListNode).$entity;
 }
-function isStoreNode(data: EntityStoreNodeItem): data is StoreNode {
+
+export function isStoreNode<T>(data: EntityStoreNodeItem): data is StoreNode<T> {
     return !!(data as StoreNode).set;
 }
+
 function isFieldEntry(data: FieldEntry | ObjectEntry | ListEntry): data is FieldEntry {
     return data.type === "field";
 }

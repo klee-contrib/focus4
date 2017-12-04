@@ -85,8 +85,11 @@ export interface Entity {
     readonly name: string;
 }
 
+/** Types possible pour le `T` de `EntityField<T>`. */
+export type StoreType = number | number[] | boolean | boolean[] | string | string[];
+
 /** Entrée de type "field" pour une entité. */
-export interface EntityField<T, D extends DomainNoDefault = DomainNoDefault> {
+export interface EntityField<T = StoreType, D extends DomainNoDefault = DomainNoDefault> {
 
     /** Métadonnées. */
     readonly $field: FieldEntry<D>;

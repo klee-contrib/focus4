@@ -2,13 +2,16 @@ import {action, autorun, isObservableArray, isObservableObject, observable, untr
 
 import {StoreNode, toFlatValues} from "./store";
 
-export interface FormNode {
+export interface FormNode<T = StoreNode> {
     /** @internal */
     /** Précise l'état de la synchronisation entre le StoreNode et le FormNode. */
     isSubscribed: boolean;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
+
+    /** StoreNode original. */
+    sourceNode: T;
 
     /** Active la synchronisation StoreNode -> FormNode. La fonction est appelée à la création. */
     subscribe(): void;
@@ -22,15 +25,16 @@ export interface FormNode {
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
  */
-export function makeFormNode<T extends StoreNode>(node: T) {
-    const formNode = clone(node) as T & FormNode;
+export function makeFormNode<T extends StoreNode, U extends StoreNode = T>(node: T, transform: (source: T) => U = x => x as any as U) {
+    const formNode = transform(clone(node)) as U & FormNode<T>;
 
     // La fonction `reset` va simplement vider et reremplir le FormNode avec les valeurs du StoreNode.
     const reset = () => {
         untracked(() => formNode.clear());
-        formNode.set(toFlatValues(node as any));
+        formNode.set(toFlatValues(formNode.sourceNode));
     };
 
+    formNode.sourceNode = node;
     formNode.reset = action(reset);
     formNode.subscribe = () => {
         if (!formNode.isSubscribed) {

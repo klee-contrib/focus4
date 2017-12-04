@@ -50,11 +50,11 @@ export function Select({
 }: SelectProps) {
 
     // On ajoute l'élément vide si nécessaire.
-    let finalValues = values;
+    let finalValues = values.slice();
     if (hasUndefined) {
         finalValues = [
             {[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)},
-            ...values
+            ...finalValues
         ];
     }
 
