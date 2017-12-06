@@ -3,6 +3,7 @@
 declare module "smoothscroll-polyfill";
 
 declare module "react-toolbox/lib/date_picker/theme.css";
+declare module "react-toolbox/lib/time_picker/theme.css";
 
 declare module "react-toolbox/lib/date_picker/Calendar" {
 
@@ -23,4 +24,19 @@ declare module "react-toolbox/lib/date_picker/Calendar" {
     function calendarFactory(IconButton: any): React.ComponentClass<CalendarProps>;
 
     export default calendarFactory;
+}
+
+declare module "react-toolbox/lib/time_picker/Clock" {
+
+    interface ClockProps {
+        display?: "hours" | "minutes";
+        format?: "24hr" | "ampm";
+        onChange?: Function;
+        onHandMoved?: Function;
+        theme?: {};
+        time?: Date;
+    }
+
+    const Clock: React.ComponentClass<ClockProps>;
+    export default Clock;
 }

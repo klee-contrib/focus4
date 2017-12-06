@@ -11,6 +11,14 @@
     width: var(--input-date-width);
     box-shadow: var(--input-date-shadow);
     background: var(--color-white);
+
+    & header {
+        box-sizing: border-box;
+    }
+
+    & .clock {
+        position: static;
+    }
 }
 
 .toggle {

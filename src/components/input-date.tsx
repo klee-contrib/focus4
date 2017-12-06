@@ -229,7 +229,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 }
 
-export default themr("RTDialog", styles)(InputDate);
+export default themr("RTDatePicker", styles)(InputDate);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
