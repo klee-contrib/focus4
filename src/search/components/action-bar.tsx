@@ -10,7 +10,7 @@ import {Button, IconButton} from "react-toolbox/lib/button";
 import {Input} from "react-toolbox/lib/input";
 
 import {ButtonMenu, getIcon, MenuItem} from "../../components";
-import {ContextualActions, GroupOperationListItem, ListStore, MiniListStore} from "../../list";
+import {ContextualActions, ListStore, MiniListStore, OperationListItem} from "../../list";
 import {classReaction} from "../../util";
 
 import {SearchStore} from "../store";
@@ -42,7 +42,7 @@ export interface ActionBarProps<T> {
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     /** Actions sur les éléments sélectionnés. */
-    operationList?: GroupOperationListItem<T>[];
+    operationList?: OperationListItem<T[]>[];
     /** Placeholder pour la barre de recherche. */
     searchBarPlaceholder?: string;
     /** Affiche les facettes qui n'ont qu'une seule valeur. */

@@ -15,7 +15,7 @@ import {ReactComponent} from "../../config";
 import {classAutorun, classReaction} from "../../util";
 
 import {MiniListStore} from "../store-base";
-import {LineOperationListItem} from "./contextual-actions";
+import {OperationListItem} from "./contextual-actions";
 import {addDragSource} from "./dnd-utils";
 import DndDragLayer, {DragLayerStyle} from "./drag-layer";
 import LineWrapper, {LineProps, LineWrapperProps} from "./line";
@@ -70,7 +70,7 @@ export interface ListProps<T> extends ListBaseProps<T> {
     /** Composant de mosaïque. */
     MosaicComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
-    operationList?: (data: T) => LineOperationListItem<T>[];
+    operationList?: (data: T) => OperationListItem<T>[];
 }
 
 /** Description d'un élément de liste, pour react-motion. */

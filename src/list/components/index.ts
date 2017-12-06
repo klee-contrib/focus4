@@ -1,4 +1,4 @@
-export {default as ContextualActions, ContextualActionsStyle, GroupOperationListItem, LineOperationListItem} from "./contextual-actions";
+export {default as ContextualActions, ContextualActionsStyle, OperationListItem} from "./contextual-actions";
 export {getDraggedItems} from "./dnd-utils";
 export {DragLayerStyle} from "./drag-layer";
 export {LineProps, LineStyle} from "./line";

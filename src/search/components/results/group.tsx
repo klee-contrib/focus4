@@ -6,7 +6,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 
 import {ReactComponent} from "../../../config";
-import {DetailProps, DragLayerStyle, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, MiniListStore, StoreList} from "../../../list";
+import {DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, MiniListStore, OperationListItem, StoreList} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
@@ -33,7 +33,7 @@ export interface GroupProps<T> {
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
     /** Actions de groupe. */
-    groupOperationList?: GroupOperationListItem<T>[];
+    groupOperationList?: OperationListItem<T[]>[];
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
     /** Affiche la sélection sur l'ActionBar et les lignes. */
@@ -45,7 +45,7 @@ export interface GroupProps<T> {
     /** Composant de ligne. */
     LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
-    lineOperationList?: (data: T) => LineOperationListItem<T>[];
+    lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
     /** CSS de la liste. */
@@ -80,10 +80,16 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
         });
     }
 
-    protected renderList() {
-        const {listTheme, lineTheme, group, hasSelection, i18nPrefix = "focus", perPage, LineComponent, lineOperationList, MosaicComponent, isLineSelectionnable, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, dragItemType, dragLayerTheme, hasDragAndDrop} = this.props;
+    render() {
+        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix, isLineSelectionnable, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage, store, theme} = this.props;
         return (
-            <div>
+            <div className={theme!.container}>
+                <ActionBar
+                    group={{code: group.code, label: group.label, totalCount: group.totalCount}}
+                    hasSelection={hasSelection}
+                    operationList={groupOperationList}
+                    store={this.store}
+                />
                 <StoreList
                     canOpenDetail={canOpenDetail}
                     data={group.list}
@@ -107,35 +113,19 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     store={this.store}
                     theme={listTheme}
                 />
-                {store.isLoading ?
-                    <div style={{padding: "15px"}}>
-                        {i18next.t(`${i18nPrefix}.search.loading`)}
-                    </div>
-                : null}
+                <GroupLoadingBar i18nPrefix={i18nPrefix} store={store} />
             </div>
         );
     }
+}
 
-    render() {
-        const {theme, group, hasSelection, groupOperationList, store} = this.props;
-        if (!store.groupingKey) {
-            return this.renderList();
-        } else if (group.code && group.label && group.totalCount) {
-            return (
-                <div className={theme!.container}>
-                    <ActionBar
-                        group={{code: group.code, label: group.label, totalCount: group.totalCount}}
-                        hasSelection={hasSelection}
-                        operationList={groupOperationList}
-                        store={this.store}
-                    />
-                    {this.renderList()}
-                </div>
-            );
-        } else {
-            return null;
-        }
-    }
+/** "Barre" de chargement pour les résultats. */
+export function GroupLoadingBar({i18nPrefix = "focus", store}: {i18nPrefix?: string, store: SearchStore}) {
+    return store.isLoading ?
+        <div style={{padding: "15px"}}>
+            {i18next.t(`${i18nPrefix}.search.loading`)}
+        </div>
+    : null;
 }
 
 export default themr("group", styles)(Group);

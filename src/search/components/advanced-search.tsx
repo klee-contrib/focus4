@@ -5,7 +5,7 @@ import {themr} from "react-css-themr";
 
 import {ButtonBackToTop} from "../../components";
 import {ReactComponent} from "../../config";
-import {DetailProps, DragLayerStyle, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle, ListWrapper} from "../../list";
+import {DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, ListWrapper, OperationListItem} from "../../list";
 
 import {SearchStore} from "../store";
 import {GroupResult} from "../types";
@@ -43,7 +43,7 @@ export interface AdvancedSearchProps<T> {
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: FacetBoxStyle;
     /** Actions de groupe par scope. */
-    groupOperationList?: (group: GroupResult<T>) => GroupOperationListItem<T>[];
+    groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Ajoute un bouton de retour en haut de page. Par défault: true */
@@ -73,7 +73,7 @@ export interface AdvancedSearchProps<T> {
     /** Composant de ligne. */
     LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
-    lineOperationList?: (data: T) => LineOperationListItem<T>[];
+    lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
     /** CSS de la liste. */
@@ -88,6 +88,8 @@ export interface AdvancedSearchProps<T> {
     mosaicHeight?: number;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
+    /** La liste des actions globales.  */
+    operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
     /** Placeholder pour la barre de recherche de l'ActionBar. */
@@ -154,9 +156,9 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderActionBar() {
-        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, groupOperationList, orderableColumnList, nbDefaultDataListFacet, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
+        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, operationList, orderableColumnList, nbDefaultDataListFacet, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
 
-        if (store.groupingKey) {
+        if (store.groups.length) {
             return null;
         }
 
@@ -168,7 +170,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 hasSelection={hasSelection}
                 i18nPrefix={i18nPrefix}
                 nbDefaultDataListFacet={nbDefaultDataListFacet}
-                operationList={groupOperationList && groupOperationList({list: store.flatResultList})}
+                operationList={operationList}
                 orderableColumnList={orderableColumnList}
                 searchBarPlaceholder={searchBarPlaceholder}
                 showSingleValuedFacets={showSingleValuedFacets}

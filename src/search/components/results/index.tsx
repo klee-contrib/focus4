@@ -1,5 +1,6 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
+import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -7,11 +8,11 @@ import {Button} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 import {ReactComponent} from "../../../config";
-import {DetailProps, DragLayerStyle, EmptyProps, GroupOperationListItem, LineOperationListItem, LineProps, LineStyle, ListStyle} from "../../../list";
+import {DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, OperationListItem, StoreList} from "../../../list";
 
 import {SearchStore} from "../../store";
 import {GroupResult} from "../../types";
-import Group, {GroupStyle} from "./group";
+import Group, {GroupLoadingBar, GroupStyle} from "./group";
 export {GroupStyle};
 
 import {bottomRow} from "../../../list/components/__style__/list.css";
@@ -31,7 +32,7 @@ export interface ResultsProps<T> {
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Actions de groupe par groupe (code / valeur). */
-    groupOperationList?: (group: GroupResult<T>) => GroupOperationListItem<T>[];
+    groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut: 5 */
     groupPageSize?: number;
     /** CSS des groupes. */
@@ -49,7 +50,7 @@ export interface ResultsProps<T> {
     /** Composant de ligne. */
     LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
-    lineOperationList?: (data: T) => LineOperationListItem<T>[];
+    lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
     /** CSS de la liste. */
@@ -109,54 +110,68 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
         return null;
     }
 
-    /** Affiche un groupe. */
-    protected renderSingleGroup(group: GroupResult<T>) {
-        const {canOpenDetail, DetailComponent, detailHeight, EmptyComponent, groupOperationList, groupPageSize = 5, groupTheme, hasSelection, i18nPrefix, isLineSelectionnable, lineTheme, LineComponent, lineOperationList, listTheme, MosaicComponent, store, dragItemType, dragLayerTheme, hasDragAndDrop} = this.props;
-        return (
-            <Group
-                canOpenDetail={canOpenDetail}
-                DetailComponent={DetailComponent}
-                detailHeight={detailHeight}
-                dragItemType={dragItemType}
-                dragLayerTheme={dragLayerTheme}
-                EmptyComponent={EmptyComponent}
-                group={group}
-                groupOperationList={groupOperationList && groupOperationList(group)}
-                hasDragAndDrop={hasDragAndDrop}
-                hasSelection={hasSelection}
-                i18nPrefix={i18nPrefix}
-                isLineSelectionnable={isLineSelectionnable}
-                key={group.code}
-                LineComponent={LineComponent}
-                lineOperationList={lineOperationList}
-                lineTheme={lineTheme}
-                listTheme={listTheme}
-                MosaicComponent={MosaicComponent}
-                perPage={groupPageSize}
-                store={store}
-                theme={groupTheme}
-            />
-        );
+    /** Props communes entre le composant de liste et ceux de groupes. */
+    @computed
+    private get commonListProps() {
+        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, LineComponent, lineTheme, MosaicComponent, isLineSelectionnable, store} = this.props;
+        return {
+            canOpenDetail,
+            detailHeight,
+            DetailComponent,
+            dragItemType,
+            dragLayerTheme,
+            EmptyComponent,
+            hasDragAndDrop,
+            hasSelection,
+            i18nPrefix,
+            LineComponent,
+            lineTheme,
+            MosaicComponent,
+            isLineSelectionnable,
+            store
+        };
     }
 
     render() {
-        const {results} = this.props.store;
+        const {groupOperationList, groupTheme, groupPageSize = 5, i18nPrefix, lineOperationList, listTheme, store} = this.props;
+        const {groups, list} = store;
 
-        // result.totalCount pour une liste seule est undefined, donc il est bien gardé.
-        const filteredResults = results.filter(result => result.totalCount !== 0);
-
-        if (!filteredResults.length) {
-            return null;
-        } else if (filteredResults.length === 1) {
+        const filteredGroups = groups.filter(group => group.totalCount !== 0);
+        if (filteredGroups.length) {
             return (
-                <div>
-                    {this.renderSingleGroup(filteredResults[0])}
+                <div data-focus="results">
+                    {filteredGroups.map(group => (
+                        <Group
+                            {...this.commonListProps}
+                            group={group}
+                            groupOperationList={groupOperationList && groupOperationList(group)}
+                            key={group.code}
+                            lineOperationList={lineOperationList}
+                            listTheme={listTheme}
+                            perPage={groupPageSize}
+                            theme={groupTheme}
+                        />
+                    ))}
+                </div>
+            );
+        }
+
+        if (list.length) {
+            return (
+                <div data-focus="results">
+                    <StoreList
+                        {...this.commonListProps}
+                        data={list}
+                        operationList={lineOperationList}
+                        theme={listTheme}
+                    />
+                    <GroupLoadingBar i18nPrefix={i18nPrefix} store={store} />
                     {this.showMoreButton}
                 </div>
             );
-        } else {
-            return <div>{filteredResults.map(this.renderSingleGroup)}</div>;
         }
+
+        return null;
     }
 }
 

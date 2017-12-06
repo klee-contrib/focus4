@@ -14,7 +14,7 @@ export type ContextualActionsStyle = Partial<typeof styles>;
 /** Description d'une action sur un ou plusieurs éléments de liste. */
 export interface OperationListItem<T> {
     /** L'action à effectuer. */
-    action: (data: T | T[]) => void;
+    action: (data: T) => void;
     /** Le libellé du bouton. */
     label?: string;
     /** L'icône du bouton */
@@ -23,18 +23,6 @@ export interface OperationListItem<T> {
     isSecondary?: boolean;
     /** Force l'affichage de l'icône en vue liste (elle est toujours visible en mosaïque) */
     showIcon?: boolean;
-}
-
-/** Description d'une action sur plusieurs éléments de liste. */
-export interface GroupOperationListItem<T> extends OperationListItem<T> {
-    /** L'action à effectuer. */
-    action: (data: T[]) => void;
-}
-
-/** Description d'une action sur un élément de liste. */
-export interface LineOperationListItem<T> extends OperationListItem<T> {
-    /** L'action à effectuer. */
-    action: (data: T) => void;
 }
 
 /** Props du composant d'actions contextuelles. */

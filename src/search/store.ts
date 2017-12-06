@@ -44,8 +44,10 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
     /** Facettes résultat de la recherche. */
     readonly facets: IObservableArray<FacetOutput> = observable([]);
-    /** Résultats de la recherche, sous forme de groupes. */
-    readonly results: IObservableArray<GroupResult<T>> = observable([]);
+    /** Résultats de la recherche, si elle retourne une liste. */
+    readonly list: IObservableArray<T> = observable([]);
+    /** Résultats de la recherche, si elle retourne des groupes. */
+    readonly groups: IObservableArray<GroupResult<T>> = observable([]);
 
     /** Service de recherche. */
     readonly service: SearchService<T>;
@@ -107,7 +109,11 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     /** Liste de tous les résultats mis à plat depuis les différents groupes. */
     @computed
     get flatResultList() {
-        return flatten(this.results.map(g => g.list.slice()));
+        if (this.groups.length) {
+            return flatten(this.groups.map(g => g.list.slice()));
+        } else {
+            return this.list;
+        }
     }
 
     /** Label du groupe choisi. */
@@ -173,7 +179,8 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     clear() {
         this.serverCount = 0;
         this.facets.clear();
-        this.results.clear();
+        this.list.clear();
+        this.groups.clear();
     }
 
     /**
@@ -187,7 +194,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         }
 
         let {query} = this;
-        const {selectedFacets, groupingKey, sortBy, sortAsc, results, top} = this;
+        const {selectedFacets, groupingKey, sortBy, sortAsc, list, top} = this;
 
         if (!query || query === "") {
             query = "*";
@@ -197,7 +204,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             criteria: {...this.flatCriteria, query} as QueryInput<C>["criteria"],
             facets: selectedFacets || {},
             group: groupingKey || "",
-            skip: isScroll && results.length === 1 ? results[0].list.length : 0, // On skip les résultats qu'on a déjà si `isScroll = true`
+            skip: isScroll && list.length || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
             sortDesc: sortAsc === undefined ? false : !sortAsc,
             sortFieldName: sortBy,
             top
@@ -212,11 +219,12 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est toujours la liste.
         if (isScroll && response.list) {
-            response.list = [...results[0].list, ...response.list];
+            response.list = [...list, ...response.list];
         }
 
         this.facets.replace(response.facets);
-        this.results.replace(response.groups || [{list: response.list || []}]);
+        this.list.replace(response.list || []);
+        this.groups.replace(response.groups || []);
         this.serverCount = response.totalCount;
     }
 
@@ -253,16 +261,16 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         const store = this;
         const searchGroupStore = {
             get currentCount() {
-                return store.results.find(result => result.code === groupCode).totalCount || 0;
+                return store.groups.find(result => result.code === groupCode).totalCount || 0;
             },
             get totalCount() {
-                return store.results.find(result => result.code === groupCode).totalCount || 0;
+                return store.groups.find(result => result.code === groupCode).totalCount || 0;
             },
             toggle(item: any) {
                 store.toggle(item);
             },
             get list() {
-                const resultGroup = store.results.find(result => result.code === groupCode);
+                const resultGroup = store.groups.find(result => result.code === groupCode);
                 return resultGroup && resultGroup.list || [];
             }
         } as any as MiniListStore<any>;

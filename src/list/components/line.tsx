@@ -14,7 +14,7 @@ import {ReactComponent} from "../../config";
 import {EntityField, stringFor} from "../../entity";
 
 import {MiniListStore} from "../store-base";
-import ContextualActions, {LineOperationListItem} from "./contextual-actions";
+import ContextualActions, {OperationListItem} from "./contextual-actions";
 
 import * as styles from "./__style__/line.css";
 
@@ -53,7 +53,7 @@ export interface LineWrapperProps<T> {
     /** Handler pour ouvrir (et fermer) le détail. */
     openDetail?: () => void;
     /** Actions de ligne. */
-    operationList?: (data: T) => LineOperationListItem<T>[];
+    operationList?: (data: T) => OperationListItem<T>[];
     /** Store de liste associé à la ligne. */
     store?: MiniListStore<T>;
     /** Style passé par la liste pour masquer l'élement en cours de drag. */

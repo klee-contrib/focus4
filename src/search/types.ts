@@ -21,13 +21,13 @@ export interface FacetOutput {
 /** Groupe résultat de recherche. */
 export interface GroupResult<T> {
     /** Code du groupe. */
-    code?: string;
+    code: string;
     /** Libellé du groupe. */
-    label?: string;
+    label: string;
     /** Liste de résultats du groupe. */
     list: T[];
     /** Nombre d'éléments totaux du groupe. */
-    totalCount?: number;
+    totalCount: number;
 }
 
 /** Objet d'entrée pour la recherche. */
