@@ -3,7 +3,6 @@
 .line,
 .mosaic {
     position: relative;
-    overflow: hidden;
 }
 
 .mosaic {
@@ -49,7 +48,7 @@
     pointer-events: none;
 }
 
-.isSelection,
+.forceDisplay,
 .line:hover .checkbox,
 .mosaic:hover .checkbox,
 .line:hover .actions,

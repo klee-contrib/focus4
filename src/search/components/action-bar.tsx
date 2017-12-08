@@ -108,7 +108,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     protected get sortButton() {
         const {i18nPrefix = "focus", orderableColumnList, store, theme} = this.props;
 
-        if (store.totalCount > 1 && !store.selectedItems.size && (isSearch(store) || isList(store)) && orderableColumnList) {
+        if (store.totalCount > 1 && !store.selectedItems.size && (isSearch(store) && !store.groupingKey || isList(store)) && orderableColumnList) {
             return (
                 <ButtonMenu
                     button={{

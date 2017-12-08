@@ -58,10 +58,18 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
     }
 
     private onClick() {
-        this.isOpened = !this.isOpened;
+        this.isOpened = true;
         const {onClick} = this.props;
         if (onClick) {
             onClick();
+        }
+    }
+
+    private onHide() {
+        this.isOpened = false;
+        const {onHide} = this.props;
+        if (onHide) {
+            onHide();
         }
     }
 
@@ -71,7 +79,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
             <div data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
                 <Button ref={i => this.button = i} {...buttonProps} onClick={this.onClick} icon={this.isOpened && openedIcon ? openedIcon : icon}/>
                 <div style={this.menuStyle}>
-                    <Menu {...menuProps} position={position} active={this.isOpened} onHide={() => this.isOpened = false}>
+                    <Menu {...menuProps} position={position} active={this.isOpened} onHide={this.onHide}>
                         {menuProps.children}
                     </Menu>
                 </div>

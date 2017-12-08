@@ -31,6 +31,10 @@ export interface ContextualActionsProps {
     i18nPrefix?: string;
     /** Mode mosaïque. */
     isMosaic?: boolean;
+    /** Quand on ouvre les actions secondaires. */
+    onClickSecondary?: () => void;
+    /** Quand on ferme les actions secondaires. */
+    onHideSecondary?: () => void;
     /** La liste d'actions. */
     operationList: OperationListItem<{}>[];
     /** Le paramètre à passer aux actions. */
@@ -58,7 +62,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
     }
 
     render() {
-        const {operationList, i18nPrefix = "focus", isMosaic, theme} = this.props;
+        const {operationList, i18nPrefix = "focus", isMosaic, onClickSecondary, onHideSecondary, theme} = this.props;
         const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {isSecondary, icon, label, showIcon}, key) => {
             const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
             if (!isSecondary) {
@@ -89,6 +93,8 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                         <IconMenu
                             icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
                             position="topRight"
+                            onClick={onClickSecondary}
+                            onHide={onHideSecondary}
                         >
                             {secondaryActionList.map(a => <MenuItem {...a} />)}
                         </IconMenu>
@@ -99,6 +105,8 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                                 floating: true
                             }}
                             position="topRight"
+                            onClick={onClickSecondary}
+                            onHide={onHideSecondary}
                         >
                             {secondaryActionList.map(a => <MenuItem {...a} />)}
                         </ButtonMenu>

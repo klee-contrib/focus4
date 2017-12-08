@@ -31,6 +31,8 @@ export interface ResultsProps<T> {
     dragLayerTheme?: DragLayerStyle;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
+    /** Header de groupe personnalisé. */
+    GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
     /** Actions de groupe par groupe (code / valeur). */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut: 5 */
@@ -61,6 +63,8 @@ export interface ResultsProps<T> {
     offset?: number;
     /** Store de recherche. */
     store: SearchStore<T>;
+    /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
+    useGroupActionBars?: boolean;
 }
 
 /** Composants affichant les résultats de recherche, avec affiche par groupe. */
@@ -133,7 +137,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     }
 
     render() {
-        const {groupOperationList, groupTheme, groupPageSize = 5, i18nPrefix, lineOperationList, listTheme, store} = this.props;
+        const {GroupHeader, groupOperationList, groupTheme, groupPageSize = 5, i18nPrefix, lineOperationList, listTheme, store, useGroupActionBars} = this.props;
         const {groups, list} = store;
 
         const filteredGroups = groups.filter(group => group.totalCount !== 0);
@@ -144,12 +148,14 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                         <Group
                             {...this.commonListProps}
                             group={group}
+                            GroupHeader={GroupHeader}
                             groupOperationList={groupOperationList && groupOperationList(group)}
                             key={group.code}
                             lineOperationList={lineOperationList}
                             listTheme={listTheme}
                             perPage={groupPageSize}
                             theme={groupTheme}
+                            useGroupActionBars={useGroupActionBars}
                         />
                     ))}
                 </div>

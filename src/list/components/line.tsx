@@ -71,6 +71,8 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
 
     /** Hauteur de la ligne (en mode ligne, en mosaïque elle est fixée.) */
     @observable private height?: number;
+    /** Force l'affichage des actions. */
+    @observable private forceActionDisplay = false;
 
     componentDidMount() {
         this.updateHeight();
@@ -148,7 +150,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                             >
                                 {hasSelection && isSelectionnable(data) && store ?
                                     <IconButton
-                                        className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.isSelection : ""}`}
+                                        className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.forceDisplay : ""}`}
                                         icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
                                         onClick={this.onSelection}
                                         primary={this.isSelected}
@@ -158,13 +160,15 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                                 <LineComponent data={data} openDetail={openDetail} />
                                 {opList && opList.length > 0 ?
                                     <div
-                                        className={theme!.actions}
+                                        className={`${theme!.actions} ${this.forceActionDisplay ? theme!.forceDisplay : ""}`}
                                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                                     >
                                         <ContextualActions
                                             isMosaic={!!mosaic}
                                             operationList={opList}
                                             operationParam={data}
+                                            onClickSecondary={() => this.forceActionDisplay = true}
+                                            onHideSecondary={() => this.forceActionDisplay = false}
                                         />
                                     </div>
                                 : null}

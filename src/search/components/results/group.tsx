@@ -4,7 +4,9 @@ import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {IconButton} from "react-toolbox/lib/button";
 
+import {getIcon} from "../../../components";
 import {ReactComponent} from "../../../config";
 import {DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, MiniListStore, OperationListItem, StoreList} from "../../../list";
 
@@ -32,6 +34,8 @@ export interface GroupProps<T> {
     EmptyComponent?: ReactComponent<EmptyProps<T>>;
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
+    /** Header de groupe personnalisé. */
+    GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
     /** Actions de groupe. */
     groupOperationList?: OperationListItem<T[]>[];
     /** Active le drag and drop. */
@@ -58,6 +62,8 @@ export interface GroupProps<T> {
     store: SearchStore<T>;
     /** CSS */
     theme?: GroupStyle;
+    /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
+    useGroupActionBars?: boolean;
 }
 
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
@@ -81,15 +87,28 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     render() {
-        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix, isLineSelectionnable, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage, store, theme} = this.props;
+        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", isLineSelectionnable, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage, store, theme, useGroupActionBars} = this.props;
         return (
             <div className={theme!.container}>
-                <ActionBar
-                    group={{code: group.code, label: group.label, totalCount: group.totalCount}}
-                    hasSelection={hasSelection}
-                    operationList={groupOperationList}
-                    store={this.store}
-                />
+                {useGroupActionBars ?
+                    <ActionBar
+                        group={{code: group.code, label: group.label, totalCount: group.totalCount}}
+                        hasSelection={hasSelection}
+                        operationList={groupOperationList}
+                        store={this.store}
+                    />
+                :
+                    <div className={theme!.header}>
+                        {hasSelection ?
+                            <IconButton
+                                icon={getIcon(`${i18nPrefix}.icons.actionBar.${this.store.selectionStatus}`)}
+                                onClick={this.store.toggleAll}
+                                theme={{toggle: theme!.selectionToggle, icon: theme!.selectionIcon}}
+                            />
+                        : null}
+                        <GroupHeader group={group} />
+                    </div>
+                }
                 <StoreList
                     canOpenDetail={canOpenDetail}
                     data={group.list}
@@ -126,6 +145,10 @@ export function GroupLoadingBar({i18nPrefix = "focus", store}: {i18nPrefix?: str
             {i18next.t(`${i18nPrefix}.search.loading`)}
         </div>
     : null;
+}
+
+function DefaultGroupHeader({group}: {group: GroupResult}) {
+    return <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>;
 }
 
 export default themr("group", styles)(Group);

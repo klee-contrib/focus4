@@ -1,3 +1,29 @@
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+
 .container:not(:last-child) {
     margin-bottom: 20px;
+}
+
+.selectionToggle > .selectionIcon:not([data-react-toolbox="tooltip"]) {
+    font-size: 24px;
+    vertical-align: initial;
+}
+
+.header {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    font-size: var(--font-size-big);
+    line-height: 36px;
+    height: 46px;
+    display: flex;
+}
+
+.header > button {
+    margin-right: 5px;
+}
+
+.container:first-child .header {
+    margin-top: 20px;
 }

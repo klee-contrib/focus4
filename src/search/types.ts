@@ -19,7 +19,7 @@ export interface FacetOutput {
 }
 
 /** Groupe résultat de recherche. */
-export interface GroupResult<T> {
+export interface GroupResult<T = any> {
     /** Code du groupe. */
     code: string;
     /** Libellé du groupe. */

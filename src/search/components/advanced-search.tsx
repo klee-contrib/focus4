@@ -42,8 +42,12 @@ export interface AdvancedSearchProps<T> {
     facetBoxPosition?: "action-bar" | "left" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: FacetBoxStyle;
+    /** Header de groupe personnalisé. */
+    GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
     /** Actions de groupe par scope. */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
+    /** Nombre d'éléments affichés par page de groupe. Par défaut: 5 */
+    groupPageSize?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Ajoute un bouton de retour en haut de page. Par défault: true */
@@ -104,6 +108,8 @@ export interface AdvancedSearchProps<T> {
     summaryTheme?: SummaryStyle;
     /** CSS. */
     theme?: AdvancedSearchStyle;
+    /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
+    useGroupActionBars?: boolean;
 }
 
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
@@ -156,9 +162,9 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderActionBar() {
-        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, operationList, orderableColumnList, nbDefaultDataListFacet, showSingleValuedFacets, searchBarPlaceholder, store} = this.props;
+        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, operationList, orderableColumnList, nbDefaultDataListFacet, showSingleValuedFacets, searchBarPlaceholder, store, useGroupActionBars} = this.props;
 
-        if (store.groups.length) {
+        if (store.groups.length && useGroupActionBars) {
             return null;
         }
 
@@ -181,7 +187,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, listTheme, lineTheme, groupOperationList, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, MosaicComponent, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme} = this.props;
+        const {groupTheme, GroupHeader, groupPageSize, listTheme, lineTheme, groupOperationList, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, MosaicComponent, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
@@ -190,7 +196,9 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 dragItemType={dragItemType}
                 dragLayerTheme={dragLayerTheme}
                 EmptyComponent={EmptyComponent}
+                GroupHeader={GroupHeader}
                 groupOperationList={groupOperationList}
+                groupPageSize={groupPageSize}
                 groupTheme={groupTheme}
                 hasDragAndDrop={hasDragAndDrop}
                 hasSelection={!!hasSelection}
@@ -203,6 +211,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 MosaicComponent={MosaicComponent}
                 isLineSelectionnable={isLineSelectionnable}
                 store={store}
+                useGroupActionBars={useGroupActionBars}
             />
         );
     }
