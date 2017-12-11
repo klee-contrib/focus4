@@ -48,6 +48,11 @@ export const fr = {
             title: "Filtrer"
         },
         loading: "Chargement...",
+        results: {
+            missing: "Non renseigné",
+            no: "Non",
+            yes: "Oui"
+        },
         summary: {
             by: "par",
             export: "Exporter",
