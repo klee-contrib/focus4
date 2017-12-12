@@ -78,11 +78,11 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     /** Action pour dégrouper et sélectionner la facette correspondant au groupe choisi. */
-    protected showAllHandler(value: string) {
+    protected showAllHandler() {
         const {groupingKey, selectedFacets, setProperties} = this.props.store;
         setProperties({
             groupingKey: undefined,
-            selectedFacets: {...selectedFacets, [groupingKey!]: value}
+            selectedFacets: {...selectedFacets, [groupingKey!]: this.props.group.code}
         });
     }
 
@@ -126,9 +126,9 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     lineTheme={lineTheme}
                     MosaicComponent={MosaicComponent}
                     operationList={lineOperationList}
-                    perPage={group.code ? perPage : undefined}
+                    perPage={perPage}
                     isLineSelectionnable={isLineSelectionnable}
-                    showAllHandler={group.code ? () => this.showAllHandler(group.code!) : undefined}
+                    showAllHandler={group.list.length < group.totalCount ? this.showAllHandler : undefined}
                     store={this.store}
                     theme={listTheme}
                 />
