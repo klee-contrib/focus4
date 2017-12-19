@@ -147,7 +147,7 @@ export function GroupLoadingBar({i18nPrefix = "focus", store}: {i18nPrefix?: str
     : null;
 }
 
-function DefaultGroupHeader({group}: {group: GroupResult}) {
+export function DefaultGroupHeader({group}: {group: GroupResult}) {
     return <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>;
 }
 
