@@ -1,17 +1,17 @@
-import {autobind} from "core-decorators";
-import {isArray, uniqueId} from "lodash";
-import {action, observable} from "mobx";
-import {observer} from "mobx-react";
+import { autobind } from "core-decorators";
+import { isArray, uniqueId } from "lodash";
+import { action, observable } from "mobx";
+import { observer } from "mobx-react";
 import moment from "moment";
 import * as React from "react";
-import {themr} from "react-css-themr";
-import {IconButton} from "react-toolbox/lib/button";
-import {Input} from "react-toolbox/lib/input";
-import {TimePickerTheme} from "react-toolbox/lib/time_picker";
+import { themr } from "react-css-themr";
+import { IconButton } from "react-toolbox/lib/button";
+import { Input } from "react-toolbox/lib/input";
+import { TimePickerTheme } from "react-toolbox/lib/time_picker";
 import Clock from "react-toolbox/lib/time_picker/Clock";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
-import {calendar, clock, input, toggle} from "./__style__/input-date.css";
+import { calendar, clock, fromRight, input, toggle } from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
 export interface InputTimeProps {
@@ -31,6 +31,8 @@ export interface InputTimeProps {
     theme?: TimePickerTheme;
     /** Valeur. */
     value?: string;
+    /** Composant affiché depuis la gauche ou la droite. */
+    displayFrom?: "left" | "right";
 }
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
@@ -58,7 +60,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     @action
-    componentWillReceiveProps({value}: InputTimeProps) {
+    componentWillReceiveProps({ value }: InputTimeProps) {
         this.time = this.toMoment(value);
         this.timeText = this.formatTime(value);
     }
@@ -78,7 +80,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     /** Formatte l'heure (ISO String) en entrée. */
     formatTime(value?: string) {
-        const {inputFormat = "HH:mm"} = this.props;
+        const { inputFormat = "HH:mm" } = this.props;
         if (isISOString(value)) {
             return moment(value, moment.ISO_8601).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
         } else {
@@ -88,7 +90,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
     @action
-    onDocumentClick({target}: Event) {
+    onDocumentClick({ target }: Event) {
         let parent = target as HTMLElement | null;
 
         while (parent && parent.getAttribute("data-id") !== this._inputTimeId) {
@@ -104,7 +106,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     /** Appelé lorsqu'on quitte le champ texte. */
     @action
     onInputBlur() {
-        const {inputFormat = "HH:mm", onChange} = this.props;
+        const { inputFormat = "HH:mm", onChange } = this.props;
         const text = (this.timeText || "").trim() || undefined;
 
         const time = moment(text, inputFormat, true);
@@ -139,7 +141,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     /** Ferme l'horloge lorsqu'on appuie sur Entrée ou Tab. */
     @action
-    handleKeyDown({key}: KeyboardEvent) {
+    handleKeyDown({ key }: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showClock = false;
             this.onInputBlur();
@@ -147,7 +149,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme} = this.props;
+        const { error, name, placeholder, disabled, theme, displayFrom = "left" } = this.props;
         return (
             <div data-focus="input-time" data-id={this._inputTimeId} className={input}>
                 <Input
@@ -161,7 +163,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                     value={this.timeText || ""}
                 />
                 {this.showClock ?
-                    <div className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay}`}>
+                    <div className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay} ${displayFrom === "right" ? fromRight : ""}`}>
                         <header className={theme!.header}>
                             <span id="hours" className={theme!.hours} onClick={() => this.clockDisplay = "hours"}>
                                 {(`0${this.time.hours()}`).slice(-2)}
@@ -170,7 +172,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                             <span id="minutes" className={theme!.minutes} onClick={() => this.clockDisplay = "minutes"}>
                                 {(`0${this.time.minutes()}`).slice(-2)}
                             </span>
-                            <IconButton icon="clear" theme={{toggle}} onClick={() => this.showClock = false} />
+                            <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showClock = false} />
                         </header>
                         <div className={`${theme!.clockWrapper} ${clock}`}>
                             <Clock
@@ -183,7 +185,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                             />
                         </div>
                     </div>
-                : null}
+                    : null}
             </div>
         );
     }

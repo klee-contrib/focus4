@@ -27,3 +27,7 @@
     top: 5px;
     color: var(--color-white) !important;
 }
+
+.fromRight {
+    right: 0;
+}

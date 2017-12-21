@@ -1,17 +1,17 @@
-import {autobind} from "core-decorators";
-import {isArray, uniqueId} from "lodash";
-import {action, observable} from "mobx";
-import {observer} from "mobx-react";
+import { autobind } from "core-decorators";
+import { isArray, uniqueId } from "lodash";
+import { action, observable } from "mobx";
+import { observer } from "mobx-react";
 import moment from "moment";
 import * as React from "react";
-import {themr} from "react-css-themr";
-import {IconButton} from "react-toolbox/lib/button";
-import {DatePickerTheme} from "react-toolbox/lib/date_picker";
+import { themr } from "react-css-themr";
+import { IconButton } from "react-toolbox/lib/button";
+import { DatePickerTheme } from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
-import {Input} from "react-toolbox/lib/input";
+import { Input } from "react-toolbox/lib/input";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
-import {calendar, input, toggle} from "./__style__/input-date.css";
+import { calendar, fromRight, input, toggle } from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
 
@@ -48,6 +48,8 @@ export interface InputDateProps {
     theme?: DatePickerTheme;
     /** Valeur. */
     value?: string;
+    /** Composant affiché depuis la gauche ou la droite. */
+    displayFrom?: "left" | "right";
 }
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
@@ -75,7 +77,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     @action
-    componentWillReceiveProps({value}: InputDateProps) {
+    componentWillReceiveProps({ value }: InputDateProps) {
         this.date = this.toMoment(value);
         this.dateText = this.formatDate(value);
     }
@@ -86,7 +88,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
 
     /** Convertit le texte en objet MomentJS. */
     toMoment(value?: string) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const { ISOStringFormat = "utc-midnight" } = this.props;
         const m = ISOStringFormat === "utc-midnight" ? moment.utc : moment;
 
         if (isISOString(value)) {
@@ -98,7 +100,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
 
     /** Formatte la date (ISO String) en entrée selon le format demandé. */
     formatDate(value?: string) {
-        const {inputFormat = "MM/DD/YYYY"} = this.props;
+        const { inputFormat = "MM/DD/YYYY" } = this.props;
         if (isISOString(value)) {
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
             return moment(value, moment.ISO_8601).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
@@ -109,7 +111,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
     @action
-    onDocumentClick({target}: Event) {
+    onDocumentClick({ target }: Event) {
         let parent = target as HTMLElement | null;
 
         while (parent && parent.getAttribute("data-id") !== this._inputDateId) {
@@ -125,7 +127,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     /** Appelé lorsqu'on quitte le champ texte. */
     @action
     onInputBlur() {
-        const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
+        const { inputFormat = "MM/DD/YYYY", onChange } = this.props;
         const text = (this.dateText || "").trim() || undefined;
 
         const date = this.transformDate(text, inputFormat, true);
@@ -142,7 +144,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     /** Au clic sur le calendrier. */
     @action
     onCalendarChange(date: Date, dayClick: boolean) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const { ISOStringFormat = "utc-midnight" } = this.props;
 
         // On arrange la date pour forcer le minuit demandé, au cas où la date d'entrée ne soit pas dans la même timezone.
         if (ISOStringFormat === "utc-midnight") {
@@ -164,7 +166,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
 
     /** Ferme le calendrier lorsqu'on appuie sur Entrée ou Tab. */
     @action
-    handleKeyDown({key}: KeyboardEvent) {
+    handleKeyDown({ key }: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showCalendar = false;
             this.onInputBlur();
@@ -175,7 +177,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     transformDate(date: Date): moment.Moment; // Depuis le calendrier.
     transformDate(date: string | undefined, inputFormat: string | string[], strict: true): moment.Moment; // Depuis la saisie manuelle.
     transformDate(...params: any[]) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const { ISOStringFormat = "utc-midnight" } = this.props;
 
         // Dans les deux cas, la date d'entrée est bien en "local-midnight".
         if (ISOStringFormat === "local-midnight") {
@@ -188,7 +190,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme, calendarFormat = "ddd, MMM D"} = this.props;
+        const { error, name, placeholder, disabled, theme, calendarFormat = "ddd, MMM D", displayFrom = "left" } = this.props;
         return (
             <div data-focus="input-date" data-id={this._inputDateId} className={input}>
                 <Input
@@ -202,7 +204,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
                     value={this.dateText || ""}
                 />
                 {this.showCalendar ?
-                    <div className={calendar}>
+                    <div className={`${calendar} ${displayFrom === "right" ? fromRight : ""}`}>
                         <header className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}>
                             <span id="years" className={theme!.year} onClick={() => this.calendarDisplay = "years"}>
                                 {this.date.year()}
@@ -210,7 +212,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
                             <h3 id="months" className={theme!.date} onClick={() => this.calendarDisplay = "months"}>
                                 {this.date.format(calendarFormat)}
                             </h3>
-                            <IconButton icon="clear" theme={{toggle}} onClick={() => this.showCalendar = false} />
+                            <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showCalendar = false} />
                         </header>
                         <div className={theme!.calendarWrapper}>
                             <Calendar
@@ -223,7 +225,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
                             />
                         </div>
                     </div>
-                : null}
+                    : null}
             </div>
         );
     }
