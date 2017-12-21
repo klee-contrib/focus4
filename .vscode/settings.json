@@ -3,7 +3,6 @@
     "editor.snippetSuggestions": "bottom",
     "files.trimTrailingWhitespace": true,
     "relativePath.removeExtension": true,
-    "relativePath.removeLeadingDot": true,
     "relativePath.ignore": [
         "**/node_modules/**",
         "**/dist/**"

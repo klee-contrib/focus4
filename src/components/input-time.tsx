@@ -11,12 +11,14 @@ import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import Clock from "react-toolbox/lib/time_picker/Clock";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
-import {calendar, clock, input, toggle} from "./__style__/input-date.css";
+import {calendar, clock, fromRight, input, toggle} from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
 export interface InputTimeProps {
     /** Désactive l'input. */
     disabled?: boolean;
+    /** Composant affiché depuis la gauche ou la droite. */
+    displayFrom?: "left" | "right";
     /** Message d'erreur. */
     error?: string | null;
     /** Format de la date dans l'input. */
@@ -147,7 +149,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme} = this.props;
+        const {error, name, placeholder, disabled, theme, displayFrom = "left"} = this.props;
         return (
             <div data-focus="input-time" data-id={this._inputTimeId} className={input}>
                 <Input
@@ -161,7 +163,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                     value={this.timeText || ""}
                 />
                 {this.showClock ?
-                    <div className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay}`}>
+                    <div className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay} ${displayFrom === "right" ? fromRight : ""}`}>
                         <header className={theme!.header}>
                             <span id="hours" className={theme!.hours} onClick={() => this.clockDisplay = "hours"}>
                                 {(`0${this.time.hours()}`).slice(-2)}
@@ -170,7 +172,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                             <span id="minutes" className={theme!.minutes} onClick={() => this.clockDisplay = "minutes"}>
                                 {(`0${this.time.minutes()}`).slice(-2)}
                             </span>
-                            <IconButton icon="clear" theme={{toggle}} onClick={() => this.showClock = false} />
+                            <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showClock = false} />
                         </header>
                         <div className={`${theme!.clockWrapper} ${clock}`}>
                             <Clock

@@ -11,7 +11,7 @@ import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {Input} from "react-toolbox/lib/input";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
-import {calendar, input, toggle} from "./__style__/input-date.css";
+import {calendar, fromRight, input, toggle} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
 
@@ -20,6 +20,8 @@ export interface InputDateProps {
     calendarFormat?: string;
     /** Désactive l'input. */
     disabled?: boolean;
+    /** Composant affiché depuis la gauche ou la droite. */
+    displayFrom?: "left" | "right";
     /** Message d'erreur. */
     error?: string | null;
     /** Format de la date dans l'input. */
@@ -188,7 +190,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme, calendarFormat = "ddd, MMM D"} = this.props;
+        const {error, name, placeholder, disabled, theme, calendarFormat = "ddd, MMM D", displayFrom = "left"} = this.props;
         return (
             <div data-focus="input-date" data-id={this._inputDateId} className={input}>
                 <Input
@@ -202,7 +204,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
                     value={this.dateText || ""}
                 />
                 {this.showCalendar ?
-                    <div className={calendar}>
+                    <div className={`${calendar} ${displayFrom === "right" ? fromRight : ""}`}>
                         <header className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}>
                             <span id="years" className={theme!.year} onClick={() => this.calendarDisplay = "years"}>
                                 {this.date.year()}
@@ -210,7 +212,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
                             <h3 id="months" className={theme!.date} onClick={() => this.calendarDisplay = "months"}>
                                 {this.date.format(calendarFormat)}
                             </h3>
-                            <IconButton icon="clear" theme={{toggle}} onClick={() => this.showCalendar = false} />
+                            <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showCalendar = false} />
                         </header>
                         <div className={theme!.calendarWrapper}>
                             <Calendar
