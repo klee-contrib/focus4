@@ -114,19 +114,19 @@ export class ListStore<T> extends ListStoreBase<T> {
      */
     @action
     async load(fetchNext?: boolean) {
-        if (this.service) {
-            this.pendingCount++;
-            const response = await this.service({
-                skip: fetchNext && this.dataList.length < this.totalCount ? this.dataList.length : 0,
-                sortDesc: !this.sortAsc,
-                sortFieldName: this.sortBy,
-                top: this.top
-            });
-            this.pendingCount--;
+        this.pendingCount++;
+        const response = await this.service!({
+            skip: fetchNext && this.dataList.length < this.totalCount ? this.dataList.length : 0,
+            sortDesc: !this.sortAsc,
+            sortFieldName: this.sortBy,
+            top: this.top
+        });
+        this.pendingCount--;
 
-            this.innerDataList = (fetchNext ? [...this.dataList, ...response.dataList] : response.dataList) || [];
-            this.serverCount = response.totalCount;
-        }
+        this.innerDataList = (fetchNext ? [...this.dataList, ...response.dataList] : response.dataList) || [];
+        this.serverCount = response.totalCount;
+
+        return response;
     }
 
     /** Sélectionne ou déselectionne tous les éléments du store. */

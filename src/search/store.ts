@@ -9,7 +9,7 @@ import {ListStoreBase, MiniListStore} from "../list";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
 
 /** Définition d'un service de recherche. */
-export type SearchService<T = any> = (query: QueryInput) => Promise<QueryOutput<T>>;
+export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
 
 /** Critères génériques de recherche. */
 export interface SearchProperties {
@@ -50,7 +50,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     readonly groups: IObservableArray<GroupResult<T>> = observable([]);
 
     /** Service de recherche. */
-    readonly service: SearchService<T>;
+    readonly service: SearchService<T, C>;
 
     /**
      * Crée un nouveau store de recherche.
@@ -58,15 +58,15 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * @param criteria La description du critère de recherche personnalisé.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      */
-    constructor(service: SearchService<T>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
+    constructor(service: SearchService<T, C>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
     /**
      * Crée un nouveau store de recherche.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      * @param service Le service de recherche.
      * @param criteria La description du critère de recherche personnalisé.
      */
-    constructor(service: SearchService<T>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
-    constructor(service: SearchService<T>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
+    constructor(service: SearchService<T, C>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
+    constructor(service: SearchService<T, C>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
         super();
         this.service = service;
 
@@ -226,6 +226,8 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         this.list.replace(response.list || []);
         this.groups.replace(response.groups || []);
         this.serverCount = response.totalCount;
+
+        return response;
     }
 
     /** Sélectionne ou déselectionne tous les élements récupérés (pas sur le serveur). */
