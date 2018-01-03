@@ -28,8 +28,8 @@ export interface FieldProps<
     VK extends string,                  // Nom de la propriété de valeur (liste de référence).
     LK extends string                   // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
-    /** Par défaut : 12. */
-    contentSize?: number;
+    /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
+    disableInlineSizing?: boolean;
     /** Surcharge l'erreur du field. */
     error?: string | null;
     /** Force l'affichage de l'erreur, même si le champ n'a pas encore été modifié. */
@@ -50,8 +50,8 @@ export interface FieldProps<
     labelCellPosition?: string;
     /** Nom de la propriété de libellé. Doit être casté en lui-même (ex: `{labelKey: "label" as "label"}`). Par défaut: "label". */
     labelKey?: LK;
-    /** Par défaut : 4. */
-    labelSize?: number;
+    /** Largeur en % du label. Par défaut : 33. */
+    labelRatio?: number;
     /** Nom du champ. */
     name: string;
     /** Handler de modification de la valeur. */
@@ -62,6 +62,8 @@ export interface FieldProps<
     value: any;
     /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */
     valueKey?: VK;
+    /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
+    valueRatio?: number;
     /** Liste des valeurs de la liste de référence. Doit contenir les propriétés `valueKey` et `labelKey`. */
     values?: R[];
 }
@@ -176,15 +178,16 @@ export class Field<
     }
 
     render() {
-        const {contentSize = 12, labelSize = 4, isRequired, hasLabel = true, isEdit, theme, className = ""} = this.props;
+        const {disableInlineSizing, hasLabel = true,  labelRatio = 33, isRequired, isEdit, theme, className = ""} = this.props;
+        const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
         return (
             <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${this.error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
                 {hasLabel ?
-                    <div style={{width: `${labelSize * 100 / contentSize}%`}} className={theme!.label}>
+                    <div style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}} className={theme!.label}>
                         {this.label()}
                     </div>
                 : null}
-                <div style={{width: `${(contentSize - (hasLabel ? labelSize : 0)) * 100 / contentSize}%`}} className ={`${theme!.value} ${className}`}>
+                <div style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}} className ={`${theme!.value} ${className}`}>
                     {isEdit ? this.input() : this.display()}
                 </div>
             </div>
