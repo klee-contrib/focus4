@@ -5,17 +5,19 @@
 .field {
     display: flex;
     align-items: stretch;
+    flex-wrap: wrap;
 }
 
 .label {
     text-align: right;
     font-weight: bold;
     font-size: 14px;
-    line-height: 21px;
+    line-height: 20px;
 }
 
 .label,
 .value {
+    flex-shrink: 0;
     padding: 8px;
     box-sizing: border-box;
 }
@@ -23,10 +25,6 @@
 .edit.required .label::after {
     content: "*";
     margin-left: 3px;
-}
-
-.edit .label {
-    line-height: 23px;
 }
 
 .edit [data-react-toolbox="input"],

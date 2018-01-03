@@ -7,6 +7,7 @@ import {Validator} from "./validation";
 
 /** Props de base pour un composant d'affichage. */
 export interface BaseDisplayProps {
+    theme?: {};
     value?: any;
 }
 
@@ -16,6 +17,7 @@ export interface BaseInputProps {
     labelKey?: string;
     name?: string;
     onChange?: Function;
+    theme?: {};
     value?: any;
     valueKey?: string;
     values?: any[];

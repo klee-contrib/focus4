@@ -3,7 +3,7 @@ import i18next from "i18next";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
+import {themeable, themr} from "react-css-themr";
 import {Input} from "react-toolbox/lib/input";
 
 import {Display} from "../components";
@@ -57,7 +57,7 @@ export interface FieldProps<
     /** Handler de modification de la valeur. */
     onChange?: ICProps["onChange"];
     /** CSS. */
-    theme?: FieldStyle;
+    theme?: FieldStyle & {display?: DCProps["theme"], input?: ICProps["theme"]};
     /** Valeur. */
     value: any;
     /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */
@@ -127,7 +127,7 @@ export class Field<
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}} = this.props;
+        const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}, theme} = this.props;
         const FinalDisplay: ReactComponent<any> = DisplayComponent || Display;
         return (
             <FinalDisplay
@@ -135,6 +135,7 @@ export class Field<
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
                 labelKey={labelKey}
+                theme={themeable(displayProps.theme || {} as any, theme!.display as any)}
                 value={value}
                 valueKey={valueKey}
                 values={values}
@@ -144,7 +145,7 @@ export class Field<
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps, name} = this.props;
+        const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps = {}, name, theme} = this.props;
         const FinalInput: ReactComponent<any> = InputComponent || Input;
 
         let props: any = {
@@ -152,7 +153,8 @@ export class Field<
             value: inputFormatter && inputFormatter(value) || value,
             error: this.showError && this.error || undefined,
             name,
-            onChange: this.onChange
+            onChange: this.onChange,
+            theme: themeable(inputProps.theme || {} as any, theme!.input as any)
         };
 
         if (values) {
