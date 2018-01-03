@@ -156,7 +156,7 @@ export class ListStore<T> extends ListStoreBase<T> {
     private sortAndFilter() {
         // Tri.
         if (this.sortBy) {
-            this.innerDataList = orderBy(this.baseDataList, this.sortBy, this.sortAsc ? "asc" : "desc");
+            this.innerDataList = orderBy(this.baseDataList, item => `${item[this.sortBy!]}`.toLowerCase(), this.sortAsc ? "asc" : "desc");
         } else {
             this.innerDataList = this.baseDataList;
         }
