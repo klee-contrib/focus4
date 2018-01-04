@@ -69,6 +69,9 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
     getMenuWidth() {
         this.context.layout.menuWidth = findDOMNode(this).clientWidth;
     }
+    componentWillUnmount() {
+        this.context.layout.menuWidth = 0;
+    }
 
     render() {
         const {activeRoute, theme} = this.props;

@@ -23,7 +23,7 @@ export interface TableProps<T> extends ListBaseProps<T> {
 /** Tableau standard */
 @autobind
 @observer
-export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T}> extends ListBase<T, P> {
+export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> extends ListBase<T, P> {
 
     /** Les données. */
     protected get data() {
@@ -83,7 +83,7 @@ export default ThemedTable;
  * Crée un composant de tableau standard.
  * @param props Les props du tableau.
  */
-export function tableFor<T>(props: TableProps<T>) {
+export function tableFor<T>(props: TableProps<T> & {data: T[]}) {
     const Table2 = ThemedTable as any;
     return <Table2 {...props} />;
 }

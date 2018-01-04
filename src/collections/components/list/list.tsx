@@ -87,7 +87,7 @@ export interface LineItem<P> {
 /** Composant de liste standard */
 @autobind
 @observer
-export class List<T, P extends ListProps<T> = ListProps<T> & {data: T}> extends ListBase<T, P> {
+export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extends ListBase<T, P> {
 
     // On récupère les infos du ListWrapper dans le contexte.
     static contextTypes = {
@@ -336,7 +336,7 @@ export default ThemedList;
  * Crée un composant de liste standard.
  * @param props Les props de la liste.
  */
-export function listFor<T>(props: ListProps<T>) {
+export function listFor<T>(props: ListProps<T> & {data: T[]}) {
     const List2 = ThemedList as any;
     return <List2 {...props} />;
 }

@@ -14,7 +14,7 @@ import {classReaction} from "../../../util";
 
 import {isList, isSearch, ListStoreBase} from "../../store";
 import {FacetBox, shouldDisplayFacet} from "../search";
-import {ContextualActions, OperationListItem} from "./contextual-actions";
+import ContextualActions, {OperationListItem} from "./contextual-actions";
 
 import * as styles from "./__style__/action-bar.css";
 

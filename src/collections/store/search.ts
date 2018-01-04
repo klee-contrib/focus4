@@ -51,7 +51,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     readonly list: IObservableArray<T> = observable([]);
 
     /** Service de recherche. */
-    readonly service: SearchService<T, C>;
+    readonly service: SearchService<T>;
 
     /** Nombre de requêtes serveur en cours. */
     @observable private pendingCount = 0;
@@ -65,15 +65,15 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * @param criteria La description du critère de recherche personnalisé.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      */
-    constructor(service: SearchService<T, C>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
+    constructor(service: SearchService<T>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
     /**
      * Crée un nouveau store de recherche.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      * @param service Le service de recherche.
      * @param criteria La description du critère de recherche personnalisé.
      */
-    constructor(service: SearchService<T, C>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
-    constructor(service: SearchService<T, C>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
+    constructor(service: SearchService<T>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
+    constructor(service: SearchService<T>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
         super();
         this.service = service;
 
@@ -191,6 +191,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     @action
     clear() {
         this.serverCount = 0;
+        this.selectedList.clear();
         this.facets.clear();
         this.list.clear();
         this.groups.clear();

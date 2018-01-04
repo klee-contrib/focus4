@@ -8,13 +8,13 @@ import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 
-import {ListStoreBase, SearchStore} from "../../store";
+import {isSearch, ListStoreBase} from "../../store";
 import {Table, TableProps} from "./table";
 
 import * as styles from "./__style__/list.css";
 
 /** Props additionnelles pour un StoreTable. */
-export interface StoreTableProps<T> {
+export interface StoreTableProps<T> extends TableProps<T> {
     /** Code du groupe à afficher, pour une recherche groupée. */
     groupCode?: string;
     /** Les colonnes sur lesquelles on peut trier. */
@@ -32,7 +32,7 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     @computed
     protected get data() {
         const {groupCode, store} = this.props;
-        return groupCode ? (store as SearchStore<T>).groups.find(group => group.code === groupCode).list : store.list;
+        return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
     }
 
     /** On modifie le header pour y ajouter les boutons de tri. */

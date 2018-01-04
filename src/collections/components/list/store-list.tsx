@@ -6,7 +6,7 @@ import {themr} from "react-css-themr";
 
 import {ReactComponent} from "../../../config";
 
-import {ListStoreBase, SearchStore} from "../../store";
+import {isSearch, ListStoreBase} from "../../store";
 import {LineProps, LineWrapperProps} from "./line";
 import {LineItem, List, ListProps} from "./list";
 
@@ -33,7 +33,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
     @computed
     protected get data() {
         const {groupCode, store} = this.props;
-        return groupCode ? (store as SearchStore<T>).groups.find(group => group.code === groupCode).list : store.list;
+        return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
     }
 
     /** `hasMoreData` regarde dans le store pour savoir s'il y a d'autres éléments. */
