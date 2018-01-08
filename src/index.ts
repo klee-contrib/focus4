@@ -4,16 +4,15 @@
 
 export {autobind} from "core-decorators";
 import i18next from "i18next"; export {i18next as i18n};
-export {action, observable} from "mobx";
+export {action, computed, observable} from "mobx";
 export {observer} from "mobx-react";
 import * as React from "react"; export {React};
 
+export {AdvancedSearch, listFor, tableFor, timelineFor} from "./collections";
 export {Panel, Popin} from "./components";
 export {AutoForm, displayFor, fieldFor, selectFor, stringFor} from "./entity";
 export {injectByName, injectByPropName} from "./ioc";
-export {listFor, tableFor, timelineFor} from "./list";
 export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
-export {AdvancedSearch, SearchBar} from "./search";
 export {classAutorun} from "./util";

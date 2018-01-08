@@ -16,12 +16,11 @@ import {InputTheme} from "react-toolbox/lib/input";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
+import {ActionBarStyle, AdvancedSearchStyle, ContextualActionsStyle, DragLayerStyle, FacetBoxStyle, FacetStyle, GroupStyle, LineStyle, ListStyle, ListWrapperStyle, SearchBarStyle, SummaryStyle} from "../collections";
 import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, PanelStyle, PopinStyle, ScrollspyStyle} from "../components";
 import {FieldStyle} from "../entity";
-import {ContextualActionsStyle, DragLayerStyle, LineStyle, ListStyle, ListWrapperStyle} from "../list";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
-import {ActionBarStyle, AdvancedSearchStyle, FacetBoxStyle, FacetStyle, GroupStyle, SearchBarStyle, SummaryStyle} from "../search";
 
 import ErrorCenter, {ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
