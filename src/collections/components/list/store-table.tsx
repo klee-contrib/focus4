@@ -8,7 +8,7 @@ import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 
-import {isSearch, ListStoreBase} from "../../store";
+import {isSearch, ListStoreBase, SearchStore} from "../../store";
 import {Table, TableProps} from "./table";
 
 import * as styles from "./__style__/list.css";
@@ -33,6 +33,25 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     protected get data() {
         const {groupCode, store} = this.props;
         return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
+    }
+
+    /** Correspond aux données chargées mais non affichées. */
+    @computed
+    private get hasMoreHidden() {
+        return this.displayedCount && this.data.length > this.displayedCount || false;
+    }
+
+    /** Correpond aux données non chargées. */
+    @computed
+    private get hasMoreToLoad() {
+        const {store} = this.props;
+        return isSearch(store) && store.totalCount > store.currentCount;
+    }
+
+    /** On complète le `hasMoreData` avec l'info du nombre de données chargées, si c'est un SearchStore. */
+    @computed
+    protected get hasMoreData() {
+        return this.hasMoreHidden || this.hasMoreToLoad;
     }
 
     /** On modifie le header pour y ajouter les boutons de tri. */
@@ -65,6 +84,15 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
                 </tr>
             </thead>
         );
+    }
+
+    /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */
+    protected handleShowMore() {
+        if (this.hasMoreHidden) {
+            super.handleShowMore();
+        } else if (this.hasMoreToLoad) {
+            (this.props.store as SearchStore).search(true);
+        }
     }
 
     /** Fonction de tri, modifie les critères du store. */

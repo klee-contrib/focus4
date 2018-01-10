@@ -1,20 +1,14 @@
 import {autobind} from "core-decorators";
-import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
-import {Button} from "react-toolbox/lib/button";
 
-import {getIcon} from "../../../../components";
 import {ReactComponent} from "../../../../config";
 import {DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, OperationListItem, StoreList} from "../../list";
 
 import {GroupResult, SearchStore} from "../../../store";
 import Group, {GroupLoadingBar, GroupStyle} from "./group";
 export {GroupStyle};
-
-import {bottomRow} from "../../list/__style__/list.css";
 
 /** Props de Results. */
 export interface ResultsProps<T> {
@@ -34,8 +28,6 @@ export interface ResultsProps<T> {
     GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
     /** Actions de groupe par groupe (code / valeur). */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
-    /** Nombre d'éléments affichés par page de groupe. Par défaut: 5 */
-    groupPageSize?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Active le drag and drop. */
@@ -60,6 +52,8 @@ export interface ResultsProps<T> {
     MosaicComponent?: ReactComponent<LineProps<T>>;
     /** Offset pour le scroll inifini. Par défaut : 250 */
     offset?: number;
+    /** Nombre d'éléments affichés par page de liste. */
+    perPage?: number;
     /** Store de recherche. */
     store: SearchStore<T>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
@@ -71,52 +65,10 @@ export interface ResultsProps<T> {
 @observer
 export class Results<T> extends React.Component<ResultsProps<T>, void> {
 
-    componentDidMount() {
-        window.addEventListener("scroll", this.scrollListener);
-        window.addEventListener("resize", this.scrollListener);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("scroll", this.scrollListener);
-        window.removeEventListener("resize", this.scrollListener);
-    }
-
-    /** Gère le scroll infini. */
-    protected scrollListener() {
-        const {store, offset = 250, isManualFetch} = this.props;
-        if (!isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
-            const el = findDOMNode(this) as HTMLElement;
-            const scrollTop = window.pageYOffset;
-            if (el && topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < offset) {
-                if (!store.isLoading) {
-                    store.search(true);
-                }
-            }
-        }
-    }
-
-    /** Bouton permettant de lancer la recherche des résultats suivants, si on n'est pas en scroll infini. */
-    protected get showMoreButton() {
-        const {store, isManualFetch, i18nPrefix = "focus"} = this.props;
-        if (isManualFetch && store.currentCount < store.totalCount && !store.groupingKey) {
-            return (
-                <div className={bottomRow}>
-                    <Button
-                        onClick={() => !store.isLoading && store.search(true)}
-                        icon={getIcon(`${i18nPrefix}.icons.list.add`)}
-                        label={`${i18next.t(`${i18nPrefix}.list.show.more`)}`}
-                    />
-                </div>
-            );
-        }
-
-        return null;
-    }
-
     /** Props communes entre le composant de liste et ceux de groupes. */
     @computed
     private get commonListProps() {
-        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, LineComponent, lineTheme, MosaicComponent, isLineSelectionnable, store} = this.props;
+        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, perPage, isLineSelectionnable, store} = this.props;
         return {
             canOpenDetail,
             detailHeight,
@@ -131,12 +83,14 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
             lineTheme,
             MosaicComponent,
             isLineSelectionnable,
+            isManualFetch,
+            perPage,
             store
         };
     }
 
     render() {
-        const {GroupHeader, groupOperationList, groupTheme, groupPageSize = 5, i18nPrefix, lineOperationList, listTheme, store, useGroupActionBars} = this.props;
+        const {GroupHeader, groupOperationList, groupTheme, i18nPrefix, lineOperationList, listTheme, store, useGroupActionBars} = this.props;
         const {groups, list} = store;
 
         const filteredGroups = groups.filter(group => group.totalCount !== 0);
@@ -152,7 +106,6 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                             key={group.code}
                             lineOperationList={lineOperationList}
                             listTheme={listTheme}
-                            perPage={groupPageSize}
                             theme={groupTheme}
                             useGroupActionBars={useGroupActionBars}
                         />
@@ -170,7 +123,6 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                         theme={listTheme}
                     />
                     <GroupLoadingBar i18nPrefix={i18nPrefix} store={store} />
-                    {this.showMoreButton}
                 </div>
             );
         }
@@ -180,10 +132,3 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
 }
 
 export default Results;
-
-function topOfElement(element: HTMLElement): number {
-    if (!element) {
-        return 0;
-    }
-    return element.offsetTop + topOfElement((element.offsetParent as HTMLElement));
-}

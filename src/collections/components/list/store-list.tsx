@@ -6,7 +6,7 @@ import {themr} from "react-css-themr";
 
 import {ReactComponent} from "../../../config";
 
-import {isSearch, ListStoreBase} from "../../store";
+import {isSearch, ListStoreBase, SearchStore} from "../../store";
 import {LineProps, LineWrapperProps} from "./line";
 import {LineItem, List, ListProps} from "./list";
 
@@ -36,15 +36,23 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
         return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
     }
 
-    /** `hasMoreData` regarde dans le store pour savoir s'il y a d'autres éléments. */
+    /** Correspond aux données chargées mais non affichées. */
+    @computed
+    private get hasMoreHidden() {
+        return this.displayedCount && this.data.length > this.displayedCount || false;
+    }
+
+    /** Correpond aux données non chargées. */
+    @computed
+    private get hasMoreToLoad() {
+        const {store} = this.props;
+        return isSearch(store) && store.totalCount > store.currentCount;
+    }
+
+    /** On complète le `hasMoreData` avec l'info du nombre de données chargées, si c'est un SearchStore. */
     @computed
     protected get hasMoreData() {
-        const {store} = this.props;
-        if (this.displayedCount) {
-            return this.data.length > this.displayedCount;
-        } else {
-            return store.totalCount > store.currentCount;
-        }
+        return this.hasMoreHidden || this.hasMoreToLoad;
     }
 
     /**
@@ -68,12 +76,12 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
         })) as LineItem<LineWrapperProps<T>>[];
     }
 
-    /** `handleShowMore` appelle le store de liste serveur si c'est le cas. */
+    /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */
     protected handleShowMore() {
-        if ((this.props.store as any).service) {
-            (this.props.store as any).load(true);
-        } else {
+        if (this.hasMoreHidden) {
             super.handleShowMore();
+        } else if (this.hasMoreToLoad) {
+            (this.props.store as SearchStore).search(true);
         }
     }
 }

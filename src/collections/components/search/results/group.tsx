@@ -54,7 +54,7 @@ export interface GroupProps<T> {
     /** Composant de mosaïque. */
     MosaicComponent?: ReactComponent<LineProps<T>>;
     /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
-    perPage: number;
+    perPage?: number;
     /** Store contenant la liste. */
     store: SearchStore<T>;
     /** CSS */
