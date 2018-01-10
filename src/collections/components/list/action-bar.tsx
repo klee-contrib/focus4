@@ -119,8 +119,9 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                     }}
                     onClick={() => this.displayFacetBox = false}
                 >
-                    {orderableColumnList.map(description => (
+                    {orderableColumnList.map((description, idx) => (
                         <MenuItem
+                            key={idx}
                             onClick={action(() => {
                                 store.sortBy = description.key as keyof T;
                                 store.sortAsc = description.order;
@@ -151,6 +152,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
             const menuItems = reduce(groupableColumnList, (operationList, label, key) => [
                 ...operationList,
                 <MenuItem
+                    key={key}
                     onClick={() => store.groupingKey = key}
                     caption={i18next.t(label)}
                 />

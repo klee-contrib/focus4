@@ -8,7 +8,7 @@ import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 
-import {isSearch, ListStoreBase, SearchStore} from "../../store";
+import {isSearch, ListStoreBase} from "../../store";
 import {Table, TableProps} from "./table";
 
 import * as styles from "./__style__/list.css";
@@ -35,6 +35,11 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
         return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
     }
 
+    protected get shouldAttachScrollListener() {
+        const {isManualFetch, store} = this.props;
+        return !isManualFetch && isSearch(store);
+    }
+
     /** Correspond aux données chargées mais non affichées. */
     @computed
     private get hasMoreHidden() {
@@ -52,6 +57,17 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     @computed
     protected get hasMoreData() {
         return this.hasMoreHidden || this.hasMoreToLoad;
+    }
+
+    /** Label du bouton "Voir plus". */
+    @computed
+    protected get showMoreLabel() {
+        const {i18nPrefix = "focus", store} = this.props;
+        if (isSearch(store)) {
+            return i18next.t(`${i18nPrefix}.list.show.more`);
+        } else {
+            return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+        }
     }
 
     /** On modifie le header pour y ajouter les boutons de tri. */
@@ -88,10 +104,14 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
 
     /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */
     protected handleShowMore() {
+        const {perPage, store} = this.props;
         if (this.hasMoreHidden) {
             super.handleShowMore();
-        } else if (this.hasMoreToLoad) {
-            (this.props.store as SearchStore).search(true);
+        } else if (isSearch(store) && this.hasMoreToLoad && !store.isLoading) {
+            store.search(true);
+            if (perPage) {
+                super.handleShowMore();
+            }
         }
     }
 

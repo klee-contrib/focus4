@@ -1,3 +1,6 @@
+import scroll from "smoothscroll-polyfill";
+scroll.polyfill();
+
 import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {computed} from "mobx";
@@ -53,7 +56,7 @@ export interface GroupProps<T> {
     listTheme?: ListStyle;
     /** Composant de mosaïque. */
     MosaicComponent?: ReactComponent<LineProps<T>>;
-    /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
+    /** Nombre d'éléments par page. Par défaut : 5. */
     perPage?: number;
     /** Store contenant la liste. */
     store: SearchStore<T>;
@@ -81,10 +84,14 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
             groupingKey: undefined,
             selectedFacets: {...selectedFacets, [groupingKey!]: this.props.group.code}
         });
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
     render() {
-        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", isLineSelectionnable, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage, store, theme, useGroupActionBars} = this.props;
+        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", isLineSelectionnable, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
         return (
             <div className={theme!.container}>
                 {useGroupActionBars ?
@@ -116,9 +123,9 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     groupCode={group.code}
                     hasDragAndDrop={hasDragAndDrop}
                     hasSelection={hasSelection}
-                    hideAdditionalItems={!!group.code}
+                    hideAdditionalItems={true}
                     i18nPrefix={i18nPrefix}
-                    isManualFetch={!!group.code}
+                    isManualFetch={true}
                     LineComponent={LineComponent}
                     lineTheme={lineTheme}
                     MosaicComponent={MosaicComponent}

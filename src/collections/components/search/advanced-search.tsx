@@ -44,6 +44,8 @@ export interface AdvancedSearchProps<T> {
     GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
     /** Actions de groupe par scope. */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
+    /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
+    groupPageSize?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Ajoute un bouton de retour en haut de page. Par défault: true */
@@ -76,6 +78,8 @@ export interface AdvancedSearchProps<T> {
     lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
+    /** Nombre d'éléments affichés par page de liste (pagination locale, indépendante de la recherche). */
+    listPageSize?: number;
     /** CSS de la liste. */
     listTheme?: ListStyle;
     /** Mode des listes dans le wrapper. Par défaut : "list". */
@@ -88,12 +92,12 @@ export interface AdvancedSearchProps<T> {
     mosaicHeight?: number;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
+    /** Offset pour le scroll infini. Par défaut : 250 */
+    offset?: number;
     /** La liste des actions globales.  */
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string, label: string, order: boolean}[];
-    /** Nombre d'éléments affichés par page de liste. */
-    perPage?: number;
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -185,7 +189,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, GroupHeader, perPage, listTheme, lineTheme, groupOperationList, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, MosaicComponent, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
+        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
@@ -196,6 +200,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 EmptyComponent={EmptyComponent}
                 GroupHeader={GroupHeader}
                 groupOperationList={groupOperationList}
+                groupPageSize={groupPageSize}
                 groupTheme={groupTheme}
                 hasDragAndDrop={hasDragAndDrop}
                 hasSelection={!!hasSelection}
@@ -204,10 +209,11 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 LineComponent={LineComponent}
                 lineOperationList={lineOperationList}
                 lineTheme={lineTheme}
+                listPageSize={listPageSize}
                 listTheme={listTheme}
                 MosaicComponent={MosaicComponent}
+                offset={offset}
                 isLineSelectionnable={isLineSelectionnable}
-                perPage={perPage}
                 store={store}
                 useGroupActionBars={useGroupActionBars}
             />

@@ -124,7 +124,6 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     }
 
     componentDidUpdate() {
-        super.componentDidUpdate();
         this.updateByLine();
     }
 

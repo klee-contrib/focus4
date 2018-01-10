@@ -28,6 +28,8 @@ export interface ResultsProps<T> {
     GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
     /** Actions de groupe par groupe (code / valeur). */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
+    /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
+    groupPageSize?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Active le drag and drop. */
@@ -46,14 +48,14 @@ export interface ResultsProps<T> {
     lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
     lineTheme?: LineStyle;
+    /** Nombre d'éléments affichés par page de liste (pagination locale, indépendante de la recherche). */
+    listPageSize?: number;
     /** CSS de la liste. */
     listTheme?: ListStyle;
     /** Composant de mosaïque. */
     MosaicComponent?: ReactComponent<LineProps<T>>;
-    /** Offset pour le scroll inifini. Par défaut : 250 */
+    /** Offset pour le scroll infini. Par défaut : 250 */
     offset?: number;
-    /** Nombre d'éléments affichés par page de liste. */
-    perPage?: number;
     /** Store de recherche. */
     store: SearchStore<T>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
@@ -68,7 +70,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     /** Props communes entre le composant de liste et ceux de groupes. */
     @computed
     private get commonListProps() {
-        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, perPage, isLineSelectionnable, store} = this.props;
+        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, isLineSelectionnable, store} = this.props;
         return {
             canOpenDetail,
             detailHeight,
@@ -84,13 +86,12 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
             MosaicComponent,
             isLineSelectionnable,
             isManualFetch,
-            perPage,
             store
         };
     }
 
     render() {
-        const {GroupHeader, groupOperationList, groupTheme, i18nPrefix, lineOperationList, listTheme, store, useGroupActionBars} = this.props;
+        const {GroupHeader, groupOperationList, groupPageSize, groupTheme, i18nPrefix, lineOperationList, listPageSize, listTheme, offset, store, useGroupActionBars} = this.props;
         const {groups, list} = store;
 
         const filteredGroups = groups.filter(group => group.totalCount !== 0);
@@ -106,6 +107,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                             key={group.code}
                             lineOperationList={lineOperationList}
                             listTheme={listTheme}
+                            perPage={groupPageSize}
                             theme={groupTheme}
                             useGroupActionBars={useGroupActionBars}
                         />
@@ -120,6 +122,8 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                     <StoreList
                         {...this.commonListProps}
                         operationList={lineOperationList}
+                        offset={offset}
+                        perPage={listPageSize}
                         theme={listTheme}
                     />
                     <GroupLoadingBar i18nPrefix={i18nPrefix} store={store} />

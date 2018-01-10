@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -6,7 +7,7 @@ import {themr} from "react-css-themr";
 
 import {ReactComponent} from "../../../config";
 
-import {isSearch, ListStoreBase, SearchStore} from "../../store";
+import {isSearch, ListStoreBase} from "../../store";
 import {LineProps, LineWrapperProps} from "./line";
 import {LineItem, List, ListProps} from "./list";
 
@@ -36,6 +37,11 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
         return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
     }
 
+    protected get shouldAttachScrollListener() {
+        const {isManualFetch, store} = this.props;
+        return !isManualFetch && isSearch(store);
+    }
+
     /** Correspond aux données chargées mais non affichées. */
     @computed
     private get hasMoreHidden() {
@@ -53,6 +59,17 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
     @computed
     protected get hasMoreData() {
         return this.hasMoreHidden || this.hasMoreToLoad;
+    }
+
+    /** Label du bouton "Voir plus". */
+    @computed
+    protected get showMoreLabel() {
+        const {i18nPrefix = "focus", store} = this.props;
+        if (isSearch(store)) {
+            return i18next.t(`${i18nPrefix}.list.show.more`);
+        } else {
+            return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+        }
     }
 
     /**
@@ -78,10 +95,14 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
 
     /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */
     protected handleShowMore() {
+        const {perPage, store} = this.props;
         if (this.hasMoreHidden) {
             super.handleShowMore();
-        } else if (this.hasMoreToLoad) {
-            (this.props.store as SearchStore).search(true);
+        } else if (isSearch(store) && this.hasMoreToLoad && !store.isLoading) {
+            store.search(true);
+            if (perPage) {
+                super.handleShowMore();
+            }
         }
     }
 }

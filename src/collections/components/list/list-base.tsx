@@ -62,20 +62,26 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
         }
     }
 
-    componentDidMount() {
+    /** Label du bouton "Voir plus". */
+    @computed
+    protected get showMoreLabel() {
+        const {i18nPrefix = "focus"} = this.props;
+        return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+    }
+
+    protected get shouldAttachScrollListener() {
         const {isManualFetch, perPage} = this.props;
-        if (!isManualFetch && perPage) {
+        return !!(!isManualFetch && perPage);
+    }
+
+    componentDidMount() {
+        if (this.shouldAttachScrollListener) {
             this.attachScrollListener();
         }
     }
 
-    componentDidUpdate() {
-        this.componentDidMount();
-    }
-
     componentWillUnmount() {
-        const {isManualFetch, perPage} = this.props;
-        if (!isManualFetch && perPage) {
+        if (this.shouldAttachScrollListener) {
             this.detachScrollListener();
         }
     }
@@ -97,7 +103,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
                         <Button
                             onClick={this.handleShowMore}
                             icon={getIcon(`${i18nPrefix}.icons.list.add`)}
-                            label={`${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`}
+                            label={this.showMoreLabel}
                         />
                     : <div />}
                     {showAllHandler ?
@@ -116,12 +122,8 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
 
     /** Enregistre un listener sur le scroll pour le scroll infini. */
     private attachScrollListener() {
-        if (!this.hasMoreData) {
-            return;
-        }
         window.addEventListener("scroll", this.scrollListener);
         window.addEventListener("resize", this.scrollListener);
-        this.scrollListener();
     }
 
     /** Retire les listeners. */
@@ -135,7 +137,6 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
         const el = findDOMNode(this) as HTMLElement;
         const scrollTop = window.pageYOffset;
         if (topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < (this.props.offset || 250)) {
-            this.detachScrollListener();
             this.handleShowMore();
         }
     }
