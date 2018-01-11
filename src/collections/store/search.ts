@@ -287,34 +287,37 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             }
         } as ListStoreBase<T>;
 
+        const selectionnableList = computed(() => searchGroupStore.list.filter(store.isItemSelectionnable));
+
         // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
         searchGroupStore.toggleAll = action(() => {
-            const areAllItemsIn = searchGroupStore.list!.every(item => store.selectedItems.has(item));
+            const areAllItemsIn = selectionnableList.get().every(item => store.selectedItems.has(item));
 
-            searchGroupStore.list!.forEach(item => {
+            searchGroupStore.list.forEach(item => {
                 if (store.selectedItems.has(item)) {
                     store.selectedList.remove(item);
                 }
             });
 
             if (!areAllItemsIn) {
-                store.selectedList.push(...searchGroupStore.list!);
+                store.selectedList.push(...selectionnableList.get());
             }
         });
 
         const selectedItems = computed(() =>
-            new Set(store.selectedList.filter(item => searchGroupStore.list!.find(i => i === item))));
+            new Set(store.selectedList.filter(item => searchGroupStore.list.find(i => i === item))));
 
         const selectionStatus = computed(() => {
             if (selectedItems.get().size === 0) {
                 return "none";
-            } else if (selectedItems.get().size === searchGroupStore.totalCount) {
+            } else if (selectedItems.get().size === selectionnableList.get().length) {
                 return "selected";
             } else {
                 return "partial";
             }
         });
 
+        (searchGroupStore as any).selectionnableList = selectionnableList;
         (searchGroupStore as any).selectedItems = selectedItems;
         (searchGroupStore as any).selectionStatus = selectionStatus;
         return observable(searchGroupStore);
