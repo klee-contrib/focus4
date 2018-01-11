@@ -15,6 +15,8 @@ export abstract class ListStoreBase<T> {
     /** Nom du champ sur lequel trier. */
     @observable sortBy: string | undefined;
 
+    /** Permet d'omettre certains élements de la liste de la sélection. */
+    @observable isItemSelectionnable: (data: T) => boolean = () => true;
     /** Liste des éléments séléctionnés */
     readonly selectedList: IObservableArray<T> = observable<T>([]);
 
@@ -29,7 +31,7 @@ export abstract class ListStoreBase<T> {
     get selectionStatus(): SelectionStatus {
         switch (this.selectedItems.size) {
             case 0: return "none";
-            case this.totalCount: return "selected";
+            case this.selectionnableList.length: return "selected";
             default: return "partial";
         }
     }
@@ -43,6 +45,9 @@ export abstract class ListStoreBase<T> {
     /** Nombre d'éléments au total (y compris non chargés pour la recherche). */
     abstract get totalCount(): number;
 
+    /** Liste des éléments sélectionnables. */
+    abstract get selectionnableList(): T[];
+
     /**
      * Sélectionne ou déselectionne un item.
      * @param item L'item.
@@ -51,11 +56,18 @@ export abstract class ListStoreBase<T> {
     toggle(item: T) {
         if (this.selectedItems.has(item)) {
             this.selectedList.remove(item);
-        } else {
+        } else if (this.isItemSelectionnable(item)) {
             this.selectedList.push(item);
         }
     }
 
     /** Sélectionne ou déselectionne tous les éléments du store. */
-    abstract toggleAll(): void;
+    @action
+    toggleAll() {
+        if (this.selectedItems.size === this.selectionnableList.length) {
+            this.selectedList.clear();
+        } else {
+            this.selectedList.replace(this.selectionnableList);
+        }
+    }
 }

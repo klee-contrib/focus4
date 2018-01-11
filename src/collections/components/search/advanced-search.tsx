@@ -68,8 +68,6 @@ export interface AdvancedSearchProps<T> {
     hideSummarySort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    isLineSelectionnable?: (data: T) => boolean;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de ligne. */
@@ -189,7 +187,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, isLineSelectionnable, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
+        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
@@ -213,7 +211,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 listTheme={listTheme}
                 MosaicComponent={MosaicComponent}
                 offset={offset}
-                isLineSelectionnable={isLineSelectionnable}
                 store={store}
                 useGroupActionBars={useGroupActionBars}
             />

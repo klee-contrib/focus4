@@ -142,6 +142,12 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         return this.serverCount;
     }
 
+    /** Liste des éléments sélectionnables. */
+    @computed.struct
+    get selectionnableList() {
+        return this.flatResultList.filter(this.isItemSelectionnable);
+    }
+
     /** Objet contenant toutes les erreurs de validation des critères personnalisés. */
     @computed.struct
     get criteriaErrors() {
@@ -242,16 +248,6 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         this.serverCount = response.totalCount;
 
         return response;
-    }
-
-    /** Sélectionne ou déselectionne tous les élements récupérés (pas sur le serveur). */
-    @action
-    toggleAll() {
-        if (this.selectedItems.size === this.currentCount) {
-            this.selectedList.clear();
-        } else {
-            this.selectedList.replace(this.flatResultList);
-        }
     }
 
     /**

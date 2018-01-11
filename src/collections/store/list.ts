@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {isString, orderBy} from "lodash";
-import {action, computed, observable} from "mobx";
+import {computed, IObservableArray, observable} from "mobx";
 
 import {ListStoreBase} from "./base";
 
@@ -14,11 +14,11 @@ import {ListStoreBase} from "./base";
 @autobind
 export class ListStore<T> extends ListStoreBase<T> {
 
+    /** Liste brute (non triée, non filtrée) des données. */
+    readonly innerList: IObservableArray<T> = observable<T>([]);
+
     /** Champs sur lequels on autorise le filtrage, en local. */
     private filterFields?: (keyof T)[];
-
-    /** Liste brute des données. */
-    private readonly innerList = observable<T>([]);
 
     /**
      * Construit un store de liste local.
@@ -72,14 +72,10 @@ export class ListStore<T> extends ListStoreBase<T> {
         return this.currentCount;
     }
 
-    /** Sélectionne ou déselectionne tous les éléments du store. */
-    @action
-    toggleAll() {
-        if (this.selectedItems.size === this.innerList.length) {
-            this.selectedList.clear();
-        } else {
-            this.selectedList.replace(this.innerList);
-        }
+    /** Liste des éléments sélectionnables. */
+    @computed.struct
+    get selectionnableList() {
+        return this.innerList.filter(this.isItemSelectionnable);
     }
 }
 

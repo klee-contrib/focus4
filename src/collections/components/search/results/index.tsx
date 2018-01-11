@@ -38,8 +38,6 @@ export interface ResultsProps<T> {
     hasSelection: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    isLineSelectionnable?: (data: T) => boolean;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de ligne. */
@@ -70,7 +68,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     /** Props communes entre le composant de liste et ceux de groupes. */
     @computed
     private get commonListProps() {
-        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, isLineSelectionnable, store} = this.props;
+        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, store} = this.props;
         return {
             canOpenDetail,
             detailHeight,
@@ -84,7 +82,6 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
             LineComponent,
             lineTheme,
             MosaicComponent,
-            isLineSelectionnable,
             isManualFetch,
             store
         };

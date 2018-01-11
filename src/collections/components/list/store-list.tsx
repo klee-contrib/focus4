@@ -19,8 +19,6 @@ export interface StoreListProps<T> extends ListProps<T> {
     groupCode?: string;
     /** Affiche la sélection sur les lignes. */
     hasSelection?: boolean;
-    /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    isLineSelectionnable?: (data?: T) => boolean;
     /** Store contenant la liste. */
     store: ListStoreBase<T>;
 }
@@ -77,7 +75,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      * @param Component Le composant de ligne.
      */
     protected getItems(Component: ReactComponent<LineProps<T>>) {
-        const {hasSelection = false, isLineSelectionnable = () => true, store} = this.props;
+        const {hasSelection = false, store} = this.props;
         return super.getItems(Component).map(({key, data, style}) => ({
             key,
             data: {
@@ -85,7 +83,6 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
                 props: {
                     ...data.props,
                     hasSelection,
-                    isSelectionnable: isLineSelectionnable,
                     store
                 }
             },

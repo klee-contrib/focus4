@@ -44,8 +44,6 @@ export interface GroupProps<T> {
     hasSelection?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Précise si chaque élément est sélectionnable ou non. Par défaut () => true. */
-    isLineSelectionnable?: (data: T) => boolean;
     /** Composant de ligne. */
     LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
@@ -91,7 +89,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     render() {
-        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", isLineSelectionnable, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
+        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
         return (
             <div className={theme!.container}>
                 {useGroupActionBars ?
@@ -131,7 +129,6 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     MosaicComponent={MosaicComponent}
                     operationList={lineOperationList}
                     perPage={perPage}
-                    isLineSelectionnable={isLineSelectionnable}
                     showAllHandler={group.list.length < group.totalCount ? this.showAllHandler : undefined}
                     store={this.store}
                     theme={listTheme}

@@ -44,8 +44,6 @@ export interface LineWrapperProps<T> {
     hasSelection?: boolean;
     /** Préfixe i18n. Par défaut: "focus". */
     i18nPrefix?: string;
-    /** Détermine si la ligne est sélectionnable. Par défaut () => true. */
-    isSelectionnable?: (data: T) => boolean;
     /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
     LineComponent: ReactComponent<LineProps<T>>;
     /** Configuration de la mosaïque (si applicable). */
@@ -121,7 +119,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
     }
 
     render() {
-        const {draggedItems, style, connectDragSource = (x: any) => x, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, isSelectionnable = () => true, theme, operationList, type, store} = this.props;
+        const {draggedItems, style, connectDragSource = (x: any) => x, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} />;
@@ -148,7 +146,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                                 className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
                                 style={{width: mosaic ? width || mosaic.width : undefined, height: mosaic ? height || mosaic.height : height, opacity: style && style.opacity}}
                             >
-                                {hasSelection && isSelectionnable(data) && store ?
+                                {hasSelection && store && store.isItemSelectionnable(data) ?
                                     <IconButton
                                         className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.forceDisplay : ""}`}
                                         icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
