@@ -42,7 +42,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     /** Notification affichée. */
     private currentNotification?: Notification;
     /** Notifications en attente. */
-    private queuedNotifications: Notification[] = [];
+    private readonly queuedNotifications: Notification[] = [];
 
     /**
      * Gère l'ajout d'un message dans le store.

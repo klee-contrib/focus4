@@ -70,7 +70,8 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     /** Précise si au moins un formulaire de l'application est en édition. */
     @computed
     static get isOneEdit() {
-        return AutoForm.editingMap.values().some(x => x);
+        return AutoForm.editingMap.values()
+            .some(x => x);
     }
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.

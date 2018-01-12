@@ -124,6 +124,7 @@
             true,
             "ignore-for-loop"
         ],
+        "newline-per-chained-call": true,
         "no-sparse-arrays": true,
         "prefer-const": true,
         "prefer-function-over-method": [
@@ -132,6 +133,7 @@
             "allow-protected"
         ],
         "prefer-object-spread": true,
+        "prefer-readonly": true,
         "prefer-switch": true,
         "prefer-template": true,
         "quotemark": [
@@ -163,7 +165,6 @@
                 "variable-declaration": "nospace"
             }
         ],
-        "typeof-compare": true,
         "use-default-type-parameter": true,
         "use-isnan": true,
         "variable-name": [

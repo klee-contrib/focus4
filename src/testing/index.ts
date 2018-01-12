@@ -29,7 +29,8 @@ export const dumClass = {
 export function test(name: string, Element: ReactElement<any>) {
     tape(name, t => {
         try {
-            t.ok(createRenderer().render(Element) || true, "Ok");
+            t.ok(createRenderer()
+                .render(Element) || true, "Ok");
         } catch (e) {
             t.error(e);
         } finally {

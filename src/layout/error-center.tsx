@@ -71,7 +71,9 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
                 </div>
                 <ul className={theme!.stack}>
                     {this.areErrorsVisible ?
-                        this.errors.slice(errorLength - numberDisplayed, errorLength).map((e, i) => <li key={i}>{e}</li>)
+                        this.errors
+                            .slice(errorLength - numberDisplayed, errorLength)
+                            .map((e, i) => <li key={i}>{e}</li>)
                     : null}
                 </ul>
             </div>

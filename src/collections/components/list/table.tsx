@@ -35,9 +35,11 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
         return (
             <thead>
                 <tr>
-                    {values(this.props.columns).map(col => (
-                        <th key={col}>{i18next.t(col)}</th>
-                    ))}
+                    {values(this.props.columns)
+                        .map(col => (
+                            <th key={col}>{i18next.t(col)}</th>
+                        ))
+                    }
                 </tr>
             </thead>
         );

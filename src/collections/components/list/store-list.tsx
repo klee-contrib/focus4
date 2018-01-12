@@ -76,18 +76,19 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      */
     protected getItems(Component: ReactComponent<LineProps<T>>) {
         const {hasSelection = false, store} = this.props;
-        return super.getItems(Component).map(({key, data, style}) => ({
-            key,
-            data: {
-                Component: data.Component,
-                props: {
-                    ...data.props,
-                    hasSelection,
-                    store
-                }
-            },
-            style
-        })) as LineItem<LineWrapperProps<T>>[];
+        return super.getItems(Component)
+            .map(({key, data, style}) => ({
+                key,
+                data: {
+                    Component: data.Component,
+                    props: {
+                        ...data.props,
+                        hasSelection,
+                        store
+                    }
+                },
+                style
+            })) as LineItem<LineWrapperProps<T>>[];
     }
 
     /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */

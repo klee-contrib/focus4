@@ -102,7 +102,11 @@ export class Panel extends React.Component<PanelProps, void> {
                             <h3>
                                 <span data-spy-title>{i18next.t(title)}</span>
                                 {showHelp ?
-                                    <ButtonHelp blockName={blockName || snakeCase(i18next.t(title)).split("_")[0]} i18nPrefix={i18nPrefix} />
+                                    <ButtonHelp
+                                        blockName={blockName || snakeCase(i18next.t(title))
+                                            .split("_")[0]}
+                                        i18nPrefix={i18nPrefix}
+                                    />
                                 : null}
                             </h3>
                         : null}

@@ -67,7 +67,9 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     /** Listes des noms de critères dans l'ordre de saisie dans le champ texte. */
     @computed
     protected get criteria() {
-        return this.criteriaList.filter(crit => this.flatCriteria.map(([c, _]) => c).find(c => c === crit));
+        return this.criteriaList
+            .filter(crit => this.flatCriteria.map(([c, _]) => c)
+            .find(c => c === crit));
     }
 
     /** Texte de la SearchBar. */
@@ -123,7 +125,8 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
         } else if (store.criteria) {
 
             // On tokenise ce qu'à écrit l'utilisateur en divisant à tous les espaces.
-            const tokens = currentTarget.value.trim().split(" ");
+            const tokens = currentTarget.value.trim()
+                .split(" ");
             let token = tokens[0];
             let skip = 0;
             this.criteriaList = [];
@@ -143,10 +146,12 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
             }
 
             // On force tous les critères sont trouvés à undefined.
-            difference(Object.keys(toFlatValues(store.criteria)), this.criteriaList).forEach(crit => (store.criteria as any)[crit].value = undefined);
+            difference(Object.keys(toFlatValues(store.criteria)), this.criteriaList)
+                .forEach(crit => (store.criteria as any)[crit].value = undefined);
 
             // Et on reconstruit le reste de la query avec ce qu'il reste.
-            store.query = `${tokens.slice(skip).join(" ")}${currentTarget.value.match(/\s*$/)![0]}`; // La regex sert à garder les espaces en plus à la fin.
+            store.query = `${tokens.slice(skip)
+                .join(" ")}${currentTarget.value.match(/\s*$/)![0]}`; // La regex sert à garder les espaces en plus à la fin.
         }
     }
 

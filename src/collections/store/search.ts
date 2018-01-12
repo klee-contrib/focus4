@@ -291,7 +291,8 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
         searchGroupStore.toggleAll = action(() => {
-            const areAllItemsIn = selectionnableList.get().every(item => store.selectedItems.has(item));
+            const areAllItemsIn = selectionnableList.get()
+                .every(item => store.selectedItems.has(item));
 
             searchGroupStore.list.forEach(item => {
                 if (store.selectedItems.has(item)) {

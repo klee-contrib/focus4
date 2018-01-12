@@ -60,15 +60,16 @@ function treatFieldErrors(response: ErrorResponse) {
  */
 function treatGlobalErrors(response: ErrorResponse) {
     let globals: string[] = [];
-    Object.keys(globalErrorTypes).forEach((errorName: keyof typeof globalErrorTypes) => {
-        const messages: string[] = response[errorName];
-        if (isArray(messages)) {
-            globals = [...globals, ...messages];
+    Object.keys(globalErrorTypes)
+        .forEach((errorName: keyof typeof globalErrorTypes) => {
+            const messages: string[] = response[errorName];
+            if (isArray(messages)) {
+                globals = [...globals, ...messages];
 
-            // On enregistre chaque message dans le store de messages.
-            messages.forEach(content => messageStore.addMessage({type: globalErrorTypes[errorName] as "info", content}));
-        }
-    });
+                // On enregistre chaque message dans le store de messages.
+                messages.forEach(content => messageStore.addMessage({type: globalErrorTypes[errorName] as "info", content}));
+            }
+        });
     return globals;
 }
 

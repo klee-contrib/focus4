@@ -58,7 +58,7 @@ export interface InputDateProps {
 export class InputDate extends React.Component<InputDateProps, void> {
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
-    private _inputDateId = uniqueId("input-date-");
+    private readonly _inputDateId = uniqueId("input-date-");
 
     /** Date actuelle. */
     @observable private date = this.toMoment(this.props.value);
@@ -94,7 +94,10 @@ export class InputDate extends React.Component<InputDateProps, void> {
         if (isISOString(value)) {
             return m(value, moment.ISO_8601);
         } else {
-            return m().hour(0).minute(0).second(0);
+            return m()
+                .hour(0)
+                .minute(0)
+                .second(0);
         }
     }
 
@@ -103,7 +106,8 @@ export class InputDate extends React.Component<InputDateProps, void> {
         const {inputFormat = "MM/DD/YYYY"} = this.props;
         if (isISOString(value)) {
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
-            return moment(value, moment.ISO_8601).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
+            return moment(value, moment.ISO_8601)
+                .format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
         } else {
             return value;
         }
@@ -155,7 +159,8 @@ export class InputDate extends React.Component<InputDateProps, void> {
         date.setMinutes(0);
         date.setSeconds(0);
 
-        const correctedDate = this.transformDate(date).format();
+        const correctedDate = this.transformDate(date)
+            .format();
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
@@ -185,7 +190,8 @@ export class InputDate extends React.Component<InputDateProps, void> {
         } else if (ISOStringFormat === "utc-midnight") {
             return moment.utc(...params);
         } else {
-            return moment(...params).utcOffset(0);
+            return moment(...params)
+                .utcOffset(0);
         }
     }
 
@@ -235,5 +241,6 @@ export default themr("RTDatePicker", styles)(InputDate);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
-    return moment(value, moment.ISO_8601, true).isValid();
+    return moment(value, moment.ISO_8601, true)
+        .isValid();
 }

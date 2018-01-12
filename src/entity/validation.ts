@@ -63,7 +63,8 @@ export type Validator = DateValidator | EmailValidator | FunctionValidator | Num
  * @param text Le texte.
  */
 export function dateValidator(text: string) {
-    return moment(text, moment.ISO_8601).isValid();
+    return moment(text, moment.ISO_8601)
+        .isValid();
 }
 
 /**

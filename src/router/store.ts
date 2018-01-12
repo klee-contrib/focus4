@@ -89,7 +89,8 @@ export class ViewStore<V, N extends string> {
      */
     getUrl(view?: Partial<V>, replace?: boolean) {
         const newView = (replace ? view : {...this.currentView as {}, ...view as {}}) as V;
-        return `/${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => newView[p]).join("/")}`.replace(/\/+$/, "");
+        return `/${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => newView[p])
+            .join("/")}`.replace(/\/+$/, "");
     }
 
     /**

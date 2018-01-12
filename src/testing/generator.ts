@@ -49,12 +49,14 @@ function getName(node: ts.Node, type: ts.Type): NamedComponent {
 }
 
 function getDefaultName(fileName: string) {
-    const possibleNames = fileName.split("/").reverse();
+    const possibleNames = fileName.split("/")
+        .reverse();
     return upperFirst(camelCase(possibleNames[0] !== "index.tsx" ? possibleNames[0].replace(".tsx", "") : possibleNames[1]));
 }
 
 function getImport(comp: TestedComponent) {
-    const fileName = comp.fileName.replace(".tsx", "").replace("/index", "");
+    const fileName = comp.fileName.replace(".tsx", "")
+        .replace("/index", "");
     const srcIndex = fileName.search(appRoot);
     return `import ${comp.importName || comp.name} from "..${fileName.substring(srcIndex + appRoot.length)}";`;
 }
@@ -74,13 +76,17 @@ glob(`${appRoot}/**/*.tsx`, (_, fileNames) => {
     fs.writeFileSync(`${appRoot}/__test__/index.tsx`,
 `${imports}
 
-${sortedOutput.map(getImport).join("\r\n")}
+${sortedOutput.map(getImport)
+    .join("\r\n")}
 
-${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
+${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`)
+    .join("\r\n")}
 `);
 
     function getComponent(c: TestedComponent) {
-        return `<${c.name} ${c.props.map(getProp).filter(p => p !== undefined).join(" ")} />`;
+        return `<${c.name} ${c.props.map(getProp)
+            .filter(p => p !== undefined)
+            .join(" ")} />`;
     }
 
     function visit(node: ts.Node) {
@@ -90,7 +96,10 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
 
         if (isClass(node) && node.modifiers && node.modifiers.find(m => m.kind === ts.SyntaxKind.ExportKeyword) && !node.modifiers.find(m => m.kind === ts.SyntaxKind.AbstractKeyword)) {
             const type = checker.getTypeAtLocation(node);
-            if (type && type.getProperties().filter(prop => prop.name === "render").length) {
+            if (type && type.getProperties()
+                .filter(prop => prop.name === "render")
+                .length
+            ) {
                 const {heritageClauses} = node;
                 if (heritageClauses) {
                     const {types} = heritageClauses[0];
@@ -156,7 +165,11 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
         }
 
         const constructSignatures = type.getConstructSignatures();
-        if (constructSignatures.length && constructSignatures[0].getReturnType().getProperties().filter(p => p.name === "render").length) {
+        if (constructSignatures.length && constructSignatures[0].getReturnType()
+            .getProperties()
+            .filter(p => p.name === "render")
+            .length
+        ) {
             return `${name}={dum.component}`;
         }
 
@@ -164,7 +177,10 @@ ${sortedOutput.map(c => `test("${c.name}", ${getComponent(c)});`).join("\r\n")}
             return `${name}={{${
                 type.getProperties()
                     .filter(p => !(p.valueDeclaration && (p.valueDeclaration as ts.ParameterDeclaration).questionToken))
-                    .map(getProp).filter(p => p !== undefined).map(p => p!.replace(/={(.+)}/, ": $1")).join(", ")
+                    .map(getProp)
+                    .filter(p => p !== undefined)
+                    .map(p => p!.replace(/={(.+)}/, ": $1"))
+                    .join(", ")
             }}}`;
         }
 

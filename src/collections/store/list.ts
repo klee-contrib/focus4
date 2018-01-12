@@ -18,7 +18,7 @@ export class ListStore<T> extends ListStoreBase<T> {
     readonly innerList: IObservableArray<T> = observable<T>([]);
 
     /** Champs sur lequels on autorise le filtrage, en local. */
-    private filterFields?: (keyof T)[];
+    private readonly filterFields?: (keyof T)[];
 
     /**
      * Construit un store de liste local.
@@ -46,7 +46,8 @@ export class ListStore<T> extends ListStoreBase<T> {
             list = list.filter(item => this.filterFields!.some(filter => {
                 const field = item[filter];
                 if (isString(field)) {
-                    return field.toLowerCase().includes(this.query.toLowerCase()); // Pour faire simple, on compare tout en minuscule.
+                    return field.toLowerCase()
+                        .includes(this.query.toLowerCase()); // Pour faire simple, on compare tout en minuscule.
                 } else {
                     return false;
                 }

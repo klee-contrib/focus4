@@ -127,7 +127,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     @action
     private onScroll() {
         this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        this.offsetTop = findDOMNode(this).getBoundingClientRect().top;
+        this.offsetTop = findDOMNode(this)
+            .getBoundingClientRect().top;
     }
 
     /** Récupère les panels triés par position dans la page. */
@@ -149,7 +150,9 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     /** Détermine le panel actif dans le menu */
     @computed.struct
     private get activeItem() {
-        const active = this.sortedPanels.slice().reverse().find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
+        const active = this.sortedPanels.slice()
+            .reverse()
+            .find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
         return active && active[0] || this.sortedPanels[0] && this.sortedPanels[0][0];
     }
 

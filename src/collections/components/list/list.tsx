@@ -114,7 +114,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     private readonly draggedItems = observable<T>([]);
 
     /** LineWrapper avec la DragSource, pour une liste avec drag and drop. */
-    private DraggableLineWrapper = this.props.hasDragAndDrop ? addDragSource(this.props.dragItemType || "item", LineWrapper) : undefined;
+    private readonly DraggableLineWrapper = this.props.hasDragAndDrop ? addDragSource(this.props.dragItemType || "item", LineWrapper) : undefined;
 
     // Tuyauterie pour maintenir `byLine` à jour.
     componentDidMount() {

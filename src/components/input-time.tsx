@@ -41,7 +41,7 @@ export interface InputTimeProps {
 export class InputTime extends React.Component<InputTimeProps, void> {
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
-    private _inputTimeId = uniqueId("input-time-");
+    private readonly _inputTimeId = uniqueId("input-time-");
 
     /** Heure actuelle. */
     @observable private time = this.toMoment(this.props.value);
@@ -82,7 +82,8 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     formatTime(value?: string) {
         const {inputFormat = "HH:mm"} = this.props;
         if (isISOString(value)) {
-            return moment(value, moment.ISO_8601).format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
+            return moment(value, moment.ISO_8601)
+                .format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
         } else {
             return value;
         }
@@ -126,7 +127,8 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     /** Au clic sur l'horloge. */
     onClockChange(time: Date) {
-        this.props.onChange(moment(time).format());
+        this.props.onChange(moment(time)
+            .format());
     }
 
     @action
@@ -195,5 +197,6 @@ export default themr("RTTimePicker", styles)(InputTime);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
-    return moment(value, moment.ISO_8601, true).isValid();
+    return moment(value, moment.ISO_8601, true)
+        .isValid();
 }
