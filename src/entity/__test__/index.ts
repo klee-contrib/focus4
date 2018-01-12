@@ -11,9 +11,21 @@ import {ProjetEntity, ProjetNode} from "./projet";
 import {StructureEntity, StructureNode} from "./structure";
 
 function getStore() {
+    const subStore = makeEntityStore({
+        structure: {} as StructureNode
+    }, {
+        operationList: {} as OperationNode
+    }, [
+        OperationEntity,
+        StructureEntity
+    ], {
+        operationList: "operation"
+    });
+
     return makeEntityStore({
         operation: {} as OperationNode,
-        projetTest: {} as ProjetNode
+        projetTest: {} as ProjetNode,
+        subStore
     }, {
         structureList: {} as StructureNode
     }, [
@@ -65,6 +77,8 @@ test("EntityStore: Création", t => {
     t.assert(isObservableArray(store.projetTest.ligneList), "'ligneList' de l'entrée 'projet' est bien un array");
     t.deepEqual(store.projetTest.ligneList.$entity, LigneEntity, "'ligneList' de l'entrée 'projet' possède bien la bonne entité");
 
+    t.equal(store.subStore.structure.id.$entity, StructureEntity.fields.id, "Le sous-store est bien accessible");
+
     t.end();
 });
 
@@ -83,6 +97,10 @@ test("EntityStore: Set global", t => {
     t.assert(store.projetTest.ligneList[2], "La liste 'projet.ligneList' a bien été enresgitrée.");
     t.equal(store.projetTest.ligneList[1].id.value, projetTest.ligneList[1].id, "Le deuxième élément de 'projet.ligneList' a bien été enregistré.");
 
+    store.set({subStore: {operationList: [operation], structure: structureList[0]}});
+    t.assert(store.subStore.structure.id.value, "Le noeud 'structure' du sous-store a bien été enregistré.");
+    t.assert(store.subStore.operationList[0].id, "Le liste 'operationList' du sous-store a bien été enregistrée.");
+    t.equal(store.subStore.operationList[0].id.value, operation.id, "La liste `operationList` possède bien les bonnes valeurs.");
     t.end();
 });
 
@@ -110,12 +128,15 @@ test("EntityStore: Set locaux", t => {
 
 test("EntityStore: Clear global", t => {
     const store = getStore();
+    store.set({operation, structureList, projetTest, subStore: {operationList: [operation], structure: structureList[0]}});
 
     store.clear();
     t.equal(store.operation.id.value, undefined, "La propriété 'id' de l'entrée 'operation' est bien undefined.");
     t.equal(store.operation.structure.id.value, undefined, "La propriété 'structure.id' de l'entrée 'operation' est bien undefined.");
     t.assert(store.structureList.length === 0, "La liste 'structureList' est bien vide.");
     t.assert(store.projetTest.ligneList.length === 0, "La liste 'projet.ligneList' est bien vide.");
+    t.equal(store.subStore.structure.id.value, undefined, "La propriété 'id' de l'entrée 'structure' du sous-store est bien undefined.");
+    t.assert(store.subStore.operationList.length === 0, "La liste 'operationList' du sous store est bien vide.");
 
     t.end();
 });

@@ -1,7 +1,7 @@
-import {isArray, isUndefined, mapValues, omitBy} from "lodash";
+import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
 import {action, IObservableArray, isObservableArray, observable} from "mobx";
 
-import { Entity, EntityField, FieldEntry, ListEntry, ObjectEntry } from "./types";
+import {Entity, EntityField, FieldEntry, ListEntry, ObjectEntry} from "./types";
 
 /** Fonction `set`. */
 export interface Setter<T> {
@@ -74,10 +74,10 @@ type EntityStore = EntityStoreConfig & StoreNode<EntityStoreConfig>;
  * @param entityList La liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
  * @param entityMapping Un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
  */
-export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extends {[key: string]: StoreNode}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode {
+export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extends {[key: string]: StoreNode}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode<Record<keyof T1, {}> & Record<keyof T2, {}[]>> {
 
-    // On construit une config unique pour les noeuds simples ({}) et les noeuds de listes ([].)
-    const config = {...mapValues(simpleNodes, _ => ({})) as any, ...mapValues(listNodes, _ => [] as any[]) as any} as EntityStoreConfig;
+    // On construit une config unique pour les noeuds simples ({}) et les noeuds de listes ([]).
+    const config = {...(simpleNodes as any), ...mapValues(listNodes, _ => [] as any[]) as any} as EntityStoreConfig;
 
     // On construit une map avec les entités à partir de la liste fournie.
     const entityMap = entityList.reduce((entities, entity) => {
@@ -87,7 +87,7 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
 
     // On vérifie qu'il ne manque pas d'entité.
     for (const entry in config) {
-        if (!entityMap[entityMapping[entry as keyof T1 & T2] as string || entry]) {
+        if (isEmpty(config[entry]) && !entityMap[entityMapping[entry as keyof T1 & T2] as string || entry]) {
             throw new Error(`La propriété "${entry}" n'a pas été trouvée dans la liste d'entités. Vous manque-t'il une correspondance ?`);
         }
     }
@@ -96,7 +96,11 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
 
     // On construit chaque entrée à partir de la config.
     for (const entry in config) {
-        entityStore[entry] = buildEntityEntry(config, entityMap, entityMapping, entry);
+        if (isEmpty(config[entry])) {
+            entityStore[entry] = buildEntityEntry(config, entityMap, entityMapping, entry);
+        } else { // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
+            entityStore[entry] =  config[entry];
+        }
     }
 
     /*
@@ -105,7 +109,7 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
         Typescript empêchera d'appeler la fonction dans le mauvais contexte de toute façon.
     */
 
-    entityStore.set = action(function set(this: typeof entityStore, setConfig: {[key: string]: any}) {
+    entityStore.set = action(function set(this: EntityStore, setConfig: any) {
         for (const entry in setConfig) {
             const entity = this[entry];
             if (!entity) {
@@ -115,13 +119,13 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
         }
     });
 
-    entityStore.clear = action(function clear(this: typeof entityStore) {
+    entityStore.clear = action(function clear(this: EntityStore) {
         for (const entry in this) {
             clearEntity(this[entry]);
         }
     });
 
-    return observable(entityStore) as any;
+    return entityStore as any;
 }
 
 /**
@@ -149,7 +153,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
     }
 
     // Cas d'une entrée simple : On parcourt tous les champs de l'entité.
-    return {
+    return observable({
         ...mapValues(entityMap[trueEntry].fields, (v, key) => {
             // Cas d'un champ composé ou liste.
             if (!isFieldEntry(v)) {
@@ -169,7 +173,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
         }),
         set: action(function set(this: EntityStoreNode, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); }),
         clear: action(function clear(this: EntityStoreNode) { clearEntity(this); })
-    } as any as EntityStoreNode;
+    }) as any as EntityStoreNode;
 }
 
 /**

@@ -35,7 +35,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     @observable blockSearch = false;
 
     /** StoreNode contenant les critères personnalisés de recherche. */
-    @observable readonly criteria: C;
+    readonly criteria: C;
     /** Champ sur lequel grouper. */
     @observable groupingKey: string | undefined;
     /** Facettes sélectionnées ({facet: value}) */
