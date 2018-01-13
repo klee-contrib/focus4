@@ -1,9 +1,11 @@
 import {isFunction} from "lodash";
-import {computed, observable} from "mobx";
+import {computed, extendObservable} from "mobx";
 import {InputProps} from "react-toolbox/lib/input";
 
 import {DisplayProps, LabelProps} from "../components";
-import {Domain, DomainNoDefault, EntityField, FieldEntry} from "./types";
+import {Domain, EntityField, FieldEntry} from "./types";
+
+export type $Field<ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>;
 
 /**
  * Construit un `EntityField` à partir d'un champ calculé.
@@ -17,7 +19,7 @@ export function makeField<
     LCProps = LabelProps
     >(
     value: () => T,
-    $field: Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>,
+    $field?: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>),
     setter?: (value: T) => void
 ): EntityField<T, Domain<ICProps, DCProps, LCProps>>;
 /**
@@ -32,11 +34,11 @@ export function makeField<
     LCProps = LabelProps
 >(
     value: T,
-    $field?: Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>
+    $field?: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>)
 ): EntityField<T, Domain<ICProps, DCProps, LCProps>>;
-export function makeField(value: any, $field: Partial<FieldEntry & Domain> = {}, setter: Function = () => null) {
+export function makeField(value: any, $field: $Field | (() => $Field) = {}, setter: Function = () => null) {
     return fromField({
-        $field: {domain: {}, isRequired: false, label: "", name: "", type: "field" as "field"},
+        $field: {domain: {}, isRequired: false, label: "", name: "", type: "field"},
         value: isFunction(value) ? computed(value, setter) : value
     }, $field);
 }
@@ -56,13 +58,15 @@ export function fromField<
     LCProps = LCDomainProps
 >(
     field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
-    $field: Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>
-) {
-
-    return observable({
-        $field: new$field(field, $field),
-        value: field.value
-    }) as EntityField<T, Domain<ICProps, DCProps, LCProps>>;
+    $field: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>)
+): EntityField<T, Domain<ICProps, DCProps, LCProps>> {
+    const valueObj = {value: field.value};
+    const $fieldObj = {$field: new$field(field, $field)};
+    if (isFunction($field)) {
+        return extendObservable({}, {...valueObj, ...$fieldObj}) as any;
+    } else {
+        return extendObservable($fieldObj, valueObj) as any;
+    }
 }
 
 /**
@@ -80,19 +84,32 @@ export function patchField<
     LCProps = LCDomainProps
 >(
     field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
-    $field: Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>
+    $field: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>),
 ) {
-    (field as any).$field = new$field(field, $field);
-    return field as any as EntityField<T, Domain<ICProps, DCProps, LCProps>>;
+    const next$field = new$field(field, $field);
+    if (isFunction($field)) {
+        extendObservable(field, {$field: next$field});
+    } else {
+        (field.$field as any) = next$field;
+    }
 }
 
-function new$field<T>(field: EntityField<T>, $field: Partial<FieldEntry & DomainNoDefault>) {
+function new$field<T>(field: EntityField<T>, $field: $Field | (() => $Field)) {
+    const {$field: old$field} = field;
+    if (isFunction($field)) {
+        return computed(() => new$fieldCore(old$field, $field()), {compareStructural: true});
+    } else {
+        return new$fieldCore(old$field, $field);
+    }
+}
+
+function new$fieldCore(old$field: FieldEntry, $field: $Field) {
     const {
-        domain = field.$field.domain,
-        isRequired = field.$field.isRequired,
-        label = field.$field.label,
-        name = field.$field.name,
-        type = field.$field.type,
+        domain = old$field.domain,
+        isRequired = old$field.isRequired,
+        label = old$field.label,
+        name = old$field.name,
+        type = old$field.type,
         ...domainOverrides
     } = $field;
     return {
