@@ -1,4 +1,5 @@
-import {action, autorun, isObservableArray, isObservableObject, observable, untracked} from "mobx";
+import {isObject} from "lodash";
+import {action, autorun, extendObservable, isObservableArray, isObservableObject, observable, untracked} from "mobx";
 
 import {StoreNode, toFlatValues} from "./store";
 
@@ -25,8 +26,9 @@ export interface FormNode<T = StoreNode> {
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
  */
-export function makeFormNode<T extends StoreNode, U extends StoreNode = T>(node: T, transform: (source: T) => U = x => x as any as U) {
-    const formNode = transform(clone(node)) as U & FormNode<T>;
+export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source: T) => U = _ => ({}) as U) {
+    const formNode = clone(node) as T & FormNode<T>;
+    Object.assign(formNode, transform(formNode) || {});
 
     // La fonction `reset` va simplement vider et reremplir le FormNode avec les valeurs du StoreNode.
     const reset = () => {
@@ -48,7 +50,7 @@ export function makeFormNode<T extends StoreNode, U extends StoreNode = T>(node:
     };
 
     formNode.subscribe(); // On s'abonne par défaut, puisque c'est à priori le comportement souhaité la plupart du temps.
-    return formNode;
+    return formNode as T & U & FormNode<T>;
 }
 
 /** Version adaptée de `toJS` de MobX pour prendre en compte `$entity` et les fonctions `set` et `pushNode` pour les arrays. */
@@ -61,7 +63,7 @@ function clone(source: any): any {
             res[i] = toAdd[i];
         }
 
-        res = observable(res);
+        res = observable.shallowArray(res);
 
         if ((source as any).$entity) {
             (res as any).$entity = (source as any).$entity;
@@ -75,15 +77,21 @@ function clone(source: any): any {
 
         return res;
     } else if (isObservableObject(source)) {
-        const res: any = {};
+        const obsRes: any = {};
+        const nonObsRes: any = {};
         for (const key in source) {
-            if (key === "$entity" || key === "$field") {
-                res[key] = observable.ref((source as any)[key]);
+            if (key === "$field") {
+                nonObsRes[key] = source[key as keyof typeof source];
             } else {
-                res[key] = clone((source as any)[key]);
+                const res = clone(source[key as keyof typeof source]);
+                if (isObject(res)) {
+                    nonObsRes[key] = res;
+                } else {
+                    obsRes[key] = res;
+                }
             }
         }
-        return observable(res);
+        return extendObservable(nonObsRes, obsRes);
     }
 
     return source;

@@ -77,7 +77,7 @@ test("EntityStore: Création", t => {
     t.assert(isObservableArray(store.projetTest.ligneList), "'ligneList' de l'entrée 'projet' est bien un array");
     t.deepEqual(store.projetTest.ligneList.$entity, LigneEntity, "'ligneList' de l'entrée 'projet' possède bien la bonne entité");
 
-    t.equal(store.subStore.structure.id.$entity, StructureEntity.fields.id, "Le sous-store est bien accessible");
+    t.equal(store.subStore.structure.id.$field, StructureEntity.fields.id, "Le sous-store est bien accessible");
 
     t.end();
 });
