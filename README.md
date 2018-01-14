@@ -1,23 +1,26 @@
 # Focus V4
 
-**`Focus V4`** est une libre réimplémentation de Focus V2 (`focus-core` et `focus-components`) en **[Typescript](http://www.typescriptlang.org)** qui utilise **[MobX](http://mobxjs.github.io/mobx)** comme conteneur de state (à la place de `flux` ou `redux`).
-Son but principal est de proposer le framework le plus simple, efficace et robuste pour effectuer les mêmes tâches que le Focus original, tout en restant proche au niveau de l'API et de la structure de l'application (à l'inverse de Focus V3 qui propose une approche différente).
+**`Focus V4`** est la version la plus récente du framework Focus, toujours basé sur React, mais cette fois-ci en **[Typescript](http://www.typescriptlang.org)** et **[MobX](http://mobx.js.org)** comme conteneur de state (à la place de `flux` ou `redux`).
+
+Cette nouvelle version a pour but de simplifier et de généraliser au maximum la réalisation de SPA en tandem avec un backend [Vertigo](http://www.github.com/KleeGroup/vertigo) ou [Kinetix](http://www.github.com/KleeGroup/kinetix), tout en laissant le plus possible de liberté (et de temps) aux développeurs pour sortir du standard si nécessaire.
+
+Ci-dessous, une présentation rapide des deux nouvelles technos majeures de Focus v4:
 
 ## Typescript
 Typescript est un **superset typé** du Javascript courant (ES2016+). Il vient avec son propre compilateur qui effectue, comme son nom l'indique, du **typage statique** via de l'inférence (ie. automatiquement) ou des annotations explicites. Son usage est totalement **facultatif** (il n'est pas nécessaire d'utiliser du Typescript pour consommer la librairie) et totalement "à la carte" (il n'est pas nécessaire d'utiliser du typage partout). Néanmoins, la surcouche est suffisament fine et intuitive pour ne pas causer une surcharge de travail notable (le "langage" peut s'apprendre en 2 heures) et les bénéfices peuvent être énormes, du moins si on se décide à utiliser les options les plus strictes.
 
 Il n'est pas non plus nécessaire d'avoir des libraries en Typescript pour faire du Typescript puisqu'il est possible d'écrire des définitions de librairies (la plupart sont déjà écrites et disponibles sur `npm`) pour décrire l'architecture de n'importe quel code Javascript. Il n'est pas non plus nécessaire d'utiliser Typescript pour profiter de ses bénéfices, puisqu'en utilisant un éditeur/IDE adapté comme **[Visual Studio Code](http://code.visualstudio.com)**, le service de langage Typescript (qui fournit l'autocomplétion, la navigation...) est également activé par défaut pour le Javascript.
 
-Quelque soit votre intérêt dans Typescript (j'espère vous avoir convaincu !), le fait que Focus V4 soit écrit en Typescript est un plus indéniable.
+Une application Focus v4 n'est donc pas nécessairement écrite en Typescript, mais si c'est bien pour Focus c'est aussi bien pour vous, et pour tout le monde :)
 
 Je vous renvoie à l'excellente [documentation](http://www.typescriptlang.org/docs/tutorial.html) pour vous lancer (si ce n'est déjà fait).
 
 ## MobX
-### En 2 phrases
-MobX permet de définir des objets JS (objet, array, map...) comme **observables**, qui seront ensuite observés par des fonctions agissant comme des **observers** (par exemple la fonction `render()` d'un composant React). Ces fonctions vont déduire automatiquement, à l'exécution, de quelles observables elles dépendent, ce qui permettra à MobX de les réexécuter à chaque fois que l'une d'entre-elle à été modifiée dans l'ensemble de l'application.
+### En 3 phrases
+MobX permet de définir des objets JS (objet, array, map...) comme **observables**, à partir desquelles on peut écrire **dérivations** (= valeur calculée) et des **réactions** (= évènement lorsqu'une observable est modifiée). MobX va déduire automatiquement à l'exécution d'une dérivation ou d'une réaction de quelles observables elles dépendent, ce qui lui permettra de les réexécuter à chaque fois que l'une d'entre-elle à été modifiée dans l'ensemble de l'application. Ainsi, cela nous permet de maintenir tout notre état et nos composants à jour en permanance, sans avoir d'effort en particulier à founir !
 
-### C'est magique
-Ce qu'il faut bien comprendre, pour l'intégration avec React, c'est que ces réactions se produisent indépendamment des `props` ou du `state` du composant !
+### Avec React
+MobX s'intègre très bien avec React : il enregistre toutes les fonctions `render()` des composants comme des dérivations. Cela permet en plus de dissocier le rendu des `props` et du `state` du composant !
 
 **Ca veut dire qu'on n'a plus besoin :**
 * de **mixins/classes de base** pour injecter de l'état dans le `state`, ou de **composants d'ordre supérieur** pour injecter dans les `props` : on peut utiliser directement cet état dans un composant et l'abonnement est automatique, au prix d'un misérable petit décorateur (ou fonction) `@observer` sur le composant.
@@ -28,11 +31,12 @@ Ce qu'il faut bien comprendre, pour l'intégration avec React, c'est que ces ré
 La doc est **[ici](http://mobx.js.org)**.
 
 ## Ce qu'il y a dans Focus V4
-Pour résumé, `Focus V4`, c'est :
-- Une version modifiée de `focus-core v2` pour Typescript et MobX
-- Les composants "dépréciés" de `focus-components v2` (layout, listes et recherche), modifiés pour Typescript et MobX (ces composants ont été réécrits de zéro pour Focus v3 et se trouvent dans les modules correspondants)
-- Une surcouche fine de `react-toolbox` pour remplacer les composants "simples " de `focus-components` (v2 et 3). Cette surcouche sera à terme extraite de ce package pour usage avec d'autres versions de Focus.
-- Une nouvelle gestion de l'état des formulaires (le reste fonctionne à peu près comme Focus V2), réalisée grâce à MobX, qui facilite beaucoup l’usage et réduit la configuration nécessaire. Ce nouveau module est entièrement testé unitairement.
-- Un nouveau routeur, qui simplifie et synchronise l'état de l'application avec l'URL, réalisé avec MobX.
+Focus V4, c'est :
+- Des modules de bases pour construire la base de votre application (`layout`, `network`, `reference`, `message`)
+- La librairie [react-toolbox](http://www.react-toolbox.io), pour fournir tous les composants _Material Design_ de base, ainsi que quelques composants supplémentaires (`components`)
+- Un module `collections` qui contient des composants et des stores de listes et de recheche.
+- Une gestion du CSS à base de modules et de variables CSS, calquée sur et intégrée avec *react-toolbox*.
+- Un module `entity` qui contient les stores et les composants pour tous vos besoins de formulaires et de champs d'édition ou consultation.
+- Un module `routeur` pour définir la structure et les stores d'état de toute votre application.
 
 La doc est disponible [ici](src)

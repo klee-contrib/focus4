@@ -1,6 +1,8 @@
 ### Puisque un exemple parle souvent mieux que des mots dans le vent, le [starter kit](http://www.github.com/get-focus/focus4-starter-kit) fait également office de démo et présente les usages les plus simples de `focus4`.
 
 # Référence d'API
+
+## [Module `collections`](collections)
 ## [Module `components`](components)
 ## [Module `entity`](entity)
 
@@ -33,7 +35,6 @@ class Component {
 Comme son nom l'indique, le décorateur `@injectByPropName` utilise le nom de la propriété comme identifiant de l'objet à injecter.
 
 ## [Module `layout`](layout)
-## [Module `list`](list)
 ## [Module `message`](message)
 ## [Module `network`](network)
 
@@ -80,8 +81,6 @@ Et voilà, ça marche tout seul.
 *Note: Du coup, tout ce qui avait attrait au fonctionnement des références dans `focus-components` est obsolète (car plus nécessaire). `selectFor` prend simplement la liste de référence en paramètre à la place de son nom.*
 
 ## [Module `router`](router)
-## [Module `search`](search)
-## [Module `testing`](testing)
 
 ## Module `user`
 Ce module propose une base de store utilisateur, pour y stocker les données de la session. La seule fonctionnalité prévue est la gestion des rôles / permissions (avec `roles` et `hasRole()`), et c'est à chaque application d'y rajouter leurs informations métiers pertinentes.
