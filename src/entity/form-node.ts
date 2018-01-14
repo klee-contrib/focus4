@@ -1,7 +1,6 @@
-import {isObject} from "lodash";
-import {action, autorun, extendObservable, isObservableArray, isObservableObject, observable, untracked} from "mobx";
+import {action, autorun, extendObservable, observable, untracked} from "mobx";
 
-import {StoreNode, toFlatValues} from "./store";
+import {isStoreListNode, isStoreNode, StoreListNode, StoreNode, toFlatValues} from "./store";
 
 export interface FormNode<T = StoreNode> {
     /** @internal */
@@ -26,9 +25,15 @@ export interface FormNode<T = StoreNode> {
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
  */
+export function makeFormNode<T extends StoreNode, U>(node: StoreListNode<T>, transform?: (source: T) => U): StoreListNode<T & U> & FormNode<T>;
+export function makeFormNode<T extends StoreNode, U>(node: T, transform?: (source: T) => U): T & U & FormNode<T>;
 export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source: T) => U = _ => ({}) as U) {
     const formNode = clone(node) as T & FormNode<T>;
-    Object.assign(formNode, transform(formNode) || {});
+    if (isStoreListNode(formNode)) {
+        formNode.$transform = transform;
+    } else {
+        Object.assign(formNode, transform(formNode) || {});
+    }
 
     // La fonction `reset` va simplement vider et reremplir le FormNode avec les valeurs du StoreNode.
     const reset = () => {
@@ -50,12 +55,12 @@ export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source
     };
 
     formNode.subscribe(); // On s'abonne par défaut, puisque c'est à priori le comportement souhaité la plupart du temps.
-    return formNode as T & U & FormNode<T>;
+    return formNode;
 }
 
-/** Version adaptée de `toJS` de MobX pour prendre en compte `$entity` et les fonctions `set` et `pushNode` pour les arrays. */
+/** Clone un StoreNode */
 function clone(source: any): any {
-    if (isObservableArray(source)) {
+    if (isStoreListNode(source)) {
         let res = [];
         const toAdd = source.map(clone);
         res.length = toAdd.length;
@@ -63,35 +68,30 @@ function clone(source: any): any {
             res[i] = toAdd[i];
         }
 
-        res = observable.shallowArray(res);
+        res = observable.shallowArray(res) as StoreListNode;
 
-        if ((source as any).$entity) {
-            (res as any).$entity = (source as any).$entity;
-        }
-        if ((source as any).pushNode) {
-            (res as any).pushNode = (source as any).pushNode;
-        }
-        if ((source as any).set) {
-            (res as any).set = (source as any).set;
+        (res as any).$entity = source.$entity;
+        res.pushNode = source.pushNode;
+        res.set = source.set;
+        if (source.$transform) {
+            res.$transform = source.$transform;
+            res.forEach(source.$transform);
         }
 
         return res;
-    } else if (isObservableObject(source)) {
-        const obsRes: any = {};
-        const nonObsRes: any = {};
+    } else if (isStoreNode(source)) {
+        const res: typeof source = {} as any;
         for (const key in source) {
-            if (key === "$field") {
-                nonObsRes[key] = source[key as keyof typeof source];
-            } else {
-                const res = clone(source[key as keyof typeof source]);
-                if (isObject(res)) {
-                    nonObsRes[key] = res;
-                } else {
-                    obsRes[key] = res;
-                }
-            }
+            const typedKey = key as keyof typeof source;
+            res[typedKey] = clone(source[typedKey]);
         }
-        return extendObservable(nonObsRes, obsRes);
+        return res;
+    } else if (source.$field) {
+        return extendObservable({
+            $field: source.$field
+        }, {
+            value: observable.ref(source.value)
+        });
     }
 
     return source;

@@ -1,5 +1,5 @@
 import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
-import {action, IObservableArray, isComputed, isObservableArray, observable} from "mobx";
+import {action, extendObservable, IObservableArray, isComputed, isObservableArray, observable} from "mobx";
 
 import {Entity, EntityField, FieldEntry, ListEntry, ObjectEntry} from "./types";
 
@@ -29,7 +29,9 @@ export interface StoreNode<T = {}> extends Setter<T>, Clearer {}
  */
 export interface StoreListNode<T extends StoreNode = StoreNode> extends IObservableArray<T> {
     /** Métadonnées. */
-    $entity: Entity;
+    readonly $entity: Entity;
+    /** Fonction de transformation du noeud de la liste. */
+    $transform?: (source: T) => {} | void;
     /** Ajoute un élément à la liste. */
     pushNode(item: {}): void;
     /** Reconstruit la liste à partir des données fournies. */
@@ -39,7 +41,7 @@ export interface StoreListNode<T extends StoreNode = StoreNode> extends IObserva
 export type EntityStoreNodeItem = EntityField | StoreNode | StoreListNode;
 /** Noeud de store simple. Véritable définition de `StoreNode`. */
 export type EntityStoreNode = StoreNode & {
-    [key: string]: EntityStoreNodeItem;
+    readonly [key: string]: EntityStoreNodeItem;
 };
 
 /** Noeud de store (simple ou liste). */
@@ -138,8 +140,8 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
 
     // Cas d'une entrée de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
-        const outputEntry: StoreListNode<EntityStoreNode> = observable([]) as any;
-        outputEntry.$entity = entityMap[trueEntry];
+        const outputEntry: StoreListNode<EntityStoreNode> = observable.shallowArray() as any;
+        (outputEntry as any).$entity = entityMap[trueEntry];
         outputEntry.pushNode = action(function pushNode(this: typeof outputEntry, item: {}) {
             const itemNode = buildEntityEntry({[trueEntry]: {}} as EntityStoreConfig, {...entityMap, item: entity.$entity}, entityMapping, trueEntry) as EntityStoreNode;
             itemNode.set(item);
@@ -150,7 +152,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
     }
 
     // Cas d'une entrée simple : On parcourt tous les champs de l'entité.
-    return observable({
+    return {
         ...mapValues(entityMap[trueEntry].fields, (v, key) => {
             // Cas d'un champ composé ou liste.
             if (!isFieldEntry(v)) {
@@ -163,14 +165,15 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
             }
 
             // On s'assure que les métadonnées du champ ne soient pas observables.
-            return {
-                $field: observable.ref(entityMap[trueEntry].fields[key]),
-                value: undefined
-            };
+            return extendObservable({
+                $field: entityMap[trueEntry].fields[key]
+            }, {
+                value: observable.ref(undefined)
+            });
         }),
         set: action(function set(this: EntityStoreNode, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); }),
         clear: action(function clear(this: EntityStoreNode) { clearEntity(this); })
-    }) as any as EntityStoreNode;
+    } as any as EntityStoreNode;
 }
 
 /**
@@ -187,7 +190,13 @@ function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, en
     if (isStoreListNode(entity)) {
         if (isArray(entityValue)) {
             // On vide l'array existant et on construit une entrée par valeur de la liste dans l'entrée.
-            entity.replace(entityValue.map((_: {}) => buildEntityEntry({[entry]: {}} as EntityStoreConfig, {...entityMap, [entry]: entity.$entity}, entityMapping, entry) as EntityStoreNode));
+            entity.replace(entityValue.map((_: {}) => {
+                const newNode = buildEntityEntry({[entry]: {}} as EntityStoreConfig, {...entityMap, [entry]: entity.$entity}, entityMapping, entry) as EntityStoreNode;
+                if (entity.$transform) {
+                    Object.assign(newNode, entity.$transform(newNode) || {});
+                }
+                return newNode;
+            }));
 
             // Puis on remplit chaque entrée avec la valeur.
             for (let i = 0; i < entityValue.length; i++) {
