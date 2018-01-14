@@ -1,12 +1,13 @@
 import i18next from "i18next";
 import {action} from "mobx";
 import * as React from "react";
+import {InputProps} from "react-toolbox/lib/input";
 
-import {Display, DisplayProps, Input, InputProps, LabelProps, Select, SelectProps} from "../components";
+import {DisplayProps, LabelProps, Select, SelectProps} from "../components";
 import {ReactComponent} from "../config";
 import {EntityField} from "../entity";
 
-import Field, {FieldOptions, FieldProps, ReferenceOptions, RefValues} from "./field";
+import Field, {FieldOptions, ReferenceOptions, RefValues} from "./field";
 import {Domain} from "./types";
 
 /**
@@ -52,8 +53,7 @@ export function fieldFor<
         }
     }
 
-    const props = buildFieldProps<T, ICProps, DCProps, LCProps>(field, options);
-    return <Field {...props} />;
+    return <Field field={field} {...options} />;
 }
 
 /**
@@ -96,64 +96,9 @@ export function stringFor<
     field: EntityField<T>,
     options: ReferenceOptions<T, R, ValueKey, LabelKey> = {}
 ) {
-    const {displayFormatter, valueKey = "code", labelKey = "label", values = [], value} = buildFieldProps(field, options);
+    const {value, $field: {domain: {displayFormatter = (t: string) => i18next.t(t)}}} = field;
+    const {valueKey = "code", labelKey = "label", values = []} = options;
     const found = values.find(val => (val as any)[valueKey] === value);
     const processedValue = found && (found as any)[labelKey] || value;
     return displayFormatter(processedValue);
-}
-
-/**
- * Construit les props à passer au composant Field.
- *
- * @param field La définition du champ.
- * @param options Les options du champ.
- */
-export function buildFieldProps<
-    T,
-    ICProps = InputProps,
-    DCProps = DisplayProps,
-    LCProps = LabelProps,
-    R extends RefValues<T, ValueKey, LabelKey> = any,
-    ValueKey extends string = "code",
-    LabelKey extends string = "label"
->(
-    field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
-    options: Partial<FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
-) {
-    const {value, $field: {name = "", domain = {}, label = "", isRequired = false, comment}} = field;
-    const {hasLabel = true, ...otherOptions} = options;
-    const {
-        className,
-        DisplayComponent = Display as any,
-        displayFormatter = (t: T) => i18next.t(t as any),
-        displayProps,
-        InputComponent = Input as any,
-        inputFormatter = ((x: T) => x),
-        inputProps,
-        LabelComponent = (() => <label htmlFor={name}>{label && i18next.t(label) || ""}</label>),
-        labelProps,
-        unformatter = ((x: string) => x),
-        validator
-    } = domain;
-
-    return {
-        className,
-        DisplayComponent,
-        displayFormatter,
-        displayProps,
-        hasLabel,
-        InputComponent,
-        inputFormatter,
-        inputProps,
-        isRequired,
-        label,
-        LabelComponent,
-        labelProps,
-        name,
-        comment,
-        unformatter,
-        validator,
-        value,
-        ...otherOptions
-    } as FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>;
 }

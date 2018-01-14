@@ -1,5 +1,5 @@
-import {DisplayProps, InputProps, LabelProps} from "../components";
-import {ReactComponent} from "../config";
+import {DisplayProps, InputProps, LabelProps} from "../../components";
+import {ReactComponent} from "../../config";
 
 import {Validator} from "./validation";
 
@@ -93,6 +93,9 @@ export interface EntityField<T = StoreType, D extends DomainNoDefault = DomainNo
 
     /** Métadonnées. */
     readonly $field: FieldEntry<D>;
+
+    /** Erreur de validation du champ, dans un FormNode. */
+    readonly error?: string | undefined;
 
     /** Valeur. */
     value: T | undefined;

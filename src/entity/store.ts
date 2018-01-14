@@ -1,42 +1,8 @@
 import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
-import {action, extendObservable, IObservableArray, isComputed, isObservableArray, observable} from "mobx";
+import {action, extendObservable, isComputed, isObservableArray, observable} from "mobx";
 
-import {Entity, EntityField, FieldEntry, ListEntry, ObjectEntry} from "./types";
-
-/** Fonction `set`. */
-export interface Setter<T> {
-    /** Renseigne les valeurs du noeud à partir des champs fournis. */
-    set(config: Partial<T>): void;
-}
-
-/** Fonction `clear`. */
-export interface Clearer {
-    /** Vide l'objet (récursivement). */
-    clear(): void;
-}
-
-/**
- * Noeud de store simple, identifié par la présence des méthodes `set` et `clear`.
- *
- * En pratique, tous les autres éléments d'un `StoreNode` doivent être des `EntityValue`.
- */
-export interface StoreNode<T = {}> extends Setter<T>, Clearer {}
-
-/**
- * Noeud de store de liste. C'est un array avec les métadonnées de l'entité du noeud.
- *
- * `T` doit être un `StoreNode` et `StoreListNode` est également considéré comme un `StoreNode`.
- */
-export interface StoreListNode<T extends StoreNode = StoreNode> extends IObservableArray<T> {
-    /** Métadonnées. */
-    readonly $entity: Entity;
-    /** Fonction de transformation du noeud de la liste. */
-    $transform?: (source: T) => {} | void;
-    /** Ajoute un élément à la liste. */
-    pushNode(item: {}): void;
-    /** Reconstruit la liste à partir des données fournies. */
-    set(array: {}[]): void;
-}
+import {Entity, EntityField, isFieldEntry, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "./types";
+import {addErrorFields} from "./validation";
 
 export type EntityStoreNodeItem = EntityField | StoreNode | StoreListNode;
 /** Noeud de store simple. Véritable définition de `StoreNode`. */
@@ -195,12 +161,15 @@ function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, en
                 if (entity.$transform) {
                     Object.assign(newNode, entity.$transform(newNode) || {});
                 }
+                if (entity.$isFormNode) {
+                    addErrorFields(newNode);
+                }
                 return newNode;
             }));
 
             // Puis on remplit chaque entrée avec la valeur.
             for (let i = 0; i < entityValue.length; i++) {
-                setEntityEntry(entity[i], entityMap, entityMapping, entityValue[i], entity.$entity.name);
+                setEntityEntry(entity[i] as EntityStoreNode, entityMap, entityMapping, entityValue[i], entity.$entity.name);
             }
         }
 
@@ -208,7 +177,7 @@ function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, en
     } else {
         // On affecte chaque valeur de l'entrée avec la valeur demandée, et on réappelle `setEntityEntry` si la valeur n'est pas primitive.
         for (const item in entityValue) {
-            const itemEntry = entity[item];
+            const itemEntry = (entity as any)[item];
             if (!itemEntry) {
                 throw new Error(`"${entry}" n'a pas de propriété "${item}".`);
             }
@@ -237,7 +206,7 @@ function clearEntity(entity: EntityStoreItem) {
             if (entry === "sourceNode") {
                 continue; // Pas touche.
             }
-            const entryItem = entity[entry];
+            const entryItem = (entity as any)[entry];
             if (isStoreListNode(entryItem)) { // Cas noeud de liste -> on vide la liste.
                 entryItem.clear();
             } else if (isStoreNode(entryItem)) { // Cas noeud de store -> `clearEntity`.
@@ -277,16 +246,4 @@ export function toFlatValues(entityStoreItem: StoreNode | StoreListNode): {} | {
             }
         }), isUndefined);
     }
-}
-
-export function isStoreListNode<T>(data: EntityStoreNodeItem): data is StoreListNode<StoreNode<T>> {
-    return isObservableArray(data) && !!(data as StoreListNode).$entity;
-}
-
-export function isStoreNode<T>(data: EntityStoreNodeItem): data is StoreNode<T> {
-    return !!(data as StoreNode).set;
-}
-
-function isFieldEntry(data: FieldEntry | ObjectEntry | ListEntry): data is FieldEntry {
-    return data.type === "field";
 }

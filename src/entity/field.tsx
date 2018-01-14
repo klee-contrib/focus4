@@ -5,11 +5,9 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themeable, themr} from "react-css-themr";
 
-import {DisplayProps, InputProps, Label, LabelProps} from "../components";
-import {ReactComponent} from "../config";
+import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
 
-import {Domain} from "./types";
-import {validate} from "./validation";
+import {Domain, EntityField} from "./types";
 
 import * as styles from "./__style__/field.css";
 
@@ -72,97 +70,46 @@ export interface FieldOptions<
     valueRatio?: number;
 }
 
-/** Props pour le Field, se base sur le contenu d'un domaine (éventuellement patché) et des options de champ. */
-export interface FieldProps<T, ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">
-    extends
-        Domain<ICProps, DCProps, LCProps>,
-        FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey> {
-    /** Commentaire sur le champ. */
-    comment?: string;
-    /** Composant pour l'affichage. */
-    DisplayComponent: ReactComponent<DCProps>;
-    /** Formatteur pour l'affichage du champ en consulation. */
-    displayFormatter: (value: T) => string;
-    /** Composant pour l'entrée utilisateur. */
-    InputComponent: ReactComponent<ICProps>;
-    /** Formatteur pour l'affichage du champ en édition. */
-    inputFormatter: (value: T) => string;
-    /** Champ requis. */
-    isRequired?: boolean;
-    /** Libellé du champ. */
-    label?: string;
-    /** Composant pour le libellé. */
-    LabelComponent: ReactComponent<LCProps>;
-    /** Nom du champ. */
-    name: string;
-    /** Formatteur inverse pour convertir l'affichage du champ en la valeur (édition uniquement) */
-    unformatter: (text: string) => T;
-    /** Valeur. */
-    value: T;
-}
-
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 @autobind
 @observer
 export class Field<
     T,
-    ICProps extends InputProps,
-    DCProps extends DisplayProps,
-    LCProps extends LabelProps,
-    R extends RefValues<T, VK, LK> ,
-    VK extends string,
-    LK extends string
-> extends React.Component<FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>, void> {
+    ICProps extends {theme?: {}} = InputProps,
+    DCProps extends {theme?: {}} = DisplayProps,
+    LCProps = LabelProps,
+    R extends RefValues<T, ValueKey, LabelKey> = any,
+    ValueKey extends string = "code",
+    LabelKey extends string = "label"
+> extends React.Component<FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey> & {field: EntityField<T, Domain<ICProps, DCProps, LCProps>>}, void> {
 
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = this.props.forceErrorDisplay || false;
 
-    componentWillUpdate({value}: FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>) {
+    componentWillUpdate({field}: {field: EntityField<T, Domain<ICProps, DCProps, LCProps>>}) {
         // On affiche l'erreur dès que et à chaque fois que l'utilisateur modifie la valeur (et à priori pas avant).
-        if (value) {
+        if (field.value) {
             this.showError = true;
         }
     }
 
-    /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
     @computed
-    get error(): string | undefined {
-        const {error, value} = this.props;
-
-        // On priorise l'éventuelle erreur passée en props.
-        if (error !== undefined) {
-            return error || undefined;
-        }
-
-        // On vérifie que le champ n'est pas vide et obligatoire.
-        const {isRequired, validator, label = ""} = this.props;
-        if (isRequired && (value as any) !== 0 && !value) {
-            return i18next.t("focus.validation.required");
-        }
-
-        // On applique le validateur du domaine.
-        if (validator && value !== undefined && value !== null) {
-            const validStat = validate({value, name: i18next.t(label)}, validator);
-            if (validStat.errors.length) {
-                return i18next.t(validStat.errors.join(", "));
-            }
-        }
-
-        // Pas d'erreur.
-        return undefined;
+    get error() {
+        return this.props.field.error;
     }
 
     /** Appelé lors d'un changement sur l'input. */
     onChange(value: any) {
-        const {onChange, unformatter} = this.props;
+        const {onChange, field: {$field: {domain}}} = this.props;
         if (onChange) {
-            (onChange as any)(unformatter && unformatter(value) || value);
+            (onChange as any)(domain.unformatter && domain.unformatter(value) || value);
         }
     }
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}, theme} = this.props;
+        const {valueKey = "code", labelKey = "label", values, field, keyResolver, theme} = this.props;
+        const {value, $field: {domain: {displayFormatter = (t: any) => i18next.t(t), DisplayComponent = Display as any, displayProps = {}}}} = field;
         return (
             <DisplayComponent
                 {...displayProps as {}}
@@ -179,12 +126,12 @@ export class Field<
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps = {}, name, theme} = this.props;
-
+        const {field, valueKey = "code", labelKey = "label", values, keyResolver, theme} = this.props;
+        const {value, error, $field: {name, domain: {InputComponent = Input, inputFormatter = ((x: string) => x), inputProps = {}}}} = field;
         let props: any = {
             ...inputProps as {},
-            value: inputFormatter(value),
-            error: this.showError && this.error || undefined,
+            value: inputFormatter(value as any),
+            error: this.showError && error || undefined,
             name,
             id: name,
             onChange: this.onChange,
@@ -203,13 +150,13 @@ export class Field<
     }
 
     render() {
-        const {comment, disableInlineSizing, i18nPrefix, label, LabelComponent, name, showTooltip, hasLabel = true,  labelRatio = 33, isRequired, isEdit, theme, className = ""} = this.props;
+        const {disableInlineSizing, hasLabel = true, labelRatio = 33, field, isEdit, showTooltip, i18nPrefix = "focus", theme} = this.props;
         const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
-        const FinalLabel = LabelComponent || Label;
+        const {error, $field: {comment, label, isRequired, domain: {className = "", LabelComponent = Label}}} = field;
         return (
-            <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${this.error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
+            <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
                 {hasLabel ?
-                    <FinalLabel
+                    <LabelComponent
                         comment={comment}
                         i18nPrefix={i18nPrefix}
                         label={label}

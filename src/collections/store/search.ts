@@ -3,7 +3,7 @@ import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
 import {config} from "../../config";
-import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues, validate} from "../../entity";
+import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues} from "../../entity";
 
 import {ListStoreBase} from "./base";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
@@ -156,13 +156,9 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         for (const key in criteria) {
             if (key !== "set" && key !== "clear") {
                 const entry = ((criteria as any)[key] as EntityField<any>);
-                const {$field: {domain}, value} = entry;
-                if (domain && domain.validator && value !== undefined && value !== null) {
-                    const validStat = validate({value, name: ""}, domain.validator);
-                    if (validStat.errors.length) {
-                        errors[key] = true;
-                        continue;
-                    }
+                if (entry.error) {
+                    errors[key] = true;
+                    continue;
                 }
                 errors[key] = false;
             }
