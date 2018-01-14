@@ -1,9 +1,9 @@
 import i18next from "i18next";
-import {isNull, isNumber, isUndefined} from "lodash";
-import {computed, extendObservable} from "mobx";
+import {isNull, isNumber, isUndefined, values} from "lodash";
+import {computed, extendObservable, observable} from "mobx";
 import moment from "moment";
 
-import {EntityField, Error, isStoreListNode, isStoreNode, NumberOptions, StringOptions, ValidationProperty, Validator} from "./types";
+import {EntityField, Error, isEntityField, isStoreListNode, isStoreNode, NumberOptions, StringOptions, ValidationProperty, Validator} from "./types";
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -162,10 +162,27 @@ function validateField({$field, value}: EntityField): string | undefined {
 export function addErrorFields(data: any) {
     if (isStoreListNode(data)) {
         data.forEach(addErrorFields);
+        (data as any).form = observable({
+            isValid: computed(() => data.every(node => !node.form || node.form.isValid))
+        });
     } else if (isStoreNode(data)) {
         for (const entry in data) {
             addErrorFields(data[entry as keyof typeof data]);
         }
+        (data as any).form = observable({
+            isValid: computed(() =>
+                values(data)
+                    .every(item => {
+                        if (isEntityField(item)) {
+                            return !item.error;
+                        } else if (isStoreNode(item)) {
+                            return !item.form || item.form.isValid;
+                        } else {
+                            return true;
+                        }
+                    })
+                )
+            });
     } else if (data.$field) {
         extendObservable(data, {error: computed(() => validateField(data))});
     }
