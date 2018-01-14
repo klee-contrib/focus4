@@ -1,62 +1,11 @@
 import i18next from "i18next";
 import {isNull, isNumber, isUndefined} from "lodash";
+import {computed, extendObservable} from "mobx";
 import moment from "moment";
 
+import {EntityField, Error, isStoreListNode, isStoreNode, NumberOptions, StringOptions, ValidationProperty, Validator} from "./types";
+
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-export interface ValidationProperty {
-    name: string;
-    value: any;
-}
-
-export interface Error {
-    errorMessage?: string;
-}
-
-export interface NumberOptions extends Error {
-    min?: number;
-    max?: number;
-    isInteger?: boolean;
-}
-
-export interface StringOptions extends Error {
-    minLength?: number;
-    maxLength?: number;
-}
-
-export interface NumberValidator {
-    type: "number";
-    options?: NumberOptions;
-}
-
-export interface StringValidator {
-    type: "string";
-    options?: StringOptions;
-}
-
-export interface RegexValidator {
-    type: "regex";
-    value: RegExp;
-    options?: Error;
-}
-
-export interface EmailValidator {
-    type: "email";
-    options?: Error;
-}
-
-export interface DateValidator {
-    type: "date";
-    options?: Error;
-}
-
-export interface FunctionValidator {
-    type: "function";
-    value: (param: any, options?: {isEdit?: boolean}) => boolean;
-    options?: {isEdit?: boolean} & Error;
-}
-
-export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator;
 
 /**
  * Vérifie que le texte est une date.
@@ -168,7 +117,7 @@ function validateProperty(property: ValidationProperty, validator: Validator) {
  * @param property La propriété à valider.
  * @param validators Les validateurs.
  */
-export function validate(property: ValidationProperty, validators?: Validator[]) {
+function validate(property: ValidationProperty, validators?: Validator[]) {
     const errors: string[] = [];
     if (validators) {
         for (const validator of validators) {
@@ -185,4 +134,39 @@ export function validate(property: ValidationProperty, validators?: Validator[])
         name: property.name,
         value: property.value
     };
+}
+
+ /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
+function validateField({$field, value}: EntityField): string | undefined {
+    const {isRequired, label = ""} = $field;
+    const {validator} = $field.domain;
+
+    // On vérifie que le champ n'est pas vide et obligatoire.
+    if (isRequired && (value as any) !== 0 && !value) {
+        return i18next.t("focus.validation.required");
+    }
+
+    // On applique le validateur du domaine.
+    if (validator && value !== undefined && value !== null) {
+        const validStat = validate({value, name: i18next.t(label)}, validator);
+        if (validStat.errors.length) {
+            return i18next.t(validStat.errors.join(", "));
+        }
+    }
+
+    // Pas d'erreur.
+    return undefined;
+}
+
+/** Ajoute les champs calculés de validation sur un StoreNode. */
+export function addErrorFields(data: any) {
+    if (isStoreListNode(data)) {
+        data.forEach(addErrorFields);
+    } else if (isStoreNode(data)) {
+        for (const entry in data) {
+            addErrorFields(data[entry as keyof typeof data]);
+        }
+    } else if (data.$field) {
+        extendObservable(data, {error: computed(() => validateField(data))});
+    }
 }
