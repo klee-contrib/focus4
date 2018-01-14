@@ -88,8 +88,7 @@ function clone(source: any): any {
     } else if (isStoreNode(source)) {
         const res: typeof source = {} as any;
         for (const key in source) {
-            const typedKey = key as keyof typeof source;
-            res[typedKey] = clone(source[typedKey]);
+            (res as any)[key] = clone((source as any)[key]);
         }
         return res;
     } else if (source.$field) {

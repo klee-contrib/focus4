@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {computed, observable} from "mobx";
+import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themeable, themr} from "react-css-themr";
@@ -91,11 +91,6 @@ export class Field<
         if (field.value) {
             this.showError = true;
         }
-    }
-
-    @computed
-    get error() {
-        return this.props.field.error;
     }
 
     /** Appelé lors d'un changement sur l'input. */

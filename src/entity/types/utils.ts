@@ -1,7 +1,11 @@
 import {isObservableArray} from "mobx";
 
-import {FieldEntry, ListEntry, ObjectEntry} from "./entity";
+import {EntityField, FieldEntry, ListEntry, ObjectEntry} from "./entity";
 import {StoreListNode, StoreNode} from "./store";
+
+export function isEntityField(data: any): data is EntityField {
+    return !!(data as EntityField).$field;
+}
 
 export function isFieldEntry(data: FieldEntry | ObjectEntry | ListEntry): data is FieldEntry {
     return !!(data as FieldEntry).name;

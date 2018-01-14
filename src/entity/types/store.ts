@@ -1,16 +1,10 @@
 import {IObservableArray} from "mobx";
 import {Entity} from "./entity";
 
-/** Fonction `set`. */
-export interface Setter<T> {
-    /** Renseigne les valeurs du noeud à partir des champs fournis. */
-    set(config: Partial<T>): void;
-}
-
-/** Fonction `clear`. */
-export interface Clearer {
-    /** Vide l'objet (récursivement). */
-    clear(): void;
+/** Objet ajouté sur un FormNode. */
+export interface FormData {
+    /** Précise si le noeud est valide (FormNode uniquement). */
+    readonly isValid: boolean;
 }
 
 /**
@@ -18,7 +12,14 @@ export interface Clearer {
  *
  * En pratique, tous les autres éléments d'un `StoreNode` doivent être des `EntityValue`.
  */
-export interface StoreNode<T = {}> extends Setter<T>, Clearer {}
+export interface StoreNode<T = {}> {
+    /** Vide l'objet (récursivement). */
+    clear(): void;
+    /** Données liée à un FormNode. */
+    readonly form?: FormData;
+    /** Renseigne les valeurs du noeud à partir des champs fournis. */
+    set(config: Partial<T>): void;
+}
 
 /**
  * Noeud de store de liste. C'est un array avec les métadonnées de l'entité du noeud.
@@ -33,6 +34,8 @@ export interface StoreListNode<T extends StoreNode = StoreNode> extends IObserva
     $isFormNode?: boolean;
     /** Fonction de transformation du noeud de la liste. */
     $transform?: (source: T) => {} | void;
+    /** Données liée à un FormNode. */
+    readonly form?: FormData;
     /** Ajoute un élément à la liste. */
     pushNode(item: {}): void;
     /** Reconstruit la liste à partir des données fournies. */

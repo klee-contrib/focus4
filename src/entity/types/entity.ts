@@ -94,7 +94,7 @@ export interface EntityField<T = StoreType, D extends DomainNoDefault = DomainNo
     /** Métadonnées. */
     readonly $field: FieldEntry<D>;
 
-    /** Erreur de validation du champ, dans un FormNode. */
+    /** Erreur de validation du champ (FormNode uniquement). */
     readonly error?: string | undefined;
 
     /** Valeur. */
