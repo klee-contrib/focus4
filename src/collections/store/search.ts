@@ -294,7 +294,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         const selectionnableList = computed(() => searchGroupStore.list.filter(store.isItemSelectionnable));
 
         // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
-        searchGroupStore.toggleAll = action(() => {
+        searchGroupStore.toggleAll = action("toggleAll", () => {
             const areAllItemsIn = selectionnableList.get()
                 .every(item => store.selectedItems.has(item));
 

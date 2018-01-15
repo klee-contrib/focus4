@@ -47,7 +47,7 @@ export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source
     };
 
     formNode.sourceNode = node;
-    formNode.reset = action(reset);
+    formNode.reset = action("resetEntity", reset);
     formNode.subscribe = () => {
         if (!formNode.isSubscribed) {
             const disposer = autorun(reset); // On crée la réaction de synchronisation.

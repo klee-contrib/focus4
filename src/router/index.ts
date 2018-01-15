@@ -59,7 +59,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
      * @param i L'index du store.
      */
     function updateActivity(i: number) {
-        runInAction(() => stores.forEach((s, j) => s.isActiveInRouter = i === j));
+        runInAction("updateViewStoreActivity", () => stores.forEach((s, j) => s.isActiveInRouter = i === j));
     }
 
     if (stores.length > 1 && stores.some(store => !store.prefix)) {
@@ -90,7 +90,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
                     }
                 }
 
-                runInAction(() => {
+                runInAction("setView", () => {
                     store.setView(params, true); // On met à jour la vue avec les paramètres d'URL.
                     updateActivity(i); // On met à jour l'activité.
                 });
@@ -103,7 +103,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         // On ajoute la route d'erreur.
         {
             $: `/${errorPageName}/:code`,
-            beforeEnter: action(({params}) => {
+            beforeEnter: action("beforeEnter", ({params}) => {
                 errorCode.set(params.code);
                 updateActivity(stores.length);
             })
