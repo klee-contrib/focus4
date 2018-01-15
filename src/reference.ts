@@ -1,3 +1,4 @@
+import {upperFirst} from "lodash";
 import {action, computed, extendObservable, IObservableArray, observable} from "mobx";
 
 import {config} from "./config";
@@ -40,7 +41,7 @@ export function makeReferenceStore<T extends Record<string, {}>>(referenceLoader
                     /* Le service de chargement est appelé dans une autre stack parce que l'appel va déclencher une mise à jour d'état (dans le RequestStore),
                         et qu'on ne peut pas changer de l'état dans une dérivation. */
                     setTimeout(() => referenceLoader(ref)
-                        .then(action((refList: {}[]) => {
+                        .then(action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
                             referenceStore[`_${ref}_cache`] = new Date().getTime();
                             referenceStore[`_${ref}`].replace(refList);
                             delete referenceStore[`_${ref}_loading`];

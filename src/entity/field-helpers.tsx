@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {upperFirst} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
 import {InputProps} from "react-toolbox/lib/input";
@@ -41,15 +42,12 @@ export function fieldFor<
     field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
     options: Partial<FieldOptions<T, ICProps, DCProps, LCProps>> = {}
 ) {
-    options.onChange = options.onChange || action(((value: T) => field.value = value));
+    options.onChange = options.onChange || action(`on${upperFirst(field.$field.name)}Change`, ((value: T) => field.value = value));
 
     // Si on ne pose pas de ref, on considère qu'on n'a pas de formulaire et donc qu'on attend un comportement par défaut un peu différent.
     if (!options.innerRef) {
         if (options.isEdit === undefined) {
             options.isEdit = true;
-        }
-        if (options.forceErrorDisplay === undefined) {
-            options.forceErrorDisplay = true;
         }
     }
 

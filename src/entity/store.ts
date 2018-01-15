@@ -74,7 +74,7 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
         Typescript empêchera d'appeler la fonction dans le mauvais contexte de toute façon.
     */
 
-    entityStore.set = action(function set(this: EntityStore, setConfig: any) {
+    entityStore.set = action("node.set", function set(this: EntityStore, setConfig: any) {
         for (const entry in setConfig) {
             const entity = this[entry];
             if (!entity) {
@@ -84,7 +84,7 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
         }
     });
 
-    entityStore.clear = action(function clear(this: EntityStore) {
+    entityStore.clear = action("node.clear", function clear(this: EntityStore) {
         for (const entry in this) {
             clearEntity(this[entry]);
         }
@@ -108,12 +108,18 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
     if (isArray(entity)) {
         const outputEntry: StoreListNode<EntityStoreNode> = observable.shallowArray() as any;
         (outputEntry as any).$entity = entityMap[trueEntry];
-        outputEntry.pushNode = action(function pushNode(this: typeof outputEntry, item: {}) {
+        outputEntry.pushNode = action("pushNode", function pushNode(this: typeof outputEntry, item: {}) {
             const itemNode = buildEntityEntry({[trueEntry]: {}} as EntityStoreConfig, {...entityMap, item: entity.$entity}, entityMapping, trueEntry) as EntityStoreNode;
+            if (this.$transform) {
+                Object.assign(itemNode, this.$transform(itemNode) || {});
+            }
+            if (this.$isFormNode) {
+                addErrorFields(itemNode);
+            }
             itemNode.set(item);
             this.push(itemNode);
         });
-        outputEntry.set = action(function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
+        outputEntry.set = action("node.set", function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
         return outputEntry;
     }
 
@@ -137,8 +143,8 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
                 value: observable.ref(undefined)
             });
         }),
-        set: action(function set(this: EntityStoreNode, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); }),
-        clear: action(function clear(this: EntityStoreNode) { clearEntity(this); })
+        set: action("node.set", function set(this: EntityStoreNode, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); }),
+        clear: action("node.clear", function clear(this: EntityStoreNode) { clearEntity(this); })
     } as any as EntityStoreNode;
 }
 

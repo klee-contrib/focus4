@@ -122,7 +122,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                     {orderableColumnList.map((description, idx) => (
                         <MenuItem
                             key={idx}
-                            onClick={action(() => {
+                            onClick={action("sort", () => {
                                 store.sortBy = description.key as keyof T;
                                 store.sortAsc = description.order;
                             })}

@@ -1,12 +1,15 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {observable} from "mobx";
+import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
 import * as React from "react";
 import {themeable, themr} from "react-css-themr";
+import {findDOMNode} from "react-dom";
 
 import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
 
+import {documentHelper} from "./document-helper";
 import {Domain, EntityField} from "./types";
 
 import * as styles from "./__style__/field.css";
@@ -44,8 +47,6 @@ export interface FieldOptions<
     disableInlineSizing?: boolean;
     /** Surcharge l'erreur du field. */
     error?: string | null;
-    /** Force l'affichage de l'erreur, même si le champ n'a pas encore été modifié. */
-    forceErrorDisplay?: boolean;
     /** Service de résolution de code. */
     keyResolver?: (key: number | string) => Promise<string>;
     /** Affiche le label. */
@@ -83,14 +84,38 @@ export class Field<
     LabelKey extends string = "label"
 > extends React.Component<FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey> & {field: EntityField<T, Domain<ICProps, DCProps, LCProps>>}, void> {
 
-    /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
-    @observable showError = this.props.forceErrorDisplay || false;
+    // On récupère le forceErrorDisplay du form depuis le contexte.
+    static contextTypes = {form: PropTypes.object};
+    context!: {form?: {forceErrorDisplay: boolean}};
 
-    componentWillUpdate({field}: {field: EntityField<T, Domain<ICProps, DCProps, LCProps>>}) {
-        // On affiche l'erreur dès que et à chaque fois que l'utilisateur modifie la valeur (et à priori pas avant).
-        if (field.value) {
-            this.showError = true;
+    /** <div /> contenant le composant de valeur (input ou display). */
+    @observable
+    private valueElement?: Element;
+    /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
+    @observable
+    private hideErrorOnInit = this.props.isEdit && !this.props.field.value;
+
+    /** Détermine si on affiche l'erreur ou pas. En plus des surcharges du form et du field lui-même, l'erreur est masquée si le champ est en cours de saisie. */
+    @computed
+    get showError() {
+        return (!this.hideErrorOnInit || this.context.form && this.context.form.forceErrorDisplay || false)
+            && !documentHelper.isElementActive(this.valueElement);
+    }
+
+    // On enregistre le <div> de la valeur et on enregistre un eventListener désactiver le `hideErrorOnInit` au premier clic sur
+    componentDidMount() {
+        // Poser une ref pose des problèmes de stack overflow (pas vraiment clair pourquoi), donc on fait un truc moisi pour récupérer le noeud qu'on veut.
+        const children = findDOMNode(this).children;
+        this.valueElement = children.item(children.length - 1);
+        if (this.hideErrorOnInit) {
+            this.valueElement.addEventListener("mousedown", this.disableHideError);
         }
+    }
+
+    /** Désactive le masquage de l'erreur si le champ était en création avant le premier clic. */
+    private disableHideError() {
+        this.hideErrorOnInit = false;
+        this.valueElement!.removeEventListener("mousedown", this.disableHideError);
     }
 
     /** Appelé lors d'un changement sur l'input. */
@@ -149,7 +174,7 @@ export class Field<
         const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
         const {error, $field: {comment, label, isRequired, domain: {className = "", LabelComponent = Label}}} = field;
         return (
-            <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
+            <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${isEdit && error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
                 {hasLabel ?
                     <LabelComponent
                         comment={comment}

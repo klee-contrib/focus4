@@ -64,9 +64,16 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
             .some(x => x);
     }
 
+    static childContextTypes = {theme: PropTypes.object, form: PropTypes.object};
+
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
     static contextTypes = {theme: PropTypes.object};
     context!: {theme: {[key: string]: {[key: string]: any}}};
+
+    readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
+    getChildContext() {
+        return {theme: this.context.theme, form: this.formContext};
+    }
 
     /** Identifiant unique du formulaire. */
     formId = v4();
@@ -155,7 +162,7 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
         if (this.services.delete) {
             this.isLoading = true;
             await this.services.delete(toFlatValues(this.entity));
-            runInAction(() => {
+            runInAction("afterDelete", () => {
                 this.isLoading = false;
                 this.entity.sourceNode.clear();
             });
@@ -175,7 +182,7 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
                 this.isLoading = true;
                 this.entity.sourceNode.clear();
                 const data = await load(...params);
-                runInAction(() => {
+                runInAction("afterLoad", () => {
                     this.entity.sourceNode.set(data);
                     this.isLoading = false;
                 });
@@ -187,12 +194,15 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
     /** Appelle le service de sauvegarde. */
     @action
     async save() {
+        // On force l'affichage des erreurs.
+        this.formContext.forceErrorDisplay =  true;
+
         // On ne sauvegarde que si la validation est en succès.
         if (!this.entity.form || this.entity.form.isValid) {
             this.isLoading = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity));
-                runInAction(() => {
+                runInAction("afterSave", () => {
                     this.isLoading = false;
                     this.isEdit = false;
                     this.entity.sourceNode.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
