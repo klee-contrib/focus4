@@ -273,5 +273,5 @@ function isStoreNode(data: EntityStoreNodeItem): data is StoreNode {
     return !!(data as StoreNode).set;
 }
 function isFieldEntry(data: FieldEntry | ObjectEntry | ListEntry): data is FieldEntry {
-    return !!(data as FieldEntry).name;
+    return data.type === "field";
 }
