@@ -50,7 +50,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
     protected get filterList() {
         const {hideCriteria, hideFacets, store} = this.props;
 
-        const topicList = [];
+        const topicList: {key: string, label: string, onDeleteClick: () => void}[] = [];
 
         // On ajoute la liste des critères.
         if (!hideCriteria) {
@@ -68,16 +68,24 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
         // On ajoute à la liste toutes les facettes sélectionnées.
         if (!hideFacets) {
             for (const facetKey in store.selectedFacets) {
-                const facetValue = store.selectedFacets[facetKey];
+                const facetValues = store.selectedFacets[facetKey] || [];
                 const facetOutput = store.facets.find(facet => facetKey === facet.code);
-                const facetItem = facetOutput && facetOutput.values.find(facet => facet.code === facetValue);
-                topicList.push({
-                    key: facetKey,
-                    label: `${i18next.t(facetOutput && facetOutput.label || facetKey)} : ${i18next.t(facetItem && facetItem.label || facetValue)}`,
-                    onDeleteClick: () => store.setProperties({
-                        selectedFacets: omit(store.selectedFacets, facetKey) as {[facet: string]: string}
-                    })
-                });
+                if (facetOutput) {
+                    facetOutput.values
+                        .filter(value => !!facetValues.find(v => v === value.code))
+                        .forEach(facetItem =>
+                            topicList.push({
+                                key: facetKey,
+                                label: `${i18next.t(facetOutput && facetOutput.label || facetKey)} : ${i18next.t(facetItem.label || facetItem.code)}`,
+                                onDeleteClick: () => {
+                                    if (store.selectedFacets[facetKey].length === 1) { // Une seule valeur sélectionnée : on retire la facette entière.
+                                        store.selectedFacets = omit(store.selectedFacets, facetKey);
+                                    } else { // Sinon, on retire simplement la valeur de la liste.
+                                        store.selectedFacets = {...store.selectedFacets, [facetKey]: store.selectedFacets[facetKey].filter(value => value !== facetItem.code)};
+                                    }
+                                }
+                            }));
+                }
             }
         }
 

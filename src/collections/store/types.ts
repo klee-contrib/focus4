@@ -33,7 +33,7 @@ export interface GroupResult<T = any> {
 /** Objet d'entrée pour la recherche. */
 export interface QueryInput<C = {}> {
     /** Facettes sélectionnées. */
-    facets?: {[facet: string]: string};
+    facets?: {[facet: string]: string[]};
     /** Critère de recherche. */
     criteria?: C & {query: string};
     /** Champ sur lequel grouper. */

@@ -18,7 +18,7 @@ export interface SearchProperties {
     /** Champ sur lequel grouper. */
     groupingKey?: string;
     /** Facettes sélectionnées ({facet: value}) */
-    selectedFacets?: {[facet: string]: string};
+    selectedFacets?: {[facet: string]: string[]};
     /** Tri croissant. */
     sortAsc?: boolean;
     /** Champ sur lequel trier. */
@@ -39,7 +39,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     /** Champ sur lequel grouper. */
     @observable groupingKey: string | undefined;
     /** Facettes sélectionnées ({facet: value}) */
-    @observable selectedFacets: {[facet: string]: string} = {};
+    @observable.ref selectedFacets: {[facet: string]: string[]} = {};
     /** Nombre maximum de résultat par requête serveur. */
     @observable top = 50;
 

@@ -80,7 +80,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
         const {groupingKey, selectedFacets, setProperties} = this.props.store;
         setProperties({
             groupingKey: undefined,
-            selectedFacets: {...selectedFacets, [groupingKey!]: this.props.group.code}
+            selectedFacets: {...selectedFacets, [groupingKey!]: [this.props.group.code]}
         });
         window.scrollTo({
             top: 0,

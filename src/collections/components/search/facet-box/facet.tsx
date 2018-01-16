@@ -1,6 +1,5 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {uniqueId} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -20,10 +19,10 @@ export interface FacetProps {
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList: number;
-    /** Valeur sélectionnée. */
-    selectedDataKey: string | undefined;
+    /** Valeurs sélectionnées. */
+    selectedValues: string[] | undefined;
     /** Handler de sélection d'une facette. */
-    selectHandler: (facetKey: string, dataKey: string | undefined) => void;
+    selectHandler: (facetKey: string, facetValue: string | undefined) => void;
     /** CSS. */
     theme?: FacetStyle;
 }
@@ -36,31 +35,32 @@ export class Facet extends React.Component<FacetProps, void> {
     @observable protected isShowAll = false;
 
     protected renderFacetDataList() {
-        const {theme, selectedDataKey, facet, nbDefaultDataList, selectHandler} = this.props;
+        const {theme, selectedValues = [], facet, nbDefaultDataList, selectHandler} = this.props;
 
-        if (selectedDataKey) {
-            const selectedFacet = facet.values.filter(value => value.code === selectedDataKey);
-            return (
-                <Chip
-                    deletable
-                    onClick={() => selectHandler(this.props.facet.code, undefined)}
-                    theme={{chip: theme!.chip}}
-                >
-                    {selectedFacet.length ? i18next.t(selectedFacet[0].label) : ""}
-                </Chip>
-            );
-        }
+        const selectedFacetValues = facet.values.filter(value => !!selectedValues.find(sv => sv === value.code));
+        const unselectedFacetValues = facet.values.filter(value => !selectedFacetValues.find(sfv => sfv.code === value.code));
 
-        const facetValues = this.isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList);
         return (
-            <ul>
-                {facetValues.map(facetValue => (
-                    <li key={uniqueId("facet-item")} onClick={() => this.props.selectHandler(this.props.facet.code, facetValue.code)}>
-                        <div>{i18next.t(facetValue.label)}</div>
-                        <div className={theme!.count}>{facetValue.count}</div>
-                    </li>
+            <div>
+                {selectedFacetValues.map(sfv => (
+                    <Chip
+                        key={sfv.code}
+                        deletable
+                        onClick={() => selectHandler(this.props.facet.code, undefined)}
+                        theme={{chip: theme!.chip}}
+                    >
+                        {i18next.t(sfv.label)}
+                    </Chip>
                 ))}
-            </ul>
+                <ul>
+                    {(this.isShowAll ? unselectedFacetValues : unselectedFacetValues.slice(0, nbDefaultDataList)).map(facetValue => (
+                        <li key={facetValue.code} onClick={() => this.props.selectHandler(this.props.facet.code, facetValue.code)}>
+                            <div>{i18next.t(facetValue.label)}</div>
+                            <div className={theme!.count}>{facetValue.count}</div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         );
     }
 

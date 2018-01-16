@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {omit, values} from "lodash";
+import {omit, uniq, values} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -31,13 +31,21 @@ export interface FacetBoxProps<T> {
 @observer
 export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
 
-    protected facetSelectionHandler(facetKey: string, dataKey: string | undefined) {
+    protected facetSelectionHandler(facetKey: string, facetValue: string | undefined) {
         const {store} = this.props;
 
-        if (!dataKey) {
-            store.selectedFacets = omit(store.selectedFacets, facetKey);
-        } else {
-            store.selectedFacets = {...store.selectedFacets, [facetKey]: dataKey};
+        if (!facetValue && store.selectedFacets[facetKey]) { // Retrait de valeur
+            if (store.selectedFacets[facetKey].length === 1) { // Une seule valeur sélectionnée : on retire la facette entière.
+                store.selectedFacets = omit(store.selectedFacets, facetKey);
+            } else { // Sinon, on retire simplement la valeur de la liste.
+                store.selectedFacets = {...store.selectedFacets, [facetKey]: store.selectedFacets[facetKey].filter(value => value !== facetValue)};
+            }
+        } else if (facetValue) { // Ajout de valeur.
+            if (store.selectedFacets[facetKey]) { // Liste existante : on ajoute la valeur à la liste (en vérifiant qu'elle n'est pas déjà présente)
+                store.selectedFacets = {...store.selectedFacets, [facetKey]: uniq(store.selectedFacets[facetKey].concat(facetValue))};
+            } else { // Liste manquante : on crée la liste.
+                store.selectedFacets = {...store.selectedFacets, [facetKey]: [facetValue]};
+            }
         }
     }
 
@@ -54,7 +62,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
                                     key={facet.code}
                                     facet={facet}
                                     i18nPrefix={i18nPrefix}
-                                    selectedDataKey={selectedFacets[facet.code]}
+                                    selectedValues={selectedFacets[facet.code]}
                                     selectHandler={this.facetSelectionHandler}
                                     nbDefaultDataList={nbDefaultDataList}
                                 />
@@ -72,7 +80,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
 export default themr("facetBox", styles)(FacetBox);
 
 /** Détermine si on doit affiche une facette dans la FacetBox ou non, pour prévoir combien on va avoir de facettes à afficher au final. */
-export function shouldDisplayFacet(facet: FacetOutput, selectedFacets: {[key: string]: string}, showSingleValuedFacets?: boolean) {
+export function shouldDisplayFacet(facet: FacetOutput, selectedFacets: {[key: string]: string[]}, showSingleValuedFacets?: boolean) {
     return !(!facet.values.length || !showSingleValuedFacets && facet.values.length === 1 && !values(selectedFacets)
-        .find(v => facet.values[0].code === v));
+        .find(vs => !!vs.find(v => facet.values[0].code === v)));
 }
