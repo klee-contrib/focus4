@@ -1,165 +1,17 @@
 import i18next from "i18next";
-import {isNull, isNumber, isUndefined, values} from "lodash";
+import {isFunction, isNumber, values} from "lodash";
 import {computed, extendObservable, observable} from "mobx";
 import moment from "moment";
 
-import {EntityField, Error, isEntityField, isStoreListNode, isStoreNode, NumberOptions, StringOptions, ValidationProperty, Validator} from "./types";
+import {EntityField, isEntityField, isRegex, isStoreListNode, isStoreNode, StoreNode, Validator} from "./types";
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /**
- * Vérifie que le texte est une date.
- * @param text Le texte.
+ * Ajoute les champs calculés de validation dans un FormNode.
+ * @param data Le StoreNode ou l'EntityField.
  */
-export function dateValidator(text: string) {
-    return moment(text, moment.ISO_8601)
-        .isValid();
-}
-
-/**
- * Vérifie que le texte est un email.
- * @param text Le texte.
- */
-export function emailValidator(text: string) {
-    return EMAIL_REGEX.test(text);
-}
-
-/**
- * Vérifie que le texte est un nombre.
- * @param text Le texte.
- * @param options Les options du validateur.
- */
-export function numberValidator(text: string, options?: NumberOptions) {
-    if (isUndefined(text) || isNull(text)) {
-        return true;
-    }
-    const n = +text;
-    if (isNaN(n) || !isNumber(n)) {
-        return false;
-    }
-
-    if (!options) {
-        return true;
-    }
-
-    if (options.isInteger && !Number.isInteger(n)) {
-        return false;
-    }
-
-    const isMin = options.min !== undefined ? n >= options.min : true;
-    const isMax = options.max !== undefined ? n <= options.max : true;
-    return isMin && isMax;
-}
-
-/**
- * Vérifie que le texte est un string valide.
- * @param text Le texte.
- * @param options Les options du validateur.
- */
-export function stringValidator(text: string, options?: StringOptions) {
-    if (!options) {
-        return true;
-    }
-
-    text = `${text || ""}`;
-    const isMinLength = text.length >= (options.minLength || 0);
-    const isMaxLength = options.maxLength !== undefined ? text.length <= options.maxLength : true;
-    return isMinLength && isMaxLength;
-}
-
-function getErrorLabel(type: string, options?: Error): string {
-    return i18next.t(options && options.errorMessage ? options.errorMessage : `focus.validation.${type}`);
-}
-
-/**
- * Valide une propriété avec un validateur.
- * @param property La propriété à valider.
- * @param validator Le validateur à utiliser.
- */
-function validateProperty(property: ValidationProperty, validator: Validator) {
-    const {value} = property;
-    const isValid = (() => {
-        switch (validator.type) {
-            case "regex":
-                if (!value) {
-                    return true;
-                }
-                return validator.value.test(value);
-            case "email":
-                if (!value) {
-                    return true;
-                }
-                return emailValidator(value);
-            case "number":
-                return numberValidator(value, validator.options);
-            case "string":
-                return stringValidator(value || "", validator.options);
-            case "date":
-                return dateValidator(value);
-            case "function":
-                return validator.value(value, validator.options);
-            default:
-                return undefined;
-        }
-    })();
-
-    if (isValid === undefined) {
-        console.warn(`Le validateur de type : ${validator.type} n'existe pas.`);
-    } else if (!isValid) {
-        return getErrorLabel(validator.type, validator.options);
-    }
-
-    return undefined;
-}
-
-/**
- * Valide une propriété avec les validateurs fournis et retourne le status de validation.
- * @param property La propriété à valider.
- * @param validators Les validateurs.
- */
-function validate(property: ValidationProperty, validators?: Validator[]) {
-    const errors: string[] = [];
-    if (validators) {
-        for (const validator of validators) {
-            const res = validateProperty(property, validator);
-            if (res !== undefined) {
-                errors.push(res);
-            }
-        }
-    }
-
-    return {
-        errors,
-        isValid: errors.length === 0,
-        name: property.name,
-        value: property.value
-    };
-}
-
- /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
-function validateField({$field, value}: EntityField): string | undefined {
-    const {isRequired, label = ""} = $field;
-    const {validator} = $field.domain;
-
-    // On vérifie que le champ n'est pas vide et obligatoire.
-    if (isRequired && (value as any) !== 0 && !value) {
-        return i18next.t("focus.validation.required");
-    }
-
-    // On applique le validateur du domaine.
-    if (validator && value !== undefined && value !== null) {
-        const validStat = validate({value, name: i18next.t(label)}, validator);
-        if (validStat.errors.length) {
-            return i18next.t(validStat.errors.join(", "));
-        }
-    }
-
-    // Pas d'erreur.
-    return undefined;
-}
-
-/** Ajoute les champs calculés de validation sur un StoreNode. */
-export function addErrorFields(data: any) {
+export function addErrorFields(data: StoreNode | EntityField) {
     if (isStoreListNode(data)) {
         data.forEach(addErrorFields);
         (data as any).form = observable({
@@ -167,7 +19,7 @@ export function addErrorFields(data: any) {
         });
     } else if (isStoreNode(data)) {
         for (const entry in data) {
-            addErrorFields(data[entry as keyof typeof data]);
+            addErrorFields((data as any)[entry]);
         }
         (data as any).form = observable({
             isValid: computed(() =>
@@ -183,7 +35,88 @@ export function addErrorFields(data: any) {
                     })
                 )
             });
-    } else if (data.$field) {
+    } else if (isEntityField(data)) {
         extendObservable(data, {error: computed(() => validateField(data))});
     }
+}
+
+ /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
+ function validateField({$field, value}: EntityField): string | undefined {
+    const {isRequired, domain: {validator}} = $field;
+
+    // On vérifie que le champ n'est pas vide et obligatoire.
+    if (isRequired && (value as any) !== 0 && !value) {
+        return i18next.t("focus.validation.required");
+    }
+
+    // On applique le validateur du domaine.
+    if (validator && value !== undefined && value !== null) {
+        const errors = validate(value, validator);
+        if (errors.length) {
+            return errors.map(e =>  i18next.t(e))
+                .join(", ");
+        }
+    }
+
+    // Pas d'erreur.
+    return undefined;
+}
+
+/**
+ * Valide une propriété avec les validateurs fournis et retourne la liste des erreurs.
+ * @param value La valeur à valider.
+ * @param validators Les validateurs.
+ */
+function validate(value: any, validators?: Validator[]) {
+    const errors: string[] = [];
+    if (validators) {
+        for (const validator of validators) {
+            let error;
+            if (isFunction(validator)) {
+                error = validator(value);
+            } else  {
+                if (isRegex(validator)) {
+                    error = value && !validator.regex.test(value);
+                } else {
+                    switch (validator.type) {
+                        case "email":
+                            error = value && !EMAIL_REGEX.test(value);
+                            break;
+                        case "number":
+                            if (value === undefined || value === null) {
+                                break;
+                            }
+                            const n = +value;
+                            if (Number.isNaN(n) || !isNumber(n) || validator.isInteger && !Number.isInteger(n)) {
+                                error = true;
+                            }
+                            const isMin = validator.min !== undefined && n < validator.min;
+                            const isMax = validator.max !== undefined && n > validator.max;
+                            error = isMin || isMax;
+                            break;
+                        case "string":
+                            const text = `${value || ""}`;
+                            const isMinLength = text.length < (validator.minLength || 0);
+                            const isMaxLength = validator.maxLength !== undefined && text.length > validator.maxLength;
+                            error = isMinLength || isMaxLength;
+                            break;
+                        case "date":
+                            error = !moment(value, moment.ISO_8601)
+                                .isValid();
+                            break;
+                    }
+                }
+
+                if (error === true) {
+                    error = validator.errorMessage || `focus.validation.${isRegex(validator) ? "regex" : validator.type}`;
+                }
+            }
+
+            if (error) {
+                errors.push(error as string); // bug TS (!!)
+            }
+        }
+    }
+
+    return errors;
 }

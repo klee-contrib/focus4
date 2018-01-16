@@ -1,53 +1,33 @@
-export interface ValidationProperty {
-    name: string;
-    value: any;
-}
-
 export interface Error {
+    /** Surcharge du message d'erreur standard `focus.validation.${type}` */
     errorMessage?: string;
 }
 
-export interface NumberOptions extends Error {
+export interface NumberValidator extends Error {
+    type: "number";
     min?: number;
     max?: number;
     isInteger?: boolean;
 }
 
-export interface StringOptions extends Error {
+export interface StringValidator extends Error {
+    type: "string";
     minLength?: number;
     maxLength?: number;
 }
 
-export interface NumberValidator {
-    type: "number";
-    options?: NumberOptions;
+export interface RegexValidator extends Error {
+    regex: RegExp;
 }
 
-export interface StringValidator {
-    type: "string";
-    options?: StringOptions;
-}
-
-export interface RegexValidator {
-    type: "regex";
-    value: RegExp;
-    options?: Error;
-}
-
-export interface EmailValidator {
+export interface EmailValidator extends Error {
     type: "email";
-    options?: Error;
 }
 
-export interface DateValidator {
+export interface DateValidator extends Error {
     type: "date";
-    options?: Error;
 }
 
-export interface FunctionValidator {
-    type: "function";
-    value: (param: any, options?: {isEdit?: boolean}) => boolean;
-    options?: {isEdit?: boolean} & Error;
-}
+export type FunctionValidator = (value: any) => string | false| undefined;
 
 export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator;
