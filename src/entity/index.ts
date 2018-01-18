@@ -1,8 +1,7 @@
 export {default as AutoForm, ServiceConfig} from "./auto-form";
 export {default as Field, FieldStyle} from "./field";
-export {displayFor, fieldFor, selectFor, stringFor} from "./field-helpers";
-export {fromField, makeField, patchField} from "./field-transforms";
-export {makeFormNode, FormNode} from "./form-node";
+export {fieldFor, fromField, makeField, patchField, selectFor, stringFor} from "./field";
+export {addFormProperties, makeFormNode} from "./form";
 export {formatNumber} from "./formatter";
 export {buildEntityEntry, makeEntityStore, toFlatValues} from "./store";
-export {Domain, Entity, FieldEntry, ObjectEntry, ListEntry, EntityField,  StoreListNode, StoreNode} from "./types";
+export {Domain, Entity, EntityField, FieldEntry, FormNode, ListEntry, ObjectEntry, StoreListNode, StoreNode} from "./types";

@@ -2,31 +2,12 @@ import i18next from "i18next";
 import {upperFirst} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
-import {InputProps} from "react-toolbox/lib/input";
 
-import {DisplayProps, LabelProps, Select, SelectProps} from "../components";
-import {ReactComponent} from "../config";
-import {EntityField} from "../entity";
+import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../../components";
+import {ReactComponent} from "../../config";
 
+import {Domain, EntityField} from "../types";
 import Field, {FieldOptions, ReferenceOptions, RefValues} from "./field";
-import {Domain} from "./types";
-
-/**
- * Crée un champ standard en lecture seule.
- * @param field La définition de champ.
- * @param options Les options du champ.
- */
-export function displayFor<
-    T,
-    DCProps = DisplayProps,
-    LCProps = LabelProps
->(
-    field: EntityField<T, Domain<any, DCProps, LCProps>>,
-    options: Partial<FieldOptions<T, any, DCProps, LCProps>> = {}
-) {
-    options.isEdit = false;
-    return fieldFor(field, options);
-}
 
 /**
  * Crée un champ standard.
@@ -43,14 +24,6 @@ export function fieldFor<
     options: Partial<FieldOptions<T, ICProps, DCProps, LCProps>> = {}
 ) {
     options.onChange = options.onChange || action(`on${upperFirst(field.$field.name)}Change`, ((value: T) => field.value = value));
-
-    // Si on ne pose pas de ref, on considère qu'on n'a pas de formulaire et donc qu'on attend un comportement par défaut un peu différent.
-    if (!options.innerRef) {
-        if (options.isEdit === undefined) {
-            options.isEdit = true;
-        }
-    }
-
     return <Field field={field} {...options} />;
 }
 
