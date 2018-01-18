@@ -1,15 +1,16 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {omit, uniq, values} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import {FacetOutput, SearchStore} from "../../../store";
+import {SearchStore} from "../../../store";
 import Facet, {FacetStyle} from "./facet";
-export {FacetStyle};
+import {addFacetValue, removeFacetValue, shouldDisplayFacet} from "./utils";
+export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetStyle};
 
 import * as styles from "./__style__/facet-box.css";
+
 export type FacetBoxStyle = Partial<typeof styles>;
 
 /** Props de la FacetBox. */
@@ -30,41 +31,21 @@ export interface FacetBoxProps<T> {
 @autobind
 @observer
 export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
-
-    protected facetSelectionHandler(facetKey: string, facetValue: string | undefined) {
-        const {store} = this.props;
-
-        if (!facetValue && store.selectedFacets[facetKey]) { // Retrait de valeur
-            if (store.selectedFacets[facetKey].length === 1) { // Une seule valeur sélectionnée : on retire la facette entière.
-                store.selectedFacets = omit(store.selectedFacets, facetKey);
-            } else { // Sinon, on retire simplement la valeur de la liste.
-                store.selectedFacets = {...store.selectedFacets, [facetKey]: store.selectedFacets[facetKey].filter(value => value !== facetValue)};
-            }
-        } else if (facetValue) { // Ajout de valeur.
-            if (store.selectedFacets[facetKey]) { // Liste existante : on ajoute la valeur à la liste (en vérifiant qu'elle n'est pas déjà présente)
-                store.selectedFacets = {...store.selectedFacets, [facetKey]: uniq(store.selectedFacets[facetKey].concat(facetValue))};
-            } else { // Liste manquante : on crée la liste.
-                store.selectedFacets = {...store.selectedFacets, [facetKey]: [facetValue]};
-            }
-        }
-    }
-
     render() {
-        const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store: {facets, selectedFacets}} = this.props;
+        const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store} = this.props;
         return (
             <div className={theme!.facetBox}>
                 <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
-                {facets.filter(facet => shouldDisplayFacet(facet, selectedFacets, showSingleValuedFacets))
+                {store.facets.filter(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
                     .map(facet => {
-                        if (selectedFacets[facet.code] || Object.keys(facet).length > 1) {
+                        if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                             return (
                                 <Facet
                                     key={facet.code}
                                     facet={facet}
                                     i18nPrefix={i18nPrefix}
-                                    selectedValues={selectedFacets[facet.code]}
-                                    selectHandler={this.facetSelectionHandler}
                                     nbDefaultDataList={nbDefaultDataList}
+                                    store={store}
                                 />
                             );
                         } else {
@@ -78,9 +59,3 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
 }
 
 export default themr("facetBox", styles)(FacetBox);
-
-/** Détermine si on doit affiche une facette dans la FacetBox ou non, pour prévoir combien on va avoir de facettes à afficher au final. */
-export function shouldDisplayFacet(facet: FacetOutput, selectedFacets: {[key: string]: string[]}, showSingleValuedFacets?: boolean) {
-    return !(!facet.values.length || !showSingleValuedFacets && facet.values.length === 1 && !values(selectedFacets)
-        .find(vs => !!vs.find(v => facet.values[0].code === v)));
-}

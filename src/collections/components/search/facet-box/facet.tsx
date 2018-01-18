@@ -6,9 +6,11 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {Chip} from "react-toolbox/lib/chip";
 
-import {FacetOutput} from "../../../store";
+import {FacetOutput, SearchStore} from "../../../store";
+import {addFacetValue, removeFacetValue} from "./utils";
 
 import * as styles from "./__style__/facet.css";
+
 export type FacetStyle = Partial<typeof styles>;
 
 /** Props de Facet. */
@@ -19,10 +21,8 @@ export interface FacetProps {
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList: number;
-    /** Valeurs sélectionnées. */
-    selectedValues: string[] | undefined;
-    /** Handler de sélection d'une facette. */
-    selectHandler: (facetKey: string, facetValue: string | undefined) => void;
+    /** Store. */
+    store: SearchStore;
     /** CSS. */
     theme?: FacetStyle;
 }
@@ -35,9 +35,9 @@ export class Facet extends React.Component<FacetProps, void> {
     @observable protected isShowAll = false;
 
     protected renderFacetDataList() {
-        const {theme, selectedValues = [], facet, nbDefaultDataList, selectHandler} = this.props;
+        const {theme, facet, nbDefaultDataList, store} = this.props;
 
-        const selectedFacetValues = facet.values.filter(value => !!selectedValues.find(sv => sv === value.code));
+        const selectedFacetValues = facet.values.filter(value => !!(store.selectedFacets[facet.code] || []).find(sv => sv === value.code));
         const unselectedFacetValues = facet.values.filter(value => !selectedFacetValues.find(sfv => sfv.code === value.code));
 
         return (
@@ -46,17 +46,17 @@ export class Facet extends React.Component<FacetProps, void> {
                     <Chip
                         key={sfv.code}
                         deletable
-                        onClick={() => selectHandler(this.props.facet.code, undefined)}
+                        onClick={() => removeFacetValue(store, facet.code, sfv.code)}
                         theme={{chip: theme!.chip}}
                     >
                         {i18next.t(sfv.label)}
                     </Chip>
                 ))}
                 <ul>
-                    {(this.isShowAll ? unselectedFacetValues : unselectedFacetValues.slice(0, nbDefaultDataList)).map(facetValue => (
-                        <li key={facetValue.code} onClick={() => this.props.selectHandler(this.props.facet.code, facetValue.code)}>
-                            <div>{i18next.t(facetValue.label)}</div>
-                            <div className={theme!.count}>{facetValue.count}</div>
+                    {(this.isShowAll ? unselectedFacetValues : unselectedFacetValues.slice(0, nbDefaultDataList)).map(sfv => (
+                        <li key={sfv.code} onClick={() => addFacetValue(store, facet.code, sfv.code)}>
+                            <div>{i18next.t(sfv.label)}</div>
+                            <div className={theme!.count}>{sfv.count}</div>
                         </li>
                     ))}
                 </ul>

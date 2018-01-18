@@ -1,6 +1,5 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {omit} from "lodash";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -11,6 +10,7 @@ import {Chip} from "react-toolbox/lib/chip";
 
 import {getIcon} from "../../../components";
 import {SearchStore} from "../../store";
+import {removeFacetValue} from "./facet-box";
 
 import * as styles from "./__style__/summary.css";
 
@@ -75,15 +75,9 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                         .filter(value => !!facetValues.find(v => v === value.code))
                         .forEach(facetItem =>
                             topicList.push({
-                                key: facetKey,
+                                key: `${facetKey}-${facetItem.code}`,
                                 label: `${i18next.t(facetOutput && facetOutput.label || facetKey)} : ${i18next.t(facetItem.label || facetItem.code)}`,
-                                onDeleteClick: () => {
-                                    if (store.selectedFacets[facetKey].length === 1) { // Une seule valeur sélectionnée : on retire la facette entière.
-                                        store.selectedFacets = omit(store.selectedFacets, facetKey);
-                                    } else { // Sinon, on retire simplement la valeur de la liste.
-                                        store.selectedFacets = {...store.selectedFacets, [facetKey]: store.selectedFacets[facetKey].filter(value => value !== facetItem.code)};
-                                    }
-                                }
+                                onDeleteClick: () => removeFacetValue(store, facetKey, facetItem.code)
                             }));
                 }
             }
