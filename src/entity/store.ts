@@ -1,8 +1,8 @@
 import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
 import {action, extendObservable, isComputed, isObservableArray, observable} from "mobx";
 
+import {addFormProperties} from "./form";
 import {Entity, EntityField, isFieldEntry, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "./types";
-import {addErrorFields} from "./validation";
 
 export type EntityStoreNodeItem = EntityField | StoreNode | StoreListNode;
 /** Noeud de store simple. Véritable définition de `StoreNode`. */
@@ -114,7 +114,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
                 Object.assign(itemNode, this.$transform(itemNode) || {});
             }
             if (this.$isFormNode) {
-                addErrorFields(itemNode);
+                addFormProperties(itemNode, outputEntry);
             }
             itemNode.set(item);
             this.push(itemNode);
@@ -168,7 +168,7 @@ function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, en
                     Object.assign(newNode, entity.$transform(newNode) || {});
                 }
                 if (entity.$isFormNode) {
-                    addErrorFields(newNode);
+                    addFormProperties(newNode, entity);
                 }
                 return newNode;
             }));

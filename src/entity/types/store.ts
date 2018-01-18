@@ -3,6 +3,8 @@ import {Entity} from "./entity";
 
 /** Objet ajouté sur un FormNode. */
 export interface FormData {
+    /** Précise si le formulaire associé est en édition ou non. */
+    isEdit: boolean;
     /** Précise si le noeud est valide (FormNode uniquement). */
     readonly isValid: boolean;
 }
@@ -40,4 +42,25 @@ export interface StoreListNode<T extends StoreNode = StoreNode> extends IObserva
     pushNode(item: {}): void;
     /** Reconstruit la liste à partir des données fournies. */
     set(array: {}[]): void;
+}
+
+export interface FormNode<T = StoreNode> {
+    /** Données liée à un FormNode. */
+    readonly form: FormNode;
+
+    /** @internal */
+    /** Précise l'état de la synchronisation entre le StoreNode et le FormNode. */
+    isSubscribed: boolean;
+
+    /** Réinitialise le FormNode à partir du StoreNode. */
+    reset(): void;
+
+    /** StoreNode original. */
+    sourceNode: T;
+
+    /** Active la synchronisation StoreNode -> FormNode. La fonction est appelée à la création. */
+    subscribe(): void;
+
+    /** Désactive la synchronisation StoreNode -> FormNode. */
+    unsubscribe(): void;
 }

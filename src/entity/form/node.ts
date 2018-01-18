@@ -1,35 +1,17 @@
 import {action, autorun, extendObservable, observable, untracked} from "mobx";
 
-import {toFlatValues} from "./store";
-import {isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "./types";
-import {addErrorFields} from "./validation";
-
-export interface FormNode<T = StoreNode> {
-    /** @internal */
-    /** Précise l'état de la synchronisation entre le StoreNode et le FormNode. */
-    isSubscribed: boolean;
-
-    /** Réinitialise le FormNode à partir du StoreNode. */
-    reset(): void;
-
-    /** StoreNode original. */
-    sourceNode: T;
-
-    /** Active la synchronisation StoreNode -> FormNode. La fonction est appelée à la création. */
-    subscribe(): void;
-
-    /** Désactive la synchronisation StoreNode -> FormNode. */
-    unsubscribe(): void;
-}
+import {toFlatValues} from "../store";
+import {FormNode, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
+import {addFormProperties} from "./properties";
 
 /**
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
  */
-export function makeFormNode<T extends StoreNode, U>(node: StoreListNode<T>, transform?: (source: T) => U): StoreListNode<T & U> & FormNode<T>;
-export function makeFormNode<T extends StoreNode, U>(node: T, transform?: (source: T) => U): T & U & FormNode<T>;
-export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source: T) => U = _ => ({}) as U) {
+export function makeFormNode<T extends StoreNode, U>(node: StoreListNode<T>, transform?: (source: T) => U, isEdit?: boolean): StoreListNode<T & U> & FormNode<T>;
+export function makeFormNode<T extends StoreNode, U>(node: T, transform?: (source: T) => U, isEdit?: boolean): T & U & FormNode<T>;
+export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source: T) => U = _ => ({}) as U, isEdit = false) {
     const formNode = clone(node) as T & FormNode<T>;
     if (isStoreListNode<T>(formNode)) {
         formNode.$transform = transform;
@@ -37,8 +19,8 @@ export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source
         Object.assign(formNode, transform(formNode) || {});
     }
 
-    // On ajoute les champs dérivés pour les erreurs.
-    addErrorFields(formNode);
+    // On ajoute les `isEdit` et les champs dérivés pour les erreurs.
+    addFormProperties(formNode, isEdit);
 
     // La fonction `reset` va simplement vider et reremplir le FormNode avec les valeurs du StoreNode.
     const reset = () => {

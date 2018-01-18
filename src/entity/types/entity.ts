@@ -97,6 +97,9 @@ export interface EntityField<T = StoreType, D extends DomainNoDefault = DomainNo
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error?: string | undefined;
 
+    /** Précise si le champ associé est en édition ou non. */
+    readonly isEdit?: boolean;
+
     /** Valeur. */
     value: T | undefined;
 }

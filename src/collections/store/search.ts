@@ -3,7 +3,7 @@ import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
 import {config} from "../../config";
-import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues} from "../../entity";
+import {addFormProperties, buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues} from "../../entity";
 
 import {ListStoreBase} from "./base";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
@@ -88,6 +88,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
         if (criteria) {
             this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteria[1]}, {}, "criteria") as any;
+            addFormProperties(this.criteria, true);
         }
 
         // Relance la recherche à chaque modification de propriété.

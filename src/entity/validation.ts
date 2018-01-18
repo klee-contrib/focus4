@@ -1,47 +1,13 @@
 import i18next from "i18next";
-import {isFunction, isNumber, values} from "lodash";
-import {computed, extendObservable, observable} from "mobx";
+import {isFunction, isNumber} from "lodash";
 import moment from "moment";
 
-import {EntityField, isEntityField, isRegex, isStoreListNode, isStoreNode, StoreNode, Validator} from "./types";
+import {EntityField, isRegex, Validator} from "./types";
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-/**
- * Ajoute les champs calculés de validation dans un FormNode.
- * @param data Le StoreNode ou l'EntityField.
- */
-export function addErrorFields(data: StoreNode | EntityField) {
-    if (isStoreListNode(data)) {
-        data.forEach(addErrorFields);
-        (data as any).form = observable({
-            isValid: computed(() => data.every(node => !node.form || node.form.isValid))
-        });
-    } else if (isStoreNode(data)) {
-        for (const entry in data) {
-            addErrorFields((data as any)[entry]);
-        }
-        (data as any).form = observable({
-            isValid: computed(() =>
-                values(data)
-                    .every(item => {
-                        if (isEntityField(item)) {
-                            return !item.error;
-                        } else if (isStoreNode(item)) {
-                            return !item.form || item.form.isValid;
-                        } else {
-                            return true;
-                        }
-                    })
-                )
-            });
-    } else if (isEntityField(data)) {
-        extendObservable(data, {error: computed(() => validateField(data))});
-    }
-}
-
- /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
- function validateField({$field, value}: EntityField): string | undefined {
+/** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
+export function validateField({$field, value}: EntityField): string | undefined {
     const {isRequired, domain: {validator}} = $field;
 
     // On vérifie que le champ n'est pas vide et obligatoire.

@@ -2,10 +2,10 @@ import {isFunction} from "lodash";
 import {computed, extendObservable} from "mobx";
 import {InputProps} from "react-toolbox/lib/input";
 
-import {DisplayProps, LabelProps} from "../components";
-import {Domain, EntityField, FieldEntry} from "./types";
+import {DisplayProps, LabelProps} from "../../components";
+import {Domain, EntityField, FieldEntry} from "../types";
 
-export type $Field<ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>;
+export type $Field<ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>> & {isEdit?: boolean};
 
 /**
  * Construit un `EntityField` à partir d'un champ calculé.
@@ -105,6 +105,7 @@ function new$field<T>(field: EntityField<T>, $field: $Field | (() => $Field)) {
 
 function new$fieldCore(old$field: FieldEntry, $field: $Field) {
     const {
+        isEdit,
         domain = old$field.domain,
         isRequired = old$field.isRequired,
         label = old$field.label,
@@ -113,6 +114,7 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         ...domainOverrides
     } = $field;
     return {
+        isEdit,
         isRequired,
         label,
         name,
