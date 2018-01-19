@@ -143,11 +143,12 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
         if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
             const groupableColumnList = store.facets ? store.facets.reduce((result, facet) => {
+                // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
                 if (facet.values.length > 1) {
-                    result[facet.code] = facet.label;
+                    return {...result, [facet.code]: facet.label};
                 }
                 return result;
-            }, {} as {[facet: string]: string}) : {};
+            }, {}) : {};
 
             const menuItems = reduce(groupableColumnList, (operationList, label, key) => [
                 ...operationList,

@@ -14,6 +14,8 @@ export interface FacetOutput {
     code: string;
     /** Libellé de la facette. */
     label: string;
+    /** Précise si la facette est multi-sélectionnable. */
+    isMultiSelectable: boolean;
     /** Valeurs de la facette. */
     values: FacetItem[];
 }

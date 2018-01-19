@@ -7,25 +7,40 @@
 }
 
 .facet h4 {
-    margin: 5px 0;
+    margin: 0 5px -6px 0;
     font-size: 17px;
     font-weight: bold;
 }
 
 .facet ul {
     margin: 0;
-    padding-left: 20px;
+    padding: 9px 0 9px 30px;
     list-style-type: none;
     max-height: 300px;
     overflow-y: auto;
 }
 
+.multiSelect ul {
+    margin-left: -15px;
+    padding-left: 15px;
+
+    & label {
+        margin: 0;
+    }
+}
+
 .facet li {
     margin: 0;
-    padding-bottom: 6px;
+    padding: 3px 0;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     line-height: 1.6;
+}
+
+.multiSelect li > div:first-of-type {
+    width: 100%;
+    padding-left: 12px;
 }
 
 .show {
@@ -45,11 +60,8 @@
     color: black;
 }
 
-.facet li:last-child {
-    padding-bottom: 0;
-}
-
 .chip {
+    margin-top: 8px;
     margin-left: 15px;
 }
 

@@ -6,6 +6,8 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {Chip} from "react-toolbox/lib/chip";
 
+import {Checkbox} from "../../../../components";
+
 import {FacetOutput, SearchStore} from "../../../store";
 import {addFacetValue, removeFacetValue} from "./utils";
 
@@ -36,32 +38,41 @@ export class Facet extends React.Component<FacetProps, void> {
 
     protected renderFacetDataList() {
         const {theme, facet, nbDefaultDataList, store} = this.props;
+        const selectedValues = store.selectedFacets[facet.code] || [];
 
-        const selectedFacetValues = facet.values.filter(value => !!(store.selectedFacets[facet.code] || []).find(sv => sv === value.code));
-        const unselectedFacetValues = facet.values.filter(value => !selectedFacetValues.find(sfv => sfv.code === value.code));
-
-        return (
-            <div>
-                {selectedFacetValues.map(sfv => (
-                    <Chip
-                        key={sfv.code}
-                        deletable
-                        onClick={() => removeFacetValue(store, facet.code, sfv.code)}
-                        theme={{chip: theme!.chip}}
-                    >
-                        {i18next.t(sfv.label)}
-                    </Chip>
-                ))}
+        if (!facet.isMultiSelectable && selectedValues.length === 1) {
+            const sfv = facet.values.find(f => f.code === selectedValues[0])!;
+            return (
+                <Chip
+                    key={sfv.code}
+                    deletable
+                    onClick={() => removeFacetValue(store, facet.code, sfv.code)}
+                    theme={{chip: theme!.chip}}
+                >
+                    {i18next.t(sfv.label)}
+                </Chip>
+            );
+        } else {
+            return (
                 <ul>
-                    {(this.isShowAll ? unselectedFacetValues : unselectedFacetValues.slice(0, nbDefaultDataList)).map(sfv => (
-                        <li key={sfv.code} onClick={() => addFacetValue(store, facet.code, sfv.code)}>
-                            <div>{i18next.t(sfv.label)}</div>
-                            <div className={theme!.count}>{sfv.count}</div>
-                        </li>
-                    ))}
+                    {(this.isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList)).map(sfv => {
+                        const isSelected = !!selectedValues.find(sv => sv === sfv.code);
+                        const clickHandler = (e: React.SyntheticEvent<any>) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            (isSelected ? removeFacetValue : addFacetValue)(store, facet.code, sfv.code);
+                        };
+                        return (
+                            <li key={sfv.code} onClick={clickHandler}>
+                                {facet.isMultiSelectable ? <Checkbox value={isSelected} onClick={clickHandler} /> : null}
+                                <div>{i18next.t(sfv.label)}</div>
+                                <div className={theme!.count}>{sfv.count}</div>
+                            </li>
+                        );
+                    })}
                 </ul>
-            </div>
-        );
+            );
+        }
     }
 
     protected renderShowAllDataList() {
@@ -80,7 +91,7 @@ export class Facet extends React.Component<FacetProps, void> {
     render() {
         const {theme, facet} = this.props;
         return (
-            <div className={theme!.facet}>
+            <div className={`${theme!.facet} ${facet.isMultiSelectable ? theme!.multiSelect : ""}`}>
                 <h4>{i18next.t(facet.label)}</h4>
                 {this.renderFacetDataList()}
                 {this.renderShowAllDataList()}
