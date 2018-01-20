@@ -1,2 +1,2 @@
 export {makeFormNode} from "./node";
-export {addFormProperties} from "./properties";
+export {addFormProperties, patchNodeEdit} from "./properties";

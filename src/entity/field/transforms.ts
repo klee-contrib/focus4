@@ -5,12 +5,14 @@ import {InputProps} from "react-toolbox/lib/input";
 import {DisplayProps, LabelProps} from "../../components";
 import {Domain, EntityField, FieldEntry} from "../types";
 
-export type $Field<ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>> & {isEdit?: boolean};
+export type $Field<ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>;
 
 /**
  * Construit un `EntityField` à partir d'un champ calculé.
  * @param value La valeur.
  * @param $field Les métadonnées pour le champ à créer.
+ * @param setter Le setter, si besoin.
+ * @param isEdit L'état initial ou la condition d'édition.
  */
 export function makeField<
     T,
@@ -20,7 +22,8 @@ export function makeField<
     >(
     value: () => T,
     $field?: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>),
-    setter?: (value: T) => void
+    setter?: (value: T) => void,
+    isEdit?: boolean | (() => boolean)
 ): EntityField<T, Domain<ICProps, DCProps, LCProps>>;
 /**
  * Construit un `EntityField` à partir d'une valeur quelconque.
@@ -36,11 +39,17 @@ export function makeField<
     value: T,
     $field?: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>)
 ): EntityField<T, Domain<ICProps, DCProps, LCProps>>;
-export function makeField(value: any, $field: $Field | (() => $Field) = {}, setter: Function = () => null) {
-    return fromField({
+export function makeField(value: any, $field: $Field | (() => $Field) = {}, setter: Function = () => null, isEdit?: any) {
+    const field =  fromField({
         $field: {domain: {}, isRequired: false, label: "", name: "", type: "field"},
         value: isFunction(value) ? computed(value, setter) : value
     }, $field);
+
+    if (isEdit) {
+        field.isEdit = (isEdit as any);
+    }
+
+    return field;
 }
 
 /**
@@ -73,6 +82,7 @@ export function fromField<
  * Patche un `EntityField` pour modifier ses métadonnées (inclus tout ce qui est définit dans le domaine). Cette fonction **MODIFIE** le champ donné.
  * @param field Le champ.
  * @param $field Les métadonnées à remplacer.
+ * @param isEdit L'état initial ou la condition d'édition.
  */
 export function patchField<
     T,
@@ -85,7 +95,9 @@ export function patchField<
 >(
     field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
     $field: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>),
+    isEdit?: boolean | (() => boolean)
 ) {
+    field.isEdit = isEdit as any;
     const next$field = new$field(field, $field);
     if (isFunction($field)) {
         extendObservable(field, {$field: next$field});
@@ -105,7 +117,6 @@ function new$field<T>(field: EntityField<T>, $field: $Field | (() => $Field)) {
 
 function new$fieldCore(old$field: FieldEntry, $field: $Field) {
     const {
-        isEdit,
         domain = old$field.domain,
         isRequired = old$field.isRequired,
         label = old$field.label,
@@ -114,7 +125,6 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         ...domainOverrides
     } = $field;
     return {
-        isEdit,
         isRequired,
         label,
         name,

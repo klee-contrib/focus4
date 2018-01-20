@@ -18,7 +18,7 @@ export interface DomainNoDefault<ICProps = any, DCProps = any, LCProps = any> {
     unformatter?: (text: string) => any;
 
     /** Liste des validateurs. */
-    validator?: Validator[];
+    validator?: Validator | Validator[];
 
     /** Composant personnalisé pour l'affichage. */
     DisplayComponent?: ReactComponent<DCProps>;
@@ -98,7 +98,7 @@ export interface EntityField<T = StoreType, D extends DomainNoDefault = DomainNo
     readonly error?: string | undefined;
 
     /** Précise si le champ associé est en édition ou non. */
-    readonly isEdit?: boolean;
+    isEdit?: boolean;
 
     /** Valeur. */
     value: T | undefined;
