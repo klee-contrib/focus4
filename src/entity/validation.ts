@@ -17,7 +17,7 @@ export function validateField({$field, value}: EntityField): string | undefined 
 
     // On applique le validateur du domaine.
     if (validator && value !== undefined && value !== null) {
-        const errors = validate(value, validator);
+        const errors = validate(value, Array.isArray(validator) ? validator : [validator]);
         if (errors.length) {
             return errors.map(e =>  i18next.t(e))
                 .join(", ");

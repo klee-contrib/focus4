@@ -15,6 +15,9 @@ export interface FormData {
  * En pratique, tous les autres éléments d'un `StoreNode` doivent être des `EntityValue`.
  */
 export interface StoreNode<T = {}> {
+    /** @internal */
+    /** isEdit temporaire, traité par `addFormProperties`. */
+    $tempEdit?: boolean | (() => boolean);
     /** Vide l'objet (récursivement). */
     clear(): void;
     /** Données liée à un FormNode. */
@@ -34,6 +37,9 @@ export interface StoreListNode<T extends StoreNode = StoreNode> extends IObserva
     /** @internal */
     /** Précise si le StoreListNode est un FormNode. */
     $isFormNode?: boolean;
+    /** @internal */
+    /** isEdit temporaire, traité par `addFormProperties`. */
+    $tempEdit?: boolean | (() => boolean);
     /** Fonction de transformation du noeud de la liste. */
     $transform?: (source: T) => {} | void;
     /** Données liée à un FormNode. */

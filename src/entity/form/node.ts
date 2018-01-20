@@ -8,10 +8,17 @@ import {addFormProperties} from "./properties";
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
+ * @param node Le noeud de base
+ * @param transform La fonction de transformation
+ * @param isEdit L'état initial ou la condition d'édition.
  */
-export function makeFormNode<T extends StoreNode, U>(node: StoreListNode<T>, transform?: (source: T) => U, isEdit?: boolean): StoreListNode<T & U> & FormNode<T>;
-export function makeFormNode<T extends StoreNode, U>(node: T, transform?: (source: T) => U, isEdit?: boolean): T & U & FormNode<T>;
-export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source: T) => U = _ => ({}) as U, isEdit = false) {
+export function makeFormNode<T extends StoreNode, U>(node: StoreListNode<T>, transform?: (source: T) => U, isEdit?: boolean | (() => boolean)): StoreListNode<T & U> & FormNode<T>;
+export function makeFormNode<T extends StoreNode, U>(node: T, transform?: (source: T) => U, isEdit?: boolean | (() => boolean)): T & U & FormNode<T>;
+export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source: T) => U = _ => ({}) as U, isEdit: boolean | (() => boolean) = false) {
+    if (node.form) {
+        throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
+    }
+
     const formNode = clone(node) as T & FormNode<T>;
     if (isStoreListNode<T>(formNode)) {
         formNode.$transform = transform;
