@@ -1,27 +1,20 @@
 import {autobind} from "core-decorators";
-import {action, computed, Lambda, observable, ObservableMap, reaction, runInAction} from "mobx";
-import * as PropTypes from "prop-types";
+import {action, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
-import {v4} from "uuid";
 
 import {PanelProps} from "../components";
 import {messageStore} from "../message";
-import {classAutorun} from "../util";
 
+import {Form} from "./form";
 import {toFlatValues} from "./store";
 import {FormNode, StoreNode} from "./types";
 
-import {form} from "./__style__/auto-form.css";
-
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions {
-
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
-
     /** Par défaut: true */
     hasForm?: boolean;
-
     /** Préfixe i18n pour les messages du formulaire (par défaut: "focus") */
     i18nPrefix?: string;
 }
@@ -43,50 +36,24 @@ export interface ServiceConfig<T, LP> {
 @autobind
 export abstract class AutoForm<P = {}> extends React.Component<P, void> {
 
-    /** Map de tous les formulaires actuellement affichés avec leur état en édition */
-    static readonly editingMap: ObservableMap<boolean> = observable.map<boolean>();
-
-    /** Précise si au moins un formulaire de l'application est en édition. */
-    @computed
-    static get isOneEdit() {
-        return AutoForm.editingMap.values()
-            .some(x => x);
-    }
-
-    static childContextTypes = {theme: PropTypes.object, form: PropTypes.object};
-
-    // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
-    static contextTypes = {theme: PropTypes.object};
-    context!: {theme: {[key: string]: {[key: string]: any}}};
-
-    readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
-    getChildContext() {
-        return {theme: this.context.theme, form: this.formContext};
-    }
-
-    /** Identifiant unique du formulaire. */
-    formId = v4();
-
     /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
     abstract entity: StoreNode & FormNode;
-
-    /** Services. */
-    services!: ServiceConfig<any, any>;
 
     /** Formulaire en chargement. */
     @observable isLoading = false;
 
     /** Classe CSS additionnelle (passée en options). */
     private className!: string;
-
+    /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
+    private readonly formContext = observable({forceErrorDisplay: false});
     /** Insère ou non un formulaire HTML. */
     private hasForm!: boolean;
-
     /** Préfixe i18n pour les messages du formulaire */
     private i18nPrefix!: string;
-
     /** Disposer de la réaction de chargement. */
     private loadDisposer?: Lambda;
+    /** Services. */
+    private services!: ServiceConfig<any, any>;
 
     /**
      * A implémenter pour initialiser le formulaire. Il faut appeler `this.formInit` à l'intérieur.
@@ -115,13 +82,9 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
 
     componentWillMount() {
         this.init();
-        AutoForm.editingMap.set(this.formId, this.entity.form.isEdit);
-        this.entity.subscribe();
-        this.load();
     }
 
-    componentWillUnmount() {
-        AutoForm.editingMap.delete(this.formId);
+    clean() {
         this.entity.unsubscribe();
         if (this.loadDisposer) {
             this.loadDisposer();
@@ -135,10 +98,6 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
         if (!isEdit) {
             this.entity.reset();
         }
-    }
-
-    @classAutorun protected updateApplicationStore() {
-        AutoForm.editingMap.set(this.formId, this.entity.form.isEdit);
     }
 
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
@@ -208,19 +167,18 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
     /** Fonction de rendu du formulaire à préciser. */
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        const contextClassName = this.context && this.context.theme && this.context.theme["form"] || "";
-        if (this.hasForm) {
-            return (
-                <form
-                    className={`${form} ${contextClassName} ${this.className}`}
-                    onSubmit={e => { e.preventDefault(); this.save(); }}
-                >
-                    <fieldset>{this.renderContent()}</fieldset>
-                </form>
-            );
-        } else {
-            return this.renderContent();
-        }
+        return (
+            <Form
+                clean={this.clean}
+                formContext={this.formContext}
+                hasForm={this.hasForm}
+                load={this.load}
+                save={this.save}
+                theme={{form: this.className}}
+            >
+                {this.renderContent()}
+            </Form>
+        );
     }
 }
 

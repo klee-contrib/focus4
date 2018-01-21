@@ -1,4 +1,3 @@
-// tslint:disable-next-line:no-submodule-imports
 import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
 
 import {autobind} from "core-decorators";
@@ -18,7 +17,7 @@ import {TabsTheme} from "react-toolbox/lib/tabs";
 
 import {ActionBarStyle, AdvancedSearchStyle, ContextualActionsStyle, DragLayerStyle, FacetBoxStyle, FacetStyle, GroupStyle, LineStyle, ListStyle, ListWrapperStyle, SearchBarStyle, SummaryStyle} from "../collections";
 import {AutocompleteStyle, BooleanRadioStyle, ButtonBackToTopStyle, DisplayStyle, LabelStyle, PanelStyle, PopinStyle, ScrollspyStyle, SelectCheckboxStyle, SelectRadioStyle} from "../components";
-import {FieldStyle} from "../entity";
+import {FieldStyle, FormStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
 
@@ -91,7 +90,7 @@ export interface LayoutStyleProviderProps {
     facet?: FacetStyle;
     facetBox?: FacetBoxStyle;
     field?: FieldStyle;
-    form?: string;
+    form?: FormStyle;
     group?: GroupStyle;
     header?: HeaderStyle;
     label?: LabelStyle;

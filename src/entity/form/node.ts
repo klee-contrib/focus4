@@ -52,6 +52,10 @@ export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source
     return formNode;
 }
 
+export function isFormNode(node: StoreNode): node is StoreNode & FormNode {
+    return !!(node as StoreNode & FormNode).reset;
+}
+
 /** Clone un StoreNode */
 function clone(source: any): any {
     if (isStoreListNode(source)) {
