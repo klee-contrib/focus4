@@ -45,7 +45,7 @@ export function makeField(value: any, $field: $Field | (() => $Field) = {}, sett
         value: isFunction(value) ? computed(value, setter) : value
     }, $field);
 
-    if (isEdit) {
+    if (isEdit !== undefined) {
         field.isEdit = (isEdit as any);
     }
 
@@ -97,12 +97,15 @@ export function patchField<
     $field: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {
-    field.isEdit = isEdit as any;
     const next$field = new$field(field, $field);
     if (isFunction($field)) {
         extendObservable(field, {$field: next$field});
     } else {
         (field.$field as any) = next$field;
+    }
+
+    if (isEdit !== undefined) {
+        field.isEdit = isEdit as any;
     }
 }
 
