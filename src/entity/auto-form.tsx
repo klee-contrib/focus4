@@ -5,10 +5,10 @@ import * as React from "react";
 import {InputProps} from "react-toolbox/lib/input";
 
 import {DisplayProps, LabelProps, PanelProps, Select, SelectProps} from "../components";
-import {ReactComponent} from "../config";
 import {messageStore} from "../message";
+import {ReferenceList} from "../reference";
 
-import {$Field, Field, FieldOptions, fromField, ReferenceOptions, RefValues, stringFor} from "./field";
+import {$Field, Field, FieldOptions, fromField, stringFor} from "./field";
 import {addFormFieldProperties, Form, makeFormNode, ServiceConfig} from "./form";
 import {toFlatValues} from "./store";
 import {Domain, EntityField, FormNode, StoreNode} from "./types";
@@ -244,37 +244,24 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         T,
         ICProps = Partial<SelectProps>,
         DCProps = DisplayProps,
-        LCProps = LabelProps,
-        R extends RefValues<T, ValueKey, LabelKey> = any,
-        ValueKey extends string = "code",
-        LabelKey extends string = "label"
+        LCProps = LabelProps
     >(
         field: EntityField<T, Domain<{}, DCProps, LCProps>>,
-        values: R[],
-        options: $Field<ICProps, DCProps, LCProps> & Partial<FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> & {
-            SelectComponent?: ReactComponent<ICProps>
-        } & {isEdit?: boolean}  = {}
+        values: ReferenceList,
+        options: $Field<ICProps, DCProps, LCProps> & Partial<FieldOptions<T, ICProps, DCProps, LCProps>> & {isEdit?: boolean} = {}
     ) {
-        options.InputComponent = options.SelectComponent as any || Select;
-        options.values = values.slice();
+        options.SelectComponent = options.SelectComponent as any || Select;
+        options.values = values;
         return this.fieldFor(field, options as any);
     }
 
     /**
      * Récupère le texte correspondant à un champ.
      * @param field La définition de champ.
-     * @param options Les options du champ.
+     * @param values L'éventulle liste de référence associée.
      */
-    stringFor<
-        T,
-        R extends RefValues<T, ValueKey, LabelKey>,
-        ValueKey extends string = "code",
-        LabelKey extends string = "label"
-    >(
-        field: EntityField<T>,
-        options: ReferenceOptions<T, R, ValueKey, LabelKey> = {}
-    ) {
-        return stringFor(field, options);
+    stringFor<T>(field: EntityField<T>, values: ReferenceList = [] as any) {
+        return stringFor(field, values);
     }
 }
 

@@ -4,10 +4,10 @@ import {action} from "mobx";
 import * as React from "react";
 
 import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../../components";
-import {ReactComponent} from "../../config";
+import {ReferenceList} from "../../reference";
 
 import {Domain, EntityField} from "../types";
-import Field, {FieldOptions, ReferenceOptions, RefValues} from "./field";
+import Field, {FieldOptions} from "./field";
 
 /**
  * Crée un champ standard.
@@ -37,39 +37,26 @@ export function selectFor<
     T,
     ICProps = Partial<SelectProps>,
     DCProps = DisplayProps,
-    LCProps = LabelProps,
-    R extends RefValues<T, ValueKey, LabelKey> = any,
-    ValueKey extends string = "code",
-    LabelKey extends string = "label"
+    LCProps = LabelProps
 >(
     field: EntityField<T, Domain<any, DCProps, LCProps>>,
-    values: R[],
-    options: Partial<FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> & {
-        SelectComponent?: ReactComponent<ICProps>
-    } = {}
+    values: ReferenceList,
+    options: Partial<FieldOptions<T, ICProps, DCProps, LCProps>> = {}
 ) {
-    field.$field.domain.InputComponent = options.SelectComponent || Select;
-    options.values = values.slice();
-    return fieldFor(field, options as any);
+    options.SelectComponent = options.SelectComponent as any || Select;
+    options.values = values;
+    return fieldFor(field, options);
 }
 
 /**
  * Récupère le texte correspondant à un champ.
  * @param field La définition de champ.
- * @param options Les options du champ.
+ * @param values L'éventulle liste de référence associée.
  */
-export function stringFor<
-    T,
-    R extends RefValues<T, ValueKey, LabelKey>,
-    ValueKey extends string = "code",
-    LabelKey extends string = "label"
->(
-    field: EntityField<T>,
-    options: ReferenceOptions<T, R, ValueKey, LabelKey> = {}
-) {
+export function stringFor<T>(field: EntityField<T>, values: ReferenceList = [] as any) {
     const {value, $field: {domain: {displayFormatter = (t: string) => i18next.t(t)}}} = field;
-    const {valueKey = "code", labelKey = "label", values = []} = options;
-    const found = values.find(val => (val as any)[valueKey] === value);
-    const processedValue = found && (found as any)[labelKey] || value;
+    const {$valueKey = "code", $labelKey = "label"} = values;
+    const found = values.find(val => (val as any)[$valueKey] === value);
+    const processedValue = found && (found as any)[$labelKey] || value;
     return displayFormatter(processedValue);
 }
