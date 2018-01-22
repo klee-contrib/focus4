@@ -28,6 +28,14 @@ export interface DateValidator extends Error {
     type: "date";
 }
 
+export interface LegacyFunctionValidator extends Error {
+    type: "function";
+    value: (text: any) => boolean;
+    options: {
+        translationKey: string;
+    };
+}
+
 export type FunctionValidator = (value: any) => string | false| undefined;
 
-export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator;
+export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator | LegacyFunctionValidator;
