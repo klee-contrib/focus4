@@ -48,8 +48,8 @@ export function selectFor<
         SelectComponent?: ReactComponent<ICProps>
     } = {}
 ) {
-    field.$field.domain.InputComponent = options.SelectComponent || Select as any;
-    options.values = values;
+    field.$field.domain.InputComponent = options.SelectComponent || Select;
+    options.values = values.slice();
     return fieldFor(field, options as any);
 }
 

@@ -1,13 +1,17 @@
 import {autobind} from "core-decorators";
+import {upperFirst} from "lodash";
 import {action, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
+import {InputProps} from "react-toolbox/lib/input";
 
-import {PanelProps} from "../components";
+import {DisplayProps, LabelProps, PanelProps, Select, SelectProps} from "../components";
+import {ReactComponent} from "../config";
 import {messageStore} from "../message";
 
-import {Form, makeFormNode, ServiceConfig} from "./form";
+import {$Field, Field, FieldOptions, fromField, ReferenceOptions, RefValues, stringFor} from "./field";
+import {addFormFieldProperties, Form, makeFormNode, ServiceConfig} from "./form";
 import {toFlatValues} from "./store";
-import {FormNode, StoreNode} from "./types";
+import {Domain, EntityField, FormNode, StoreNode} from "./types";
 
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions<E> {
@@ -184,6 +188,93 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
                 {this.renderContent()}
             </Form>
         );
+    }
+
+    /**
+     * Crée un champ standard en lecture seule.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    displayFor<
+        T,
+        DCProps = DisplayProps,
+        LCProps = LabelProps
+    >(
+        field: EntityField<T, Domain<{}, DCProps, LCProps>>,
+        options: $Field<{}, DCProps, LCProps> & Partial<FieldOptions<T, {}, DCProps, LCProps>> = {}
+    ) {
+        return this.fieldFor(field, {...options, isEdit: false});
+    }
+
+    /**
+     * Crée un champ standard.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    fieldFor<
+        T,
+        ICProps = InputProps,
+        DCProps = DisplayProps,
+        LCProps = LabelProps
+    >(
+        field: EntityField<T, Domain<ICProps, DCProps, LCProps>>,
+        options: $Field<ICProps, DCProps, LCProps> & Partial<FieldOptions<T, ICProps, DCProps, LCProps>> & {isEdit?: boolean} = {}
+    ) {
+        const transformedField = fromField(field, options);
+        addFormFieldProperties(transformedField as any, this.entity);
+        if (options.isEdit !== undefined) {
+            transformedField.isEdit = options.isEdit;
+        }
+        return (
+            <Field
+                field={transformedField}
+                onChange={options.onChange || action(`on${upperFirst(field.$field.name)}Change`, ((value: T) => field.value = value))}
+                {...options}
+            />
+        );
+    }
+
+    /**
+     * Crée un champ avec résolution de référence.
+     * @param field La définition de champ.
+     * @param values La liste de référence.
+     * @param options Les options du champ.
+     */
+    selectFor<
+        T,
+        ICProps = Partial<SelectProps>,
+        DCProps = DisplayProps,
+        LCProps = LabelProps,
+        R extends RefValues<T, ValueKey, LabelKey> = any,
+        ValueKey extends string = "code",
+        LabelKey extends string = "label"
+    >(
+        field: EntityField<T, Domain<{}, DCProps, LCProps>>,
+        values: R[],
+        options: $Field<ICProps, DCProps, LCProps> & Partial<FieldOptions<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> & {
+            SelectComponent?: ReactComponent<ICProps>
+        } & {isEdit?: boolean}  = {}
+    ) {
+        options.InputComponent = options.SelectComponent as any || Select;
+        options.values = values.slice();
+        return this.fieldFor(field, options as any);
+    }
+
+    /**
+     * Récupère le texte correspondant à un champ.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    stringFor<
+        T,
+        R extends RefValues<T, ValueKey, LabelKey>,
+        ValueKey extends string = "code",
+        LabelKey extends string = "label"
+    >(
+        field: EntityField<T>,
+        options: ReferenceOptions<T, R, ValueKey, LabelKey> = {}
+    ) {
+        return stringFor(field, options);
     }
 }
 
