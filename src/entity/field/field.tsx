@@ -16,7 +16,7 @@ import * as styles from "./__style__/field.css";
 
 export type FieldStyle = Partial<typeof styles>;
 
-export type RefValues<T, ValueKey extends string, LabelKey extends string> = {[P in ValueKey]: T} & {[P in LabelKey]: string};
+export type RefValues<T, ValueKey extends string, LabelKey extends string> = {[P in ValueKey]?: T} & {[P in LabelKey]: string};
 
 /** Options pour gérer une liste de référence. */
 export interface ReferenceOptions<
