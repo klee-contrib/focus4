@@ -25,7 +25,7 @@ export interface FormConfig {
 }
 
 /** Config de services à fournir au formulaire. */
-export interface ServiceConfig<T> {
+export interface ServiceConfig<T = any> {
     /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
     getLoadParams?: () => T[] | undefined;
     /** Service de chargement. */
@@ -37,20 +37,20 @@ export interface ServiceConfig<T> {
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
 export class FormActions<T> {
+
+    /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
+    readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
     /** Formulaire en chargement. */
     @observable isLoading = false;
+    /** Services. */
+    readonly services: ServiceConfig<T>;
 
     /** Config. */
     private readonly config: FormConfig;
     /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
     private readonly entity: StoreNode;
-    /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
-    private readonly formContext = observable({forceErrorDisplay: false});
     /** Disposer de la réaction de chargement. */
     private readonly loadDisposer?: Lambda;
-    /** Services. */
-    private readonly services: ServiceConfig<T>;
-
     constructor(formNode: StoreNode, services: ServiceConfig<T>, config?: FormConfig) {
         if (!formNode.form) {
             throw new Error("Impossible de créer un formulaire à partir d'un noeud non passé par `makeFormNode`.");

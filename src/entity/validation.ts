@@ -70,6 +70,9 @@ function validate(value: any, validators?: Validator[]) {
                             error = !moment(value, moment.ISO_8601)
                                 .isValid();
                             break;
+                        case "function":
+                            error = !validator.value(value) && validator.options.translationKey;
+                            break;
                     }
                 }
 

@@ -5,55 +5,46 @@ import * as React from "react";
 import {PanelProps} from "../components";
 import {messageStore} from "../message";
 
-import {Form} from "./form";
+import {Form, makeFormNode, ServiceConfig} from "./form";
 import {toFlatValues} from "./store";
 import {FormNode, StoreNode} from "./types";
 
 /** Options additionnelles de l'AutoForm. */
-export interface AutoFormOptions {
+export interface AutoFormOptions<E> {
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
+    /** ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
+    entity?: E & FormNode;
     /** Par défaut: true */
     hasForm?: boolean;
     /** Préfixe i18n pour les messages du formulaire (par défaut: "focus") */
     i18nPrefix?: string;
-}
-
-/** Config de services à fournir à AutoForm. */
-export interface ServiceConfig<T, LP> {
-
-    /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
-    getLoadParams?: () => LP[] | undefined;
-
-    /** Service de chargement. */
-    load?: (...args: LP[]) => Promise<T>;
-
-    /** Service de sauvegarde. Obligatoire. */
-    save: (entity: T) => Promise<T>;
+    /** Par défaut: false */
+    initiallyEditing?: boolean;
 }
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
-export abstract class AutoForm<P = {}> extends React.Component<P, void> {
+export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P, void> {
 
-    /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
-    abstract entity: StoreNode & FormNode;
+    /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
+    entity!: E & FormNode;
+    /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
+    readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
+    /** Services. */
+    services!: ServiceConfig;
 
     /** Formulaire en chargement. */
     @observable isLoading = false;
 
     /** Classe CSS additionnelle (passée en options). */
     private className!: string;
-    /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
-    private readonly formContext = observable({forceErrorDisplay: false});
     /** Insère ou non un formulaire HTML. */
     private hasForm!: boolean;
     /** Préfixe i18n pour les messages du formulaire */
     private i18nPrefix!: string;
     /** Disposer de la réaction de chargement. */
     private loadDisposer?: Lambda;
-    /** Services. */
-    private services!: ServiceConfig<any, any>;
 
     /**
      * A implémenter pour initialiser le formulaire. Il faut appeler `this.formInit` à l'intérieur.
@@ -68,7 +59,8 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    formInit(services: ServiceConfig<any, any>, {className, hasForm, i18nPrefix}: AutoFormOptions = {}) {
+    formInit(storeData: E, services: ServiceConfig, {className, hasForm, i18nPrefix, entity, initiallyEditing}: AutoFormOptions<E> = {}) {
+        this.entity = entity || makeFormNode(storeData, undefined, initiallyEditing);
         this.services = services;
         this.hasForm = hasForm !== undefined ? hasForm : true;
         this.className = className || "";
@@ -78,6 +70,14 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
         if (services.getLoadParams) {
             this.loadDisposer = reaction(services.getLoadParams, this.load, {compareStructural: true});
         }
+    }
+
+    get isEdit() {
+        return this.entity.form.isEdit;
+    }
+
+    set isEdit(edit) {
+        this.entity.form.isEdit = edit;
     }
 
     componentWillMount() {
@@ -94,7 +94,7 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
     /** Change le mode du formulaire. */
     @action
     toggleEdit(isEdit: boolean) {
-        this.entity.form.isEdit = isEdit;
+        this.isEdit = isEdit;
         if (!isEdit) {
             this.entity.reset();
         }
@@ -128,7 +128,7 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
         this.formContext.forceErrorDisplay =  true;
 
         // On ne sauvegarde que si la validation est en succès.
-        if (!this.entity.form || this.entity.form.isValid) {
+        if (this.validate()) {
             this.isLoading = true;
             try {
                 const data = await this.services.save(toFlatValues(this.entity));
@@ -144,6 +144,11 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
         }
     }
 
+    @action
+    validate() {
+        return this.entity.form.isValid;
+    }
+
     /** Est appelé après le chargement. */
     onFormLoaded() {
         // A éventuellement surcharger.
@@ -157,7 +162,7 @@ export abstract class AutoForm<P = {}> extends React.Component<P, void> {
     /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */
     getPanelProps(): PanelProps {
         return {
-            editing: this.entity.form.isEdit,
+            editing: this.isEdit,
             loading: this.isLoading,
             save: this.hasForm ? undefined : this.save,
             toggleEdit: this.toggleEdit,
