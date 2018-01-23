@@ -111,9 +111,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                     ))}
                 </div>
             );
-        }
-
-        if (list.length) {
+        } else {
             return (
                 <div data-focus="results">
                     <StoreList
@@ -127,8 +125,6 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
                 </div>
             );
         }
-
-        return null;
     }
 }
 
