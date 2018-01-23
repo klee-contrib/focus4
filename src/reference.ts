@@ -1,5 +1,5 @@
 import {upperFirst} from "lodash";
-import {action, computed, extendObservable, IObservableArray, observable} from "mobx";
+import {action, computed, extendObservable, observable} from "mobx";
 
 import {config} from "./config";
 
@@ -16,7 +16,7 @@ export interface ReferenceDefinition<T = {}> {
     valueKey?: string;
 }
 
-export interface ReferenceList<T = {}> extends IObservableArray<T> {
+export interface ReferenceList<T = {}> extends Array<T> {
     /** Propriété représentant le libellé. */
     $labelKey?: string;
     /** Propriété représentant la valeur. */
