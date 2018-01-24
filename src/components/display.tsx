@@ -1,4 +1,3 @@
-import {get} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -51,7 +50,9 @@ export class Display extends React.Component<DisplayProps, void> {
 
     render() {
         const {valueKey = "code", labelKey = "label", values, value, formatter, theme} = this.props;
-        const displayed: any = values && get(values.find(v => (v as any)[valueKey] === value), labelKey) || this.value;
+        // tslint:disable-next-line:triple-equals ---> Le "==" est volontaire pour convertir un éventuel ID de type string (comme celui donné par un Select) en number.
+        const ref = values && values.find(v => (v as any)[valueKey] == value);
+        const displayed = ref && (ref as any)[labelKey] || this.value;
         return (
             <div data-focus="display" className={theme!.display}>
                 {formatter && formatter(displayed) || displayed}
