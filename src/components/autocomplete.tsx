@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {debounce} from "lodash-decorators";
-import {observable, ObservableMap, runInAction} from "mobx";
+import {action, observable, ObservableMap, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -26,8 +26,10 @@ export interface AutocompleteResult {
 
 /** Props du composant d'autocomplétion */
 export interface AutocompleteProps extends RTAutocompleteProps {
+    /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
+    isQuickSearch?: boolean;
     /** Service de résolution de code. */
-    keyResolver: (key: number | string) => Promise<string | undefined>;
+    keyResolver?: (key: number | string) => Promise<string | undefined>;
     /** Service de recherche. */
     querySearcher: (text: string) => Promise<AutocompleteResult | undefined>;
     /** CSS. */
@@ -50,8 +52,8 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
     protected value: string;
 
     async componentWillMount() {
-        const {value, keyResolver} = this.props;
-        if (value) {
+        const {value, keyResolver, isQuickSearch} = this.props;
+        if (value && !isQuickSearch && keyResolver) {
             this.query = await keyResolver(value) || value;
         }
     }
@@ -61,7 +63,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * @param query Le champ texte.
      */
     async onQueryChange(query: string) {
-        const {onQueryChange, onChange} = this.props;
+        const {onQueryChange, onChange, isQuickSearch} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
         const label = this.value && this.values.get(this.value);
@@ -69,12 +71,16 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
             onChange(undefined);
         }
 
-        if (query !== this.query) {
+        if (query !== this.query && (!this.value || !isQuickSearch)) {
             this.query = query;
             if (onQueryChange) {
                 onQueryChange(query);
             }
             this.debouncedSearch(query);
+        }
+
+        if (isQuickSearch) {
+            this.value = "";
         }
     }
 
@@ -82,10 +88,19 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Est appelé lorsque l'on sélectionne une valeur.
      * @param value La valeur sélectionnée.
      */
+    @action
     onValueChange(value: string) {
+        const {isQuickSearch, onChange} = this.props;
+
+        if (isQuickSearch && value) {
+            this.query = "";
+            this.values.clear();
+        }
+
         this.value = value;
-        if (this.props.onChange) {
-            this.props.onChange(value);
+
+        if (onChange) {
+            onChange(value);
         }
     }
 
