@@ -121,7 +121,7 @@ export function buildFieldProps<T, ICDomainProps extends BaseInputProps = InputP
     field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
     options: Partial<FieldProps<T, ICProps, DCProps, LCProps, {}, string, string>>
 ) {
-    const {value, $entity: {domain = {}, translationKey, isRequired}} = field;
+    const {value, $entity: {domain = {}, translationKey, isRequired, name}} = field;
     const {hasLabel = true, innerRef, inputProps = {}, displayProps = {}, labelProps = {},  ...otherOptions} = options;
     const {
         inputProps: inputPropsD = {},
