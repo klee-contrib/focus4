@@ -1,0 +1,15 @@
+.label {
+    text-align: right;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.icon {
+    font-size: 22px;
+    margin: -1px -2px 0 5px;
+    cursor: default;
+}

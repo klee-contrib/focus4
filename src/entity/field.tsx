@@ -4,12 +4,11 @@ import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themeable, themr} from "react-css-themr";
-import {Input} from "react-toolbox/lib/input";
+import {Input, InputProps} from "react-toolbox/lib/input";
 
-import {Display} from "../components";
-import {ReactComponent} from "../config";
+import {Display, DisplayProps, Label, LabelProps} from "../components";
 
-import {BaseDisplayProps, BaseInputProps, BaseLabelProps, Domain} from "./types";
+import {Domain} from "./types";
 import {validate} from "./validation";
 
 import * as styles from "./__style__/field.css";
@@ -21,13 +20,15 @@ export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
     T,                                  // Type de la valeur.
-    ICProps extends BaseInputProps,     // Props du composant d'input.
-    DCProps extends BaseDisplayProps,   // Props du component d'affichage.
-    LCProps extends BaseLabelProps,     // Props du component de libellé.
+    ICProps extends InputProps,     // Props du composant d'input.
+    DCProps extends DisplayProps,   // Props du component d'affichage.
+    LCProps extends LabelProps,     // Props du component de libellé.
     R extends RefValues<T, VK, LK>,     // Type de la liste de référence associée.
     VK extends string,                  // Nom de la propriété de valeur (liste de référence).
     LK extends string                   // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
+    /** Commentaire à afficher dans la tooltip. */
+    comment?: string;
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
     /** Surcharge l'erreur du field. */
@@ -38,6 +39,8 @@ export interface FieldProps<
     keyResolver?: (key: number | string) => Promise<string | undefined>;
     /** Affiche le label. */
     hasLabel?: boolean;
+    /** Pour l'icône de la Tooltip. Par défaut : "focus". */
+    i18nPrefix?: string;
     /** A utiliser à la place de `ref`. */
     innerRef?: (i: Field<T, ICProps, DCProps, LCProps, R, VK, LK>) => void;
     /** Champ en édition. */
@@ -56,6 +59,8 @@ export interface FieldProps<
     name: string;
     /** Handler de modification de la valeur. */
     onChange?: ICProps["onChange"];
+    /** Affiche la tooltip. */
+    showTooltip?: boolean;
     /** CSS. */
     theme?: FieldStyle & {display?: DCProps["theme"], input?: ICProps["theme"]};
     /** Valeur. */
@@ -73,9 +78,9 @@ export interface FieldProps<
 @observer
 export class Field<
     T,
-    ICProps extends BaseInputProps,
-    DCProps extends BaseDisplayProps,
-    LCProps extends BaseLabelProps,
+    ICProps extends InputProps,
+    DCProps extends DisplayProps,
+    LCProps extends LabelProps,
     R extends RefValues<T, VK, LK> ,
     VK extends string,
     LK extends string
@@ -130,7 +135,7 @@ export class Field<
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
         const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}, theme} = this.props;
-        const FinalDisplay: ReactComponent<any> = DisplayComponent || Display;
+        const FinalDisplay = DisplayComponent || Display;
         return (
             <FinalDisplay
                 {...displayProps as {}}
@@ -148,7 +153,7 @@ export class Field<
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps = {}, name, theme} = this.props;
-        const FinalInput: ReactComponent<any> = InputComponent || Input;
+        const FinalInput = InputComponent || Input;
 
         let props: any = {
             ...inputProps as {},
@@ -170,22 +175,22 @@ export class Field<
         return <FinalInput {...props} />;
     }
 
-    /** Affiche le composant de libellé (`LabelComponent`). */
-    label() {
-        const {name, label, LabelComponent} = this.props;
-        const FinalLabel = LabelComponent || (() => <label htmlFor={name}>{label && i18next.t(label) || ""}</label>);
-        return <FinalLabel name={name} text={label} />;
-    }
-
     render() {
-        const {disableInlineSizing, hasLabel = true,  labelRatio = 33, isRequired, isEdit, theme, className = ""} = this.props;
+        const {comment, disableInlineSizing, i18nPrefix, label, LabelComponent, name, showTooltip, hasLabel = true,  labelRatio = 33, isRequired, isEdit, theme, className = ""} = this.props;
         const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
+        const FinalLabel = LabelComponent || Label;
         return (
             <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${this.error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
                 {hasLabel ?
-                    <div style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}} className={theme!.label}>
-                        {this.label()}
-                    </div>
+                    <FinalLabel
+                        comment={comment}
+                        i18nPrefix={i18nPrefix}
+                        label={label}
+                        name={name}
+                        showTooltip={showTooltip}
+                        style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
+                        theme={{label: theme!.label}}
+                    />
                 : null}
                 <div style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}} className ={`${theme!.value} ${className}`}>
                     {isEdit ? this.input() : this.display()}

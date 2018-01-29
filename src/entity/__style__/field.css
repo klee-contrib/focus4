@@ -8,13 +8,6 @@
     flex-wrap: wrap;
 }
 
-.label {
-    text-align: right;
-    font-weight: bold;
-    font-size: 14px;
-    line-height: 20px;
-}
-
 .label,
 .value {
     flex-shrink: 0;
@@ -22,7 +15,7 @@
     box-sizing: border-box;
 }
 
-.edit.required .label::after {
+.edit.required .label label::after {
     content: "*";
     margin-left: 3px;
 }

@@ -6,13 +6,13 @@ import * as React from "react";
 import {InputProps} from "react-toolbox/lib/input";
 import {v4} from "uuid";
 
-import {DisplayProps, PanelProps, SelectProps} from "../components";
+import {DisplayProps, LabelProps, PanelProps, SelectProps} from "../components";
 import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
 import {Field, FieldProps, RefValues} from "./field";
 import {StoreNode, toFlatValues} from "./store";
-import {BaseDisplayProps, BaseInputProps, BaseLabelProps, Domain, EntityField} from "./types";
+import {Domain, EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
 
 import {
@@ -303,15 +303,15 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    displayFor<DCProps extends BaseDisplayProps = DisplayProps, LCProps extends BaseLabelProps = BaseLabelProps>(
+    displayFor<DCProps = DisplayProps, LCProps = LabelProps>(
         field: string | number | boolean,
         options?: Partial<FieldProps<string | number | boolean, {}, DCProps, LCProps, {}, string, string>>
     ): JSX.Element;
-    displayFor<T, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
         field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, {}, DCProps, LCProps, {}, string, string>>
     ): JSX.Element;
-    displayFor<T, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
         field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, {}, DCProps, LCProps, {}, string, string>> = {}
     ) {
@@ -323,15 +323,15 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldFor<ICProps extends BaseInputProps = InputProps, DCProps extends BaseDisplayProps = DisplayProps, LCProps extends BaseLabelProps = BaseLabelProps>(
+    fieldFor<ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps>(
         field: string | number | boolean,
         options?: Partial<FieldProps<string | number | boolean, ICProps, DCProps, LCProps, {}, string, string>>
     ): JSX.Element;
-    fieldFor<T, ICDomainProps extends BaseInputProps = InputProps, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    fieldFor<T, ICDomainProps = InputProps, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
         field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, ICProps, DCProps, LCProps, {}, string, string>>
     ): JSX.Element;
-    fieldFor<T, ICDomainProps extends BaseInputProps = InputProps, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    fieldFor<T, ICDomainProps = InputProps, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
         field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, {}, string, string>> = {}
     ) {
@@ -344,7 +344,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T, DCDomainProps extends BaseDisplayProps = DisplayProps, LCDomainProps extends BaseLabelProps = BaseLabelProps, ICProps extends BaseInputProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">(
+    selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">(
         field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>>,
         values: R[],
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}

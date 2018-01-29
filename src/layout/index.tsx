@@ -17,7 +17,7 @@ import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
 import {ActionBarStyle, AdvancedSearchStyle, ContextualActionsStyle, DragLayerStyle, FacetBoxStyle, FacetStyle, GroupStyle, LineStyle, ListStyle, ListWrapperStyle, SearchBarStyle, SummaryStyle} from "../collections";
-import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, PanelStyle, PopinStyle, ScrollspyStyle} from "../components";
+import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, LabelStyle, PanelStyle, PopinStyle, ScrollspyStyle} from "../components";
 import {FieldStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
@@ -93,6 +93,7 @@ export interface LayoutStyleProviderProps {
     form?: string;
     group?: GroupStyle;
     header?: HeaderStyle;
+    label?: LabelStyle;
     layout?: LayoutStyle;
     loadingBar?: LoadingBarStyle;
     line?: LineStyle;

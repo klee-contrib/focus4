@@ -89,9 +89,8 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
 
     render() {
         const {GroupHeader, groupOperationList, groupPageSize, groupTheme, i18nPrefix, lineOperationList, listPageSize, listTheme, offset, store, useGroupActionBars} = this.props;
-        const {groups, list} = store;
 
-        const filteredGroups = groups.filter(group => group.totalCount !== 0);
+        const filteredGroups = store.groups.filter(group => group.totalCount !== 0);
         if (filteredGroups.length) {
             return (
                 <div data-focus="results">

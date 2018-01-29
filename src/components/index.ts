@@ -6,6 +6,7 @@ export {default as Display, DisplayProps, DisplayStyle} from "./display";
 export {getIcon} from "./icon";
 export {default as InputDate, InputDateProps} from "./input-date";
 export {default as InputTime, InputTimeProps} from "./input-time";
+export {default as Label, LabelProps, LabelStyle} from "./label";
 export {default as Panel, PanelButtons, PanelProps, PanelStyle} from "./panel";
 export {default as Popin, PopinStyle} from "./popin";
 export {default as ScrollspyContainer, ScrollspyContainerProps, ScrollspyStyle} from "./scrollspy-container";

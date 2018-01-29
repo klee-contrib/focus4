@@ -1,33 +1,9 @@
 import {InputProps} from "react-toolbox/lib/input";
 
-import {DisplayProps} from "../components";
+import {DisplayProps, LabelProps} from "../components";
 import {ReactComponent} from "../config";
 
 import {Validator} from "./validation";
-
-/** Props de base pour un composant d'affichage. */
-export interface BaseDisplayProps {
-    theme?: {};
-    value?: any;
-}
-
-/** Props de base pour un composant d'input. */
-export interface BaseInputProps {
-    error?: React.ReactNode;
-    labelKey?: string;
-    name?: string;
-    onChange?: Function;
-    theme?: {};
-    value?: any;
-    valueKey?: string;
-    values?: any[];
-}
-
-/** Props de base pour un composant de libellé. */
-export interface BaseLabelProps {
-    name?: string;
-    text?: string;
-}
 
 /** Définition de base d'un domaine, sans valeurs par défaut (sinon ça pose problème avec les EntityField). */
 export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
@@ -63,7 +39,7 @@ export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
 }
 
 /** Définition de base d'un domaine. */
-export interface Domain<ICProps extends BaseInputProps = Partial<InputProps>, DCProps extends BaseDisplayProps = DisplayProps, LCProps extends BaseLabelProps = BaseLabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
+export interface Domain<ICProps = Partial<InputProps>, DCProps = DisplayProps, LCProps = LabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {
@@ -80,6 +56,9 @@ export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {
 
     /** Identifiant unique de l'entrée. */
     readonly translationKey: string;
+
+    /** Commentaire de l'entrée */
+    readonly comment?: string;
 }
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */

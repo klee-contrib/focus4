@@ -82,6 +82,12 @@ export const icons = {
             name: "more_vert"
         }
     },
+    label: {
+        tooltip: {
+            library: "material",
+            name: "info"
+        }
+    },
     line: {
         selected: {
             library: "material",
