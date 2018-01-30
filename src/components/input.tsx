@@ -163,7 +163,7 @@ export class Input extends React.Component<InputProps, void> {
             const value = this.mask.getValue();
             return value === this.mask.emptyValue || value === undefined ? "" : value;
         } else {
-            return this.props.value !== undefined ? this.props.value : "";
+            return this.props.value === undefined ? "" : this.props.value;
         }
     }
 

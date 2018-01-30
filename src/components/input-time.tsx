@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import {isArray, uniqueId} from "lodash";
+import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment";
@@ -22,8 +22,8 @@ export interface InputTimeProps {
     displayFrom?: "left" | "right";
     /** Message d'erreur. */
     error?: string | null;
-    /** Format de la date dans l'input. */
-    inputFormat?: string | string[];
+    /** Format de l'heure dans l'input. */
+    inputFormat?: string;
     /** Nom de l'input. */
     name?: string;
     /** Est appelé au clic sur le calendrier ou au blur (n'est pas synchronisé avec le texte). */
@@ -84,7 +84,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
         const {inputFormat = "HH:mm"} = this.props;
         if (isISOString(value)) {
             return moment(value, moment.ISO_8601)
-                .format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
+                .format(inputFormat);
         } else {
             return value;
         }
@@ -152,12 +152,13 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme, displayFrom = "left"} = this.props;
+        const {error, name, placeholder, disabled, theme, inputFormat = "HH:mm", displayFrom = "left"} = this.props;
         return (
             <div data-focus="input-time" data-id={this._inputTimeId} className={input}>
                 <Input
                     disabled={disabled}
                     error={error}
+                    mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                     name={name}
                     onChange={(value: string) => this.timeText = value}
                     onKeyDown={this.handleKeyDown}

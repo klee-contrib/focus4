@@ -1,5 +1,5 @@
 import {autobind} from "core-decorators";
-import {isArray, uniqueId} from "lodash";
+import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment";
@@ -26,7 +26,7 @@ export interface InputDateProps {
     /** Message d'erreur. */
     error?: string | null;
     /** Format de la date dans l'input. */
-    inputFormat?: string | string[];
+    inputFormat?: string;
     /**
      * Définit la correspondance entre une date et l'ISOString (date/heure) associé.
      *
@@ -108,7 +108,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
         if (isISOString(value)) {
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
             return moment(value, moment.ISO_8601)
-                .format(isArray(inputFormat) ? inputFormat[0] : inputFormat);
+                .format(inputFormat);
         } else {
             return value;
         }
@@ -181,7 +181,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
 
     /** Transforme la date selon le format de date/timezone souhaité. */
     transformDate(date: Date): moment.Moment; // Depuis le calendrier.
-    transformDate(date: string | undefined, inputFormat: string | string[], strict: true): moment.Moment; // Depuis la saisie manuelle.
+    transformDate(date: string | undefined, inputFormat: string, strict: true): moment.Moment; // Depuis la saisie manuelle.
     transformDate(...params: any[]) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 
@@ -197,12 +197,13 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme, calendarFormat = "ddd, MMM D", displayFrom = "left"} = this.props;
+        const {error, name, placeholder, disabled, theme, inputFormat = "MM/DD/YYYY", calendarFormat = "ddd, MMM D", displayFrom = "left"} = this.props;
         return (
             <div data-focus="input-date" data-id={this._inputDateId} className={input}>
                 <Input
                     disabled={disabled}
                     error={error}
+                    mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                     name={name}
                     onChange={(value: string) => this.dateText = value}
                     onKeyDown={this.handleKeyDown}
