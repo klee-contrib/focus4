@@ -1,6 +1,4 @@
-import {InputProps} from "react-toolbox/lib/input";
-
-import {DisplayProps, LabelProps} from "../components";
+import {DisplayProps, InputProps, LabelProps} from "../components";
 import {ReactComponent} from "../config";
 
 import {Validator} from "./validation";

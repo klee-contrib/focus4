@@ -86,10 +86,6 @@
         "no-return-await": true,
         "no-shadowed-variable": true,
         "no-string-throw": true,
-        "no-submodule-imports": [
-            true,
-            "react-toolbox"
-        ],
         "no-this-assignment": [
             true,
             {"allow-destructuring": true}

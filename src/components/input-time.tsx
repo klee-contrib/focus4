@@ -6,9 +6,10 @@ import moment from "moment";
 import * as React from "react";
 import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
-import {Input} from "react-toolbox/lib/input";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import Clock from "react-toolbox/lib/time_picker/Clock";
+
+import {Input} from "../components";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
 import {calendar, clock, fromRight, input, toggle} from "./__style__/input-date.css";

@@ -8,7 +8,8 @@ import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
-import {Input} from "react-toolbox/lib/input";
+
+import {Input} from "../components";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
 import {calendar, fromRight, input, toggle} from "./__style__/input-date.css";

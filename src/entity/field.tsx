@@ -4,9 +4,8 @@ import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themeable, themr} from "react-css-themr";
-import {Input, InputProps} from "react-toolbox/lib/input";
 
-import {Display, DisplayProps, Label, LabelProps} from "../components";
+import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
 
 import {Domain} from "./types";
 import {validate} from "./validation";

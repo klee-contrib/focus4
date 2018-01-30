@@ -2,9 +2,8 @@ import i18next from "i18next";
 import {find, result} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
-import {InputProps} from "react-toolbox/lib/input";
 
-import {DisplayProps, LabelProps, Select, SelectProps} from "../components";
+import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../components";
 import {EntityField} from "../entity";
 
 import Field, {FieldProps, RefValues} from "./field";

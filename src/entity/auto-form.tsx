@@ -3,10 +3,9 @@ import {some, values as _values} from "lodash";
 import {action, computed, Lambda, observable, ObservableMap, reaction, runInAction} from "mobx";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {InputProps} from "react-toolbox/lib/input";
 import {v4} from "uuid";
 
-import {DisplayProps, LabelProps, PanelProps, SelectProps} from "../components";
+import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../components";
 import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
