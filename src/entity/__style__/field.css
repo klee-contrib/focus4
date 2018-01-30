@@ -34,6 +34,6 @@
     margin-top: -28px;
 }
 
-.invalid .label {
+.invalid .label label {
     color: var(--input-text-error-color);
 }
