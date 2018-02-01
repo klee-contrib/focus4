@@ -4,6 +4,7 @@ import {action, observable, ObservableMap, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {findDOMNode} from "react-dom";
 export {ObservableMap};
 
 import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps, AutocompleteTheme} from "react-toolbox/lib/autocomplete";
@@ -41,6 +42,8 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 @observer
 export class Autocomplete extends React.Component<AutocompleteProps, void> {
 
+    inputElement: HTMLInputElement | null;
+
     /** Composant en chargement. */
     @observable protected isLoading = false;
     /** Contenu du champ texte. */
@@ -56,6 +59,16 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
         if (value && !isQuickSearch && keyResolver) {
             this.query = await keyResolver(value) || value;
         }
+    }
+
+    componentDidMount() {
+        this.inputElement = findDOMNode(this)
+            .querySelector("input");
+    }
+
+    focus() {
+        // C'est moche mais sinon ça marche pas...
+        setTimeout(() => this.inputElement && this.inputElement.focus(), 0);
     }
 
     /**
@@ -95,6 +108,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
         if (isQuickSearch && value) {
             this.query = "";
             this.values.clear();
+            this.focus();
         }
 
         this.value = value;
