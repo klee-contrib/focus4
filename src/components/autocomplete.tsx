@@ -1,4 +1,5 @@
 import {autobind} from "core-decorators";
+import i18next from "i18next";
 import {debounce} from "lodash-decorators";
 import {action, observable, ObservableMap, runInAction} from "mobx";
 import {observer} from "mobx-react";
@@ -57,7 +58,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
         if (value && !isQuickSearch && keyResolver) {
-            this.query = await keyResolver(value) || value;
+            this.query = i18next.t(await keyResolver(value) || "") || value;
         }
     }
 
@@ -127,7 +128,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
             runInAction(() => {
-                this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: next.label}), {}) || {});
+                this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {}) || {});
                 this.isLoading = false;
             });
         }
