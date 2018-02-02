@@ -5,6 +5,7 @@ import {observer} from "mobx-react";
 import moment from "moment";
 import * as React from "react";
 import {themr} from "react-css-themr";
+import {findDOMNode} from "react-dom";
 import {IconButton} from "react-toolbox/lib/button";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import Clock from "react-toolbox/lib/time_picker/Clock";
@@ -43,6 +44,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     private clock?: HTMLDivElement;
     private clockComp?: any;
+    private scrollParent: Element;
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
     private readonly _inputTimeId = uniqueId("input-time-");
@@ -64,7 +66,12 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
-        window.addEventListener("scroll", this.resetClockCenter);
+    }
+
+    componentDidMount() {
+       this.scrollParent = getScrollParent(findDOMNode(this));
+       this.scrollParent.addEventListener("scroll", this.resetClockCenter);
+       window.addEventListener("scroll", this.resetClockCenter);
     }
 
     @action
@@ -92,6 +99,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     componentWillUnmount() {
         document.removeEventListener("mousedown", this.onDocumentClick);
+        this.scrollParent.removeEventListener("scroll", this.resetClockCenter);
         window.removeEventListener("scroll", this.resetClockCenter);
     }
 
@@ -237,4 +245,22 @@ export default themr("RTTimePicker", styles)(InputTime);
 function isISOString(value?: string) {
     return moment(value, moment.ISO_8601, true)
         .isValid();
+}
+
+/** Retourne le parent le plus proche qui est scrollable. */
+function getScrollParent(element: Element, includeHidden = false) {
+    let style = getComputedStyle(element);
+    const excludeStaticParent = style.position === "absolute";
+    const overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+
+    if (style.position === "fixed") { return document.body; }
+    for (let parent: Element | null = element; (parent = parent.parentElement);) {
+        style = getComputedStyle(parent);
+        if (excludeStaticParent && style.position === "static") {
+            continue;
+        }
+        if (overflowRegex.test(style.overflow! + style.overflowY + style.overflowX)) { return parent; }
+    }
+
+    return document.body;
 }
