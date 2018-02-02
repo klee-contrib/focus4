@@ -12,7 +12,7 @@ import Clock from "react-toolbox/lib/time_picker/Clock";
 import {Input} from "../components";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
-import {calendar, clock, fromRight, input, toggle} from "./__style__/input-date.css";
+import {calendar, clock, down, fromRight, input, toggle, upClock} from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
 export interface InputTimeProps {
@@ -41,6 +41,9 @@ export interface InputTimeProps {
 @observer
 export class InputTime extends React.Component<InputTimeProps, void> {
 
+    private clock?: HTMLDivElement;
+    private clockComp?: any;
+
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
     private readonly _inputTimeId = uniqueId("input-time-");
 
@@ -53,11 +56,15 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     /** Affiche l'horloge. */
     @observable private showClock = false;
 
-    /** Mode du calendrier. */
+    /** Mode de l'horloge. */
     @observable private clockDisplay = "hours" as "hours" | "minutes";
+
+    /** Position de l'horloge. */
+    @observable private clockPosition?: "up" | "down";
 
     componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
+        window.addEventListener("scroll", this.resetClockCenter);
     }
 
     @action
@@ -66,8 +73,33 @@ export class InputTime extends React.Component<InputTimeProps, void> {
         this.timeText = this.formatTime(value);
     }
 
+    // Met à jour la position du calendrier.
+    componentDidUpdate() {
+        if (this.clock && this.showClock) {
+            const client = this.clock.getBoundingClientRect();
+            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            if (!this.clockPosition) {
+                if (client.top + client.height > screenHeight) {
+                    this.clockPosition = "up";
+                } else {
+                    this.clockPosition = "down";
+                }
+            }
+        } else {
+            this.clockPosition = undefined;
+        }
+    }
+
     componentWillUnmount() {
         document.removeEventListener("mousedown", this.onDocumentClick);
+        window.removeEventListener("scroll", this.resetClockCenter);
+    }
+
+    /** Reset le centre de l'horloge au scroll, parce que c'est pas prévu par le composant... */
+    resetClockCenter() {
+        if (this.clockComp) {
+            this.clockComp.handleCalculateShape();
+        }
     }
 
     /** Convertit le texte en objet momentJS. */
@@ -167,7 +199,10 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                     value={this.timeText || ""}
                 />
                 {this.showClock ?
-                    <div className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay} ${displayFrom === "right" ? fromRight : ""}`}>
+                    <div
+                        ref={clo => this.clock = clo}
+                        className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay} ${displayFrom === "right" ? fromRight : ""} ${this.clockPosition === "up" ? upClock : down}`}
+                    >
                         <header className={theme!.header}>
                             <span id="hours" className={theme!.hours} onClick={() => this.clockDisplay = "hours"}>
                                 {(`0${this.time.hours()}`).slice(-2)}
@@ -180,6 +215,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                         </header>
                         <div className={`${theme!.clockWrapper} ${clock}`}>
                             <Clock
+                                ref={c => this.clockComp = c}
                                 display={this.clockDisplay}
                                 format="24hr"
                                 onChange={this.onClockChange}

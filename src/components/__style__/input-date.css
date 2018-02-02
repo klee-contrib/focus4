@@ -6,7 +6,6 @@
 
 .calendar {
     position: absolute;
-    top: 60px;
     z-index: var(--z-index-high);
     width: var(--input-date-width);
     box-shadow: var(--input-date-shadow);
@@ -18,6 +17,7 @@
 
     & .clock {
         position: static;
+        height: 300px;
     }
 }
 
@@ -30,4 +30,16 @@
 
 .fromRight {
     right: 0;
+}
+
+.up {
+    bottom: 10px;
+}
+
+.down {
+    top: 60px;
+}
+
+.upClock {
+    bottom: 60px;
 }

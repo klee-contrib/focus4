@@ -12,7 +12,7 @@ import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {Input} from "../components";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
-import {calendar, fromRight, input, toggle} from "./__style__/input-date.css";
+import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
 
@@ -58,6 +58,8 @@ export interface InputDateProps {
 @observer
 export class InputDate extends React.Component<InputDateProps, void> {
 
+    private calendar?: HTMLDivElement;
+
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
     private readonly _inputDateId = uniqueId("input-date-");
 
@@ -73,6 +75,9 @@ export class InputDate extends React.Component<InputDateProps, void> {
     /** Mode du calendrier. */
     @observable private calendarDisplay = "months" as "months" | "years";
 
+    /** Position du calendrier. */
+    @observable private calendarPosition?: "up" | "down";
+
     componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
     }
@@ -81,6 +86,23 @@ export class InputDate extends React.Component<InputDateProps, void> {
     componentWillReceiveProps({value}: InputDateProps) {
         this.date = this.toMoment(value);
         this.dateText = this.formatDate(value);
+    }
+
+    // Met à jour la position du calendrier.
+    componentDidUpdate() {
+        if (this.calendar && this.showCalendar) {
+            const client = this.calendar.getBoundingClientRect();
+            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            if (!this.calendarPosition) {
+                if (client.top + client.height > screenHeight) {
+                    this.calendarPosition = "up";
+                } else {
+                    this.calendarPosition = "down";
+                }
+            }
+        } else {
+            this.calendarPosition = undefined;
+        }
     }
 
     componentWillUnmount() {
@@ -212,7 +234,10 @@ export class InputDate extends React.Component<InputDateProps, void> {
                     value={this.dateText || ""}
                 />
                 {this.showCalendar ?
-                    <div className={`${calendar} ${displayFrom === "right" ? fromRight : ""}`}>
+                    <div
+                        ref={cal => this.calendar = cal}
+                        className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${this.calendarPosition === "up" ? up : down}`}
+                    >
                         <header className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}>
                             <span id="years" className={theme!.year} onClick={() => this.calendarDisplay = "years"}>
                                 {this.date.year()}
