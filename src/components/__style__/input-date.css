@@ -33,13 +33,10 @@
 }
 
 .up {
-    bottom: 10px;
+    bottom: 60px;
 }
 
 .down {
     top: 60px;
 }
 
-.upClock {
-    bottom: 60px;
-}

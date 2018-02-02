@@ -12,7 +12,7 @@ import Clock from "react-toolbox/lib/time_picker/Clock";
 import {Input} from "../components";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
-import {calendar, clock, down, fromRight, input, toggle, upClock} from "./__style__/input-date.css";
+import {calendar, clock, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
 export interface InputTimeProps {
@@ -201,7 +201,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                 {this.showClock ?
                     <div
                         ref={clo => this.clock = clo}
-                        className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay} ${displayFrom === "right" ? fromRight : ""} ${this.clockPosition === "up" ? upClock : down}`}
+                        className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay} ${displayFrom === "right" ? fromRight : ""} ${this.clockPosition === "up" ? up : down}`}
                     >
                         <header className={theme!.header}>
                             <span id="hours" className={theme!.hours} onClick={() => this.clockDisplay = "hours"}>
