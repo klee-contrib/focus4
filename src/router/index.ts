@@ -12,6 +12,8 @@ export interface RouterConfig<E = "error"> {
     errorPageName?: E;
     /** Nom du code pour une page non trouvée. Par défaut : "notfound" */
     notfoundCode?: string;
+    /** Handler personnalisé pour une route non trouvée. Peut retourner l'URL finale voulue, "true" pour rester sur place, ou "undefined" pour garder le comportement par défaut qui navigue vers la 404.  */
+    notfoundHandler?: (url: string) => string | true | undefined;
 }
 
 /**
@@ -110,10 +112,23 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         // On ajoute le wildcard pour les URLs non matchées.
         {
             $: "*",
-            beforeEnter: ({newPath}) => {
+            beforeEnter: ({newPath, oldPath}) => {
                 if (newPath === "/") { // Si on a pas de route initiale, on redirige vers le store principal.
-                    return {redirect: `/${stores[0].prefix}`, replace: true};
-                } else { // Sinon on redirige vers la page d'erreur.
+                    return { redirect: `/${stores[0].prefix}`, replace: true };
+                } else {
+                    // On traite le handler personnalisé.
+                    if (config.notfoundHandler) {
+                        const result = config.notfoundHandler(newPath);
+                        if (result) {
+                            if (result === true) {
+                                return {redirect: oldPath || getUrl(), replace: true}; // On reste où on est.
+                            } else {
+                                return {redirect: result, replace: true}; // On redirige ailleurs.
+                            }
+                        }
+                    }
+
+                    // Sinon on redirige vers la page d'erreur.
                     return {redirect: `/${errorPageName}/${notfoundCode}`, replace: true};
                 }
             }
