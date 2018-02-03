@@ -20,7 +20,7 @@ export function classAutorun(target: RCL, propertyKey: keyof RCL, _: TypedProper
  * @param opts Les options de la réaction.
  */
 export function classReaction<T extends RCL>(expression: ReactionExpression<T>, opts?: IReactionOptions) {
-    return function(instance: RCL, propertyKey: keyof RCL) {
+    return function(instance: T, propertyKey: keyof RCL) {
         patchClass("reaction", instance, propertyKey, expression, opts);
     };
 }
@@ -30,12 +30,12 @@ export function classReaction<T extends RCL>(expression: ReactionExpression<T>, 
  * @param expression L'expression à tracker pour le when. Si le contexte est nécessaire, le passer dans un lambda englobant.
  */
 export function classWhen<T extends RCL>(expression: WhenExpression<T>) {
-    return function(instance: RCL, propertyKey: keyof RCL) {
+    return function(instance: T, propertyKey: keyof RCL) {
         patchClass("when", instance, propertyKey, expression);
     };
 }
 
-function patchClass<T extends RCL>(type: "autorun" | "reaction" | "when", instance: T, propertyKey: keyof RCL, expression?: WhenExpression<T> | ReactionExpression<T>, opts?: IReactionOptions) {
+function patchClass<T extends RCL>(type: "autorun" | "reaction" | "when", instance: T, propertyKey: keyof T, expression?: WhenExpression<T> | ReactionExpression<T>, opts?: IReactionOptions) {
     function componentWillMount(this: T) {
         this[`${type}_${propertyKey}`] =
             type === "autorun" ?

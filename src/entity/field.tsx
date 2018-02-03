@@ -18,13 +18,13 @@ export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} 
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
-    T,                                  // Type de la valeur.
-    ICProps extends InputProps,     // Props du composant d'input.
-    DCProps extends DisplayProps,   // Props du component d'affichage.
-    LCProps extends LabelProps,     // Props du component de libellé.
-    R extends RefValues<T, VK, LK>,     // Type de la liste de référence associée.
-    VK extends string,                  // Nom de la propriété de valeur (liste de référence).
-    LK extends string                   // Nom de la propriété de libellé (liste de référence).
+    T = any,                                        // Type de la valeur.
+    ICProps extends {theme?: {}} = InputProps,      // Props du composant d'input.
+    DCProps extends {theme?: {}} = DisplayProps,    // Props du component d'affichage.
+    LCProps = LabelProps,                           // Props du component de libellé.
+    R extends RefValues<T, VK, LK> = any,           // Type de la liste de référence associée.
+    VK extends string = any,                        // Nom de la propriété de valeur (liste de référence).
+    LK extends string = any                         // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
     /** Commentaire à afficher dans la tooltip. */
     comment?: string;
@@ -57,7 +57,7 @@ export interface FieldProps<
     /** Nom du champ. */
     name: string;
     /** Handler de modification de la valeur. */
-    onChange?: ICProps["onChange"];
+    onChange?: (value: T) => void;
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** CSS. */

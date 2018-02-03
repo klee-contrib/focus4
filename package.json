@@ -22,8 +22,8 @@
     "tslint": "tslint --project tsconfig.json --force"
   },
   "dependencies": {
-    "@types/i18next": "8.4.2",
-    "@types/lodash": "4.14.92",
+    "@types/i18next": "8.4.3",
+    "@types/lodash": "4.14.100",
     "@types/numeral": "0.0.22",
     "@types/prop-types": "15.5.2",
     "@types/react": "15.0.1",
@@ -33,9 +33,9 @@
     "@types/react-motion": "0.0.22",
     "@types/uuid": "3.4.3",
     "core-decorators": "0.20.0",
-    "i18next": "10.2.2",
+    "i18next": "10.3.0",
     "inputmask-core": "2.2.0",
-    "inversify": "4.9.0",
+    "inversify": "4.10.0",
     "inversify-inject-decorators": "3.1.0",
     "lodash": "4.17.4",
     "lodash-decorators": "4.5.0",
@@ -52,23 +52,23 @@
     "react-motion": "0.5.2",
     "react-text-mask": "5.1.0",
     "react-toolbox": "2.0.0-beta.12",
-    "reflect-metadata": "0.1.10",
+    "reflect-metadata": "0.1.12",
     "smoothscroll-polyfill": "0.4.0",
     "text-mask-core": "5.0.1",
-    "tslib": "1.8.1",
-    "uuid": "3.1.0",
+    "tslib": "1.9.0",
+    "uuid": "3.2.1",
     "yester": "0.10.0"
   },
   "devDependencies": {
-    "@types/shelljs": "0.7.7",
+    "@types/shelljs": "0.7.8",
     "@types/tape": "4.2.31",
-    "shelljs": "0.7.8",
+    "shelljs": "0.8.1",
     "stylelint": "8.4.0",
     "tap-spec": "4.1.1",
     "tape": "4.8.0",
     "ts-node": "4.1.0",
     "tslint": "5.9.1",
     "typed-css-modules": "0.3.1",
-    "typescript": "2.6.2"
+    "typescript": "2.7.1"
   }
 }

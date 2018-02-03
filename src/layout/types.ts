@@ -1,4 +1,4 @@
-import styles from "./__style__/layout.css";
+import * as styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 export {styles};
 

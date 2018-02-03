@@ -224,7 +224,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
                 {this.showCriteriaComponent ?
                     <div className={theme!.criteria}>
                         <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.close`)} onClick={this.toggleCriteria} />
-                        {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: (query: string) => store.query = query})}
+                        {fieldFor(store.query, {label: `${i18nPrefix}.search.bar.query`, onChange: query => store.query = query})}
                         {criteriaComponent}
                         <div className={theme!.buttons}>
                             <Button primary raised onClick={this.toggleCriteria} label={`${i18nPrefix}.search.bar.search`} />

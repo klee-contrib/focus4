@@ -226,7 +226,7 @@ function getSelection(el: HTMLInputElement) {
 function setSelection(el: HTMLInputElement, selection: InputMaskSelection) {
     try {
         if (el.selectionStart !== undefined) {
-            el.setSelectionRange(selection.start, selection.end);
+            el.setSelectionRange(selection.start!, selection.end!);
         } else {
             const rangeEl = (el as any).createTextRange();
             rangeEl.collapse(true);

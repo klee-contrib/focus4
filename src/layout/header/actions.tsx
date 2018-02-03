@@ -7,7 +7,7 @@ import Tooltip, {TooltipProps} from "react-toolbox/lib/tooltip";
 
 import {ButtonMenu, getIcon, MenuItem} from "../../components";
 
-import styles from "./__style__/header.css";
+import * as styles from "./__style__/header.css";
 
 const TooltipButton = Tooltip(Button);
 

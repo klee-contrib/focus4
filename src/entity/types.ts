@@ -4,7 +4,7 @@ import {ReactComponent} from "../config";
 import {Validator} from "./validation";
 
 /** Définition de base d'un domaine, sans valeurs par défaut (sinon ça pose problème avec les EntityField). */
-export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
+export interface DomainNoDefault<ICProps = any, DCProps = any, LCProps = any> {
     /** Classe CSS pour le champ. */
     className?: string;
 
@@ -37,7 +37,7 @@ export interface DomainNoDefault<ICProps = {}, DCProps = {}, LCProps = {}> {
 }
 
 /** Définition de base d'un domaine. */
-export interface Domain<ICProps = Partial<InputProps>, DCProps = DisplayProps, LCProps = LabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
+export interface Domain<ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {

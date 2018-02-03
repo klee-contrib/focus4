@@ -4,7 +4,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
-import styles from "../__style__/header.css";
+import * as styles from "../__style__/header.css";
 
 export {default as HeaderBarLeft} from "./bar-left";
 export {default as HeaderBarRight} from "./bar-right";

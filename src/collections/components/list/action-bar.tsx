@@ -157,7 +157,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                     onClick={() => store.groupingKey = key}
                     caption={i18next.t(label)}
                 />
-            ], []);
+            ], [] as JSX.Element[]);
 
             if (menuItems.length) {
                 return (

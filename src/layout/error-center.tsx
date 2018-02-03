@@ -8,7 +8,7 @@ import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "../components";
 
-import styles from "./__style__/error-center.css";
+import * as styles from "./__style__/error-center.css";
 
 export type ErrorCenterStyle = Partial<typeof styles>;
 

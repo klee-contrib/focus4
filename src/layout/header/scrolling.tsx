@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import styles from "./__style__/header.css";
+import * as styles from "./__style__/header.css";
 
 export type HeaderStyle = Partial<typeof styles>;
 

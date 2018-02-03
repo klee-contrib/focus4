@@ -44,7 +44,7 @@ export interface ListProps<T> extends ListBaseProps<T> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data?: T) => boolean;
+    canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
@@ -114,7 +114,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     private readonly draggedItems = observable<T>([]);
 
     /** LineWrapper avec la DragSource, pour une liste avec drag and drop. */
-    private readonly DraggableLineWrapper = this.props.hasDragAndDrop ? addDragSource(this.props.dragItemType || "item", LineWrapper) : undefined;
+    private readonly DraggableLineWrapper = this.props.hasDragAndDrop ? addDragSource<T>(this.props.dragItemType || "item", LineWrapper) : undefined;
 
     // Tuyauterie pour maintenir `byLine` à jour.
     componentDidMount() {

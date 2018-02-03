@@ -36,9 +36,9 @@ export interface ContextualActionsProps {
     /** Quand on ferme les actions secondaires. */
     onHideSecondary?: () => void;
     /** La liste d'actions. */
-    operationList: OperationListItem<{}>[];
+    operationList: OperationListItem<any>[];
     /** Le paramètre à passer aux actions. */
-    operationParam: {} | {}[];
+    operationParam: any | any[];
     /** CSS. */
     theme?: ContextualActionsStyle;
 }

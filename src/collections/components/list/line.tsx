@@ -119,7 +119,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
     }
 
     render() {
-        const {draggedItems, style, connectDragSource = (x: any) => x, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, theme, operationList, type, store} = this.props;
+        const {draggedItems, style, connectDragSource, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} />;
@@ -142,7 +142,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                     <Observer>
                         {() =>
                             // Si pas de drag and drop, la fonction est l'identité.
-                            connectDragSource(<li
+                            (connectDragSource || (x => x))(<li
                                 className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
                                 style={{width: mosaic ? width || mosaic.width : undefined, height: mosaic ? height || mosaic.height : height, opacity: style && style.opacity}}
                             >

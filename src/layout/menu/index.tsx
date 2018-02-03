@@ -56,7 +56,7 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
      * @param menuIndex Index du menu.
      */
     @action
-    private onSelectMenu(evt: React.SyntheticEvent<HTMLDivElement>, menuIndex: number) {
+    private onSelectMenu(evt: React.MouseEvent<HTMLLIElement>, menuIndex: number) {
         const targetPosition = evt.currentTarget.getBoundingClientRect();
         this.showPanel = this.activeMenuIndex !== menuIndex || !this.showPanel;
         this.activeMenuIndex = menuIndex;

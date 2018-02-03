@@ -52,7 +52,7 @@ Le scoping des classes est une fonctionnalité à double tranchant, car elle va 
 Par exemple, le header est défini ainsi:
 
 ```tsx
-import styles from "./style/header.css";
+import * as styles from "./style/header.css";
 export type HeaderStyle = Partial<typeof styles>;
 
 export const Header = themr("header", styles)(

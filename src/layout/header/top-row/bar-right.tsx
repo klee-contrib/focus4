@@ -1,7 +1,7 @@
 import * as React from "react";
 import {themr} from "react-css-themr";
 
-import styles from "../__style__/header.css";
+import * as styles from "../__style__/header.css";
 
 /** Props du HeaderBarRight. */
 export interface HeaderBarRightProps {
