@@ -4,7 +4,7 @@ import {autorun, IReactionOptions, reaction, when} from "mobx";
 export type RCL = React.ComponentLifecycle<any, any> & {[key: string]: any};
 
 /** Type d'expressions possibles pour le décorateur de réaction. */
-export type ReactionExpression<T> = ((inst: T) => () => {}) | (() => {});
+export type ReactionExpression<T> = ((inst: T) => () => any) | (() => any);
 
 /** Type d'expressions possibles pour le décorateur de `when` */
 export type WhenExpression<T> = ((inst: T) => () => boolean) | (() => boolean);

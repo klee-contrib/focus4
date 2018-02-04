@@ -34,7 +34,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         header: PropTypes.object
     };
 
-    context: {
+    context!: {
         header: {
             marginBottom: number,
             topRowHeight: number
@@ -42,21 +42,19 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     };
 
     /** Seuil de déploiement, calculé à partir de la hauteur du header. */
-    @observable deployThreshold: number;
+    @observable deployThreshold = 1000;
     /** Header déployé. */
     @observable isDeployed = true;
     /** Hauteur du div vide à placer sous le header en mode replié, pour conserver la continuité. */
-    @observable placeholderHeight: number;
+    @observable placeholderHeight = 1000;
 
     /** Header dans le DOM. */
     private header?: Element | null;
     /** Elément de DOM sur lequel on écoute le scroll */
-    private scrollTargetNode: Element | Window;
+    private scrollTargetNode = this.props.scrollTargetSelector ? document.querySelector(this.props.scrollTargetSelector)! : window;
 
     componentWillMount() {
         this.handleScroll();
-        const {scrollTargetSelector} = this.props;
-        this.scrollTargetNode = (scrollTargetSelector && scrollTargetSelector !== "") ? document.querySelector(scrollTargetSelector)! : window;
     }
 
     componentDidMount() {

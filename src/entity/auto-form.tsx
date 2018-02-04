@@ -75,19 +75,19 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
     static contextTypes = {theme: PropTypes.object};
-    context: {theme: {[key: string]: {[key: string]: any}}};
+    context!: {theme: {[key: string]: {[key: string]: any}}};
 
     /** Identifiant unique du formulaire. */
     formId = v4();
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
-    entity: E & ViewModel;
+    entity!: E & ViewModel;
 
     /** Services. */
-    services: ServiceConfig;
+    services!: ServiceConfig;
 
     /** Noeud de store à partir du quel le formulaire a été créé. */
-    storeData: E;
+    storeData!: E;
 
     /** Erreurs sur les champs issues du serveur. */
     @observable errors: Record<string, string> = {};
@@ -96,22 +96,22 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     @observable fields: Record<string, Field<any, any, any, any, any, any, any> | null> = {};
 
     /** Formulaire en édition. */
-    @observable isEdit: boolean;
+    @observable isEdit!: boolean;
 
     /** Formulaire en chargement. */
     @observable isLoading = false;
 
     /** Classe CSS additionnelle (passée en options). */
-    private className: string;
+    private className!: string;
 
     /** Insère ou non un formulaire HTML. */
-    private hasForm: boolean;
+    private hasForm!: boolean;
 
     /** Préfixe i18n pour les messages du formulaire */
-    private i18nPrefix: string;
+    private i18nPrefix!: string;
 
     /** Utilise ou non un ViewModel personnalisé, passé en options. */
-    private isCustomEntity: boolean;
+    private isCustomEntity!: boolean;
 
     /** Disposer de la réaction de chargement. */
     private loadDisposer?: Lambda;

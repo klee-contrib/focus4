@@ -58,7 +58,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
         header: PropTypes.object
     };
 
-    context: {
+    context!: {
         layout: {
             contentPaddingTop: number
         }

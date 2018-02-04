@@ -43,7 +43,7 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 @observer
 export class Autocomplete extends React.Component<AutocompleteProps, void> {
 
-    inputElement: HTMLInputElement | null;
+    private inputElement!: HTMLInputElement | null;
 
     /** Composant en chargement. */
     @observable protected isLoading = false;
@@ -53,7 +53,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
     protected readonly values = observable.map<string>();
 
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
-    protected value: string;
+    protected value?: string;
 
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;

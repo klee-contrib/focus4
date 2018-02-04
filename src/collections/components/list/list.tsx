@@ -94,7 +94,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         listWrapper: PropTypes.object
     };
 
-    context: {
+    context!: {
         listWrapper?: {
             addItemHandler: () => void;
             mosaic: {
@@ -106,7 +106,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     };
 
     /** Nombre de mosaïque par ligne, déterminé à la volée. */
-    @observable private byLine: number;
+    @observable private byLine!: number;
     /** Index de l'item sur lequel on doit afficher le détail. */
     @observable private displayedIdx?: number;
 

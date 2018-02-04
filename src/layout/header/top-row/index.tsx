@@ -27,7 +27,7 @@ export class HeaderTopRow extends React.Component<HeaderTopRowProps, void> {
         layout: PropTypes.object
     };
 
-    context: {
+    context!: {
         header: {topRowHeight: number};
         layout: {menuWidth: number};
     };

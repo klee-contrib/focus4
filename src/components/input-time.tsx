@@ -44,7 +44,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
 
     private clock?: HTMLDivElement;
     private clockComp?: any;
-    private scrollParent: Element;
+    private scrollParent!: Element;
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
     private readonly _inputTimeId = uniqueId("input-time-");

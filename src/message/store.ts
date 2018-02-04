@@ -17,7 +17,7 @@ export class MessageStore {
     /** Objet contenant tous les messages reçus. */
     @observable data: {[id: string]: Message} = {};
     /** Dernier message reçu. */
-    @observable latestMessage: Message;
+    @observable latestMessage?: Message;
 
     /**
      * Ajoute un message sans type.

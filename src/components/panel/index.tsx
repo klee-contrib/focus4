@@ -44,14 +44,14 @@ export interface PanelDescriptor {
 /** Construit un Panel avec un titre et des actions. */
 export class Panel extends React.Component<PanelProps, void> {
 
-    private id: string;
+    private id!: string;
 
     static contextTypes = {
         scrollspy: PropTypes.object
     };
 
     /** On récupère le contexte posé par le scrollspy parent. */
-    context: {
+    context!: {
         scrollspy: {
             registerPanel(panel: PanelDescriptor): string;
             removePanel(id: string): void;

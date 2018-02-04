@@ -18,7 +18,7 @@ export interface HeaderContentProps {
 export class HeaderContent extends React.Component<HeaderContentProps, void> {
 
     static contextTypes = {layout: PropTypes.object};
-    context: {layout: {menuWidth: number}};
+    context!: {layout: {menuWidth: number}};
 
     render() {
         const {children, theme} = this.props;

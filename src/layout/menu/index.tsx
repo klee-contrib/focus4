@@ -32,7 +32,7 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
         layout: PropTypes.object
     };
 
-    context: {
+    context!: {
         layout: {menuWidth: number};
     };
 

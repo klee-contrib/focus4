@@ -11,7 +11,7 @@ import {LayoutProps, styles} from "./types";
 export class LayoutContent extends React.Component<LayoutProps, void> {
 
     static contextTypes = {layout: PropTypes.object};
-    context: {
+    context!: {
         layout: {
             contentPaddingTop: number,
             menuWidth: number

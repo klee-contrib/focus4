@@ -22,7 +22,7 @@ export interface InputProps extends RTInputProps {
 @autobind
 export class Input extends React.Component<InputProps, void> {
 
-    private inputElement: HTMLInputElement;
+    private inputElement!: HTMLInputElement;
     private mask?: InputMask;
 
     componentWillMount() {

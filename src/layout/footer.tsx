@@ -7,7 +7,7 @@ import * as React from "react";
 export class LayoutFooter extends React.Component<{}, void> {
 
     static contextTypes = {layout: PropTypes.object};
-    context: {layout: {menuWidth: number}};
+    context!: {layout: {menuWidth: number}};
 
     render() {
         return (

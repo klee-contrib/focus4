@@ -18,7 +18,6 @@
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "strictPropertyInitialization": false, // TODO
 
         // Spécifique librairie
         "declaration": true,

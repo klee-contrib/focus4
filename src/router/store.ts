@@ -28,7 +28,7 @@ export class ViewStore<V, N extends string> {
 
     /** @internal */
     /** Renseigné par le routeur. Est appelé lors d'un retour d'erreur dans le `beforeEnter`.  */
-    handleError: (code: string) => void;
+    handleError!: (code: string) => void;
 
     /** @internal */
     /** Renseigné par le routeur. Précise si le store est actuellement actif dans ce dernier. */
@@ -43,7 +43,7 @@ export class ViewStore<V, N extends string> {
 
     /** @internal */
     /** Renseigné par le routeur. Permet de mettre le store actif dans le routeur. */
-    updateActivity: () => void;
+    updateActivity!: () => void;
 
     /** @internal */
     /** Représente l'état courant de l'URL. */
