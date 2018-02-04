@@ -40,7 +40,7 @@ export interface DomainNoDefault<ICProps = any, DCProps = any, LCProps = any> {
 export interface Domain<ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry<ICProps = {}, DCProps = {}, LCProps = {}> {
+export interface FieldEntry<ICProps = any, DCProps = any, LCProps = any> {
     readonly type: "field";
 
     /** Domaine du champ. */

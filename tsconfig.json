@@ -3,7 +3,7 @@
         // Général
         "lib": ["es2018", "dom"],
         "jsx": "react",
-        "module": "es2015",
+        "module": "esnext",
         "moduleResolution": "node",
         "target": "es5",
 

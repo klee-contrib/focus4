@@ -25,15 +25,15 @@ export const $entity = {
  */
 export function displayFor<T extends string | number | boolean, DCProps = DisplayProps, LCProps = LabelProps>(
     field: T,
-    options?: Partial<FieldProps<T, {}, DCProps, LCProps>>
+    options?: Partial<FieldProps<T, any, DCProps, LCProps>>
 ): JSX.Element;
 export function displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
-    field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>>,
-    options?: Partial<FieldProps<T, {}, DCProps, LCProps>>
+    field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
+    options?: Partial<FieldProps<T, any, DCProps, LCProps>>
 ): JSX.Element;
 export function displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
-    field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>> | T,
-    options: Partial<FieldProps<T, {}, DCProps, LCProps>> = {}
+    field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>> | T,
+    options: Partial<FieldProps<T, any, DCProps, LCProps>> = {}
 ) {
     options.isEdit = false;
     return fieldFor(field as any, options);

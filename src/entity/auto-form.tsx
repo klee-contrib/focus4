@@ -44,19 +44,19 @@ export interface AutoFormOptions<E> {
 }
 
 /** Config de services à fournir à AutoForm. */
-export interface ServiceConfig {
+export interface ServiceConfig<T, LP> {
 
     /** Service de suppression. */
-    delete?: (entity: {}) => Promise<void | number | boolean>;
+    delete?: (entity: T) => Promise<void | number | boolean>;
 
     /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
-    getLoadParams?: () => any[] | undefined;
+    getLoadParams?: () => LP[] | undefined;
 
     /** Service de chargement. */
-    load?: (...args: any[]) => Promise<{} | undefined>;
+    load?: (...args: LP[]) => Promise<T>;
 
     /** Service de sauvegarde. Obligatoire. */
-    save: (entity: {}) => Promise<{}>;
+    save: (entity: T) => Promise<T>;
 }
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
@@ -84,7 +84,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     entity!: E & ViewModel;
 
     /** Services. */
-    services!: ServiceConfig;
+    services!: ServiceConfig<any, any>;
 
     /** Noeud de store à partir du quel le formulaire a été créé. */
     storeData!: E;
@@ -129,7 +129,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    formInit(storeData: E, services: ServiceConfig, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
+    formInit<T, LP>(storeData: E, services: ServiceConfig<T, LP>, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
         this.storeData = storeData;
         this.services = services;
         this.entity = entity || createViewModel(storeData);
@@ -304,15 +304,15 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      */
     displayFor<T extends string | number | boolean, DCProps = DisplayProps, LCProps = LabelProps>(
         field: T,
-        options?: Partial<FieldProps<T, {}, DCProps, LCProps>>
+        options?: Partial<FieldProps<T, any, DCProps, LCProps>>
     ): JSX.Element;
     displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
-        field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>>,
-        options?: Partial<FieldProps<T, {}, DCProps, LCProps>>
+        field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
+        options?: Partial<FieldProps<T, any, DCProps, LCProps>>
     ): JSX.Element;
     displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
-        field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>> | T,
-        options: Partial<FieldProps<T, {}, DCProps, LCProps>> = {}
+        field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>> | T,
+        options: Partial<FieldProps<T, any, DCProps, LCProps>> = {}
     ) {
         return displayFor(field as any, options);
     }
