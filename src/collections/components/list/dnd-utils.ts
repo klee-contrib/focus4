@@ -1,4 +1,4 @@
-import {action} from "mobx";
+import {runInAction} from "mobx";
 import {DragSource, DropTargetMonitor} from "react-dnd";
 
 import {LineWrapperProps} from "./line";
@@ -16,7 +16,7 @@ export function addDragSource<T>(type: string, Component: React.ComponentClass<L
             if (store) {
                 // Si l'élément en cours de drag est sélectionné, alors on embarque tous les éléments sélectionnés.
                 if (store.selectedItems.has(data)) {
-                    store.selectedItems.forEach(action((item: T) => draggedItems!.push(item)));
+                    runInAction(() => store.selectedItems.forEach((item: T) => draggedItems!.push(item)));
                 } else {
                     // Sinon, simplement l'élément en cours.
                     draggedItems!.push(data);
