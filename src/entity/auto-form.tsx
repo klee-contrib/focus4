@@ -273,7 +273,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         return {
             editing: this.isEdit,
             loading: this.isLoading,
-            save: this.save,
+            save: this.hasForm ? undefined : this.save,
             toggleEdit: this.toggleEdit,
         };
     }
@@ -286,7 +286,6 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
             return (
                 <form
                     className={`${form} ${contextClassName} ${this.className}`}
-                    noValidate={true}
                     onSubmit={e => { e.preventDefault(); this.save(); }}
                 >
                     <fieldset>{this.renderContent()}</fieldset>

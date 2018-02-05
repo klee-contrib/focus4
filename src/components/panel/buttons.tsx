@@ -29,6 +29,7 @@ export function PanelButtons({editing, i18nPrefix = "focus", loading, toggleEdit
                         label={i18next.t(`${i18nPrefix}.button.save`)}
                         primary={true}
                         onClick={save}
+                        type="submit"
                         disabled={loading}
                     />
                     <Button

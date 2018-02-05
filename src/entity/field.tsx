@@ -159,6 +159,7 @@ export class Field<
             value: inputFormatter && inputFormatter(value) || value,
             error: this.showError && this.error || undefined,
             name,
+            id: name,
             onChange: this.onChange,
             theme: themeable(inputProps.theme || {} as any, theme!.input as any)
         };
