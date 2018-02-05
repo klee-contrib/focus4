@@ -242,4 +242,14 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 }
 
-export default themr("advancedSearch", styles)(AdvancedSearch);
+const ThemedAdvancedSearch = themr("advancedSearch", styles)(AdvancedSearch);
+export default ThemedAdvancedSearch;
+
+/**
+ * Crée un composant de recherche avancée.
+ * @param props Les props de l'AdvancedSearch.
+ */
+export function advancedSearchFor<T>(props: AdvancedSearchProps<T>) {
+    const Search = ThemedAdvancedSearch as any;
+    return <Search {...props} />;
+}

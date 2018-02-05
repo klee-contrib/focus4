@@ -294,4 +294,14 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     }
 }
 
-export default themr("actionBar", styles)(ActionBar);
+const ThemedActionBar = themr("actionBar", styles)(ActionBar);
+export default ThemedActionBar;
+
+/**
+ * Crée une ActionBar.
+ * @param props Les props de l'ActionBar.
+ */
+export function actionBarFor<T>(props: ActionBarProps<T>) {
+    const AB = ThemedActionBar as any;
+    return <AB {...props} />;
+}

@@ -8,7 +8,7 @@ export {action, computed, observable} from "mobx";
 export {observer} from "mobx-react";
 import * as React from "react"; export {React};
 
-export {AdvancedSearch, listFor, tableFor, timelineFor} from "./collections";
+export {advancedSearchFor, listFor, tableFor, timelineFor} from "./collections";
 export {Panel, Popin} from "./components";
 export {AutoForm, displayFor, fieldFor, selectFor, stringFor} from "./entity";
 export {injectByName, injectByPropName} from "./ioc";

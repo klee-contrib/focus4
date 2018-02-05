@@ -1,5 +1,6 @@
 export {
     ActionBar,
+    actionBarFor,
     ActionBarStyle,
     ContextualActions,
     ContextualActionsStyle,
@@ -24,12 +25,14 @@ export {
     timelineFor,
 
     AdvancedSearch,
+    advancedSearchFor,
     AdvancedSearchStyle,
     FacetBox,
     FacetBoxStyle,
     FacetStyle,
     GroupStyle,
     Results,
+    resultsFor,
     SearchBar,
     SearchBarStyle,
     Summary,

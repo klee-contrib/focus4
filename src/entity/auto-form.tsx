@@ -344,7 +344,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param options Les options du champ.
      */
     selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">(
-        field: EntityField<T, Domain<{}, DCDomainProps, LCDomainProps>>,
+        field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
         values: R[],
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
     ) {

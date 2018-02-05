@@ -152,4 +152,14 @@ export function DefaultGroupHeader({group}: {group: GroupResult}) {
     return <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>;
 }
 
-export default themr("group", styles)(Group);
+const ThemedGroup = themr("group", styles)(Group);
+export default ThemedGroup;
+
+/**
+ * Crée un composant de groupe.
+ * @param props Les props du groupe.
+ */
+export function groupFor<T>(props: GroupProps<T>) {
+    const G = ThemedGroup as any;
+    return <G {...props} />;
+}

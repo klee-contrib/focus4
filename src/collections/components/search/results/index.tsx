@@ -128,3 +128,12 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
 }
 
 export default Results;
+
+/**
+ * Crée un composant de Results.
+ * @param props Les props du Results.
+ */
+export function resultsFor<T>(props: ResultsProps<T>) {
+    const R = Results as any;
+    return <R {...props} />;
+}

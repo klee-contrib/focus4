@@ -1,4 +1,4 @@
-export {default as ActionBar, ActionBarStyle} from "./action-bar";
+export {default as ActionBar, actionBarFor, ActionBarStyle} from "./action-bar";
 export {default as ContextualActions, ContextualActionsStyle, OperationListItem} from "./contextual-actions";
 export {getDraggedItems} from "./dnd-utils";
 export {DragLayerStyle} from "./drag-layer";

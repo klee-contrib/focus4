@@ -1,5 +1,6 @@
 export {
     ActionBar,
+    actionBarFor,
     ActionBarStyle,
     ContextualActions,
     ContextualActionsStyle,
@@ -25,12 +26,14 @@ export {
 } from "./list";
 export {
     AdvancedSearch,
+    advancedSearchFor,
     AdvancedSearchStyle,
     FacetBox,
     FacetBoxStyle,
     FacetStyle,
     GroupStyle,
     Results,
+    resultsFor,
     SearchBar,
     SearchBarStyle,
     Summary,
