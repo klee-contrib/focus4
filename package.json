@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "8.7.2-rc2",
+  "version": "8.7.2",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -52,7 +52,7 @@
     "react-motion": "0.5.2",
     "react-text-mask": "5.1.0",
     "react-toolbox": "2.0.0-beta.12",
-    "reflect-metadata": "0.1.12",
+    "reflect-metadata": "0.1.10",
     "smoothscroll-polyfill": "0.4.0",
     "text-mask-core": "5.0.1",
     "tslib": "1.9.0",

@@ -30,6 +30,8 @@ export interface AdvancedSearchProps<T> {
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
+    /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
+    disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
@@ -187,12 +189,13 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
+        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, disableDragAnimThreshold, i18nPrefix, isManualFetch, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
                 detailHeight={detailHeight}
                 DetailComponent={DetailComponent}
+                disableDragAnimThreshold={disableDragAnimThreshold}
                 dragItemType={dragItemType}
                 dragLayerTheme={dragLayerTheme}
                 EmptyComponent={EmptyComponent}

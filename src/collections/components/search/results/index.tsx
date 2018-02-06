@@ -18,6 +18,8 @@ export interface ResultsProps<T> {
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
+    /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
+    disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
@@ -68,11 +70,12 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     /** Props communes entre le composant de liste et ceux de groupes. */
     @computed
     private get commonListProps() {
-        const {canOpenDetail, detailHeight, DetailComponent, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, store} = this.props;
+        const {canOpenDetail, detailHeight, DetailComponent, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, store} = this.props;
         return {
             canOpenDetail,
             detailHeight,
             DetailComponent,
+            disableDragAnimThreshold,
             dragItemType,
             dragLayerTheme,
             EmptyComponent,

@@ -129,7 +129,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    formInit<T, LP>(storeData: E, services: ServiceConfig<T, LP>, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
+    formInit(storeData: E, services: ServiceConfig<any, any>, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
         this.storeData = storeData;
         this.services = services;
         this.entity = entity || createViewModel(storeData);

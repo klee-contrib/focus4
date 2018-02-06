@@ -38,6 +38,8 @@ export interface LineWrapperProps<T> {
     data: T;
     /** Le sélecteur pour le champ date, pour une ligne timeline. */
     dateSelector?: (data: T) => EntityField<string>;
+    /** Désactive l'animation de drag and drop. */
+    disableDragAnimation?: boolean;
     /** Les items en cours de drag dans la liste. */
     draggedItems?: IObservableArray<T>;
     /** Affiche ou non la checkbox de sélection. */
@@ -119,7 +121,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
     }
 
     render() {
-        const {draggedItems, style, connectDragSource, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, theme, operationList, type, store} = this.props;
+        const {draggedItems, disableDragAnimation, style, connectDragSource, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, theme, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} />;
@@ -177,7 +179,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                 // On ne wrappe la ligne dans le Motion que si la hauteur est définie pour
                 // - ne pas avoir une animation de départ d'une valeur quelconque jusqu'à la bonne valeur.
                 // - ne pas avoir d'animation lorsque l'élément affiché change, comme par exemple lorsqu'on supprime un élément.
-                if (this.height && draggedItems) {
+                if (this.height && draggedItems && !disableDragAnimation) {
                     return (
                         <Motion
                             defaultStyle={{height: mosaic && mosaic.height || this.height, width: mosaic && mosaic.width || 0}}

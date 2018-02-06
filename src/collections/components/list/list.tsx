@@ -49,6 +49,8 @@ export interface ListProps<T> extends ListBaseProps<T> {
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
+    /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
+    disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
@@ -180,6 +182,17 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         return !!(!this.props.hideAdditionalItems && this.addItemHandler && this.mode === "mosaic");
     }
 
+    /** Désactive l'animation de drag and drop sur les lignes. */
+    @computed
+    private get disableDragAnimation() {
+        const {disableDragAnimThreshold} = this.props;
+        if (disableDragAnimThreshold === undefined) {
+            return false;
+        } else {
+            return disableDragAnimThreshold <= this.displayedData.length;
+        }
+    }
+
     /**
      * Transforme les données en éléments de liste.
      * @param Component Le composant de ligne.
@@ -194,6 +207,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                     Component: this.DraggableLineWrapper || LineWrapper,
                     props: {
                         data: item,
+                        disableDragAnimation: this.disableDragAnimation,
                         draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
                         i18nPrefix,
                         mosaic: this.mode === "mosaic" ? this.mosaic : undefined,

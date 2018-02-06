@@ -26,6 +26,8 @@ export interface GroupProps<T> {
     DetailComponent?: ReactComponent<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
+    /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
+    disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
@@ -89,7 +91,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     render() {
-        const {canOpenDetail, DetailComponent, detailHeight, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
+        const {canOpenDetail, DetailComponent, detailHeight, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
         return (
             <div className={theme!.container}>
                 {useGroupActionBars ?
@@ -115,6 +117,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     canOpenDetail={canOpenDetail}
                     detailHeight={detailHeight}
                     DetailComponent={DetailComponent}
+                    disableDragAnimThreshold={disableDragAnimThreshold}
                     dragItemType={dragItemType}
                     dragLayerTheme={dragLayerTheme}
                     EmptyComponent={EmptyComponent}
