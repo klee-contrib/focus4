@@ -8,8 +8,6 @@ import * as styles from "./__style__/menu.css";
 
 /** Props du MenuItem. */
 export interface MainMenuItemProps extends ButtonProps {
-    /** Sous-menu. */
-    children?: React.ReactChildren;
     /** La route associée, pour comparaison avec la route active. */
     route?: string;
     /** CSS. */

@@ -14,8 +14,6 @@ export interface MainMenuListStyle {
 export interface MainMenuListProps {
     /** Route active. */
     activeRoute?: string;
-    /** Menu. */
-    children?: React.ReactChildren;
     /** Handler de clic sur un item. */
     onSelectMenu?: (evt: React.MouseEvent<HTMLLIElement>, idx: number) => void;
     /** CSS. */
