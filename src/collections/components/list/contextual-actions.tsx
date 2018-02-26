@@ -92,7 +92,6 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                     !isMosaic ?
                         <IconMenu
                             icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
-                            position="topRight"
                             onClick={onClickSecondary}
                             onHide={onHideSecondary}
                         >
@@ -104,7 +103,6 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                                 icon: getIcon(`${i18nPrefix}.icons.contextualActions.secondary`),
                                 floating: true
                             }}
-                            position="topRight"
                             onClick={onClickSecondary}
                             onHide={onHideSecondary}
                         >
