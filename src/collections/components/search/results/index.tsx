@@ -42,6 +42,8 @@ export interface ResultsProps<T> {
     i18nPrefix?: string;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
+    /** Champ de l'objet à utiliser pour la key des lignes. */
+    itemKey?: keyof T;
     /** Composant de ligne. */
     LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
@@ -70,7 +72,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     /** Props communes entre le composant de liste et ceux de groupes. */
     @computed
     private get commonListProps() {
-        const {canOpenDetail, detailHeight, DetailComponent, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, LineComponent, lineTheme, MosaicComponent, store} = this.props;
+        const {canOpenDetail, detailHeight, DetailComponent, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, itemKey, LineComponent, lineTheme, MosaicComponent, store} = this.props;
         return {
             canOpenDetail,
             detailHeight,
@@ -86,6 +88,7 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
             lineTheme,
             MosaicComponent,
             isManualFetch,
+            itemKey,
             store
         };
     }

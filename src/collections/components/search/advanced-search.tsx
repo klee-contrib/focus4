@@ -70,6 +70,8 @@ export interface AdvancedSearchProps<T> {
     hideSummarySort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Champ de l'objet à utiliser pour la key des lignes. */
+    itemKey?: keyof T;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de ligne. */
@@ -189,7 +191,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
     }
 
     protected renderResults() {
-        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, disableDragAnimThreshold, i18nPrefix, isManualFetch, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
+        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, disableDragAnimThreshold, i18nPrefix, isManualFetch, itemKey, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
@@ -207,6 +209,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, v
                 hasSelection={!!hasSelection}
                 i18nPrefix={i18nPrefix}
                 isManualFetch={isManualFetch}
+                itemKey={itemKey}
                 LineComponent={LineComponent}
                 lineOperationList={lineOperationList}
                 lineTheme={lineTheme}

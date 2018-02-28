@@ -46,6 +46,8 @@ export interface GroupProps<T> {
     hasSelection?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Champ de l'objet à utiliser pour la key des lignes. */
+    itemKey?: keyof T;
     /** Composant de ligne. */
     LineComponent?: ReactComponent<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
@@ -91,7 +93,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     render() {
-        const {canOpenDetail, DetailComponent, detailHeight, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
+        const {canOpenDetail, DetailComponent, detailHeight, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", itemKey, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
         return (
             <div className={theme!.container}>
                 {useGroupActionBars ?
@@ -127,6 +129,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
                     hideAdditionalItems={true}
                     i18nPrefix={i18nPrefix}
                     isManualFetch={true}
+                    itemKey={itemKey}
                     LineComponent={LineComponent}
                     lineTheme={lineTheme}
                     MosaicComponent={MosaicComponent}
