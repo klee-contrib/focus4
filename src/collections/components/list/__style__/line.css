@@ -12,8 +12,7 @@
 
 .checkbox,
 .actions {
-    z-index: var(--z-index-normal);
-    display: none;
+    opacity: 0;
     position: absolute;
 }
 
@@ -29,7 +28,6 @@
 .mosaic .checkbox {
     bottom: 5px;
     right: 5px;
-    z-index: var(--z-index-normal);
 }
 
 .selected {
@@ -53,7 +51,7 @@
 .mosaic:hover .checkbox,
 .line:hover .actions,
 .mosaic:hover .actions {
-    display: block;
+    opacity: 1;
 }
 
 .timelineDate {

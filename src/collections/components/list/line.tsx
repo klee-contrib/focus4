@@ -120,6 +120,14 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
         }
     }
 
+    setForceActionDisplay() {
+        this.forceActionDisplay = true;
+    }
+
+    unsetForceActionDisplay() {
+        this.forceActionDisplay = false;
+    }
+
     render() {
         const {draggedItems, disableDragAnimation, style, connectDragSource, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, theme, operationList, type, store} = this.props;
         switch (type) {
@@ -148,6 +156,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                                 className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
                                 style={{width: mosaic ? width || mosaic.width : undefined, height: mosaic ? height || mosaic.height : height, opacity: style && style.opacity}}
                             >
+                                <LineComponent data={data} openDetail={openDetail} />
                                 {hasSelection && store && store.isItemSelectionnable(data) ?
                                     <IconButton
                                         className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.forceDisplay : ""}`}
@@ -157,7 +166,6 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                                         theme={{toggle: theme!.toggle, icon: theme!.checkboxIcon}}
                                     />
                                 : null}
-                                <LineComponent data={data} openDetail={openDetail} />
                                 {opList && opList.length > 0 ?
                                     <div
                                         className={`${theme!.actions} ${this.forceActionDisplay ? theme!.forceDisplay : ""}`}
@@ -166,9 +174,9 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
                                         <ContextualActions
                                             isMosaic={!!mosaic}
                                             operationList={opList}
-                                            operationParam={data}
-                                            onClickSecondary={() => this.forceActionDisplay = true}
-                                            onHideSecondary={() => this.forceActionDisplay = false}
+                                            data={data}
+                                            onClickMenu={this.setForceActionDisplay}
+                                            onHideMenu={this.unsetForceActionDisplay}
                                         />
                                     </div>
                                 : null}

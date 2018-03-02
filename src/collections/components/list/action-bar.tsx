@@ -263,7 +263,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                         {this.searchBar}
                     </div>
                     {store.selectedItems.size && operationList && operationList.length ?
-                        <ContextualActions operationList={operationList} operationParam={Array.from(store.selectedItems)} />
+                        <ContextualActions operationList={operationList} data={Array.from(store.selectedItems)} />
                     : null}
                 </div>
 

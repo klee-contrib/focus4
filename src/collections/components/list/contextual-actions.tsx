@@ -6,13 +6,24 @@ import {Button} from "react-toolbox/lib/button";
 import {IconMenu, MenuItem, MenuItemProps} from "react-toolbox/lib/menu";
 
 import {ButtonMenu, getIcon} from "../../../components";
+import {ReactComponent} from "../../../config";
 
 import * as styles from "./__style__/contextual-actions.css";
 
 export type ContextualActionsStyle = Partial<typeof styles>;
 
+/** Props passée à un composant d'action custom. */
+export interface OperationListItemComponentProps<T> {
+    /** Les données. */
+    data: T;
+    /** A passer au `onClick` d'un Menu pour gérer l'overflow et le hover. */
+    onClickMenu?: () => void;
+    /** A passer au `onHide` d'un Menu pour gérer l'overflow et le hover. */
+    onHideMenu?: () => void;
+}
+
 /** Description d'une action sur un ou plusieurs éléments de liste. */
-export interface OperationListItem<T> {
+export type OperationListItem<T> = {
     /** L'action à effectuer. */
     action: (data: T) => void;
     /** Le libellé du bouton. */
@@ -23,22 +34,22 @@ export interface OperationListItem<T> {
     isSecondary?: boolean;
     /** Force l'affichage de l'icône en vue liste (elle est toujours visible en mosaïque) */
     showIcon?: boolean;
-}
+} | ReactComponent<OperationListItemComponentProps<T>>;
 
 /** Props du composant d'actions contextuelles. */
 export interface ContextualActionsProps {
+    /** Le paramètre à passer aux actions. */
+    data: any;
     /** Préfixe i18n pour l'icône de dropdown. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Mode mosaïque. */
     isMosaic?: boolean;
     /** Quand on ouvre les actions secondaires. */
-    onClickSecondary?: () => void;
+    onClickMenu?: () => void;
     /** Quand on ferme les actions secondaires. */
-    onHideSecondary?: () => void;
+    onHideMenu?: () => void;
     /** La liste d'actions. */
     operationList: OperationListItem<any>[];
-    /** Le paramètre à passer aux actions. */
-    operationParam: any | any[];
     /** CSS. */
     theme?: ContextualActionsStyle;
 }
@@ -52,50 +63,56 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
      */
     @autobind
     private handleAction(key: number) {
-        const {operationList, operationParam} = this.props;
+        const {data, operationList} = this.props;
         return (e: React.SyntheticEvent<any>) => {
             // On arrête bien tous les autres évènements, pour être sûr.
             e.preventDefault();
             e.stopPropagation();
-            operationList[key].action(operationParam);
+            const item = operationList[key];
+            if (!isComponent(item)) {
+                item.action(data);
+            }
         };
     }
 
     render() {
-        const {operationList, i18nPrefix = "focus", isMosaic, onClickSecondary, onHideSecondary, theme} = this.props;
-        const {primaryActionList, secondaryActionList} = operationList.reduce((actionLists, {isSecondary, icon, label, showIcon}, key) => {
-            const {primaryActionList: primaryActions, secondaryActionList: secondaryActions} = actionLists;
-            if (!isSecondary) {
+        const {data, operationList, i18nPrefix = "focus", isMosaic, onClickMenu, onHideMenu, theme} = this.props;
+        const lists = operationList.reduce((actionLists, Operation, key) => {
+            const {customComponents, primaryActions, secondaryActions} = actionLists;
+            if (isComponent(Operation)) {
+                customComponents.push(<Operation data={data} onClickMenu={onClickMenu} onHideMenu={onHideMenu} />);
+            } else if (!Operation.isSecondary) {
                 primaryActions.push(
                     <Button
                         primary={isMosaic}
                         onClick={this.handleAction(key)}
-                        icon={(!isMosaic && showIcon || isMosaic) && icon || undefined}
+                        icon={(!isMosaic && Operation.showIcon || isMosaic) && Operation.icon || undefined}
                         key={key}
-                        label={!isMosaic && label || undefined}
+                        label={!isMosaic && Operation.label || undefined}
                         floating={isMosaic}
                     />
                 );
-            } else if (label) {
+            } else if (Operation.label) {
                 secondaryActions.push({
-                    icon,
+                    icon: Operation.icon,
                     onClick: this.handleAction(key),
-                    caption: label
+                    caption: Operation.label
                 });
             }
             return actionLists;
-        }, {primaryActionList: [] as React.ReactElement<any>[], secondaryActionList: [] as MenuItemProps[]});
+        }, {customComponents: [] as React.ReactElement<any>[], primaryActions: [] as React.ReactElement<any>[], secondaryActions: [] as MenuItemProps[]});
         return (
             <div className={!isMosaic ? theme!.text : theme!.fab}>
-                {primaryActionList}
-                {secondaryActionList.length ?
+                {...lists.customComponents}
+                {lists.primaryActions}
+                {lists.secondaryActions.length ?
                     !isMosaic ?
                         <IconMenu
                             icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
-                            onClick={onClickSecondary}
-                            onHide={onHideSecondary}
+                            onClick={onClickMenu}
+                            onHide={onHideMenu}
                         >
-                            {secondaryActionList.map((a, i) => <MenuItem key={i} {...a} />)}
+                            {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
                         </IconMenu>
                     :
                         <ButtonMenu
@@ -103,15 +120,19 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                                 icon: getIcon(`${i18nPrefix}.icons.contextualActions.secondary`),
                                 floating: true
                             }}
-                            onClick={onClickSecondary}
-                            onHide={onHideSecondary}
+                            onClick={onClickMenu}
+                            onHide={onHideMenu}
                         >
-                            {secondaryActionList.map((a, i) => <MenuItem key={i} {...a} />)}
+                            {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
                         </ButtonMenu>
                 : null}
             </div>
         );
     }
+}
+
+function isComponent<T>(item: OperationListItem<T>): item is ReactComponent<OperationListItemComponentProps<T>> {
+    return !(item as any).action;
 }
 
 export default themr("contextualActions", styles)(ContextualActions);
