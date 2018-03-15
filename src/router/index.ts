@@ -72,7 +72,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         // On construit une route par store.
         ...stores.map((store, i) => ({
             // Route sur laquelle matcher, construite à partir du préfixe et des paramètres.
-            $: `/${store.prefix ? `${store.prefix}` : ""}${store.paramNames.map(param => `(/:${param})`)
+            $: `/${store.prefix ? store.prefix : ""}${store.paramNames.map((param, idx) => `(${(idx !== 0 || store.prefix) ? "/" : ""}:${param})`)
                 .join("")}`,
             // Appelé à chaque navigation vers la route.
             beforeEnter: (({params}) => {
