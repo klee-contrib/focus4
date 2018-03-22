@@ -154,7 +154,7 @@ export class FormActions<T, LP> {
                 if (this.config.onFormSaved) {
                     this.config.onFormSaved();
                 }
-            } catch (e) {
+            } finally {
                 this.isLoading = false;
             }
         }
