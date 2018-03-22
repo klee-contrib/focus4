@@ -1,5 +1,7 @@
 import i18next from "i18next";
 import {snakeCase} from "lodash";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -42,9 +44,11 @@ export interface PanelDescriptor {
 }
 
 /** Construit un Panel avec un titre et des actions. */
+@observer
 export class Panel extends React.Component<PanelProps, void> {
 
     private id!: string;
+    @observable private isInForm = false;
 
     static contextTypes = {
         scrollspy: PropTypes.object
@@ -64,6 +68,15 @@ export class Panel extends React.Component<PanelProps, void> {
         const {hideOnScrollspy, title} = this.props;
         if (this.context.scrollspy && !hideOnScrollspy) {
             this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this)});
+        }
+
+        // On essaie de savoir si ce panel est inclus dans un formulaire.
+        let parentNode = findDOMNode(this) as HTMLElement | null;
+        while (parentNode && parentNode.tagName !== "FORM") {
+            parentNode = parentNode.parentElement;
+        }
+        if (parentNode) {
+            this.isInForm = true;
         }
     }
 
@@ -86,7 +99,7 @@ export class Panel extends React.Component<PanelProps, void> {
 
         const buttons = (
             <div className={theme!.actions}>
-                <Buttons editing={editing} i18nPrefix={i18nPrefix} loading={loading} save={save} toggleEdit={toggleEdit} />
+                <Buttons editing={editing} i18nPrefix={i18nPrefix} loading={loading} save={!this.isInForm ? save : undefined} toggleEdit={toggleEdit} />
             </div>
         );
 
