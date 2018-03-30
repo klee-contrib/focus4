@@ -1,18 +1,10 @@
-import {EntityField, StoreNode} from "../types";
-import {Structure, StructureNode} from "./structure";
+import {Structure} from "./structure";
 
 export interface Operation {
     id?: number;
     numero?: string;
     montant?: number;
     structure?: Structure;
-}
-
-export interface OperationNode extends StoreNode<Operation> {
-    id: EntityField<number>;
-    numero: EntityField<string>;
-    montant: EntityField<number>;
-    structure: StructureNode;
 }
 
 export const OperationEntity = {

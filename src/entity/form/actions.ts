@@ -25,33 +25,33 @@ export interface FormConfig {
 }
 
 /** Config de services à fournir au formulaire. */
-export interface ServiceConfig<T = any, LP = any> {
+export interface ServiceConfig<T> {
     /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
-    getLoadParams?: () => LP[] | undefined;
+    getLoadParams?: () => any[] | undefined;
     /** Service de chargement. */
-    load?: (...args: LP[]) => Promise<T>;
+    load?: (...args: any[]) => Promise<T>;
     /** Service de sauvegarde. Obligatoire. */
     save: (entity: T) => Promise<T>;
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
-export class FormActions<T, LP> {
+export class FormActions<T, TNode extends T> {
 
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
     /** Formulaire en chargement. */
     @observable isLoading = false;
     /** Services. */
-    readonly services: ServiceConfig<T, LP>;
+    readonly services: ServiceConfig<T>;
 
     /** Config. */
     private readonly config: FormConfig;
     /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
-    private readonly entity: StoreNode;
+    private readonly entity: StoreNode<TNode>;
     /** Disposer de la réaction de chargement. */
     private readonly loadDisposer?: Lambda;
-    constructor(formNode: StoreNode, services: ServiceConfig<T, LP>, config?: FormConfig) {
+    constructor(formNode: StoreNode<TNode>, services: ServiceConfig<T>, config?: FormConfig) {
         if (!formNode.form) {
             throw new Error("Impossible de créer un formulaire à partir d'un noeud non passé par `makeFormNode`.");
         }
@@ -116,7 +116,7 @@ export class FormActions<T, LP> {
                 this.entity.sourceNode.clear();
                 const data = await load(...params);
                 runInAction("afterLoad", () => {
-                    (this.entity as StoreNode & FormNode).sourceNode.set(data);
+                    (this.entity as FormNode<TNode>).sourceNode.set(data as TNode);
                     this.isLoading = false;
                 });
 
@@ -135,14 +135,14 @@ export class FormActions<T, LP> {
         if (!this.entity.form || this.entity.form.isValid) {
             this.isLoading = true;
             try {
-                const data = await this.services.save(toFlatValues<T>(this.entity));
+                const data = await this.services.save(toFlatValues(this.entity));
                 runInAction("afterSave", () => {
                     this.isLoading = false;
                     this.entity.form!.isEdit = false;
                     if (isFormNode(this.entity)) {
                          // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                          // On ne peut pas faire ça dans un sous-noeud, mais bon à priori on s'en fiche un peu.
-                        this.entity.sourceNode.set(data);
+                        this.entity.sourceNode.set(data as TNode);
                     }
                 });
 
@@ -179,6 +179,6 @@ export class FormActions<T, LP> {
  * @param services La config de services pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T, LP>(formNode: StoreNode, services: ServiceConfig<T>, config?: FormConfig) {
-    return new FormActions<T, LP>(formNode, services, config);
+export function makeFormActions<T, TNode extends T>(formNode: StoreNode<TNode>, services: ServiceConfig<T>, config?: FormConfig) {
+    return new FormActions<T, TNode>(formNode, services, config);
 }

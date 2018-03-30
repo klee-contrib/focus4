@@ -16,11 +16,10 @@ export function isRegex(validator: Validator): validator is RegexValidator {
     return !!(validator as RegexValidator).regex;
 }
 
-export function isStoreListNode<T extends StoreNode>(data: any): data is StoreListNode<T>;
-export function isStoreListNode<T>(data: any): data is StoreListNode<StoreNode<T>> {
+export function isStoreListNode<T = {}>(data: any): data is StoreListNode<T> {
     return isObservableArray(data) && !!(data as StoreListNode).$entity;
 }
 
-export function isStoreNode<T>(data: any): data is StoreNode<T> {
+export function isStoreNode<T = {}>(data: any): data is StoreNode<T> {
     return !!(data as StoreNode).set;
 }

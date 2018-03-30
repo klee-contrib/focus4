@@ -12,14 +12,14 @@ import {addFormProperties} from "./properties";
  * @param transform La fonction de transformation
  * @param isEdit L'état initial ou la condition d'édition.
  */
-export function makeFormNode<T extends StoreNode, U>(node: StoreListNode<T>, transform?: (source: T) => U, isEdit?: boolean | (() => boolean)): StoreListNode<T & U> & FormNode<T>;
-export function makeFormNode<T extends StoreNode, U>(node: T, transform?: (source: T) => U, isEdit?: boolean | (() => boolean)): T & U & FormNode<T>;
-export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source: T) => U = _ => ({}) as U, isEdit: boolean | (() => boolean) = false) {
+export function makeFormNode<T, U>(node: StoreListNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreListNode<T & U> & FormNode<T>;
+export function makeFormNode<T, U>(node: StoreNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreNode<T> & U & FormNode<T>;
+export function makeFormNode<T, U>(node: StoreNode<T>, transform: (source: StoreNode<T>) => U = _ => ({}) as U, isEdit: boolean | (() => boolean) = false) {
     if (node.form) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
 
-    const formNode = clone(node) as T & FormNode<T>;
+    const formNode = clone(node) as FormNode<T>;
     if (isStoreListNode<T>(formNode)) {
         formNode.$transform = transform;
     } else {
@@ -52,8 +52,8 @@ export function makeFormNode<T extends StoreNode, U>(node: T, transform: (source
     return formNode;
 }
 
-export function isFormNode(node: StoreNode): node is StoreNode & FormNode {
-    return !!(node as StoreNode & FormNode).reset;
+export function isFormNode<T>(node: StoreNode<T>): node is FormNode<T> {
+    return !!(node as FormNode<T>).reset;
 }
 
 /** Clone un StoreNode */
