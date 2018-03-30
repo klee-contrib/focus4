@@ -170,7 +170,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     /** Récupère l'objet de critères personnalisé à plat (sans le StoreNode) */
     @computed.struct
     get flatCriteria() {
-        const criteria = this.criteria && toFlatValues(this.criteria);
+        const criteria = this.criteria && toFlatValues(this.criteria) as {};
         if (criteria) {
 
             // On enlève les critères en erreur.

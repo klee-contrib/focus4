@@ -18,7 +18,7 @@ export interface AutoFormOptions<E> {
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
     /** ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
-    entity?: E & FormNode;
+    entity?: FormNode<E>;
     /** Par défaut: true */
     hasForm?: boolean;
     /** Préfixe i18n pour les messages du formulaire (par défaut: "focus") */
@@ -29,14 +29,14 @@ export interface AutoFormOptions<E> {
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
-export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P, void> {
+export abstract class AutoForm<P, E> extends React.Component<P, void> {
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
-    entity!: E & FormNode;
+    entity!: FormNode<E>;
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
     /** Services. */
-    services!: ServiceConfig;
+    services!: ServiceConfig<E>;
 
     /** Formulaire en chargement. */
     @observable isLoading = false;
@@ -63,7 +63,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    formInit(storeData: E, services: ServiceConfig, {className, hasForm, i18nPrefix, entity, initiallyEditing}: AutoFormOptions<E> = {}) {
+    formInit(storeData: StoreNode<E>, services: ServiceConfig<E>, {className, hasForm, i18nPrefix, entity, initiallyEditing}: AutoFormOptions<E> = {}) {
         this.entity = entity || makeFormNode(storeData, undefined, initiallyEditing);
         this.services = services;
         this.hasForm = hasForm !== undefined ? hasForm : true;

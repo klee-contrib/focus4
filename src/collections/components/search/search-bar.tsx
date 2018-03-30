@@ -55,7 +55,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
 
     /** Paires clés/valeurs des différents critères. */
     @computed
-    protected get flatCriteria() {
+    private get flatCriteria() {
         const {criteria} = this.props.store;
         if (criteria) {
             return toPairs(toFlatValues(criteria));
@@ -66,7 +66,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
 
     /** Listes des noms de critères dans l'ordre de saisie dans le champ texte. */
     @computed
-    protected get criteria() {
+    private get criteria() {
         return this.criteriaList
             .filter(crit => this.flatCriteria.map(([c, _]) => c)
             .find(c => c === crit));

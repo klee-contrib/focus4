@@ -1,5 +1,5 @@
 import {IObservableArray} from "mobx";
-import {Entity} from "./entity";
+import {Entity, EntityField, StoreType} from "./entity";
 
 /** Objet ajouté sur un FormNode. */
 export interface FormData {
@@ -9,12 +9,31 @@ export interface FormData {
     readonly isValid: boolean;
 }
 
+/** Transforme les propriétés d'un objet JS en leur équivalent dans un StoreNode. */
+export type ToNode<T> = {
+    readonly [P in keyof T]-?:
+        T[P] extends StoreType ? EntityField<T[P]>
+        : T[P] extends (infer Q)[] ? StoreListNode<Q>
+        : T[P] extends Function ? T[P]
+        : StoreNode<T[P]>
+};
+
+/** Transforme les propriétés d'un StoreNode en leur équivalent JS. */
+export type FromNode<T> =
+    T extends StoreListNode<infer Q> ? Q[]
+    : T extends StoreNode<infer QQ> ? QQ
+    : {
+        [P in keyof T]?:
+            T[P] extends EntityField<infer R> ? R
+            : T[P] extends StoreNode<infer S> ? S
+            : T[P] extends StoreListNode<infer U> ? U
+            : T[P]
+    };
+
 /**
- * Noeud de store simple, identifié par la présence des méthodes `set` et `clear`.
- *
- * En pratique, tous les autres éléments d'un `StoreNode` doivent être des `EntityValue`.
+ * Noeud de store simple.
  */
-export interface StoreNode<T = {}> {
+export type StoreNode<T = {}> = ToNode<T> & {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
@@ -24,14 +43,14 @@ export interface StoreNode<T = {}> {
     readonly form?: FormData;
     /** Renseigne les valeurs du noeud à partir des champs fournis. */
     set(config: Partial<T>): void;
-}
+};
 
 /**
  * Noeud de store de liste. C'est un array avec les métadonnées de l'entité du noeud.
  *
- * `T` doit être un `StoreNode` et `StoreListNode` est également considéré comme un `StoreNode`.
+ * `StoreListNode` est également considéré comme un `StoreNode`.
  */
-export interface StoreListNode<T extends StoreNode = StoreNode> extends IObservableArray<T> {
+export interface StoreListNode<T = {}> extends IObservableArray<StoreNode<T>> {
     /** Métadonnées. */
     readonly $entity: Entity;
     /** @internal */
@@ -41,18 +60,18 @@ export interface StoreListNode<T extends StoreNode = StoreNode> extends IObserva
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
     /** Fonction de transformation du noeud de la liste. */
-    $transform?: (source: T) => {} | void;
+    $transform?: (source: StoreNode<T>) => {} | void;
     /** Données liée à un FormNode. */
     readonly form?: FormData;
     /** Ajoute un élément à la liste. */
-    pushNode(item: {}): void;
+    pushNode(item: T): void;
     /** Reconstruit la liste à partir des données fournies. */
-    set(array: {}[]): void;
+    set(array: T[]): void;
 }
 
-export interface FormNode<T = StoreNode> {
+export type FormNode<T> = StoreNode<T> & {
     /** Données liée à un FormNode. */
-    readonly form: FormNode;
+    readonly form: FormData;
 
     /** @internal */
     /** Précise l'état de la synchronisation entre le StoreNode et le FormNode. */
@@ -62,11 +81,11 @@ export interface FormNode<T = StoreNode> {
     reset(): void;
 
     /** StoreNode original. */
-    sourceNode: T;
+    sourceNode: StoreNode<T>;
 
     /** Active la synchronisation StoreNode -> FormNode. La fonction est appelée à la création. */
     subscribe(): void;
 
     /** Désactive la synchronisation StoreNode -> FormNode. */
     unsubscribe(): void;
-}
+};

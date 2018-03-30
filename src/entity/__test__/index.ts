@@ -5,15 +5,14 @@ import test = require("tape");
 import {makeFormNode} from "../form/node";
 import {makeEntityStore, toFlatValues} from "../store";
 import {LigneEntity} from "./ligne";
-import {OperationEntity, OperationNode} from "./operation";
-import {ProjetEntity, ProjetNode} from "./projet";
-import {StructureEntity, StructureNode} from "./structure";
+import {OperationEntity, Operation} from "./operation";
+import {ProjetEntity, Projet} from "./projet";
+import {StructureEntity, Structure} from "./structure";
 
 function getStore() {
     const subStore = makeEntityStore({
-        structure: {} as StructureNode
-    }, {
-        operationList: {} as OperationNode
+        structure: {} as Structure,
+        operationList: [] as Operation[]
     }, [
         OperationEntity,
         StructureEntity
@@ -22,11 +21,10 @@ function getStore() {
     });
 
     return makeEntityStore({
-        operation: {} as OperationNode,
-        projetTest: {} as ProjetNode,
+        operation: {} as Operation,
+        projetTest: {} as Projet,
+        structureList: [] as Structure[],
         subStore
-    }, {
-        structureList: {} as StructureNode
     }, [
         OperationEntity,
         ProjetEntity,
