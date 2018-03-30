@@ -1,11 +1,15 @@
-import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
+import {isArray, isObject, isUndefined, mapValues, omitBy} from "lodash";
 import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
 import {addFormProperties} from "./form/properties";
-import {Entity, EntityField, isFieldEntry, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "./types";
-import { FromNode } from "./types/store";
+import {Entity, FieldEntry, FromNode, isStoreListNode, isStoreNode, ListEntry, ObjectEntry, StoreListNode, StoreNode} from "./types";
 
-export type EntityStoreItem = EntityField | StoreNode | StoreListNode;
+export type ExtractEntities<T> = {
+    [P in keyof T]:
+        T[P] extends Entity<infer Q> ? Q
+        : T[P] extends Entity<infer Q>[] ? Q[]
+        : T[P]
+};
 
 /**
  * Construit un store d'entité à partir de la config et les entités données.
@@ -14,74 +18,59 @@ export type EntityStoreItem = EntityField | StoreNode | StoreListNode;
  * @param entityList La liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
  * @param entityMapping Un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
  */
-export function makeEntityStore<T>(config: T, entityList: Entity[], entityMapping: {[P in keyof T]?: string} = {}): StoreNode<T> & {set(config: FromNode<T>): void} {
+export function makeEntityStore<T extends Record<string, Entity | Entity[] | StoreNode>>(config: T): StoreNode<ExtractEntities<T>> & {set(config: FromNode<ExtractEntities<T>>): void} {
 
-    // On construit une map avec les entités à partir de la liste fournie.
-    const entityMap = entityList.reduce((entities, entity) => {
-        entities[entity.name] = entity;
-        return entities;
-    }, {} as {[name: string]: Entity});
-
-    // On vérifie qu'il ne manque pas d'entité.
-    for (const entry in config) {
-        if (isEmpty(config[entry]) && !entityMap[entityMapping[entry]! || entry]) {
-            throw new Error(`La propriété "${entry}" n'a pas été trouvée dans la liste d'entités. Vous manque-t'il une correspondance ?`);
-        }
-    }
-
-    const entityStore: StoreNode<T> = {} as any;
+    const entityStore: StoreNode<ExtractEntities<T>> & {set(config: FromNode<ExtractEntities<T>>): void} = {} as any;
 
     // On construit chaque entrée à partir de la config.
     for (const entry in config) {
-        if (isEmpty(config[entry])) {
-            entityStore[entry] = buildEntityEntry(config, entityMap, entityMapping, entry) as any;
-        } else { // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
-            entityStore[entry] = config[entry] as any;
+        const item = config[entry] as Entity | Entity[] | StoreNode;
+        if (isStoreNode(item)) {  // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
+            entityStore[entry] = item as any;
+        } else {
+            entityStore[entry] = buildEntityEntry(item as any) as any;
         }
     }
 
     /*
         Les fonctions `set` et `clear` ne sont pas bindées, ce qui permettra de les copier lorsqu'on voudra faire un FormNode.
-        Tant qu'on appelle bien les fonctions depuis les objets (sans déstructuer par exemple), tout marchera comme prévu.
+        Tant qu'on appelle bien les fonctions depuis les objets (sans déstructurer par exemple), tout marchera comme prévu.
         Typescript empêchera d'appeler la fonction dans le mauvais contexte de toute façon.
     */
 
-    entityStore.set = action("node.set", function set(this: StoreNode<T>, setConfig: any) {
+    entityStore.set = action("node.set", function set(this: StoreNode<ExtractEntities<T>>, setConfig: any) {
         for (const entry in setConfig) {
             const entity = (this as any)[entry];
             if (!entity) {
                 throw new Error(`"${entry}" n'existe pas dans ce store.`);
             }
-            setEntityEntry(entity, entityMap, entityMapping, setConfig[entry], entry);
+            setEntityEntry(entity, setConfig[entry]);
         }
     });
 
-    entityStore.clear = action("node.clear", function clear(this: StoreNode<T>) {
+    entityStore.clear = action("node.clear", function clear(this: StoreNode<ExtractEntities<T>>) {
         for (const entry in this) {
             clearEntity((this as any)[entry]);
         }
     });
 
-    return entityStore as any;
+    return entityStore;
 }
 
 /**
  * Construit une entrée de store, potentiellement de façon récursive.
- * @param config La config du store, dans laquelle `entry` se trouve.
- * @param entityMap La map des entités.
- * @param entityMapping Le mapping éventuel entre le nom de l'entrée et l'entité associée.
- * @param entry Le nom de l'entrée.
+ * @param entity L'entité de base (dans une liste pour un noeud liste).
  */
-export function buildEntityEntry<T>(config: T, entityMap: {[name: string]: Entity}, entityMapping: {[P in keyof T]?: string}, entry: keyof T): EntityStoreItem {
-    const entity = config[entry]; // {} ou [] selon que l'entrée soit une liste ou pas.
-    const trueEntry = (entityMapping[entry] || entry) as string; // On récupère le nom de l'entité.
+export function buildEntityEntry<T>(entity: Entity<T>): StoreNode;
+export function buildEntityEntry<T>(entity: Entity<T>[]): StoreListNode;
+export function buildEntityEntry<T>(entity: Entity<T> | Entity<T>[]): StoreNode | StoreListNode {
 
     // Cas d'une entrée de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
-        const outputEntry: StoreListNode = observable.shallowArray() as any;
-        (outputEntry as any).$entity = entityMap[trueEntry];
+        const outputEntry = observable.shallowArray() as StoreListNode;
+        (outputEntry as any).$entity = entity[0];
         outputEntry.pushNode = action("pushNode", function pushNode(this: typeof outputEntry, item: {}) {
-            const itemNode = buildEntityEntry({[trueEntry]: {}}, {...entityMap, item: this.$entity}, entityMapping, trueEntry) as StoreNode;
+            const itemNode = buildEntityEntry(entity[0]);
             if (this.$transform) {
                 Object.assign(itemNode, this.$transform(itemNode) || {});
             }
@@ -91,33 +80,22 @@ export function buildEntityEntry<T>(config: T, entityMap: {[name: string]: Entit
             itemNode.set(item);
             this.push(itemNode);
         });
-        outputEntry.set = action("node.set", function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
+        outputEntry.set = action("node.set", function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, values); });
         return outputEntry;
     }
 
     // Cas d'une entrée simple : On parcourt tous les champs de l'entité.
     return {
-        ...mapValues(entityMap[trueEntry].fields, (v, key) => {
-            // Cas d'un champ composé ou liste.
-            if (!isFieldEntry(v)) {
-                // On vérifie que l'entité de ce champ est bien dans la liste.
-                if (v.entityName && !entityMap[v.entityName]) {
-                    throw new Error(`L'entité "${trueEntry}" dépend de l'entité "${v.entityName}" qui n'a pas été trouvée dans la liste.`);
-                }
-                // Et on construit le champ de manière récursive.
-                return buildEntityEntry({[v.entityName]: v.type === "list" ? [] : {}}, entityMap, entityMapping, v.entityName);
+        ...mapValues(entity.fields, (field: FieldEntry | ObjectEntry | ListEntry) => {
+            if (field.type === "list") {
+                return buildEntityEntry([field.entity]);
+            } else if (field.type === "object") {
+                return buildEntityEntry(field.entity);
+            } else {
+                return extendObservable({$field: field}, {value: undefined}, {value: observable.ref});
             }
-
-            // On s'assure que les métadonnées du champ ne soient pas observables.
-            return extendObservable({
-                $field: entityMap[trueEntry].fields[key]
-            }, {
-                value: undefined
-            }, {
-                value: observable.ref
-            });
         }),
-        set: action("node.set", function set(this: StoreNode, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); }),
+        set: action("node.set", function set(this: StoreNode, entityValue: any) { setEntityEntry(this, entityValue); }),
         clear: action("node.clear", function clear(this: StoreNode) { clearEntity(this); })
     };
 }
@@ -130,41 +108,42 @@ export function buildEntityEntry<T>(config: T, entityMap: {[name: string]: Entit
  * @param entityValue La valeur de l'entrée.
  * @param entry Le nom de l'entrée.
  */
-function setEntityEntry<T>(entity: StoreNode, entityMap: {[name: string]: Entity}, entityMapping: {[P in keyof T]?: string}, entityValue: any, entry: string) {
+function setEntityEntry<T>(entity: StoreListNode<T>, value: T[]): StoreListNode<T>;
+function setEntityEntry<T>(entity: StoreNode<T>, value: T): StoreNode<T>;
+function setEntityEntry<T>(entity: StoreNode<T> | StoreListNode<T>, value: T[] | T) {
 
     // Cas du noeud liste.
-    if (isStoreListNode(entity)) {
-        if (isArray(entityValue)) {
-            // On vide l'array existant et on construit une entrée par valeur de la liste dans l'entrée.
-            entity.replace(entityValue.map((_: {}) => {
-                const newNode = buildEntityEntry({[entry]: {}}, {...entityMap, [entry]: entity.$entity}, entityMapping, entry) as StoreNode;
-                if (entity.$transform) {
-                    Object.assign(newNode, entity.$transform(newNode) || {});
-                }
-                if (entity.$isFormNode) {
-                    addFormProperties(newNode, entity);
-                }
-                return newNode;
-            }));
-
-            // Puis on remplit chaque entrée avec la valeur.
-            for (let i = 0; i < entityValue.length; i++) {
-                setEntityEntry(entity[i], entityMap, entityMapping, entityValue[i], entity.$entity.name);
+    if (isStoreListNode(entity) && isArray(value)) {
+        // On vide l'array existant et on construit une entrée par valeur de la liste dans l'entrée.
+        entity.replace(value.map((_: {}) => {
+            const newNode = buildEntityEntry(entity.$entity);
+            if (entity.$transform) {
+                Object.assign(newNode, entity.$transform(newNode) || {});
             }
+            if (entity.$isFormNode) {
+                addFormProperties(newNode, entity);
+            }
+            return newNode;
+        }));
+
+        // Puis on remplit chaque entrée avec la valeur.
+        for (let i = 0; i < value.length; i++) {
+            setEntityEntry(entity[i], value[i]);
         }
 
     // Cas du noeud simple.
-    } else {
+    } else if (isStoreNode(entity) && isObject(value)) {
         // On affecte chaque valeur de l'entrée avec la valeur demandée, et on réappelle `setEntityEntry` si la valeur n'est pas primitive.
-        for (const item in entityValue) {
+        for (const item in value as any) {
             const itemEntry = (entity as any)[item];
+            const itemValue = (value as any)[item];
             if (!itemEntry) {
-                throw new Error(`"${entry}" n'a pas de propriété "${item}".`);
+                throw new Error(`node.set : propriété "${item}" introuvable.`);
             }
             if (isStoreNode(itemEntry)) {
-                setEntityEntry(itemEntry, entityMap, entityMapping, entityValue[item], item);
+                setEntityEntry(itemEntry, itemValue);
             } else {
-                itemEntry.value = entityValue[item];
+                itemEntry.value = itemValue;
             }
         }
     }

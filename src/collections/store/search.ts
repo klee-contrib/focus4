@@ -87,7 +87,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
         if (criteria) {
-            this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteria[1]}, {}, "criteria") as any;
+            this.criteria = buildEntityEntry(criteria[1]) as any;
             addFormProperties(this.criteria, true);
         }
 

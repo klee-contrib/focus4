@@ -1,4 +1,5 @@
-import {Structure} from "./structure";
+import {Entity} from "../types";
+import {Structure, StructureEntity} from "./structure";
 
 export interface Operation {
     id?: number;
@@ -7,33 +8,33 @@ export interface Operation {
     structure?: Structure;
 }
 
-export const OperationEntity = {
+export const OperationEntity: Entity<Operation> = {
     name: "operation",
     fields: {
         id: {
-            type: "field" as "field",
+            type: "field",
             domain: {},
             isRequired: true,
             name: "id",
             label: "operation.id"
         },
         numero: {
-            type: "field" as "field",
+            type: "field",
             domain: {},
             isRequired: true,
             name: "numero",
             label: "operation.numero"
         },
         montant: {
-            type: "field" as "field",
+            type: "field",
             domain: {},
             isRequired: true,
             name: "montant",
             label: "operation.montant"
         },
         structure: {
-            type: "object" as "object",
-            entityName: "structure"
+            type: "object",
+            entity: StructureEntity
         }
     }
 };

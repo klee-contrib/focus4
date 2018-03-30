@@ -52,7 +52,7 @@ export type StoreNode<T = {}> = ToNode<T> & {
  */
 export interface StoreListNode<T = {}> extends IObservableArray<StoreNode<T>> {
     /** Métadonnées. */
-    readonly $entity: Entity;
+    readonly $entity: Entity<T>;
     /** @internal */
     /** Précise si le StoreListNode est un FormNode. */
     $isFormNode?: boolean;

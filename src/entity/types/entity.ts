@@ -42,8 +42,11 @@ export interface DomainNoDefault<ICProps = any, DCProps = any, LCProps = any> {
 export interface Domain<ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry<D extends DomainNoDefault = DomainNoDefault> {
+export interface FieldEntry<T = any, D extends DomainNoDefault = DomainNoDefault> {
     readonly type: "field";
+
+    /** @internal */
+    readonly fieldType?: T;
 
     /** Domaine du champ. */
     readonly domain: D;
@@ -62,29 +65,34 @@ export interface FieldEntry<D extends DomainNoDefault = DomainNoDefault> {
 }
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
-export interface ObjectEntry {
+export interface ObjectEntry<T = object> {
     readonly type: "object";
 
     /** Entité de l'entrée */
-    readonly entityName: string;
+    readonly entity: Entity<T>;
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
-export interface ListEntry {
+export interface ListEntry<T = object> {
     readonly type: "list";
 
     /** Entité de l'entrée */
-    readonly entityName: string;
+    readonly entity: Entity<T>;
 }
 
 /** Définition d'une entité. */
-export interface Entity {
-
-    /** Liste des champs de l'entité. */
-    readonly fields: {readonly [name: string]: FieldEntry | ObjectEntry | ListEntry};
+export interface Entity<T = any> {
 
     /** Nom de l'entité. */
     readonly name: string;
+
+    /** Liste des champs de l'entité. */
+    readonly fields: {
+        readonly [P in keyof T]-?:
+            T[P] extends StoreType ? FieldEntry<T[P]>
+            : T[P] extends (infer Q)[] ? ListEntry<Q>
+            : ObjectEntry<T[P]>
+    };
 }
 
 /** Types possible pour le `T` de `EntityField<T>`. */

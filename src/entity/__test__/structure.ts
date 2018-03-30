@@ -1,28 +1,30 @@
+import {Entity} from "../types";
+
 export interface Structure {
     id?: number;
     nom?: string;
     siret?: string;
 }
 
-export const StructureEntity = {
+export const StructureEntity: Entity<Structure> = {
     name: "structure",
     fields: {
         id: {
-            type: "field" as "field",
+            type: "field",
             domain: {},
             isRequired: true,
             name: "id",
             label: "structure.id"
         },
         nom: {
-            type: "field" as "field",
+            type: "field",
             domain: {},
             isRequired: true,
             name: "nom",
             label: "structure.nom"
         },
         siret: {
-            type: "field" as "field",
+            type: "field",
             domain: {},
             isRequired: false,
             name: "siret",
