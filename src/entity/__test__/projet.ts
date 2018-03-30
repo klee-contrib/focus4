@@ -1,23 +1,24 @@
-import {Ligne} from "./ligne";
+import {Entity} from "../types";
+import {Ligne, LigneEntity} from "./ligne";
 
 export interface Projet {
     id?: number;
     ligneList?: Ligne[];
 }
 
-export const ProjetEntity = {
+export const ProjetEntity: Entity<Projet> = {
     name: "projet",
     fields: {
         id: {
-            type: "field" as "field",
+            type: "field",
             domain: {},
             isRequired: true,
             name: "id",
             label: "projet.id"
         },
         ligneList: {
-            type: "list" as "list",
-            entityName: "ligne"
+            type: "list",
+            entity: LigneEntity
         }
     }
 };

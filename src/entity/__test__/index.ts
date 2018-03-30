@@ -11,28 +11,15 @@ import {StructureEntity, Structure} from "./structure";
 
 function getStore() {
     const subStore = makeEntityStore({
-        structure: {} as Structure,
-        operationList: [] as Operation[]
-    }, [
-        OperationEntity,
-        StructureEntity
-    ], {
-        operationList: "operation"
+        structure: StructureEntity,
+        operationList: [OperationEntity]
     });
 
     return makeEntityStore({
-        operation: {} as Operation,
-        projetTest: {} as Projet,
-        structureList: [] as Structure[],
+        operation: OperationEntity,
+        projetTest: ProjetEntity,
+        structureList: [StructureEntity],
         subStore
-    }, [
-        OperationEntity,
-        ProjetEntity,
-        StructureEntity,
-        LigneEntity
-    ], {
-        projetTest: "projet",
-        structureList: "structure"
     });
 }
 
