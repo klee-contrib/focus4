@@ -51,7 +51,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     /** Header dans le DOM. */
     private header?: Element | null;
     /** Elément de DOM sur lequel on écoute le scroll */
-    private scrollTargetNode = this.props.scrollTargetSelector ? document.querySelector(this.props.scrollTargetSelector)! : window;
+    private readonly scrollTargetNode = this.props.scrollTargetSelector ? document.querySelector(this.props.scrollTargetSelector)! : window;
 
     componentWillMount() {
         this.handleScroll();

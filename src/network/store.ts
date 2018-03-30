@@ -14,11 +14,11 @@ export interface Request {
 export class RequestStore {
 
     /** Requêtes en erreur. */
-    readonly error = new ObservableMap<Request>({});
+    readonly error = new ObservableMap<string, Request>({});
     /** Requêtes en cours. */
-    readonly pending = new ObservableMap<Request>({});
+    readonly pending = new ObservableMap<string, Request>({});
     /** Requête en succès. */
-    readonly success = new ObservableMap<Request>({});
+    readonly success = new ObservableMap<string, Request>({});
 
     /** Nombres de requêtes. */
     @computed.struct

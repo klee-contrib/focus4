@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {upperFirst} from "lodash";
-import {action, Lambda, observable, reaction, runInAction} from "mobx";
+import {action, comparer, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
 import {InputProps} from "react-toolbox/lib/input";
 
@@ -72,7 +72,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
         // On met en place la réaction de chargement.
         if (services.getLoadParams) {
-            this.loadDisposer = reaction(services.getLoadParams, this.load, {compareStructural: true});
+            this.loadDisposer = reaction(services.getLoadParams, this.load, {equals: comparer.structural});
         }
     }
 

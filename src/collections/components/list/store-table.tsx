@@ -32,7 +32,7 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     @computed
     protected get data() {
         const {groupCode, store} = this.props;
-        return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
+        return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode)!.list : store.list;
     }
 
     protected get shouldAttachScrollListener() {

@@ -29,7 +29,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
     }
 
     /** Code d'erreur en cours. */
-    const errorCode = observable<string>(undefined);
+    const errorCode = observable.box<string>(undefined);
 
     /** Récupère l'URL courante. */
     function getUrl() {
@@ -166,7 +166,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
         start: router.init.bind(router) as () => Promise<void>,
 
         /** La liste des ViewStores enregistrés dans le routeur. */
-        stores: observable.ref(stores),
+        stores,
 
         /**
          * Navigue vers la racine du store du préfixe donné.
@@ -177,5 +177,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(store
                 updateUrl(`/${prefix}`);
             }
         }
+    }, {
+        stores: observable.ref
     });
 }

@@ -1,9 +1,8 @@
 /* tslint:disable */
-
 import {isObservable, isObservableArray} from "mobx";
 import test = require("tape");
 
-import {makeFormNode} from "../form-node";
+import {makeFormNode} from "../form/node";
 import {makeEntityStore, toFlatValues} from "../store";
 import {LigneEntity} from "./ligne";
 import {OperationEntity, OperationNode} from "./operation";
@@ -187,8 +186,8 @@ test("FormNode: Création", t => {
     const entry2 = getStore().projetTest;
     const formNode2 = makeFormNode(entry2);
 
-    t.deepEqual(formNode.numero, entry.numero, "Les champs simples du FormNode sont bien identiques à ceux du StoreNode.");
-    t.deepEqual(formNode.structure, entry.structure, "Les champs composites du FormNode sont bien identiques à ceux du StoreNode.");
+    t.deepEqual(formNode.numero.$field, entry.numero.$field, "Les champs simples du FormNode sont bien identiques à ceux du StoreNode.");
+    t.deepEqual(toFlatValues(formNode.structure), toFlatValues(entry.structure), "Les champs composites du FormNode sont bien identiques à ceux du StoreNode.");
     t.assert(isObservableArray(formNode2.ligneList), "Une sous liste est bien toujours observable");
     t.deepEqual(formNode2.ligneList.$entity, entry2.ligneList.$entity, "Une sous liste a bien toujours son entité attachée.");
     t.assert(!isObservable(formNode2.ligneList.$entity), "Le champ '$entity' d'une sous liste n'est bien pas observable");
@@ -198,7 +197,7 @@ test("FormNode: Création", t => {
     entry.set(operation);
 
     t.equal(formNode.id.value, entry.id.value, "Les modifications du StoreNode sont bien répercutées sur les champs simples.");
-    t.deepEqual(formNode.structure, entry.structure, "Les modifications du StoreNode sont bien répercutées sur les champs composites.");
+    t.deepEqual(toFlatValues(formNode.structure), toFlatValues(entry.structure), "Les modifications du StoreNode sont bien répercutées sur les champs composites.");
 
     t.comment("FormNode: Modification de FormNode");
     formNode.montant.value = 1000;
