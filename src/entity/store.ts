@@ -1,7 +1,7 @@
 import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
-import {action, extendObservable, isComputed, isObservableArray, observable} from "mobx";
+import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
-import {addFormProperties} from "./form";
+import {addFormProperties} from "./form/properties";
 import {Entity, EntityField, isFieldEntry, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "./types";
 
 export type EntityStoreNodeItem = EntityField | StoreNode | StoreListNode;
@@ -140,7 +140,9 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
             return extendObservable({
                 $field: entityMap[trueEntry].fields[key]
             }, {
-                value: observable.ref(undefined)
+                value: undefined
+            }, {
+                value: observable.ref
             });
         }),
         set: action("node.set", function set(this: EntityStoreNode, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); }),
@@ -217,7 +219,7 @@ function clearEntity(entity: EntityStoreItem) {
                 entryItem.clear();
             } else if (isStoreNode(entryItem)) { // Cas noeud de store -> `clearEntity`.
                 clearEntity(entryItem as EntityStoreNode);
-            } else if (entryItem.value !== undefined && !isComputed(entryItem, "value")) { // Cas primitive -> on met à `undefined`.
+            } else if (entryItem.value !== undefined && !isComputedProp(entryItem, "value")) { // Cas primitive -> on met à `undefined`.
                 entryItem.value = undefined;
             }
         }
@@ -245,7 +247,7 @@ export function toFlatValues(entityStoreItem: StoreNode | StoreListNode): {} | {
                 return toFlatValues(item);
             } else if (isObservableArray(item.value)) { // Cas array de primitive -> array simple.
                 return item.value.slice();
-            } else if (!isComputed(item, "value")) { // Cas `EntityField` simple.
+            } else if (!isComputedProp(item, "value")) { // Cas `EntityField` simple.
                 return item.value;
             } else {
                 return undefined; // Cas champ calculé : on le retire.

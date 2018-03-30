@@ -270,10 +270,10 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         const store = this;
         const searchGroupStore = {
             get currentCount() {
-                return store.groups.find(result => result.code === groupCode).totalCount || 0;
+                return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
             },
             get totalCount() {
-                return store.groups.find(result => result.code === groupCode).totalCount || 0;
+                return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
             },
             isItemSelectionnable: store.isItemSelectionnable,
             toggle(item: T) {

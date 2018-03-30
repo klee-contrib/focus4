@@ -1,6 +1,7 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {action, observable} from "mobx";
+// @ts-ignore
+import {action, IObservableObject, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
@@ -47,9 +48,9 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
     };
 
     /** Objet passé en contexte pour les listes contenues dans le wrapper. */
-    @observable childContext = {
+    childContext = observable({
         /** Handler au clic sur le bouton "Ajouter". */
-        addItemHandler: observable.ref(this.props.addItemHandler),
+        addItemHandler: this.props.addItemHandler,
         /** Taile des mosaïques. */
         mosaic: {
             width: this.props.mosaicWidth || 200,
@@ -57,7 +58,9 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
         },
         /** Mode des listes. */
         mode: this.props.mode || "list"
-    };
+    }, {
+        addItemHandler: observable.ref
+    });
 
     // On met à jour l'objet passé en contexte à chaque fois qu'on change les props du composant.
     @action

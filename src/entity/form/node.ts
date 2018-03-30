@@ -88,7 +88,9 @@ function clone(source: any): any {
         return extendObservable({
             $field: source.$field
         }, {
-            value: observable.ref(source.value)
+            value: source.value
+        }, {
+            value: observable.ref
         });
     }
 

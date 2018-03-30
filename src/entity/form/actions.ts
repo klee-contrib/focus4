@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {action, computed, Lambda, observable, reaction, runInAction} from "mobx";
+import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
 
 import {PanelProps} from "../../components";
 import {messageStore} from "../../message";
@@ -62,7 +62,7 @@ export class FormActions<T, LP> {
 
         // On met en place la réaction de chargement.
         if (services.getLoadParams) {
-            this.loadDisposer = reaction(services.getLoadParams, this.load, {compareStructural: true});
+            this.loadDisposer = reaction(services.getLoadParams, this.load, {equals: comparer.structural});
         }
     }
 

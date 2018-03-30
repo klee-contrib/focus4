@@ -1,7 +1,4 @@
-/* tslint:disable */
-
-import {StoreListNode, StoreNode} from "../store";
-import {EntityField} from "../types";
+import {EntityField, StoreListNode, StoreNode} from "../types";
 import {Ligne, LigneNode} from "./ligne";
 
 export interface Projet {

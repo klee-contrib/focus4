@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {computed, extendObservable} from "mobx";
+import {comparer, computed, extendObservable, set} from "mobx";
 import {InputProps} from "react-toolbox/lib/input";
 
 import {DisplayProps, LabelProps} from "../../components";
@@ -99,7 +99,7 @@ export function patchField<
 ) {
     const next$field = new$field(field, $field);
     if (isFunction($field)) {
-        extendObservable(field, {$field: next$field});
+        set(field, {$field: next$field});
     } else {
         (field.$field as any) = next$field;
     }
@@ -112,7 +112,7 @@ export function patchField<
 function new$field<T>(field: EntityField<T>, $field: $Field | (() => $Field)) {
     const {$field: old$field} = field;
     if (isFunction($field)) {
-        return computed(() => new$fieldCore(old$field, $field()), {compareStructural: true});
+        return computed(() => new$fieldCore(old$field, $field()), {equals: comparer.structural});
     } else {
         return new$fieldCore(old$field, $field);
     }

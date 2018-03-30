@@ -45,7 +45,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     @observable private scrollTop = 0;
 
     /** Map des panels qui se sont enregistrés dans le container. */
-    private readonly panels = observable.map<PanelDescriptor>();
+    private readonly panels = observable.map<string, PanelDescriptor>();
 
     static childContextTypes = {
         header: PropTypes.object,
@@ -134,7 +134,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     /** Récupère les panels triés par position dans la page. */
     @computed.struct
     private get sortedPanels() {
-        return sortBy(this.panels.entries(), (([_, {node}]) => this.getOffsetTop(node)));
+        return sortBy(Array.from(this.panels.entries()), (([_, {node}]) => this.getOffsetTop(node)));
     }
 
     /** Récupère les items du menu à partir des panels enregistrés. */
