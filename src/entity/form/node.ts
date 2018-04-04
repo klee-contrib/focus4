@@ -66,7 +66,7 @@ function clone(source: any): any {
             res[i] = toAdd[i];
         }
 
-        res = observable.shallowArray(res) as StoreListNode;
+        res = observable.array(res, {deep: false}) as StoreListNode;
 
         (res as any).$entity = source.$entity;
         res.$isFormNode = true;
@@ -74,7 +74,9 @@ function clone(source: any): any {
         res.set = source.set;
         if (source.$transform) {
             res.$transform = source.$transform;
-            res.forEach(source.$transform);
+            res.forEach(item => {
+                Object.assign(item, source.$transform!(item) || {});
+            });
         }
 
         return res;

@@ -46,9 +46,8 @@ export interface StoreListNode<T extends Entity = any, U = {}> extends IObservab
     /** @internal */
     /** Précise si le StoreListNode est un FormNode. */
     $isFormNode?: boolean;
-    /** @internal */
     /** Fonction de transformation du noeud de la liste. */
-    $transform?: (source: StoreNode<T>) => {} | void;
+    $transform?: (source: StoreNode<T>) => U | void;
     /** Ajoute un élément à la liste. */
     pushNode(item: EntityToType<T> & NodeToType<U>): void;
 }

@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "9.4.0-alpha",
+  "version": "9.4.0-alpha3",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -50,7 +50,7 @@
     "react-dom": "15.6.2",
     "react-motion": "0.5.2",
     "react-toolbox": "2.0.0-beta.12",
-    "reflect-metadata": "0.1.12",
+    "reflect-metadata": "0.1.10",
     "smoothscroll-polyfill": "0.4.3",
     "tslib": "1.9.0",
     "uuid": "3.2.1",

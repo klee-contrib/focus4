@@ -1,11 +1,6 @@
-import {StoreNode} from "../types";
+import {EntityToType, StoreNode} from "../types";
 
-export interface Structure {
-    id?: number;
-    nom: string;
-    siret?: string;
-}
-
+export type Structure = EntityToType<typeof StructureEntity>;
 export type StructureNode = StoreNode<typeof StructureEntity>;
 
 export const StructureEntity = {
