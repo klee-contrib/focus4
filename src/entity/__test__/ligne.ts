@@ -1,14 +1,17 @@
-import {Entity} from "../types";
+import {StoreNode} from "../types";
 
 export interface Ligne {
     id?: number;
 }
 
-export const LigneEntity: Entity<Ligne> = {
+export type LigneNode = StoreNode<typeof LigneEntity>;
+
+export const LigneEntity = {
     name: "ligne",
     fields: {
         id: {
-            type: "field",
+            type: "field" as "field",
+            fieldType: 0,
             domain: {},
             isRequired: true,
             name: "id",

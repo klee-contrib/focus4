@@ -5,8 +5,8 @@ import {ReactComponent} from "../../config";
 
 import {Validator} from "./validation";
 
-/** Définition de base d'un domaine, sans valeurs par défaut (sinon ça pose problème avec les EntityField). */
-export interface DomainNoDefault<ICProps = any, DCProps = any, LCProps = any> {
+/** Définition d'un domaine. */
+export interface Domain<ICProps extends {theme?: {}} = InputProps, DCProps extends {theme?: {}} = DisplayProps, LCProps = LabelProps> {
     /** Classe CSS pour le champ. */
     className?: string;
 
@@ -38,18 +38,27 @@ export interface DomainNoDefault<ICProps = any, DCProps = any, LCProps = any> {
     labelProps?: Partial<LCProps>;
 }
 
-/** Définition de base d'un domaine. */
-export interface Domain<ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps> extends DomainNoDefault<ICProps, DCProps, LCProps> {}
+/** Définition générale d'une entité. */
+export interface Entity {
+    /** Nom de l'entité. */
+    readonly name: string;
+
+    /** Liste des champs de l'entité. */
+    readonly fields: {[key: string]: FieldEntry | ObjectEntry | ListEntry};
+}
+
+/** Enumération des types primitifs possibles dans entité, à partir desquels on construira les champs. */
+export type StoreType = number | number[] | boolean | boolean[] | string | string[];
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry<T = any, D extends DomainNoDefault = DomainNoDefault> {
+export interface FieldEntry<T = StoreType, ICProps extends {theme?: {}} = InputProps, DCProps extends {theme?: {}} = DisplayProps, LCProps = LabelProps> {
     readonly type: "field";
 
-    /** @internal */
-    readonly fieldType?: T;
+    /** Type du champ. */
+    readonly fieldType: T;
 
     /** Domaine du champ. */
-    readonly domain: D;
+    readonly domain: Domain<ICProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -65,44 +74,35 @@ export interface FieldEntry<T = any, D extends DomainNoDefault = DomainNoDefault
 }
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
-export interface ObjectEntry<T = object> {
+export interface ObjectEntry<T extends Entity = any> {
     readonly type: "object";
 
     /** Entité de l'entrée */
-    readonly entity: Entity<T>;
+    readonly entity: T;
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
-export interface ListEntry<T = object> {
+export interface ListEntry<T extends Entity = any> {
     readonly type: "list";
 
     /** Entité de l'entrée */
-    readonly entity: Entity<T>;
+    readonly entity: T;
 }
 
-/** Définition d'une entité. */
-export interface Entity<T = any> {
+/** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
+export type EntityToType<T extends Entity> = {
+    [P in keyof T["fields"]]?:
+        T["fields"][P] extends FieldEntry ? T["fields"][P]["fieldType"]
+        : T["fields"][P] extends ObjectEntry<infer U> ? EntityToType<U>
+        : T["fields"][P] extends ListEntry<infer U> ? EntityToType<U>[]
+        : never
+};
 
-    /** Nom de l'entité. */
-    readonly name: string;
-
-    /** Liste des champs de l'entité. */
-    readonly fields: {
-        readonly [P in keyof T]-?:
-            T[P] extends StoreType ? FieldEntry<T[P]>
-            : T[P] extends (infer Q)[] ? ListEntry<Q>
-            : ObjectEntry<T[P]>
-    };
-}
-
-/** Types possible pour le `T` de `EntityField<T>`. */
-export type StoreType = number | number[] | boolean | boolean[] | string | string[];
-
-/** Entrée de type "field" pour une entité. */
-export interface EntityField<T = StoreType, D extends DomainNoDefault = DomainNoDefault> {
+/** Définition de champ dans un store. */
+export interface EntityField<F extends FieldEntry<any, any, any, any> = FieldEntry> {
 
     /** Métadonnées. */
-    readonly $field: FieldEntry<D>;
+    readonly $field: F;
 
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error?: string | undefined;
@@ -111,5 +111,5 @@ export interface EntityField<T = StoreType, D extends DomainNoDefault = DomainNo
     isEdit?: boolean;
 
     /** Valeur. */
-    value: T | undefined;
+    value: F["fieldType"] | undefined;
 }

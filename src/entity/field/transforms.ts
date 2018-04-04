@@ -3,9 +3,9 @@ import {comparer, computed, extendObservable, set} from "mobx";
 import {InputProps} from "react-toolbox/lib/input";
 
 import {DisplayProps, LabelProps} from "../../components";
-import {Domain, EntityField, FieldEntry} from "../types";
+import {Domain, EntityField, FieldEntry, StoreType} from "../types";
 
-export type $Field<ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<Domain<ICProps, DCProps, LCProps>> & Domain<ICProps, DCProps, LCProps>>;
+export type $Field<T = any, ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<T, ICProps, DCProps, LCProps> & Domain<ICProps, DCProps, LCProps>>;
 
 /**
  * Construit un `EntityField` à partir d'un champ calculé.
@@ -15,34 +15,39 @@ export type $Field<ICProps = any, DCProps = any, LCProps = any> = Partial<FieldE
  * @param isEdit L'état initial ou la condition d'édition.
  */
 export function makeField<
-    T,
-    ICProps = InputProps,
-    DCProps = DisplayProps,
+    T extends StoreType,
+    ICProps extends {theme?: {}} = InputProps,
+    DCProps extends {theme?: {}} = DisplayProps,
     LCProps = LabelProps
-    >(
+>(
     value: () => T,
-    $field?: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>),
+    $field?: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>),
     setter?: (value: T) => void,
     isEdit?: boolean | (() => boolean)
-): EntityField<T, Domain<ICProps, DCProps, LCProps>>;
+): EntityField<FieldEntry<T, ICProps, DCProps, LCProps>>;
 /**
  * Construit un `EntityField` à partir d'une valeur quelconque.
  * @param value La valeur.
  * @param $field Les métadonnées pour le champ à créer.
  */
 export function makeField<
-    T,
-    ICProps = InputProps,
-    DCProps = DisplayProps,
+    T extends StoreType,
+    ICProps extends {theme?: {}} = InputProps,
+    DCProps extends {theme?: {}} = DisplayProps,
     LCProps = LabelProps
 >(
     value: T,
-    $field?: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>)
-): EntityField<T, Domain<ICProps, DCProps, LCProps>>;
-export function makeField(value: any, $field: $Field | (() => $Field) = {}, setter: Function = () => null, isEdit?: any) {
+    $field?: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>)
+): EntityField<FieldEntry<T, ICProps, DCProps, LCProps>>;
+export function makeField<
+    T extends StoreType,
+    ICProps extends {theme?: {}} = InputProps,
+    DCProps extends {theme?: {}} = DisplayProps,
+    LCProps = LabelProps
+>(value: T | (() => T), $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>) = {}, setter: Function = () => null, isEdit?: any) {
     const field =  fromField({
-        $field: {domain: {}, isRequired: false, label: "", name: "", type: "field"},
-        value: isFunction(value) ? computed(value, setter) : value
+        $field: {domain: {}, isRequired: false, label: "", name: "", type: "field", fieldType: {} as T},
+        value: isFunction(value) ? computed(value, setter) as any : value
     }, $field);
 
     if (isEdit !== undefined) {
@@ -58,17 +63,17 @@ export function makeField(value: any, $field: $Field | (() => $Field) = {}, sett
  * @param $field Les métadonnées à remplacer.
  */
 export function fromField<
-    T,
-    ICDomainProps = InputProps,
-    DCDomainProps = DisplayProps,
+    T extends StoreType,
+    ICDomainProps extends {theme?: {}} = InputProps,
+    DCDomainProps extends {theme?: {}} = DisplayProps,
     LCDomainProps = LabelProps,
-    ICProps = ICDomainProps,
-    DCProps = DCDomainProps,
+    ICProps extends {theme?: {}} = ICDomainProps,
+    DCProps extends {theme?: {}} = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
-    $field: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>)
-): EntityField<T, Domain<ICProps, DCProps, LCProps>> {
+    field: EntityField<FieldEntry<T, ICDomainProps, DCDomainProps, LCDomainProps>>,
+    $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>)
+): EntityField<FieldEntry<T, ICProps, DCProps, LCProps>> {
     const valueObj = {value: field.value};
     const $fieldObj = {$field: new$field(field, $field)};
     if (isFunction($field)) {
@@ -85,7 +90,7 @@ export function fromField<
  * @param isEdit L'état initial ou la condition d'édition.
  */
 export function patchField<
-    T,
+    T extends StoreType,
     ICDomainProps = InputProps,
     DCDomainProps = DisplayProps,
     LCDomainProps = LabelProps,
@@ -93,8 +98,8 @@ export function patchField<
     DCProps = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
-    $field: $Field<ICProps, DCProps, LCProps> | (() => $Field<ICProps, DCProps, LCProps>),
+    field: EntityField<FieldEntry<T, ICDomainProps, DCDomainProps, LCDomainProps>>,
+    $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {
     const next$field = new$field(field, $field);
@@ -109,7 +114,7 @@ export function patchField<
     }
 }
 
-function new$field<T>(field: EntityField<T>, $field: $Field | (() => $Field)) {
+function new$field<T extends FieldEntry<any, any, any, any>>(field: EntityField<T>, $field: $Field | (() => $Field)) {
     const {$field: old$field} = field;
     if (isFunction($field)) {
         return computed(() => new$fieldCore(old$field, $field()), {equals: comparer.structural});
@@ -125,6 +130,7 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         label = old$field.label,
         name = old$field.name,
         type = old$field.type,
+        fieldType = old$field.fieldType,
         ...domainOverrides
     } = $field;
     return {
@@ -132,6 +138,7 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         label,
         name,
         type,
+        fieldType,
         domain: {
             ...domain,
             ...domainOverrides,

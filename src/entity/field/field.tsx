@@ -7,11 +7,11 @@ import * as React from "react";
 import {themeable, themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
-import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../../components";
+import {Display, Input, Label} from "../../components";
 import {ReactComponent} from "../../config";
 import {ReferenceList} from "../../reference";
 
-import {Domain, EntityField} from "../types";
+import {EntityField, FieldEntry} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -19,12 +19,7 @@ import * as styles from "./__style__/field.css";
 export type FieldStyle = Partial<typeof styles>;
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
-export interface FieldOptions<
-    T,
-    ICProps extends {theme?: {}} = InputProps,
-    DCProps extends {theme?: {}} = DisplayProps,
-    LCProps = LabelProps
-> {
+export interface FieldOptions<T extends FieldEntry, SProps = {}> {
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
     /** Surcharge l'erreur du field. */
@@ -36,20 +31,20 @@ export interface FieldOptions<
     /** Pour l'icône de la Tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
     /** A utiliser à la place de `ref`. */
-    innerRef?: (i: Field<T, ICProps, DCProps, LCProps>) => void;
+    innerRef?: (i: Field<T>) => void;
     /** Par défaut : "top". */
     labelCellPosition?: string;
     /** Largeur en % du label. Par défaut : 33. */
     labelRatio?: number;
     /** Handler de modification de la valeur. */
-    onChange?: (value: T) => void;
+    onChange?: (value: T["fieldType"]) => void;
     /** @internal */
     /** Pour `selectFor`, composant de Select. */
-    SelectComponent?: ReactComponent<ICProps>;
+    SelectComponent?: ReactComponent<SProps>;
     /** Affiche la tooltip de commentaire. */
     showTooltip?: boolean;
     /** CSS. */
-    theme?: FieldStyle & {display?: DCProps["theme"], input?: ICProps["theme"]};
+    theme?: FieldStyle & {display?: NonNullable<T["domain"]["displayProps"]>["theme"], input?: NonNullable<T["domain"]["inputProps"]>["theme"]};
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
     valueRatio?: number;
     /** @internal */
@@ -60,12 +55,7 @@ export interface FieldOptions<
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 @autobind
 @observer
-export class Field<
-    T,
-    ICProps extends {theme?: {}} = InputProps,
-    DCProps extends {theme?: {}} = DisplayProps,
-    LCProps = LabelProps
-> extends React.Component<FieldOptions<T, ICProps, DCProps, LCProps> & {field: EntityField<T, Domain<ICProps, DCProps, LCProps>>}, void> {
+export class Field<T extends FieldEntry, SProps = {}> extends React.Component<FieldOptions<T, SProps> & {field: EntityField<T>}, void> {
 
     // On récupère le forceErrorDisplay du form depuis le contexte.
     static contextTypes = {form: PropTypes.object};

@@ -5,9 +5,9 @@ import test = require("tape");
 import {makeFormNode} from "../form/node";
 import {makeEntityStore, toFlatValues} from "../store";
 import {LigneEntity} from "./ligne";
-import {OperationEntity, Operation} from "./operation";
-import {ProjetEntity, Projet} from "./projet";
-import {StructureEntity, Structure} from "./structure";
+import {OperationEntity} from "./operation";
+import {ProjetEntity} from "./projet";
+import {StructureEntity} from "./structure";
 
 function getStore() {
     const subStore = makeEntityStore({
