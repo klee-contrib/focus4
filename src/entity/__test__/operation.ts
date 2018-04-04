@@ -1,13 +1,7 @@
-import {StoreNode} from "../types";
+import {EntityToType, StoreNode} from "../types";
 import {Structure, StructureEntity} from "./structure";
 
-export interface Operation {
-    id?: number;
-    numero: string;
-    montant?: number;
-    structure: Structure;
-}
-
+export type Operation = EntityToType<typeof OperationEntity>;
 export type OperationNode = StoreNode<typeof OperationEntity>;
 
 export const OperationEntity = {

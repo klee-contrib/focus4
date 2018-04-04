@@ -77,7 +77,7 @@ export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T
 
     // Cas d'une entrée de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
-        const outputEntry = observable.shallowArray() as StoreListNode<T>;
+        const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<T>;
         (outputEntry as any).$entity = entity[0];
         outputEntry.pushNode = action("pushNode", function pushNode(this: typeof outputEntry, item: {}) {
             const itemNode = buildEntityEntry(entity[0]);

@@ -15,7 +15,7 @@ export type $Field<T = any, ICProps = any, DCProps = any, LCProps = any> = Parti
  * @param isEdit L'état initial ou la condition d'édition.
  */
 export function makeField<
-    T extends StoreType,
+    T extends StoreType | undefined,
     ICProps extends {theme?: {}} = InputProps,
     DCProps extends {theme?: {}} = DisplayProps,
     LCProps = LabelProps
@@ -24,29 +24,29 @@ export function makeField<
     $field?: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>),
     setter?: (value: T) => void,
     isEdit?: boolean | (() => boolean)
-): EntityField<FieldEntry<T, ICProps, DCProps, LCProps>>;
+): EntityField<FieldEntry<NonNullable<T>, ICProps, DCProps, LCProps>>;
 /**
  * Construit un `EntityField` à partir d'une valeur quelconque.
  * @param value La valeur.
  * @param $field Les métadonnées pour le champ à créer.
  */
 export function makeField<
-    T extends StoreType,
+    T extends StoreType | undefined,
     ICProps extends {theme?: {}} = InputProps,
     DCProps extends {theme?: {}} = DisplayProps,
     LCProps = LabelProps
 >(
     value: T,
     $field?: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>)
-): EntityField<FieldEntry<T, ICProps, DCProps, LCProps>>;
+): EntityField<FieldEntry<NonNullable<T>, ICProps, DCProps, LCProps>>;
 export function makeField<
-    T extends StoreType,
+    T extends StoreType | undefined,
     ICProps extends {theme?: {}} = InputProps,
     DCProps extends {theme?: {}} = DisplayProps,
     LCProps = LabelProps
 >(value: T | (() => T), $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>) = {}, setter: Function = () => null, isEdit?: any) {
     const field =  fromField({
-        $field: {domain: {}, isRequired: false, label: "", name: "", type: "field", fieldType: {} as T},
+        $field: {domain: {}, isRequired: false, label: "", name: "", type: "field", fieldType: {} as NonNullable<T>},
         value: isFunction(value) ? computed(value, setter) as any : value
     }, $field);
 
@@ -63,7 +63,7 @@ export function makeField<
  * @param $field Les métadonnées à remplacer.
  */
 export function fromField<
-    T extends StoreType,
+    T extends StoreType | undefined,
     ICDomainProps extends {theme?: {}} = InputProps,
     DCDomainProps extends {theme?: {}} = DisplayProps,
     LCDomainProps = LabelProps,
@@ -71,9 +71,9 @@ export function fromField<
     DCProps extends {theme?: {}} = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<FieldEntry<T, ICDomainProps, DCDomainProps, LCDomainProps>>,
+    field: EntityField<FieldEntry<NonNullable<T>, ICDomainProps, DCDomainProps, LCDomainProps>>,
     $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>)
-): EntityField<FieldEntry<T, ICProps, DCProps, LCProps>> {
+): EntityField<FieldEntry<NonNullable<T>, ICProps, DCProps, LCProps>> {
     const valueObj = {value: field.value};
     const $fieldObj = {$field: new$field(field, $field)};
     if (isFunction($field)) {
@@ -90,7 +90,7 @@ export function fromField<
  * @param isEdit L'état initial ou la condition d'édition.
  */
 export function patchField<
-    T extends StoreType,
+    T extends StoreType | undefined,
     ICDomainProps = InputProps,
     DCDomainProps = DisplayProps,
     LCDomainProps = LabelProps,
@@ -98,7 +98,7 @@ export function patchField<
     DCProps = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<FieldEntry<T, ICDomainProps, DCDomainProps, LCDomainProps>>,
+    field: EntityField<FieldEntry<NonNullable<T>, ICDomainProps, DCDomainProps, LCDomainProps>>,
     $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {

@@ -1,9 +1,6 @@
-import {StoreNode} from "../types";
+import {EntityToType, StoreNode} from "../types";
 
-export interface Ligne {
-    id?: number;
-}
-
+export type Ligne = EntityToType<typeof LigneEntity>;
 export type LigneNode = StoreNode<typeof LigneEntity>;
 
 export const LigneEntity = {
