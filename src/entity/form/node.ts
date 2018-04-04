@@ -1,7 +1,7 @@
 import {action, autorun, extendObservable, observable, untracked} from "mobx";
 
 import {toFlatValues} from "../store";
-import {FormNode, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
+import {Entity, FormNode, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
 import {addFormProperties} from "./properties";
 
 /**
@@ -12,14 +12,14 @@ import {addFormProperties} from "./properties";
  * @param transform La fonction de transformation
  * @param isEdit L'état initial ou la condition d'édition.
  */
-export function makeFormNode<T, U>(node: StoreListNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreListNode<T & U> & FormNode<T>;
-export function makeFormNode<T, U>(node: StoreNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreNode<T> & U & FormNode<T>;
-export function makeFormNode<T, U>(node: StoreNode<T>, transform: (source: StoreNode<T>) => U = _ => ({}) as U, isEdit: boolean | (() => boolean) = false) {
+export function makeFormNode<T extends Entity, U = {}>(node: StoreListNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreListNode<T, U> & FormNode<StoreListNode<T>>;
+export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreNode<T> & U & FormNode<StoreNode<T>>;
+export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T> | StoreListNode<T>, transform: (source: StoreNode<T>) => U = _ => ({}) as U, isEdit: boolean | (() => boolean) = false) {
     if (node.form) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
 
-    const formNode = clone(node) as FormNode<T>;
+    const formNode = clone(node);
     if (isStoreListNode<T>(formNode)) {
         formNode.$transform = transform;
     } else {
@@ -52,8 +52,8 @@ export function makeFormNode<T, U>(node: StoreNode<T>, transform: (source: Store
     return formNode;
 }
 
-export function isFormNode<T>(node: StoreNode<T>): node is FormNode<T> {
-    return !!(node as FormNode<T>).reset;
+export function isFormNode(node: any): node is FormNode {
+    return !!(node as FormNode).reset;
 }
 
 /** Clone un StoreNode */

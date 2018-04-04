@@ -4,7 +4,7 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 
 import {ReactComponent} from "../../../config";
-import {EntityField} from "../../../entity";
+import {EntityField, FieldEntry} from "../../../entity";
 
 import LineWrapper, {LineProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
@@ -16,7 +16,7 @@ export interface TimelineProps<T> extends ListBaseProps<T> {
     /** Les données. */
     data: T[];
     /** Le sélecteur du champ contenant la date. */
-    dateSelector: (data: T) => EntityField<string>;
+    dateSelector: (data: T) => EntityField<FieldEntry<string>>;
     /** Le composant de ligne. */
     TimelineComponent: ReactComponent<LineProps<T>>;
 }

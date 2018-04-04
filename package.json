@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "9.3.3-beta",
+  "version": "9.4.0-alpha",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {

@@ -1,7 +1,7 @@
 import {isBoolean, isFunction, values} from "lodash";
 import {extendObservable, observable} from "mobx";
 
-import {EntityField, isEntityField, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
+import {BaseStoreNode, EntityField, isEntityField, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
 import {validateField} from "../validation";
 
 /**
@@ -9,7 +9,7 @@ import {validateField} from "../validation";
  * @param data Le StoreNode ou l'EntityField.
  * @param parentNodeOrEditing Node parent, (l'état initial ou la condition) d'édition.
  */
-export function addFormProperties(data: StoreNode, parentNodeOrEditing: StoreNode | boolean | (() => boolean)) {
+export function addFormProperties(data: BaseStoreNode, parentNodeOrEditing: BaseStoreNode | boolean | (() => boolean)) {
     const {$tempEdit} = data;
     if ($tempEdit) {
         delete data.$tempEdit;
@@ -71,7 +71,7 @@ export function patchNodeEdit(node: StoreNode, isEdit: boolean | (() => boolean)
 }
 
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
-export function addFormFieldProperties(field: EntityField, parentNode: StoreNode) {
+export function addFormFieldProperties(field: EntityField, parentNode: BaseStoreNode) {
     const {isEdit} = field;
     extendObservable(field, {
         _isEdit: isBoolean(isEdit) ? isEdit : true,

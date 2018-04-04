@@ -1,39 +1,44 @@
-import {Entity} from "../types";
+import {StoreNode} from "../types";
 import {Structure, StructureEntity} from "./structure";
 
 export interface Operation {
     id?: number;
-    numero?: string;
+    numero: string;
     montant?: number;
-    structure?: Structure;
+    structure: Structure;
 }
 
-export const OperationEntity: Entity<Operation> = {
+export type OperationNode = StoreNode<typeof OperationEntity>;
+
+export const OperationEntity = {
     name: "operation",
     fields: {
         id: {
-            type: "field",
+            type: "field" as "field",
+            fieldType: 0,
             domain: {},
-            isRequired: true,
+            isRequired: false,
             name: "id",
             label: "operation.id"
         },
         numero: {
-            type: "field",
+            type: "field" as "field",
+            fieldType: "",
             domain: {},
             isRequired: true,
             name: "numero",
             label: "operation.numero"
         },
         montant: {
-            type: "field",
+            type: "field" as "field",
+            fieldType: 0,
             domain: {},
-            isRequired: true,
+            isRequired: false,
             name: "montant",
             label: "operation.montant"
         },
         structure: {
-            type: "object",
+            type: "object" as "object",
             entity: StructureEntity
         }
     }
