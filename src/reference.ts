@@ -1,5 +1,5 @@
 import {upperFirst} from "lodash";
-import {action, computed, extendObservable, observable} from "mobx";
+import {action, extendObservable, observable} from "mobx";
 
 import {config} from "./config";
 
@@ -52,7 +52,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
             // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
             [`_${ref}_cache`]: undefined,
             // On définit le getter de la liste de référence par une dérivation MobX.
-            [ref]: () => {
+            get [ref]() {
                 // Si on n'est pas en train de charger et que la donnée n'est pas dans le cache, alors on appelle le service de chargement.
                 if (!referenceStore[`_${ref}_loading`] && !(referenceStore[`_${ref}_cache`] && (new Date().getTime() - referenceStore[`_${ref}_cache`]) < config.referenceCacheDuration)) {
                     referenceStore[`_${ref}_loading`] = true;
@@ -71,8 +71,6 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                 // Dans tous les cas, on renvoie la liste "cachée". Ainsi, sa mise à jour relancera toujours la dérivation.
                 return referenceStore[`_${ref}`];
             }
-        }, {
-            [ref]: computed
         });
     }
 

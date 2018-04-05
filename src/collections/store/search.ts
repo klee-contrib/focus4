@@ -275,58 +275,62 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     getSearchGroupStore(groupCode: string): ListStoreBase<T> {
         // tslint:disable-next-line:no-this-assignment
         const store = this;
-        const searchGroupStore = {
+        return observable({
+
             get currentCount() {
                 return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
             },
+
             get totalCount() {
                 return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
             },
+
             isItemSelectionnable: store.isItemSelectionnable,
-            toggle(item: T) {
-                store.toggle(item);
-            },
+
             get list() {
                 const resultGroup = store.groups.find(result => result.code === groupCode);
                 return resultGroup && resultGroup.list || [];
-            }
-        } as ListStoreBase<T>;
+            },
 
-        const selectionnableList = computed(() => searchGroupStore.list.filter(store.isItemSelectionnable));
+            get selectionnableList(): T[] {
+                return this.list.filter(store.isItemSelectionnable);
+            },
 
-        // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
-        searchGroupStore.toggleAll = action("toggleAll", () => {
-            const areAllItemsIn = selectionnableList.get()
-                .every(item => store.selectedItems.has(item));
+            get selectedItems() {
+                return new Set(store.selectedList.filter(item => this.list.find((i: T) => i === item)));
+            },
 
-            searchGroupStore.list.forEach(item => {
-                if (store.selectedItems.has(item)) {
-                    store.selectedList.remove(item);
+            get selectionStatus() {
+                if (this.selectedItems.size === 0) {
+                    return "none";
+                } else if (this.selectedItems.size === this.selectionnableList.length) {
+                    return "selected";
+                } else {
+                    return "partial";
                 }
-            });
+            },
 
-            if (!areAllItemsIn) {
-                store.selectedList.push(...selectionnableList.get());
+            toggle(item: T) {
+                store.toggle(item);
+            },
+
+            // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
+            toggleAll() {
+                const areAllItemsIn = this.selectionnableList.every(item => store.selectedItems.has(item));
+
+                this.list.forEach(item => {
+                    if (store.selectedItems.has(item)) {
+                        store.selectedList.remove(item);
+                    }
+                });
+
+                if (!areAllItemsIn) {
+                    store.selectedList.push(...this.selectionnableList);
+                }
             }
-        });
-
-        const selectedItems = computed(() =>
-            new Set(store.selectedList.filter(item => searchGroupStore.list.find(i => i === item))));
-
-        const selectionStatus = computed(() => {
-            if (selectedItems.get().size === 0) {
-                return "none";
-            } else if (selectedItems.get().size === selectionnableList.get().length) {
-                return "selected";
-            } else {
-                return "partial";
-            }
-        });
-
-        (searchGroupStore as any).selectionnableList = selectionnableList;
-        (searchGroupStore as any).selectedItems = selectedItems;
-        (searchGroupStore as any).selectionStatus = selectionStatus;
-        return observable(searchGroupStore);
+        }, {
+            toggleAll: action.bound
+        }) as any;
     }
 }
 
