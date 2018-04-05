@@ -1,8 +1,8 @@
 import {isFunction} from "lodash";
-import {comparer, computed, extendObservable, set} from "mobx";
-import {InputProps} from "react-toolbox/lib/input";
+import {comparer, computed, extendObservable, observable} from "mobx";
 
-import {DisplayProps, LabelProps} from "../../components";
+import {DisplayProps, InputProps, LabelProps} from "../../components";
+
 import {Domain, EntityField, FieldEntry, StoreType} from "../types";
 
 export type $Field<T = any, ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<T, ICProps, DCProps, LCProps> & Domain<ICProps, DCProps, LCProps>>;
@@ -45,13 +45,17 @@ export function makeField<
     DCProps extends {theme?: {}} = DisplayProps,
     LCProps = LabelProps
 >(value: T | (() => T), $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>) = {}, setter: Function = () => null, isEdit?: any) {
-    const field =  fromField({
-        $field: {domain: {}, isRequired: false, label: "", name: "", type: "field", fieldType: {} as NonNullable<T>},
-        value: isFunction(value) ? computed(value, setter) as any : value
-    }, $field);
+
+    const field = extendObservable(
+        new$field({domain: {}, isRequired: false, label: "", name: "", type: "field" as "field", fieldType: {} as NonNullable<T>}, $field),
+        isFunction(value) ? {
+            get value() { return (value as () => T)() as NonNullable<T>; },
+            set value(v) { setter(v); }
+        } : {value}
+    ) as EntityField;
 
     if (isEdit !== undefined) {
-        field.isEdit = (isEdit as any);
+        field.isEdit = isEdit;
     }
 
     return field;
@@ -74,13 +78,7 @@ export function fromField<
     field: EntityField<FieldEntry<NonNullable<T>, ICDomainProps, DCDomainProps, LCDomainProps>>,
     $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>)
 ): EntityField<FieldEntry<NonNullable<T>, ICProps, DCProps, LCProps>> {
-    const valueObj = {value: field.value};
-    const $fieldObj = {$field: new$field(field, $field)};
-    if (isFunction($field)) {
-        return extendObservable({}, {...valueObj, ...$fieldObj}) as any;
-    } else {
-        return extendObservable($fieldObj, valueObj) as any;
-    }
+    return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
 }
 
 /**
@@ -102,11 +100,12 @@ export function patchField<
     $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {
-    const next$field = new$field(field, $field);
+    const next$field = new$field(field.$field, $field);
     if (isFunction($field)) {
-        set(field, {$field: next$field});
+        delete (field as any).$field;
+        extendObservable(field, { get $field() { return next$field.$field; }});
     } else {
-        (field.$field as any) = next$field;
+        (field.$field as any) = next$field.$field;
     }
 
     if (isEdit !== undefined) {
@@ -114,12 +113,19 @@ export function patchField<
     }
 }
 
-function new$field<T extends FieldEntry<any, any, any, any>>(field: EntityField<T>, $field: $Field | (() => $Field)) {
-    const {$field: old$field} = field;
+function new$field<T extends FieldEntry<any, any, any, any>>(old$field: T, $field: $Field | (() => $Field)) {
     if (isFunction($field)) {
-        return computed(() => new$fieldCore(old$field, $field()), {equals: comparer.structural});
+        return observable({
+            get $field() {
+                return new$fieldCore(old$field, ($field as () => T)());
+            }
+        }, {
+            $field: computed({equals: comparer.structural})
+        });
     } else {
-        return new$fieldCore(old$field, $field);
+        return {
+            $field: new$fieldCore(old$field, $field)
+        };
     }
 }
 

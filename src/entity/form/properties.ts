@@ -73,6 +73,7 @@ export function patchNodeEdit(node: StoreNode, isEdit: boolean | (() => boolean)
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
 export function addFormFieldProperties(field: EntityField, parentNode: BaseStoreNode) {
     const {isEdit} = field;
+    delete field.isEdit;
     extendObservable(field, {
         _isEdit: isBoolean(isEdit) ? isEdit : true,
         get error() {
