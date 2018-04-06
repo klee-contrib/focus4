@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -23,7 +22,6 @@ export interface FormProps {
 }
 
 /** Composant de formulaire */
-@autobind
 export class Form extends React.Component<FormProps, void> {
 
     static childContextTypes = {form: PropTypes.object};

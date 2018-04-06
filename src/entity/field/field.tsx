@@ -1,6 +1,5 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {computed, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import * as React from "react";
@@ -53,7 +52,6 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
 }
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-@autobind
 @observer
 export class Field<T extends FieldEntry, SProps = {}> extends React.Component<FieldOptions<T, SProps> & {field: EntityField<T>}, void> {
 
@@ -86,12 +84,14 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     }
 
     /** Désactive le masquage de l'erreur si le champ était en création avant le premier clic. */
+    @action.bound
     private disableHideError() {
         this.hideErrorOnInit = false;
         this.valueElement!.removeEventListener("mousedown", this.disableHideError);
     }
 
     /** Appelé lors d'un changement sur l'input. */
+    @action.bound
     onChange(value: any) {
         const {onChange, field: {$field: {domain}}} = this.props;
         if (onChange) {

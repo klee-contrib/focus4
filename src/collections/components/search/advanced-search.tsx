@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -117,7 +116,6 @@ export interface AdvancedSearchProps<T> {
 }
 
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
-@autobind
 @observer
 export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, void> {
 

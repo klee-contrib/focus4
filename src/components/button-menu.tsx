@@ -1,5 +1,4 @@
-import {autobind} from "core-decorators";
-import {computed, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -18,7 +17,6 @@ export interface ButtonMenuProps extends MenuProps {
 }
 
 /** Menu React-Toolbox avec un bouton personnalisable (non icône). */
-@autobind
 @observer
 export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
 
@@ -57,6 +55,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
         };
     }
 
+    @action.bound
     private onClick() {
         this.isOpened = true;
         const {onClick} = this.props;
@@ -65,6 +64,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
         }
     }
 
+    @action.bound
     private onHide() {
         this.isOpened = false;
         const {onHide} = this.props;

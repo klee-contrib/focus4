@@ -1,5 +1,4 @@
-import {autobind} from "core-decorators";
-import {computed, IObservableArray, observable} from "mobx";
+import {action, computed, IObservableArray, observable} from "mobx";
 import {observer, Observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -65,7 +64,6 @@ export interface LineWrapperProps<T> {
 }
 
 /** Wrapper de ligne dans une liste. */
-@autobind
 @observer
 export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
 
@@ -113,6 +111,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
     }
 
     /** Handler de clic sur la case de sélection. */
+    @action.bound
     onSelection() {
         const {store} = this.props;
         if (store) {
@@ -120,10 +119,12 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
         }
     }
 
+    @action.bound
     setForceActionDisplay() {
         this.forceActionDisplay = true;
     }
 
+    @action.bound
     unsetForceActionDisplay() {
         this.forceActionDisplay = false;
     }

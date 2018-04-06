@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
@@ -30,7 +29,6 @@ export interface FacetProps {
 }
 
 /** Composant affichant le détail d'une facette avec ses valeurs. */
-@autobind
 @observer
 export class Facet extends React.Component<FacetProps, void> {
 

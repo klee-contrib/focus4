@@ -1,4 +1,6 @@
 /* tslint:disable */
+import "ignore-styles";
+
 import {isObservable, isObservableArray} from "mobx";
 import test = require("tape");
 

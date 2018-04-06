@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {debounce} from "lodash-decorators";
 import {action, observable, ObservableMap, runInAction} from "mobx";
@@ -39,7 +38,6 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 }
 
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
-@autobind
 @observer
 export class Autocomplete extends React.Component<AutocompleteProps, void> {
 
@@ -76,7 +74,8 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Est appelé à chaque saisie dans le champ texte.
      * @param query Le champ texte.
      */
-    async onQueryChange(query: string) {
+    @action.bound
+    onQueryChange(query: string) {
         const {onQueryChange, onChange, isQuickSearch} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
@@ -102,7 +101,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Est appelé lorsque l'on sélectionne une valeur.
      * @param value La valeur sélectionnée.
      */
-    @action
+    @action.bound
     onValueChange(value: string) {
         const {isQuickSearch, onChange} = this.props;
 
@@ -123,6 +122,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Effectue la recherche sur le serveur.
      * @param query Le champ texte.
      */
+    @action.bound
     async search(query: string) {
         if (query && query.trim().length) {
             this.isLoading = true;

@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {values} from "lodash";
 import {observer} from "mobx-react";
@@ -21,7 +20,6 @@ export interface TableProps<T> extends ListBaseProps<T> {
 }
 
 /** Tableau standard */
-@autobind
 @observer
 export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> extends ListBase<T, P> {
 

@@ -1,8 +1,7 @@
 import scroll from "smoothscroll-polyfill";
 scroll.polyfill();
 
-import {autobind} from "core-decorators";
-import {observable} from "mobx";
+import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -22,7 +21,6 @@ export interface ButtonBackToTopProps {
 }
 
 /** Bouton de retour en haut de page. */
-@autobind
 @observer
 export class ButtonBackToTop extends React.Component<ButtonBackToTopProps, void> {
 
@@ -40,12 +38,14 @@ export class ButtonBackToTop extends React.Component<ButtonBackToTopProps, void>
     }
 
     /** Détermine si le bouton est visible, c'est-à-dire quand on a dépassé l'offset. */
+    @action.bound
     scrollSpy() {
         const {offset = 100} = this.props;
         this.isVisible = (window.pageYOffset || document.documentElement.scrollTop) > offset;
     }
 
     /** Remonte la page, de façon fluide. */
+    @action.bound
     scrollToTop() {
         window.scrollTo({
             top: 0,

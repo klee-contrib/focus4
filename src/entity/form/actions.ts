@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
 
@@ -35,7 +34,6 @@ export interface ServiceConfig<T> {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-@autobind
 export class FormActions<T extends BaseStoreNode> {
 
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
@@ -89,6 +87,7 @@ export class FormActions<T extends BaseStoreNode> {
     }
 
     /** Supprime les réactions du formulaire et de son FormNode. */
+    @action.bound
     clean() {
         if (this.loadDisposer) {
             this.loadDisposer();
@@ -99,7 +98,7 @@ export class FormActions<T extends BaseStoreNode> {
     }
 
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
-    @action
+    @action.bound
     async load() {
         const {getLoadParams, load} = this.services;
 
@@ -128,7 +127,7 @@ export class FormActions<T extends BaseStoreNode> {
     }
 
     /** Appelle le service de sauvegarde. */
-    @action
+    @action.bound
     async save() {
         this.formContext.forceErrorDisplay = true;
         // On ne sauvegarde que si la validation est en succès.
@@ -161,7 +160,7 @@ export class FormActions<T extends BaseStoreNode> {
     }
 
     /** Change le mode du formulaire. */
-    @action
+    @action.bound
     toggleEdit(isEdit: boolean) {
         this.entity.form!.isEdit = isEdit;
         if (!isEdit && isFormNode(this.entity)) {

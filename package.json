@@ -1,6 +1,6 @@
 {
   "name": "focus4",
-  "version": "9.4.0-alpha5",
+  "version": "9.4.0-beta",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "index.js",
   "repository": {
@@ -31,7 +31,6 @@
     "@types/react-dom": "15.5.6",
     "@types/react-motion": "0.0.22",
     "@types/uuid": "3.4.3",
-    "core-decorators": "0.20.0",
     "i18next": "10.6.0",
     "inputmask-core": "2.2.0",
     "inversify": "4.11.1",

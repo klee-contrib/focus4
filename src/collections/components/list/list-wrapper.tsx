@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 // @ts-ignore
 import {action, IObservableObject, observable} from "mobx";
@@ -38,7 +37,6 @@ export interface ListWrapperProps {
 }
 
 /** Wrapper de liste permettant de partager le mode d'affichage de toutes les listes qu'il contient. */
-@autobind
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps, void> {
 

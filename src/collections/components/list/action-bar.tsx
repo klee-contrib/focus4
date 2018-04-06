@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {reduce} from "lodash";
 import {action, computed, observable} from "mobx";
@@ -55,7 +54,6 @@ export interface ActionBarProps<T> {
 
 /** Barre d'actions pour une liste ou un groupe de recherche. Permet le tri, le grouping, la recherche et la sélection + actions en masse. */
 @observer
-@autobind
 export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
 
     /** Affiche la FacetBox. */

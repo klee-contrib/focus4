@@ -1,5 +1,4 @@
-import {autobind} from "core-decorators";
-import {observable} from "mobx";
+import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import * as React from "react";
@@ -26,7 +25,6 @@ export interface HeaderScrollingProps {
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
-@autobind
 @observer
 export class HeaderScrolling extends React.Component<HeaderScrollingProps, void> {
 
@@ -58,8 +56,8 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     componentDidMount() {
-        this.scrollTargetNode.addEventListener("scroll", this.listener);
-        this.scrollTargetNode.addEventListener("resize", this.listener);
+        this.scrollTargetNode.addEventListener("scroll", this.handleScroll);
+        this.scrollTargetNode.addEventListener("resize", this.handleScroll);
 
         const marginBottom = window.getComputedStyle(this.header!).marginBottom;
         this.context.header.marginBottom = marginBottom && marginBottom.endsWith("px") && +marginBottom.replace("px", "") || 0;
@@ -72,16 +70,16 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     componentWillUnmount() {
-        this.scrollTargetNode.removeEventListener("scroll", this.listener);
-        this.scrollTargetNode.removeEventListener("resize", this.listener);
-    }
-
-    listener() {
-        this.handleScroll();
+        this.scrollTargetNode.removeEventListener("scroll", this.handleScroll);
+        this.scrollTargetNode.removeEventListener("resize", this.handleScroll);
     }
 
     /** Recalcule l'état du header, appelé à chaque scroll, resize ou changement de `canDeploy`. */
-    handleScroll(canDeploy?: boolean) {
+    @action.bound
+    handleScroll(canDeploy?: boolean | Event) {
+        if (canDeploy !== true && canDeploy !== false) {
+            canDeploy = undefined;
+        }
 
         // Si on est déployé, on recalcule le seuil de déploiement.
         if (this.isDeployed) {

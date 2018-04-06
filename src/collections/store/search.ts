@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
@@ -28,7 +27,6 @@ export interface SearchProperties {
 }
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-@autobind
 export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T> implements SearchProperties {
 
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
@@ -191,7 +189,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     }
 
     /** Vide les résultats de recherche. */
-    @action
+    @action.bound
     clear() {
         this.serverCount = 0;
         this.selectedList.clear();
@@ -204,7 +202,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * Effectue la recherche.
      * @param isScroll Récupère la suite des résultats.
      */
-    @action
+    @action.bound
     async search(isScroll = false) {
         if (this.blockSearch) {
             /* tslint:disable */ return; /* tslint:enable */
@@ -258,7 +256,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * Met à jour plusieurs critères de recherche.
      * @param props Les propriétés à mettre à jour.
      */
-    @action
+    @action.bound
     setProperties(props: SearchProperties) {
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.selectedFacets = props.selectedFacets || this.selectedFacets;
@@ -329,6 +327,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
                 }
             }
         }, {
+            toggle: action.bound,
             toggleAll: action.bound
         }) as any;
     }

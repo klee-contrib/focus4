@@ -1,6 +1,5 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {computed} from "mobx";
+import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -24,7 +23,6 @@ export interface StoreListProps<T> extends ListProps<T> {
 }
 
 /** Composant de liste lié à un store, qui permet la sélection de ses éléments. */
-@autobind
 @observer
 export class StoreList<T> extends List<T, StoreListProps<T>> {
 
@@ -92,6 +90,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
     }
 
     /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */
+    @action
     protected handleShowMore() {
         const {perPage, store} = this.props;
         if (this.hasMoreHidden) {

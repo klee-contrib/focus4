@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
@@ -41,7 +40,6 @@ export interface ListSummaryProps<T> {
 }
 
 /** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
-@autobind
 @observer
 export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
 

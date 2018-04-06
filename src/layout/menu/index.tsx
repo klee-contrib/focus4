@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
@@ -25,7 +24,6 @@ export interface MainMenuProps {
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 @observer
-@autobind
 export class MainMenu extends React.Component<MainMenuProps, void> {
 
     static contextTypes = {
@@ -55,7 +53,7 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
      * @param evt Evènement HTML.
      * @param menuIndex Index du menu.
      */
-    @action
+    @action.bound
     private onSelectMenu(evt: React.MouseEvent<HTMLLIElement>, menuIndex: number) {
         const targetPosition = evt.currentTarget.getBoundingClientRect();
         this.showPanel = this.activeMenuIndex !== menuIndex || !this.showPanel;

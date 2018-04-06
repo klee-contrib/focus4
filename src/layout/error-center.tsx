@@ -1,5 +1,4 @@
-import {autobind} from "core-decorators";
-import {observable} from "mobx";
+import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -28,7 +27,6 @@ export interface ErrorCenterProps {
 }
 
 /** Centre d'erreurs Javascript, pour afficher toutes les erreurs directement dans l'application. */
-@autobind
 @observer
 export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
 
@@ -40,6 +38,7 @@ export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
         (this.props.source || window).onerror = (e => this.errors.push(e));
     }
 
+    @action.bound
     toggleVisible() {
         this.areErrorsVisible = !this.areErrorsVisible;
     }

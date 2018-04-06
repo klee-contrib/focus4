@@ -1,7 +1,7 @@
 import {isArray, isObject, isUndefined, mapValues, omitBy} from "lodash";
 import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
-import {addFormProperties} from "./form/properties";
+import {addFormProperties} from "./form";
 import {BaseStoreNode, Entity, EntityToType, FieldEntry, isStoreListNode, isStoreNode, ListEntry, NodeToType, ObjectEntry, StoreListNode, StoreNode} from "./types";
 
 /** Récupère les noeuds de store associés aux entités définies dans T. */
