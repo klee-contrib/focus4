@@ -1,7 +1,6 @@
 import scroll from "smoothscroll-polyfill";
 scroll.polyfill();
 
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {sortBy, uniqueId} from "lodash";
 import {action, computed, observable, untracked} from "mobx";
@@ -35,7 +34,6 @@ export interface ScrollspyContainerProps {
 }
 
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
-@autobind
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps, void> {
 
@@ -85,6 +83,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
      * Enregistre un panel dans le container et retourne son id.
      * @param panel La description d'un panel
      */
+    @action.bound
     private registerPanel(panel: PanelDescriptor) {
         const id = uniqueId("ssc-panel");
         this.panels.set(id, panel);
@@ -95,6 +94,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
      * Retire un panel du container.
      * @param id L'id du panel.
      */
+    @action.bound
     private removePanel(id: string) {
         this.panels.delete(id);
     }
@@ -104,6 +104,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
      * @param id L'id du panel.
      * @param panel La description du panel.
      */
+    @action.bound
     private updatePanel(id: string, panel: PanelDescriptor) {
         this.panels.set(id, panel);
     }
@@ -124,7 +125,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     }
 
     /** Synchronise le scroll/resize de la page avec les observables qui les représentent. */
-    @action
+    @action.bound
     private onScroll() {
         this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
         this.offsetTop = findDOMNode(this)

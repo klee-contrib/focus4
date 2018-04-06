@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -28,9 +27,9 @@ export interface FacetBoxProps<T> {
 }
 
 /** Composant contenant la liste des facettes retournées par une recherche. */
-@autobind
 @observer
 export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
+
     render() {
         const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store} = this.props;
         return (

@@ -1,6 +1,5 @@
 import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
 
-import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
@@ -33,7 +32,6 @@ export {default as MainMenu, MainMenuItem} from "./menu";
 
 /** Composant de Layout sans le provider de style. */
 @themr("layout", styles)
-@autobind
 @observer
 class LayoutBase extends React.Component<LayoutProps, void> {
 

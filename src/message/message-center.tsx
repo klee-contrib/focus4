@@ -1,6 +1,5 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {observable} from "mobx";
+import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {Snackbar} from "react-toolbox/lib/snackbar";
@@ -32,7 +31,6 @@ interface Notification {
 }
 
 /** Centre de message. Affiche les messages lorsqu'ils sont ajoutés dans le MessageStore. */
-@autobind
 @observer
 export class MessageCenter extends React.Component<MessageCenterProps, void> {
 
@@ -49,6 +47,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
      * @param message Le message.
      */
     @classReaction(() => messageStore.latestMessage)
+    @action
     handlePushMessage(message: Message) {
         const {content, type} = message;
         const {error = 8000, info = 3000, success = 3000, warning = 3000} = this.props;
@@ -57,6 +56,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     }
 
     /** Affiche la snackbar avec la notification demandée. */
+    @action.bound
     private showSnackbar(data: Notification) {
         if (this.active) {
             this.queuedNotifications.push(data);
@@ -67,6 +67,7 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
     }
 
     /** Ferme le message affiché. */
+    @action.bound
     private closeSnackbar() {
         this.active = false;
         setTimeout(() => {

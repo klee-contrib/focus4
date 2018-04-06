@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -31,7 +30,6 @@ export interface InputTimeProps extends InputProps {
 }
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
-@autobind
 @observer
 export class InputTime extends React.Component<InputTimeProps, void> {
 
@@ -97,6 +95,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Reset le centre de l'horloge au scroll, parce que c'est pas prévu par le composant... */
+    @action.bound
     resetClockCenter() {
         if (this.clockComp) {
             this.clockComp.handleCalculateShape();
@@ -124,7 +123,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
-    @action
+    @action.bound
     onDocumentClick({target}: Event) {
         let parent = target as HTMLElement | null;
 
@@ -139,7 +138,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Appelé lorsqu'on quitte le champ texte. */
-    @action
+    @action.bound
     onInputBlur() {
         const {inputFormat = "HH:mm", onChange} = this.props;
         const text = (this.timeText || "").trim() || undefined;
@@ -160,12 +159,13 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Au clic sur l'horloge. */
+    @action.bound
     onClockChange(time: Date) {
         this.props.onChange(moment(time)
             .format());
     }
 
-    @action
+    @action.bound
     onHandMoved() {
         if (this.clockDisplay === "hours") {
             this.clockDisplay = "minutes";
@@ -176,7 +176,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Ferme l'horloge lorsqu'on appuie sur Entrée ou Tab. */
-    @action
+    @action.bound
     handleKeyDown({key}: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showClock = false;

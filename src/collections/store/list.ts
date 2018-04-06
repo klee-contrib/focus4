@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {isString, orderBy} from "lodash";
 import {computed, IObservableArray, observable} from "mobx";
 
@@ -11,7 +10,6 @@ import {ListStoreBase} from "./base";
  *
  * S'utilise sur une liste pré-chargée
  */
-@autobind
 export class ListStore<T> extends ListStoreBase<T> {
 
     /** Liste brute (non triée, non filtrée) des données. */

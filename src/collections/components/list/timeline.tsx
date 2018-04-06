@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -22,7 +21,6 @@ export interface TimelineProps<T> extends ListBaseProps<T> {
 }
 
 /** Composant affichant une liste sous forme de Timeline. */
-@autobind
 @observer
 export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
 

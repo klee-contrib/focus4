@@ -1,9 +1,8 @@
 import scroll from "smoothscroll-polyfill";
 scroll.polyfill();
 
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {computed} from "mobx";
+import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -69,7 +68,6 @@ export interface GroupProps<T> {
 }
 
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
-@autobind
 @observer
 export class Group<T> extends React.Component<GroupProps<T>, void> {
 
@@ -80,6 +78,7 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     /** Action pour dégrouper et sélectionner la facette correspondant au groupe choisi. */
+    @action.bound
     protected showAllHandler() {
         const {groupingKey, selectedFacets, setProperties} = this.props.store;
         setProperties({

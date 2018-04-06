@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
@@ -24,7 +23,6 @@ export interface StoreTableProps<T> extends TableProps<T> {
 }
 
 /** Composant de tableau lié à un store, qui permet le tri de ses colonnes. */
-@autobind
 @observer
 export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
 
@@ -104,6 +102,7 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     }
 
     /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */
+    @action
     protected handleShowMore() {
         const {perPage, store} = this.props;
         if (this.hasMoreHidden) {

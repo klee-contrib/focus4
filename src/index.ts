@@ -2,7 +2,6 @@
 // Le but est d'essayer de limiter le nombre d'imports à 1 pour un écran simple.
 // Il n'a pas du tout vocation a être exhaustif.
 
-export {autobind} from "core-decorators";
 import i18next from "i18next"; export {i18next as i18n};
 export {action, computed, observable} from "mobx";
 export {observer} from "mobx-react";

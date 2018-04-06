@@ -1,6 +1,5 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {computed, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
@@ -33,7 +32,6 @@ export interface ListBaseProps<T> {
 }
 
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
-@autobind
 export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P, void> {
 
     /** Nombre d'éléments affichés. */
@@ -87,6 +85,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Charge la page suivante. */
+    @action
     protected handleShowMore() {
         if (this.hasMoreData) {
             this.displayedCount! += (this.props.perPage || 5);
@@ -101,7 +100,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
                 <div className={theme!.bottomRow}>
                     {isManualFetch && this.hasMoreData ?
                         <Button
-                            onClick={this.handleShowMore}
+                            onClick={() => this.handleShowMore()}
                             icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                             label={this.showMoreLabel}
                         />
@@ -133,6 +132,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Gère le scroll infini. */
+    @action.bound
     private scrollListener() {
         const el = findDOMNode(this) as HTMLElement;
         const scrollTop = window.pageYOffset;

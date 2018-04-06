@@ -1,6 +1,4 @@
-import {DisplayProps} from "../../components/display";
-import {InputProps} from "../../components/input";
-import {LabelProps} from "../../components/label";
+import {DisplayProps, InputProps, LabelProps} from "../../components";
 import {ReactComponent} from "../../config";
 
 import {Validator} from "./validation";

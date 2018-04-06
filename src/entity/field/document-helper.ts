@@ -1,8 +1,6 @@
-import {autobind} from "core-decorators";
 import {observable} from "mobx";
 
 /** Classe permettant de définir un ersatz observable de `document.activeElement`. */
-@autobind
 export class DocumentHelper {
 
     @observable

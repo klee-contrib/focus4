@@ -1,5 +1,4 @@
-import {autobind} from "core-decorators";
-import {observable} from "mobx";
+import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {themr} from "react-css-themr";
@@ -32,7 +31,6 @@ export interface PopinProps {
 }
 
 /** Affiche son contenu dans une popin, dont l'ouverture est contrôlée par ses props. */
-@autobind
 @observer
 export class Popin extends React.Component<PopinProps, void> {
 
@@ -69,6 +67,7 @@ export class Popin extends React.Component<PopinProps, void> {
      * Ouvre ou ferme la popin.
      * @param opened Nouvel état de la popin.
      */
+    @action.bound
     private toggleOpen(opened: boolean) {
         if (opened) {
             this.willOpen = true;

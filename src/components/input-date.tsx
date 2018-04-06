@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -51,7 +50,6 @@ export interface InputDateProps extends InputProps {
 }
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
-@autobind
 @observer
 export class InputDate extends React.Component<InputDateProps, void> {
 
@@ -150,7 +148,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
-    @action
+    @action.bound
     onDocumentClick({target}: Event) {
         let parent = target as HTMLElement | null;
 
@@ -165,7 +163,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     /** Appelé lorsqu'on quitte le champ texte. */
-    @action
+    @action.bound
     onInputBlur() {
         const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
         const text = (this.dateText || "").trim() || undefined;
@@ -182,7 +180,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     /** Au clic sur le calendrier. */
-    @action
+    @action.bound
     onCalendarChange(date: Date, dayClick: boolean) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 
@@ -203,7 +201,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     /** Ferme le calendrier lorsqu'on appuie sur Entrée ou Tab. */
-    @action
+    @action.bound
     handleKeyDown({key}: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showCalendar = false;

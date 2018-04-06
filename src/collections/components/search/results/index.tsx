@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -65,7 +64,6 @@ export interface ResultsProps<T> {
 }
 
 /** Composants affichant les résultats de recherche, avec affiche par groupe. */
-@autobind
 @observer
 export class Results<T> extends React.Component<ResultsProps<T>, void> {
 

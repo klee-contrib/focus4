@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {difference, toPairs} from "lodash";
 import {action, computed, observable} from "mobx";
@@ -41,7 +40,6 @@ export interface SearchBarProps<T, C extends StoreNode> {
 }
 
 /** Barre de recherche permettant de contrôle le texte et les critères personnalisés de recherche. */
-@autobind
 @observer
 export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>, void> {
 
@@ -117,7 +115,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Le onChange de l'input */
-    @action
+    @action.bound
     protected onInputChange({currentTarget}: {currentTarget: HTMLInputElement}) {
         const {disableInputCriteria, store} = this.props;
         if (disableInputCriteria || !store.criteria) {
@@ -156,7 +154,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Au clic sur un scope. */
-    @action
+    @action.bound
     protected onScopeSelection(scope: string) {
         const {scopeKey, store} = this.props;
         if (store.criteria && scopeKey) {
@@ -172,7 +170,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Vide la barre. */
-    @action
+    @action.bound
     protected clear() {
         const {disableInputCriteria, store} = this.props;
         store.query = "";
@@ -182,6 +180,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Affiche ou masque le composant de critères. */
+    @action.bound
     protected toggleCriteria() {
         this.showCriteriaComponent = !this.showCriteriaComponent;
         this.props.store.blockSearch = !this.props.store.blockSearch;

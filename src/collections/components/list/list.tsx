@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -87,7 +86,6 @@ export interface LineItem<P> {
 }
 
 /** Composant de liste standard */
-@autobind
 @observer
 export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extends ListBase<T, P> {
 
@@ -122,7 +120,6 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     componentDidMount() {
         super.componentDidMount();
         window.addEventListener("resize", this.updateByLine);
-        this.updateByLine();
     }
 
     componentDidUpdate() {
@@ -136,7 +133,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
     /** Met à jour `byLine`. */
     @classAutorun
-    private updateByLine() {
+    protected readonly updateByLine = () => {
         const node = findDOMNode(this);
         if (node) {
             this.byLine = this.mode === "mosaic" ? Math.floor(node.clientWidth / (this.mosaic.width + 10)) : 1;
@@ -145,7 +142,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
     /** Réaction pour fermer le détail si la liste change. */
     @classReaction((that: List<any, any>) => () => that.displayedData.length)
-    protected closeDetail() {
+    protected readonly closeDetail = () => {
         this.displayedIdx = undefined;
     }
 
@@ -226,7 +223,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
      * Ouvre le détail au clic sur un élément.
      * @param idx L'index de l'élément cliqué.
      */
-    @action
+    @action.bound
     protected onLineClick(idx: number) {
         this.displayedIdx = this.displayedIdx !== idx ? idx : undefined;
     }

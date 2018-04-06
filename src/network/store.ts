@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {action, computed, ObservableMap} from "mobx";
 import {v4} from "uuid";
 
@@ -10,7 +9,6 @@ export interface Request {
 }
 
 /** Store de requête contenant les requêtes effectuées dans l'application. */
-@autobind
 export class RequestStore {
 
     /** Requêtes en erreur. */
@@ -32,7 +30,7 @@ export class RequestStore {
     }
 
     /** Vide les requêtes dans le store. */
-    @action
+    @action.bound
     clearRequests() {
         this.success.clear();
         this.error.clear();
@@ -43,7 +41,7 @@ export class RequestStore {
      * Met à jour une requête.
      * @param request La requête.
      */
-    @action
+    @action.bound
     updateRequest(request: Request) {
         request.id = request.id || v4();
         switch (request.status) {

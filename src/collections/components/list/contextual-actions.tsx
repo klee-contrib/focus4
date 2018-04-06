@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import * as React from "react";
 import {themr} from "react-css-themr";
 
@@ -61,18 +60,16 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
      * Exécute une action
      * @param key L'index de l'action dans la liste.
      */
-    @autobind
-    private handleAction(key: number) {
+    private handleAction(key: number, e: React.SyntheticEvent<any>) {
         const {data, operationList} = this.props;
-        return (e: React.SyntheticEvent<any>) => {
-            // On arrête bien tous les autres évènements, pour être sûr.
-            e.preventDefault();
-            e.stopPropagation();
-            const item = operationList[key];
-            if (!isComponent(item)) {
-                item.action(data);
-            }
-        };
+
+        // On arrête bien tous les autres évènements, pour être sûr.
+        e.preventDefault();
+        e.stopPropagation();
+        const item = operationList[key];
+        if (!isComponent(item)) {
+            item.action(data);
+        }
     }
 
     render() {
@@ -85,7 +82,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
                 primaryActions.push(
                     <Button
                         primary={isMosaic}
-                        onClick={this.handleAction(key)}
+                        onClick={(e: any) => this.handleAction(key, e)}
                         icon={(!isMosaic && Operation.showIcon || isMosaic) && Operation.icon || undefined}
                         key={key}
                         label={!isMosaic && Operation.label || undefined}
@@ -95,7 +92,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps, v
             } else if (Operation.label) {
                 secondaryActions.push({
                     icon: Operation.icon,
-                    onClick: this.handleAction(key),
+                    onClick: (e: any) => this.handleAction(key, e),
                     caption: Operation.label
                 });
             }
