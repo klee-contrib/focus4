@@ -113,7 +113,7 @@ export function patchField<
     }
 }
 
-function new$field<T extends FieldEntry<any, any, any, any>>(old$field: T, $field: $Field | (() => $Field)) {
+function new$field<T extends FieldEntry>(old$field: T, $field: $Field | (() => $Field)) {
     if (isFunction($field)) {
         return observable({
             get $field() {

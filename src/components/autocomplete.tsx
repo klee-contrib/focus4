@@ -147,7 +147,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
                     {...props}
                     onChange={this.onValueChange}
                     multiple={false}
-                    source={this.values.toJS()}
+                    source={this.values.toJSON()}
                     query={this.query}
                     onQueryChange={this.onQueryChange}
                     maxLength={undefined}
