@@ -1,11 +1,17 @@
 # Module `entity`
 
-## EntityStore
-Un `EntityStore` sert à stocker des **entités**, c'est-à-dire des objets structurés (mappés sur les beans et DTOs du serveur) avec leurs *métadonnées*.
+## Entité
 
-Si vous cherchez à stocker des primitives ou des objets pour lesquels vous n'avez pas besoin de métadonnées, vous n'avez pas besoin de ce store et vous pouvez directement utiliser des observables pour stocker vos valeurs. MobX s'occupe déjà automatiquement de tous les abonnements des observables utilisées ; l'`EntityStore` n'en est qu'une surcouche spécialisée dans l'usage avec les métadonnées.
+Au sein de Focus, on appelle **entité** tout objet "métier" d'une application, à priori issu du (et généré à partir du) modèle de données. C'est un objet d'échange entre le client et le serveur, à partir duquel on va construire tous les rendus et formulaires qui vont peupler une application Focus.
 
-Il remplace à l'usage le `CoreStore` de `focus-core`, mais ne doit donc pas être utilisé systématiquement.
+Une entité est constituée de **champs**, objet primitif représentant une des valeurs qui la constitue. Une entité peut également contenir d'autres entités, mais en fin de compte toute la donnée sera représentée comme un ensemble de champs. Un champ est défini par son nom, son caractère obligatoire, son type (au choix parmi `string`, `number`, `boolean`, ou un array de ceux-ci) et son domaine.
+
+Le **domaine** d'un champ répresente le type de donnée métier qui lui est associé (par exemple : une date, un numéro de téléphone, un montant...). On se sert du domaine pour définir des validateurs de saisie, des formatteurs, ou encore des composants de saisie/présentation/libellé personnalisés.
+
+## Stockage des entités : `EntityStore`
+Une entité retournée directement depuis le serveur est, comme tout le reste, un objet JSON simple. Parfois, pour diverses raisons, c'est bien la donnée seule qui nous intéresse. Dans ce cas, il suffit de stocker cette donnée dans une simple observable et de l'utiliser comme n'importe quel autre état. Dans d'autres cas, cette donnée est une liste que l'on voudra manipuler. Ici, il faudra s'orienter vers le module **`list`** et ses stores spécialisés.
+
+Par contre, si vous avez besoin d'utiliser les **métadonnées** associées à l'entité pour construire un quelconque formulaire, ou bien si vous voulez simplement afficher quelques champs formattés avec leurs libellés, Focus met à disposition un **`EntityStore`**, un store d'entités pour un stockage qui consolide toutes les valeurs de champs avec leurs métadonnées, pour une consommation simplifiée.
 
 Par exemple, un objet `operation` de la forme:
 
@@ -23,122 +29,111 @@ sera stocké dans un `EntityStore` sous la forme :
 {
     operation: {
         id: {
-            $field: {type: "field", isRequired: true, domain: DO_ID, label: "operation.id"},
+            $field: {type: "field", fieldType: {} as number, isRequired: false, domain: DO_ID, label: "operation.id"},
             value: 1
         },
         number: {
-            $field: {type: "field", isRequired: false, domain: DO_NUMBER, label: "operation.number"},
+            $field: {type: "field", fieldType: {} as string, isRequired: false, domain: DO_NUMBER, label: "operation.number"},
             value: "1.3"
         },
         amount: {
-            $field: {type: "field", isRequired: true, domain: DO_AMOUNT, label: "operation.amount"},
+            $field: {type: "field", fieldType: {} as number, isRequired: true, domain: DO_AMOUNT, label: "operation.amount"},
             value: 34.3
         }
     }
 }
 ```
 
-### Mais quel est donc l'intérêt ?
+A partir des champs ainsi déclarés (dans un objet appelé `EntityField`), on va pouvoir construire des méthodes simples pour les consommer. A noter que l'usage d'un `EntityStore` n'est pas la seule façon de créer des champs, comme montré plus bas.
 
-Lorsque l'on veut afficher un champ issu d'un store dans Focus, on utilise la fonction `fieldFor` (et consorts) de la manière suivante : `this.fieldFor('amount')` (ou `this.props.fieldFor('amount')` pour la v3). Pour que ça marche, `fieldFor` doit être capable de retrouver à quelle propriété du noeud de store en cours (quel store en cours d'ailleurs ?) `amount` correspond, et à quelle propriété de l'entité en cours (quelle entité en cours d'ailleurs ?) `amount` correspond. Pour faire la correspondance, il est nécessaire de spécifier dans le composant qui utilise `fieldFor` un store, un noeud de store (ou un sélecteur sur le store pour la v3) ainsi que le nom de l'entité correspondante.
+## Constitution et APIs des noeuds
+Un chaque objet contenu dans un `EntityStore` peut être l'un des trois objets suivants :
+- Un `EntityField`, objet représentant un champ, détaillé dans le paragraphe précédent.
+- Un `StoreNode`, objet contenant des champs et d'autres `Store(List)Node`. Une entité dans un `EntityStore` est représentée par un `StoreNode`, et l'`EntityStore` lui-même est également un `StoreNode` (qui n'a à priori pas de champs au premier niveau).
+- Un `StoreListNode`, qui est une liste de `StoreNode`.
 
-#### Listons les problèmes liés à cette approche :
-* `fieldFor` est lié à la configuration du composant et ne peut donc pas être utilisé en dehors du cadre d'un composant avec au moins 2 mixins (v2) (`builtInComponents` + `storeBehaviour`) ou 3 connecteurs (v3) (`connectToMetadata` + `connectToForm` + `connectToFieldHelpers`). Youhou au moins c'est cohérent avec le numéro de version !
-* `fieldFor` (et même le composant en général, puis qu'ils sont indissociables) ne vérifie pas si les données dans le store et l'entité correspondent.
-* `fieldFor` accepte une chaîne de caractères comme identifiant pour le champ, ce qui n'est pas vérifiable statiquement et est un nid à problèmes, en particulier dès qu'on à le malheur de faire un peu de refactoring.
+Le `StoreNode` et le `StoreListNode` partagent la même API de base, qui comporte les deux méthodes suivantes :
+- `set(data)`, qui prend les données sous forme "JSON" et les insère dans le noeud, de manière récursive. Si le `set` doit mettre à jour un `StoreNode`, alors il ne mettae à jour que les champs reçus (accomplissant un "merge"). Si le `set` doit mettre à jour un `StoreListNode`, alors il va vider la liste et la remplir avec les objets passés, tels quels.
+- `clear()`, qui vide récursivement le noeud et son contenu.
 
-#### La solution proposée par l'EntityStore :
-Grâce à MobX, on n'a plus besoin de connecteurs ou de mixins pour lier du state global à des composants, donc on n'a pas vraiment envie d'en rajouter pour gérer une map d'`entityDefinition` qui en plus ne changera jamais.
+C'est aussi l'occasion de rappeler que, contrairement à de la donnée brute sous forme de JSON, un `StoreNode` contient toujours l'ensemble de tous les champs du noeud. Si une valeur n'est pas renseignée, la propriété `value` du champ a simplement pour valeur `undefined`. De même, il faut toujours garder à l'esprit que `store.operation.id` est un _`EntityField`_ (qui est donc toujours vrai)  et non un _`number | undefined`_. La valeur est bien toujours `store.operation.id.value`.
 
-Du coup, ce qu'on va faire, c'est construire des stores à partir des `entityDefinition`s et les remplir avec notre state.
+Le `StoreListNode` dispose également d'une méthode supplémentaire `pushNode(item)`, qui permet d'y ajouter un node à partir d'un objet JSON brut.
 
-`fieldFor` est donc maintenant une fonction *de la librairie* qui s'utilise comme ça : **`fieldFor(store.operation.amount)`**.
+De plus, il convient également de rappeler que la modification d'un noeud ou de l'un de ses champs n'est pas limité à l'usage des méthodes `set()` ou `clear()`. Ce sont des méthodes utilitaires qui permettent simplement d'affecter plusieurs valeurs en même temps à des champs. Il est parfaitement possible de faire l'affection manuellement, par exemple `store.operation.id.value = undefined`. Derrière, comme tout le reste de l'application, MobX gère tout tout seul.
 
-`store.operation.amount` contient la valeur de la propriété `amount`, les métadonnées de la propriété `amount` et est directement le noeud de store qui existe et qui est vérifiable à la compilation (avec du Typescript bien entendu).
+## API de l'`EntityStore`
 
-Et on retrouve le même fonctionnement d'avant.
+### `makeEntityStore(config)`
+La fonction `makeEntityStore` permet de créer un nouvel `EntityStore` à partir d'un objet de configuration. Cette objet peut contenir :
+- Des objets de définition d'entité (généralement générés sous le nom `OperationEntity`), pour générér les `StoreNode`s correspondants.
+- Des arrays contenants un objet d'entité (`[OperationEntity]`), pour générer les `StoreListNode`s correspondants.
+- Des `StoreNode`s existants, créés à partir d'un autre `EntityStore`. Cela permet de les rattacher aux méthodes `set` et `clear` du store, pour associer des ensembles d'entités liées.
 
-*Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange`, `ref` et `error`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans Focus V4 doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus.*
+### `toFlatValues(node)`
+Cette fonction est l'opposé de la fonction `set` : elle prend un node et récupère toutes les valeurs de champs dans l'objet "JSON" équivalent au node.
 
-### Description
+## Afficher des champs
+Focus met à disposition trois fonctions pour afficher des champs :
 
-Un `EntityStore` contient des *items* (`EntityStoreItem`) qui peuvent être soit un noeud (`EntityStoreNode`), soit une liste de noeuds (`StoreListNode<EntityStoreNode>`). Un `EntityStoreNode` contient des *valeurs* (`EntityValue`) qui peuvent être soit des *primitives*, soit un autre *item*. Chaque `EntityValue` se présente sous la forme `{$field, value}` où `$field` est la métadonnée associée à la valeur. Chaque *item* (objet ou liste), ainsi que le store lui-même, est également muni de deux méthodes `set(data)` et `clear()`, permettant respectivement de les remplir ou de les vider.
+### `fieldFor(field, options?)`
+C'est la fonction principale, elle permet d'afficher un champ avec son libellé, à partir de ses métadonnées (en particulier le domaine). Elle prend comme paramètres :
+- `field`, un `EntityField`
+- `options`, les différentes options à passer au champ. Il ne s'agit uniquement de props pour le composant de Field, et _il n'y est pas possible de surcharger les métadonnées du champ_.
 
-Un `StoreNode`, qui est la partie commune à tous les *items* (objet ou liste) d'un store, est conçu pour être utilisé par les `fieldHelpers` (`fieldFor`, `selectFor`...) et par extension par l'`AutoForm`, qui sont des composants qui consomment des métadonnées. Le `fieldHelper` prend en entrée une `EntityValue` (`{$field, value}`) qui vient à priori d'un `StoreNode`, mais peut également être construite à la main sur place.
+Le composant de Field utilisera ses composants par défaut si le domaine ne les renseignent pas (`Input`, `Display` et `Label` de `components`).
 
-La modification du store ou de l'une de ses entrées n'est pas limitée à l'usage des méthodes `set()` ou `clear()`. Etant toujours une observable MobX, il est tout à fait possible d'affecter des valeurs directement, comme `store.operation.id.value = undefined` par exemple. Ca peut être utile car **`set()` ne mettra à jour que les valeurs qu'il reçoit**. Pour un array, la méthode `set()` prend un array en paramètre qui remplacera toutes les valeurs courantes.
+### `selectFor(field, values, options?)`
+La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une liste de référence. Elle prend comme paramètres :
+- `field`, le champ contenant le code
+- `values`, la liste de référence à utiliser pour résoudre le code.
+- `options`, comme `fieldfor`, avec une option en plus pour personnaliser le composant de `Select`.
 
-Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, que ça soit des objets dans des objets ou des dans arrays ou des arrays dans des objets... L'arbre des entités et propriétés est généré à la création du store pour les objets, et la méthode `set` de l'array (`StoreListNode`) va construire l'arbre de chaque entité dans l'array à l'insertion. Pour les listes, la méthode `set` vide l'array et remplace tous les éléments par les nouveaux éléments fournis (en interne, elle appelle la méthode `replace` définie sur les arrays observables MobX). Pour ajouter un élément dans un array, la méthode `push` attend le `StoreNode` équivalent en entrée, ce qui n'est rarement pratique. Un `StoreListNode` possède donc une méthode supplémentaire `pushNode` qui permet d'ajouter un élement "brut" dans une liste et qui va se charger de créer sur `StoreNode` associé.
+### `stringFor(field, values?)`
+La fonction `stringFor` affiche la représentation textuelle d'un champ de store, en utilisant le formatteur et si besoin une liste de référence. Les paramètres sont :
+- `field`,
+- `values`, s'il y a une liste de référence à résoudre.
 
 
-**Remarque importante** : Cela a été précisé à de nombreuses reprises dans la présentation mais l'accent jamais mis dessus : **`store.operation.id` n'est *pas* la valeur dans le store**, c'est **`store.operation.id.value`**. En particulier, quelque soit la valeur de `id`, **`store.operation.id` est toujours défini et vaut `{$field, value}`**, même si `value` vaut `undefined`.
+## Création et modification de champs.
+Jusqu'ici, on est capable de créer des champs à partir de noeuds, mais ces champs ont été initialisés et figés par la définition initiale des entités générées depuis le modèle. Or bien souvent, on peut avoir besoin de modifier une métadonnée en particulier, ou bien d'avoir à remplacer un composant dans un écran précis pour un champ donné. Et même, on peut vouloir créer un champ à la volée sans avoir besoin d'insérer toute une entité dans un `EntityStore`.
+
+Pour répondre à ces problématiques, Focus propose trois fonctions utilitaires :
+
+### `makeField(value, $field?)`
+Cette fonction permet de créer un field à partir d'une valeur. L'objet optionnel `$field` peut contenir toutes les métadonnées (ainsi que celles portées par le domaine) à ajouter au champ ainsi créé. Par défaut, le champ n'a pas de nom, pas de domaine et n'est pas obligatoire.
+
+Cet usage de `makeField` (il y en aura d'autres plus bas) peut servir à récréer rapidement un champ entier à partir d'une valeur, ou simplement pour ajouter un domaine, un formatteur ou juste un libellé et profiter des fonctions d'affichage du paragraphe précédent.
+
+### `fromField(field, $field)`
+Cette fonction permet de dupliquer un champ en remplaçant certaines métadonnées par celles précisées dans `$field`. Cette fonction ne sert qu'à de l'affichage (et en passant, on n'a bien parlé que de ça depuis le début).
+
+### `patchField(field, $field)`
+Cette fonction fonctionne comme `fromField`, à la différence notable qu'elle modifie le champ donné au lieu de le dupliquer. Son usage n'est conseillé que pour la construction de formulaires (voir plus bas).
+
+## Gestion de l'édition.
+Le sujet n'a pas réellement été abordé jusque ici pour une raison simple : **les champs ne gèrent pas l'édition nativement**.
+
+Du moins, une propriété `isEdit` peut être ajoutée aux champs, qui sera lue par `fieldFor` et `selectFor`, mais elle est presque toujours gérée par un noeud de formulaire. En l'absence de cette propriété, il n'est pas possible d'afficher un champ en édition.
+
+La seule façon d'avoir un champ en édition en dehors d'un formulaire est d'utiliser la deuxième définition de `makeField` :
+
+### `makeField(getter, $field, setter, isEdit?)`
+- `getter` est une fonction sans paramètre représant une dérivation qui retourne la valeur.
+- `setter` est une fonction qui prend la valeur comme paramètre et qui doit se charger de mettre à jour la valeur retournée par le getter.
+- `isEdit` peut être renseigné à `true` pour afficher le champ en édition.
 
 
-### API
+## Création d'un formulaire : noeud de formulaire (`FormNode`).
+TODO
 
-#### `displayFor(field, options?)`
-Même chose que `fieldFor` mais avec `isEdit = false`.
+## Création d'un formulaire : actions de formulaires
+TODO
 
-#### `fieldFor(field, options?)`
-La fonction `fieldFor`, permettent de créer un champ d'entrée ou d'affichage avec un libellé, en utilisant les composants du domaine ou par défaut. Elle prend comme paramètres :
-- `field`, l'`EntityField` contenant la valeur et les métadonnées du champ à afficher. La plupart du temps, `field` est une propriété dans un `EntityStore`, mais il est également possible de le créer à la volée. Il est également possible de passer directement une valeur s'il n'y a pas de métadonnées associées (elles seront toutes vides du coup).
-- `options`, les différentes options à passer au champ. On y retrouve les props du `Field`, comportant entre autres les propriétés `inputProps`, `displayProps` et `labelProps` qui seront les props supplémentaires à passer aux différents composants du `Field`.
+## Création d'un formulaire : `<Form>` (et `<Panel>`)
+TODO
 
-Par défaut, `fieldFor` utilise les composants `InputComponent`, `DisplayComponent` et `LabelComponent` définis dans le domaine. Si ces composants ne sont pas renseignés, alors il utilisera les composants par défaut (en particulier, un `InputText` pour l'input). Il est possible de surcharger localement ces composants en les respécifiant dans les options. Si le typage des domaines et des entités est bien fait, alors `inputProps` et consorts seront bien typés avec les props du composant qui sera utilisé.
-
-#### `selectFor(field, values, options?)`
-La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une liste de référence. Elle utilise un composant `Select` par défaut comme composant d'input et renseigne `options.values` avec le paramètre `values`.
-- `field`, comme `fieldFor`, à la différence près qu'on accepte que des `EntityField`.
-- `values`, la liste des valeurs de la liste de référence à utilise pour résoudre le code.
-- `options`, comme `fieldfor`.
-
-`selectFor` vérifie également le type de la liste de référence en fonction du type du champ et de la présence des propriétés de bon type `valueKey` et `labelKey`. Par défaut, il cherche des propriétés `code` et `label`, qui sont surchargeables dans les options. Attention de bien caster `valueKey` et `labelKey` en eux-même (par exemple `{valueKey: "id" as "id}`) pour que l'inférence de type cherche bien la propriété `id` et non toutes les propriétés de l'objet.
-
-### `stringFor(field, options?)`
-La fonction `stringFor` affiche la représentation textuelle d'un champ de store, en utilisant si besoin le formatteur et une liste de référence. Les paramètres sont :
-- `field`, comme `selectFor`
-- `options`, comme `fieldFor`, même si finalement très peu d'options sont réellement utilisées.
-
-#### `makeEntityStore(simpleNodes, listNodes, entities, entityMapping?)`
-La fonction `makeEntityStore` permet de créer un nouvel `EntityStore`. Elle prend comme paramètres :
-- `simpleNodes`, un objet dont les propriétés décrivent tous les noeuds "simples" du store (la valeur n'importe peu, mais il convient de la typer avec le type de noeud).
-- `listNodes`, un objet dont les propriétés décrivent tous les noeuds "listes" du store (la valeur n'importe peu, mais il convient de la typer avec le type de l'**objet** du noeud, sans la liste).
-- `entityList`, la liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
-- `entityMapping` (facultatif), un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
-
-#### `toFlatValues(entityStoreItem)`
-La fonction `toFlatValues` prend une **entrée** est la met à plat en enlevant toutes les métadonnées.
-
-### Ce qui faut générer pour un `EntityStore`
-Pour pouvoir pleinement profiter d'un `EntityStore`, il est vivement conseillé de générer automatiquement les 3 objets/types à partir du modèle du serveur. Ces trois objets, pour un objet `Operation`:
-- Le type **`Operation`**, qui est une bête interface représentant le type "plat", dont tous les champs sont **optionnels**.
-- Le type **`OperationNode`**, qui est l'`EntityStoreNode` correspondant, dont tous les champs sont **obligatoires**. C'est le type `Operation` avec toutes ses valeurs wrappées dans des `EntityValue` et `StoreListNode`, et avec les méthodes `set()` et `clear()` correspondantes.
-- L'objet **`OperationEntity`**, qui est l'objet contenant les métadonnées.
-
-### Exemple de création (d'après les tests)
-
-```ts
-const store = makeEntityStore({
-    // Noeuds "simples"
-    operation: {} as OperationNode,
-    projetTest: {} as ProjetNode
-}, {
-    // Noeuds "listes"
-    structureList: {} as StructureNode
-}, [
-    // Entités
-    OperationEntity,
-    ProjetEntity,
-    StructureEntity,
-    LigneEntity
-], {
-    // Mappings
-    projetTest: "projet",
-    structureList: "structure"
-});
-```
-
-## AutoForm
+## AutoForm (OBSOLETE, A METTRE A JOUR ASAP)
 L'`AutoForm` est une classe dont un composant de formulaire doit hériter. C'est le remplacant du `formMixin` de la v2.
 
 C'est un "vestige" de Focus v2 qui fait le travail qu'on lui demande de façon très simple et les comportements qu'il apporte ne sont pas reproductibles simplement d'une autre manière. Focus v3 en est un excellent exemple. C'est la seule classe de base (ou seul équivalent "mixin") de la librairie (la v2 possède une 20taine de mixins et la v3 5 ou 6 connecteurs, à titre de comparaison), et son usage est très précis : **c'est pour faire un formulaire**, avec :

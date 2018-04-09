@@ -42,12 +42,13 @@ Comme son nom l'indique, le décorateur `@injectByPropName` utilise le nom de la
 ### `ReferenceStore`
 Un `ReferenceStore` de Focus V4 est construit par la fonction `makeReferenceStore(referenceLoader, refConfig)` :
 * `referenceLoader` est une fonction qui prend en paramètre un nom de référence et la liste de référence (qui renvoie donc une Promise)
-* `refConfig` est un objet dont les propriétés seront les noms des listes de références à charger. Pour typer le store de référence, il suffit de typer ces propriétés avec le type correspondant :
+* `refConfig` est un objet dont les propriétés sont des définitions de listes de référence, à priori générés avec le reste du modèle. Ce sont des objets de la forme `{type, valueKey, labelKey}` qui servent à définir totalement comme la référence doit s'utiliser.
 
+Un store de référence se construit de la manière suivante :
 ```ts
 const referenceStore = makeReferenceStore(referenceLoader, {
-    product: {} as Product,
-    line: {} as Line
+    product,
+    line
 });
 ```
 
@@ -77,8 +78,6 @@ Ce composant sera initialement rendu 3 fois:
 Les fois suivantes (dans la mesure que les listes sont toujours en cache), il n'y aura qu'un seul rendu avec les deux listes déjà chargées.
 
 Et voilà, ça marche tout seul.
-
-*Note: Du coup, tout ce qui avait attrait au fonctionnement des références dans `focus-components` est obsolète (car plus nécessaire). `selectFor` prend simplement la liste de référence en paramètre à la place de son nom.*
 
 ## [Module `router`](router)
 
