@@ -79,6 +79,9 @@ Les fois suivantes (dans la mesure que les listes sont toujours en cache), il n'
 
 Et voilà, ça marche tout seul.
 
+### `makeReferenceList(list, {valueKey, labelKey})`
+Cette fonction permet de transformer une liste classique en une liste utilisable comme liste de référence (pour `selectFor`).
+
 ## [Module `router`](router)
 
 ## Module `user`
