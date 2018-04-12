@@ -136,6 +136,7 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         label = old$field.label,
         name = old$field.name,
         type = old$field.type,
+        comment = old$field.comment,
         fieldType = old$field.fieldType,
         ...domainOverrides
     } = $field;
@@ -144,6 +145,7 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         label,
         name,
         type,
+        comment,
         fieldType,
         domain: {
             ...domain,
