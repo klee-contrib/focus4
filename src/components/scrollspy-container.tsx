@@ -35,7 +35,7 @@ export interface ScrollspyContainerProps {
 
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
 @observer
-export class ScrollspyContainer extends React.Component<ScrollspyContainerProps, void> {
+export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
 
     /** Offset entre le container et le haut du document. */
     @observable private offsetTop = 0;

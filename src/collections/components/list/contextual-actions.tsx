@@ -54,7 +54,7 @@ export interface ContextualActionsProps {
 }
 
 /** Affiche une liste d'actions contextuelles. */
-export class ContextualActions extends React.Component<ContextualActionsProps, void> {
+export class ContextualActions extends React.Component<ContextualActionsProps> {
 
     /**
      * Exécute une action

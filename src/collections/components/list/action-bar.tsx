@@ -54,7 +54,7 @@ export interface ActionBarProps<T> {
 
 /** Barre d'actions pour une liste ou un groupe de recherche. Permet le tri, le grouping, la recherche et la sélection + actions en masse. */
 @observer
-export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
+export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 
     /** Affiche la FacetBox. */
     @observable displayFacetBox = false;
@@ -269,7 +269,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                 {hasFacetBox && isSearch(store) ?
                     <div className={theme!.facetBoxContainer}>
                         <Motion style={{marginTop: this.facetBoxHeight === DEFAULT_FACETBOX_MARGIN ? -this.facetBoxHeight : spring(this.displayFacetBox ? 5 : -this.facetBoxHeight)}}>
-                            {(style: {marginTop: number}) => (
+                            {(style: {marginTop?: number}) => (
                                 <div style={style} ref={i => this.facetBox = i}>
                                     <IconButton
                                         icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}

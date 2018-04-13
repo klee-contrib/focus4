@@ -22,7 +22,7 @@ export interface MainMenuListProps {
 
 /** Liste d'item de menu. */
 @observer
-export class MainMenuList extends React.Component<MainMenuListProps, void> {
+export class MainMenuList extends React.Component<MainMenuListProps> {
 
     /** Handler de clic, appelle le handler du menu (pour ouvrir le panel) puis celui de l'item. */
     private onClick(evt: React.MouseEvent<HTMLLIElement>, idx: number) {

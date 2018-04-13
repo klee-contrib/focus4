@@ -77,7 +77,7 @@ export interface LineItem<P> {
     /** Clé React. */
     key: string;
     /** Description du composant, avec ses props. */
-    data: {
+    data?: {
         Component: ReactComponent<P>,
         props?: P
     };
@@ -328,7 +328,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                     >
                         {(items: LineItem<any>[]) => (
                             <ul>
-                                {items.map(({key, style, data: {Component, props}}) => <Component key={key} style={style} {...props} />)}
+                                {items.map(({key, style, data: {Component = {} as any, props = {}} = {}}) => <Component key={key} style={style} {...props} />)}
                             </ul>
                         )}
                     </TransitionMotion>

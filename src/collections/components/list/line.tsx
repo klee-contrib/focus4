@@ -65,7 +65,7 @@ export interface LineWrapperProps<T> {
 
 /** Wrapper de ligne dans une liste. */
 @observer
-export class LineWrapper<T> extends React.Component<LineWrapperProps<T>, void> {
+export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
 
     /** Hauteur de la ligne (en mode ligne, en mosaïque elle est fixée.) */
     @observable private height?: number;

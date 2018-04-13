@@ -31,9 +31,9 @@ export interface InputTimeProps extends InputProps {
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
-export class InputTime extends React.Component<InputTimeProps, void> {
+export class InputTime extends React.Component<InputTimeProps> {
 
-    private clock?: HTMLDivElement;
+    private clock?: HTMLDivElement | null;
     private clockComp?: any;
     private scrollParent!: Element;
 

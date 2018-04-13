@@ -28,7 +28,7 @@ export interface ErrorCenterProps {
 
 /** Centre d'erreurs Javascript, pour afficher toutes les erreurs directement dans l'application. */
 @observer
-export class ErrorCenter extends React.Component<ErrorCenterProps, void> {
+export class ErrorCenter extends React.Component<ErrorCenterProps> {
 
     @observable areErrorsVisible = this.props.areErrorsVisible || false;
     @observable errors = this.props.errors || [];

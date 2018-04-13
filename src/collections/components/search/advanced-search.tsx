@@ -117,7 +117,7 @@ export interface AdvancedSearchProps<T> {
 
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
 @observer
-export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>, void> {
+export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
 
     componentWillMount() {
         const {searchOnMount = true, store} = this.props;

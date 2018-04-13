@@ -53,7 +53,7 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 @observer
-export class Field<T extends FieldEntry, SProps = {}> extends React.Component<FieldOptions<T, SProps> & {field: EntityField<T>}, void> {
+export class Field<T extends FieldEntry, SProps = {}> extends React.Component<FieldOptions<T, SProps> & {field: EntityField<T>}> {
 
     // On récupère le forceErrorDisplay du form depuis le contexte.
     static contextTypes = {form: PropTypes.object};

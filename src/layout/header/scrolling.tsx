@@ -26,7 +26,7 @@ export interface HeaderScrollingProps {
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
 @observer
-export class HeaderScrolling extends React.Component<HeaderScrollingProps, void> {
+export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
 
     static contextTypes = {
         header: PropTypes.object

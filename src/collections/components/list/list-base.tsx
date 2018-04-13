@@ -32,7 +32,7 @@ export interface ListBaseProps<T> {
 }
 
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
-export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P, void> {
+export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P> {
 
     /** Nombre d'éléments affichés. */
     @observable displayedCount = this.props.perPage;

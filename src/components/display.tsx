@@ -26,7 +26,7 @@ export interface DisplayProps {
 
 /** Composant d'affichage par défaut, gère la résolution de la valeur par liste de référence ou par service. */
 @observer
-export class Display extends React.Component<DisplayProps, void> {
+export class Display extends React.Component<DisplayProps> {
 
     @observable value?: any;
 

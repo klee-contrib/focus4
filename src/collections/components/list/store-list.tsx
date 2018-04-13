@@ -78,9 +78,9 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
             .map(({key, data, style}) => ({
                 key,
                 data: {
-                    Component: data.Component,
+                    Component: data!.Component,
                     props: {
-                        ...data.props,
+                        ...data!.props,
                         hasSelection,
                         store
                     }

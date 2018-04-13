@@ -41,7 +41,7 @@ export interface SearchBarProps<T, C extends StoreNode> {
 
 /** Barre de recherche permettant de contrôle le texte et les critères personnalisés de recherche. */
 @observer
-export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>, void> {
+export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>> {
 
     /** L'input HTML. */
     protected input?: HTMLInputElement | null;

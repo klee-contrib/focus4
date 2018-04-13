@@ -38,7 +38,7 @@ export interface ListWrapperProps {
 
 /** Wrapper de liste permettant de partager le mode d'affichage de toutes les listes qu'il contient. */
 @observer
-export class ListWrapper extends React.Component<ListWrapperProps, void> {
+export class ListWrapper extends React.Component<ListWrapperProps> {
 
     // On utilise le contexte React pour partager le mode entre les listes.
     static childContextTypes = {
