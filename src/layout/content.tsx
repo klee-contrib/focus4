@@ -8,7 +8,7 @@ import {LayoutProps, styles} from "./types";
 
 /** Contenu du Layout. */
 @observer
-export class LayoutContent extends React.Component<LayoutProps, void> {
+export class LayoutContent extends React.Component<LayoutProps> {
 
     static contextTypes = {layout: PropTypes.object};
     context!: {

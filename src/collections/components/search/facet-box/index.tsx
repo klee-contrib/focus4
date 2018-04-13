@@ -28,7 +28,7 @@ export interface FacetBoxProps<T> {
 
 /** Composant contenant la liste des facettes retournées par une recherche. */
 @observer
-export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
+export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
 
     render() {
         const {theme, i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store} = this.props;

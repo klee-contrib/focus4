@@ -30,7 +30,7 @@ export interface FacetProps {
 
 /** Composant affichant le détail d'une facette avec ses valeurs. */
 @observer
-export class Facet extends React.Component<FacetProps, void> {
+export class Facet extends React.Component<FacetProps> {
 
     @observable protected isShowAll = false;
 

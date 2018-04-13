@@ -32,7 +32,7 @@ export interface PopinProps {
 
 /** Affiche son contenu dans une popin, dont l'ouverture est contrôlée par ses props. */
 @observer
-export class Popin extends React.Component<PopinProps, void> {
+export class Popin extends React.Component<PopinProps> {
 
     /** ID du timeout d'ouverture/fermeture en cours. */
     private openTimeoutID: any;

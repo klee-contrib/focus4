@@ -32,7 +32,7 @@ interface Notification {
 
 /** Centre de message. Affiche les messages lorsqu'ils sont ajoutés dans le MessageStore. */
 @observer
-export class MessageCenter extends React.Component<MessageCenterProps, void> {
+export class MessageCenter extends React.Component<MessageCenterProps> {
 
     /** Snackbar affichée ou non. */
     @observable active = false;

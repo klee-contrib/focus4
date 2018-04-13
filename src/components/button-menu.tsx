@@ -18,7 +18,7 @@ export interface ButtonMenuProps extends MenuProps {
 
 /** Menu React-Toolbox avec un bouton personnalisable (non icône). */
 @observer
-export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
+export class ButtonMenu extends React.Component<ButtonMenuProps> {
 
     /** Menu ouvert. */
     @observable isOpened = false;

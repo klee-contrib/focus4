@@ -22,7 +22,7 @@ export interface ButtonBackToTopProps {
 
 /** Bouton de retour en haut de page. */
 @observer
-export class ButtonBackToTop extends React.Component<ButtonBackToTopProps, void> {
+export class ButtonBackToTop extends React.Component<ButtonBackToTopProps> {
 
     @observable isVisible = false;
 

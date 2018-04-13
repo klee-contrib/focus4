@@ -19,7 +19,7 @@ export interface InputProps extends RTInputProps {
     mask?: MaskDefinition;
 }
 
-export class Input extends React.Component<InputProps, void> {
+export class Input extends React.Component<InputProps> {
 
     private inputElement!: HTMLInputElement;
     private mask?: InputMask;

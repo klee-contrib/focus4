@@ -24,7 +24,7 @@ export interface MainMenuProps {
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 @observer
-export class MainMenu extends React.Component<MainMenuProps, void> {
+export class MainMenu extends React.Component<MainMenuProps> {
 
     static contextTypes = {
         layout: PropTypes.object

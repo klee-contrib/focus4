@@ -4,7 +4,7 @@ import * as React from "react";
 
 /** Footer du Layout. */
 @observer
-export class LayoutFooter extends React.Component<{}, void> {
+export class LayoutFooter extends React.Component {
 
     static contextTypes = {layout: PropTypes.object};
     context!: {layout: {menuWidth: number}};

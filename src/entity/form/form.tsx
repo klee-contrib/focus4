@@ -22,7 +22,7 @@ export interface FormProps {
 }
 
 /** Composant de formulaire */
-export class Form extends React.Component<FormProps, void> {
+export class Form extends React.Component<FormProps> {
 
     static childContextTypes = {form: PropTypes.object};
     getChildContext() {

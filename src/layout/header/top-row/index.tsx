@@ -20,7 +20,7 @@ export interface HeaderTopRowProps {
 
 /** Barre du haut dans le header. */
 @observer
-export class HeaderTopRow extends React.Component<HeaderTopRowProps, void> {
+export class HeaderTopRow extends React.Component<HeaderTopRowProps> {
 
     static contextTypes = {
         header: PropTypes.object,

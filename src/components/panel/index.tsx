@@ -45,7 +45,7 @@ export interface PanelDescriptor {
 
 /** Construit un Panel avec un titre et des actions. */
 @observer
-export class Panel extends React.Component<PanelProps, void> {
+export class Panel extends React.Component<PanelProps> {
 
     private id!: string;
     @observable private isInForm = false;

@@ -33,7 +33,7 @@ export {default as MainMenu, MainMenuItem} from "./menu";
 /** Composant de Layout sans le provider de style. */
 @themr("layout", styles)
 @observer
-class LayoutBase extends React.Component<LayoutProps, void> {
+class LayoutBase extends React.Component<LayoutProps> {
 
     // On utilise le contexte React pour partager la taille du menu et du header.
     static childContextTypes = {

@@ -41,7 +41,7 @@ export interface ListSummaryProps<T> {
 
 /** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
 @observer
-export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
+export class Summary<T> extends React.Component<ListSummaryProps<T>> {
 
     /** Liste des filtres à afficher. */
     @computed.struct

@@ -15,7 +15,7 @@ export interface HeaderContentProps {
 
 /** Contenu du header. n'est affiché que si le header est déplié. */
 @observer
-export class HeaderContent extends React.Component<HeaderContentProps, void> {
+export class HeaderContent extends React.Component<HeaderContentProps> {
 
     static contextTypes = {layout: PropTypes.object};
     context!: {layout: {menuWidth: number}};

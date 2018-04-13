@@ -65,7 +65,7 @@ export interface ResultsProps<T> {
 
 /** Composants affichant les résultats de recherche, avec affiche par groupe. */
 @observer
-export class Results<T> extends React.Component<ResultsProps<T>, void> {
+export class Results<T> extends React.Component<ResultsProps<T>> {
 
     /** Props communes entre le composant de liste et ceux de groupes. */
     @computed

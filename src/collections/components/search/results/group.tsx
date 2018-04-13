@@ -69,7 +69,7 @@ export interface GroupProps<T> {
 
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
 @observer
-export class Group<T> extends React.Component<GroupProps<T>, void> {
+export class Group<T> extends React.Component<GroupProps<T>> {
 
     @computed
     protected get store(): ListStoreBase<T> {

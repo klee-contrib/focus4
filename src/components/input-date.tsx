@@ -51,9 +51,9 @@ export interface InputDateProps extends InputProps {
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
-export class InputDate extends React.Component<InputDateProps, void> {
+export class InputDate extends React.Component<InputDateProps> {
 
-    private calendar?: HTMLDivElement;
+    private calendar?: HTMLDivElement | null;
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
     private readonly _inputDateId = uniqueId("input-date-");
