@@ -9,7 +9,7 @@ import {Dropdown} from "react-toolbox/lib/dropdown";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "../../../components";
-import {fieldFor, makeField, StoreNode, toFlatValues} from "../../../entity";
+import {Entity, fieldFor, makeField, toFlatValues} from "../../../entity";
 
 import {SearchStore} from "../../store";
 
@@ -18,7 +18,7 @@ import * as styles from "./__style__/search-bar.css";
 export type SearchBarStyle = Partial<typeof styles>;
 
 /** Props de la SearchBar. */
-export interface SearchBarProps<T, C extends StoreNode> {
+export interface SearchBarProps<T, C extends Entity> {
     /** Rendu du composant du critère. */
     criteriaComponent?: React.ReactElement<any>;
     /** Désactive la gestion des critères dans le champ texte. */
@@ -41,7 +41,7 @@ export interface SearchBarProps<T, C extends StoreNode> {
 
 /** Barre de recherche permettant de contrôle le texte et les critères personnalisés de recherche. */
 @observer
-export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>> {
+export class SearchBar<T, C extends Entity> extends React.Component<SearchBarProps<T, C>> {
 
     /** L'input HTML. */
     protected input?: HTMLInputElement | null;

@@ -60,6 +60,5 @@ export default ThemedTimeline;
  * @param props Les props de la timeline.
  */
 export function timelineFor<T>(props: TimelineProps<T>) {
-    const List = ThemedTimeline as any;
-    return <List {...props} />;
+    return <ThemedTimeline {...props} />;
 }

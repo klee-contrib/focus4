@@ -138,6 +138,5 @@ export default Results;
  * @param props Les props du Results.
  */
 export function resultsFor<T>(props: ResultsProps<T>) {
-    const R = Results as any;
-    return <R {...props} />;
+    return <Results {...props} />;
 }

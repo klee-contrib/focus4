@@ -254,6 +254,5 @@ export default ThemedAdvancedSearch;
  * @param props Les props de l'AdvancedSearch.
  */
 export function advancedSearchFor<T>(props: AdvancedSearchProps<T>) {
-    const Search = ThemedAdvancedSearch as any;
-    return <Search {...props} />;
+    return <ThemedAdvancedSearch {...props} />;
 }

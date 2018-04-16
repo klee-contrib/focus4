@@ -165,6 +165,5 @@ export default ThemedGroup;
  * @param props Les props du groupe.
  */
 export function groupFor<T>(props: GroupProps<T>) {
-    const G = ThemedGroup as any;
-    return <G {...props} />;
+    return <ThemedGroup {...props} />;
 }

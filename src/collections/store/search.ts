@@ -27,13 +27,13 @@ export interface SearchProperties {
 }
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T> implements SearchProperties {
+export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<T> implements SearchProperties {
 
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
 
     /** StoreNode contenant les critères personnalisés de recherche. */
-    readonly criteria!: C;
+    readonly criteria!: StoreNode<C>;
     /** Champ sur lequel grouper. */
     @observable groupingKey: string | undefined;
     /** Facettes sélectionnées ({facet: value}) */
@@ -63,21 +63,29 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * @param criteria La description du critère de recherche personnalisé.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      */
-    constructor(service: SearchService<T>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
+    constructor(service: SearchService<T>, criteria?: C, initialQuery?: SearchProperties & {debounceCriteria?: boolean})
     /**
      * Crée un nouveau store de recherche.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      * @param service Le service de recherche.
      * @param criteria La description du critère de recherche personnalisé.
      */
-    constructor(service: SearchService<T>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
-    constructor(service: SearchService<T>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
+    constructor(service: SearchService<T>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: C)
+    constructor(service: SearchService<T>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | C, thirdParam?: SearchProperties & {debounceCriteria?: boolean} | C) {
         super();
         this.service = service;
 
         // On gère les paramètres du constructeur dans les deux ordres.
-        const initialQuery = !Array.isArray(secondParam) && secondParam || !Array.isArray(thirdParam) && thirdParam;
-        const criteria = Array.isArray(secondParam) && secondParam || Array.isArray(thirdParam) && thirdParam;
+        let initialQuery: SearchProperties & {debounceCriteria?: boolean};
+        let criteria;
+
+        if (secondParam && (secondParam as C).name) {
+            criteria = secondParam as C;
+            initialQuery = thirdParam as any;
+        } else {
+            initialQuery = secondParam as any;
+            criteria = thirdParam as C;
+        }
 
         if (initialQuery) {
             this.setProperties(initialQuery);
@@ -85,7 +93,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
         if (criteria) {
-            this.criteria = buildEntityEntry(criteria[1]) as any;
+            this.criteria = buildEntityEntry(criteria);
             addFormProperties(this.criteria, true);
         }
 
