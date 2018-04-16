@@ -23,13 +23,13 @@ export interface FormConfig {
     onToggleEdit?: (edit: boolean) => void;
 }
 
-/** Config de services à fournir au formulaire. */
-export interface ServiceConfig<T> {
-    /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
+/** Config d'actions à fournir au formulaire. */
+export interface ActionConfig<T> {
+    /** Fonction pour récupérer la liste des paramètres pour l'action de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
     getLoadParams?: () => any[] | undefined;
-    /** Service de chargement. */
+    /** Action de chargement. */
     load?: (...args: any[]) => Promise<T>;
-    /** Service de sauvegarde. Obligatoire. */
+    /** Action de sauvegarde. Obligatoire. */
     save: (entity: T) => Promise<T>;
 }
 
@@ -41,7 +41,7 @@ export class FormActions<T extends BaseStoreNode> {
     /** Formulaire en chargement. */
     @observable isLoading = false;
     /** Services. */
-    readonly services: ServiceConfig<NodeToType<T>>;
+    readonly actions: ActionConfig<NodeToType<T>>;
 
     /** Config. */
     private readonly config: FormConfig;
@@ -49,18 +49,18 @@ export class FormActions<T extends BaseStoreNode> {
     private readonly entity: T;
     /** Disposer de la réaction de chargement. */
     private readonly loadDisposer?: Lambda;
-    constructor(formNode: T, services: ServiceConfig<NodeToType<T>>, config?: FormConfig) {
+    constructor(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
         if (!formNode.form) {
             throw new Error("Impossible de créer un formulaire à partir d'un noeud non passé par `makeFormNode`.");
         }
 
         this.entity = formNode;
         this.config = config || {};
-        this.services = services;
+        this.actions = actions;
 
         // On met en place la réaction de chargement.
-        if (services.getLoadParams) {
-            this.loadDisposer = reaction(services.getLoadParams, this.load, {equals: comparer.structural});
+        if (actions.getLoadParams) {
+            this.loadDisposer = reaction(actions.getLoadParams, this.load, {equals: comparer.structural});
         }
     }
 
@@ -100,7 +100,7 @@ export class FormActions<T extends BaseStoreNode> {
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
     @action.bound
     async load() {
-        const {getLoadParams, load} = this.services;
+        const {getLoadParams, load} = this.actions;
 
         if (this.config.clearBeforeInit && isFormNode(this.entity)) {
             this.entity.sourceNode.clear();
@@ -134,7 +134,7 @@ export class FormActions<T extends BaseStoreNode> {
         if (!this.entity.form || this.entity.form.isValid) {
             this.isLoading = true;
             try {
-                const data = await this.services.save(toFlatValues(this.entity));
+                const data = await this.actions.save(toFlatValues(this.entity));
                 runInAction("afterSave", () => {
                     this.isLoading = false;
                     this.entity.form!.isEdit = false;
@@ -175,9 +175,9 @@ export class FormActions<T extends BaseStoreNode> {
 /**
  * Crée un formulaire.
  * @param formNode Le FormNode du formulaire.
- * @param services La config de services pour le formulaire ({getLoadParams, load, save}).
+ * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends BaseStoreNode>(formNode: T, services: ServiceConfig<NodeToType<T>>, config?: FormConfig) {
-    return new FormActions<T>(formNode, services, config);
+export function makeFormActions<T extends BaseStoreNode>(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
+    return new FormActions<T>(formNode, actions, config);
 }
