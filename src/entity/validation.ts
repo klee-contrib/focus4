@@ -11,7 +11,7 @@ export function validateField({$field, value}: EntityField): string | undefined 
     const {isRequired, domain: {validator}} = $field;
 
     // On vérifie que le champ n'est pas vide et obligatoire.
-    if (isRequired && (value as any) !== 0 && !value) {
+    if (isRequired && value !== 0 && !value) {
         return i18next.t("focus.validation.required");
     }
 

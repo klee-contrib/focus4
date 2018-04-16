@@ -92,10 +92,10 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
 
     /** Appelé lors d'un changement sur l'input. */
     @action.bound
-    onChange(value: any) {
+    onChange(value: T["fieldType"]) {
         const {onChange, field: {$field: {domain}}} = this.props;
         if (onChange) {
-            (onChange as any)(domain.unformatter && domain.unformatter(value) || value);
+            onChange(domain.unformatter && domain.unformatter(value) || value);
         }
     }
 
@@ -109,8 +109,8 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
                 labelKey={values && values.$labelKey || "code"}
-                theme={themeable(displayProps.theme || {} as any, theme!.display as any)}
-                value={value as any}
+                theme={themeable(displayProps.theme || {}, theme!.display || {})}
+                value={value}
                 valueKey={values && values.$valueKey || "label"}
                 values={values}
             />
@@ -120,15 +120,15 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {field, values, keyResolver, SelectComponent, theme} = this.props;
-        const {value, error, $field: {name, domain: {InputComponent = Input, inputFormatter = ((x: string) => x), inputProps = {}}}} = field;
+        const {value, error, $field: {name, domain: {InputComponent = Input, inputFormatter = ((x?: string) => x), inputProps = {}}}} = field;
         let props: any = {
             ...inputProps as {},
-            value: inputFormatter(value as any),
+            value: inputFormatter(value),
             error: this.showError && error || undefined,
             name,
             id: name,
             onChange: this.onChange,
-            theme: themeable(inputProps.theme || {} as any, theme!.input as any)
+            theme: themeable(inputProps.theme || {}, theme!.input || {})
         };
 
         if (keyResolver) {

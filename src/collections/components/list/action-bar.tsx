@@ -300,6 +300,5 @@ export default ThemedActionBar;
  * @param props Les props de l'ActionBar.
  */
 export function actionBarFor<T>(props: ActionBarProps<T>) {
-    const AB = ThemedActionBar as any;
-    return <AB {...props} />;
+    return <ThemedActionBar {...props} />;
 }

@@ -112,6 +112,5 @@ export default ThemedStoreList;
  * @param props Les props de la liste.
  */
 export function storeListFor<T>(props: ListProps<T> & StoreListProps<T>) {
-    const List2 = ThemedStoreList as any;
-    return <List2 {...props} />;
+    return <ThemedStoreList {...props} />;
 }

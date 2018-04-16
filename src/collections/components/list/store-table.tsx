@@ -132,6 +132,5 @@ export default ThemedStoreTable;
  * @param props Les props du tableau.
  */
 export function storeTableFor<T>(props: TableProps<T> & StoreTableProps<T>) {
-    const Table2 = ThemedStoreTable as any;
-    return <Table2 {...props} />;
+    return <ThemedStoreTable {...props} />;
 }

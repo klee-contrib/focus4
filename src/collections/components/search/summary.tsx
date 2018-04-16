@@ -53,12 +53,12 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
         // On ajoute la liste des critères.
         if (!hideCriteria) {
             for (const criteriaKey in store.flatCriteria) {
-                const {label, domain} = store.criteria[criteriaKey].$field;
+                const {label, domain} = (store.criteria[criteriaKey] as any).$field;
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
                     key: criteriaKey,
                     label: `${i18next.t(label)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
-                    onDeleteClick: () => { store.criteria[criteriaKey].value = undefined; }
+                    onDeleteClick: () => { (store.criteria[criteriaKey] as any).value = undefined; }
                 });
             }
         }
