@@ -5,9 +5,8 @@ import {PanelProps} from "../../components";
 import {messageStore} from "../../message";
 
 import {toFlatValues} from "../store";
-import {BaseStoreNode, NodeToType} from "../types";
+import {FormNode, isFormNode, NodeToType} from "../types";
 import {FormProps} from "./form";
-import {isFormNode} from "./node";
 
 /** Configuration additionnelle du formulaire.. */
 export interface FormConfig {
@@ -34,7 +33,7 @@ export interface ActionConfig<T> {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export class FormActions<T extends BaseStoreNode> {
+export class FormActions<T extends FormNode> {
 
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
@@ -50,10 +49,6 @@ export class FormActions<T extends BaseStoreNode> {
     /** Disposer de la réaction de chargement. */
     private readonly loadDisposer?: Lambda;
     constructor(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
-        if (!formNode.form) {
-            throw new Error("Impossible de créer un formulaire à partir d'un noeud non passé par `makeFormNode`.");
-        }
-
         this.entity = formNode;
         this.config = config || {};
         this.actions = actions;
@@ -79,7 +74,7 @@ export class FormActions<T extends BaseStoreNode> {
     @computed.struct
     get panelProps(): PanelProps {
         return {
-            editing: this.entity.form!.isEdit,
+            editing: this.entity.form.isEdit,
             loading: this.isLoading,
             save: this.save,
             toggleEdit: this.toggleEdit,
@@ -92,9 +87,7 @@ export class FormActions<T extends BaseStoreNode> {
         if (this.loadDisposer) {
             this.loadDisposer();
         }
-        if (isFormNode(this.entity)) {
-            this.entity.unsubscribe();
-        }
+        this.entity.stopSync();
     }
 
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
@@ -102,20 +95,20 @@ export class FormActions<T extends BaseStoreNode> {
     async load() {
         const {getLoadParams, load} = this.actions;
 
-        if (this.config.clearBeforeInit && isFormNode(this.entity)) {
+        if (this.config.clearBeforeInit) {
             this.entity.sourceNode.clear();
         }
 
         // On n'effectue le chargement que si on a un service de chargement et des paramètres pour le service.
         // Aussi, un formulaire sur un sous-node ne peut pas gérer de chargement.
-        if (getLoadParams && load && isFormNode(this.entity)) {
+        if (getLoadParams && load) {
             const params = getLoadParams();
             if (params) {
                 this.isLoading = true;
                 this.entity.sourceNode.clear();
                 const data = await load(...params);
                 runInAction("afterLoad", () => {
-                    (this.entity as any).sourceNode.set(data);
+                    this.entity.sourceNode.set(data);
                     this.isLoading = false;
                 });
 
@@ -178,6 +171,6 @@ export class FormActions<T extends BaseStoreNode> {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends BaseStoreNode>(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
+export function makeFormActions<T extends FormNode>(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
     return new FormActions<T>(formNode, actions, config);
 }

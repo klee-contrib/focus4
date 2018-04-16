@@ -10,7 +10,7 @@ import {Display, Input, Label} from "../../components";
 import {ReactComponent} from "../../config";
 import {ReferenceList} from "../../reference";
 
-import {EntityField, FieldEntry} from "../types";
+import {EntityField, FieldEntry, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -64,7 +64,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     private valueElement?: Element;
     /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
     @observable
-    private hideErrorOnInit = this.props.field.isEdit && !this.props.field.value;
+    private hideErrorOnInit = (this.props.field as FormEntityField<T>).isEdit && !this.props.field.value;
 
     /** Détermine si on affiche l'erreur ou pas. En plus des surcharges du form et du field lui-même, l'erreur est masquée si le champ est en cours de saisie. */
     @computed
@@ -120,7 +120,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {field, values, keyResolver, SelectComponent, theme} = this.props;
-        const {value, error, $field: {name, domain: {InputComponent = Input, inputFormatter = ((x?: string) => x), inputProps = {}}}} = field;
+        const {value, error, $field: {name, domain: {InputComponent = Input, inputFormatter = ((x?: string) => x), inputProps = {}}}} = field as FormEntityField<T>;
         let props: any = {
             ...inputProps as {},
             value: inputFormatter(value),
@@ -152,7 +152,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     render() {
         const {disableInlineSizing, hasLabel = true, labelRatio = 33, field, showTooltip, i18nPrefix = "focus", theme} = this.props;
         const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
-        const {error, isEdit, $field: {comment, label, isRequired, domain: {className = "", LabelComponent = Label}}} = field;
+        const {error, isEdit, $field: {comment, label, isRequired, domain: {className = "", LabelComponent = Label}}} = field as FormEntityField<T>;
         return (
             <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${isEdit && error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
                 {hasLabel ?

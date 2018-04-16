@@ -102,12 +102,6 @@ export interface EntityField<F extends FieldEntry = FieldEntry<StoreType, InputP
     /** Métadonnées. */
     readonly $field: F;
 
-    /** Erreur de validation du champ (FormNode uniquement). */
-    readonly error?: string | undefined;
-
-    /** Précise si le champ associé est en édition ou non. */
-    isEdit?: boolean;
-
     /** Valeur. */
     value: F["fieldType"] | undefined;
 }

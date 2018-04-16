@@ -219,17 +219,11 @@ test("FormNode: Création", t => {
     t.equal(formNode.structure.nom.value, "yolo", "Champ composite via set local: le FormNode a bien été réinitialisé.");
     t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le StoreNode est bien toujours identique.");
 
-    t.comment("FormNode: unsubscribe");
-    formNode.unsubscribe();
+    t.comment("FormNode: stopSync");
+    formNode.stopSync();
     entry.montant.value = 2;
 
     t.equal(formNode.montant.value, 1000, "Le FormNode n'a pas été mis à jour.");
-
-    t.comment("FormNode: subscribe");
-    formNode.subscribe();
-    entry.montant.value = 5;
-
-    t.equal(formNode.montant.value, 5, "Le FormNode a bien été mis à jour.");
 
     t.end();
 });

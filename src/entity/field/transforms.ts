@@ -55,7 +55,7 @@ export function makeField<
     ) as EntityField;
 
     if (isEdit !== undefined) {
-        field.isEdit = isEdit;
+        (field as any).isEdit = isEdit;
     }
 
     return field;
@@ -109,7 +109,7 @@ export function patchField<
     }
 
     if (isEdit !== undefined) {
-        field.isEdit = isEdit as any;
+        (field as any).isEdit = isEdit;
     }
 }
 

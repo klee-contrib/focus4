@@ -1,7 +1,7 @@
 import {isBoolean, isFunction, values} from "lodash";
 import {extendObservable, observable} from "mobx";
 
-import {BaseStoreNode, EntityField, isEntityField, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
+import {BaseStoreNode, EntityField, FormEntityField, FormNode, isEntityField, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
 import {validateField} from "../validation";
 
 /**
@@ -9,17 +9,19 @@ import {validateField} from "../validation";
  * @param data Le StoreNode ou l'EntityField.
  * @param parentNodeOrEditing Node parent, (l'état initial ou la condition) d'édition.
  */
-export function addFormProperties(data: BaseStoreNode, parentNodeOrEditing: BaseStoreNode | boolean | (() => boolean)) {
+export function addFormProperties(data: BaseStoreNode, parentNodeOrEditing: FormNode | boolean | (() => boolean)) {
     const {$tempEdit} = data;
     if ($tempEdit) {
         delete data.$tempEdit;
     }
 
-    (data as any).form = observable({
+    const formData = data as FormNode<BaseStoreNode>;
+
+    (formData as any).form = observable({
         _isEdit: (isBoolean(parentNodeOrEditing) ? parentNodeOrEditing : true) && (isBoolean($tempEdit) ? $tempEdit : true),
         get isEdit() {
             return this._isEdit
-                && (isStoreNode(parentNodeOrEditing) ? parentNodeOrEditing.form!.isEdit : true)
+                && (isStoreNode(parentNodeOrEditing) ? (parentNodeOrEditing as FormNode<StoreNode>).form.isEdit : true)
                 && (isFunction(parentNodeOrEditing) ? parentNodeOrEditing() : true)
                 && (isFunction($tempEdit) ? $tempEdit() : true);
         },
@@ -28,30 +30,30 @@ export function addFormProperties(data: BaseStoreNode, parentNodeOrEditing: Base
         }
     });
 
-    if (isStoreListNode(data)) {
-        data.forEach(i => addFormProperties(i, data));
-        extendObservable(data.form!, {
+    if (isStoreListNode(formData)) {
+        formData.forEach(i => addFormProperties(i, formData));
+        extendObservable(formData.form, {
             get isValid() {
-                return !data.form!.isEdit || (data as StoreListNode).every(node => !node.form || node.form.isValid);
+                return !formData.form.isEdit || (data as StoreListNode).every(node => !node.form || node.form.isValid);
             }
         });
     } else {
-        for (const entry in data) {
-            const child: {} = (data as any)[entry];
+        for (const entry in formData) {
+            const child: {} = (formData as any)[entry];
             if (isEntityField(child)) {
-                addFormFieldProperties(child, data);
+                addFormFieldProperties(child, formData);
             } else if (isStoreNode(child)) {
-                addFormProperties(child, isBoolean(parentNodeOrEditing) ? data : parentNodeOrEditing);
+                addFormProperties(child, isBoolean(parentNodeOrEditing) ? formData : parentNodeOrEditing);
             }
         }
-        extendObservable(data.form!, {
+        extendObservable(formData.form, {
             get isValid() {
-                return !data.form!.isEdit || values(data)
+                return formData.form.isEdit || values(formData)
                     .every(item => {
                         if (isEntityField(item)) {
-                            return !item.isEdit || !item.error;
+                            return !(item as FormEntityField).isEdit || !(item as FormEntityField).error;
                         } else if (isStoreNode(item)) {
-                            return !item.form || item.form.isValid;
+                            return !item.form || (item as FormNode<StoreNode>).form.isValid;
                         } else {
                             return true;
                         }
@@ -71,9 +73,9 @@ export function patchNodeEdit(node: StoreNode, isEdit: boolean | (() => boolean)
 }
 
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
-export function addFormFieldProperties(field: EntityField, parentNode: BaseStoreNode) {
-    const {isEdit} = field;
-    delete field.isEdit;
+export function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
+    const {isEdit} = field as FormEntityField;
+    delete (field as FormEntityField).isEdit;
     extendObservable(field, {
         _isEdit: isBoolean(isEdit) ? isEdit : true,
         get error() {
