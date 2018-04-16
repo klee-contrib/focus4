@@ -92,7 +92,7 @@ export type EntityToType<T extends Entity> = {
     [P in keyof T["fields"]]?:
         T["fields"][P] extends FieldEntry ? T["fields"][P]["fieldType"]
         : T["fields"][P] extends ObjectEntry<infer U> ? EntityToType<U>
-        : T["fields"][P] extends ListEntry<infer U> ? EntityToType<U>[]
+        : T["fields"][P] extends ListEntry<infer V> ? EntityToType<V>[]
         : never
 };
 

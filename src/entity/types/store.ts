@@ -17,19 +17,19 @@ export type EntityToNode<T extends Entity> = {
     [P in keyof T["fields"]]:
         T["fields"][P] extends FieldEntry ? EntityField<T["fields"][P]>
         : T["fields"][P] extends ObjectEntry<infer U> ? StoreNode<U>
-        : T["fields"][P] extends ListEntry<infer U> ? StoreListNode<U>
+        : T["fields"][P] extends ListEntry<infer V> ? StoreListNode<V>
         : never
 };
 
 /** Génère l'objet JS "normal" équivalent à un noeud de store. */
 export type NodeToType<T> =
     T extends StoreListNode<infer U> ? EntityToType<U>[]
-    : T extends StoreNode<infer U> ? EntityToType<U>
+    : T extends StoreNode<infer V> ? EntityToType<V>
     : {
         [P in keyof T]?:
-            T[P] extends EntityField<infer V> ? V["fieldType"]
-            : T[P] extends StoreNode<infer V> ? EntityToType<V>
-            : T[P] extends StoreListNode<infer V> ? EntityToType<V>[]
+            T[P] extends EntityField<infer W> ? W["fieldType"]
+            : T[P] extends StoreNode<infer X> ? EntityToType<X>
+            : T[P] extends StoreListNode<infer Y> ? EntityToType<Y>[]
             : T[P]
     };
 
