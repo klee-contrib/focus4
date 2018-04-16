@@ -196,55 +196,105 @@ const formNode = makeFormNode(mainStore.structure, entity => {
 ```
 
 
-## Les actions de formulaires : `FormActions`
-TODO
+### Les actions de formulaires : `FormActions`
+Une fois le `FormNode` créé, on aura besoin d'un deuxième objet pour gérer le cycle de vie du formulaire : un `FormActions`.
 
-## Les composants de formulaire : `<Form>` (et `<Panel>`)
-TODO
+Il se crée à partir d'un `FormNode` via la fonction **`makeFormActions`**. Ses paramètres sont :
+- `formNode`, le `FormNode` sur lequel les actions vont intéragir. Il est possible de passer ici un sous-noeud, mais ce dernier n'ayant pas accès au noeud d'origine, certaines fonctionalités ne seront pas disponbiles.
+* `actions`, qui est un objet contenant essentiellement les services de **`load`** et de **`save`**. L'action de `load` n'est pas obligatoire (par exemple : formulaire de création), mais par contre le `save` l'est bien (sinon, ce ne serait pas un formulaire).
+- `config?`, un objet de configuration additionel qui permet notamment de placer des `hooks` après le chargement, la sauvegarde ou le changement d'état.
 
-## AutoForm (OBSOLETE, A METTRE A JOUR ASAP)
-### Configuration
-* `serviceConfig`, qui est un objet contenant **les services** de `load` et de `save` (les actions n'existant plus en tant que telles, on saute l'étape), ainsi que la fonction `getLoadParams()` qui doit retourner les paramètres du `load`. Cette fonction sera appelée pendant `componentWillMount` puis une réaction MobX sera construite sur cette fonction : à chaque fois qu'une des observables utilisées dans la fonction est modifiée et que la valeur retournée à structurellement changée, le formulaire sera rechargé. Cela permet de synchroniser le formulaire sur une autre observable (en particulier un `ViewStore`) et de ne pas avoir à passer par une prop pour charger le formulaire. Rien n'empêche par contre de définir `getLoadParams` comme `() => [this.props.id]` et par conséquent de ne pas bénéficier de la réaction. C'est une moins bonne solution.
-* `options?`, un objet qui contient des options de configuration secondaires.
+#### Chargement des données
+En plus du service de chargement, pour pouvoir charger des données il est aussi nécessaire de renseigner la fonction `getLoadParams()` dans `actions`. Cette fonction est un getter qui doit renvoyer un array de paramètres qui sera utilisé à l'appel de `load`. Si `getLoadParams()` ne renvoie rien (`undefined`), alors l'action ne sera pas appelée. Si `getLoadParams()` renvoie un array vide, alors l'action sera appelée sans paramètres.
 
-L'appel de `load()` va appeler le service et mettre le résultat dans le store, qui via la réaction mettra à jour `this.entity`.
+`getLoadParams` sera utilisé comme une dérivation MobX, dont chaque changement (en plus de l'éventuel appel initial) lancera l'action de `load` en réaction. Cela permet de synchroniser le formulaire sur une autre observable (en particulier un `ViewStore`) et de ne pas avoir à passer par une prop (dont il faudrait gérer manuellement la modification) pour (re)charger le formulaire. Rien n'empêche par contre de définir `getLoadParams` comme `() => [this.props.id]`, mais c'est moins direct que d'utiliser directement l'état concerné. Par conséquent, cela veut dire que tout formulaire (et même écran en général) à usage unique n'a en général pas besoin de props.
 
-L'appel de `save()` sur le formulaire va appeler le service avec la valeur courante de `this.entity` et récupérer le résultat dans le store, qui via la réaction mettra à jour `this.entity`.
+#### Méthodes de `FormActions`
+`FormActions` expose principalement trois méthodes, qui permettent d'appeler les actions que l'on a enregistrées :
+- `load()`, qui si `formNode` est un "vrai" `FormNode`, appelle l'action de `actions.load` avec les paramètres de `actions.getLoadParams` si les deux sont renseignés, et met à jour le noeud origine de `formNode` (et donc `formNode` également).
+- `save()`, qui appelle l'action de `actions.save` à partir de l'état actuellement stocké dans `formNode`. Si `formNode` est un "vrai" `FormNode`, alors le résultat de l'action de sauvegarde sera enregistré dans le noeud origine de `formNode` (et donc `formNode` également).
+- `toggleEdit(edit)`, qui met à jour l'état d'édition général du `formNode`. Si `edit === false` et `formNode` est un "vrai" `FormNode`, alors `formNode` sera réinitialisé sur l'état du noeud origine.
 
-L'appel de `cancel()` sur le formulaire appelle simplement `this.entity.reset()`.
+On voit ici qu'utiliser un sous-node pour `FormActions` est un pratique assez limité. La fonctionnalité existe parce qu'elle ne demandait quasiment aucun temps de développement en plus et qu'elle peut avoir son utilité, en particulier dans des écrans avec plusieurs blocs dont la création est unifiée mais la modification se fait par bloc. Néanmoins, si les limitations de `load` et de `save` ne sont pas gênantes, celle de `toggleEdit` rend probablement la fonctionnalité peu pratique à utiliser. Une évolution future pourrait être de réussir à répéter les propriétés additionelles de `FormNode` (`reset`, `sourceNode`) sur tous les noeuds. Ca serait bien ouais :)
 
-Il est important de noter que puisque les valeurs de stores sont toutes stockées dans un objet `{$field, value}`, copier cette objet puis modifier `value` va modifier la valeur initiale. C'est très pratique lorsque le contenu du store ne correspond pas à ce qu'on veut afficher, puisqu'il n'y a pas besoin de se soucier de mettre à jour le store lorsque l'on modifier sa transformée. `createFormNode` construit une copie profonde du store, ce qui veut dire que ceci ne s'applique pas de `this.entity` vers `storeData` (heureusement !).
+#### Exemples
+Premier exemple : formulaire classique d'édition
+```ts
+actions = makeFormActions(this.entity, { // this.entity est un `formNode` préalablement créé
+    getLoadParams: () => homeViewStore.withView(({page, id}) => !page && id && [+id]),
+    load: loadStructure,
+    save: saveStructure
+});
+```
 
-### Autres fonctionnalités
- De même, l'état `isLoading` est porté par le formulaire.
-* Le formulaire possède également des méthodes à surcharger `onFormLoaded`, `onFormSaved` et `onFormDeleted` pour placer des actions après ces évènements.
+Deuxième exemple : formulaire de création avec des options
+```ts
+actions = makeFormActions(
+    this.entity,
+    {save: async x  => { mainStore.suivi.evenementList.pushNode(x); return x; }},
+    {
+        clearBeforeInit: true,
+        onFormSaved: () => this.props.close(),
+        onToggleEdit: edit => !edit && this.props.close()
+    }
+);
+```
 
-### Exemple de formulaire (issu du starter kit)
+### Les composants de formulaire : `<Form>` (et `<Panel>`)
+Une fois que l'on a le `formNode` (que l'on stocke habituellement dans `this.entity` dans un composant React) et son objet d'actions associé (que l'on stocke habituellement dans `this.actions`), on peut enfin les utiliser dans un composant de formulaire.
 
+#### `<Form>`
+`Form` est un composant qui sert à poser le formulaire dans un composant React. Il utilise l'objet d'actions dans son cycle de vie (en particulier, il appelle `load` pendant son `componentWillMount`) et peut poser un formulaire HTML dont l'action est le `save`.
+
+La propriété `formProps` de `FormActions` contient toutes les props nécessaires au `Form`, donc en pratique son utilisation est très simple :
 ```tsx
-import {AutoForm, i18n, observer, Panel, React} from "focus4";
+render() {
+    return (
+        <Form {...this.actions.formProps}>
+            {/* blablabla */}
+        </Form>
+    );
+}
+```
+Sa seule prop additionnelle est `hasForm` (par défaut à true), qui indique s'il doit poser le formulaire HTML ou non.
 
-import {StructureNode} from "../../model/main/structure";
-import {loadStructure, saveStructure} from "../../services/main";
-import {mainStore} from "../../stores/main";
-import {referenceStore} from "../../stores/reference";
+#### `<Panel>`
+C'est un composant qui permet de poser un panel avec un titre et des boutons d'actions. Il n'est pas spécialement lié aux formulaires (il se trouve dans le module `components`), mais en pratique il est quasiment toujours utilisé avec.
+
+Comme pour `<Form>`, `FormActions` expose `actions.panelProps`, qui contient les méthodes et les états nécessaires à son fonctionnements.
+
+#### Champs
+Une fois qu'on a fait tout ça, on peut utiliser directement `fieldFor` et consorts sur les champs du `formNode`, sans aucune (autre) différences.
+
+### Exemple complet de formulaire simple
+```tsx
+import {fieldFor, Form, makeFormActions, makeFormNode, observer, Panel, React, selectFor} from "focus4";
+
+import {loadStructure, saveStructure} from "../../../services/main";
+import {homeViewStore, mainStore, referenceStore} from "../../../stores";
 
 @observer
-export class Form extends AutoForm<{}, StructureNode> {
+export class BasicForm extends React.Component<{}, void> {
 
-    init() {
-        this.formInit(mainStore.structure, {getLoadParams: () => [], load: loadStructure, save: saveStructure});
-    }
+    entity = makeFormNode(mainStore.structure);
+    actions = makeFormActions(this.entity, {
+        getLoadParams: () => homeViewStore.withView(({page, id}) => !page && id && [+id]),
+        load: loadStructure,
+        save: saveStructure
+    });
 
-    renderContent() {
-        const {denominationSociale, capitalSocial, statutJuridiqueCode} = this.entity;
+    render() {
+        const {denominationSociale, capitalSocial, statutJuridiqueCode, adresse} = this.entity;
         return (
-            <Panel title="form.title" {...this.getPanelButtonProps()}>
-                {i18next.t("form.content")}
-                {this.fieldFor(denominationSociale)}
-                {this.fieldFor(capitalSocial)}
-                {this.selectFor(statutJuridiqueCode, referenceStore.statutJuridique, {labelKey: "libelle"})}
-            </Panel>
+            <Form {...this.actions.formProps}>
+                <Panel title="form.title" {...this.actions.panelProps}>
+                    {fieldFor(denominationSociale)}
+                    {fieldFor(capitalSocial)}
+                    {selectFor(statutJuridiqueCode, referenceStore.statutJuridique)}
+                    {fieldFor(adresse.codePostal)}
+                    {fieldFor(adresse.ville)}
+                </Panel>
+            </Form>
         );
     }
 }
