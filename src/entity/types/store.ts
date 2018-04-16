@@ -6,8 +6,6 @@ export interface BaseStoreNode<T = any> {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
-    /** Données liée à un FormNode. */
-    readonly form?: FormData;
     /** Renseigne les valeurs du noeud à partir des champs fournis. */
     set(config: T): void;
 }
@@ -40,7 +38,7 @@ export type StoreNode<T extends Entity = any> = EntityToNode<T> & BaseStoreNode<
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<T extends Entity = any, U = {}> extends IObservableArray<StoreNode<T> & U>, BaseStoreNode<(EntityToType<T> & NodeToType<U>)[]> {
+export interface StoreListNode<T extends Entity = any, U = any> extends IObservableArray<StoreNode<T> & U>, BaseStoreNode<(EntityToType<T> & NodeToType<U>)[]> {
     /** Métadonnées. */
     readonly $entity: T;
     /** @internal */
@@ -50,34 +48,4 @@ export interface StoreListNode<T extends Entity = any, U = {}> extends IObservab
     $transform?: (source: StoreNode<T>) => U | void;
     /** Ajoute un élément à la liste. */
     pushNode(item: EntityToType<T> & NodeToType<U>): void;
-}
-
-/** Objet ajouté sur un FormNode. */
-export interface FormData {
-    /** Précise si le formulaire associé est en édition ou non. */
-    isEdit: boolean;
-    /** Précise si le noeud est valide (FormNode uniquement). */
-    readonly isValid: boolean;
-}
-
-/** Champs additionnels pour un noeud de formulaire. */
-export interface FormNode<T extends BaseStoreNode = any> {
-    /** Données liée à un FormNode. */
-    readonly form: FormData;
-
-    /** @internal */
-    /** Précise l'état de la synchronisation entre le StoreNode et le FormNode. */
-    isSubscribed: boolean;
-
-    /** Réinitialise le FormNode à partir du StoreNode. */
-    reset(): void;
-
-    /** StoreNode original. */
-    sourceNode: T;
-
-    /** Active la synchronisation StoreNode -> FormNode. La fonction est appelée à la création. */
-    subscribe(): void;
-
-    /** Désactive la synchronisation StoreNode -> FormNode. */
-    unsubscribe(): void;
 }

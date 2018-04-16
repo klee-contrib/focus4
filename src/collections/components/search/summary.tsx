@@ -8,6 +8,8 @@ import {Button} from "react-toolbox/lib/button";
 import {Chip} from "react-toolbox/lib/chip";
 
 import {getIcon} from "../../../components";
+import {FormEntityField} from "../../../entity";
+
 import {SearchStore} from "../../store";
 import {removeFacetValue} from "./facet-box";
 
@@ -51,14 +53,14 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
         const topicList: {key: string, label: string, onDeleteClick: () => void}[] = [];
 
         // On ajoute la liste des critères.
-        if (!hideCriteria) {
+        if (!hideCriteria && store.criteria) {
             for (const criteriaKey in store.flatCriteria) {
-                const {label, domain} = (store.criteria[criteriaKey] as any).$field;
+                const {label, domain} = (store.criteria[criteriaKey] as FormEntityField).$field;
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
                     key: criteriaKey,
                     label: `${i18next.t(label)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
-                    onDeleteClick: () => { (store.criteria[criteriaKey] as any).value = undefined; }
+                    onDeleteClick: () => { (store.criteria![criteriaKey] as FormEntityField).value = undefined; }
                 });
             }
         }

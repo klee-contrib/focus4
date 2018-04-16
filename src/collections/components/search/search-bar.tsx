@@ -9,7 +9,7 @@ import {Dropdown} from "react-toolbox/lib/dropdown";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "../../../components";
-import {Entity, fieldFor, makeField, toFlatValues} from "../../../entity";
+import {Entity, fieldFor, FormEntityField, makeField, toFlatValues} from "../../../entity";
 
 import {SearchStore} from "../../store";
 
@@ -134,7 +134,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                 const [crit = "", value = ""] = token && token.split(/:(.+)/) || [];
                 // Si le token est de la bonne forme et que le critère existe, alors on l'enregistre.
                 if (crit && value && (store.criteria as any)[crit] && !this.criteriaList.find(u => u === crit)) {
-                    (store.criteria as any)[crit].value = value;
+                    ((store.criteria as any)[crit] as FormEntityField).value = value;
                     skip++;
                     this.criteriaList.push(crit);
                     token = tokens[skip];
@@ -145,7 +145,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
 
             // On force tous les critères sont trouvés à undefined.
             difference(Object.keys(toFlatValues(store.criteria)), this.criteriaList)
-                .forEach(crit => (store.criteria as any)[crit].value = undefined);
+                .forEach(crit => ((store.criteria as any)[crit] as FormEntityField).value = undefined);
 
             // Et on reconstruit le reste de la query avec ce qu'il reste.
             store.query = `${tokens.slice(skip)
@@ -165,7 +165,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                 sortAsc: true,
                 sortBy: undefined
             });
-            (store.criteria[scopeKey] as any).value = scope;
+            ((store.criteria as any)[scopeKey] as FormEntityField).value = scope;
         }
     }
 
@@ -195,7 +195,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                     {scopes && store.criteria && scopeKey ?
                         <Dropdown
                             onChange={this.onScopeSelection}
-                            value={(store.criteria[scopeKey] as any).value}
+                            value={((store.criteria as any)[scopeKey] as FormEntityField).value as string | number}
                             source={[{value: undefined, label: ""}, ...scopes.map(({code, label}) => ({value: code, label}))]}
                             theme={{dropdown: theme!.dropdown, values: theme!.scopes, valueKey: ""}}
                         />

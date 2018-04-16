@@ -2,7 +2,7 @@ import {isArray, isObject, isUndefined, mapValues, omitBy} from "lodash";
 import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
 import {addFormProperties} from "./form";
-import {BaseStoreNode, Entity, EntityToType, FieldEntry, isStoreListNode, isStoreNode, ListEntry, NodeToType, ObjectEntry, StoreListNode, StoreNode} from "./types";
+import {BaseStoreNode, Entity, EntityToType, FieldEntry, FormNode, isStoreListNode, isStoreNode, ListEntry, NodeToType, ObjectEntry, StoreListNode, StoreNode} from "./types";
 
 /** Récupère les noeuds de store associés aux entités définies dans T. */
 export type ExtractEntities<T> = {
@@ -85,7 +85,7 @@ export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T
                 Object.assign(itemNode, this.$transform(itemNode) || {});
             }
             if (this.$isFormNode) {
-                addFormProperties(itemNode, outputEntry);
+                addFormProperties(itemNode, outputEntry as any);
             }
             itemNode.set(item);
             this.push(itemNode);
@@ -128,7 +128,7 @@ export function setEntityEntry<T extends Entity>(entity: StoreNode<T> | StoreLis
                 Object.assign(newNode, entity.$transform(newNode) || {});
             }
             if (entity.$isFormNode) {
-                addFormProperties(newNode, entity);
+                addFormProperties(newNode, entity as any);
             }
             return newNode;
         }));
@@ -210,4 +210,12 @@ export function toFlatValues<T>(storeNode: T): NodeToType<T> {
             }
         }), isUndefined) as any;
     }
+}
+
+/** Construit la méthode `reset` pour un `FormNode`. */
+export function makeResetMethod(formNode: FormNode) {
+    return () => {
+        (formNode as any).clear();
+        (formNode as any).set(toFlatValues(formNode.source));
+    };
 }

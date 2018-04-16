@@ -1,7 +1,7 @@
-import {action, autorun, extendObservable, observable, untracked} from "mobx";
+import {action, autorun, extendObservable, observable} from "mobx";
 
 import {toFlatValues} from "../store";
-import {Entity, FormNode, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
+import {Entity, FormNode, isEntityField, isFormNode, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
 import {addFormProperties} from "./properties";
 
 /**
@@ -12,10 +12,10 @@ import {addFormProperties} from "./properties";
  * @param transform La fonction de transformation
  * @param isEdit L'état initial ou la condition d'édition.
  */
-export function makeFormNode<T extends Entity, U = {}>(node: StoreListNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreListNode<T, U> & FormNode<StoreListNode<T>>;
-export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): StoreNode<T> & U & FormNode<StoreNode<T>>;
+export function makeFormNode<T extends Entity, U = {}>(node: StoreListNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): FormNode<StoreListNode<T, U>>;
+export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): FormNode<StoreNode<T> & U>;
 export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T> | StoreListNode<T>, transform: (source: StoreNode<T>) => U = _ => ({}) as U, isEdit: boolean | (() => boolean) = false) {
-    if (node.form) {
+    if (isFormNode(node)) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
 
@@ -26,34 +26,21 @@ export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T> | Stor
         Object.assign(formNode, transform(formNode) || {});
     }
 
-    // On ajoute les `isEdit` et les champs dérivés pour les erreurs.
-    addFormProperties(formNode, isEdit);
-
     // La fonction `reset` va simplement vider et reremplir le FormNode avec les valeurs du StoreNode.
     const reset = () => {
-        untracked(() => formNode.clear());
+        formNode.clear();
         formNode.set(toFlatValues(formNode.sourceNode));
     };
 
     formNode.sourceNode = node;
     formNode.reset = action("resetEntity", reset);
-    formNode.subscribe = () => {
-        if (!formNode.isSubscribed) {
-            const disposer = autorun(reset); // On crée la réaction de synchronisation.
-            formNode.unsubscribe = () => {
-                disposer();
-                formNode.isSubscribed = false;
-            };
-            formNode.isSubscribed = true;
-        }
-    };
 
-    formNode.subscribe(); // On s'abonne par défaut, puisque c'est à priori le comportement souhaité la plupart du temps.
+    // On ajoute les `isEdit` et les champs dérivés pour les erreurs.
+    addFormProperties(formNode, isEdit);
+
+    const disposer = autorun(reset);
+    formNode.stopSync = disposer;
     return formNode;
-}
-
-export function isFormNode(node: any): node is FormNode {
-    return !!(node as FormNode).reset;
 }
 
 /** Clone un StoreNode */
@@ -86,7 +73,7 @@ function clone(source: any): any {
             (res as any)[key] = clone((source as any)[key]);
         }
         return res;
-    } else if (source.$field) {
+    } else if (isEntityField(source)) {
         return extendObservable({
             $field: source.$field
         }, {

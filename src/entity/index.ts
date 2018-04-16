@@ -3,4 +3,4 @@ export {fieldFor, fromField, makeField, patchField, selectFor, stringFor} from "
 export {ActionConfig, addFormProperties, Form, FormStyle, makeFormActions, makeFormNode, patchNodeEdit} from "./form";
 export {formatNumber} from "./formatter";
 export {buildEntityEntry, makeEntityStore, toFlatValues} from "./store";
-export {Domain, Entity, EntityField, EntityToType, FieldEntry, FormNode, ListEntry, ObjectEntry, StoreListNode, StoreNode} from "./types";
+export {Domain, Entity, EntityField, EntityToType, FieldEntry, FormEntityField, FormNode, ListEntry, ObjectEntry, StoreListNode, StoreNode} from "./types";
