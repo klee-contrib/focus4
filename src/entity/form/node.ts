@@ -1,8 +1,7 @@
-import {action, autorun, extendObservable, observable} from "mobx";
+import {extendObservable, observable} from "mobx";
 
-import {toFlatValues} from "../store";
+import {addFormProperties} from "../store";
 import {Entity, FormNode, isEntityField, isFormNode, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
-import {addFormProperties} from "./properties";
 
 /**
  * Construit un FormNode à partir d'un StoreNode.
@@ -26,20 +25,8 @@ export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T> | Stor
         Object.assign(formNode, transform(formNode) || {});
     }
 
-    // La fonction `reset` va simplement vider et reremplir le FormNode avec les valeurs du StoreNode.
-    const reset = () => {
-        formNode.clear();
-        formNode.set(toFlatValues(formNode.sourceNode));
-    };
+    addFormProperties(formNode, node, isEdit);
 
-    formNode.sourceNode = node;
-    formNode.reset = action("resetEntity", reset);
-
-    // On ajoute les `isEdit` et les champs dérivés pour les erreurs.
-    addFormProperties(formNode, isEdit);
-
-    const disposer = autorun(reset);
-    formNode.stopSync = disposer;
     return formNode;
 }
 

@@ -94,7 +94,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
         // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
         if (criteria) {
             this.criteria = buildEntityEntry(criteria) as any;
-            addFormProperties(this.criteria!, true);
+            addFormProperties(this.criteria!, this.criteria!, true);
         }
 
         // Relance la recherche à chaque modification de propriété.

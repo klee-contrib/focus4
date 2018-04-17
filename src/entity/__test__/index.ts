@@ -179,12 +179,17 @@ test("FormNode: Création", t => {
     t.deepEqual(formNode2.ligneList.$entity, entry2.ligneList.$entity, "Une sous liste a bien toujours son entité attachée.");
     t.assert(!isObservable(formNode2.ligneList.$entity), "Le champ '$entity' d'une sous liste n'est bien pas observable");
     t.assert(formNode2.ligneList.set, "Une sous liste a bien toujours sa méthode 'set' attachée");
+    t.deepEqual(entry, formNode.sourceNode, "Le sourceNode racine est bien le bon.");
+    t.deepEqual(entry.structure, formNode.structure.sourceNode, "Le sous-sourceNode est bien le bon");
 
     t.comment("FormNode: Modification de StoreNode.");
     entry.set(operation);
+    entry2.set(projetTest);
 
     t.equal(formNode.id.value, entry.id.value, "Les modifications du StoreNode sont bien répercutées sur les champs simples.");
     t.deepEqual(toFlatValues(formNode.structure), toFlatValues(entry.structure), "Les modifications du StoreNode sont bien répercutées sur les champs composites.");
+    t.deepEqual(toFlatValues(formNode2), toFlatValues(entry2), "Les modifications du StoreNode sont bien répercutées sur les champs avec des listes.");
+    t.deepEqual(entry2.ligneList[0], formNode2.ligneList[0].sourceNode, "Le sourceNode d'un objet de liste est bien le bon.");
 
     t.comment("FormNode: Modification de FormNode");
     formNode.montant.value = 1000;
