@@ -1,23 +1,26 @@
 import {isBoolean, isFunction, values} from "lodash";
-import {extendObservable, observable} from "mobx";
+import {action, extendObservable, observable, reaction} from "mobx";
 
 import {BaseStoreNode, EntityField, FormEntityField, FormNode, isEntityField, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
 import {validateField} from "../validation";
+import {setEntityEntry} from "./store";
+import {toFlatValues} from "./utils";
 
 /**
  * Ajoute les champs calculés de validation et édition dans un FormNode.
- * @param data Le StoreNode ou l'EntityField.
+ * @param node Le FormNode en cours de création.
+ * @param sourceNode Le node origine du FormNode.
  * @param parentNodeOrEditing Node parent, (l'état initial ou la condition) d'édition.
  */
-export function addFormProperties(data: BaseStoreNode, parentNodeOrEditing: FormNode | boolean | (() => boolean)) {
-    const {$tempEdit} = data;
+export function addFormProperties(node: BaseStoreNode, sourceNode: BaseStoreNode, parentNodeOrEditing: FormNode | boolean | (() => boolean)) {
+    const {$tempEdit} = node;
     if ($tempEdit) {
-        delete data.$tempEdit;
+        delete node.$tempEdit;
     }
 
-    const formData = data as FormNode<BaseStoreNode>;
+    const formNode = node as FormNode<BaseStoreNode>;
 
-    (formData as any).form = observable({
+    (formNode as any).form = observable({
         _isEdit: (isBoolean(parentNodeOrEditing) ? parentNodeOrEditing : true) && (isBoolean($tempEdit) ? $tempEdit : true),
         get isEdit() {
             return this._isEdit
@@ -30,25 +33,25 @@ export function addFormProperties(data: BaseStoreNode, parentNodeOrEditing: Form
         }
     });
 
-    if (isStoreListNode(formData)) {
-        formData.forEach(i => addFormProperties(i, formData));
-        extendObservable(formData.form, {
+    if (isStoreListNode(formNode)) {
+        formNode.forEach((item, i) => addFormProperties(item, (sourceNode as StoreListNode)[i], formNode));
+        extendObservable(formNode.form, {
             get isValid() {
-                return !formData.form.isEdit || (data as StoreListNode).every(node => !node.form || node.form.isValid);
+                return !formNode.form.isEdit || (node as StoreListNode).every(item => !item.form || item.form.isValid);
             }
         });
     } else {
-        for (const entry in formData) {
-            const child: {} = (formData as any)[entry];
+        for (const entry in formNode) {
+            const child: {} = (formNode as any)[entry];
             if (isEntityField(child)) {
-                addFormFieldProperties(child, formData);
+                addFormFieldProperties(child, formNode);
             } else if (isStoreNode(child)) {
-                addFormProperties(child, isBoolean(parentNodeOrEditing) ? formData : parentNodeOrEditing);
+                addFormProperties(child, (sourceNode as any)[entry], isBoolean(parentNodeOrEditing) ? formNode : parentNodeOrEditing);
             }
         }
-        extendObservable(formData.form, {
+        extendObservable(formNode.form, {
             get isValid() {
-                return formData.form.isEdit || values(formData)
+                return formNode.form.isEdit || values(formNode)
                     .every(item => {
                         if (isEntityField(item)) {
                             return !(item as FormEntityField).isEdit || !(item as FormEntityField).error;
@@ -61,6 +64,10 @@ export function addFormProperties(data: BaseStoreNode, parentNodeOrEditing: Form
                 }
             });
     }
+
+    formNode.reset = makeResetAction(formNode);
+    formNode.sourceNode = sourceNode;
+    formNode.stopSync = reaction(() => toFlatValues(sourceNode), formNode.reset);
 }
 
 /**
@@ -89,5 +96,13 @@ export function addFormFieldProperties(field: EntityField, parentNode: FormNode)
         set isEdit(edit) {
             this._isEdit = edit;
         }
+    });
+}
+
+/** Construit la méthode `reset` pour un `FormNode`. */
+export function makeResetAction(formNode: FormNode): () => void {
+    return action("formNode.reset", () => {
+        (formNode as any).clear();
+        setEntityEntry(formNode as any, formNode.sourceNode);
     });
 }
