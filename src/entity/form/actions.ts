@@ -5,7 +5,7 @@ import {PanelProps} from "../../components";
 import {messageStore} from "../../message";
 
 import {toFlatValues} from "../store";
-import {FormNode, isFormNode, NodeToType} from "../types";
+import {FormListNode, FormNode, isFormNode, NodeToType} from "../types";
 import {FormProps} from "./form";
 
 /** Configuration additionnelle du formulaire.. */
@@ -33,7 +33,7 @@ export interface ActionConfig<T> {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export class FormActions<T extends FormNode> {
+export class FormActions<T extends FormNode | FormListNode> {
 
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
@@ -87,7 +87,9 @@ export class FormActions<T extends FormNode> {
         if (this.loadDisposer) {
             this.loadDisposer();
         }
-        this.entity.stopSync();
+        if ((this.entity as any).stopSync) {
+            (this.entity as any).stopSync();
+        }
     }
 
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
@@ -108,7 +110,7 @@ export class FormActions<T extends FormNode> {
                 this.entity.sourceNode.clear();
                 const data = await load(...params);
                 runInAction("afterLoad", () => {
-                    this.entity.sourceNode.set(data);
+                    (this.entity.sourceNode as any).set(data);
                     this.isLoading = false;
                 });
 
@@ -130,7 +132,7 @@ export class FormActions<T extends FormNode> {
                 const data = await this.actions.save(toFlatValues(this.entity));
                 runInAction("afterSave", () => {
                     this.isLoading = false;
-                    this.entity.form!.isEdit = false;
+                    this.entity.form.isEdit = false;
                     if (isFormNode(this.entity)) {
                          // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                          // On ne peut pas faire ça dans un sous-noeud, mais bon à priori on s'en fiche un peu.
@@ -155,7 +157,7 @@ export class FormActions<T extends FormNode> {
     /** Change le mode du formulaire. */
     @action.bound
     toggleEdit(isEdit: boolean) {
-        this.entity.form!.isEdit = isEdit;
+        this.entity.form.isEdit = isEdit;
         if (!isEdit && isFormNode(this.entity)) {
             this.entity.reset();
         }
@@ -171,6 +173,6 @@ export class FormActions<T extends FormNode> {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends FormNode>(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
+export function makeFormActions<T extends FormNode | FormListNode>(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
     return new FormActions<T>(formNode, actions, config);
 }

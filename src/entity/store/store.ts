@@ -1,9 +1,9 @@
 import {isArray, isObject, mapValues} from "lodash";
 import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
-import {BaseStoreNode, Entity, EntityToType, FieldEntry, isEntityField, isStoreListNode, isStoreNode, ListEntry, NodeToType, ObjectEntry, StoreListNode, StoreNode} from "../types";
-import {addFormProperties} from "./properties";
-import {toFlatValues} from "./utils";
+import {BaseStoreNode, Entity, EntityToType, FieldEntry, isEntityField, isFormListNode, isStoreListNode, isStoreNode, ListEntry, NodeToType, ObjectEntry, StoreListNode, StoreNode} from "../types";
+import {nodeToFormNode} from "./form";
+import {toFlatValues} from "./util";
 
 /** Récupère les noeuds de store associés aux entités définies dans T. */
 export type ExtractEntities<T> = {
@@ -85,8 +85,8 @@ export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T
             if (this.$transform) {
                 Object.assign(itemNode, this.$transform(itemNode) || {});
             }
-            if (this.$isFormNode) {
-                addFormProperties(itemNode, itemNode, outputEntry as any);
+            if (isFormListNode(this)) {
+                nodeToFormNode(itemNode, itemNode, outputEntry as any);
             }
             itemNode.set(item);
             this.push(itemNode);
@@ -128,8 +128,8 @@ export function setEntityEntry<T extends Entity>(entity: StoreNode<T> | StoreLis
             if (entity.$transform) {
                 Object.assign(newNode, entity.$transform(newNode) || {});
             }
-            if (entity.$isFormNode) {
-                addFormProperties(newNode, isStoreNode(item) ? item : newNode, entity as any);
+            if (isFormListNode(entity)) {
+                nodeToFormNode(newNode, isStoreNode(item) ? item : newNode, entity as any);
             }
 
             if (isStoreNode<T>(item)) {

@@ -1,5 +1,5 @@
 import {EntityToType, StoreNode} from "../types";
-import {Ligne, LigneEntity} from "./ligne";
+import {LigneEntity} from "./ligne";
 
 export type Projet = EntityToType<typeof ProjetEntity>;
 export type ProjetNode = StoreNode<typeof ProjetEntity>;

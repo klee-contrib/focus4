@@ -2,7 +2,7 @@ import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction} from "mobx";
 
 import {config} from "../../config";
-import {addFormProperties, buildEntityEntry, Entity, FormEntityField, FormNode, StoreNode, toFlatValues} from "../../entity";
+import {buildEntityEntry, Entity, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../../entity";
 
 import {ListStoreBase} from "./base";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
@@ -33,7 +33,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
     @observable blockSearch = false;
 
     /** StoreNode contenant les critères personnalisés de recherche. */
-    readonly criteria!: FormNode<StoreNode<C>>;
+    readonly criteria!: FormNode<C>;
     /** Champ sur lequel grouper. */
     @observable groupingKey: string | undefined;
     /** Facettes sélectionnées ({facet: value}) */
@@ -94,7 +94,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
         // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
         if (criteria) {
             this.criteria = buildEntityEntry(criteria) as any;
-            addFormProperties(this.criteria!, this.criteria!, true);
+            nodeToFormNode(this.criteria!, this.criteria!, true);
         }
 
         // Relance la recherche à chaque modification de propriété.

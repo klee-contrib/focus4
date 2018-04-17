@@ -5,6 +5,7 @@ import {Validator} from "./validation";
 
 /** Définition d'un domaine. */
 export interface Domain<ICProps extends {theme?: {}} = InputProps, DCProps extends {theme?: {}} = DisplayProps, LCProps = LabelProps> {
+
     /** Classe CSS pour le champ. */
     className?: string;
 
@@ -38,6 +39,7 @@ export interface Domain<ICProps extends {theme?: {}} = InputProps, DCProps exten
 
 /** Définition générale d'une entité. */
 export interface Entity {
+
     /** Nom de l'entité. */
     readonly name: string;
 
