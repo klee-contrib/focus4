@@ -3,9 +3,11 @@ import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry} f
 
 /** Interface commune aux noeuds de store. */
 export interface BaseStoreNode<T = any> {
+
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
+
     /** Renseigne les valeurs du noeud à partir des champs fournis. */
     set(config: T): void;
 }
@@ -33,19 +35,20 @@ export type NodeToType<T> =
 
 /** Noeud de store simple. */
 export type StoreNode<T extends Entity = any> = EntityToNode<T> & BaseStoreNode<EntityToType<T>> & {
+
     /** Vide l'objet (récursivement). */
     clear(): void;
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<T extends Entity = any, U = any> extends IObservableArray<StoreNode<T> & U>, BaseStoreNode<(EntityToType<T> & NodeToType<U>)[]> {
+export interface StoreListNode<T extends Entity = any, U = {}> extends IObservableArray<StoreNode<T> & U>, BaseStoreNode<(EntityToType<T> & NodeToType<U>)[]> {
+
     /** Métadonnées. */
     readonly $entity: T;
-    /** @internal */
-    /** Précise si le StoreListNode est un FormNode. */
-    $isFormNode?: boolean;
+
     /** Fonction de transformation du noeud de la liste. */
     $transform?: (source: StoreNode<T>) => U | void;
+
     /** Ajoute un élément à la liste. */
     pushNode(item: EntityToType<T> & NodeToType<U>): void;
 }

@@ -1,3 +1,3 @@
-export {addFormFieldProperties, addFormProperties, patchNodeEdit} from "./properties";
+export {nodeToFormNode, patchNodeEdit} from "./form";
 export {makeEntityStore, buildEntityEntry} from "./store";
-export {toFlatValues} from "./utils";
+export {toFlatValues} from "./util";
