@@ -1,7 +1,7 @@
 /* tslint:disable */
 import "ignore-styles";
 
-import {isObservable, isObservableArray} from "mobx";
+import {isObservable, isObservableArray, isObservableProp} from "mobx";
 import test = require("tape");
 
 import {makeFormNode} from "../form/node";
@@ -177,10 +177,10 @@ test("FormNode: Création", t => {
     t.deepEqual(toFlatValues(formNode.structure), toFlatValues(entry.structure), "Les champs composites du FormNode sont bien identiques à ceux du StoreNode.");
     t.assert(isObservableArray(formNode2.ligneList), "Une sous liste est bien toujours observable");
     t.deepEqual(formNode2.ligneList.$entity, entry2.ligneList.$entity, "Une sous liste a bien toujours son entité attachée.");
-    t.assert(!isObservable(formNode2.ligneList.$entity), "Le champ '$entity' d'une sous liste n'est bien pas observable");
     t.assert(formNode2.ligneList.set, "Une sous liste a bien toujours sa méthode 'set' attachée");
     t.deepEqual(entry, formNode.sourceNode, "Le sourceNode racine est bien le bon.");
-    t.deepEqual(entry.structure, formNode.structure.sourceNode, "Le sous-sourceNode est bien le bon");
+    t.deepEqual(entry.structure, formNode.structure.sourceNode, "Le sous-sourceNode simple est bien le bon");
+    t.deepEqual(entry2.ligneList, formNode2.ligneList.sourceNode, "Le sous-sourceNode liste est bien le bon");
 
     t.comment("FormNode: Modification de StoreNode.");
     entry.set(operation);
@@ -206,29 +206,43 @@ test("FormNode: Création", t => {
     t.comment("FormNode: StoreNode.set(toFlatValues(FormNode))");
     entry.set(toFlatValues(formNode));
 
-    t.equal(formNode.montant.value, 1000, "Champ simple: le FormNode est bien toujours identique.");
     t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode a bien été mis à jour.");
-    t.equal(formNode.structure.id.value, 26, "Champ composite via set global: le FormNode est bien toujours identique.");
     t.equal(entry.structure.id.value, 26, "Champ composite via set global: le StoreNode a bien été mis à jour.");
-    t.equal(formNode.structure.nom.value, "yolo", "Champ composite via set local: le FormNode est bien toujours identique.");
     t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le StoreNode a bien été mis à jour.");
 
-    t.comment("FormNode: reset");
+    t.comment("FormNode: reset global");
     formNode.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
     formNode.reset();
 
     t.equal(formNode.montant.value, 1000, "Champ simple: le FormNode a bien été réinitialisé.");
-    t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode est bien toujours identique.");
-    t.equal(formNode.structure.id.value, 26, "Champ composite via set global: le FormNode a bien été réinitialisé.");
-    t.equal(entry.structure.id.value, 26, "Champ composite via set global: le StoreNode est bien toujours identique.");
-    t.equal(formNode.structure.nom.value, "yolo", "Champ composite via set local: le FormNode a bien été réinitialisé.");
-    t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le StoreNode est bien toujours identique.");
+    t.equal(formNode.structure.id.value, 26, "Champ composite: le FormNode a bien été réinitialisé.");
+
+    t.comment("FormNode: reset local (noeud simple)");
+    formNode.set({montant: 3000, structure: {id: 23}});
+    formNode.structure.reset();
+
+    t.equal(formNode.montant.value, 3000, "Champ non concerné pas le reset : n'a pas été touché.");
+    t.equal(formNode.structure.id.value, 26, "Champ concerné par le reset : a été réinitialisé.");
+
+    t.comment("FormNode: reset de liste");
+    formNode2.ligneList[0].id.value = 23;
+    formNode2.ligneList.remove(formNode2.ligneList[2]);
+    formNode2.ligneList.reset();
+
+    t.equal(formNode2.ligneList[0].id.value, 5, "Champ modifié d'un item : a été réinitialisé.");
+    t.equal(formNode2.ligneList[2].id.value, entry2.ligneList[2].id.value, "Item retiré : a été réajouté");
+
+    t.comment("FormNode: reset d'un item de liste");
+    formNode2.ligneList[0].id.value = 23;
+    formNode2.ligneList[0].reset();
+
+    t.equal(formNode2.ligneList[0].id.value, 5, "Champ modifié de l'item : a été réinitialisé.");
 
     t.comment("FormNode: stopSync");
     formNode.stopSync();
     entry.montant.value = 2;
 
-    t.equal(formNode.montant.value, 1000, "Le FormNode n'a pas été mis à jour.");
+    t.equal(formNode.montant.value, 3000, "Le FormNode n'a pas été mis à jour.");
 
     t.end();
 });
