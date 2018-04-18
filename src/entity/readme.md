@@ -146,7 +146,10 @@ Un `FormNode`, construit par la fonction **`makeFormNode`**, est une copie confo
 
 #### Contenu
 Tous les objets contenus dans un `FormNode` (et y compris le `FormNode` lui-même) sont complétés de propriétés supplémentaires représentant les états d'édition et de validation de l'objet. Ils prennent la forme :
-- D'une propriété additionnelle `form` sur un `Store(List)Node`, un objet muni des deux propriétés `isEdit` et `isValid`
+- Sur un `Store(List)Node`
+    + `form`, un objet muni des deux propriétés `isEdit` et `isValid`
+    + `sourceNode`, une référence vers le noeud origine du `FormNode`
+    + `reset()`, une méthode pour réinitialiser le `FormNode` sur son `sourceNode`. La méthode `reset()` qui se trouve sur l'objet racine du `FormNode` sera également appelée automatiquement à chaque modification de son `sourceNode`, assurant que le `FormNode` ne manque jamais une de ses modifications
 - Des deux propriétés additionnelles `isEdit` et `error` sur un `EntityField`.
 
 Les propriétés `error` et `isValid` sont en lecture seule et sont calculées automatiquement. `error` est le message d'erreur de validation sur un champ et vaut `undefined` si il n'y a pas d'erreur. `isValid` sur un node est le résultat de validation de tous les champs qu'il contient, valant donc `true` seulement si toutes les propriétés `error` des champs valent `undefined`. A noter cependant que si le noeud n'est pas en édition, alors `isValid` vaut forcément `true` (en effet, il n'y a pas besoin de la validation si on n'est pas en cours de saisie).
@@ -154,8 +157,6 @@ Les propriétés `error` et `isValid` sont en lecture seule et sont calculées a
 Les propriétés `isEdit` sont modifiables, mais chaque `isEdit` est l'intersection de l'état d'édition du noeud/champ et de celui de son parent, ce qui veut dire qu'un champ de formulaire ne peut être en édition (et donc modifiable) que si le formulaire est en édition _et_ que son éventuel noeud parent est en édition _et_ que lui-même est en édition. En pratique, le seul état d'édition que l'on manipule directement est celui du `FormNode`, dont l'état initial peut être passé à la création (par défaut, ce sera `false`). Tous les sous-états d'édition sont initialisés à `true`, pour laisser l'état global piloter toute l'édition.
 
 Sur les champs, ces deux propriétés sont utilisées par `fieldFor` et `selectFor` pour gérer le mode édition et afficher les erreurs de validation, comme attendu.
-
-Enfin, pour terminer sur les ajouts, le `FormNode` est muni d'une méthode `reset()` pour se réinitialiser sur l'état du noeud initial (et qui sera appelée automatiquement à chaque changement de ce dernier), ainsi que d'une propriété `sourceNode` pour y accéder. Ces propriétés n'existe bien que sur la racine du `FormNode`, à l'inverse des états présentés au-dessus.
 
 #### Transformations de noeud et de champs
 En plus d'ajouter ces propriétés à tous les sous-noeuds et champs du noeud initial, le `FormNode` gère  également une **fonction de transformation** en entrée, qui sera utilisée à la création. Elle permet d'effectuer toutes les modifications de champs souhaitées pour le formulaire via des appels à `patchField()` (qui seront appliqués sur le noeud de formulaire pendant la création), ainsi que d'ajouter des champs au `FormNode` en retournant un objet de propriétés créées par `makeField()`.
@@ -211,11 +212,11 @@ En plus du service de chargement, pour pouvoir charger des données il est aussi
 
 #### Méthodes de `FormActions`
 `FormActions` expose principalement trois méthodes, qui permettent d'appeler les actions que l'on a enregistrées :
-- `load()`, qui si `formNode` est un "vrai" `FormNode`, appelle l'action de `actions.load` avec les paramètres de `actions.getLoadParams` si les deux sont renseignés, et met à jour le noeud origine de `formNode` (et donc `formNode` également).
-- `save()`, qui appelle l'action de `actions.save` à partir de l'état actuellement stocké dans `formNode`. Si `formNode` est un "vrai" `FormNode`, alors le résultat de l'action de sauvegarde sera enregistré dans le noeud origine de `formNode` (et donc `formNode` également).
-- `toggleEdit(edit)`, qui met à jour l'état d'édition général du `formNode`. Si `edit === false` et `formNode` est un "vrai" `FormNode`, alors `formNode` sera réinitialisé sur l'état du noeud origine.
+- `load()`, qui  appelle l'action de `actions.load` avec les paramètres de `actions.getLoadParams` si les deux sont renseignés, et met à jour le noeud origine de `formNode` (et donc `formNode` également).
+- `save()`, qui appelle l'action de `actions.save` à partir de l'état actuellement stocké dans `formNode`. Le résultat de l'action de sauvegarde (si non void/undefined/null...) sera enregistré dans le noeud origine de `formNode` (et donc `formNode` également).
+- `toggleEdit(edit)`, qui met à jour l'état d'édition général du `formNode`. Si `edit === false`, alors `formNode` sera réinitialisé sur l'état du noeud origine.
 
-On voit ici qu'utiliser un sous-node pour `FormActions` est un pratique assez limité. La fonctionnalité existe parce qu'elle ne demandait quasiment aucun temps de développement en plus et qu'elle peut avoir son utilité, en particulier dans des écrans avec plusieurs blocs dont la création est unifiée mais la modification se fait par bloc. Néanmoins, si les limitations de `load` et de `save` ne sont pas gênantes, celle de `toggleEdit` rend probablement la fonctionnalité peu pratique à utiliser. Une évolution future pourrait être de réussir à répéter les propriétés additionelles de `FormNode` (`reset`, `sourceNode`) sur tous les noeuds. Ca serait bien ouais :)
+_Note : pour éviter le reset de tout le formulaire lors de la sauvegarde d'un sous formulaire, il faut donc que son action de sauvegarde ne renvoie rien_
 
 #### Exemples
 Premier exemple : formulaire classique d'édition
