@@ -5,7 +5,7 @@ import {PanelProps} from "../../components";
 import {messageStore} from "../../message";
 
 import {toFlatValues} from "../store";
-import {FormListNode, FormNode, NodeToType} from "../types";
+import {Entity, EntityToType, FormListNode, FormNode} from "../types";
 import {FormProps} from "./form";
 
 /** Configuration additionnelle du formulaire.. */
@@ -23,7 +23,7 @@ export interface FormConfig {
 }
 
 /** Config d'actions à fournir au formulaire. */
-export interface ActionConfig<T> {
+export interface ActionConfig<T = any> {
     /** Fonction pour récupérer la liste des paramètres pour l'action de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
     getLoadParams?: () => any[] | undefined;
     /** Action de chargement. */
@@ -33,22 +33,23 @@ export interface ActionConfig<T> {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export class FormActions<T extends FormNode<any, any> | FormListNode<any, any>> {
+export class FormActions {
 
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
     /** Formulaire en chargement. */
     @observable isLoading = false;
-    /** Services. */
-    readonly actions: ActionConfig<NodeToType<T>>;
 
+    /** Services. */
+    private readonly actions: ActionConfig;
     /** Config. */
     private readonly config: FormConfig;
     /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
-    private readonly entity: T;
+    private readonly entity: FormNode | FormListNode;
     /** Disposer de la réaction de chargement. */
     private readonly loadDisposer?: Lambda;
-    constructor(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
+
+    constructor(formNode: FormNode | FormListNode, actions: ActionConfig, config?: FormConfig) {
         this.entity = formNode;
         this.config = config || {};
         this.actions = actions;
@@ -171,6 +172,8 @@ export class FormActions<T extends FormNode<any, any> | FormListNode<any, any>> 
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends FormNode<any, any> | FormListNode<any, any>>(formNode: T, actions: ActionConfig<NodeToType<T>>, config?: FormConfig) {
-    return new FormActions<T>(formNode, actions, config);
+export function makeFormActions<T extends Entity>(formNode: FormListNode<T>, actions: ActionConfig<EntityToType<T>[]>, config?: FormConfig): FormActions;
+export function makeFormActions<T extends Entity>(formNode: FormNode<T>, actions: ActionConfig<EntityToType<T>>, config?: FormConfig): FormActions;
+export function makeFormActions(formNode: FormNode | FormListNode, actions: ActionConfig, config?: FormConfig) {
+    return new FormActions(formNode, actions, config);
 }
