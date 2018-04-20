@@ -20,6 +20,8 @@ export interface LabelProps {
     label?: string;
     /** Nom du champ associé */
     name?: string;
+    /** Au click sur la tooltip. */
+    onTooltipClick?: () => void;
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** Style inline. */
@@ -28,13 +30,21 @@ export interface LabelProps {
     theme?: LabelStyle;
 }
 
-export function Label({comment, i18nPrefix = "focus", label, name, showTooltip, style, theme}: LabelProps) {
+export function Label({comment, i18nPrefix = "focus", label, name, onTooltipClick, showTooltip, style, theme}: LabelProps) {
     return (
         <div className={theme!.label} style={style}>
             <label htmlFor={name}>
                 {label && i18next.t(label) || ""}
             </label>
-            {comment && showTooltip ? <TooltipIcon className={theme!.icon} tooltip={i18next.t(comment)} value={getIcon(`${i18nPrefix}.icons.label.tooltip`)} /> : null}
+            {comment && showTooltip ?
+                <TooltipIcon
+                    className={`${theme!.icon} ${!!onTooltipClick ? theme!.clickable : ""}`}
+                    tooltipHideOnClick={!onTooltipClick}
+                    onClick={onTooltipClick}
+                    tooltip={i18next.t(comment)}
+                    value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
+                />
+            : null}
         </div>
     );
 }
