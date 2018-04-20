@@ -6,23 +6,23 @@ import {StoreListNode, StoreNode} from "./store";
 import {RegexValidator, Validator} from "./validation";
 
 export function isEntityField(data: any): data is EntityField {
-    return !!(data as EntityField).$field;
+    return data && !!(data as EntityField).$field;
 }
 
 export function isRegex(validator: Validator): validator is RegexValidator {
-    return !!(validator as RegexValidator).regex;
+    return validator && !!(validator as RegexValidator).regex;
 }
 
 export function isStoreListNode<T extends Entity = any>(data: any): data is StoreListNode<T> {
-    return isObservableArray(data) && !!(data as StoreListNode).$entity;
+    return data && isObservableArray(data) && !!(data as StoreListNode).$entity;
 }
 
 export function isStoreNode<T extends Entity = any>(data: any): data is StoreNode<T> {
-    return !!(data as StoreNode).set;
+    return data && !!(data as StoreNode).set;
 }
 
 export function isAnyFormNode<T extends Entity = any>(data: any): data is FormNode<T> | FormListNode<T> {
-    return !!(data as FormNode).form;
+    return data && !!(data as FormNode).form;
 }
 
 export function isFormNode<T extends Entity = any>(data: any): data is FormNode<T> {
