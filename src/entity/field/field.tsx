@@ -76,7 +76,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     // On enregistre le <div> de la valeur et on enregistre un eventListener désactiver le `hideErrorOnInit` au premier clic sur
     componentDidMount() {
         // Poser une ref pose des problèmes de stack overflow (pas vraiment clair pourquoi), donc on fait un truc moisi pour récupérer le noeud qu'on veut.
-        const children = findDOMNode(this).children;
+        const children = (findDOMNode(this) as Element).children;
         this.valueElement = children.item(children.length - 1);
         if (this.hideErrorOnInit) {
             this.valueElement.addEventListener("mousedown", this.disableHideError);

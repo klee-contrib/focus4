@@ -134,7 +134,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Met à jour `byLine`. */
     @classAutorun
     protected readonly updateByLine = () => {
-        const node = findDOMNode(this);
+        const node = findDOMNode(this) as Element;
         if (node) {
             this.byLine = this.mode === "mosaic" ? Math.floor(node.clientWidth / (this.mosaic.width + 10)) : 1;
         }

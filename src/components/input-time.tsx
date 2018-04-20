@@ -60,7 +60,7 @@ export class InputTime extends React.Component<InputTimeProps> {
     }
 
     componentDidMount() {
-       this.scrollParent = getScrollParent(findDOMNode(this));
+       this.scrollParent = getScrollParent(findDOMNode(this) as Element);
        this.scrollParent.addEventListener("scroll", this.resetClockCenter);
        window.addEventListener("scroll", this.resetClockCenter);
     }
