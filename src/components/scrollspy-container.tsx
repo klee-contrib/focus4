@@ -24,7 +24,7 @@ export interface ScrollspyContainerProps {
     /** Offset de scroll à partir du moment ou le menu devient fixe, par rapport au header. Par défaut : toutes les marges qui vont bien. */
     menuOffset?: number;
     /** Largeur du menu. Par défaut : 250. */
-    menuWidth?: boolean;
+    menuWidth?: number;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
     /** Offset entre la position du panel et la position de scroll au clic sur le menu. Par défaut : 150. */
@@ -128,7 +128,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     @action.bound
     private onScroll() {
         this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        this.offsetTop = findDOMNode(this)
+        this.offsetTop = (findDOMNode(this) as Element)
             .getBoundingClientRect().top;
     }
 

@@ -67,7 +67,7 @@ export class Panel extends React.Component<PanelProps> {
     componentDidMount() {
         const {hideOnScrollspy, title} = this.props;
         if (this.context.scrollspy && !hideOnScrollspy) {
-            this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this)});
+            this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this) as HTMLDivElement});
         }
 
         // On essaie de savoir si ce panel est inclus dans un formulaire.
@@ -83,7 +83,7 @@ export class Panel extends React.Component<PanelProps> {
     /** On se met à jour dans le scrollspy. */
     componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
          if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title) {
-            this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this)});
+            this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this) as HTMLDivElement});
         }
     }
 

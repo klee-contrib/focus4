@@ -61,7 +61,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
     }
 
     componentDidMount() {
-        this.inputElement = findDOMNode(this)
+        this.inputElement = (findDOMNode(this) as Element)
             .querySelector("input");
     }
 

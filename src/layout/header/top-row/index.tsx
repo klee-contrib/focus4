@@ -33,11 +33,11 @@ export class HeaderTopRow extends React.Component<HeaderTopRowProps> {
     };
 
     componentDidMount() {
-        this.context.header.topRowHeight = findDOMNode(this).clientHeight;
+        this.context.header.topRowHeight = (findDOMNode(this) as Element).clientHeight;
     }
 
     componentDidUpdate() {
-        this.context.header.topRowHeight = findDOMNode(this).clientHeight;
+        this.context.header.topRowHeight = (findDOMNode(this) as Element).clientHeight;
     }
 
     render() {

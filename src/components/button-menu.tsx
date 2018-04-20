@@ -30,13 +30,13 @@ export class ButtonMenu extends React.Component<ButtonMenuProps> {
     // On récupère à tout instant la hauteur du bouton.
     componentDidMount() {
         if (this.button) {
-            this.buttonHeight = findDOMNode(this.button).clientHeight;
+            this.buttonHeight = (findDOMNode(this.button) as Element).clientHeight;
         }
     }
 
     componentDidUpdate() {
         if (this.button) {
-            this.buttonHeight = findDOMNode(this.button).clientHeight;
+            this.buttonHeight = (findDOMNode(this.button) as Element).clientHeight;
         }
     }
 

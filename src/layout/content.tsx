@@ -19,7 +19,7 @@ export class LayoutContent extends React.Component<LayoutProps> {
     };
 
     componentDidMount() {
-        const paddingTop = window.getComputedStyle(findDOMNode(this)).paddingTop;
+        const paddingTop = window.getComputedStyle(findDOMNode(this) as Element).paddingTop;
         this.context.layout.contentPaddingTop = paddingTop && paddingTop.endsWith("px") && +paddingTop.replace("px", "") || 0;
     }
 
