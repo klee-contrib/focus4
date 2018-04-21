@@ -25,5 +25,3 @@ export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string
         />
     );
 }
-
-export default ButtonHelp;

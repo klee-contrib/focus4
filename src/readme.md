@@ -84,6 +84,8 @@ Cette fonction permet de transformer une liste classique en une liste utilisable
 
 ## [Module `router`](router)
 
+## [Module `theme`](theme)
+
 ## Module `user`
 Ce module propose une base de store utilisateur, pour y stocker les données de la session. La seule fonctionnalité prévue est la gestion des rôles / permissions (avec `roles` et `hasRole()`), et c'est à chaque application d'y rajouter leurs informations métiers pertinentes.
 

@@ -4,17 +4,17 @@ import {action, IObservableObject, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {Button, IconButton as IB} from "react-toolbox/lib/button";
 import Tooltip from "react-toolbox/lib/tooltip";
 
 import {getIcon} from "../../../components";
+import {themr} from "../../../theme";
 
 import * as styles from "./__style__/list-wrapper.css";
+export type ListWrapperStyle = Partial<typeof styles>;
+const Theme = themr("listWrapper", styles);
 
 const IconButton = Tooltip(IB);
-
-export type ListWrapperStyle = Partial<typeof styles>;
 
 /** Props du wrapper de liste. */
 export interface ListWrapperProps {
@@ -82,39 +82,41 @@ export class ListWrapper extends React.Component<ListWrapperProps> {
     }
 
     render() {
-        const {theme, children, canChangeMode, hideAddItemHandler, i18nPrefix = "focus"} = this.props;
+        const {children, canChangeMode, hideAddItemHandler, i18nPrefix = "focus"} = this.props;
         const {mode, addItemHandler} = this.childContext;
         return (
-            <div className={theme!.wrapper}>
-                <div className={theme!.bar}>
-                    {canChangeMode ?
-                        <IconButton
-                            accent={mode === "list"}
-                            onClick={() => this.childContext.mode = "list"}
-                            icon={getIcon(`${i18nPrefix}.icons.listWrapper.list`)}
-                            tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
-                        />
-                    : null}
-                    {canChangeMode ?
-                        <IconButton
-                            accent={mode === "mosaic"}
-                            onClick={() => this.childContext.mode = "mosaic"}
-                            icon={getIcon(`${i18nPrefix}.icons.listWrapper.mosaic`)}
-                            tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
-                        />
-                    : null}
-                    {!hideAddItemHandler && addItemHandler && mode === "list" ?
-                        <Button
-                            onClick={addItemHandler}
-                            icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}
-                            label={i18next.t(`${i18nPrefix}.list.add`)}
-                        />
-                    : null}
-                </div>
-                {children}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <div className={theme.wrapper}>
+                        <div className={theme.bar}>
+                            {canChangeMode ?
+                                <IconButton
+                                    accent={mode === "list"}
+                                    onClick={() => this.childContext.mode = "list"}
+                                    icon={getIcon(`${i18nPrefix}.icons.listWrapper.list`)}
+                                    tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
+                                />
+                            : null}
+                            {canChangeMode ?
+                                <IconButton
+                                    accent={mode === "mosaic"}
+                                    onClick={() => this.childContext.mode = "mosaic"}
+                                    icon={getIcon(`${i18nPrefix}.icons.listWrapper.mosaic`)}
+                                    tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
+                                />
+                            : null}
+                            {!hideAddItemHandler && addItemHandler && mode === "list" ?
+                                <Button
+                                    onClick={addItemHandler}
+                                    icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}
+                                    label={i18next.t(`${i18nPrefix}.list.add`)}
+                                />
+                            : null}
+                        </div>
+                        {children}
+                    </div>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("listWrapper", styles)(ListWrapper);

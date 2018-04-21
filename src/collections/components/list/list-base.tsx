@@ -93,11 +93,11 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Affiche les éventuels boutons "Voir plus" et "Voir tout" en fin de liste. */
-    protected renderBottomRow() {
-        const {theme, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
+    protected renderBottomRow(theme: ListStyle) {
+        const {i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
         if (isManualFetch && this.hasMoreData || showAllHandler) {
             return (
-                <div className={theme!.bottomRow}>
+                <div className={theme.bottomRow}>
                     {isManualFetch && this.hasMoreData ?
                         <Button
                             onClick={() => this.handleShowMore()}
@@ -141,8 +141,6 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
         }
     }
 }
-
-export default ListBase;
 
 /**
  * Détermine le sommet de l'élément choisi.

@@ -2,15 +2,12 @@ import i18next from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 
 import {isSearch, ListStoreBase} from "../../store";
 import {Table, TableProps} from "./table";
-
-import * as styles from "./__style__/list.css";
 
 /** Props additionnelles pour un StoreTable. */
 export interface StoreTableProps<T> extends TableProps<T> {
@@ -124,13 +121,10 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     }
 }
 
-const ThemedStoreTable = themr("list", styles)(StoreTable);
-export default ThemedStoreTable;
-
 /**
  * Crée un composant de tableau avec store.
  * @param props Les props du tableau.
  */
 export function storeTableFor<T>(props: TableProps<T> & StoreTableProps<T>) {
-    return <ThemedStoreTable {...props} />;
+    return <StoreTable {...props} />;
 }

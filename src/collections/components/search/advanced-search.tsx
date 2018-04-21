@@ -1,19 +1,18 @@
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 
 import {ButtonBackToTop} from "../../../components";
-import {ReactComponent} from "../../../config";
+import {themr} from "../../../theme";
 
 import {GroupResult, SearchStore} from "../../store";
 import {ActionBar, ActionBarStyle, DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, ListWrapper, OperationListItem} from "../list";
-import FacetBox, {FacetBoxStyle} from "./facet-box";
-import Results, {GroupStyle} from "./results";
-import Summary, {SummaryStyle} from "./summary";
+import {FacetBox, FacetBoxStyle} from "./facet-box";
+import {GroupStyle, Results} from "./results";
+import {Summary, SummaryStyle} from "./summary";
 
 import * as styles from "./__style__/advanced-search.css";
-
 export type AdvancedSearchStyle = Partial<typeof styles>;
+const Theme = themr("advancedSearch", styles);
 
 /** Props de l'AdvancedSearch. */
 export interface AdvancedSearchProps<T> {
@@ -26,7 +25,7 @@ export interface AdvancedSearchProps<T> {
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: ReactComponent<DetailProps<T>>;
+    DetailComponent?: React.ComponentType<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
@@ -36,13 +35,13 @@ export interface AdvancedSearchProps<T> {
     /** CSS du DragLayer. */
     dragLayerTheme?: DragLayerStyle;
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: ReactComponent<EmptyProps<T>>;
+    EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: FacetBoxStyle;
     /** Header de groupe personnalisé. */
-    GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
+    GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe par scope. */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
@@ -74,7 +73,7 @@ export interface AdvancedSearchProps<T> {
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de ligne. */
-    LineComponent?: ReactComponent<LineProps<T>>;
+    LineComponent?: React.ComponentType<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
@@ -86,7 +85,7 @@ export interface AdvancedSearchProps<T> {
     /** Mode des listes dans le wrapper. Par défaut : "list". */
     mode?: "list" | "mosaic";
     /** Composants de mosaïque. */
-    MosaicComponent?: ReactComponent<LineProps<T>>;
+    MosaicComponent?: React.ComponentType<LineProps<T>>;
     /** Largeur des mosaïques. Par défaut : 200. */
     mosaicWidth?: number;
     /** Hauteur des mosaïques. Par défaut : 200. */
@@ -126,12 +125,12 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         }
     }
 
-    protected renderFacetBox() {
-        const {theme, facetBoxPosition = "left", facetBoxTheme, i18nPrefix, nbDefaultDataListFacet, showSingleValuedFacets, store} = this.props;
+    protected renderFacetBox(theme: AdvancedSearchStyle) {
+        const {facetBoxPosition = "left", facetBoxTheme, i18nPrefix, nbDefaultDataListFacet, showSingleValuedFacets, store} = this.props;
 
         if (facetBoxPosition === "left") {
             return (
-                 <div className={theme!.facetContainer}>
+                 <div className={theme.facetContainer}>
                     <FacetBox
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
@@ -222,37 +221,38 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     }
 
     render() {
-        const {addItemHandler, i18nPrefix, LineComponent, MosaicComponent, mode, mosaicHeight, mosaicWidth, hasBackToTop = true, theme} = this.props;
+        const {addItemHandler, i18nPrefix, LineComponent, MosaicComponent, mode, mosaicHeight, mosaicWidth, hasBackToTop = true} = this.props;
         return (
-            <div>
-                {this.renderFacetBox()}
-                <div className={theme!.resultContainer}>
-                    <ListWrapper
-                        addItemHandler={addItemHandler}
-                        canChangeMode={!!(LineComponent && MosaicComponent)}
-                        i18nPrefix={i18nPrefix}
-                        mode={mode || MosaicComponent && !LineComponent ? "mosaic" : "list"}
-                        mosaicHeight={mosaicHeight}
-                        mosaicWidth={mosaicWidth}
-                    >
-                        {this.renderListSummary()}
-                        {this.renderActionBar()}
-                        {this.renderResults()}
-                    </ListWrapper>
-                </div>
-                {hasBackToTop ? <ButtonBackToTop /> : null}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <>
+                        {this.renderFacetBox(theme)}
+                        <div className={theme.resultContainer}>
+                            <ListWrapper
+                                addItemHandler={addItemHandler}
+                                canChangeMode={!!(LineComponent && MosaicComponent)}
+                                i18nPrefix={i18nPrefix}
+                                mode={mode || MosaicComponent && !LineComponent ? "mosaic" : "list"}
+                                mosaicHeight={mosaicHeight}
+                                mosaicWidth={mosaicWidth}
+                            >
+                                {this.renderListSummary()}
+                                {this.renderActionBar()}
+                                {this.renderResults()}
+                            </ListWrapper>
+                        </div>
+                        {hasBackToTop ? <ButtonBackToTop /> : null}
+                    </>
+                }
+            </Theme>
         );
     }
 }
-
-const ThemedAdvancedSearch = themr("advancedSearch", styles)(AdvancedSearch);
-export default ThemedAdvancedSearch;
 
 /**
  * Crée un composant de recherche avancée.
  * @param props Les props de l'AdvancedSearch.
  */
 export function advancedSearchFor<T>(props: AdvancedSearchProps<T>) {
-    return <ThemedAdvancedSearch {...props} />;
+    return <AdvancedSearch {...props} />;
 }

@@ -187,8 +187,6 @@ export class Input extends React.Component<InputProps> {
     }
 }
 
-export default Input;
-
 const KEYCODE_Z = 90;
 const KEYCODE_Y = 89;
 

@@ -1,5 +1,4 @@
 import {DisplayProps, InputProps, LabelProps} from "../../components";
-import {ReactComponent} from "../../config";
 
 import {Validator} from "./validation";
 
@@ -22,17 +21,17 @@ export interface Domain<ICProps extends {theme?: {}} = InputProps, DCProps exten
     validator?: Validator | Validator[];
 
     /** Composant personnalisé pour l'affichage. */
-    DisplayComponent?: ReactComponent<DCProps>;
+    DisplayComponent?: React.ComponentType<DCProps>;
     /** Props pour le composant d'affichage */
     displayProps?: Partial<DCProps>;
 
     /** Composant personnalisé pour l'entrée utilisateur. */
-    InputComponent?: ReactComponent<ICProps>;
+    InputComponent?: React.ComponentType<ICProps>;
     /** Props pour le composant d'entrée utilisateur. */
     inputProps?: Partial<ICProps>;
 
     /** Composant personnalisé pour le libellé. */
-    LabelComponent?: ReactComponent<LCProps>;
+    LabelComponent?: React.ComponentType<LCProps>;
     /** Props pour le composant de libellé. */
     labelProps?: Partial<LCProps>;
 }

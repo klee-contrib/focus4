@@ -1,7 +1,6 @@
 import {action, computed, IObservableArray, observable} from "mobx";
-import {observer, Observer} from "mobx-react";
+import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {ConnectDragPreview, ConnectDragSource} from "react-dnd";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import {findDOMNode} from "react-dom";
@@ -9,15 +8,15 @@ import {Motion, spring} from "react-motion";
 import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
-import {ReactComponent} from "../../../config";
 import {EntityField, FieldEntry, stringFor} from "../../../entity";
+import {themr} from "../../../theme";
 
 import {ListStoreBase} from "../../store";
-import ContextualActions, {OperationListItem} from "./contextual-actions";
+import {ContextualActions, OperationListItem} from "./contextual-actions";
 
 import * as styles from "./__style__/line.css";
-
 export type LineStyle = Partial<typeof styles>;
+const Theme = themr("line", styles);
 
 /** Props de base d'un composant de lingne. */
 export interface LineProps<T> {
@@ -46,7 +45,7 @@ export interface LineWrapperProps<T> {
     /** Préfixe i18n. Par défaut: "focus". */
     i18nPrefix?: string;
     /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
-    LineComponent: ReactComponent<LineProps<T>>;
+    LineComponent: React.ComponentType<LineProps<T>>;
     /** Configuration de la mosaïque (si applicable). */
     mosaic?: {width: number, height: number};
     /** Handler pour ouvrir (et fermer) le détail. */
@@ -130,19 +129,23 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
     }
 
     render() {
-        const {draggedItems, disableDragAnimation, style, connectDragSource, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, theme, operationList, type, store} = this.props;
+        const {draggedItems, disableDragAnimation, style, connectDragSource, LineComponent, openDetail, data, dateSelector, hasSelection, i18nPrefix = "focus", mosaic, operationList, type, store} = this.props;
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} />;
             case "timeline": // Pour une timeline, on wrappe simplement la ligne dans le conteneur de timeline qui affiche la date et la décoration de timeline.
                 return (
-                    <li>
-                        <div className={theme!.timelineDate}>{stringFor(dateSelector!(data))}</div>
-                        <div className={theme!.timelineBadge}></div>
-                        <div className={theme!.timelinePanel}>
-                            <LineComponent data={data} />
-                        </div>
-                    </li>
+                    <Theme theme={this.props.theme}>
+                        {theme =>
+                            <li>
+                                <div className={theme.timelineDate}>{stringFor(dateSelector!(data))}</div>
+                                <div className={theme.timelineBadge}></div>
+                                <div className={theme.timelinePanel}>
+                                    <LineComponent data={data} />
+                                </div>
+                            </li>
+                        }
+                    </Theme>
                 );
             default: // Pour une liste, on ajoute éventuellement la case à cocher et les actions de ligne.
                 const opList = operationList && operationList(data);
@@ -150,26 +153,26 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                 // On construit une fonction de rendu à part parce qu'on ne va pas toujours wrapper le résultat dans le Motion.
                 const lineContent = ({height, width}: {height?: number, width?: number}) =>
                     // On a besoin de rewrapper le contenu dans un <Observer> parce que sinon on perd le contexte MobX dans la Motion.
-                    <Observer>
-                        {() =>
+                    <Theme theme={this.props.theme}>
+                        {theme =>
                             // Si pas de drag and drop, la fonction est l'identité.
                             (connectDragSource || (x => x))(<li
-                                className={`${mosaic ? theme!.mosaic : theme!.line} ${this.isSelected ? theme!.selected : ""}`}
+                                className={`${mosaic ? theme.mosaic : theme.line} ${this.isSelected ? theme.selected : ""}`}
                                 style={{width: mosaic ? width || mosaic.width : undefined, height: mosaic ? height || mosaic.height : height, opacity: style && style.opacity}}
                             >
                                 <LineComponent data={data} openDetail={openDetail} />
                                 {hasSelection && store && store.isItemSelectionnable(data) ?
                                     <IconButton
-                                        className={`${theme!.checkbox} ${store.selectedItems.size ? theme!.forceDisplay : ""}`}
+                                        className={`${theme.checkbox} ${store.selectedItems.size ? theme.forceDisplay : ""}`}
                                         icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
                                         onClick={this.onSelection}
                                         primary={this.isSelected}
-                                        theme={{toggle: theme!.toggle, icon: theme!.checkboxIcon}}
+                                        theme={{toggle: theme.toggle, icon: theme.checkboxIcon}}
                                     />
                                 : null}
                                 {opList && opList.length > 0 ?
                                     <div
-                                        className={`${theme!.actions} ${this.forceActionDisplay ? theme!.forceDisplay : ""}`}
+                                        className={`${theme.actions} ${this.forceActionDisplay ? theme.forceDisplay : ""}`}
                                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                                     >
                                         <ContextualActions
@@ -183,7 +186,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                                 : null}
                             </li>)
                         }
-                    </Observer>;
+                    </Theme>;
 
                 // On ne wrappe la ligne dans le Motion que si la hauteur est définie pour
                 // - ne pas avoir une animation de départ d'une valeur quelconque jusqu'à la bonne valeur.
@@ -204,5 +207,3 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
         }
     }
 }
-
-export default themr("line", styles)(LineWrapper);

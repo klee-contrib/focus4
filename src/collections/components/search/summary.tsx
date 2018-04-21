@@ -2,20 +2,20 @@ import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 
 import {Button} from "react-toolbox/lib/button";
 import {Chip} from "react-toolbox/lib/chip";
 
 import {getIcon} from "../../../components";
 import {FormEntityField} from "../../../entity";
+import {themr} from "../../../theme";
 
 import {SearchStore} from "../../store";
 import {removeFacetValue} from "./facet-box";
 
 import * as styles from "./__style__/summary.css";
-
 export type SummaryStyle = Partial<typeof styles>;
+const Theme = themr("summary", styles);
 
 /** Props du ListSummary. */
 export interface ListSummaryProps<T> {
@@ -98,72 +98,73 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
     }
 
     render() {
-        const {canRemoveSort = true, theme, exportAction, hideGroup, hideSort, i18nPrefix = "focus", store} = this.props;
+        const {canRemoveSort = true, exportAction, hideGroup, hideSort, i18nPrefix = "focus", store} = this.props;
         const {groupingKey, totalCount, query} = store;
 
         const plural = totalCount !== 1 ? "s" : "";
-        const sentence = theme!.sentence;
 
         return (
-            <div className={theme!.summary}>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <div className={theme.summary}>
 
-                {/* Nombre de résultats. */}
-                <span className={sentence}>
-                    <strong>{totalCount}&nbsp;</strong>{i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
-                </span>
+                        {/* Nombre de résultats. */}
+                        <span className={theme.sentence}>
+                            <strong>{totalCount}&nbsp;</strong>{i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
+                        </span>
 
-                {/* Texte de recherche. */}
-                {query && query.trim().length > 0 ?
-                    <span className={sentence}> {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
-                : null}
+                        {/* Texte de recherche. */}
+                        {query && query.trim().length > 0 ?
+                            <span className={theme.sentence}> {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
+                        : null}
 
-                {/* Liste des filtres (scope + facettes + critères) */}
-                {this.filterList.length ?
-                    <div className={theme!.chips}>
-                        <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
-                        {this.filterList.map(chip => <Chip deletable {...chip}>{chip.label}</Chip>)}
+                        {/* Liste des filtres (scope + facettes + critères) */}
+                        {this.filterList.length ?
+                            <div className={theme.chips}>
+                                <span className={theme.sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
+                                {this.filterList.map(chip => <Chip deletable {...chip}>{chip.label}</Chip>)}
+                            </div>
+                        : null}
+
+                        {/* Groupe. */}
+                        {groupingKey && !hideGroup ?
+                            <div className={theme.chips}>
+                                <span className={theme.sentence}>{i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
+                                <Chip
+                                    deletable
+                                    onDeleteClick={() => store.groupingKey = undefined}
+                                >
+                                    {i18next.t(store.groupingLabel!)}
+                                </Chip>
+                            </div>
+                        : null}
+
+                        {/* Tri. */}
+                        {this.currentSort && !hideSort && !groupingKey && totalCount > 1 ?
+                            <div className={theme.chips}>
+                                <span className={theme.sentence}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
+                                <Chip
+                                    deletable={canRemoveSort}
+                                    onDeleteClick={canRemoveSort ? () => store.sortBy = undefined : undefined}
+                                >
+                                {i18next.t(this.currentSort.label)}</Chip>
+                            </div>
+                        : null}
+
+                        {/* Action d'export. */}
+                        {exportAction ?
+                            <div className={theme.print}>
+                                <Button
+                                    onClick={exportAction}
+                                    icon={getIcon(`${i18nPrefix}.icons.summary.export`)}
+                                    label={`${i18nPrefix}.search.summary.export`}
+                                    type="button"
+                                />
+                            </div>
+                        : null}
                     </div>
-                : null}
-
-                {/* Groupe. */}
-                {groupingKey && !hideGroup ?
-                    <div className={theme!.chips}>
-                        <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
-                        <Chip
-                            deletable
-                            onDeleteClick={() => store.groupingKey = undefined}
-                        >
-                            {i18next.t(store.groupingLabel!)}
-                        </Chip>
-                    </div>
-                : null}
-
-                {/* Tri. */}
-                {this.currentSort && !hideSort && !groupingKey && totalCount > 1 ?
-                    <div className={theme!.chips}>
-                        <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
-                        <Chip
-                            deletable={canRemoveSort}
-                            onDeleteClick={canRemoveSort ? () => store.sortBy = undefined : undefined}
-                        >
-                        {i18next.t(this.currentSort.label)}</Chip>
-                    </div>
-                : null}
-
-                {/* Action d'export. */}
-                {exportAction ?
-                    <div className={theme!.print}>
-                        <Button
-                            onClick={exportAction}
-                            icon={getIcon(`${i18nPrefix}.icons.summary.export`)}
-                            label={`${i18nPrefix}.search.summary.export`}
-                            type="button"
-                        />
-                    </div>
-                : null}
-            </div>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("summary", styles)(Summary);

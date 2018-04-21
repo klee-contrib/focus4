@@ -3,15 +3,17 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {InputTheme} from "react-toolbox/lib/input";
 
-import {Input, InputProps} from "./input";
+import {Input, InputProps} from "../components";
+import {themr} from "../theme";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
+const Theme = themr("RTDatePicker", styles);
+
 import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
@@ -227,50 +229,52 @@ export class InputDate extends React.Component<InputDateProps> {
     }
 
     render() {
-        const {theme, inputFormat = "MM/DD/YYYY", calendarFormat = "ddd, MMM D", displayFrom = "left", ISOStringFormat = "utc-midnight", ...inputProps} = this.props;
+        const {theme: pTheme, inputFormat = "MM/DD/YYYY", calendarFormat = "ddd, MMM D", displayFrom = "left", ISOStringFormat = "utc-midnight", ...inputProps} = this.props;
         return (
-            <div data-focus="input-date" data-id={this._inputDateId} className={input}>
-                <Input
-                    {...inputProps}
-                    mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                    onChange={(value: string) => this.dateText = value}
-                    onKeyDown={this.handleKeyDown}
-                    onFocus={() => this.showCalendar = true}
-                    theme={theme}
-                    value={this.dateText || ""}
-                />
-                {this.showCalendar ?
-                    <div
-                        ref={cal => this.calendar = cal}
-                        className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${this.calendarPosition === "up" ? up : down}`}
-                    >
-                        <header className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}>
-                            <span id="years" className={theme!.year} onClick={() => this.calendarDisplay = "years"}>
-                                {this.date.year()}
-                            </span>
-                            <h3 id="months" className={theme!.date} onClick={() => this.calendarDisplay = "months"}>
-                                {(ISOStringFormat === "local-utc-midnight" ? this.date.clone().local() : this.date).format(calendarFormat)}
-                            </h3>
-                            <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showCalendar = false} />
-                        </header>
-                        <div className={theme!.calendarWrapper}>
-                            <Calendar
-                                handleSelect={() => null}
-                                selectedDate={this.jsDate}
-                                display={this.calendarDisplay}
-                                locale={moment.locale()}
-                                onChange={this.onCalendarChange}
-                                theme={theme}
-                            />
-                        </div>
+            <Theme theme={pTheme}>
+                {theme =>
+                    <div data-focus="input-date" data-id={this._inputDateId} className={input}>
+                        <Input
+                            {...inputProps}
+                            mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                            onChange={(value: string) => this.dateText = value}
+                            onKeyDown={this.handleKeyDown}
+                            onFocus={() => this.showCalendar = true}
+                            theme={theme}
+                            value={this.dateText || ""}
+                        />
+                        {this.showCalendar ?
+                            <div
+                                ref={cal => this.calendar = cal}
+                                className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${this.calendarPosition === "up" ? up : down}`}
+                            >
+                                <header className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}>
+                                    <span id="years" className={theme!.year} onClick={() => this.calendarDisplay = "years"}>
+                                        {this.date.year()}
+                                    </span>
+                                    <h3 id="months" className={theme!.date} onClick={() => this.calendarDisplay = "months"}>
+                                        {(ISOStringFormat === "local-utc-midnight" ? this.date.clone().local() : this.date).format(calendarFormat)}
+                                    </h3>
+                                    <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showCalendar = false} />
+                                </header>
+                                <div className={theme!.calendarWrapper}>
+                                    <Calendar
+                                        handleSelect={() => null}
+                                        selectedDate={this.jsDate}
+                                        display={this.calendarDisplay}
+                                        locale={moment.locale()}
+                                        onChange={this.onCalendarChange}
+                                        theme={theme}
+                                    />
+                                </div>
+                            </div>
+                        : null}
                     </div>
-                : null}
-            </div>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("RTDatePicker", styles)(InputDate);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {

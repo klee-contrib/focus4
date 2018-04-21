@@ -1,10 +1,12 @@
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
+
+import {themr} from "../theme";
 
 import * as styles from "./__style__/display.css";
 export type DisplayStyle = Partial<typeof styles>;
+const Theme = themr("display", styles);
 
 /** Props du composant d'affichage. */
 export interface DisplayProps {
@@ -49,16 +51,18 @@ export class Display extends React.Component<DisplayProps> {
     }
 
     render() {
-        const {valueKey = "code", labelKey = "label", values, value, formatter, theme} = this.props;
+        const {valueKey = "code", labelKey = "label", values, value, formatter} = this.props;
         // tslint:disable-next-line:triple-equals ---> Le "==" est volontaire pour convertir un éventuel ID de type string (comme celui donné par un Select) en number.
         const ref = values && values.find(v => (v as any)[valueKey] == value);
         const displayed = ref && (ref as any)[labelKey] || this.value;
         return (
-            <div data-focus="display" className={theme!.display}>
-                {formatter && formatter(displayed) || displayed}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <div data-focus="display" className={theme.display}>
+                        {formatter && formatter(displayed) || displayed}
+                    </div>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("display", styles)(Display);

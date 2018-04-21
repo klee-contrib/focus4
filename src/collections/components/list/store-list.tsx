@@ -2,15 +2,10 @@ import i18next from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
-
-import {ReactComponent} from "../../../config";
 
 import {isSearch, ListStoreBase} from "../../store";
 import {LineProps, LineWrapperProps} from "./line";
 import {LineItem, List, ListProps} from "./list";
-
-import * as styles from "./__style__/list.css";
 
 /** Props additionnelles pour un StoreList. */
 export interface StoreListProps<T> extends ListProps<T> {
@@ -72,7 +67,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      * Quelques props supplémentaires à ajouter pour la sélection.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: ReactComponent<LineProps<T>>) {
+    protected getItems(Component: React.ComponentType<LineProps<T>>) {
         const {hasSelection = false, store} = this.props;
         return super.getItems(Component)
             .map(({key, data, style}) => ({
@@ -104,13 +99,10 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
     }
 }
 
-const ThemedStoreList = themr("list", styles)(StoreList);
-export default ThemedStoreList;
-
 /**
  * Crée un composant de liste avec store.
  * @param props Les props de la liste.
  */
 export function storeListFor<T>(props: ListProps<T> & StoreListProps<T>) {
-    return <ThemedStoreList {...props} />;
+    return <StoreList {...props} />;
 }
