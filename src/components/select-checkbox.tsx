@@ -1,11 +1,13 @@
 import i18next from "i18next";
 import React from "react";
-import {themr} from "react-css-themr";
+
+import {themr} from "../theme";
 
 import {Checkbox} from "./checkbox";
 
 import * as styles from "./__style__/select-checkbox.css";
 export type SelectCheckboxStyle = Partial<typeof styles>;
+const Theme = themr("selectCheckbox", styles);
 
 function clickHandlerFactory(
     isDisabled: boolean,
@@ -23,8 +25,8 @@ function clickHandlerFactory(
                 // is selected -> remove it
                 onChange(
                     value
-                    ? (value as any).filter((val: any) => val !== optVal)
-                    : undefined
+                        ? (value as any).filter((val: any) => val !== optVal)
+                        : undefined
                 );
             } else {
                 // is not selected -> add it
@@ -64,50 +66,54 @@ export function SelectCheckbox({
     labelKey,
     name,
     onChange,
-    theme,
+    theme: pTheme,
     value,
     valueKey,
     values
 }: SelectCheckboxProps) {
     return (
-        <div className={theme!.select}>
-            {label && <h5>{i18next.t(label)}</h5>}
-            <ul>
-                {values.map(option => {
-                    const optVal = (option as any)[valueKey];
-                    const optLabel = (option as any)[labelKey];
+        <Theme theme={pTheme}>
+            {theme => (
+                <div className={theme.select}>
+                    {label && <h5>{i18next.t(label)}</h5>}
+                    <ul>
+                        {values.map(option => {
+                            const optVal = (option as any)[valueKey];
+                            const optLabel = (option as any)[labelKey];
 
-                    const isSelected = value
-                        ? !!(value as any).find((val: any) => optVal === val)
-                        : false;
-                    const clickHandler = clickHandlerFactory(
-                        disabled,
-                        isSelected,
-                        value,
-                        optVal,
-                        onChange
-                    );
+                            const isSelected = value
+                                ? !!(value as any).find(
+                                      (val: any) => optVal === val
+                                  )
+                                : false;
+                            const clickHandler = clickHandlerFactory(
+                                disabled,
+                                isSelected,
+                                value,
+                                optVal,
+                                onChange
+                            );
 
-                    return (
-                        <li
-                            key={optVal}
-                            onClick={clickHandler}
-                            className={theme!.option}
-                        >
-                            <Checkbox
-                                name={`${name}-${optVal}`}
-                                value={isSelected}
-                                onClick={clickHandler}
-                                disabled={disabled}
-                                label={i18next.t(optLabel)}
-                            />
-                        </li>
-                    );
-                })}
-            </ul>
-            {error ? <div>{error}</div> : null}
-        </div>
+                            return (
+                                <li
+                                    key={optVal}
+                                    onClick={clickHandler}
+                                    className={theme!.option}
+                                >
+                                    <Checkbox
+                                        name={`${name}-${optVal}`}
+                                        value={isSelected}
+                                        onClick={clickHandler}
+                                        disabled={disabled}
+                                        label={i18next.t(optLabel)}
+                                    />
+                                </li>
+                            );
+                        })}
+                    </ul>
+                    {error ? <div>{error}</div> : null}
+                </div>
+            )}
+        </Theme>
     );
 }
-
-export default themr("selectCheckbox", styles)(SelectCheckbox);

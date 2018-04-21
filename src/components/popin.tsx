@@ -1,16 +1,17 @@
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {IconButton} from "react-toolbox/lib/button";
 import Portal from "react-toolbox/lib/hoc/Portal";
 
+import {themr} from "../theme";
+
 import {getIcon} from "./icon";
 
 import * as styles from "./__style__/popin.css";
-
 export type PopinStyle = Partial<typeof styles>;
+const Theme = themr("popin", styles);
 
 /** Props de la popin. */
 export interface PopinProps {
@@ -120,51 +121,60 @@ export class Popin extends React.Component<PopinProps> {
     }
 
     /** Récupère les deux animations d'ouverture et de fermeture selon le type de popin. */
-    private get animations() {
-        const {type = "from-right", theme} = this.props;
+    private animation(theme: PopinStyle) {
+        const {type = "from-right"} = this.props;
+        let open;
+        let close;
         switch (type) {
             case "from-right":
-                return {
-                    open: theme!.slideInRight,
-                    close: theme!.slideOutRight
-                };
+                open = theme.slideInRight;
+                close = theme.slideOutRight;
+                break;
             case "from-left":
-                return {
-                    open: theme!.slideInLeft,
-                    close: theme!.slideOutLeft
-                };
-            default:
-                return {open: "", close: ""};
+                open = theme.slideInLeft;
+                close = theme.slideOutLeft;
+                break;
+        }
+
+        if (this.willClose) {
+            return close;
+        } else if (this.willOpen) {
+            return open;
+        } else {
+            return "";
         }
     }
 
     render() {
-        const {i18nPrefix = "focus", level = 0, children, closePopin, theme, type = "from-right", preventOverlayClick} = this.props;
-        const {open, close} = this.animations;
+        const {i18nPrefix = "focus", level = 0, children, closePopin, type = "from-right", preventOverlayClick} = this.props;
         return this.opened ?
             <Portal>
-                <div
-                    className={`${theme!.overlay} ${this.willClose ? theme!.fadeOut : this.willOpen ? theme!.fadeIn : ""}`}
-                    onClick={!preventOverlayClick && closePopin || undefined}
-                    style={level > 0 ? {background: "none"} : {}}
-                >
-                    {!this.willOpen ?
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
-                            onClick={closePopin}
-                        />
-                    : null}
-                </div>
-                <div
-                    data-level={level}
-                    className={`${theme!.popin} ${type === "from-right" ? theme!.right : type === "from-left" ? theme!.left : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
-                    onClick={e => e.stopPropagation()}
-                >
-                    {children}
-                </div>
+                <Theme theme={this.props.theme}>
+                    {theme =>
+                        <>
+                            <div
+                                className={`${theme.overlay} ${this.willClose ? theme.fadeOut : this.willOpen ? theme.fadeIn : ""}`}
+                                onClick={!preventOverlayClick && closePopin || undefined}
+                                style={level > 0 ? {background: "none"} : {}}
+                            >
+                                {!this.willOpen ?
+                                    <IconButton
+                                        icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
+                                        onClick={closePopin}
+                                    />
+                                : null}
+                            </div>
+                            <div
+                                data-level={level}
+                                className={`${theme.popin} ${type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""} ${this.animation(theme) || ""}`}
+                                onClick={e => e.stopPropagation()}
+                            >
+                                {children}
+                            </div>
+                        </>
+                    }
+                </Theme>
             </Portal>
         : <div />;
     }
 }
-
-export default themr("popin", styles)(Popin);

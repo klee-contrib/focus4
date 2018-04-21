@@ -5,7 +5,7 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
+import {ThemeProvider as LegacyThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
 
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox";
@@ -19,6 +19,7 @@ import {AutocompleteStyle, BooleanRadioStyle, ButtonBackToTopStyle, DisplayStyle
 import {FieldStyle, FormStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
+import {ThemeProvider} from "../theme";
 
 import ErrorCenter, {ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
@@ -121,10 +122,12 @@ export interface LayoutStyleProviderProps {
  */
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     return (
-        <ThemeProvider theme={(props.appTheme || {}) as TReactCSSThemrTheme}>
-            <LayoutBase {...omit(props, "appTheme")}>
-                {props.children}
-            </LayoutBase>
+        <ThemeProvider value={props.appTheme}>
+            <LegacyThemeProvider theme={(props.appTheme || {}) as TReactCSSThemrTheme}>
+                <LayoutBase {...omit(props, "appTheme")}>
+                    {props.children}
+                </LayoutBase>
+            </LegacyThemeProvider>
         </ThemeProvider>
     );
 }

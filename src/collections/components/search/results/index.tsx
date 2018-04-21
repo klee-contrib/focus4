@@ -2,11 +2,10 @@ import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {ReactComponent} from "../../../../config";
 import {DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, OperationListItem, StoreList} from "../../list";
 
 import {GroupResult, SearchStore} from "../../../store";
-import Group, {GroupLoadingBar, GroupStyle} from "./group";
+import {Group, GroupLoadingBar, GroupStyle} from "./group";
 export {GroupStyle};
 
 /** Props de Results. */
@@ -14,7 +13,7 @@ export interface ResultsProps<T> {
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: ReactComponent<DetailProps<T>>;
+    DetailComponent?: React.ComponentType<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
     detailHeight?: number | ((data: T) => number);
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
@@ -24,9 +23,9 @@ export interface ResultsProps<T> {
     /** CSS du DragLayer. */
     dragLayerTheme?: DragLayerStyle;
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: ReactComponent<EmptyProps<T>>;
+    EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Header de groupe personnalisé. */
-    GroupHeader?: ReactComponent<{group: GroupResult<T>}>;
+    GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe par groupe (code / valeur). */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
@@ -44,7 +43,7 @@ export interface ResultsProps<T> {
     /** Champ de l'objet à utiliser pour la key des lignes. */
     itemKey?: keyof T;
     /** Composant de ligne. */
-    LineComponent?: ReactComponent<LineProps<T>>;
+    LineComponent?: React.ComponentType<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
@@ -54,7 +53,7 @@ export interface ResultsProps<T> {
     /** CSS de la liste. */
     listTheme?: ListStyle;
     /** Composant de mosaïque. */
-    MosaicComponent?: ReactComponent<LineProps<T>>;
+    MosaicComponent?: React.ComponentType<LineProps<T>>;
     /** Offset pour le scroll infini. Par défaut : 250 */
     offset?: number;
     /** Store de recherche. */
@@ -130,8 +129,6 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
         }
     }
 }
-
-export default Results;
 
 /**
  * Crée un composant de Results.

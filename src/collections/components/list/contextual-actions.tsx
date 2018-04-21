@@ -1,15 +1,14 @@
 import * as React from "react";
-import {themr} from "react-css-themr";
 
 import {Button} from "react-toolbox/lib/button";
 import {IconMenu, MenuItem, MenuItemProps} from "react-toolbox/lib/menu";
 
 import {ButtonMenu, getIcon} from "../../../components";
-import {ReactComponent} from "../../../config";
+import {themr} from "../../../theme";
 
 import * as styles from "./__style__/contextual-actions.css";
-
 export type ContextualActionsStyle = Partial<typeof styles>;
+const Theme = themr("contextualActions", styles);
 
 /** Props passée à un composant d'action custom. */
 export interface OperationListItemComponentProps<T> {
@@ -33,7 +32,7 @@ export type OperationListItem<T> = {
     isSecondary?: boolean;
     /** Force l'affichage de l'icône en vue liste (elle est toujours visible en mosaïque) */
     showIcon?: boolean;
-} | ReactComponent<OperationListItemComponentProps<T>>;
+} | React.ComponentType<OperationListItemComponentProps<T>>;
 
 /** Props du composant d'actions contextuelles. */
 export interface ContextualActionsProps {
@@ -73,7 +72,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
     }
 
     render() {
-        const {data, operationList, i18nPrefix = "focus", isMosaic, onClickMenu, onHideMenu, theme} = this.props;
+        const {data, operationList, i18nPrefix = "focus", isMosaic, onClickMenu, onHideMenu} = this.props;
         const lists = operationList.reduce((actionLists, Operation, key) => {
             const {customComponents, primaryActions, secondaryActions} = actionLists;
             if (isComponent(Operation)) {
@@ -99,37 +98,39 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
             return actionLists;
         }, {customComponents: [] as React.ReactElement<any>[], primaryActions: [] as React.ReactElement<any>[], secondaryActions: [] as MenuItemProps[]});
         return (
-            <div className={!isMosaic ? theme!.text : theme!.fab}>
-                {...lists.customComponents}
-                {lists.primaryActions}
-                {lists.secondaryActions.length ?
-                    !isMosaic ?
-                        <IconMenu
-                            icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
-                            onClick={onClickMenu}
-                            onHide={onHideMenu}
-                        >
-                            {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
-                        </IconMenu>
-                    :
-                        <ButtonMenu
-                            button={{
-                                icon: getIcon(`${i18nPrefix}.icons.contextualActions.secondary`),
-                                floating: true
-                            }}
-                            onClick={onClickMenu}
-                            onHide={onHideMenu}
-                        >
-                            {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
-                        </ButtonMenu>
-                : null}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <div className={!isMosaic ? theme.text : theme.fab}>
+                        {...lists.customComponents}
+                        {lists.primaryActions}
+                        {lists.secondaryActions.length ?
+                            !isMosaic ?
+                                <IconMenu
+                                    icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
+                                    onClick={onClickMenu}
+                                    onHide={onHideMenu}
+                                >
+                                    {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
+                                </IconMenu>
+                            :
+                                <ButtonMenu
+                                    button={{
+                                        icon: getIcon(`${i18nPrefix}.icons.contextualActions.secondary`),
+                                        floating: true
+                                    }}
+                                    onClick={onClickMenu}
+                                    onHide={onHideMenu}
+                                >
+                                    {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
+                                </ButtonMenu>
+                        : null}
+                    </div>
+                }
+            </Theme>
         );
     }
 }
 
-function isComponent<T>(item: OperationListItem<T>): item is ReactComponent<OperationListItemComponentProps<T>> {
+function isComponent<T>(item: OperationListItem<T>): item is React.ComponentType<OperationListItemComponentProps<T>> {
     return !(item as any).action;
 }
-
-export default themr("contextualActions", styles)(ContextualActions);

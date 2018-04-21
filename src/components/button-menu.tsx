@@ -87,5 +87,3 @@ export class ButtonMenu extends React.Component<ButtonMenuProps> {
         );
     }
 }
-
-export default ButtonMenu;

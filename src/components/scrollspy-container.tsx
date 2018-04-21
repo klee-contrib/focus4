@@ -7,15 +7,16 @@ import {action, computed, observable, untracked} from "mobx";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
-import ButtonBackToTop from "./button-back-to-top";
+import {themr} from "../theme";
+
+import {ButtonBackToTop} from "./button-back-to-top";
 import {PanelDescriptor} from "./panel";
 
 import * as styles from "./__style__/scrollspy-container.css";
-
 export type ScrollspyStyle = Partial<typeof styles>;
+const Theme = themr("scrollspy", styles);
 
 /** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
@@ -199,23 +200,25 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     }
 
     render() {
-        const {children, hideBackToTop, menuWidth = 250, scrollBehaviour = "smooth", theme} = this.props;
+        const {children, hideBackToTop, menuWidth = 250, scrollBehaviour = "smooth"} = this.props;
         return (
-            <div className={theme!.scrollspy}>
-                <nav style={this.menuPosition}>
-                    <ul>
-                        {this.menuItems.map(({label, id, onClick}) =>
-                            <li className={this.activeItem === id ? theme!.active : undefined} key={id} onClick={onClick}>{label}</li>
-                        )}
-                    </ul>
-                </nav>
-                <div className={theme!.content} style={{marginLeft: menuWidth}}>
-                    {children}
-                </div>
-                {!hideBackToTop ? <ButtonBackToTop scrollBehaviour={scrollBehaviour} /> : null}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <div className={theme.scrollspy}>
+                        <nav style={this.menuPosition}>
+                            <ul>
+                                {this.menuItems.map(({label, id, onClick}) =>
+                                    <li className={this.activeItem === id ? theme.active : undefined} key={id} onClick={onClick}>{label}</li>
+                                )}
+                            </ul>
+                        </nav>
+                        <div className={theme.content} style={{marginLeft: menuWidth}}>
+                            {children}
+                        </div>
+                        {!hideBackToTop ? <ButtonBackToTop scrollBehaviour={scrollBehaviour} /> : null}
+                    </div>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("scrollspy", styles)(ScrollspyContainer);

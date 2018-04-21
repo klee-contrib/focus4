@@ -3,7 +3,6 @@ import {debounce} from "lodash-decorators";
 import {action, observable, ObservableMap, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 export {ObservableMap};
 
@@ -11,8 +10,11 @@ import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps
 import {InputTheme} from "react-toolbox/lib/input";
 import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
+import {themr} from "../theme";
+
 import * as styles from "./__style__/autocomplete.css";
 export type AutocompleteStyle = Partial<typeof styles> & AutocompleteTheme & InputTheme;
+const Theme = themr("autocomplete", styles);
 
 /** Résultat du service de recherche. */
 export interface AutocompleteResult {
@@ -140,25 +142,28 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
     }
 
     render() {
-        const {keyResolver, querySearcher, ...props} = this.props;
+        const {keyResolver, querySearcher, theme: pTheme, ...props} = this.props;
         return (
-            <div data-focus="autocomplete">
-                <RTAutocomplete
-                    {...props}
-                    onChange={this.onValueChange}
-                    multiple={false}
-                    source={this.values.toJSON()}
-                    query={this.query}
-                    onQueryChange={this.onQueryChange}
-                    maxLength={undefined}
-                    suggestionMatch="disabled"
-                />
-                {this.isLoading ?
-                    <ProgressBar type="linear" mode="indeterminate" theme={{linear: props.theme!.progressBar}} />
-                : null}
-            </div>
+            <Theme theme={pTheme}>
+                {theme =>
+                    <div data-focus="autocomplete">
+                        <RTAutocomplete
+                            {...props}
+                            onChange={this.onValueChange}
+                            multiple={false}
+                            source={this.values.toJSON()}
+                            query={this.query}
+                            onQueryChange={this.onQueryChange}
+                            maxLength={undefined}
+                            suggestionMatch="disabled"
+                            theme={theme}
+                        />
+                        {this.isLoading ?
+                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
+                        : null}
+                    </div>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("autocomplete", styles)(Autocomplete);

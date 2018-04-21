@@ -1,14 +1,14 @@
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 
-import {ReactComponent} from "../../../config";
 import {EntityField, FieldEntry} from "../../../entity";
+import {themr} from "../../../theme";
 
-import LineWrapper, {LineProps} from "./line";
+import {LineProps, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
+const Theme = themr("list", styles);
 
 /** Props du composant de TimeLine. */
 export interface TimelineProps<T> extends ListBaseProps<T> {
@@ -17,7 +17,7 @@ export interface TimelineProps<T> extends ListBaseProps<T> {
     /** Le sélecteur du champ contenant la date. */
     dateSelector: (data: T) => EntityField<FieldEntry<string>>;
     /** Le composant de ligne. */
-    TimelineComponent: ReactComponent<LineProps<T>>;
+    TimelineComponent: React.ComponentType<LineProps<T>>;
 }
 
 /** Composant affichant une liste sous forme de Timeline. */
@@ -44,21 +44,22 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
 
     render() {
         return (
-            <ul className={this.props.theme!.timeline}>
-                {this.renderLines()}
-                {this.renderBottomRow()}
-            </ul>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <ul className={theme.timeline}>
+                        {this.renderLines()}
+                        {this.renderBottomRow(theme)}
+                    </ul>
+                }
+            </Theme>
         );
     }
 }
-
-const ThemedTimeline = themr("list", styles)(Timeline);
-export default ThemedTimeline;
 
 /**
  * Crée un composant affichant une liste sous forme de Timeline.
  * @param props Les props de la timeline.
  */
 export function timelineFor<T>(props: TimelineProps<T>) {
-    return <ThemedTimeline {...props} />;
+    return <Timeline {...props} />;
 }

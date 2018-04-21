@@ -1,10 +1,12 @@
 import i18next from "i18next";
 import React from "react";
-import {themr} from "react-css-themr";
 import {RadioButton, RadioGroup} from "react-toolbox/lib/radio";
+
+import {themr} from "../theme";
 
 import * as styles from "./__style__/boolean-radio.css";
 export type BooleanRadioStyle = Partial<typeof styles>;
+const Theme = themr("booleanRadio", styles);
 
 export interface BooleanRadioProps {
     /** Disabled radio-select, default to: false */
@@ -26,31 +28,33 @@ export function BooleanRadio({
     error,
     name,
     onChange,
-    theme,
+    theme: pTheme,
     value
 }: BooleanRadioProps) {
     return (
-        <div>
-            <RadioGroup
-                name={name}
-                value={value}
-                onChange={onChange}
-                className={theme!.radio}
-            >
-                <RadioButton
-                    label={i18next.t("focus.yes")}
-                    value={true}
-                    disabled={disabled}
-                />
-                <RadioButton
-                    label={i18next.t("focus.no")}
-                    value={false}
-                    disabled={disabled}
-                />
-            </RadioGroup>
-            {error ? <div>{error}</div> : null}
-        </div>
+        <Theme theme={pTheme}>
+            {theme => (
+                <>
+                    <RadioGroup
+                        name={name}
+                        value={value}
+                        onChange={onChange}
+                        className={theme.radio}
+                    >
+                        <RadioButton
+                            label={i18next.t("focus.yes")}
+                            value={true}
+                            disabled={disabled}
+                        />
+                        <RadioButton
+                            label={i18next.t("focus.no")}
+                            value={false}
+                            disabled={disabled}
+                        />
+                    </RadioGroup>
+                    {error ? <div>{error}</div> : null}
+                </>
+            )}
+        </Theme>
     );
 }
-
-export default themr("booleanRadio", styles)(BooleanRadio);

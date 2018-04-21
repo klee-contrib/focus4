@@ -7,7 +7,6 @@ import {themeable, themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
 import {Display, Input, Label} from "../../components";
-import {ReactComponent} from "../../config";
 import {ReferenceList} from "../../reference";
 
 import {EntityField, FieldEntry, FormEntityField} from "../types";
@@ -39,7 +38,7 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
     onChange?: (value: T["fieldType"]) => void;
     /** @internal */
     /** Pour `selectFor`, composant de Select. */
-    SelectComponent?: ReactComponent<SProps>;
+    SelectComponent?: React.ComponentType<SProps>;
     /** Affiche la tooltip de commentaire. */
     showTooltip?: boolean;
     /** CSS. */
