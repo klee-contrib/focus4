@@ -1,13 +1,10 @@
-import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
-import {LayoutProps, styles} from "./types";
+import {LayoutProps, Theme} from "./types";
 
 /** Contenu du Layout. */
-@observer
 export class LayoutContent extends React.Component<LayoutProps> {
 
     static contextTypes = {layout: PropTypes.object};
@@ -24,13 +21,14 @@ export class LayoutContent extends React.Component<LayoutProps> {
     }
 
     render() {
-        const {children, theme} = this.props;
         return (
-            <div className={theme!.content} style={{marginLeft: this.context.layout.menuWidth}}>
-                {children}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <div className={theme.content} style={{marginLeft: this.context.layout.menuWidth}}>
+                        {this.props.children}
+                    </div>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("layout", styles)(LayoutContent);

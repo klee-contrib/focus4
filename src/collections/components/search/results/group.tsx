@@ -157,6 +157,8 @@ export const GroupLoadingBar = observer(({i18nPrefix = "focus", store}: {i18nPre
     : <div />
 );
 
+(GroupLoadingBar as any).displayName = "GroupLoadingBar";
+
 export function DefaultGroupHeader({group}: {group: GroupResult}) {
     return <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>;
 }

@@ -3,11 +3,11 @@ import {upperFirst} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
 
-import {Select, SelectProps} from "../../components";
+import {Select} from "../../components";
 import {ReferenceList} from "../../reference";
 
 import {EntityField, FieldEntry} from "../types";
-import Field, {FieldOptions} from "./field";
+import {Field, FieldOptions} from "./field";
 
 /**
  * Crée un champ standard.
@@ -20,18 +20,20 @@ export function fieldFor<T extends FieldEntry>(field: EntityField<T>, options: P
     return <Field field={field} {...options} />;
 }
 
+export type Props<T> = T extends React.Component<infer P1> ? P1 : T extends (props: infer P2) => any ? P2 : never;
+
 /**
  * Crée un champ avec résolution de référence.
  * @param field La définition de champ.
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T extends FieldEntry, SProps = Partial<SelectProps>>(
+export function selectFor<T extends FieldEntry, SComponent = typeof Select>(
     field: EntityField<T>,
     values: ReferenceList,
-    options: Partial<FieldOptions<T, SProps>> = {}
+    options: Partial<FieldOptions<T, Props<SComponent>>> & {SelectComponent?: SComponent, selectProps?: Partial<Props<SComponent>>} = {}
 ) {
-    options.SelectComponent = options.SelectComponent as any || Select;
+    options.SelectComponent = options.SelectComponent || Select as any;
     options.values = values;
     return fieldFor<T>(field, options as Partial<FieldOptions<T>>);
 }

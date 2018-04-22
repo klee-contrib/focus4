@@ -1,20 +1,20 @@
 import i18next from "i18next";
 import {action, computed, observable} from "mobx";
-import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import * as React from "react";
-import {themeable, themr} from "react-css-themr";
+import {themeable} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
 import {Display, Input, Label} from "../../components";
 import {ReferenceList} from "../../reference";
+import {themr} from "../../theme";
 
 import {EntityField, FieldEntry, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
-
 export type FieldStyle = Partial<typeof styles>;
+const Theme = themr("field", styles);
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
 export interface FieldOptions<T extends FieldEntry, SProps = {}> {
@@ -39,6 +39,9 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
     /** @internal */
     /** Pour `selectFor`, composant de Select. */
     SelectComponent?: React.ComponentType<SProps>;
+    /** @internal */
+    /** Pour `selectFor`, props du composant de Select. */
+    selectProps?: SProps;
     /** Affiche la tooltip de commentaire. */
     showTooltip?: boolean;
     /** CSS. */
@@ -51,7 +54,6 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
 }
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-@observer
 export class Field<T extends FieldEntry, SProps = {}> extends React.Component<FieldOptions<T, SProps> & {field: EntityField<T>}> {
 
     // On récupère le forceErrorDisplay du form depuis le contexte.
@@ -108,7 +110,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
                 labelKey={values && values.$labelKey || "code"}
-                theme={themeable(displayProps.theme || {}, theme!.display || {})}
+                theme={themeable(displayProps.theme || {}, theme && theme.display || {})}
                 value={value}
                 valueKey={values && values.$valueKey || "label"}
                 values={values}
@@ -118,16 +120,15 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {field, values, keyResolver, SelectComponent, theme} = this.props;
+        const {field, values, keyResolver, SelectComponent, selectProps, theme} = this.props;
         const {value, error, $field: {name, domain: {InputComponent = Input, inputFormatter = ((x?: string) => x), inputProps = {}}}} = field as FormEntityField<T>;
         let props: any = {
-            ...inputProps as {},
             value: inputFormatter(value),
             error: this.showError && error || undefined,
             name,
             id: name,
             onChange: this.onChange,
-            theme: themeable(inputProps.theme || {}, theme!.input || {})
+            theme: themeable(inputProps.theme || {}, theme && theme.input || {})
         };
 
         if (keyResolver) {
@@ -137,6 +138,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
         if (SelectComponent && values) {
             return (
                 <SelectComponent
+                    {...selectProps}
                     {...props}
                     values={values.slice()}
                     labelKey={values && values.$labelKey || "code"}
@@ -144,33 +146,38 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
                 />
             );
         } else {
-            return <InputComponent {...props} />;
+            return <InputComponent {...inputProps} {...props} />;
         }
     }
 
     render() {
-        const {disableInlineSizing, hasLabel = true, labelRatio = 33, field, showTooltip, i18nPrefix = "focus", theme} = this.props;
-        const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
-        const {error, isEdit, $field: {comment, label, isRequired, domain: {className = "", LabelComponent = Label}}} = field as FormEntityField<T>;
         return (
-            <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${isEdit && error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
-                {hasLabel ?
-                    <LabelComponent
-                        comment={comment}
-                        i18nPrefix={i18nPrefix}
-                        label={label}
-                        name={name}
-                        showTooltip={showTooltip}
-                        style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
-                        theme={{label: theme!.label}}
-                    />
-                : null}
-                <div style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}} className ={`${theme!.value} ${className}`}>
-                    {isEdit ? this.input() : this.display()}
-                </div>
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme => {
+                    const {disableInlineSizing, hasLabel = true, labelRatio = 33, field, showTooltip, i18nPrefix = "focus"} = this.props;
+                    const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
+                    const {error, isEdit, $field: {comment, label, isRequired, domain: {className = "", LabelComponent = Label}}} = field as FormEntityField<T>;
+
+                    return (
+                        <div className={`${theme.field} ${isEdit ? theme.edit : ""} ${isEdit && error && this.showError ? theme.invalid : ""} ${isRequired ? theme.required : ""} ${className}`}>
+                            {hasLabel ?
+                                <LabelComponent
+                                    comment={comment}
+                                    i18nPrefix={i18nPrefix}
+                                    label={label}
+                                    name={name}
+                                    showTooltip={showTooltip}
+                                    style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
+                                    theme={{label: theme.label}}
+                                />
+                            : null}
+                            <div style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}} className ={`${theme.value} ${className}`}>
+                                {isEdit ? this.input() : this.display()}
+                            </div>
+                        </div>
+                    );
+                }}
+            </Theme>
         );
     }
 }
-
-export default themr("field", styles)(Field);
