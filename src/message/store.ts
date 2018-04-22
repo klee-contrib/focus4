@@ -11,7 +11,6 @@ export interface Message {
 
 /** Store de messages */
 export class MessageStore {
-
     /** Objet contenant tous les messages reçus. */
     @observable data: {[id: string]: Message} = {};
     /** Dernier message reçu. */

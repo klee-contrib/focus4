@@ -1,7 +1,17 @@
 import {extendObservable, observable, reaction} from "mobx";
 
 import {nodeToFormNode, toFlatValues} from "../store";
-import {Entity, FormListNode, FormNode, isEntityField, isFormNode, isStoreListNode, isStoreNode, StoreListNode, StoreNode} from "../types";
+import {
+    Entity,
+    FormListNode,
+    FormNode,
+    isEntityField,
+    isFormNode,
+    isStoreListNode,
+    isStoreNode,
+    StoreListNode,
+    StoreNode
+} from "../types";
 
 /**
  * Construit un FormNode à partir d'un StoreNode.
@@ -11,9 +21,21 @@ import {Entity, FormListNode, FormNode, isEntityField, isFormNode, isStoreListNo
  * @param transform La fonction de transformation
  * @param isEdit L'état initial ou la condition d'édition.
  */
-export function makeFormNode<T extends Entity, U = {}>(node: StoreListNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): FormListNode<T, U> & {stopSync(): void};
-export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T>, transform?: (source: StoreNode<T>) => U, isEdit?: boolean | (() => boolean)): FormNode<T, U> & {stopSync(): void};
-export function makeFormNode<T extends Entity, U = {}>(node: StoreNode<T> | StoreListNode<T>, transform: (source: StoreNode<T>) => U = _ => ({}) as U, isEdit: boolean | (() => boolean) = false) {
+export function makeFormNode<T extends Entity, U = {}>(
+    node: StoreListNode<T>,
+    transform?: (source: StoreNode<T>) => U,
+    isEdit?: boolean | (() => boolean)
+): FormListNode<T, U> & {stopSync(): void};
+export function makeFormNode<T extends Entity, U = {}>(
+    node: StoreNode<T>,
+    transform?: (source: StoreNode<T>) => U,
+    isEdit?: boolean | (() => boolean)
+): FormNode<T, U> & {stopSync(): void};
+export function makeFormNode<T extends Entity, U = {}>(
+    node: StoreNode<T> | StoreListNode<T>,
+    transform: (source: StoreNode<T>) => U = _ => ({} as U),
+    isEdit: boolean | (() => boolean) = false
+) {
     if (isFormNode(node)) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
@@ -61,13 +83,17 @@ function clone(source: any): any {
         }
         return res;
     } else if (isEntityField(source)) {
-        return extendObservable({
-            $field: source.$field
-        }, {
-            value: source.value
-        }, {
-            value: observable.ref
-        });
+        return extendObservable(
+            {
+                $field: source.$field
+            },
+            {
+                value: source.value
+            },
+            {
+                value: observable.ref
+            }
+        );
     }
 
     return source;

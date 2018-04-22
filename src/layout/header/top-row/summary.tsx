@@ -16,13 +16,5 @@ export interface HeaderSummaryProps {
 
 /** Summary, doit être affiché dans `HeaderTopRow` et est masqué si le header est replié. */
 export function HeaderSummary({children, theme: pTheme}: HeaderSummaryProps) {
-    return (
-        <Theme theme={pTheme}>
-            {theme =>
-                <div className={`${theme.item} ${theme.middle}`}>
-                    {children}
-                </div>
-            }
-        </Theme>
-    );
+    return <Theme theme={pTheme}>{theme => <div className={`${theme.item} ${theme.middle}`}>{children}</div>}</Theme>;
 }

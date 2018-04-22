@@ -36,6 +36,13 @@ export interface LegacyFunctionValidator extends Error {
     };
 }
 
-export type FunctionValidator = (value: any) => string | false| undefined;
+export type FunctionValidator = (value: any) => string | false | undefined;
 
-export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator | LegacyFunctionValidator;
+export type Validator =
+    | DateValidator
+    | EmailValidator
+    | FunctionValidator
+    | NumberValidator
+    | RegexValidator
+    | StringValidator
+    | LegacyFunctionValidator;

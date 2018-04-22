@@ -1,7 +1,20 @@
 import {isBoolean, isFunction, values} from "lodash";
 import {action, extendObservable, observable} from "mobx";
 
-import {BaseStoreNode, EntityField, FormEntityField, FormListNode, FormNode, isAnyFormNode, isEntityField, isFormListNode, isFormNode, isStoreNode, StoreListNode, StoreNode} from "../types";
+import {
+    BaseStoreNode,
+    EntityField,
+    FormEntityField,
+    FormListNode,
+    FormNode,
+    isAnyFormNode,
+    isEntityField,
+    isFormListNode,
+    isFormNode,
+    isStoreNode,
+    StoreListNode,
+    StoreNode
+} from "../types";
 import {validateField} from "../validation";
 import {setEntityEntry} from "./store";
 
@@ -11,19 +24,26 @@ import {setEntityEntry} from "./store";
  * @param sourceNode Le node origine du FormNode.
  * @param parentNodeOrEditing Node parent, (l'état initial ou la condition) d'édition.
  */
-export function nodeToFormNode(node: BaseStoreNode, sourceNode: BaseStoreNode, parentNodeOrEditing: FormNode | FormListNode | boolean | (() => boolean)) {
+export function nodeToFormNode(
+    node: BaseStoreNode,
+    sourceNode: BaseStoreNode,
+    parentNodeOrEditing: FormNode | FormListNode | boolean | (() => boolean)
+) {
     const {$tempEdit} = node;
     if ($tempEdit) {
         delete node.$tempEdit;
     }
 
     (node as any).form = observable({
-        _isEdit: (isBoolean(parentNodeOrEditing) ? parentNodeOrEditing : true) && (isBoolean($tempEdit) ? $tempEdit : true),
+        _isEdit:
+            (isBoolean(parentNodeOrEditing) ? parentNodeOrEditing : true) && (isBoolean($tempEdit) ? $tempEdit : true),
         get isEdit() {
-            return this._isEdit
-                && (isFormNode(parentNodeOrEditing) ? parentNodeOrEditing.form.isEdit : true)
-                && (isFunction(parentNodeOrEditing) ? parentNodeOrEditing() : true)
-                && (isFunction($tempEdit) ? $tempEdit() : true);
+            return (
+                this._isEdit &&
+                (isFormNode(parentNodeOrEditing) ? parentNodeOrEditing.form.isEdit : true) &&
+                (isFunction(parentNodeOrEditing) ? parentNodeOrEditing() : true) &&
+                (isFunction($tempEdit) ? $tempEdit() : true)
+            );
         },
         set isEdit(edit) {
             this._isEdit = edit;
@@ -34,7 +54,9 @@ export function nodeToFormNode(node: BaseStoreNode, sourceNode: BaseStoreNode, p
         node.forEach((item, i) => nodeToFormNode(item, (sourceNode as StoreListNode)[i], node));
         extendObservable(node.form, {
             get isValid() {
-                return isFormListNode(node) && (!node.form.isEdit || node.every(item => !item.form || item.form.isValid));
+                return (
+                    isFormListNode(node) && (!node.form.isEdit || node.every(item => !item.form || item.form.isValid))
+                );
             }
         });
     } else if (isFormNode(node)) {
@@ -43,23 +65,30 @@ export function nodeToFormNode(node: BaseStoreNode, sourceNode: BaseStoreNode, p
             if (isEntityField(child)) {
                 addFormFieldProperties(child, node);
             } else if (isStoreNode(child)) {
-                nodeToFormNode(child, (sourceNode as any)[entry], isBoolean(parentNodeOrEditing) ? node : parentNodeOrEditing);
+                nodeToFormNode(
+                    child,
+                    (sourceNode as any)[entry],
+                    isBoolean(parentNodeOrEditing) ? node : parentNodeOrEditing
+                );
             }
         }
         extendObservable(node.form, {
             get isValid() {
-                return isFormNode(node) && (node.form.isEdit || values(node)
-                    .every(item => {
-                        if (isEntityField(item)) {
-                            return !(item as FormEntityField).isEdit || !(item as FormEntityField).error;
-                        } else if (isFormNode(item)) {
-                            return !item.form || item.form.isValid;
-                        } else {
-                            return true;
-                        }
-                    }));
-                }
-            });
+                return (
+                    isFormNode(node) &&
+                    (node.form.isEdit ||
+                        values(node).every(item => {
+                            if (isEntityField(item)) {
+                                return !(item as FormEntityField).isEdit || !(item as FormEntityField).error;
+                            } else if (isFormNode(item)) {
+                                return !item.form || item.form.isValid;
+                            } else {
+                                return true;
+                            }
+                        }))
+                );
+            }
+        });
     }
 
     if (isAnyFormNode(node)) {
@@ -90,9 +119,7 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
             return validateField(field);
         },
         get isEdit() {
-            return this._isEdit
-                && parentNode.form.isEdit
-                && (isFunction(isEdit) ? isEdit() : true);
+            return this._isEdit && parentNode.form.isEdit && (isFunction(isEdit) ? isEdit() : true);
         },
         set isEdit(edit) {
             this._isEdit = edit;

@@ -45,7 +45,10 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
     /** Affiche la tooltip de commentaire. */
     showTooltip?: boolean;
     /** CSS. */
-    theme?: FieldStyle & {display?: NonNullable<T["domain"]["displayProps"]>["theme"], input?: NonNullable<T["domain"]["inputProps"]>["theme"]};
+    theme?: FieldStyle & {
+        display?: NonNullable<T["domain"]["displayProps"]>["theme"];
+        input?: NonNullable<T["domain"]["inputProps"]>["theme"];
+    };
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
     valueRatio?: number;
     /** @internal */
@@ -54,24 +57,25 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
 }
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-export class Field<T extends FieldEntry, SProps = {}> extends React.Component<FieldOptions<T, SProps> & {field: EntityField<T>}> {
-
+export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
+    FieldOptions<T, SProps> & {field: EntityField<T>}
+> {
     // On récupère le forceErrorDisplay du form depuis le contexte.
     static contextTypes = {form: PropTypes.object};
     context!: {form?: {forceErrorDisplay: boolean}};
 
     /** <div /> contenant le composant de valeur (input ou display). */
-    @observable
-    private valueElement?: Element;
+    @observable private valueElement?: Element;
     /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
-    @observable
-    private hideErrorOnInit = (this.props.field as FormEntityField<T>).isEdit && !this.props.field.value;
+    @observable private hideErrorOnInit = (this.props.field as FormEntityField<T>).isEdit && !this.props.field.value;
 
     /** Détermine si on affiche l'erreur ou pas. En plus des surcharges du form et du field lui-même, l'erreur est masquée si le champ est en cours de saisie. */
     @computed
     get showError() {
-        return (!this.hideErrorOnInit || this.context.form && this.context.form.forceErrorDisplay || false)
-            && !documentHelper.isElementActive(this.valueElement);
+        return (
+            (!this.hideErrorOnInit || (this.context.form && this.context.form.forceErrorDisplay) || false) &&
+            !documentHelper.isElementActive(this.valueElement)
+        );
     }
 
     // On enregistre le <div> de la valeur et on enregistre un eventListener désactiver le `hideErrorOnInit` au premier clic sur
@@ -94,25 +98,39 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     /** Appelé lors d'un changement sur l'input. */
     @action.bound
     onChange(value: T["fieldType"]) {
-        const {onChange, field: {$field: {domain}}} = this.props;
+        const {
+            onChange,
+            field: {
+                $field: {domain}
+            }
+        } = this.props;
         if (onChange) {
-            onChange(domain.unformatter && domain.unformatter(value) || value);
+            onChange((domain.unformatter && domain.unformatter(value)) || value);
         }
     }
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
         const {values, field, keyResolver, theme} = this.props;
-        const {value, $field: {domain: {displayFormatter = (t: string) => i18next.t(t), DisplayComponent = Display as any, displayProps = {}}}} = field;
+        const {
+            value,
+            $field: {
+                domain: {
+                    displayFormatter = (t: string) => i18next.t(t),
+                    DisplayComponent = Display as any,
+                    displayProps = {}
+                }
+            }
+        } = field;
         return (
             <DisplayComponent
                 {...displayProps as {}}
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
-                labelKey={values && values.$labelKey || "code"}
-                theme={themeable(displayProps.theme || {}, theme && theme.display || {})}
+                labelKey={(values && values.$labelKey) || "code"}
+                theme={themeable(displayProps.theme || {}, (theme && theme.display) || {})}
                 value={value}
-                valueKey={values && values.$valueKey || "label"}
+                valueKey={(values && values.$valueKey) || "label"}
                 values={values}
             />
         );
@@ -121,14 +139,21 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
         const {field, values, keyResolver, SelectComponent, selectProps, theme} = this.props;
-        const {value, error, $field: {name, domain: {InputComponent = Input, inputFormatter = ((x?: string) => x), inputProps = {}}}} = field as FormEntityField<T>;
+        const {
+            value,
+            error,
+            $field: {
+                name,
+                domain: {InputComponent = Input, inputFormatter = (x?: string) => x, inputProps = {}}
+            }
+        } = field as FormEntityField<T>;
         let props: any = {
             value: inputFormatter(value),
-            error: this.showError && error || undefined,
+            error: (this.showError && error) || undefined,
             name,
             id: name,
             onChange: this.onChange,
-            theme: themeable(inputProps.theme || {}, theme && theme.input || {})
+            theme: themeable(inputProps.theme || {}, (theme && theme.input) || {})
         };
 
         if (keyResolver) {
@@ -141,8 +166,8 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
                     {...selectProps}
                     {...props}
                     values={values.slice()}
-                    labelKey={values && values.$labelKey || "code"}
-                    valueKey={values && values.$valueKey || "label"}
+                    labelKey={(values && values.$labelKey) || "code"}
+                    valueKey={(values && values.$valueKey) || "label"}
                 />
             );
         } else {
@@ -154,13 +179,33 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
         return (
             <Theme theme={this.props.theme}>
                 {theme => {
-                    const {disableInlineSizing, hasLabel = true, labelRatio = 33, field, showTooltip, i18nPrefix = "focus"} = this.props;
+                    const {
+                        disableInlineSizing,
+                        hasLabel = true,
+                        labelRatio = 33,
+                        field,
+                        showTooltip,
+                        i18nPrefix = "focus"
+                    } = this.props;
                     const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
-                    const {error, isEdit, $field: {comment, label, isRequired, domain: {className = "", LabelComponent = Label}}} = field as FormEntityField<T>;
+                    const {
+                        error,
+                        isEdit,
+                        $field: {
+                            comment,
+                            label,
+                            isRequired,
+                            domain: {className = "", LabelComponent = Label}
+                        }
+                    } = field as FormEntityField<T>;
 
                     return (
-                        <div className={`${theme.field} ${isEdit ? theme.edit : ""} ${isEdit && error && this.showError ? theme.invalid : ""} ${isRequired ? theme.required : ""} ${className}`}>
-                            {hasLabel ?
+                        <div
+                            className={`${theme.field} ${isEdit ? theme.edit : ""} ${
+                                isEdit && error && this.showError ? theme.invalid : ""
+                            } ${isRequired ? theme.required : ""} ${className}`}
+                        >
+                            {hasLabel ? (
                                 <LabelComponent
                                     comment={comment}
                                     i18nPrefix={i18nPrefix}
@@ -170,8 +215,11 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<Fi
                                     style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
                                     theme={{label: theme.label}}
                                 />
-                            : null}
-                            <div style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}} className ={`${theme.value} ${className}`}>
+                            ) : null}
+                            <div
+                                style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
+                                className={`${theme.value} ${className}`}
+                            >
                                 {isEdit ? this.input() : this.display()}
                             </div>
                         </div>

@@ -6,12 +6,11 @@ declare module "react-toolbox/lib/date_picker/theme.css";
 declare module "react-toolbox/lib/time_picker/theme.css";
 
 declare module "react-toolbox/lib/date_picker/Calendar" {
-
     interface CalendarProps {
         disabledDates?: Date[];
         display?: "months" | "years";
         enabledDates?: Date[];
-        handleSelect?: Function
+        handleSelect?: Function;
         locale?: string | {};
         maxDate?: Date;
         minDate?: Date;
@@ -27,7 +26,6 @@ declare module "react-toolbox/lib/date_picker/Calendar" {
 }
 
 declare module "react-toolbox/lib/time_picker/Clock" {
-
     interface ClockProps {
         display?: "hours" | "minutes";
         format?: "24hr" | "ampm";
@@ -70,7 +68,7 @@ declare module "inputmask-core" {
         getRawValue(): string | undefined;
         getValue(): string | undefined;
 
-        setPattern(pattern: string, options?: {selection?: InputMaskSelection, value?: string | undefined}): void;
+        setPattern(pattern: string, options?: {selection?: InputMaskSelection; value?: string | undefined}): void;
         setSelection(selection: InputMaskSelection): void;
         setValue(value: string | undefined): void;
 

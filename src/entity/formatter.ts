@@ -6,6 +6,5 @@ import numeral from "numeral";
  * @param format Le format (par défaut: "0.0").
  */
 export function formatNumber(n: string | number, format?: string) {
-    return numeral(n)
-        .format(format || "0,0");
+    return numeral(n).format(format || "0,0");
 }

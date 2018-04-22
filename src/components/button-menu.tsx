@@ -19,7 +19,6 @@ export interface ButtonMenuProps extends MenuProps {
 /** Menu React-Toolbox avec un bouton personnalisable (non icône). */
 @observer
 export class ButtonMenu extends React.Component<ButtonMenuProps> {
-
     /** Menu ouvert. */
     @observable isOpened = false;
     /** Hauteur du bouton, pour placer le menu. */
@@ -74,10 +73,19 @@ export class ButtonMenu extends React.Component<ButtonMenuProps> {
     }
 
     render() {
-        const {button: {icon, openedIcon, ...buttonProps}, position = "topLeft", ...menuProps} = this.props;
+        const {
+            button: {icon, openedIcon, ...buttonProps},
+            position = "topLeft",
+            ...menuProps
+        } = this.props;
         return (
             <div data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
-                <Button ref={i => this.button = i} {...buttonProps} onClick={this.onClick} icon={this.isOpened && openedIcon ? openedIcon : icon}/>
+                <Button
+                    ref={i => (this.button = i)}
+                    {...buttonProps}
+                    onClick={this.onClick}
+                    icon={this.isOpened && openedIcon ? openedIcon : icon}
+                />
                 <div style={this.menuStyle}>
                     <Menu {...menuProps} position={position} active={this.isOpened} onHide={this.onHide}>
                         {menuProps.children}

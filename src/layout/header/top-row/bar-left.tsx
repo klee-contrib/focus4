@@ -16,13 +16,5 @@ export interface HeaderBarLeftProps {
 
 /** Barre du haut à gauche, doit être affiché dans `HeaderTopRow`. */
 export function HeaderBarLeft({children, theme: pTheme}: HeaderBarLeftProps) {
-    return (
-        <Theme theme={pTheme}>
-            {theme =>
-                <div className={`${theme.item} ${theme.left}`}>
-                    {children}
-                </div>
-            }
-        </Theme>
-    );
+    return <Theme theme={pTheme}>{theme => <div className={`${theme.item} ${theme.left}`}>{children}</div>}</Theme>;
 }

@@ -12,10 +12,11 @@ const Theme = themr("header", styles);
 const TooltipButton = Tooltip(Button);
 
 /** Action principale, affichée dans son propre bouton. */
-export type PrimaryAction = ButtonProps & TooltipProps & {
-    /** Icône custom (non material). */
-    iconCustom?: boolean;
-};
+export type PrimaryAction = ButtonProps &
+    TooltipProps & {
+        /** Icône custom (non material). */
+        iconCustom?: boolean;
+    };
 
 /** Action secondaire, affichée dans un menu. */
 export interface SecondaryAction extends MenuItemProps {
@@ -41,7 +42,7 @@ export interface HeaderActionsProps {
 export function HeaderActions({i18nPrefix = "focus", primary = [], secondary = [], theme: pTheme}: HeaderActionsProps) {
     return (
         <Theme theme={pTheme}>
-            {theme =>
+            {theme => (
                 <div className={theme.actions}>
                     {primary.map((action, i) => {
                         const FinalButton = action.tooltip ? TooltipButton : Button;
@@ -54,7 +55,7 @@ export function HeaderActions({i18nPrefix = "focus", primary = [], secondary = [
                             />
                         );
                     })}
-                    {secondary.length > 0 ?
+                    {secondary.length > 0 ? (
                         <ButtonMenu
                             button={{
                                 floating: true,
@@ -62,11 +63,17 @@ export function HeaderActions({i18nPrefix = "focus", primary = [], secondary = [
                             }}
                             position="topRight"
                         >
-                            {secondary.map((action, i) => <MenuItem key={`${i}`} {...action} icon={getIcon(action.icon, action.iconCustom || false)}  />)}
+                            {secondary.map((action, i) => (
+                                <MenuItem
+                                    key={`${i}`}
+                                    {...action}
+                                    icon={getIcon(action.icon, action.iconCustom || false)}
+                                />
+                            ))}
                         </ButtonMenu>
-                    : null}
+                    ) : null}
                 </div>
-            }
+            )}
         </Theme>
     );
 }

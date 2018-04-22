@@ -23,34 +23,33 @@ export interface TimelineProps<T> extends ListBaseProps<T> {
 /** Composant affichant une liste sous forme de Timeline. */
 @observer
 export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
-
     get data() {
         return this.props.data;
     }
 
     private renderLines() {
         const {lineTheme, itemKey, TimelineComponent, dateSelector} = this.props;
-        return this.displayedData.map((item, idx) =>
+        return this.displayedData.map((item, idx) => (
             <LineWrapper
-                key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
+                key={(itemKey && item[itemKey] && (item[itemKey] as any).value) || (itemKey && item[itemKey]) || idx}
                 theme={lineTheme}
                 data={item}
                 dateSelector={dateSelector}
                 LineComponent={TimelineComponent}
                 type="timeline"
             />
-        );
+        ));
     }
 
     render() {
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <ul className={theme.timeline}>
                         {this.renderLines()}
                         {this.renderBottomRow(theme)}
                     </ul>
-                }
+                )}
             </Theme>
         );
     }

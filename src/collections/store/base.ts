@@ -5,7 +5,6 @@ export type SelectionStatus = "none" | "partial" | "selected";
 
 /** Socle commun entre le store de liste et de recherche. */
 export abstract class ListStoreBase<T> {
-
     /** Filtre texte. */
     @observable query = "";
     /** Tri par ordre croissant. */
@@ -28,9 +27,12 @@ export abstract class ListStoreBase<T> {
     @computed
     get selectionStatus(): SelectionStatus {
         switch (this.selectedItems.size) {
-            case 0: return "none";
-            case this.selectionnableList.length: return "selected";
-            default: return "partial";
+            case 0:
+                return "none";
+            case this.selectionnableList.length:
+                return "selected";
+            default:
+                return "partial";
         }
     }
 

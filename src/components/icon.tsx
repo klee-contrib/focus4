@@ -19,7 +19,7 @@ export function getIcon(name?: React.ReactNode, isCustom?: boolean) {
     }
 
     if (isCustom) {
-        return <span className={`icon-${name}`}></span>;
+        return <span className={`icon-${name}`} />;
     } else {
         return name;
     }

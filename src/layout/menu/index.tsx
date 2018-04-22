@@ -24,7 +24,6 @@ export interface MainMenuProps {
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 export class MainMenu extends React.Component<MainMenuProps> {
-
     static contextTypes = {
         layout: PropTypes.object
     };
@@ -43,8 +42,13 @@ export class MainMenu extends React.Component<MainMenuProps> {
     /** Récupère le sous-menu actif. */
     @computed
     get subMenu() {
-        const activeMenuItem = this.activeMenuIndex && React.Children.toArray(this.props.children)[this.activeMenuIndex] as React.ReactElement<MainMenuItemProps> || undefined;
-        return activeMenuItem && activeMenuItem.props && activeMenuItem.props.children || undefined;
+        const activeMenuItem =
+            (this.activeMenuIndex &&
+                (React.Children.toArray(this.props.children)[this.activeMenuIndex] as React.ReactElement<
+                    MainMenuItemProps
+                >)) ||
+            undefined;
+        return (activeMenuItem && activeMenuItem.props && activeMenuItem.props.children) || undefined;
     }
 
     /**
@@ -61,8 +65,12 @@ export class MainMenu extends React.Component<MainMenuProps> {
     }
 
     // Permet de récupérer et d'actualiser la largeur du menu à l'exécution.
-    componentDidMount() { this.getMenuWidth(); }
-    componentDidUpdate() { this.getMenuWidth(); }
+    componentDidMount() {
+        this.getMenuWidth();
+    }
+    componentDidUpdate() {
+        this.getMenuWidth();
+    }
     getMenuWidth() {
         this.context.layout.menuWidth = (findDOMNode(this) as Element).clientWidth;
     }
@@ -74,31 +82,24 @@ export class MainMenu extends React.Component<MainMenuProps> {
         const {activeRoute, children} = this.props;
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <nav className={theme.menu}>
-                        <MainMenuList
-                            activeRoute={activeRoute}
-                            onSelectMenu={this.onSelectMenu}
-                            theme={theme}
-                        >
+                        <MainMenuList activeRoute={activeRoute} onSelectMenu={this.onSelectMenu} theme={theme}>
                             {children}
                         </MainMenuList>
                         <MainMenuPanel
-                            close={() => this.showPanel = false}
+                            close={() => (this.showPanel = false)}
                             opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
                             xOffset={this.context.layout.menuWidth}
                             yOffset={this.yPosition}
                             theme={theme}
                         >
-                            <MainMenuList
-                                activeRoute={activeRoute}
-                                theme={theme}
-                            >
+                            <MainMenuList activeRoute={activeRoute} theme={theme}>
                                 {this.subMenu}
                             </MainMenuList>
                         </MainMenuPanel>
                     </nav>
-                }
+                )}
             </Theme>
         );
     }

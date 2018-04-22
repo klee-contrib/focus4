@@ -21,7 +21,6 @@ export interface HeaderTopRowProps {
 
 /** Barre du haut dans le header. */
 export class HeaderTopRow extends React.Component<HeaderTopRowProps> {
-
     static contextTypes = {
         header: PropTypes.object,
         layout: PropTypes.object
@@ -43,13 +42,11 @@ export class HeaderTopRow extends React.Component<HeaderTopRowProps> {
     render() {
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={theme.topRow}>
-                        <div style={{marginLeft: this.context.layout.menuWidth}}>
-                            {this.props.children}
-                        </div>
+                        <div style={{marginLeft: this.context.layout.menuWidth}}>{this.props.children}</div>
                     </div>
-                }
+                )}
             </Theme>
         );
     }

@@ -1,25 +1,37 @@
 import {isArray, isObject, mapValues} from "lodash";
 import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
-import {BaseStoreNode, Entity, EntityToType, FieldEntry, isEntityField, isFormListNode, isStoreListNode, isStoreNode, ListEntry, NodeToType, ObjectEntry, StoreListNode, StoreNode} from "../types";
+import {
+    BaseStoreNode,
+    Entity,
+    EntityToType,
+    FieldEntry,
+    isEntityField,
+    isFormListNode,
+    isStoreListNode,
+    isStoreNode,
+    ListEntry,
+    NodeToType,
+    ObjectEntry,
+    StoreListNode,
+    StoreNode
+} from "../types";
 import {nodeToFormNode} from "./form";
 import {toFlatValues} from "./util";
 
 /** Récupère les noeuds de store associés aux entités définies dans T. */
 export type ExtractEntities<T> = {
-    [P in keyof T]:
-        T[P] extends Entity ? StoreNode<T[P]>
-        : T[P] extends Entity[] ? StoreListNode<T[P][0]>
-        : T[P]
+    [P in keyof T]: T[P] extends Entity ? StoreNode<T[P]> : T[P] extends Entity[] ? StoreListNode<T[P][0]> : T[P]
 };
 
 /** Récupère les types associés aux entités définies dans T. */
-export type ExtractTypes<T> = Partial<{
-    [P in keyof T]:
-        T[P] extends Entity ? EntityToType<T[P]>
-        : T[P] extends Entity[] ? EntityToType<T[P][0]>[]
-        : NodeToType<T[P]>
-}>;
+export type ExtractTypes<T> = Partial<
+    {
+        [P in keyof T]: T[P] extends Entity
+            ? EntityToType<T[P]>
+            : T[P] extends Entity[] ? EntityToType<T[P][0]>[] : NodeToType<T[P]>
+    }
+>;
 
 /** Définition d'un store d'entité à partir des entités définies dans T. */
 export type EntityStore<T> = ExtractEntities<T> & BaseStoreNode<ExtractTypes<T>> & {clear(): void};
@@ -29,14 +41,16 @@ export type EntityStore<T> = ExtractEntities<T> & BaseStoreNode<ExtractTypes<T>>
  * Le store d'entité inclut les métadonnées pour tous les champs des entités utilsées.
  * @param config Un objet dont les propriétés décrivent tous les noeuds du store.
  */
-export function makeEntityStore<T extends Record<string, Entity | Entity[] | BaseStoreNode>>(config: T): EntityStore<T> {
-
+export function makeEntityStore<T extends Record<string, Entity | Entity[] | BaseStoreNode>>(
+    config: T
+): EntityStore<T> {
     const entityStore: EntityStore<T> = {} as any;
 
     // On construit chaque entrée à partir de la config.
     for (const entry in config) {
         const item = config[entry] as Entity | Entity[] | BaseStoreNode;
-        if (isStoreNode(item)) {  // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
+        if (isStoreNode(item)) {
+            // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
             entityStore[entry] = item as any;
         } else {
             entityStore[entry] = buildEntityEntry(item as any) as any;
@@ -75,7 +89,6 @@ export function makeEntityStore<T extends Record<string, Entity | Entity[] | Bas
 export function buildEntityEntry<T extends Entity>(entity: T): StoreNode<T>;
 export function buildEntityEntry<T extends Entity>(entity: T[]): StoreListNode<T>;
 export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T> | StoreListNode<T> {
-
     // Cas d'une entrée de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
         const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<T>;
@@ -91,7 +104,9 @@ export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T
             itemNode.set(item);
             this.push(itemNode);
         });
-        outputEntry.set = action("node.set", function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, values); });
+        outputEntry.set = action("node.set", function set(this: typeof outputEntry, values: {}[]) {
+            setEntityEntry(this, values);
+        });
         return outputEntry;
     }
 
@@ -106,8 +121,12 @@ export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T
                 return extendObservable({$field: field}, {value: undefined}, {value: observable.ref});
             }
         }),
-        set: action("node.set", function set(this: StoreNode<T>, entityValue: any) { setEntityEntry(this, entityValue); }),
-        clear: action("node.clear", function clear(this: StoreNode<T>) { clearEntity(this); })
+        set: action("node.set", function set(this: StoreNode<T>, entityValue: any) {
+            setEntityEntry(this, entityValue);
+        }),
+        clear: action("node.clear", function clear(this: StoreNode<T>) {
+            clearEntity(this);
+        })
     } as any;
 }
 
@@ -116,37 +135,47 @@ export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T
  * @param entity L'entrée à remplir.
  * @param value La valeur de l'entrée.
  */
-export function setEntityEntry<T extends Entity>(entity: StoreNode<T>, value: EntityToType<T> | StoreNode<T>): StoreNode<T>;
-export function setEntityEntry<T extends Entity>(entity: StoreListNode<T>, value: EntityToType<T>[] | StoreListNode<T>): StoreListNode<T>;
-export function setEntityEntry<T extends Entity>(entity: StoreNode<T> | StoreListNode<T>, value: EntityToType<T> | EntityToType<T>[] | StoreNode<T> | StoreListNode<T>): StoreNode<T> | StoreListNode<T> {
-
+export function setEntityEntry<T extends Entity>(
+    entity: StoreNode<T>,
+    value: EntityToType<T> | StoreNode<T>
+): StoreNode<T>;
+export function setEntityEntry<T extends Entity>(
+    entity: StoreListNode<T>,
+    value: EntityToType<T>[] | StoreListNode<T>
+): StoreListNode<T>;
+export function setEntityEntry<T extends Entity>(
+    entity: StoreNode<T> | StoreListNode<T>,
+    value: EntityToType<T> | EntityToType<T>[] | StoreNode<T> | StoreListNode<T>
+): StoreNode<T> | StoreListNode<T> {
     // Cas du noeud liste.
     if (isStoreListNode<T>(entity) && (isArray(value) || isObservableArray(value))) {
         // On vide l'array existant et on construit une entrée par valeur de la liste dans l'entrée.
-        entity.replace((value as (EntityToType<T> | StoreNode<T>)[]).map(item => {
-            const newNode = buildEntityEntry(entity.$entity);
-            if (entity.$transform) {
-                Object.assign(newNode, entity.$transform(newNode) || {});
-            }
-            if (isFormListNode(entity)) {
-                nodeToFormNode(newNode, isStoreNode(item) ? item : newNode, entity as any);
-            }
+        entity.replace(
+            (value as (EntityToType<T> | StoreNode<T>)[]).map(item => {
+                const newNode = buildEntityEntry(entity.$entity);
+                if (entity.$transform) {
+                    Object.assign(newNode, entity.$transform(newNode) || {});
+                }
+                if (isFormListNode(entity)) {
+                    nodeToFormNode(newNode, isStoreNode(item) ? item : newNode, entity as any);
+                }
 
-            if (isStoreNode<T>(item)) {
-                newNode.set(toFlatValues(item));
-            } else {
-                newNode.set(item);
-            }
+                if (isStoreNode<T>(item)) {
+                    newNode.set(toFlatValues(item));
+                } else {
+                    newNode.set(item);
+                }
 
-            return newNode;
-        }));
+                return newNode;
+            })
+        );
 
         // Puis on remplit chaque entrée avec la valeur.
         for (let i = 0; i < value.length; i++) {
             setEntityEntry(entity[i], value[i]);
         }
 
-    // Cas du noeud simple.
+        // Cas du noeud simple.
     } else if (isStoreNode(entity) && isObject(value)) {
         // On affecte chaque valeur de l'entrée avec la valeur demandée, et on réappelle `setEntityEntry` si la valeur n'est pas primitive.
         for (const item in value as any) {
@@ -183,11 +212,14 @@ function clearEntity<T extends Entity>(entity: StoreNode<T>) {
                 continue; // Pas touche.
             }
             const entryItem = (entity as any)[entry];
-            if (isStoreListNode(entryItem)) { // Cas noeud de liste -> on vide la liste.
+            if (isStoreListNode(entryItem)) {
+                // Cas noeud de liste -> on vide la liste.
                 entryItem.clear();
-            } else if (isStoreNode(entryItem)) { // Cas noeud de store -> `clearEntity`.
+            } else if (isStoreNode(entryItem)) {
+                // Cas noeud de store -> `clearEntity`.
                 clearEntity(entryItem as StoreNode);
-            } else if (entryItem.value !== undefined && !isComputedProp(entryItem, "value")) { // Cas primitive -> on met à `undefined`.
+            } else if (entryItem.value !== undefined && !isComputedProp(entryItem, "value")) {
+                // Cas primitive -> on met à `undefined`.
                 entryItem.value = undefined;
             }
         }

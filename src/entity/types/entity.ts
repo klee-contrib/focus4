@@ -3,8 +3,11 @@ import {DisplayProps, InputProps, LabelProps} from "../../components";
 import {Validator} from "./validation";
 
 /** Définition d'un domaine. */
-export interface Domain<ICProps extends {theme?: {}} = InputProps, DCProps extends {theme?: {}} = DisplayProps, LCProps = LabelProps> {
-
+export interface Domain<
+    ICProps extends {theme?: {}} = InputProps,
+    DCProps extends {theme?: {}} = DisplayProps,
+    LCProps = LabelProps
+> {
     /** Classe CSS pour le champ. */
     className?: string;
 
@@ -38,7 +41,6 @@ export interface Domain<ICProps extends {theme?: {}} = InputProps, DCProps exten
 
 /** Définition générale d'une entité. */
 export interface Entity {
-
     /** Nom de l'entité. */
     readonly name: string;
 
@@ -50,7 +52,12 @@ export interface Entity {
 export type StoreType = number | number[] | boolean | boolean[] | string | string[];
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry<T = any, ICProps extends {theme?: {}} = any, DCProps extends {theme?: {}} = any, LCProps = any> {
+export interface FieldEntry<
+    T = any,
+    ICProps extends {theme?: {}} = any,
+    DCProps extends {theme?: {}} = any,
+    LCProps = any
+> {
     readonly type: "field";
 
     /** Type du champ. */
@@ -90,16 +97,15 @@ export interface ListEntry<T extends Entity = any> {
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
 export type EntityToType<T extends Entity> = {
-    [P in keyof T["fields"]]?:
-        T["fields"][P] extends FieldEntry ? T["fields"][P]["fieldType"]
-        : T["fields"][P] extends ObjectEntry<infer U> ? EntityToType<U>
-        : T["fields"][P] extends ListEntry<infer V> ? EntityToType<V>[]
-        : never
+    [P in keyof T["fields"]]?: T["fields"][P] extends FieldEntry
+        ? T["fields"][P]["fieldType"]
+        : T["fields"][P] extends ObjectEntry<infer U>
+            ? EntityToType<U>
+            : T["fields"][P] extends ListEntry<infer V> ? EntityToType<V>[] : never
 };
 
 /** Définition de champ dans un store. */
 export interface EntityField<F extends FieldEntry = FieldEntry<StoreType, InputProps, DisplayProps, LabelProps>> {
-
     /** Métadonnées. */
     readonly $field: F;
 

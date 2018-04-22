@@ -5,7 +5,18 @@ import {ButtonBackToTop} from "../../../components";
 import {themr} from "../../../theme";
 
 import {GroupResult, SearchStore} from "../../store";
-import {ActionBar, ActionBarStyle, DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, ListWrapper, OperationListItem} from "../list";
+import {
+    ActionBar,
+    ActionBarStyle,
+    DetailProps,
+    DragLayerStyle,
+    EmptyProps,
+    LineProps,
+    LineStyle,
+    ListStyle,
+    ListWrapper,
+    OperationListItem
+} from "../list";
 import {FacetBox, FacetBoxStyle} from "./facet-box";
 import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
@@ -97,7 +108,7 @@ export interface AdvancedSearchProps<T> {
     /** La liste des actions globales.  */
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
-    orderableColumnList?: {key: string, label: string, order: boolean}[];
+    orderableColumnList?: {key: string; label: string; order: boolean}[];
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -117,7 +128,6 @@ export interface AdvancedSearchProps<T> {
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
 @observer
 export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
-
     componentWillMount() {
         const {searchOnMount = true, store} = this.props;
         if (searchOnMount) {
@@ -126,11 +136,18 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     }
 
     protected renderFacetBox(theme: AdvancedSearchStyle) {
-        const {facetBoxPosition = "left", facetBoxTheme, i18nPrefix, nbDefaultDataListFacet, showSingleValuedFacets, store} = this.props;
+        const {
+            facetBoxPosition = "left",
+            facetBoxTheme,
+            i18nPrefix,
+            nbDefaultDataListFacet,
+            showSingleValuedFacets,
+            store
+        } = this.props;
 
         if (facetBoxPosition === "left") {
             return (
-                 <div className={theme.facetContainer}>
+                <div className={theme.facetContainer}>
                     <FacetBox
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
@@ -146,7 +163,17 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     }
 
     protected renderListSummary() {
-        const {canRemoveSort, hideSummaryCriteria, hideSummaryFacets, hideSummaryGroup, hideSummarySort, i18nPrefix, orderableColumnList, store, summaryTheme} = this.props;
+        const {
+            canRemoveSort,
+            hideSummaryCriteria,
+            hideSummaryFacets,
+            hideSummaryGroup,
+            hideSummarySort,
+            i18nPrefix,
+            orderableColumnList,
+            store,
+            summaryTheme
+        } = this.props;
         return (
             <Summary
                 canRemoveSort={canRemoveSort}
@@ -163,7 +190,21 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     }
 
     protected renderActionBar() {
-        const {actionBarTheme, facetBoxPosition = "left", hasGrouping, hasSearchBar, hasSelection, i18nPrefix, operationList, orderableColumnList, nbDefaultDataListFacet, showSingleValuedFacets, searchBarPlaceholder, store, useGroupActionBars} = this.props;
+        const {
+            actionBarTheme,
+            facetBoxPosition = "left",
+            hasGrouping,
+            hasSearchBar,
+            hasSelection,
+            i18nPrefix,
+            operationList,
+            orderableColumnList,
+            nbDefaultDataListFacet,
+            showSingleValuedFacets,
+            searchBarPlaceholder,
+            store,
+            useGroupActionBars
+        } = this.props;
 
         if (store.groups.length && useGroupActionBars) {
             return null;
@@ -188,7 +229,33 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     }
 
     protected renderResults() {
-        const {groupTheme, GroupHeader, listTheme, lineTheme, groupOperationList, groupPageSize, hasSelection, disableDragAnimThreshold, i18nPrefix, isManualFetch, itemKey, LineComponent, lineOperationList, listPageSize, MosaicComponent, offset, store, EmptyComponent, DetailComponent, detailHeight, canOpenDetail, hasDragAndDrop, dragItemType, dragLayerTheme, useGroupActionBars} = this.props;
+        const {
+            groupTheme,
+            GroupHeader,
+            listTheme,
+            lineTheme,
+            groupOperationList,
+            groupPageSize,
+            hasSelection,
+            disableDragAnimThreshold,
+            i18nPrefix,
+            isManualFetch,
+            itemKey,
+            LineComponent,
+            lineOperationList,
+            listPageSize,
+            MosaicComponent,
+            offset,
+            store,
+            EmptyComponent,
+            DetailComponent,
+            detailHeight,
+            canOpenDetail,
+            hasDragAndDrop,
+            dragItemType,
+            dragLayerTheme,
+            useGroupActionBars
+        } = this.props;
         return (
             <Results
                 canOpenDetail={canOpenDetail}
@@ -221,10 +288,19 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     }
 
     render() {
-        const {addItemHandler, i18nPrefix, LineComponent, MosaicComponent, mode, mosaicHeight, mosaicWidth, hasBackToTop = true} = this.props;
+        const {
+            addItemHandler,
+            i18nPrefix,
+            LineComponent,
+            MosaicComponent,
+            mode,
+            mosaicHeight,
+            mosaicWidth,
+            hasBackToTop = true
+        } = this.props;
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <>
                         {this.renderFacetBox(theme)}
                         <div className={theme.resultContainer}>
@@ -232,7 +308,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                                 addItemHandler={addItemHandler}
                                 canChangeMode={!!(LineComponent && MosaicComponent)}
                                 i18nPrefix={i18nPrefix}
-                                mode={mode || MosaicComponent && !LineComponent ? "mosaic" : "list"}
+                                mode={mode || (MosaicComponent && !LineComponent) ? "mosaic" : "list"}
                                 mosaicHeight={mosaicHeight}
                                 mosaicWidth={mosaicWidth}
                             >
@@ -243,7 +319,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                         </div>
                         {hasBackToTop ? <ButtonBackToTop /> : null}
                     </>
-                }
+                )}
             </Theme>
         );
     }

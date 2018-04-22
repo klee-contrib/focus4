@@ -11,7 +11,6 @@ export interface SwitchProps extends RTSwitchProps {
 
 /** Surcharge du Switch de React-Toolbox pour utilisation avec un <Field> */
 export function Switch(props: SwitchProps) {
-
     // On remplace `value` par `checked`.
     const rtProps = {...props, checked: props.value !== undefined ? props.value : props.checked};
 
