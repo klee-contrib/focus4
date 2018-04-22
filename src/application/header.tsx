@@ -29,4 +29,4 @@ export const Header = observer(() => (
     </HeaderScrolling>
 ));
 
-export default Header;
+(Header as any).displayName = "Header";

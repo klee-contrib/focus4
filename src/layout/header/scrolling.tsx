@@ -1,12 +1,11 @@
 import {action, observable} from "mobx";
-import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
+import {themr} from "../../theme";
 
 import * as styles from "./__style__/header.css";
-
 export type HeaderStyle = Partial<typeof styles>;
+const Theme = themr("header", styles);
 
 /** Props du conteneur de header. */
 export interface HeaderScrollingProps {
@@ -25,7 +24,6 @@ export interface HeaderScrollingProps {
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
-@observer
 export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
 
     static contextTypes = {
@@ -102,14 +100,15 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
     }
 
     render() {
-        const {canDeploy, theme} = this.props;
         return (
-            <header ref={header => this.header = header} className={`${theme!.scrolling} ${this.isDeployed ? theme!.deployed : theme!.undeployed}`}>
-                {this.props.children}
-                {!this.isDeployed ? <div style={{height: canDeploy ? this.placeholderHeight : this.context.header.topRowHeight, width: "100%"}} /> : null}
-            </header>
+            <Theme theme={this.props.theme}>
+                {theme =>
+                    <header ref={header => this.header = header} className={`${theme.scrolling} ${this.isDeployed ? theme.deployed : theme.undeployed}`}>
+                        {this.props.children}
+                        {!this.isDeployed ? <div style={{height: this.props.canDeploy ? this.placeholderHeight : this.context.header.topRowHeight, width: "100%"}} /> : null}
+                    </header>
+                }
+            </Theme>
         );
     }
 }
-
-export default themr("header", styles)(HeaderScrolling);

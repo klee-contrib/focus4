@@ -1,10 +1,10 @@
-import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
-
 import {Button, ButtonProps, IconButton, IconButtonTheme} from "react-toolbox/lib/button";
 
+import {themr} from "../../theme";
+
 import * as styles from "./__style__/menu.css";
+const Theme = themr("mainMenu", styles);
 
 /** Props du MenuItem. */
 export interface MainMenuItemProps extends ButtonProps {
@@ -15,28 +15,34 @@ export interface MainMenuItemProps extends ButtonProps {
 }
 
 /** Elément de menu. */
-export const MainMenuItem = observer((props: MainMenuItemProps) => {
-    const {label, icon, onClick, route, theme, children, ...otherProps} = props;
+export function MainMenuItem(props: MainMenuItemProps) {
+    const {label, icon, onClick, route, children, ...otherProps} = props;
     if (label) {
         return (
-            <Button
-                {...otherProps}
-                icon={icon}
-                label={label}
-                onClick={onClick}
-                theme={theme}
-            />
+            <Theme theme={props.theme}>
+                {theme =>
+                    <Button
+                        {...otherProps}
+                        icon={icon}
+                        label={label}
+                        onClick={onClick}
+                        theme={theme}
+                    />
+                }
+            </Theme>
         );
     } else {
         return (
-            <IconButton
-                {...otherProps}
-                icon={icon}
-                onClick={onClick}
-                theme={theme}
-            />
+            <Theme theme={props.theme}>
+                {theme =>
+                    <IconButton
+                        {...otherProps}
+                        icon={icon}
+                        onClick={onClick}
+                        theme={theme}
+                    />
+                }
+            </Theme>
         );
     }
-});
-
-export default themr("mainMenu", styles)(MainMenuItem);
+}

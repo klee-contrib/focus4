@@ -17,5 +17,3 @@ export class LayoutFooter extends React.Component {
         );
     }
 }
-
-export default LayoutFooter;

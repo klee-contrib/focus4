@@ -1,9 +1,11 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
+
+import {themr} from "../../theme";
 
 import * as styles from "./__style__/form.css";
 export type FormStyle = Partial<typeof styles>;
+const Theme = themr("form", styles);
 
 /** Options additionnelles du Form. */
 export interface FormProps {
@@ -11,8 +13,8 @@ export interface FormProps {
     clean: () => void;
     /** Voir `FormActions` */
     formContext: {forceErrorDisplay: boolean};
-    /** Par défaut: true */
-    hasForm?: boolean;
+    /** Retire le formulaire HTML */
+    noForm?: boolean;
     /** Voir `FormActions` */
     load: () => void;
     /** Voir `FormActions` */
@@ -38,21 +40,22 @@ export class Form extends React.Component<FormProps> {
     }
 
     render() {
-        const {hasForm = true, theme} = this.props;
-        if (hasForm) {
+        if (this.props.noForm) {
             return (
-                <form
-                    className={theme!.form!}
-                    noValidate={true}
-                    onSubmit={e => { e.preventDefault(); this.props.save(); }}
-                >
-                    <fieldset>{this.props.children}</fieldset>
-                </form>
+                <Theme theme={this.props.theme}>
+                    {theme =>
+                        <form
+                            className={theme.form}
+                            noValidate={true}
+                            onSubmit={e => { e.preventDefault(); this.props.save(); }}
+                        >
+                            <fieldset>{this.props.children}</fieldset>
+                        </form>
+                    }
+                </Theme>
             );
         } else {
-            return <div>{this.props.children}</div>;
+            return this.props.children;
         }
     }
 }
-
-export default themr("form", styles)(Form);

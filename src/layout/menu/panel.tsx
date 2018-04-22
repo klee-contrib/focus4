@@ -1,7 +1,9 @@
 import * as React from "react";
-import {themr} from "react-css-themr";
+
+import {themr} from "../../theme";
 
 import * as styles from "./__style__/menu.css";
+const Theme = themr("mainMenu", styles);
 
 export interface MainMenuPanelStyle {
     animate?: string;
@@ -28,15 +30,17 @@ export interface MenuPanelProps {
 }
 
 /** Panel contenant une sous liste de menu. */
-export const MainMenuPanel = (props: MenuPanelProps) => {
-    const {children, close, opened, xOffset, yOffset, theme} = props;
+export function MainMenuPanel(props: MenuPanelProps) {
+    const {children, close, opened, xOffset, yOffset, theme: pTheme} = props;
     return (
-        <div className={opened && theme!.panelWrapper || ""} onClick={close}>
-            <div className={`${theme!.panel} ${theme!.animate} ${opened ? theme!.open : theme!.close}`} style={{top: yOffset, left: xOffset}}>
-                {children}
-            </div>
-        </div>
+        <Theme theme={pTheme}>
+            {theme =>
+                <div className={opened && theme.panelWrapper || ""} onClick={close}>
+                    <div className={`${theme.panel} ${theme.animate} ${opened ? theme.open : theme.close}`} style={{top: yOffset, left: xOffset}}>
+                        {children}
+                    </div>
+                </div>
+            }
+        </Theme>
     );
-};
-
-export default themr("mainMenu", styles)(MainMenuPanel);
+}
