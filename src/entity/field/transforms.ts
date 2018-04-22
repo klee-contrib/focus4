@@ -5,7 +5,9 @@ import {DisplayProps, InputProps, LabelProps} from "../../components";
 
 import {Domain, EntityField, FieldEntry, StoreType} from "../types";
 
-export type $Field<T = any, ICProps = any, DCProps = any, LCProps = any> = Partial<FieldEntry<T, ICProps, DCProps, LCProps> & Domain<ICProps, DCProps, LCProps>>;
+export type $Field<T = any, ICProps = any, DCProps = any, LCProps = any> = Partial<
+    FieldEntry<T, ICProps, DCProps, LCProps> & Domain<ICProps, DCProps, LCProps>
+>;
 
 /**
  * Construit un `EntityField` à partir d'un champ calculé.
@@ -44,14 +46,34 @@ export function makeField<
     ICProps extends {theme?: {}} = InputProps,
     DCProps extends {theme?: {}} = DisplayProps,
     LCProps = LabelProps
->(value: T | (() => T), $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>) = {}, setter: Function = () => null, isEdit?: any) {
-
+>(
+    value: T | (() => T),
+    $field: $Field<T, ICProps, DCProps, LCProps> | (() => $Field<T, ICProps, DCProps, LCProps>) = {},
+    setter: Function = () => null,
+    isEdit?: any
+) {
     const field = extendObservable(
-        new$field({domain: {}, isRequired: false, label: "", name: "", type: "field" as "field", fieldType: {} as NonNullable<T>}, $field),
-        isFunction(value) ? {
-            get value() { return (value as () => T)() as NonNullable<T>; },
-            set value(v) { setter(v); }
-        } : {value}
+        new$field(
+            {
+                domain: {},
+                isRequired: false,
+                label: "",
+                name: "",
+                type: "field" as "field",
+                fieldType: {} as NonNullable<T>
+            },
+            $field
+        ),
+        isFunction(value)
+            ? {
+                  get value() {
+                      return (value as () => T)() as NonNullable<T>;
+                  },
+                  set value(v) {
+                      setter(v);
+                  }
+              }
+            : {value}
     ) as EntityField;
 
     if (isEdit !== undefined) {
@@ -103,7 +125,11 @@ export function patchField<
     const next$field = new$field(field.$field, $field);
     if (isFunction($field)) {
         delete (field as any).$field;
-        extendObservable(field, { get $field() { return next$field.$field; }});
+        extendObservable(field, {
+            get $field() {
+                return next$field.$field;
+            }
+        });
     } else {
         (field.$field as any) = next$field.$field;
     }
@@ -115,13 +141,16 @@ export function patchField<
 
 function new$field<T extends FieldEntry>(old$field: T, $field: $Field | (() => $Field)) {
     if (isFunction($field)) {
-        return observable({
-            get $field() {
-                return new$fieldCore(old$field, ($field as () => T)());
+        return observable(
+            {
+                get $field() {
+                    return new$fieldCore(old$field, ($field as () => T)());
+                }
+            },
+            {
+                $field: computed({equals: comparer.structural})
             }
-        }, {
-            $field: computed({equals: comparer.structural})
-        });
+        );
     } else {
         return {
             $field: new$fieldCore(old$field, $field)
@@ -162,6 +191,6 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
                 ...(domain.labelProps as any),
                 ...(domainOverrides.labelProps as any)
             }
-        },
+        }
     };
 }

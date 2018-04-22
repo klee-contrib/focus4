@@ -25,7 +25,6 @@ export interface FormProps {
 
 /** Composant de formulaire */
 export class Form extends React.Component<FormProps> {
-
     static childContextTypes = {form: PropTypes.object};
     getChildContext() {
         return {form: this.props.formContext};
@@ -43,15 +42,18 @@ export class Form extends React.Component<FormProps> {
         if (this.props.noForm) {
             return (
                 <Theme theme={this.props.theme}>
-                    {theme =>
+                    {theme => (
                         <form
                             className={theme.form}
                             noValidate={true}
-                            onSubmit={e => { e.preventDefault(); this.props.save(); }}
+                            onSubmit={e => {
+                                e.preventDefault();
+                                this.props.save();
+                            }}
                         >
                             <fieldset>{this.props.children}</fieldset>
                         </form>
-                    }
+                    )}
                 </Theme>
             );
         } else {

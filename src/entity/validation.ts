@@ -8,7 +8,10 @@ const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+
 
 /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
 export function validateField({$field, value}: EntityField): string | undefined {
-    const {isRequired, domain: {validator}} = $field;
+    const {
+        isRequired,
+        domain: {validator}
+    } = $field;
 
     // On vérifie que le champ n'est pas vide et obligatoire.
     if (isRequired && value !== 0 && !value) {
@@ -19,8 +22,7 @@ export function validateField({$field, value}: EntityField): string | undefined 
     if (validator && value !== undefined && value !== null) {
         const errors = validate(value, Array.isArray(validator) ? validator : [validator]);
         if (errors.length) {
-            return errors.map(e =>  i18next.t(e))
-                .join(", ");
+            return errors.map(e => i18next.t(e)).join(", ");
         }
     }
 
@@ -40,7 +42,7 @@ function validate(value: any, validators?: Validator[]) {
             let error;
             if (isFunction(validator)) {
                 error = validator(value);
-            } else  {
+            } else {
                 if (isRegex(validator)) {
                     error = value && !validator.regex.test(value);
                 } else {
@@ -53,7 +55,7 @@ function validate(value: any, validators?: Validator[]) {
                                 break;
                             }
                             const n = +value;
-                            if (Number.isNaN(n) || !isNumber(n) || validator.isInteger && !Number.isInteger(n)) {
+                            if (Number.isNaN(n) || !isNumber(n) || (validator.isInteger && !Number.isInteger(n))) {
                                 error = true;
                             }
                             const isMin = validator.min !== undefined && n < validator.min;
@@ -67,8 +69,7 @@ function validate(value: any, validators?: Validator[]) {
                             error = isMinLength || isMaxLength;
                             break;
                         case "date":
-                            error = !moment(value, moment.ISO_8601)
-                                .isValid();
+                            error = !moment(value, moment.ISO_8601).isValid();
                             break;
                         case "function":
                             error = !validator.value(value) && validator.options.translationKey;
@@ -77,7 +78,8 @@ function validate(value: any, validators?: Validator[]) {
                 }
 
                 if (error === true) {
-                    error = validator.errorMessage || `focus.validation.${isRegex(validator) ? "regex" : validator.type}`;
+                    error =
+                        validator.errorMessage || `focus.validation.${isRegex(validator) ? "regex" : validator.type}`;
                 }
             }
 

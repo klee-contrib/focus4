@@ -30,15 +30,15 @@ export interface FacetBoxProps<T> {
 /** Composant contenant la liste des facettes retournées par une recherche. */
 @observer
 export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
-
     render() {
         const {i18nPrefix = "focus", nbDefaultDataList = 6, showSingleValuedFacets, store} = this.props;
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={theme.facetBox}>
                         <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
-                        {store.facets.filter(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
+                        {store.facets
+                            .filter(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
                             .map(facet => {
                                 if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                                     return (
@@ -53,10 +53,9 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                                 } else {
                                     return null;
                                 }
-                            })
-                        }
+                            })}
                     </div>
-                }
+                )}
             </Theme>
         );
     }

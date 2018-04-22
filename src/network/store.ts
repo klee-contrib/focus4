@@ -10,7 +10,6 @@ export interface Request {
 
 /** Store de requête contenant les requêtes effectuées dans l'application. */
 export class RequestStore {
-
     /** Requêtes en erreur. */
     readonly error = new ObservableMap<string, Request>({});
     /** Requêtes en cours. */
@@ -45,9 +44,15 @@ export class RequestStore {
     updateRequest(request: Request) {
         request.id = request.id || v4();
         switch (request.status) {
-            case "success": this.success.set(request.id, request); break;
-            case "error": this.error.set(request.id, request); break;
-            case "pending": this.pending.set(request.id, request); break;
+            case "success":
+                this.success.set(request.id, request);
+                break;
+            case "error":
+                this.error.set(request.id, request);
+                break;
+            case "pending":
+                this.pending.set(request.id, request);
+                break;
         }
 
         // Si on met à jour une requête en cours, on la supprime de la map.

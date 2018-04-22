@@ -24,26 +24,39 @@ export interface LoadingBarProps {
 }
 
 /** Composant standard pour afficher une barre de chargement sur l'état des requêtes en cours. */
-export const LoadingBar = observer(({i18nPrefix = "focus", progressBarType, theme: pTheme, displayDevBar}: LoadingBarProps) => {
-    const {count, error, pending, success} = requestStore;
-    const completed = +((count.total - count.pending) / count.total) * 100;
-    return (
-        <Theme theme={pTheme}>
-            {theme =>
-                <div className={theme.bar}>
-                    {completed < 100 ? <ProgressBar type={progressBarType} theme={theme} /> : null}
-                    {displayDevBar ?
-                        <ul>
-                            <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.pending`)}</FontIcon> pending {pending}</li>
-                            <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.success`)}</FontIcon> success {success}</li>
-                            <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.error`)}</FontIcon>  error {error}</li>
-                            <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.total`)}</FontIcon>  total {count.total}</li>
-                        </ul>
-                    : null}
-                </div>
-            }
-        </Theme>
-    );
-});
+export const LoadingBar = observer(
+    ({i18nPrefix = "focus", progressBarType, theme: pTheme, displayDevBar}: LoadingBarProps) => {
+        const {count, error, pending, success} = requestStore;
+        const completed = +((count.total - count.pending) / count.total) * 100;
+        return (
+            <Theme theme={pTheme}>
+                {theme => (
+                    <div className={theme.bar}>
+                        {completed < 100 ? <ProgressBar type={progressBarType} theme={theme} /> : null}
+                        {displayDevBar ? (
+                            <ul>
+                                <li>
+                                    <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.pending`)}</FontIcon> pending{" "}
+                                    {pending}
+                                </li>
+                                <li>
+                                    <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.success`)}</FontIcon> success{" "}
+                                    {success}
+                                </li>
+                                <li>
+                                    <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.error`)}</FontIcon> error {error}
+                                </li>
+                                <li>
+                                    <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.total`)}</FontIcon> total{" "}
+                                    {count.total}
+                                </li>
+                            </ul>
+                        ) : null}
+                    </div>
+                )}
+            </Theme>
+        );
+    }
+);
 
 (LoadingBar as any).displayName = "LoadingBar";

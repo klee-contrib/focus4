@@ -39,26 +39,28 @@ export interface ListWrapperProps {
 /** Wrapper de liste permettant de partager le mode d'affichage de toutes les listes qu'il contient. */
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps> {
-
     // On utilise le contexte React pour partager le mode entre les listes.
     static childContextTypes = {
         listWrapper: PropTypes.object
     };
 
     /** Objet passé en contexte pour les listes contenues dans le wrapper. */
-    childContext = observable({
-        /** Handler au clic sur le bouton "Ajouter". */
-        addItemHandler: this.props.addItemHandler,
-        /** Taile des mosaïques. */
-        mosaic: {
-            width: this.props.mosaicWidth || 200,
-            height: this.props.mosaicHeight || 200
+    childContext = observable(
+        {
+            /** Handler au clic sur le bouton "Ajouter". */
+            addItemHandler: this.props.addItemHandler,
+            /** Taile des mosaïques. */
+            mosaic: {
+                width: this.props.mosaicWidth || 200,
+                height: this.props.mosaicHeight || 200
+            },
+            /** Mode des listes. */
+            mode: this.props.mode || "list"
         },
-        /** Mode des listes. */
-        mode: this.props.mode || "list"
-    }, {
-        addItemHandler: observable.ref
-    });
+        {
+            addItemHandler: observable.ref
+        }
+    );
 
     // On met à jour l'objet passé en contexte à chaque fois qu'on change les props du composant.
     @action
@@ -86,36 +88,36 @@ export class ListWrapper extends React.Component<ListWrapperProps> {
         const {mode, addItemHandler} = this.childContext;
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={theme.wrapper}>
                         <div className={theme.bar}>
-                            {canChangeMode ?
+                            {canChangeMode ? (
                                 <IconButton
                                     accent={mode === "list"}
-                                    onClick={() => this.childContext.mode = "list"}
+                                    onClick={() => (this.childContext.mode = "list")}
                                     icon={getIcon(`${i18nPrefix}.icons.listWrapper.list`)}
                                     tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
                                 />
-                            : null}
-                            {canChangeMode ?
+                            ) : null}
+                            {canChangeMode ? (
                                 <IconButton
                                     accent={mode === "mosaic"}
-                                    onClick={() => this.childContext.mode = "mosaic"}
+                                    onClick={() => (this.childContext.mode = "mosaic")}
                                     icon={getIcon(`${i18nPrefix}.icons.listWrapper.mosaic`)}
                                     tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
                                 />
-                            : null}
-                            {!hideAddItemHandler && addItemHandler && mode === "list" ?
+                            ) : null}
+                            {!hideAddItemHandler && addItemHandler && mode === "list" ? (
                                 <Button
                                     onClick={addItemHandler}
                                     icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}
                                     label={i18next.t(`${i18nPrefix}.list.add`)}
                                 />
-                            : null}
+                            ) : null}
                         </div>
                         {children}
                     </div>
-                }
+                )}
             </Theme>
         );
     }

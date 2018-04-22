@@ -50,19 +50,15 @@ export function Select({
     i18nPrefix = "focus",
     unSelectedLabel = `${i18nPrefix}.select.unselected`
 }: SelectProps) {
-
     // On ajoute l'élément vide si nécessaire.
     let finalValues = values;
     if (hasUndefined) {
-        finalValues = [
-            {[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)},
-            ...finalValues
-        ];
+        finalValues = [{[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)}, ...finalValues];
     }
 
     return (
         <Theme theme={pTheme}>
-            {theme =>
+            {theme => (
                 <div data-focus="select" className={`${theme.select} ${error ? theme.error : ""}`}>
                     <select
                         disabled={disabled}
@@ -73,13 +69,18 @@ export function Select({
                         {finalValues.map((val, idx) => {
                             const optVal = `${(val as any)[valueKey]}`;
                             const elementValue = (val as any)[labelKey];
-                            const optLabel = elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
-                            return <option key={idx} value={optVal}>{i18next.t(optLabel)}</option>;
+                            const optLabel =
+                                elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
+                            return (
+                                <option key={idx} value={optVal}>
+                                    {i18next.t(optLabel)}
+                                </option>
+                            );
                         })}
                     </select>
                     {error ? <div className={theme.errorLabel}>{error}</div> : null}
                 </div>
-            }
+            )}
         </Theme>
     );
 }

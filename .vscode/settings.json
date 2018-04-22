@@ -3,12 +3,10 @@
     "editor.snippetSuggestions": "bottom",
     "files.trimTrailingWhitespace": true,
     "relativePath.removeExtension": true,
-    "relativePath.ignore": [
-        "**/node_modules/**",
-        "**/dist/**"
-    ],
+    "relativePath.ignore": ["**/node_modules/**", "**/dist/**"],
     "tslint.autoFixOnSave": true,
     "files.associations": {
         "*.css": "postcss"
-    }
+    },
+    "editor.formatOnSave": true
 }

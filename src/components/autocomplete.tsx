@@ -6,7 +6,11 @@ import * as React from "react";
 import {findDOMNode} from "react-dom";
 export {ObservableMap};
 
-import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps, AutocompleteTheme} from "react-toolbox/lib/autocomplete";
+import {
+    Autocomplete as RTAutocomplete,
+    AutocompleteProps as RTAutocompleteProps,
+    AutocompleteTheme
+} from "react-toolbox/lib/autocomplete";
 import {InputTheme} from "react-toolbox/lib/input";
 import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
@@ -42,7 +46,6 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
 export class Autocomplete extends React.Component<AutocompleteProps> {
-
     private inputElement!: HTMLInputElement | null;
 
     /** Composant en chargement. */
@@ -58,13 +61,12 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
         if (value && !isQuickSearch && keyResolver) {
-            this.query = i18next.t(await keyResolver(value) || "") || value;
+            this.query = i18next.t((await keyResolver(value)) || "") || value;
         }
     }
 
     componentDidMount() {
-        this.inputElement = (findDOMNode(this) as Element)
-            .querySelector("input");
+        this.inputElement = (findDOMNode(this) as Element).querySelector("input");
     }
 
     focus() {
@@ -130,7 +132,12 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
             runInAction("replaceResults", () => {
-                this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {}) || {});
+                this.values.replace(
+                    (result &&
+                        result.data &&
+                        result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {})) ||
+                        {}
+                );
                 this.isLoading = false;
             });
         }
@@ -145,7 +152,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
         const {keyResolver, querySearcher, theme: pTheme, ...props} = this.props;
         return (
             <Theme theme={pTheme}>
-                {theme =>
+                {theme => (
                     <div data-focus="autocomplete">
                         <RTAutocomplete
                             {...props}
@@ -158,11 +165,11 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
                             suggestionMatch="disabled"
                             theme={theme}
                         />
-                        {this.isLoading ?
+                        {this.isLoading ? (
                             <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
-                        : null}
+                        ) : null}
                     </div>
-                }
+                )}
             </Theme>
         );
     }

@@ -34,13 +34,16 @@ export function MainMenuPanel(props: MenuPanelProps) {
     const {children, close, opened, xOffset, yOffset, theme: pTheme} = props;
     return (
         <Theme theme={pTheme}>
-            {theme =>
-                <div className={opened && theme.panelWrapper || ""} onClick={close}>
-                    <div className={`${theme.panel} ${theme.animate} ${opened ? theme.open : theme.close}`} style={{top: yOffset, left: xOffset}}>
+            {theme => (
+                <div className={(opened && theme.panelWrapper) || ""} onClick={close}>
+                    <div
+                        className={`${theme.panel} ${theme.animate} ${opened ? theme.open : theme.close}`}
+                        style={{top: yOffset, left: xOffset}}
+                    >
                         {children}
                     </div>
                 </div>
-            }
+            )}
         </Theme>
     );
 }

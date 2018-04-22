@@ -16,18 +16,17 @@ export interface HeaderContentProps {
 
 /** Contenu du header. n'est affiché que si le header est déplié. */
 export class HeaderContent extends React.Component<HeaderContentProps> {
-
     static contextTypes = {layout: PropTypes.object};
     context!: {layout: {menuWidth: number}};
 
     render() {
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={theme.content} style={{marginLeft: this.context.layout.menuWidth}}>
                         {this.props.children}
                     </div>
-                }
+                )}
             </Theme>
         );
     }

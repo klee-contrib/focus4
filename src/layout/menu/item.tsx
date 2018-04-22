@@ -20,28 +20,13 @@ export function MainMenuItem(props: MainMenuItemProps) {
     if (label) {
         return (
             <Theme theme={props.theme}>
-                {theme =>
-                    <Button
-                        {...otherProps}
-                        icon={icon}
-                        label={label}
-                        onClick={onClick}
-                        theme={theme}
-                    />
-                }
+                {theme => <Button {...otherProps} icon={icon} label={label} onClick={onClick} theme={theme} />}
             </Theme>
         );
     } else {
         return (
             <Theme theme={props.theme}>
-                {theme =>
-                    <IconButton
-                        {...otherProps}
-                        icon={icon}
-                        onClick={onClick}
-                        theme={theme}
-                    />
-                }
+                {theme => <IconButton {...otherProps} icon={icon} onClick={onClick} theme={theme} />}
             </Theme>
         );
     }

@@ -45,7 +45,6 @@ export interface PanelDescriptor {
 /** Construit un Panel avec un titre et des actions. */
 @observer
 export class Panel extends React.Component<PanelProps> {
-
     private id!: string;
     @observable private isInForm = false;
 
@@ -59,7 +58,7 @@ export class Panel extends React.Component<PanelProps> {
             registerPanel(panel: PanelDescriptor): string;
             removePanel(id: string): void;
             updatePanel(id: string, panel: PanelDescriptor): void;
-        }
+        };
     };
 
     /** On s'enregistre dans le scrollspy. */
@@ -81,7 +80,7 @@ export class Panel extends React.Component<PanelProps> {
 
     /** On se met à jour dans le scrollspy. */
     componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
-         if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title) {
+        if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title) {
             this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this) as HTMLDivElement});
         }
     }
@@ -94,11 +93,30 @@ export class Panel extends React.Component<PanelProps> {
     }
 
     render() {
-        const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, title, showHelp, editing, toggleEdit, save, hideProgressBar} = this.props;
+        const {
+            blockName,
+            Buttons = PanelButtons,
+            buttonsPosition = "top",
+            children,
+            i18nPrefix,
+            loading,
+            title,
+            showHelp,
+            editing,
+            toggleEdit,
+            save,
+            hideProgressBar
+        } = this.props;
 
         const buttons = (theme: PanelStyle) => (
             <div className={theme.actions}>
-                <Buttons editing={editing} i18nPrefix={i18nPrefix} loading={loading} save={!this.isInForm ? save : undefined} toggleEdit={toggleEdit} />
+                <Buttons
+                    editing={editing}
+                    i18nPrefix={i18nPrefix}
+                    loading={loading}
+                    save={!this.isInForm ? save : undefined}
+                    toggleEdit={toggleEdit}
+                />
             </div>
         );
 
@@ -107,36 +125,33 @@ export class Panel extends React.Component<PanelProps> {
 
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={`${theme.panel} ${loading ? theme.busy : ""} ${editing ? theme.edit : ""}`}>
-                        {!hideProgressBar && loading ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} /> : null}
-                        {title || areButtonsTop ?
+                        {!hideProgressBar && loading ? (
+                            <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} />
+                        ) : null}
+                        {title || areButtonsTop ? (
                             <div className={`${theme.title} ${theme.top}`}>
-                                {title ?
+                                {title ? (
                                     <h3>
                                         <span data-spy-title>{i18next.t(title)}</span>
-                                        {showHelp ?
+                                        {showHelp ? (
                                             <ButtonHelp
-                                                blockName={blockName || snakeCase(i18next.t(title))
-                                                    .split("_")[0]}
+                                                blockName={blockName || snakeCase(i18next.t(title)).split("_")[0]}
                                                 i18nPrefix={i18nPrefix}
                                             />
-                                        : null}
+                                        ) : null}
                                     </h3>
-                                : null}
+                                ) : null}
                                 {areButtonsTop ? buttons(theme) : null}
                             </div>
-                        : null}
-                        <div className={theme.content}>
-                            {children}
-                        </div>
-                        {areButtonsDown ?
-                            <div className={`${theme.title} ${theme.bottom}`}>
-                                {buttons(theme)}
-                            </div>
-                        : null}
+                        ) : null}
+                        <div className={theme.content}>{children}</div>
+                        {areButtonsDown ? (
+                            <div className={`${theme.title} ${theme.bottom}`}>{buttons(theme)}</div>
+                        ) : null}
                     </div>
-                }
+                )}
             </Theme>
         );
     }

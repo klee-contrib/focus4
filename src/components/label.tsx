@@ -32,15 +32,22 @@ export interface LabelProps {
     theme?: LabelStyle;
 }
 
-export function Label({comment, i18nPrefix = "focus", label, name, onTooltipClick, showTooltip, style, theme: pTheme}: LabelProps) {
+export function Label({
+    comment,
+    i18nPrefix = "focus",
+    label,
+    name,
+    onTooltipClick,
+    showTooltip,
+    style,
+    theme: pTheme
+}: LabelProps) {
     return (
         <Theme theme={pTheme}>
-            {theme =>
+            {theme => (
                 <div className={theme.label} style={style}>
-                    <label htmlFor={name}>
-                        {label && i18next.t(label) || ""}
-                    </label>
-                    {comment && showTooltip ?
+                    <label htmlFor={name}>{(label && i18next.t(label)) || ""}</label>
+                    {comment && showTooltip ? (
                         <TooltipIcon
                             className={`${theme.icon} ${!!onTooltipClick ? theme.clickable : ""}`}
                             tooltipHideOnClick={!onTooltipClick}
@@ -48,9 +55,9 @@ export function Label({comment, i18nPrefix = "focus", label, name, onTooltipClic
                             tooltip={i18next.t(comment)}
                             value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
                         />
-                    : null}
+                    ) : null}
                 </div>
-            }
+            )}
         </Theme>
     );
 }

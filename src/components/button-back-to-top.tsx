@@ -25,7 +25,6 @@ export interface ButtonBackToTopProps {
 /** Bouton de retour en haut de page. */
 @observer
 export class ButtonBackToTop extends React.Component<ButtonBackToTopProps> {
-
     @observable isVisible = false;
 
     componentDidMount() {
@@ -56,20 +55,14 @@ export class ButtonBackToTop extends React.Component<ButtonBackToTopProps> {
     }
 
     render() {
-        return this.isVisible ?
+        return this.isVisible ? (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={theme.backToTop}>
-                        <Button
-                            accent
-                            onClick={this.scrollToTop}
-                            icon="expand_less"
-                            floating
-                            theme={theme}
-                        />
+                        <Button accent onClick={this.scrollToTop} icon="expand_less" floating theme={theme} />
                     </div>
-                }
+                )}
             </Theme>
-        : null;
+        ) : null;
     }
 }

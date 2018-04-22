@@ -34,7 +34,6 @@ export interface ActionConfig<T = any> {
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 export class FormActions {
-
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
     /** Formulaire en chargement. */
@@ -78,7 +77,7 @@ export class FormActions {
             editing: this.entity.form.isEdit,
             loading: this.isLoading,
             save: this.save,
-            toggleEdit: this.toggleEdit,
+            toggleEdit: this.toggleEdit
         };
     }
 
@@ -134,7 +133,7 @@ export class FormActions {
                     this.isLoading = false;
                     this.entity.form.isEdit = false;
                     if (data) {
-                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
+                        // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                         (this.entity.sourceNode as any).set(data);
                     }
                 });
@@ -172,8 +171,16 @@ export class FormActions {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends Entity>(formNode: FormListNode<T>, actions: ActionConfig<EntityToType<T>[]>, config?: FormConfig): FormActions;
-export function makeFormActions<T extends Entity>(formNode: FormNode<T>, actions: ActionConfig<EntityToType<T>>, config?: FormConfig): FormActions;
+export function makeFormActions<T extends Entity>(
+    formNode: FormListNode<T>,
+    actions: ActionConfig<EntityToType<T>[]>,
+    config?: FormConfig
+): FormActions;
+export function makeFormActions<T extends Entity>(
+    formNode: FormNode<T>,
+    actions: ActionConfig<EntityToType<T>>,
+    config?: FormConfig
+): FormActions;
 export function makeFormActions(formNode: FormNode | FormListNode, actions: ActionConfig, config?: FormConfig) {
     return new FormActions(formNode, actions, config);
 }

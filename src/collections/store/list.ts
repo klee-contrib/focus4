@@ -11,7 +11,6 @@ import {ListStoreBase} from "./base";
  * S'utilise sur une liste pré-chargée
  */
 export class ListStore<T> extends ListStoreBase<T> {
-
     /** Liste brute (non triée, non filtrée) des données. */
     readonly innerList: IObservableArray<T> = observable<T>([]);
 
@@ -34,22 +33,27 @@ export class ListStore<T> extends ListStoreBase<T> {
 
         // Tri.
         if (this.sortBy) {
-            list = orderBy(this.innerList, item => `${(item as any)[this.sortBy!]}`.toLowerCase(), this.sortAsc ? "asc" : "desc");
+            list = orderBy(
+                this.innerList,
+                item => `${(item as any)[this.sortBy!]}`.toLowerCase(),
+                this.sortAsc ? "asc" : "desc"
+            );
         } else {
             list = this.innerList;
         }
 
         // Filtrage simple, sur les champs choisis.
         if (this.filterFields) {
-            list = list.filter(item => this.filterFields!.some(filter => {
-                const field = item[filter];
-                if (isString(field)) {
-                    return field.toLowerCase()
-                        .includes(this.query.toLowerCase()); // Pour faire simple, on compare tout en minuscule.
-                } else {
-                    return false;
-                }
-            }));
+            list = list.filter(item =>
+                this.filterFields!.some(filter => {
+                    const field = item[filter];
+                    if (isString(field)) {
+                        return field.toLowerCase().includes(this.query.toLowerCase()); // Pour faire simple, on compare tout en minuscule.
+                    } else {
+                        return false;
+                    }
+                })
+            );
         }
 
         return list;

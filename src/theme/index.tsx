@@ -4,7 +4,10 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import {themeable} from "react-css-themr";
 
-export type ThemeConsumer<T> = React.ComponentClass<{children: (theme: T) => React.ReactElement<any>, theme?: Partial<T>}>;
+export type ThemeConsumer<T> = React.ComponentClass<{
+    children: (theme: T) => React.ReactElement<any>;
+    theme?: Partial<T>;
+}>;
 
 /**
  * Crée un composant pour injecter le theme souhaité dans un composant, via une render props (à la place du HoC de `react-css-themr`).
@@ -12,10 +15,8 @@ export type ThemeConsumer<T> = React.ComponentClass<{children: (theme: T) => Rea
  * @param localTheme Le theme local, fourni par le composant.
  */
 export function themr<T>(name: string, localTheme?: T): ThemeConsumer<T> {
-
     @observer
-    class TC extends React.Component<{children: (theme: T) => React.ReactElement<any>, theme?: Partial<T>}> {
-
+    class TC extends React.Component<{children: (theme: T) => React.ReactElement<any>; theme?: Partial<T>}> {
         static displayName = `${upperFirst(name)}ThemeConsumer`;
 
         static contextTypes = {
@@ -26,7 +27,11 @@ export function themr<T>(name: string, localTheme?: T): ThemeConsumer<T> {
 
         render() {
             const {children, theme} = this.props;
-            return children(themeable(localTheme || {}, this.context.themr && this.context.themr.theme[name] || {}, theme as any || {}) as any);
+            return children(themeable(
+                localTheme || {},
+                (this.context.themr && this.context.themr.theme[name]) || {},
+                (theme as any) || {}
+            ) as any);
         }
     }
 

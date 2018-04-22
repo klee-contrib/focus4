@@ -54,7 +54,6 @@ export interface InputDateProps extends InputProps {
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
 export class InputDate extends React.Component<InputDateProps> {
-
     private calendar?: HTMLDivElement | null;
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
@@ -142,8 +141,7 @@ export class InputDate extends React.Component<InputDateProps> {
         const {inputFormat = "MM/DD/YYYY"} = this.props;
         if (isISOString(value)) {
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
-            return moment(value, moment.ISO_8601)
-                .format(inputFormat);
+            return moment(value, moment.ISO_8601).format(inputFormat);
         } else {
             return value;
         }
@@ -178,7 +176,6 @@ export class InputDate extends React.Component<InputDateProps> {
         } else {
             onChange(text);
         }
-
     }
 
     /** Au clic sur le calendrier. */
@@ -192,8 +189,7 @@ export class InputDate extends React.Component<InputDateProps> {
             date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
         }
 
-        const correctedDate = this.transformDate(date)
-            .format();
+        const correctedDate = this.transformDate(date).format();
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
@@ -223,39 +219,64 @@ export class InputDate extends React.Component<InputDateProps> {
         } else if (ISOStringFormat === "utc-midnight") {
             return moment.utc(...params);
         } else {
-            return moment(...params)
-                .utcOffset(0);
+            return moment(...params).utcOffset(0);
         }
     }
 
     render() {
-        const {theme: pTheme, inputFormat = "MM/DD/YYYY", calendarFormat = "ddd, MMM D", displayFrom = "left", ISOStringFormat = "utc-midnight", ...inputProps} = this.props;
+        const {
+            theme: pTheme,
+            inputFormat = "MM/DD/YYYY",
+            calendarFormat = "ddd, MMM D",
+            displayFrom = "left",
+            ISOStringFormat = "utc-midnight",
+            ...inputProps
+        } = this.props;
         return (
             <Theme theme={pTheme}>
-                {theme =>
+                {theme => (
                     <div data-focus="input-date" data-id={this._inputDateId} className={input}>
                         <Input
                             {...inputProps}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                            onChange={(value: string) => this.dateText = value}
+                            onChange={(value: string) => (this.dateText = value)}
                             onKeyDown={this.handleKeyDown}
-                            onFocus={() => this.showCalendar = true}
+                            onFocus={() => (this.showCalendar = true)}
                             theme={theme}
                             value={this.dateText || ""}
                         />
-                        {this.showCalendar ?
+                        {this.showCalendar ? (
                             <div
-                                ref={cal => this.calendar = cal}
-                                className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${this.calendarPosition === "up" ? up : down}`}
+                                ref={cal => (this.calendar = cal)}
+                                className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${
+                                    this.calendarPosition === "up" ? up : down
+                                }`}
                             >
-                                <header className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}>
-                                    <span id="years" className={theme!.year} onClick={() => this.calendarDisplay = "years"}>
+                                <header
+                                    className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}
+                                >
+                                    <span
+                                        id="years"
+                                        className={theme!.year}
+                                        onClick={() => (this.calendarDisplay = "years")}
+                                    >
                                         {this.date.year()}
                                     </span>
-                                    <h3 id="months" className={theme!.date} onClick={() => this.calendarDisplay = "months"}>
-                                        {(ISOStringFormat === "local-utc-midnight" ? this.date.clone().local() : this.date).format(calendarFormat)}
+                                    <h3
+                                        id="months"
+                                        className={theme!.date}
+                                        onClick={() => (this.calendarDisplay = "months")}
+                                    >
+                                        {(ISOStringFormat === "local-utc-midnight"
+                                            ? this.date.clone().local()
+                                            : this.date
+                                        ).format(calendarFormat)}
                                     </h3>
-                                    <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showCalendar = false} />
+                                    <IconButton
+                                        icon="clear"
+                                        theme={{toggle}}
+                                        onClick={() => (this.showCalendar = false)}
+                                    />
                                 </header>
                                 <div className={theme!.calendarWrapper}>
                                     <Calendar
@@ -268,9 +289,9 @@ export class InputDate extends React.Component<InputDateProps> {
                                     />
                                 </div>
                             </div>
-                        : null}
+                        ) : null}
                     </div>
-                }
+                )}
             </Theme>
         );
     }
@@ -278,6 +299,5 @@ export class InputDate extends React.Component<InputDateProps> {
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
-    return moment(value, moment.ISO_8601, true)
-        .isValid();
+    return moment(value, moment.ISO_8601, true).isValid();
 }

@@ -36,7 +36,7 @@ export const fr = {
             group: "Grouper",
             selectedItem: "élement sélectionné",
             selectedItems: "élements sélectionnés",
-            sort: "Trier",
+            sort: "Trier"
         },
         bar: {
             error: "Les critères suivants sont en erreur",

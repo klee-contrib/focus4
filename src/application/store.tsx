@@ -26,7 +26,8 @@ export interface ApplicationAction {
 /** Store applicatif, regroupant des informations tranverses, et en particulier la gestion du header. */
 export class ApplicationStore implements ApplicationAction {
     /** Actions transverses. */
-    @observable actions: {
+    @observable
+    actions: {
         /** Actions principales, affichées directement. */
         primary: PrimaryAction[];
         /** Actions secondaires, affichées dans une dropdown. */
@@ -63,8 +64,8 @@ export class ApplicationStore implements ApplicationAction {
         if (!isPartial) {
             this.cartridge = cartridge || <div />;
             this.summary = summary || <div />;
-            this.actions.primary = actions && actions.primary || [];
-            this.actions.secondary = actions && actions.secondary || [];
+            this.actions.primary = (actions && actions.primary) || [];
+            this.actions.secondary = (actions && actions.secondary) || [];
             this.barLeft = barLeft || <div />;
             this.canDeploy = canDeploy === undefined ? true : canDeploy;
         } else {
@@ -75,8 +76,8 @@ export class ApplicationStore implements ApplicationAction {
                 this.summary = summary;
             }
             if (actions) {
-                this.actions.primary = actions && actions.primary || [];
-                this.actions.secondary = actions && actions.secondary || [];
+                this.actions.primary = (actions && actions.primary) || [];
+                this.actions.secondary = (actions && actions.secondary) || [];
             }
             if (barLeft) {
                 this.barLeft = barLeft;

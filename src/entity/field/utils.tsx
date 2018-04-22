@@ -14,9 +14,10 @@ import {Field, FieldOptions} from "./field";
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<T extends FieldEntry>(field: EntityField<T>, options: Partial<FieldOptions<T>> = {}
-) {
-    options.onChange = options.onChange || action(`on${upperFirst(field.$field.name)}Change`, (value: T["fieldType"]) => field.value = value);
+export function fieldFor<T extends FieldEntry>(field: EntityField<T>, options: Partial<FieldOptions<T>> = {}) {
+    options.onChange =
+        options.onChange ||
+        action(`on${upperFirst(field.$field.name)}Change`, (value: T["fieldType"]) => (field.value = value));
     return <Field field={field} {...options} />;
 }
 
@@ -31,9 +32,12 @@ export type Props<T> = T extends React.Component<infer P1> ? P1 : T extends (pro
 export function selectFor<T extends FieldEntry, SComponent = typeof Select>(
     field: EntityField<T>,
     values: ReferenceList,
-    options: Partial<FieldOptions<T, Props<SComponent>>> & {SelectComponent?: SComponent, selectProps?: Partial<Props<SComponent>>} = {}
+    options: Partial<FieldOptions<T, Props<SComponent>>> & {
+        SelectComponent?: SComponent;
+        selectProps?: Partial<Props<SComponent>>;
+    } = {}
 ) {
-    options.SelectComponent = options.SelectComponent || Select as any;
+    options.SelectComponent = options.SelectComponent || (Select as any);
     options.values = values;
     return fieldFor<T>(field, options as Partial<FieldOptions<T>>);
 }
@@ -44,9 +48,14 @@ export function selectFor<T extends FieldEntry, SComponent = typeof Select>(
  * @param values L'éventulle liste de référence associée.
  */
 export function stringFor<T extends FieldEntry>(field: EntityField<T>, values: ReferenceList = [] as any) {
-    const {value, $field: {domain: {displayFormatter = (t: string) => i18next.t(t)}}} = field;
+    const {
+        value,
+        $field: {
+            domain: {displayFormatter = (t: string) => i18next.t(t)}
+        }
+    } = field;
     const {$valueKey = "code", $labelKey = "label"} = values;
     const found = values.find(val => (val as any)[$valueKey] === value);
-    const processedValue = found && (found as any)[$labelKey] || value;
+    const processedValue = (found && (found as any)[$labelKey]) || value;
     return displayFormatter(processedValue);
 }

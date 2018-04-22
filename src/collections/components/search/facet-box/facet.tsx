@@ -31,7 +31,6 @@ export interface FacetProps {
 /** Composant affichant le détail d'une facette avec ses valeurs. */
 @observer
 export class Facet extends React.Component<FacetProps> {
-
     @observable protected isShowAll = false;
 
     protected renderFacetDataList(theme: FacetStyle) {
@@ -62,7 +61,9 @@ export class Facet extends React.Component<FacetProps> {
                         };
                         return (
                             <li key={sfv.code} onClick={clickHandler}>
-                                {facet.isMultiSelectable ? <Checkbox value={isSelected} onClick={clickHandler} /> : null}
+                                {facet.isMultiSelectable ? (
+                                    <Checkbox value={isSelected} onClick={clickHandler} />
+                                ) : null}
                                 <div>{i18next.t(sfv.label)}</div>
                                 <div className={theme.count}>{sfv.count}</div>
                             </li>
@@ -77,7 +78,7 @@ export class Facet extends React.Component<FacetProps> {
         const {facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
         if (facet.values.length > nbDefaultDataList) {
             return (
-                <div className={theme.show} onClick={() => this.isShowAll = !this.isShowAll}>
+                <div className={theme.show} onClick={() => (this.isShowAll = !this.isShowAll)}>
                     {i18next.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                 </div>
             );
@@ -90,13 +91,13 @@ export class Facet extends React.Component<FacetProps> {
         const {facet} = this.props;
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={`${theme.facet} ${facet.isMultiSelectable ? theme.multiSelect : ""}`}>
                         <h4>{i18next.t(facet.label)}</h4>
                         {this.renderFacetDataList(theme)}
                         {this.renderShowAllDataList(theme)}
                     </div>
-                }
+                )}
             </Theme>
         );
     }

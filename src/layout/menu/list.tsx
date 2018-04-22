@@ -23,7 +23,6 @@ export interface MainMenuListProps {
 
 /** Liste d'item de menu. */
 export class MainMenuList extends React.Component<MainMenuListProps> {
-
     /** Handler de clic, appelle le handler du menu (pour ouvrir le panel) puis celui de l'item. */
     private onClick(evt: React.MouseEvent<HTMLLIElement>, idx: number) {
         const {onSelectMenu} = this.props;
@@ -36,11 +35,13 @@ export class MainMenuList extends React.Component<MainMenuListProps> {
         const {activeRoute, children} = this.props;
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <ul className={theme.list}>
                         {React.Children.map(children, (menuItem: any, idx) => (
                             <li
-                                className={`${theme.item} ${menuItem.props && menuItem.props.route === activeRoute ? theme.active : ""}`}
+                                className={`${theme.item} ${
+                                    menuItem.props && menuItem.props.route === activeRoute ? theme.active : ""
+                                }`}
                                 key={idx}
                                 onClick={evt => this.onClick(evt, idx)}
                             >
@@ -48,7 +49,7 @@ export class MainMenuList extends React.Component<MainMenuListProps> {
                             </li>
                         ))}
                     </ul>
-                }
+                )}
             </Theme>
         );
     }

@@ -11,7 +11,17 @@ import {getIcon} from "../../../../components";
 import {themr} from "../../../../theme";
 
 import {GroupResult, ListStoreBase, SearchStore} from "../../../store";
-import {ActionBar, DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, OperationListItem, StoreList} from "../../list";
+import {
+    ActionBar,
+    DetailProps,
+    DragLayerStyle,
+    EmptyProps,
+    LineProps,
+    LineStyle,
+    ListStyle,
+    OperationListItem,
+    StoreList
+} from "../../list";
 
 import * as styles from "./__style__/group.css";
 export type GroupStyle = Partial<typeof styles>;
@@ -70,7 +80,6 @@ export interface GroupProps<T> {
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
 @observer
 export class Group<T> extends React.Component<GroupProps<T>> {
-
     @computed
     protected get store(): ListStoreBase<T> {
         const {group, store} = this.props;
@@ -92,30 +101,53 @@ export class Group<T> extends React.Component<GroupProps<T>> {
     }
 
     render() {
-        const {canOpenDetail, DetailComponent, detailHeight, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", itemKey, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, useGroupActionBars} = this.props;
+        const {
+            canOpenDetail,
+            DetailComponent,
+            detailHeight,
+            disableDragAnimThreshold,
+            dragItemType,
+            dragLayerTheme,
+            EmptyComponent,
+            group,
+            GroupHeader = DefaultGroupHeader,
+            groupOperationList,
+            hasDragAndDrop,
+            hasSelection,
+            i18nPrefix = "focus",
+            itemKey,
+            LineComponent,
+            lineOperationList,
+            lineTheme,
+            listTheme,
+            MosaicComponent,
+            perPage = 5,
+            store,
+            useGroupActionBars
+        } = this.props;
         return (
             <Theme theme={this.props.theme}>
-                {theme =>
+                {theme => (
                     <div className={theme.container}>
-                        {useGroupActionBars ?
+                        {useGroupActionBars ? (
                             <ActionBar
                                 group={{code: group.code, label: group.label, totalCount: group.totalCount}}
                                 hasSelection={hasSelection}
                                 operationList={groupOperationList}
                                 store={this.store}
                             />
-                        :
+                        ) : (
                             <div className={theme.header}>
-                                {hasSelection ?
+                                {hasSelection ? (
                                     <IconButton
                                         icon={getIcon(`${i18nPrefix}.icons.actionBar.${this.store.selectionStatus}`)}
                                         onClick={this.store.toggleAll}
                                         theme={{toggle: theme.selectionToggle, icon: theme.selectionIcon}}
                                     />
-                                : null}
+                                ) : null}
                                 <GroupHeader group={group} />
                             </div>
-                        }
+                        )}
                         <StoreList
                             canOpenDetail={canOpenDetail}
                             detailHeight={detailHeight}
@@ -142,19 +174,16 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                         />
                         <GroupLoadingBar i18nPrefix={i18nPrefix} store={store} />
                     </div>
-                }
+                )}
             </Theme>
         );
     }
 }
 
 /** "Barre" de chargement pour les résultats. */
-export const GroupLoadingBar = observer(({i18nPrefix = "focus", store}: {i18nPrefix?: string, store: SearchStore}) =>
-    store.isLoading ?
-        <div style={{padding: "15px"}}>
-            {i18next.t(`${i18nPrefix}.search.loading`)}
-        </div>
-    : <div />
+export const GroupLoadingBar = observer(
+    ({i18nPrefix = "focus", store}: {i18nPrefix?: string; store: SearchStore}) =>
+        store.isLoading ? <div style={{padding: "15px"}}>{i18next.t(`${i18nPrefix}.search.loading`)}</div> : <div />
 );
 
 (GroupLoadingBar as any).displayName = "GroupLoadingBar";
