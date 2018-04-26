@@ -12,5 +12,5 @@ export {Label, LabelProps, LabelStyle} from "./label";
 export {Panel, PanelButtons, PanelProps, PanelStyle} from "./panel";
 export {Popin, PopinStyle} from "./popin";
 export {ScrollspyContainer, ScrollspyContainerProps, ScrollspyStyle} from "./scrollspy-container";
-export {Select, SelectProps} from "./select";
+export {Select, SelectProps, SelectStyle} from "./select";
 export {Switch, SwitchProps} from "./switch";

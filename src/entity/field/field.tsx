@@ -194,6 +194,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
                         $field: {
                             comment,
                             label,
+                            name,
                             isRequired,
                             domain: {className = "", LabelComponent = Label}
                         }

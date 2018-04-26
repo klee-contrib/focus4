@@ -34,7 +34,8 @@ import {
     LabelStyle,
     PanelStyle,
     PopinStyle,
-    ScrollspyStyle
+    ScrollspyStyle,
+    SelectStyle
 } from "../components";
 import {FieldStyle, FormStyle} from "../entity";
 import {MessageCenter} from "../message";
@@ -133,6 +134,7 @@ export interface LayoutStyleProviderProps {
     popin?: PopinStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
+    select?: SelectStyle;
     summary?: SummaryStyle;
 
     RTButton?: ButtonTheme;
