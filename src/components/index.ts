@@ -13,7 +13,7 @@ export {Label, LabelProps, LabelStyle} from "./label";
 export {Panel, PanelButtons, PanelProps, PanelStyle} from "./panel";
 export {Popin, PopinStyle} from "./popin";
 export {ScrollspyContainer, ScrollspyContainerProps, ScrollspyStyle} from "./scrollspy-container";
-export {Select, SelectProps} from "./select";
+export {Select, SelectProps, SelectStyle} from "./select";
 export {SelectCheckbox, SelectCheckboxProps, SelectCheckboxStyle} from "./select-checkbox";
 export {SelectRadio, SelectRadioProps, SelectRadioStyle} from "./select-radio";
 export {Switch, SwitchProps} from "./switch";

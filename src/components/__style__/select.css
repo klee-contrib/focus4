@@ -1,17 +1,36 @@
 @import "../../style/select.css";
 
 .select {
+    position: relative;
     display: inline-block;
     padding: var(--input-padding) 0;
 
     & select {
+        font-family: var(--preferred-font);
         border-top: 0;
         border-left: 0;
         border-right: 0;
-        border-bottom: 1px solid var(--input-text-bottom-border-color);
+        border-bottom: 1px solid var(--select-line-color);
         color: var(--color-text);
         height: var(--select-height);
         font-size: var(--input-field-font-size);
+        appearance: none;
+        padding-right: 20px;
+
+        &::-ms-expand {
+            display: none;
+        }
+    }
+
+    &::before {
+        content: "\E313";
+        font-family: "Material Icons";
+        position: absolute;
+        bottom: 25px;
+        right: 0;
+        pointer-events: none;
+        font-size: var(--input-field-font-size);
+        color: var(--select-arrow-color);
     }
 }
 

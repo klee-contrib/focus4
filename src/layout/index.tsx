@@ -37,7 +37,8 @@ import {
     PopinStyle,
     ScrollspyStyle,
     SelectCheckboxStyle,
-    SelectRadioStyle
+    SelectRadioStyle,
+    SelectStyle
 } from "../components";
 import {FieldStyle, FormStyle} from "../entity";
 import {MessageCenter} from "../message";
@@ -137,6 +138,7 @@ export interface LayoutStyleProviderProps {
     popin?: PopinStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
+    select?: SelectStyle;
     selectCheckbox?: SelectCheckboxStyle;
     selectRadio?: SelectRadioStyle;
     summary?: SummaryStyle;

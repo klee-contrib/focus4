@@ -62,6 +62,7 @@ export function Select({
                 <div data-focus="select" className={`${theme.select} ${error ? theme.error : ""}`}>
                     <select
                         disabled={disabled}
+                        id={name}
                         name={name}
                         onChange={({currentTarget: {value: v}}) => onChange(v || undefined)}
                         value={value === undefined ? "" : value}

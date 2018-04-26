@@ -58,7 +58,7 @@
     align-items: center;
     margin: 0;
     position: relative;
-    background: var(--menu-background);
+    background: var(--main-menu-background);
     height: 100%;
     z-index: calc(var(--z-index-high) + 1);
 }
@@ -78,9 +78,9 @@
 .button.neutral:not([disabled]),
 .toggle,
 .toggle.neutral:not([disabled]) {
-    height: var(--menu-item-height);
-    color: var(--menu-item-color);
-    min-width: var(--menu-item-height);
+    height: var(--main-menu-item-height);
+    color: var(--main-menu-item-color);
+    min-width: var(--main-menu-item-height);
 }
 
 .button {
@@ -107,11 +107,11 @@
 }
 
 .active {
-    background: var(--menu-item-active-background);
+    background: var(--main-menu-item-active-background);
 
     & .icon,
     & .button.neutral:not([disabled]),
     & .toggle {
-        color: var(--menu-item-active-color);
+        color: var(--main-menu-item-active-color);
     }
 }
