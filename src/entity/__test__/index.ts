@@ -53,10 +53,12 @@ test("EntityStore: Création", t => {
                 nom: {$field: StructureEntity.fields.nom, value: undefined},
                 siret: {$field: StructureEntity.fields.siret, value: undefined},
                 set: store.operation.structure.set,
-                clear: store.operation.structure.clear
+                clear: store.operation.structure.clear,
+                replace: store.operation.structure.replace
             },
             set: store.operation.set,
-            clear: store.operation.clear
+            clear: store.operation.clear,
+            replace: store.operation.replace
         },
         "L'entrée 'operation' a bien la forme attendue"
     );
@@ -76,10 +78,10 @@ test("EntityStore: Création", t => {
     t.end();
 });
 
-test("EntityStore: Set global", t => {
+test("EntityStore: Replace global", t => {
     const store = getStore();
 
-    store.set({operation});
+    store.replace({operation});
     t.equal(
         store.operation.id.value,
         operation.id,
@@ -91,7 +93,7 @@ test("EntityStore: Set global", t => {
         "La propriété 'structure.id' de l'entrée 'operation' a bien été enregistrée."
     );
 
-    store.set({structureList});
+    store.replace({structureList});
     t.assert(store.structureList[2], "La liste 'structureList' a bien été enregistrée.");
     t.equal(
         store.structureList[1].id.value,
@@ -99,7 +101,7 @@ test("EntityStore: Set global", t => {
         "Le deuxième élément de 'structureList' a bien été enregistré."
     );
 
-    store.set({projetTest});
+    store.replace({projetTest});
     t.assert(store.projetTest.ligneList[2], "La liste 'projet.ligneList' a bien été enresgitrée.");
     t.equal(
         store.projetTest.ligneList[1].id.value,
@@ -107,7 +109,7 @@ test("EntityStore: Set global", t => {
         "Le deuxième élément de 'projet.ligneList' a bien été enregistré."
     );
 
-    store.set({subStore: {operationList: [operation], structure: structureList[0]}});
+    store.replace({subStore: {operationList: [operation], structure: structureList[0]}});
     t.assert(store.subStore.structure.id.value, "Le noeud 'structure' du sous-store a bien été enregistré.");
     t.assert(store.subStore.operationList[0].id, "Le liste 'operationList' du sous-store a bien été enregistrée.");
     t.equal(
@@ -118,10 +120,10 @@ test("EntityStore: Set global", t => {
     t.end();
 });
 
-test("EntityStore: Set locaux", t => {
+test("EntityStore: Replace locaux", t => {
     let store = getStore();
 
-    store.operation.set(operation);
+    store.operation.replace(operation);
     t.equal(
         store.operation.id.value,
         operation.id,
@@ -134,14 +136,14 @@ test("EntityStore: Set locaux", t => {
     );
 
     store = getStore();
-    store.operation.structure.set(operation.structure);
+    store.operation.structure.replace(operation.structure);
     t.equal(
         store.operation.structure.id.value,
         operation.structure.id,
         "La propriété 'structure.id' de l'entrée 'operation' a bien été enregistrée (set structure)"
     );
 
-    store.structureList.set(structureList);
+    store.structureList.replaceNodes(structureList);
     t.assert(store.structureList[2], "La liste 'structureList' a bien été enregistrée.");
     t.equal(
         store.structureList[1].id.value,
@@ -149,7 +151,7 @@ test("EntityStore: Set locaux", t => {
         "Le deuxième élément de 'structureList' a bien été enregistré."
     );
 
-    store.projetTest.set(projetTest);
+    store.projetTest.replace(projetTest);
     t.assert(store.projetTest.ligneList[2], "La liste 'projet.ligneList' a bien été enregistrée.");
     t.equal(
         store.projetTest.ligneList[1].id.value,
@@ -160,9 +162,54 @@ test("EntityStore: Set locaux", t => {
     t.end();
 });
 
+test("EntityStore: Ajout élément dans une liste", t => {
+    const store = getStore();
+
+    store.structureList.replaceNodes(structureList);
+    store.structureList.pushNode({id: 8});
+    t.assert(store.structureList.length === 4, "La liste 'structureList' possède bien un élément de plus.");
+    t.deepEqual(
+        store.structureList[3].id.$field,
+        StructureEntity.fields.id,
+        "L'élément ajouté est bien un node avec les bonnes métadonnées."
+    );
+    t.equal(store.structureList[3].id.value, 8, "L'élement ajouté possède bien les valeurs attendues");
+
+    t.end();
+});
+
+test("EntityStore: Set global", t => {
+    const store = getStore();
+
+    store.replace({operation});
+    t.equal(
+        store.operation.id.value,
+        operation.id,
+        "La propriété 'id' de l'entrée 'operation' a bien été enregistrée."
+    );
+    t.equal(
+        store.operation.structure.id.value,
+        operation.structure.id,
+        "La propriété 'structure.id' de l'entrée 'operation' a bien été enregistrée."
+    );
+
+    store.set({subStore: {structure: structureList[0]}});
+    t.assert(store.subStore.structure.id.value, "Le noeud 'structure' du sous-store a bien été enregistré.");
+
+    store.structureList.pushNode({id: 1}, {id: 2});
+    store.set({structureList: [{siret: "test"}, {id: 4}, {id: 5}, {id: 6}]});
+    t.equal(store.structureList[0].id.value, 1, "La propriété 'structure[0].id' n'a pas été modifiée.");
+    t.equal(store.structureList[1].id.value, 4, "La propriété 'structure[1].id' a bien été modifiée.");
+    t.equal(store.structureList[0].siret.value, "test", "La propriété 'structure[0].siret' a bien été renseignée.");
+    t.equal(store.structureList[2].id.value, 5, "Un item supplémentaire dans la liste a bien été créé.");
+    t.equal(store.structureList[3].id.value, 6, "Un deuxième item supplémentaire dans la liste a bien été créé.");
+
+    t.end();
+});
+
 test("EntityStore: Clear global", t => {
     const store = getStore();
-    store.set({
+    store.replace({
         operation,
         structureList,
         projetTest,
@@ -184,22 +231,6 @@ test("EntityStore: Clear global", t => {
         "La propriété 'id' de l'entrée 'structure' du sous-store est bien undefined."
     );
     t.assert(store.subStore.operationList.length === 0, "La liste 'operationList' du sous store est bien vide.");
-
-    t.end();
-});
-
-test("EntityStore: Ajout élément dans une liste", t => {
-    const store = getStore();
-
-    store.structureList.set(structureList);
-    store.structureList.pushNode({id: 8});
-    t.assert(store.structureList.length === 4, "La liste 'structureList' possède bien un élément de plus.");
-    t.deepEqual(
-        store.structureList[3].id.$field,
-        StructureEntity.fields.id,
-        "L'élément ajouté est bien un node avec les bonnes métadonnées."
-    );
-    t.equal(store.structureList[3].id.value, 8, "L'élement ajouté possède bien les valeurs attendues");
 
     t.end();
 });
@@ -226,7 +257,7 @@ test("EntityStore: Clear locaux", t => {
 
 test("toFlatValues", t => {
     const store = getStore();
-    store.set({operation, projetTest, structureList});
+    store.replace({operation, projetTest, structureList});
 
     t.deepEqual(toFlatValues(store.operation), operation, "L'entrée 'operation' a bien été mise à plat.");
     t.deepEqual(toFlatValues(store.projetTest), projetTest, "L'entrée 'projet' a bien été mise à plat.");
@@ -264,8 +295,8 @@ test("FormNode: Création", t => {
     t.deepEqual(entry2.ligneList, formNode2.ligneList.sourceNode, "Le sous-sourceNode liste est bien le bon");
 
     t.comment("FormNode: Modification de StoreNode.");
-    entry.set(operation);
-    entry2.set(projetTest);
+    entry.replace(operation);
+    entry2.replace(projetTest);
 
     t.equal(
         formNode.id.value,
@@ -309,7 +340,7 @@ test("FormNode: Création", t => {
     );
 
     t.comment("FormNode: StoreNode.set(toFlatValues(FormNode))");
-    entry.set(toFlatValues(formNode));
+    entry.replace(toFlatValues(formNode));
 
     t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode a bien été mis à jour.");
     t.equal(entry.structure.id.value, 26, "Champ composite via set global: le StoreNode a bien été mis à jour.");

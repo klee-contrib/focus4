@@ -68,18 +68,19 @@ Un chaque objet contenu dans un `EntityStore` peut être l'un des trois objets s
 
 *   Un `EntityField`, objet représentant un champ, détaillé dans le paragraphe précédent.
 *   Un `StoreNode`, objet contenant des champs et d'autres `Store(List)Node`. Une entité dans un `EntityStore` est représentée par un `StoreNode`, et l'`EntityStore` lui-même est également un `StoreNode` (qui n'a à priori pas de champs au premier niveau).
-*   Un `StoreListNode`, qui est une liste de `StoreNode`.
+*   Un `StoreListNode`, qui est une liste de `StoreNode` (il s'agit d'un array observable avec des propriétés en plus, il hérite donc de toutes ses méthodes).
 
-Le `StoreNode` et le `StoreListNode` partagent la même API de base, qui comporte les deux méthodes suivantes :
+Le `StoreNode` et le `StoreListNode` ont une API similaire, qui contient les méthodes suivantes :
 
-*   `set(data)`, qui prend les données sous forme "JSON" et les insère dans le noeud, de manière récursive. Si le `set` doit mettre à jour un `StoreNode`, alors il ne mettae à jour que les champs reçus (accomplissant un "merge"). Si le `set` doit mettre à jour un `StoreListNode`, alors il va vider la liste et la remplir avec les objets passés, tels quels.
+*   `replace(data)`/`replaceNodes(data)`, qui remplace le noeud (récursivement) intégralement par l'objet (sous forme "JSON") passé en paramètre. `replace` sur un array observable existe déjà et est la méthode utilisée pour remplacer l'array par l'array donné : `replaceNodes` réalise la construction des `StoreNode`s en plus.
+*   `set(data)`, qui met à jour le noeud (récursivement) avec les champs renseignés dans `data` (c'est un "merge"). Pour un noeud de liste, si l'objet à l'index passé n'existe pas encore dans la liste, il sera créé en même temps.
 *   `clear()`, qui vide récursivement le noeud et son contenu.
+
+Le `StoreNode` possède également une méthode `pushNode(...items)`, qui est à `push(...items)` ce qu'est `replaceNode` à `replace`.
 
 C'est aussi l'occasion de rappeler que, contrairement à de la donnée brute sous forme de JSON, un `StoreNode` contient toujours l'ensemble de tous les champs du noeud. Si une valeur n'est pas renseignée, la propriété `value` du champ a simplement pour valeur `undefined`. De même, il faut toujours garder à l'esprit que `store.operation.id` est un _`EntityField`_ (qui est donc toujours vrai) et non un _`number | undefined`_. La valeur est bien toujours `store.operation.id.value`.
 
-Le `StoreListNode` dispose également d'une méthode supplémentaire `pushNode(item)`, qui permet d'y ajouter un node à partir d'un objet JSON brut.
-
-De plus, il convient également de rappeler que la modification d'un noeud ou de l'un de ses champs n'est pas limité à l'usage des méthodes `set()` ou `clear()`. Ce sont des méthodes utilitaires qui permettent simplement d'affecter plusieurs valeurs en même temps à des champs. Il est parfaitement possible de faire l'affection manuellement, par exemple `store.operation.id.value = undefined`. Derrière, comme tout le reste de l'application, MobX gère tout tout seul.
+De plus, il convient également de rappeler que la modification d'un noeud ou de l'un de ses champs n'est pas limité à l'usage des méthodes `replace()`, `set()` ou `clear()`. Ce sont des méthodes utilitaires qui permettent simplement d'affecter plusieurs valeurs en même temps à des champs. Il est parfaitement possible de faire l'affection manuellement, par exemple `store.operation.id.value = undefined`. Derrière, comme tout le reste de l'application, MobX gère tout tout seul.
 
 ### API de l'`EntityStore`
 
@@ -89,11 +90,11 @@ La fonction `makeEntityStore` permet de créer un nouvel `EntityStore` à partir
 
 *   Des objets de définition d'entité (généralement générés sous le nom `OperationEntity`), pour générér les `StoreNode`s correspondants.
 *   Des arrays contenants un objet d'entité (`[OperationEntity]`), pour générer les `StoreListNode`s correspondants.
-*   Des `StoreNode`s existants, créés à partir d'un autre `EntityStore`. Cela permet de les rattacher aux méthodes `set` et `clear` du store, pour associer des ensembles d'entités liées.
+*   Des `StoreNode`s existants, créés à partir d'un autre `EntityStore`. Cela permet de les rattacher aux méthodes `replace`, `set` et `clear` du store, pour associer des ensembles d'entités liées.
 
 #### `toFlatValues(node)`
 
-Cette fonction est l'opposé de la fonction `set` : elle prend un node et récupère toutes les valeurs de champs dans l'objet "JSON" équivalent au node.
+Cette fonction prend un noeud quelconque en paramètre et récupère toutes les valeurs de champs dans son objet "JSON" équivalent.
 
 ## Afficher des champs
 

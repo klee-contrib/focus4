@@ -106,10 +106,9 @@ export class FormActions {
             const params = getLoadParams();
             if (params) {
                 this.isLoading = true;
-                this.entity.sourceNode.clear();
                 const data = await load(...params);
                 runInAction("afterLoad", () => {
-                    (this.entity.sourceNode as any).set(data);
+                    (this.entity.sourceNode as any).replace(data);
                     this.isLoading = false;
                 });
 
@@ -134,7 +133,7 @@ export class FormActions {
                     this.entity.form.isEdit = false;
                     if (data) {
                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                        (this.entity.sourceNode as any).set(data);
+                        (this.entity.sourceNode as any).replace(data);
                     }
                 });
 

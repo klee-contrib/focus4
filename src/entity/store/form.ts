@@ -16,7 +16,7 @@ import {
     StoreNode
 } from "../types";
 import {validateField} from "../validation";
-import {setNode} from "./store";
+import {replaceNode} from "./store";
 
 /**
  * Transforme un Store(List)Node en Form(List)Node.
@@ -94,7 +94,7 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
     if (isAnyFormNode(node)) {
         node.reset = action("formNode.reset", () => {
             node.clear();
-            setNode(node as any, sourceNode as any);
+            replaceNode(node as any, sourceNode as any);
         });
         (node as any).sourceNode = sourceNode as any;
     }
