@@ -27,6 +27,9 @@ export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
     /** Données liée à un FormNode. */
     readonly form: FormData;
 
+    /** Remplace le contenu du noeud par le contenu donné. */
+    replace(data: EntityToType<T>): void;
+
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
 
@@ -45,7 +48,10 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
     $transform?: (source: StoreNode<T>) => U | void;
 
     /** Ajoute un élément à la liste. */
-    pushNode(item: EntityToType<T> & NodeToType<U>): void;
+    pushNode(...items: EntityToType<T>[]): void;
+
+    /** Reconstruit le noeud de liste à partir de la liste fournie. */
+    replaceNodes(data: (EntityToType<T> & NodeToType<U>)[]): void;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;

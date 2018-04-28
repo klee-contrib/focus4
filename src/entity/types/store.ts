@@ -32,12 +32,15 @@ export type StoreNode<T extends Entity = any> = EntityToNode<T> & {
     /** Vide l'objet (récursivement). */
     clear(): void;
 
+    /** Remplace le contenu du noeud par le contenu donné. */
+    replace(data: EntityToType<T>): void;
+
     /** Met à jour les champs donnés dans le noeud. */
     set(data: EntityToType<T>): void;
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<T extends Entity = any, U = {}> extends IObservableArray<StoreNode<T> & U> {
+export interface StoreListNode<T extends Entity = any, U = {}> extends IObservableArray<StoreNode<T>> {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
@@ -49,8 +52,11 @@ export interface StoreListNode<T extends Entity = any, U = {}> extends IObservab
     $transform?: (source: StoreNode<T>) => U | void;
 
     /** Ajoute un élément à la liste. */
-    pushNode(item: EntityToType<T> & NodeToType<U>): void;
+    pushNode(...items: EntityToType<T>[]): void;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    set(data: (EntityToType<T> & NodeToType<U>)[]): void;
+    replaceNodes(data: EntityToType<T>[]): void;
+
+    /** Met à jour le noeud de liste à partir de la liste fournie. */
+    set(data: EntityToType<T>[]): void;
 }
