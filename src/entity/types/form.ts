@@ -2,7 +2,7 @@ import {IObservableArray} from "mobx";
 
 import {DisplayProps, InputProps, LabelProps} from "../../components";
 import {Entity, EntityField, EntityToType, FieldEntry, StoreType} from "./entity";
-import {BaseStoreNode, NodeToType, StoreListNode, StoreNode} from "./store";
+import {NodeToType, StoreListNode, StoreNode} from "./store";
 
 /** Objet ajouté sur un FormNode. */
 export interface FormData {
@@ -34,9 +34,7 @@ export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
     readonly sourceNode: StoreNode<T>;
 };
 
-export interface FormListNode<T extends Entity = any, U = {}>
-    extends IObservableArray<FormNode<T, U>>,
-        BaseStoreNode<(EntityToType<T> & NodeToType<U>)[]> {
+export interface FormListNode<T extends Entity = any, U = {}> extends IObservableArray<FormNode<T, U>> {
     /** Métadonnées. */
     readonly $entity: T;
 
@@ -51,6 +49,9 @@ export interface FormListNode<T extends Entity = any, U = {}>
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
+
+    /** Reconstruit le noeud de liste à partir de la liste fournie. */
+    set(data: (EntityToType<T> & NodeToType<U>)[]): void;
 
     /** StoreNode original. */
     readonly sourceNode: StoreListNode<T>;

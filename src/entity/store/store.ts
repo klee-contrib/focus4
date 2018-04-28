@@ -2,7 +2,6 @@ import {isArray, isObject, mapValues} from "lodash";
 import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
 import {
-    BaseStoreNode,
     Entity,
     EntityToType,
     FieldEntry,
@@ -34,26 +33,24 @@ export type ExtractTypes<T> = Partial<
 >;
 
 /** Définition d'un store d'entité à partir des entités définies dans T. */
-export type EntityStore<T> = ExtractEntities<T> & BaseStoreNode<ExtractTypes<T>> & {clear(): void};
+export type EntityStore<T = any> = ExtractEntities<T> & {clear(): void; set(data: ExtractTypes<T>): void};
 
 /**
  * Construit un store d'entité à partir de la config et les entités données.
  * Le store d'entité inclut les métadonnées pour tous les champs des entités utilsées.
  * @param config Un objet dont les propriétés décrivent tous les noeuds du store.
  */
-export function makeEntityStore<T extends Record<string, Entity | Entity[] | BaseStoreNode>>(
-    config: T
-): EntityStore<T> {
+export function makeEntityStore<T extends Record<string, Entity | Entity[] | EntityStore>>(config: T): EntityStore<T> {
     const entityStore: EntityStore<T> = {} as any;
 
-    // On construit chaque entrée à partir de la config.
-    for (const entry in config) {
-        const item = config[entry] as Entity | Entity[] | BaseStoreNode;
+    // On construit chaque noeud à partir de la config.
+    for (const key in config) {
+        const item = config[key] as Entity | Entity[] | EntityStore;
         if (isStoreNode(item)) {
             // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
-            entityStore[entry] = item as any;
+            entityStore[key] = item as any;
         } else {
-            entityStore[entry] = buildEntityEntry(item as any) as any;
+            entityStore[key] = buildNode(item as any) as any;
         }
     }
 
@@ -63,129 +60,84 @@ export function makeEntityStore<T extends Record<string, Entity | Entity[] | Bas
         Typescript empêchera d'appeler la fonction dans le mauvais contexte de toute façon.
     */
 
-    entityStore.set = action("node.set", function set(this: EntityStore<T>, setConfig: any) {
-        for (const entry in setConfig) {
-            const entity = (this as any)[entry];
-            if (!entity) {
-                throw new Error(`"${entry}" n'existe pas dans ce store.`);
-            }
-            setEntityEntry(entity, setConfig[entry]);
-        }
+    entityStore.set = action("node.set", function set(this: EntityStore<T>, data: {}) {
+        setNode(this as StoreNode, data);
     });
 
     entityStore.clear = action("node.clear", function clear(this: EntityStore<T>) {
-        for (const entry in this) {
-            clearEntity((this as any)[entry]);
-        }
+        clearNode(this as StoreNode);
     });
 
     return entityStore as any;
 }
 
 /**
- * Construit une entrée de store, potentiellement de façon récursive.
+ * Construit un noeud à partir d'une entité, potentiellement de façon récursive.
  * @param entity L'entité de base (dans une liste pour un noeud liste).
  */
-export function buildEntityEntry<T extends Entity>(entity: T): StoreNode<T>;
-export function buildEntityEntry<T extends Entity>(entity: T[]): StoreListNode<T>;
-export function buildEntityEntry<T extends Entity>(entity: T | T[]): StoreNode<T> | StoreListNode<T> {
-    // Cas d'une entrée de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
+export function buildNode<T extends Entity>(entity: T): StoreNode<T>;
+export function buildNode<T extends Entity>(entity: T[]): StoreListNode<T>;
+export function buildNode<T extends Entity>(entity: T | T[]): StoreNode<T> | StoreListNode<T> {
+    // Cas d'un noeud de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
         const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<T>;
         (outputEntry as any).$entity = entity[0];
         outputEntry.pushNode = action("pushNode", function pushNode(this: typeof outputEntry, item: {}) {
-            const itemNode = buildEntityEntry(entity[0]);
-            if (this.$transform) {
-                Object.assign(itemNode, this.$transform(itemNode) || {});
-            }
-            if (isFormListNode(this)) {
-                nodeToFormNode(itemNode, itemNode, outputEntry as any);
-            }
-            itemNode.set(item);
-            this.push(itemNode);
+            this.push(getNodeForList(this, item));
         });
         outputEntry.set = action("node.set", function set(this: typeof outputEntry, values: {}[]) {
-            setEntityEntry(this, values);
+            setNode(this, values);
         });
         return outputEntry;
     }
 
-    // Cas d'une entrée simple : On parcourt tous les champs de l'entité.
+    // Cas d'un noeud simple : On parcourt tous les champs de l'entité.
     return {
         ...mapValues(entity.fields, (field: FieldEntry | ObjectEntry | ListEntry) => {
             if (field.type === "list") {
-                return buildEntityEntry([field.entity]);
+                return buildNode([field.entity]);
             } else if (field.type === "object") {
-                return buildEntityEntry(field.entity);
+                return buildNode(field.entity);
             } else {
                 return extendObservable({$field: field}, {value: undefined}, {value: observable.ref});
             }
         }),
         set: action("node.set", function set(this: StoreNode<T>, entityValue: any) {
-            setEntityEntry(this, entityValue);
+            setNode(this, entityValue);
         }),
         clear: action("node.clear", function clear(this: StoreNode<T>) {
-            clearEntity(this);
+            clearNode(this);
         })
     } as any;
 }
 
 /**
- * Rempli une entité avec les valeurs fournies, potentiellement de façon récursive.
- * @param entity L'entrée à remplir.
- * @param value La valeur de l'entrée.
+ * Remplit un noeud avec les valeurs fournies, potentiellement de façon récursive.
+ * @param node Le noeud à remplir.
+ * @param value La valeur du noeud.
  */
-export function setEntityEntry<T extends Entity>(
-    entity: StoreNode<T>,
-    value: EntityToType<T> | StoreNode<T>
-): StoreNode<T>;
-export function setEntityEntry<T extends Entity>(
+export function setNode<T extends Entity>(node: StoreNode<T>, value: EntityToType<T> | StoreNode<T>): StoreNode<T>;
+export function setNode<T extends Entity>(
     entity: StoreListNode<T>,
     value: EntityToType<T>[] | StoreListNode<T>
 ): StoreListNode<T>;
-export function setEntityEntry<T extends Entity>(
+export function setNode<T extends Entity>(
     entity: StoreNode<T> | StoreListNode<T>,
     value: EntityToType<T> | EntityToType<T>[] | StoreNode<T> | StoreListNode<T>
 ): StoreNode<T> | StoreListNode<T> {
-    // Cas du noeud liste.
     if (isStoreListNode<T>(entity) && (isArray(value) || isObservableArray(value))) {
-        // On vide l'array existant et on construit une entrée par valeur de la liste dans l'entrée.
-        entity.replace(
-            (value as (EntityToType<T> | StoreNode<T>)[]).map(item => {
-                const newNode = buildEntityEntry(entity.$entity);
-                if (entity.$transform) {
-                    Object.assign(newNode, entity.$transform(newNode) || {});
-                }
-                if (isFormListNode(entity)) {
-                    nodeToFormNode(newNode, isStoreNode(item) ? item : newNode, entity as any);
-                }
-
-                if (isStoreNode<T>(item)) {
-                    newNode.set(toFlatValues(item));
-                } else {
-                    newNode.set(item);
-                }
-
-                return newNode;
-            })
-        );
-
-        // Puis on remplit chaque entrée avec la valeur.
-        for (let i = 0; i < value.length; i++) {
-            setEntityEntry(entity[i], value[i]);
-        }
-
-        // Cas du noeud simple.
+        // On remplace la liste existante par une nouvelle liste de noeuds construit à partir de `value`.
+        entity.replace((value as (EntityToType<T> | StoreNode<T>)[]).map(item => getNodeForList(entity, item)));
     } else if (isStoreNode(entity) && isObject(value)) {
-        // On affecte chaque valeur de l'entrée avec la valeur demandée, et on réappelle `setEntityEntry` si la valeur n'est pas primitive.
-        for (const item in value as any) {
+        // On affecte chaque valeur du noeud avec la valeur demandée, et on réappelle `setNode` si la valeur n'est pas primitive.
+        for (const item in value) {
             const itemEntry = (entity as any)[item];
             const itemValue = (value as any)[item];
             if (!itemEntry) {
                 throw new Error(`node.set : propriété "${item}" introuvable.`);
             }
             if (isStoreNode(itemEntry)) {
-                setEntityEntry(itemEntry, itemValue);
+                setNode(itemEntry, itemValue);
             } else if (isEntityField(itemValue)) {
                 itemEntry.value = itemValue.value;
             } else {
@@ -198,30 +150,52 @@ export function setEntityEntry<T extends Entity>(
 }
 
 /**
- * Vide une entrée de store.
- * @param entity L'entrée.
+ * Vide un noeud de store.
+ * @param entity Le noeud.
  */
-function clearEntity<T extends Entity>(entity: StoreNode<T>) {
-    // Cas de l'entrée liste : On vide simplement la liste.
+function clearNode<T extends Entity>(entity: StoreNode<T>) {
+    // Cas du noeud de liste : On vide simplement la liste.
     if (isStoreListNode(entity)) {
         entity.replace([]);
     } else {
-        // Cas de l'entrée simple, on parcourt chaque champ.
-        for (const entry in entity) {
-            if (entry === "sourceNode") {
+        // Cas du noeud simple, on parcourt chaque champ.
+        for (const key in entity) {
+            if (key === "sourceNode") {
                 continue; // Pas touche.
             }
-            const entryItem = (entity as any)[entry];
+            const entryItem = (entity as any)[key];
             if (isStoreListNode(entryItem)) {
                 // Cas noeud de liste -> on vide la liste.
                 entryItem.clear();
             } else if (isStoreNode(entryItem)) {
                 // Cas noeud de store -> `clearEntity`.
-                clearEntity(entryItem as StoreNode);
+                clearNode(entryItem as StoreNode);
             } else if (entryItem.value !== undefined && !isComputedProp(entryItem, "value")) {
                 // Cas primitive -> on met à `undefined`.
                 entryItem.value = undefined;
             }
         }
     }
+}
+
+/**
+ * Crée un noeud à ajouter dans un noeud de liste à partir de l'objet à ajouter.
+ * @param list Le noeud de liste.
+ * @param item L'item à ajouter (classique ou noeud).
+ */
+function getNodeForList<T extends Entity>(list: StoreListNode<T>, item: EntityToType<T> | StoreNode<T>) {
+    const node = buildNode<T>(list.$entity);
+    if (list.$transform) {
+        Object.assign(node, list.$transform(node) || {});
+    }
+    if (isFormListNode(list)) {
+        nodeToFormNode<T>(node, isStoreNode<T>(item) ? item : node, list);
+    }
+    if (isStoreNode<T>(item)) {
+        node.set(toFlatValues(item));
+    } else {
+        node.set(item);
+    }
+
+    return node;
 }
