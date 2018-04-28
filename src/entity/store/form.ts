@@ -8,10 +8,10 @@ import {
     FormListNode,
     FormNode,
     isAnyFormNode,
+    isAnyStoreNode,
     isEntityField,
     isFormListNode,
     isFormNode,
-    isStoreNode,
     StoreListNode,
     StoreNode
 } from "../types";
@@ -40,7 +40,7 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         get isEdit() {
             return (
                 this._isEdit &&
-                (isFormNode(parentNodeOrEditing) ? parentNodeOrEditing.form.isEdit : true) &&
+                (isAnyFormNode(parentNodeOrEditing) ? parentNodeOrEditing.form.isEdit : true) &&
                 (isFunction(parentNodeOrEditing) ? parentNodeOrEditing() : true) &&
                 (isFunction($tempEdit) ? $tempEdit() : true)
             );
@@ -54,9 +54,7 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         node.forEach((item, i) => nodeToFormNode<any>(item, (sourceNode as StoreListNode)[i], node));
         extendObservable(node.form, {
             get isValid() {
-                return (
-                    isFormListNode(node) && (!node.form.isEdit || node.every(item => !item.form || item.form.isValid))
-                );
+                return isFormListNode(node) && node.every(item => item.form.isValid);
             }
         });
     } else if (isFormNode(node)) {
@@ -64,8 +62,8 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
             const child: {} = (node as any)[entry];
             if (isEntityField(child)) {
                 addFormFieldProperties(child, node);
-            } else if (isStoreNode(child)) {
-                nodeToFormNode<any>(
+            } else if (isAnyStoreNode(child)) {
+                nodeToFormNode(
                     child,
                     (sourceNode as any)[entry],
                     isBoolean(parentNodeOrEditing) ? node : parentNodeOrEditing
@@ -76,12 +74,12 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
             get isValid() {
                 return (
                     isFormNode(node) &&
-                    (node.form.isEdit ||
+                    (!node.form.isEdit ||
                         values(node).every(item => {
                             if (isEntityField(item)) {
                                 return !(item as FormEntityField).isEdit || !(item as FormEntityField).error;
-                            } else if (isFormNode(item)) {
-                                return !item.form || item.form.isValid;
+                            } else if (isAnyFormNode(item)) {
+                                return item.form.isValid;
                             } else {
                                 return true;
                             }

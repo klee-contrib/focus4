@@ -5,8 +5,8 @@ import {
     Entity,
     FormListNode,
     FormNode,
+    isAnyFormNode,
     isEntityField,
-    isFormNode,
     isStoreListNode,
     isStoreNode,
     StoreListNode,
@@ -36,17 +36,11 @@ export function makeFormNode<T extends Entity, U = {}>(
     transform: (source: StoreNode<T>) => U = _ => ({} as U),
     isEdit: boolean | (() => boolean) = false
 ) {
-    if (isFormNode(node)) {
+    if (isAnyFormNode(node)) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
 
-    const formNode = clone(node);
-    if (isStoreListNode<T>(formNode)) {
-        formNode.$transform = transform;
-    } else {
-        Object.assign(formNode, transform(formNode) || {});
-    }
-
+    const formNode = clone(node, transform);
     nodeToFormNode(formNode, node, isEdit);
     formNode.stopSync = reaction(() => toFlatValues(node), formNode.reset);
 
@@ -54,10 +48,10 @@ export function makeFormNode<T extends Entity, U = {}>(
 }
 
 /** Clone un StoreNode */
-function clone(source: any): any {
+function clone(source: any, transform?: (node: any) => any): any {
     if (isStoreListNode(source)) {
         let res = [];
-        const toAdd = source.map(clone);
+        const toAdd = source.map(i => clone(i, transform || source.$transform));
         res.length = toAdd.length;
         for (let i = 0; i < toAdd.length; i++) {
             res[i] = toAdd[i];
@@ -69,18 +63,16 @@ function clone(source: any): any {
         res.pushNode = source.pushNode;
         res.replaceNodes = source.replaceNodes;
         res.set = source.set;
-        if (source.$transform) {
-            res.$transform = source.$transform;
-            res.forEach(item => {
-                Object.assign(item, source.$transform!(item) || {});
-            });
-        }
+        res.$transform = transform || source.$transform;
 
         return res;
     } else if (isStoreNode(source)) {
         const res: typeof source = {} as any;
         for (const key in source) {
             (res as any)[key] = clone((source as any)[key]);
+        }
+        if (transform) {
+            Object.assign(res, transform(res) || {});
         }
         return res;
     } else if (isEntityField(source)) {
