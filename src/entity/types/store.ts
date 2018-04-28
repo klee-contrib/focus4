@@ -1,16 +1,6 @@
 import {IObservableArray} from "mobx";
 import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry} from "./entity";
 
-/** Interface commune aux noeuds de store. */
-export interface BaseStoreNode<T = any> {
-    /** @internal */
-    /** isEdit temporaire, traité par `addFormProperties`. */
-    $tempEdit?: boolean | (() => boolean);
-
-    /** Renseigne les valeurs du noeud à partir des champs fournis. */
-    set(config: T): void;
-}
-
 /** Génère les entrées de noeud de store équivalent à une entité. */
 export type EntityToNode<T extends Entity> = {
     [P in keyof T["fields"]]: T["fields"][P] extends FieldEntry
@@ -34,16 +24,24 @@ export type NodeToType<T> = T extends StoreListNode<infer U>
           };
 
 /** Noeud de store simple. */
-export type StoreNode<T extends Entity = any> = EntityToNode<T> &
-    BaseStoreNode<EntityToType<T>> & {
-        /** Vide l'objet (récursivement). */
-        clear(): void;
-    };
+export type StoreNode<T extends Entity = any> = EntityToNode<T> & {
+    /** @internal */
+    /** isEdit temporaire, traité par `addFormProperties`. */
+    $tempEdit?: boolean | (() => boolean);
+
+    /** Vide l'objet (récursivement). */
+    clear(): void;
+
+    /** Met à jour les champs donnés dans le noeud. */
+    set(data: EntityToType<T>): void;
+};
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<T extends Entity = any, U = {}>
-    extends IObservableArray<StoreNode<T> & U>,
-        BaseStoreNode<(EntityToType<T> & NodeToType<U>)[]> {
+export interface StoreListNode<T extends Entity = any, U = {}> extends IObservableArray<StoreNode<T> & U> {
+    /** @internal */
+    /** isEdit temporaire, traité par `addFormProperties`. */
+    $tempEdit?: boolean | (() => boolean);
+
     /** Métadonnées. */
     readonly $entity: T;
 
@@ -52,4 +50,7 @@ export interface StoreListNode<T extends Entity = any, U = {}>
 
     /** Ajoute un élément à la liste. */
     pushNode(item: EntityToType<T> & NodeToType<U>): void;
+
+    /** Reconstruit le noeud de liste à partir de la liste fournie. */
+    set(data: (EntityToType<T> & NodeToType<U>)[]): void;
 }

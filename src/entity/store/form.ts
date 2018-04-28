@@ -2,7 +2,7 @@ import {isBoolean, isFunction, values} from "lodash";
 import {action, extendObservable, observable} from "mobx";
 
 import {
-    BaseStoreNode,
+    Entity,
     EntityField,
     FormEntityField,
     FormListNode,
@@ -16,7 +16,7 @@ import {
     StoreNode
 } from "../types";
 import {validateField} from "../validation";
-import {setEntityEntry} from "./store";
+import {setNode} from "./store";
 
 /**
  * Transforme un Store(List)Node en Form(List)Node.
@@ -24,9 +24,9 @@ import {setEntityEntry} from "./store";
  * @param sourceNode Le node origine du FormNode.
  * @param parentNodeOrEditing Node parent, (l'état initial ou la condition) d'édition.
  */
-export function nodeToFormNode(
-    node: BaseStoreNode,
-    sourceNode: BaseStoreNode,
+export function nodeToFormNode<T extends Entity = any, U = {}>(
+    node: StoreNode<T> & U | StoreListNode<T, U>,
+    sourceNode: StoreNode<T> | StoreListNode<T>,
     parentNodeOrEditing: FormNode | FormListNode | boolean | (() => boolean)
 ) {
     const {$tempEdit} = node;
@@ -51,7 +51,7 @@ export function nodeToFormNode(
     });
 
     if (isFormListNode(node)) {
-        node.forEach((item, i) => nodeToFormNode(item, (sourceNode as StoreListNode)[i], node));
+        node.forEach((item, i) => nodeToFormNode<any>(item, (sourceNode as StoreListNode)[i], node));
         extendObservable(node.form, {
             get isValid() {
                 return (
@@ -65,7 +65,7 @@ export function nodeToFormNode(
             if (isEntityField(child)) {
                 addFormFieldProperties(child, node);
             } else if (isStoreNode(child)) {
-                nodeToFormNode(
+                nodeToFormNode<any>(
                     child,
                     (sourceNode as any)[entry],
                     isBoolean(parentNodeOrEditing) ? node : parentNodeOrEditing
@@ -94,7 +94,7 @@ export function nodeToFormNode(
     if (isAnyFormNode(node)) {
         node.reset = action("formNode.reset", () => {
             node.clear();
-            setEntityEntry(node as any, sourceNode as any);
+            setNode(node as any, sourceNode as any);
         });
         (node as any).sourceNode = sourceNode as any;
     }

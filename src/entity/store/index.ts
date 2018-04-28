@@ -1,3 +1,3 @@
 export {nodeToFormNode, patchNodeEdit} from "./form";
-export {makeEntityStore, buildEntityEntry} from "./store";
+export {buildNode, makeEntityStore} from "./store";
 export {toFlatValues} from "./util";
