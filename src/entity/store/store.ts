@@ -5,6 +5,7 @@ import {
     Entity,
     EntityToType,
     FieldEntry,
+    isAnyStoreNode,
     isEntityField,
     isFormListNode,
     isStoreListNode,
@@ -50,7 +51,7 @@ export function makeEntityStore<T extends Record<string, Entity | Entity[] | Ent
     // On construit chaque noeud à partir de la config.
     for (const key in config) {
         const item = config[key] as Entity | Entity[] | EntityStore;
-        if (isStoreNode(item)) {
+        if (isAnyStoreNode(item)) {
             // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
             entityStore[key] = item as any;
         } else {
@@ -189,7 +190,7 @@ export function replaceNode<T extends Entity>(
             const valueEntry = (value as any)[entry];
             if (entry === "sourceNode") {
                 // Pas touche
-            } else if (isStoreListNode(item) || isStoreNode(item)) {
+            } else if (isAnyStoreNode(item)) {
                 // Noeud -> on réappelle `replaceNode` ou on vide.
                 if (!valueEntry) {
                     clearNode(item as StoreNode);
@@ -239,8 +240,8 @@ export function setNode<T extends Entity>(
             if (!itemEntry) {
                 throw new Error(`node.set : propriété "${item}" introuvable.`);
             }
-            if (isStoreNode(itemEntry)) {
-                setNode(itemEntry, itemValue);
+            if (isAnyStoreNode(itemEntry)) {
+                setNode(itemEntry as StoreNode, itemValue);
             } else if (isEntityField(itemValue)) {
                 itemEntry.value = itemValue.value;
             } else {

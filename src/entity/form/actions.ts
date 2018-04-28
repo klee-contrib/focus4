@@ -5,7 +5,7 @@ import {PanelProps} from "../../components";
 import {messageStore} from "../../message";
 
 import {toFlatValues} from "../store";
-import {Entity, EntityToType, FormListNode, FormNode} from "../types";
+import {Entity, EntityToType, FormListNode, FormNode, isStoreNode} from "../types";
 import {FormProps} from "./form";
 
 /** Configuration additionnelle du formulaire.. */
@@ -108,7 +108,12 @@ export class FormActions {
                 this.isLoading = true;
                 const data = await load(...params);
                 runInAction("afterLoad", () => {
-                    (this.entity.sourceNode as any).replace(data);
+                    if (isStoreNode(this.entity.sourceNode)) {
+                        this.entity.sourceNode.replace(data);
+                    } else {
+                        this.entity.sourceNode.replaceNodes(data);
+                    }
+
                     this.isLoading = false;
                 });
 
@@ -133,7 +138,11 @@ export class FormActions {
                     this.entity.form.isEdit = false;
                     if (data) {
                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                        (this.entity.sourceNode as any).replace(data);
+                        if (isStoreNode(this.entity.sourceNode)) {
+                            this.entity.sourceNode.replace(data);
+                        } else {
+                            this.entity.sourceNode.replaceNodes(data);
+                        }
                     }
                 });
 

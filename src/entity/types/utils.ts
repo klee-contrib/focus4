@@ -13,12 +13,16 @@ export function isRegex(validator: Validator): validator is RegexValidator {
     return validator && !!(validator as RegexValidator).regex;
 }
 
+export function isAnyStoreNode<T extends Entity = any>(data: any): data is StoreNode<T> | StoreListNode<T> {
+    return data && !!(data as StoreNode).set && !!(data as StoreNode).clear;
+}
+
 export function isStoreListNode<T extends Entity = any>(data: any): data is StoreListNode<T> {
-    return data && isObservableArray(data) && !!(data as StoreListNode).$entity;
+    return isAnyStoreNode(data) && isObservableArray(data);
 }
 
 export function isStoreNode<T extends Entity = any>(data: any): data is StoreNode<T> {
-    return data && !!(data as StoreNode).set;
+    return isAnyStoreNode(data) && !isObservableArray(data);
 }
 
 export function isAnyFormNode<T extends Entity = any>(data: any): data is FormNode<T> | FormListNode<T> {

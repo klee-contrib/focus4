@@ -11,6 +11,9 @@ import {OperationEntity} from "./operation";
 import {ProjetEntity} from "./projet";
 import {StructureEntity} from "./structure";
 
+import i18n = require("i18next");
+i18n.init();
+
 function getStore() {
     const subStore = makeEntityStore({
         structure: StructureEntity,
@@ -294,6 +297,22 @@ test("FormNode: Création", t => {
     t.deepEqual(entry.structure, formNode.structure.sourceNode, "Le sous-sourceNode simple est bien le bon");
     t.deepEqual(entry2.ligneList, formNode2.ligneList.sourceNode, "Le sous-sourceNode liste est bien le bon");
 
+    t.equal((formNode.form as any)._isEdit, false, "Le FormNode a bien une propriété '_isEdit' initialisée à 'false'.");
+    t.equal(formNode.form.isEdit, false, "Le FormNode a bien une propriété 'isEdit' initialisée à 'false'.");
+    t.equal(
+        (formNode.montant as any)._isEdit,
+        true,
+        "Les champs du FormNode ont bien une propriété '_isEdit' qui vaut 'true'."
+    );
+    t.equal(
+        formNode.montant.isEdit,
+        false,
+        "Les champs du FormNode ont bien une propriété 'isEdit' calculée qui vaut 'false'."
+    );
+
+    t.assert(formNode.numero.hasOwnProperty("error"), "Les champs ont bien une propriété 'error'");
+    t.equal(formNode.form.isValid, true, "Le FormNode a bien une propriété 'isValid', initialisée à 'true'.");
+
     t.comment("FormNode: Modification de StoreNode.");
     entry.replace(operation);
     entry2.replace(projetTest);
@@ -339,12 +358,19 @@ test("FormNode: Création", t => {
         "Champ composite via set local: le StoreNode est bien toujours identique."
     );
 
+    t.comment("FormNode: propagation isEdit et isValid");
+    formNode.form.isEdit = true;
+    t.equal(formNode.structure.nom.isEdit, true, "Tous les champs sont maintenant en édition");
+
+    formNode.structure.nom.value = undefined;
+    t.assert(!!formNode.structure.nom.error, "Un champ required non renseigné est bien en erreur.");
+    t.equal(formNode.structure.form.isValid, false, "Par conséquent, le FormNode n'est plus valide.");
+
     t.comment("FormNode: StoreNode.set(toFlatValues(FormNode))");
     entry.replace(toFlatValues(formNode));
 
     t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode a bien été mis à jour.");
-    t.equal(entry.structure.id.value, 26, "Champ composite via set global: le StoreNode a bien été mis à jour.");
-    t.equal(entry.structure.nom.value, "yolo", "Champ composite via set local: le StoreNode a bien été mis à jour.");
+    t.equal(entry.structure.id.value, 26, "Champ composite via set: le StoreNode a bien été mis à jour.");
 
     t.comment("FormNode: reset global");
     formNode.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
