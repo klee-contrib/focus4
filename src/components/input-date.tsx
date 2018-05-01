@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {uniqueId} from "lodash";
-import {action, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment";
 import * as React from "react";
@@ -8,23 +8,20 @@ import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
+import {InputTheme} from "react-toolbox/lib/input";
 
-import {Input} from "../components";
+import {Input, InputProps} from "./input";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
 import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
 
-export interface InputDateProps {
+export interface InputDateProps extends InputProps {
     /** Format de l'affichage de la date dans le calendrier. */
     calendarFormat?: string;
-    /** Désactive l'input. */
-    disabled?: boolean;
     /** Composant affiché depuis la gauche ou la droite. */
     displayFrom?: "left" | "right";
-    /** Message d'erreur. */
-    error?: string | null;
     /** Format de la date dans l'input. */
     inputFormat?: string;
     /**
@@ -38,17 +35,17 @@ export interface InputDateProps {
      *
      * "local-utc-midnight" : Minuit à l'heure locale, en UTC. (-> 2017-10-23T22:00:00Z)
      *
+     * En "utc-midnight", le composant ignore totalement la composante heure de la date qu'il reçoit,
+     * alors qu'en "local-*" la date sera convertie dans le fuseau horaire local. Quelque soit le format choisi,
+     * la composante heure sera toujours normalisée (comme choisi) en sortie de `onChange`.
+     *
      * Par défaut "utc-midnight".
      */
     ISOStringFormat?: "utc-midnight" | "local-midnight" | "local-utc-midnight";
-    /** Nom de l'input. */
-    name?: string;
     /** Est appelé au clic sur le calendrier ou au blur (n'est pas synchronisé avec le texte). */
     onChange: (date?: string) => void;
-    /** Placeholder. */
-    placeholder?: string;
     /** CSS. */
-    theme?: DatePickerTheme;
+    theme?: DatePickerTheme & InputTheme;
     /** Valeur. */
     value?: string;
 }
@@ -109,6 +106,21 @@ export class InputDate extends React.Component<InputDateProps, void> {
         document.removeEventListener("mousedown", this.onDocumentClick);
     }
 
+    @computed
+    get jsDate() {
+        const {ISOStringFormat = "utc-midnight"} = this.props;
+        if (ISOStringFormat === "utc-midnight") {
+            return new Date(this.date.year(), this.date.month(), this.date.date());
+        } else {
+            const jsDate = this.date.toDate();
+            jsDate.setHours(0);
+            jsDate.setMinutes(0);
+            jsDate.setSeconds(0);
+            jsDate.setMilliseconds(0);
+            return jsDate;
+        }
+    }
+
     /** Convertit le texte en objet MomentJS. */
     toMoment(value?: string) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
@@ -120,7 +132,8 @@ export class InputDate extends React.Component<InputDateProps, void> {
             return m()
                 .hour(0)
                 .minute(0)
-                .second(0);
+                .second(0)
+                .millisecond(0);
         }
     }
 
@@ -173,14 +186,11 @@ export class InputDate extends React.Component<InputDateProps, void> {
     onCalendarChange(date: Date, dayClick: boolean) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 
-        // On arrange la date pour forcer le minuit demandé, au cas où la date d'entrée ne soit pas dans la même timezone.
+        // La date reçue est toujours à minuit en "local-midnight".
         if (ISOStringFormat === "utc-midnight") {
-            date.setUTCHours(0);
-        } else {
-            date.setHours(0);
+            // Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
+            date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
         }
-        date.setMinutes(0);
-        date.setSeconds(0);
 
         const correctedDate = this.transformDate(date)
             .format();
@@ -219,18 +229,16 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme, inputFormat = "MM/DD/YYYY", calendarFormat = "ddd, MMM D", displayFrom = "left"} = this.props;
+        const {theme, inputFormat = "MM/DD/YYYY", calendarFormat = "ddd, MMM D", displayFrom = "left", ISOStringFormat = "utc-midnight", ...inputProps} = this.props;
         return (
             <div data-focus="input-date" data-id={this._inputDateId} className={input}>
                 <Input
-                    disabled={disabled}
-                    error={error}
+                    {...inputProps}
                     mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                    name={name}
                     onChange={(value: string) => this.dateText = value}
                     onKeyDown={this.handleKeyDown}
                     onFocus={() => this.showCalendar = true}
-                    hint={placeholder}
+                    theme={theme}
                     value={this.dateText || ""}
                 />
                 {this.showCalendar ?
@@ -243,14 +251,14 @@ export class InputDate extends React.Component<InputDateProps, void> {
                                 {this.date.year()}
                             </span>
                             <h3 id="months" className={theme!.date} onClick={() => this.calendarDisplay = "months"}>
-                                {this.date.format(calendarFormat)}
+                                {(ISOStringFormat === "local-utc-midnight" ? this.date.clone().local() : this.date).format(calendarFormat)}
                             </h3>
                             <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showCalendar = false} />
                         </header>
                         <div className={theme!.calendarWrapper}>
                             <Calendar
                                 handleSelect={() => null}
-                                selectedDate={this.date.toDate()}
+                                selectedDate={this.jsDate}
                                 display={this.calendarDisplay}
                                 locale={moment.locale()}
                                 onChange={this.onCalendarChange}

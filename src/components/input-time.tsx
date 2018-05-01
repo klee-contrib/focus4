@@ -7,32 +7,25 @@ import * as React from "react";
 import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {IconButton} from "react-toolbox/lib/button";
+import {InputTheme} from "react-toolbox/lib/input";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import Clock from "react-toolbox/lib/time_picker/Clock";
 
-import {Input} from "../components";
+import {Input, InputProps} from "../components";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
 import {calendar, clock, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
-export interface InputTimeProps {
-    /** Désactive l'input. */
-    disabled?: boolean;
+export interface InputTimeProps extends InputProps {
     /** Composant affiché depuis la gauche ou la droite. */
     displayFrom?: "left" | "right";
-    /** Message d'erreur. */
-    error?: string | null;
     /** Format de l'heure dans l'input. */
     inputFormat?: string;
-    /** Nom de l'input. */
-    name?: string;
-    /** Est appelé au clic sur le calendrier ou au blur (n'est pas synchronisé avec le texte). */
-    onChange: (date?: string) => void;
-    /** Placeholder. */
-    placeholder?: string;
+    /** Est appelé au clic sur l'horloge ou au blur (n'est pas synchronisé avec le texte). */
+    onChange: (time?: string) => void;
     /** CSS. */
-    theme?: TimePickerTheme;
+    theme?: TimePickerTheme & InputTheme;
     /** Valeur. */
     value?: string;
 }
@@ -192,18 +185,16 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     render() {
-        const {error, name, placeholder, disabled, theme, inputFormat = "HH:mm", displayFrom = "left"} = this.props;
+        const {theme, inputFormat = "HH:mm", displayFrom = "left", ...inputProps} = this.props;
         return (
             <div data-focus="input-time" data-id={this._inputTimeId} className={input}>
                 <Input
-                    disabled={disabled}
-                    error={error}
+                    {...inputProps}
                     mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                    name={name}
                     onChange={(value: string) => this.timeText = value}
                     onKeyDown={this.handleKeyDown}
                     onFocus={() => this.showClock = true}
-                    hint={placeholder}
+                    theme={theme}
                     value={this.timeText || ""}
                 />
                 {this.showClock ?
