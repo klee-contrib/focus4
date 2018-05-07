@@ -104,7 +104,7 @@ export function buildNode<T extends Entity>(entity: T | T[]): StoreNode<T> | Sto
             replaceNode(this, values);
         });
 
-        outputEntry.set = action("set", function set(this: typeof outputEntry, values: {}[]) {
+        outputEntry.setNodes = action("setNodes", function set(this: typeof outputEntry, values: {}[]) {
             setNode(this, values);
         });
 

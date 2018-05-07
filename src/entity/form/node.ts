@@ -23,18 +23,18 @@ import {
  */
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreListNode<T>,
-    transform?: (source: StoreNode<T>) => U,
-    isEdit?: boolean | (() => boolean)
+    isEdit?: boolean | (() => boolean),
+    transform?: (source: StoreNode<T>) => U
 ): FormListNode<T, U> & {stopSync(): void};
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreNode<T>,
-    transform?: (source: StoreNode<T>) => U,
-    isEdit?: boolean | (() => boolean)
+    isEdit?: boolean | (() => boolean),
+    transform?: (source: StoreNode<T>) => U
 ): FormNode<T, U> & {stopSync(): void};
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreNode<T> | StoreListNode<T>,
-    transform: (source: StoreNode<T>) => U = _ => ({} as U),
-    isEdit: boolean | (() => boolean) = false
+    isEdit: boolean | (() => boolean) = false,
+    transform: (source: StoreNode<T>) => U = _ => ({} as U)
 ) {
     if (isAnyFormNode(node)) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
@@ -62,7 +62,7 @@ function clone(source: any, transform?: (node: any) => any): any {
         (res as any).$entity = source.$entity;
         res.pushNode = source.pushNode;
         res.replaceNodes = source.replaceNodes;
-        res.set = source.set;
+        res.setNodes = source.setNodes;
         res.$transform = transform || source.$transform;
 
         return res;

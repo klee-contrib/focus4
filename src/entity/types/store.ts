@@ -58,5 +58,5 @@ export interface StoreListNode<T extends Entity = any, U = {}> extends IObservab
     replaceNodes(data: EntityToType<T>[]): void;
 
     /** Met à jour le noeud de liste à partir de la liste fournie. */
-    set(data: EntityToType<T>[]): void;
+    setNodes(data: EntityToType<T>[]): void;
 }

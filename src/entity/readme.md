@@ -73,7 +73,7 @@ Un chaque objet contenu dans un `EntityStore` peut être l'un des trois objets s
 Le `StoreNode` et le `StoreListNode` ont une API similaire, qui contient les méthodes suivantes :
 
 *   `replace(data)`/`replaceNodes(data)`, qui remplace le noeud (récursivement) intégralement par l'objet (sous forme "JSON") passé en paramètre. `replace` sur un array observable existe déjà et est la méthode utilisée pour remplacer l'array par l'array donné : `replaceNodes` réalise la construction des `StoreNode`s en plus.
-*   `set(data)`, qui met à jour le noeud (récursivement) avec les champs renseignés dans `data` (c'est un "merge"). Pour un noeud de liste, si l'objet à l'index passé n'existe pas encore dans la liste, il sera créé en même temps.
+*   `set(data)`/`setNodes(data)`, qui met à jour le noeud (récursivement) avec les champs renseignés dans `data` (c'est un "merge"). Pour un noeud de liste, si l'objet à l'index passé n'existe pas encore dans la liste, il sera créé en même temps.
 *   `clear()`, qui vide récursivement le noeud et son contenu.
 
 Le `StoreNode` possède également une méthode `pushNode(...items)`, qui est à `push(...items)` ce qu'est `replaceNode` à `replace`.
@@ -98,7 +98,7 @@ Cette fonction prend un noeud quelconque en paramètre et récupère toutes les 
 
 ## Afficher des champs
 
-Focus met à disposition trois fonctions pour afficher des champs :
+Focus met à disposition quatre fonctions pour afficher des champs :
 
 ### `fieldFor(field, options?)`
 
@@ -115,7 +115,14 @@ La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affic
 
 *   `field`, le champ contenant le code
 *   `values`, la liste de référence à utiliser pour résoudre le code.
-*   `options`, comme `fieldfor`, avec une option en plus pour personnaliser le composant de `Select`.
+*   `options`, comme `fieldFor`, avec une option en plus pour personnaliser le composant de `Select`.
+
+### `autocompleteFor(field, options)`
+
+La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec un champ d'autocomplétion. Elle prend comme paramètres :
+
+*   `field`, le champ contenant le code
+*   `options`, comme `fieldFor`, où il faut également préciser `keyResolver` et/ou `querySearcher` pour gérer la consultation et/ou la saisie. De plus, il y est possible de personnaliser le composant d'`Autocomplete`.
 
 ### `stringFor(field, values?)`
 
@@ -123,6 +130,8 @@ La fonction `stringFor` affiche la représentation textuelle d'un champ de store
 
 *   `field`,
 *   `values`, s'il y a une liste de référence à résoudre.
+
+_Note : `stringFor` ne peut pas être utilisé avec un `keyResolver`, il faut soit utiliser `autocompleteFor` en consultation, ou résoudre la clé à la main_
 
 ## Création et modification de champs.
 
@@ -148,7 +157,7 @@ Cette fonction fonctionne comme `fromField`, à la différence notable qu'elle m
 
 Le sujet n'a pas réellement été abordé jusque ici pour une raison simple : **les champs ne gèrent pas l'édition nativement**.
 
-Du moins, une propriété `isEdit` peut être ajoutée aux champs, qui sera lue par `fieldFor` et `selectFor`, mais elle est presque toujours gérée par un noeud de formulaire. En l'absence de cette propriété, il n'est pas possible d'afficher un champ en édition.
+Du moins, une propriété `isEdit` peut être ajoutée aux champs, qui sera lue par `fieldFor` et `autocompleteFor`/`selectFor`, mais elle est presque toujours gérée par un noeud de formulaire. En l'absence de cette propriété, il n'est pas possible d'afficher un champ en édition.
 
 La seule façon d'avoir un champ en édition en dehors d'un formulaire est d'utiliser la deuxième définition de `makeField` :
 
@@ -184,7 +193,7 @@ Les propriétés `error` et `isValid` sont en lecture seule et sont calculées a
 
 Les propriétés `isEdit` sont modifiables, mais chaque `isEdit` est l'intersection de l'état d'édition du noeud/champ et de celui de son parent, ce qui veut dire qu'un champ de formulaire ne peut être en édition (et donc modifiable) que si le formulaire est en édition _et_ que son éventuel noeud parent est en édition _et_ que lui-même est en édition. En pratique, le seul état d'édition que l'on manipule directement est celui du `FormNode`, dont l'état initial peut être passé à la création (par défaut, ce sera `false`). Tous les sous-états d'édition sont initialisés à `true`, pour laisser l'état global piloter toute l'édition.
 
-Sur les champs, ces deux propriétés sont utilisées par `fieldFor` et `selectFor` pour gérer le mode édition et afficher les erreurs de validation, comme attendu.
+Sur les champs, ces deux propriétés sont utilisées par `fieldFor` et `autocompleteFor`/`selectFor` pour gérer le mode édition et afficher les erreurs de validation, comme attendu.
 
 #### Transformations de noeud et de champs
 
@@ -196,7 +205,7 @@ Une fonction de patch supplémentaire, `patchNodeEdit`, est disponible pour ajou
 
 L'usage de `fromField` est à proscrire dans un noeud de formulaire, car le champ qui sera créé à partir du champ de formulaire initial ne sera plus lié au formulaire (plus de `isEdit`, plus de `error`). A la place, _chaque modification de champ (y compris un simple changement de libellé) doit passer par la fonction de transformation_.
 
-Il est nécessaire d'utiliser la fonction de transformation pour modifier des champs car c'est le seul endroit où on peut le faire. On pourrait être tenté de vouloir le faire dans `fieldFor`/`selectFor`, mais il ne faut pas oublier qu'un composant de `Field` n'a pas d'état et que tout (en particulier la validation) est déjà géré en amont au niveau du `FormNode`.
+Il est nécessaire d'utiliser la fonction de transformation pour modifier des champs car c'est le seul endroit où on peut le faire. On pourrait être tenté de vouloir le faire dans `fieldFor`/`autocompleteFor`/`selectFor`, mais il ne faut pas oublier qu'un composant de `Field` n'a pas d'état et que tout (en particulier la validation) est déjà géré en amont au niveau du `FormNode`.
 
 #### Exemple
 

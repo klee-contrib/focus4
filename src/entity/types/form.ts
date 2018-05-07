@@ -71,4 +71,7 @@ export interface FormEntityField<F extends FieldEntry = FieldEntry<StoreType, In
 
     /** Précise si le champ associé est en édition ou non. */
     isEdit: boolean;
+
+    /** Précise si le champ associé est valide (pas d'erreur ou pas en édition). */
+    readonly isValid: boolean;
 }

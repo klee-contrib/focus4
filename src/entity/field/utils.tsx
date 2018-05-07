@@ -3,11 +3,36 @@ import {upperFirst} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
 
-import {Select} from "../../components";
+import {Autocomplete, AutocompleteResult, Select} from "../../components";
 import {ReferenceList} from "../../reference";
 
 import {EntityField, FieldEntry} from "../types";
 import {Field, FieldOptions} from "./field";
+
+/**
+ * Crée un champ avec saisie en autocomplete
+ * @param field La définition de champ.
+ * @param values La liste de référence.
+ * @param options Les options du champ.
+ */
+export function autocompleteFor<T extends FieldEntry, AComponent = typeof Autocomplete>(
+    field: EntityField<T>,
+    options: Partial<FieldOptions<T, Props<AComponent>>> & {
+        /** Composant d'autocomplete personnalisé. */
+        AutocompleteComponent?: AComponent;
+        /** Props supplémentaires pour le composant autocomplete. */
+        autocompleteProps?: Partial<Props<AComponent>>;
+        /** Service de résolution de code. */
+        keyResolver?: (key: number | string) => Promise<string | undefined>;
+        /** Service de recherche. */
+        querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+    }
+) {
+    const {AutocompleteComponent, autocompleteProps, ...otherOptions} = options;
+    otherOptions.InputComponent = AutocompleteComponent || (Autocomplete as any);
+    otherOptions.inputProps = autocompleteProps;
+    return fieldFor<T>(field, otherOptions as Partial<FieldOptions<T>>);
+}
 
 /**
  * Crée un champ standard.
@@ -37,9 +62,11 @@ export function selectFor<T extends FieldEntry, SComponent = typeof Select>(
         selectProps?: Partial<Props<SComponent>>;
     } = {}
 ) {
-    options.SelectComponent = options.SelectComponent || (Select as any);
-    options.values = values;
-    return fieldFor<T>(field, options as Partial<FieldOptions<T>>);
+    const {SelectComponent, selectProps, ...otherOptions} = options;
+    otherOptions.InputComponent = SelectComponent || (Select as any);
+    otherOptions.inputProps = selectProps;
+    otherOptions.values = values;
+    return fieldFor<T>(field, otherOptions as Partial<FieldOptions<T>>);
 }
 
 /**

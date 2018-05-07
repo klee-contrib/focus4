@@ -1,4 +1,4 @@
-export {Autocomplete, AutocompleteProps, AutocompleteStyle} from "./autocomplete";
+export {Autocomplete, AutocompleteProps, AutocompleteResult, AutocompleteStyle} from "./autocomplete";
 export {BooleanRadio, BooleanRadioProps, BooleanRadioStyle} from "./boolean-radio";
 export {ButtonBackToTop, ButtonBackToTopProps, ButtonBackToTopStyle} from "./button-back-to-top";
 export {ButtonHelp} from "./button-help";

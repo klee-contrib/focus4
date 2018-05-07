@@ -5,7 +5,7 @@ import * as React from "react";
 import {themeable} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
-import {Display, Input, Label} from "../../components";
+import {AutocompleteResult, Display, Input, Label} from "../../components";
 import {ReferenceList} from "../../reference";
 import {themr} from "../../theme";
 
@@ -17,12 +17,13 @@ export type FieldStyle = Partial<typeof styles>;
 const Theme = themr("field", styles);
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
-export interface FieldOptions<T extends FieldEntry, SProps = {}> {
+export interface FieldOptions<T extends FieldEntry, ICProps = {}> {
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
     /** Surcharge l'erreur du field. */
     error?: string | null;
-    /** Service de résolution de code. */
+    /** @internal */
+    /** Pour `autocompleteFor`, service de résolution de code. */
     keyResolver?: (key: number | string) => Promise<string>;
     /** Affiche le label. */
     hasLabel?: boolean;
@@ -30,6 +31,12 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
     i18nPrefix?: string;
     /** A utiliser à la place de `ref`. */
     innerRef?: (i: Field<T>) => void;
+    /** @internal */
+    /** Pour `autocompleteFor`/`selectFor`, composant d'input. */
+    InputComponent?: React.ComponentType<ICProps>;
+    /** @internal */
+    /** Pour `autocompleteFor`/`selectFor`, props du composant d'input. */
+    inputProps?: Partial<ICProps>;
     /** Par défaut : "top". */
     labelCellPosition?: string;
     /** Largeur en % du label. Par défaut : 33. */
@@ -37,11 +44,8 @@ export interface FieldOptions<T extends FieldEntry, SProps = {}> {
     /** Handler de modification de la valeur. */
     onChange?: (value: T["fieldType"]) => void;
     /** @internal */
-    /** Pour `selectFor`, composant de Select. */
-    SelectComponent?: React.ComponentType<SProps>;
-    /** @internal */
-    /** Pour `selectFor`, props du composant de Select. */
-    selectProps?: SProps;
+    /** Pour `autocompleteFor`, service de recherche. */
+    querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     /** Affiche la tooltip de commentaire. */
     showTooltip?: boolean;
     /** CSS. */
@@ -138,7 +142,15 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {field, values, keyResolver, SelectComponent, selectProps, theme} = this.props;
+        const {
+            field,
+            values,
+            keyResolver,
+            InputComponent: OverrideInput,
+            inputProps: overrideInputProps,
+            querySearcher,
+            theme
+        } = this.props;
         const {
             value,
             error,
@@ -147,7 +159,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
                 domain: {InputComponent = Input, inputFormatter = (x?: string) => x, inputProps = {}}
             }
         } = field as FormEntityField<T>;
-        let props: any = {
+        const props: any = {
             value: inputFormatter(value),
             error: (this.showError && error) || undefined,
             name,
@@ -156,18 +168,23 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
             theme: themeable(inputProps.theme || {}, (theme && theme.input) || {})
         };
 
-        if (keyResolver) {
-            props = {...props, keyResolver};
-        }
-
-        if (SelectComponent && values) {
+        if (OverrideInput && values) {
             return (
-                <SelectComponent
-                    {...selectProps}
+                <OverrideInput
+                    {...overrideInputProps}
                     {...props}
                     values={values.slice()}
                     labelKey={(values && values.$labelKey) || "code"}
                     valueKey={(values && values.$valueKey) || "label"}
+                />
+            );
+        } else if (OverrideInput && (keyResolver || querySearcher)) {
+            return (
+                <OverrideInput
+                    {...overrideInputProps}
+                    {...props}
+                    keyResolver={keyResolver}
+                    querySearcher={querySearcher}
                 />
             );
         } else {

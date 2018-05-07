@@ -74,16 +74,15 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
             get isValid() {
                 return (
                     isFormNode(node) &&
-                    (!node.form.isEdit ||
-                        values(node).every(item => {
-                            if (isEntityField(item)) {
-                                return !(item as FormEntityField).isEdit || !(item as FormEntityField).error;
-                            } else if (isAnyFormNode(item)) {
-                                return item.form.isValid;
-                            } else {
-                                return true;
-                            }
-                        }))
+                    values(node).every(item => {
+                        if (isEntityField(item)) {
+                            return (item as FormEntityField).isValid;
+                        } else if (isAnyFormNode(item)) {
+                            return item.form.isValid;
+                        } else {
+                            return true;
+                        }
+                    })
                 );
             }
         });
@@ -121,6 +120,9 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
         },
         set isEdit(edit) {
             this._isEdit = edit;
+        },
+        get isValid() {
+            return !this.isEdit || !this.error;
         }
     });
 }
