@@ -76,6 +76,7 @@
         "prefer-readonly": true,
         "prefer-switch": true,
         "prefer-template": true,
+        "prefer-while": true,
         "quotemark": [true, "double"],
         "return-undefined": true,
         "switch-final-break": [true, "always"],
