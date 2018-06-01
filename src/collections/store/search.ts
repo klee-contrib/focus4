@@ -286,7 +286,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.selectedFacets = props.selectedFacets || this.selectedFacets;
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
-        this.sortBy = props.hasOwnProperty("sortBy") ? (props.sortBy as keyof T) : this.sortBy;
+        this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         this.query = props.query || this.query;
         this.top = props.top || this.top;
     }

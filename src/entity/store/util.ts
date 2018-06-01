@@ -1,5 +1,5 @@
 import {isUndefined, mapValues, omitBy} from "lodash";
-import {isComputedProp, isObservableArray} from "mobx";
+import {isComputedProp} from "mobx";
 
 import {isEntityField, isStoreListNode, isStoreNode, NodeToType} from "../types";
 
@@ -7,7 +7,7 @@ import {isEntityField, isStoreListNode, isStoreNode, NodeToType} from "../types"
  * Met à plat un noeud de store pour récupèrer sa valeur "brute".
  * @param entityStoreItem Le noeud de store à mettre à plat.
  */
-export function toFlatValues<T>(storeNode: T): NodeToType<T> {
+export function toFlatValues<T extends object>(storeNode: T): NodeToType<T> {
     // Cas entrée liste : on appelle `toFlatValues` sur chaque élément.
     if (isStoreListNode(storeNode)) {
         return storeNode.map(toFlatValues) as any;
@@ -24,9 +24,6 @@ export function toFlatValues<T>(storeNode: T): NodeToType<T> {
                 } else if (isStoreNode(item)) {
                     // Cas entrée simple -> `toFlatValues`.
                     return toFlatValues(item);
-                } else if (isObservableArray(item.value)) {
-                    // Cas array de primitive -> array simple.
-                    return item.value.slice();
                 } else if (isEntityField(item) && !isComputedProp(item, "value")) {
                     // Cas `EntityField` simple.
                     return item.value;

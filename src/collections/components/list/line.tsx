@@ -169,51 +169,52 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                 const lineContent = ({height, width}: {height?: number; width?: number}) => (
                     // On a besoin de rewrapper le contenu dans un <Observer> parce que sinon on perd le contexte MobX dans la Motion.
                     <Theme theme={this.props.theme}>
-                        {theme =>
-                            // Si pas de drag and drop, la fonction est l'identité.
-                            (connectDragSource || (x => x))(
-                                <li
-                                    className={`${mosaic ? theme.mosaic : theme.line} ${
-                                        this.isSelected ? theme.selected : ""
-                                    }`}
-                                    style={{
-                                        width: mosaic ? width || mosaic.width : undefined,
-                                        height: mosaic ? height || mosaic.height : height,
-                                        opacity: style && style.opacity
-                                    }}
-                                >
-                                    <LineComponent data={data} openDetail={openDetail} />
-                                    {hasSelection && store && store.isItemSelectionnable(data) ? (
-                                        <IconButton
-                                            className={`${theme.checkbox} ${
-                                                store.selectedItems.size ? theme.forceDisplay : ""
-                                            }`}
-                                            icon={getIcon(
-                                                `${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`
-                                            )}
-                                            onClick={this.onSelection}
-                                            primary={this.isSelected}
-                                            theme={{toggle: theme.toggle, icon: theme.checkboxIcon}}
-                                        />
-                                    ) : null}
-                                    {opList && opList.length > 0 ? (
-                                        <div
-                                            className={`${theme.actions} ${
-                                                this.forceActionDisplay ? theme.forceDisplay : ""
-                                            }`}
-                                            style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
-                                        >
-                                            <ContextualActions
-                                                isMosaic={!!mosaic}
-                                                operationList={opList}
-                                                data={data}
-                                                onClickMenu={this.setForceActionDisplay}
-                                                onHideMenu={this.unsetForceActionDisplay}
+                        {
+                            ((theme: LineStyle) =>
+                                // Si pas de drag and drop, la fonction est l'identité.
+                                (connectDragSource || (x => x))(
+                                    <li
+                                        className={`${mosaic ? theme.mosaic : theme.line} ${
+                                            this.isSelected ? theme.selected : ""
+                                        }`}
+                                        style={{
+                                            width: mosaic ? width || mosaic.width : undefined,
+                                            height: mosaic ? height || mosaic.height : height,
+                                            opacity: style && style.opacity
+                                        }}
+                                    >
+                                        <LineComponent data={data} openDetail={openDetail} />
+                                        {hasSelection && store && store.isItemSelectionnable(data) ? (
+                                            <IconButton
+                                                className={`${theme.checkbox} ${
+                                                    store.selectedItems.size ? theme.forceDisplay : ""
+                                                }`}
+                                                icon={getIcon(
+                                                    `${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`
+                                                )}
+                                                onClick={this.onSelection}
+                                                primary={this.isSelected}
+                                                theme={{toggle: theme.toggle, icon: theme.checkboxIcon}}
                                             />
-                                        </div>
-                                    ) : null}
-                                </li>
-                            )
+                                        ) : null}
+                                        {opList && opList.length > 0 ? (
+                                            <div
+                                                className={`${theme.actions} ${
+                                                    this.forceActionDisplay ? theme.forceDisplay : ""
+                                                }`}
+                                                style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+                                            >
+                                                <ContextualActions
+                                                    isMosaic={!!mosaic}
+                                                    operationList={opList}
+                                                    data={data}
+                                                    onClickMenu={this.setForceActionDisplay}
+                                                    onHideMenu={this.unsetForceActionDisplay}
+                                                />
+                                            </div>
+                                        ) : null}
+                                    </li>
+                                )) as any
                         }
                     </Theme>
                 );

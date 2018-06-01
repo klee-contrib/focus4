@@ -1,6 +1,6 @@
 import {isEmpty} from "lodash";
 import {action, IObservableObject, observable, reaction, runInAction} from "mobx";
-import {RouteConfig, Router} from "yester";
+import {RouteConfig, RouteEnterEvent, Router} from "yester";
 
 import {ViewStore} from "./store";
 export {IObservableObject, ViewStore};
@@ -78,7 +78,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
                     ({
                         // Route sur laquelle matcher, construite à partir du préfixe et des paramètres.
                         $: `/${store.prefix ? store.prefix : ""}${store.paramNames
-                            .map((param, idx) => `(${idx !== 0 || store.prefix ? "/" : ""}:${param})`)
+                            .map((param, idx) => `(${idx !== 0 || store.prefix ? "/" : ""}:${param as string})`)
                             .join("")}`,
                         // Appelé à chaque navigation vers la route.
                         beforeEnter: ({params}) => {
@@ -113,7 +113,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
             // On ajoute la route d'erreur.
             {
                 $: `/${errorPageName}/:code`,
-                beforeEnter: action("beforeEnter", ({params}) => {
+                beforeEnter: action("beforeEnter", ({params}: RouteEnterEvent) => {
                     errorCode.set(params.code);
                     updateActivity(stores.length);
                 })

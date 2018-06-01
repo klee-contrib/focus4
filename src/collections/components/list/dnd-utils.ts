@@ -8,8 +8,8 @@ import {LineWrapperProps} from "./line";
  * @param type Le type d'élément.
  * @param Component Le LineWrapper.
  */
-export function addDragSource<T>(type: string, Component: React.ComponentClass<LineWrapperProps<T>>) {
-    return DragSource<LineWrapperProps<T>>(
+export function addDragSource<T>(type: string, Component: React.ComponentClass<LineWrapperProps<T>>): typeof Component {
+    return DragSource<LineWrapperProps<T>, {}, React.Component<LineWrapperProps<T>>, {}, {}>(
         type,
         {
             /** Est appelé au lancement du drag. */

@@ -127,7 +127,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                         <MenuItem
                             key={idx}
                             onClick={action("sort", () => {
-                                store.sortBy = description.key as keyof T;
+                                store.sortBy = description.key;
                                 store.sortAsc = description.order;
                             })}
                             caption={i18next.t(description.label)}
