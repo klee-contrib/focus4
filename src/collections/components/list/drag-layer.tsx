@@ -23,7 +23,7 @@ export interface DndDragLayerProps {
     theme?: DragLayerStyle;
 }
 
-export const DndDragLayer = DragLayer<DndDragLayerProps>(monitor => ({
+export const DndDragLayer = DragLayer(monitor => ({
     currentOffset: monitor.getClientOffset(),
     isDragging: monitor.isDragging(),
     item: monitor.getItem()

@@ -66,15 +66,15 @@ export function makeEntityStore<T extends Record<string, Entity | Entity[] | Ent
     */
 
     entityStore.clear = action("node.clear", function clear(this: EntityStore<T>) {
-        clearNode(this as StoreNode);
+        clearNode(this as any);
     });
 
     entityStore.replace = action("node.replace", function replace(this: EntityStore<T>, data: {}) {
-        replaceNode(this as StoreNode, data);
+        replaceNode(this as any, data);
     });
 
     entityStore.set = action("node.set", function set(this: EntityStore<T>, data: {}) {
-        setNode(this as StoreNode, data);
+        setNode(this as any, data);
     });
 
     return entityStore as any;

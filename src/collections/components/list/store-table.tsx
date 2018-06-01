@@ -128,7 +128,7 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     private sort(sortBy: string, sortAsc: boolean) {
         const {store} = this.props;
         store.sortAsc = sortAsc;
-        store.sortBy = sortBy as keyof T;
+        store.sortBy = sortBy;
     }
 }
 
