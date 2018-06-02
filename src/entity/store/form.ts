@@ -51,7 +51,7 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
     });
 
     if (isFormListNode(node)) {
-        node.forEach((item, i) => nodeToFormNode<any>(item, (sourceNode as StoreListNode)[i], node));
+        node.forEach((item, i) => nodeToFormNode(item, (sourceNode as StoreListNode)[i], node));
         extendObservable(node.form, {
             get isValid() {
                 return isFormListNode(node) && node.every(item => item.form.isValid);

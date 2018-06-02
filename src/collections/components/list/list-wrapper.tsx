@@ -1,6 +1,5 @@
 import i18next from "i18next";
-// @ts-ignore
-import {action, IObservableObject, observable} from "mobx";
+import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
