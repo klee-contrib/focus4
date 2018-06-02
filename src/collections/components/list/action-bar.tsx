@@ -213,7 +213,6 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 
     /** Réaction permettant de fermer la FacetBox et de mettre à jour sa hauteur à chaque fois que c'est nécessaire (changement de son contenu).  */
     @classReaction<ActionBar<T>>(that => () => {
-        // tslint:disable-next-line:no-shadowed-variable
         const {hasFacetBox, store} = that.props;
         return (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false;
     })
