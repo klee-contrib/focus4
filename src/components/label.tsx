@@ -15,7 +15,7 @@ const Theme = themr("label", styles);
 /** Props du Label. */
 export interface LabelProps {
     /** Commentaire, affiché sur la tooltip */
-    comment?: string;
+    comment?: React.ReactNode;
     /** Pour l'icône de la tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Libellé. */
@@ -52,7 +52,7 @@ export function Label({
                             className={`${theme.icon} ${!!onTooltipClick ? theme.clickable : ""}`}
                             tooltipHideOnClick={!onTooltipClick}
                             onClick={onTooltipClick}
-                            tooltip={i18next.t(comment)}
+                            tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
                             value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
                         />
                     ) : null}

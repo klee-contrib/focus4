@@ -205,7 +205,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                                         {value: undefined, label: ""},
                                         ...scopes.map(({code, label}) => ({value: code, label}))
                                     ]}
-                                    theme={{dropdown: theme.dropdown, values: theme.scopes, valueKey: ""}}
+                                    theme={{dropdown: theme.dropdown, values: theme.scopes}}
                                 />
                             ) : null}
                             <div className={theme.input}>
