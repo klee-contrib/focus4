@@ -119,11 +119,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
         const {
             value,
             $field: {
-                domain: {
-                    displayFormatter = (t: string) => i18next.t(t),
-                    DisplayComponent = Display as any,
-                    displayProps = {}
-                }
+                domain: {displayFormatter = defaultFormatter, DisplayComponent = Display as any, displayProps = {}}
             }
         } = field;
         return (
@@ -245,5 +241,14 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
                 }}
             </Theme>
         );
+    }
+}
+
+/** Formatter par défaut en consulation. */
+function defaultFormatter(input: any) {
+    if (typeof input === "string") {
+        return i18next.t(input);
+    } else {
+        return input;
     }
 }
