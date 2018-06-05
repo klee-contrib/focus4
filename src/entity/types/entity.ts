@@ -76,7 +76,7 @@ export interface FieldEntry<
     readonly label: string;
 
     /** Commentaire de l'entrée */
-    readonly comment?: string;
+    readonly comment?: React.ReactNode;
 }
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
