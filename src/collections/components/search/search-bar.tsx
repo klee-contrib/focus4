@@ -242,18 +242,23 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                                     icon={getIcon(`${i18nPrefix}.icons.searchBar.close`)}
                                     onClick={this.toggleCriteria}
                                 />
-                                {fieldFor(makeField(store.query, {label: `${i18nPrefix}.search.bar.query`}), {
-                                    onChange: query => (store.query = query)
-                                })}
+                                {fieldFor(
+                                    makeField(
+                                        () => store.query,
+                                        {label: `${i18nPrefix}.search.bar.query`},
+                                        query => (store.query = query),
+                                        true
+                                    )
+                                )}
                                 {criteriaComponent}
                                 <div className={theme.buttons}>
                                     <Button
                                         primary
                                         raised
                                         onClick={this.toggleCriteria}
-                                        label={`${i18nPrefix}.search.bar.search`}
+                                        label={i18next.t(`${i18nPrefix}.search.bar.search`)}
                                     />
-                                    <Button onClick={this.clear} label={`${i18nPrefix}.search.bar.reset`} />
+                                    <Button onClick={this.clear} label={i18next.t(`${i18nPrefix}.search.bar.reset`)} />
                                 </div>
                             </div>
                         ) : null}
