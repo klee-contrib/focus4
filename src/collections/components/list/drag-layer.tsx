@@ -27,7 +27,7 @@ export const DndDragLayer = DragLayer<DndDragLayerProps>(monitor => ({
     item: monitor.getItem()
 }))(({currentOffset, i18nPrefix = "focus", isDragging, item, theme}: DndDragLayerProps) => {
 
-    if (!isDragging) {
+    if (!isDragging || !item || !item.dragged) {
         return <div />;
     }
 
@@ -35,13 +35,13 @@ export const DndDragLayer = DragLayer<DndDragLayerProps>(monitor => ({
         <div className={theme!.container}>
             <div
                 className={theme!.layer}
-                style={!currentOffset || !item ? {display: "none"} : {transform: `translate(${currentOffset.x - 18}px, ${currentOffset.y - 20}px)`}}
+                style={!currentOffset ? {display: "none"} : {transform: `translate(${currentOffset.x - 18}px, ${currentOffset.y - 20}px)`}}
             >
                 <FontIcon>drag_handle</FontIcon>
                 <div className={theme!.count}>
-                    {item!.dragged.length}
+                    {item.dragged.length}
                 </div>
-                <div>{i18next.t(`${i18nPrefix}.dragLayer.item${item!.dragged.length !== 1 ? "s" : ""}`)}</div>
+                <div>{i18next.t(`${i18nPrefix}.dragLayer.item${item.dragged.length !== 1 ? "s" : ""}`)}</div>
             </div>
         </div>
     );
