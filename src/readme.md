@@ -8,32 +8,6 @@
 
 ## [Module `entity`](entity)
 
-## Module `ioc`
-
-Ce module contient un container d'injection de dépendances ([InversifyJS](https://github.com/inversify/InversifyJS)) ainsi que deux décorateurs pour injecter une dépendance par propriété dans une classe.
-
-Exemple d'usage :
-
-```ts
-import {container} from "focus4/ioc";
-import {adminService} from "../services";
-
-container.bind("adminService").toConstantValue(adminService);
-
-//////////////////////////////////
-
-import {injectByName, injectByPropName} from "focus4/ioc";
-import {AdminService} from "../services";
-
-class Component {
-    @injectByName("adminService") monService: AdminService;
-
-    @injectByPropName adminService: AdminService;
-}
-```
-
-Comme son nom l'indique, le décorateur `@injectByPropName` utilise le nom de la propriété comme identifiant de l'objet à injecter.
-
 ## [Module `layout`](layout)
 
 ## [Module `message`](message)
@@ -46,8 +20,8 @@ Comme son nom l'indique, le décorateur `@injectByPropName` utilise le nom de la
 
 Un `ReferenceStore` de Focus V4 est construit par la fonction `makeReferenceStore(referenceLoader, refConfig)` :
 
-*   `referenceLoader` est une fonction qui prend en paramètre un nom de référence et la liste de référence (qui renvoie donc une Promise)
-*   `refConfig` est un objet dont les propriétés sont des définitions de listes de référence, à priori générés avec le reste du modèle. Ce sont des objets de la forme `{type, valueKey, labelKey}` qui servent à définir totalement comme la référence doit s'utiliser.
+-   `referenceLoader` est une fonction qui prend en paramètre un nom de référence et la liste de référence (qui renvoie donc une Promise)
+-   `refConfig` est un objet dont les propriétés sont des définitions de listes de référence, à priori générés avec le reste du modèle. Ce sont des objets de la forme `{type, valueKey, labelKey}` qui servent à définir totalement comme la référence doit s'utiliser.
 
 Un store de référence se construit de la manière suivante :
 
@@ -78,9 +52,9 @@ class View extends React.Component {
 
 Ce composant sera initialement rendu 3 fois:
 
-*   La première fois, les deux utilisations de `product` et de `line` vont lancer les appels de service (les deux listes sont vides)
-*   La deuxième fois, l'une des deux listes aura été chargée et sera affichée.
-*   La troisième fois, l'autre liste aura également été chargée et les deux seront affichées.
+-   La première fois, les deux utilisations de `product` et de `line` vont lancer les appels de service (les deux listes sont vides)
+-   La deuxième fois, l'une des deux listes aura été chargée et sera affichée.
+-   La troisième fois, l'autre liste aura également été chargée et les deux seront affichées.
 
 Les fois suivantes (dans la mesure que les listes sont toujours en cache), il n'y aura qu'un seul rendu avec les deux listes déjà chargées.
 

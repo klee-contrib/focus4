@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "9.5.15-beta",
+    "version": "9.6.0-preview",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -14,7 +14,7 @@
         "clean": "node scripts/clean.js",
         "prepublishOnly": "node scripts/clean.js && node scripts/tcm.js && tsc --outDir ./ && node scripts/copy-css.js ./",
         "postinstall": "node scripts/patch-types-react.js",
-        "postpublish": "rm -rf config.js config.d.ts index.js index.d.ts ioc.js ioc.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf collections components entity layout message network router style testing translation theme",
+        "postpublish": "rm -rf config.js config.d.ts index.js index.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf collections components entity layout message network router style testing translation theme",
         "start": "tsc && node scripts/copy-css.js dist",
         "stylelint": "stylelint src/**/*.css",
         "tcm": "node scripts/tcm.js",
@@ -32,8 +32,6 @@
         "@types/uuid": "3.4.3",
         "i18next": "11.3.6",
         "inputmask-core": "2.2.0",
-        "inversify": "4.13.0",
-        "inversify-inject-decorators": "3.1.0",
         "lodash": "4.17.10",
         "lodash-decorators": "6.0.0",
         "material-design-icons-iconfont": "3.0.3",
@@ -47,7 +45,6 @@
         "react-dom": "16.4.1",
         "react-motion": "0.5.2",
         "react-toolbox": "2.0.0-beta.13",
-        "reflect-metadata": "0.1.10",
         "smoothscroll-polyfill": "0.4.3",
         "tslib": "1.9.3",
         "uuid": "3.3.2",

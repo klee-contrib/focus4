@@ -22,7 +22,6 @@ export {
     selectFor,
     stringFor
 } from "./entity";
-export {injectByName, injectByPropName} from "./ioc";
 export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
