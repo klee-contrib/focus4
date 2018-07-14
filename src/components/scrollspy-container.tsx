@@ -165,7 +165,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                 this.context.header.marginBottom +
                 this.context.layout.contentPaddingTop
         } = this.props;
-        const isFixed = this.scrollTop != 0 && this.offsetTop < menuOffset;
+        const isFixed = this.scrollTop !== 0 && this.offsetTop < menuOffset;
         return {
             position: isFixed ? ("fixed" as "fixed") : ("absolute" as "absolute"),
             top: isFixed ? menuOffset : 0

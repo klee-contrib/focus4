@@ -20,9 +20,9 @@ export interface SelectProps {
     /** Nom du champ de libellé. */
     labelKey: string;
     /** Nom de l'input. */
-    name: string;
+    name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: string | number | undefined) => void;
+    onChange?: (value: string | number | undefined) => void;
     /** CSS. */
     theme?: SelectStyle;
     /** Libellés des champs sans libellés. */
@@ -64,7 +64,7 @@ export function Select({
                         disabled={disabled}
                         id={name}
                         name={name}
-                        onChange={({currentTarget: {value: v}}) => onChange(v || undefined)}
+                        onChange={({currentTarget: {value: v}}) => onChange && onChange(v || undefined)}
                         value={value === undefined ? "" : value}
                     >
                         {finalValues.map((val, idx) => {

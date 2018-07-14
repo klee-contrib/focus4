@@ -38,7 +38,7 @@ export interface AutocompleteProps extends RTAutocompleteProps {
     /** Service de résolution de code. */
     keyResolver?: (key: number | string) => Promise<string | undefined>;
     /** Service de recherche. */
-    querySearcher: (text: string) => Promise<AutocompleteResult | undefined>;
+    querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     /** CSS. */
     theme?: AutocompleteStyle;
 }
@@ -128,7 +128,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
      */
     @action.bound
     async search(query: string) {
-        if (query && query.trim().length) {
+        if (this.props.querySearcher && query && query.trim().length) {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
             runInAction("replaceResults", () => {

@@ -5,11 +5,10 @@ import * as React from "react";
 import {themeable} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
-import {AutocompleteResult, Display, Input, Label} from "../../components";
-import {ReferenceList} from "../../reference";
+import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {themr} from "../../theme";
 
-import {EntityField, FieldEntry, FormEntityField} from "../types";
+import {EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -17,52 +16,36 @@ export type FieldStyle = Partial<typeof styles>;
 const Theme = themr("field", styles);
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
-export interface FieldOptions<T extends FieldEntry, ICProps = {}> {
+export interface FieldOptions<T extends FieldEntry> {
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
     /** Surcharge l'erreur du field. */
     error?: string | null;
-    /** @internal */
-    /** Pour `autocompleteFor`, service de résolution de code. */
-    keyResolver?: (key: number | string) => Promise<string>;
     /** Affiche le label. */
     hasLabel?: boolean;
     /** Pour l'icône de la Tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
     /** A utiliser à la place de `ref`. */
     innerRef?: (i: Field<T>) => void;
-    /** @internal */
-    /** Pour `autocompleteFor`/`selectFor`, composant d'input. */
-    InputComponent?: React.ComponentType<ICProps>;
-    /** @internal */
-    /** Pour `autocompleteFor`/`selectFor`, props du composant d'input. */
-    inputProps?: Partial<ICProps>;
+    /** L'input à utiliser. */
+    inputType?: "input" | "select" | "autocomplete";
     /** Par défaut : "top". */
     labelCellPosition?: string;
     /** Largeur en % du label. Par défaut : 33. */
     labelRatio?: number;
     /** Handler de modification de la valeur. */
     onChange?: (value: T["fieldType"]) => void;
-    /** @internal */
-    /** Pour `autocompleteFor`, service de recherche. */
-    querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     /** Affiche la tooltip de commentaire. */
     showTooltip?: boolean;
     /** CSS. */
-    theme?: FieldStyle & {
-        display?: NonNullable<T["domain"]["displayProps"]>["theme"];
-        input?: NonNullable<T["domain"]["inputProps"]>["theme"];
-    };
+    theme?: FieldStyle;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
     valueRatio?: number;
-    /** @internal */
-    /** Pour `selectFor`, valeurs de la liste de référence associée. */
-    values?: ReferenceList;
 }
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
-    FieldOptions<T, SProps> & {field: EntityField<T>}
+export class Field<T extends FieldEntry> extends React.Component<
+    {field: EntityField<T>} & FieldOptions<T> & FieldComponents
 > {
     // On récupère le forceErrorDisplay du form depuis le contexte.
     static contextTypes = {form: PropTypes.object};
@@ -115,44 +98,49 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {values, field, keyResolver, theme} = this.props;
+        const {field, autocompleteProps = {}, displayProps = {}, selectProps = {}} = this.props;
         const {
             value,
             $field: {
-                domain: {displayFormatter = defaultFormatter, DisplayComponent = Display as any, displayProps = {}}
+                domain: {
+                    displayFormatter = defaultFormatter,
+                    DisplayComponent = Display as any,
+                    displayProps: domainDCP = {}
+                }
             }
         } = field;
         return (
             <DisplayComponent
-                {...displayProps as {}}
+                {...domainDCP}
+                {...displayProps}
                 formatter={displayFormatter}
-                keyResolver={keyResolver}
-                labelKey={(values && values.$labelKey) || "code"}
-                theme={themeable(displayProps.theme || {}, (theme && theme.display) || {})}
+                keyResolver={autocompleteProps.keyResolver}
+                labelKey={selectProps.labelKey}
                 value={value}
-                valueKey={(values && values.$valueKey) || "label"}
-                values={values}
+                valueKey={selectProps.valueKey}
+                values={selectProps.values}
+                theme={themeable(domainDCP.theme || {}, displayProps.theme || {})}
             />
         );
     }
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {
-            field,
-            values,
-            keyResolver,
-            InputComponent: OverrideInput,
-            inputProps: overrideInputProps,
-            querySearcher,
-            theme
-        } = this.props;
+        const {field, inputType = "input", autocompleteProps = {}, inputProps = {}, selectProps = {}} = this.props;
         const {
             value,
             error,
             $field: {
                 name,
-                domain: {InputComponent = Input, inputFormatter = (x?: string) => x, inputProps = {}}
+                domain: {
+                    autocompleteProps: domainACP = {},
+                    AutocompleteComponent = Autocomplete,
+                    inputProps: domainICP = {},
+                    InputComponent = Input,
+                    inputFormatter = (x?: string) => x,
+                    selectProps: domainSCP = {},
+                    SelectComponent = Select
+                }
             }
         } = field as FormEntityField<T>;
         const props: any = {
@@ -160,31 +148,36 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
             error: (this.showError && error) || undefined,
             name,
             id: name,
-            onChange: this.onChange,
-            theme: themeable(inputProps.theme || {}, (theme && theme.input) || {})
+            onChange: this.onChange
         };
 
-        if (OverrideInput && values) {
+        if (inputType === "select") {
             return (
-                <OverrideInput
-                    {...overrideInputProps}
+                <SelectComponent
+                    {...domainSCP}
+                    {...selectProps}
                     {...props}
-                    values={values.slice()}
-                    labelKey={(values && values.$labelKey) || "code"}
-                    valueKey={(values && values.$valueKey) || "label"}
+                    theme={themeable(domainSCP.theme || {}, selectProps.theme || {})}
                 />
             );
-        } else if (OverrideInput && (keyResolver || querySearcher)) {
+        } else if (inputType === "autocomplete") {
             return (
-                <OverrideInput
-                    {...overrideInputProps}
+                <AutocompleteComponent
+                    {...domainACP}
+                    {...autocompleteProps}
                     {...props}
-                    keyResolver={keyResolver}
-                    querySearcher={querySearcher}
+                    theme={themeable(domainACP.theme || {}, autocompleteProps.theme || {})}
                 />
             );
         } else {
-            return <InputComponent {...inputProps} {...props} />;
+            return (
+                <InputComponent
+                    {...domainICP}
+                    {...inputProps}
+                    {...props}
+                    theme={themeable(domainICP.theme || {}, inputProps.theme || {})}
+                />
+            );
         }
     }
 
@@ -196,6 +189,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
                         disableInlineSizing,
                         hasLabel = true,
                         labelRatio = 33,
+                        labelProps = {},
                         field,
                         showTooltip,
                         i18nPrefix = "focus"
@@ -209,7 +203,7 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
                             label,
                             name,
                             isRequired,
-                            domain: {className = "", LabelComponent = Label}
+                            domain: {className = "", LabelComponent = Label, labelProps: domainLCP = {}}
                         }
                     } = field as FormEntityField<T>;
 
@@ -221,13 +215,19 @@ export class Field<T extends FieldEntry, SProps = {}> extends React.Component<
                         >
                             {hasLabel ? (
                                 <LabelComponent
+                                    {...domainLCP}
+                                    {...labelProps}
                                     comment={comment}
                                     i18nPrefix={i18nPrefix}
                                     label={label}
                                     name={name}
                                     showTooltip={showTooltip}
                                     style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
-                                    theme={{label: theme.label}}
+                                    theme={themeable(
+                                        {label: theme.label},
+                                        domainLCP.theme || {},
+                                        labelProps.theme || {}
+                                    )}
                                 />
                             ) : null}
                             <div

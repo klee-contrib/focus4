@@ -3,11 +3,24 @@ import {upperFirst} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
 
-import {Autocomplete, AutocompleteResult, Select} from "../../components";
+import {AutocompleteResult} from "../../components";
 import {ReferenceList} from "../../reference";
 
-import {EntityField, FieldEntry} from "../types";
+import {
+    AutocompleteComponents,
+    BaseAutocompleteProps,
+    BaseSelectProps,
+    EntityField,
+    FieldEntry,
+    InputComponents,
+    Props,
+    SelectComponents
+} from "../types";
 import {Field, FieldOptions} from "./field";
+
+function getOnChange<T extends FieldEntry>(field: EntityField<T>) {
+    return action(`on${upperFirst(field.$field.name)}Change`, value => (field.value = value));
+}
 
 /**
  * Crée un champ avec saisie en autocomplete
@@ -15,23 +28,24 @@ import {Field, FieldOptions} from "./field";
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function autocompleteFor<T extends FieldEntry, AComponent = typeof Autocomplete>(
+export function autocompleteFor<
+    AComp extends React.ComponentType<BaseAutocompleteProps>,
+    DComp,
+    LComp,
+    T extends FieldEntry<any, any, any, AComp, DComp, LComp>
+>(
     field: EntityField<T>,
-    options: Partial<FieldOptions<T, Props<AComponent>>> & {
-        /** Composant d'autocomplete personnalisé. */
-        AutocompleteComponent?: AComponent;
-        /** Props supplémentaires pour le composant autocomplete. */
-        autocompleteProps?: Partial<Props<AComponent>>;
-        /** Service de résolution de code. */
-        keyResolver?: (key: number | string) => Promise<string | undefined>;
-        /** Service de recherche. */
-        querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
-    }
+    options: Partial<FieldOptions<T>> &
+        AutocompleteComponents<Props<AComp>, Props<DComp>, Props<LComp>> & {
+            /** Service de résolution de code. */
+            keyResolver?: (key: number | string) => Promise<string | undefined>;
+            /** Service de recherche. */
+            querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+        }
 ) {
-    const {AutocompleteComponent, autocompleteProps, ...otherOptions} = options;
-    otherOptions.InputComponent = AutocompleteComponent || (Autocomplete as any);
-    otherOptions.inputProps = autocompleteProps;
-    return fieldFor<T>(field, otherOptions as Partial<FieldOptions<T>>);
+    const {keyResolver, querySearcher, ...otherOptions} = options;
+    otherOptions.autocompleteProps = {...((options.autocompleteProps as {}) || {}), keyResolver, querySearcher} as {};
+    return <Field field={field} {...otherOptions} onChange={getOnChange(field)} inputType="autocomplete" />;
 }
 
 /**
@@ -39,14 +53,12 @@ export function autocompleteFor<T extends FieldEntry, AComponent = typeof Autoco
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<T extends FieldEntry>(field: EntityField<T>, options: Partial<FieldOptions<T>> = {}) {
-    options.onChange =
-        options.onChange ||
-        action(`on${upperFirst(field.$field.name)}Change`, (value: T["fieldType"]) => (field.value = value));
-    return <Field field={field} {...options} />;
+export function fieldFor<IComp, DComp, LComp, T extends FieldEntry<any, IComp, any, any, DComp, LComp>>(
+    field: EntityField<T>,
+    options: Partial<FieldOptions<T>> & InputComponents<Props<IComp>, Props<DComp>, Props<LComp>> = {}
+) {
+    return <Field field={field} {...options} onChange={getOnChange(field)} inputType="input" />;
 }
-
-export type Props<T> = T extends React.Component<infer P1> ? P1 : T extends (props: infer P2) => any ? P2 : never;
 
 /**
  * Crée un champ avec résolution de référence.
@@ -54,19 +66,23 @@ export type Props<T> = T extends React.Component<infer P1> ? P1 : T extends (pro
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T extends FieldEntry, SComponent = typeof Select>(
+export function selectFor<
+    SComp extends React.ComponentType<BaseSelectProps>,
+    DComp,
+    LComp,
+    T extends FieldEntry<any, any, SComp, any, DComp, LComp>
+>(
     field: EntityField<T>,
     values: ReferenceList,
-    options: Partial<FieldOptions<T, Props<SComponent>>> & {
-        SelectComponent?: SComponent;
-        selectProps?: Partial<Props<SComponent>>;
-    } = {}
+    options: Partial<FieldOptions<T>> & SelectComponents<Props<SComp>, Props<DComp>, Props<LComp>> = {}
 ) {
-    const {SelectComponent, selectProps, ...otherOptions} = options;
-    otherOptions.InputComponent = SelectComponent || (Select as any);
-    otherOptions.inputProps = selectProps;
-    otherOptions.values = values;
-    return fieldFor<T>(field, otherOptions as Partial<FieldOptions<T>>);
+    options.selectProps = {
+        ...((options.selectProps as {}) || {}),
+        values: values.slice(),
+        labelKey: (values && values.$labelKey) || "code",
+        valueKey: (values && values.$valueKey) || "label"
+    } as {};
+    return <Field field={field} {...options} onChange={getOnChange(field)} inputType="select" />;
 }
 
 /**
