@@ -1,6 +1,6 @@
 // Libs
-import React from "react";
 import i18n from "i18next";
+import React from "react";
 
 // Components
 import { Checkbox } from "./checkbox";
@@ -9,6 +9,7 @@ import { Checkbox } from "./checkbox";
 import "./__style__/checkbox-select.scss";
 
 function clickHandlerFactory(
+  isDisabled: boolean,
   isSelected: boolean,
   value: string[] | number[] | undefined,
   optVal: string | number,
@@ -18,14 +19,18 @@ function clickHandlerFactory(
     e.stopPropagation();
     e.preventDefault();
 
-    if (isSelected) {
-      // is selected -> remove it
-      onChange(
-        value ? (value as any).filter((val: any) => val !== optVal) : undefined
-      );
-    } else {
-      // is not selected -> add it
-      onChange((value ? [...value, optVal] : [optVal]) as any);
+    if (!isDisabled) {
+      if (isSelected) {
+        // is selected -> remove it
+        onChange(
+          value
+            ? (value as any).filter((val: any) => val !== optVal)
+            : undefined
+        );
+      } else {
+        // is not selected -> add it
+        onChange((value ? [...value, optVal] : [optVal]) as any);
+      }
     }
   };
 }
@@ -74,6 +79,7 @@ export function CheckboxSelect({
             ? !!(value as any).find((val: any) => optVal === val)
             : false;
           const clickHandler = clickHandlerFactory(
+            disabled,
             isSelected,
             value,
             optVal,
@@ -93,11 +99,11 @@ export function CheckboxSelect({
                 disabled={disabled}
                 label={i18n.t(optLabel)}
               />
-              {error ? <div>{error}</div> : null}
             </li>
           );
         })}
       </ul>
+      {error ? <div>{error}</div> : null}
     </div>
   );
 }
