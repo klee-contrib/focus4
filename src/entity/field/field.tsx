@@ -8,7 +8,7 @@ import {findDOMNode} from "react-dom";
 import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {themr} from "../../theme";
 
-import {EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
+import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -35,8 +35,6 @@ export interface FieldOptions<T extends FieldEntry> {
     labelRatio?: number;
     /** Handler de modification de la valeur. */
     onChange?: (value: T["fieldType"]) => void;
-    /** Affiche la tooltip de commentaire. */
-    showTooltip?: boolean;
     /** CSS. */
     theme?: FieldStyle;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
@@ -102,11 +100,7 @@ export class Field<T extends FieldEntry> extends React.Component<
         const {
             value,
             $field: {
-                domain: {
-                    displayFormatter = defaultFormatter,
-                    DisplayComponent = Display as any,
-                    displayProps: domainDCP = {}
-                }
+                domain: {displayFormatter = defaultFormatter, DisplayComponent = Display, displayProps: domainDCP = {}}
             }
         } = field;
         return (
@@ -143,7 +137,7 @@ export class Field<T extends FieldEntry> extends React.Component<
                 }
             }
         } = field as FormEntityField<T>;
-        const props: any = {
+        const props: BaseInputProps = {
             value: inputFormatter(value),
             error: (this.showError && error) || undefined,
             name,
@@ -191,7 +185,6 @@ export class Field<T extends FieldEntry> extends React.Component<
                         labelRatio = 33,
                         labelProps = {},
                         field,
-                        showTooltip,
                         i18nPrefix = "focus"
                     } = this.props;
                     const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
@@ -221,7 +214,6 @@ export class Field<T extends FieldEntry> extends React.Component<
                                     i18nPrefix={i18nPrefix}
                                     label={label}
                                     name={name}
-                                    showTooltip={showTooltip}
                                     style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
                                     theme={themeable(
                                         {label: theme.label},

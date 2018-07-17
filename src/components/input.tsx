@@ -17,6 +17,7 @@ export interface MaskDefinition {
 
 export interface InputProps extends RTInputProps {
     mask?: MaskDefinition;
+    onChange?: (value: any) => void;
 }
 
 export class Input extends React.Component<InputProps> {

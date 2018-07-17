@@ -36,9 +36,13 @@ export interface AutocompleteProps extends RTAutocompleteProps {
     /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
     isQuickSearch?: boolean;
     /** Service de résolution de code. */
-    keyResolver?: (key: number | string) => Promise<string | undefined>;
+    keyResolver?: (key: any) => Promise<string | undefined>;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+    /** Au changement. */
+    onChange?: (value: any) => void;
+    /** Valeur. */
+    value?: any;
     /** CSS. */
     theme?: AutocompleteStyle;
 }

@@ -3,17 +3,13 @@ export {
     BaseAutocompleteProps,
     InputComponents,
     SelectComponents,
+    BaseInputProps,
+    BaseDisplayProps,
+    BaseLabelProps,
     BaseSelectProps,
-    FieldComponents,
-    Domain,
-    Entity,
-    EntityField,
-    FieldEntry,
-    ListEntry,
-    ObjectEntry,
-    EntityToType,
-    Props
-} from "./entity";
+    FieldComponents
+} from "./components";
+export {Domain, Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry} from "./entity";
 export {FormEntityField, FormListNode, FormNode} from "./form";
 export {NodeToType, StoreListNode, StoreNode} from "./store";
 export {

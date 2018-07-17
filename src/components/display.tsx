@@ -13,13 +13,13 @@ export interface DisplayProps {
     /** Formatteur. */
     formatter?: (value: any) => string;
     /** Service de résolution de code. */
-    keyResolver?: (key: number | string) => Promise<string>;
+    keyResolver?: (key: any) => Promise<string>;
     /** Nom de la propriété de libellé, pour liste de référence. */
     labelKey?: string;
     /** CSS. */
     theme?: DisplayStyle;
     /** Valeur à afficher. */
-    value?: string | number;
+    value?: any;
     /** Nom de la propriété de libellé, pour liste de référence. */
     valueKey?: string;
     /** Liste des valeurs de référence. */

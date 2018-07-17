@@ -1,6 +1,5 @@
 import {IObservableArray} from "mobx";
 
-import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {Entity, EntityField, EntityToType, FieldEntry} from "./entity";
 import {NodeToType, StoreListNode, StoreNode} from "./store";
 
@@ -64,16 +63,7 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
 }
 
 /** Définition de champ dans un FormNode. */
-export interface FormEntityField<
-    F extends FieldEntry = FieldEntry<
-        any,
-        typeof Input,
-        typeof Select,
-        typeof Autocomplete,
-        typeof Display,
-        typeof Label
-    >
-> extends EntityField<F> {
+export interface FormEntityField<F extends FieldEntry = FieldEntry> extends EntityField<F> {
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error: string | undefined;
 

@@ -22,13 +22,13 @@ export interface SelectProps {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange?: (value: string | number | undefined) => void;
+    onChange?: (value: any) => void;
     /** CSS. */
     theme?: SelectStyle;
     /** Libellés des champs sans libellés. */
     unSelectedLabel?: string;
     /** Valeur. */
-    value?: string | number;
+    value?: any;
     /** Nom du champ de valeur. */
     valueKey: string;
     /** Liste des valeurs. */

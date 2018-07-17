@@ -2,18 +2,29 @@ import {isFunction} from "lodash";
 import {comparer, computed, extendObservable, observable} from "mobx";
 import {themeable} from "react-css-themr";
 
-import {Autocomplete, Display, Input, Label, Select} from "../../components";
+import {AutocompleteProps, DisplayProps, InputProps, LabelProps, SelectProps} from "../../components";
 
-import {BaseAutocompleteProps, BaseSelectProps, Domain, EntityField, FieldEntry} from "../types";
+import {
+    BaseAutocompleteProps,
+    BaseDisplayProps,
+    BaseInputProps,
+    BaseLabelProps,
+    BaseSelectProps,
+    Domain,
+    EntityField,
+    FieldEntry
+} from "../types";
 
 export type $Field<
     T = any,
-    IComp = any,
-    SComp extends React.ComponentType<BaseSelectProps> = any,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = any,
-    DComp = any,
-    LComp = any
-> = Partial<FieldEntry<T, IComp, SComp, AComp, DComp, LComp> & Domain<IComp, SComp, AComp, DComp, LComp>>;
+    ICProps extends BaseInputProps = any,
+    SCProps extends BaseSelectProps = any,
+    ACProps extends BaseAutocompleteProps = any,
+    DCProps extends BaseDisplayProps = any,
+    LCProps extends BaseLabelProps = any
+> = Partial<
+    FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps> & Domain<ICProps, SCProps, ACProps, DCProps, LCProps>
+>;
 
 /**
  * Construit un `EntityField` à partir d'un champ calculé.
@@ -24,17 +35,19 @@ export type $Field<
  */
 export function makeField<
     T,
-    IComp = typeof Input,
-    SComp extends React.ComponentType<BaseSelectProps> = typeof Select,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = typeof Autocomplete,
-    DComp = typeof Display,
-    LComp = typeof Label
+    ICProps extends BaseInputProps = InputProps,
+    SCProps extends BaseSelectProps = SelectProps,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    DCProps extends BaseDisplayProps = DisplayProps,
+    LCProps extends BaseLabelProps = LabelProps
 >(
     value: () => T,
-    $field?: $Field<T, IComp, SComp, AComp, DComp, LComp> | (() => $Field<T, IComp, SComp, AComp, DComp, LComp>),
+    $field?:
+        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>),
     setter?: (value: T) => void,
     isEdit?: boolean | (() => boolean)
-): EntityField<FieldEntry<NonNullable<T>, IComp, SComp, AComp, DComp, LComp>>;
+): EntityField<FieldEntry<NonNullable<T>, ICProps, SCProps, ACProps, DCProps, LCProps>>;
 /**
  * Construit un `EntityField` à partir d'une valeur quelconque.
  * @param value La valeur.
@@ -42,25 +55,29 @@ export function makeField<
  */
 export function makeField<
     T,
-    IComp = typeof Input,
-    SComp extends React.ComponentType<BaseSelectProps> = typeof Select,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = typeof Autocomplete,
-    DComp = typeof Display,
-    LComp = typeof Label
+    ICProps extends BaseInputProps = InputProps,
+    SCProps extends BaseSelectProps = SelectProps,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    DCProps extends BaseDisplayProps = DisplayProps,
+    LCProps extends BaseLabelProps = LabelProps
 >(
     value: T,
-    $field?: $Field<T, IComp, SComp, AComp, DComp, LComp> | (() => $Field<T, IComp, SComp, AComp, DComp, LComp>)
-): EntityField<FieldEntry<NonNullable<T>, IComp, SComp, AComp, DComp, LComp>>;
+    $field?:
+        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>)
+): EntityField<FieldEntry<NonNullable<T>, ICProps, SCProps, ACProps, DCProps, LCProps>>;
 export function makeField<
     T,
-    IComp = typeof Input,
-    SComp extends React.ComponentType<BaseSelectProps> = typeof Select,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = typeof Autocomplete,
-    DComp = typeof Display,
-    LComp = typeof Label
+    ICProps extends BaseInputProps = InputProps,
+    SCProps extends BaseSelectProps = SelectProps,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    DCProps extends BaseDisplayProps = DisplayProps,
+    LCProps extends BaseLabelProps = LabelProps
 >(
     value: T | (() => T),
-    $field: $Field<T, IComp, SComp, AComp, DComp, LComp> | (() => $Field<T, IComp, SComp, AComp, DComp, LComp>) = {},
+    $field:
+        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
     setter: Function = () => null,
     isEdit?: any
 ) {
@@ -102,20 +119,22 @@ export function makeField<
  */
 export function fromField<
     T,
-    IDComp = typeof Input,
-    SDComp extends React.ComponentType<BaseSelectProps> = typeof Select,
-    ADComp extends React.ComponentType<BaseAutocompleteProps> = typeof Autocomplete,
-    DDComp = typeof Display,
-    LDComp = typeof Label,
-    IComp = IDComp,
-    SComp extends React.ComponentType<BaseSelectProps> = SDComp,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = ADComp,
-    DComp = DDComp,
-    LComp = LDComp
+    ICDProps extends BaseInputProps = InputProps,
+    SCDProps extends BaseSelectProps = SelectProps,
+    ACDProps extends BaseAutocompleteProps = AutocompleteProps,
+    DCDProps extends BaseDisplayProps = DisplayProps,
+    LCDProps extends BaseLabelProps = LabelProps,
+    ICProps extends BaseInputProps = ICDProps,
+    SCProps extends BaseSelectProps = SCDProps,
+    ACProps extends BaseAutocompleteProps = ACDProps,
+    DCProps extends BaseDisplayProps = DCDProps,
+    LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<NonNullable<T>, IDComp, SDComp, ADComp, DDComp, LDComp>>,
-    $field: $Field<T, IComp, SComp, AComp, DComp, LComp> | (() => $Field<T, IComp, SComp, AComp, DComp, LComp>)
-): EntityField<FieldEntry<NonNullable<T>, IComp, SComp, AComp, DComp, LComp>> {
+    field: EntityField<FieldEntry<T, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    $field:
+        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>)
+): EntityField<FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
 }
 
@@ -127,19 +146,21 @@ export function fromField<
  */
 export function patchField<
     T,
-    IDComp = typeof Input,
-    SDComp extends React.ComponentType<BaseSelectProps> = typeof Select,
-    ADComp extends React.ComponentType<BaseAutocompleteProps> = typeof Autocomplete,
-    DDComp = typeof Display,
-    LDComp = typeof Label,
-    IComp = IDComp,
-    SComp extends React.ComponentType<BaseSelectProps> = SDComp,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = ADComp,
-    DComp = DDComp,
-    LComp = LDComp
+    ICDProps extends BaseInputProps = InputProps,
+    SCDProps extends BaseSelectProps = SelectProps,
+    ACDProps extends BaseAutocompleteProps = AutocompleteProps,
+    DCDProps extends BaseDisplayProps = DisplayProps,
+    LCDProps extends BaseLabelProps = LabelProps,
+    ICProps extends BaseInputProps = ICDProps,
+    SCProps extends BaseSelectProps = SCDProps,
+    ACProps extends BaseAutocompleteProps = ACDProps,
+    DCProps extends BaseDisplayProps = DCDProps,
+    LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<NonNullable<T>, IDComp, SDComp, ADComp, DDComp, LDComp>>,
-    $field: $Field<T, IComp, SComp, AComp, DComp, LComp> | (() => $Field<T, IComp, SComp, AComp, DComp, LComp>),
+    field: EntityField<FieldEntry<T, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    $field:
+        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {
     const next$field = new$field(field.$field, $field);

@@ -1,64 +1,23 @@
-import {Autocomplete, Display, Input, Label, Select} from "../../components";
+import {AutocompleteProps, DisplayProps, InputProps, LabelProps, SelectProps} from "../../components";
 
+import {
+    BaseAutocompleteProps,
+    BaseDisplayProps,
+    BaseInputProps,
+    BaseLabelProps,
+    BaseSelectProps,
+    FieldComponents
+} from "./components";
 import {Validator} from "./validation";
-
-export type Props<T> = T extends any
-    ? any
-    : T extends React.Component<infer P1> ? P1 : T extends (props: infer P2) => any ? P2 : never;
-
-export interface BaseAutocompleteProps {
-    keyResolver?: (key: number | string) => Promise<string | undefined>;
-}
-
-export interface BaseSelectProps {
-    labelKey: string;
-    valueKey: string;
-    values: {}[];
-}
-
-export interface BaseComponents<DCProps = any, LCProps = any> {
-    /** Props pour le composant d'affichage */
-    displayProps?: Partial<DCProps>;
-    /** Props pour le composant de libellé. */
-    labelProps?: Partial<LCProps>;
-}
-
-export interface InputComponents<ICProps = any, DCProps = any, LCProps = any> extends BaseComponents<DCProps, LCProps> {
-    /** Props pour le composant d'entrée utilisateur. */
-    inputProps?: Partial<ICProps>;
-}
-
-export interface SelectComponents<SCProps extends BaseSelectProps = any, DCProps = any, LCProps = any>
-    extends BaseComponents<DCProps, LCProps> {
-    /** Props pour le composant d'autocomplete. */
-    selectProps?: Partial<SCProps>;
-}
-
-export interface AutocompleteComponents<ACProps extends BaseAutocompleteProps = any, DCProps = any, LCProps = any>
-    extends BaseComponents<DCProps, LCProps> {
-    /** Props supplémentaires pour le composant autocomplete. */
-    autocompleteProps?: Partial<ACProps>;
-}
-
-export interface FieldComponents<
-    ICProps = any,
-    SCProps extends BaseSelectProps = any,
-    ACProps extends BaseAutocompleteProps = any,
-    DCProps = any,
-    LCProps = any
->
-    extends InputComponents<ICProps, DCProps, LCProps>,
-        SelectComponents<SCProps, DCProps, LCProps>,
-        AutocompleteComponents<ACProps, DCProps, LCProps> {}
 
 /** Définition d'un domaine. */
 export interface Domain<
-    IComp = typeof Input,
-    SComp extends React.ComponentType<BaseSelectProps> = typeof Select,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = typeof Autocomplete,
-    DComp = typeof Display,
-    LComp = typeof Label
-> extends FieldComponents<IComp, Props<SComp>, Props<AComp>, DComp, LComp> {
+    ICProps extends BaseInputProps = InputProps,
+    SCProps extends BaseSelectProps = SelectProps,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    DCProps extends BaseDisplayProps = DisplayProps,
+    LCProps extends BaseLabelProps = LabelProps
+> extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Formatteur pour l'affichage du champ en consulation. */
@@ -71,15 +30,15 @@ export interface Domain<
     validator?: Validator | Validator[];
 
     /** Composant personnalisé pour l'autocomplete. */
-    AutocompleteComponent?: AComp;
+    AutocompleteComponent?: React.ComponentType<ACProps>;
     /** Composant personnalisé pour l'affichage. */
-    DisplayComponent?: DComp;
+    DisplayComponent?: React.ComponentType<DCProps>;
     /** Composant personnalisé pour le libellé. */
-    LabelComponent?: LComp;
+    LabelComponent?: React.ComponentType<LCProps>;
     /** Composant personnalisé pour l'entrée utilisateur. */
-    InputComponent?: IComp;
+    InputComponent?: React.ComponentType<ICProps>;
     /** Composant personnalisé pour le select. */
-    SelectComponent?: SComp;
+    SelectComponent?: React.ComponentType<SCProps>;
 }
 
 /** Définition générale d'une entité. */
@@ -94,11 +53,11 @@ export interface Entity {
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
     T = any,
-    IComp = any,
-    SComp extends React.ComponentType<BaseSelectProps> = any,
-    AComp extends React.ComponentType<BaseAutocompleteProps> = any,
-    DComp = any,
-    LComp = any
+    ICProps extends BaseInputProps = any,
+    SCProps extends BaseSelectProps = any,
+    ACProps extends BaseAutocompleteProps = any,
+    DCProps extends BaseDisplayProps = any,
+    LCProps extends BaseLabelProps = any
 > {
     readonly type: "field";
 
@@ -106,7 +65,7 @@ export interface FieldEntry<
     readonly fieldType: T;
 
     /** Domaine du champ. */
-    readonly domain: Domain<IComp, SComp, AComp, DComp, LComp>;
+    readonly domain: Domain<ICProps, SCProps, ACProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -147,16 +106,7 @@ export type EntityToType<T extends Entity> = {
 };
 
 /** Définition de champ dans un store. */
-export interface EntityField<
-    F extends FieldEntry = FieldEntry<
-        any,
-        typeof Input,
-        typeof Select,
-        typeof Autocomplete,
-        typeof Display,
-        typeof Label
-    >
-> {
+export interface EntityField<F extends FieldEntry = FieldEntry> {
     /** Métadonnées. */
     readonly $field: F;
 

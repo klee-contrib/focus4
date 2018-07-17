@@ -8,12 +8,10 @@ import {ReferenceList} from "../../reference";
 
 import {
     AutocompleteComponents,
-    BaseAutocompleteProps,
     BaseSelectProps,
     EntityField,
     FieldEntry,
     InputComponents,
-    Props,
     SelectComponents
 } from "../types";
 import {Field, FieldOptions} from "./field";
@@ -28,15 +26,14 @@ function getOnChange<T extends FieldEntry>(field: EntityField<T>) {
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function autocompleteFor<
-    AComp extends React.ComponentType<BaseAutocompleteProps>,
-    DComp,
-    LComp,
-    T extends FieldEntry<any, any, any, AComp, DComp, LComp>
->(
+export function autocompleteFor<T extends FieldEntry>(
     field: EntityField<T>,
     options: Partial<FieldOptions<T>> &
-        AutocompleteComponents<Props<AComp>, Props<DComp>, Props<LComp>> & {
+        AutocompleteComponents<
+            NonNullable<T["domain"]["autocompleteProps"]>,
+            NonNullable<T["domain"]["displayProps"]>,
+            NonNullable<T["domain"]["labelProps"]>
+        > & {
             /** Service de résolution de code. */
             keyResolver?: (key: number | string) => Promise<string | undefined>;
             /** Service de recherche. */
@@ -53,9 +50,14 @@ export function autocompleteFor<
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<IComp, DComp, LComp, T extends FieldEntry<any, IComp, any, any, DComp, LComp>>(
+export function fieldFor<T extends FieldEntry>(
     field: EntityField<T>,
-    options: Partial<FieldOptions<T>> & InputComponents<Props<IComp>, Props<DComp>, Props<LComp>> = {}
+    options: Partial<FieldOptions<T>> &
+        InputComponents<
+            NonNullable<T["domain"]["inputProps"]>,
+            NonNullable<T["domain"]["displayProps"]>,
+            NonNullable<T["domain"]["labelProps"]>
+        > = {}
 ) {
     return <Field field={field} {...options} onChange={getOnChange(field)} inputType="input" />;
 }
@@ -66,15 +68,15 @@ export function fieldFor<IComp, DComp, LComp, T extends FieldEntry<any, IComp, a
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<
-    SComp extends React.ComponentType<BaseSelectProps>,
-    DComp,
-    LComp,
-    T extends FieldEntry<any, any, SComp, any, DComp, LComp>
->(
+export function selectFor<T extends FieldEntry>(
     field: EntityField<T>,
     values: ReferenceList,
-    options: Partial<FieldOptions<T>> & SelectComponents<Props<SComp>, Props<DComp>, Props<LComp>> = {}
+    options: Partial<FieldOptions<T>> &
+        SelectComponents<
+            NonNullable<T["domain"]["selectProps"]> & BaseSelectProps,
+            NonNullable<T["domain"]["displayProps"]>,
+            NonNullable<T["domain"]["labelProps"]>
+        > = {}
 ) {
     options.selectProps = {
         ...((options.selectProps as {}) || {}),
