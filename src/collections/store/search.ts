@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {debounce, flatten} from "lodash";
-import {action, computed, IObservableArray, observable, reaction} from "mobx";
+import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
 import {config} from "../../config";
 import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues, validate} from "../../entity";
@@ -232,20 +232,27 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         this.pendingCount++;
 
-        this.selectedList.clear(); // On vide les éléments sélectionnés avant de rechercher, pour ne pas avoir d'état de sélection incohérent.
-        const response = await this.service(data);
-
-        this.pendingCount--;
-
-        // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est toujours la liste.
-        if (isScroll && response.list) {
-            response.list = [...list, ...response.list];
+         // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
+        if (!isScroll) {
+            this.selectedList.clear();
         }
 
-        this.facets.replace(response.facets);
-        this.list.replace(response.list || []);
-        this.groups.replace(response.groups || []);
-        this.serverCount = response.totalCount;
+        const response = await this.service(data);
+
+        runInAction(() => {
+            this.pendingCount--;
+
+            // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
+            if (isScroll) {
+                this.list.push(...(response.list || []));
+            } else {
+                this.list.replace(response.list || []);
+            }
+
+            this.facets.replace(response.facets);
+            this.groups.replace(response.groups || []);
+            this.serverCount = response.totalCount;
+        });
 
         return response;
     }
