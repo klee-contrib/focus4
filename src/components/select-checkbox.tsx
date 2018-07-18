@@ -4,8 +4,8 @@ import {themr} from "react-css-themr";
 
 import {Checkbox} from "./checkbox";
 
-import * as styles from "./__style__/checkbox-select.css";
-export type CheckboxSelectStyle = Partial<typeof styles>;
+import * as styles from "./__style__/select-checkbox.css";
+export type SelectCheckboxStyle = Partial<typeof styles>;
 
 function clickHandlerFactory(
     isDisabled: boolean,
@@ -34,7 +34,7 @@ function clickHandlerFactory(
     };
 }
 
-export interface CheckboxSelectProps {
+export interface SelectCheckboxProps {
     /** Disabled checkbox-select. */
     disabled?: boolean;
     /** Error message to display. */
@@ -48,7 +48,7 @@ export interface CheckboxSelectProps {
     /** Call with each value change. */
     onChange: (value: string[] | number[] | undefined) => void;
     /** CSS. */
-    theme?: CheckboxSelectStyle;
+    theme?: SelectCheckboxStyle;
     /** Value. */
     value?: string[] | number[];
     /** Name of field for key. */
@@ -57,7 +57,7 @@ export interface CheckboxSelectProps {
     values: {}[];
 }
 
-export function CheckboxSelect({
+export function SelectCheckbox({
     disabled = false,
     error,
     label,
@@ -68,7 +68,7 @@ export function CheckboxSelect({
     value,
     valueKey,
     values
-}: CheckboxSelectProps) {
+}: SelectCheckboxProps) {
     return (
         <div className={theme!.select}>
             {label && <h5>{i18next.t(label)}</h5>}
@@ -110,4 +110,4 @@ export function CheckboxSelect({
     );
 }
 
-export default themr("checkboxSelect", styles)(CheckboxSelect);
+export default themr("selectCheckbox", styles)(SelectCheckbox);

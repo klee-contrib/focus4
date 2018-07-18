@@ -17,7 +17,7 @@ import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
 import {ActionBarStyle, AdvancedSearchStyle, ContextualActionsStyle, DragLayerStyle, FacetBoxStyle, FacetStyle, GroupStyle, LineStyle, ListStyle, ListWrapperStyle, SearchBarStyle, SummaryStyle} from "../collections";
-import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, LabelStyle, PanelStyle, PopinStyle, ScrollspyStyle} from "../components";
+import {AutocompleteStyle, ButtonBackToTopStyle, DisplayStyle, LabelStyle, PanelStyle, PopinStyle, ScrollspyStyle, SelectCheckboxStyle, SelectRadioStyle} from "../components";
 import {FieldStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
@@ -104,6 +104,8 @@ export interface LayoutStyleProviderProps {
     popin?: PopinStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
+    selectCheckbox?: SelectCheckboxStyle;
+    selectRadio?: SelectRadioStyle;
     summary?: SummaryStyle;
 
     RTButton?: ButtonTheme;
