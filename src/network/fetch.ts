@@ -1,4 +1,4 @@
-import {isObject} from "lodash";
+import {isObject, merge, toPairs} from "lodash";
 import {v4} from "uuid";
 import "whatwg-fetch";
 
@@ -9,9 +9,31 @@ import {requestStore} from "./store";
  * Effectue une requête HTTP avec du log et la gestion des erreurs.
  * @param method Méthode HTTP.
  * @param url L'url à requêter.
- * @param data Le corps du message.
+ * @param data Contient le body ainsi que l'objet à convertir en query string.
+ * @param options Les options de la requête, qui surchargeront les valeurs par défaut.
  */
-export async function coreFetch(url: string, options: RequestInit): Promise<any> {
+export async function coreFetch(
+    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS" | "HEAD" | "TRACE" | "CONNECT",
+    url: string,
+    {body, query}: {body?: {}; query?: {}} = {},
+    options: RequestInit = {}
+): Promise<any> {
+    const queryString = buildQueryString(query);
+
+    url = url + (queryString ? `?${queryString}` : "");
+    options = merge(
+        {method, credentials: "include"},
+        body
+            ? {
+                  headers: {
+                      "Content-Type": isObject(body) ? "application/json" : "text/plain"
+                  },
+                  body: JSON.stringify(body)
+              }
+            : {},
+        options
+    );
+
     // On crée la requête dans le store de requête.
     const id = v4();
     requestStore.updateRequest({id, url, status: "pending"});
@@ -30,8 +52,10 @@ export async function coreFetch(url: string, options: RequestInit): Promise<any>
             const contentType = response.headers.get("Content-Type");
             if (contentType && contentType.includes("application/json")) {
                 return await response.json();
-            } else {
+            } else if (contentType && contentType.includes("text/plain")) {
                 return await response.text();
+            } else {
+                return response;
             }
         } else {
             // Retour en erreur
@@ -60,46 +84,19 @@ export async function coreFetch(url: string, options: RequestInit): Promise<any>
     }
 }
 
-/**
- * Effectue un DELETE avec du log et la gestion des erreurs.
- * @param url L'url à requêter.
- */
-export async function httpDelete<RS>(url: string): Promise<RS> {
-    return coreFetch(url, {method: "DELETE", credentials: "include"});
-}
-
-/**
- * Effectue un GET avec du log et la gestion des erreurs.
- * @param url L'url à requêter.
- */
-export async function httpGet<RS>(url: string): Promise<RS> {
-    return coreFetch(url, {method: "GET", credentials: "include"});
-}
-
-/**
- * Effectue un POST avec du log et la gestion des erreurs.
- * @param url L'url à requêter.
- * @param data Le corps du message.
- */
-export async function httpPost<RQ, RS>(url: string, data: RQ): Promise<RS> {
-    return coreFetch(url, {
-        method: "POST",
-        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"},
-        body: JSON.stringify(data),
-        credentials: "include"
-    });
-}
-
-/**
- * Effectue un PUT avec du log et la gestion des erreurs.
- * @param url L'url à requêter.
- * @param data Le corps du message.
- */
-export async function httpPut<RQ, RS>(url: string, data: RQ): Promise<RS> {
-    return coreFetch(url, {
-        method: "PUT",
-        headers: {"Content-Type": isObject(data) ? "application/json" : "text/plain"},
-        body: JSON.stringify(data),
-        credentials: "include"
-    });
+/** Construit le query string associé à l'objet donné. */
+function buildQueryString(obj: any, prefix = ""): string {
+    let queryString = "";
+    if (isObject(obj)) {
+        queryString = toPairs(obj).reduce(
+            (acc, [key, value]) =>
+                acc +
+                (acc && acc !== "" && !acc.endsWith("&") && value !== undefined ? "&" : "") +
+                buildQueryString(value, prefix !== "" ? `${prefix}.${key}` : key),
+            ""
+        );
+    } else if (prefix && prefix !== "" && obj !== undefined) {
+        queryString = `${prefix}=${encodeURIComponent(obj)}`;
+    }
+    return queryString;
 }

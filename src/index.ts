@@ -23,6 +23,5 @@ export {
     stringFor
 } from "./entity";
 export {messageStore} from "./message";
-export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";
 export {makeReferenceStore} from "./reference";
 export {classAutorun} from "./util";
