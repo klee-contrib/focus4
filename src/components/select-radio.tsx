@@ -56,31 +56,18 @@ export function SelectRadio({
 }: SelectRadioProps) {
     let definitiveValues = values;
     if (hasUndefined && undefinedPosition === "bottom") {
-        definitiveValues = [
-            ...values,
-            {[valueKey]: undefined, [labelKey]: undefinedLabel}
-        ];
+        definitiveValues = [...values, {[valueKey]: undefined, [labelKey]: undefinedLabel}];
     }
     if (hasUndefined && undefinedPosition === "top") {
-        definitiveValues = [
-            {[valueKey]: undefined, [labelKey]: undefinedLabel},
-            ...values
-        ];
+        definitiveValues = [{[valueKey]: undefined, [labelKey]: undefinedLabel}, ...values];
     }
 
     return (
         <Theme theme={pTheme}>
             {theme => (
                 <div className={theme.select}>
-                    {label && (
-                        <h5 className={theme.title}>{i18next.t(label)}</h5>
-                    )}
-                    <RadioGroup
-                        name={name}
-                        value={value}
-                        onChange={onChange}
-                        disabled={disabled}
-                    >
+                    {label && <h5 className={theme.title}>{i18next.t(label)}</h5>}
+                    <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
                         {definitiveValues.map(option => {
                             const optVal = (option as any)[valueKey];
                             const optLabel = (option as any)[labelKey];

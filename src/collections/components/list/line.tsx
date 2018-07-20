@@ -75,7 +75,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
 
         // Permet de masquer la preview par défaut de drag and drop HTML5.
         if (this.props.connectDragPreview) {
-            this.props.connectDragPreview(getEmptyImage());
+            this.props.connectDragPreview(getEmptyImage() as any);
         }
     }
 

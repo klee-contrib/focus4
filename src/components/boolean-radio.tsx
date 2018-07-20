@@ -23,34 +23,14 @@ export interface BooleanRadioProps {
     value?: boolean;
 }
 
-export function BooleanRadio({
-    disabled,
-    error,
-    name,
-    onChange,
-    theme: pTheme,
-    value
-}: BooleanRadioProps) {
+export function BooleanRadio({disabled, error, name, onChange, theme: pTheme, value}: BooleanRadioProps) {
     return (
         <Theme theme={pTheme}>
             {theme => (
                 <>
-                    <RadioGroup
-                        name={name}
-                        value={value}
-                        onChange={onChange}
-                        className={theme.radio}
-                    >
-                        <RadioButton
-                            label={i18next.t("focus.yes")}
-                            value={true}
-                            disabled={disabled}
-                        />
-                        <RadioButton
-                            label={i18next.t("focus.no")}
-                            value={false}
-                            disabled={disabled}
-                        />
+                    <RadioGroup name={name} value={value} onChange={onChange} className={theme.radio}>
+                        <RadioButton label={i18next.t("focus.boolean.yes")} value={true} disabled={disabled} />
+                        <RadioButton label={i18next.t("focus.boolean.no")} value={false} disabled={disabled} />
                     </RadioGroup>
                     {error ? <div>{error}</div> : null}
                 </>
