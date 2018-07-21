@@ -2,7 +2,7 @@ import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
 import {config} from "../../config";
-import {buildNode, Entity, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../../entity";
+import {buildNode, Entity, EntityToType, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../../entity";
 
 import {ListStoreBase} from "./base";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
@@ -11,7 +11,9 @@ import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
 export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
 
 /** Critères génériques de recherche. */
-export interface SearchProperties {
+export interface SearchProperties<C extends Entity = any> {
+    /** Critère personnalisé. */
+    criteria?: EntityToType<C>;
     /** Champ texte. */
     query?: string;
     /** Champ sur lequel grouper. */
@@ -27,7 +29,7 @@ export interface SearchProperties {
 }
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<T> implements SearchProperties {
+export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<T> {
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
 
@@ -65,7 +67,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
     constructor(
         service: SearchService<T>,
         criteria?: C,
-        initialQuery?: SearchProperties & {debounceCriteria?: boolean}
+        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean}
     );
     /**
      * Crée un nouveau store de recherche.
@@ -75,19 +77,19 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
      */
     constructor(
         service: SearchService<T>,
-        initialQuery?: SearchProperties & {debounceCriteria?: boolean},
+        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean},
         criteria?: C
     );
     constructor(
         service: SearchService<T>,
-        secondParam?: SearchProperties & {debounceCriteria?: boolean} | C,
-        thirdParam?: SearchProperties & {debounceCriteria?: boolean} | C
+        secondParam?: SearchProperties<C> & {debounceCriteria?: boolean} | C,
+        thirdParam?: SearchProperties<C> & {debounceCriteria?: boolean} | C
     ) {
         super();
         this.service = service;
 
         // On gère les paramètres du constructeur dans les deux ordres.
-        let initialQuery: SearchProperties & {debounceCriteria?: boolean};
+        let initialQuery: SearchProperties<C> & {debounceCriteria?: boolean};
         let criteria;
 
         if (secondParam && (secondParam as C).name) {
@@ -98,15 +100,15 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
             criteria = thirdParam as C;
         }
 
-        if (initialQuery) {
-            this.setProperties(initialQuery);
-        }
-
         // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
         if (criteria) {
             const node = buildNode(criteria);
             nodeToFormNode<C>(node, node, true);
             this.criteria = node as any;
+        }
+
+        if (initialQuery) {
+            this.setProperties(initialQuery);
         }
 
         // Relance la recherche à chaque modification de propriété.
@@ -252,7 +254,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
 
         this.pendingCount++;
 
-         // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
+        // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
         if (!isScroll) {
             this.selectedList.clear();
         }
@@ -282,13 +284,17 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
      * @param props Les propriétés à mettre à jour.
      */
     @action.bound
-    setProperties(props: SearchProperties) {
+    setProperties(props: SearchProperties<C>) {
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.selectedFacets = props.selectedFacets || this.selectedFacets;
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
         this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         this.query = props.query || this.query;
         this.top = props.top || this.top;
+
+        if (this.criteria && props.criteria) {
+            this.criteria.set(props.criteria);
+        }
     }
 
     /**
