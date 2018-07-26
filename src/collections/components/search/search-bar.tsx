@@ -25,8 +25,6 @@ export interface SearchBarProps<T, C extends Entity> {
     disableInputCriteria?: boolean;
     /** Préfixe i18n pour les libellés et les icônes. Par défaut : "focus" */
     i18nPrefix?: string;
-    /** Ref vers la SearchBar. */
-    innerRef?: (instance: SearchBar<T, C>) => void;
     /** Placeholder pour le champ texte. */
     placeholder?: string;
     /** Nom de la propriété des critères correspondant au scope, pour affichage du sélecteur. */

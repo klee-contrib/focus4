@@ -25,8 +25,6 @@ export interface FieldOptions<T extends FieldEntry> {
     hasLabel?: boolean;
     /** Pour l'icône de la Tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** A utiliser à la place de `ref`. */
-    innerRef?: (i: Field<T>) => void;
     /** L'input à utiliser. */
     inputType?: "input" | "select" | "autocomplete";
     /** Par défaut : "top". */
