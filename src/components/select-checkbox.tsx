@@ -41,6 +41,8 @@ export interface SelectCheckboxProps {
     label?: string;
     /** Name of field for label. */
     labelKey: string;
+    /** Max number of selected items. */
+    maxSelectable?: number;
     /** Name for input field. */
     name: string;
     /** Call with each value change. */
@@ -60,6 +62,7 @@ export function SelectCheckbox({
     error,
     label,
     labelKey,
+    maxSelectable,
     name,
     onChange,
     theme: pTheme,
@@ -86,7 +89,12 @@ export function SelectCheckbox({
                                         name={`${name}-${optVal}`}
                                         value={isSelected}
                                         onClick={clickHandler}
-                                        disabled={disabled}
+                                        disabled={
+                                            disabled ||
+                                            (maxSelectable !== undefined &&
+                                                maxSelectable === (value && value.length) &&
+                                                !isSelected)
+                                        }
                                         label={i18next.t(optLabel)}
                                     />
                                 </li>
