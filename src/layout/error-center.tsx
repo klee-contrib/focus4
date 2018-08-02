@@ -34,7 +34,7 @@ export class ErrorCenter extends React.Component<ErrorCenterProps> {
 
     // Ajoute un listener sur la source pour enregistrer les erreurs.
     componentWillMount() {
-        (this.props.source || window).onerror = e => this.errors.push(e);
+        (this.props.source || window).onerror = (e: string) => this.errors.push(e);
     }
 
     @action.bound
