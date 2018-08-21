@@ -77,7 +77,8 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
                     values(node).every(item => {
                         if (isEntityField(item)) {
                             return (item as FormEntityField).isValid;
-                        } else if (isAnyFormNode(item)) {
+                        } else if (isAnyFormNode(item) && item !== (node as any)) {
+                            // Un noeud qui a été ajouté dans une liste contient une référence vers lui-même dans `sourceNode`, il faut donc la passer au risque de boucler infiniment.
                             return item.form.isValid;
                         } else {
                             return true;

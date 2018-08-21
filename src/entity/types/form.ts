@@ -56,7 +56,7 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
     reset(): void;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    set(data: (EntityToType<T> & NodeToType<U>)[]): void;
+    setNodes(data: (EntityToType<T> & NodeToType<U>)[]): void;
 
     /** StoreNode original. */
     readonly sourceNode: StoreListNode<T>;
