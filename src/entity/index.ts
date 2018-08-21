@@ -1,4 +1,4 @@
-export {default as Field, FieldStyle} from "./field";
+export {Field, FieldStyle} from "./field";
 export {autocompleteFor, fieldFor, fromField, makeField, patchField, selectFor, stringFor} from "./field";
 export {ActionConfig, Form, FormStyle, makeFormActions, makeFormNode} from "./form";
 export {formatNumber} from "./formatter";
