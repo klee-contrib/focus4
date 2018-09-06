@@ -31,6 +31,8 @@ export interface PanelProps extends PanelButtonsProps {
     hideProgressBar?: boolean;
     /** Affiche le bouton d'aide. */
     showHelp?: boolean;
+    /** Id du panel dans le scrollspy, si besoin de l'identfier. */
+    sscId?: string;
     /** CSS. */
     theme?: PanelStyle;
     /** Titre du panel. */
@@ -45,8 +47,10 @@ export interface PanelDescriptor {
 /** Construit un Panel avec un titre et des actions. */
 @observer
 export class Panel extends React.Component<PanelProps> {
-    private id!: string;
-    @observable private isInForm = false;
+    private id = this.props.sscId;
+
+    @observable
+    private isInForm = false;
 
     static contextTypes = {
         scrollspy: PropTypes.object
@@ -55,7 +59,7 @@ export class Panel extends React.Component<PanelProps> {
     /** On récupère le contexte posé par le scrollspy parent. */
     context!: {
         scrollspy: {
-            registerPanel(panel: PanelDescriptor): string;
+            registerPanel(panel: PanelDescriptor, sscId?: string): string;
             removePanel(id: string): void;
             updatePanel(id: string, panel: PanelDescriptor): void;
         };
@@ -65,7 +69,7 @@ export class Panel extends React.Component<PanelProps> {
     componentDidMount() {
         const {hideOnScrollspy, title} = this.props;
         if (this.context.scrollspy && !hideOnScrollspy) {
-            this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this) as HTMLDivElement});
+            this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this) as HTMLDivElement}, this.id);
         }
 
         // On essaie de savoir si ce panel est inclus dans un formulaire.
@@ -80,14 +84,14 @@ export class Panel extends React.Component<PanelProps> {
 
     /** On se met à jour dans le scrollspy. */
     componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
-        if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title) {
+        if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title && this.id) {
             this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this) as HTMLDivElement});
         }
     }
 
     /** On se retire du scrollspy. */
     componentWillUnmount() {
-        if (this.context.scrollspy && !this.props.hideOnScrollspy) {
+        if (this.context.scrollspy && !this.props.hideOnScrollspy && this.id) {
             this.context.scrollspy.removePanel(this.id);
         }
     }

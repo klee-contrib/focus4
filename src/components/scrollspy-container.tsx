@@ -22,6 +22,8 @@ const Theme = themr("scrollspy", styles);
 export interface ScrollspyContainerProps {
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
+    /** Menu personnalisé pour le scrollspy. */
+    MenuComponent?: React.ComponentType<ScrollspyMenuProps>;
     /** Offset de scroll à partir du moment ou le menu devient fixe, par rapport au header. Par défaut : toutes les marges qui vont bien. */
     menuOffset?: number;
     /** Largeur du menu. Par défaut : 250. */
@@ -38,9 +40,11 @@ export interface ScrollspyContainerProps {
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
     /** Offset entre le container et le haut du document. */
-    @observable private offsetTop = 0;
+    @observable
+    private offsetTop = 0;
     /** Scroll courant. */
-    @observable private scrollTop = 0;
+    @observable
+    private scrollTop = 0;
 
     /** Map des panels qui se sont enregistrés dans le container. */
     private readonly panels = observable.map<string, PanelDescriptor>();
@@ -84,10 +88,10 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * @param panel La description d'un panel
      */
     @action.bound
-    private registerPanel(panel: PanelDescriptor) {
-        const id = uniqueId("ssc-panel");
-        this.panels.set(id, panel);
-        return id;
+    private registerPanel(panel: PanelDescriptor, sscId?: string) {
+        sscId = sscId || uniqueId("ssc-panel");
+        this.panels.set(sscId, panel);
+        return sscId;
     }
 
     /**
@@ -137,16 +141,6 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
         return sortBy(Array.from(this.panels.entries()), ([_, {node}]) => this.getOffsetTop(node));
     }
 
-    /** Récupère les items du menu à partir des panels enregistrés. */
-    @computed.struct
-    private get menuItems() {
-        return this.sortedPanels.map(([id, {node, title}]) => ({
-            id,
-            label: title && i18next.t(title),
-            onClick: () => this.scrollTo(node)
-        }));
-    }
-
     /** Détermine le panel actif dans le menu */
     @computed.struct
     private get activeItem() {
@@ -193,34 +187,42 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     }
 
     /**
-     * Scrolle la page vers le noeud demandé.
-     * @param node Le noeud cible.
+     * Scrolle la page vers le panel demandé.
+     * @param sscId Le panel cible.
      */
-    private scrollTo(node: HTMLDivElement) {
-        window.scrollTo({
-            top: this.getOffsetTop(node),
-            behavior: this.props.scrollBehaviour || "smooth"
-        });
+    @action.bound
+    scrollToPanel(sscId: string) {
+        const panel = this.panels.get(sscId);
+        if (panel) {
+            window.scrollTo({
+                top: this.getOffsetTop(panel.node),
+                behavior: this.props.scrollBehaviour || "smooth"
+            });
+        }
     }
 
     render() {
-        const {children, hideBackToTop, menuWidth = 250, scrollBehaviour = "smooth"} = this.props;
+        const {
+            children,
+            hideBackToTop,
+            MenuComponent = ScrollspyMenu,
+            menuWidth = 250,
+            scrollBehaviour = "smooth"
+        } = this.props;
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
                     <div className={theme.scrollspy}>
                         <nav style={this.menuPosition}>
-                            <ul>
-                                {this.menuItems.map(({label, id, onClick}) => (
-                                    <li
-                                        className={this.activeItem === id ? theme.active : undefined}
-                                        key={id}
-                                        onClick={onClick}
-                                    >
-                                        {label}
-                                    </li>
-                                ))}
-                            </ul>
+                            <MenuComponent
+                                activeClassName={theme.active}
+                                activeId={this.activeItem}
+                                panels={this.sortedPanels.map(([id, {title}]) => ({
+                                    id,
+                                    title: title && i18next.t(title)
+                                }))}
+                                scrollToPanel={this.scrollToPanel}
+                            />
                         </nav>
                         <div className={theme.content} style={{marginLeft: menuWidth}}>
                             {children}
@@ -231,4 +233,33 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
             </Theme>
         );
     }
+}
+
+/** Props du ScrollspyMenu. */
+export interface ScrollspyMenuProps {
+    /** Id du panel actif. */
+    activeId: string;
+    /** Classe CSS à ajouter pour le panel actif. */
+    activeClassName?: string;
+    /** Liste des panels. */
+    panels: {title: string; id: string}[];
+    /** Fonction pour scroller vers un panel. */
+    scrollToPanel: (id: string) => void;
+}
+
+/** Menu par défaut pour le ScrollspyContainer. */
+export function ScrollspyMenu({activeId, activeClassName, panels, scrollToPanel}: ScrollspyMenuProps) {
+    return (
+        <ul>
+            {panels.map(({title, id}) => (
+                <li
+                    className={activeId === id ? activeClassName : undefined}
+                    key={id}
+                    onClick={() => scrollToPanel(id)}
+                >
+                    {title}
+                </li>
+            ))}
+        </ul>
+    );
 }
