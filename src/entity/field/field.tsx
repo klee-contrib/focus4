@@ -19,18 +19,19 @@ const Theme = themr("field", styles);
 export interface FieldOptions<T extends FieldEntry> {
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
-    /** Surcharge l'erreur du field. */
-    error?: string | null;
     /** Affiche le label. */
     hasLabel?: boolean;
     /** Pour l'icône de la Tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** @internal */
     /** L'input à utiliser. */
     inputType?: "input" | "select" | "autocomplete";
     /** Par défaut : "top". */
     labelCellPosition?: string;
     /** Largeur en % du label. Par défaut : 33. */
     labelRatio?: number;
+    /** N'affiche jamais le champ en erreur. */
+    noError?: boolean;
     /** Handler de modification de la valeur. */
     onChange?: (value: T["fieldType"]) => void;
     /** CSS. */
@@ -56,8 +57,9 @@ export class Field<T extends FieldEntry> extends React.Component<
     @computed
     get showError() {
         return (
-            (!this.hideErrorOnInit || (this.context.form && this.context.form.forceErrorDisplay) || false) &&
-            !documentHelper.isElementActive(this.valueElement)
+            !this.props.noError &&
+            !documentHelper.isElementActive(this.valueElement) &&
+            (!this.hideErrorOnInit || (this.context.form && this.context.form.forceErrorDisplay) || false)
         );
     }
 
