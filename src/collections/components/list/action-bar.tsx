@@ -85,7 +85,9 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
         if (
             hasFacetBox &&
             isSearch(store) &&
-            store.facets.some(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
+            store.facets.some(facet =>
+                shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
+            )
         ) {
             return (
                 <div style={{position: "relative"}}>
@@ -228,7 +230,9 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
         if (
             this.displayFacetBox &&
             isSearch(store) &&
-            store.facets.every(facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
+            store.facets.every(
+                facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
+            )
         ) {
             this.displayFacetBox = false;
         }

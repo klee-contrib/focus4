@@ -38,7 +38,14 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                     <div className={theme.facetBox}>
                         <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
                         {store.facets
-                            .filter(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
+                            .filter(facet =>
+                                shouldDisplayFacet(
+                                    facet,
+                                    store.selectedFacets,
+                                    showSingleValuedFacets,
+                                    store.totalCount
+                                )
+                            )
                             .map(facet => {
                                 if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                                     return (

@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "9.6.0-rc9",
+    "version": "9.6.0-rc10",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -54,6 +54,7 @@
         "@types/shelljs": "0.8.0",
         "@types/tape": "4.2.32",
         "ignore-styles": "5.0.1",
+        "prettier": "1.13.7",
         "shelljs": "0.8.2",
         "stylelint": "9.4.0",
         "tap-spec": "5.0.0",
