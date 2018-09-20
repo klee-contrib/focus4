@@ -283,7 +283,13 @@ export class InputDate extends React.Component<InputDateProps> {
                                         handleSelect={() => null}
                                         selectedDate={this.jsDate}
                                         display={this.calendarDisplay}
-                                        locale={moment.locale()}
+                                        locale={{
+                                            months: moment.localeData().months(),
+                                            monthsShort: moment.localeData().monthsShort(),
+                                            weekdays: moment.localeData().weekdays(),
+                                            weekdaysLetter: moment.localeData().weekdaysMin(),
+                                            weekdaysShort: moment.localeData().weekdaysShort()
+                                        }}
                                         onChange={this.onCalendarChange}
                                         theme={theme}
                                     />

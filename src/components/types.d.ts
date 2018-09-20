@@ -6,12 +6,14 @@ declare module "react-toolbox/lib/date_picker/theme.css";
 declare module "react-toolbox/lib/time_picker/theme.css";
 
 declare module "react-toolbox/lib/date_picker/Calendar" {
+    import {DatePickerLocale} from "react-toolbox/lib/date_picker";
+
     interface CalendarProps {
         disabledDates?: Date[];
         display?: "months" | "years";
         enabledDates?: Date[];
         handleSelect?: Function;
-        locale?: string | {};
+        locale?: string | DatePickerLocale;
         maxDate?: Date;
         minDate?: Date;
         onChange: Function;
