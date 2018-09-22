@@ -14,7 +14,7 @@ export interface FormData {
 
 /** Transforme les nodes et fields d'un noeud en leur équivalent dans un formulaire. */
 export type NodeToForm<T extends Entity, U = {}> = {
-    [P in keyof (StoreNode<T> & U)]: (StoreNode<T> & U)[P] extends StoreNode<infer V>
+    readonly [P in keyof (StoreNode<T> & U)]: (StoreNode<T> & U)[P] extends StoreNode<infer V>
         ? FormNode<V>
         : (StoreNode<T> & U)[P] extends StoreListNode<infer W, infer X>
             ? FormListNode<W, X>

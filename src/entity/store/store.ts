@@ -21,7 +21,9 @@ import {toFlatValues} from "./util";
 
 /** Récupère les noeuds de store associés aux entités définies dans T. */
 export type ExtractEntities<T> = {
-    [P in keyof T]: T[P] extends Entity ? StoreNode<T[P]> : T[P] extends Entity[] ? StoreListNode<T[P][0]> : T[P]
+    readonly [P in keyof T]: T[P] extends Entity
+        ? StoreNode<T[P]>
+        : T[P] extends Entity[] ? StoreListNode<T[P][0]> : T[P]
 };
 
 /** Récupère les types associés aux entités définies dans T. */

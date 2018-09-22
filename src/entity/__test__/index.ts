@@ -292,7 +292,7 @@ test("FormNode: Création", t => {
         entry2.ligneList.$entity,
         "Une sous liste a bien toujours son entité attachée."
     );
-    t.assert(formNode2.ligneList.set, "Une sous liste a bien toujours sa méthode 'set' attachée");
+    t.assert(formNode2.ligneList.setNodes, "Une sous liste a bien toujours sa méthode 'setNodes' attachée");
     t.deepEqual(entry, formNode.sourceNode, "Le sourceNode racine est bien le bon.");
     t.deepEqual(entry.structure, formNode.structure.sourceNode, "Le sous-sourceNode simple est bien le bon");
     t.deepEqual(entry2.ligneList, formNode2.ligneList.sourceNode, "Le sous-sourceNode liste est bien le bon");
