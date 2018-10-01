@@ -37,7 +37,7 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
     }
 
     /** Affiche le corps du tableau. */
-    private renderTableBody() {
+    protected renderTableBody() {
         const {lineTheme, itemKey, RowComponent} = this.props;
         const Line = LineWrapper as new () => LineWrapper<T>;
 

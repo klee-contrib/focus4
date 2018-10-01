@@ -21,8 +21,8 @@ export interface InputProps extends RTInputProps {
 }
 
 export class Input extends React.Component<InputProps> {
-    private inputElement!: HTMLInputElement;
-    private mask?: InputMask;
+    protected inputElement!: HTMLInputElement;
+    protected mask?: InputMask;
 
     componentWillMount() {
         const {mask, value} = this.props;

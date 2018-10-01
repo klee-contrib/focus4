@@ -34,27 +34,27 @@ export interface InputTimeProps extends InputProps {
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
 export class InputTime extends React.Component<InputTimeProps> {
-    private clock?: HTMLDivElement | null;
-    private clockComp?: any;
-    private scrollParent!: Element;
+    protected clock?: HTMLDivElement | null;
+    protected clockComp?: any;
+    protected scrollParent!: Element;
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
-    private readonly _inputTimeId = uniqueId("input-time-");
+    protected readonly _inputTimeId = uniqueId("input-time-");
 
     /** Heure actuelle. */
-    @observable private time = this.toMoment(this.props.value);
+    @observable protected time = this.toMoment(this.props.value);
 
     /** Contenu du champ texte. */
-    @observable private timeText = this.formatTime(this.props.value);
+    @observable protected timeText = this.formatTime(this.props.value);
 
     /** Affiche l'horloge. */
-    @observable private showClock = false;
+    @observable protected showClock = false;
 
     /** Mode de l'horloge. */
-    @observable private clockDisplay = "hours" as "hours" | "minutes";
+    @observable protected clockDisplay = "hours" as "hours" | "minutes";
 
     /** Position de l'horloge. */
-    @observable private clockPosition?: "up" | "down";
+    @observable protected clockPosition?: "up" | "down";
 
     componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);

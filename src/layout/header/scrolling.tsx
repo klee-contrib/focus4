@@ -44,9 +44,9 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
     @observable placeholderHeight = 1000;
 
     /** Header dans le DOM. */
-    private header?: Element | null;
+    protected header?: Element | null;
     /** Elément de DOM sur lequel on écoute le scroll */
-    private readonly scrollTargetNode = this.props.scrollTargetSelector
+    protected readonly scrollTargetNode = this.props.scrollTargetSelector
         ? document.querySelector(this.props.scrollTargetSelector)!
         : window;
 

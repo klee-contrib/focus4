@@ -40,14 +40,12 @@ export interface ScrollspyContainerProps {
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
     /** Offset entre le container et le haut du document. */
-    @observable
-    private offsetTop = 0;
+    @observable protected offsetTop = 0;
     /** Scroll courant. */
-    @observable
-    private scrollTop = 0;
+    @observable protected scrollTop = 0;
 
     /** Map des panels qui se sont enregistrés dans le container. */
-    private readonly panels = observable.map<string, PanelDescriptor>();
+    protected readonly panels = observable.map<string, PanelDescriptor>();
 
     static childContextTypes = {
         header: PropTypes.object,
@@ -88,7 +86,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * @param panel La description d'un panel
      */
     @action.bound
-    private registerPanel(panel: PanelDescriptor, sscId?: string) {
+    protected registerPanel(panel: PanelDescriptor, sscId?: string) {
         sscId = sscId || uniqueId("ssc-panel");
         this.panels.set(sscId, panel);
         return sscId;
@@ -99,7 +97,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * @param id L'id du panel.
      */
     @action.bound
-    private removePanel(id: string) {
+    protected removePanel(id: string) {
         this.panels.delete(id);
     }
 
@@ -109,7 +107,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * @param panel La description du panel.
      */
     @action.bound
-    private updatePanel(id: string, panel: PanelDescriptor) {
+    protected updatePanel(id: string, panel: PanelDescriptor) {
         this.panels.set(id, panel);
     }
 
@@ -130,20 +128,20 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
 
     /** Synchronise le scroll/resize de la page avec les observables qui les représentent. */
     @action.bound
-    private onScroll() {
+    protected onScroll() {
         this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
         this.offsetTop = (findDOMNode(this) as Element).getBoundingClientRect().top;
     }
 
     /** Récupère les panels triés par position dans la page. */
     @computed.struct
-    private get sortedPanels() {
+    protected get sortedPanels() {
         return sortBy(Array.from(this.panels.entries()), ([_, {node}]) => this.getOffsetTop(node));
     }
 
     /** Détermine le panel actif dans le menu */
     @computed.struct
-    private get activeItem() {
+    protected get activeItem() {
         const active = this.sortedPanels
             .slice()
             .reverse()
@@ -153,7 +151,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
 
     /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
     @computed.struct
-    private get menuPosition() {
+    protected get menuPosition() {
         const {
             menuOffset = this.context.header.topRowHeight +
                 this.context.header.marginBottom +
@@ -170,7 +168,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * Récupère l'offset d'un noeud HTML (un panel) par rapport au top du document.
      * @param node Le noeud HTML.
      */
-    private getOffsetTop(node: HTMLElement) {
+    protected getOffsetTop(node: HTMLElement) {
         return untracked(() => {
             // Il y a un bug très bizarre qui fait planter tout MobX à cause de l'accès à la prop, donc on met un untracked pour le contourner.
             let distance = 0;

@@ -60,7 +60,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
      * Exécute une action
      * @param key L'index de l'action dans la liste.
      */
-    private handleAction(key: number, e: React.SyntheticEvent<any>) {
+    protected handleAction(key: number, e: React.SyntheticEvent<any>) {
         const {data, operationList} = this.props;
 
         // On arrête bien tous les autres évènements, pour être sûr.

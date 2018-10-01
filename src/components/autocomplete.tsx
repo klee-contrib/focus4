@@ -50,7 +50,7 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
 export class Autocomplete extends React.Component<AutocompleteProps> {
-    private inputElement!: HTMLInputElement | null;
+    protected inputElement!: HTMLInputElement | null;
 
     /** Composant en chargement. */
     @observable protected isLoading = false;

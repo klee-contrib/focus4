@@ -66,9 +66,9 @@ export interface LineWrapperProps<T> {
 @observer
 export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
     /** Hauteur de la ligne (en mode ligne, en mosaïque elle est fixée.) */
-    @observable private height?: number;
+    @observable protected height?: number;
     /** Force l'affichage des actions. */
-    @observable private forceActionDisplay = false;
+    @observable protected forceActionDisplay = false;
 
     componentDidMount() {
         this.updateHeight();

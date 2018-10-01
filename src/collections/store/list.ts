@@ -15,7 +15,7 @@ export class ListStore<T> extends ListStoreBase<T> {
     readonly innerList: IObservableArray<T> = observable<T>([]);
 
     /** Champs sur lequels on autorise le filtrage, en local. */
-    private readonly filterFields?: (keyof T)[];
+    protected readonly filterFields?: (keyof T)[];
 
     /**
      * Construit un store de liste local.

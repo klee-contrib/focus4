@@ -47,10 +47,9 @@ export interface PanelDescriptor {
 /** Construit un Panel avec un titre et des actions. */
 @observer
 export class Panel extends React.Component<PanelProps> {
-    private id = this.props.sscId;
+    protected id = this.props.sscId;
 
-    @observable
-    private isInForm = false;
+    @observable protected isInForm = false;
 
     static contextTypes = {
         scrollspy: PropTypes.object

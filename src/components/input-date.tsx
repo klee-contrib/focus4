@@ -54,25 +54,25 @@ export interface InputDateProps extends InputProps {
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
 export class InputDate extends React.Component<InputDateProps> {
-    private calendar?: HTMLDivElement | null;
+    protected calendar?: HTMLDivElement | null;
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
-    private readonly _inputDateId = uniqueId("input-date-");
+    protected readonly _inputDateId = uniqueId("input-date-");
 
     /** Date actuelle. */
-    @observable private date = this.toMoment(this.props.value);
+    @observable protected date = this.toMoment(this.props.value);
 
     /** Contenu du champ texte. */
-    @observable private dateText = this.formatDate(this.props.value);
+    @observable protected dateText = this.formatDate(this.props.value);
 
     /** Affiche le calendrier. */
-    @observable private showCalendar = false;
+    @observable protected showCalendar = false;
 
     /** Mode du calendrier. */
-    @observable private calendarDisplay = "months" as "months" | "years";
+    @observable protected calendarDisplay = "months" as "months" | "years";
 
     /** Position du calendrier. */
-    @observable private calendarPosition?: "up" | "down";
+    @observable protected calendarPosition?: "up" | "down";
 
     componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);

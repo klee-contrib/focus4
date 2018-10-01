@@ -34,13 +34,13 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
 
     /** Correspond aux données chargées mais non affichées. */
     @computed
-    private get hasMoreHidden() {
+    protected get hasMoreHidden() {
         return (this.displayedCount && this.data.length > this.displayedCount) || false;
     }
 
     /** Correpond aux données non chargées. */
     @computed
-    private get hasMoreToLoad() {
+    protected get hasMoreToLoad() {
         const {store} = this.props;
         return isSearch(store) && store.totalCount > store.currentCount;
     }

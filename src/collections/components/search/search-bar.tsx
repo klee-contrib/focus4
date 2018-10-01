@@ -50,7 +50,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
 
     /** Paires clés/valeurs des différents critères. */
     @computed
-    private get flatCriteria() {
+    protected get flatCriteria() {
         const {criteria} = this.props.store;
         if (criteria) {
             return toPairs(toFlatValues(criteria));
@@ -61,7 +61,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
 
     /** Listes des noms de critères dans l'ordre de saisie dans le champ texte. */
     @computed
-    private get criteria() {
+    protected get criteria() {
         return this.criteriaList.filter(crit => this.flatCriteria.map(([c, _]) => c).find(c => c === crit));
     }
 

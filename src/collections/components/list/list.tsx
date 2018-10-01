@@ -110,7 +110,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     @observable private displayedIdx?: number;
 
     /** Liste des éléments sélectionnés par le drag and drop. */
-    private readonly draggedItems = observable<T>([]);
+    protected readonly draggedItems = observable<T>([]);
 
     /** LineWrapper avec la DragSource, pour une liste avec drag and drop. */
     private readonly DraggableLineWrapper = this.props.hasDragAndDrop
@@ -176,13 +176,13 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
     /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
     @computed
-    private get isAddItemShown() {
+    protected get isAddItemShown() {
         return !!(!this.props.hideAdditionalItems && this.addItemHandler && this.mode === "mosaic");
     }
 
     /** Désactive l'animation de drag and drop sur les lignes. */
     @computed
-    private get disableDragAnimation() {
+    protected get disableDragAnimation() {
         const {disableDragAnimThreshold} = this.props;
         if (disableDragAnimThreshold === undefined) {
             return false;
@@ -254,7 +254,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
             // En mosaïque, on affiche le détail juste après une fin de ligne au lieu de juste après l'élément cliqué.
             if (this.mode === "mosaic") {
-                idx += this.byLine - idx % this.byLine - (this.isAddItemShown ? 1 : 0);
+                idx += this.byLine - (idx % this.byLine) - (this.isAddItemShown ? 1 : 0);
             }
             const item = this.displayedData[this.displayedIdx];
 
