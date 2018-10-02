@@ -153,7 +153,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
     }
 
     render() {
-        const {keyResolver, querySearcher, theme: pTheme, ...props} = this.props;
+        const {keyResolver, querySearcher, theme: pTheme, isQuickSearch, ...props} = this.props;
         return (
             <Theme theme={pTheme}>
                 {theme => (
