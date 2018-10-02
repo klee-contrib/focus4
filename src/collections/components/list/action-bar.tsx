@@ -240,13 +240,19 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 
     componentDidMount() {
         this.updateFacetBoxHeight();
+        window.addEventListener("resize", this.updateFacetBoxHeight);
     }
 
     componentDidUpdate() {
         this.updateFacetBoxHeight();
     }
 
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateFacetBoxHeight);
+    }
+
     /** On maintient également la hauteur de la FacetBox en permanance.  */
+    @action.bound
     protected updateFacetBoxHeight() {
         if (this.facetBox && this.facetBox.clientHeight > MIN_FACETBOX_HEIGHT) {
             this.facetBoxHeight = this.facetBox.clientHeight;
@@ -264,7 +270,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
             store
         } = this.props;
         return (
-            <Theme theme={this.props.theme}>
+            <Theme theme={this.props.theme} onMountOrUpdate={this.updateFacetBoxHeight}>
                 {theme => (
                     <div className={theme.container}>
                         {/* ActionBar en tant que telle. */}
