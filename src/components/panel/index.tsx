@@ -1,27 +1,28 @@
 import i18next from "i18next";
 import {snakeCase} from "lodash";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
-import {ReactComponent} from "../../config";
+import {themr} from "../../theme";
 
-import ButtonHelp from "../button-help";
+import {ButtonHelp} from "../button-help";
 import {PanelButtons, PanelButtonsProps} from "./buttons";
 export {PanelButtons};
 
 import * as styles from "../__style__/panel.css";
-
 export type PanelStyle = Partial<typeof styles>;
+const Theme = themr("panel", styles);
 
 /** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {
     /** Nom du bloc pour le bouton d'aide. Par défaut : premier mot du titre. */
     blockName?: string;
     /** Boutons à afficher dans le Panel. Par défaut : les boutons de formulaire (edit / save / cancel). */
-    Buttons?: ReactComponent<PanelButtonsProps>;
+    Buttons?: React.ComponentType<PanelButtonsProps>;
     /** Position des boutons. Par défaut : "top". */
     buttonsPosition?: "both" | "bottom" | "top" | "none";
     /** Masque le panel dans le ScrollspyContainer. */
@@ -30,6 +31,8 @@ export interface PanelProps extends PanelButtonsProps {
     hideProgressBar?: boolean;
     /** Affiche le bouton d'aide. */
     showHelp?: boolean;
+    /** Id du panel dans le scrollspy, si besoin de l'identfier. */
+    sscId?: string;
     /** CSS. */
     theme?: PanelStyle;
     /** Titre du panel. */
@@ -42,9 +45,11 @@ export interface PanelDescriptor {
 }
 
 /** Construit un Panel avec un titre et des actions. */
-export class Panel extends React.Component<PanelProps, void> {
+@observer
+export class Panel extends React.Component<PanelProps> {
+    protected id = this.props.sscId;
 
-    private id!: string;
+    @observable protected isInForm = false;
 
     static contextTypes = {
         scrollspy: PropTypes.object
@@ -53,40 +58,68 @@ export class Panel extends React.Component<PanelProps, void> {
     /** On récupère le contexte posé par le scrollspy parent. */
     context!: {
         scrollspy: {
-            registerPanel(panel: PanelDescriptor): string;
+            registerPanel(panel: PanelDescriptor, sscId?: string): string;
             removePanel(id: string): void;
             updatePanel(id: string, panel: PanelDescriptor): void;
-        }
+        };
     };
 
     /** On s'enregistre dans le scrollspy. */
     componentDidMount() {
         const {hideOnScrollspy, title} = this.props;
         if (this.context.scrollspy && !hideOnScrollspy) {
-            this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this)});
+            this.id = this.context.scrollspy.registerPanel({title, node: findDOMNode(this) as HTMLDivElement}, this.id);
+        }
+
+        // On essaie de savoir si ce panel est inclus dans un formulaire.
+        let parentNode = findDOMNode(this) as HTMLElement | null;
+        while (parentNode && parentNode.tagName !== "FORM") {
+            parentNode = parentNode.parentElement;
+        }
+        if (parentNode) {
+            this.isInForm = true;
         }
     }
 
     /** On se met à jour dans le scrollspy. */
     componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
-         if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title) {
-            this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this)});
+        if (this.context.scrollspy && !hideOnScrollspy && title !== this.props.title && this.id) {
+            this.context.scrollspy.updatePanel(this.id, {title, node: findDOMNode(this) as HTMLDivElement});
         }
     }
 
     /** On se retire du scrollspy. */
     componentWillUnmount() {
-        if (this.context.scrollspy && !this.props.hideOnScrollspy) {
+        if (this.context.scrollspy && !this.props.hideOnScrollspy && this.id) {
             this.context.scrollspy.removePanel(this.id);
         }
     }
 
     render() {
-        const {blockName, Buttons = PanelButtons, buttonsPosition = "top", children, i18nPrefix, loading, title, showHelp, editing, toggleEdit, save, hideProgressBar, theme} = this.props;
+        const {
+            blockName,
+            Buttons = PanelButtons,
+            buttonsPosition = "top",
+            children,
+            i18nPrefix,
+            loading,
+            title,
+            showHelp,
+            editing,
+            toggleEdit,
+            save,
+            hideProgressBar
+        } = this.props;
 
-        const buttons = (
-            <div className={theme!.actions}>
-                <Buttons editing={editing} i18nPrefix={i18nPrefix} loading={loading} save={save} toggleEdit={toggleEdit} />
+        const buttons = (theme: PanelStyle) => (
+            <div className={theme.actions}>
+                <Buttons
+                    editing={editing}
+                    i18nPrefix={i18nPrefix}
+                    loading={loading}
+                    save={!this.isInForm ? save : undefined}
+                    toggleEdit={toggleEdit}
+                />
             </div>
         );
 
@@ -94,36 +127,35 @@ export class Panel extends React.Component<PanelProps, void> {
         const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
         return (
-            <div className={`${theme!.panel} ${loading ? theme!.busy : ""} ${editing ? theme!.edit : ""}`}>
-                {!hideProgressBar && loading ? <ProgressBar mode="indeterminate" theme={{indeterminate: theme!.progress}} /> : null}
-                {title || areButtonsTop ?
-                    <div className={`${theme!.title} ${theme!.top}`}>
-                        {title ?
-                            <h3>
-                                <span data-spy-title>{i18next.t(title)}</span>
-                                {showHelp ?
-                                    <ButtonHelp
-                                        blockName={blockName || snakeCase(i18next.t(title))
-                                            .split("_")[0]}
-                                        i18nPrefix={i18nPrefix}
-                                    />
-                                : null}
-                            </h3>
-                        : null}
-                        {areButtonsTop ? buttons : null}
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <div className={`${theme.panel} ${loading ? theme.busy : ""} ${editing ? theme.edit : ""}`}>
+                        {!hideProgressBar && loading ? (
+                            <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} />
+                        ) : null}
+                        {title || areButtonsTop ? (
+                            <div className={`${theme.title} ${theme.top}`}>
+                                {title ? (
+                                    <h3>
+                                        <span data-spy-title>{i18next.t(title)}</span>
+                                        {showHelp ? (
+                                            <ButtonHelp
+                                                blockName={blockName || snakeCase(i18next.t(title)).split("_")[0]}
+                                                i18nPrefix={i18nPrefix}
+                                            />
+                                        ) : null}
+                                    </h3>
+                                ) : null}
+                                {areButtonsTop ? buttons(theme) : null}
+                            </div>
+                        ) : null}
+                        <div className={theme.content}>{children}</div>
+                        {areButtonsDown ? (
+                            <div className={`${theme.title} ${theme.bottom}`}>{buttons(theme)}</div>
+                        ) : null}
                     </div>
-                : null}
-                <div className={theme!.content}>
-                    {children}
-                </div>
-                {areButtonsDown ?
-                    <div className={`${theme!.title} ${theme!.bottom}`}>
-                        {buttons}
-                    </div>
-                : null}
-            </div>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("panel", styles)(Panel);

@@ -1,13 +1,10 @@
-import {autobind} from "core-decorators";
 import {action, computed, IObservableArray, observable} from "mobx";
 
 /** Statut de la séléection */
 export type SelectionStatus = "none" | "partial" | "selected";
 
 /** Socle commun entre le store de liste et de recherche. */
-@autobind
 export abstract class ListStoreBase<T> {
-
     /** Filtre texte. */
     @observable query = "";
     /** Tri par ordre croissant. */
@@ -30,9 +27,12 @@ export abstract class ListStoreBase<T> {
     @computed
     get selectionStatus(): SelectionStatus {
         switch (this.selectedItems.size) {
-            case 0: return "none";
-            case this.selectionnableList.length: return "selected";
-            default: return "partial";
+            case 0:
+                return "none";
+            case this.selectionnableList.length:
+                return "selected";
+            default:
+                return "partial";
         }
     }
 
@@ -52,7 +52,7 @@ export abstract class ListStoreBase<T> {
      * Sélectionne ou déselectionne un item.
      * @param item L'item.
      */
-    @action
+    @action.bound
     toggle(item: T) {
         if (this.selectedItems.has(item)) {
             this.selectedList.remove(item);
@@ -62,7 +62,7 @@ export abstract class ListStoreBase<T> {
     }
 
     /** Sélectionne ou déselectionne tous les éléments du store. */
-    @action
+    @action.bound
     toggleAll() {
         if (this.selectedItems.size === this.selectionnableList.length) {
             this.selectedList.clear();

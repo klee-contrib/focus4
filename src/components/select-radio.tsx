@@ -1,10 +1,12 @@
 import i18next from "i18next";
 import React from "react";
-import {themr} from "react-css-themr";
 import {RadioButton, RadioGroup} from "react-toolbox/lib/radio";
+
+import {themr} from "../theme";
 
 import * as styles from "./__style__/select-radio.css";
 export type SelectRadioStyle = Partial<typeof styles>;
+const Theme = themr("selectRadio", styles);
 
 /** Props for RadioSelect */
 export interface SelectRadioProps {
@@ -44,7 +46,7 @@ export function SelectRadio({
     labelKey,
     name,
     onChange,
-    theme,
+    theme: pTheme,
     value,
     valueKey,
     values,
@@ -54,44 +56,35 @@ export function SelectRadio({
 }: SelectRadioProps) {
     let definitiveValues = values;
     if (hasUndefined && undefinedPosition === "bottom") {
-        definitiveValues = [
-            ...values,
-            {[valueKey]: undefined, [labelKey]: undefinedLabel}
-        ];
+        definitiveValues = [...values, {[valueKey]: undefined, [labelKey]: undefinedLabel}];
     }
     if (hasUndefined && undefinedPosition === "top") {
-        definitiveValues = [
-            {[valueKey]: undefined, [labelKey]: undefinedLabel},
-            ...values
-        ];
+        definitiveValues = [{[valueKey]: undefined, [labelKey]: undefinedLabel}, ...values];
     }
 
     return (
-        <div className={theme!.select}>
-            {label && <h5 className={theme!.title}>{i18next.t(label)}</h5>}
-            <RadioGroup
-                name={name}
-                value={value}
-                onChange={onChange}
-                disabled={disabled}
-            >
-                {definitiveValues.map(option => {
-                    const optVal = (option as any)[valueKey];
-                    const optLabel = (option as any)[labelKey];
+        <Theme theme={pTheme}>
+            {theme => (
+                <div className={theme.select}>
+                    {label && <h5 className={theme.title}>{i18next.t(label)}</h5>}
+                    <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
+                        {definitiveValues.map(option => {
+                            const optVal = (option as any)[valueKey];
+                            const optLabel = (option as any)[labelKey];
 
-                    return (
-                        <RadioButton
-                            key={optVal || "undefined"}
-                            label={i18next.t(optLabel)}
-                            value={optVal}
-                            theme={{field: theme!.option}}
-                        />
-                    );
-                })}
-            </RadioGroup>
-            {error ? <div>{error}</div> : null}
-        </div>
+                            return (
+                                <RadioButton
+                                    key={optVal || "undefined"}
+                                    label={i18next.t(optLabel)}
+                                    value={optVal}
+                                    theme={{field: theme.option}}
+                                />
+                            );
+                        })}
+                    </RadioGroup>
+                    {error ? <div>{error}</div> : null}
+                </div>
+            )}
+        </Theme>
     );
 }
-
-export default themr("selectRadio", styles)(SelectRadio);

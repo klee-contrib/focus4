@@ -1,5 +1,5 @@
-import {autobind} from "core-decorators";
 import InputMask, {InputMaskFormatOptions, InputMaskSelection} from "inputmask-core";
+import {action} from "mobx";
 import * as React from "react";
 import {Input as RTInput, InputProps as RTInputProps} from "react-toolbox/lib/input";
 
@@ -17,13 +17,12 @@ export interface MaskDefinition {
 
 export interface InputProps extends RTInputProps {
     mask?: MaskDefinition;
+    onChange?: (value: any) => void;
 }
 
-@autobind
-export class Input extends React.Component<InputProps, void> {
-
-    private inputElement!: HTMLInputElement;
-    private mask?: InputMask;
+export class Input extends React.Component<InputProps> {
+    protected inputElement!: HTMLInputElement;
+    protected mask?: InputMask;
 
     componentWillMount() {
         const {mask, value} = this.props;
@@ -51,7 +50,10 @@ export class Input extends React.Component<InputProps, void> {
 
     componentWillUpdate({mask}: InputProps) {
         if (this.mask && mask && this.props.mask && mask.pattern !== this.props.mask.pattern) {
-            this.mask.setPattern(mask.pattern, {value: this.mask.getRawValue(), selection: getSelection(this.inputElement)});
+            this.mask.setPattern(mask.pattern, {
+                value: this.mask.getRawValue(),
+                selection: getSelection(this.inputElement)
+            });
         }
     }
 
@@ -61,18 +63,21 @@ export class Input extends React.Component<InputProps, void> {
         }
     }
 
+    @action.bound
     updateMaskSelection() {
         if (this.mask) {
             this.mask.selection = getSelection(this.inputElement);
         }
     }
 
+    @action.bound
     updateInputSelection() {
         if (this.mask) {
             setSelection(this.inputElement, this.mask.selection);
         }
     }
 
+    @action.bound
     onKeyDown(e: KeyboardEvent) {
         const {onChange, value} = this.props;
         if (this.mask) {
@@ -124,15 +129,22 @@ export class Input extends React.Component<InputProps, void> {
                 }
             }
         }
+
+        if (this.props.onKeyDown) {
+            this.props.onKeyDown(e);
+        }
     }
 
+    @action.bound
     onKeyPress(e: KeyboardEvent) {
         if (this.mask) {
-            if (e.metaKey || e.altKey || e.ctrlKey || e.key === "Enter") { return; }
+            if (e.metaKey || e.altKey || e.ctrlKey || e.key === "Enter") {
+                return;
+            }
 
             e.preventDefault();
             this.updateMaskSelection();
-            if (this.mask.input((e.key || (e as any).data))) {
+            if (this.mask.input(e.key || (e as any).data)) {
                 this.updateInputSelection();
 
                 const {onChange, value} = this.props;
@@ -141,8 +153,13 @@ export class Input extends React.Component<InputProps, void> {
                 }
             }
         }
+
+        if (this.props.onKeyPress) {
+            this.props.onKeyPress(e);
+        }
     }
 
+    @action.bound
     onPaste(e: ClipboardEvent) {
         if (this.mask) {
             e.preventDefault();
@@ -172,7 +189,7 @@ export class Input extends React.Component<InputProps, void> {
             <RTInput
                 {...this.props}
                 {...{
-                    innerRef: (i: any) => this.inputElement = i && i.inputNode,
+                    innerRef: (i: any) => (this.inputElement = i && i.inputNode),
                     onPaste: this.onPaste
                 }}
                 onKeyDown={this.onKeyDown}
@@ -182,8 +199,6 @@ export class Input extends React.Component<InputProps, void> {
         );
     }
 }
-
-export default Input;
 
 const KEYCODE_Z = 90;
 const KEYCODE_Y = 89;
@@ -208,19 +223,17 @@ function getSelection(el: HTMLInputElement) {
             const rangeEl = (el as any).createTextRange();
             const clone = rangeEl.duplicate();
 
-            rangeEl.moveToBookmark(
-                (document as any).selection
-                    .createRange()
-                    .getBookmark()
-            );
+            rangeEl.moveToBookmark((document as any).selection.createRange().getBookmark());
             clone.setEndPoint("EndToStart", rangeEl);
 
             start = clone.text.length;
             end = start + rangeEl.text.length;
-        } catch (e) { /* not focused or not visible */ }
+        } catch (e) {
+            /* not focused or not visible */
+        }
     }
 
-    return { start, end };
+    return {start, end};
 }
 
 function setSelection(el: HTMLInputElement, selection: InputMaskSelection) {
@@ -234,5 +247,7 @@ function setSelection(el: HTMLInputElement, selection: InputMaskSelection) {
             rangeEl.moveEnd("character", selection.end! - selection.start!);
             rangeEl.select();
         }
-    } catch (e) { /* not focused or not visible */ }
+    } catch (e) {
+        /* not focused or not visible */
+    }
 }

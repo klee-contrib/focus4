@@ -47,7 +47,10 @@ const errorTypes = {
  * @param response Erreur serveur.
  */
 function treatFieldErrors(response: ErrorResponse) {
-    if ([400, 401, 422].find(x => x === response.status) && response.type || errorTypes.entity === errorTypes.entity) {
+    if (
+        ([400, 401, 422].find(x => x === response.status) && response.type) ||
+        errorTypes.entity === errorTypes.entity
+    ) {
         return response.fieldErrors || {};
     } else {
         return undefined;
@@ -60,16 +63,20 @@ function treatFieldErrors(response: ErrorResponse) {
  */
 function treatGlobalErrors(response: ErrorResponse) {
     let globals: string[] = [];
-    Object.keys(globalErrorTypes)
-        .forEach(errorName => {
-            const messages: string[] = response[errorName];
-            if (isArray(messages)) {
-                globals = [...globals, ...messages];
+    Object.keys(globalErrorTypes).forEach(errorName => {
+        const messages: string[] = response[errorName];
+        if (isArray(messages)) {
+            globals = [...globals, ...messages];
 
-                // On enregistre chaque message dans le store de messages.
-                messages.forEach(content => messageStore.addMessage({type: globalErrorTypes[errorName as keyof typeof globalErrorTypes] as "info", content}));
-            }
-        });
+            // On enregistre chaque message dans le store de messages.
+            messages.forEach(content =>
+                messageStore.addMessage({
+                    type: globalErrorTypes[errorName as keyof typeof globalErrorTypes] as "info",
+                    content
+                })
+            );
+        }
+    });
     return globals;
 }
 

@@ -2,14 +2,12 @@ import {isEqual, mapValues} from "lodash";
 import {action, computed, observable} from "mobx";
 
 /** Crée le type de vue associé à un objet. */
-export type View<T> = {
-    readonly [P in keyof T]: T[P] | undefined;
-};
+export type View<T> = {readonly [P in keyof T]: T[P] | undefined};
 
 /** Configuration du ViewStore. */
 export interface ViewStoreConfig<V, N> {
     /** Est appelé avant la navigation vers une nouvelle route. */
-    beforeEnter?: (view: View<V>) => {redirect?: Partial<V>, errorCode?: string} | undefined;
+    beforeEnter?: (view: View<V>) => {redirect?: Partial<V>; errorCode?: string} | undefined;
     /** Le préfixe du store. */
     prefix?: N;
     /** Objet de vue, représenté dans l'URL. L'ordre des paramètres compte. */
@@ -21,10 +19,9 @@ export interface ViewStoreConfig<V, N> {
  * ce store sera l'unique source de vérité sur l'état de vue courant de l'application (ou d'un module).
  */
 export class ViewStore<V, N extends string> {
-
     /** @internal */
     /** Est appelé avant la navigation vers une nouvelle route. */
-    readonly beforeEnter?: (view: View<V>) => {redirect?: Partial<V>, errorCode?: string} | undefined;
+    readonly beforeEnter?: (view: View<V>) => {redirect?: Partial<V>; errorCode?: string} | undefined;
 
     /** @internal */
     /** Renseigné par le routeur. Est appelé lors d'un retour d'erreur dans le `beforeEnter`.  */
@@ -65,7 +62,9 @@ export class ViewStore<V, N extends string> {
     get currentPath() {
         const url = this.getUrl();
         if (url.includes("//")) {
-            throw new Error("La vue courante n'est pas convertible en une URL car des paramètres sont manquants. Par exemple, pour l'URL '/:param1/:param2', si 'param2' est spécifié alors 'param1' doit l'être aussi.");
+            throw new Error(
+                "La vue courante n'est pas convertible en une URL car des paramètres sont manquants. Par exemple, pour l'URL '/:param1/:param2', si 'param2' est spécifié alors 'param1' doit l'être aussi."
+            );
         }
         return url;
     }
@@ -73,7 +72,7 @@ export class ViewStore<V, N extends string> {
     /** Représente l'état courant de l'URL. */
     @computed.struct
     get currentView() {
-        return this.isActive && this.view || {} as View<V>;
+        return (this.isActive && this.view) || ({} as View<V>);
     }
 
     /** Précise si le store est actuellement actif dans le router. */
@@ -88,9 +87,11 @@ export class ViewStore<V, N extends string> {
      * @param replace Ne fusionne pas la vue demandée avec la vue courante.
      */
     getUrl(view?: Partial<V>, replace?: boolean) {
-        const newView = (replace ? view : {...this.currentView as {}, ...view as {}}) as V;
-        return `/${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => newView[p])
-            .join("/")}`.replace(/\/+$/, "");
+        const newView = (replace ? view : {...(this.currentView as {}), ...(view as {})}) as V;
+        return `/${this.prefix ? `${this.prefix}/` : ""}${this.paramNames.map(p => newView[p]).join("/")}`.replace(
+            /\/+$/,
+            ""
+        );
     }
 
     /**
@@ -101,17 +102,20 @@ export class ViewStore<V, N extends string> {
     @action
     setView(view: Partial<V>, replace?: boolean) {
         // On construit la nouvelle vue.
-        const newView = (replace ? view : {...this.currentView as {}, ...view as {}}) as V;
+        const newView = (replace ? view : {...(this.currentView as {}), ...(view as {})}) as V;
 
         // Si on a un `beforeEnter`, on l'appelle.
         if (this.beforeEnter) {
             const {errorCode, redirect} = this.beforeEnter(newView) || {errorCode: undefined, redirect: undefined};
-            if (errorCode) { // Cas erreur : on appelle le handler du routeur.
+            if (errorCode) {
+                // Cas erreur : on appelle le handler du routeur.
                 this.handleError(errorCode);
                 return;
-            } else if (redirect) { // Cas de la redirection : on réappelle `setView` avec la vue ainsi reprécisée.
-                const redirectedView = {...newView as {}, ...redirect as {}};
-                if (!isEqual(newView, redirectedView)) { // On ne rappelle pas `setView` si on est déjà dans le bon état, bien sûr.
+            } else if (redirect) {
+                // Cas de la redirection : on réappelle `setView` avec la vue ainsi reprécisée.
+                const redirectedView = {...(newView as {}), ...(redirect as {})};
+                if (!isEqual(newView, redirectedView)) {
+                    // On ne rappelle pas `setView` si on est déjà dans le bon état, bien sûr.
                     this.setView(redirectedView);
                     return;
                 }

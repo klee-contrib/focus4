@@ -1,6 +1,5 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {computed, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
@@ -33,9 +32,7 @@ export interface ListBaseProps<T> {
 }
 
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
-@autobind
-export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P, void> {
-
+export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P> {
     /** Nombre d'éléments affichés. */
     @observable displayedCount = this.props.perPage;
 
@@ -66,7 +63,9 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     @computed
     protected get showMoreLabel() {
         const {i18nPrefix = "focus"} = this.props;
-        return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+        return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
+            this.data.length
+        } ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
     }
 
     protected get shouldAttachScrollListener() {
@@ -87,32 +86,35 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Charge la page suivante. */
+    @action
     protected handleShowMore() {
         if (this.hasMoreData) {
-            this.displayedCount! += (this.props.perPage || 5);
+            this.displayedCount! += this.props.perPage || 5;
         }
     }
 
     /** Affiche les éventuels boutons "Voir plus" et "Voir tout" en fin de liste. */
-    protected renderBottomRow() {
-        const {theme, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
-        if (isManualFetch && this.hasMoreData || showAllHandler) {
+    protected renderBottomRow(theme: ListStyle) {
+        const {i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
+        if ((isManualFetch && this.hasMoreData) || showAllHandler) {
             return (
-                <div className={theme!.bottomRow}>
-                    {isManualFetch && this.hasMoreData ?
+                <div className={theme.bottomRow}>
+                    {isManualFetch && this.hasMoreData ? (
                         <Button
-                            onClick={this.handleShowMore}
+                            onClick={() => this.handleShowMore()}
                             icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                             label={this.showMoreLabel}
                         />
-                    : <div />}
-                    {showAllHandler ?
+                    ) : (
+                        <div />
+                    )}
+                    {showAllHandler ? (
                         <Button
                             onClick={showAllHandler}
                             icon={getIcon(`${i18nPrefix}.icons.list.showAll`)}
                             label={i18next.t(`${i18nPrefix}.list.show.all`)}
                         />
-                    : null}
+                    ) : null}
                 </div>
             );
         } else {
@@ -133,16 +135,15 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Gère le scroll infini. */
+    @action.bound
     private scrollListener() {
         const el = findDOMNode(this) as HTMLElement;
         const scrollTop = window.pageYOffset;
-        if (topOfElement(el) + el.offsetHeight - scrollTop - (window.innerHeight) < (this.props.offset || 250)) {
+        if (topOfElement(el) + el.offsetHeight - scrollTop - window.innerHeight < (this.props.offset || 250)) {
             this.handleShowMore();
         }
     }
 }
-
-export default ListBase;
 
 /**
  * Détermine le sommet de l'élément choisi.
@@ -152,5 +153,5 @@ function topOfElement(element: HTMLElement): number {
     if (!element) {
         return 0;
     }
-    return element.offsetTop + topOfElement((element.offsetParent as HTMLElement));
+    return element.offsetTop + topOfElement(element.offsetParent as HTMLElement);
 }

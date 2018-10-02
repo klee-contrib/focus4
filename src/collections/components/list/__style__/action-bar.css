@@ -75,7 +75,7 @@
 
 .triangle {
     position: absolute;
-    bottom: -calc(5px + var(--action-bar-padding));
+    bottom: calc(-5px - var(--action-bar-padding));
     left: calc(50% - var(--action-bar-facetbox-triangle-width) / 2);
     width: 0;
     height: 0;

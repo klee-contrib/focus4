@@ -1,18 +1,19 @@
-import {autobind} from "core-decorators";
 import {uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {InputTheme} from "react-toolbox/lib/input";
 
-import {Input, InputProps} from "./input";
+import {Input, InputProps} from "../components";
+import {themr} from "../theme";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
+const Theme = themr("RTDatePicker", styles);
+
 import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
@@ -51,29 +52,27 @@ export interface InputDateProps extends InputProps {
 }
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
-@autobind
 @observer
-export class InputDate extends React.Component<InputDateProps, void> {
-
-    private calendar?: HTMLDivElement;
+export class InputDate extends React.Component<InputDateProps> {
+    protected calendar?: HTMLDivElement | null;
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
-    private readonly _inputDateId = uniqueId("input-date-");
+    protected readonly _inputDateId = uniqueId("input-date-");
 
     /** Date actuelle. */
-    @observable private date = this.toMoment(this.props.value);
+    @observable protected date = this.toMoment(this.props.value);
 
     /** Contenu du champ texte. */
-    @observable private dateText = this.formatDate(this.props.value);
+    @observable protected dateText = this.formatDate(this.props.value);
 
     /** Affiche le calendrier. */
-    @observable private showCalendar = false;
+    @observable protected showCalendar = false;
 
     /** Mode du calendrier. */
-    @observable private calendarDisplay = "months" as "months" | "years";
+    @observable protected calendarDisplay = "months" as "months" | "years";
 
     /** Position du calendrier. */
-    @observable private calendarPosition?: "up" | "down";
+    @observable protected calendarPosition?: "up" | "down";
 
     componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
@@ -142,15 +141,14 @@ export class InputDate extends React.Component<InputDateProps, void> {
         const {inputFormat = "MM/DD/YYYY"} = this.props;
         if (isISOString(value)) {
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
-            return moment(value, moment.ISO_8601)
-                .format(inputFormat);
+            return moment(value, moment.ISO_8601).format(inputFormat);
         } else {
             return value;
         }
     }
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
-    @action
+    @action.bound
     onDocumentClick({target}: Event) {
         let parent = target as HTMLElement | null;
 
@@ -165,7 +163,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     /** Appelé lorsqu'on quitte le champ texte. */
-    @action
+    @action.bound
     onInputBlur() {
         const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
         const text = (this.dateText || "").trim() || undefined;
@@ -178,11 +176,10 @@ export class InputDate extends React.Component<InputDateProps, void> {
         } else {
             onChange(text);
         }
-
     }
 
     /** Au clic sur le calendrier. */
-    @action
+    @action.bound
     onCalendarChange(date: Date, dayClick: boolean) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 
@@ -192,8 +189,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
             date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
         }
 
-        const correctedDate = this.transformDate(date)
-            .format();
+        const correctedDate = this.transformDate(date).format();
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
@@ -203,7 +199,7 @@ export class InputDate extends React.Component<InputDateProps, void> {
     }
 
     /** Ferme le calendrier lorsqu'on appuie sur Entrée ou Tab. */
-    @action
+    @action.bound
     handleKeyDown({key}: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showCalendar = false;
@@ -223,65 +219,91 @@ export class InputDate extends React.Component<InputDateProps, void> {
         } else if (ISOStringFormat === "utc-midnight") {
             return moment.utc(...params);
         } else {
-            return moment(...params)
-                .utcOffset(0);
+            return moment(...params).utcOffset(0);
         }
     }
 
     render() {
-        const {theme, inputFormat = "MM/DD/YYYY", calendarFormat = "ddd, MMM D", displayFrom = "left", ISOStringFormat = "utc-midnight", ...inputProps} = this.props;
+        const {
+            theme: pTheme,
+            inputFormat = "MM/DD/YYYY",
+            calendarFormat = "ddd, MMM D",
+            displayFrom = "left",
+            ISOStringFormat = "utc-midnight",
+            ...inputProps
+        } = this.props;
         return (
-            <div data-focus="input-date" data-id={this._inputDateId} className={input}>
-                <Input
-                    {...inputProps}
-                    mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                    onChange={(value: string) => this.dateText = value}
-                    onKeyDown={this.handleKeyDown}
-                    onFocus={() => this.showCalendar = true}
-                    theme={theme}
-                    value={this.dateText || ""}
-                />
-                {this.showCalendar ?
-                    <div
-                        ref={cal => this.calendar = cal}
-                        className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${this.calendarPosition === "up" ? up : down}`}
-                    >
-                        <header className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}>
-                            <span id="years" className={theme!.year} onClick={() => this.calendarDisplay = "years"}>
-                                {this.date.year()}
-                            </span>
-                            <h3 id="months" className={theme!.date} onClick={() => this.calendarDisplay = "months"}>
-                                {(ISOStringFormat === "local-utc-midnight" ? this.date.clone().local() : this.date).format(calendarFormat)}
-                            </h3>
-                            <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showCalendar = false} />
-                        </header>
-                        <div className={theme!.calendarWrapper}>
-                            <Calendar
-                                handleSelect={() => null}
-                                selectedDate={this.jsDate}
-                                display={this.calendarDisplay}
-                                locale={{
-                                    months: moment.localeData().months(),
-                                    monthsShort: moment.localeData().monthsShort(),
-                                    weekdays: moment.localeData().weekdays(),
-                                    weekdaysLetter: moment.localeData().weekdaysMin(),
-                                    weekdaysShort: moment.localeData().weekdaysShort()
-                                }}
-                                onChange={this.onCalendarChange}
-                                theme={theme}
-                            />
-                        </div>
+            <Theme theme={pTheme}>
+                {theme => (
+                    <div data-focus="input-date" data-id={this._inputDateId} className={input}>
+                        <Input
+                            {...inputProps}
+                            mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                            onChange={(value: string) => (this.dateText = value)}
+                            onKeyDown={this.handleKeyDown}
+                            onFocus={() => (this.showCalendar = true)}
+                            theme={theme}
+                            value={this.dateText || ""}
+                        />
+                        {this.showCalendar ? (
+                            <div
+                                ref={cal => (this.calendar = cal)}
+                                className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${
+                                    this.calendarPosition === "up" ? up : down
+                                }`}
+                            >
+                                <header
+                                    className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}
+                                >
+                                    <span
+                                        id="years"
+                                        className={theme!.year}
+                                        onClick={() => (this.calendarDisplay = "years")}
+                                    >
+                                        {this.date.year()}
+                                    </span>
+                                    <h3
+                                        id="months"
+                                        className={theme!.date}
+                                        onClick={() => (this.calendarDisplay = "months")}
+                                    >
+                                        {(ISOStringFormat === "local-utc-midnight"
+                                            ? this.date.clone().local()
+                                            : this.date
+                                        ).format(calendarFormat)}
+                                    </h3>
+                                    <IconButton
+                                        icon="clear"
+                                        theme={{toggle}}
+                                        onClick={() => (this.showCalendar = false)}
+                                    />
+                                </header>
+                                <div className={theme!.calendarWrapper}>
+                                    <Calendar
+                                        handleSelect={() => null}
+                                        selectedDate={this.jsDate}
+                                        display={this.calendarDisplay}
+                                        locale={{
+                                            months: moment.localeData().months(),
+                                            monthsShort: moment.localeData().monthsShort(),
+                                            weekdays: moment.localeData().weekdays(),
+                                            weekdaysLetter: moment.localeData().weekdaysMin(),
+                                            weekdaysShort: moment.localeData().weekdaysShort()
+                                        }}
+                                        onChange={this.onCalendarChange}
+                                        theme={theme}
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
                     </div>
-                : null}
-            </div>
+                )}
+            </Theme>
         );
     }
 }
 
-export default themr("RTDatePicker", styles)(InputDate);
-
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
-    return moment(value, moment.ISO_8601, true)
-        .isValid();
+    return moment(value, moment.ISO_8601, true).isValid();
 }

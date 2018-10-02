@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {isString} from "lodash";
 import {action, observable} from "mobx";
 import {v4} from "uuid";
@@ -11,9 +10,7 @@ export interface Message {
 }
 
 /** Store de messages */
-@autobind
 export class MessageStore {
-
     /** Objet contenant tous les messages reçus. */
     @observable data: {[id: string]: Message} = {};
     /** Dernier message reçu. */
@@ -23,7 +20,7 @@ export class MessageStore {
      * Ajoute un message sans type.
      * @param message Le message.
      */
-    @action
+    @action.bound
     addMessage(message: string | Message) {
         const id = v4();
         this.data[id] = parseString(message);
@@ -34,6 +31,7 @@ export class MessageStore {
      * Ajoute un message d'avertissement.
      * @param message Le message.
      */
+    @action.bound
     addWarningMessage(message: string | Message) {
         message = parseString(message);
         message.type = "warning";
@@ -44,6 +42,7 @@ export class MessageStore {
      * Ajoute un message d'information.
      * @param message Le message.
      */
+    @action.bound
     addInformationMessage(message: string | Message) {
         message = parseString(message);
         message.type = "info";
@@ -54,6 +53,7 @@ export class MessageStore {
      * Ajoute un message d'erreur.
      * @param message Le message.
      */
+    @action.bound
     addErrorMessage(message: string | Message) {
         message = parseString(message);
         message.type = "error";
@@ -64,6 +64,7 @@ export class MessageStore {
      * Ajoute un message de succès.
      * @param message Le message.
      */
+    @action.bound
     addSuccessMessage(message: string | Message) {
         message = parseString(message);
         message.type = "success";

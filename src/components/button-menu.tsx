@@ -1,5 +1,4 @@
-import {autobind} from "core-decorators";
-import {computed, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
@@ -18,10 +17,8 @@ export interface ButtonMenuProps extends MenuProps {
 }
 
 /** Menu React-Toolbox avec un bouton personnalisable (non icône). */
-@autobind
 @observer
-export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
-
+export class ButtonMenu extends React.Component<ButtonMenuProps> {
     /** Menu ouvert. */
     @observable isOpened = false;
     /** Hauteur du bouton, pour placer le menu. */
@@ -32,13 +29,13 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
     // On récupère à tout instant la hauteur du bouton.
     componentDidMount() {
         if (this.button) {
-            this.buttonHeight = findDOMNode(this.button).clientHeight;
+            this.buttonHeight = (findDOMNode(this.button) as Element).clientHeight;
         }
     }
 
     componentDidUpdate() {
         if (this.button) {
-            this.buttonHeight = findDOMNode(this.button).clientHeight;
+            this.buttonHeight = (findDOMNode(this.button) as Element).clientHeight;
         }
     }
 
@@ -57,6 +54,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
         };
     }
 
+    @action.bound
     private onClick() {
         this.isOpened = true;
         const {onClick} = this.props;
@@ -65,6 +63,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
         }
     }
 
+    @action.bound
     private onHide() {
         this.isOpened = false;
         const {onHide} = this.props;
@@ -74,10 +73,19 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
     }
 
     render() {
-        const {button: {icon, openedIcon, ...buttonProps}, position = "topLeft", ...menuProps} = this.props;
+        const {
+            button: {icon, openedIcon, ...buttonProps},
+            position = "topLeft",
+            ...menuProps
+        } = this.props;
         return (
             <div data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
-                <Button ref={i => this.button = i} {...buttonProps} onClick={this.onClick} icon={this.isOpened && openedIcon ? openedIcon : icon}/>
+                <Button
+                    ref={i => (this.button = i)}
+                    {...buttonProps}
+                    onClick={this.onClick}
+                    icon={this.isOpened && openedIcon ? openedIcon : icon}
+                />
                 <div style={this.menuStyle}>
                     <Menu {...menuProps} position={position} active={this.isOpened} onHide={this.onHide}>
                         {menuProps.children}
@@ -87,5 +95,3 @@ export class ButtonMenu extends React.Component<ButtonMenuProps, void> {
         );
     }
 }
-
-export default ButtonMenu;

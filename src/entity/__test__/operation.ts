@@ -1,50 +1,39 @@
-/* tslint:disable */
+import {EntityToType, StoreNode} from "../types";
+import {StructureEntity} from "./structure";
 
-import {StoreNode} from "../store";
-import {EntityField} from "../types";
-import {Structure, StructureNode} from "./structure";
-
-export interface Operation {
-    id?: number;
-    numero?: string;
-    montant?: number;
-    structure?: Structure;
-}
-
-export interface OperationNode extends StoreNode<Operation> {
-    id: EntityField<number>;
-    numero: EntityField<string>;
-    montant: EntityField<number>;
-    structure: StructureNode;
-}
+export type Operation = EntityToType<typeof OperationEntity>;
+export type OperationNode = StoreNode<typeof OperationEntity>;
 
 export const OperationEntity = {
     name: "operation",
     fields: {
         id: {
             type: "field" as "field",
+            fieldType: 0,
             domain: {},
-            isRequired: true,
+            isRequired: false,
             name: "id",
-            translationKey: "operation.id"
+            label: "operation.id"
         },
         numero: {
             type: "field" as "field",
+            fieldType: "",
             domain: {},
             isRequired: true,
             name: "numero",
-            translationKey: "operation.numero"
+            label: "operation.numero"
         },
         montant: {
             type: "field" as "field",
+            fieldType: 0,
             domain: {},
-            isRequired: true,
+            isRequired: false,
             name: "montant",
-            translationKey: "operation.montant"
+            label: "operation.montant"
         },
         structure: {
             type: "object" as "object",
-            entityName: "structure"
+            entity: StructureEntity
         }
     }
 };

@@ -1,19 +1,18 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {Chip} from "react-toolbox/lib/chip";
 
 import {Checkbox} from "../../../../components";
+import {themr} from "../../../../theme";
 
 import {FacetOutput, SearchStore} from "../../../store";
 import {addFacetValue, removeFacetValue} from "./utils";
 
 import * as styles from "./__style__/facet.css";
-
 export type FacetStyle = Partial<typeof styles>;
+const Theme = themr("facet", styles);
 
 /** Props de Facet. */
 export interface FacetProps {
@@ -30,14 +29,12 @@ export interface FacetProps {
 }
 
 /** Composant affichant le détail d'une facette avec ses valeurs. */
-@autobind
 @observer
-export class Facet extends React.Component<FacetProps, void> {
-
+export class Facet extends React.Component<FacetProps> {
     @observable protected isShowAll = false;
 
-    protected renderFacetDataList() {
-        const {theme, facet, nbDefaultDataList, store} = this.props;
+    protected renderFacetDataList(theme: FacetStyle) {
+        const {facet, nbDefaultDataList, store} = this.props;
         const selectedValues = store.selectedFacets[facet.code] || [];
 
         if (!facet.isMultiSelectable && selectedValues.length === 1) {
@@ -47,7 +44,7 @@ export class Facet extends React.Component<FacetProps, void> {
                     key={sfv.code}
                     deletable
                     onClick={() => removeFacetValue(store, facet.code, sfv.code)}
-                    theme={{chip: theme!.chip}}
+                    theme={{chip: theme.chip}}
                 >
                     {i18next.t(sfv.label)}
                 </Chip>
@@ -64,9 +61,11 @@ export class Facet extends React.Component<FacetProps, void> {
                         };
                         return (
                             <li key={sfv.code} onClick={clickHandler}>
-                                {facet.isMultiSelectable ? <Checkbox value={isSelected} onClick={clickHandler} /> : null}
+                                {facet.isMultiSelectable ? (
+                                    <Checkbox value={isSelected} onClick={clickHandler} />
+                                ) : null}
                                 <div>{i18next.t(sfv.label)}</div>
-                                <div className={theme!.count}>{sfv.count}</div>
+                                <div className={theme.count}>{sfv.count}</div>
                             </li>
                         );
                     })}
@@ -75,11 +74,11 @@ export class Facet extends React.Component<FacetProps, void> {
         }
     }
 
-    protected renderShowAllDataList() {
-        const {theme, facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
+    protected renderShowAllDataList(theme: FacetStyle) {
+        const {facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
         if (facet.values.length > nbDefaultDataList) {
             return (
-                <div className={theme!.show} onClick={() => this.isShowAll = !this.isShowAll}>
+                <div className={theme.show} onClick={() => (this.isShowAll = !this.isShowAll)}>
                     {i18next.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                 </div>
             );
@@ -89,15 +88,17 @@ export class Facet extends React.Component<FacetProps, void> {
     }
 
     render() {
-        const {theme, facet} = this.props;
+        const {facet} = this.props;
         return (
-            <div className={`${theme!.facet} ${facet.isMultiSelectable ? theme!.multiSelect : ""}`}>
-                <h4>{i18next.t(facet.label)}</h4>
-                {this.renderFacetDataList()}
-                {this.renderShowAllDataList()}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <div className={`${theme.facet} ${facet.isMultiSelectable ? theme.multiSelect : ""}`}>
+                        <h4>{i18next.t(facet.label)}</h4>
+                        {this.renderFacetDataList(theme)}
+                        {this.renderShowAllDataList(theme)}
+                    </div>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("facet", styles)(Facet);

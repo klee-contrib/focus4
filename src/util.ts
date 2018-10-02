@@ -10,7 +10,7 @@ export type ReactionExpression<T> = ((inst: T) => () => any) | (() => any);
 export type WhenExpression<T> = ((inst: T) => () => boolean) | (() => boolean);
 
 /** Décorateur permettant, dans une classe React, de poser un autorun sur la fonction décorée. */
-export function classAutorun(target: RCL, propertyKey: keyof RCL, _: TypedPropertyDescriptor<any>) {
+export function classAutorun(target: RCL, propertyKey: keyof RCL) {
     patchClass("autorun", target, propertyKey);
 }
 
@@ -35,16 +35,24 @@ export function classWhen<T extends RCL>(expression: WhenExpression<T>) {
     };
 }
 
-function patchClass<T extends RCL>(type: "autorun" | "reaction" | "when", instance: T, propertyKey: keyof T, expression?: WhenExpression<T> | ReactionExpression<T>, opts?: IReactionOptions) {
+function patchClass<T extends RCL>(
+    type: "autorun" | "reaction" | "when",
+    instance: T,
+    propertyKey: keyof T,
+    expression?: WhenExpression<T> | ReactionExpression<T>,
+    opts?: IReactionOptions
+) {
     function componentWillMount(this: T) {
+        const r = this[propertyKey].bind(this);
+
         this[`${type}_${propertyKey}`] =
-            type === "autorun" ?
-                autorun((instance[propertyKey]).bind(this))
-          : type === "reaction" ?
-                reaction(hasExpressionThis(expression) ? expression(this) : expression as any, instance[propertyKey].bind(this), opts)
-          : type === "when" ?
-                when(hasExpressionThis(expression) ? expression(this) : expression as any, instance[propertyKey].bind(this))
-          : undefined;
+            type === "autorun"
+                ? autorun(r)
+                : type === "reaction"
+                    ? reaction(hasExpressionThis(expression) ? expression(this) : (expression as any), r, opts)
+                    : type === "when"
+                        ? when(hasExpressionThis(expression) ? expression(this) : (expression as any), r)
+                        : undefined;
     }
 
     function componentWillUnmount(this: RCL) {
@@ -54,11 +62,23 @@ function patchClass<T extends RCL>(type: "autorun" | "reaction" | "when", instan
     const baseCWM = instance.componentWillMount;
     const baseCWUM = instance.componentWillUnmount;
 
-    instance.componentWillMount = !baseCWM ? componentWillMount : function(this: RCL) { baseCWM.apply(this); componentWillMount.apply(this); };
-    instance.componentWillUnmount = !baseCWUM ? componentWillUnmount : function(this: RCL) { baseCWUM.apply(this); componentWillUnmount.apply(this); };
+    instance.componentWillMount = !baseCWM
+        ? componentWillMount
+        : function(this: RCL) {
+              baseCWM.apply(this);
+              componentWillMount.apply(this);
+          };
+    instance.componentWillUnmount = !baseCWUM
+        ? componentWillUnmount
+        : function(this: RCL) {
+              baseCWUM.apply(this);
+              componentWillUnmount.apply(this);
+          };
 }
 
 /** Permet de distinguer le type d'expression fourni à la réaction. */
-function hasExpressionThis<T extends RCL>(expression?: ReactionExpression<T> | WhenExpression<T>): expression is (inst: T) => () => {} {
+function hasExpressionThis<T extends RCL>(
+    expression?: ReactionExpression<T> | WhenExpression<T>
+): expression is (inst: T) => () => {} {
     return typeof (expression as ((inst: T) => () => any))({} as any) === "function";
 }

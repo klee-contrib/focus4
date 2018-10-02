@@ -1,5 +1,9 @@
 /** Objet contenant les traductions i18n en français par défaut, à intégrer si besoin dans un projet. */
 export const fr = {
+    boolean: {
+        no: "Non",
+        yes: "Oui"
+    },
     button: {
         cancel: "Annuler",
         edit: "Modifier",
@@ -36,7 +40,7 @@ export const fr = {
             group: "Grouper",
             selectedItem: "élement sélectionné",
             selectedItems: "élements sélectionnés",
-            sort: "Trier",
+            sort: "Trier"
         },
         bar: {
             error: "Les critères suivants sont en erreur",
@@ -76,6 +80,7 @@ export const fr = {
         number: "Le nombre saisi est invalide",
         pourcentage: "Le pourcentage saisi est invalide",
         regex: "La valeur saisie est invalide",
-        required: "Le champ est obligatoire"
+        required: "Le champ est obligatoire",
+        string: "Le texte saisi est invalide"
     }
 };

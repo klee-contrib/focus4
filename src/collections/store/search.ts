@@ -1,9 +1,8 @@
-import {autobind} from "core-decorators";
 import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
 import {config} from "../../config";
-import {buildEntityEntry, Entity, EntityField, StoreNode, toFlatValues, validate} from "../../entity";
+import {buildNode, Entity, EntityToType, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../../entity";
 
 import {ListStoreBase} from "./base";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
@@ -12,7 +11,9 @@ import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
 export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
 
 /** Critères génériques de recherche. */
-export interface SearchProperties {
+export interface SearchProperties<C extends Entity = any> {
+    /** Critère personnalisé. */
+    criteria?: EntityToType<C>;
     /** Champ texte. */
     query?: string;
     /** Champ sur lequel grouper. */
@@ -28,14 +29,12 @@ export interface SearchProperties {
 }
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-@autobind
-export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T> implements SearchProperties {
-
+export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<T> {
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
 
     /** StoreNode contenant les critères personnalisés de recherche. */
-    readonly criteria!: C;
+    readonly criteria!: FormNode<C>;
     /** Champ sur lequel grouper. */
     @observable groupingKey: string | undefined;
     /** Facettes sélectionnées ({facet: value}) */
@@ -65,46 +64,74 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * @param criteria La description du critère de recherche personnalisé.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      */
-    constructor(service: SearchService<T>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
+    constructor(
+        service: SearchService<T>,
+        criteria?: C,
+        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean}
+    );
     /**
      * Crée un nouveau store de recherche.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      * @param service Le service de recherche.
      * @param criteria La description du critère de recherche personnalisé.
      */
-    constructor(service: SearchService<T>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
-    constructor(service: SearchService<T>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
+    constructor(
+        service: SearchService<T>,
+        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean},
+        criteria?: C
+    );
+    constructor(
+        service: SearchService<T>,
+        secondParam?: SearchProperties<C> & {debounceCriteria?: boolean} | C,
+        thirdParam?: SearchProperties<C> & {debounceCriteria?: boolean} | C
+    ) {
         super();
         this.service = service;
 
         // On gère les paramètres du constructeur dans les deux ordres.
-        const initialQuery = !Array.isArray(secondParam) && secondParam || !Array.isArray(thirdParam) && thirdParam;
-        const criteria = Array.isArray(secondParam) && secondParam || Array.isArray(thirdParam) && thirdParam;
+        let initialQuery: SearchProperties<C> & {debounceCriteria?: boolean};
+        let criteria;
+
+        if (secondParam && (secondParam as C).name) {
+            criteria = secondParam as C;
+            initialQuery = thirdParam as any;
+        } else {
+            initialQuery = secondParam as any;
+            criteria = thirdParam as C;
+        }
+
+        // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
+        if (criteria) {
+            const node = buildNode(criteria);
+            nodeToFormNode<C>(node, node, true);
+            this.criteria = node as any;
+        }
 
         if (initialQuery) {
             this.setProperties(initialQuery);
         }
 
-        // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
-        if (criteria) {
-            this.criteria = buildEntityEntry({criteria: {} as any}, {criteria: criteria[1]}, {}, "criteria") as any;
-        }
-
         // Relance la recherche à chaque modification de propriété.
-        reaction(() => [
-            this.blockSearch,
-            this.groupingKey,
-            this.selectedFacets,
-            !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
-            this.sortAsc,
-            this.sortBy
-        ], () => this.search());
+        reaction(
+            () => [
+                this.blockSearch,
+                this.groupingKey,
+                this.selectedFacets,
+                !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
+                this.sortAsc,
+                this.sortBy
+            ],
+            () => this.search()
+        );
 
         // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
-        reaction(() => [
-            initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
-            this.query
-        ], debounce(() => this.search(), config.textSearchDelay));
+        reaction(
+            () => [
+                initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
+                this.query
+            ],
+            debounce(() => this.search(), config.textSearchDelay)
+        );
     }
 
     /** Store en chargement. */
@@ -133,7 +160,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     @computed
     get groupingLabel() {
         const group = this.facets.find(facet => facet.code === this.groupingKey);
-        return group && group.label || this.groupingKey;
+        return (group && group.label) || this.groupingKey;
     }
 
     /** Nombre total de résultats de la recherche (pas forcément récupérés). */
@@ -155,14 +182,10 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         const {criteria = {}} = this;
         for (const key in criteria) {
             if (key !== "set" && key !== "clear") {
-                const entry = ((criteria as any)[key] as EntityField<any>);
-                const {$entity: {domain}, value} = entry;
-                if (domain && domain.validator && value !== undefined && value !== null) {
-                    const validStat = validate({value, name: ""}, domain.validator);
-                    if (validStat.errors.length) {
-                        errors[key] = true;
-                        continue;
-                    }
+                const entry = (criteria as any)[key] as FormEntityField;
+                if (entry.error) {
+                    errors[key] = true;
+                    continue;
                 }
                 errors[key] = false;
             }
@@ -173,9 +196,8 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     /** Récupère l'objet de critères personnalisé à plat (sans le StoreNode) */
     @computed.struct
     get flatCriteria() {
-        const criteria = this.criteria && toFlatValues(this.criteria);
+        const criteria = this.criteria && (toFlatValues(this.criteria) as {});
         if (criteria) {
-
             // On enlève les critères en erreur.
             for (const error in this.criteriaErrors) {
                 if (this.criteriaErrors[error]) {
@@ -194,7 +216,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     }
 
     /** Vide les résultats de recherche. */
-    @action
+    @action.bound
     clear() {
         this.serverCount = 0;
         this.selectedList.clear();
@@ -207,7 +229,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * Effectue la recherche.
      * @param isScroll Récupère la suite des résultats.
      */
-    @action
+    @action.bound
     async search(isScroll = false) {
         if (this.blockSearch) {
             /* tslint:disable */ return; /* tslint:enable */
@@ -224,7 +246,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             criteria: {...this.flatCriteria, query} as QueryInput<C>["criteria"],
             facets: selectedFacets || {},
             group: groupingKey || "",
-            skip: isScroll && list.length || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
+            skip: (isScroll && list.length) || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
             sortDesc: sortAsc === undefined ? false : !sortAsc,
             sortFieldName: sortBy,
             top
@@ -232,7 +254,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         this.pendingCount++;
 
-         // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
+        // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
         if (!isScroll) {
             this.selectedList.clear();
         }
@@ -261,14 +283,18 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * Met à jour plusieurs critères de recherche.
      * @param props Les propriétés à mettre à jour.
      */
-    @action
-    setProperties(props: SearchProperties) {
+    @action.bound
+    setProperties(props: SearchProperties<C>) {
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.selectedFacets = props.selectedFacets || this.selectedFacets;
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
-        this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy as keyof T : this.sortBy;
+        this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         this.query = props.query || this.query;
         this.top = props.top || this.top;
+
+        if (this.criteria && props.criteria) {
+            this.criteria.set(props.criteria);
+        }
     }
 
     /**
@@ -278,58 +304,65 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     getSearchGroupStore(groupCode: string): ListStoreBase<T> {
         // tslint:disable-next-line:no-this-assignment
         const store = this;
-        const searchGroupStore = {
-            get currentCount() {
-                return store.groups.find(result => result.code === groupCode).totalCount || 0;
-            },
-            get totalCount() {
-                return store.groups.find(result => result.code === groupCode).totalCount || 0;
-            },
-            isItemSelectionnable: store.isItemSelectionnable,
-            toggle(item: T) {
-                store.toggle(item);
-            },
-            get list() {
-                const resultGroup = store.groups.find(result => result.code === groupCode);
-                return resultGroup && resultGroup.list || [];
-            }
-        } as ListStoreBase<T>;
+        return observable(
+            {
+                get currentCount() {
+                    return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
+                },
 
-        const selectionnableList = computed(() => searchGroupStore.list.filter(store.isItemSelectionnable));
+                get totalCount() {
+                    return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
+                },
 
-        // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
-        searchGroupStore.toggleAll = action(() => {
-            const areAllItemsIn = selectionnableList.get()
-                .every(item => store.selectedItems.has(item));
+                isItemSelectionnable: store.isItemSelectionnable,
 
-            searchGroupStore.list.forEach(item => {
-                if (store.selectedItems.has(item)) {
-                    store.selectedList.remove(item);
+                get list() {
+                    const resultGroup = store.groups.find(result => result.code === groupCode);
+                    return (resultGroup && resultGroup.list) || [];
+                },
+
+                get selectionnableList(): T[] {
+                    return this.list.filter(store.isItemSelectionnable);
+                },
+
+                get selectedItems() {
+                    return new Set(store.selectedList.filter(item => this.list.find((i: T) => i === item)));
+                },
+
+                get selectionStatus() {
+                    if (this.selectedItems.size === 0) {
+                        return "none";
+                    } else if (this.selectedItems.size === this.selectionnableList.length) {
+                        return "selected";
+                    } else {
+                        return "partial";
+                    }
+                },
+
+                toggle(item: T) {
+                    store.toggle(item);
+                },
+
+                // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
+                toggleAll() {
+                    const areAllItemsIn = this.selectionnableList.every(item => store.selectedItems.has(item));
+
+                    this.list.forEach(item => {
+                        if (store.selectedItems.has(item)) {
+                            store.selectedList.remove(item);
+                        }
+                    });
+
+                    if (!areAllItemsIn) {
+                        store.selectedList.push(...this.selectionnableList);
+                    }
                 }
-            });
-
-            if (!areAllItemsIn) {
-                store.selectedList.push(...selectionnableList.get());
+            },
+            {
+                toggle: action.bound,
+                toggleAll: action.bound
             }
-        });
-
-        const selectedItems = computed(() =>
-            new Set(store.selectedList.filter(item => searchGroupStore.list.find(i => i === item))));
-
-        const selectionStatus = computed(() => {
-            if (selectedItems.get().size === 0) {
-                return "none";
-            } else if (selectedItems.get().size === selectionnableList.get().length) {
-                return "selected";
-            } else {
-                return "partial";
-            }
-        });
-
-        (searchGroupStore as any).selectionnableList = selectionnableList;
-        (searchGroupStore as any).selectedItems = selectedItems;
-        (searchGroupStore as any).selectionStatus = selectionStatus;
-        return observable(searchGroupStore);
+        ) as any;
     }
 }
 

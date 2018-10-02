@@ -1,13 +1,10 @@
-// tslint:disable-next-line:no-submodule-imports
 import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
 
-import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import {observable} from "mobx";
-import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
+import {ThemeProvider, TReactCSSThemrTheme} from "react-css-themr";
 
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox";
@@ -16,28 +13,59 @@ import {InputTheme} from "react-toolbox/lib/input";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
-import {ActionBarStyle, AdvancedSearchStyle, ContextualActionsStyle, DragLayerStyle, FacetBoxStyle, FacetStyle, GroupStyle, LineStyle, ListStyle, ListWrapperStyle, SearchBarStyle, SummaryStyle} from "../collections";
-import {AutocompleteStyle, BooleanRadioStyle, ButtonBackToTopStyle, DisplayStyle, LabelStyle, PanelStyle, PopinStyle, ScrollspyStyle, SelectCheckboxStyle, SelectRadioStyle} from "../components";
-import {FieldStyle} from "../entity";
+import {
+    ActionBarStyle,
+    AdvancedSearchStyle,
+    ContextualActionsStyle,
+    DragLayerStyle,
+    FacetBoxStyle,
+    FacetStyle,
+    GroupStyle,
+    LineStyle,
+    ListStyle,
+    ListWrapperStyle,
+    SearchBarStyle,
+    SummaryStyle
+} from "../collections";
+import {
+    AutocompleteStyle,
+    BooleanRadioStyle,
+    ButtonBackToTopStyle,
+    DisplayStyle,
+    LabelStyle,
+    PanelStyle,
+    PopinStyle,
+    ScrollspyStyle,
+    SelectCheckboxStyle,
+    SelectRadioStyle,
+    SelectStyle
+} from "../components";
+import {FieldStyle, FormStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
 
-import ErrorCenter, {ErrorCenterStyle} from "./error-center";
+import {ErrorCenter, ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
-import {LayoutProps, LayoutStyle, styles} from "./types";
+import {LayoutProps, LayoutStyle, Theme} from "./types";
 
-export {default as LayoutContent} from "./content";
-export {default as LayoutFooter} from "./footer";
-export {HeaderActions, HeaderBarLeft, HeaderBarRight, HeaderContent, HeaderScrolling, HeaderSummary, HeaderTopRow, PrimaryAction, SecondaryAction} from "./header";
-export {default as MainMenu, MainMenuItem} from "./menu";
+export {LayoutContent} from "./content";
+export {LayoutFooter} from "./footer";
+export {
+    HeaderActions,
+    HeaderBarLeft,
+    HeaderBarRight,
+    HeaderContent,
+    HeaderScrolling,
+    HeaderSummary,
+    HeaderTopRow,
+    PrimaryAction,
+    SecondaryAction
+} from "./header";
+export {MainMenu, MainMenuItem} from "./menu";
 
 /** Composant de Layout sans le provider de style. */
-@themr("layout", styles)
-@autobind
-@observer
-class LayoutBase extends React.Component<LayoutProps, void> {
-
+class LayoutBase extends React.Component<LayoutProps> {
     // On utilise le contexte React pour partager la taille du menu et du header.
     static childContextTypes = {
         header: PropTypes.object,
@@ -45,13 +73,15 @@ class LayoutBase extends React.Component<LayoutProps, void> {
     };
 
     /** Objet passé en contexte pour la hauteur du header top row. */
-    @observable headerContext = {
+    @observable
+    headerContext = {
         marginBottom: 50,
         topRowHeight: 60
     };
 
     /** Objet passé en contexte pour la taille du menu. */
-    @observable layoutContext = {
+    @observable
+    layoutContext = {
         contentPaddingTop: 10,
         menuWidth: undefined as number | undefined
     };
@@ -64,13 +94,16 @@ class LayoutBase extends React.Component<LayoutProps, void> {
     }
 
     render() {
-        const {children, theme} = this.props;
         return (
-            <div className={theme!.layout}>
-                <ErrorCenter />
-                <MessageCenter />
-                {children}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <div className={theme.layout}>
+                        <ErrorCenter />
+                        <MessageCenter />
+                        {this.props.children}
+                    </div>
+                )}
+            </Theme>
         );
     }
 }
@@ -91,7 +124,7 @@ export interface LayoutStyleProviderProps {
     facet?: FacetStyle;
     facetBox?: FacetBoxStyle;
     field?: FieldStyle;
-    form?: string;
+    form?: FormStyle;
     group?: GroupStyle;
     header?: HeaderStyle;
     label?: LabelStyle;
@@ -105,6 +138,7 @@ export interface LayoutStyleProviderProps {
     popin?: PopinStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
+    select?: SelectStyle;
     selectCheckbox?: SelectCheckboxStyle;
     selectRadio?: SelectRadioStyle;
     summary?: SummaryStyle;
@@ -125,9 +159,7 @@ export interface LayoutStyleProviderProps {
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     return (
         <ThemeProvider theme={(props.appTheme || {}) as TReactCSSThemrTheme}>
-            <LayoutBase {...omit(props, "appTheme")}>
-                {props.children}
-            </LayoutBase>
+            <LayoutBase {...omit(props, "appTheme")}>{props.children}</LayoutBase>
         </ThemeProvider>
     );
 }

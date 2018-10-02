@@ -1,32 +1,23 @@
-/* tslint:disable */
+import {EntityToType, StoreNode} from "../types";
+import {LigneEntity} from "./ligne";
 
-import {StoreListNode, StoreNode} from "../store";
-import {EntityField} from "../types";
-import {Ligne, LigneNode} from "./ligne";
-
-export interface Projet {
-    id?: number;
-    ligneList?: Ligne[];
-}
-
-export interface ProjetNode extends StoreNode<Projet>  {
-    id: EntityField<number>;
-    ligneList: StoreListNode<LigneNode>;
-}
+export type Projet = EntityToType<typeof ProjetEntity>;
+export type ProjetNode = StoreNode<typeof ProjetEntity>;
 
 export const ProjetEntity = {
     name: "projet",
     fields: {
         id: {
             type: "field" as "field",
+            fieldType: 0,
             domain: {},
-            isRequired: true,
+            isRequired: false,
             name: "id",
-            translationKey: "projet.id"
+            label: "projet.id"
         },
         ligneList: {
             type: "list" as "list",
-            entityName: "ligne"
+            entity: LigneEntity
         }
     }
 };

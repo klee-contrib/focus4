@@ -1,9 +1,10 @@
-import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
+
+import {themr} from "../../theme";
 
 import * as styles from "./__style__/header.css";
+const Theme = themr("header", styles);
 
 /** Props du HeaderContent. */
 export interface HeaderContentProps {
@@ -14,20 +15,19 @@ export interface HeaderContentProps {
 }
 
 /** Contenu du header. n'est affiché que si le header est déplié. */
-@observer
-export class HeaderContent extends React.Component<HeaderContentProps, void> {
-
+export class HeaderContent extends React.Component<HeaderContentProps> {
     static contextTypes = {layout: PropTypes.object};
     context!: {layout: {menuWidth: number}};
 
     render() {
-        const {children, theme} = this.props;
         return (
-            <div className={theme!.content} style={{marginLeft: this.context.layout.menuWidth}}>
-                {children}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <div className={theme.content} style={{marginLeft: this.context.layout.menuWidth}}>
+                        {this.props.children}
+                    </div>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("header", styles)(HeaderContent);
