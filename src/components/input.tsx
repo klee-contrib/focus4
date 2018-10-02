@@ -129,6 +129,10 @@ export class Input extends React.Component<InputProps> {
                 }
             }
         }
+
+        if (this.props.onKeyDown) {
+            this.props.onKeyDown(e);
+        }
     }
 
     @action.bound
@@ -148,6 +152,10 @@ export class Input extends React.Component<InputProps> {
                     onChange(this.value);
                 }
             }
+        }
+
+        if (this.props.onKeyPress) {
+            this.props.onKeyPress(e);
         }
     }
 
