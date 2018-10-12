@@ -9,18 +9,18 @@ export type ReferenceLoader = (refName: string) => Promise<{}[]>;
 /** Définition d'un type de référence. */
 export interface ReferenceDefinition<T = {}> {
     /** Propriété représentant le libellé. */
-    labelKey?: string;
+    labelKey?: keyof T;
     /** Le type de la liste. */
     type: T;
     /** Propriété représentant la valeur. */
-    valueKey?: string;
+    valueKey?: keyof T;
 }
 
 export interface ReferenceList<T = {}> extends Array<T> {
     /** Propriété représentant le libellé. */
-    $labelKey?: string;
+    $labelKey?: keyof T;
     /** Propriété représentant la valeur. */
-    $valueKey?: string;
+    $valueKey?: keyof T;
 }
 
 /** Mapping de type pour transformer les types d'entrée en liste de ces même types. */
@@ -102,7 +102,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
  * @param list La liste.
  * @param keys Les clés pour la liste.
  */
-export function makeReferenceList<T>(list: T[], {labelKey, valueKey}: {labelKey?: string; valueKey?: string}) {
+export function makeReferenceList<T>(list: T[], {labelKey, valueKey}: {labelKey?: keyof T; valueKey?: keyof T}) {
     const newList = [...list] as ReferenceList<T>;
     newList.$valueKey = valueKey || (list as ReferenceList<T>).$valueKey;
     newList.$labelKey = labelKey || (list as ReferenceList<T>).$labelKey;

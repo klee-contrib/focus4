@@ -103,7 +103,10 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
  * @param node Le noeud de store.
  * @param isEdit L'état initial ou la condition d'édition.
  */
-export function patchNodeEdit(node: StoreNode, isEdit: boolean | (() => boolean)) {
+export function patchNodeEdit<T extends Entity = any, U = {}>(
+    node: StoreNode<T> | StoreListNode<T, U>,
+    isEdit: boolean | (() => boolean)
+) {
     node.$tempEdit = isEdit;
 }
 
