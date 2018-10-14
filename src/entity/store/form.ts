@@ -30,7 +30,7 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
     parentNodeOrEditing: FormNode | FormListNode | boolean | (() => boolean)
 ) {
     const {$tempEdit} = node;
-    if ($tempEdit) {
+    if ($tempEdit !== undefined) {
         delete node.$tempEdit;
     }
 
@@ -63,11 +63,7 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
             if (isEntityField(child)) {
                 addFormFieldProperties(child, node);
             } else if (isAnyStoreNode(child)) {
-                nodeToFormNode(
-                    child,
-                    (sourceNode as any)[entry],
-                    isBoolean(parentNodeOrEditing) ? node : parentNodeOrEditing
-                );
+                nodeToFormNode(child, (sourceNode as any)[entry], node);
             }
         }
         extendObservable(node.form, {
