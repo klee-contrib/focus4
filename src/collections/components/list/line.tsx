@@ -127,23 +127,75 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
         this.forceActionDisplay = false;
     }
 
-    render() {
+    /** Fonction de rendu de la ligne standard, qui sera wrappée ou non dans un conteneur Motion. */
+    @action.bound
+    lineContent({height, width}: {height?: number; width?: number}) {
         const {
-            draggedItems,
-            disableDragAnimation,
             style,
             connectDragSource,
             LineComponent,
             openDetail,
+            operationList,
             data,
-            dateSelector,
             hasSelection,
             i18nPrefix = "focus",
             mosaic,
-            operationList,
-            type,
             store
         } = this.props;
+
+        // Pour une liste, on ajoute éventuellement la case à cocher et les actions de ligne.
+        const opList = operationList && operationList(data);
+
+        return (
+            // On a besoin de rewrapper le contenu dans un <Observer> parce que sinon on perd le contexte MobX dans la Motion.
+            <Theme theme={this.props.theme}>
+                {(theme: LineStyle) =>
+                    // Si pas de drag and drop, la fonction est l'identité.
+                    (connectDragSource || (x => x))(
+                        <li
+                            className={`${mosaic ? theme.mosaic : theme.line} ${this.isSelected ? theme.selected : ""}`}
+                            style={{
+                                width: mosaic ? width || mosaic.width : undefined,
+                                height: mosaic ? height || mosaic.height : height,
+                                opacity: style && style.opacity
+                            }}
+                        >
+                            <LineComponent data={data} openDetail={openDetail} />
+                            {hasSelection && store && store.isItemSelectionnable(data) ? (
+                                <IconButton
+                                    className={`${theme.checkbox} ${
+                                        store.selectedItems.size ? theme.forceDisplay : ""
+                                    }`}
+                                    icon={getIcon(`${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`)}
+                                    onClick={this.onSelection}
+                                    primary={this.isSelected}
+                                    theme={{toggle: theme.toggle, icon: theme.checkboxIcon}}
+                                />
+                            ) : null}
+                            {opList && opList.length > 0 ? (
+                                <div
+                                    className={`${theme.actions} ${this.forceActionDisplay ? theme.forceDisplay : ""}`}
+                                    style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
+                                >
+                                    <ContextualActions
+                                        isMosaic={!!mosaic}
+                                        operationList={opList}
+                                        data={data}
+                                        onClickMenu={this.setForceActionDisplay}
+                                        onHideMenu={this.unsetForceActionDisplay}
+                                    />
+                                </div>
+                            ) : null}
+                        </li>
+                    )
+                }
+            </Theme>
+        );
+    }
+
+    render() {
+        const {draggedItems, disableDragAnimation, style, LineComponent, data, dateSelector, mosaic, type} = this.props;
+
         switch (type) {
             case "table": // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
                 return <LineComponent data={data} />;
@@ -162,63 +214,6 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                     </Theme>
                 );
             default:
-                // Pour une liste, on ajoute éventuellement la case à cocher et les actions de ligne.
-                const opList = operationList && operationList(data);
-
-                // On construit une fonction de rendu à part parce qu'on ne va pas toujours wrapper le résultat dans le Motion.
-                const lineContent = ({height, width}: {height?: number; width?: number}) => (
-                    // On a besoin de rewrapper le contenu dans un <Observer> parce que sinon on perd le contexte MobX dans la Motion.
-                    <Theme theme={this.props.theme}>
-                        {
-                            ((theme: LineStyle) =>
-                                // Si pas de drag and drop, la fonction est l'identité.
-                                (connectDragSource || (x => x))(
-                                    <li
-                                        className={`${mosaic ? theme.mosaic : theme.line} ${
-                                            this.isSelected ? theme.selected : ""
-                                        }`}
-                                        style={{
-                                            width: mosaic ? width || mosaic.width : undefined,
-                                            height: mosaic ? height || mosaic.height : height,
-                                            opacity: style && style.opacity
-                                        }}
-                                    >
-                                        <LineComponent data={data} openDetail={openDetail} />
-                                        {hasSelection && store && store.isItemSelectionnable(data) ? (
-                                            <IconButton
-                                                className={`${theme.checkbox} ${
-                                                    store.selectedItems.size ? theme.forceDisplay : ""
-                                                }`}
-                                                icon={getIcon(
-                                                    `${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`
-                                                )}
-                                                onClick={this.onSelection}
-                                                primary={this.isSelected}
-                                                theme={{toggle: theme.toggle, icon: theme.checkboxIcon}}
-                                            />
-                                        ) : null}
-                                        {opList && opList.length > 0 ? (
-                                            <div
-                                                className={`${theme.actions} ${
-                                                    this.forceActionDisplay ? theme.forceDisplay : ""
-                                                }`}
-                                                style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
-                                            >
-                                                <ContextualActions
-                                                    isMosaic={!!mosaic}
-                                                    operationList={opList}
-                                                    data={data}
-                                                    onClickMenu={this.setForceActionDisplay}
-                                                    onHideMenu={this.unsetForceActionDisplay}
-                                                />
-                                            </div>
-                                        ) : null}
-                                    </li>
-                                )) as any
-                        }
-                    </Theme>
-                );
-
                 // On ne wrappe la ligne dans le Motion que si la hauteur est définie pour
                 // - ne pas avoir une animation de départ d'une valeur quelconque jusqu'à la bonne valeur.
                 // - ne pas avoir d'animation lorsque l'élément affiché change, comme par exemple lorsqu'on supprime un élément.
@@ -234,12 +229,12 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                                 height: spring(style && !style.opacity ? 0 : mosaic ? mosaic.height : this.height)
                             }}
                         >
-                            {lineContent}
+                            {this.lineContent}
                         </Motion>
                     );
                 } else {
                     // Sinon on ne passe pas de style et ça restera à undefined.
-                    return lineContent({});
+                    return this.lineContent({});
                 }
         }
     }
