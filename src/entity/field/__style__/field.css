@@ -24,10 +24,6 @@
 .edit [data-focus="select"] {
     margin-top: -27px;
     margin-bottom: -15px;
-
-    & > span {
-        white-space: nowrap;
-    }
 }
 
 .edit.invalid [data-react-toolbox="input"] {
