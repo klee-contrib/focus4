@@ -88,7 +88,7 @@ export class InputDate extends React.Component<InputDateProps> {
     componentDidUpdate() {
         if (this.calendar && this.showCalendar) {
             const client = this.calendar.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            const screenHeight = window.innerHeight || document.documentElement!.offsetHeight;
             if (!this.calendarPosition) {
                 if (client.top + client.height > screenHeight) {
                     this.calendarPosition = "up";

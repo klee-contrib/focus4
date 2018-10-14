@@ -100,7 +100,7 @@ export class Popin extends React.Component<PopinProps> {
             }
         }
 
-        document.documentElement.style.overflowY = "hidden";
+        document.documentElement!.style.overflowY = "hidden";
     }
 
     /** Restore l'overflow (selon l'axe Y) du <html> et de l'éventuelle popin parente */
@@ -116,7 +116,7 @@ export class Popin extends React.Component<PopinProps> {
             }
         }
 
-        document.documentElement.style.overflowY = "auto";
+        document.documentElement!.style.overflowY = "auto";
     }
 
     /** Récupère les deux animations d'ouverture et de fermeture selon le type de popin. */

@@ -49,7 +49,7 @@ export class Field<T extends FieldEntry> extends React.Component<
     context!: {form?: {forceErrorDisplay: boolean}};
 
     /** <div /> contenant le composant de valeur (input ou display). */
-    @observable private valueElement?: Element;
+    @observable private valueElement?: Element | null;
     /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
     @observable private hideErrorOnInit = (this.props.field as FormEntityField<T>).isEdit && !this.props.field.value;
 
@@ -69,7 +69,7 @@ export class Field<T extends FieldEntry> extends React.Component<
         const children = (findDOMNode(this) as Element).children;
         this.valueElement = children.item(children.length - 1);
         if (this.hideErrorOnInit) {
-            this.valueElement.addEventListener("mousedown", this.disableHideError);
+            this.valueElement!.addEventListener("mousedown", this.disableHideError);
         }
     }
 

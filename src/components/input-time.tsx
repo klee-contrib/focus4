@@ -76,7 +76,7 @@ export class InputTime extends React.Component<InputTimeProps> {
     componentDidUpdate() {
         if (this.clock && this.showClock) {
             const client = this.clock.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            const screenHeight = window.innerHeight || document.documentElement!.offsetHeight;
             if (!this.clockPosition) {
                 if (client.top + client.height > screenHeight) {
                     this.clockPosition = "up";

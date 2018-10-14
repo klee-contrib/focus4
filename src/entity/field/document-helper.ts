@@ -16,7 +16,7 @@ export class DocumentHelper {
     }
 
     /** Vérifie si l'élement actif est contenu dans l'élément demandé (ce qui rend ce même élément actif). */
-    isElementActive(element?: Element) {
+    isElementActive(element?: Element | null) {
         if (element) {
             return !!Array.from(element.querySelectorAll("*")).find(child => child === this._activeElement);
         } else {

@@ -42,7 +42,7 @@ export class ButtonBackToTop extends React.Component<ButtonBackToTopProps> {
     @action.bound
     scrollSpy() {
         const {offset = 100} = this.props;
-        this.isVisible = (window.pageYOffset || document.documentElement.scrollTop) > offset;
+        this.isVisible = (window.pageYOffset || document.documentElement!.scrollTop) > offset;
     }
 
     /** Remonte la page, de façon fluide. */

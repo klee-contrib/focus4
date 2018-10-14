@@ -88,7 +88,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
         }
 
         // On détermine si on a dépassé le seuil.
-        const top = window.pageYOffset || document.documentElement.scrollTop;
+        const top = window.pageYOffset || document.documentElement!.scrollTop;
         const isDeployed = (canDeploy !== undefined
           ? canDeploy
           : this.props.canDeploy)
