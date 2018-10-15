@@ -360,11 +360,37 @@ test("FormNode: Création", t => {
 
     t.comment("FormNode: propagation isEdit et isValid");
     formNode.form.isEdit = true;
-    t.equal(formNode.structure.nom.isEdit, true, "Tous les champs sont maintenant en édition");
+    formNode2.form.isEdit = true;
+    t.equal(formNode.structure.nom.isEdit, true, "Tous les champs du noeud simple sont maintenant en édition");
+    t.equal(formNode2.ligneList[0].id.isEdit, true, "Tous les champs du noeud liste sont maintenant en édition");
 
     formNode.structure.nom.value = undefined;
     t.assert(!!formNode.structure.nom.error, "Un champ required non renseigné est bien en erreur.");
-    t.equal(formNode.structure.form.isValid, false, "Par conséquent, le FormNode n'est plus valide.");
+    t.equal(formNode.form.isValid, false, "Par conséquent, le FormNode n'est plus valide.");
+    t.deepEqual(
+        formNode.form.errors,
+        {structure: {nom: "focus.validation.required"}},
+        "La liste d'erreurs du FormNode est bien remplie."
+    );
+    t.deepEqual(
+        formNode.structure.form.errors,
+        formNode.form.errors.structure,
+        "Les erreurs de formulaires sont les mêmes à tous les niveaux."
+    );
+
+    formNode2.ligneList[1].id.value = undefined;
+    t.equal(
+        formNode2.ligneList[1].form.isValid,
+        false,
+        "Dans un FormListNode, le noeud avec une champ en erreur est invalide."
+    );
+    t.equal(formNode2.ligneList[0].form.isValid, true, "Mais le noeud d'à côté reste valide.");
+    t.equal(formNode2.ligneList.form.isValid, false, "La liste elle-même est invalide.");
+    t.deepEqual(
+        formNode2.ligneList.form.errors,
+        [{}, {id: "focus.validation.required"}, {}],
+        "La liste des erreurs sur le noeud liste est correcte."
+    );
 
     t.comment("FormNode: StoreNode.set(toFlatValues(FormNode))");
     entry.replace(toFlatValues(formNode));

@@ -128,35 +128,38 @@ export class FormActions {
     @action.bound
     async save() {
         this.formContext.forceErrorDisplay = true;
-        // On ne sauvegarde que si la validation est en succès.
-        if (!this.entity.form || this.entity.form.isValid) {
-            this.isLoading = true;
-            try {
-                const data = await this.actions.save(toFlatValues(this.entity));
-                runInAction("afterSave", () => {
-                    this.isLoading = false;
-                    this.entity.form.isEdit = false;
-                    if (data) {
-                        // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                        if (isStoreNode(this.entity.sourceNode)) {
-                            this.entity.sourceNode.replace(data);
-                        } else {
-                            this.entity.sourceNode.replaceNodes(data);
-                        }
-                    }
-                });
 
-                // Pour supprimer le message, il "suffit" de faire en sorte qu'il soit vide.
-                const savedMessage = i18next.t(`${this.config.i18nPrefix || "focus"}.detail.saved`);
-                if (savedMessage) {
-                    messageStore.addSuccessMessage(savedMessage);
-                }
-                if (this.config.onFormSaved) {
-                    this.config.onFormSaved();
-                }
-            } finally {
+        // On ne sauvegarde que si la validation est en succès.
+        if (this.entity.form && !this.entity.form.isValid) {
+            return Promise.reject({error: "Le formulaire est invalide", detail: this.entity.form.errors});
+        }
+
+        try {
+            this.isLoading = true;
+            const data = await this.actions.save(toFlatValues(this.entity));
+            runInAction("afterSave", () => {
                 this.isLoading = false;
+                this.entity.form.isEdit = false;
+                if (data) {
+                    // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
+                    if (isStoreNode(this.entity.sourceNode)) {
+                        this.entity.sourceNode.replace(data);
+                    } else {
+                        this.entity.sourceNode.replaceNodes(data);
+                    }
+                }
+            });
+
+            // Pour supprimer le message, il "suffit" de faire en sorte qu'il soit vide.
+            const savedMessage = i18next.t(`${this.config.i18nPrefix || "focus"}.detail.saved`);
+            if (savedMessage) {
+                messageStore.addSuccessMessage(savedMessage);
             }
+            if (this.config.onFormSaved) {
+                this.config.onFormSaved();
+            }
+        } finally {
+            this.isLoading = false;
         }
     }
 

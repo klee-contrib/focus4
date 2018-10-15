@@ -1,4 +1,4 @@
-import {isBoolean, isFunction, values} from "lodash";
+import {isBoolean, isFunction, toPairs} from "lodash";
 import {action, extendObservable, observable} from "mobx";
 
 import {
@@ -55,6 +55,9 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         extendObservable(node.form, {
             get isValid() {
                 return isFormListNode(node) && node.every(item => item.form.isValid);
+            },
+            get errors() {
+                return (isFormListNode(node) && node.map(item => item.form.errors)) || [];
             }
         });
     } else if (isFormNode(node)) {
@@ -68,18 +71,25 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         }
         extendObservable(node.form, {
             get isValid() {
+                return !Object.keys(this.errors).length;
+            },
+            get errors() {
                 return (
-                    isFormNode(node) &&
-                    values(node).every(item => {
-                        if (isEntityField(item)) {
-                            return (item as FormEntityField).isValid;
-                        } else if (isAnyFormNode(item) && item !== (node as any)) {
-                            // Un noeud qui a été ajouté dans une liste contient une référence vers lui-même dans `sourceNode`, il faut donc la passer au risque de boucler infiniment.
-                            return item.form.isValid;
-                        } else {
-                            return true;
-                        }
-                    })
+                    (isFormNode(node) &&
+                        toPairs(node).reduce((errors, [key, item]) => {
+                            if (isEntityField(item)) {
+                                const fItem = item as FormEntityField;
+                                if (!fItem.isValid) {
+                                    return {...errors, [key]: fItem.error};
+                                }
+                            } else if (isAnyFormNode(item) && item !== (node as any)) {
+                                if (!item.form.isValid) {
+                                    return {...errors, [key]: item.form.errors};
+                                }
+                            }
+                            return errors;
+                        }, {})) ||
+                    {}
                 );
             }
         });
