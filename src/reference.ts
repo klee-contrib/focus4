@@ -7,7 +7,7 @@ import {config} from "./config";
 export type ReferenceLoader = (refName: string) => Promise<{}[]>;
 
 /** Définition d'un type de référence. */
-export interface ReferenceDefinition<T = {}> {
+export interface ReferenceDefinition<T = any> {
     /** Propriété représentant le libellé. */
     labelKey?: keyof T;
     /** Le type de la liste. */
@@ -16,7 +16,7 @@ export interface ReferenceDefinition<T = {}> {
     valueKey?: keyof T;
 }
 
-export interface ReferenceList<T = {}> extends Array<T> {
+export interface ReferenceList<T = any> extends Array<T> {
     /** Propriété représentant le libellé. */
     $labelKey?: keyof T;
     /** Propriété représentant la valeur. */
