@@ -10,12 +10,12 @@ export const fr = {
         save: "Enregistrer"
     },
     detail: {
-        deleted: "Élement supprimé avec succès",
-        saved: "Élement enregistré avec succès"
+        deleted: "Élément supprimé avec succès",
+        saved: "Élément enregistré avec succès"
     },
     dragLayer: {
         item: "élément",
-        items: "élements"
+        items: "éléments"
     },
     list: {
         add: "Ajouter",
@@ -26,7 +26,7 @@ export const fr = {
         },
         show: {
             all: "Voir tout",
-            displayed: "élements affichés",
+            displayed: "éléments affichés",
             less: "Voir moins",
             more: "Voir plus"
         }
@@ -38,8 +38,8 @@ export const fr = {
         action: {
             filter: "Filtrer",
             group: "Grouper",
-            selectedItem: "élement sélectionné",
-            selectedItems: "élements sélectionnés",
+            selectedItem: "élément sélectionné",
+            selectedItems: "éléments sélectionnés",
             sort: "Trier"
         },
         bar: {
