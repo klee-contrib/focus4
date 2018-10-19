@@ -41,8 +41,15 @@ export function autocompleteFor<T extends FieldEntry>(
         }
 ) {
     const {keyResolver, querySearcher, ...otherOptions} = options;
-    otherOptions.autocompleteProps = {...((options.autocompleteProps as {}) || {}), keyResolver, querySearcher} as {};
-    return <Field field={field} onChange={getOnChange(field)} {...otherOptions} inputType="autocomplete" />;
+    return (
+        <Field
+            field={field}
+            onChange={getOnChange(field)}
+            {...otherOptions}
+            autocompleteProps={{...((options.autocompleteProps as {}) || {}), keyResolver, querySearcher}}
+            inputType="autocomplete"
+        />
+    );
 }
 
 /**
@@ -78,13 +85,20 @@ export function selectFor<T extends FieldEntry>(
             NonNullable<T["domain"]["labelProps"]>
         > = {}
 ) {
-    options.selectProps = {
-        values: values.slice(),
-        labelKey: (values && values.$labelKey) || "label",
-        valueKey: (values && values.$valueKey) || "code",
-        ...((options.selectProps as {}) || {}),
-    } as {};
-    return <Field field={field} onChange={getOnChange(field)} {...options} inputType="select" />;
+    return (
+        <Field
+            field={field}
+            onChange={getOnChange(field)}
+            {...options}
+            selectProps={{
+                values: values.slice(),
+                labelKey: (values && values.$labelKey) || "label",
+                valueKey: (values && values.$valueKey) || "code",
+                ...((options.selectProps as {}) || {})
+            }}
+            inputType="select"
+        />
+    );
 }
 
 /**
