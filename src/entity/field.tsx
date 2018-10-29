@@ -14,15 +14,13 @@ import * as styles from "./__style__/field.css";
 
 export type FieldStyle = Partial<typeof styles>;
 
-export type RefValues<T, VK extends string, LK extends string> = {[P in VK]: T} & {[P in LK]: string};
-
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
     T = any,                                        // Type de la valeur.
     ICProps extends {theme?: {}} = InputProps,      // Props du composant d'input.
     DCProps extends {theme?: {}} = DisplayProps,    // Props du component d'affichage.
     LCProps = LabelProps,                           // Props du component de libellé.
-    R extends RefValues<T, VK, LK> = any,           // Type de la liste de référence associée.
+    R = any,                                        // Type de la liste de référence associée.
     VK extends string = any,                        // Nom de la propriété de valeur (liste de référence).
     LK extends string = any                         // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
@@ -80,7 +78,7 @@ export class Field<
     ICProps extends InputProps,
     DCProps extends DisplayProps,
     LCProps extends LabelProps,
-    R extends RefValues<T, VK, LK> ,
+    R,
     VK extends string,
     LK extends string
 > extends React.Component<FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>, void> {

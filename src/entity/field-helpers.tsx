@@ -6,7 +6,7 @@ import * as React from "react";
 import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../components";
 import {EntityField} from "../entity";
 
-import Field, {FieldProps, RefValues} from "./field";
+import Field, {FieldProps} from "./field";
 import {Domain} from "./types";
 
 /** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */
@@ -85,7 +85,7 @@ export function fieldFor<T, ICDomainProps = InputProps, DCDomainProps = DisplayP
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">(
+export function selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R = any, ValueKey extends string = "code", LabelKey extends string = "label">(
     field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
     values: R[],
     options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
@@ -100,7 +100,7 @@ export function selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = Label
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function stringFor<T, R extends RefValues<T, ValueKey, LabelKey>, ValueKey extends string = "code", LabelKey extends string = "label">(
+export function stringFor<T, R, ValueKey extends string = "code", LabelKey extends string = "label">(
     field: EntityField<T>,
     options: Partial<FieldProps<T, {}, {}, {}, R, ValueKey, LabelKey>> = {}
 ) {

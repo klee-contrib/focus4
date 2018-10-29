@@ -9,7 +9,7 @@ import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../
 import {messageStore} from "../message";
 import {classAutorun} from "../util";
 
-import {Field, FieldProps, RefValues} from "./field";
+import {Field, FieldProps} from "./field";
 import {StoreNode, toFlatValues} from "./store";
 import {Domain, EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
@@ -342,7 +342,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R extends RefValues<T, ValueKey, LabelKey> = any, ValueKey extends string = "code", LabelKey extends string = "label">(
+    selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R = any, ValueKey extends string = "code", LabelKey extends string = "label">(
         field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
         values: R[],
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
@@ -355,7 +355,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    stringFor<T, R extends RefValues<T, ValueKey, LabelKey>, ValueKey extends string = "code", LabelKey extends string = "label">(
+    stringFor<T, R, ValueKey extends string = "code", LabelKey extends string = "label">(
         field: EntityField<T>,
         options: Partial<FieldProps<T, {}, {}, {}, R, ValueKey, LabelKey>> = {}
     ) {
