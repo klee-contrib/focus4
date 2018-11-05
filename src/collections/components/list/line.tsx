@@ -151,7 +151,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
             <Theme theme={this.props.theme}>
                 {(theme: LineStyle) =>
                     // Si pas de drag and drop, la fonction est l'identité.
-                    (connectDragSource || (x => x))(
+                    (connectDragSource || ((x => x) as ConnectDragSource))(
                         <li
                             className={`${mosaic ? theme.mosaic : theme.line} ${this.isSelected ? theme.selected : ""}`}
                             style={{
