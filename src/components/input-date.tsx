@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import moment from "moment";
 import * as React from "react";
 import {IconButton} from "react-toolbox/lib/button";
-import {DatePickerTheme} from "react-toolbox/lib/date_picker";
+import {DatePickerTheme, DatePickerProps} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {InputTheme} from "react-toolbox/lib/input";
 
@@ -49,6 +49,8 @@ export interface InputDateProps extends InputProps {
     theme?: DatePickerTheme & InputTheme;
     /** Valeur. */
     value?: string;
+    /* Autres props du Calendar React */
+    calendarProps?: DatePickerProps;
 }
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
@@ -230,6 +232,7 @@ export class InputDate extends React.Component<InputDateProps> {
             calendarFormat = "ddd, MMM D",
             displayFrom = "left",
             ISOStringFormat = "utc-midnight",
+            calendarProps = {},
             ...inputProps
         } = this.props;
         return (
@@ -280,6 +283,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                 </header>
                                 <div className={theme!.calendarWrapper}>
                                     <Calendar
+                                        {...calendarProps}
                                         handleSelect={() => null}
                                         selectedDate={this.jsDate}
                                         display={this.calendarDisplay}
