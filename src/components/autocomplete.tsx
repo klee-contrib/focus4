@@ -1,10 +1,11 @@
 import i18next from "i18next";
 import {debounce} from "lodash-decorators";
-import {action, observable, ObservableMap, runInAction} from "mobx";
+import {action, computed, observable, ObservableMap, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 export {ObservableMap};
+import {isEmpty} from "lodash";
 
 import {
     Autocomplete as RTAutocomplete,
@@ -17,7 +18,6 @@ import {ProgressBar} from "react-toolbox/lib/progress_bar";
 import {themr} from "../theme";
 
 import * as styles from "./__style__/autocomplete.css";
-import { isEmpty } from 'lodash';
 export type AutocompleteStyle = Partial<typeof styles> & AutocompleteTheme & InputTheme;
 const Theme = themr("autocomplete", styles);
 
@@ -53,18 +53,26 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 export class Autocomplete extends React.Component<AutocompleteProps> {
     protected inputElement!: HTMLInputElement | null;
 
-    /** Composant en chargement. */
+    /** Requête d'autocomplete en cours. */
     @observable protected isLoading = false;
+
     /** Contenu du champ texte. */
     @observable protected query = "";
-    /** Liste des valeurs. */
-    protected readonly values = observable.map<string>();
+
+    /** Résultat de la recherche d'autocomplétion. */
+    protected readonly data = observable.map<string>();
+
+    /** Résultats sous format JSON, pour l'autocomplete. */
+    @computed.struct
+    get source() {
+        return this.data.toJSON();
+    }
 
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
     protected value?: string;
 
     /** Reference du composant Autocomplete de RT, qui n'a pas renseigné ses types -_-' */
-    private RtAcRef?: any | null;
+    private autocomplete?: any;
 
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
@@ -91,7 +99,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
         const {onQueryChange, onChange, isQuickSearch} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
-        const label = this.value && this.values.get(this.value);
+        const label = this.value && this.data.get(this.value);
         if (label !== query && onChange) {
             onChange(undefined);
         }
@@ -119,7 +127,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
 
         if (isQuickSearch && value) {
             this.query = "";
-            this.values.clear();
+            this.data.clear();
             this.focus();
         }
 
@@ -140,7 +148,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
             runInAction("replaceResults", () => {
-                this.values.replace(
+                this.data.replace(
                     (result &&
                         result.data &&
                         result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {})) ||
@@ -156,45 +164,45 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
         this.search(query);
     }
 
+    /**
+     * Pour sélectionner le premier élément de la liste de suggestion avec Tab.
+     * Recopie une bonne partie du mécanisme de l'autocomplete de RT puisqu'on ne peut pas faire autrement...
+     */
+    @action.bound
     onKeyDown(event: KeyboardEvent) {
+        if (event.key === "Tab" && this.autocomplete) {
+            const {active} = this.autocomplete.state;
 
-        /// Gestion du tab avec selection
-        if (event.key === "Tab" && this.RtAcRef) {
-            this.selectOrCreateActiveItem(event);
-        }
-    }
-
-    selectOrCreateActiveItem(event: KeyboardEvent) {
-        const active = this.RtAcRef.state.active;
-        let target = active;
-        if (!active && this.RtAcRef.props.source && !isEmpty(this.RtAcRef.props.source)) {
-            target = Object.keys(this.RtAcRef.props.source)[0];
-        }
-
-        this.select(event, target);
-    }
-
-    select(event: KeyboardEvent, target: any) {
-        const values = this.RtAcRef.values(this.RtAcRef.props.value);
-        const source = this.RtAcRef.source();
-        const newValue = target === void 0 ? (event!.target! as any).id : target;
-
-        if (this.RtAcRef.isValueAnObject()) {
-            const newItem = Array.from(source).reduce((obj: any, [k, value]: any) => {
-                if (k === newValue) {
-                    (obj as any)[k] = value;
-                }
-                return obj;
-            }, {});
-
-            if (Object.keys(newItem).length === 0 && newValue) {
-                newItem[newValue] = newValue;
+            let targetValue = active;
+            if (!active && this.source && !isEmpty(this.source)) {
+                targetValue = Object.keys(this.source)[0];
             }
 
-            return this.RtAcRef.handleChange(Object.assign(this.RtAcRef.mapToObject(values), newItem), event);
+            const values = this.autocomplete.values(this.autocomplete.props.value);
+            const source = this.autocomplete.source();
+            const newValue = targetValue === void 0 ? (event!.target! as any).id : targetValue;
+
+            if (this.autocomplete.isValueAnObject()) {
+                const newItem = Array.from(source).reduce((obj: any, [k, value]: any) => {
+                    if (k === newValue) {
+                        (obj as any)[k] = value;
+                    }
+                    return obj;
+                }, {});
+
+                if (Object.keys(newItem).length === 0 && newValue) {
+                    newItem[newValue] = newValue;
+                }
+
+                return this.autocomplete.handleChange({...this.autocomplete.mapToObject(values), ...newItem}, event);
+            }
+
+            this.autocomplete.handleChange([newValue, ...values.keys()], event);
         }
 
-        this.RtAcRef.handleChange([newValue, ...values.keys()], event);
+        if (this.props.onKeyDown) {
+            this.props.onKeyDown();
+        }
     }
 
     render() {
@@ -207,13 +215,14 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
                             {...props}
                             onChange={this.onValueChange}
                             multiple={false}
-                            source={this.values.toJSON()}
+                            source={this.source}
                             query={this.query}
                             onQueryChange={this.onQueryChange}
                             maxLength={undefined}
                             suggestionMatch="disabled"
                             theme={theme}
-                            innerRef={(ref: any) => (this.RtAcRef = ref)}
+                            innerRef={(ref: any) => (this.autocomplete = ref)}
+                            onKeyDown={this.onKeyDown}
                         />
                         {this.isLoading ? (
                             <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
