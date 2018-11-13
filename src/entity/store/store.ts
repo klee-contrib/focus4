@@ -23,7 +23,9 @@ import {toFlatValues} from "./util";
 export type ExtractEntities<T> = {
     readonly [P in keyof T]: T[P] extends Entity
         ? StoreNode<T[P]>
-        : T[P] extends Entity[] ? StoreListNode<T[P][0]> : T[P]
+        : T[P] extends Entity[]
+        ? StoreListNode<T[P][0]>
+        : T[P]
 };
 
 /** Récupère les types associés aux entités définies dans T. */
@@ -31,7 +33,9 @@ export type ExtractTypes<T> = Partial<
     {
         [P in keyof T]: T[P] extends Entity
             ? EntityToType<T[P]>
-            : T[P] extends Entity[] ? EntityToType<T[P][0]>[] : NodeToType<T[P]>
+            : T[P] extends Entity[]
+            ? EntityToType<T[P][0]>[]
+            : NodeToType<T[P]>
     }
 >;
 

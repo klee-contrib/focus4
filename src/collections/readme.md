@@ -10,11 +10,11 @@ Ces composants permettent respectivement d'afficher une liste, un tableau ou une
 
 Si les composants de tableau et de timeline sont assez simples, la liste possède quelques fonctionnalités supplémentaires :
 
-*   On peut passer et afficher des actions sur chaque élement (`operationList`).
-*   Elle peut gérer d'un mode liste et d'un mode mosaïque, avec deux composants séparés. (`LineComponent` et `MosaicComponent`)
-*   Elle peut gérer un détail d'élément, dont l'affichage se fait par accordéon. (`DetailComponent` et la prop supplémentaire `openDetail` passée aux lignes.)
-*   Les lignes de la liste peuvent être des sources de drag and drop.
-*   On peut ajouter un handler d'ajout d'élément (affiché uniquement en mosaïque). (`addItemHandler`)
+-   On peut passer et afficher des actions sur chaque élement (`operationList`).
+-   Elle peut gérer d'un mode liste et d'un mode mosaïque, avec deux composants séparés. (`LineComponent` et `MosaicComponent`)
+-   Elle peut gérer un détail d'élément, dont l'affichage se fait par accordéon. (`DetailComponent` et la prop supplémentaire `openDetail` passée aux lignes.)
+-   Les lignes de la liste peuvent être des sources de drag and drop.
+-   On peut ajouter un handler d'ajout d'élément (affiché uniquement en mosaïque). (`addItemHandler`)
 
 Un composant transverse **`ListWrapper`** permet de centraliser les paramètres de mode, de taille de mosaïque et d'handler d'ajout d'élément pour partager cet état entre plusieurs listes (ce qui est utilisé nativement par la recherche groupée). Il suffit de poser toutes les listes dans un `ListWrapper` et elles récupéreront l'état via le contexte.
 
@@ -32,20 +32,20 @@ Le `ListStore` est le store le plus simple : on lui affecte une liste pré-charg
 
 Le `SearchStore` est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur ElasticSearch. Il contient à la fois les différents critères de recherche ainsi que les résultats, en plus de contenir les fonctionnalités communes comme la sélection. Chaque changement de critère va relancer la recherche. Son usage standard est très simple puisqu'il sera intégralement piloté et affiché par les composants de recherche, mais il est également possible de manipuler les différents critères à la main, qui sont :
 
-*   `query` : le champ texte
-*   `groupingKey` : le champ sur lequel grouper.
-*   `selectedFacets` : les facettes sélectionnées.
-*   `sortAsc` : le sens du tri.
-*   `sortBy`: le champ sur lequel trier.
-*   `top` : le nombre de résultats à retourner par requête.
+-   `query` : le champ texte
+-   `groupingKey` : le champ sur lequel grouper.
+-   `selectedFacets` : les facettes sélectionnées.
+-   `sortAsc` : le sens du tri.
+-   `sortBy`: le champ sur lequel trier.
+-   `top` : le nombre de résultats à retourner par requête.
 
 A ces critères-là, on peut ajouter un objet de critère `criteria` personnalisé pour ajouter d'autres champs à utiliser pour la recherche. Cet objet sera stocké sous la forme d'un `StoreNode` pour pouvoir construire des champs, avec de la validation, de manière immédiate (par exemple pour des champs de date, de montant...). Ou bien, simplement pour ajouter des critères simples comme un scope ou un ID d'objet pour restreindre la recherche.
 
 Le constructeur prend jusqu'à 3 paramètres :
 
-*   `searchService` (obligatoire) : le service de recherche, qui soit respecter impérativement l'API de recherche prévue : `(query: QueryInput) => Promise<QueryOutput<T>>`
-*   `initialQuery` (facultatif) : les valeurs des critères par défaut à la création du store.
-*   `criteria` (facultatif) : la description du critère personnalisé. Doit être de la forme `[{} as MyObjectNode, MyObjectEntity]`
+-   `searchService` (obligatoire) : le service de recherche, qui soit respecter impérativement l'API de recherche prévue : `(query: QueryInput) => Promise<QueryOutput<T>>`
+-   `initialQuery` (facultatif) : les valeurs des critères par défaut à la création du store.
+-   `criteria` (facultatif) : la description du critère personnalisé. Doit être de la forme `[{} as MyObjectNode, MyObjectEntity]`
 
 _(Note : les deux derniers paramètres sont interchangeables)_
 
@@ -55,23 +55,23 @@ S'il est possible d'utiliser les composants de base avec un store, il existe tou
 
 ### Listes
 
-*   Le composant de liste `listFor` devient `storeListFor`, et il propose en plus :
-    *   L'affichage des cases de sélection sur chaque ligne
-    *   La pagination serveur en plus de la pagination locale (les deux peuvent être utilisées en même temps)
-*   Le composant de tableau `tableFor` devient `storeTableFor`, et il propose en plus :
-    *   Le tri au niveau des colonnes
-    *   La pagination serveur (idem `storeListFor`)
+-   Le composant de liste `listFor` devient `storeListFor`, et il propose en plus :
+    -   L'affichage des cases de sélection sur chaque ligne
+    -   La pagination serveur en plus de la pagination locale (les deux peuvent être utilisées en même temps)
+-   Le composant de tableau `tableFor` devient `storeTableFor`, et il propose en plus :
+    -   Le tri au niveau des colonnes
+    -   La pagination serveur (idem `storeListFor`)
 
 ### `ActionBar`
 
 C'est le composant principal pour piloter un store (liste ou recherche). On y retrouve, dans l'ordre :
 
-*   La case à cocher de sélection (si `hasSelection = true`).
-*   Le menu de tri (si `orderableColumnList` a été renseigné).
-*   Le bouton d'ouverture des filtres (si `hasFacetBox = true`).
-*   Le menu de groupe (si `hasGroup = true`).
-*   La barre de recherche (si `hasSearchBar = true`)
-*   Les actions de sélection (si au moins un élément est sélectionné et que `operationList` a été renseigné).
+-   La case à cocher de sélection (si `hasSelection = true`).
+-   Le menu de tri (si `orderableColumnList` a été renseigné).
+-   Le bouton d'ouverture des filtres (si `hasFacetBox = true`).
+-   Le menu de groupe (si `hasGroup = true`).
+-   La barre de recherche (si `hasSearchBar = true`)
+-   Les actions de sélection (si au moins un élément est sélectionné et que `operationList` a été renseigné).
 
 Lorsqu'un élément au moins a été sélectionné, toutes les autres actions disparaissent pour afficher le nombre d'éléments sélectionnés à la place. Ces mêmes actions sont absentes de l'ActionBar d'un groupe et le nom du groupe est affiché à la place.
 
@@ -87,12 +87,12 @@ Ce composant permet d'afficher les résultats de la recherche, sous la forme d'u
 
 Ce composant est affiché en premier, au-dessus de l'`ActionBar` et du `Results`. Il sert à afficher le résumé de la recherche en cours en listant, dans l'ordre :
 
-*   Le nombre de résultats
-*   Le champ de recherche textuel
-*   Les critères (masquables)
-*   Les facettes (masquables)
-*   Le groupe (masquable)
-*   Le tri (masquable)
+-   Le nombre de résultats
+-   Le champ de recherche textuel
+-   Les critères (masquables)
+-   Les facettes (masquables)
+-   Le groupe (masquable)
+-   Le tri (masquable)
 
 _(Note : le tri et le groupe ne sont jamais effectifs en même temps)_
 

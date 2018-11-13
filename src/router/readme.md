@@ -70,9 +70,9 @@ const Main = observer(() => {
 
 Il est possible de définir un hook `beforeEnter` sur un `ViewStore` (dans le constructeur) qui va s'exécuter juste avant une navigation (que ça soit par URL ou par `setView()`), qui peut retourner 3 choses :
 
-*   `{redirect: view}`, pour rediriger vers la vue retournée. Par exemple : `{redirect: {page: "home"}}`.
-*   `{errorCode: "code"}`, pour rediriger vers la page d'erreur avec le code demandé (voir plus bas).
-*   `undefined`, pour ne rien faire.
+-   `{redirect: view}`, pour rediriger vers la vue retournée. Par exemple : `{redirect: {page: "home"}}`.
+-   `{errorCode: "code"}`, pour rediriger vers la page d'erreur avec le code demandé (voir plus bas).
+-   `undefined`, pour ne rien faire.
     Ce hook permet d'ajouter de la logique pour par exemple bloquer l'accès à certaines pages si l'utilisateur n'a pas les droits, ou pour combler une URL qui n'existe pas.
 
 ## Page d'erreur

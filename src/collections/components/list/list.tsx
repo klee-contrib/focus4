@@ -279,15 +279,15 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                             this.displayedIdx === undefined && this.mode === "mosaic"
                                                 ? {left: -1000}
                                                 : this.mode === "mosaic"
-                                                    ? {
-                                                          left:
-                                                              this.mosaic.width / 2 -
-                                                              8.25 +
-                                                              ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) %
-                                                                  this.byLine) *
-                                                                  (this.mosaic.width + 10)
-                                                      }
-                                                    : {}
+                                                ? {
+                                                      left:
+                                                          this.mosaic.width / 2 -
+                                                          8.25 +
+                                                          ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) %
+                                                              this.byLine) *
+                                                              (this.mosaic.width + 10)
+                                                  }
+                                                : {}
                                         }
                                     />
                                     <div className={theme.detail}>

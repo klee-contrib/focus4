@@ -8,8 +8,10 @@ export type NodeToForm<T extends Entity, U = {}> = {
     readonly [P in keyof (StoreNode<T> & U)]: (StoreNode<T> & U)[P] extends StoreNode<infer V>
         ? FormNode<V>
         : (StoreNode<T> & U)[P] extends StoreListNode<infer W, infer X>
-            ? FormListNode<W, X>
-            : (StoreNode<T> & U)[P] extends EntityField<infer F> ? FormEntityField<F> : (StoreNode<T> & U)[P]
+        ? FormListNode<W, X>
+        : (StoreNode<T> & U)[P] extends EntityField<infer F>
+        ? FormEntityField<F>
+        : (StoreNode<T> & U)[P]
 };
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
@@ -20,8 +22,10 @@ export type NodeToErrors<T extends Entity, U = {}> = Omit<
         readonly [P in keyof (StoreNode<T> & U)]?: (StoreNode<T> & U)[P] extends StoreNode<infer V>
             ? NodeToErrors<V>
             : (StoreNode<T> & U)[P] extends StoreListNode<infer W, infer X>
-                ? NodeToErrors<W, X>[]
-                : (StoreNode<T> & U)[P] extends EntityField ? string : never
+            ? NodeToErrors<W, X>[]
+            : (StoreNode<T> & U)[P] extends EntityField
+            ? string
+            : never
     },
     {
         [P in keyof (StoreNode<T> & U)]: (StoreNode<T> & U)[P] extends StoreNode | StoreListNode | EntityField

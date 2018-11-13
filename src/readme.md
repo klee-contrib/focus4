@@ -42,8 +42,12 @@ class View extends React.Component {
     render() {
         return (
             <ul>
-                {referenceStore.product.map(product => <li>product.code</li>)}
-                {referenceStore.line.map(line => <li>line.label</li>)}
+                {referenceStore.product.map(product => (
+                    <li>product.code</li>
+                ))}
+                {referenceStore.line.map(line => (
+                    <li>line.label</li>
+                ))}
             </ul>
         );
     }

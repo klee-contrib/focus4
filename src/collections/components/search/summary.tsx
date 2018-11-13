@@ -75,15 +75,17 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                 const facetValues = store.selectedFacets[facetKey] || [];
                 const facetOutput = store.facets.find(facet => facetKey === facet.code);
                 if (facetOutput) {
-                    facetOutput.values.filter(value => !!facetValues.find(v => v === value.code)).forEach(facetItem =>
-                        topicList.push({
-                            key: `${facetKey}-${facetItem.code}`,
-                            label: `${i18next.t((facetOutput && facetOutput.label) || facetKey)} : ${i18next.t(
-                                facetItem.label || facetItem.code
-                            )}`,
-                            onDeleteClick: () => removeFacetValue(store, facetKey, facetItem.code)
-                        })
-                    );
+                    facetOutput.values
+                        .filter(value => !!facetValues.find(v => v === value.code))
+                        .forEach(facetItem =>
+                            topicList.push({
+                                key: `${facetKey}-${facetItem.code}`,
+                                label: `${i18next.t((facetOutput && facetOutput.label) || facetKey)} : ${i18next.t(
+                                    facetItem.label || facetItem.code
+                                )}`,
+                                onDeleteClick: () => removeFacetValue(store, facetKey, facetItem.code)
+                            })
+                        );
                 }
             }
         }

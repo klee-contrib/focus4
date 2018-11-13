@@ -49,10 +49,10 @@ function patchClass<T extends RCL>(
             type === "autorun"
                 ? autorun(r)
                 : type === "reaction"
-                    ? reaction(hasExpressionThis(expression) ? expression(this) : (expression as any), r, opts)
-                    : type === "when"
-                        ? when(hasExpressionThis(expression) ? expression(this) : (expression as any), r)
-                        : undefined;
+                ? reaction(hasExpressionThis(expression) ? expression(this) : (expression as any), r, opts)
+                : type === "when"
+                ? when(hasExpressionThis(expression) ? expression(this) : (expression as any), r)
+                : undefined;
     }
 
     function componentWillUnmount(this: RCL) {

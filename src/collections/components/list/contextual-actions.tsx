@@ -118,7 +118,9 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
                                     onClick={onClickMenu}
                                     onHide={onHideMenu}
                                 >
-                                    {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
+                                    {lists.secondaryActions.map((a, i) => (
+                                        <MenuItem key={i} {...a} />
+                                    ))}
                                 </IconMenu>
                             ) : (
                                 <ButtonMenu
@@ -129,7 +131,9 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
                                     onClick={onClickMenu}
                                     onHide={onHideMenu}
                                 >
-                                    {lists.secondaryActions.map((a, i) => <MenuItem key={i} {...a} />)}
+                                    {lists.secondaryActions.map((a, i) => (
+                                        <MenuItem key={i} {...a} />
+                                    ))}
                                 </ButtonMenu>
                             )
                         ) : null}

@@ -16,8 +16,8 @@ Le **domaine** d'un champ répresente le type de donnée métier qui lui est ass
 
 ## Principes généraux
 
-*   Le module `entity`, comme son nom ne l'indique pas, est entièrement construit autour des **champs**. Une entité n'est qu'un ensemble de champs comme un autre, et les différentes APIs proposées n'agissent directement que sur des champs ou parfois sur des ensembles de champs.
-*   Un champ est autonome et n'a jamais besoin d'un contexte extérieur pour compléter sa définition, ce qui permet justement aux APIs d'utiliser des champs directement. Même s'il est en pratique rattaché à un conteneur, ce rattachement est transparant à l'utilisation.
+-   Le module `entity`, comme son nom ne l'indique pas, est entièrement construit autour des **champs**. Une entité n'est qu'un ensemble de champs comme un autre, et les différentes APIs proposées n'agissent directement que sur des champs ou parfois sur des ensembles de champs.
+-   Un champ est autonome et n'a jamais besoin d'un contexte extérieur pour compléter sa définition, ce qui permet justement aux APIs d'utiliser des champs directement. Même s'il est en pratique rattaché à un conteneur, ce rattachement est transparant à l'utilisation.
 
 ## Construction de champs via une entité dans un `EntityStore`
 
@@ -66,15 +66,15 @@ Construire un `EntityStore` est une façon de créer des champs mais n'est pas l
 
 Un chaque objet contenu dans un `EntityStore` peut être l'un des trois objets suivants :
 
-*   Un `EntityField`, objet représentant un champ, détaillé dans le paragraphe précédent.
-*   Un `StoreNode`, objet contenant des champs et d'autres `Store(List)Node`. Une entité dans un `EntityStore` est représentée par un `StoreNode`, et l'`EntityStore` lui-même est également un `StoreNode` (qui n'a à priori pas de champs au premier niveau).
-*   Un `StoreListNode`, qui est une liste de `StoreNode` (il s'agit d'un array observable avec des propriétés en plus, il hérite donc de toutes ses méthodes).
+-   Un `EntityField`, objet représentant un champ, détaillé dans le paragraphe précédent.
+-   Un `StoreNode`, objet contenant des champs et d'autres `Store(List)Node`. Une entité dans un `EntityStore` est représentée par un `StoreNode`, et l'`EntityStore` lui-même est également un `StoreNode` (qui n'a à priori pas de champs au premier niveau).
+-   Un `StoreListNode`, qui est une liste de `StoreNode` (il s'agit d'un array observable avec des propriétés en plus, il hérite donc de toutes ses méthodes).
 
 Le `StoreNode` et le `StoreListNode` ont une API similaire, qui contient les méthodes suivantes :
 
-*   `replace(data)`/`replaceNodes(data)`, qui remplace le noeud (récursivement) intégralement par l'objet (sous forme "JSON") passé en paramètre. `replace` sur un array observable existe déjà et est la méthode utilisée pour remplacer l'array par l'array donné : `replaceNodes` réalise la construction des `StoreNode`s en plus.
-*   `set(data)`/`setNodes(data)`, qui met à jour le noeud (récursivement) avec les champs renseignés dans `data` (c'est un "merge"). Pour un noeud de liste, si l'objet à l'index passé n'existe pas encore dans la liste, il sera créé en même temps.
-*   `clear()`, qui vide récursivement le noeud et son contenu.
+-   `replace(data)`/`replaceNodes(data)`, qui remplace le noeud (récursivement) intégralement par l'objet (sous forme "JSON") passé en paramètre. `replace` sur un array observable existe déjà et est la méthode utilisée pour remplacer l'array par l'array donné : `replaceNodes` réalise la construction des `StoreNode`s en plus.
+-   `set(data)`/`setNodes(data)`, qui met à jour le noeud (récursivement) avec les champs renseignés dans `data` (c'est un "merge"). Pour un noeud de liste, si l'objet à l'index passé n'existe pas encore dans la liste, il sera créé en même temps.
+-   `clear()`, qui vide récursivement le noeud et son contenu.
 
 Le `StoreNode` possède également une méthode `pushNode(...items)`, qui est à `push(...items)` ce qu'est `replaceNode` à `replace`.
 
@@ -88,9 +88,9 @@ De plus, il convient également de rappeler que la modification d'un noeud ou de
 
 La fonction `makeEntityStore` permet de créer un nouvel `EntityStore` à partir d'un objet de configuration. Cette objet peut contenir :
 
-*   Des objets de définition d'entité (généralement générés sous le nom `OperationEntity`), pour générér les `StoreNode`s correspondants.
-*   Des arrays contenants un objet d'entité (`[OperationEntity]`), pour générer les `StoreListNode`s correspondants.
-*   Des `StoreNode`s existants, créés à partir d'un autre `EntityStore`. Cela permet de les rattacher aux méthodes `replace`, `set` et `clear` du store, pour associer des ensembles d'entités liées.
+-   Des objets de définition d'entité (généralement générés sous le nom `OperationEntity`), pour générér les `StoreNode`s correspondants.
+-   Des arrays contenants un objet d'entité (`[OperationEntity]`), pour générer les `StoreListNode`s correspondants.
+-   Des `StoreNode`s existants, créés à partir d'un autre `EntityStore`. Cela permet de les rattacher aux méthodes `replace`, `set` et `clear` du store, pour associer des ensembles d'entités liées.
 
 #### `toFlatValues(node)`
 
@@ -104,8 +104,8 @@ Focus met à disposition quatre fonctions pour afficher des champs :
 
 C'est la fonction principale, elle permet d'afficher un champ avec son libellé, à partir de ses métadonnées (en particulier le domaine). Elle prend comme paramètres :
 
-*   `field`, un `EntityField`
-*   `options`, les différentes options à passer au champ. Il ne s'agit uniquement de props pour le composant de Field, et _il n'y est pas possible de surcharger les métadonnées du champ_.
+-   `field`, un `EntityField`
+-   `options`, les différentes options à passer au champ. Il ne s'agit uniquement de props pour le composant de Field, et _il n'y est pas possible de surcharger les métadonnées du champ_.
 
 Le composant de Field utilisera ses composants par défaut si le domaine ne les renseignent pas (`Input`, `Display` et `Label` de `components`).
 
@@ -113,23 +113,23 @@ Le composant de Field utilisera ses composants par défaut si le domaine ne les 
 
 La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une liste de référence. Elle prend comme paramètres :
 
-*   `field`, le champ contenant le code
-*   `values`, la liste de référence à utiliser pour résoudre le code.
-*   `options`, comme `fieldFor`, avec une option en plus pour personnaliser le composant de `Select`.
+-   `field`, le champ contenant le code
+-   `values`, la liste de référence à utiliser pour résoudre le code.
+-   `options`, comme `fieldFor`, avec une option en plus pour personnaliser le composant de `Select`.
 
 ### `autocompleteFor(field, options)`
 
 La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec un champ d'autocomplétion. Elle prend comme paramètres :
 
-*   `field`, le champ contenant le code
-*   `options`, comme `fieldFor`, où il faut également préciser `keyResolver` et/ou `querySearcher` pour gérer la consultation et/ou la saisie. De plus, il y est possible de personnaliser le composant d'`Autocomplete`.
+-   `field`, le champ contenant le code
+-   `options`, comme `fieldFor`, où il faut également préciser `keyResolver` et/ou `querySearcher` pour gérer la consultation et/ou la saisie. De plus, il y est possible de personnaliser le composant d'`Autocomplete`.
 
 ### `stringFor(field, values?)`
 
 La fonction `stringFor` affiche la représentation textuelle d'un champ de store, en utilisant le formatteur et si besoin une liste de référence. Les paramètres sont :
 
-*   `field`,
-*   `values`, s'il y a une liste de référence à résoudre.
+-   `field`,
+-   `values`, s'il y a une liste de référence à résoudre.
 
 _Note : `stringFor` ne peut pas être utilisé avec un `keyResolver`, il faut soit utiliser `autocompleteFor` en consultation, ou résoudre la clé à la main_
 
@@ -163,9 +163,9 @@ La seule façon d'avoir un champ en édition en dehors d'un formulaire est d'uti
 
 ### `makeField(getter, $field, setter, isEdit?)`
 
-*   `getter` est une fonction sans paramètre représant une dérivation qui retourne la valeur.
-*   `setter` est une fonction qui prend la valeur comme paramètre et qui doit se charger de mettre à jour la valeur retournée par le getter.
-*   `isEdit` peut être renseigné à `true` pour afficher le champ en édition.
+-   `getter` est une fonction sans paramètre représant une dérivation qui retourne la valeur.
+-   `setter` est une fonction qui prend la valeur comme paramètre et qui doit se charger de mettre à jour la valeur retournée par le getter.
+-   `isEdit` peut être renseigné à `true` pour afficher le champ en édition.
 
 ## Formulaires
 
@@ -183,11 +183,11 @@ Un `FormNode`, construit par la fonction **`makeFormNode`**, est une copie confo
 
 Tous les objets contenus dans un `FormNode` (et y compris le `FormNode` lui-même) sont complétés de propriétés supplémentaires représentant les états d'édition et de validation de l'objet. Ils prennent la forme :
 
-*   Sur un `Store(List)Node`
-    *   `form`, un objet muni des deux propriétés `isEdit` et `isValid`
-    *   `sourceNode`, une référence vers le noeud origine du `FormNode`
-    *   `reset()`, une méthode pour réinitialiser le `FormNode` sur son `sourceNode`. La méthode `reset()` qui se trouve sur l'objet racine du `FormNode` sera également appelée automatiquement à chaque modification de son `sourceNode`, assurant que le `FormNode` ne manque jamais une de ses modifications
-*   Des deux propriétés additionnelles `isEdit` et `error` sur un `EntityField`.
+-   Sur un `Store(List)Node`
+    -   `form`, un objet muni des deux propriétés `isEdit` et `isValid`
+    -   `sourceNode`, une référence vers le noeud origine du `FormNode`
+    -   `reset()`, une méthode pour réinitialiser le `FormNode` sur son `sourceNode`. La méthode `reset()` qui se trouve sur l'objet racine du `FormNode` sera également appelée automatiquement à chaque modification de son `sourceNode`, assurant que le `FormNode` ne manque jamais une de ses modifications
+-   Des deux propriétés additionnelles `isEdit` et `error` sur un `EntityField`.
 
 Les propriétés `error` et `isValid` sont en lecture seule et sont calculées automatiquement. `error` est le message d'erreur de validation sur un champ et vaut `undefined` si il n'y a pas d'erreur. `isValid` sur un node est le résultat de validation de tous les champs qu'il contient, valant donc `true` seulement si toutes les propriétés `error` des champs valent `undefined`. A noter cependant que si le noeud n'est pas en édition, alors `isValid` vaut forcément `true` (en effet, il n'y a pas besoin de la validation si on n'est pas en cours de saisie).
 
@@ -250,11 +250,11 @@ Une fois le `FormNode` créé, on aura besoin d'un deuxième objet pour gérer l
 
 Il se crée à partir d'un `FormNode` via la fonction **`makeFormActions`**. Ses paramètres sont :
 
-*   `formNode`, le `FormNode` sur lequel les actions vont intéragir. Il est possible de passer ici un sous-noeud, mais ce dernier n'ayant pas accès au noeud d'origine, certaines fonctionalités ne seront pas disponbiles.
+-   `formNode`, le `FormNode` sur lequel les actions vont intéragir. Il est possible de passer ici un sous-noeud, mais ce dernier n'ayant pas accès au noeud d'origine, certaines fonctionalités ne seront pas disponbiles.
 
--   `actions`, qui est un objet contenant essentiellement les services de **`load`** et de **`save`**. L'action de `load` n'est pas obligatoire (par exemple : formulaire de création), mais par contre le `save` l'est bien (sinon, ce ne serait pas un formulaire).
+*   `actions`, qui est un objet contenant essentiellement les services de **`load`** et de **`save`**. L'action de `load` n'est pas obligatoire (par exemple : formulaire de création), mais par contre le `save` l'est bien (sinon, ce ne serait pas un formulaire).
 
-*   `config?`, un objet de configuration additionel qui permet notamment de placer des `hooks` après le chargement, la sauvegarde ou le changement d'état.
+-   `config?`, un objet de configuration additionel qui permet notamment de placer des `hooks` après le chargement, la sauvegarde ou le changement d'état.
 
 #### Chargement des données
 
@@ -266,9 +266,9 @@ En plus du service de chargement, pour pouvoir charger des données il est aussi
 
 `FormActions` expose principalement trois méthodes, qui permettent d'appeler les actions que l'on a enregistrées :
 
-*   `load()`, qui appelle l'action de `actions.load` avec les paramètres de `actions.getLoadParams` si les deux sont renseignés, et met à jour le noeud origine de `formNode` (et donc `formNode` également).
-*   `save()`, qui appelle l'action de `actions.save` à partir de l'état actuellement stocké dans `formNode`. Le résultat de l'action de sauvegarde (si non void/undefined/null...) sera enregistré dans le noeud origine de `formNode` (et donc `formNode` également).
-*   `toggleEdit(edit)`, qui met à jour l'état d'édition général du `formNode`. Si `edit === false`, alors `formNode` sera réinitialisé sur l'état du noeud origine.
+-   `load()`, qui appelle l'action de `actions.load` avec les paramètres de `actions.getLoadParams` si les deux sont renseignés, et met à jour le noeud origine de `formNode` (et donc `formNode` également).
+-   `save()`, qui appelle l'action de `actions.save` à partir de l'état actuellement stocké dans `formNode`. Le résultat de l'action de sauvegarde (si non void/undefined/null...) sera enregistré dans le noeud origine de `formNode` (et donc `formNode` également).
+-   `toggleEdit(edit)`, qui met à jour l'état d'édition général du `formNode`. Si `edit === false`, alors `formNode` sera réinitialisé sur l'état du noeud origine.
 
 _Note : pour éviter le reset de tout le formulaire lors de la sauvegarde d'un sous formulaire, il faut donc que son action de sauvegarde ne renvoie rien_
 

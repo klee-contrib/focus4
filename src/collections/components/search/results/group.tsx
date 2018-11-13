@@ -181,9 +181,8 @@ export class Group<T> extends React.Component<GroupProps<T>> {
 }
 
 /** "Barre" de chargement pour les résultats. */
-export const GroupLoadingBar = observer(
-    ({i18nPrefix = "focus", store}: {i18nPrefix?: string; store: SearchStore}) =>
-        store.isLoading ? <div style={{padding: "15px"}}>{i18next.t(`${i18nPrefix}.search.loading`)}</div> : <div />
+export const GroupLoadingBar = observer(({i18nPrefix = "focus", store}: {i18nPrefix?: string; store: SearchStore}) =>
+    store.isLoading ? <div style={{padding: "15px"}}>{i18next.t(`${i18nPrefix}.search.loading`)}</div> : <div />
 );
 
 (GroupLoadingBar as any).displayName = "GroupLoadingBar";
