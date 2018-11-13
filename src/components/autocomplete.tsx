@@ -17,6 +17,7 @@ import {ProgressBar} from "react-toolbox/lib/progress_bar";
 import {themr} from "../theme";
 
 import * as styles from "./__style__/autocomplete.css";
+import { isEmpty } from 'lodash';
 export type AutocompleteStyle = Partial<typeof styles> & AutocompleteTheme & InputTheme;
 const Theme = themr("autocomplete", styles);
 
@@ -61,6 +62,9 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
 
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
     protected value?: string;
+
+    /** Reference du composant Autocomplete de RT, qui n'a pas renseigné ses types -_-' */
+    private RtAcRef?: any | null;
 
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
@@ -152,6 +156,47 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
         this.search(query);
     }
 
+    onKeyDown(event: KeyboardEvent) {
+
+        /// Gestion du tab avec selection
+        if (event.key === "Tab" && this.RtAcRef) {
+            this.selectOrCreateActiveItem(event);
+        }
+    }
+
+    selectOrCreateActiveItem(event: KeyboardEvent) {
+        const active = this.RtAcRef.state.active;
+        let target = active;
+        if (!active && this.RtAcRef.props.source && !isEmpty(this.RtAcRef.props.source)) {
+            target = Object.keys(this.RtAcRef.props.source)[0];
+        }
+
+        this.select(event, target);
+    }
+
+    select(event: KeyboardEvent, target: any) {
+        const values = this.RtAcRef.values(this.RtAcRef.props.value);
+        const source = this.RtAcRef.source();
+        const newValue = target === void 0 ? (event!.target! as any).id : target;
+
+        if (this.RtAcRef.isValueAnObject()) {
+            const newItem = Array.from(source).reduce((obj: any, [k, value]: any) => {
+                if (k === newValue) {
+                    (obj as any)[k] = value;
+                }
+                return obj;
+            }, {});
+
+            if (Object.keys(newItem).length === 0 && newValue) {
+                newItem[newValue] = newValue;
+            }
+
+            return this.RtAcRef.handleChange(Object.assign(this.RtAcRef.mapToObject(values), newItem), event);
+        }
+
+        this.RtAcRef.handleChange([newValue, ...values.keys()], event);
+    }
+
     render() {
         const {keyResolver, querySearcher, theme: pTheme, isQuickSearch, ...props} = this.props;
         return (
@@ -168,6 +213,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
                             maxLength={undefined}
                             suggestionMatch="disabled"
                             theme={theme}
+                            innerRef={(ref: any) => (this.RtAcRef = ref)}
                         />
                         {this.isLoading ? (
                             <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
