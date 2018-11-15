@@ -338,6 +338,20 @@ test("FormNode: Création", t => {
         "Le sourceNode d'un objet de liste est bien le bon."
     );
 
+    entry2.ligneList.splice(2, 1);
+    t.deepEqual(
+        [{id: 5}, {id: 6}],
+        toFlatValues(formNode2.ligneList),
+        "Les suppressions d'élements de liste dans un Storeode sont bien répercutées."
+    );
+
+    entry2.ligneList.pushNode({id: 7});
+    t.deepEqual(
+        [{id: 5}, {id: 6}, {id: 7}],
+        toFlatValues(formNode2.ligneList),
+        "Les ajouts d'élements de liste dans un Storeode sont bien répercutées."
+    );
+
     t.comment("FormNode: Modification de FormNode");
     formNode.montant.value = 1000;
     formNode.set({structure: {id: 26}});
@@ -392,7 +406,7 @@ test("FormNode: Création", t => {
         "La liste des erreurs sur le noeud liste est correcte."
     );
 
-    t.comment("FormNode: StoreNode.set(toFlatValues(FormNode))");
+    t.comment("FormNode: StoreNode.replace(toFlatValues(FormNode))");
     entry.replace(toFlatValues(formNode));
 
     t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode a bien été mis à jour.");

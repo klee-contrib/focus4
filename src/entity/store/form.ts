@@ -90,7 +90,9 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         node.form._disposer = observe(sourceNode as StoreListNode, change => {
             if (change.type === "splice") {
                 const newNodes = change.added.map(item => getNodeForList(node, item));
-                node.splice(change.index, change.removedCount, ...(newNodes as any));
+                node.splice(change.index, change.removedCount, ...(newNodes as any)).forEach(deleted =>
+                    deleted.form.dispose()
+                );
             }
         });
     } else if (isFormNode(node)) {
