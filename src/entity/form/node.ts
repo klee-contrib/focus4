@@ -1,6 +1,6 @@
-import {extendObservable, observable, reaction} from "mobx";
+import {extendObservable, observable} from "mobx";
 
-import {nodeToFormNode, toFlatValues} from "../store";
+import {nodeToFormNode} from "../store";
 import {
     Entity,
     FormListNode,
@@ -25,12 +25,12 @@ export function makeFormNode<T extends Entity, U = {}>(
     node: StoreListNode<T>,
     isEdit?: boolean | (() => boolean),
     transform?: (source: StoreNode<T>) => U
-): FormListNode<T, U> & {stopSync(): void};
+): FormListNode<T, U>;
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreNode<T>,
     isEdit?: boolean | (() => boolean),
     transform?: (source: StoreNode<T>) => U
-): FormNode<T, U> & {stopSync(): void};
+): FormNode<T, U>;
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreNode<T> | StoreListNode<T>,
     isEdit: boolean | (() => boolean) = false,
@@ -42,7 +42,6 @@ export function makeFormNode<T extends Entity, U = {}>(
 
     const formNode = clone(node, transform);
     nodeToFormNode(formNode, node, isEdit);
-    formNode.stopSync = reaction(() => toFlatValues(node), formNode.reset);
 
     return formNode;
 }

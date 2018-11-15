@@ -1,4 +1,4 @@
-import {IObservableArray} from "mobx";
+import {IObservableArray, Lambda} from "mobx";
 
 import {Entity, EntityField, EntityToType, FieldEntry} from "./entity";
 import {NodeToType, StoreListNode, StoreNode} from "./store";
@@ -38,6 +38,9 @@ export type NodeToErrors<T extends Entity, U = {}> = Omit<
 export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
     /** Données liée à un FormNode. */
     readonly form: {
+        /** Désactive la synchronisation entre ce FormNode et son noeud source. */
+        dispose(): void;
+
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
@@ -64,6 +67,13 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
 
     /** Données liée à un FormNode. */
     readonly form: {
+        /** @internal */
+        /** Disposer de l'observeur qui suit l'ajout et la suppression d'élement dans la liste source. */
+        _disposer: Lambda;
+
+        /** Désactive la synchronisation entre ce FormNode et son noeud source. */
+        dispose(): void;
+
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
@@ -95,6 +105,10 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
 
 /** Définition de champ dans un FormNode. */
 export interface FormEntityField<F extends FieldEntry = FieldEntry> extends EntityField<F> {
+    /** @internal */
+    /** Disposer de l'intercepteur qui met à jour le champ de formulaire si le champ source est modifié. */
+    _formDisposer: Lambda;
+
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error: string | undefined;
 

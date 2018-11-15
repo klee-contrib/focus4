@@ -1,5 +1,5 @@
 import {isBoolean, isFunction, toPairs} from "lodash";
-import {action, extendObservable, observable} from "mobx";
+import {action, extendObservable, intercept, observable, observe} from "mobx";
 
 import {
     Entity,
@@ -16,7 +16,7 @@ import {
     StoreNode
 } from "../types";
 import {validateField} from "../validation";
-import {replaceNode} from "./store";
+import {getNodeForList, replaceNode} from "./store";
 
 /**
  * Transforme un Store(List)Node en Form(List)Node.
@@ -34,6 +34,13 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         delete node.$tempEdit;
     }
 
+    (node as any).reset = action("formNode.reset", () => {
+        node.clear();
+        replaceNode(node as any, sourceNode as any);
+    });
+
+    (node as any).sourceNode = sourceNode;
+
     (node as any).form = observable({
         _isEdit:
             (isBoolean(parentNodeOrEditing) ? parentNodeOrEditing : true) && (isBoolean($tempEdit) ? $tempEdit : true),
@@ -50,6 +57,25 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         }
     });
 
+    (node as any).form.dispose = function dispose() {
+        if (isFormListNode(node)) {
+            node.forEach(item => item.form.dispose());
+            node.form._disposer();
+        } else {
+            for (const entry in node) {
+                if (entry === "sourceNode") {
+                    continue;
+                }
+                const child: {} = (node as any)[entry];
+                if (isEntityField(child)) {
+                    (child as FormEntityField)._formDisposer();
+                } else if (isAnyFormNode(child)) {
+                    child.form.dispose();
+                }
+            }
+        }
+    };
+
     if (isFormListNode(node)) {
         node.forEach((item, i) => nodeToFormNode(item, (sourceNode as StoreListNode)[i], node));
         extendObservable(node.form, {
@@ -60,8 +86,18 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
                 return (isFormListNode(node) && node.map(item => item.form.errors)) || [];
             }
         });
+
+        node.form._disposer = observe(sourceNode as StoreListNode, change => {
+            if (change.type === "splice") {
+                const newNodes = change.added.map(item => getNodeForList(node, item));
+                node.splice(change.index, change.removedCount, ...(newNodes as any));
+            }
+        });
     } else if (isFormNode(node)) {
         for (const entry in node) {
+            if (entry === "sourceNode") {
+                continue;
+            }
             const child: {} = (node as any)[entry];
             if (isEntityField(child)) {
                 addFormFieldProperties(child, node);
@@ -93,14 +129,6 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
                 );
             }
         });
-    }
-
-    if (isAnyFormNode(node)) {
-        node.reset = action("formNode.reset", () => {
-            node.clear();
-            replaceNode(node as any, sourceNode as any);
-        });
-        (node as any).sourceNode = sourceNode as any;
     }
 }
 
@@ -135,4 +163,13 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
             return !this.isEdit || !this.error;
         }
     });
+
+    (field as FormEntityField)._formDisposer = intercept(
+        parentNode.sourceNode[field.$field.name] as EntityField,
+        "value",
+        change => {
+            field.value = change.newValue;
+            return change;
+        }
+    );
 }

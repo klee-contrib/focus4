@@ -264,7 +264,7 @@ export function setNode<T extends Entity>(
  * @param list Le noeud de liste.
  * @param item L'item à ajouter (classique ou noeud).
  */
-function getNodeForList<T extends Entity>(list: StoreListNode<T>, item: EntityToType<T> | StoreNode<T>) {
+export function getNodeForList<T extends Entity>(list: StoreListNode<T>, item: EntityToType<T> | StoreNode<T>) {
     const node = buildNode<T>(list.$entity);
     if (list.$transform) {
         Object.assign(node, list.$transform(node) || {});

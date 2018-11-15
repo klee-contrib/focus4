@@ -426,8 +426,8 @@ test("FormNode: Création", t => {
 
     t.equal(formNode2.ligneList[0].id.value, 5, "Champ modifié de l'item : a été réinitialisé.");
 
-    t.comment("FormNode: stopSync");
-    formNode.stopSync();
+    t.comment("FormNode: dispose");
+    formNode.form.dispose();
     entry.montant.value = 2;
 
     t.equal(formNode.montant.value, 3000, "Le FormNode n'a pas été mis à jour.");

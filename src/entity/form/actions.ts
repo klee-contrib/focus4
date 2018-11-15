@@ -87,9 +87,7 @@ export class FormActions {
         if (this.loadDisposer) {
             this.loadDisposer();
         }
-        if ((this.entity as any).stopSync) {
-            (this.entity as any).stopSync();
-        }
+        this.entity.form.dispose();
     }
 
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
