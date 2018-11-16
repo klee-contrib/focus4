@@ -437,17 +437,59 @@ test("FormListNode: Modification", t => {
     entry2.replace(projetTest);
     t.deepEqual(
         toFlatValues(formNode2.ligneList),
-        [{id: 5}, {id: 6}, {id: 7}, {id: 1}, {id: 2}],
-        "Et si je replace les deux, comment on s'en sort ?."
+        toFlatValues(entry2.ligneList),
+        "Un replace du StoreListNode écrase totalement les modifications du FormListNode."
     );
 
-    formNode2.replace({ligneList: [{id: 7}, {id: 2}, {id: 5}, {id: 1}]});
-    entry2.replace(projetTest);
+    entry2.ligneList.setNodes([{id: 10}, {id: 11}, {}, {id: 13}]);
+    t.deepEqual(toFlatValues(formNode2.ligneList), toFlatValues(entry2.ligneList), "SetNodes marche comme attendu.");
+
+    formNode2.ligneList.splice(1, 1);
+    entry2.ligneList.setNodes([{id: 14}, {id: 15}, {}, {id: 17}]);
     t.deepEqual(
         toFlatValues(formNode2.ligneList),
-        [{id: 5}, {id: 6}, {id: 7}, {id: 2}, {id: 1}],
-        "La je suis tordu au possible, et ça passe toujours."
+        [{id: 14}, {id: 7}, {id: 17}],
+        "SetNodes marche comme attendu, bis."
     );
+
+    t.end();
+});
+
+test("FormNode: Modification de source forcée", t => {
+    const {entry, entry2, formNode, formNode2} = getFormNodes();
+
+    entry.replace(operation);
+    entry2.replace(projetTest);
+    formNode.numero.value = "10";
+    formNode2.ligneList[0].id.value = 65;
+    entry.replace(operation);
+    entry2.replace(projetTest);
+
+    t.deepEqual(
+        toFlatValues(formNode),
+        toFlatValues(entry),
+        "La mise à jour de la source (noeud simple) reset toujours la cible, même si la mise à jour de la source ne fait rien."
+    );
+    t.deepEqual(
+        toFlatValues(formNode2),
+        toFlatValues(entry2),
+        "La mise à jour de la source (noeud liste) reset toujours la cible, même si la mise à jour de la source ne fait rien."
+    );
+
+    formNode.numero.value = "yolo";
+    entry.structure.id.value = 9000;
+    entry.structure.replace(operation.structure);
+    t.equal(formNode.numero.value, "yolo", "Un reset partiel n'affecte pas les champs non affectés.");
+    t.deepEqual(
+        toFlatValues(formNode.structure),
+        operation.structure,
+        "Un reset partiel affecte les champs concernés."
+    );
+
+    formNode.montant.value = 9000;
+    entry.numero.value = "déso";
+    t.equal(formNode.montant.value, 9000, "Un reset partiel n'affecte pas les champs non affectés.");
+    t.equal(formNode.numero.value, "déso", "Un reset partiel n'affecte pas les champs non affectés.");
 
     t.end();
 });

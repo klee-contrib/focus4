@@ -17,7 +17,6 @@ import {
 } from "../types";
 import {validateField} from "../validation";
 import {getNodeForList, replaceNode} from "./store";
-import {toFlatValues} from "./util";
 
 /**
  * Transforme un Store(List)Node en Form(List)Node.
@@ -95,10 +94,17 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
                 if (change.type === "splice") {
                     // On construit les nouveaux noeuds à ajouter au FormListNode.
                     const newNodes = change.added.map(item => getNodeForList(node, item));
+
+                    // Cas particulier du replace : on remplace tout comme attendu.
+                    if (change.addedCount === change.removedCount) {
+                        node.replace(newNodes as any);
+                        return;
+                    }
+
                     // On cherche les noeuds correspondants aux noeuds supprimés de la source.
                     // Ils ne sont potentiellement ni à la même place, ni même présents.
                     const nodesToRemove = node.filter(item =>
-                        change.removed.find(changed => isEqual(toFlatValues(changed), toFlatValues(item)))
+                        change.removed.find(changed => changed === item.sourceNode)
                     );
 
                     // On va toujours chercher à ajouter les noeuds de la source avant les éventuels noeuds ajoutés dans la cible.
@@ -114,7 +120,7 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
                             // On va donc chercher le premier item de la cible précédent l'index de la source qui est inclus dans la source.
                             changeIndex--;
                             previousIndex = node.findIndex(item =>
-                                isEqual(toFlatValues(change.object[changeIndex]), toFlatValues(item))
+                                isEqual(change.object[changeIndex], item.sourceNode)
                             );
                         } while (previousIndex === -1 && changeIndex > 0);
                         // Si aucune suppression, on a fait (-1 +1) donc on retombe au bon endroit.
