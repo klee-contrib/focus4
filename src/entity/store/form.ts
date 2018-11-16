@@ -67,8 +67,8 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
                     continue;
                 }
                 const child: {} = (node as any)[entry];
-                if (isEntityField(child)) {
-                    (child as FormEntityField)._formDisposer();
+                if (isEntityField(child) && (child as FormEntityField)._formDisposer) {
+                    (child as FormEntityField)._formDisposer!();
                 } else if (isAnyFormNode(child)) {
                     child.form.dispose();
                 }
@@ -87,14 +87,23 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
             }
         });
 
-        node.form._disposer = observe(sourceNode as StoreListNode, change => {
+        const onSourceSplice = observe(sourceNode as StoreListNode, change => {
             if (change.type === "splice") {
                 const newNodes = change.added.map(item => getNodeForList(node, item));
-                node.splice(change.index, change.removedCount, ...(newNodes as any)).forEach(deleted =>
-                    deleted.form.dispose()
-                );
+                node.splice(change.index, change.removedCount, ...(newNodes as any));
             }
         });
+
+        const onRemove = observe(node, change => {
+            if (change.type === "splice") {
+                change.removed.forEach(deleted => deleted.form.dispose());
+            }
+        });
+
+        node.form._disposer = function _disposer() {
+            onSourceSplice();
+            onRemove();
+        };
     } else if (isFormNode(node)) {
         for (const entry in node) {
             if (entry === "sourceNode") {
@@ -166,12 +175,14 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
         }
     });
 
-    (field as FormEntityField)._formDisposer = intercept(
-        parentNode.sourceNode[field.$field.name] as EntityField,
-        "value",
-        change => {
-            field.value = change.newValue;
-            return change;
-        }
-    );
+    if (parentNode !== parentNode.sourceNode) {
+        (field as FormEntityField)._formDisposer = intercept(
+            parentNode.sourceNode[field.$field.name] as EntityField,
+            "value",
+            change => {
+                field.value = change.newValue;
+                return change;
+            }
+        );
+    }
 }

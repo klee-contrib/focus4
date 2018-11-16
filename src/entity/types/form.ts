@@ -107,7 +107,7 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
 export interface FormEntityField<F extends FieldEntry = FieldEntry> extends EntityField<F> {
     /** @internal */
     /** Disposer de l'intercepteur qui met à jour le champ de formulaire si le champ source est modifié. */
-    _formDisposer: Lambda;
+    _formDisposer?: Lambda;
 
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error: string | undefined;

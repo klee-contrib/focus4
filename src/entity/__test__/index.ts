@@ -28,6 +28,14 @@ function getStore() {
     });
 }
 
+function getFormNodes() {
+    const entry = getStore().operation;
+    const entry2 = getStore().projetTest;
+    const formNode = makeFormNode(entry);
+    const formNode2 = makeFormNode(entry2);
+    return {entry, entry2, formNode, formNode2};
+}
+
 const operation = {
     id: 4,
     numero: "A324",
@@ -270,11 +278,7 @@ test("toFlatValues", t => {
 });
 
 test("FormNode: Création", t => {
-    const entry = getStore().operation;
-    const formNode = makeFormNode(entry);
-
-    const entry2 = getStore().projetTest;
-    const formNode2 = makeFormNode(entry2);
+    const {entry, entry2, formNode, formNode2} = getFormNodes();
 
     t.deepEqual(
         formNode.numero.$field,
@@ -313,24 +317,30 @@ test("FormNode: Création", t => {
     t.assert(formNode.numero.hasOwnProperty("error"), "Les champs ont bien une propriété 'error'");
     t.equal(formNode.form.isValid, true, "Le FormNode a bien une propriété 'isValid', initialisée à 'true'.");
 
-    t.comment("FormNode: Modification de StoreNode.");
+    t.end();
+});
+
+test("FormNode: Modification de StoreNode.", t => {
+    const {entry, formNode} = getFormNodes();
     entry.replace(operation);
+
+    t.deepEqual(
+        toFlatValues(formNode),
+        toFlatValues(entry),
+        "Le contenu du FormNode est identique à celui du StoreNode."
+    );
+
+    t.end();
+});
+
+test("FormNode: Modification de StoreListNode.", t => {
+    const {entry2, formNode2} = getFormNodes();
     entry2.replace(projetTest);
 
-    t.equal(
-        formNode.id.value,
-        entry.id.value,
-        "Les modifications du StoreNode sont bien répercutées sur les champs simples."
-    );
-    t.deepEqual(
-        toFlatValues(formNode.structure),
-        toFlatValues(entry.structure),
-        "Les modifications du StoreNode sont bien répercutées sur les champs composites."
-    );
     t.deepEqual(
         toFlatValues(formNode2),
         toFlatValues(entry2),
-        "Les modifications du StoreNode sont bien répercutées sur les champs avec des listes."
+        "Le contenu du FormListNode est identique à celui du StoreListNode."
     );
     t.deepEqual(
         entry2.ligneList[0],
@@ -345,14 +355,19 @@ test("FormNode: Création", t => {
         "Les suppressions d'élements de liste dans un Storeode sont bien répercutées."
     );
 
-    entry2.ligneList.pushNode({id: 7});
+    entry2.ligneList.pushNode({id: 8});
     t.deepEqual(
-        [{id: 5}, {id: 6}, {id: 7}],
+        [{id: 5}, {id: 6}, {id: 8}],
         toFlatValues(formNode2.ligneList),
         "Les ajouts d'élements de liste dans un Storeode sont bien répercutées."
     );
 
-    t.comment("FormNode: Modification de FormNode");
+    t.end();
+});
+
+test("FormNode: Modification de FormNode", t => {
+    const {entry, formNode} = getFormNodes();
+    entry.replace(operation);
     formNode.montant.value = 1000;
     formNode.set({structure: {id: 26}});
     formNode.structure.set({nom: "yolo"});
@@ -372,7 +387,14 @@ test("FormNode: Création", t => {
         "Champ composite via set local: le StoreNode est bien toujours identique."
     );
 
-    t.comment("FormNode: propagation isEdit et isValid");
+    t.end();
+});
+
+test("FormNode: propagation isEdit et isValid", t => {
+    const {formNode, formNode2} = getFormNodes();
+    formNode.replace(operation);
+    formNode2.replace(projetTest);
+
     formNode.form.isEdit = true;
     formNode2.form.isEdit = true;
     t.equal(formNode.structure.nom.isEdit, true, "Tous les champs du noeud simple sont maintenant en édition");
@@ -406,45 +428,67 @@ test("FormNode: Création", t => {
         "La liste des erreurs sur le noeud liste est correcte."
     );
 
-    t.comment("FormNode: StoreNode.replace(toFlatValues(FormNode))");
-    entry.replace(toFlatValues(formNode));
+    t.end();
+});
 
-    t.equal(entry.montant.value, 1000, "Champ simple: le StoreNode a bien été mis à jour.");
-    t.equal(entry.structure.id.value, 26, "Champ composite via set: le StoreNode a bien été mis à jour.");
-
-    t.comment("FormNode: reset global");
+test("FormNode: reset global", t => {
+    const {entry, formNode} = getFormNodes();
+    entry.replace(operation);
     formNode.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
     formNode.reset();
 
-    t.equal(formNode.montant.value, 1000, "Champ simple: le FormNode a bien été réinitialisé.");
-    t.equal(formNode.structure.id.value, 26, "Champ composite: le FormNode a bien été réinitialisé.");
+    t.equal(formNode.montant.value, operation.montant, "Champ simple: le FormNode a bien été réinitialisé.");
+    t.equal(
+        formNode.structure.id.value,
+        operation.structure.id,
+        "Champ composite: le FormNode a bien été réinitialisé."
+    );
 
-    t.comment("FormNode: reset local (noeud simple)");
+    t.end();
+});
+
+test("FormNode: reset local (noeud simple)", t => {
+    const {entry, formNode} = getFormNodes();
+    entry.replace(operation);
     formNode.set({montant: 3000, structure: {id: 23}});
     formNode.structure.reset();
 
     t.equal(formNode.montant.value, 3000, "Champ non concerné pas le reset : n'a pas été touché.");
-    t.equal(formNode.structure.id.value, 26, "Champ concerné par le reset : a été réinitialisé.");
+    t.equal(formNode.structure.id.value, operation.structure.id, "Champ concerné par le reset : a été réinitialisé.");
 
-    t.comment("FormNode: reset de liste");
+    t.end();
+});
+
+test("FormNode: reset de liste", t => {
+    const {entry2, formNode2} = getFormNodes();
+    entry2.replace(projetTest);
     formNode2.ligneList[0].id.value = 23;
     formNode2.ligneList.remove(formNode2.ligneList[2]);
     formNode2.ligneList.reset();
 
-    t.equal(formNode2.ligneList[0].id.value, 5, "Champ modifié d'un item : a été réinitialisé.");
-    t.equal(formNode2.ligneList[2].id.value, entry2.ligneList[2].id.value, "Item retiré : a été réajouté");
+    t.deepEqual(toFlatValues(formNode2), toFlatValues(entry2), "La liste à bien été réinitialisée.");
 
-    t.comment("FormNode: reset d'un item de liste");
+    t.end();
+});
+
+test("FormNode: reset d'un item de liste", t => {
+    const {entry2, formNode2} = getFormNodes();
+    entry2.replace(projetTest);
     formNode2.ligneList[0].id.value = 23;
     formNode2.ligneList[0].reset();
 
     t.equal(formNode2.ligneList[0].id.value, 5, "Champ modifié de l'item : a été réinitialisé.");
 
-    t.comment("FormNode: dispose");
+    t.end();
+});
+
+test("FormNode: dispose", t => {
+    const {entry, formNode} = getFormNodes();
+    entry.replace(operation);
     formNode.form.dispose();
     entry.montant.value = 2;
 
-    t.equal(formNode.montant.value, 3000, "Le FormNode n'a pas été mis à jour.");
+    t.equal(formNode.montant.value, operation.montant, "Le FormNode n'a pas été mis à jour.");
 
     t.end();
 });
