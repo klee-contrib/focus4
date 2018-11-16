@@ -1,5 +1,5 @@
-import {isBoolean, isFunction, toPairs} from "lodash";
-import {action, extendObservable, intercept, observable, observe} from "mobx";
+import {isBoolean, isEqual, isFunction, toPairs} from "lodash";
+import {action, extendObservable, IArrayChange, IArraySplice, intercept, observable, observe} from "mobx";
 
 import {
     Entity,
@@ -17,6 +17,7 @@ import {
 } from "../types";
 import {validateField} from "../validation";
 import {getNodeForList, replaceNode} from "./store";
+import {toFlatValues} from "./util";
 
 /**
  * Transforme un Store(List)Node en Form(List)Node.
@@ -87,19 +88,55 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
             }
         });
 
-        const onSourceSplice = observe(sourceNode as StoreListNode, change => {
-            if (change.type === "splice") {
-                const newNodes = change.added.map(item => getNodeForList(node, item));
-                node.splice(change.index, change.removedCount, ...(newNodes as any));
-            }
-        });
+        // On va chercher à mettre à jour le FormListNode suite aux ajouts et suppressions depuis la souce.
+        const onSourceSplice = observe(
+            sourceNode as StoreListNode,
+            action((change: IArrayChange | IArraySplice) => {
+                if (change.type === "splice") {
+                    // On construit les nouveaux noeuds à ajouter au FormListNode.
+                    const newNodes = change.added.map(item => getNodeForList(node, item));
+                    // On cherche les noeuds correspondants aux noeuds supprimés de la source.
+                    // Ils ne sont potentiellement ni à la même place, ni même présents.
+                    const nodesToRemove = node.filter(item =>
+                        change.removed.find(changed => isEqual(toFlatValues(changed), toFlatValues(item)))
+                    );
 
+                    // On va toujours chercher à ajouter les noeuds de la source avant les éventuels noeuds ajoutés dans la cible.
+                    if (!change.index) {
+                        // Ici c'est le cas facile : les éléments ajoutés sont au début de la source : ils sont donc au début de la cible.
+                        node.splice(0, 0, ...(newNodes as any));
+                    } else {
+                        // On doit chercher l'index auquel il faut ajouter les éléments, qui au mieux est le même.
+                        // La pire chose qu'il puisse arriver est d'avoir supprimé des éléments de la source dans la cible.
+                        let previousIndex;
+                        let changeIndex = change.index;
+                        do {
+                            // On va donc chercher le premier item de la cible précédent l'index de la source qui est inclus dans la source.
+                            changeIndex--;
+                            previousIndex = node.findIndex(item =>
+                                isEqual(toFlatValues(change.object[changeIndex]), toFlatValues(item))
+                            );
+                        } while (previousIndex === -1 && changeIndex > 0);
+                        // Si aucune suppression, on a fait (-1 +1) donc on retombe au bon endroit.
+                        // S'il y a eu n suppressions, on a fait (-1 -n +1), et on est aussi au bon endroit.
+                        // L'index minimal final est bien toujours 0, donc au pire on ajoutera au début, c'est qui est aussi le bon endroit.
+                        node.splice(previousIndex + 1, 0, ...(newNodes as any));
+                    }
+
+                    // Et on supprime les noeuds à supprimer.
+                    nodesToRemove.forEach(toRemove => node.remove(toRemove));
+                }
+            })
+        );
+
+        // En plus de monitorer les ajouts et les suppressions, il faut aussi disposer tous les noeuds supprimés de la liste.
         const onRemove = observe(node, change => {
             if (change.type === "splice") {
                 change.removed.forEach(deleted => deleted.form.dispose());
             }
         });
 
+        // Le disposer final d'un FormListNode est donc composer des deux observers ci-dessus.
         node.form._disposer = function _disposer() {
             onSourceSplice();
             onRemove();

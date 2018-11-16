@@ -343,22 +343,22 @@ test("FormNode: Modification de StoreListNode.", t => {
         "Le contenu du FormListNode est identique à celui du StoreListNode."
     );
     t.deepEqual(
-        entry2.ligneList[0],
         formNode2.ligneList[0].sourceNode,
+        entry2.ligneList[0],
         "Le sourceNode d'un objet de liste est bien le bon."
     );
 
     entry2.ligneList.splice(2, 1);
     t.deepEqual(
-        [{id: 5}, {id: 6}],
         toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 6}],
         "Les suppressions d'élements de liste dans un Storeode sont bien répercutées."
     );
 
     entry2.ligneList.pushNode({id: 8});
     t.deepEqual(
-        [{id: 5}, {id: 6}, {id: 8}],
         toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 6}, {id: 8}],
         "Les ajouts d'élements de liste dans un Storeode sont bien répercutées."
     );
 
@@ -385,6 +385,68 @@ test("FormNode: Modification de FormNode", t => {
         entry.structure.nom.value,
         operation.structure.nom,
         "Champ composite via set local: le StoreNode est bien toujours identique."
+    );
+
+    t.end();
+});
+
+test("FormListNode: Modification", t => {
+    const {entry2, formNode2} = getFormNodes();
+    entry2.replace(projetTest);
+
+    formNode2.ligneList.pushNode({id: 8});
+    entry2.ligneList.splice(1, 1);
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 7}, {id: 8}],
+        "Une suppression d'élement dans un StoreListNode est bien répercutée dans le FormListNode, en conservant un élément dans ce dernier ajouté à la fin."
+    );
+
+    entry2.ligneList.pushNode({id: 9});
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 7}, {id: 9}, {id: 8}],
+        "Un élément ajouté dans un StoreListNode se retoruve dans le FormListNode, avant tout élément ajouté dans ce dernier."
+    );
+
+    formNode2.ligneList.splice(1, 1);
+    entry2.ligneList.pushNode({id: 10});
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 9}, {id: 10}, {id: 8}],
+        "Y compris si le FormListNode a retiré un élément au milieu avant."
+    );
+
+    formNode2.ligneList.splice(2, 1);
+    entry2.ligneList.pushNode({id: 11});
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 9}, {id: 11}, {id: 8}],
+        "Plus dur, l'élément à partir du quel j'ai ajouté dans le StoreListNode manque dans le FormListNode."
+    );
+
+    formNode2.ligneList.splice(0, 1);
+    entry2.replace(projetTest);
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 6}, {id: 7}, {id: 8}],
+        "Et si je reset ma liste initiale, je la retrouve dans le FormNode suivie des éléments qui y on été ajoutés."
+    );
+
+    formNode2.replace({ligneList: [{id: 1}, {id: 2}, {id: 5}, {id: 7}]});
+    entry2.replace(projetTest);
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 6}, {id: 7}, {id: 1}, {id: 2}],
+        "Et si je replace les deux, comment on s'en sort ?."
+    );
+
+    formNode2.replace({ligneList: [{id: 7}, {id: 2}, {id: 5}, {id: 1}]});
+    entry2.replace(projetTest);
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 6}, {id: 7}, {id: 2}, {id: 1}],
+        "La je suis tordu au possible, et ça passe toujours."
     );
 
     t.end();
@@ -459,7 +521,7 @@ test("FormNode: reset local (noeud simple)", t => {
     t.end();
 });
 
-test("FormNode: reset de liste", t => {
+test("FormListNode: reset", t => {
     const {entry2, formNode2} = getFormNodes();
     entry2.replace(projetTest);
     formNode2.ligneList[0].id.value = 23;
@@ -471,7 +533,7 @@ test("FormNode: reset de liste", t => {
     t.end();
 });
 
-test("FormNode: reset d'un item de liste", t => {
+test("FormListNode: reset d'un item", t => {
     const {entry2, formNode2} = getFormNodes();
     entry2.replace(projetTest);
     formNode2.ligneList[0].id.value = 23;
@@ -489,6 +551,34 @@ test("FormNode: dispose", t => {
     entry.montant.value = 2;
 
     t.equal(formNode.montant.value, operation.montant, "Le FormNode n'a pas été mis à jour.");
+
+    t.end();
+});
+
+test("FormListNode: dispose", t => {
+    const {entry2, formNode2} = getFormNodes();
+    entry2.replace(projetTest);
+
+    const [item2] = formNode2.ligneList.splice(2, 1);
+    entry2.ligneList[2].id.value = 55;
+    entry2.ligneList[1].id.value = 54;
+    t.equal(
+        item2.id.value,
+        projetTest.ligneList[2].id,
+        "Un objet supprimé d'un FormListNode n'est bien plus mis à jour."
+    );
+    t.equal(formNode2.ligneList[1].id.value, 54, "Mais les autres le sont toujours.");
+
+    formNode2.form.dispose();
+    entry2.replace({ligneList: [{id: 41}]});
+    t.deepEqual(
+        toFlatValues(formNode2.ligneList),
+        [{id: 5}, {id: 54}],
+        "Après le dispose de la liste, les ajouts et les suppressions ne font plus rien."
+    );
+
+    entry2.ligneList[0].id.value = 235;
+    t.deepEqual(toFlatValues(formNode2.ligneList), [{id: 5}, {id: 54}], "Et les noeuds invididuels sont inchangés.");
 
     t.end();
 });
