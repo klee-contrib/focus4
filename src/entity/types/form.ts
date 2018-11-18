@@ -84,8 +84,8 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
         readonly errors: NodeToErrors<T, U>[];
     };
 
-    /** Fonction de transformation du noeud de la liste. */
-    $transform?: (source: StoreNode<T>) => U | void;
+    /** Fonction d'initialisation pour les items du noeud liste. */
+    $initializer?: (source: StoreNode<T>) => U | void;
 
     /** Ajoute un élément à la liste. */
     pushNode(...items: EntityToType<T>[]): void;

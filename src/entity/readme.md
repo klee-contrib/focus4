@@ -179,33 +179,45 @@ Un formulaire sera toujours construit à partir d'un `Store(List)Node`, qui sara
 
 Un `FormNode`, construit par la fonction **`makeFormNode`**, est une copie conforme du noeud à partir duquel il a été créé, qui sera "abonné" aux modifications de ce noeud. Il représentera l'état interne du formulaire, qui sera modifié lors de la saisie de l'utilisateur, sans impacter l'état du noeud initial.
 
+#### `makeFormNode(node, {isEdit, isEmpty}, initializer)`
+
+Les différents paramètres de `makeFormNode` sont :
+
+-   `node`, le noeud à partir duquel on construit le formulaire. Il n'y a aucune restriction sur la nature de ce noeud (simple, liste, composé...). Il n'est juste pas possible de créer un `FormNode` à partir d'un autre `FormNode`.
+-   `{isEdit, isEmpty}`, deux options permettant de préciser :
+    -   `isEdit`, l'état d'édition initial du noeud (précisions plus bas). Cela peut également être une condition (de la forme `() => boolean`) pour que le noeud soit en édition.
+    -   `isEmpty`, pour préciser si le noeud de formulaire ne doit pas copier le contenu de son noeud source à la création (il copie donc par défaut);
+-   `initializer`, détaillé plus bas
+
 #### Contenu
 
 Tous les objets contenus dans un `FormNode` (et y compris le `FormNode` lui-même) sont complétés de propriétés supplémentaires représentant les états d'édition et de validation de l'objet. Ils prennent la forme :
 
--   Sur un `Store(List)Node`
-    -   `form`, un objet muni des deux propriétés `isEdit` et `isValid`
-    -   `sourceNode`, une référence vers le noeud origine du `FormNode`
-    -   `reset()`, une méthode pour réinitialiser le `FormNode` sur son `sourceNode`. La méthode `reset()` qui se trouve sur l'objet racine du `FormNode` sera également appelée automatiquement à chaque modification de son `sourceNode`, assurant que le `FormNode` ne manque jamais une de ses modifications
--   Des deux propriétés additionnelles `isEdit` et `error` sur un `EntityField`.
+-   Sur un `Form(List)Node`
+    -   `form`, un objet muni des trois propriétés `isEdit`, `isValid` et `errors`.
+    -   `sourceNode`, une référence vers le noeud source équivalent du `FormNode`
+    -   `reset()`, une méthode pour réinitialiser le `FormNode` sur son `sourceNode`.
+-   Des trois propriétés additionnelles `isEdit`, `isValid` et `error` sur un `EntityField`.
 
-Les propriétés `error` et `isValid` sont en lecture seule et sont calculées automatiquement. `error` est le message d'erreur de validation sur un champ et vaut `undefined` si il n'y a pas d'erreur. `isValid` sur un node est le résultat de validation de tous les champs qu'il contient, valant donc `true` seulement si toutes les propriétés `error` des champs valent `undefined`. A noter cependant que si le noeud n'est pas en édition, alors `isValid` vaut forcément `true` (en effet, il n'y a pas besoin de la validation si on n'est pas en cours de saisie).
+Les propriétés `error(s)` et `isValid` sont en lecture seule et sont calculées automatiquement. `error` est le message d'erreur de validation sur un champ et vaut `undefined` si il n'y a pas d'erreur. `errors` est l'objet qui contient l'ensemble des erreurs des champs contenu dans un noeud. `isValid` sur un noeud est le résultat de validation de tous les champs qu'il contient, valant donc `true` seulement si toutes les propriétés `isValid` des champs valent `true`. A noter cependant que si le noeud/champ n'est pas en édition, alors `isValid` vaut forcément `true` (en effet, il n'y a pas besoin de la validation si on n'est pas en cours de saisie).
 
 Les propriétés `isEdit` sont modifiables, mais chaque `isEdit` est l'intersection de l'état d'édition du noeud/champ et de celui de son parent, ce qui veut dire qu'un champ de formulaire ne peut être en édition (et donc modifiable) que si le formulaire est en édition _et_ que son éventuel noeud parent est en édition _et_ que lui-même est en édition. En pratique, le seul état d'édition que l'on manipule directement est celui du `FormNode`, dont l'état initial peut être passé à la création (par défaut, ce sera `false`). Tous les sous-états d'édition sont initialisés à `true`, pour laisser l'état global piloter toute l'édition.
 
 Sur les champs, ces deux propriétés sont utilisées par `fieldFor` et `autocompleteFor`/`selectFor` pour gérer le mode édition et afficher les erreurs de validation, comme attendu.
 
-#### Transformations de noeud et de champs
+#### Initialisation et transformations de noeud et de champs
 
-En plus d'ajouter ces propriétés à tous les sous-noeuds et champs du noeud initial, le `FormNode` gère également une **fonction de transformation** en entrée, qui sera utilisée à la création. Elle permet d'effectuer toutes les modifications de champs souhaitées pour le formulaire via des appels à `patchField()` (qui seront appliqués sur le noeud de formulaire pendant la création), ainsi que d'ajouter des champs au `FormNode` en retournant un objet de propriétés créées par `makeField()`.
+En plus d'ajouter ces propriétés à tous les sous-noeuds et champs du noeud initial, il est possible de spécifier au `FormNode` une **fonction d'initialisation** en entrée, qui sera appelée à sa création. C'est l'endroit adapté pour donner des valeurs par défaut aux différents champs qui compose le formulaire.
+
+Son usage le plus avancé permet également d'effectuer toutes les modifications de champs souhaitées pour le formulaire via des appels à `patchField()` (qui seront appliqués sur le noeud de formulaire pendant la création), ainsi que d'ajouter des champs au `FormNode` en retournant un objet de propriétés créées par `makeField()`.
 
 En plus des signatures présentées dans leur chapitre dédié, ces deux fonctions peuvent également accepter des getters pour l'objet de métadonnées ainsi que pour l'état d'édition. Cela permet de dériver des métadonnées d'un autre état (le plus souvent de la valeur d'un autre champ, par exemple pour définir un caractère obligatoire dépendant du fait que l'autre champ soit renseigné ou non), ou bien d'ajouter une condition supplémentaire pour qu'un champ soit en édition.
 
 Une fonction de patch supplémentaire, `patchNodeEdit`, est disponible pour ajouter une condition d'édition sur un sous-noeud tout entier. A noter que, de manière générale, si on ajoute une condition d'édition valant `false` sur un noeud ou un champ, alors ce champ ne sera jamais éditable puisqu'elle sera intersectée avec l'état propre et celui du parent (`false && true && true === false` en somme).
 
-L'usage de `fromField` est à proscrire dans un noeud de formulaire, car le champ qui sera créé à partir du champ de formulaire initial ne sera plus lié au formulaire (plus de `isEdit`, plus de `error`). A la place, _chaque modification de champ (y compris un simple changement de libellé) doit passer par la fonction de transformation_.
+L'usage de `fromField` est à proscrire dans un noeud de formulaire, car le champ qui sera créé à partir du champ de formulaire initial ne sera plus lié au formulaire (plus de `isEdit`, plus de `error`). A la place, _chaque modification de champ (y compris un simple changement de libellé) doit passer par la fonction d'initialisation_.
 
-Il est nécessaire d'utiliser la fonction de transformation pour modifier des champs car c'est le seul endroit où on peut le faire. On pourrait être tenté de vouloir le faire dans `fieldFor`/`autocompleteFor`/`selectFor`, mais il ne faut pas oublier qu'un composant de `Field` n'a pas d'état et que tout (en particulier la validation) est déjà géré en amont au niveau du `FormNode`.
+Il est nécessaire d'utiliser la fonction d'initialisation pour modifier des champs car c'est le seul endroit où on peut le faire. On pourrait être tenté de vouloir le faire dans `fieldFor`/`autocompleteFor`/`selectFor`, mais il ne faut pas oublier qu'un composant de `Field` n'a pas d'état et que tout (en particulier la validation) est déjà géré en amont au niveau du `FormNode`.
 
 #### Exemple
 
@@ -213,8 +225,12 @@ Cet exemple est peu réaliste, mais il montre bien tout ce qu'on peut faire à l
 
 ```ts
 const formNode = makeFormNode(
-    mainStore.structure,
+    mainStore.structure, // StoreNode source.
+    {isEdit: true}, // FormNode initialisé en édition.
     entity => {
+        // On initialise la valeur du champ ville à "Paris".
+        entity.adresse.ville.value = "Paris";
+
         // On change le domaine et le isRequired du champ.
         patchField(entity.denominationSociale, () => ({
             domain: DO_COMMENTAIRE,
@@ -239,9 +255,8 @@ const formNode = makeFormNode(
                 email => (entity.denominationSociale.value = email)
             ) // Setter.
         };
-    },
-    true
-); // FormNode initialisé en édition.
+    }
+);
 ```
 
 ### Les actions de formulaires : `FormActions`
@@ -299,7 +314,7 @@ actions = makeFormActions(
     {
         clearBeforeInit: true,
         onFormSaved: () => this.props.close(),
-        onToggleEdit: edit => !edit && this.props.close()
+        onClickCancel: () => this.props.close()
     }
 );
 ```

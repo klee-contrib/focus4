@@ -52,8 +52,8 @@ export interface StoreListNode<T extends Entity = any, U = {}> extends IObservab
     /** Métadonnées. */
     readonly $entity: T;
 
-    /** Fonction de transformation du noeud de la liste. */
-    $transform?: (source: StoreNode<T>) => U | void;
+    /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
+    $initializer?: (source: StoreNode<T>) => U | void;
 
     /** Ajoute un élément à la liste. */
     pushNode(...items: EntityToType<T>[]): void;

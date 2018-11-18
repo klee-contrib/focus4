@@ -266,8 +266,8 @@ export function setNode<T extends Entity>(
  */
 export function getNodeForList<T extends Entity>(list: StoreListNode<T>, item: EntityToType<T> | StoreNode<T>) {
     const node = buildNode<T>(list.$entity);
-    if (list.$transform) {
-        Object.assign(node, list.$transform(node) || {});
+    if (list.$initializer) {
+        Object.assign(node, list.$initializer(node) || {});
     }
     if (isFormListNode(list)) {
         nodeToFormNode<T>(node, isStoreNode<T>(item) ? item : node, list);
