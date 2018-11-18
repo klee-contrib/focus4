@@ -106,7 +106,8 @@ export class Panel extends React.Component<PanelProps> {
             title,
             showHelp,
             editing,
-            toggleEdit,
+            onClickCancel,
+            onClickEdit,
             save,
             hideProgressBar
         } = this.props;
@@ -117,8 +118,9 @@ export class Panel extends React.Component<PanelProps> {
                     editing={editing}
                     i18nPrefix={i18nPrefix}
                     loading={loading}
+                    onClickCancel={onClickCancel}
+                    onClickEdit={onClickEdit}
                     save={!this.isInForm ? save : undefined}
-                    toggleEdit={toggleEdit}
                 />
             </div>
         );

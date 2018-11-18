@@ -10,16 +10,16 @@ import {FormProps} from "./form";
 
 /** Configuration additionnelle du formulaire.. */
 export interface FormConfig {
-    /** Vide le store de base à l'initialisation. */
-    clearBeforeInit?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Appelé au clic sur le bouton "Annuler". */
+    onClickCancel?: () => void;
+    /** Appelé au clic sur le bouton "Modifier". */
+    onClickEdit?: () => void;
     /** Appelé après le chargement. */
     onFormLoaded?: () => void;
     /** Appelé après la sauvegarde. */
     onFormSaved?: () => void;
-    /** Appelé après le changement de mode. */
-    onToggleEdit?: (edit: boolean) => void;
 }
 
 /** Config d'actions à fournir au formulaire. */
@@ -76,8 +76,9 @@ export class FormActions {
         return {
             editing: this.entity.form.isEdit,
             loading: this.isLoading,
-            save: this.save,
-            toggleEdit: this.toggleEdit
+            onClickCancel: this.onClickCancel,
+            onClickEdit: this.onClickEdit,
+            save: this.save
         };
     }
 
@@ -94,10 +95,6 @@ export class FormActions {
     @action.bound
     async load() {
         const {getLoadParams, load} = this.actions;
-
-        if (this.config.clearBeforeInit) {
-            this.entity.sourceNode.clear();
-        }
 
         // On n'effectue le chargement que si on a un service de chargement et des paramètres pour le service.
         if (getLoadParams && load) {
@@ -161,15 +158,22 @@ export class FormActions {
         }
     }
 
-    /** Change le mode du formulaire. */
+    /** Handler de clic sur le bouton "Annuler". */
     @action.bound
-    toggleEdit(isEdit: boolean) {
-        this.entity.form.isEdit = isEdit;
-        if (!isEdit) {
-            this.entity.reset();
+    onClickCancel() {
+        this.entity.form.isEdit = false;
+        this.entity.reset();
+        if (this.config.onClickCancel) {
+            this.config.onClickCancel();
         }
-        if (this.config.onToggleEdit) {
-            this.config.onToggleEdit(isEdit);
+    }
+
+    /** Handler de clic sur le bouton "Modifier". */
+    @action.bound
+    onClickEdit() {
+        this.entity.form.isEdit = true;
+        if (this.config.onClickEdit) {
+            this.config.onClickEdit();
         }
     }
 }
