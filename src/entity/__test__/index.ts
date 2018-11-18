@@ -320,6 +320,43 @@ test("FormNode: Création", t => {
     t.end();
 });
 
+test("FormNode: Création à partir d'un noeud non-vide", t => {
+    const entry = getStore().operation;
+    const entry2 = getStore().projetTest;
+    entry.replace(operation);
+    entry2.replace(projetTest);
+
+    const formNode = makeFormNode(entry);
+    const formNode2 = makeFormNode(entry2);
+
+    t.deepEqual(
+        toFlatValues(formNode),
+        toFlatValues(entry),
+        "Un FormNode créé sans options à partir d'une source non vide possède tout son contenu."
+    );
+    t.deepEqual(
+        toFlatValues(formNode2),
+        toFlatValues(entry2),
+        "Un FormListNode créé sans options à partir d'une source non vide possède tout son contenu."
+    );
+
+    const formNodeB = makeFormNode(entry, {isEmpty: true});
+    const formNodeB2 = makeFormNode(entry2, {isEmpty: true});
+
+    t.deepEqual(
+        toFlatValues(formNodeB),
+        {structure: {}},
+        "Un FormNode créé vide à partir d'une source non vide est bien vide."
+    );
+    t.deepEqual(
+        toFlatValues(formNodeB2),
+        {ligneList: []},
+        "Un FormListNode créé vide à partir d'une source non vide possède est bien vide."
+    );
+
+    t.end();
+});
+
 test("FormNode: Modification de StoreNode.", t => {
     const {entry, formNode} = getFormNodes();
     entry.replace(operation);

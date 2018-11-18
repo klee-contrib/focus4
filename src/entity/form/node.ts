@@ -13,47 +13,58 @@ import {
     StoreNode
 } from "../types";
 
+/** Options de `makeFormNode` */
+export interface FormNodeOptions {
+    /** Etat d'édition initial ou condition pour être en édition. */
+    isEdit?: boolean | (() => boolean);
+    /** Construit un FormNode vide au lieu de recopier le contenu actuel du noeud source. */
+    isEmpty?: boolean;
+}
+
 /**
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
  * @param node Le noeud de base
+ * @param opts Options du FormNode.
  * @param transform La fonction de transformation
- * @param isEdit L'état initial ou la condition d'édition.
  */
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreListNode<T>,
-    isEdit?: boolean | (() => boolean),
+    opts?: FormNodeOptions,
     transform?: (source: StoreNode<T>) => U
 ): FormListNode<T, U>;
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreNode<T>,
-    isEdit?: boolean | (() => boolean),
+    opts?: FormNodeOptions,
     transform?: (source: StoreNode<T>) => U
 ): FormNode<T, U>;
 export function makeFormNode<T extends Entity, U = {}>(
     node: StoreNode<T> | StoreListNode<T>,
-    isEdit: boolean | (() => boolean) = false,
+    {isEdit, isEmpty}: FormNodeOptions = {},
     transform: (source: StoreNode<T>) => U = _ => ({} as U)
 ) {
     if (isAnyFormNode(node)) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
 
-    const formNode = clone(node, transform);
-    nodeToFormNode(formNode, node, isEdit);
+    const formNode = clone(node, isEmpty, transform);
+    nodeToFormNode(formNode, node, isEdit || false);
 
     return formNode;
 }
 
 /** Clone un StoreNode */
-function clone(source: any, transform?: (node: any) => any): any {
+function clone(source: any, isEmpty?: boolean, transform?: (node: any) => any): any {
     if (isStoreListNode(source)) {
         let res = [];
-        const toAdd = source.map(i => clone(i, transform || source.$transform));
-        res.length = toAdd.length;
-        for (let i = 0; i < toAdd.length; i++) {
-            res[i] = toAdd[i];
+
+        if (!isEmpty) {
+            const toAdd = source.map(i => clone(i, isEmpty, transform || source.$transform));
+            res.length = toAdd.length;
+            for (let i = 0; i < toAdd.length; i++) {
+                res[i] = toAdd[i];
+            }
         }
 
         res = observable.array(res, {deep: false}) as StoreListNode;
@@ -68,7 +79,7 @@ function clone(source: any, transform?: (node: any) => any): any {
     } else if (isStoreNode(source)) {
         const res: typeof source = {} as any;
         for (const key in source) {
-            (res as any)[key] = clone((source as any)[key]);
+            (res as any)[key] = clone((source as any)[key], isEmpty);
         }
         if (transform) {
             Object.assign(res, transform(res) || {});
@@ -80,7 +91,7 @@ function clone(source: any, transform?: (node: any) => any): any {
                 $field: source.$field
             },
             {
-                value: source.value
+                value: isEmpty ? undefined : source.value
             },
             {
                 value: observable.ref
