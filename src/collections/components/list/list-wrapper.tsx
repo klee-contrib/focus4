@@ -1,7 +1,6 @@
 import i18next from "i18next";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import {Button, IconButton as IB} from "react-toolbox/lib/button";
 import Tooltip from "react-toolbox/lib/tooltip";
@@ -35,26 +34,30 @@ export interface ListWrapperProps {
     theme?: ListWrapperStyle;
 }
 
+const lwcInit = {
+    addItemHandler: () => {
+        /*noop */
+    },
+    mosaic: {width: 200, height: 200},
+    mode: "list" as "list" | "mosaic"
+};
+export const ListWrapperContext = React.createContext(lwcInit);
+
 /** Wrapper de liste permettant de partager le mode d'affichage de toutes les listes qu'il contient. */
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps> {
-    // On utilise le contexte React pour partager le mode entre les listes.
-    static childContextTypes = {
-        listWrapper: PropTypes.object
-    };
-
     /** Objet passé en contexte pour les listes contenues dans le wrapper. */
-    childContext = observable(
+    listWrapperContext = observable(
         {
             /** Handler au clic sur le bouton "Ajouter". */
-            addItemHandler: this.props.addItemHandler,
+            addItemHandler: this.props.addItemHandler || lwcInit.addItemHandler,
             /** Taile des mosaïques. */
             mosaic: {
-                width: this.props.mosaicWidth || 200,
-                height: this.props.mosaicHeight || 200
+                width: this.props.mosaicWidth || lwcInit.mosaic.width,
+                height: this.props.mosaicHeight || lwcInit.mosaic.height
             },
             /** Mode des listes. */
-            mode: this.props.mode || "list"
+            mode: this.props.mode || lwcInit.mode
         },
         {
             addItemHandler: observable.ref
@@ -65,59 +68,57 @@ export class ListWrapper extends React.Component<ListWrapperProps> {
     @action
     componentWillReceiveProps({addItemHandler, mode, mosaicHeight, mosaicWidth}: ListWrapperProps) {
         if (this.props.addItemHandler !== addItemHandler) {
-            this.childContext.addItemHandler = addItemHandler;
+            this.listWrapperContext.addItemHandler = addItemHandler || lwcInit.addItemHandler;
         }
         if (mode && this.props.mode !== mode) {
-            this.childContext.mode = mode;
+            this.listWrapperContext.mode = mode;
         }
         if (mosaicWidth && this.props.mosaicWidth !== mosaicWidth) {
-            this.childContext.mosaic.width = mosaicWidth;
+            this.listWrapperContext.mosaic.width = mosaicWidth;
         }
         if (mosaicHeight && this.props.mosaicHeight !== mosaicHeight) {
-            this.childContext.mosaic.height = mosaicHeight;
+            this.listWrapperContext.mosaic.height = mosaicHeight;
         }
-    }
-
-    getChildContext() {
-        return {listWrapper: this.childContext};
     }
 
     render() {
         const {children, canChangeMode, hideAddItemHandler, i18nPrefix = "focus"} = this.props;
-        const {mode, addItemHandler} = this.childContext;
+        const {mode, addItemHandler} = this.listWrapperContext;
         return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div className={theme.wrapper}>
-                        <div className={theme.bar}>
-                            {canChangeMode ? (
-                                <IconButton
-                                    accent={mode === "list"}
-                                    onClick={() => (this.childContext.mode = "list")}
-                                    icon={getIcon(`${i18nPrefix}.icons.listWrapper.list`)}
-                                    tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
-                                />
-                            ) : null}
-                            {canChangeMode ? (
-                                <IconButton
-                                    accent={mode === "mosaic"}
-                                    onClick={() => (this.childContext.mode = "mosaic")}
-                                    icon={getIcon(`${i18nPrefix}.icons.listWrapper.mosaic`)}
-                                    tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
-                                />
-                            ) : null}
-                            {!hideAddItemHandler && addItemHandler && mode === "list" ? (
-                                <Button
-                                    onClick={addItemHandler}
-                                    icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}
-                                    label={i18next.t(`${i18nPrefix}.list.add`)}
-                                />
-                            ) : null}
+            <ListWrapperContext.Provider value={this.listWrapperContext}>
+                <Theme theme={this.props.theme}>
+                    {theme => (
+                        <div className={theme.wrapper}>
+                            <div className={theme.bar}>
+                                {canChangeMode ? (
+                                    <IconButton
+                                        accent={mode === "list"}
+                                        onClick={() => (this.listWrapperContext.mode = "list")}
+                                        icon={getIcon(`${i18nPrefix}.icons.listWrapper.list`)}
+                                        tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
+                                    />
+                                ) : null}
+                                {canChangeMode ? (
+                                    <IconButton
+                                        accent={mode === "mosaic"}
+                                        onClick={() => (this.listWrapperContext.mode = "mosaic")}
+                                        icon={getIcon(`${i18nPrefix}.icons.listWrapper.mosaic`)}
+                                        tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
+                                    />
+                                ) : null}
+                                {!hideAddItemHandler && addItemHandler && mode === "list" ? (
+                                    <Button
+                                        onClick={addItemHandler}
+                                        icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}
+                                        label={i18next.t(`${i18nPrefix}.list.add`)}
+                                    />
+                                ) : null}
+                            </div>
+                            {children}
                         </div>
-                        {children}
-                    </div>
-                )}
-            </Theme>
+                    )}
+                </Theme>
+            </ListWrapperContext.Provider>
         );
     }
 }

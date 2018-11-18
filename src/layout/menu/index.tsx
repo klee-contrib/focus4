@@ -1,11 +1,11 @@
 import {action, computed, observable} from "mobx";
-import PropTypes from "prop-types";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {IconButtonTheme} from "react-toolbox/lib/button";
 
 import {themr} from "../../theme";
 
+import {LayoutContext} from "../types";
 import {MainMenuItem, MainMenuItemProps} from "./item";
 import {MainMenuList, MainMenuListStyle} from "./list";
 import {MainMenuPanel, MainMenuPanelStyle} from "./panel";
@@ -24,13 +24,8 @@ export interface MainMenuProps {
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 export class MainMenu extends React.Component<MainMenuProps> {
-    static contextTypes = {
-        layout: PropTypes.object
-    };
-
-    context!: {
-        layout: {menuWidth: number};
-    };
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
 
     /** Index du sous-menu actif. */
     @observable activeMenuIndex?: number;
@@ -90,7 +85,7 @@ export class MainMenu extends React.Component<MainMenuProps> {
                         <MainMenuPanel
                             close={() => (this.showPanel = false)}
                             opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
-                            xOffset={this.context.layout.menuWidth}
+                            xOffset={this.context.layout.menuWidth || 0}
                             yOffset={this.yPosition}
                             theme={theme}
                         >

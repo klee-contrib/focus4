@@ -1,7 +1,6 @@
 import i18next from "i18next";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {spring, Style, TransitionMotion} from "react-motion";
@@ -18,6 +17,7 @@ import {addDragSource} from "./dnd-utils";
 import {DndDragLayer, DragLayerStyle} from "./drag-layer";
 import {LineProps, LineWrapper, LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
+import {ListWrapperContext} from "./list-wrapper";
 
 import * as styles from "./__style__/list.css";
 const Theme = themr("list", styles);
@@ -89,20 +89,8 @@ export interface LineItem<P> {
 @observer
 export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extends ListBase<T, P> {
     // On récupère les infos du ListWrapper dans le contexte.
-    static contextTypes = {
-        listWrapper: PropTypes.object
-    };
-
-    context!: {
-        listWrapper?: {
-            addItemHandler: () => void;
-            mosaic: {
-                width: number;
-                height: number;
-            };
-            mode: "list" | "mosaic";
-        };
-    };
+    static contextType = ListWrapperContext;
+    context!: React.ContextType<typeof ListWrapperContext>;
 
     /** Nombre de mosaïque par ligne, déterminé à la volée. */
     @observable private byLine!: number;
@@ -150,23 +138,20 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Handler d'ajout d'élément (fusion contexte / props). */
     @computed
     protected get addItemHandler() {
-        const {listWrapper} = this.context;
-        return this.props.addItemHandler || (listWrapper && listWrapper.addItemHandler);
+        return this.props.addItemHandler || this.context.addItemHandler;
     }
 
     /** Mode (fusion contexte / props). */
     @computed
     protected get mode() {
         const {mode, MosaicComponent, LineComponent} = this.props;
-        const {listWrapper} = this.context;
-        return mode || (listWrapper && listWrapper.mode) || (MosaicComponent && !LineComponent && "mosaic") || "list";
+        return mode || (MosaicComponent && !LineComponent && "mosaic") || this.context.mode;
     }
 
     /** Taille de la mosaïque (fusion contexte / props). */
     @computed
     protected get mosaic() {
-        const {listWrapper} = this.context;
-        return this.props.mosaic || (listWrapper && listWrapper.mosaic) || {width: 200, height: 200};
+        return this.props.mosaic || this.context.mosaic;
     }
 
     /** Les données. */

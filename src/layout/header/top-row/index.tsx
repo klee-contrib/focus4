@@ -1,8 +1,9 @@
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
 import {themr} from "../../../theme";
+
+import {LayoutContext} from "../../types";
 
 import * as styles from "../__style__/header.css";
 const Theme = themr("header", styles);
@@ -21,15 +22,8 @@ export interface HeaderTopRowProps {
 
 /** Barre du haut dans le header. */
 export class HeaderTopRow extends React.Component<HeaderTopRowProps> {
-    static contextTypes = {
-        header: PropTypes.object,
-        layout: PropTypes.object
-    };
-
-    context!: {
-        header: {topRowHeight: number};
-        layout: {menuWidth: number};
-    };
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
 
     componentDidMount() {
         this.context.header.topRowHeight = (findDOMNode(this) as Element).clientHeight;

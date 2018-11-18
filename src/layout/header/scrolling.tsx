@@ -1,7 +1,9 @@
 import {action, observable} from "mobx";
-import PropTypes from "prop-types";
 import * as React from "react";
+
 import {themr} from "../../theme";
+
+import {LayoutContext} from "../types";
 
 import * as styles from "./__style__/header.css";
 export type HeaderStyle = Partial<typeof styles>;
@@ -25,16 +27,8 @@ export interface HeaderScrollingProps {
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
 export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
-    static contextTypes = {
-        header: PropTypes.object
-    };
-
-    context!: {
-        header: {
-            marginBottom: number;
-            topRowHeight: number;
-        };
-    };
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
 
     /** Seuil de déploiement, calculé à partir de la hauteur du header. */
     @observable deployThreshold = 1000;

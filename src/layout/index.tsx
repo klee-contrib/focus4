@@ -2,9 +2,8 @@ import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-de
 
 import {omit} from "lodash";
 import {observable} from "mobx";
-import * as PropTypes from "prop-types";
 import * as React from "react";
-import {ThemeProvider, TReactCSSThemrTheme} from "react-css-themr";
+import {TReactCSSThemrTheme} from "react-css-themr";
 
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox";
@@ -47,7 +46,7 @@ import {LoadingBarStyle} from "../network";
 import {ErrorCenter, ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
-import {LayoutProps, LayoutStyle, Theme} from "./types";
+import {LayoutContext, layoutContextInit, LayoutProps, LayoutStyle, Theme} from "./types";
 
 export {LayoutContent} from "./content";
 export {LayoutFooter} from "./footer";
@@ -64,46 +63,27 @@ export {
 } from "./header";
 export {MainMenu, MainMenuItem} from "./menu";
 
+export const ThemeContext = React.createContext({} as TReactCSSThemrTheme);
+
 /** Composant de Layout sans le provider de style. */
 class LayoutBase extends React.Component<LayoutProps> {
-    // On utilise le contexte React pour partager la taille du menu et du header.
-    static childContextTypes = {
-        header: PropTypes.object,
-        layout: PropTypes.object
-    };
-
     /** Objet passé en contexte pour la hauteur du header top row. */
-    @observable
-    headerContext = {
-        marginBottom: 50,
-        topRowHeight: 60
-    };
 
-    /** Objet passé en contexte pour la taille du menu. */
-    @observable
-    layoutContext = {
-        contentPaddingTop: 10,
-        menuWidth: undefined as number | undefined
-    };
-
-    getChildContext() {
-        return {
-            header: this.headerContext,
-            layout: this.layoutContext
-        };
-    }
+    readonly layoutContext = observable(layoutContextInit);
 
     render() {
         return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div className={theme.layout}>
-                        <ErrorCenter />
-                        <MessageCenter />
-                        {this.props.children}
-                    </div>
-                )}
-            </Theme>
+            <LayoutContext.Provider value={this.layoutContext}>
+                <Theme theme={this.props.theme}>
+                    {theme => (
+                        <div className={theme.layout}>
+                            <ErrorCenter />
+                            <MessageCenter />
+                            {this.props.children}
+                        </div>
+                    )}
+                </Theme>
+            </LayoutContext.Provider>
         );
     }
 }
@@ -158,8 +138,8 @@ export interface LayoutStyleProviderProps {
  */
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     return (
-        <ThemeProvider theme={(props.appTheme || {}) as TReactCSSThemrTheme}>
+        <ThemeContext.Provider value={(props.appTheme || {}) as TReactCSSThemrTheme}>
             <LayoutBase {...omit(props, "appTheme")}>{props.children}</LayoutBase>
-        </ThemeProvider>
+        </ThemeContext.Provider>
     );
 }

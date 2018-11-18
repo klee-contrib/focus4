@@ -1,18 +1,12 @@
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {LayoutProps, Theme} from "./types";
+import {LayoutContext, LayoutProps, Theme} from "./types";
 
 /** Contenu du Layout. */
 export class LayoutContent extends React.Component<LayoutProps> {
-    static contextTypes = {layout: PropTypes.object};
-    context!: {
-        layout: {
-            contentPaddingTop: number;
-            menuWidth: number;
-        };
-    };
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
 
     componentDidMount() {
         const paddingTop = window.getComputedStyle(findDOMNode(this) as Element).paddingTop;

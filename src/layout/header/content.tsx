@@ -1,7 +1,8 @@
-import * as PropTypes from "prop-types";
 import * as React from "react";
 
 import {themr} from "../../theme";
+
+import {LayoutContext} from "../types";
 
 import * as styles from "./__style__/header.css";
 const Theme = themr("header", styles);
@@ -16,8 +17,8 @@ export interface HeaderContentProps {
 
 /** Contenu du header. n'est affiché que si le header est déplié. */
 export class HeaderContent extends React.Component<HeaderContentProps> {
-    static contextTypes = {layout: PropTypes.object};
-    context!: {layout: {menuWidth: number}};
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
 
     render() {
         return (

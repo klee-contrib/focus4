@@ -1,3 +1,3 @@
 export {ActionConfig, makeFormActions} from "./actions";
-export {Form, FormStyle} from "./form";
+export {Form, FormContext, FormStyle} from "./form";
 export {makeFormNode} from "./node";

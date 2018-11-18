@@ -1,6 +1,5 @@
 import i18next from "i18next";
 import {action, computed, observable} from "mobx";
-import PropTypes from "prop-types";
 import * as React from "react";
 import {themeable} from "react-css-themr";
 import {findDOMNode} from "react-dom";
@@ -8,6 +7,7 @@ import {findDOMNode} from "react-dom";
 import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {themr} from "../../theme";
 
+import {FormContext} from "../form";
 import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
@@ -45,8 +45,8 @@ export class Field<T extends FieldEntry> extends React.Component<
     {field: EntityField<T>} & FieldOptions<T> & FieldComponents
 > {
     // On récupère le forceErrorDisplay du form depuis le contexte.
-    static contextTypes = {form: PropTypes.object};
-    context!: {form?: {forceErrorDisplay: boolean}};
+    static contextType = FormContext;
+    context!: React.ContextType<typeof FormContext>;
 
     /** <div /> contenant le composant de valeur (input ou display). */
     @observable private valueElement?: Element | null;
@@ -59,7 +59,7 @@ export class Field<T extends FieldEntry> extends React.Component<
         return (
             !this.props.noError &&
             !documentHelper.isElementActive(this.valueElement) &&
-            (!this.hideErrorOnInit || (this.context.form && this.context.form.forceErrorDisplay) || false)
+            (!this.hideErrorOnInit || this.context.forceErrorDisplay)
         );
     }
 
