@@ -46,7 +46,8 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
     /** Récupère le sous-menu actif. */
     @computed
     get subMenu() {
-        const activeMenuItem = this.activeMenuIndex && React.Children.toArray(this.props.children)[this.activeMenuIndex] as React.ReactElement<MainMenuItemProps> || undefined;
+        const activeMenuItem = this.activeMenuIndex && React.Children.toArray(this.props.children)
+            .filter(x => x)[this.activeMenuIndex] as React.ReactElement<MainMenuItemProps> || undefined;
         return activeMenuItem && activeMenuItem.props && activeMenuItem.props.children || undefined;
     }
 
