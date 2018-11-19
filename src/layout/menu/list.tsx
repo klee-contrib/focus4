@@ -34,17 +34,19 @@ export class MainMenuList extends React.Component<MainMenuListProps, void> {
 
     render() {
         const {activeRoute, children, theme} = this.props;
+        const childItems = React.Children.map(children, item => item);
         return (
             <ul className={theme!.list}>
-                {React.Children.map(children, (menuItem: any, idx) => (
-                    <li
-                        className={`${theme!.item} ${menuItem.props && menuItem.props.route === activeRoute ? theme!.active : ""}`}
-                        key={idx}
-                        onClick={evt => this.onClick(evt, idx)}
-                    >
-                        {menuItem}
-                    </li>
-                ))}
+                {childItems && childItems.filter(item => item)
+                    .map((item, idx) => (
+                        <li
+                            className={`${theme!.item} ${typeof item !== "string" && typeof item !== "number" && item.props.route === activeRoute ? theme!.active : ""}`}
+                            key={idx}
+                            onClick={evt => this.onClick(evt, idx)}
+                        >
+                            {item}
+                        </li>
+                    ))}
             </ul>
         );
     }
