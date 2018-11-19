@@ -39,7 +39,7 @@ export class MainMenu extends React.Component<MainMenuProps> {
     get subMenu() {
         const activeMenuItem =
             (this.activeMenuIndex &&
-                (React.Children.toArray(this.props.children)[this.activeMenuIndex] as React.ReactElement<
+                (React.Children.toArray(this.props.children).filter(x => x)[this.activeMenuIndex] as React.ReactElement<
                     MainMenuItemProps
                 >)) ||
             undefined;
