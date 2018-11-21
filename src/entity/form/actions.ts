@@ -184,16 +184,20 @@ export class FormActions {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends Entity>(
-    formNode: FormListNode<T>,
+export function makeFormActions<T extends Entity, U>(
+    formNode: FormListNode<T, U>,
     actions: ActionConfig<EntityToType<T>[]>,
     config?: FormConfig
 ): FormActions;
-export function makeFormActions<T extends Entity>(
-    formNode: FormNode<T>,
+export function makeFormActions<T extends Entity, U>(
+    formNode: FormNode<T, U>,
     actions: ActionConfig<EntityToType<T>>,
     config?: FormConfig
 ): FormActions;
-export function makeFormActions(formNode: FormNode | FormListNode, actions: ActionConfig, config?: FormConfig) {
-    return new FormActions(formNode, actions, config);
+export function makeFormActions<T extends Entity, U>(
+    formNode: FormNode<T, U> | FormListNode<T, U>,
+    actions: ActionConfig,
+    config?: FormConfig
+) {
+    return new FormActions(formNode as any, actions, config);
 }
