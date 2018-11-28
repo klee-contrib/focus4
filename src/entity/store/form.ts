@@ -1,5 +1,14 @@
 import {isBoolean, isEqual, isFunction, toPairs} from "lodash";
-import {action, extendObservable, IArrayChange, IArraySplice, intercept, observable, observe} from "mobx";
+import {
+    action,
+    extendObservable,
+    IArrayChange,
+    IArraySplice,
+    intercept,
+    isComputedProp,
+    observable,
+    observe
+} from "mobx";
 
 import {
     Entity,
@@ -218,7 +227,7 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
         }
     });
 
-    if (parentNode !== parentNode.sourceNode) {
+    if (parentNode !== parentNode.sourceNode && !isComputedProp(field, "value")) {
         (field as FormEntityField)._formDisposer = intercept(
             parentNode.sourceNode[field.$field.name] as EntityField,
             "value",
