@@ -42,6 +42,7 @@ import {
 import {FieldStyle, FormStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
+import {ThemeContext} from "../theme";
 
 import {ErrorCenter, ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
@@ -62,8 +63,6 @@ export {
     SecondaryAction
 } from "./header";
 export {MainMenu, MainMenuItem} from "./menu";
-
-export const ThemeContext = React.createContext({} as TReactCSSThemrTheme);
 
 /** Composant de Layout sans le provider de style. */
 class LayoutBase extends React.Component<LayoutProps> {

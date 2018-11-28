@@ -1,9 +1,7 @@
 import {upperFirst} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themeable} from "react-css-themr";
-
-import {ThemeContext} from "../layout";
+import {themeable, TReactCSSThemrTheme} from "react-css-themr";
 
 export interface ThemeConsumerProps<T> {
     children: (theme: T) => React.ReactElement<any>;
@@ -12,6 +10,8 @@ export interface ThemeConsumerProps<T> {
 }
 
 export type ThemeConsumer<T> = React.ComponentClass<ThemeConsumerProps<T>>;
+
+export const ThemeContext = React.createContext({} as TReactCSSThemrTheme);
 
 /**
  * Crée un composant pour injecter le theme souhaité dans un composant, via une render props (à la place du HoC de `react-css-themr`).
