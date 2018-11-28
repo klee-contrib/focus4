@@ -8,6 +8,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
+import {LayoutContext} from "../layout";
 import {themr} from "../theme";
 
 import {ButtonBackToTop} from "./button-back-to-top";
@@ -44,6 +45,9 @@ export const ScrollspyContext = React.createContext({
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
+
     /** Offset entre le container et le haut du document. */
     @observable protected offsetTop = 0;
     /** Scroll courant. */

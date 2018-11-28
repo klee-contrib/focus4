@@ -63,6 +63,7 @@ export {
     SecondaryAction
 } from "./header";
 export {MainMenu, MainMenuItem} from "./menu";
+export {LayoutContext};
 
 /** Composant de Layout sans le provider de style. */
 class LayoutBase extends React.Component<LayoutProps> {
