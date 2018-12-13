@@ -12,7 +12,7 @@ export interface SelectProps {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
-    error?: string;
+    error?: React.ReactNode;
     /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
     hasUndefined?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */

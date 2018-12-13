@@ -23,9 +23,9 @@
     },
     "dependencies": {
         "@types/i18next": "12.1.0",
-        "@types/lodash": "4.14.118",
+        "@types/lodash": "4.14.119",
         "@types/numeral": "0.0.25",
-        "@types/react": "16.7.7",
+        "@types/react": "16.7.17",
         "@types/react-dom": "16.0.11",
         "@types/react-motion": "0.0.27",
         "@types/uuid": "3.4.4",
@@ -33,14 +33,14 @@
         "inputmask-core": "2.2.0",
         "lodash": "4.17.11",
         "lodash-decorators": "6.0.0",
-        "material-design-icons-iconfont": "4.0.2",
-        "mobx": "4.6.0",
-        "mobx-react": "5.4.2",
-        "moment": "2.22.2",
+        "material-design-icons-iconfont": "4.0.3",
+        "mobx": "4.8.0",
+        "mobx-react": "5.4.3",
+        "moment": "2.23.0",
         "numeral": "2.0.6",
         "react": "16.6.3",
-        "react-dnd": "7.0.0",
-        "react-dnd-html5-backend": "7.0.0",
+        "react-dnd": "7.0.2",
+        "react-dnd-html5-backend": "7.0.2",
         "react-dom": "16.6.3",
         "react-motion": "0.5.2",
         "react-toolbox": "2.0.0-beta.13",
@@ -50,7 +50,7 @@
         "yester": "0.10.0"
     },
     "devDependencies": {
-        "@types/shelljs": "0.8.0",
+        "@types/shelljs": "0.8.1",
         "@types/tape": "4.2.32",
         "ignore-styles": "5.0.1",
         "shelljs": "0.8.3",
@@ -60,6 +60,6 @@
         "ts-node": "7.0.1",
         "tslint": "5.11.0",
         "typed-css-modules": "0.3.7",
-        "typescript": "3.1.6"
+        "typescript": "3.2.2"
     }
 }

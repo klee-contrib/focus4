@@ -55,7 +55,7 @@ function patchClass<T extends RCL>(
                 : undefined;
     }
 
-    function componentWillUnmount(this: RCL) {
+    function componentWillUnmount(this: T) {
         this[`${type}_${propertyKey}`]();
     }
 
@@ -66,13 +66,13 @@ function patchClass<T extends RCL>(
         ? componentWillMount
         : function(this: RCL) {
               baseCWM.apply(this);
-              componentWillMount.apply(this);
+              componentWillMount.apply(this as T);
           };
     instance.componentWillUnmount = !baseCWUM
         ? componentWillUnmount
         : function(this: RCL) {
               baseCWUM.apply(this);
-              componentWillUnmount.apply(this);
+              componentWillUnmount.apply(this as T);
           };
 }
 

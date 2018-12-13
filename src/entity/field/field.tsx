@@ -8,7 +8,7 @@ import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {themr} from "../../theme";
 
 import {FormContext} from "../form";
-import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
+import {BaseInputProps, BaseSelectProps, EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -149,7 +149,7 @@ export class Field<T extends FieldEntry> extends React.Component<
             return (
                 <SelectComponent
                     {...domainSCP}
-                    {...selectProps}
+                    {...selectProps as BaseSelectProps}
                     {...props}
                     theme={themeable(domainSCP.theme || {}, selectProps.theme || {})}
                 />
