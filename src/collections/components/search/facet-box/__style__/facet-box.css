@@ -7,3 +7,17 @@
     margin: 0 0 15px;
     text-transform: uppercase;
 }
+
+.section {
+    margin-top: 40px;
+
+    & h5 {
+        margin-bottom: 15px;
+        margin-top: 0;
+        text-transform: uppercase;
+    }
+}
+
+h3 + .section {
+    margin-top: 25px;
+}

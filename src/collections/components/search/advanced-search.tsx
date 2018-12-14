@@ -1,5 +1,6 @@
 import {observer} from "mobx-react";
 import * as React from "react";
+import {ChipTheme} from "react-toolbox/lib/chip";
 
 import {ButtonBackToTop} from "../../../components";
 import {themr} from "../../../theme";
@@ -17,7 +18,7 @@ import {
     ListWrapper,
     OperationListItem
 } from "../list";
-import {FacetBox, FacetBoxStyle} from "./facet-box";
+import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
 import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
 
@@ -35,6 +36,10 @@ export interface AdvancedSearchProps<T> {
     canOpenDetail?: (data: T) => boolean;
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
+    /** Permet d'appliquer un style personnalisé à chaque Chip selon son type et ton code. */
+    chipThemer?: (type: "filter" | "facet" | "sort" | "group", code: string) => ChipTheme;
+    /** Composant personnalisés pour affichage d'une facette en particulier. */
+    customFacetComponents?: {[facet: string]: React.ReactType<FacetProps>};
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentType<DetailProps<T>>;
     /** Hauteur du composant de détail. Par défaut : 200. */
@@ -51,6 +56,11 @@ export interface AdvancedSearchProps<T> {
     facetBoxPosition?: "action-bar" | "left" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: FacetBoxStyle;
+    /**
+     * Si renseigné, affiche les facettes dans des sections nommées.
+     * Il est possible d'avoir une section qui contient toutes les facettes non renseignées en ne renseignant pas la liste `facets`.
+     */
+    facetSections?: {name: string; facets?: string[]}[];
     /** Header de groupe personnalisé. */
     GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe par scope. */
@@ -137,8 +147,11 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
 
     protected renderFacetBox(theme: AdvancedSearchStyle) {
         const {
+            chipThemer = () => ({}),
+            customFacetComponents,
             facetBoxPosition = "left",
             facetBoxTheme,
+            facetSections,
             i18nPrefix,
             nbDefaultDataListFacet,
             showSingleValuedFacets,
@@ -149,8 +162,11 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             return (
                 <div className={theme.facetContainer}>
                     <FacetBox
+                        customFacetComponents={customFacetComponents}
+                        chipThemer={code => chipThemer("facet", code)}
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
+                        sections={facetSections}
                         showSingleValuedFacets={showSingleValuedFacets}
                         store={store}
                         theme={facetBoxTheme}
@@ -165,6 +181,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     protected renderListSummary() {
         const {
             canRemoveSort,
+            chipThemer,
             hideSummaryCriteria,
             hideSummaryFacets,
             hideSummaryGroup,
@@ -177,6 +194,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         return (
             <Summary
                 canRemoveSort={canRemoveSort}
+                chipThemer={chipThemer}
                 i18nPrefix={i18nPrefix}
                 hideCriteria={hideSummaryCriteria}
                 hideFacets={hideSummaryFacets}

@@ -2,7 +2,8 @@ import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {Chip} from "react-toolbox/lib/chip";
+import {themeable} from "react-css-themr";
+import {Chip, ChipTheme} from "react-toolbox/lib/chip";
 
 import {Checkbox} from "../../../../components";
 import {themr} from "../../../../theme";
@@ -12,10 +13,12 @@ import {addFacetValue, removeFacetValue} from "./utils";
 
 import * as styles from "./__style__/facet.css";
 export type FacetStyle = Partial<typeof styles>;
-const Theme = themr("facet", styles);
+export const FacetTheme = themr("facet", styles);
 
 /** Props de Facet. */
 export interface FacetProps {
+    /** Permet d'appliquer un style personnalisé à chaque Chip selon code. */
+    chipThemer?: (code: string) => ChipTheme;
     /** Facette à afficher. */
     facet: FacetOutput;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -34,7 +37,7 @@ export class Facet extends React.Component<FacetProps> {
     @observable protected isShowAll = false;
 
     protected renderFacetDataList(theme: FacetStyle) {
-        const {facet, nbDefaultDataList, store} = this.props;
+        const {chipThemer = () => ({}), facet, nbDefaultDataList, store} = this.props;
         const selectedValues = store.selectedFacets[facet.code] || [];
 
         if (!facet.isMultiSelectable && selectedValues.length === 1) {
@@ -44,7 +47,7 @@ export class Facet extends React.Component<FacetProps> {
                     key={sfv.code}
                     deletable
                     onClick={() => removeFacetValue(store, facet.code, sfv.code)}
-                    theme={{chip: theme.chip}}
+                    theme={themeable({chip: theme.chip!}, chipThemer(facet.code))}
                 >
                     {i18next.t(sfv.label)}
                 </Chip>
@@ -90,15 +93,18 @@ export class Facet extends React.Component<FacetProps> {
     render() {
         const {facet} = this.props;
         return (
-            <Theme theme={this.props.theme}>
+            <FacetTheme theme={this.props.theme}>
                 {theme => (
-                    <div className={`${theme.facet} ${facet.isMultiSelectable ? theme.multiSelect : ""}`}>
+                    <div
+                        className={`${theme.facet} ${facet.isMultiSelectable ? theme.multiSelect : ""}`}
+                        data-facet={facet.code}
+                    >
                         <h4>{i18next.t(facet.label)}</h4>
                         {this.renderFacetDataList(theme)}
                         {this.renderShowAllDataList(theme)}
                     </div>
                 )}
-            </Theme>
+            </FacetTheme>
         );
     }
 }

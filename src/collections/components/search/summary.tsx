@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {Button} from "react-toolbox/lib/button";
-import {Chip} from "react-toolbox/lib/chip";
+import {Chip, ChipTheme} from "react-toolbox/lib/chip";
 
 import {getIcon} from "../../../components";
 import {FormEntityField} from "../../../entity";
@@ -21,6 +21,8 @@ const Theme = themr("summary", styles);
 export interface ListSummaryProps<T> {
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
+    /** Permet d'appliquer un style personnalisé à chaque Chip selon son type et ton code. */
+    chipThemer?: (type: "filter" | "facet" | "sort" | "group", code: string) => ChipTheme;
     /** Handler pour le bouton d'export. */
     exportAction?: () => void;
     /** Masque les critères de recherche. */
@@ -49,7 +51,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
     protected get filterList() {
         const {hideCriteria, hideFacets, store} = this.props;
 
-        const topicList: {key: string; label: string; onDeleteClick: () => void}[] = [];
+        const topicList: {type: "facet" | "filter"; key: string; label: string; onDeleteClick: () => void}[] = [];
 
         // On ajoute la liste des critères.
         if (!hideCriteria && store.criteria) {
@@ -57,6 +59,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                 const {label, domain} = (store.criteria[criteriaKey] as FormEntityField).$field;
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
+                    type: "filter",
                     key: criteriaKey,
                     label: `${i18next.t(label)} : ${(domain &&
                         domain.displayFormatter &&
@@ -79,6 +82,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                         .filter(value => !!facetValues.find(v => v === value.code))
                         .forEach(facetItem =>
                             topicList.push({
+                                type: "facet",
                                 key: `${facetKey}-${facetItem.code}`,
                                 label: `${i18next.t((facetOutput && facetOutput.label) || facetKey)} : ${i18next.t(
                                     facetItem.label || facetItem.code
@@ -105,7 +109,15 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
     }
 
     render() {
-        const {canRemoveSort = true, exportAction, hideGroup, hideSort, i18nPrefix = "focus", store} = this.props;
+        const {
+            canRemoveSort = true,
+            chipThemer = () => undefined,
+            exportAction,
+            hideGroup,
+            hideSort,
+            i18nPrefix = "focus",
+            store
+        } = this.props;
         const {groupingKey, totalCount, query} = store;
 
         const plural = totalCount !== 1 ? "s" : "";
@@ -133,7 +145,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                             <div className={theme.chips}>
                                 <span className={theme.sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
                                 {this.filterList.map(chip => (
-                                    <Chip deletable {...chip}>
+                                    <Chip deletable {...chip} theme={chipThemer(chip.type, chip.key)}>
                                         {chip.label}
                                     </Chip>
                                 ))}
@@ -146,7 +158,11 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                                 <span className={theme.sentence}>
                                     {i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}
                                 </span>
-                                <Chip deletable onDeleteClick={() => (store.groupingKey = undefined)}>
+                                <Chip
+                                    deletable
+                                    onDeleteClick={() => (store.groupingKey = undefined)}
+                                    theme={chipThemer("group", groupingKey)}
+                                >
                                     {i18next.t(store.groupingLabel!)}
                                 </Chip>
                             </div>
@@ -161,6 +177,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                                 <Chip
                                     deletable={canRemoveSort}
                                     onDeleteClick={canRemoveSort ? () => (store.sortBy = undefined) : undefined}
+                                    theme={chipThemer("sort", this.currentSort.key)}
                                 >
                                     {i18next.t(this.currentSort.label)}
                                 </Chip>
