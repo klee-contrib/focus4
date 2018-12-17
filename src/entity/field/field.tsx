@@ -90,7 +90,11 @@ export class Field<T extends FieldEntry> extends React.Component<
             }
         } = this.props;
         if (onChange) {
-            onChange((domain.unformatter && domain.unformatter(value)) || value);
+            if (domain.unformatter) {
+                onChange(domain.unformatter(value));
+            } else {
+                onChange(value);
+            }
         }
     }
 
