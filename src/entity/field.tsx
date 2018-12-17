@@ -105,7 +105,7 @@ export class Field<
 
         // On vérifie que le champ n'est pas vide et obligatoire.
         const {isRequired, validator, label = ""} = this.props;
-        if (isRequired && (value === undefined || value === null || value === "")) {
+        if (isRequired && (value === undefined || value === null || typeof value === "string" && value.trim() === "")) {
             return i18next.t("focus.validation.required");
         }
 
@@ -123,9 +123,9 @@ export class Field<
 
     /** Appelé lors d'un changement sur l'input. */
     onChange(value: any) {
-        const {onChange, unformatter} = this.props;
+        const {onChange, unformatter = (x: string) => x} = this.props;
         if (onChange) {
-            (onChange as any)(unformatter && unformatter(value) || value);
+            onChange(unformatter(value));
         }
     }
 
