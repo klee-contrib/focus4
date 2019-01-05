@@ -122,7 +122,7 @@
         border-right: 1px solid var(--palette-grey-400);
     }
 
-    ul {
+    & ul {
         padding-left: 0;
     }
 }

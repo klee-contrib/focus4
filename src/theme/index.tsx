@@ -5,7 +5,6 @@ import {themeable, TReactCSSThemrTheme} from "react-css-themr";
 
 export interface ThemeConsumerProps<T> {
     children: (theme: T) => React.ReactElement<any>;
-    onMountOrUpdate?: () => void;
     theme?: Partial<T>;
 }
 
@@ -25,18 +24,6 @@ export function themr<T>(name: string, localTheme?: T): ThemeConsumer<T> {
 
         static contextType = ThemeContext;
         context!: React.ContextType<typeof ThemeContext>;
-
-        componentDidMount() {
-            if (this.props.onMountOrUpdate) {
-                this.props.onMountOrUpdate();
-            }
-        }
-
-        componentWillUpdate() {
-            if (this.props.onMountOrUpdate) {
-                this.props.onMountOrUpdate();
-            }
-        }
 
         render() {
             const {children, theme} = this.props;

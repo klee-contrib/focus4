@@ -3,11 +3,12 @@ import {reduce} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {Motion, spring} from "react-motion";
+import posed, {Transition} from "react-pose";
 import {Button, IconButton} from "react-toolbox/lib/button";
 import {Input} from "react-toolbox/lib/input";
 
 import {ButtonMenu, getIcon, MenuItem} from "../../../components";
+import {config} from "../../../config";
 import {themr} from "../../../theme";
 import {classReaction} from "../../../util";
 
@@ -18,9 +19,6 @@ import {ContextualActions, OperationListItem} from "./contextual-actions";
 import * as styles from "./__style__/action-bar.css";
 export type ActionBarStyle = Partial<typeof styles>;
 const Theme = themr("actionBar", styles);
-
-const MIN_FACETBOX_HEIGHT = 80;
-const DEFAULT_FACETBOX_MARGIN = 1000;
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
@@ -57,11 +55,6 @@ export interface ActionBarProps<T> {
 export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     /** Affiche la FacetBox. */
     @observable displayFacetBox = false;
-    /** Hauteur de la FacetBox. */
-    @observable facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
-
-    /** Div contenant la facet box. */
-    protected facetBox?: HTMLDivElement | null;
 
     /** Bouton de sélection (case à cocher). */
     protected selectionButton(theme: ActionBarStyle) {
@@ -221,11 +214,6 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     protected closeFacetBox() {
         const {store, showSingleValuedFacets} = this.props;
 
-        // La hauteur de la FacetBox est utilisée pour la refermer correctement, puisqu'on anime sa propriété `margin-top`.
-        if (!this.displayFacetBox) {
-            this.facetBoxHeight = DEFAULT_FACETBOX_MARGIN;
-        }
-
         // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
         if (
             this.displayFacetBox &&
@@ -235,27 +223,6 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
             )
         ) {
             this.displayFacetBox = false;
-        }
-    }
-
-    componentDidMount() {
-        this.updateFacetBoxHeight();
-        window.addEventListener("resize", this.updateFacetBoxHeight);
-    }
-
-    componentDidUpdate() {
-        this.updateFacetBoxHeight();
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.updateFacetBoxHeight);
-    }
-
-    /** On maintient également la hauteur de la FacetBox en permanance.  */
-    @action.bound
-    protected updateFacetBoxHeight() {
-        if (this.facetBox && this.facetBox.clientHeight > MIN_FACETBOX_HEIGHT) {
-            this.facetBoxHeight = this.facetBox.clientHeight;
         }
     }
 
@@ -270,7 +237,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
             store
         } = this.props;
         return (
-            <Theme theme={this.props.theme} onMountOrUpdate={this.updateFacetBoxHeight}>
+            <Theme theme={this.props.theme}>
                 {theme => (
                     <div className={theme.container}>
                         {/* ActionBar en tant que telle. */}
@@ -300,16 +267,9 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                         {/* FacetBox */}
                         {hasFacetBox && isSearch(store) ? (
                             <div className={theme.facetBoxContainer}>
-                                <Motion
-                                    style={{
-                                        marginTop:
-                                            this.facetBoxHeight === DEFAULT_FACETBOX_MARGIN
-                                                ? -this.facetBoxHeight
-                                                : spring(this.displayFacetBox ? 5 : -this.facetBoxHeight)
-                                    }}
-                                >
-                                    {(style: {marginTop?: number}) => (
-                                        <div style={style} ref={i => (this.facetBox = i)}>
+                                <Transition>
+                                    {this.displayFacetBox && (
+                                        <PanningDiv key="facet-box">
                                             <IconButton
                                                 icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
                                                 onClick={() => (this.displayFacetBox = false)}
@@ -320,9 +280,9 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                                                 showSingleValuedFacets={showSingleValuedFacets}
                                                 store={store}
                                             />
-                                        </div>
+                                        </PanningDiv>
                                     )}
-                                </Motion>
+                                </Transition>
                             </div>
                         ) : null}
                     </div>
@@ -339,3 +299,14 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 export function actionBarFor<T>(props: ActionBarProps<T>) {
     return <ActionBar {...props} />;
 }
+
+const PanningDiv = posed.div({
+    exit: {
+        height: 0,
+        transition: config.poseTransition
+    },
+    enter: {
+        height: "auto",
+        transition: config.poseTransition
+    }
+});
