@@ -22,8 +22,10 @@ const Theme = themr("actionBar", styles);
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
-    /** Constituion de l'éventuel groupe auquel est lié l'ActionBar */
+    /** Constitution de l'éventuel groupe auquel est lié l'ActionBar */
     group?: {code: string; label: string; totalCount: number};
+    /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
+    groupableFacets?: string[];
     /** Contient une FacetBox. */
     hasFacetBox?: boolean;
     /** Affiche le bouton de groupe. */
@@ -137,13 +139,17 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 
     /** Bouton de groupe. */
     protected groupButton(theme: ActionBarStyle) {
-        const {hasGrouping, i18nPrefix = "focus", store} = this.props;
+        const {groupableFacets, hasGrouping, i18nPrefix = "focus", store} = this.props;
 
         if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
             const groupableColumnList = store.facets
                 ? store.facets.reduce((result, facet) => {
-                      // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
-                      if (facet.values.length > 1) {
+                      if (
+                          // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
+                          facet.values.length > 1 &&
+                          // Et on ne garde que les facettes demandées dans la liste.
+                          (!groupableFacets || groupableFacets.find(code => code === facet.code))
+                      ) {
                           return {...result, [facet.code]: facet.label};
                       }
                       return result;

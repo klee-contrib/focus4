@@ -59,6 +59,8 @@ export interface AdvancedSearchProps<T> {
      * Il est possible d'avoir une section qui contient toutes les facettes non renseignées en ne renseignant pas la liste `facets`.
      */
     facetSections?: {name: string; facets?: string[]}[];
+    /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
+    groupableFacets?: string[];
     /** Header de groupe personnalisé. */
     GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe par scope. */
@@ -209,6 +211,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         const {
             actionBarTheme,
             facetBoxPosition = "left",
+            groupableFacets,
             hasGrouping,
             hasSearchBar,
             hasSelection,
@@ -228,6 +231,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
 
         return (
             <ActionBar
+                groupableFacets={groupableFacets}
                 hasFacetBox={facetBoxPosition === "action-bar"}
                 hasGrouping={hasGrouping}
                 hasSearchBar={hasSearchBar}
