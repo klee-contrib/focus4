@@ -33,8 +33,6 @@ export interface GroupProps<T> {
     canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentType<DetailProps<T>>;
-    /** Hauteur du composant de détail. Par défaut : 200. */
-    detailHeight?: number | ((data: T) => number);
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
     disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
@@ -104,7 +102,6 @@ export class Group<T> extends React.Component<GroupProps<T>> {
         const {
             canOpenDetail,
             DetailComponent,
-            detailHeight,
             disableDragAnimThreshold,
             dragItemType,
             dragLayerTheme,
@@ -150,7 +147,6 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                         )}
                         <StoreList
                             canOpenDetail={canOpenDetail}
-                            detailHeight={detailHeight}
                             DetailComponent={DetailComponent}
                             disableDragAnimThreshold={disableDragAnimThreshold}
                             dragItemType={dragItemType}

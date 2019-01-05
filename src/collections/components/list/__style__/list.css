@@ -68,25 +68,19 @@
 .detailWrapper {
     width: 100%;
     position: relative;
-    overflow: hidden;
+    display: inline-block;
 }
 
 .detail {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
     padding: 10px;
     background: #e8e8e8;
     margin: 20px 0;
-    overflow: hidden;
 }
 
 .detail > button {
     position: absolute;
     right: 4px;
-    top: 5px;
+    top: 24px;
 }
 
 .triangle {

@@ -23,8 +23,6 @@ export interface ResultsProps<T> {
     canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentType<DetailProps<T>>;
-    /** Hauteur du composant de détail. Par défaut : 200. */
-    detailHeight?: number | ((data: T) => number);
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
     disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
@@ -79,7 +77,6 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
     private get commonListProps() {
         const {
             canOpenDetail,
-            detailHeight,
             DetailComponent,
             disableDragAnimThreshold,
             dragItemType,
@@ -97,7 +94,6 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
         } = this.props;
         return {
             canOpenDetail,
-            detailHeight,
             DetailComponent,
             disableDragAnimThreshold,
             dragItemType,

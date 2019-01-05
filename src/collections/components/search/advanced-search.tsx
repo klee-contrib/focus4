@@ -42,8 +42,6 @@ export interface AdvancedSearchProps<T> {
     customFacetComponents?: {[facet: string]: React.ReactType<FacetProps>};
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentType<DetailProps<T>>;
-    /** Hauteur du composant de détail. Par défaut : 200. */
-    detailHeight?: number | ((data: T) => number);
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
     disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
@@ -267,7 +265,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             store,
             EmptyComponent,
             DetailComponent,
-            detailHeight,
             canOpenDetail,
             hasDragAndDrop,
             dragItemType,
@@ -277,7 +274,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         return (
             <Results
                 canOpenDetail={canOpenDetail}
-                detailHeight={detailHeight}
                 DetailComponent={DetailComponent}
                 disableDragAnimThreshold={disableDragAnimThreshold}
                 dragItemType={dragItemType}

@@ -2,12 +2,12 @@ import i18next from "i18next";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
-import {spring, Style, TransitionMotion} from "react-motion";
+import posed, {Transition} from "react-pose";
 import {IconButton} from "react-toolbox/lib/button";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "../../../components";
+import {config} from "../../../config";
 import {themr} from "../../../theme";
 import {classAutorun, classReaction} from "../../../util";
 
@@ -16,7 +16,7 @@ import {OperationListItem} from "./contextual-actions";
 import {addDragSource} from "./dnd-utils";
 import {DndDragLayer, DragLayerStyle} from "./drag-layer";
 import {LineProps, LineWrapper, LineWrapperProps} from "./line";
-import {ListBase, ListBaseProps} from "./list-base";
+import {ListBase, ListBaseProps, ListStyle} from "./list-base";
 import {ListWrapperContext} from "./list-wrapper";
 
 import * as styles from "./__style__/list.css";
@@ -46,8 +46,6 @@ export interface ListProps<T> extends ListBaseProps<T> {
     canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentType<DetailProps<T>>;
-    /** Hauteur du composant de détail. Par défaut : 200. */
-    detailHeight?: number | ((data: T) => number);
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
     disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
@@ -72,19 +70,6 @@ export interface ListProps<T> extends ListBaseProps<T> {
     operationList?: (data: T) => OperationListItem<T>[];
 }
 
-/** Description d'un élément de liste, pour react-motion. */
-export interface LineItem<P> {
-    /** Clé React. */
-    key: string | number | undefined;
-    /** Description du composant, avec ses props. */
-    data?: {
-        Component: React.ComponentType<P>;
-        props?: P;
-    };
-    /** Style interpolé (ou pas) par react-motion. */
-    style: Style;
-}
-
 /** Composant de liste standard */
 @observer
 export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extends ListBase<T, P> {
@@ -96,6 +81,8 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     @observable private byLine!: number;
     /** Index de l'item sur lequel on doit afficher le détail. */
     @observable private displayedIdx?: number;
+    /** Ref vers la liste pour déterminer sa largeur. */
+    @observable private ulRef?: HTMLUListElement | null;
 
     /** Liste des éléments sélectionnés par le drag and drop. */
     protected readonly draggedItems = observable<T>([]);
@@ -111,10 +98,6 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         window.addEventListener("resize", this.updateByLine);
     }
 
-    componentDidUpdate() {
-        this.updateByLine();
-    }
-
     componentWillUnmount() {
         super.componentWillUnmount();
         window.removeEventListener("resize", this.updateByLine);
@@ -123,9 +106,8 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Met à jour `byLine`. */
     @classAutorun
     protected readonly updateByLine = () => {
-        const node = findDOMNode(this) as Element;
-        if (node) {
-            this.byLine = this.mode === "mosaic" ? Math.floor(node.clientWidth / (this.mosaic.width + 10)) : 1;
+        if (this.ulRef) {
+            this.byLine = this.mode === "mosaic" ? Math.floor(this.ulRef.clientWidth / (this.mosaic.width + 10)) : 1;
         }
     };
 
@@ -180,27 +162,23 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
      * Transforme les données en éléments de liste.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentType<LineProps<T>>): LineItem<LineWrapperProps<T>>[] {
+    protected getItems(Component: React.ComponentType<LineProps<T>>) {
         const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, operationList, hasDragAndDrop} = this.props;
 
         return this.displayedData.map((item, idx) => ({
-            // On essaie de couvrir toutes les possibilités pour la clé, en tenant compte du faite qu'on a potentiellement une liste de StoreNode.
-            key: itemKey(item, idx),
-            data: {
-                Component: this.DraggableLineWrapper || LineWrapper,
-                props: {
-                    data: item,
-                    disableDragAnimation: this.disableDragAnimation,
-                    draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
-                    i18nPrefix,
-                    mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
-                    LineComponent: Component,
-                    openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
-                    operationList,
-                    theme: lineTheme
-                }
-            },
-            style: {}
+            Component: (this.DraggableLineWrapper || LineWrapper) as typeof LineWrapper,
+            props: {
+                key: itemKey(item, idx),
+                data: item,
+                disableDragAnimation: this.disableDragAnimation,
+                draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
+                i18nPrefix,
+                mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
+                LineComponent: Component,
+                openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
+                operationList,
+                theme: lineTheme
+            } as LineWrapperProps<T>
         }));
     }
 
@@ -213,10 +191,10 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         this.displayedIdx = this.displayedIdx !== idx ? idx : undefined;
     }
 
-    /** Construit les lignes de la liste à partir des données, en tenant compte du mode, de l'affichage du détail et du bouton d'ajout. */
+    /** Construit les lignes de la liste à partir des données, en tenant compte du mode et de l'affichage du détail. */
     @computed
     private get lines() {
-        const {i18nPrefix = "focus", LineComponent, MosaicComponent, DetailComponent, detailHeight = 200} = this.props;
+        const {LineComponent, MosaicComponent, DetailComponent, theme} = this.props;
 
         /* On détermine quel composant on utilise. */
         let Component;
@@ -229,86 +207,34 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         }
 
         /* On récupère les items de la liste. */
-        const items: LineItem<any>[] = this.getItems(Component);
+        const items = this.getItems(Component).map(({Component: C, props}) => <C {...props} />);
 
         /* On regarde si le composant de détail doit être ajouté. */
         if (DetailComponent && this.displayedIdx !== undefined) {
-            // On détermine son index.
-            let idx = this.displayedIdx + (this.isAddItemShown || this.mode === "list" ? 1 : 0);
-
-            // En mosaïque, on affiche le détail juste après une fin de ligne au lieu de juste après l'élément cliqué.
-            if (this.mode === "mosaic") {
-                idx += this.byLine - (idx % this.byLine) - (this.isAddItemShown ? 1 : 0);
-            }
-            const item = this.displayedData[this.displayedIdx];
+            const idx =
+                this.mode === "list"
+                    ? this.displayedIdx + 1
+                    : (Math.floor((this.displayedIdx + (this.isAddItemShown ? 1 : 0)) / this.byLine) + 1) *
+                          this.byLine -
+                      (this.isAddItemShown ? 1 : 0);
 
             // Puis on ajoute l'élément à sa place dans la liste.
-            items.splice(idx, 0, {
-                key: `detail-${idx}`,
-                data: {
-                    Component: ({style: {height}}: {style: {height: number}}) => (
-                        <Theme theme={this.props.theme}>
-                            {theme => (
-                                <li
-                                    className={theme.detailWrapper}
-                                    style={{
-                                        width: height < 1 ? 0 : undefined, // react-motion prend un moment avant que la hauteur atteigne bien 0, donc on essaie de masquer le composant en avance.
-                                        height: Math.round(height)
-                                    }}
-                                >
-                                    {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident... et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}
-                                    <div
-                                        className={theme.triangle}
-                                        style={
-                                            this.displayedIdx === undefined && this.mode === "mosaic"
-                                                ? {left: -1000}
-                                                : this.mode === "mosaic"
-                                                ? {
-                                                      left:
-                                                          this.mosaic.width / 2 -
-                                                          8.25 +
-                                                          ((this.displayedIdx! + (this.isAddItemShown ? 1 : 0)) %
-                                                              this.byLine) *
-                                                              (this.mosaic.width + 10)
-                                                  }
-                                                : {}
-                                        }
-                                    />
-                                    <div className={theme.detail}>
-                                        <IconButton icon="clear" onClick={this.closeDetail} />
-                                        <DetailComponent data={item} closeDetail={this.closeDetail} />
-                                    </div>
-                                </li>
-                            )}
-                        </Theme>
-                    )
-                },
-                style: {height: spring((typeof detailHeight === "number" ? detailHeight : detailHeight(item)) + 40)} // On indique l'animation d'ouverture. Le +40 permet de prendre en compte les marges de 20px en haut et en bas.
-            });
-        }
-
-        /* On regarde si on doit ajouter l'élément d'ajout. */
-        if (this.isAddItemShown) {
-            items.splice(0, 0, {
-                key: "mosaic-add",
-                data: {
-                    Component: () => (
-                        <Theme theme={this.props.theme}>
-                            {theme => (
-                                <div
-                                    className={theme.mosaicAdd}
-                                    style={{width: this.mosaic.width, height: this.mosaic.height}}
-                                    onClick={this.addItemHandler}
-                                >
-                                    <FontIcon className={theme.add}>{getIcon(`${i18nPrefix}.icons.list.add`)}</FontIcon>
-                                    {i18next.t(`${i18nPrefix}.list.add`)}
-                                </div>
-                            )}
-                        </Theme>
-                    )
-                },
-                style: {}
-            });
+            items.splice(
+                idx,
+                0,
+                <DetailWrapper
+                    displayedIdx={this.displayedIdx}
+                    DetailComponent={DetailComponent as any}
+                    byLine={this.byLine}
+                    closeDetail={this.closeDetail}
+                    isAddItemShown={this.isAddItemShown}
+                    item={this.displayedData[this.displayedIdx]}
+                    mode={this.mode}
+                    mosaic={this.mosaic}
+                    theme={theme}
+                    key={`detail-${idx}`}
+                />
+            );
         }
 
         return items;
@@ -316,11 +242,16 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
     render() {
         const {dragLayerTheme, EmptyComponent, hasDragAndDrop, hideAdditionalItems, i18nPrefix = "focus"} = this.props;
-        return !hideAdditionalItems && !this.displayedData.length && EmptyComponent ? (
-            <EmptyComponent addItemHandler={this.addItemHandler} store={(this.props as any).store} />
-        ) : !hideAdditionalItems && !this.displayedData.length ? (
-            <div>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
-        ) : (
+
+        if (!hideAdditionalItems && !this.displayedData.length) {
+            if (EmptyComponent) {
+                return <EmptyComponent addItemHandler={this.addItemHandler} store={(this.props as any).store} />;
+            } else {
+                return <div>{i18next.t(`${i18nPrefix}.list.empty`)}</div>;
+            }
+        }
+
+        return (
             <Theme theme={this.props.theme}>
                 {theme => (
                     <>
@@ -328,26 +259,23 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                             <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} />
                         ) : null}
                         <div className={this.mode === "list" ? theme.list : theme.mosaic}>
-                            <TransitionMotion
-                                willEnter={() => ({height: 0, opacity: 1})}
-                                willLeave={({style}: {style: Style}) => {
-                                    // Est appelé au retrait d'un élément de la liste.
-                                    if (style.height) {
-                                        // `height` n'existe que pour le détail
-                                        return {height: spring(0)}; // On ajoute l'animation de fermeture.
-                                    }
-                                    return undefined; // Pour les autres éléments, on les retire immédiatement.
-                                }}
-                                styles={this.lines.slice() as any}
-                            >
-                                {(items: LineItem<any>[]) => (
-                                    <ul>
-                                        {items.map(({key, style, data: {Component = {} as any, props = {}} = {}}) => (
-                                            <Component key={key} style={style} {...props} />
-                                        ))}
-                                    </ul>
-                                )}
-                            </TransitionMotion>
+                            <ul ref={ul => (this.ulRef = ul)}>
+                                {/* On regarde si on doit ajouter l'élément d'ajout. */}
+                                {this.isAddItemShown ? (
+                                    <li
+                                        key="mosaic-add"
+                                        className={theme.mosaicAdd}
+                                        style={{width: this.mosaic.width, height: this.mosaic.height}}
+                                        onClick={this.addItemHandler}
+                                    >
+                                        <FontIcon className={theme.add}>
+                                            {getIcon(`${i18nPrefix}.icons.list.add`)}
+                                        </FontIcon>
+                                        {i18next.t(`${i18nPrefix}.list.add`)}
+                                    </li>
+                                ) : null}
+                                <Transition>{this.lines}</Transition>
+                            </ul>
                             {this.renderBottomRow(theme)}
                         </div>
                     </>
@@ -365,3 +293,78 @@ export function listFor<T>(props: ListProps<T> & {data: T[]}) {
     const List2 = List as any;
     return <List2 {...props} />;
 }
+
+/** Props du composant wrapper du détail. */
+interface DetailWrapperProps {
+    displayedIdx: number;
+    mode: "list" | "mosaic";
+    mosaic: {width: number; height: number};
+    isAddItemShown: boolean;
+    byLine: number;
+    DetailComponent: React.ComponentType<DetailProps<{}>>;
+    closeDetail: () => void;
+    item: {};
+    theme?: ListStyle;
+}
+
+/** Wrapper pour le composant de détail. */
+const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
+    React.forwardRef(
+        (
+            {
+                displayedIdx,
+                mode,
+                mosaic,
+                isAddItemShown,
+                byLine,
+                DetailComponent,
+                closeDetail,
+                item,
+                theme: pTheme
+            }: DetailWrapperProps,
+            ref: React.Ref<HTMLLIElement>
+        ) => (
+            <Theme theme={pTheme}>
+                {theme => (
+                    <li ref={ref} className={theme.detailWrapper}>
+                        {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident...
+                        et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}
+                        <div
+                            className={theme.triangle}
+                            style={
+                                displayedIdx === undefined && mode === "mosaic"
+                                    ? {left: -1000}
+                                    : mode === "mosaic"
+                                    ? {
+                                          left:
+                                              mosaic.width / 2 -
+                                              8.25 +
+                                              ((displayedIdx! + (isAddItemShown ? 1 : 0)) % byLine) *
+                                                  (mosaic.width + 10)
+                                      }
+                                    : {}
+                            }
+                        />
+                        <div className={theme.detail}>
+                            <IconButton icon="clear" onClick={closeDetail} />
+                            <DetailComponent data={item} closeDetail={closeDetail} />
+                        </div>
+                    </li>
+                )}
+            </Theme>
+        )
+    )
+)({
+    enter: {
+        applyAtStart: {overflow: "hidden"},
+        applyAtEnd: {overflow: "visible"},
+        height: "auto",
+        transition: config.poseTransition
+    },
+    exit: {
+        applyAtStart: {overflow: "hidden"},
+        applyAtEnd: {overflow: "visible"},
+        height: 0,
+        transition: config.poseTransition
+    }
+});
