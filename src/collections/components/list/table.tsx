@@ -49,11 +49,7 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
             <tbody>
                 {this.displayedData.map((item, idx) => (
                     <Line
-                        key={
-                            (itemKey && item[itemKey] && (item[itemKey] as any).value) ||
-                            (itemKey && item[itemKey]) ||
-                            idx
-                        }
+                        key={itemKey(item, idx)}
                         theme={lineTheme}
                         data={item}
                         LineComponent={RowComponent}

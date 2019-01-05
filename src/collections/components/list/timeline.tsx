@@ -31,7 +31,7 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
         const {lineTheme, itemKey, TimelineComponent, dateSelector} = this.props;
         return this.displayedData.map((item, idx) => (
             <LineWrapper
-                key={(itemKey && item[itemKey] && (item[itemKey] as any).value) || (itemKey && item[itemKey]) || idx}
+                key={itemKey(item, idx)}
                 theme={lineTheme}
                 data={item}
                 dateSelector={dateSelector}

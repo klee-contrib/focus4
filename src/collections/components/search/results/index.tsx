@@ -49,8 +49,8 @@ export interface ResultsProps<T> {
     i18nPrefix?: string;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
-    /** Champ de l'objet à utiliser pour la key des lignes. */
-    itemKey?: keyof T;
+    /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
+    itemKey: (item: T, idx: number) => string | number | undefined;
     /** Composant de ligne. */
     LineComponent?: React.ComponentType<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */

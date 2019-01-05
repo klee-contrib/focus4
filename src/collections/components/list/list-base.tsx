@@ -19,8 +19,8 @@ export interface ListBaseProps<T> {
     i18nPrefix?: string;
     /** Affiche le bouton "Voir plus" au lieu d'un scroll infini. */
     isManualFetch?: boolean;
-    /** Champ de l'objet à utiliser pour la key des lignes. */
-    itemKey?: keyof T;
+    /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
+    itemKey: (item: T, idx: number) => string | number | undefined;
     /** Décalage entre le scroll et le bas de la page en dessous du quel on déclenche le chargement en scroll infini. Par défaut : 250. */
     offset?: number;
     /** Nombre d'éléments par page, ne pagine pas si non renseigné. */

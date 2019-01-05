@@ -75,7 +75,7 @@ export interface ListProps<T> extends ListBaseProps<T> {
 /** Description d'un élément de liste, pour react-motion. */
 export interface LineItem<P> {
     /** Clé React. */
-    key: string;
+    key: string | number | undefined;
     /** Description du composant, avec ses props. */
     data?: {
         Component: React.ComponentType<P>;
@@ -185,7 +185,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
         return this.displayedData.map((item, idx) => ({
             // On essaie de couvrir toutes les possibilités pour la clé, en tenant compte du faite qu'on a potentiellement une liste de StoreNode.
-            key: `${(itemKey && item[itemKey] && (item[itemKey] as any).value) || (itemKey && item[itemKey]) || idx}`,
+            key: itemKey(item, idx),
             data: {
                 Component: this.DraggableLineWrapper || LineWrapper,
                 props: {
@@ -338,7 +338,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                     }
                                     return undefined; // Pour les autres éléments, on les retire immédiatement.
                                 }}
-                                styles={this.lines.slice()}
+                                styles={this.lines.slice() as any}
                             >
                                 {(items: LineItem<any>[]) => (
                                     <ul>

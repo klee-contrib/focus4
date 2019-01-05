@@ -89,8 +89,8 @@ export interface AdvancedSearchProps<T> {
     hideSummarySort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Champ de l'objet à utiliser pour la key des lignes. */
-    itemKey?: keyof T;
+    /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
+    itemKey: (item: T, idx: number) => string | number | undefined;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de ligne. */
