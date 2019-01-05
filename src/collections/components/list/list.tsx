@@ -200,8 +200,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                     theme: lineTheme
                 }
             },
-            // Masque l'élément s'il est en train d'être déplacé par le drag and drop.
-            style: {opacity: this.draggedItems.find(i => i === item) ? 0 : 1}
+            style: {}
         }));
     }
 
