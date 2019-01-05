@@ -38,6 +38,12 @@ export interface EmptyProps<T> {
     store?: ListStoreBase<T>;
 }
 
+/** Props de base d'un composant de chargement. */
+export interface LoadingProps<T> {
+    /** Store de la liste. */
+    store?: ListStoreBase<T>;
+}
+
 /** Props du composant de liste standard. */
 export interface ListProps<T> extends ListBaseProps<T> {
     /** Handler au clic sur le bouton "Ajouter". */
@@ -58,8 +64,12 @@ export interface ListProps<T> extends ListBaseProps<T> {
     hasDragAndDrop?: boolean;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
+    /** Précise si la liste est en cours de chargement (surchargé par le store si disponible). */
+    isLoading?: boolean;
     /** Composant de ligne. */
     LineComponent?: React.ComponentType<LineProps<T>>;
+    /** Composant à afficher pendant le chargement. */
+    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Mode des listes dans le wrapper. Par défaut : celui du composant fourni, ou "list". */
     mode?: "list" | "mosaic";
     /** Taille de la mosaïque. */
@@ -139,6 +149,12 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Les données. */
     protected get data() {
         return (this.props as any).data || [];
+    }
+
+    /** Précise si la liste est en cours de chargement. */
+    @computed
+    protected get isLoading() {
+        return this.props.isLoading || false;
     }
 
     /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
@@ -241,16 +257,14 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     }
 
     render() {
-        const {dragLayerTheme, EmptyComponent, hasDragAndDrop, hideAdditionalItems, i18nPrefix = "focus"} = this.props;
-
-        if (!hideAdditionalItems && !this.displayedData.length) {
-            if (EmptyComponent) {
-                return <EmptyComponent addItemHandler={this.addItemHandler} store={(this.props as any).store} />;
-            } else {
-                return <div>{i18next.t(`${i18nPrefix}.list.empty`)}</div>;
-            }
-        }
-
+        const {
+            dragLayerTheme,
+            EmptyComponent,
+            LoadingComponent,
+            hasDragAndDrop,
+            hideAdditionalItems,
+            i18nPrefix = "focus"
+        } = this.props;
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
@@ -259,23 +273,43 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                             <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} />
                         ) : null}
                         <div className={this.mode === "list" ? theme.list : theme.mosaic}>
-                            <ul ref={ul => (this.ulRef = ul)}>
-                                {/* On regarde si on doit ajouter l'élément d'ajout. */}
-                                {this.isAddItemShown ? (
-                                    <li
-                                        key="mosaic-add"
-                                        className={theme.mosaicAdd}
-                                        style={{width: this.mosaic.width, height: this.mosaic.height}}
-                                        onClick={this.addItemHandler}
-                                    >
-                                        <FontIcon className={theme.add}>
-                                            {getIcon(`${i18nPrefix}.icons.list.add`)}
-                                        </FontIcon>
-                                        {i18next.t(`${i18nPrefix}.list.add`)}
-                                    </li>
-                                ) : null}
-                                <Transition>{this.lines}</Transition>
-                            </ul>
+                            {/* Gestion de l'empty state. */}
+                            {!this.isLoading && !hideAdditionalItems && !this.displayedData.length ? (
+                                EmptyComponent ? (
+                                    <EmptyComponent
+                                        addItemHandler={this.addItemHandler}
+                                        store={(this.props as any).store}
+                                    />
+                                ) : (
+                                    <div className={theme.loading}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
+                                )
+                            ) : (
+                                <ul ref={ul => (this.ulRef = ul)}>
+                                    {/* On regarde si on doit ajouter l'élément d'ajout. */}
+                                    {this.isAddItemShown ? (
+                                        <li
+                                            key="mosaic-add"
+                                            className={theme.mosaicAdd}
+                                            style={{width: this.mosaic.width, height: this.mosaic.height}}
+                                            onClick={this.addItemHandler}
+                                        >
+                                            <FontIcon className={theme.add}>
+                                                {getIcon(`${i18nPrefix}.icons.list.add`)}
+                                            </FontIcon>
+                                            {i18next.t(`${i18nPrefix}.list.add`)}
+                                        </li>
+                                    ) : null}
+                                    <Transition>{this.lines}</Transition>
+                                </ul>
+                            )}
+                            {/* Gestion de l'affichage du chargement. */}
+                            {this.isLoading ? (
+                                LoadingComponent ? (
+                                    <LoadingComponent store={(this.props as any).store} />
+                                ) : (
+                                    <div className={theme.loading}>{i18next.t(`${i18nPrefix}.search.loading`)}</div>
+                                )
+                            ) : null}
                             {this.renderBottomRow(theme)}
                         </div>
                     </>

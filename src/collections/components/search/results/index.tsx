@@ -9,12 +9,13 @@ import {
     LineProps,
     LineStyle,
     ListStyle,
+    LoadingProps,
     OperationListItem,
     StoreList
 } from "../../list";
 
 import {GroupResult, SearchStore} from "../../../store";
-import {Group, GroupLoadingBar, GroupStyle} from "./group";
+import {Group, GroupStyle} from "./group";
 export {GroupStyle};
 
 /** Props de Results. */
@@ -59,6 +60,8 @@ export interface ResultsProps<T> {
     listPageSize?: number;
     /** CSS de la liste. */
     listTheme?: ListStyle;
+    /** Composant à afficher pendant le chargement. */
+    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Composant de mosaïque. */
     MosaicComponent?: React.ComponentType<LineProps<T>>;
     /** Offset pour le scroll infini. Par défaut : 250 */
@@ -89,6 +92,7 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
             itemKey,
             LineComponent,
             lineTheme,
+            LoadingComponent,
             MosaicComponent,
             store
         } = this.props;
@@ -104,6 +108,7 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
             i18nPrefix,
             LineComponent,
             lineTheme,
+            LoadingComponent,
             MosaicComponent,
             isManualFetch,
             itemKey,
@@ -117,7 +122,6 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
             groupOperationList,
             groupPageSize,
             groupTheme,
-            i18nPrefix,
             lineOperationList,
             listPageSize,
             listTheme,
@@ -156,7 +160,6 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
                         perPage={listPageSize}
                         theme={listTheme}
                     />
-                    <GroupLoadingBar i18nPrefix={i18nPrefix} store={store} />
                 </div>
             );
         }

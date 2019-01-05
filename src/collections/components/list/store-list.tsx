@@ -27,6 +27,16 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
         return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode)!.list : store.list;
     }
 
+    @computed
+    protected get isLoading() {
+        const {store} = this.props;
+        if (isSearch(store)) {
+            return store.isLoading;
+        } else {
+            return this.props.isLoading || false;
+        }
+    }
+
     protected get shouldAttachScrollListener() {
         const {isManualFetch, store} = this.props;
         return !isManualFetch && isSearch(store);

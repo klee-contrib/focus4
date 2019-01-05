@@ -3,7 +3,7 @@ export {ContextualActions, ContextualActionsStyle, OperationListItem} from "./co
 export {getDraggedItems} from "./dnd-utils";
 export {DragLayerStyle} from "./drag-layer";
 export {LineProps, LineStyle} from "./line";
-export {List, DetailProps, EmptyProps, listFor} from "./list";
+export {List, DetailProps, EmptyProps, LoadingProps, listFor} from "./list";
 export {ListBase, ListStyle} from "./list-base";
 export {ListWrapper, ListWrapperStyle} from "./list-wrapper";
 export {StoreList, storeListFor} from "./store-list";

@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import moment from "moment";
 import * as React from "react";
 import {IconButton} from "react-toolbox/lib/button";
-import {DatePickerTheme, DatePickerProps} from "react-toolbox/lib/date_picker";
+import {DatePickerProps, DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {InputTheme} from "react-toolbox/lib/input";
 

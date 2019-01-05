@@ -94,6 +94,10 @@
     border-color: transparent transparent #e8e8e8;
 }
 
+.loading {
+    padding: 5px;
+}
+
 .bottomRow {
     display: flex;
     justify-content: space-between;

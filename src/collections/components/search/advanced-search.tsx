@@ -16,6 +16,7 @@ import {
     LineStyle,
     ListStyle,
     ListWrapper,
+    LoadingProps,
     OperationListItem
 } from "../list";
 import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
@@ -103,6 +104,8 @@ export interface AdvancedSearchProps<T> {
     listPageSize?: number;
     /** CSS de la liste. */
     listTheme?: ListStyle;
+    /** Composant à afficher pendant le chargement. */
+    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Mode des listes dans le wrapper. Par défaut : "list". */
     mode?: "list" | "mosaic";
     /** Composants de mosaïque. */
@@ -269,6 +272,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             store,
             EmptyComponent,
             DetailComponent,
+            LoadingComponent,
             canOpenDetail,
             hasDragAndDrop,
             dragItemType,
@@ -297,6 +301,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                 lineTheme={lineTheme}
                 listPageSize={listPageSize}
                 listTheme={listTheme}
+                LoadingComponent={LoadingComponent}
                 MosaicComponent={MosaicComponent}
                 offset={offset}
                 store={store}

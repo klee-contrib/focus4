@@ -19,6 +19,7 @@ import {
     LineProps,
     LineStyle,
     ListStyle,
+    LoadingProps,
     OperationListItem,
     StoreList
 } from "../../list";
@@ -63,6 +64,8 @@ export interface GroupProps<T> {
     lineTheme?: LineStyle;
     /** CSS de la liste. */
     listTheme?: ListStyle;
+    /** Composant à afficher pendant le chargement. */
+    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Composant de mosaïque. */
     MosaicComponent?: React.ComponentType<LineProps<T>>;
     /** Nombre d'éléments par page. Par défaut : 5. */
@@ -117,9 +120,9 @@ export class Group<T> extends React.Component<GroupProps<T>> {
             lineOperationList,
             lineTheme,
             listTheme,
+            LoadingComponent,
             MosaicComponent,
             perPage = 5,
-            store,
             useGroupActionBars
         } = this.props;
         return (
@@ -161,6 +164,7 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                             itemKey={itemKey}
                             LineComponent={LineComponent}
                             lineTheme={lineTheme}
+                            LoadingComponent={LoadingComponent}
                             MosaicComponent={MosaicComponent}
                             operationList={lineOperationList}
                             perPage={perPage}
@@ -168,20 +172,12 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                             store={this.store}
                             theme={listTheme}
                         />
-                        <GroupLoadingBar i18nPrefix={i18nPrefix} store={store} />
                     </div>
                 )}
             </Theme>
         );
     }
 }
-
-/** "Barre" de chargement pour les résultats. */
-export const GroupLoadingBar = observer(({i18nPrefix = "focus", store}: {i18nPrefix?: string; store: SearchStore}) =>
-    store.isLoading ? <div style={{padding: "15px"}}>{i18next.t(`${i18nPrefix}.search.loading`)}</div> : <div />
-);
-
-(GroupLoadingBar as any).displayName = "GroupLoadingBar";
 
 export function DefaultGroupHeader({group}: {group: GroupResult}) {
     return <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>;
