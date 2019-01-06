@@ -32,6 +32,7 @@ export function BooleanRadio({disabled, error, name, onChange, theme: pTheme, va
                         name={name}
                         value={value === true ? "true" : value === false ? "false" : undefined}
                         onChange={(x: string) => onChange(x === "true")}
+                        className={theme.radio}
                     >
                         <RadioButton label={i18next.t("focus.boolean.yes")} value={"true"} disabled={disabled} />
                         <RadioButton label={i18next.t("focus.boolean.no")} value={"false"} disabled={disabled} />
