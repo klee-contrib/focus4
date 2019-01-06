@@ -1,13 +1,9 @@
-// tslint:disable-next-line:no-submodule-imports
 import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
 
-import {autobind} from "core-decorators";
 import {omit} from "lodash";
 import {observable} from "mobx";
-import {observer} from "mobx-react";
-import * as PropTypes from "prop-types";
 import * as React from "react";
-import {ThemeProvider, themr, TReactCSSThemrTheme} from "react-css-themr";
+import {TReactCSSThemrTheme} from "react-css-themr";
 
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox";
@@ -40,19 +36,21 @@ import {
     PopinStyle,
     ScrollspyStyle,
     SelectCheckboxStyle,
-    SelectRadioStyle
+    SelectRadioStyle,
+    SelectStyle
 } from "../components";
 import {FieldStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
+import {ThemeContext} from "../theme";
 
-import ErrorCenter, {ErrorCenterStyle} from "./error-center";
+import {ErrorCenter, ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
-import {LayoutProps, LayoutStyle, styles} from "./types";
+import {LayoutContext, layoutContextInit, LayoutProps, LayoutStyle, Theme} from "./types";
 
-export {default as LayoutContent} from "./content";
-export {default as LayoutFooter} from "./footer";
+export {LayoutContent} from "./content";
+export {LayoutFooter} from "./footer";
 export {
     HeaderActions,
     HeaderBarLeft,
@@ -64,46 +62,28 @@ export {
     PrimaryAction,
     SecondaryAction
 } from "./header";
-export {default as MainMenu, MainMenuItem} from "./menu";
+export {MainMenu, MainMenuItem} from "./menu";
+export {LayoutContext};
 
 /** Composant de Layout sans le provider de style. */
-@themr("layout", styles)
-@autobind
-@observer
-class LayoutBase extends React.Component<LayoutProps, void> {
-    // On utilise le contexte React pour partager la taille du menu et du header.
-    static childContextTypes = {
-        header: PropTypes.object,
-        layout: PropTypes.object
-    };
-
+class LayoutBase extends React.Component<LayoutProps> {
     /** Objet passé en contexte pour la hauteur du header top row. */
-    @observable headerContext = {
-        marginBottom: 50,
-        topRowHeight: 60
-    };
 
-    /** Objet passé en contexte pour la taille du menu. */
-    @observable layoutContext = {
-        contentPaddingTop: 10,
-        menuWidth: undefined as number | undefined
-    };
-
-    getChildContext() {
-        return {
-            header: this.headerContext,
-            layout: this.layoutContext
-        };
-    }
+    readonly layoutContext = observable(layoutContextInit);
 
     render() {
-        const {children, theme} = this.props;
         return (
-            <div className={theme!.layout}>
-                <ErrorCenter />
-                <MessageCenter />
-                {children}
-            </div>
+            <LayoutContext.Provider value={this.layoutContext}>
+                <Theme theme={this.props.theme}>
+                    {theme => (
+                        <div className={theme.layout}>
+                            <ErrorCenter />
+                            <MessageCenter />
+                            {this.props.children}
+                        </div>
+                    )}
+                </Theme>
+            </LayoutContext.Provider>
         );
     }
 }
@@ -138,6 +118,7 @@ export interface LayoutStyleProviderProps {
     popin?: PopinStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
+    select?: SelectStyle;
     selectCheckbox?: SelectCheckboxStyle;
     selectRadio?: SelectRadioStyle;
     summary?: SummaryStyle;
@@ -157,8 +138,8 @@ export interface LayoutStyleProviderProps {
  */
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     return (
-        <ThemeProvider theme={(props.appTheme || {}) as TReactCSSThemrTheme}>
+        <ThemeContext.Provider value={(props.appTheme || {}) as TReactCSSThemrTheme}>
             <LayoutBase {...omit(props, "appTheme")}>{props.children}</LayoutBase>
-        </ThemeProvider>
+        </ThemeContext.Provider>
     );
 }

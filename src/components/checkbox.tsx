@@ -21,5 +21,3 @@ export function Checkbox(props: CheckboxProps) {
 
     return <RTCheckbox {...rtProps} />;
 }
-
-export default Checkbox;

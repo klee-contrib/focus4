@@ -33,12 +33,14 @@ export function removeFacetValue(store: SearchStore, facetKey: string, facetValu
 export function shouldDisplayFacet(
     facet: FacetOutput,
     selectedFacets: {[key: string]: string[]},
-    showSingleValuedFacets?: boolean
+    showSingleValuedFacets: boolean | undefined,
+    totalCount: number
 ) {
     return !(
         !facet.values.length ||
         (!showSingleValuedFacets &&
             facet.values.length === 1 &&
+            facet.values[0].count === totalCount &&
             !values(selectedFacets).find(vs => !!vs.find(v => facet.values[0].code === v)))
     );
 }

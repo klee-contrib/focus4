@@ -1,10 +1,8 @@
-import {autobind} from "core-decorators";
 import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {IconButton} from "react-toolbox/lib/button";
 import {InputTheme} from "react-toolbox/lib/input";
@@ -12,8 +10,11 @@ import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import Clock from "react-toolbox/lib/time_picker/Clock";
 
 import {Input, InputProps} from "../components";
+import {themr} from "../theme";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
+const Theme = themr("RTTimePicker", styles);
+
 import {calendar, clock, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
@@ -31,37 +32,36 @@ export interface InputTimeProps extends InputProps {
 }
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
-@autobind
 @observer
-export class InputTime extends React.Component<InputTimeProps, void> {
-    private clock?: HTMLDivElement;
-    private clockComp?: any;
-    private scrollParent!: Element;
+export class InputTime extends React.Component<InputTimeProps> {
+    protected clock?: HTMLDivElement | null;
+    protected clockComp?: any;
+    protected scrollParent!: Element;
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
-    private readonly _inputTimeId = uniqueId("input-time-");
+    protected readonly _inputTimeId = uniqueId("input-time-");
 
     /** Heure actuelle. */
-    @observable private time = this.toMoment(this.props.value);
+    @observable protected time = this.toMoment(this.props.value);
 
     /** Contenu du champ texte. */
-    @observable private timeText = this.formatTime(this.props.value);
+    @observable protected timeText = this.formatTime(this.props.value);
 
     /** Affiche l'horloge. */
-    @observable private showClock = false;
+    @observable protected showClock = false;
 
     /** Mode de l'horloge. */
-    @observable private clockDisplay = "hours" as "hours" | "minutes";
+    @observable protected clockDisplay = "hours" as "hours" | "minutes";
 
     /** Position de l'horloge. */
-    @observable private clockPosition?: "up" | "down";
+    @observable protected clockPosition?: "up" | "down";
 
     componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
     }
 
     componentDidMount() {
-        this.scrollParent = getScrollParent(findDOMNode(this));
+        this.scrollParent = getScrollParent(findDOMNode(this) as Element);
         this.scrollParent.addEventListener("scroll", this.resetClockCenter);
         window.addEventListener("scroll", this.resetClockCenter);
     }
@@ -76,7 +76,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     componentDidUpdate() {
         if (this.clock && this.showClock) {
             const client = this.clock.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            const screenHeight = window.innerHeight || document.documentElement!.offsetHeight;
             if (!this.clockPosition) {
                 if (client.top + client.height > screenHeight) {
                     this.clockPosition = "up";
@@ -96,6 +96,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Reset le centre de l'horloge au scroll, parce que c'est pas prévu par le composant... */
+    @action.bound
     resetClockCenter() {
         if (this.clockComp) {
             this.clockComp.handleCalculateShape();
@@ -122,7 +123,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
-    @action
+    @action.bound
     onDocumentClick({target}: Event) {
         let parent = target as HTMLElement | null;
 
@@ -137,7 +138,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Appelé lorsqu'on quitte le champ texte. */
-    @action
+    @action.bound
     onInputBlur() {
         const {inputFormat = "HH:mm", onChange} = this.props;
         const text = (this.timeText || "").trim() || undefined;
@@ -157,11 +158,12 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Au clic sur l'horloge. */
+    @action.bound
     onClockChange(time: Date) {
         this.props.onChange(moment(time).format());
     }
 
-    @action
+    @action.bound
     onHandMoved() {
         if (this.clockDisplay === "hours") {
             this.clockDisplay = "minutes";
@@ -172,7 +174,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     /** Ferme l'horloge lorsqu'on appuie sur Entrée ou Tab. */
-    @action
+    @action.bound
     handleKeyDown({key}: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showClock = false;
@@ -181,58 +183,70 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     render() {
-        const {theme, inputFormat = "HH:mm", displayFrom = "left", ...inputProps} = this.props;
+        const {theme: pTheme, inputFormat = "HH:mm", displayFrom = "left", ...inputProps} = this.props;
         return (
-            <div data-focus="input-time" data-id={this._inputTimeId} className={input}>
-                <Input
-                    {...inputProps}
-                    mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                    onChange={(value: string) => (this.timeText = value)}
-                    onKeyDown={this.handleKeyDown}
-                    onFocus={() => (this.showClock = true)}
-                    theme={theme}
-                    value={this.timeText || ""}
-                />
-                {this.showClock ? (
-                    <div
-                        ref={clo => (this.clock = clo)}
-                        className={`${calendar} ${theme!.dialog} ${
-                            this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay
-                        } ${displayFrom === "right" ? fromRight : ""} ${this.clockPosition === "up" ? up : down}`}
-                    >
-                        <header className={theme!.header}>
-                            <span id="hours" className={theme!.hours} onClick={() => (this.clockDisplay = "hours")}>
-                                {`0${this.time.hours()}`.slice(-2)}
-                            </span>
-                            <span className={theme!.separator}>:</span>
-                            <span
-                                id="minutes"
-                                className={theme!.minutes}
-                                onClick={() => (this.clockDisplay = "minutes")}
+            <Theme theme={pTheme}>
+                {theme => (
+                    <div data-focus="input-time" data-id={this._inputTimeId} className={input}>
+                        <Input
+                            {...inputProps}
+                            mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                            onChange={(value: string) => (this.timeText = value)}
+                            onKeyDown={this.handleKeyDown}
+                            onFocus={() => (this.showClock = true)}
+                            theme={theme}
+                            value={this.timeText || ""}
+                        />
+                        {this.showClock ? (
+                            <div
+                                ref={clo => (this.clock = clo)}
+                                className={`${calendar} ${theme!.dialog} ${
+                                    this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay
+                                } ${displayFrom === "right" ? fromRight : ""} ${
+                                    this.clockPosition === "up" ? up : down
+                                }`}
                             >
-                                {`0${this.time.minutes()}`.slice(-2)}
-                            </span>
-                            <IconButton icon="clear" theme={{toggle}} onClick={() => (this.showClock = false)} />
-                        </header>
-                        <div className={`${theme!.clockWrapper} ${clock}`}>
-                            <Clock
-                                ref={c => (this.clockComp = c)}
-                                display={this.clockDisplay}
-                                format="24hr"
-                                onChange={this.onClockChange}
-                                onHandMoved={this.onHandMoved}
-                                theme={theme}
-                                time={this.time.toDate()}
-                            />
-                        </div>
+                                <header className={theme!.header}>
+                                    <span
+                                        id="hours"
+                                        className={theme!.hours}
+                                        onClick={() => (this.clockDisplay = "hours")}
+                                    >
+                                        {`0${this.time.hours()}`.slice(-2)}
+                                    </span>
+                                    <span className={theme!.separator}>:</span>
+                                    <span
+                                        id="minutes"
+                                        className={theme!.minutes}
+                                        onClick={() => (this.clockDisplay = "minutes")}
+                                    >
+                                        {`0${this.time.minutes()}`.slice(-2)}
+                                    </span>
+                                    <IconButton
+                                        icon="clear"
+                                        theme={{toggle}}
+                                        onClick={() => (this.showClock = false)}
+                                    />
+                                </header>
+                                <div className={`${theme!.clockWrapper} ${clock}`}>
+                                    <Clock
+                                        ref={c => (this.clockComp = c)}
+                                        display={this.clockDisplay}
+                                        format="24hr"
+                                        onChange={this.onClockChange}
+                                        onHandMoved={this.onHandMoved}
+                                        theme={theme}
+                                        time={this.time.toDate()}
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
                     </div>
-                ) : null}
-            </div>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("RTTimePicker", styles)(InputTime);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {

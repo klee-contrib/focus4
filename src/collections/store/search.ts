@@ -285,7 +285,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.selectedFacets = props.selectedFacets || this.selectedFacets;
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
-        this.sortBy = props.hasOwnProperty("sortBy") ? (props.sortBy as keyof T) : this.sortBy;
+        this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         this.query = props.query || this.query;
         this.top = props.top || this.top;
     }
@@ -299,10 +299,10 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         const store = this;
         const searchGroupStore = {
             get currentCount() {
-                return store.groups.find(result => result.code === groupCode).totalCount || 0;
+                return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
             },
             get totalCount() {
-                return store.groups.find(result => result.code === groupCode).totalCount || 0;
+                return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
             },
             isItemSelectionnable: store.isItemSelectionnable,
             toggle(item: T) {

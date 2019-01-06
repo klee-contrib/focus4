@@ -1,17 +1,21 @@
 /** Objet contenant les traductions i18n en français par défaut, à intégrer si besoin dans un projet. */
 export const fr = {
+    boolean: {
+        no: "Non",
+        yes: "Oui"
+    },
     button: {
         cancel: "Annuler",
         edit: "Modifier",
         save: "Enregistrer"
     },
     detail: {
-        deleted: "Élement supprimé avec succès",
-        saved: "Élement enregistré avec succès"
+        deleted: "Élément supprimé avec succès",
+        saved: "Élément enregistré avec succès"
     },
     dragLayer: {
         item: "élément",
-        items: "élements"
+        items: "éléments"
     },
     list: {
         add: "Ajouter",
@@ -22,7 +26,7 @@ export const fr = {
         },
         show: {
             all: "Voir tout",
-            displayed: "élements affichés",
+            displayed: "éléments affichés",
             less: "Voir moins",
             more: "Voir plus"
         }
@@ -34,8 +38,8 @@ export const fr = {
         action: {
             filter: "Filtrer",
             group: "Grouper",
-            selectedItem: "élement sélectionné",
-            selectedItems: "élements sélectionnés",
+            selectedItem: "élément sélectionné",
+            selectedItems: "éléments sélectionnés",
             sort: "Trier"
         },
         bar: {
@@ -76,6 +80,7 @@ export const fr = {
         number: "Le nombre saisi est invalide",
         pourcentage: "Le pourcentage saisi est invalide",
         regex: "La valeur saisie est invalide",
-        required: "Le champ est obligatoire"
+        required: "Le champ est obligatoire",
+        string: "Le texte saisi est invalide"
     }
 };

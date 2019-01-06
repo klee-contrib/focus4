@@ -53,7 +53,7 @@ export interface ServiceConfig<T, LP> {
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
-export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P, void> {
+export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap: ObservableMap<boolean> = observable.map<boolean>();
 
@@ -417,5 +417,3 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         return options;
     }
 }
-
-export default AutoForm;

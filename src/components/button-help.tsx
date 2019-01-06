@@ -15,7 +15,7 @@ export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string
 
     if (typeof openHelpCenter !== "function") {
         console.warn(
-            'La fonction "window.openHelpCenter" n\'est pas définie. Merci de placer quelque part dans l\'application une "DraggableIframe" avec "openHelpCenter" comme "toggleFunctionName"'
+            `La fonction "window.openHelpCenter" n'est pas définie. Merci de placer quelque part dans l'application une "DraggableIframe" avec "openHelpCenter" comme "toggleFunctionName"`
         );
     }
 
@@ -27,5 +27,3 @@ export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string
         />
     );
 }
-
-export default ButtonHelp;

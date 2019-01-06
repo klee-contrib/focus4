@@ -53,5 +53,3 @@ export function PanelButtons({editing, i18nPrefix = "focus", loading, toggleEdit
 
     return null;
 }
-
-export default PanelButtons;

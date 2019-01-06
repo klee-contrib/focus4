@@ -1,21 +1,20 @@
-import {autobind} from "core-decorators";
 import {action, computed, observable} from "mobx";
-import {observer} from "mobx-react";
-import PropTypes from "prop-types";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 import {IconButtonTheme} from "react-toolbox/lib/button";
 
-import MainMenuItem, {MainMenuItemProps} from "./item";
-import MainMenuList, {MainMenuListStyle} from "./list";
-import MainMenuPanel, {MainMenuPanelStyle} from "./panel";
+import {themr} from "../../theme";
+
+import {LayoutContext} from "../types";
+import {MainMenuItem, MainMenuItemProps} from "./item";
+import {MainMenuList, MainMenuListStyle} from "./list";
+import {MainMenuPanel, MainMenuPanelStyle} from "./panel";
 
 export {MainMenuItem};
 
 import * as styles from "./__style__/menu.css";
-
 export type MainMenuStyle = Partial<typeof styles> & IconButtonTheme;
+const Theme = themr("mainMenu", styles);
 
 /** Props du Menu. */
 export interface MainMenuProps {
@@ -24,16 +23,9 @@ export interface MainMenuProps {
 }
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
-@observer
-@autobind
-export class MainMenu extends React.Component<MainMenuProps, void> {
-    static contextTypes = {
-        layout: PropTypes.object
-    };
-
-    context!: {
-        layout: {menuWidth: number};
-    };
+export class MainMenu extends React.Component<MainMenuProps> {
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
 
     /** Index du sous-menu actif. */
     @observable activeMenuIndex?: number;
@@ -59,7 +51,7 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
      * @param evt Evènement HTML.
      * @param menuIndex Index du menu.
      */
-    @action
+    @action.bound
     private onSelectMenu(evt: React.MouseEvent<HTMLLIElement>, menuIndex: number) {
         const targetPosition = evt.currentTarget.getBoundingClientRect();
         this.showPanel = this.activeMenuIndex !== menuIndex || !this.showPanel;
@@ -75,33 +67,35 @@ export class MainMenu extends React.Component<MainMenuProps, void> {
         this.getMenuWidth();
     }
     getMenuWidth() {
-        this.context.layout.menuWidth = findDOMNode(this).clientWidth;
+        this.context.layout.menuWidth = (findDOMNode(this) as Element).clientWidth;
     }
     componentWillUnmount() {
         this.context.layout.menuWidth = 0;
     }
 
     render() {
-        const {activeRoute, theme} = this.props;
+        const {activeRoute, children} = this.props;
         return (
-            <nav className={theme!.menu}>
-                <MainMenuList activeRoute={activeRoute} onSelectMenu={this.onSelectMenu} theme={theme}>
-                    {this.props.children}
-                </MainMenuList>
-                <MainMenuPanel
-                    close={() => (this.showPanel = false)}
-                    opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
-                    xOffset={this.context.layout.menuWidth}
-                    yOffset={this.yPosition}
-                    theme={theme}
-                >
-                    <MainMenuList activeRoute={activeRoute} theme={theme}>
-                        {this.subMenu}
-                    </MainMenuList>
-                </MainMenuPanel>
-            </nav>
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <nav className={theme.menu}>
+                        <MainMenuList activeRoute={activeRoute} onSelectMenu={this.onSelectMenu} theme={theme}>
+                            {children}
+                        </MainMenuList>
+                        <MainMenuPanel
+                            close={() => (this.showPanel = false)}
+                            opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
+                            xOffset={this.context.layout.menuWidth || 0}
+                            yOffset={this.yPosition}
+                            theme={theme}
+                        >
+                            <MainMenuList activeRoute={activeRoute} theme={theme}>
+                                {this.subMenu}
+                            </MainMenuList>
+                        </MainMenuPanel>
+                    </nav>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("mainMenu", styles)(MainMenu);

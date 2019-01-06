@@ -1,28 +1,26 @@
-import {autobind} from "core-decorators";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 
-import {ReactComponent} from "../../../config";
-import {EntityField} from "../../../entity";
+import {EntityField, FieldEntry} from "../../../entity";
+import {themr} from "../../../theme";
 
-import LineWrapper, {LineProps} from "./line";
+import {LineProps, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
+const Theme = themr("list", styles);
 
 /** Props du composant de TimeLine. */
 export interface TimelineProps<T> extends ListBaseProps<T> {
     /** Les données. */
     data: T[];
     /** Le sélecteur du champ contenant la date. */
-    dateSelector: (data: T) => EntityField<string>;
+    dateSelector: (data: T) => EntityField<FieldEntry<string>>;
     /** Le composant de ligne. */
-    TimelineComponent: ReactComponent<LineProps<T>>;
+    TimelineComponent: React.ComponentType<LineProps<T>>;
 }
 
 /** Composant affichant une liste sous forme de Timeline. */
-@autobind
 @observer
 export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
     get data() {
@@ -33,7 +31,7 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
         const {lineTheme, itemKey, TimelineComponent, dateSelector} = this.props;
         return this.displayedData.map((item, idx) => (
             <LineWrapper
-                key={(itemKey && item[itemKey] && (item[itemKey] as any).value) || (itemKey && item[itemKey]) || idx}
+                key={itemKey(item, idx)}
                 theme={lineTheme}
                 data={item}
                 dateSelector={dateSelector}
@@ -45,22 +43,22 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
 
     render() {
         return (
-            <ul className={this.props.theme!.timeline}>
-                {this.renderLines()}
-                {this.renderBottomRow()}
-            </ul>
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <ul className={theme.timeline}>
+                        {this.renderLines()}
+                        {this.renderBottomRow(theme)}
+                    </ul>
+                )}
+            </Theme>
         );
     }
 }
-
-const ThemedTimeline = themr("list", styles)(Timeline);
-export default ThemedTimeline;
 
 /**
  * Crée un composant affichant une liste sous forme de Timeline.
  * @param props Les props de la timeline.
  */
 export function timelineFor<T>(props: TimelineProps<T>) {
-    const List = ThemedTimeline as any;
-    return <List {...props} />;
+    return <Timeline {...props} />;
 }

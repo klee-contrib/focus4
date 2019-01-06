@@ -6,7 +6,7 @@ import * as React from "react";
 import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../components";
 import {EntityField} from "../entity";
 
-import Field, {FieldProps} from "./field";
+import {Field, FieldProps} from "./field";
 import {Domain} from "./types";
 
 /** $entity par défaut dans le cas où on n'a pas de métadonnées particulière pour afficher un champ. */

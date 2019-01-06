@@ -1,12 +1,11 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {debounce} from "lodash-decorators";
-import {action, observable, ObservableMap, runInAction} from "mobx";
+import {action, computed, observable, ObservableMap, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 export {ObservableMap};
+import {isEmpty} from "lodash";
 
 import {
     Autocomplete as RTAutocomplete,
@@ -16,8 +15,11 @@ import {
 import {InputTheme} from "react-toolbox/lib/input";
 import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
+import {themr} from "../theme";
+
 import * as styles from "./__style__/autocomplete.css";
 export type AutocompleteStyle = Partial<typeof styles> & AutocompleteTheme & InputTheme;
+const Theme = themr("autocomplete", styles);
 
 /** Résultat du service de recherche. */
 export interface AutocompleteResult {
@@ -35,28 +37,42 @@ export interface AutocompleteProps extends RTAutocompleteProps {
     /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
     isQuickSearch?: boolean;
     /** Service de résolution de code. */
-    keyResolver?: (key: number | string) => Promise<string | undefined>;
+    keyResolver?: (key: any) => Promise<string | undefined>;
     /** Service de recherche. */
-    querySearcher: (text: string) => Promise<AutocompleteResult | undefined>;
+    querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+    /** Au changement. */
+    onChange?: (value: any) => void;
+    /** Valeur. */
+    value?: any;
     /** CSS. */
     theme?: AutocompleteStyle;
 }
 
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
-@autobind
 @observer
-export class Autocomplete extends React.Component<AutocompleteProps, void> {
-    private inputElement!: HTMLInputElement | null;
+export class Autocomplete extends React.Component<AutocompleteProps> {
+    protected inputElement!: HTMLInputElement | null;
 
-    /** Composant en chargement. */
+    /** Requête d'autocomplete en cours. */
     @observable protected isLoading = false;
+
     /** Contenu du champ texte. */
     @observable protected query = "";
-    /** Liste des valeurs. */
-    protected readonly values = observable.map<string>();
+
+    /** Résultat de la recherche d'autocomplétion. */
+    protected readonly data = observable.map<string>();
+
+    /** Résultats sous format JSON, pour l'autocomplete. */
+    @computed.struct
+    get source() {
+        return this.data.toJSON();
+    }
 
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
     protected value?: string;
+
+    /** Reference du composant Autocomplete de RT, qui n'a pas renseigné ses types -_-' */
+    private autocomplete?: any;
 
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
@@ -66,7 +82,7 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
     }
 
     componentDidMount() {
-        this.inputElement = findDOMNode(this).querySelector("input");
+        this.inputElement = (findDOMNode(this) as Element).querySelector("input");
     }
 
     focus() {
@@ -78,11 +94,12 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Est appelé à chaque saisie dans le champ texte.
      * @param query Le champ texte.
      */
-    async onQueryChange(query: string) {
+    @action.bound
+    onQueryChange(query: string) {
         const {onQueryChange, onChange, isQuickSearch} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
-        const label = this.value && this.values.get(this.value);
+        const label = this.value && this.data.get(this.value);
         if (label !== query && onChange) {
             onChange(undefined);
         }
@@ -104,13 +121,13 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Est appelé lorsque l'on sélectionne une valeur.
      * @param value La valeur sélectionnée.
      */
-    @action
+    @action.bound
     onValueChange(value: string) {
         const {isQuickSearch, onChange} = this.props;
 
         if (isQuickSearch && value) {
             this.query = "";
-            this.values.clear();
+            this.data.clear();
             this.focus();
         }
 
@@ -125,12 +142,13 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
      * Effectue la recherche sur le serveur.
      * @param query Le champ texte.
      */
+    @action.bound
     async search(query: string) {
-        if (query && query.trim().length) {
+        if (this.props.querySearcher && query && query.trim().length) {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
-            runInAction(() => {
-                this.values.replace(
+            runInAction("replaceResults", () => {
+                this.data.replace(
                     (result &&
                         result.data &&
                         result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {})) ||
@@ -146,26 +164,72 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
         this.search(query);
     }
 
+    /**
+     * Pour sélectionner le premier élément de la liste de suggestion avec Tab.
+     * Recopie une bonne partie du mécanisme de l'autocomplete de RT puisqu'on ne peut pas faire autrement...
+     */
+    @action.bound
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key === "Tab" && this.autocomplete) {
+            const {active} = this.autocomplete.state;
+
+            let targetValue = active;
+            if (!active && this.source && !isEmpty(this.source)) {
+                targetValue = Object.keys(this.source)[0];
+            }
+
+            const values = this.autocomplete.values(this.autocomplete.props.value);
+            const source = this.autocomplete.source();
+            const newValue = targetValue === void 0 ? (event!.target! as any).id : targetValue;
+
+            if (this.autocomplete.isValueAnObject()) {
+                const newItem = Array.from(source).reduce((obj: any, [k, value]: any) => {
+                    if (k === newValue) {
+                        (obj as any)[k] = value;
+                    }
+                    return obj;
+                }, {});
+
+                if (Object.keys(newItem).length === 0 && newValue) {
+                    newItem[newValue] = newValue;
+                }
+
+                return this.autocomplete.handleChange({...this.autocomplete.mapToObject(values), ...newItem}, event);
+            }
+
+            this.autocomplete.handleChange([newValue, ...values.keys()], event);
+        }
+
+        if (this.props.onKeyDown) {
+            this.props.onKeyDown();
+        }
+    }
+
     render() {
-        const {keyResolver, querySearcher, ...props} = this.props;
+        const {keyResolver, querySearcher, theme: pTheme, isQuickSearch, ...props} = this.props;
         return (
-            <div data-focus="autocomplete">
-                <RTAutocomplete
-                    {...props}
-                    onChange={this.onValueChange}
-                    multiple={false}
-                    source={this.values.toJS()}
-                    query={this.query}
-                    onQueryChange={this.onQueryChange}
-                    maxLength={undefined}
-                    suggestionMatch="disabled"
-                />
-                {this.isLoading ? (
-                    <ProgressBar type="linear" mode="indeterminate" theme={{linear: props.theme!.progressBar}} />
-                ) : null}
-            </div>
+            <Theme theme={pTheme}>
+                {theme => (
+                    <div data-focus="autocomplete">
+                        <RTAutocomplete
+                            {...props}
+                            onChange={this.onValueChange}
+                            multiple={false}
+                            source={this.source}
+                            query={this.query}
+                            onQueryChange={this.onQueryChange}
+                            maxLength={undefined}
+                            suggestionMatch="disabled"
+                            theme={theme}
+                            innerRef={(ref: any) => (this.autocomplete = ref)}
+                            onKeyDown={this.onKeyDown}
+                        />
+                        {this.isLoading ? (
+                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
+                        ) : null}
+                    </div>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("autocomplete", styles)(Autocomplete);

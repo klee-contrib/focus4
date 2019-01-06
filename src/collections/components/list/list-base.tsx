@@ -1,6 +1,5 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
-import {computed, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
@@ -20,8 +19,8 @@ export interface ListBaseProps<T> {
     i18nPrefix?: string;
     /** Affiche le bouton "Voir plus" au lieu d'un scroll infini. */
     isManualFetch?: boolean;
-    /** Champ de l'objet à utiliser pour la key des lignes. */
-    itemKey?: keyof T;
+    /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
+    itemKey: (item: T, idx: number) => string | number | undefined;
     /** Décalage entre le scroll et le bas de la page en dessous du quel on déclenche le chargement en scroll infini. Par défaut : 250. */
     offset?: number;
     /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
@@ -33,8 +32,7 @@ export interface ListBaseProps<T> {
 }
 
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
-@autobind
-export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P, void> {
+export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P> {
     /** Nombre d'éléments affichés. */
     @observable displayedCount = this.props.perPage;
 
@@ -88,6 +86,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Charge la page suivante. */
+    @action
     protected handleShowMore() {
         if (this.hasMoreData) {
             this.displayedCount! += this.props.perPage || 5;
@@ -95,14 +94,14 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Affiche les éventuels boutons "Voir plus" et "Voir tout" en fin de liste. */
-    protected renderBottomRow() {
-        const {theme, i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
+    protected renderBottomRow(theme: ListStyle) {
+        const {i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
         if ((isManualFetch && this.hasMoreData) || showAllHandler) {
             return (
-                <div className={theme!.bottomRow}>
+                <div className={theme.bottomRow}>
                     {isManualFetch && this.hasMoreData ? (
                         <Button
-                            onClick={this.handleShowMore}
+                            onClick={() => this.handleShowMore()}
                             icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                             label={this.showMoreLabel}
                         />
@@ -136,6 +135,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Gère le scroll infini. */
+    @action.bound
     private scrollListener() {
         const el = findDOMNode(this) as HTMLElement;
         const scrollTop = window.pageYOffset;
@@ -144,8 +144,6 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
         }
     }
 }
-
-export default ListBase;
 
 /**
  * Détermine le sommet de l'élément choisi.

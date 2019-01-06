@@ -1,17 +1,13 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 
 import {isSearch, ListStoreBase} from "../../store";
 import {Table, TableProps} from "./table";
-
-import * as styles from "./__style__/list.css";
 
 /** Props additionnelles pour un StoreTable. */
 export interface StoreTableProps<T> extends TableProps<T> {
@@ -24,14 +20,13 @@ export interface StoreTableProps<T> extends TableProps<T> {
 }
 
 /** Composant de tableau lié à un store, qui permet le tri de ses colonnes. */
-@autobind
 @observer
 export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     /** Les données. */
     @computed
     protected get data() {
         const {groupCode, store} = this.props;
-        return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode).list : store.list;
+        return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode)!.list : store.list;
     }
 
     protected get shouldAttachScrollListener() {
@@ -41,13 +36,13 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
 
     /** Correspond aux données chargées mais non affichées. */
     @computed
-    private get hasMoreHidden() {
+    protected get hasMoreHidden() {
         return (this.displayedCount && this.data.length > this.displayedCount) || false;
     }
 
     /** Correpond aux données non chargées. */
     @computed
-    private get hasMoreToLoad() {
+    protected get hasMoreToLoad() {
         const {store} = this.props;
         return isSearch(store) && store.totalCount > store.currentCount;
     }
@@ -115,6 +110,7 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     }
 
     /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */
+    @action
     protected handleShowMore() {
         const {perPage, store} = this.props;
         if (this.hasMoreHidden) {
@@ -129,21 +125,17 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
 
     /** Fonction de tri, modifie les critères du store. */
     @action
-    private sort(sortBy: string, sortAsc: boolean) {
+    protected sort(sortBy: string, sortAsc: boolean) {
         const {store} = this.props;
         store.sortAsc = sortAsc;
-        store.sortBy = sortBy as keyof T;
+        store.sortBy = sortBy;
     }
 }
-
-const ThemedStoreTable = themr("list", styles)(StoreTable);
-export default ThemedStoreTable;
 
 /**
  * Crée un composant de tableau avec store.
  * @param props Les props du tableau.
  */
 export function storeTableFor<T>(props: TableProps<T> & StoreTableProps<T>) {
-    const Table2 = ThemedStoreTable as any;
-    return <Table2 {...props} />;
+    return <StoreTable {...props} />;
 }

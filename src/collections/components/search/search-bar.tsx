@@ -1,22 +1,21 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {difference, toPairs} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 import {Button, IconButton} from "react-toolbox/lib/button";
 import {Dropdown} from "react-toolbox/lib/dropdown";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "../../../components";
 import {fieldFor, StoreNode, toFlatValues} from "../../../entity";
+import {themr} from "../../../theme";
 
 import {SearchStore} from "../../store";
 
 import * as styles from "./__style__/search-bar.css";
-
 export type SearchBarStyle = Partial<typeof styles>;
+const Theme = themr("searchBar", styles);
 
 /** Props de la SearchBar. */
 export interface SearchBarProps<T, C extends StoreNode> {
@@ -26,8 +25,6 @@ export interface SearchBarProps<T, C extends StoreNode> {
     disableInputCriteria?: boolean;
     /** Préfixe i18n pour les libellés et les icônes. Par défaut : "focus" */
     i18nPrefix?: string;
-    /** Ref vers la SearchBar. */
-    innerRef?: (instance: SearchBar<T, C>) => void;
     /** Placeholder pour le champ texte. */
     placeholder?: string;
     /** Nom de la propriété des critères correspondant au scope, pour affichage du sélecteur. */
@@ -41,9 +38,8 @@ export interface SearchBarProps<T, C extends StoreNode> {
 }
 
 /** Barre de recherche permettant de contrôle le texte et les critères personnalisés de recherche. */
-@autobind
 @observer
-export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>, void> {
+export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBarProps<T, C>> {
     /** L'input HTML. */
     protected input?: HTMLInputElement | null;
 
@@ -117,7 +113,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Le onChange de l'input */
-    @action
+    @action.bound
     protected onInputChange({currentTarget}: {currentTarget: HTMLInputElement}) {
         const {disableInputCriteria, store} = this.props;
         if (disableInputCriteria || !store.criteria) {
@@ -154,7 +150,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Au clic sur un scope. */
-    @action
+    @action.bound
     protected onScopeSelection(scope: string) {
         const {scopeKey, store} = this.props;
         if (store.criteria && scopeKey) {
@@ -170,7 +166,7 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Vide la barre. */
-    @action
+    @action.bound
     protected clear() {
         const {disableInputCriteria, store} = this.props;
         store.query = "";
@@ -181,78 +177,86 @@ export class SearchBar<T, C extends StoreNode> extends React.Component<SearchBar
     }
 
     /** Affiche ou masque le composant de critères. */
+    @action.bound
     protected toggleCriteria() {
         this.showCriteriaComponent = !this.showCriteriaComponent;
         this.props.store.blockSearch = !this.props.store.blockSearch;
     }
 
     render() {
-        const {i18nPrefix = "focus", placeholder, store, scopeKey, scopes, theme, criteriaComponent} = this.props;
+        const {i18nPrefix = "focus", placeholder, store, scopeKey, scopes, criteriaComponent} = this.props;
         return (
-            <div style={{position: "relative"}}>
-                {this.showCriteriaComponent ? (
-                    <div className={theme!.criteriaWrapper} onClick={this.toggleCriteria} />
-                ) : null}
-                <div className={`${theme!.bar} ${this.error ? theme!.error : ""}`}>
-                    {scopes && store.criteria && scopeKey ? (
-                        <Dropdown
-                            onChange={this.onScopeSelection}
-                            value={(store.criteria[scopeKey] as any).value}
-                            source={[
-                                {value: undefined, label: ""},
-                                ...scopes.map(({code, label}) => ({value: code, label}))
-                            ]}
-                            theme={{dropdown: theme!.dropdown, values: theme!.scopes, valueKey: ""}}
-                        />
-                    ) : null}
-                    <div className={theme!.input}>
-                        <FontIcon className={theme!.searchIcon}>
-                            {getIcon(`${i18nPrefix}.icons.searchBar.search`)}
-                        </FontIcon>
-                        <input
-                            name="search-bar-input"
-                            onChange={this.onInputChange}
-                            placeholder={i18next.t(placeholder || "")}
-                            ref={input => (this.input = input)}
-                            value={this.text}
-                        />
-                    </div>
-                    {this.text && !this.showCriteriaComponent ? (
-                        <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} onClick={this.clear} />
-                    ) : null}
-                    {store.criteria && criteriaComponent && !this.showCriteriaComponent ? (
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.searchBar.open`)}
-                            onClick={this.toggleCriteria}
-                        />
-                    ) : null}
-                </div>
-                {!this.showCriteriaComponent && this.error ? <span className={theme!.errors}>{this.error}</span> : null}
-                {this.showCriteriaComponent ? (
-                    <div className={theme!.criteria}>
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.searchBar.close`)}
-                            onClick={this.toggleCriteria}
-                        />
-                        {fieldFor(store.query, {
-                            label: `${i18nPrefix}.search.bar.query`,
-                            onChange: query => (store.query = query)
-                        })}
-                        {criteriaComponent}
-                        <div className={theme!.buttons}>
-                            <Button
-                                primary
-                                raised
-                                onClick={this.toggleCriteria}
-                                label={`${i18nPrefix}.search.bar.search`}
-                            />
-                            <Button onClick={this.clear} label={`${i18nPrefix}.search.bar.reset`} />
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <div style={{position: "relative"}}>
+                        {this.showCriteriaComponent ? (
+                            <div className={theme.criteriaWrapper} onClick={this.toggleCriteria} />
+                        ) : null}
+                        <div className={`${theme.bar} ${this.error ? theme.error : ""}`}>
+                            {scopes && store.criteria && scopeKey ? (
+                                <Dropdown
+                                    onChange={this.onScopeSelection}
+                                    value={(store.criteria[scopeKey] as any).value}
+                                    source={[
+                                        {value: undefined, label: ""},
+                                        ...scopes.map(({code, label}) => ({value: code, label}))
+                                    ]}
+                                    theme={{dropdown: theme.dropdown, values: theme.scopes}}
+                                />
+                            ) : null}
+                            <div className={theme.input}>
+                                <FontIcon className={theme.searchIcon}>
+                                    {getIcon(`${i18nPrefix}.icons.searchBar.search`)}
+                                </FontIcon>
+                                <input
+                                    name="search-bar-input"
+                                    onChange={this.onInputChange}
+                                    placeholder={i18next.t(placeholder || "")}
+                                    ref={input => (this.input = input)}
+                                    value={this.text}
+                                />
+                            </div>
+                            {this.text && !this.showCriteriaComponent ? (
+                                <IconButton
+                                    icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)}
+                                    onClick={this.clear}
+                                />
+                            ) : null}
+                            {store.criteria && criteriaComponent && !this.showCriteriaComponent ? (
+                                <IconButton
+                                    icon={getIcon(`${i18nPrefix}.icons.searchBar.open`)}
+                                    onClick={this.toggleCriteria}
+                                />
+                            ) : null}
                         </div>
+                        {!this.showCriteriaComponent && this.error ? (
+                            <span className={theme.errors}>{this.error}</span>
+                        ) : null}
+                        {this.showCriteriaComponent ? (
+                            <div className={theme.criteria}>
+                                <IconButton
+                                    icon={getIcon(`${i18nPrefix}.icons.searchBar.close`)}
+                                    onClick={this.toggleCriteria}
+                                />
+                                {fieldFor(store.query, {
+                                    label: `${i18nPrefix}.search.bar.query`,
+                                    onChange: query => (store.query = query)
+                                })}
+                                {criteriaComponent}
+                                <div className={theme.buttons}>
+                                    <Button
+                                        primary
+                                        raised
+                                        onClick={this.toggleCriteria}
+                                        label={i18next.t(`${i18nPrefix}.search.bar.search`)}
+                                    />
+                                    <Button onClick={this.clear} label={i18next.t(`${i18nPrefix}.search.bar.reset`)} />
+                                </div>
+                            </div>
+                        ) : null}
                     </div>
-                ) : null}
-            </div>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("searchBar", styles)(SearchBar);

@@ -1,27 +1,25 @@
-import {autobind} from "core-decorators";
 import i18next from "i18next";
 import {values} from "lodash";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themr} from "react-css-themr";
 
-import {ReactComponent} from "../../../config";
+import {themr} from "../../../theme";
 
 import {LineProps, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
 import * as styles from "./__style__/list.css";
+const Theme = themr("list", styles);
 
 /** Props du tableau de base. */
 export interface TableProps<T> extends ListBaseProps<T> {
     /** La description des colonnes du tableau avec leur libellés. */
     columns: {[field: string]: string};
     /** Le composant de ligne. */
-    RowComponent: ReactComponent<LineProps<T>>;
+    RowComponent: React.ComponentType<LineProps<T>>;
 }
 
 /** Tableau standard */
-@autobind
 @observer
 export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> extends ListBase<T, P> {
     /** Les données. */
@@ -43,7 +41,7 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
     }
 
     /** Affiche le corps du tableau. */
-    private renderTableBody() {
+    protected renderTableBody() {
         const {lineTheme, itemKey, RowComponent} = this.props;
         const Line = LineWrapper as new () => LineWrapper<T>;
 
@@ -51,11 +49,7 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
             <tbody>
                 {this.displayedData.map((item, idx) => (
                     <Line
-                        key={
-                            (itemKey && item[itemKey] && (item[itemKey] as any).value) ||
-                            (itemKey && item[itemKey]) ||
-                            idx
-                        }
+                        key={itemKey(item, idx)}
                         theme={lineTheme}
                         data={item}
                         LineComponent={RowComponent}
@@ -68,25 +62,26 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
 
     render() {
         return (
-            <div>
-                <table className={this.props.theme!.table}>
-                    {this.renderTableHeader()}
-                    {this.renderTableBody()}
-                </table>
-                {this.renderBottomRow()}
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <>
+                        <table className={theme.table}>
+                            {this.renderTableHeader()}
+                            {this.renderTableBody()}
+                        </table>
+                        {this.renderBottomRow(theme)}
+                    </>
+                )}
+            </Theme>
         );
     }
 }
-
-const ThemedTable = themr("list", styles)(Table);
-export default ThemedTable;
 
 /**
  * Crée un composant de tableau standard.
  * @param props Les props du tableau.
  */
 export function tableFor<T>(props: TableProps<T> & {data: T[]}) {
-    const Table2 = ThemedTable as any;
+    const Table2 = Table as any;
     return <Table2 {...props} />;
 }

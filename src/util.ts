@@ -10,7 +10,7 @@ export type ReactionExpression<T> = ((inst: T) => () => any) | (() => any);
 export type WhenExpression<T> = ((inst: T) => () => boolean) | (() => boolean);
 
 /** Décorateur permettant, dans une classe React, de poser un autorun sur la fonction décorée. */
-export function classAutorun(target: RCL, propertyKey: keyof RCL, _: TypedPropertyDescriptor<any>) {
+export function classAutorun(target: RCL, propertyKey: keyof RCL) {
     patchClass("autorun", target, propertyKey);
 }
 
@@ -43,24 +43,19 @@ function patchClass<T extends RCL>(
     opts?: IReactionOptions
 ) {
     function componentWillMount(this: T) {
+        const r = this[propertyKey].bind(this);
+
         this[`${type}_${propertyKey}`] =
             type === "autorun"
-                ? autorun(instance[propertyKey].bind(this))
+                ? autorun(r)
                 : type === "reaction"
-                ? reaction(
-                      hasExpressionThis(expression) ? expression(this) : (expression as any),
-                      instance[propertyKey].bind(this),
-                      opts
-                  )
+                ? reaction(hasExpressionThis(expression) ? expression(this) : (expression as any), r, opts)
                 : type === "when"
-                ? when(
-                      hasExpressionThis(expression) ? expression(this) : (expression as any),
-                      instance[propertyKey].bind(this)
-                  )
+                ? when(hasExpressionThis(expression) ? expression(this) : (expression as any), r)
                 : undefined;
     }
 
-    function componentWillUnmount(this: RCL) {
+    function componentWillUnmount(this: T) {
         this[`${type}_${propertyKey}`]();
     }
 
@@ -71,13 +66,13 @@ function patchClass<T extends RCL>(
         ? componentWillMount
         : function(this: RCL) {
               baseCWM.apply(this);
-              componentWillMount.apply(this);
+              componentWillMount.apply(this as T);
           };
     instance.componentWillUnmount = !baseCWUM
         ? componentWillUnmount
         : function(this: RCL) {
               baseCWUM.apply(this);
-              componentWillUnmount.apply(this);
+              componentWillUnmount.apply(this as T);
           };
 }
 

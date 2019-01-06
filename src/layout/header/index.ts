@@ -1,4 +1,4 @@
-export {default as HeaderActions, PrimaryAction, SecondaryAction} from "./actions";
-export {default as HeaderContent} from "./content";
-export {default as HeaderScrolling, HeaderStyle} from "./scrolling";
-export {default as HeaderTopRow, HeaderBarLeft, HeaderBarRight, HeaderSummary} from "./top-row";
+export {HeaderActions, PrimaryAction, SecondaryAction} from "./actions";
+export {HeaderContent} from "./content";
+export {HeaderScrolling, HeaderStyle} from "./scrolling";
+export {HeaderTopRow, HeaderBarLeft, HeaderBarRight, HeaderSummary} from "./top-row";

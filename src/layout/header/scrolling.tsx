@@ -1,13 +1,13 @@
-import {autobind} from "core-decorators";
-import {observable} from "mobx";
-import {observer} from "mobx-react";
-import PropTypes from "prop-types";
+import {action, observable} from "mobx";
 import * as React from "react";
-import {themr} from "react-css-themr";
+
+import {themr} from "../../theme";
+
+import {LayoutContext} from "../types";
 
 import * as styles from "./__style__/header.css";
-
 export type HeaderStyle = Partial<typeof styles>;
+const Theme = themr("header", styles);
 
 /** Props du conteneur de header. */
 export interface HeaderScrollingProps {
@@ -26,19 +26,9 @@ export interface HeaderScrollingProps {
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
-@autobind
-@observer
-export class HeaderScrolling extends React.Component<HeaderScrollingProps, void> {
-    static contextTypes = {
-        header: PropTypes.object
-    };
-
-    context!: {
-        header: {
-            marginBottom: number;
-            topRowHeight: number;
-        };
-    };
+export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
+    static contextType = LayoutContext;
+    context!: React.ContextType<typeof LayoutContext>;
 
     /** Seuil de déploiement, calculé à partir de la hauteur du header. */
     @observable deployThreshold = 1000;
@@ -48,9 +38,9 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     @observable placeholderHeight = 1000;
 
     /** Header dans le DOM. */
-    private header?: Element | null;
+    protected header?: Element | null;
     /** Elément de DOM sur lequel on écoute le scroll */
-    private scrollTargetNode = this.props.scrollTargetSelector
+    protected readonly scrollTargetNode = this.props.scrollTargetSelector
         ? document.querySelector(this.props.scrollTargetSelector)!
         : window;
 
@@ -59,8 +49,8 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     componentDidMount() {
-        this.scrollTargetNode.addEventListener("scroll", this.listener);
-        this.scrollTargetNode.addEventListener("resize", this.listener);
+        this.scrollTargetNode.addEventListener("scroll", this.handleScroll);
+        this.scrollTargetNode.addEventListener("resize", this.handleScroll);
 
         const marginBottom = window.getComputedStyle(this.header!).marginBottom;
         this.context.header.marginBottom =
@@ -74,16 +64,17 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     componentWillUnmount() {
-        this.scrollTargetNode.removeEventListener("scroll", this.listener);
-        this.scrollTargetNode.removeEventListener("resize", this.listener);
-    }
-
-    listener() {
-        this.handleScroll();
+        this.scrollTargetNode.removeEventListener("scroll", this.handleScroll);
+        this.scrollTargetNode.removeEventListener("resize", this.handleScroll);
     }
 
     /** Recalcule l'état du header, appelé à chaque scroll, resize ou changement de `canDeploy`. */
-    handleScroll(canDeploy?: boolean) {
+    @action.bound
+    handleScroll(canDeploy?: boolean | Event) {
+        if (canDeploy !== true && canDeploy !== false) {
+            canDeploy = undefined;
+        }
+
         // Si on est déployé, on recalcule le seuil de déploiement.
         if (this.isDeployed) {
             this.deployThreshold = this.header ? this.header.clientHeight - this.context.header.topRowHeight : 1000;
@@ -91,7 +82,7 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         }
 
         // On détermine si on a dépassé le seuil.
-        const top = window.pageYOffset || document.documentElement.scrollTop;
+        const top = window.pageYOffset || document.documentElement!.scrollTop;
         const isDeployed = (canDeploy !== undefined
           ? canDeploy
           : this.props.canDeploy)
@@ -109,24 +100,27 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     }
 
     render() {
-        const {canDeploy, theme} = this.props;
         return (
-            <header
-                ref={header => (this.header = header)}
-                className={`${theme!.scrolling} ${this.isDeployed ? theme!.deployed : theme!.undeployed}`}
-            >
-                {this.props.children}
-                {!this.isDeployed ? (
-                    <div
-                        style={{
-                            height: canDeploy ? this.placeholderHeight : this.context.header.topRowHeight,
-                            width: "100%"
-                        }}
-                    />
-                ) : null}
-            </header>
+            <Theme theme={this.props.theme}>
+                {theme => (
+                    <header
+                        ref={header => (this.header = header)}
+                        className={`${theme.scrolling} ${this.isDeployed ? theme.deployed : theme.undeployed}`}
+                    >
+                        {this.props.children}
+                        {!this.isDeployed ? (
+                            <div
+                                style={{
+                                    height: this.props.canDeploy
+                                        ? this.placeholderHeight
+                                        : this.context.header.topRowHeight,
+                                    width: "100%"
+                                }}
+                            />
+                        ) : null}
+                    </header>
+                )}
+            </Theme>
         );
     }
 }
-
-export default themr("header", styles)(HeaderScrolling);

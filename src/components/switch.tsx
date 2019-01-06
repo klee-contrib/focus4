@@ -21,5 +21,3 @@ export function Switch(props: SwitchProps) {
 
     return <RTSwitch {...rtProps} />;
 }
-
-export default Switch;

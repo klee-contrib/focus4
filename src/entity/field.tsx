@@ -3,16 +3,17 @@ import i18next from "i18next";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themeable, themr} from "react-css-themr";
+import {themeable} from "react-css-themr";
 
 import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
+import {themr} from "../theme";
 
 import {Domain} from "./types";
 import {validate} from "./validation";
 
 import * as styles from "./__style__/field.css";
-
 export type FieldStyle = Partial<typeof styles>;
+const Theme = themr("field", styles);
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
@@ -81,7 +82,7 @@ export class Field<
     R,
     VK extends string,
     LK extends string
-> extends React.Component<FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>, void> {
+> extends React.Component<FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>> {
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = this.props.forceErrorDisplay || false;
 
@@ -132,7 +133,7 @@ export class Field<
     }
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
-    display() {
+    display(theme: FieldStyle & {display?: DCProps["theme"]; input?: ICProps["theme"]}) {
         const {
             valueKey = "code",
             labelKey = "label",
@@ -141,10 +142,9 @@ export class Field<
             keyResolver,
             displayFormatter,
             DisplayComponent,
-            displayProps = {},
-            theme
+            displayProps = {}
         } = this.props;
-        const FinalDisplay = DisplayComponent || Display;
+        const FinalDisplay = DisplayComponent || (Display as any);
         return (
             <FinalDisplay
                 {...displayProps as {}}
@@ -160,7 +160,7 @@ export class Field<
     }
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
-    input() {
+    input(theme: FieldStyle & {display?: DCProps["theme"]; input?: ICProps["theme"]}) {
         const {
             InputComponent,
             inputFormatter,
@@ -170,8 +170,7 @@ export class Field<
             values,
             keyResolver,
             inputProps = {},
-            name,
-            theme
+            name
         } = this.props;
         const FinalInput = InputComponent || Input;
 
@@ -197,49 +196,52 @@ export class Field<
     }
 
     render() {
-        const {
-            comment,
-            disableInlineSizing,
-            i18nPrefix,
-            label,
-            LabelComponent,
-            name,
-            showTooltip,
-            hasLabel = true,
-            labelRatio = 33,
-            isRequired,
-            isEdit,
-            theme,
-            className = ""
-        } = this.props;
-        const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
-        const FinalLabel = LabelComponent || Label;
         return (
-            <div
-                className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${
-                    this.error && this.showError ? theme!.invalid : ""
-                } ${isRequired ? theme!.required : ""} ${className}`}
-            >
-                {hasLabel ? (
-                    <FinalLabel
-                        comment={comment}
-                        i18nPrefix={i18nPrefix}
-                        label={label}
-                        name={name}
-                        showTooltip={showTooltip}
-                        style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
-                        theme={{label: theme!.label}}
-                    />
-                ) : null}
-                <div
-                    style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
-                    className={`${theme!.value} ${className}`}
-                >
-                    {isEdit ? this.input() : this.display()}
-                </div>
-            </div>
+            <Theme theme={this.props.theme}>
+                {theme => {
+                    const {
+                        comment,
+                        disableInlineSizing,
+                        i18nPrefix,
+                        label,
+                        LabelComponent,
+                        name,
+                        showTooltip,
+                        hasLabel = true,
+                        labelRatio = 33,
+                        isRequired,
+                        isEdit,
+                        className = ""
+                    } = this.props;
+                    const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
+                    const FinalLabel = LabelComponent || (Label as any);
+                    return (
+                        <div
+                            className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${
+                                this.error && this.showError ? theme!.invalid : ""
+                            } ${isRequired ? theme!.required : ""} ${className}`}
+                        >
+                            {hasLabel ? (
+                                <FinalLabel
+                                    comment={comment}
+                                    i18nPrefix={i18nPrefix}
+                                    label={label}
+                                    name={name}
+                                    showTooltip={showTooltip}
+                                    style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
+                                    theme={{label: theme!.label}}
+                                />
+                            ) : null}
+                            <div
+                                style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
+                                className={`${theme!.value} ${className}`}
+                            >
+                                {isEdit ? this.input(theme) : this.display(theme)}
+                            </div>
+                        </div>
+                    );
+                }}
+            </Theme>
         );
     }
 }
-
-export default themr("field", styles)(Field);

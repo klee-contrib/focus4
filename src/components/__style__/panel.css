@@ -49,9 +49,11 @@
     display: none;
 }
 
-.edit .actions,
-.panel:hover .actions {
-    display: block;
+.edit,
+.panel:hover {
+    & > .title > .actions {
+        display: block;
+    }
 }
 
 .content {

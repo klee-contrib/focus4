@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {isString, orderBy} from "lodash";
 import {computed, IObservableArray, observable} from "mobx";
 
@@ -11,13 +10,12 @@ import {ListStoreBase} from "./base";
  *
  * S'utilise sur une liste pré-chargée
  */
-@autobind
 export class ListStore<T> extends ListStoreBase<T> {
     /** Liste brute (non triée, non filtrée) des données. */
     readonly innerList: IObservableArray<T> = observable<T>([]);
 
     /** Champs sur lequels on autorise le filtrage, en local. */
-    private readonly filterFields?: (keyof T)[];
+    protected readonly filterFields?: (keyof T)[];
 
     /**
      * Construit un store de liste local.
