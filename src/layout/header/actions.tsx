@@ -32,6 +32,8 @@ export interface HeaderActionsProps {
     primary?: PrimaryAction[];
     /** Actions secondaires. */
     secondary?: SecondaryAction[];
+    /** Pour personnaliser le bouton du menu des actions secondaires. */
+    secondaryButton?: PrimaryAction;
     /** CSS. */
     theme?: {
         actions?: string;
@@ -39,7 +41,13 @@ export interface HeaderActionsProps {
 }
 
 /** Barre d'actions du header. */
-export function HeaderActions({i18nPrefix = "focus", primary = [], secondary = [], theme: pTheme}: HeaderActionsProps) {
+export function HeaderActions({
+    i18nPrefix = "focus",
+    primary = [],
+    secondary = [],
+    secondaryButton = {},
+    theme: pTheme
+}: HeaderActionsProps) {
     return (
         <Theme theme={pTheme}>
             {theme => (
@@ -59,7 +67,10 @@ export function HeaderActions({i18nPrefix = "focus", primary = [], secondary = [
                         <ButtonMenu
                             button={{
                                 floating: true,
-                                icon: getIcon(`${i18nPrefix}.icons.headerActions.secondary`)
+                                ...secondaryButton,
+                                icon: secondaryButton.icon
+                                    ? getIcon(secondaryButton.icon, secondaryButton.iconCustom || false)
+                                    : getIcon(`${i18nPrefix}.icons.secondaryButton.secondary`)
                             }}
                             position="topRight"
                         >

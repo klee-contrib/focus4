@@ -4,16 +4,20 @@ import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {Button, ButtonProps} from "react-toolbox/lib/button";
 import {IconMenu, Menu, MenuItem, MenuProps} from "react-toolbox/lib/menu";
+import Tooltip, {TooltipProps} from "react-toolbox/lib/tooltip";
 
 export {MenuItem, IconMenu};
+
+const TooltipButton = Tooltip(Button);
 
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
 export interface ButtonMenuProps extends MenuProps {
     /** Les props du bouton. */
-    button: ButtonProps & {
-        /** L'icône à afficher quand le bouton est ouvert. */
-        openedIcon?: React.ReactNode;
-    };
+    button: ButtonProps &
+        TooltipProps & {
+            /** L'icône à afficher quand le bouton est ouvert. */
+            openedIcon?: React.ReactNode;
+        };
 }
 
 /** Menu React-Toolbox avec un bouton personnalisable (non icône). */
@@ -24,7 +28,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps> {
     /** Hauteur du bouton, pour placer le menu. */
     @observable buttonHeight = 0;
 
-    private button?: Button | null;
+    private button?: React.Component<any> | null;
 
     // On récupère à tout instant la hauteur du bouton.
     componentDidMount() {
@@ -78,14 +82,16 @@ export class ButtonMenu extends React.Component<ButtonMenuProps> {
             position = "topLeft",
             ...menuProps
         } = this.props;
+        const FinalButton = buttonProps.tooltip ? TooltipButton : Button;
         return (
             <div data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
-                <Button
+                <FinalButton
                     ref={i => (this.button = i)}
                     {...buttonProps}
                     onClick={this.onClick}
                     icon={this.isOpened && openedIcon ? openedIcon : icon}
                 />
+
                 <div style={this.menuStyle}>
                     <Menu {...menuProps} position={position} active={this.isOpened} onHide={this.onHide}>
                         {menuProps.children}
