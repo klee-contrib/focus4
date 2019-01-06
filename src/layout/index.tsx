@@ -16,8 +16,32 @@ import {InputTheme} from "react-toolbox/lib/input";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
-import {ActionBarStyle, AdvancedSearchStyle, ContextualActionsStyle, DragLayerStyle, FacetBoxStyle, FacetStyle, GroupStyle, LineStyle, ListStyle, ListWrapperStyle, SearchBarStyle, SummaryStyle} from "../collections";
-import {AutocompleteStyle, BooleanRadioStyle, ButtonBackToTopStyle, DisplayStyle, LabelStyle, PanelStyle, PopinStyle, ScrollspyStyle, SelectCheckboxStyle, SelectRadioStyle} from "../components";
+import {
+    ActionBarStyle,
+    AdvancedSearchStyle,
+    ContextualActionsStyle,
+    DragLayerStyle,
+    FacetBoxStyle,
+    FacetStyle,
+    GroupStyle,
+    LineStyle,
+    ListStyle,
+    ListWrapperStyle,
+    SearchBarStyle,
+    SummaryStyle
+} from "../collections";
+import {
+    AutocompleteStyle,
+    BooleanRadioStyle,
+    ButtonBackToTopStyle,
+    DisplayStyle,
+    LabelStyle,
+    PanelStyle,
+    PopinStyle,
+    ScrollspyStyle,
+    SelectCheckboxStyle,
+    SelectRadioStyle
+} from "../components";
 import {FieldStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
@@ -29,7 +53,17 @@ import {LayoutProps, LayoutStyle, styles} from "./types";
 
 export {default as LayoutContent} from "./content";
 export {default as LayoutFooter} from "./footer";
-export {HeaderActions, HeaderBarLeft, HeaderBarRight, HeaderContent, HeaderScrolling, HeaderSummary, HeaderTopRow, PrimaryAction, SecondaryAction} from "./header";
+export {
+    HeaderActions,
+    HeaderBarLeft,
+    HeaderBarRight,
+    HeaderContent,
+    HeaderScrolling,
+    HeaderSummary,
+    HeaderTopRow,
+    PrimaryAction,
+    SecondaryAction
+} from "./header";
 export {default as MainMenu, MainMenuItem} from "./menu";
 
 /** Composant de Layout sans le provider de style. */
@@ -37,7 +71,6 @@ export {default as MainMenu, MainMenuItem} from "./menu";
 @autobind
 @observer
 class LayoutBase extends React.Component<LayoutProps, void> {
-
     // On utilise le contexte React pour partager la taille du menu et du header.
     static childContextTypes = {
         header: PropTypes.object,
@@ -125,9 +158,7 @@ export interface LayoutStyleProviderProps {
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     return (
         <ThemeProvider theme={(props.appTheme || {}) as TReactCSSThemrTheme}>
-            <LayoutBase {...omit(props, "appTheme")}>
-                {props.children}
-            </LayoutBase>
+            <LayoutBase {...omit(props, "appTheme")}>{props.children}</LayoutBase>
         </ThemeProvider>
     );
 }

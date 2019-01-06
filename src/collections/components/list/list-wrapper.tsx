@@ -40,7 +40,6 @@ export interface ListWrapperProps {
 @autobind
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps, void> {
-
     // On utilise le contexte React pour partager le mode entre les listes.
     static childContextTypes = {
         listWrapper: PropTypes.object
@@ -86,29 +85,29 @@ export class ListWrapper extends React.Component<ListWrapperProps, void> {
         return (
             <div className={theme!.wrapper}>
                 <div className={theme!.bar}>
-                    {canChangeMode ?
+                    {canChangeMode ? (
                         <IconButton
                             accent={mode === "list"}
-                            onClick={() => this.childContext.mode = "list"}
+                            onClick={() => (this.childContext.mode = "list")}
                             icon={getIcon(`${i18nPrefix}.icons.listWrapper.list`)}
                             tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
                         />
-                    : null}
-                    {canChangeMode ?
+                    ) : null}
+                    {canChangeMode ? (
                         <IconButton
                             accent={mode === "mosaic"}
-                            onClick={() => this.childContext.mode = "mosaic"}
+                            onClick={() => (this.childContext.mode = "mosaic")}
                             icon={getIcon(`${i18nPrefix}.icons.listWrapper.mosaic`)}
                             tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
                         />
-                    : null}
-                    {!hideAddItemHandler && addItemHandler && mode === "list" ?
+                    ) : null}
+                    {!hideAddItemHandler && addItemHandler && mode === "list" ? (
                         <Button
                             onClick={addItemHandler}
                             icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}
                             label={i18next.t(`${i18nPrefix}.list.add`)}
                         />
-                    : null}
+                    ) : null}
                 </div>
                 {children}
             </div>

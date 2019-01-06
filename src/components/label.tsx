@@ -31,10 +31,14 @@ export interface LabelProps {
 export function Label({comment, i18nPrefix = "focus", label, name, showTooltip, style, theme}: LabelProps) {
     return (
         <div className={theme!.label} style={style}>
-            <label htmlFor={name}>
-                {label && i18next.t(label) || ""}
-            </label>
-            {comment && showTooltip ? <TooltipIcon className={theme!.icon} tooltip={i18next.t(comment)} value={getIcon(`${i18nPrefix}.icons.label.tooltip`)} /> : null}
+            <label htmlFor={name}>{(label && i18next.t(label)) || ""}</label>
+            {comment && showTooltip ? (
+                <TooltipIcon
+                    className={theme!.icon}
+                    tooltip={i18next.t(comment)}
+                    value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
+                />
+            ) : null}
         </div>
     );
 }

@@ -23,7 +23,6 @@ export {
     tableFor,
     Timeline,
     timelineFor,
-
     AdvancedSearch,
     advancedSearchFor,
     AdvancedSearchStyle,

@@ -26,7 +26,7 @@ export type ActionBarStyle = Partial<typeof styles>;
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
     /** Constituion de l'éventuel groupe auquel est lié l'ActionBar */
-    group?: {code: string, label: string, totalCount: number};
+    group?: {code: string; label: string; totalCount: number};
     /** Contient une FacetBox. */
     hasFacetBox?: boolean;
     /** Affiche le bouton de groupe. */
@@ -40,7 +40,7 @@ export interface ActionBarProps<T> {
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
     /** Liste des colonnes sur lesquels on peut trier. */
-    orderableColumnList?: {key: string, label: string, order: boolean}[];
+    orderableColumnList?: {key: string; label: string; order: boolean}[];
     /** Actions sur les éléments sélectionnés. */
     operationList?: OperationListItem<T[]>[];
     /** Placeholder pour la barre de recherche. */
@@ -57,7 +57,6 @@ export interface ActionBarProps<T> {
 @observer
 @autobind
 export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
-
     /** Affiche la FacetBox. */
     @observable displayFacetBox = false;
     /** Hauteur de la FacetBox. */
@@ -86,11 +85,15 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     /** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */
     protected get filterButton() {
         const {theme, hasFacetBox, showSingleValuedFacets, i18nPrefix = "focus", store} = this.props;
-        if (hasFacetBox && isSearch(store) && store.facets.some(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
+        if (
+            hasFacetBox &&
+            isSearch(store) &&
+            store.facets.some(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
+        ) {
             return (
                 <div style={{position: "relative"}}>
                     <Button
-                        onClick={() => this.displayFacetBox = !this.displayFacetBox}
+                        onClick={() => (this.displayFacetBox = !this.displayFacetBox)}
                         icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}`)}
                         theme={{icon: theme!.dropdown}}
                         label={i18next.t(`${i18nPrefix}.search.action.filter`)}
@@ -108,7 +111,12 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     protected get sortButton() {
         const {i18nPrefix = "focus", orderableColumnList, store, theme} = this.props;
 
-        if (store.totalCount > 1 && !store.selectedItems.size && (isSearch(store) && !store.groupingKey || isList(store)) && orderableColumnList) {
+        if (
+            store.totalCount > 1 &&
+            !store.selectedItems.size &&
+            ((isSearch(store) && !store.groupingKey) || isList(store)) &&
+            orderableColumnList
+        ) {
             return (
                 <ButtonMenu
                     button={{
@@ -117,7 +125,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                         openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
                         theme: {icon: theme!.dropdown}
                     }}
-                    onClick={() => this.displayFacetBox = false}
+                    onClick={() => (this.displayFacetBox = false)}
                 >
                     {orderableColumnList.map((description, idx) => (
                         <MenuItem
@@ -142,22 +150,24 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         const {hasGrouping, i18nPrefix = "focus", store, theme} = this.props;
 
         if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
-            const groupableColumnList = store.facets ? store.facets.reduce((result, facet) => {
-                // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
-                if (facet.values.length > 1) {
-                    return {...result, [facet.code]: facet.label};
-                }
-                return result;
-            }, {}) : {};
+            const groupableColumnList = store.facets
+                ? store.facets.reduce((result, facet) => {
+                      // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
+                      if (facet.values.length > 1) {
+                          return {...result, [facet.code]: facet.label};
+                      }
+                      return result;
+                  }, {})
+                : {};
 
-            const menuItems = reduce(groupableColumnList, (operationList, label, key) => [
-                ...operationList,
-                <MenuItem
-                    key={key}
-                    onClick={() => store.groupingKey = key}
-                    caption={i18next.t(label)}
-                />
-            ], [] as JSX.Element[]);
+            const menuItems = reduce(
+                groupableColumnList,
+                (operationList, label, key) => [
+                    ...operationList,
+                    <MenuItem key={key} onClick={() => (store.groupingKey = key)} caption={i18next.t(label)} />
+                ],
+                [] as JSX.Element[]
+            );
 
             if (menuItems.length) {
                 return (
@@ -168,7 +178,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                             openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
                             theme: {icon: theme!.dropdown}
                         }}
-                        onClick={() => this.displayFacetBox = false}
+                        onClick={() => (this.displayFacetBox = false)}
                     >
                         {menuItems}
                     </ButtonMenu>
@@ -190,16 +200,16 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                     <Input
                         icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
                         value={store.query}
-                        onChange={(text: string) => store.query = text}
+                        onChange={(text: string) => (store.query = text)}
                         hint={searchBarPlaceholder}
                         theme={{input: theme!.searchBarField, icon: theme!.searchBarIcon, hint: theme!.searchBarHint}}
                     />
-                    {store.query ?
+                    {store.query ? (
                         <IconButton
                             icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
-                            onClick={() => store.query = ""}
+                            onClick={() => (store.query = "")}
                         />
-                    : null}
+                    ) : null}
                 </div>
             );
         }
@@ -211,7 +221,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     @classReaction<ActionBar<T>>(that => () => {
         // tslint:disable-next-line:no-shadowed-variable
         const {hasFacetBox, store} = that.props;
-        return hasFacetBox && isSearch(store) && store.facets.length && store.facets[0] || false;
+        return (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false;
     })
     protected closeFacetBox() {
         const {store, showSingleValuedFacets} = this.props;
@@ -222,7 +232,11 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
         }
 
         // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
-        if (this.displayFacetBox && isSearch(store) && store.facets.every(facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))) {
+        if (
+            this.displayFacetBox &&
+            isSearch(store) &&
+            store.facets.every(facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
+        ) {
             this.displayFacetBox = false;
         }
     }
@@ -243,39 +257,54 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
     }
 
     render() {
-        const {theme, group, hasFacetBox, i18nPrefix = "focus", nbDefaultDataListFacet = 6, operationList, showSingleValuedFacets, store} = this.props;
+        const {
+            theme,
+            group,
+            hasFacetBox,
+            i18nPrefix = "focus",
+            nbDefaultDataListFacet = 6,
+            operationList,
+            showSingleValuedFacets,
+            store
+        } = this.props;
         return (
             <div className={theme!.container}>
-
                 {/* ActionBar en tant que telle. */}
                 <div className={`${theme!.bar} ${store.selectedItems.size ? theme!.selection : ""}`}>
                     <div className={theme!.buttons}>
                         {this.selectionButton}
-                        {group ?
-                            <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>
-                        : null}
-                        {store.selectedItems.size ?
-                            <strong>{`${store.selectedItems.size} ${i18next.t(`${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`)}`}</strong>
-                        : null}
+                        {group ? <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong> : null}
+                        {store.selectedItems.size ? (
+                            <strong>{`${store.selectedItems.size} ${i18next.t(
+                                `${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`
+                            )}`}</strong>
+                        ) : null}
                         {this.filterButton}
                         {this.sortButton}
                         {this.groupButton}
                         {this.searchBar}
                     </div>
-                    {store.selectedItems.size && operationList && operationList.length ?
+                    {store.selectedItems.size && operationList && operationList.length ? (
                         <ContextualActions operationList={operationList} data={Array.from(store.selectedItems)} />
-                    : null}
+                    ) : null}
                 </div>
 
                 {/* FacetBox */}
-                {hasFacetBox && isSearch(store) ?
+                {hasFacetBox && isSearch(store) ? (
                     <div className={theme!.facetBoxContainer}>
-                        <Motion style={{marginTop: this.facetBoxHeight === DEFAULT_FACETBOX_MARGIN ? -this.facetBoxHeight : spring(this.displayFacetBox ? 5 : -this.facetBoxHeight)}}>
+                        <Motion
+                            style={{
+                                marginTop:
+                                    this.facetBoxHeight === DEFAULT_FACETBOX_MARGIN
+                                        ? -this.facetBoxHeight
+                                        : spring(this.displayFacetBox ? 5 : -this.facetBoxHeight)
+                            }}
+                        >
                             {(style: {marginTop: number}) => (
-                                <div style={style} ref={i => this.facetBox = i}>
+                                <div style={style} ref={i => (this.facetBox = i)}>
                                     <IconButton
                                         icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
-                                        onClick={() => this.displayFacetBox = false}
+                                        onClick={() => (this.displayFacetBox = false)}
                                     />
                                     <FacetBox
                                         theme={{facetBox: theme!.facetBox}}
@@ -287,8 +316,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>, void> {
                             )}
                         </Motion>
                     </div>
-                : null}
-
+                ) : null}
             </div>
         );
     }

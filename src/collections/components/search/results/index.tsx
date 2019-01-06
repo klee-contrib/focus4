@@ -4,7 +4,16 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {ReactComponent} from "../../../../config";
-import {DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, OperationListItem, StoreList} from "../../list";
+import {
+    DetailProps,
+    DragLayerStyle,
+    EmptyProps,
+    LineProps,
+    LineStyle,
+    ListStyle,
+    OperationListItem,
+    StoreList
+} from "../../list";
 
 import {GroupResult, SearchStore} from "../../../store";
 import Group, {GroupLoadingBar, GroupStyle} from "./group";
@@ -68,11 +77,27 @@ export interface ResultsProps<T> {
 @autobind
 @observer
 export class Results<T> extends React.Component<ResultsProps<T>, void> {
-
     /** Props communes entre le composant de liste et ceux de groupes. */
     @computed
     private get commonListProps() {
-        const {canOpenDetail, detailHeight, DetailComponent, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, hasDragAndDrop, hasSelection, i18nPrefix, isManualFetch, itemKey, LineComponent, lineTheme, MosaicComponent, store} = this.props;
+        const {
+            canOpenDetail,
+            detailHeight,
+            DetailComponent,
+            disableDragAnimThreshold,
+            dragItemType,
+            dragLayerTheme,
+            EmptyComponent,
+            hasDragAndDrop,
+            hasSelection,
+            i18nPrefix,
+            isManualFetch,
+            itemKey,
+            LineComponent,
+            lineTheme,
+            MosaicComponent,
+            store
+        } = this.props;
         return {
             canOpenDetail,
             detailHeight,
@@ -94,7 +119,19 @@ export class Results<T> extends React.Component<ResultsProps<T>, void> {
     }
 
     render() {
-        const {GroupHeader, groupOperationList, groupPageSize, groupTheme, i18nPrefix, lineOperationList, listPageSize, listTheme, offset, store, useGroupActionBars} = this.props;
+        const {
+            GroupHeader,
+            groupOperationList,
+            groupPageSize,
+            groupTheme,
+            i18nPrefix,
+            lineOperationList,
+            listPageSize,
+            listTheme,
+            offset,
+            store,
+            useGroupActionBars
+        } = this.props;
 
         const filteredGroups = store.groups.filter(group => group.totalCount !== 0);
         if (filteredGroups.length) {

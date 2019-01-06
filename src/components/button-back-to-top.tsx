@@ -25,7 +25,6 @@ export interface ButtonBackToTopProps {
 @autobind
 @observer
 export class ButtonBackToTop extends React.Component<ButtonBackToTopProps, void> {
-
     @observable isVisible = false;
 
     componentDidMount() {
@@ -55,17 +54,11 @@ export class ButtonBackToTop extends React.Component<ButtonBackToTopProps, void>
 
     render() {
         const {theme} = this.props;
-        return this.isVisible ?
+        return this.isVisible ? (
             <div className={theme!.backToTop}>
-                <Button
-                    accent
-                    onClick={this.scrollToTop}
-                    icon="expand_less"
-                    floating
-                    theme={theme}
-                />
+                <Button accent onClick={this.scrollToTop} icon="expand_less" floating theme={theme} />
             </div>
-        : null;
+        ) : null;
     }
 }
 

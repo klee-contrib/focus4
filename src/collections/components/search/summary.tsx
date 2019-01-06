@@ -33,7 +33,7 @@ export interface ListSummaryProps<T> {
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Liste des colonnes sur lesquels on peut trier. */
-    orderableColumnList?: {key: string, label: string, order: boolean}[];
+    orderableColumnList?: {key: string; label: string; order: boolean}[];
     /** Store associé. */
     store: SearchStore<T>;
     /** CSS. */
@@ -44,13 +44,12 @@ export interface ListSummaryProps<T> {
 @autobind
 @observer
 export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
-
     /** Liste des filtres à afficher. */
     @computed.struct
     protected get filterList() {
         const {hideCriteria, hideFacets, store} = this.props;
 
-        const topicList: {key: string, label: string, onDeleteClick: () => void}[] = [];
+        const topicList: {key: string; label: string; onDeleteClick: () => void}[] = [];
 
         // On ajoute la liste des critères.
         if (!hideCriteria) {
@@ -59,8 +58,13 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
                     key: criteriaKey,
-                    label: `${i18next.t(translationKey)} : ${domain && domain.displayFormatter && domain.displayFormatter(value) || value}`,
-                    onDeleteClick: () => { store.criteria[criteriaKey].value = undefined; }
+                    label: `${i18next.t(translationKey)} : ${(domain &&
+                        domain.displayFormatter &&
+                        domain.displayFormatter(value)) ||
+                        value}`,
+                    onDeleteClick: () => {
+                        store.criteria[criteriaKey].value = undefined;
+                    }
                 });
             }
         }
@@ -76,9 +80,12 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                         .forEach(facetItem =>
                             topicList.push({
                                 key: `${facetKey}-${facetItem.code}`,
-                                label: `${i18next.t(facetOutput && facetOutput.label || facetKey)} : ${i18next.t(facetItem.label || facetItem.code)}`,
+                                label: `${i18next.t((facetOutput && facetOutput.label) || facetKey)} : ${i18next.t(
+                                    facetItem.label || facetItem.code
+                                )}`,
                                 onDeleteClick: () => removeFacetValue(store, facetKey, facetItem.code)
-                            }));
+                            })
+                        );
                 }
             }
         }
@@ -98,7 +105,15 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
     }
 
     render() {
-        const {canRemoveSort = true, theme, exportAction, hideGroup, hideSort, i18nPrefix = "focus", store} = this.props;
+        const {
+            canRemoveSort = true,
+            theme,
+            exportAction,
+            hideGroup,
+            hideSort,
+            i18nPrefix = "focus",
+            store
+        } = this.props;
         const {groupingKey, totalCount, query} = store;
 
         const plural = totalCount !== 1 ? "s" : "";
@@ -106,52 +121,54 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
 
         return (
             <div className={theme!.summary}>
-
                 {/* Nombre de résultats. */}
                 <span className={sentence}>
-                    <strong>{totalCount}&nbsp;</strong>{i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
+                    <strong>{totalCount}&nbsp;</strong>
+                    {i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
                 </span>
 
                 {/* Texte de recherche. */}
-                {query && query.trim().length > 0 ?
+                {query && query.trim().length > 0 ? (
                     <span className={sentence}> {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
-                : null}
+                ) : null}
 
                 {/* Liste des filtres (scope + facettes + critères) */}
-                {this.filterList.length ?
+                {this.filterList.length ? (
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
-                        {this.filterList.map(chip => <Chip deletable {...chip}>{chip.label}</Chip>)}
+                        {this.filterList.map(chip => (
+                            <Chip deletable {...chip}>
+                                {chip.label}
+                            </Chip>
+                        ))}
                     </div>
-                : null}
+                ) : null}
 
                 {/* Groupe. */}
-                {groupingKey && !hideGroup ?
+                {groupingKey && !hideGroup ? (
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}</span>
-                        <Chip
-                            deletable
-                            onDeleteClick={() => store.groupingKey = undefined}
-                        >
+                        <Chip deletable onDeleteClick={() => (store.groupingKey = undefined)}>
                             {i18next.t(store.groupingLabel!)}
                         </Chip>
                     </div>
-                : null}
+                ) : null}
 
                 {/* Tri. */}
-                {this.currentSort && !hideSort && !groupingKey && totalCount > 1 ?
+                {this.currentSort && !hideSort && !groupingKey && totalCount > 1 ? (
                     <div className={theme!.chips}>
                         <span className={sentence}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <Chip
                             deletable={canRemoveSort}
-                            onDeleteClick={canRemoveSort ? () => store.sortBy = undefined : undefined}
+                            onDeleteClick={canRemoveSort ? () => (store.sortBy = undefined) : undefined}
                         >
-                        {i18next.t(this.currentSort.label)}</Chip>
+                            {i18next.t(this.currentSort.label)}
+                        </Chip>
                     </div>
-                : null}
+                ) : null}
 
                 {/* Action d'export. */}
-                {exportAction ?
+                {exportAction ? (
                     <div className={theme!.print}>
                         <Button
                             onClick={exportAction}
@@ -160,7 +177,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>, void> {
                             type="button"
                         />
                     </div>
-                : null}
+                ) : null}
             </div>
         );
     }

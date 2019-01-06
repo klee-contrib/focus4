@@ -31,8 +31,11 @@ export interface MenuPanelProps {
 export const MainMenuPanel = (props: MenuPanelProps) => {
     const {children, close, opened, xOffset, yOffset, theme} = props;
     return (
-        <div className={opened && theme!.panelWrapper || ""} onClick={close}>
-            <div className={`${theme!.panel} ${theme!.animate} ${opened ? theme!.open : theme!.close}`} style={{top: yOffset, left: xOffset}}>
+        <div className={(opened && theme!.panelWrapper) || ""} onClick={close}>
+            <div
+                className={`${theme!.panel} ${theme!.animate} ${opened ? theme!.open : theme!.close}`}
+                style={{top: yOffset, left: xOffset}}
+            >
                 {children}
             </div>
         </div>

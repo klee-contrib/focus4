@@ -63,8 +63,8 @@ export class ApplicationStore implements ApplicationAction {
         if (!isPartial) {
             this.cartridge = cartridge || <div />;
             this.summary = summary || <div />;
-            this.actions.primary = actions && actions.primary || [];
-            this.actions.secondary = actions && actions.secondary || [];
+            this.actions.primary = (actions && actions.primary) || [];
+            this.actions.secondary = (actions && actions.secondary) || [];
             this.barLeft = barLeft || <div />;
             this.canDeploy = canDeploy === undefined ? true : canDeploy;
         } else {
@@ -75,8 +75,8 @@ export class ApplicationStore implements ApplicationAction {
                 this.summary = summary;
             }
             if (actions) {
-                this.actions.primary = actions && actions.primary || [];
-                this.actions.secondary = actions && actions.secondary || [];
+                this.actions.primary = (actions && actions.primary) || [];
+                this.actions.secondary = (actions && actions.secondary) || [];
             }
             if (barLeft) {
                 this.barLeft = barLeft;

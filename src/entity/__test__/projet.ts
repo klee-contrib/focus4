@@ -9,7 +9,7 @@ export interface Projet {
     ligneList?: Ligne[];
 }
 
-export interface ProjetNode extends StoreNode<Projet>  {
+export interface ProjetNode extends StoreNode<Projet> {
     id: EntityField<number>;
     ligneList: StoreListNode<LigneNode>;
 }

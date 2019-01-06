@@ -27,7 +27,6 @@ export interface DisplayProps {
 /** Composant d'affichage par défaut, gère la résolution de la valeur par liste de référence ou par service. */
 @observer
 export class Display extends React.Component<DisplayProps, void> {
-
     @observable value?: any;
 
     componentWillMount() {
@@ -42,7 +41,7 @@ export class Display extends React.Component<DisplayProps, void> {
 
     async load({value, keyResolver}: DisplayProps) {
         if (value && keyResolver) {
-            this.value = await keyResolver(value) || value;
+            this.value = (await keyResolver(value)) || value;
         } else {
             this.value = value;
         }
@@ -52,10 +51,10 @@ export class Display extends React.Component<DisplayProps, void> {
         const {valueKey = "code", labelKey = "label", values, value, formatter, theme} = this.props;
         // tslint:disable-next-line:triple-equals ---> Le "==" est volontaire pour convertir un éventuel ID de type string (comme celui donné par un Select) en number.
         const ref = values && values.find(v => (v as any)[valueKey] == value);
-        const displayed = ref && (ref as any)[labelKey] || this.value;
+        const displayed = (ref && (ref as any)[labelKey]) || this.value;
         return (
             <div data-focus="display" className={theme!.display}>
-                {formatter && formatter(displayed) || displayed}
+                {(formatter && formatter(displayed)) || displayed}
             </div>
         );
     }

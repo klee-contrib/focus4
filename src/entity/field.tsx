@@ -16,13 +16,13 @@ export type FieldStyle = Partial<typeof styles>;
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
-    T = any,                                        // Type de la valeur.
-    ICProps extends {theme?: {}} = InputProps,      // Props du composant d'input.
-    DCProps extends {theme?: {}} = DisplayProps,    // Props du component d'affichage.
-    LCProps = LabelProps,                           // Props du component de libellé.
-    R = any,                                        // Type de la liste de référence associée.
-    VK extends string = any,                        // Nom de la propriété de valeur (liste de référence).
-    LK extends string = any                         // Nom de la propriété de libellé (liste de référence).
+    T = any, // Type de la valeur.
+    ICProps extends {theme?: {}} = InputProps, // Props du composant d'input.
+    DCProps extends {theme?: {}} = DisplayProps, // Props du component d'affichage.
+    LCProps = LabelProps, // Props du component de libellé.
+    R = any, // Type de la liste de référence associée.
+    VK extends string = any, // Nom de la propriété de valeur (liste de référence).
+    LK extends string = any // Nom de la propriété de libellé (liste de référence).
 > extends Domain<ICProps, DCProps, LCProps> {
     /** Commentaire à afficher dans la tooltip. */
     comment?: string;
@@ -59,7 +59,7 @@ export interface FieldProps<
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** CSS. */
-    theme?: FieldStyle & {display?: DCProps["theme"], input?: ICProps["theme"]};
+    theme?: FieldStyle & {display?: DCProps["theme"]; input?: ICProps["theme"]};
     /** Valeur. */
     value: any;
     /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */
@@ -82,7 +82,6 @@ export class Field<
     VK extends string,
     LK extends string
 > extends React.Component<FieldProps<T, ICProps, DCProps, LCProps, R, VK, LK>, void> {
-
     /** Affiche l'erreur du champ. Initialisé à `false` pour ne pas afficher l'erreur dès l'initilisation du champ avant la moindre saisie utilisateur. */
     @observable showError = this.props.forceErrorDisplay || false;
 
@@ -105,7 +104,10 @@ export class Field<
 
         // On vérifie que le champ n'est pas vide et obligatoire.
         const {isRequired, validator, label = ""} = this.props;
-        if (isRequired && (value === undefined || value === null || typeof value === "string" && value.trim() === "")) {
+        if (
+            isRequired &&
+            (value === undefined || value === null || (typeof value === "string" && value.trim() === ""))
+        ) {
             return i18next.t("focus.validation.required");
         }
 
@@ -131,7 +133,17 @@ export class Field<
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
-        const {valueKey = "code", labelKey = "label", values, value, keyResolver, displayFormatter, DisplayComponent, displayProps = {}, theme} = this.props;
+        const {
+            valueKey = "code",
+            labelKey = "label",
+            values,
+            value,
+            keyResolver,
+            displayFormatter,
+            DisplayComponent,
+            displayProps = {},
+            theme
+        } = this.props;
         const FinalDisplay = DisplayComponent || Display;
         return (
             <FinalDisplay
@@ -139,7 +151,7 @@ export class Field<
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
                 labelKey={labelKey}
-                theme={themeable(displayProps.theme || {} as any, theme!.display as any)}
+                theme={themeable(displayProps.theme || ({} as any), theme!.display as any)}
                 value={value}
                 valueKey={valueKey}
                 values={values}
@@ -149,17 +161,28 @@ export class Field<
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {InputComponent, inputFormatter, value, valueKey = "code", labelKey = "label", values, keyResolver, inputProps = {}, name, theme} = this.props;
+        const {
+            InputComponent,
+            inputFormatter,
+            value,
+            valueKey = "code",
+            labelKey = "label",
+            values,
+            keyResolver,
+            inputProps = {},
+            name,
+            theme
+        } = this.props;
         const FinalInput = InputComponent || Input;
 
         let props: any = {
-            ...inputProps as {},
-            value: inputFormatter && inputFormatter(value) || value,
-            error: this.showError && this.error || undefined,
+            ...(inputProps as {}),
+            value: (inputFormatter && inputFormatter(value)) || value,
+            error: (this.showError && this.error) || undefined,
             name,
             id: name,
             onChange: this.onChange,
-            theme: themeable(inputProps.theme || {} as any, theme!.input as any)
+            theme: themeable(inputProps.theme || ({} as any), theme!.input as any)
         };
 
         if (values) {
@@ -174,12 +197,30 @@ export class Field<
     }
 
     render() {
-        const {comment, disableInlineSizing, i18nPrefix, label, LabelComponent, name, showTooltip, hasLabel = true,  labelRatio = 33, isRequired, isEdit, theme, className = ""} = this.props;
+        const {
+            comment,
+            disableInlineSizing,
+            i18nPrefix,
+            label,
+            LabelComponent,
+            name,
+            showTooltip,
+            hasLabel = true,
+            labelRatio = 33,
+            isRequired,
+            isEdit,
+            theme,
+            className = ""
+        } = this.props;
         const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
         const FinalLabel = LabelComponent || Label;
         return (
-            <div className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${this.error && this.showError ? theme!.invalid : ""} ${isRequired ? theme!.required : ""} ${className}`}>
-                {hasLabel ?
+            <div
+                className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${
+                    this.error && this.showError ? theme!.invalid : ""
+                } ${isRequired ? theme!.required : ""} ${className}`}
+            >
+                {hasLabel ? (
                     <FinalLabel
                         comment={comment}
                         i18nPrefix={i18nPrefix}
@@ -189,8 +230,11 @@ export class Field<
                         style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
                         theme={{label: theme!.label}}
                     />
-                : null}
-                <div style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}} className ={`${theme!.value} ${className}`}>
+                ) : null}
+                <div
+                    style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
+                    className={`${theme!.value} ${className}`}
+                >
                     {isEdit ? this.input() : this.display()}
                 </div>
             </div>

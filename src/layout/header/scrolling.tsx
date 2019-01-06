@@ -29,16 +29,15 @@ export interface HeaderScrollingProps {
 @autobind
 @observer
 export class HeaderScrolling extends React.Component<HeaderScrollingProps, void> {
-
     static contextTypes = {
         header: PropTypes.object
     };
 
     context!: {
         header: {
-            marginBottom: number,
-            topRowHeight: number
-        }
+            marginBottom: number;
+            topRowHeight: number;
+        };
     };
 
     /** Seuil de déploiement, calculé à partir de la hauteur du header. */
@@ -51,7 +50,9 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     /** Header dans le DOM. */
     private header?: Element | null;
     /** Elément de DOM sur lequel on écoute le scroll */
-    private scrollTargetNode = this.props.scrollTargetSelector ? document.querySelector(this.props.scrollTargetSelector)! : window;
+    private scrollTargetNode = this.props.scrollTargetSelector
+        ? document.querySelector(this.props.scrollTargetSelector)!
+        : window;
 
     componentWillMount() {
         this.handleScroll();
@@ -62,7 +63,8 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
         this.scrollTargetNode.addEventListener("resize", this.listener);
 
         const marginBottom = window.getComputedStyle(this.header!).marginBottom;
-        this.context.header.marginBottom = marginBottom && marginBottom.endsWith("px") && +marginBottom.replace("px", "") || 0;
+        this.context.header.marginBottom =
+            (marginBottom && marginBottom.endsWith("px") && +marginBottom.replace("px", "")) || 0;
     }
 
     componentWillReceiveProps({canDeploy}: HeaderScrollingProps) {
@@ -82,7 +84,6 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
 
     /** Recalcule l'état du header, appelé à chaque scroll, resize ou changement de `canDeploy`. */
     handleScroll(canDeploy?: boolean) {
-
         // Si on est déployé, on recalcule le seuil de déploiement.
         if (this.isDeployed) {
             this.deployThreshold = this.header ? this.header.clientHeight - this.context.header.topRowHeight : 1000;
@@ -91,7 +92,11 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
 
         // On détermine si on a dépassé le seuil.
         const top = window.pageYOffset || document.documentElement.scrollTop;
-        const isDeployed = (canDeploy !== undefined ? canDeploy : this.props.canDeploy) ? top <= this.deployThreshold : false;
+        const isDeployed = (canDeploy !== undefined
+          ? canDeploy
+          : this.props.canDeploy)
+            ? top <= this.deployThreshold
+            : false;
 
         // Et on se met à jour.
         if (isDeployed !== this.isDeployed) {
@@ -106,9 +111,19 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps, void>
     render() {
         const {canDeploy, theme} = this.props;
         return (
-            <header ref={header => this.header = header} className={`${theme!.scrolling} ${this.isDeployed ? theme!.deployed : theme!.undeployed}`}>
+            <header
+                ref={header => (this.header = header)}
+                className={`${theme!.scrolling} ${this.isDeployed ? theme!.deployed : theme!.undeployed}`}
+            >
                 {this.props.children}
-                {!this.isDeployed ? <div style={{height: canDeploy ? this.placeholderHeight : this.context.header.topRowHeight, width: "100%"}} /> : null}
+                {!this.isDeployed ? (
+                    <div
+                        style={{
+                            height: canDeploy ? this.placeholderHeight : this.context.header.topRowHeight,
+                            width: "100%"
+                        }}
+                    />
+                ) : null}
             </header>
         );
     }

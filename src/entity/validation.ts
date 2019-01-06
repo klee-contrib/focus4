@@ -56,15 +56,20 @@ export interface FunctionValidator {
     options?: {isEdit?: boolean} & TrKey;
 }
 
-export type Validator = DateValidator | EmailValidator | FunctionValidator | NumberValidator | RegexValidator | StringValidator;
+export type Validator =
+    | DateValidator
+    | EmailValidator
+    | FunctionValidator
+    | NumberValidator
+    | RegexValidator
+    | StringValidator;
 
 /**
  * Vérifie que le texte est une date.
  * @param text Le texte.
  */
 export function dateValidator(text: string) {
-    return moment(text, moment.ISO_8601)
-        .isValid();
+    return moment(text, moment.ISO_8601).isValid();
 }
 
 /**

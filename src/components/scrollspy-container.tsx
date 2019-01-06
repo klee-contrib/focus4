@@ -38,7 +38,6 @@ export interface ScrollspyContainerProps {
 @autobind
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps, void> {
-
     /** Offset entre le container et le haut du document. */
     @observable private offsetTop = 0;
     /** Scroll courant. */
@@ -60,12 +59,12 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
 
     context!: {
         layout: {
-            contentPaddingTop: number
-        }
+            contentPaddingTop: number;
+        };
         header: {
-            marginBottom: number,
-            topRowHeight: number
-        }
+            marginBottom: number;
+            topRowHeight: number;
+        };
     };
 
     /** On définit les méthodes que l'on passe aux enfants. */
@@ -127,14 +126,13 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     @action
     private onScroll() {
         this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        this.offsetTop = findDOMNode(this)
-            .getBoundingClientRect().top;
+        this.offsetTop = findDOMNode(this).getBoundingClientRect().top;
     }
 
     /** Récupère les panels triés par position dans la page. */
     @computed.struct
     private get sortedPanels() {
-        return sortBy(this.panels.entries(), (([_, {node}]) => this.getOffsetTop(node)));
+        return sortBy(this.panels.entries(), ([_, {node}]) => this.getOffsetTop(node));
     }
 
     /** Récupère les items du menu à partir des panels enregistrés. */
@@ -150,19 +148,24 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
     /** Détermine le panel actif dans le menu */
     @computed.struct
     private get activeItem() {
-        const active = this.sortedPanels.slice()
+        const active = this.sortedPanels
+            .slice()
             .reverse()
             .find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
-        return active && active[0] || this.sortedPanels[0] && this.sortedPanels[0][0];
+        return (active && active[0]) || (this.sortedPanels[0] && this.sortedPanels[0][0]);
     }
 
     /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
     @computed.struct
     private get menuPosition() {
-        const {menuOffset = this.context.header.topRowHeight + this.context.header.marginBottom + this.context.layout.contentPaddingTop} = this.props;
+        const {
+            menuOffset = this.context.header.topRowHeight +
+                this.context.header.marginBottom +
+                this.context.layout.contentPaddingTop
+        } = this.props;
         const isFixed = this.offsetTop < menuOffset;
         return {
-            position: isFixed ? "fixed" as "fixed" : "absolute" as "absolute",
+            position: isFixed ? ("fixed" as "fixed") : ("absolute" as "absolute"),
             top: isFixed ? menuOffset : 0
         };
     }
@@ -172,7 +175,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
      * @param node Le noeud HTML.
      */
     private getOffsetTop(node: HTMLElement) {
-        return untracked(() => { // Il y a un bug très bizarre qui fait planter tout MobX à cause de l'accès à la prop, donc on met un untracked pour le contourner.
+        return untracked(() => {
+            // Il y a un bug très bizarre qui fait planter tout MobX à cause de l'accès à la prop, donc on met un untracked pour le contourner.
             let distance = 0;
 
             if (node.offsetParent) {
@@ -203,9 +207,15 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps,
             <div className={theme!.scrollspy}>
                 <nav style={this.menuPosition}>
                     <ul>
-                        {this.menuItems.map(({label, id, onClick}) =>
-                            <li className={this.activeItem === id ? theme!.active : undefined} key={id} onClick={onClick}>{label}</li>
-                        )}
+                        {this.menuItems.map(({label, id, onClick}) => (
+                            <li
+                                className={this.activeItem === id ? theme!.active : undefined}
+                                key={id}
+                                onClick={onClick}
+                            >
+                                {label}
+                            </li>
+                        ))}
                     </ul>
                 </nav>
                 <div className={theme!.content} style={{marginLeft: menuWidth}}>

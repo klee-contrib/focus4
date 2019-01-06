@@ -35,7 +35,6 @@ interface Notification {
 @autobind
 @observer
 export class MessageCenter extends React.Component<MessageCenterProps, void> {
-
     /** Snackbar affichée ou non. */
     @observable active = false;
 
@@ -88,7 +87,9 @@ export class MessageCenter extends React.Component<MessageCenterProps, void> {
                 onTimeout={this.closeSnackbar}
                 timeout={timeout}
                 theme={theme}
-                type={type === "error" ? "cancel" : type === "success" ? "accept" : type === "warning" ? type : undefined}
+                type={
+                    type === "error" ? "cancel" : type === "success" ? "accept" : type === "warning" ? type : undefined
+                }
             />
         );
     }

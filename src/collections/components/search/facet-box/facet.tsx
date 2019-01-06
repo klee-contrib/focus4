@@ -33,7 +33,6 @@ export interface FacetProps {
 @autobind
 @observer
 export class Facet extends React.Component<FacetProps, void> {
-
     @observable protected isShowAll = false;
 
     protected renderFacetDataList() {
@@ -64,7 +63,9 @@ export class Facet extends React.Component<FacetProps, void> {
                         };
                         return (
                             <li key={sfv.code} onClick={clickHandler}>
-                                {facet.isMultiSelectable ? <Checkbox value={isSelected} onClick={clickHandler} /> : null}
+                                {facet.isMultiSelectable ? (
+                                    <Checkbox value={isSelected} onClick={clickHandler} />
+                                ) : null}
                                 <div>{i18next.t(sfv.label)}</div>
                                 <div className={theme!.count}>{sfv.count}</div>
                             </li>
@@ -79,7 +80,7 @@ export class Facet extends React.Component<FacetProps, void> {
         const {theme, facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
         if (facet.values.length > nbDefaultDataList) {
             return (
-                <div className={theme!.show} onClick={() => this.isShowAll = !this.isShowAll}>
+                <div className={theme!.show} onClick={() => (this.isShowAll = !this.isShowAll)}>
                     {i18next.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                 </div>
             );

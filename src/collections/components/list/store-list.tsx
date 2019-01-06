@@ -27,7 +27,6 @@ export interface StoreListProps<T> extends ListProps<T> {
 @autobind
 @observer
 export class StoreList<T> extends List<T, StoreListProps<T>> {
-
     /** Les données. */
     @computed
     protected get data() {
@@ -43,7 +42,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
     /** Correspond aux données chargées mais non affichées. */
     @computed
     private get hasMoreHidden() {
-        return this.displayedCount && this.data.length > this.displayedCount || false;
+        return (this.displayedCount && this.data.length > this.displayedCount) || false;
     }
 
     /** Correpond aux données non chargées. */
@@ -66,7 +65,9 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
         if (isSearch(store)) {
             return i18next.t(`${i18nPrefix}.list.show.more`);
         } else {
-            return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+            return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
+                this.data.length
+            } ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
         }
     }
 
@@ -76,19 +77,18 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      */
     protected getItems(Component: ReactComponent<LineProps<T>>) {
         const {hasSelection = false, store} = this.props;
-        return super.getItems(Component)
-            .map(({key, data, style}) => ({
-                key,
-                data: {
-                    Component: data.Component,
-                    props: {
-                        ...data.props,
-                        hasSelection,
-                        store
-                    }
-                },
-                style
-            })) as LineItem<LineWrapperProps<T>>[];
+        return super.getItems(Component).map(({key, data, style}) => ({
+            key,
+            data: {
+                Component: data.Component,
+                props: {
+                    ...data.props,
+                    hasSelection,
+                    store
+                }
+            },
+            style
+        })) as LineItem<LineWrapperProps<T>>[];
     }
 
     /** `handleShowMore` peut aussi appeler le serveur pour récupérer les résultats suivants, si c'est un SearchStore. */

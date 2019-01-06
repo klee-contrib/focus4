@@ -34,7 +34,6 @@ export interface InputTimeProps extends InputProps {
 @autobind
 @observer
 export class InputTime extends React.Component<InputTimeProps, void> {
-
     private clock?: HTMLDivElement;
     private clockComp?: any;
     private scrollParent!: Element;
@@ -62,9 +61,9 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     }
 
     componentDidMount() {
-       this.scrollParent = getScrollParent(findDOMNode(this));
-       this.scrollParent.addEventListener("scroll", this.resetClockCenter);
-       window.addEventListener("scroll", this.resetClockCenter);
+        this.scrollParent = getScrollParent(findDOMNode(this));
+        this.scrollParent.addEventListener("scroll", this.resetClockCenter);
+        window.addEventListener("scroll", this.resetClockCenter);
     }
 
     @action
@@ -116,8 +115,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
     formatTime(value?: string) {
         const {inputFormat = "HH:mm"} = this.props;
         if (isISOString(value)) {
-            return moment(value, moment.ISO_8601)
-                .format(inputFormat);
+            return moment(value, moment.ISO_8601).format(inputFormat);
         } else {
             return value;
         }
@@ -156,13 +154,11 @@ export class InputTime extends React.Component<InputTimeProps, void> {
         } else {
             onChange(text);
         }
-
     }
 
     /** Au clic sur l'horloge. */
     onClockChange(time: Date) {
-        this.props.onChange(moment(time)
-            .format());
+        this.props.onChange(moment(time).format());
     }
 
     @action
@@ -191,30 +187,36 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                 <Input
                     {...inputProps}
                     mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                    onChange={(value: string) => this.timeText = value}
+                    onChange={(value: string) => (this.timeText = value)}
                     onKeyDown={this.handleKeyDown}
-                    onFocus={() => this.showClock = true}
+                    onFocus={() => (this.showClock = true)}
                     theme={theme}
                     value={this.timeText || ""}
                 />
-                {this.showClock ?
+                {this.showClock ? (
                     <div
-                        ref={clo => this.clock = clo}
-                        className={`${calendar} ${theme!.dialog} ${this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay} ${displayFrom === "right" ? fromRight : ""} ${this.clockPosition === "up" ? up : down}`}
+                        ref={clo => (this.clock = clo)}
+                        className={`${calendar} ${theme!.dialog} ${
+                            this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay
+                        } ${displayFrom === "right" ? fromRight : ""} ${this.clockPosition === "up" ? up : down}`}
                     >
                         <header className={theme!.header}>
-                            <span id="hours" className={theme!.hours} onClick={() => this.clockDisplay = "hours"}>
-                                {(`0${this.time.hours()}`).slice(-2)}
+                            <span id="hours" className={theme!.hours} onClick={() => (this.clockDisplay = "hours")}>
+                                {`0${this.time.hours()}`.slice(-2)}
                             </span>
                             <span className={theme!.separator}>:</span>
-                            <span id="minutes" className={theme!.minutes} onClick={() => this.clockDisplay = "minutes"}>
-                                {(`0${this.time.minutes()}`).slice(-2)}
+                            <span
+                                id="minutes"
+                                className={theme!.minutes}
+                                onClick={() => (this.clockDisplay = "minutes")}
+                            >
+                                {`0${this.time.minutes()}`.slice(-2)}
                             </span>
-                            <IconButton icon="clear" theme={{ toggle }} onClick={() => this.showClock = false} />
+                            <IconButton icon="clear" theme={{toggle}} onClick={() => (this.showClock = false)} />
                         </header>
                         <div className={`${theme!.clockWrapper} ${clock}`}>
                             <Clock
-                                ref={c => this.clockComp = c}
+                                ref={c => (this.clockComp = c)}
                                 display={this.clockDisplay}
                                 format="24hr"
                                 onChange={this.onClockChange}
@@ -224,7 +226,7 @@ export class InputTime extends React.Component<InputTimeProps, void> {
                             />
                         </div>
                     </div>
-                : null}
+                ) : null}
             </div>
         );
     }
@@ -234,8 +236,7 @@ export default themr("RTTimePicker", styles)(InputTime);
 
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string) {
-    return moment(value, moment.ISO_8601, true)
-        .isValid();
+    return moment(value, moment.ISO_8601, true).isValid();
 }
 
 /** Retourne le parent le plus proche qui est scrollable. */
@@ -244,13 +245,17 @@ function getScrollParent(element: Element, includeHidden = false) {
     const excludeStaticParent = style.position === "absolute";
     const overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
 
-    if (style.position === "fixed") { return document.body; }
-    for (let parent: Element | null = element; (parent = parent.parentElement);) {
+    if (style.position === "fixed") {
+        return document.body;
+    }
+    for (let parent: Element | null = element; (parent = parent.parentElement); ) {
         style = getComputedStyle(parent);
         if (excludeStaticParent && style.position === "static") {
             continue;
         }
-        if (overflowRegex.test(style.overflow! + style.overflowY + style.overflowX)) { return parent; }
+        if (overflowRegex.test(style.overflow! + style.overflowY + style.overflowX)) {
+            return parent;
+        }
     }
 
     return document.body;

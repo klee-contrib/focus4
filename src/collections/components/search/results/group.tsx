@@ -12,7 +12,17 @@ import {IconButton} from "react-toolbox/lib/button";
 import {getIcon} from "../../../../components";
 import {ReactComponent} from "../../../../config";
 import {GroupResult, ListStoreBase, SearchStore} from "../../../store";
-import {ActionBar, DetailProps, DragLayerStyle, EmptyProps, LineProps, LineStyle, ListStyle, OperationListItem, StoreList} from "../../list";
+import {
+    ActionBar,
+    DetailProps,
+    DragLayerStyle,
+    EmptyProps,
+    LineProps,
+    LineStyle,
+    ListStyle,
+    OperationListItem,
+    StoreList
+} from "../../list";
 
 import * as styles from "./__style__/group.css";
 
@@ -72,7 +82,6 @@ export interface GroupProps<T> {
 @autobind
 @observer
 export class Group<T> extends React.Component<GroupProps<T>, void> {
-
     @computed
     protected get store(): ListStoreBase<T> {
         const {group, store} = this.props;
@@ -93,28 +102,52 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
     }
 
     render() {
-        const {canOpenDetail, DetailComponent, detailHeight, disableDragAnimThreshold, dragItemType, dragLayerTheme, EmptyComponent, group, GroupHeader = DefaultGroupHeader, groupOperationList, hasDragAndDrop, hasSelection, i18nPrefix = "focus", itemKey, LineComponent, lineOperationList, lineTheme, listTheme, MosaicComponent, perPage = 5, store, theme, useGroupActionBars} = this.props;
+        const {
+            canOpenDetail,
+            DetailComponent,
+            detailHeight,
+            disableDragAnimThreshold,
+            dragItemType,
+            dragLayerTheme,
+            EmptyComponent,
+            group,
+            GroupHeader = DefaultGroupHeader,
+            groupOperationList,
+            hasDragAndDrop,
+            hasSelection,
+            i18nPrefix = "focus",
+            itemKey,
+            LineComponent,
+            lineOperationList,
+            lineTheme,
+            listTheme,
+            MosaicComponent,
+            perPage = 5,
+            store,
+            theme,
+            useGroupActionBars
+        } = this.props;
         return (
             <div className={theme!.container}>
-                {useGroupActionBars ?
+                {useGroupActionBars ? (
                     <ActionBar
                         group={{code: group.code, label: group.label, totalCount: group.totalCount}}
                         hasSelection={hasSelection}
                         operationList={groupOperationList}
                         store={this.store}
                     />
-                :
+                ) : (
                     <div className={theme!.header}>
-                        {hasSelection ?
+                        {hasSelection ? (
                             <IconButton
                                 icon={getIcon(`${i18nPrefix}.icons.actionBar.${this.store.selectionStatus}`)}
                                 onClick={this.store.toggleAll}
                                 theme={{toggle: theme!.selectionToggle, icon: theme!.selectionIcon}}
                             />
-                        : null}
+                        ) : null}
                         <GroupHeader group={group} />
                     </div>
-                }
+                )}
                 <StoreList
                     canOpenDetail={canOpenDetail}
                     detailHeight={detailHeight}
@@ -146,12 +179,8 @@ export class Group<T> extends React.Component<GroupProps<T>, void> {
 }
 
 /** "Barre" de chargement pour les résultats. */
-export const GroupLoadingBar = observer(({i18nPrefix = "focus", store}: {i18nPrefix?: string, store: SearchStore}) =>
-    store.isLoading ?
-        <div style={{padding: "15px"}}>
-            {i18next.t(`${i18nPrefix}.search.loading`)}
-        </div>
-    : <div />
+export const GroupLoadingBar = observer(({i18nPrefix = "focus", store}: {i18nPrefix?: string; store: SearchStore}) =>
+    store.isLoading ? <div style={{padding: "15px"}}>{i18next.t(`${i18nPrefix}.search.loading`)}</div> : <div />
 );
 
 export function DefaultGroupHeader({group}: {group: GroupResult}) {

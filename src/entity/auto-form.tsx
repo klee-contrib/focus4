@@ -14,19 +14,12 @@ import {StoreNode, toFlatValues} from "./store";
 import {Domain, EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
 
-import {
-    displayFor,
-    fieldFor,
-    isField,
-    selectFor,
-    stringFor,
-} from "./field-helpers";
+import {displayFor, fieldFor, isField, selectFor, stringFor} from "./field-helpers";
 
 import {form} from "./__style__/auto-form.css";
 
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions<E> {
-
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
 
@@ -45,7 +38,6 @@ export interface AutoFormOptions<E> {
 
 /** Config de services à fournir à AutoForm. */
 export interface ServiceConfig<T, LP> {
-
     /** Service de suppression. */
     delete?: (entity: T) => Promise<void | number | boolean>;
 
@@ -62,15 +54,13 @@ export interface ServiceConfig<T, LP> {
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 @autobind
 export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P, void> {
-
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap: ObservableMap<boolean> = observable.map<boolean>();
 
     /** Précise si au moins un formulaire de l'application est en édition. */
     @computed
     static get isOneEdit() {
-        return AutoForm.editingMap.values()
-            .some(x => x);
+        return AutoForm.editingMap.values().some(x => x);
     }
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
@@ -129,7 +119,11 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param services La config de services pour le formulaire ({delete?, getLoadParams, load, save}).
      * @param options Options additionnelles.
      */
-    formInit(storeData: E, services: ServiceConfig<any, any>, {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}) {
+    formInit(
+        storeData: E,
+        services: ServiceConfig<any, any>,
+        {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}
+    ) {
         this.storeData = storeData;
         this.services = services;
         this.entity = entity || createViewModel(storeData);
@@ -274,19 +268,22 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
             editing: this.isEdit,
             loading: this.isLoading,
             save: this.hasForm ? undefined : this.save,
-            toggleEdit: this.toggleEdit,
+            toggleEdit: this.toggleEdit
         };
     }
 
     /** Fonction de rendu du formulaire à préciser. */
     abstract renderContent(): React.ReactElement<any> | null;
     render() {
-        const contextClassName = this.context && this.context.theme && this.context.theme["form"] || "";
+        const contextClassName = (this.context && this.context.theme && this.context.theme["form"]) || "";
         if (this.hasForm) {
             return (
                 <form
                     className={`${form} ${contextClassName} ${this.className}`}
-                    onSubmit={e => { e.preventDefault(); this.save(); }}
+                    onSubmit={e => {
+                        e.preventDefault();
+                        this.save();
+                    }}
                 >
                     <fieldset>{this.renderContent()}</fieldset>
                 </form>
@@ -305,11 +302,23 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         field: T,
         options?: Partial<FieldProps<T, any, DCProps, LCProps>>
     ): JSX.Element;
-    displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    displayFor<
+        T,
+        DCDomainProps = DisplayProps,
+        LCDomainProps = LabelProps,
+        DCProps = DCDomainProps,
+        LCProps = LCDomainProps
+    >(
         field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, any, DCProps, LCProps>>
     ): JSX.Element;
-    displayFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    displayFor<
+        T,
+        DCDomainProps = DisplayProps,
+        LCDomainProps = LabelProps,
+        DCProps = DCDomainProps,
+        LCProps = LCDomainProps
+    >(
         field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, any, DCProps, LCProps>> = {}
     ) {
@@ -325,11 +334,27 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         field: T,
         options?: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
     ): JSX.Element;
-    fieldFor<T, ICDomainProps = InputProps, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    fieldFor<
+        T,
+        ICDomainProps = InputProps,
+        DCDomainProps = DisplayProps,
+        LCDomainProps = LabelProps,
+        ICProps = ICDomainProps,
+        DCProps = DCDomainProps,
+        LCProps = LCDomainProps
+    >(
         field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
     ): JSX.Element;
-    fieldFor<T, ICDomainProps = InputProps, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = ICDomainProps, DCProps = DCDomainProps, LCProps = LCDomainProps>(
+    fieldFor<
+        T,
+        ICDomainProps = InputProps,
+        DCDomainProps = DisplayProps,
+        LCDomainProps = LabelProps,
+        ICProps = ICDomainProps,
+        DCProps = DCDomainProps,
+        LCProps = LCDomainProps
+    >(
         field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps>> = {}
     ) {
@@ -342,7 +367,17 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param listName Le nom de la liste de référence.
      * @param options Les options du champ.
      */
-    selectFor<T, DCDomainProps = DisplayProps, LCDomainProps = LabelProps, ICProps = Partial<SelectProps>, DCProps = DCDomainProps, LCProps = LCDomainProps, R = any, ValueKey extends string = "code", LabelKey extends string = "label">(
+    selectFor<
+        T,
+        DCDomainProps = DisplayProps,
+        LCDomainProps = LabelProps,
+        ICProps = Partial<SelectProps>,
+        DCProps = DCDomainProps,
+        LCProps = LCDomainProps,
+        R = any,
+        ValueKey extends string = "code",
+        LabelKey extends string = "label"
+    >(
         field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
         values: R[],
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
@@ -373,7 +408,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         }
 
         if (isField(field)) {
-            options.innerRef = f => this.fields[field.$entity.translationKey] = f;
+            options.innerRef = f => (this.fields[field.$entity.translationKey] = f);
             if (!options.error) {
                 options.error = this.errors[field.$entity.translationKey];
             }

@@ -30,14 +30,22 @@ export const LoadingBar = observer(({i18nPrefix = "focus", progressBarType, them
     return (
         <div className={theme!.bar}>
             {completed < 100 ? <ProgressBar type={progressBarType} theme={theme} /> : null}
-            {displayDevBar ?
+            {displayDevBar ? (
                 <ul>
-                    <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.pending`)}</FontIcon> pending {pending}</li>
-                    <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.success`)}</FontIcon> success {success}</li>
-                    <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.error`)}</FontIcon>  error {error}</li>
-                    <li><FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.total`)}</FontIcon>  total {count.total}</li>
+                    <li>
+                        <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.pending`)}</FontIcon> pending {pending}
+                    </li>
+                    <li>
+                        <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.success`)}</FontIcon> success {success}
+                    </li>
+                    <li>
+                        <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.error`)}</FontIcon> error {error}
+                    </li>
+                    <li>
+                        <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.total`)}</FontIcon> total {count.total}
+                    </li>
                 </ul>
-            : null}
+            ) : null}
         </div>
     );
 });

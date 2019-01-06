@@ -7,6 +7,7 @@ Le router proposé par Focus V4 est un peu particulier et est basé sur les [id�
 Il s'articule autour d'un ou plusieurs store(s) (le `ViewStore`) qui sert d'intermédiaire entre le "vrai" routeur et le reste de l'application. Ce store expose une propriété observable `currentView`, qui est le miroir de l'état de l'URL. Modifier l'URL va mettre `currentView` à jour en conséquence, et inversement.
 
 Exemple :
+
 ```ts
 const viewStore = new ViewStore({view: {page: "", id: "", subPage: "", subId: ""}});
 const router = makeRouter([viewStore]);
@@ -18,8 +19,9 @@ async function preload() {
 
 // navigation vers "/structure/1/detail" -> viewStore.currentView = {page: "structure", id: "1", subPage: "detail"}
 // action utilisateur
-viewStore.setView({id: 5}) // -> URL = "/structure/5/detail"
+viewStore.setView({id: 5}); // -> URL = "/structure/5/detail"
 ```
+
 Il est ensuite très facile dans des composants de se synchroniser au `ViewStore` en utilisant `store.currentView` comme n'importe quelle autre observable. Ainsi, on abstrait entièrement le routing des vues et on interagit à la place avec un store (= de l'état), ce qu'on fait déjà pour tout le reste.
 
 ## Plusieurs ViewStores
@@ -32,10 +34,13 @@ La fonction `makeRouter` prend un array de `ViewStore` comme second paramètre p
 
 Un routeur avec plusieurs stores gère la notion de "store actif", c'est-à-dire qu'il va déterminer quel store est actif automatiquement. La règle est très simple : c'est le dernier store modifié qui est actif. Chaque store possède une propriété `isActive` pour savoir s'il est actif. La fonction `makeRouter` retourne un objet contenant la listes des stores, la méthode `start()`, une propriété observable `currentStore` qui contient le store actif, et une méthode `to(prefix)` permettant de naviguer vers l'état par défaut du `ViewStore` choisi (cette navigation n'entraînant pas de modification d'état, on est forcé de l'effectuer via le routeur au lieu d'une interaction avec un store).
 
-
 Exemple d'usage :
+
 ```tsx
-export const homeView = new ViewStore({prefix: "home", view: {page: "" as undefined | "test" | "list", id: "" as string | undefined}});
+export const homeView = new ViewStore({
+    prefix: "home",
+    view: {page: "" as undefined | "test" | "list", id: "" as string | undefined}
+});
 export const testView = new ViewStore({prefix: "test", view: {lol: ""}});
 
 const router = makeRouter([homeView, testView]);
@@ -44,9 +49,12 @@ const Main = observer(() => {
     const {currentStore} = router;
     if (currentStore.prefix === "home") {
         switch (currentStore.currentView.page) {
-            case "test": return <Test />;
-            case "list": return <List />;
-            default: return <Home />;
+            case "test":
+                return <Test />;
+            case "list":
+                return <List />;
+            default:
+                return <Home />;
         }
     } else if (currentStore.prefix === "test") {
         return <div>Test Store "{currentStore.currentView.lol}"</div>;
@@ -55,23 +63,26 @@ const Main = observer(() => {
     }
 });
 ```
+
 (oui oui, le `currentStore` est statiquement typé avec le bon store lorsqu'on distingue par préfixe !)
 
 ## `beforeEnter`
+
 Il est possible de définir un hook `beforeEnter` sur un `ViewStore` (dans le constructeur) qui va s'exécuter juste avant une navigation (que ça soit par URL ou par `setView()`), qui peut retourner 3 choses :
-- `{redirect: view}`, pour rediriger vers la vue retournée. Par exemple : `{redirect: {page: "home"}}`.
-- `{errorCode: "code"}`, pour rediriger vers la page d'erreur avec le code demandé (voir plus bas).
-- `undefined`, pour ne rien faire.
-Ce hook permet d'ajouter de la logique pour par exemple bloquer l'accès à certaines pages si l'utilisateur n'a pas les droits, ou pour combler une URL qui n'existe pas.
+
+-   `{redirect: view}`, pour rediriger vers la vue retournée. Par exemple : `{redirect: {page: "home"}}`.
+-   `{errorCode: "code"}`, pour rediriger vers la page d'erreur avec le code demandé (voir plus bas).
+-   `undefined`, pour ne rien faire.
+    Ce hook permet d'ajouter de la logique pour par exemple bloquer l'accès à certaines pages si l'utilisateur n'a pas les droits, ou pour combler une URL qui n'existe pas.
 
 ## Page d'erreur
+
 Le routeur gère, en plus des différents `ViewStores`, une page spéciale destinée aux erreurs. Cela correspond au cas ou aucun store n'est actif : dans ce cas, `currentStore` vaut `{prefix: "error", errorCode: "your_code"}`. On y accède soit par une erreur personnalisée retournée dans un `beforeEnter`, soit lorsqu'une route n'est pas matchée (`errorCode = "notfound"`). C'est donc a l'utilisateur, dans le switch principal de l'application, de concevoir ses propres pages d'erreurs en fonction du code. (le nom de la page "error" et le code "notfound" sont configurables)
 
 ## API du `ViewStore`
 
 ```ts
 export declare class ViewStore<V, N extends string> {
-
     /** Préfixe éventuel du store. */
     readonly prefix?: N;
 
@@ -152,7 +163,7 @@ Le gros point fort en faisant ça, c'est qu'on peut librement modifier l'id dans
 
 L'`AutoForm` créé nativement une réaction pour le chargement à partir de la fonction `getLoadParams` qu'on lui passe dans la configuration. Donc si cette fonction ressemble à quelque chose comme `() => viewStore.withView(({id}) => id && [+id])`, alors il bénificiera de la synchronisation.
 
-*Note : la synchronisation par réaction n'est pas à faire en toute circonstances. Par exemple, si un module affiche des composants différents selon un état global qui peut changer avec l'ID, alors ces composants ne doivent pas être synchronisés. Dans ce cas, la meilleure solution est de synchroniser le composant racine et de s'assurer que l'on remonte tous les composants enfants à chaque changement d'ID. [fromPromise](https://github.com/mobxjs/mobx-utils#frompromise) est pratique pour ça.*
+_Note : la synchronisation par réaction n'est pas à faire en toute circonstances. Par exemple, si un module affiche des composants différents selon un état global qui peut changer avec l'ID, alors ces composants ne doivent pas être synchronisés. Dans ce cas, la meilleure solution est de synchroniser le composant racine et de s'assurer que l'on remonte tous les composants enfants à chaque changement d'ID. [fromPromise](https://github.com/mobxjs/mobx-utils#frompromise) est pratique pour ça._
 
 ## A propos de ce qu'on vient de faire
 

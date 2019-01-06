@@ -30,7 +30,6 @@ export interface SearchProperties {
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
 @autobind
 export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T> implements SearchProperties {
-
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
 
@@ -65,21 +64,33 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
      * @param criteria La description du critère de recherche personnalisé.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      */
-    constructor(service: SearchService<T>, criteria?: [C, Entity], initialQuery?: SearchProperties & {debounceCriteria?: boolean})
+    constructor(
+        service: SearchService<T>,
+        criteria?: [C, Entity],
+        initialQuery?: SearchProperties & {debounceCriteria?: boolean}
+    );
     /**
      * Crée un nouveau store de recherche.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      * @param service Le service de recherche.
      * @param criteria La description du critère de recherche personnalisé.
      */
-    constructor(service: SearchService<T>, initialQuery?: SearchProperties & {debounceCriteria?: boolean}, criteria?: [C, Entity])
-    constructor(service: SearchService<T>, secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity], thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]) {
+    constructor(
+        service: SearchService<T>,
+        initialQuery?: SearchProperties & {debounceCriteria?: boolean},
+        criteria?: [C, Entity]
+    );
+    constructor(
+        service: SearchService<T>,
+        secondParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity],
+        thirdParam?: SearchProperties & {debounceCriteria?: boolean} | [C, Entity]
+    ) {
         super();
         this.service = service;
 
         // On gère les paramètres du constructeur dans les deux ordres.
-        const initialQuery = !Array.isArray(secondParam) && secondParam || !Array.isArray(thirdParam) && thirdParam;
-        const criteria = Array.isArray(secondParam) && secondParam || Array.isArray(thirdParam) && thirdParam;
+        const initialQuery = (!Array.isArray(secondParam) && secondParam) || (!Array.isArray(thirdParam) && thirdParam);
+        const criteria = (Array.isArray(secondParam) && secondParam) || (Array.isArray(thirdParam) && thirdParam);
 
         if (initialQuery) {
             this.setProperties(initialQuery);
@@ -91,20 +102,26 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         }
 
         // Relance la recherche à chaque modification de propriété.
-        reaction(() => [
-            this.blockSearch,
-            this.groupingKey,
-            this.selectedFacets,
-            !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
-            this.sortAsc,
-            this.sortBy
-        ], () => this.search());
+        reaction(
+            () => [
+                this.blockSearch,
+                this.groupingKey,
+                this.selectedFacets,
+                !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
+                this.sortAsc,
+                this.sortBy
+            ],
+            () => this.search()
+        );
 
         // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
-        reaction(() => [
-            initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
-            this.query
-        ], debounce(() => this.search(), config.textSearchDelay));
+        reaction(
+            () => [
+                initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
+                this.query
+            ],
+            debounce(() => this.search(), config.textSearchDelay)
+        );
     }
 
     /** Store en chargement. */
@@ -133,7 +150,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     @computed
     get groupingLabel() {
         const group = this.facets.find(facet => facet.code === this.groupingKey);
-        return group && group.label || this.groupingKey;
+        return (group && group.label) || this.groupingKey;
     }
 
     /** Nombre total de résultats de la recherche (pas forcément récupérés). */
@@ -155,8 +172,11 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         const {criteria = {}} = this;
         for (const key in criteria) {
             if (key !== "set" && key !== "clear") {
-                const entry = ((criteria as any)[key] as EntityField<any>);
-                const {$entity: {domain}, value} = entry;
+                const entry = (criteria as any)[key] as EntityField<any>;
+                const {
+                    $entity: {domain},
+                    value
+                } = entry;
                 if (domain && domain.validator && value !== undefined && value !== null) {
                     const validStat = validate({value, name: ""}, domain.validator);
                     if (validStat.errors.length) {
@@ -175,7 +195,6 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     get flatCriteria() {
         const criteria = this.criteria && toFlatValues(this.criteria);
         if (criteria) {
-
             // On enlève les critères en erreur.
             for (const error in this.criteriaErrors) {
                 if (this.criteriaErrors[error]) {
@@ -224,7 +243,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             criteria: {...this.flatCriteria, query} as QueryInput<C>["criteria"],
             facets: selectedFacets || {},
             group: groupingKey || "",
-            skip: isScroll && list.length || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
+            skip: (isScroll && list.length) || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
             sortDesc: sortAsc === undefined ? false : !sortAsc,
             sortFieldName: sortBy,
             top
@@ -232,7 +251,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         this.pendingCount++;
 
-         // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
+        // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
         if (!isScroll) {
             this.selectedList.clear();
         }
@@ -266,7 +285,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.selectedFacets = props.selectedFacets || this.selectedFacets;
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
-        this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy as keyof T : this.sortBy;
+        this.sortBy = props.hasOwnProperty("sortBy") ? (props.sortBy as keyof T) : this.sortBy;
         this.query = props.query || this.query;
         this.top = props.top || this.top;
     }
@@ -291,7 +310,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             },
             get list() {
                 const resultGroup = store.groups.find(result => result.code === groupCode);
-                return resultGroup && resultGroup.list || [];
+                return (resultGroup && resultGroup.list) || [];
             }
         } as ListStoreBase<T>;
 
@@ -299,8 +318,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
         searchGroupStore.toggleAll = action(() => {
-            const areAllItemsIn = selectionnableList.get()
-                .every(item => store.selectedItems.has(item));
+            const areAllItemsIn = selectionnableList.get().every(item => store.selectedItems.has(item));
 
             searchGroupStore.list.forEach(item => {
                 if (store.selectedItems.has(item)) {
@@ -313,8 +331,9 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             }
         });
 
-        const selectedItems = computed(() =>
-            new Set(store.selectedList.filter(item => searchGroupStore.list.find(i => i === item))));
+        const selectedItems = computed(
+            () => new Set(store.selectedList.filter(item => searchGroupStore.list.find(i => i === item)))
+        );
 
         const selectionStatus = computed(() => {
             if (selectedItems.get().size === 0) {

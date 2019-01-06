@@ -8,13 +8,15 @@ import {getIcon} from "./icon";
 const Button = Tooltip(IconButton);
 
 /** Affiche un bouton pour ouvrir le centre d'aide. */
-export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string, i18nPrefix?: string}) {
+export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string; i18nPrefix?: string}) {
     const {hash, pathname} = window.location;
-    const url = hash && hash.replace("#", "") || pathname;
+    const url = (hash && hash.replace("#", "")) || pathname;
     const {openHelpCenter} = window as any;
 
     if (typeof openHelpCenter !== "function") {
-        console.warn("La fonction \"window.openHelpCenter\" n'est pas définie. Merci de placer quelque part dans l'application une \"DraggableIframe\" avec \"openHelpCenter\" comme \"toggleFunctionName\"");
+        console.warn(
+            'La fonction "window.openHelpCenter" n\'est pas définie. Merci de placer quelque part dans l\'application une "DraggableIframe" avec "openHelpCenter" comme "toggleFunctionName"'
+        );
     }
 
     return (

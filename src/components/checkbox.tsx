@@ -11,7 +11,6 @@ export interface CheckboxProps extends RTCheckboxProps {
 
 /** Surcharge de la Checkbox de React-Toolbox pour utilisation avec un <Field> */
 export function Checkbox(props: CheckboxProps) {
-
     // On remplace `value` par `checked`.
     const rtProps = {...props, checked: props.value !== undefined ? props.value : props.checked};
 

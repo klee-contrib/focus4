@@ -28,7 +28,6 @@ declare module "react-toolbox/lib/date_picker/Calendar" {
 }
 
 declare module "react-toolbox/lib/time_picker/Clock" {
-
     interface ClockProps {
         display?: "hours" | "minutes";
         format?: "24hr" | "ampm";
@@ -71,7 +70,7 @@ declare module "inputmask-core" {
         getRawValue(): string | undefined;
         getValue(): string | undefined;
 
-        setPattern(pattern: string, options?: {selection?: InputMaskSelection, value?: string | undefined}): void;
+        setPattern(pattern: string, options?: {selection?: InputMaskSelection; value?: string | undefined}): void;
         setSelection(selection: InputMaskSelection): void;
         setValue(value: string | undefined): void;
 

@@ -35,7 +35,6 @@ export interface PopinProps {
 @autobind
 @observer
 export class Popin extends React.Component<PopinProps, void> {
-
     /** ID du timeout d'ouverture/fermeture en cours. */
     private openTimeoutID: any;
 
@@ -72,7 +71,7 @@ export class Popin extends React.Component<PopinProps, void> {
     private toggleOpen(opened: boolean) {
         if (opened) {
             this.willOpen = true;
-            this.openTimeoutID = setTimeout(() => this.willOpen = false, 200); // La popin s'ouvre en 200ms.
+            this.openTimeoutID = setTimeout(() => (this.willOpen = false), 200); // La popin s'ouvre en 200ms.
             this.opened = true;
             this.hideBodyOverflow();
         } else {
@@ -140,31 +139,42 @@ export class Popin extends React.Component<PopinProps, void> {
     }
 
     render() {
-        const {i18nPrefix = "focus", level = 0, children, closePopin, theme, type = "from-right", preventOverlayClick} = this.props;
+        const {
+            i18nPrefix = "focus",
+            level = 0,
+            children,
+            closePopin,
+            theme,
+            type = "from-right",
+            preventOverlayClick
+        } = this.props;
         const {open, close} = this.animations;
-        return this.opened ?
+        return this.opened ? (
             <Portal>
                 <div
-                    className={`${theme!.overlay} ${this.willClose ? theme!.fadeOut : this.willOpen ? theme!.fadeIn : ""}`}
-                    onClick={!preventOverlayClick && closePopin || undefined}
+                    className={`${theme!.overlay} ${
+                        this.willClose ? theme!.fadeOut : this.willOpen ? theme!.fadeIn : ""
+                    }`}
+                    onClick={(!preventOverlayClick && closePopin) || undefined}
                     style={level > 0 ? {background: "none"} : {}}
                 >
-                    {!this.willOpen ?
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
-                            onClick={closePopin}
-                        />
-                    : null}
+                    {!this.willOpen ? (
+                        <IconButton icon={getIcon(`${i18nPrefix}.icons.popin.close`)} onClick={closePopin} />
+                    ) : null}
                 </div>
                 <div
                     data-level={level}
-                    className={`${theme!.popin} ${type === "from-right" ? theme!.right : type === "from-left" ? theme!.left : ""} ${this.willClose ? close : this.willOpen ? open : ""}`}
+                    className={`${theme!.popin} ${
+                        type === "from-right" ? theme!.right : type === "from-left" ? theme!.left : ""
+                    } ${this.willClose ? close : this.willOpen ? open : ""}`}
                     onClick={e => e.stopPropagation()}
                 >
                     {children}
                 </div>
             </Portal>
-        : <div />;
+        ) : (
+            <div />
+        );
     }
 }
 

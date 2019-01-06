@@ -24,7 +24,6 @@ export interface TableProps<T> extends ListBaseProps<T> {
 @autobind
 @observer
 export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> extends ListBase<T, P> {
-
     /** Les données. */
     protected get data() {
         return (this.props as any).data || [];
@@ -35,11 +34,9 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
         return (
             <thead>
                 <tr>
-                    {values(this.props.columns)
-                        .map(col => (
-                            <th key={col}>{i18next.t(col)}</th>
-                        ))
-                    }
+                    {values(this.props.columns).map(col => (
+                        <th key={col}>{i18next.t(col)}</th>
+                    ))}
                 </tr>
             </thead>
         );
@@ -48,13 +45,17 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
     /** Affiche le corps du tableau. */
     private renderTableBody() {
         const {lineTheme, itemKey, RowComponent} = this.props;
-        const Line = LineWrapper as new() => LineWrapper<T>;
+        const Line = LineWrapper as new () => LineWrapper<T>;
 
         return (
             <tbody>
                 {this.displayedData.map((item, idx) => (
                     <Line
-                        key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
+                        key={
+                            (itemKey && item[itemKey] && (item[itemKey] as any).value) ||
+                            (itemKey && item[itemKey]) ||
+                            idx
+                        }
                         theme={lineTheme}
                         data={item}
                         LineComponent={RowComponent}

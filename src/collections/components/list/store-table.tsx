@@ -27,7 +27,6 @@ export interface StoreTableProps<T> extends TableProps<T> {
 @autobind
 @observer
 export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
-
     /** Les données. */
     @computed
     protected get data() {
@@ -43,7 +42,7 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
     /** Correspond aux données chargées mais non affichées. */
     @computed
     private get hasMoreHidden() {
-        return this.displayedCount && this.data.length > this.displayedCount || false;
+        return (this.displayedCount && this.data.length > this.displayedCount) || false;
     }
 
     /** Correpond aux données non chargées. */
@@ -66,38 +65,50 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
         if (isSearch(store)) {
             return i18next.t(`${i18nPrefix}.list.show.more`);
         } else {
-            return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${this.data.length} ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+            return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
+                this.data.length
+            } ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
         }
     }
 
     /** On modifie le header pour y ajouter les boutons de tri. */
     protected renderTableHeader() {
-        const {columns, i18nPrefix = "focus", sortableColumns = [], store: {sortAsc, sortBy}} = this.props;
+        const {
+            columns,
+            i18nPrefix = "focus",
+            sortableColumns = [],
+            store: {sortAsc, sortBy}
+        } = this.props;
         return (
             <thead>
                 <tr>
-                    {Object.keys(columns)
-                        .map(col => (
-                            <th key={col}>
-                                <div style={{display: "flex", alignItems: "center", marginBottom: sortableColumns.find(c => c === col) ? -3 : 0}}>
-                                    <div>{i18next.t(columns[col])}</div>
-                                    {sortableColumns.find(c => c === col) ?
-                                        <div style={{marginLeft: 3, display: "flex"}}>
-                                            <IconButton
-                                                disabled={sortAsc && sortBy === col}
-                                                onClick={() => this.sort(col, true)}
-                                                icon={getIcon(`${i18nPrefix}.icons.table.sortAsc`)}
-                                            />
-                                            <IconButton
-                                                disabled={!sortAsc && sortBy === col}
-                                                onClick={() => this.sort(col, false)}
-                                                icon={getIcon(`${i18nPrefix}.icons.table.sortDesc`)}
-                                            />
-                                        </div>
-                                    : null}
-                                </div>
-                            </th>
-                        ))}
+                    {Object.keys(columns).map(col => (
+                        <th key={col}>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginBottom: sortableColumns.find(c => c === col) ? -3 : 0
+                                }}
+                            >
+                                <div>{i18next.t(columns[col])}</div>
+                                {sortableColumns.find(c => c === col) ? (
+                                    <div style={{marginLeft: 3, display: "flex"}}>
+                                        <IconButton
+                                            disabled={sortAsc && sortBy === col}
+                                            onClick={() => this.sort(col, true)}
+                                            icon={getIcon(`${i18nPrefix}.icons.table.sortAsc`)}
+                                        />
+                                        <IconButton
+                                            disabled={!sortAsc && sortBy === col}
+                                            onClick={() => this.sort(col, false)}
+                                            icon={getIcon(`${i18nPrefix}.icons.table.sortDesc`)}
+                                        />
+                                    </div>
+                                ) : null}
+                            </div>
+                        </th>
+                    ))}
                 </tr>
             </thead>
         );

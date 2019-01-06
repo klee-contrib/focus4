@@ -12,7 +12,6 @@ import {requestStore} from "./store";
  * @param data Le corps du message.
  */
 export async function coreFetch(url: string, options: RequestInit): Promise<any> {
-
     // On crée la requête dans le store de requête.
     const id = v4();
     requestStore.updateRequest({id, url, status: "pending"});
@@ -21,7 +20,8 @@ export async function coreFetch(url: string, options: RequestInit): Promise<any>
     try {
         const response = await window.fetch(url, options);
 
-        if (response.status >= 200 && response.status < 300) { // Retour en succès.
+        if (response.status >= 200 && response.status < 300) {
+            // Retour en succès.
 
             // On met à jour en succès la requête dans le store.
             requestStore.updateRequest({id, url, status: "success"});
@@ -33,7 +33,8 @@ export async function coreFetch(url: string, options: RequestInit): Promise<any>
             } else {
                 return await response.text();
             }
-        } else { // Retour en erreur
+        } else {
+            // Retour en erreur
 
             // On met à jour en erreur la requête dans le store.
             requestStore.updateRequest({id, url, status: "error"});
@@ -41,17 +42,18 @@ export async function coreFetch(url: string, options: RequestInit): Promise<any>
             // On détermine le type de retour en fonction du Content-Type dans le header.
             const contentType = response.headers.get("Content-Type");
             if (contentType && contentType.includes("application/json")) {
-
                 // Pour une erreur JSON, on la parse pour trouver et enregistrer les erreurs "attendues".
-                return Promise.reject<ManagedErrorResponse>(manageResponseErrors(response.status, await response.json()));
+                return Promise.reject<ManagedErrorResponse>(
+                    manageResponseErrors(response.status, await response.json())
+                );
             } else {
-
                 // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).
                 console.error(`${response.status} error when calling ${url}`);
                 return Promise.reject<string>(await response.text());
             }
         }
-    } catch (error) { // Requête en erreur (= pas de retour serveur).
+    } catch (error) {
+        // Requête en erreur (= pas de retour serveur).
         requestStore.updateRequest({id, url, status: "error"});
         console.error(`"${error.message}" error when calling ${url}`);
         return Promise.reject(error);

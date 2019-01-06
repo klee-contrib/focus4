@@ -49,14 +49,10 @@ export type EntityStoreNode = StoreNode & {
 export type EntityStoreItem = EntityStoreNode | StoreListNode<EntityStoreNode>;
 
 /** Type du mapping noeud <-> nom d'entité. */
-export type EntityMapping<T> = {
-    [P in keyof T]?: string;
-};
+export type EntityMapping<T> = {[P in keyof T]?: string};
 
 /** Mapping pour convertir les noeuds de listes en listes. */
-export type AsStoreListNode<T extends {[key: string]: StoreNode}> = {
-    [P in keyof T]: StoreListNode<T[P]>;
-};
+export type AsStoreListNode<T extends {[key: string]: StoreNode}> = {[P in keyof T]: StoreListNode<T[P]>};
 
 /** Config du store. */
 export interface EntityStoreConfig {
@@ -74,21 +70,30 @@ type EntityStore = EntityStoreConfig & StoreNode<EntityStoreConfig>;
  * @param entityList La liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
  * @param entityMapping Un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
  */
-export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extends {[key: string]: StoreNode}>(simpleNodes: T1, listNodes: T2, entityList: Entity[], entityMapping: EntityMapping<T1 & T2> = {} as any): T1 & AsStoreListNode<T2> & StoreNode<Record<keyof T1, {}> & Record<keyof T2, {}[]>> {
-
+export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extends {[key: string]: StoreNode}>(
+    simpleNodes: T1,
+    listNodes: T2,
+    entityList: Entity[],
+    entityMapping: EntityMapping<T1 & T2> = {} as any
+): T1 & AsStoreListNode<T2> & StoreNode<Record<keyof T1, {}> & Record<keyof T2, {}[]>> {
     // On construit une config unique pour les noeuds simples ({}) et les noeuds de listes ([]).
-    const config = {...(simpleNodes as any), ...mapValues(listNodes, _ => [] as any[]) as any} as EntityStoreConfig;
+    const config = {...(simpleNodes as any), ...(mapValues(listNodes, _ => [] as any[]) as any)} as EntityStoreConfig;
 
     // On construit une map avec les entités à partir de la liste fournie.
-    const entityMap = entityList.reduce((entities, entity) => {
-        entities[entity.name] = entity;
-        return entities;
-    }, {} as {[name: string]: Entity});
+    const entityMap = entityList.reduce(
+        (entities, entity) => {
+            entities[entity.name] = entity;
+            return entities;
+        },
+        {} as {[name: string]: Entity}
+    );
 
     // On vérifie qu'il ne manque pas d'entité.
     for (const entry in config) {
-        if (isEmpty(config[entry]) && !entityMap[entityMapping[entry as keyof T1 & T2] as string || entry]) {
-            throw new Error(`La propriété "${entry}" n'a pas été trouvée dans la liste d'entités. Vous manque-t'il une correspondance ?`);
+        if (isEmpty(config[entry]) && !entityMap[(entityMapping[entry as keyof T1 & T2] as string) || entry]) {
+            throw new Error(
+                `La propriété "${entry}" n'a pas été trouvée dans la liste d'entités. Vous manque-t'il une correspondance ?`
+            );
         }
     }
 
@@ -98,8 +103,9 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
     for (const entry in config) {
         if (isEmpty(config[entry])) {
             entityStore[entry] = buildEntityEntry(config, entityMap, entityMapping, entry);
-        } else { // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
-            entityStore[entry] =  config[entry];
+        } else {
+            // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
+            entityStore[entry] = config[entry];
         }
     }
 
@@ -135,7 +141,12 @@ export function makeEntityStore<T1 extends {[key: string]: StoreNode}, T2 extend
  * @param entityMapping Le mapping éventuel entre le nom de l'entrée et l'entité associée.
  * @param entry Le nom de l'entrée.
  */
-export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStoreConfig, entityMap: {[name: string]: Entity}, entityMapping: EntityMapping<T>, entry: string): EntityStoreItem {
+export function buildEntityEntry<T extends EntityStoreConfig>(
+    config: EntityStoreConfig,
+    entityMap: {[name: string]: Entity},
+    entityMapping: EntityMapping<T>,
+    entry: string
+): EntityStoreItem {
     const entity = config[entry]; // {} ou [] selon que l'entrée soit une liste ou pas.
     const trueEntry = entityMapping[entry] || entry; // On récupère le nom de l'entité.
 
@@ -144,25 +155,41 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
         const outputEntry: StoreListNode<EntityStoreNode> = observable([]) as any;
         outputEntry.$entity = entityMap[trueEntry];
         outputEntry.pushNode = action(function pushNode(this: typeof outputEntry, item: {}) {
-            const itemNode = buildEntityEntry({[trueEntry]: {}} as EntityStoreConfig, {...entityMap, item: entity.$entity}, entityMapping, trueEntry) as EntityStoreNode;
+            const itemNode = buildEntityEntry(
+                {[trueEntry]: {}} as EntityStoreConfig,
+                {...entityMap, item: entity.$entity},
+                entityMapping,
+                trueEntry
+            ) as EntityStoreNode;
             itemNode.set(item);
             this.push(itemNode);
         });
-        outputEntry.set = action(function set(this: typeof outputEntry, values: {}[]) { setEntityEntry(this, entityMap, entityMapping, values, trueEntry); });
+        outputEntry.set = action(function set(this: typeof outputEntry, values: {}[]) {
+            setEntityEntry(this, entityMap, entityMapping, values, trueEntry);
+        });
         return outputEntry;
     }
 
     // Cas d'une entrée simple : On parcourt tous les champs de l'entité.
-    return observable({
+    return (observable({
         ...mapValues(entityMap[trueEntry].fields, (v, key) => {
             // Cas d'un champ composé ou liste.
             if (!isFieldEntry(v)) {
                 // On vérifie que l'entité de ce champ est bien dans la liste.
                 if (v.entityName && !entityMap[v.entityName]) {
-                    throw new Error(`L'entité "${trueEntry}" dépend de l'entité "${v.entityName}" qui n'a pas été trouvée dans la liste.`);
+                    throw new Error(
+                        `L'entité "${trueEntry}" dépend de l'entité "${
+                            v.entityName
+                        }" qui n'a pas été trouvée dans la liste.`
+                    );
                 }
                 // Et on construit le champ de manière récursive.
-                return buildEntityEntry({[v.entityName]: v.type === "list" ? [] : {}} as EntityStoreConfig, entityMap, entityMapping, v.entityName);
+                return buildEntityEntry(
+                    {[v.entityName]: v.type === "list" ? [] : {}} as EntityStoreConfig,
+                    entityMap,
+                    entityMapping,
+                    v.entityName
+                );
             }
 
             // On s'assure que les métadonnées du champ ne soient pas observables.
@@ -171,9 +198,13 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
                 value: undefined
             };
         }),
-        set: action(function set(this: EntityStoreNode, entityValue: any) { setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry); }),
-        clear: action(function clear(this: EntityStoreNode) { clearEntity(this); })
-    }) as any as EntityStoreNode;
+        set: action(function set(this: EntityStoreNode, entityValue: any) {
+            setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry);
+        }),
+        clear: action(function clear(this: EntityStoreNode) {
+            clearEntity(this);
+        })
+    }) as any) as EntityStoreNode;
 }
 
 /**
@@ -184,13 +215,28 @@ export function buildEntityEntry<T extends EntityStoreConfig>(config: EntityStor
  * @param entityValue La valeur de l'entrée.
  * @param entry Le nom de l'entrée.
  */
-function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, entityMap: {[name: string]: Entity}, entityMapping: EntityMapping<T>, entityValue: any, entry: string) {
-
+function setEntityEntry<T extends EntityStoreConfig>(
+    entity: EntityStoreItem,
+    entityMap: {[name: string]: Entity},
+    entityMapping: EntityMapping<T>,
+    entityValue: any,
+    entry: string
+) {
     // Cas du noeud liste.
     if (isStoreListNode(entity)) {
         if (isArray(entityValue)) {
             // On vide l'array existant et on construit une entrée par valeur de la liste dans l'entrée.
-            entity.replace(entityValue.map((_: {}) => buildEntityEntry({[entry]: {}} as EntityStoreConfig, {...entityMap, [entry]: entity.$entity}, entityMapping, entry) as EntityStoreNode));
+            entity.replace(
+                entityValue.map(
+                    (_: {}) =>
+                        buildEntityEntry(
+                            {[entry]: {}} as EntityStoreConfig,
+                            {...entityMap, [entry]: entity.$entity},
+                            entityMapping,
+                            entry
+                        ) as EntityStoreNode
+                )
+            );
 
             // Puis on remplit chaque entrée avec la valeur.
             for (let i = 0; i < entityValue.length; i++) {
@@ -198,7 +244,7 @@ function setEntityEntry<T extends EntityStoreConfig>(entity: EntityStoreItem, en
             }
         }
 
-    // Cas du noeud simple.
+        // Cas du noeud simple.
     } else {
         // On affecte chaque valeur de l'entrée avec la valeur demandée, et on réappelle `setEntityEntry` si la valeur n'est pas primitive.
         for (const item in entityValue) {
@@ -229,11 +275,14 @@ function clearEntity(entity: EntityStoreItem) {
         // Cas de l'entrée simple, on parcourt chaque champ.
         for (const entry in entity) {
             const entryItem = entity[entry];
-            if (isStoreListNode(entryItem)) { // Cas noeud de liste -> on vide la liste.
+            if (isStoreListNode(entryItem)) {
+                // Cas noeud de liste -> on vide la liste.
                 entryItem.clear();
-            } else if (isStoreNode(entryItem)) { // Cas noeud de store -> `clearEntity`.
+            } else if (isStoreNode(entryItem)) {
+                // Cas noeud de store -> `clearEntity`.
                 clearEntity(entryItem as EntityStoreNode);
-            } else if (entryItem.value !== undefined) { // Cas primitive -> on met à `undefined`.
+            } else if (entryItem.value !== undefined) {
+                // Cas primitive -> on met à `undefined`.
                 entryItem.value = undefined;
             }
         }
@@ -252,17 +301,23 @@ export function toFlatValues(entityStoreItem: StoreNode | StoreListNode): {} | {
         return entityStoreItem.map(toFlatValues);
     } else {
         // Cas entrée simple : on parcourt chaque champ et on enlève les valeurs `undefined`.
-        return omitBy(mapValues(entityStoreItem, (item: EntityStoreNodeItem) => {
-            if (isStoreListNode(item)) { // Cas entrée liste -> `toFlatValues` sur chaque élément.
-                return item.map(toFlatValues);
-            } else if (isStoreNode(item)) { // Cas entrée simple -> `toFlatValues`.
-                return toFlatValues(item);
-            } else if (isObservableArray(item.value)) { // Cas array de primitive -> array simple.
-                return item.value.slice();
-            } else {
-                return item.value; // Sinon, on renvoie la valeur.
-            }
-        }), isUndefined);
+        return omitBy(
+            mapValues(entityStoreItem, (item: EntityStoreNodeItem) => {
+                if (isStoreListNode(item)) {
+                    // Cas entrée liste -> `toFlatValues` sur chaque élément.
+                    return item.map(toFlatValues);
+                } else if (isStoreNode(item)) {
+                    // Cas entrée simple -> `toFlatValues`.
+                    return toFlatValues(item);
+                } else if (isObservableArray(item.value)) {
+                    // Cas array de primitive -> array simple.
+                    return item.value.slice();
+                } else {
+                    return item.value; // Sinon, on renvoie la valeur.
+                }
+            }),
+            isUndefined
+        );
     }
 }
 

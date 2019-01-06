@@ -2,7 +2,6 @@ import {ComponentClass, SFC} from "react";
 
 /** Config Focus de l'application */
 export const config = {
-
     /** Durée de cache par défaut pour les listes de référence. */
     referenceCacheDuration: 3600000, // 1h.
 

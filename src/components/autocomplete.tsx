@@ -8,7 +8,11 @@ import {themr} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 export {ObservableMap};
 
-import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps, AutocompleteTheme} from "react-toolbox/lib/autocomplete";
+import {
+    Autocomplete as RTAutocomplete,
+    AutocompleteProps as RTAutocompleteProps,
+    AutocompleteTheme
+} from "react-toolbox/lib/autocomplete";
 import {InputTheme} from "react-toolbox/lib/input";
 import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
@@ -42,7 +46,6 @@ export interface AutocompleteProps extends RTAutocompleteProps {
 @autobind
 @observer
 export class Autocomplete extends React.Component<AutocompleteProps, void> {
-
     private inputElement!: HTMLInputElement | null;
 
     /** Composant en chargement. */
@@ -58,13 +61,12 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
         if (value && !isQuickSearch && keyResolver) {
-            this.query = i18next.t(await keyResolver(value) || "") || value;
+            this.query = i18next.t((await keyResolver(value)) || "") || value;
         }
     }
 
     componentDidMount() {
-        this.inputElement = findDOMNode(this)
-            .querySelector("input");
+        this.inputElement = findDOMNode(this).querySelector("input");
     }
 
     focus() {
@@ -128,7 +130,12 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
             runInAction(() => {
-                this.values.replace(result && result.data && result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {}) || {});
+                this.values.replace(
+                    (result &&
+                        result.data &&
+                        result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {})) ||
+                        {}
+                );
                 this.isLoading = false;
             });
         }
@@ -153,9 +160,9 @@ export class Autocomplete extends React.Component<AutocompleteProps, void> {
                     maxLength={undefined}
                     suggestionMatch="disabled"
                 />
-                {this.isLoading ?
+                {this.isLoading ? (
                     <ProgressBar type="linear" mode="indeterminate" theme={{linear: props.theme!.progressBar}} />
-                : null}
+                ) : null}
             </div>
         );
     }

@@ -9,18 +9,18 @@ import {LayoutProps, styles} from "./types";
 /** Contenu du Layout. */
 @observer
 export class LayoutContent extends React.Component<LayoutProps, void> {
-
     static contextTypes = {layout: PropTypes.object};
     context!: {
         layout: {
-            contentPaddingTop: number,
-            menuWidth: number
-        }
+            contentPaddingTop: number;
+            menuWidth: number;
+        };
     };
 
     componentDidMount() {
         const paddingTop = window.getComputedStyle(findDOMNode(this)).paddingTop;
-        this.context.layout.contentPaddingTop = paddingTop && paddingTop.endsWith("px") && +paddingTop.replace("px", "") || 0;
+        this.context.layout.contentPaddingTop =
+            (paddingTop && paddingTop.endsWith("px") && +paddingTop.replace("px", "")) || 0;
     }
 
     render() {

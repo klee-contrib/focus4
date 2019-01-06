@@ -25,23 +25,22 @@ export interface TimelineProps<T> extends ListBaseProps<T> {
 @autobind
 @observer
 export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
-
     get data() {
         return this.props.data;
     }
 
     private renderLines() {
         const {lineTheme, itemKey, TimelineComponent, dateSelector} = this.props;
-        return this.displayedData.map((item, idx) =>
+        return this.displayedData.map((item, idx) => (
             <LineWrapper
-                key={itemKey && item[itemKey] && (item[itemKey] as any).value || itemKey && item[itemKey] || idx}
+                key={(itemKey && item[itemKey] && (item[itemKey] as any).value) || (itemKey && item[itemKey]) || idx}
                 theme={lineTheme}
                 data={item}
                 dateSelector={dateSelector}
                 LineComponent={TimelineComponent}
                 type="timeline"
             />
-        );
+        ));
     }
 
     render() {

@@ -36,7 +36,8 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
         return (
             <div className={theme!.facetBox}>
                 <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
-                {store.facets.filter(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
+                {store.facets
+                    .filter(facet => shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets))
                     .map(facet => {
                         if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
                             return (
@@ -51,8 +52,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>, void> {
                         } else {
                             return null;
                         }
-                    })
-                }
+                    })}
             </div>
         );
     }

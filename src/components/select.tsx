@@ -48,14 +48,10 @@ export function Select({
     i18nPrefix = "focus",
     unSelectedLabel = `${i18nPrefix}.select.unselected`
 }: SelectProps) {
-
     // On ajoute l'élément vide si nécessaire.
     let finalValues = values;
     if (hasUndefined) {
-        finalValues = [
-            {[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)},
-            ...values
-        ];
+        finalValues = [{[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)}, ...values];
     }
 
     return (
@@ -69,8 +65,13 @@ export function Select({
                 {finalValues.map((val, idx) => {
                     const optVal = `${(val as any)[valueKey]}`;
                     const elementValue = (val as any)[labelKey];
-                    const optLabel = elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
-                    return <option key={idx} value={optVal}>{i18next.t(optLabel)}</option>;
+                    const optLabel =
+                        elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
+                    return (
+                        <option key={idx} value={optVal}>
+                            {i18next.t(optLabel)}
+                        </option>
+                    );
                 })}
             </select>
             {error ? <div className={theme!.errorLabel}>{error}</div> : null}
