@@ -1,7 +1,7 @@
 import * as React from "react";
-
-import {Button} from "react-toolbox/lib/button";
+import {Button, IconButton} from "react-toolbox/lib/button";
 import {IconMenu, MenuItem, MenuItemProps} from "react-toolbox/lib/menu";
+import Tooltip from "react-toolbox/lib/tooltip";
 
 import {ButtonMenu, getIcon} from "../../../components";
 import {themr} from "../../../theme";
@@ -9,6 +9,9 @@ import {themr} from "../../../theme";
 import * as styles from "./__style__/contextual-actions.css";
 export type ContextualActionsStyle = Partial<typeof styles>;
 const Theme = themr("contextualActions", styles);
+
+const TooltipButton = Tooltip(Button);
+const TooltipIconButton = Tooltip(IconButton);
 
 /** Props passée à un composant d'action custom. */
 export interface OperationListItemComponentProps<T> {
@@ -25,14 +28,12 @@ export type OperationListItem<T> =
     | {
           /** L'action à effectuer. */
           action: (data: T) => void;
-          /** Le libellé du bouton. */
+          /** Le libellé (ou la tooltip) du bouton. */
           label?: string;
           /** L'icône du bouton */
           icon?: React.ReactNode;
-          /** Précise si l'action est secondaire (sera affichée dans une dropdown au lieu de son propre bouton) */
-          isSecondary?: boolean;
-          /** Force l'affichage de l'icône en vue liste (elle est toujours visible en mosaïque) */
-          showIcon?: boolean;
+          /** Type d'affichage pour l'action. Seul "secondary" sera pris en compte pour un mosaïque. Par défaut : "icon-label". */
+          type?: "icon" | "label" | "icon-label" | "icon-tooltip" | "secondary";
       }
     | React.ComponentType<OperationListItemComponentProps<T>>;
 
@@ -79,14 +80,31 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
                 const {customComponents, primaryActions, secondaryActions} = actionLists;
                 if (isComponent(Operation)) {
                     customComponents.push(<Operation data={data} onClickMenu={onClickMenu} onHideMenu={onHideMenu} />);
-                } else if (!Operation.isSecondary) {
+                } else if (Operation.type !== "secondary") {
+                    const FinalButton =
+                        isMosaic && Operation.label
+                            ? TooltipButton
+                            : (isMosaic && !Operation.label) || !Operation.type || Operation.type.includes("label")
+                            ? Button
+                            : Operation.type === "icon"
+                            ? IconButton
+                            : TooltipIconButton;
                     primaryActions.push(
-                        <Button
-                            primary={isMosaic}
+                        <FinalButton
                             onClick={(e: any) => this.handleAction(key, e)}
-                            icon={(((!isMosaic && Operation.showIcon) || isMosaic) && Operation.icon) || undefined}
+                            icon={
+                                isMosaic || !Operation.type || Operation.type.includes("icon")
+                                    ? Operation.icon
+                                    : undefined
+                            }
                             key={key}
-                            label={(!isMosaic && Operation.label) || undefined}
+                            label={!isMosaic && FinalButton === Button && Operation.label}
+                            tooltip={
+                                FinalButton === TooltipButton || FinalButton === TooltipIconButton
+                                    ? Operation.label
+                                    : undefined
+                            }
+                            primary={isMosaic}
                             floating={isMosaic}
                         />
                     );
