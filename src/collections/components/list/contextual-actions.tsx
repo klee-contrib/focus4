@@ -98,14 +98,14 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
                                     : undefined
                             }
                             key={key}
-                            label={!isMosaic && FinalButton === Button && Operation.label}
+                            label={(!isMosaic && FinalButton === Button && Operation.label) || undefined}
                             tooltip={
                                 FinalButton === TooltipButton || FinalButton === TooltipIconButton
                                     ? Operation.label
                                     : undefined
                             }
                             primary={isMosaic}
-                            floating={isMosaic}
+                            floating={isMosaic ? true : undefined}
                         />
                     );
                 } else if (Operation.label) {
