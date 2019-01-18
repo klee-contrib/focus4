@@ -97,10 +97,10 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Liste des éléments sélectionnés par le drag and drop. */
     protected readonly draggedItems = observable<T>([]);
 
-    /** LineWrapper avec la DragSource, pour une liste avec drag and drop. */
-    private readonly DraggableLineWrapper = this.props.hasDragAndDrop
-        ? addDragSource<T>(this.props.dragItemType || "item", LineWrapper)
-        : undefined;
+    /** LineWrapper (avec la DragSource, pour une liste avec drag and drop). */
+    private readonly LineWrapper = this.props.hasDragAndDrop
+        ? (addDragSource<T>(this.props.dragItemType || "item", LineWrapper) as typeof LineWrapper)
+        : LineWrapper;
 
     // Tuyauterie pour maintenir `byLine` à jour.
     componentDidMount() {
@@ -178,23 +178,19 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
      * Transforme les données en éléments de liste.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentType<LineProps<T>>) {
+    protected getItems(Component: React.ComponentType<LineProps<T>>): LineWrapperProps<T>[] {
         const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, operationList, hasDragAndDrop} = this.props;
-
         return this.displayedData.map((item, idx) => ({
-            Component: (this.DraggableLineWrapper || LineWrapper) as typeof LineWrapper,
-            props: {
-                key: itemKey(item, idx),
-                data: item,
-                disableDragAnimation: this.disableDragAnimation,
-                draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
-                i18nPrefix,
-                mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
-                LineComponent: Component,
-                openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
-                operationList,
-                theme: lineTheme
-            } as LineWrapperProps<T>
+            key: itemKey(item, idx),
+            data: item,
+            disableDragAnimation: this.disableDragAnimation,
+            draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
+            i18nPrefix,
+            mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
+            LineComponent: Component,
+            openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
+            operationList,
+            theme: lineTheme
         }));
     }
 
@@ -223,7 +219,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         }
 
         /* On récupère les items de la liste. */
-        const items = this.getItems(Component).map(({Component: C, props}) => <C {...props} />);
+        const items = this.getItems(Component).map(props => <this.LineWrapper {...props} />);
 
         /* On regarde si le composant de détail doit être ajouté. */
         if (DetailComponent && this.displayedIdx !== undefined) {

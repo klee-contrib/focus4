@@ -100,4 +100,4 @@ Ce module propose une base de store utilisateur, pour y stocker les données de 
 
 ## Module `util`
 
-Ce module contient deux décorateurs `@classAutorun` et `@classReaction` pour créer un `autorun`/`reaction` sur une méthode de classe React (en attendant que ça soit nativement supporté par MobX ?).
+Ce module contient deux décorateurs `@classAutorun` et `@classReaction` pour créer un `autorun`/`reaction` sur une méthode de classe React (MobX met maintenant à disposition `@disposeOnUnmount` mais il se pose sur des réactions créées dans le constructeur, ce qui est moins souple).

@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {action, computed, observable} from "mobx";
+import {action, computed, observable, reaction} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
@@ -34,7 +34,14 @@ export interface ListBaseProps<T> {
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
 export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P> {
     /** Nombre d'éléments affichés. */
-    @observable displayedCount = this.props.perPage;
+    @observable displayedCount?: number;
+
+    /** (Ré)initialise la pagination dès que les données changent. */
+    protected countResetter = reaction(
+        () => this.data.map(this.props.itemKey),
+        () => (this.displayedCount = this.props.perPage),
+        {fireImmediately: true, compareStructural: true}
+    );
 
     /** Les données. */
     protected abstract get data(): T[];
@@ -80,6 +87,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     componentWillUnmount() {
+        this.countResetter();
         if (this.shouldAttachScrollListener) {
             this.detachScrollListener();
         }
