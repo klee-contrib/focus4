@@ -38,8 +38,8 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
     }
 
     protected get shouldAttachScrollListener() {
-        const {isManualFetch, store} = this.props;
-        return !isManualFetch && isSearch(store);
+        const {isManualFetch, store, perPage} = this.props;
+        return !isManualFetch && (isSearch(store) || !!perPage);
     }
 
     /** Correspond aux données chargées mais non affichées. */
@@ -80,13 +80,10 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      */
     protected getItems(Component: React.ComponentType<LineProps<T>>) {
         const {hasSelection = false, store} = this.props;
-        return super.getItems(Component).map(({Component: C, props}) => ({
-            Component: C,
-            props: {
-                ...props,
-                hasSelection,
-                store
-            }
+        return super.getItems(Component).map(props => ({
+            ...props,
+            hasSelection,
+            store
         }));
     }
 

@@ -1,6 +1,6 @@
 import i18next from "i18next";
-import {action, computed, observable} from "mobx";
-import {observer} from "mobx-react";
+import {action, autorun, comparer, computed, observable, reaction} from "mobx";
+import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 import {IconButton} from "react-toolbox/lib/button";
@@ -9,7 +9,6 @@ import {FontIcon} from "react-toolbox/lib/font_icon";
 import {getIcon} from "../../../components";
 import {config} from "../../../config";
 import {themr} from "../../../theme";
-import {classAutorun, classReaction} from "../../../util";
 
 import {ListStoreBase} from "../../store";
 import {OperationListItem} from "./contextual-actions";
@@ -97,10 +96,17 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Liste des éléments sélectionnés par le drag and drop. */
     protected readonly draggedItems = observable<T>([]);
 
-    /** LineWrapper avec la DragSource, pour une liste avec drag and drop. */
-    private readonly DraggableLineWrapper = this.props.hasDragAndDrop
-        ? addDragSource<T>(this.props.dragItemType || "item", LineWrapper)
-        : undefined;
+    /** LineWrapper (avec la DragSource, pour une liste avec drag and drop). */
+    private readonly LineWrapper = this.props.hasDragAndDrop
+        ? (addDragSource<T>(this.props.dragItemType || "item", LineWrapper) as typeof LineWrapper)
+        : LineWrapper;
+
+    /** Met à jour `byLine`. */
+    private updateByLine = () => {
+        if (this.ulRef) {
+            this.byLine = this.mode === "mosaic" ? Math.floor(this.ulRef.clientWidth / (this.mosaic.width + 10)) : 1;
+        }
+    };
 
     // Tuyauterie pour maintenir `byLine` à jour.
     componentDidMount() {
@@ -113,19 +119,21 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         window.removeEventListener("resize", this.updateByLine);
     }
 
-    /** Met à jour `byLine`. */
-    @classAutorun
-    protected readonly updateByLine = () => {
-        if (this.ulRef) {
-            this.byLine = this.mode === "mosaic" ? Math.floor(this.ulRef.clientWidth / (this.mosaic.width + 10)) : 1;
-        }
-    };
+    @disposeOnUnmount
+    protected byLineUpdater = autorun(this.updateByLine);
+
+    /** Ferme le détail. */
+    @action.bound
+    closeDetail() {
+        this.displayedIdx = undefined;
+    }
 
     /** Réaction pour fermer le détail si la liste change. */
-    @classReaction((that: List<any, any>) => () => that.displayedData.length)
-    protected readonly closeDetail = () => {
-        this.displayedIdx = undefined;
-    };
+    @disposeOnUnmount
+    protected detailCloser = reaction(() => this.displayedData.map(this.props.itemKey), this.closeDetail, {
+        fireImmediately: true,
+        equals: comparer.structural
+    });
 
     /** Handler d'ajout d'élément (fusion contexte / props). */
     @computed
@@ -178,23 +186,19 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
      * Transforme les données en éléments de liste.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentType<LineProps<T>>) {
+    protected getItems(Component: React.ComponentType<LineProps<T>>): LineWrapperProps<T>[] {
         const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, operationList, hasDragAndDrop} = this.props;
-
         return this.displayedData.map((item, idx) => ({
-            Component: (this.DraggableLineWrapper || LineWrapper) as typeof LineWrapper,
-            props: {
-                key: itemKey(item, idx),
-                data: item,
-                disableDragAnimation: this.disableDragAnimation,
-                draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
-                i18nPrefix,
-                mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
-                LineComponent: Component,
-                openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
-                operationList,
-                theme: lineTheme
-            } as LineWrapperProps<T>
+            key: itemKey(item, idx),
+            data: item,
+            disableDragAnimation: this.disableDragAnimation,
+            draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
+            i18nPrefix,
+            mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
+            LineComponent: Component,
+            openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
+            operationList,
+            theme: lineTheme
         }));
     }
 
@@ -223,7 +227,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         }
 
         /* On récupère les items de la liste. */
-        const items = this.getItems(Component).map(({Component: C, props}) => <C {...props} />);
+        const items = this.getItems(Component).map(props => <this.LineWrapper {...props} />);
 
         /* On regarde si le composant de détail doit être ajouté. */
         if (DetailComponent && this.displayedIdx !== undefined) {
