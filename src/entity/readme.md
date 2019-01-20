@@ -159,9 +159,9 @@ Le sujet n'a pas réellement été abordé jusque ici pour une raison simple : *
 
 Du moins, une propriété `isEdit` peut être ajoutée aux champs, qui sera lue par `fieldFor` et `autocompleteFor`/`selectFor`, mais elle est presque toujours gérée par un noeud de formulaire. En l'absence de cette propriété, il n'est pas possible d'afficher un champ en édition.
 
-La seule façon d'avoir un champ en édition en dehors d'un formulaire est d'utiliser la deuxième définition de `makeField` :
+La seule façon d'avoir un champ en édition (_en dehors d'un formulaire_) est d'utiliser la deuxième définition de `makeField` :
 
-### `makeField(getter, $field, setter, isEdit?)`
+### `makeField(getter, $field, setter, isEdit?)` ou `makeField(field, isEdit)`
 
 -   `getter` est une fonction sans paramètre représant une dérivation qui retourne la valeur.
 -   `setter` est une fonction qui prend la valeur comme paramètre et qui doit se charger de mettre à jour la valeur retournée par le getter.
@@ -214,6 +214,11 @@ Son usage le plus avancé permet également d'effectuer toutes les modifications
 En plus des signatures présentées dans leur chapitre dédié, ces deux fonctions peuvent également accepter des getters pour l'objet de métadonnées ainsi que pour l'état d'édition. Cela permet de dériver des métadonnées d'un autre état (le plus souvent de la valeur d'un autre champ, par exemple pour définir un caractère obligatoire dépendant du fait que l'autre champ soit renseigné ou non), ou bien d'ajouter une condition supplémentaire pour qu'un champ soit en édition.
 
 Une fonction de patch supplémentaire, `patchNodeEdit`, est disponible pour ajouter une condition d'édition sur un sous-noeud tout entier. A noter que, de manière générale, si on ajoute une condition d'édition valant `false` sur un noeud ou un champ, alors ce champ ne sera jamais éditable puisqu'elle sera intersectée avec l'état propre et celui du parent (`false && true && true === false` en somme).
+
+Toutes les fonctions qui accepte un `isEdit` comme paramètre (`makeFormNode`, `makeField`, `patchField` et `patchNodeEdit`) peuvent recevoir soit un booléen (`true`/`false`), ou bien un "getter" de la forme `() => boolean`. Bien que ces deux formes soient similaires, en pratique leur effet est différent :
+
+-   Si on passe un _booléen_, alors il correspondra à la valeur initiale de l'état d'édition du champ/noeud cible
+-   Si on passe un _getter_, alors il s'ajoutera aux conditions d'édition du champ/noeud cible, donc il s'agira d'une condition nécessaire (mais pas suffisante) pour que le champ soit en édition. L'état propre du champ/noeud existera toujours (et est toujours initialisé à `true` comme précisé plus haut).
 
 L'usage de `fromField` est à proscrire dans un noeud de formulaire, car le champ qui sera créé à partir du champ de formulaire initial ne sera plus lié au formulaire (plus de `isEdit`, plus de `error`). A la place, _chaque modification de champ (y compris un simple changement de libellé) doit passer par la fonction d'initialisation_.
 
