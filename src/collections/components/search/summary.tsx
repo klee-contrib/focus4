@@ -2,15 +2,15 @@ import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-
 import {Button} from "react-toolbox/lib/button";
-import {Chip, ChipTheme} from "react-toolbox/lib/chip";
+import {ChipTheme} from "react-toolbox/lib/chip";
 
 import {getIcon} from "../../../components";
 import {FormEntityField} from "../../../entity";
 import {themr} from "../../../theme";
 
 import {SearchStore} from "../../store";
+import {ChipType, SearchChip, SearchChipProps} from "./chip";
 import {removeFacetValue} from "./facet-box";
 
 import * as styles from "./__style__/summary.css";
@@ -21,8 +21,10 @@ const Theme = themr("summary", styles);
 export interface ListSummaryProps<T> {
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
-    /** Permet d'appliquer un style personnalisé à chaque Chip selon son type et ton code. */
-    chipThemer?: (type: "filter" | "facet" | "sort" | "group", code: string) => ChipTheme;
+    /** Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips. */
+    chipKeyResolver?: (type: ChipType, code: string, value: string) => Promise<string | undefined>;
+    /** Passe le style retourné par cette fonction aux chips. */
+    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Handler pour le bouton d'export. */
     exportAction?: () => void;
     /** Masque les critères de recherche. */
@@ -51,7 +53,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
     protected get filterList() {
         const {hideCriteria, hideFacets, store} = this.props;
 
-        const topicList: {type: "facet" | "filter"; key: string; label: string; onDeleteClick: () => void}[] = [];
+        const topicList: (SearchChipProps & {key: string})[] = [];
 
         // On ajoute la liste des critères.
         if (!hideCriteria && store.criteria) {
@@ -61,10 +63,10 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                 topicList.push({
                     type: "filter",
                     key: criteriaKey,
-                    label: `${i18next.t(label)} : ${(domain &&
-                        domain.displayFormatter &&
-                        domain.displayFormatter(value)) ||
-                        value}`,
+                    code: label,
+                    codeLabel: label,
+                    value,
+                    valueLabel: domain && domain.displayFormatter && domain.displayFormatter(value),
                     onDeleteClick: () => {
                         (store.criteria![criteriaKey] as FormEntityField).value = undefined;
                     }
@@ -84,9 +86,10 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                             topicList.push({
                                 type: "facet",
                                 key: `${facetKey}-${facetItem.code}`,
-                                label: `${i18next.t((facetOutput && facetOutput.label) || facetKey)} : ${i18next.t(
-                                    facetItem.label || facetItem.code
-                                )}`,
+                                code: facetOutput.code,
+                                codeLabel: facetOutput.label,
+                                value: facetItem.code,
+                                valueLabel: facetItem.label,
                                 onDeleteClick: () => removeFacetValue(store, facetKey, facetItem.code)
                             })
                         );
@@ -111,7 +114,8 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
     render() {
         const {
             canRemoveSort = true,
-            chipThemer = () => undefined,
+            chipKeyResolver,
+            chipThemer,
             exportAction,
             hideGroup,
             hideSort,
@@ -145,9 +149,13 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                             <div className={theme.chips}>
                                 <span className={theme.sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
                                 {this.filterList.map(chip => (
-                                    <Chip deletable {...chip} theme={chipThemer(chip.type, chip.key)}>
-                                        {chip.label}
-                                    </Chip>
+                                    <SearchChip
+                                        {...chip}
+                                        deletable
+                                        keyResolver={chipKeyResolver}
+                                        showCode
+                                        themer={chipThemer}
+                                    />
                                 ))}
                             </div>
                         ) : null}
@@ -158,13 +166,14 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                                 <span className={theme.sentence}>
                                     {i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}
                                 </span>
-                                <Chip
+                                <SearchChip
+                                    code={groupingKey}
+                                    codeLabel={store.groupingLabel!}
                                     deletable
                                     onDeleteClick={() => (store.groupingKey = undefined)}
-                                    theme={chipThemer("group", groupingKey)}
-                                >
-                                    {i18next.t(store.groupingLabel!)}
-                                </Chip>
+                                    themer={chipThemer}
+                                    type="group"
+                                />
                             </div>
                         ) : null}
 
@@ -174,13 +183,14 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                                 <span className={theme.sentence}>
                                     {i18next.t(`${i18nPrefix}.search.summary.sortBy`)}
                                 </span>
-                                <Chip
+                                <SearchChip
+                                    code={this.currentSort.key}
+                                    codeLabel={this.currentSort.label}
                                     deletable={canRemoveSort}
                                     onDeleteClick={canRemoveSort ? () => (store.sortBy = undefined) : undefined}
-                                    theme={chipThemer("sort", this.currentSort.key)}
-                                >
-                                    {i18next.t(this.currentSort.label)}
-                                </Chip>
+                                    themer={chipThemer}
+                                    type="sort"
+                                />
                             </div>
                         ) : null}
 

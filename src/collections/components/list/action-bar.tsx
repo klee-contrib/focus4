@@ -5,6 +5,7 @@ import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 import {Button, IconButton} from "react-toolbox/lib/button";
+import {ChipTheme} from "react-toolbox/lib/chip";
 import {Input} from "react-toolbox/lib/input";
 
 import {ButtonMenu, getIcon, MenuItem} from "../../../components";
@@ -12,7 +13,7 @@ import {config} from "../../../config";
 import {themr} from "../../../theme";
 
 import {isList, isSearch, ListStoreBase} from "../../store";
-import {FacetBox, shouldDisplayFacet} from "../search";
+import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
 import * as styles from "./__style__/action-bar.css";
@@ -21,6 +22,10 @@ const Theme = themr("actionBar", styles);
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
+    /** Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips. */
+    chipKeyResolver?: (type: ChipType, code: string, value: string) => Promise<string | undefined>;
+    /** Passe le style retourné par cette fonction aux chips. */
+    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Constitution de l'éventuel groupe auquel est lié l'ActionBar */
     group?: {code: string; label: string; totalCount: number};
     /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
@@ -236,6 +241,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 
     render() {
         const {
+            chipKeyResolver,
+            chipThemer,
             group,
             hasFacetBox,
             i18nPrefix = "focus",
@@ -283,10 +290,12 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                                                 onClick={() => (this.displayFacetBox = false)}
                                             />
                                             <FacetBox
-                                                theme={{facetBox: theme.facetBox}}
+                                                chipKeyResolver={chipKeyResolver}
+                                                chipThemer={chipThemer}
                                                 nbDefaultDataList={nbDefaultDataListFacet}
                                                 showSingleValuedFacets={showSingleValuedFacets}
                                                 store={store}
+                                                theme={{facetBox: theme.facetBox}}
                                             />
                                         </PanningDiv>
                                     )}

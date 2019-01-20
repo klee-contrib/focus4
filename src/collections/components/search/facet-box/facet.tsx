@@ -2,13 +2,13 @@ import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themeable} from "react-css-themr";
-import {Chip, ChipTheme} from "react-toolbox/lib/chip";
+import {ChipTheme} from "react-toolbox/lib/chip";
 
 import {Checkbox} from "../../../../components";
 import {themr} from "../../../../theme";
 
 import {FacetOutput, SearchStore} from "../../../store";
+import {ChipType, SearchChip} from "../chip";
 import {addFacetValue, removeFacetValue} from "./utils";
 
 import * as styles from "./__style__/facet.css";
@@ -17,8 +17,10 @@ export const FacetTheme = themr("facet", styles);
 
 /** Props de Facet. */
 export interface FacetProps {
-    /** Permet d'appliquer un style personnalisé à chaque Chip selon code. */
-    chipThemer?: (code: string) => ChipTheme;
+    /** Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips. */
+    chipKeyResolver?: (type: ChipType, code: string, value: string) => Promise<string | undefined>;
+    /** Passe le style retourné par cette fonction aux chips. */
+    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Facette à afficher. */
     facet: FacetOutput;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -37,20 +39,25 @@ export class Facet extends React.Component<FacetProps> {
     @observable protected isShowAll = false;
 
     protected renderFacetDataList(theme: FacetStyle) {
-        const {chipThemer = () => ({}), facet, nbDefaultDataList, store} = this.props;
+        const {chipKeyResolver, chipThemer, facet, nbDefaultDataList, store} = this.props;
         const selectedValues = store.selectedFacets[facet.code] || [];
 
         if (!facet.isMultiSelectable && selectedValues.length === 1) {
             const sfv = facet.values.find(f => f.code === selectedValues[0])!;
             return (
-                <Chip
+                <SearchChip
                     key={sfv.code}
+                    code={facet.code}
+                    codeLabel={facet.label}
                     deletable
-                    onClick={() => removeFacetValue(store, facet.code, sfv.code)}
-                    theme={themeable({chip: theme.chip!}, chipThemer(facet.code))}
-                >
-                    {i18next.t(sfv.label)}
-                </Chip>
+                    onDeleteClick={() => removeFacetValue(store, facet.code, sfv.code)}
+                    keyResolver={chipKeyResolver}
+                    theme={{chip: theme.chip}}
+                    themer={chipThemer}
+                    type="facet"
+                    value={sfv.code}
+                    valueLabel={sfv.label}
+                />
             );
         } else {
             return (
