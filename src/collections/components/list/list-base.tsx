@@ -1,5 +1,6 @@
 import i18next from "i18next";
-import {action, computed, observable, reaction} from "mobx";
+import {isEqual} from "lodash";
+import {action, computed, observable, observe} from "mobx";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
@@ -34,13 +35,23 @@ export interface ListBaseProps<T> {
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
 export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P> {
     /** Nombre d'éléments affichés. */
-    @observable displayedCount?: number;
+    @observable displayedCount = this.props.perPage;
 
-    /** (Ré)initialise la pagination dès que les données changent. */
-    protected countResetter = reaction(
-        () => this.data.map(this.props.itemKey),
-        () => (this.displayedCount = this.props.perPage),
-        {fireImmediately: true, compareStructural: true}
+    /** (Ré)initialise la pagination dès que les données affichées changent. */
+    protected countResetter = observe(
+        (this as any) as {displayedData: T[]},
+        "displayedData",
+        ({oldValue, newValue}) => {
+            if (
+                oldValue!.length > newValue.length ||
+                !isEqual(
+                    oldValue!.map(this.props.itemKey),
+                    newValue!.map(this.props.itemKey).slice(0, oldValue!.length)
+                )
+            ) {
+                this.displayedCount = this.props.perPage;
+            }
+        }
     );
 
     /** Les données. */
