@@ -6,6 +6,7 @@ import {ChipTheme} from "react-toolbox/lib/chip";
 import {themr} from "../../../../theme";
 
 import {FacetOutput, SearchStore} from "../../../store";
+import {ChipType} from "../chip";
 import {Facet, FacetProps, FacetStyle, FacetTheme} from "./facet";
 import {addFacetValue, removeFacetValue, shouldDisplayFacet} from "./utils";
 export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps, FacetStyle};
@@ -16,8 +17,10 @@ const Theme = themr("facetBox", styles);
 
 /** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
-    /** Permet d'appliquer un style personnalisé à chaque Chip selon code. */
-    chipThemer?: (code: string) => ChipTheme;
+    /** Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips. */
+    chipKeyResolver?: (type: ChipType, code: string, value: string) => Promise<string | undefined>;
+    /** Passe le style retourné par cette fonction aux chips. */
+    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: React.ReactType<FacetProps>};
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -41,7 +44,14 @@ export interface FacetBoxProps<T> {
 @observer
 export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
     renderFacet = (facet: FacetOutput) => {
-        const {chipThemer, customFacetComponents = {}, i18nPrefix = "focus", nbDefaultDataList = 6, store} = this.props;
+        const {
+            chipKeyResolver,
+            chipThemer,
+            customFacetComponents = {},
+            i18nPrefix = "focus",
+            nbDefaultDataList = 6,
+            store
+        } = this.props;
         if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
             let FacetComponent: React.ReactType<FacetProps> = Facet;
 
@@ -53,6 +63,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
             return (
                 <FacetComponent
                     key={facet.code}
+                    chipKeyResolver={chipKeyResolver}
                     chipThemer={chipThemer}
                     facet={facet}
                     i18nPrefix={i18nPrefix}

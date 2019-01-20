@@ -19,6 +19,7 @@ import {
     LoadingProps,
     OperationListItem
 } from "../list";
+import {ChipType} from "./chip";
 import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
 import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
@@ -37,8 +38,10 @@ export interface AdvancedSearchProps<T> {
     canOpenDetail?: (data: T) => boolean;
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
-    /** Permet d'appliquer un style personnalisé à chaque Chip selon son type et ton code. */
-    chipThemer?: (type: "filter" | "facet" | "sort" | "group", code: string) => ChipTheme;
+    /** Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips. */
+    chipKeyResolver?: (type: ChipType, code: string, value: string) => Promise<string | undefined>;
+    /** Passe le style retourné par cette fonction aux chips. */
+    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: React.ReactType<FacetProps>};
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
@@ -150,7 +153,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
 
     protected renderFacetBox(theme: AdvancedSearchStyle) {
         const {
-            chipThemer = () => ({}),
+            chipKeyResolver,
+            chipThemer,
             customFacetComponents,
             facetBoxPosition = "left",
             facetBoxTheme,
@@ -165,8 +169,9 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             return (
                 <div className={theme.facetContainer}>
                     <FacetBox
+                        chipKeyResolver={chipKeyResolver}
+                        chipThemer={chipThemer}
                         customFacetComponents={customFacetComponents}
-                        chipThemer={code => chipThemer("facet", code)}
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataList={nbDefaultDataListFacet}
                         sections={facetSections}
@@ -184,6 +189,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     protected renderListSummary() {
         const {
             canRemoveSort,
+            chipKeyResolver,
             chipThemer,
             hideSummaryCriteria,
             hideSummaryFacets,
@@ -197,6 +203,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         return (
             <Summary
                 canRemoveSort={canRemoveSort}
+                chipKeyResolver={chipKeyResolver}
                 chipThemer={chipThemer}
                 i18nPrefix={i18nPrefix}
                 hideCriteria={hideSummaryCriteria}
@@ -213,6 +220,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
     protected renderActionBar() {
         const {
             actionBarTheme,
+            chipKeyResolver,
+            chipThemer,
             facetBoxPosition = "left",
             groupableFacets,
             hasGrouping,
@@ -234,6 +243,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
 
         return (
             <ActionBar
+                chipKeyResolver={chipKeyResolver}
+                chipThemer={chipThemer}
                 groupableFacets={groupableFacets}
                 hasFacetBox={facetBoxPosition === "action-bar"}
                 hasGrouping={hasGrouping}
