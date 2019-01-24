@@ -232,12 +232,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
             /* tslint:disable */ return; /* tslint:enable */
         }
 
-        let {query} = this;
-        const {selectedFacets, groupingKey, sortBy, sortAsc, list, top} = this;
-
-        if (!query || query === "") {
-            query = "*";
-        }
+        const {query, selectedFacets, groupingKey, sortBy, sortAsc, list, top} = this;
 
         const data = {
             criteria: {...this.flatCriteria, query} as QueryInput<C>["criteria"],

@@ -101,7 +101,7 @@ export class ListWrapper extends React.Component<ListWrapperProps> {
                                         tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
                                     />
                                 ) : null}
-                                {!hideAddItemHandler && addItemHandler && mode === "list" ? (
+                                {!hideAddItemHandler && addItemHandler !== lwcInit.addItemHandler && mode === "list" ? (
                                     <Button
                                         onClick={addItemHandler}
                                         icon={getIcon(`${i18nPrefix}.icons.listWrapper.add`)}

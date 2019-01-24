@@ -4,7 +4,6 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {isSearch, ListStoreBase} from "../../store";
-import {LineProps} from "./line";
 import {List, ListProps} from "./list";
 
 /** Props additionnelles pour un StoreList. */
@@ -78,9 +77,9 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      * Quelques props supplémentaires à ajouter pour la sélection.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentType<LineProps<T>>) {
+    protected getItems() {
         const {hasSelection = false, store} = this.props;
-        return super.getItems(Component).map(props => ({
+        return super.getItems().map(props => ({
             ...props,
             hasSelection,
             store
