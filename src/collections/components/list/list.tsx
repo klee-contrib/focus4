@@ -186,8 +186,29 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
      * Transforme les données en éléments de liste.
      * @param Component Le composant de ligne.
      */
-    protected getItems(Component: React.ComponentType<LineProps<T>>): LineWrapperProps<T>[] {
-        const {canOpenDetail = () => true, i18nPrefix, itemKey, lineTheme, operationList, hasDragAndDrop} = this.props;
+    protected getItems(): LineWrapperProps<T>[] {
+        const {
+            DetailComponent,
+            LineComponent,
+            MosaicComponent,
+            canOpenDetail = () => true,
+            i18nPrefix,
+            itemKey,
+            lineTheme,
+            operationList,
+            hasDragAndDrop
+        } = this.props;
+
+        /* On détermine quel composant on utilise. */
+        let Component: React.ComponentType<LineProps<T>>;
+        if (this.mode === "list" && LineComponent) {
+            Component = LineComponent;
+        } else if (this.mode === "mosaic" && MosaicComponent) {
+            Component = MosaicComponent;
+        } else {
+            throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
+        }
+
         return this.displayedData.map((item, idx) => ({
             key: itemKey(item, idx),
             data: item,
@@ -196,7 +217,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
             i18nPrefix,
             mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
             LineComponent: Component,
-            openDetail: canOpenDetail(item) ? () => this.onLineClick(idx) : undefined,
+            openDetail: canOpenDetail(item) && DetailComponent ? () => this.onLineClick(idx) : undefined,
             operationList,
             theme: lineTheme
         }));
@@ -214,20 +235,10 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Construit les lignes de la liste à partir des données, en tenant compte du mode et de l'affichage du détail. */
     @computed
     private get lines() {
-        const {LineComponent, MosaicComponent, DetailComponent, theme} = this.props;
-
-        /* On détermine quel composant on utilise. */
-        let Component;
-        if (this.mode === "list" && LineComponent) {
-            Component = LineComponent;
-        } else if (this.mode === "mosaic" && MosaicComponent) {
-            Component = MosaicComponent;
-        } else {
-            throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
-        }
+        const {DetailComponent, theme} = this.props;
 
         /* On récupère les items de la liste. */
-        const items = this.getItems(Component).map(props => <this.LineWrapper {...props} />);
+        const items = this.getItems().map(props => <this.LineWrapper {...props} />);
 
         /* On regarde si le composant de détail doit être ajouté. */
         if (DetailComponent && this.displayedIdx !== undefined) {
