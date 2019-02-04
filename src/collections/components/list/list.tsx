@@ -273,6 +273,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
     render() {
         const {
+            DetailComponent,
             dragLayerTheme,
             EmptyComponent,
             LoadingComponent,
@@ -314,7 +315,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                             {i18next.t(`${i18nPrefix}.list.add`)}
                                         </li>
                                     ) : null}
-                                    <Transition>{this.lines}</Transition>
+                                    {DetailComponent ? <Transition>{this.lines}</Transition> : this.lines}
                                 </ul>
                             )}
                             {/* Gestion de l'affichage du chargement. */}

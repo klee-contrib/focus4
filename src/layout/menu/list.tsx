@@ -46,7 +46,9 @@ export class MainMenuList extends React.Component<MainMenuListProps> {
                                         className={`${theme.item} ${
                                             typeof item !== "string" &&
                                             typeof item !== "number" &&
-                                            item.props.route === activeRoute
+                                            item &&
+                                            item !== true &&
+                                            (item as React.ReactElement<any>).props.route === activeRoute
                                                 ? theme!.active
                                                 : ""
                                         }`}

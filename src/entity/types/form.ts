@@ -51,11 +51,17 @@ export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
         readonly errors: NodeToErrors<T, U>;
     };
 
+    /** Vide l'objet (récursivement). */
+    clear(): void;
+
     /** Remplace le contenu du noeud par le contenu donné. */
     replace(data: EntityToType<T>): void;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
+
+    /** Met à jour les champs donnés dans le noeud. */
+    set(data: EntityToType<T>): void;
 
     /** StoreNode original. */
     readonly sourceNode: StoreNode<T>;

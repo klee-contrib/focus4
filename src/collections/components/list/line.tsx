@@ -223,14 +223,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
 }
 
 /** On construit un <li> "draggable" qui est la composition de react-pose (animation) et react-dnd */
-const DraggableLi: React.ComponentType<
-    React.HTMLProps<any> & {
-        connectDragSource?: ConnectDragSource;
-        pose: "dragging" | "idle";
-        width?: number;
-        height?: number;
-    }
-> = posed(
+const DraggableLi = posed(
     // react-pose et react-dnd ont tous les deux besoin de la ref sur le <li>, et le premier est le seul qui supporte la forwardRef.
     // Néanmoins, react-dnd fait quand même des choses bizarres avec et ça fait des warnings (qui ont l'air inoffensifs).
     React.forwardRef(({connectDragSource = (x => x) as ConnectDragSource, ...props}: any, ref) =>

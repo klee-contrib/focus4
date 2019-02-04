@@ -273,7 +273,7 @@ export function getNodeForList<T extends Entity>(list: StoreListNode<T>, item: E
         nodeToFormNode<T>(node, isStoreNode<T>(item) ? item : node, list);
     }
     if (isStoreNode<T>(item)) {
-        node.set(toFlatValues(item));
+        node.set(toFlatValues(item) as any); // TODO : régression TS 3.3
     } else {
         node.set(item);
     }
