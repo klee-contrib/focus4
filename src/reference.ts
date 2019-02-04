@@ -7,30 +7,31 @@ import {config} from "./config";
 export type ReferenceLoader = (refName: string) => Promise<{}[]>;
 
 /** Définition d'un type de référence. */
-export interface ReferenceDefinition<T = any> {
+export interface ReferenceDefinition<T = any, VK extends keyof T = any, LK extends keyof T = any> {
     /** Propriété représentant le libellé. */
-    labelKey?: keyof T;
+    labelKey: LK;
     /** Le type de la liste. */
     type: T;
     /** Propriété représentant la valeur. */
-    valueKey?: keyof T;
+    valueKey: VK;
 }
 
-export interface ReferenceList<T = any> extends Array<T> {
+export interface ReferenceList<T = any, VK extends keyof T = any, LK extends keyof T = any> extends Array<T> {
     /** Propriété représentant le libellé. */
-    $labelKey?: keyof T;
+    $labelKey: LK;
     /** Propriété représentant la valeur. */
-    $valueKey?: keyof T;
+    $valueKey: VK;
     /**
      * Obtient le libellé d'un item à partir de la valeur.
      * @param value Valeur de l'item.
-     * @returns Libellé de l'item. Undefined si la valeur est undefined.
      */
-    getLabel(value: string | undefined): string | undefined;
+    getLabel(value: T[VK] | undefined): T[LK] | undefined;
 }
 
 /** Mapping de type pour transformer les types d'entrée en liste de ces même types. */
-export type AsList<T extends Record<string, ReferenceDefinition>> = {[P in keyof T]: ReferenceList<T[P]["type"]>};
+export type AsList<T extends Record<string, ReferenceDefinition>> = {
+    [P in keyof T]: ReferenceList<T[P]["type"], T[P]["valueKey"], T[P]["labelKey"]>
+};
 
 /**
  * Construit un store de référence à partir de la config donnée.
@@ -50,11 +51,12 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
 } {
     const referenceStore: any = {};
     for (const ref in refConfig) {
-        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé, et le résolveur de libellé.
+        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé et le résolveur de libellé.
         referenceStore[`_${ref}`] = observable.array([], {deep: false});
-        referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey;
-        referenceStore[`_${ref}`].$valueKey = refConfig[ref].valueKey;
-        referenceStore[`_${ref}`].getLabel = (value: string | undefined) => getLabel(value, referenceStore[`_${ref}`]);
+        referenceStore[`_${ref}`].$valueKey = refConfig[ref].valueKey || "code";
+        referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey || "label";
+        referenceStore[`_${ref}`].getLabel = (value: any) => getLabel(value, referenceStore[`_${ref}`]);
+
         extendObservable(referenceStore, {
             // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
             [`_${ref}_cache`]: undefined,
@@ -109,10 +111,26 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
  * @param list La liste.
  * @param keys Les clés pour la liste.
  */
-export function makeReferenceList<T>(list: T[], {labelKey, valueKey}: {labelKey?: keyof T; valueKey?: keyof T}) {
-    const newList = [...list] as ReferenceList<T>;
-    newList.$valueKey = valueKey || (list as ReferenceList<T>).$valueKey;
-    newList.$labelKey = labelKey || (list as ReferenceList<T>).$labelKey;
+export function makeReferenceList<T extends {code: any; label: any}>(list: T[]): ReferenceList<T, "code", "label">;
+export function makeReferenceList<T extends {label: any}, VK extends keyof T>(
+    list: T[],
+    {valueKey}: {valueKey: VK}
+): ReferenceList<T, VK, "label">;
+export function makeReferenceList<T extends {code: any}, LK extends keyof T>(
+    list: T[],
+    {labelKey}: {labelKey: LK}
+): ReferenceList<T, "code", LK>;
+export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
+    list: T[],
+    {labelKey, valueKey}: {labelKey: LK; valueKey: VK}
+): ReferenceList<T, VK, LK>;
+export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
+    list: T[],
+    {labelKey, valueKey}: {labelKey?: LK; valueKey?: VK} = {}
+) {
+    const newList = [...list] as ReferenceList<T, VK, LK>;
+    newList.$valueKey = valueKey || (list as ReferenceList<T>).$valueKey || "code";
+    newList.$labelKey = labelKey || (list as ReferenceList<T>).$labelKey || "label";
     newList.getLabel = value => getLabel(value, newList);
     return newList;
 }
@@ -122,13 +140,16 @@ export function makeReferenceList<T>(list: T[], {labelKey, valueKey}: {labelKey?
  * @param value Valeur de l'item.
  * @param list Liste des items
  */
-export function getLabel<T>(value: string | undefined, list: ReferenceList<T>): string | undefined {
+function getLabel<T, VK extends keyof T, LK extends keyof T>(
+    value: T[VK] | undefined,
+    list: ReferenceList<T, VK, LK>
+): T[LK] | undefined {
     if (!value) {
         return undefined;
     }
 
     /* Cherche l'item. */
-    const item = list.find(s => ((s[list.$valueKey!] as any) as string) === value);
+    const item = list.find(s => s[list.$valueKey] === value);
 
     /* Cas où l'item est introuvable. */
     if (!item) {
@@ -136,7 +157,5 @@ export function getLabel<T>(value: string | undefined, list: ReferenceList<T>): 
     }
 
     /* Item trouvé : on extrait le libellé. */
-    const label = (item[list.$labelKey!] as any) as string;
-
-    return label;
+    return item[list.$labelKey];
 }

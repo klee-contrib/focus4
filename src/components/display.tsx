@@ -50,10 +50,10 @@ export class Display extends React.Component<DisplayProps> {
     }
 
     render() {
-        const {valueKey = "code", labelKey = "label", values, value, formatter} = this.props;
+        const {valueKey, labelKey, values, value, formatter} = this.props;
         // tslint:disable-next-line:triple-equals ---> Le "==" est volontaire pour convertir un éventuel ID de type string (comme celui donné par un Select) en number.
-        const ref = values && values.find(v => (v as any)[valueKey] == value);
-        const displayed = (ref && (ref as any)[labelKey]) || this.value;
+        const ref = values && valueKey && values.find(v => (v as any)[valueKey] == value);
+        const displayed = (ref && labelKey && (ref as any)[labelKey]) || this.value;
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
