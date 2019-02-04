@@ -21,6 +21,12 @@ export interface ReferenceList<T = any> extends Array<T> {
     $labelKey?: keyof T;
     /** Propriété représentant la valeur. */
     $valueKey?: keyof T;
+    /**
+     * Obtient le libellé d'un item à partir de la valeur.
+     * @param value Valeur de l'item.
+     * @returns Libellé de l'item. Undefined si la valeur est undefined.
+     */
+    getLabel(value: string | undefined): string | undefined;
 }
 
 /** Mapping de type pour transformer les types d'entrée en liste de ces même types. */
@@ -44,10 +50,11 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
 } {
     const referenceStore: any = {};
     for (const ref in refConfig) {
-        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé.
+        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé, et le résolveur de libellé.
         referenceStore[`_${ref}`] = observable.array([], {deep: false});
         referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey;
         referenceStore[`_${ref}`].$valueKey = refConfig[ref].valueKey;
+        referenceStore[`_${ref}`].getLabel = (value: string | undefined) => getLabel(value, referenceStore[`_${ref}`]);
         extendObservable(referenceStore, {
             // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
             [`_${ref}_cache`]: undefined,
@@ -106,5 +113,30 @@ export function makeReferenceList<T>(list: T[], {labelKey, valueKey}: {labelKey?
     const newList = [...list] as ReferenceList<T>;
     newList.$valueKey = valueKey || (list as ReferenceList<T>).$valueKey;
     newList.$labelKey = labelKey || (list as ReferenceList<T>).$labelKey;
+    newList.getLabel = value => getLabel(value, newList);
     return newList;
+}
+
+/**
+ * Obtient le libellé d'un item d'une liste de référence à partir d'une valeur.
+ * @param value Valeur de l'item.
+ * @param list Liste des items
+ */
+export function getLabel<T>(value: string | undefined, list: ReferenceList<T>): string | undefined {
+    if (!value) {
+        return undefined;
+    }
+
+    /* Cherche l'item. */
+    const item = list.find(s => ((s[list.$valueKey!] as any) as string) === value);
+
+    /* Cas où l'item est introuvable. */
+    if (!item) {
+        return undefined;
+    }
+
+    /* Item trouvé : on extrait le libellé. */
+    const label = (item[list.$labelKey!] as any) as string;
+
+    return label;
 }
