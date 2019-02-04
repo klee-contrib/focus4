@@ -142,12 +142,12 @@ export class Field<
             keyResolver,
             displayFormatter,
             DisplayComponent,
-            displayProps = {}
+            displayProps = {} as DCProps
         } = this.props;
         const FinalDisplay = DisplayComponent || (Display as any);
         return (
             <FinalDisplay
-                {...displayProps as {}}
+                {...displayProps}
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
                 labelKey={labelKey}
@@ -169,13 +169,13 @@ export class Field<
             labelKey = "label",
             values,
             keyResolver,
-            inputProps = {},
+            inputProps = {} as ICProps,
             name
         } = this.props;
         const FinalInput = InputComponent || Input;
 
         let props: any = {
-            ...(inputProps as {}),
+            ...inputProps,
             value: (inputFormatter && inputFormatter(value)) || value,
             error: (this.showError && this.error) || undefined,
             name,
