@@ -47,7 +47,7 @@ export function makeField<
         | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>),
     setter?: (value: T) => void,
     isEdit?: boolean | (() => boolean)
-): EntityField<FieldEntry<NonNullable<T>, ICProps, SCProps, ACProps, DCProps, LCProps>>;
+): EntityField<FieldEntry<NonNullable<T>, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
 /**
  * Construit un `EntityField` à partir d'une valeur quelconque.
  * @param value La valeur.
@@ -79,7 +79,7 @@ export function makeField<
         | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
         | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
     setter: Function = () => null,
-    isEdit?: any
+    isEdit?: boolean | (() => boolean)
 ) {
     const field = extendObservable(
         new$field(
@@ -110,6 +110,17 @@ export function makeField<
     }
 
     return field;
+}
+
+/**
+ * Clone un `EntityField` pour y ajouter ou remplacer un état d'édition. Le champ cloné utilise l'état (getter/setter) du champ source.
+ * @param field Le champ.
+ * @param isEdit L'état d'édition du champ ainsi cloné.
+ */
+export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?: boolean) {
+    return makeField(() => field.value, field.$field, value => (field.value = value), isEdit) as EntityField<F> & {
+        isEdit?: boolean;
+    };
 }
 
 /**
