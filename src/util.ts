@@ -9,11 +9,13 @@ export type ReactionExpression<T> = ((inst: T) => () => any) | (() => any);
 /** Type d'expressions possibles pour le décorateur de `when` */
 export type WhenExpression<T> = ((inst: T) => () => boolean) | (() => boolean);
 
+/** @deprecated Utiliser `@disposeOnUnmount` sur la réaction à la place */
 /** Décorateur permettant, dans une classe React, de poser un autorun sur la fonction décorée. */
 export function classAutorun(target: RCL, propertyKey: keyof RCL) {
     patchClass("autorun", target, propertyKey);
 }
 
+/** @deprecated Utiliser `@disposeOnUnmount` sur la réaction à la place */
 /**
  * Décorateur permettant, dans une classe React, de poser une réaction sur la fonction décorée.
  * @param expression L'expression à tracker pour la réaction. Si le contexte est nécessaire, le passer dans un lambda englobant.
@@ -25,6 +27,7 @@ export function classReaction<T extends RCL>(expression: ReactionExpression<T>, 
     };
 }
 
+/** @deprecated Utiliser `@disposeOnUnmount` sur la réaction à la place */
 /**
  * Décorateur permettant, dans une classe React, de poser un `when` sur la fonction décorée.
  * @param expression L'expression à tracker pour le when. Si le contexte est nécessaire, le passer dans un lambda englobant.
@@ -42,6 +45,12 @@ function patchClass<T extends RCL>(
     expression?: WhenExpression<T> | ReactionExpression<T>,
     opts?: IReactionOptions
 ) {
+    if (process.env.NODE_ENV !== "production") {
+        console.warn(
+            "@classAutorun et consorts sont dépréciés : utilisez @disposeOnUnmount sur vos réactions à la place."
+        );
+    }
+
     function componentWillMount(this: T) {
         const r = this[propertyKey].bind(this);
 

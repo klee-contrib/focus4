@@ -75,7 +75,3 @@ Cette fonction permet de transformer une liste classique en une liste utilisable
 ## Module `user`
 
 Ce module propose une base de store utilisateur, pour y stocker les données de la session. La seule fonctionnalité prévue est la gestion des rôles / permissions (avec `roles` et `hasRole()`), et c'est à chaque application d'y rajouter leurs informations métiers pertinentes.
-
-## Module `util`
-
-Ce module contient deux décorateurs `@classAutorun` et `@classReaction` pour créer un `autorun`/`reaction` sur une méthode de classe React (MobX met maintenant à disposition `@disposeOnUnmount` mais il se pose sur des réactions créées dans le constructeur, ce qui est moins souple).

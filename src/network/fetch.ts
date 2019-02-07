@@ -34,9 +34,9 @@ export async function coreFetch(
         options
     );
 
-    // On crée la requête dans le store de requête.
+    // On crée la requête dans le store de requête, dans un setTimeout pour éviter le rendu immédiat de la barre de chargement.
     const id = v4();
-    requestStore.updateRequest({id, url, status: "pending"});
+    setTimeout(() => requestStore.updateRequest({id, url, status: "pending"}), 0);
 
     // On lance la requête.
     try {

@@ -72,18 +72,13 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                 ) {
                     referenceStore[`_${ref}_loading`] = true;
 
-                    /* Le service de chargement est appelé dans une autre stack parce que l'appel va déclencher une mise à jour d'état (dans le RequestStore),
-                        et qu'on ne peut pas changer de l'état dans une dérivation. */
-                    setTimeout(
-                        () =>
-                            referenceLoader(ref).then(
-                                action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
-                                    referenceStore[`_${ref}_cache`] = new Date().getTime();
-                                    referenceStore[`_${ref}`].replace(refList);
-                                    delete referenceStore[`_${ref}_loading`];
-                                })
-                            ),
-                        0
+                    // On effectue l'appel et on met à jour la liste.
+                    referenceLoader(ref).then(
+                        action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
+                            referenceStore[`_${ref}_cache`] = new Date().getTime();
+                            referenceStore[`_${ref}`].replace(refList);
+                            delete referenceStore[`_${ref}_loading`];
+                        })
                     );
                 }
 
