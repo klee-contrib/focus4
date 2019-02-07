@@ -38,9 +38,6 @@ export type NodeToErrors<T extends Entity, U = {}> = Omit<
 export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
     /** Données liée à un FormNode. */
     readonly form: {
-        /** Désactive la synchronisation entre ce FormNode et son noeud source. */
-        dispose(): void;
-
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
@@ -53,6 +50,9 @@ export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
 
     /** Vide l'objet (récursivement). */
     clear(): void;
+
+    /** Désactive la synchronisation entre ce FormNode et son noeud source. */
+    dispose(): void;
 
     /** Remplace le contenu du noeud par le contenu donné. */
     replace(data: EntityToType<T>): void;
@@ -73,13 +73,6 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
 
     /** Données liée à un FormNode. */
     readonly form: {
-        /** @internal */
-        /** Disposer de l'observeur qui suit l'ajout et la suppression d'élement dans la liste source. */
-        _disposer: Lambda;
-
-        /** Désactive la synchronisation entre ce FormNode et son noeud source. */
-        dispose(): void;
-
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
@@ -92,6 +85,13 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
 
     /** Fonction d'initialisation pour les items du noeud liste. */
     $initializer?: (source: StoreNode<T>) => U | void;
+
+    /** @internal */
+    /** Dispose l'observer qui suit l'ajout et la suppression d'élement dans la liste source. */
+    _dispose: Lambda;
+
+    /** Désactive la synchronisation entre ce FormNode et son noeud source. */
+    dispose(): void;
 
     /** Ajoute un élément à la liste. */
     pushNode(...items: EntityToType<T>[]): void;
@@ -112,8 +112,8 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
 /** Définition de champ dans un FormNode. */
 export interface FormEntityField<F extends FieldEntry = FieldEntry> extends EntityField<F> {
     /** @internal */
-    /** Disposer de l'intercepteur qui met à jour le champ de formulaire si le champ source est modifié. */
-    _formDisposer?: Lambda;
+    /** Dispose l'interceptor qui met à jour le champ de formulaire si le champ source est modifié. */
+    _dispose?: Lambda;
 
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error: string | undefined;

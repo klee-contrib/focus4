@@ -60,20 +60,20 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         }
     });
 
-    (node as any).form.dispose = function dispose() {
+    (node as any).dispose = function dispose() {
         if (isFormListNode(node)) {
-            node.forEach(item => item.form.dispose());
-            node.form._disposer();
+            node.forEach(item => item.dispose());
+            node._dispose();
         } else {
             for (const entry in node) {
                 if (entry === "sourceNode") {
                     continue;
                 }
                 const child: {} = (node as any)[entry];
-                if (isEntityField(child) && (child as FormEntityField)._formDisposer) {
-                    (child as FormEntityField)._formDisposer!();
+                if (isEntityField(child) && (child as FormEntityField)._dispose) {
+                    (child as FormEntityField)._dispose!();
                 } else if (isAnyFormNode(child)) {
-                    child.form.dispose();
+                    child.dispose();
                 }
             }
         }
@@ -145,12 +145,12 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         // En plus de monitorer les ajouts et les suppressions, il faut aussi disposer tous les noeuds supprimés de la liste.
         const onRemove = observe(node, change => {
             if (change.type === "splice") {
-                change.removed.forEach(deleted => deleted.form.dispose());
+                change.removed.forEach(deleted => deleted.dispose());
             }
         });
 
         // Le disposer final d'un FormListNode est donc composer des deux observers ci-dessus.
-        node.form._disposer = function _disposer() {
+        node._dispose = function _dispose() {
             onSourceSplice();
             onRemove();
         };
@@ -227,7 +227,7 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
     });
 
     if (parentNode !== parentNode.sourceNode && !isComputedProp(field, "value")) {
-        (field as FormEntityField)._formDisposer = intercept(
+        (field as FormEntityField)._dispose = intercept(
             parentNode.sourceNode[field.$field.name] as EntityField,
             "value",
             change => {
