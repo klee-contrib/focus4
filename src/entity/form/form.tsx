@@ -9,7 +9,7 @@ const Theme = themr("form", styles);
 /** Options additionnelles du Form. */
 export interface FormProps {
     /** Voir `FormActions` */
-    clean: () => void;
+    dispose: () => void;
     /** Voir `FormActions` */
     formContext: {forceErrorDisplay: boolean};
     /** Retire le formulaire HTML */
@@ -31,7 +31,7 @@ export class Form extends React.Component<FormProps> {
     }
 
     componentWillUnmount() {
-        this.props.clean();
+        this.props.dispose();
     }
 
     render() {

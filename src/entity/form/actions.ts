@@ -63,7 +63,7 @@ export class FormActions {
     @computed.struct
     get formProps(): FormProps {
         return {
-            clean: this.clean,
+            dispose: this.dispose,
             formContext: this.formContext,
             load: this.load,
             save: this.save
@@ -84,7 +84,7 @@ export class FormActions {
 
     /** Supprime les réactions du formulaire et de son FormNode. */
     @action.bound
-    clean() {
+    dispose() {
         if (this.loadDisposer) {
             this.loadDisposer();
         }
