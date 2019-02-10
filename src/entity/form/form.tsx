@@ -8,8 +8,8 @@ const Theme = themr("form", styles);
 
 /** Options additionnelles du Form. */
 export interface FormProps {
-    /** Voir `FormActions` */
-    dispose: () => void;
+    /** Children. */
+    children?: React.ReactNode;
     /** Voir `FormActions` */
     formContext: {forceErrorDisplay: boolean};
     /** Retire le formulaire HTML */
@@ -25,37 +25,27 @@ export interface FormProps {
 export const FormContext = React.createContext({forceErrorDisplay: false});
 
 /** Composant de formulaire */
-export class Form extends React.Component<FormProps> {
-    componentWillMount() {
-        this.props.load();
-    }
-
-    componentWillUnmount() {
-        this.props.dispose();
-    }
-
-    render() {
-        return (
-            <FormContext.Provider value={this.props.formContext}>
-                {this.props.noForm ? (
-                    <Theme theme={this.props.theme}>
-                        {theme => (
-                            <form
-                                className={theme.form}
-                                noValidate={true}
-                                onSubmit={e => {
-                                    e.preventDefault();
-                                    this.props.save();
-                                }}
-                            >
-                                <fieldset>{this.props.children}</fieldset>
-                            </form>
-                        )}
-                    </Theme>
-                ) : (
-                    this.props.children
-                )}
-            </FormContext.Provider>
-        );
-    }
+export function Form(props: FormProps) {
+    return (
+        <FormContext.Provider value={props.formContext}>
+            {props.noForm ? (
+                <Theme theme={props.theme}>
+                    {theme => (
+                        <form
+                            className={theme.form}
+                            noValidate={true}
+                            onSubmit={e => {
+                                e.preventDefault();
+                                props.save();
+                            }}
+                        >
+                            <fieldset>{props.children}</fieldset>
+                        </form>
+                    )}
+                </Theme>
+            ) : (
+                props.children
+            )}
+        </FormContext.Provider>
+    );
 }

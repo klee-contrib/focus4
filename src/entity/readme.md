@@ -186,10 +186,11 @@ Un formulaire sera toujours construit à partir d'un `Store(List)Node`, qui sara
 
 Un `FormNode`, construit par la fonction **`makeFormNode`**, est une copie conforme du noeud à partir duquel il a été créé, qui sera "abonné" aux modifications de ce noeud. Il représentera l'état interne du formulaire, qui sera modifié lors de la saisie de l'utilisateur, sans impacter l'état du noeud initial.
 
-#### `makeFormNode(node, {isEdit, isEmpty}, initializer)`
+#### `makeFormNode(componentClass, node, {isEdit, isEmpty}, initializer)`
 
 Les différents paramètres de `makeFormNode` sont :
 
+-   `componentClass` : passer `this` (permet de disposer de la réaction de synchronisation lorsque le composant sera démonté).
 -   `node`, le noeud à partir duquel on construit le formulaire. Il n'y a aucune restriction sur la nature de ce noeud (simple, liste, composé...). Il n'est juste pas possible de créer un `FormNode` à partir d'un autre `FormNode`.
 -   `{isEdit, isEmpty}`, deux options permettant de préciser :
     -   `isEdit`, l'état d'édition initial du noeud (précisions plus bas). Cela peut également être un getter (de la forme `() => boolean`) qui sera utilisé à la place de l'état interne, pour contrôler l'état d'édition depuis l'extérieur (ou le forcer à `true` ou `false` avec `() => true` ou `() => false`)
@@ -239,6 +240,7 @@ Cet exemple est peu réaliste, mais il montre bien tout ce qu'on peut faire à l
 
 ```ts
 const formNode = makeFormNode(
+    null, // Passer `this` dans un composant à la place.
     mainStore.structure, // StoreNode source.
     {isEdit: true}, // FormNode initialisé en édition.
     entity => {
@@ -279,10 +281,9 @@ Une fois le `FormNode` créé, on aura besoin d'un deuxième objet pour gérer l
 
 Il se crée à partir d'un `FormNode` via la fonction **`makeFormActions`**. Ses paramètres sont :
 
+-   `componentClass` : passer `this` (permet de disposer de la réaction de chargement lorsque le composant sera démonté).
 -   `formNode`, le `FormNode` sur lequel les actions vont intéragir. Il est possible de passer ici un sous-noeud, mais ce dernier n'ayant pas accès au noeud d'origine, certaines fonctionalités ne seront pas disponbiles.
-
-*   `actions`, qui est un objet contenant essentiellement les services de **`load`** et de **`save`**. L'action de `load` n'est pas obligatoire (par exemple : formulaire de création), mais par contre le `save` l'est bien (sinon, ce ne serait pas un formulaire).
-
+-   `actions`, qui est un objet contenant essentiellement les services de **`load`** et de **`save`**. L'action de `load` n'est pas obligatoire (par exemple : formulaire de création), mais par contre le `save` l'est bien (sinon, ce ne serait pas un formulaire).
 -   `config?`, un objet de configuration additionel qui permet notamment de placer des `hooks` après le chargement, la sauvegarde ou le changement d'état.
 
 #### Chargement des données
@@ -306,7 +307,7 @@ _Note : pour éviter le reset de tout le formulaire lors de la sauvegarde d'un s
 Premier exemple : formulaire classique d'édition
 
 ```ts
-actions = makeFormActions(this.entity, {
+actions = makeFormActions(this, this.entity, {
     // this.entity est un `formNode` préalablement créé
     getLoadParams: () => homeViewStore.withView(({page, id}) => !page && id && [+id]),
     load: loadStructure,
@@ -318,6 +319,7 @@ Deuxième exemple : formulaire de création avec des options
 
 ```ts
 actions = makeFormActions(
+    this,
     this.entity,
     {
         save: async x => {
@@ -375,8 +377,8 @@ import {homeViewStore, mainStore, referenceStore} from "../../../stores";
 
 @observer
 export class BasicForm extends React.Component<{}, void> {
-    entity = makeFormNode(mainStore.structure);
-    actions = makeFormActions(this.entity, {
+    entity = makeFormNode(this, mainStore.structure);
+    actions = makeFormActions(this, this.entity, {
         getLoadParams: () => homeViewStore.withView(({page, id}) => !page && id && [+id]),
         load: loadStructure,
         save: saveStructure

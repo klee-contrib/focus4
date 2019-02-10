@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
+import {disposeOnUnmount} from "mobx-react";
 
 import {PanelProps} from "../../components";
 import {messageStore} from "../../message";
@@ -34,6 +35,8 @@ export interface ActionConfig<T = any> {
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 export class FormActions {
+    /** Dispose la réaction de chargement. */
+    readonly dispose?: Lambda;
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
     /** Formulaire en chargement. */
@@ -45,8 +48,6 @@ export class FormActions {
     private readonly config: FormConfig;
     /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
     private readonly entity: FormNode | FormListNode;
-    /** Disposer de la réaction de chargement. */
-    private readonly loadDisposer?: Lambda;
 
     constructor(formNode: FormNode | FormListNode, actions: ActionConfig, config?: FormConfig) {
         this.entity = formNode;
@@ -55,15 +56,17 @@ export class FormActions {
 
         // On met en place la réaction de chargement.
         if (actions.getLoadParams) {
-            this.loadDisposer = reaction(actions.getLoadParams, this.load, {equals: comparer.structural});
+            this.dispose = reaction(actions.getLoadParams, this.load, {equals: comparer.structural});
         }
+
+        // On appelle le chargement.
+        this.load();
     }
 
     /** Récupère les props à fournir à un Form pour lui fournir les actions. */
     @computed.struct
     get formProps(): FormProps {
         return {
-            dispose: this.dispose,
             formContext: this.formContext,
             load: this.load,
             save: this.save
@@ -80,15 +83,6 @@ export class FormActions {
             onClickEdit: this.onClickEdit,
             save: this.save
         };
-    }
-
-    /** Supprime les réactions du formulaire et de son FormNode. */
-    @action.bound
-    dispose() {
-        if (this.loadDisposer) {
-            this.loadDisposer();
-        }
-        this.entity.dispose();
     }
 
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
@@ -180,24 +174,34 @@ export class FormActions {
 
 /**
  * Crée un formulaire.
+ * @param componentClass Le composant (classe) lié aux actions, pour disposer la réaction de chargement à son démontage.
  * @param formNode Le FormNode du formulaire.
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
 export function makeFormActions<T extends Entity, U>(
+    componentClass: React.Component | null,
     formNode: FormListNode<T, U>,
     actions: ActionConfig<EntityToType<T>[]>,
     config?: FormConfig
 ): FormActions;
 export function makeFormActions<T extends Entity, U>(
+    componentClass: React.Component | null,
     formNode: FormNode<T, U>,
     actions: ActionConfig<EntityToType<T>>,
     config?: FormConfig
 ): FormActions;
 export function makeFormActions<T extends Entity, U>(
+    componentClass: React.Component | null,
     formNode: FormNode<T, U> | FormListNode<T, U>,
     actions: ActionConfig,
     config?: FormConfig
 ) {
-    return new FormActions(formNode as any, actions, config);
+    const formActions = new FormActions(formNode as any, actions, config);
+
+    if (componentClass && formActions.dispose) {
+        disposeOnUnmount(componentClass, formActions.dispose);
+    }
+
+    return formActions;
 }
