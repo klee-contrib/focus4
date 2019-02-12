@@ -70,7 +70,7 @@ export function HeaderActions({
                                 ...secondaryButton,
                                 icon: secondaryButton.icon
                                     ? getIcon(secondaryButton.icon, secondaryButton.iconCustom || false)
-                                    : getIcon(`${i18nPrefix}.icons.secondaryButton.secondary`)
+                                    : getIcon(`${i18nPrefix}.icons.headerActions.secondary`)
                             }}
                             position="topRight"
                         >

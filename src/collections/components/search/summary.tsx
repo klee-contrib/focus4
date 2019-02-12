@@ -20,9 +20,21 @@ const Theme = themr("summary", styles);
 export interface ListSummaryProps<T> {
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
-    /** Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips. */
-    chipKeyResolver?: (type: ChipType, code: string, value: string) => Promise<string | undefined>;
-    /** Passe le style retourné par cette fonction aux chips. */
+    /**
+     * Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips.
+     * @param type Le type du chip affiché (`filter` ou `facet`)
+     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`)
+     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
+     * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
+     */
+    chipKeyResolver?: (type: "filter" | "facet", code: string, value: string) => Promise<string | undefined>;
+    /**
+     * Passe le style retourné par cette fonction aux chips.
+     * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
+     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
+     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
+     * @returns L'objet de theme, qui sera fusionné avec le theme existant.
+     */
     chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Handler pour le bouton d'export. */
     exportAction?: () => void;
@@ -61,7 +73,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                 const value = (store.flatCriteria as any)[criteriaKey];
                 topicList.push({
                     type: "filter",
-                    key: criteriaKey,
+                    key: `${criteriaKey}-${value}`,
                     code: translationKey,
                     codeLabel: translationKey,
                     value,

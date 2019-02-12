@@ -23,9 +23,21 @@ const Theme = themr("actionBar", styles);
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
-    /** Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips. */
-    chipKeyResolver?: (type: ChipType, code: string, value: string) => Promise<string | undefined>;
-    /** Passe le style retourné par cette fonction aux chips. */
+    /**
+     * Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips.
+     * @param type Le type du chip affiché (`filter` ou `facet`)
+     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`)
+     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
+     * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
+     */
+    chipKeyResolver?: (type: "filter" | "facet", code: string, value: string) => Promise<string | undefined>;
+    /**
+     * Passe le style retourné par cette fonction aux chips.
+     * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
+     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
+     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
+     * @returns L'objet de theme, qui sera fusionné avec le theme existant.
+     */
     chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Constitution de l'éventuel groupe auquel est lié l'ActionBar */
     group?: {code: string; label: string; totalCount: number};
