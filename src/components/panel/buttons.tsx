@@ -29,32 +29,36 @@ export function PanelButtons({
     onClickEdit,
     save
 }: PanelButtonsProps) {
-    if (editing) {
-        return (
-            <span>
+    if (onClickCancel && onClickEdit) {
+        if (editing) {
+            return (
+                <span>
+                    <Button
+                        icon={getIcon(`${i18nPrefix}.icons.button.save`)}
+                        label={i18next.t(`${i18nPrefix}.button.save`)}
+                        primary={true}
+                        onClick={save}
+                        type="submit"
+                        disabled={loading}
+                    />
+                    <Button
+                        icon={getIcon(`${i18nPrefix}.icons.button.cancel`)}
+                        label={i18next.t(`${i18nPrefix}.button.cancel`)}
+                        onClick={onClickCancel}
+                        disabled={loading}
+                    />
+                </span>
+            );
+        } else {
+            return (
                 <Button
-                    icon={getIcon(`${i18nPrefix}.icons.button.save`)}
-                    label={i18next.t(`${i18nPrefix}.button.save`)}
-                    primary={true}
-                    onClick={save}
-                    type="submit"
-                    disabled={loading}
+                    icon={getIcon(`${i18nPrefix}.icons.button.edit`)}
+                    label={i18next.t(`${i18nPrefix}.button.edit`)}
+                    onClick={onClickEdit}
                 />
-                <Button
-                    icon={getIcon(`${i18nPrefix}.icons.button.cancel`)}
-                    label={i18next.t(`${i18nPrefix}.button.cancel`)}
-                    onClick={onClickCancel}
-                    disabled={loading}
-                />
-            </span>
-        );
+            );
+        }
     } else {
-        return (
-            <Button
-                icon={getIcon(`${i18nPrefix}.icons.button.edit`)}
-                label={i18next.t(`${i18nPrefix}.button.edit`)}
-                onClick={onClickEdit}
-            />
-        );
+        return null;
     }
 }
