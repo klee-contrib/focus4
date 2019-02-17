@@ -31,12 +31,12 @@ import {getNodeForList, replaceNode} from "./store";
  * Transforme un Store(List)Node en Form(List)Node.
  * @param node Le FormNode en cours de création.
  * @param sourceNode Le node origine du FormNode.
- * @param parentNodeOrEditing Node parent, (l'état initial ou la condition) d'édition.
+ * @param parentNode Le node parent.
  */
 export function nodeToFormNode<T extends Entity = any, U = {}>(
     node: StoreNode<T> & U | StoreListNode<T, U>,
     sourceNode: StoreNode<T> | StoreListNode<T>,
-    parentNodeOrEditing: FormNode | FormListNode | boolean | (() => boolean)
+    parentNode?: FormNode | FormListNode
 ) {
     const {$tempEdit} = node;
     if ($tempEdit !== undefined) {
@@ -51,15 +51,9 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
     (node as any).sourceNode = sourceNode;
 
     (node as any).form = observable({
-        _isEdit:
-            (isBoolean(parentNodeOrEditing) ? parentNodeOrEditing : true) && (isBoolean($tempEdit) ? $tempEdit : true),
+        _isEdit: isBoolean($tempEdit) ? $tempEdit : true,
         get isEdit() {
-            return (
-                this._isEdit &&
-                (isAnyFormNode(parentNodeOrEditing) ? parentNodeOrEditing.form.isEdit : true) &&
-                (isFunction(parentNodeOrEditing) ? parentNodeOrEditing() : true) &&
-                (isFunction($tempEdit) ? $tempEdit() : true)
-            );
+            return (parentNode ? parentNode.form.isEdit : true) && (isFunction($tempEdit) ? $tempEdit() : this._isEdit);
         },
         set isEdit(edit) {
             this._isEdit = edit;
@@ -205,6 +199,7 @@ export function patchNodeEdit<T extends Entity = any, U = {}>(
     isEdit: boolean | (() => boolean)
 ) {
     node.$tempEdit = isEdit;
+    return node;
 }
 
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
@@ -217,7 +212,7 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
             return validateField(field);
         },
         get isEdit() {
-            return this._isEdit && parentNode.form.isEdit && (isFunction(isEdit) ? isEdit() : true);
+            return parentNode.form.isEdit && (isFunction(isEdit) ? isEdit() : this._isEdit);
         },
         set isEdit(edit) {
             this._isEdit = edit;

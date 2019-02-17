@@ -103,7 +103,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
         // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
         if (criteria) {
             const node = buildNode(criteria);
-            nodeToFormNode<C>(node, node, true);
+            nodeToFormNode<C>(node, node);
             this.criteria = node as any;
         }
 

@@ -31,7 +31,7 @@ export type $Field<
  * @param value La valeur.
  * @param $field Les métadonnées pour le champ à créer.
  * @param setter Le setter, si besoin.
- * @param isEdit L'état initial ou la condition d'édition.
+ * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function makeField<
     T,
@@ -142,7 +142,7 @@ export function fromField<
  * Patche un `EntityField` pour modifier ses métadonnées (inclus tout ce qui est définit dans le domaine). Cette fonction **MODIFIE** le champ donné.
  * @param field Le champ.
  * @param $field Les métadonnées à remplacer.
- * @param isEdit L'état initial ou la condition d'édition.
+ * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function patchField<
     T,

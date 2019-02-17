@@ -1,6 +1,6 @@
 import {extendObservable, observable} from "mobx";
 
-import {nodeToFormNode} from "../store";
+import {nodeToFormNode, patchNodeEdit} from "../store";
 import {
     Entity,
     FormListNode,
@@ -15,7 +15,7 @@ import {
 
 /** Options de `makeFormNode` */
 export interface FormNodeOptions {
-    /** Etat d'édition initial ou condition pour être en édition. */
+    /** Etat d'édition initial ou getter vers un état d'édition externe. */
     isEdit?: boolean | (() => boolean);
     /** Construit un FormNode vide au lieu de recopier le contenu actuel du noeud source. */
     isEmpty?: boolean;
@@ -48,8 +48,8 @@ export function makeFormNode<T extends Entity, U = {}>(
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
 
-    const formNode = clone(node, isEmpty, initializer);
-    nodeToFormNode(formNode, node, isEdit || false);
+    const formNode = patchNodeEdit(clone(node, isEmpty, initializer), isEdit || false);
+    nodeToFormNode(formNode, node);
 
     return formNode;
 }

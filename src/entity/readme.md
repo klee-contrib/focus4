@@ -185,7 +185,7 @@ Les différents paramètres de `makeFormNode` sont :
 
 -   `node`, le noeud à partir duquel on construit le formulaire. Il n'y a aucune restriction sur la nature de ce noeud (simple, liste, composé...). Il n'est juste pas possible de créer un `FormNode` à partir d'un autre `FormNode`.
 -   `{isEdit, isEmpty}`, deux options permettant de préciser :
-    -   `isEdit`, l'état d'édition initial du noeud (précisions plus bas). Cela peut également être une condition (de la forme `() => boolean`) pour que le noeud soit en édition.
+    -   `isEdit`, l'état d'édition initial du noeud (précisions plus bas). Cela peut également être un getter (de la forme `() => boolean`) qui sera utilisé à la place de l'état interne, pour contrôler l'état d'édition depuis l'extérieur (ou le forcer à `true` ou `false` avec `() => true` ou `() => false`)
     -   `isEmpty`, pour préciser si le noeud de formulaire ne doit pas copier le contenu de son noeud source à la création (il copie donc par défaut);
 -   `initializer`, détaillé plus bas
 
@@ -211,14 +211,14 @@ En plus d'ajouter ces propriétés à tous les sous-noeuds et champs du noeud in
 
 Son usage le plus avancé permet également d'effectuer toutes les modifications de champs souhaitées pour le formulaire via des appels à `patchField()` (qui seront appliqués sur le noeud de formulaire pendant la création), ainsi que d'ajouter des champs au `FormNode` en retournant un objet de propriétés créées par `makeField()`.
 
-En plus des signatures présentées dans leur chapitre dédié, ces deux fonctions peuvent également accepter des getters pour l'objet de métadonnées ainsi que pour l'état d'édition. Cela permet de dériver des métadonnées d'un autre état (le plus souvent de la valeur d'un autre champ, par exemple pour définir un caractère obligatoire dépendant du fait que l'autre champ soit renseigné ou non), ou bien d'ajouter une condition supplémentaire pour qu'un champ soit en édition.
+En plus des signatures présentées dans leur chapitre dédié, ces deux fonctions peuvent également accepter des getters pour l'objet de métadonnées ainsi que pour l'état d'édition. Cela permet de dériver des métadonnées d'un autre état (le plus souvent de la valeur d'un autre champ, par exemple pour définir un caractère obligatoire dépendant du fait que l'autre champ soit renseigné ou non), ou bien pour contrôler son état d'édition.
 
-Une fonction de patch supplémentaire, `patchNodeEdit`, est disponible pour ajouter une condition d'édition sur un sous-noeud tout entier. A noter que, de manière générale, si on ajoute une condition d'édition valant `false` sur un noeud ou un champ, alors ce champ ne sera jamais éditable puisqu'elle sera intersectée avec l'état propre et celui du parent (`false && true && true === false` en somme).
+Tout comme `makeFormNode`, `makeField` et `patchField` peuvent recevoir soit un booléen (`true`/`false`), ou bien un "getter" de la forme `() => boolean` dans leur paramètre `isEdit`. Pour rappel (ceci étant valable également pour `makeFormNode`) :
 
-Toutes les fonctions qui accepte un `isEdit` comme paramètre (`makeFormNode`, `makeField`, `patchField` et `patchNodeEdit`) peuvent recevoir soit un booléen (`true`/`false`), ou bien un "getter" de la forme `() => boolean`. Bien que ces deux formes soient similaires, en pratique leur effet est différent :
+-   Si on passe un _booléen_, alors il correspondra à la valeur initiale de l'état d'édition du champ cible
+-   Si on passe un _getter_, alors il écrasera l'état d'édition interne du champ. A noter que le champ nécessitera toujours que son parent soit en édition pour être en édition, mais si on le contrôle ainsi.
 
--   Si on passe un _booléen_, alors il correspondra à la valeur initiale de l'état d'édition du champ/noeud cible
--   Si on passe un _getter_, alors il s'ajoutera aux conditions d'édition du champ/noeud cible, donc il s'agira d'une condition nécessaire (mais pas suffisante) pour que le champ soit en édition. L'état propre du champ/noeud existera toujours (et est toujours initialisé à `true` comme précisé plus haut).
+Une fonction de patch supplémentaire, `patchNodeEdit`, est disponible pour initialiser ou contrôler l'état d'édition d'un sous-noeud tout entier. Les sous-états d'édition étant tous initilisés à `true` par défaut, cette fonction sera surtout utilisée pour bloquer d'édition du noeud tout entier via en passant `false`, ou mieux, `() => false`.
 
 L'usage de `fromField` est à proscrire dans un noeud de formulaire, car le champ qui sera créé à partir du champ de formulaire initial ne sera plus lié au formulaire (plus de `isEdit`, plus de `error`). A la place, _chaque modification de champ (y compris un simple changement de libellé) doit passer par la fonction d'initialisation_.
 
