@@ -1,7 +1,9 @@
 .vscode
 .npmrc
 dist
-scripts
+scripts/clean.js
+scripts/copy-css.js
+scripts/tcm.js
 .stylelintrc.json
 tsconfig.json
 tslint.json
