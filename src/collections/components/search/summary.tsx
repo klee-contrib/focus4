@@ -114,8 +114,7 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                     <div className={theme.summary}>
                         {/* Nombre de résultats. */}
                         <span className={theme.sentence}>
-                            <strong>{totalCount}&nbsp;</strong>
-                            {i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
+                            {i18next.t(`${i18nPrefix}.search.summary.result`, {count: totalCount})}
                         </span>
 
                         {/* Texte de recherche. */}

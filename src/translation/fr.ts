@@ -63,8 +63,8 @@ export const fr = {
             for: "pour",
             group: "groupé par",
             groups: "groupés par",
-            result: "résultat",
-            results: "résultats",
+            result: "{{count}} résultat",
+            result_plural: "{{count}} résultats",
             sortBy: "triés par"
         }
     },
