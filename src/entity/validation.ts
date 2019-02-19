@@ -54,9 +54,14 @@ function validate(value: any, validators?: Validator[]) {
                             if (value === undefined || value === null) {
                                 break;
                             }
+                            if (typeof value === "string" && value.trim() !== value) {
+                                error = true;
+                                break;
+                            }
                             const n = +value;
                             if (Number.isNaN(n) || !isNumber(n) || (validator.isInteger && !Number.isInteger(n))) {
                                 error = true;
+                                break;
                             }
                             const isMin = validator.min !== undefined && n < validator.min;
                             const isMax = validator.max !== undefined && n > validator.max;
