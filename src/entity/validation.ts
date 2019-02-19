@@ -89,6 +89,9 @@ export function numberValidator(text: string, options?: NumberOptions) {
     if (isUndefined(text) || isNull(text)) {
         return true;
     }
+    if (typeof text === "string" && text.trim() !== text) {
+        return false;
+    }
     const n = +text;
     if (isNaN(n) || !isNumber(n)) {
         return false;
