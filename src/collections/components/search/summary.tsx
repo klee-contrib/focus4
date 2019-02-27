@@ -44,6 +44,10 @@ export interface ListSummaryProps<T> {
     hideFacets?: boolean;
     /** Masque le groupe. */
     hideGroup?: boolean;
+    /** Masque la requête. */
+    hideQuery?: boolean;
+    /** Masque le nombre de résultats. */
+    hideResults?: boolean;
     /** Masque le tri. */
     hideSort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -129,6 +133,8 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
             chipThemer,
             exportAction,
             hideGroup,
+            hideQuery,
+            hideResults,
             hideSort,
             i18nPrefix = "focus",
             store
@@ -142,13 +148,15 @@ export class Summary<T> extends React.Component<ListSummaryProps<T>> {
                 {theme => (
                     <div className={theme.summary}>
                         {/* Nombre de résultats. */}
-                        <span className={theme.sentence}>
-                            <strong>{totalCount}&nbsp;</strong>
-                            {i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
-                        </span>
+                        {!hideResults ? (
+                            <span className={theme.sentence}>
+                                <strong>{totalCount}&nbsp;</strong>
+                                {i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
+                            </span>
+                        ) : null}
 
                         {/* Texte de recherche. */}
-                        {query && query.trim().length > 0 ? (
+                        {!hideQuery && query && query.trim().length > 0 ? (
                             <span className={theme.sentence}>
                                 {" "}
                                 {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}

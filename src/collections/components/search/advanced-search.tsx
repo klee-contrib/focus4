@@ -101,6 +101,10 @@ export interface AdvancedSearchProps<T> {
     hideSummaryFacets?: boolean;
     /** Masque le groupe dans le Summary. */
     hideSummaryGroup?: boolean;
+    /** Masque la requête dans le Summary. */
+    hideSummaryQuery?: boolean;
+    /** Masque le nombre de résultats dans le Summary. */
+    hideSummaryResults?: boolean;
     /** Masque le tri dans le Summary. */
     hideSummarySort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -206,6 +210,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             hideSummaryCriteria,
             hideSummaryFacets,
             hideSummaryGroup,
+            hideSummaryQuery,
+            hideSummaryResults,
             hideSummarySort,
             i18nPrefix,
             orderableColumnList,
@@ -221,6 +227,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                 hideCriteria={hideSummaryCriteria}
                 hideFacets={hideSummaryFacets}
                 hideGroup={hideSummaryGroup}
+                hideQuery={hideSummaryQuery}
+                hideResults={hideSummaryResults}
                 hideSort={hideSummarySort}
                 orderableColumnList={orderableColumnList}
                 store={store}
