@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "9.8.2",
+    "version": "9.8.3",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -23,24 +23,24 @@
     },
     "dependencies": {
         "@types/i18next": "12.1.0",
-        "@types/lodash": "4.14.120",
+        "@types/lodash": "4.14.122",
         "@types/numeral": "0.0.25",
-        "@types/react": "16.8.2",
-        "@types/react-dom": "16.8.0",
+        "@types/react": "16.8.7",
+        "@types/react-dom": "16.8.2",
         "@types/uuid": "3.4.4",
-        "i18next": "15.0.2",
+        "i18next": "15.0.6",
         "inputmask-core": "2.2.0",
         "lodash": "4.17.11",
         "lodash-decorators": "6.0.1",
-        "material-design-icons-iconfont": "4.0.4",
+        "material-design-icons-iconfont": "4.0.5",
         "mobx": "4.9.0",
         "mobx-react": "5.4.3",
         "moment": "2.24.0",
         "numeral": "2.0.6",
-        "react": "16.8.1",
-        "react-dnd": "7.0.2",
-        "react-dnd-html5-backend": "7.0.2",
-        "react-dom": "16.8.1",
+        "react": "16.8.4",
+        "react-dnd": "7.3.1",
+        "react-dnd-html5-backend": "7.2.0",
+        "react-dom": "16.8.4",
         "react-pose": "4.0.7",
         "react-toolbox": "2.0.0-beta.13",
         "smoothscroll-polyfill": "0.4.3",
@@ -49,16 +49,16 @@
         "yester": "0.10.0"
     },
     "devDependencies": {
-        "@types/shelljs": "0.8.2",
+        "@types/shelljs": "0.8.3",
         "@types/tape": "4.2.33",
         "ignore-styles": "5.0.1",
         "shelljs": "0.8.3",
         "stylelint": "9.10.1",
         "tap-spec": "5.0.0",
-        "tape": "4.10.0",
-        "ts-node": "8.0.2",
-        "tslint": "5.12.1",
+        "tape": "4.10.1",
+        "ts-node": "8.0.3",
+        "tslint": "5.13.1",
         "typed-css-modules": "0.3.7",
-        "typescript": "3.3.3"
+        "typescript": "3.3.3333"
     }
 }
