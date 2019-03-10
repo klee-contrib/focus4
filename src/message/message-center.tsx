@@ -10,15 +10,15 @@ import * as theme from "./__style__/snackbar.css";
 
 export interface MessageCenterProps {
     /** Temps en ms d'affichage des messages d'erreur (par défaut: 8000). */
-    error?: number;
-    /** Préfixe i18n pour l'icône. Par défaut : "focus". */
+    errorDuration?: number;
+    /** Préfixe i18n pour le label de fermeture. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Temps en ms d'affichage des messages d'information (par défaut: 3000). */
-    info?: number;
+    infoDuration?: number;
     /** Temps en ms d'affichage des messages de succès (par défaut: 3000). */
-    success?: number;
+    successDuration?: number;
     /** Temps en ms d'affichage des messages d'avertissement (par défaut: 3000). */
-    warning?: number;
+    warningDuration?: number;
 }
 
 /** Description d'une notification. */
@@ -45,8 +45,20 @@ export class MessageCenter extends React.Component<MessageCenterProps> {
         () => messageStore.latestMessage!,
         message => {
             const {content, type} = message;
-            const {error = 8000, info = 3000, success = 3000, warning = 3000} = this.props;
-            const timeout = type === "error" ? error : type === "info" ? info : type === "success" ? success : warning;
+            const {
+                errorDuration = 8000,
+                infoDuration = 3000,
+                successDuration = 3000,
+                warningDuration = 3000
+            } = this.props;
+            const timeout =
+                type === "error"
+                    ? errorDuration
+                    : type === "info"
+                    ? infoDuration
+                    : type === "success"
+                    ? successDuration
+                    : warningDuration;
             this.showSnackbar({type, content, timeout});
         }
     );

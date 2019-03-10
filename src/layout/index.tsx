@@ -72,14 +72,15 @@ class LayoutBase extends React.Component<LayoutProps> {
     readonly layoutContext = observable(layoutContextInit);
 
     render() {
+        const {theme: pTheme, children, ...messageCenterProps} = this.props;
         return (
             <LayoutContext.Provider value={this.layoutContext}>
-                <Theme theme={this.props.theme}>
+                <Theme theme={pTheme}>
                     {theme => (
                         <div className={theme.layout}>
                             <ErrorCenter />
-                            <MessageCenter />
-                            {this.props.children}
+                            <MessageCenter {...messageCenterProps} />
+                            {children}
                         </div>
                     )}
                 </Theme>
