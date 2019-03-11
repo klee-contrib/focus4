@@ -1,34 +1,34 @@
 import {IObservableArray} from "mobx";
-import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry} from "./entity";
+import {Entity, EntityField, EntityToType, FieldEntry, FieldEntryType, ListEntry, ObjectEntry} from "./entity";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
-export type EntityToNode<T extends Entity> = {
-    readonly [P in keyof T["fields"]]: T["fields"][P] extends FieldEntry
-        ? EntityField<T["fields"][P]>
-        : T["fields"][P] extends ObjectEntry<infer U>
-        ? StoreNode<U>
-        : T["fields"][P] extends ListEntry<infer V>
-        ? StoreListNode<V>
+export type EntityToNode<E extends Entity> = {
+    readonly [P in keyof E["fields"]]: E["fields"][P] extends FieldEntry
+        ? EntityField<E["fields"][P]>
+        : E["fields"][P] extends ObjectEntry<infer OE>
+        ? StoreNode<OE>
+        : E["fields"][P] extends ListEntry<infer LE>
+        ? StoreListNode<LE>
         : never
 };
 
 /** Génère l'objet JS "normal" équivalent à un noeud de store. */
-export type NodeToType<T> = T extends StoreListNode<infer U>
-    ? EntityToType<U>[]
-    : T extends StoreNode<infer V>
-    ? EntityToType<V>
+export type NodeToType<T> = T extends StoreListNode<infer LE>
+    ? EntityToType<LE>[]
+    : T extends StoreNode<infer OE>
+    ? EntityToType<OE>
     : {
-          [P in keyof T]?: T[P] extends EntityField<infer W>
-              ? W["fieldType"]
-              : T[P] extends StoreNode<infer X>
-              ? EntityToType<X>
-              : T[P] extends StoreListNode<infer Y>
-              ? EntityToType<Y>[]
+          [P in keyof T]?: T[P] extends EntityField<infer F>
+              ? FieldEntryType<F>
+              : T[P] extends StoreNode<infer sOE>
+              ? EntityToType<sOE>
+              : T[P] extends StoreListNode<infer sLE>
+              ? EntityToType<sLE>[]
               : T[P]
       };
 
 /** Noeud de store simple. */
-export type StoreNode<T extends Entity = any> = EntityToNode<T> & {
+export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
@@ -37,30 +37,30 @@ export type StoreNode<T extends Entity = any> = EntityToNode<T> & {
     clear(): void;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<T>): void;
+    replace(data: EntityToType<E>): void;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<T>): void;
+    set(data: EntityToType<E>): void;
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<T extends Entity = any, U = {}> extends IObservableArray<StoreNode<T>> {
+export interface StoreListNode<E extends Entity = any, A = {}> extends IObservableArray<StoreNode<E>> {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
 
     /** Métadonnées. */
-    readonly $entity: T;
+    readonly $entity: E;
 
     /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
-    $initializer?: (source: StoreNode<T>) => U | void;
+    $initializer?: (source: StoreNode<E>) => A | void;
 
     /** Ajoute un élément à la liste. */
-    pushNode(...items: EntityToType<T>[]): void;
+    pushNode(...items: EntityToType<E>[]): void;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: EntityToType<T>[]): void;
+    replaceNodes(data: EntityToType<E>[]): void;
 
     /** Met à jour le noeud de liste à partir de la liste fournie. */
-    setNodes(data: EntityToType<T>[]): void;
+    setNodes(data: EntityToType<E>[]): void;
 }

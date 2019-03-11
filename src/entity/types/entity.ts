@@ -80,30 +80,41 @@ export interface FieldEntry<
     readonly comment?: React.ReactNode;
 }
 
+/** Récupère le type d'un FieldEntry, et gère les cas spéciaux "string", "number" et "boolean". */
+export type FieldEntryType<F> = F extends FieldEntry<"string">
+    ? string
+    : F extends FieldEntry<"number">
+    ? number
+    : F extends FieldEntry<"boolean">
+    ? boolean
+    : F extends FieldEntry<infer T>
+    ? T
+    : never;
+
 /** Métadonnées d'une entrée de type "object" pour une entité. */
-export interface ObjectEntry<T extends Entity = any> {
+export interface ObjectEntry<E extends Entity = any> {
     readonly type: "object";
 
     /** Entité de l'entrée */
-    readonly entity: T;
+    readonly entity: E;
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
-export interface ListEntry<T extends Entity = any> {
+export interface ListEntry<E extends Entity = any> {
     readonly type: "list";
 
     /** Entité de l'entrée */
-    readonly entity: T;
+    readonly entity: E;
 }
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
-export type EntityToType<T extends Entity> = {
-    [P in keyof T["fields"]]?: T["fields"][P] extends FieldEntry
-        ? T["fields"][P]["fieldType"]
-        : T["fields"][P] extends ObjectEntry<infer U>
-        ? EntityToType<U>
-        : T["fields"][P] extends ListEntry<infer V>
-        ? EntityToType<V>[]
+export type EntityToType<E extends Entity> = {
+    [P in keyof E["fields"]]?: E["fields"][P] extends FieldEntry
+        ? FieldEntryType<E["fields"][P]>
+        : E["fields"][P] extends ObjectEntry<infer OE>
+        ? EntityToType<OE>
+        : E["fields"][P] extends ListEntry<infer LE>
+        ? EntityToType<LE>[]
         : never
 };
 
@@ -113,5 +124,5 @@ export interface EntityField<F extends FieldEntry = FieldEntry> {
     readonly $field: F;
 
     /** Valeur. */
-    value: F["fieldType"] | undefined;
+    value: FieldEntryType<F> | undefined;
 }

@@ -4,38 +4,38 @@ import {Entity, EntityField, EntityToType, FieldEntry} from "./entity";
 import {NodeToType, StoreListNode, StoreNode} from "./store";
 
 /** Transforme les nodes et fields d'un noeud en leur équivalent dans un formulaire. */
-export type NodeToForm<T extends Entity, U = {}> = {
-    readonly [P in keyof (StoreNode<T> & U)]: (StoreNode<T> & U)[P] extends StoreNode<infer V>
-        ? FormNode<V>
-        : (StoreNode<T> & U)[P] extends StoreListNode<infer W, infer X>
-        ? FormListNode<W, X>
-        : (StoreNode<T> & U)[P] extends EntityField<infer F>
+export type NodeToForm<E extends Entity, A = {}> = {
+    readonly [P in keyof (StoreNode<E> & A)]: (StoreNode<E> & A)[P] extends StoreNode<infer OE>
+        ? FormNode<OE>
+        : (StoreNode<E> & A)[P] extends StoreListNode<infer LE, infer LA>
+        ? FormListNode<LE, LA>
+        : (StoreNode<E> & A)[P] extends EntityField<infer F>
         ? FormEntityField<F>
-        : (StoreNode<T> & U)[P]
+        : (StoreNode<E> & A)[P]
 };
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
 /** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
-export type NodeToErrors<T extends Entity, U = {}> = Omit<
+export type NodeToErrors<E extends Entity, A = {}> = Omit<
     {
-        readonly [P in keyof (StoreNode<T> & U)]?: (StoreNode<T> & U)[P] extends StoreNode<infer V>
-            ? NodeToErrors<V>
-            : (StoreNode<T> & U)[P] extends StoreListNode<infer W, infer X>
-            ? NodeToErrors<W, X>[]
-            : (StoreNode<T> & U)[P] extends EntityField
+        readonly [P in keyof (StoreNode<E> & A)]?: (StoreNode<E> & A)[P] extends StoreNode<infer OE>
+            ? NodeToErrors<OE>
+            : (StoreNode<E> & A)[P] extends StoreListNode<infer LE, infer LA>
+            ? NodeToErrors<LE, LA>[]
+            : (StoreNode<E> & A)[P] extends EntityField
             ? string
             : never
     },
     {
-        [P in keyof (StoreNode<T> & U)]: (StoreNode<T> & U)[P] extends StoreNode | StoreListNode | EntityField
+        [P in keyof (StoreNode<E> & A)]: (StoreNode<E> & A)[P] extends StoreNode | StoreListNode | EntityField
             ? never
             : P
-    }[keyof (StoreNode<T> & U)]
+    }[keyof (StoreNode<E> & A)]
 >;
 
 /** Champs additionnels pour un noeud de formulaire. */
-export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
+export type FormNode<E extends Entity = any, A = {}> = NodeToForm<E, A> & {
     /** Données liée à un FormNode. */
     readonly form: {
         /** Précise si le formulaire associé est en édition ou non. */
@@ -45,7 +45,7 @@ export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: NodeToErrors<T, U>;
+        readonly errors: NodeToErrors<E, A>;
     };
 
     /** Vide l'objet (récursivement). */
@@ -55,21 +55,21 @@ export type FormNode<T extends Entity = any, U = {}> = NodeToForm<T, U> & {
     dispose(): void;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<T>): void;
+    replace(data: EntityToType<E>): void;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<T>): void;
+    set(data: EntityToType<E>): void;
 
     /** StoreNode original. */
-    readonly sourceNode: StoreNode<T>;
+    readonly sourceNode: StoreNode<E>;
 };
 
-export interface FormListNode<T extends Entity = any, U = {}> extends IObservableArray<FormNode<T, U>> {
+export interface FormListNode<E extends Entity = any, A = {}> extends IObservableArray<FormNode<E, A>> {
     /** Métadonnées. */
-    readonly $entity: T;
+    readonly $entity: E;
 
     /** Données liée à un FormNode. */
     readonly form: {
@@ -80,11 +80,11 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: NodeToErrors<T, U>[];
+        readonly errors: NodeToErrors<E, A>[];
     };
 
     /** Fonction d'initialisation pour les items du noeud liste. */
-    $initializer?: (source: StoreNode<T>) => U | void;
+    $initializer?: (source: StoreNode<E>) => A | void;
 
     /** @internal */
     /** Dispose l'observer qui suit l'ajout et la suppression d'élement dans la liste source. */
@@ -94,19 +94,19 @@ export interface FormListNode<T extends Entity = any, U = {}> extends IObservabl
     dispose(): void;
 
     /** Ajoute un élément à la liste. */
-    pushNode(...items: EntityToType<T>[]): void;
+    pushNode(...items: EntityToType<E>[]): void;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: (EntityToType<T> & NodeToType<U>)[]): void;
+    replaceNodes(data: (EntityToType<E> & NodeToType<A>)[]): void;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    setNodes(data: (EntityToType<T> & NodeToType<U>)[]): void;
+    setNodes(data: (EntityToType<E> & NodeToType<A>)[]): void;
 
     /** StoreNode original. */
-    readonly sourceNode: StoreListNode<T>;
+    readonly sourceNode: StoreListNode<E>;
 }
 
 /** Définition de champ dans un FormNode. */

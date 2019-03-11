@@ -11,13 +11,14 @@ import {
     BaseSelectProps,
     EntityField,
     FieldEntry,
+    FieldEntryType,
     InputComponents,
     SelectComponents
 } from "../types";
 import {Field, FieldOptions} from "./field";
 
-function getOnChange<T extends FieldEntry>(field: EntityField<T>) {
-    return action(`on${upperFirst(field.$field.name)}Change`, value => (field.value = value));
+function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
+    return action(`on${upperFirst(field.$field.name)}Change`, (value: FieldEntryType<F>) => (field.value = value));
 }
 
 /**

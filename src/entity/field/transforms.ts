@@ -88,7 +88,7 @@ export function makeField<
                 isRequired: false,
                 label: "",
                 name: "",
-                type: "field" as "field",
+                type: "field",
                 fieldType: {} as NonNullable<T>
             },
             $field
@@ -103,7 +103,7 @@ export function makeField<
                   }
               }
             : {value}
-    ) as EntityField;
+    ) as EntityField<FieldEntry<T>>;
 
     if (isEdit !== undefined) {
         (field as any).isEdit = isEdit;

@@ -7,12 +7,12 @@ export const LigneEntity = {
     name: "ligne",
     fields: {
         id: {
-            type: "field" as "field",
-            fieldType: 0,
+            type: "field",
+            fieldType: "number",
             domain: {},
             isRequired: true,
             name: "id",
             label: "ligne.id"
         }
     }
-};
+} as const;

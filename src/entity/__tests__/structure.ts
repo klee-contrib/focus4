@@ -7,28 +7,28 @@ export const StructureEntity = {
     name: "structure",
     fields: {
         id: {
-            type: "field" as "field",
-            fieldType: 0,
+            type: "field",
+            fieldType: "number",
             domain: {},
             isRequired: false,
             name: "id",
             label: "structure.id"
         },
         nom: {
-            type: "field" as "field",
-            fieldType: "",
+            type: "field",
+            fieldType: "string",
             domain: {},
             isRequired: true,
             name: "nom",
             label: "structure.nom"
         },
         siret: {
-            type: "field" as "field",
-            fieldType: "",
+            type: "field",
+            fieldType: "string",
             domain: {},
             isRequired: false,
             name: "siret",
             label: "structure.siret"
         }
     }
-};
+} as const;

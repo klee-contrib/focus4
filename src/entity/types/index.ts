@@ -9,7 +9,7 @@ export {
     BaseSelectProps,
     FieldComponents
 } from "./components";
-export {Domain, Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry} from "./entity";
+export {Domain, Entity, EntityField, EntityToType, FieldEntry, FieldEntryType, ListEntry, ObjectEntry} from "./entity";
 export {FormEntityField, FormListNode, FormNode} from "./form";
 export {NodeToType, StoreListNode, StoreNode} from "./store";
 export {

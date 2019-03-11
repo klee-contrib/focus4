@@ -8,32 +8,32 @@ export const OperationEntity = {
     name: "operation",
     fields: {
         id: {
-            type: "field" as "field",
-            fieldType: 0,
+            type: "field",
+            fieldType: "number",
             domain: {},
             isRequired: false,
             name: "id",
             label: "operation.id"
         },
         numero: {
-            type: "field" as "field",
-            fieldType: "",
+            type: "field",
+            fieldType: "string",
             domain: {},
             isRequired: true,
             name: "numero",
             label: "operation.numero"
         },
         montant: {
-            type: "field" as "field",
-            fieldType: 0,
+            type: "field",
+            fieldType: "number",
             domain: {},
             isRequired: false,
             name: "montant",
             label: "operation.montant"
         },
         structure: {
-            type: "object" as "object",
+            type: "object",
             entity: StructureEntity
         }
     }
-};
+} as const;

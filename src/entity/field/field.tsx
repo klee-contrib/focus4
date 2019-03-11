@@ -8,7 +8,15 @@ import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {themr} from "../../theme";
 
 import {FormContext} from "../form";
-import {BaseInputProps, BaseSelectProps, EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
+import {
+    BaseInputProps,
+    BaseSelectProps,
+    EntityField,
+    FieldComponents,
+    FieldEntry,
+    FieldEntryType,
+    FormEntityField
+} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -33,7 +41,7 @@ export interface FieldOptions<T extends FieldEntry> {
     /** N'affiche jamais le champ en erreur. */
     noError?: boolean;
     /** Handler de modification de la valeur. */
-    onChange?: (value: T["fieldType"]) => void;
+    onChange?: (value: FieldEntryType<T>) => void;
     /** CSS. */
     theme?: FieldStyle;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
@@ -82,7 +90,7 @@ export class Field<T extends FieldEntry> extends React.Component<
 
     /** Appelé lors d'un changement sur l'input. */
     @action.bound
-    onChange(value: T["fieldType"]) {
+    onChange(value: FieldEntryType<T>) {
         const {
             onChange,
             field: {
