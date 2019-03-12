@@ -94,6 +94,10 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
         const onSourceSplice = observe(
             sourceNode as StoreListNode,
             action((change: IArrayChange | IArraySplice) => {
+                if (sourceNode === node) {
+                    return;
+                }
+
                 if (change.type === "splice") {
                     // On construit les nouveaux noeuds à ajouter au FormListNode.
                     const newNodes = change.added.map(item => getNodeForList(node, item));
@@ -227,7 +231,9 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
             parentNode.sourceNode[field.$field.name] as EntityField,
             "value",
             change => {
-                field.value = change.newValue;
+                if (parentNode !== parentNode.sourceNode) {
+                    field.value = change.newValue;
+                }
                 return change;
             }
         );

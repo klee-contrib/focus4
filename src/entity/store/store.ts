@@ -17,7 +17,6 @@ import {
     StoreNode
 } from "../types";
 import {nodeToFormNode} from "./form";
-import {toFlatValues} from "./util";
 
 /** Récupère les noeuds de store associés aux entités définies dans T. */
 export type ExtractEntities<T> = {
@@ -272,11 +271,6 @@ export function getNodeForList<T extends Entity>(list: StoreListNode<T>, item: E
     if (isFormListNode(list)) {
         nodeToFormNode<T>(node, isStoreNode<T>(item) ? item : node, list);
     }
-    if (isStoreNode<T>(item)) {
-        node.set(toFlatValues(item) as any); // TODO : régression TS 3.3
-    } else {
-        node.set(item);
-    }
-
+    setNode(node, item);
     return node;
 }

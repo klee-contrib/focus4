@@ -11,8 +11,9 @@ import {OperationEntity} from "./operation";
 import {ProjetEntity} from "./projet";
 import {StructureEntity} from "./structure";
 
-import i18n = require("i18next");
-i18n.init();
+import i18next = require("i18next");
+i18next.default = i18next as any;
+(i18next as any).init();
 
 function getStore() {
     const subStore = makeEntityStore({
