@@ -220,6 +220,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
                             onQueryChange={this.onQueryChange}
                             maxLength={undefined}
                             suggestionMatch="disabled"
+                            type="text"
                             theme={theme}
                             innerRef={(ref: any) => (this.autocomplete = ref)}
                             onKeyDown={this.onKeyDown}

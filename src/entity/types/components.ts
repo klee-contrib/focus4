@@ -5,6 +5,7 @@ export interface BaseInputProps {
     id?: string;
     name?: string;
     onChange?: (value: any) => void;
+    type?: string;
     theme?: object;
     value?: any;
 }

@@ -137,6 +137,7 @@ export class Field<T extends FieldEntry> extends React.Component<
             value,
             error,
             $field: {
+                fieldType,
                 name,
                 domain: {
                     autocompleteProps: domainACP = {},
@@ -154,6 +155,7 @@ export class Field<T extends FieldEntry> extends React.Component<
             error: (this.showError && error) || undefined,
             name,
             id: name,
+            type: fieldType === "number" ? "number" : "string",
             onChange: this.onChange
         };
 

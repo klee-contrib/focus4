@@ -35,7 +35,7 @@ export type $Field<
  */
 export function makeField<
     T,
-    ICProps extends BaseInputProps = InputProps,
+    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
     SCProps extends BaseSelectProps = SelectProps,
     ACProps extends BaseAutocompleteProps = AutocompleteProps,
     DCProps extends BaseDisplayProps = DisplayProps,
@@ -55,7 +55,7 @@ export function makeField<
  */
 export function makeField<
     T,
-    ICProps extends BaseInputProps = InputProps,
+    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
     SCProps extends BaseSelectProps = SelectProps,
     ACProps extends BaseAutocompleteProps = AutocompleteProps,
     DCProps extends BaseDisplayProps = DisplayProps,
@@ -68,7 +68,7 @@ export function makeField<
 ): EntityField<FieldEntry<NonNullable<T>, ICProps, SCProps, ACProps, DCProps, LCProps>>;
 export function makeField<
     T,
-    ICProps extends BaseInputProps = InputProps,
+    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
     SCProps extends BaseSelectProps = SelectProps,
     ACProps extends BaseAutocompleteProps = AutocompleteProps,
     DCProps extends BaseDisplayProps = DisplayProps,
@@ -89,7 +89,7 @@ export function makeField<
                 label: "",
                 name: "",
                 type: "field",
-                fieldType: {} as NonNullable<T>
+                fieldType: typeof (isFunction(value) ? value() : value) === "number" ? "number" : {}
             },
             $field
         ),
@@ -130,7 +130,7 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?:
  */
 export function fromField<
     T,
-    ICDProps extends BaseInputProps = InputProps,
+    ICDProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
     SCDProps extends BaseSelectProps = SelectProps,
     ACDProps extends BaseAutocompleteProps = AutocompleteProps,
     DCDProps extends BaseDisplayProps = DisplayProps,
@@ -157,7 +157,7 @@ export function fromField<
  */
 export function patchField<
     T,
-    ICDProps extends BaseInputProps = InputProps,
+    ICDProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
     SCDProps extends BaseSelectProps = SelectProps,
     ACDProps extends BaseAutocompleteProps = AutocompleteProps,
     DCDProps extends BaseDisplayProps = DisplayProps,

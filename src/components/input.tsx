@@ -1,5 +1,5 @@
 import InputMask, {InputMaskFormatOptions, InputMaskSelection} from "inputmask-core";
-import {action} from "mobx";
+import {action, observable} from "mobx";
 import * as React from "react";
 import {Input as RTInput, InputProps as RTInputProps} from "react-toolbox/lib/input";
 
@@ -15,40 +15,49 @@ export interface MaskDefinition {
     placeholderChar?: string;
 }
 
-export interface InputProps extends RTInputProps {
+export interface InputProps<T extends "string" | "number"> extends RTInputProps {
     mask?: MaskDefinition;
-    onChange?: (value: any) => void;
+    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    type: T;
+    value: (T extends "string" ? string : number) | undefined;
 }
 
-export class Input extends React.Component<InputProps> {
+export class Input<T extends "string" | "number"> extends React.Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement;
     protected mask?: InputMask;
 
+    @observable numberStringValue =
+        this.props.type === "number" ? (this.props.value !== undefined ? `${this.props.value}` : "") : undefined;
+
     componentWillMount() {
-        const {mask, value} = this.props;
-        if (mask) {
-            this.mask = new InputMask({...mask, value});
+        const {mask, type, value} = this.props;
+        if (mask && type === "string") {
+            this.mask = new InputMask({...mask, value: value as string});
         }
     }
 
-    componentWillReceiveProps({mask, value}: InputProps) {
+    componentWillReceiveProps({mask, value}: InputProps<T>) {
         // Mets à jour le pattern et la valeur du masque, si applicable.
         if (this.mask && mask && this.props.mask) {
             if (this.props.mask.pattern !== mask.pattern && this.props.value !== value) {
                 if (this.mask.getValue() === this.mask.emptyValue) {
-                    this.mask.setPattern(mask.pattern, {value});
+                    this.mask.setPattern(mask.pattern, {value: value as string});
                 } else {
                     this.mask.setPattern(mask.pattern, {value: this.mask.getRawValue()});
                 }
             } else if (this.props.mask.pattern !== mask.pattern) {
                 this.mask.setPattern(mask.pattern, {value: this.mask.getRawValue()});
             } else if (this.props.value !== value) {
-                this.mask.setValue(value);
+                this.mask.setValue(value as string);
             }
+        }
+
+        if (this.props.type === "number" && (!this.numberStringValue || value !== +this.numberStringValue)) {
+            this.numberStringValue = value !== undefined ? `${value}` : "";
         }
     }
 
-    componentWillUpdate({mask}: InputProps) {
+    componentWillUpdate({mask}: InputProps<T>) {
         if (this.mask && mask && this.props.mask && mask.pattern !== this.props.mask.pattern) {
             this.mask.setPattern(mask.pattern, {
                 value: this.mask.getRawValue(),
@@ -79,15 +88,14 @@ export class Input extends React.Component<InputProps> {
 
     @action.bound
     onKeyDown(e: KeyboardEvent) {
-        const {onChange, value} = this.props;
         if (this.mask) {
             if (isUndo(e)) {
                 e.preventDefault();
                 if (this.mask.undo()) {
                     this.updateInputSelection();
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
                 return;
@@ -96,8 +104,8 @@ export class Input extends React.Component<InputProps> {
                 if (this.mask.redo()) {
                     this.updateInputSelection();
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
                 return;
@@ -109,8 +117,8 @@ export class Input extends React.Component<InputProps> {
                         this.updateInputSelection();
                     }
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
             } else if (e.key === "Delete") {
@@ -123,8 +131,8 @@ export class Input extends React.Component<InputProps> {
                         this.updateInputSelection();
                     }
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
             }
@@ -147,9 +155,8 @@ export class Input extends React.Component<InputProps> {
             if (this.mask.input(e.key || (e as any).data)) {
                 this.updateInputSelection();
 
-                const {onChange, value} = this.props;
-                if (onChange && this.value !== value) {
-                    onChange(this.value);
+                if (this.value !== this.props.value) {
+                    this.onChange(this.value);
                 }
             }
         }
@@ -167,11 +174,21 @@ export class Input extends React.Component<InputProps> {
             if (this.mask.paste(e.clipboardData!.getData("Text"))) {
                 setTimeout(this.updateInputSelection, 0);
 
-                const {onChange, value} = this.props;
-                if (onChange && this.value !== value) {
-                    onChange(this.value);
+                if (this.value !== this.props.value) {
+                    this.onChange(this.value);
                 }
             }
+        }
+    }
+
+    @action.bound
+    onChange(value: string) {
+        const {onChange, type} = this.props;
+        if (type === "string") {
+            onChange(value === "" ? undefined : (value as any));
+        } else {
+            onChange(value === "" ? undefined : (+value as any));
+            this.numberStringValue = value;
         }
     }
 
@@ -179,8 +196,10 @@ export class Input extends React.Component<InputProps> {
         if (this.mask) {
             const value = this.mask.getValue();
             return value === this.mask.emptyValue || value === undefined ? "" : value;
+        } else if (this.props.type === "string") {
+            return (this.props.value || "") as string;
         } else {
-            return this.props.value === undefined ? "" : this.props.value;
+            return this.numberStringValue!;
         }
     }
 
@@ -192,8 +211,10 @@ export class Input extends React.Component<InputProps> {
                     innerRef: (i: any) => (this.inputElement = i && i.inputNode),
                     onPaste: this.onPaste
                 }}
+                onChange={this.onChange}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
+                type="text"
                 value={this.value}
             />
         );

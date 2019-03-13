@@ -18,7 +18,7 @@ import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-da
 
 const Calendar = calendarFactory(IconButton);
 
-export interface InputDateProps extends InputProps {
+export interface InputDateProps extends InputProps<"string"> {
     /** Format de l'affichage de la date dans le calendrier. */
     calendarFormat?: string;
     /** Composant affiché depuis la gauche ou la droite. */
@@ -43,12 +43,10 @@ export interface InputDateProps extends InputProps {
      * Par défaut "utc-midnight".
      */
     ISOStringFormat?: "utc-midnight" | "local-midnight" | "local-utc-midnight";
-    /** Est appelé au clic sur le calendrier ou au blur (n'est pas synchronisé avec le texte). */
-    onChange: (date?: string) => void;
     /** CSS. */
     theme?: DatePickerTheme & InputTheme;
     /** Valeur. */
-    value?: string;
+    value: string | undefined;
     /* Autres props du Calendar React */
     calendarProps?: DatePickerProps;
 }
@@ -242,7 +240,7 @@ export class InputDate extends React.Component<InputDateProps> {
                         <Input
                             {...inputProps}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                            onChange={(value: string) => (this.dateText = value)}
+                            onChange={value => (this.dateText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showCalendar = true)}
                             theme={theme}

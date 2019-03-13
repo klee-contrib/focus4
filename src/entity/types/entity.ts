@@ -12,7 +12,7 @@ import {Validator} from "./validation";
 
 /** Définition d'un domaine. */
 export interface Domain<
-    ICProps extends BaseInputProps = InputProps,
+    ICProps extends BaseInputProps = InputProps<"string" | "number">,
     SCProps extends BaseSelectProps = SelectProps,
     ACProps extends BaseAutocompleteProps = AutocompleteProps,
     DCProps extends BaseDisplayProps = DisplayProps,
