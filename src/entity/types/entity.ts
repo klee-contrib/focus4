@@ -13,8 +13,8 @@ import {Validator} from "./validation";
 /** Définition d'un domaine. */
 export interface Domain<
     ICProps extends BaseInputProps = InputProps<"string" | "number">,
-    SCProps extends BaseSelectProps = SelectProps,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    SCProps extends BaseSelectProps = SelectProps<"string" | "number">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<"string" | "number">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 > extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {

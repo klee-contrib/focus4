@@ -12,9 +12,9 @@ const Theme = themr("selectCheckbox", styles);
 function clickHandlerFactory(
     isDisabled: boolean,
     isSelected: boolean,
-    value: string[] | number[] | undefined,
+    value: any[] | undefined,
     optVal: string | number,
-    onChange: (value: string[] | number[] | undefined) => void
+    onChange: (value: any[] | undefined) => void
 ) {
     return (e: React.SyntheticEvent<any>) => {
         e.stopPropagation();
@@ -23,41 +23,44 @@ function clickHandlerFactory(
         if (!isDisabled) {
             if (isSelected) {
                 // is selected -> remove it
-                onChange(value ? (value as any).filter((val: any) => val !== optVal) : undefined);
+                onChange(value ? value.filter(val => val !== optVal) : undefined);
             } else {
                 // is not selected -> add it
-                onChange((value ? [...value, optVal] : [optVal]) as any);
+                onChange(value ? [...value, optVal] : [optVal]);
             }
         }
     };
 }
 
-export interface SelectCheckboxProps {
-    /** Disabled checkbox-select. */
+/** Props du SelectCheckbox */
+export interface SelectCheckboxProps<T extends "string" | "number"> {
+    /** Désactive le select. */
     disabled?: boolean;
-    /** Error message to display. */
-    error?: string;
-    /** Label to display. */
+    /** Message d'erreur à afficher. */
+    error?: React.ReactNode;
+    /** Libellé. */
     label?: string;
-    /** Name of field for label. */
+    /** Nom du champ de libellé. */
     labelKey: string;
-    /** Max number of selected items. */
+    /** Nombre maximal d'éléments sélectionnables. */
     maxSelectable?: number;
-    /** Name for input field. */
-    name: string;
-    /** Call with each value change. */
-    onChange: (value: string[] | number[] | undefined) => void;
+    /** Nom de l'input. */
+    name?: string;
+    /** Est appelé à chaque changement de valeur. */
+    onChange: (value: (T extends "string" ? string : number)[] | undefined) => void;
     /** CSS. */
     theme?: SelectCheckboxStyle;
-    /** Value. */
-    value?: string[] | number[];
-    /** Name of field for key. */
+    /** Type du champ (number ou string). */
+    type: T;
+    /** Valeur. */
+    value: (T extends "string" ? string : number)[] | undefined;
+    /** Nom du champ de valeur. */
     valueKey: string;
-    /** Values. */
+    /** Liste des valeurs. */
     values: {}[];
 }
 
-export function SelectCheckbox({
+export function SelectCheckbox<T extends "string" | "number">({
     disabled = false,
     error,
     label,
@@ -69,7 +72,7 @@ export function SelectCheckbox({
     value,
     valueKey,
     values
-}: SelectCheckboxProps) {
+}: SelectCheckboxProps<T>) {
     return (
         <Theme theme={pTheme}>
             {theme => (

@@ -8,52 +8,54 @@ import * as styles from "./__style__/select-radio.css";
 export type SelectRadioStyle = Partial<typeof styles>;
 const Theme = themr("selectRadio", styles);
 
-/** Props for RadioSelect */
-export interface SelectRadioProps {
-    /** Disabled radio-select, default to: false */
+/** Props du SelectRadio. */
+export interface SelectRadioProps<T extends "string" | "number"> {
+    /** Désactive le select. */
     disabled?: boolean;
-    /** Error message to display. */
-    error?: string;
-    /** Label to display. */
+    /** Message d'erreur à afficher. */
+    error?: React.ReactNode;
+    /** Libellé. */
     label?: string;
-    /** Name of field for label. */
+    /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "false". */
+    hasUndefined?: boolean;
+    /** Nom du champ de libellé. */
     labelKey: string;
-    /** Name for input field. */
-    name: string;
-    /** Call with each value change. */
-    onChange: (value: string | number | undefined) => void;
+    /** Nom de l'input. */
+    name?: string;
+    /** Est appelé à chaque changement de valeur. */
+    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** CSS. */
     theme?: SelectRadioStyle;
-    /** Value. */
-    value?: string | number | undefined;
-    /** Name of field for key. */
-    valueKey: string;
-    /** Values. */
-    values: {}[];
-    /** If has undefined, default to: false */
-    hasUndefined?: boolean;
-    /** Undefined label */
+    /** Type du champ (number ou string). */
+    type: T;
+    /** Libellé du cas vide. */
     undefinedLabel?: string;
-    /** Undefined position, default to: bottom */
+    /** Position du cas vide. Par défaut : "bottom". */
     undefinedPosition?: "top" | "bottom";
+    /** Valeur. */
+    value: (T extends "string" ? string : number) | undefined;
+    /** Nom du champ de valeur. */
+    valueKey: string;
+    /** Liste des valeurs. */
+    values: {}[];
 }
 
 /** RadioSelect component */
-export function SelectRadio({
+export function SelectRadio<T extends "string" | "number">({
     disabled = false,
     error,
     label,
     labelKey,
+    hasUndefined = false,
     name,
     onChange,
     theme: pTheme,
+    undefinedLabel = "focus.select.none",
+    undefinedPosition = "bottom",
     value,
     valueKey,
-    values,
-    hasUndefined = false,
-    undefinedLabel = "focus.select.none",
-    undefinedPosition = "bottom"
-}: SelectRadioProps) {
+    values
+}: SelectRadioProps<T>) {
     let definitiveValues = values;
     if (hasUndefined && undefinedPosition === "bottom") {
         definitiveValues = [...values, {[valueKey]: undefined, [labelKey]: undefinedLabel}];

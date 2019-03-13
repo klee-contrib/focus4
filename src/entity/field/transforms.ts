@@ -36,8 +36,8 @@ export type $Field<
 export function makeField<
     T,
     ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 >(
@@ -56,8 +56,8 @@ export function makeField<
 export function makeField<
     T,
     ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 >(
@@ -69,8 +69,8 @@ export function makeField<
 export function makeField<
     T,
     ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 >(
@@ -131,8 +131,8 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?:
 export function fromField<
     T,
     ICDProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCDProps extends BaseSelectProps = SelectProps,
-    ACDProps extends BaseAutocompleteProps = AutocompleteProps,
+    SCDProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACDProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
     DCDProps extends BaseDisplayProps = DisplayProps,
     LCDProps extends BaseLabelProps = LabelProps,
     ICProps extends BaseInputProps = ICDProps,
@@ -158,8 +158,8 @@ export function fromField<
 export function patchField<
     T,
     ICDProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCDProps extends BaseSelectProps = SelectProps,
-    ACDProps extends BaseAutocompleteProps = AutocompleteProps,
+    SCDProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACDProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
     DCDProps extends BaseDisplayProps = DisplayProps,
     LCDProps extends BaseLabelProps = LabelProps,
     ICProps extends BaseInputProps = ICDProps,
