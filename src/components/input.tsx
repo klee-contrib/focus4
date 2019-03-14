@@ -1,7 +1,13 @@
 import InputMask, {InputMaskFormatOptions, InputMaskSelection} from "inputmask-core";
 import {action, observable} from "mobx";
+import {observer} from "mobx-react";
+import n from "numeral";
 import * as React from "react";
 import {Input as RTInput, InputProps as RTInputProps} from "react-toolbox/lib/input";
+
+function numeral(text: string) {
+    return n(typeof text === "string" && n.locale() === "fr" ? text.replace(".", ",") : text);
+}
 
 /** Définition d'un masque de saisie. */
 export interface MaskDefinition {
@@ -22,12 +28,17 @@ export interface InputProps<T extends "string" | "number"> extends RTInputProps 
     value: (T extends "string" ? string : number) | undefined;
 }
 
+@observer
 export class Input<T extends "string" | "number"> extends React.Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement;
     protected mask?: InputMask;
 
     @observable numberStringValue =
-        this.props.type === "number" ? (this.props.value !== undefined ? `${this.props.value}` : "") : undefined;
+        this.props.type === "number"
+            ? this.props.value !== undefined
+                ? n(this.props.value).format("0,0[.0]")
+                : ""
+            : undefined;
 
     componentWillMount() {
         const {mask, type, value} = this.props;
@@ -52,8 +63,11 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
             }
         }
 
-        if (this.props.type === "number" && (!this.numberStringValue || value !== +this.numberStringValue)) {
-            this.numberStringValue = value !== undefined ? `${value}` : "";
+        if (
+            this.props.type === "number" &&
+            (!this.numberStringValue || value !== numeral(this.numberStringValue).value())
+        ) {
+            this.numberStringValue = value !== undefined ? n(value).format("0,0[.0]") : "";
         }
     }
 
@@ -187,8 +201,24 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
         if (type === "string") {
             onChange(value === "" ? undefined : (value as any));
         } else {
-            onChange(value === "" ? undefined : (+value as any));
-            this.numberStringValue = value;
+            if (value === "") {
+                onChange(undefined);
+            } else {
+                if (n.locale() === "fr") {
+                    value = value.replace(".", ",");
+                }
+                const {decimal, thousands} = n.localeData().delimiters;
+                if (
+                    value.split("").filter(c => c === decimal).length < 2 &&
+                    !value
+                        .replace(decimal, "")
+                        .replace(new RegExp(thousands, "g"), "")
+                        .match(/\D/)
+                ) {
+                    onChange(numeral(value).value() as any);
+                    this.numberStringValue = value;
+                }
+            }
         }
     }
 
