@@ -1,13 +1,10 @@
 import InputMask, {InputMaskFormatOptions, InputMaskSelection} from "inputmask-core";
-import {action, observable} from "mobx";
+import {range} from "lodash";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
-import n from "numeral";
+import numeral from "numeral";
 import * as React from "react";
 import {Input as RTInput, InputProps as RTInputProps} from "react-toolbox/lib/input";
-
-function numeral(text: string) {
-    return n(typeof text === "string" && n.locale() === "fr" ? text.replace(".", ",") : text);
-}
 
 /** Définition d'un masque de saisie. */
 export interface MaskDefinition {
@@ -22,9 +19,17 @@ export interface MaskDefinition {
 }
 
 export interface InputProps<T extends "string" | "number"> extends RTInputProps {
+    /** Pour un input de type "number", affiche les séparateurs de milliers. */
+    hasThousandsSeparator?: boolean;
+    /** Pour un input de type "text", paramètre un masque de saisie. */
     mask?: MaskDefinition;
+    /** Pour un input de type "number", le nombre maximal de décimales qu'il est possible de saisir. Par défaut : 10. */
+    maxDecimals?: number;
+    /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    /** Type de l'input. */
     type: T;
+    /** Valeur. */
     value: (T extends "string" ? string : number) | undefined;
 }
 
@@ -33,10 +38,22 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
     protected inputElement!: HTMLInputElement;
     protected mask?: InputMask;
 
+    @computed
+    get numberFormat() {
+        const {hasThousandsSeparator, maxDecimals = 10} = this.props;
+        return `${hasThousandsSeparator ? "0," : ""}0${
+            maxDecimals > 0
+                ? `[.][${range(0, maxDecimals)
+                      .map(_ => "0")
+                      .join("")}`
+                : ""
+        }`;
+    }
+
     @observable numberStringValue =
         this.props.type === "number"
             ? this.props.value !== undefined
-                ? n(this.props.value).format("0,0[.0]")
+                ? numeral(this.props.value).format(this.numberFormat)
                 : ""
             : undefined;
 
@@ -67,7 +84,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
             this.props.type === "number" &&
             (!this.numberStringValue || value !== numeral(this.numberStringValue).value())
         ) {
-            this.numberStringValue = value !== undefined ? n(value).format("0,0[.0]") : "";
+            this.numberStringValue = value !== undefined ? numeral(value).format(this.numberFormat) : "";
         }
     }
 
@@ -195,29 +212,74 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
         }
     }
 
+    private pendingAnimationFrame = false;
+
     @action.bound
     onChange(value: string) {
-        const {onChange, type} = this.props;
+        if (this.pendingAnimationFrame) {
+            return;
+        }
+
+        const {onChange, maxDecimals = 10, type} = this.props;
         if (type === "string") {
             onChange(value === "" ? undefined : (value as any));
         } else {
             if (value === "") {
                 onChange(undefined);
             } else {
-                if (n.locale() === "fr") {
+                if (numeral.locale() === "fr") {
                     value = value.replace(".", ",");
                 }
-                const {decimal, thousands} = n.localeData().delimiters;
+
+                const {decimal, thousands} = numeral.localeData().delimiters;
+                const invalidCharRegex = new RegExp(`[^\\d\\${thousands}\\${decimal}]`, "g");
+                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}]`);
+                const [left, right, nope] = value.split(decimal);
+
                 if (
-                    value.split("").filter(c => c === decimal).length < 2 &&
-                    !value
-                        .replace(decimal, "")
-                        .replace(new RegExp(thousands, "g"), "")
-                        .match(/\D/)
+                    ((maxDecimals && (right || "").length <= maxDecimals) || right === undefined) &&
+                    nope === undefined &&
+                    !value.match(invalidCharRegex)
                 ) {
-                    onChange(numeral(value).value() as any);
-                    this.numberStringValue = value;
+                    const newValue =
+                        (!left && !right ? "" : numeral(value).format(this.numberFormat)) +
+                        (right === "" ? decimal : "");
+                    const newNumberValue = numeral(newValue).value();
+
+                    this.numberStringValue = newValue;
+                    onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
                 }
+
+                const {end} = getSelection(this.inputElement);
+                const ajustedEnd = Math.max(
+                    0,
+                    value
+                        .slice(0, end)
+                        .replace(invalidCharRegex, "")
+                        .replace(new RegExp(thousands, "g"), "").length +
+                        this.numberStringValue!.split("").filter(c => c === "0").length -
+                        value.split("").filter(c => c === "0").length
+                );
+
+                let charCount = 0;
+                const newEnd = this.numberStringValue!.split("").reduce((count, char) => {
+                    if (charCount === ajustedEnd) {
+                        return count;
+                    }
+                    if (char.match(digitDecimalRegex)) {
+                        charCount++;
+                    }
+                    return count + 1;
+                }, 0);
+
+                this.pendingAnimationFrame = true;
+                window.requestAnimationFrame(() => {
+                    setSelection(this.inputElement, {
+                        start: newEnd,
+                        end: newEnd
+                    });
+                    this.pendingAnimationFrame = false;
+                });
             }
         }
     }
@@ -234,9 +296,10 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
     }
 
     render() {
+        const {mask, hasThousandsSeparator, maxDecimals, ...props} = this.props;
         return (
             <RTInput
-                {...this.props}
+                {...props}
                 {...{
                     innerRef: (i: any) => (this.inputElement = i && i.inputNode),
                     onPaste: this.onPaste
