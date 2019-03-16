@@ -24,7 +24,7 @@ export interface Domain<
     /** Formatteur pour l'affichage du champ en consulation. */
     displayFormatter?: (value: T) => string;
     /** Liste des validateurs. */
-    validator?: Validator | Validator[];
+    validator?: Validator<T> | Validator<T>[];
 
     /** Composant personnalisé pour l'autocomplete. */
     AutocompleteComponent?: React.ComponentType<ACProps>;
@@ -75,7 +75,14 @@ export interface FieldEntry<
     readonly fieldType: T;
 
     /** Domaine du champ. */
-    readonly domain: Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>;
+    readonly domain: Domain<
+        T extends "string" ? string : T extends "number" ? number : T extends "boolean" ? boolean : T,
+        ICProps,
+        SCProps,
+        ACProps,
+        DCProps,
+        LCProps
+    >;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;

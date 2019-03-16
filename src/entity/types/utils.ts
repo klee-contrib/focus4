@@ -3,14 +3,9 @@ import {isObservableArray} from "mobx";
 import {Entity, EntityField} from "./entity";
 import {FormListNode, FormNode} from "./form";
 import {StoreListNode, StoreNode} from "./store";
-import {RegexValidator, Validator} from "./validation";
 
 export function isEntityField(data: any): data is EntityField {
     return data && !!(data as EntityField).$field;
-}
-
-export function isRegex(validator: Validator): validator is RegexValidator {
-    return validator && !!(validator as RegexValidator).regex;
 }
 
 export function isAnyStoreNode<E extends Entity = any>(data: any): data is StoreNode<E> | StoreListNode<E> {

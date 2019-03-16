@@ -27,7 +27,6 @@ export {
     isAnyFormNode,
     isFormListNode,
     isFormNode,
-    isRegex,
     isAnyStoreNode,
     isStoreListNode,
     isStoreNode

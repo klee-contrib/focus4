@@ -213,7 +213,7 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
     extendObservable(field, {
         _isEdit: isBoolean(isEdit) ? isEdit : true,
         get error() {
-            return validateField(field);
+            return validateField(field.value, field.$field.isRequired, field.$field.domain.validator);
         },
         get isEdit() {
             return parentNode.form.isEdit && (isFunction(isEdit) ? isEdit() : this._isEdit);
