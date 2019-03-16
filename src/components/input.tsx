@@ -25,6 +25,8 @@ export interface InputProps<T extends "string" | "number"> extends RTInputProps 
     mask?: MaskDefinition;
     /** Pour un input de type "number", le nombre maximal de décimales qu'il est possible de saisir. Par défaut : 10. */
     maxDecimals?: number;
+    /** Pour un input de type "number", interdit la saisie de nombres négatifs. */
+    noNegativeNumbers?: boolean;
     /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** Type de l'input. */
@@ -220,7 +222,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
             return;
         }
 
-        const {onChange, maxDecimals = 10, type} = this.props;
+        const {noNegativeNumbers, onChange, maxDecimals = 10, type} = this.props;
         if (type === "string") {
             onChange(value === "" ? undefined : (value as any));
         } else {
@@ -231,9 +233,15 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
                     value = value.replace(".", ",");
                 }
 
+                let isNegative = false;
+                if (value.startsWith("-") && !noNegativeNumbers) {
+                    value = value.substring(1);
+                    isNegative = true;
+                }
+
                 const {decimal, thousands} = numeral.localeData().delimiters;
                 const invalidCharRegex = new RegExp(`[^\\d\\${thousands}\\${decimal}]`, "g");
-                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}]`);
+                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
                 const [left, right, nope] = value.split(decimal);
 
                 if (
@@ -242,6 +250,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
                     !value.match(invalidCharRegex)
                 ) {
                     const newValue =
+                        (isNegative ? "-" : "") +
                         (!left && !right ? "" : numeral(value).format(this.numberFormat)) +
                         (right === "" ? decimal : "");
                     const newNumberValue = numeral(newValue).value();
@@ -250,16 +259,17 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
                     onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
                 }
 
-                const {end} = getSelection(this.inputElement);
-                const ajustedEnd = Math.max(
-                    0,
-                    value
-                        .slice(0, end)
-                        .replace(invalidCharRegex, "")
-                        .replace(new RegExp(thousands, "g"), "").length +
-                        this.numberStringValue!.split("").filter(c => c === "0").length -
-                        value.split("").filter(c => c === "0").length
-                );
+                const end = getSelection(this.inputElement).end - (isNegative ? 1 : 0);
+                const ajustedEnd =
+                    Math.max(
+                        0,
+                        value
+                            .slice(0, end)
+                            .replace(invalidCharRegex, "")
+                            .replace(new RegExp(thousands, "g"), "").length +
+                            this.numberStringValue!.split("").filter(c => c === "0").length -
+                            value.split("").filter(c => c === "0").length
+                    ) + (isNegative ? 1 : 0);
 
                 let charCount = 0;
                 const newEnd = this.numberStringValue!.split("").reduce((count, char) => {
