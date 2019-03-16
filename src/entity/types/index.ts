@@ -17,6 +17,7 @@ export {
     EntityToType,
     FieldEntry,
     FieldEntryType,
+    FieldType,
     ListEntry,
     ObjectEntry
 } from "./entity";

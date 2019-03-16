@@ -75,14 +75,7 @@ export interface FieldEntry<
     readonly fieldType: T;
 
     /** Domaine du champ. */
-    readonly domain: Domain<
-        T extends "string" ? string : T extends "number" ? number : T extends "boolean" ? boolean : T,
-        ICProps,
-        SCProps,
-        ACProps,
-        DCProps,
-        LCProps
-    >;
+    readonly domain: Domain<FieldType<T>, ICProps, SCProps, ACProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -105,8 +98,17 @@ export type FieldEntryType<F> = F extends FieldEntry<"string">
     : F extends FieldEntry<"boolean">
     ? boolean
     : F extends FieldEntry<infer T>
-    ? T
+    ? NonNullable<T>
     : never;
+
+/** Transforme le type passé ) un FieldEntry en type effectif. */
+export type FieldType<T> = T extends "string"
+    ? string
+    : T extends "number"
+    ? number
+    : T extends "boolean"
+    ? boolean
+    : NonNullable<T>;
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
 export interface ObjectEntry<E extends Entity = any> {

@@ -12,7 +12,8 @@ import {
     BaseSelectProps,
     Domain,
     EntityField,
-    FieldEntry
+    FieldEntry,
+    FieldType
 } from "../types";
 
 export type $Field<
@@ -23,7 +24,8 @@ export type $Field<
     DCProps extends BaseDisplayProps = any,
     LCProps extends BaseLabelProps = any
 > = Partial<
-    FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps> & Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+    FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps> &
+        Domain<FieldType<T>, ICProps, SCProps, ACProps, DCProps, LCProps>
 >;
 
 /**
@@ -231,6 +233,16 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         domain: {
             ...domain,
             ...domainOverrides,
+            validator: !domain.validator
+                ? domainOverrides.validator
+                : !domainOverrides.validator
+                ? domain.validator
+                : [
+                      ...(Array.isArray(domain.validator) ? domain.validator : [domain.validator]),
+                      ...(Array.isArray(domainOverrides.validator)
+                          ? domainOverrides.validator
+                          : [domainOverrides.validator])
+                  ],
             inputProps: {
                 ...domain.inputProps,
                 ...domainOverrides.inputProps,

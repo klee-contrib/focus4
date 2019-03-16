@@ -71,9 +71,8 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                     const isMin = min !== undefined && value < min;
                     const isMax = max !== undefined && value > max;
                     const isDecimals =
-                        maxDecimals !== undefined && (`${value}`.split(".")[1] || "").length <= maxDecimals;
+                        maxDecimals !== undefined && (`${value}`.split(".")[1] || "").length > maxDecimals;
                     error = isMin || isMax || isDecimals ? errorMessage || "focus.validation.number" : false;
-                    break;
                 }
             }
 
