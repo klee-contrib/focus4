@@ -12,20 +12,17 @@ import {Validator} from "./validation";
 
 /** Définition d'un domaine. */
 export interface Domain<
-    ICProps extends BaseInputProps = InputProps<"string" | "number">,
-    SCProps extends BaseSelectProps = SelectProps<"string" | "number">,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps<"string" | "number">,
+    T = unknown,
+    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 > extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Formatteur pour l'affichage du champ en consulation. */
-    displayFormatter?: (value: any) => string;
-    /** Formatteur pour l'affichage du champ en édition. */
-    inputFormatter?: (value: any) => string;
-    /** Formatteur inverse pour convertir l'affichage du champ en la valeur (édition uniquement) */
-    unformatter?: (text: string) => any;
+    displayFormatter?: (value: T) => string;
     /** Liste des validateurs. */
     validator?: Validator | Validator[];
 
@@ -39,6 +36,19 @@ export interface Domain<
     InputComponent?: React.ComponentType<ICProps>;
     /** Composant personnalisé pour le select. */
     SelectComponent?: React.ComponentType<SCProps>;
+}
+
+/** Crée un domaine. */
+export function domain<T>(): <
+    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+    DCProps extends BaseDisplayProps = DisplayProps,
+    LCProps extends BaseLabelProps = LabelProps
+>(
+    d: Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+) => Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps> {
+    return d => d;
 }
 
 /** Définition générale d'une entité. */
@@ -65,7 +75,7 @@ export interface FieldEntry<
     readonly fieldType: T;
 
     /** Domaine du champ. */
-    readonly domain: Domain<ICProps, SCProps, ACProps, DCProps, LCProps>;
+    readonly domain: Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;

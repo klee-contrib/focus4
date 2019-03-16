@@ -88,24 +88,6 @@ export class Field<T extends FieldEntry> extends React.Component<
         this.valueElement!.removeEventListener("mousedown", this.disableHideError);
     }
 
-    /** Appelé lors d'un changement sur l'input. */
-    @action.bound
-    onChange(value: FieldEntryType<T>) {
-        const {
-            onChange,
-            field: {
-                $field: {domain}
-            }
-        } = this.props;
-        if (onChange) {
-            if (domain.unformatter) {
-                onChange(domain.unformatter(value));
-            } else {
-                onChange(value);
-            }
-        }
-    }
-
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
         const {field, autocompleteProps = {}, displayProps = {}, selectProps = {}} = this.props;
@@ -132,7 +114,14 @@ export class Field<T extends FieldEntry> extends React.Component<
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {field, inputType = "input", autocompleteProps = {}, inputProps = {}, selectProps = {}} = this.props;
+        const {
+            field,
+            inputType = "input",
+            onChange,
+            autocompleteProps = {},
+            inputProps = {},
+            selectProps = {}
+        } = this.props;
         const {
             value,
             error,
@@ -144,19 +133,18 @@ export class Field<T extends FieldEntry> extends React.Component<
                     AutocompleteComponent = Autocomplete,
                     inputProps: domainICP = {},
                     InputComponent = Input,
-                    inputFormatter = (x?: string) => x,
                     selectProps: domainSCP = {},
                     SelectComponent = Select
                 }
             }
         } = field as FormEntityField<T>;
         const props: BaseInputProps = {
-            value: inputFormatter(value),
+            value,
             error: (this.showError && error) || undefined,
             name,
             id: name,
             type: fieldType === "number" ? "number" : "string",
-            onChange: this.onChange
+            onChange
         };
 
         if (inputType === "select") {

@@ -23,7 +23,7 @@ export type $Field<
     DCProps extends BaseDisplayProps = any,
     LCProps extends BaseLabelProps = any
 > = Partial<
-    FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps> & Domain<ICProps, SCProps, ACProps, DCProps, LCProps>
+    FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps> & Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>
 >;
 
 /**
