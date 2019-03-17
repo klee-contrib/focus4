@@ -15,8 +15,6 @@ export interface FormProps {
     /** Retire le formulaire HTML */
     noForm?: boolean;
     /** Voir `FormActions` */
-    load: () => void;
-    /** Voir `FormActions` */
     save: () => void;
     /** CSS. */
     theme?: FormStyle;

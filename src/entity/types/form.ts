@@ -1,4 +1,5 @@
 import {IObservableArray, Lambda} from "mobx";
+import {Omit} from "ts-essentials";
 
 import {Entity, EntityField, EntityToType, FieldEntry} from "./entity";
 import {NodeToType, StoreListNode, StoreNode} from "./store";
@@ -13,8 +14,6 @@ export type NodeToForm<E extends Entity, A = {}> = {
         ? FormEntityField<F>
         : (StoreNode<E> & A)[P]
 };
-
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
 /** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
 export type NodeToErrors<E extends Entity, A = {}> = Omit<

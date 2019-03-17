@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
+import {action, comparer, computed, extendObservable, Lambda, observable, reaction, runInAction} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 
 import {PanelProps} from "../../components";
@@ -24,184 +24,202 @@ export interface FormConfig {
 }
 
 /** Config d'actions à fournir au formulaire. */
-export interface ActionConfig<T = any> {
+export interface ActionConfig<T, S extends string = never> {
     /** Fonction pour récupérer la liste des paramètres pour l'action de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
     getLoadParams?: () => any[] | undefined;
     /** Action de chargement. */
     load?: (...args: any[]) => Promise<T>;
     /** Action de sauvegarde. Obligatoire. */
     save: (entity: T) => Promise<T | void>;
+    /** Services de sauvegarde supplémentaires. */
+    saves?: {[P in S]: (entity: T) => Promise<T | void>};
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export class FormActions {
+export type FormActions<S extends string = never> = {
     /** Dispose la réaction de chargement. */
-    readonly dispose?: Lambda;
+    dispose?: Lambda;
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
-    readonly formContext: {forceErrorDisplay: boolean} = observable({forceErrorDisplay: false});
+    readonly formContext: {forceErrorDisplay: boolean};
     /** Formulaire en chargement. */
-    @observable isLoading = false;
-
-    /** Services. */
-    private readonly actions: ActionConfig;
-    /** Config. */
-    private readonly config: FormConfig;
-    /** Etat courant du formulaire, à définir à partir de `makeFormNode`. Sera réinitialisé à chaque modification du `sourceNode`. */
-    private readonly entity: FormNode | FormListNode;
-
-    constructor(formNode: FormNode | FormListNode, actions: ActionConfig, config?: FormConfig) {
-        this.entity = formNode;
-        this.config = config || {};
-        this.actions = actions;
-
-        // On met en place la réaction de chargement.
-        if (actions.getLoadParams) {
-            this.dispose = reaction(actions.getLoadParams, this.load, {equals: comparer.structural});
-        }
-
-        // On appelle le chargement.
-        this.load();
-    }
-
+    isLoading: boolean;
     /** Récupère les props à fournir à un Form pour lui fournir les actions. */
-    @computed.struct
-    get formProps(): FormProps {
-        return {
-            formContext: this.formContext,
-            load: this.load,
-            save: this.save
-        };
-    }
-
+    readonly formProps: FormProps;
     /** Récupère les props à fournir à un Panel pour relier ses boutons aux actions. */
-    @computed.struct
-    get panelProps(): PanelProps {
-        return {
-            editing: this.entity.form.isEdit,
-            loading: this.isLoading,
-            onClickCancel: this.onClickCancel,
-            onClickEdit: this.onClickEdit,
-            save: this.save
-        };
-    }
-
+    readonly panelProps: PanelProps;
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
-    @action.bound
-    async load() {
-        const {getLoadParams, load} = this.actions;
-
-        // On n'effectue le chargement que si on a un service de chargement et des paramètres pour le service.
-        if (getLoadParams && load) {
-            const params = getLoadParams();
-            if (params) {
-                this.isLoading = true;
-                const data = await load(...params);
-                runInAction("afterLoad", () => {
-                    if (isStoreNode(this.entity.sourceNode)) {
-                        this.entity.sourceNode.replace(data);
-                    } else {
-                        this.entity.sourceNode.replaceNodes(data);
-                    }
-
-                    this.isLoading = false;
-                });
-
-                if (this.config.onFormLoaded) {
-                    this.config.onFormLoaded();
-                }
-            }
-        }
-    }
-
+    load(): void;
     /** Appelle le service de sauvegarde. */
-    @action.bound
-    async save() {
-        this.formContext.forceErrorDisplay = true;
-
-        // On ne sauvegarde que si la validation est en succès.
-        if (this.entity.form && !this.entity.form.isValid) {
-            return Promise.reject({error: "Le formulaire est invalide", detail: this.entity.form.errors});
-        }
-
-        try {
-            this.isLoading = true;
-            const data = await this.actions.save(toFlatValues(this.entity));
-            runInAction("afterSave", () => {
-                this.isLoading = false;
-                this.entity.form.isEdit = false;
-                if (data) {
-                    // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                    if (isStoreNode(this.entity.sourceNode)) {
-                        this.entity.sourceNode.replace(data);
-                    } else {
-                        this.entity.sourceNode.replaceNodes(data);
-                    }
-                }
-            });
-
-            // Pour supprimer le message, il "suffit" de faire en sorte qu'il soit vide.
-            const savedMessage = i18next.t(`${this.config.i18nPrefix || "focus"}.detail.saved`);
-            if (savedMessage) {
-                messageStore.addSuccessMessage(savedMessage);
-            }
-            if (this.config.onFormSaved) {
-                this.config.onFormSaved();
-            }
-        } finally {
-            this.isLoading = false;
-        }
-    }
-
+    save(): void;
     /** Handler de clic sur le bouton "Annuler". */
-    @action.bound
-    onClickCancel() {
-        this.entity.form.isEdit = false;
-        this.entity.reset();
-        if (this.config.onClickCancel) {
-            this.config.onClickCancel();
-        }
-    }
-
+    onClickCancel(): void;
     /** Handler de clic sur le bouton "Modifier". */
-    @action.bound
-    onClickEdit() {
-        this.entity.form.isEdit = true;
-        if (this.config.onClickEdit) {
-            this.config.onClickEdit();
-        }
-    }
-}
+    onClickEdit(): void;
+} & {[P in S]: () => void};
 
 /**
- * Crée un formulaire.
- * @param componentClass Le composant (classe) lié aux actions, pour disposer la réaction de chargement à son démontage.
+ * Crée les actions d'un formulaire.
  * @param formNode Le FormNode du formulaire.
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends Entity, U>(
+export function makeFormActions<T extends Entity, U, S extends string = never>(
     componentClass: React.Component | null,
     formNode: FormListNode<T, U>,
-    actions: ActionConfig<EntityToType<T>[]>,
+    actions: ActionConfig<EntityToType<T>[], S>,
     config?: FormConfig
-): FormActions;
-export function makeFormActions<T extends Entity, U>(
+): FormActions<S>;
+export function makeFormActions<T extends Entity, U, S extends string = never>(
     componentClass: React.Component | null,
     formNode: FormNode<T, U>,
-    actions: ActionConfig<EntityToType<T>>,
+    actions: ActionConfig<EntityToType<T>, S>,
     config?: FormConfig
-): FormActions;
-export function makeFormActions<T extends Entity, U>(
+): FormActions<S>;
+export function makeFormActions<T extends Entity, U, S extends string>(
     componentClass: React.Component | null,
     formNode: FormNode<T, U> | FormListNode<T, U>,
-    actions: ActionConfig,
-    config?: FormConfig
+    actions: ActionConfig<any, S>,
+    config: FormConfig = {}
 ) {
-    const formActions = new FormActions(formNode as any, actions, config);
+    // On se prépare à construire plusieurs actions de sauvegarde.
+    function buildSave(saveService: (entity: any) => Promise<any | void>) {
+        return async function save(this: FormActions<S>) {
+            this.formContext.forceErrorDisplay = true;
 
-    if (componentClass && formActions.dispose) {
-        disposeOnUnmount(componentClass, formActions.dispose);
+            // On ne fait rien si on est déjà en chargement.
+            if (this.isLoading) {
+                return;
+            }
+
+            // On ne sauvegarde que si la validation est en succès.
+            if (formNode.form && !formNode.form.isValid) {
+                return Promise.reject({error: "Le formulaire est invalide", detail: formNode.form.errors});
+            }
+
+            try {
+                this.isLoading = true;
+                const data = await saveService(toFlatValues(formNode));
+                runInAction("afterSave", () => {
+                    this.isLoading = false;
+                    formNode.form.isEdit = false;
+                    if (data) {
+                        // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
+                        if (isStoreNode(formNode.sourceNode)) {
+                            formNode.sourceNode.replace(data);
+                        } else {
+                            formNode.sourceNode.replaceNodes(data);
+                        }
+                    }
+                });
+
+                // Pour supprimer le message, il "suffit" de faire en sorte qu'il soit vide.
+                const savedMessage = i18next.t(`${config.i18nPrefix || "focus"}.detail.saved`);
+                if (savedMessage) {
+                    messageStore.addSuccessMessage(savedMessage);
+                }
+                if (config.onFormSaved) {
+                    config.onFormSaved();
+                }
+            } finally {
+                this.isLoading = false;
+            }
+        };
     }
+
+    const formActions = observable(
+        {
+            formContext: {forceErrorDisplay: false},
+            isLoading: false,
+
+            get formProps(): FormProps {
+                return {
+                    formContext: this.formContext,
+                    save: this.save
+                };
+            },
+
+            get panelProps(): PanelProps {
+                return {
+                    editing: formNode.form.isEdit,
+                    loading: this.isLoading,
+                    onClickCancel: this.onClickCancel,
+                    onClickEdit: this.onClickEdit,
+                    save: this.save
+                };
+            },
+
+            async load() {
+                const {getLoadParams, load} = actions;
+
+                // On n'effectue le chargement que si on a un service de chargement et des paramètres pour le service.
+                if (getLoadParams && load) {
+                    const params = getLoadParams();
+                    if (params) {
+                        this.isLoading = true;
+                        const data = await load(...params);
+                        runInAction("afterLoad", () => {
+                            if (isStoreNode(formNode.sourceNode)) {
+                                formNode.sourceNode.replace(data);
+                            } else {
+                                formNode.sourceNode.replaceNodes(data);
+                            }
+
+                            this.isLoading = false;
+                        });
+
+                        if (config.onFormLoaded) {
+                            config.onFormLoaded();
+                        }
+                    }
+                }
+            },
+
+            save: buildSave(actions.save),
+
+            onClickCancel() {
+                formNode.form.isEdit = false;
+                formNode.reset();
+                if (config.onClickCancel) {
+                    config.onClickCancel();
+                }
+            },
+
+            onClickEdit() {
+                formNode.form.isEdit = true;
+                if (config.onClickEdit) {
+                    config.onClickEdit();
+                }
+            }
+        } as FormActions,
+        {
+            formProps: computed.struct,
+            panelProps: computed.struct,
+            load: action.bound,
+            save: action.bound,
+            onClickCancel: action.bound,
+            onClickEdit: action.bound
+        }
+    );
+
+    // On ajoute les services de sauvegardes additionnels.
+    if (actions.saves) {
+        for (const save in actions.saves) {
+            extendObservable(formActions, {[save]: buildSave(actions.saves[save])}, {[save]: action.bound});
+        }
+    }
+
+    // On met en place la réaction de chargement.
+    if (actions.getLoadParams) {
+        formActions.dispose = reaction(actions.getLoadParams, formActions.load, {equals: comparer.structural});
+
+        // Et on la lie au composant, si renseigné.
+        if (componentClass) {
+            disposeOnUnmount(componentClass, formActions.dispose);
+        }
+    }
+
+    // On appelle le chargement.
+    formActions.load();
 
     return formActions;
 }
