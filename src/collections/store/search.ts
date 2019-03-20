@@ -235,7 +235,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
         const {query, selectedFacets, groupingKey, sortBy, sortAsc, list, top} = this;
 
         const data = {
-            criteria: {...this.flatCriteria, query} as QueryInput<C>["criteria"],
+            criteria: {...this.flatCriteria, query: query || "*"} as QueryInput<C>["criteria"],
             facets: selectedFacets || {},
             group: groupingKey || "",
             skip: (isScroll && list.length) || 0, // On skip les résultats qu'on a déjà si `isScroll = true`

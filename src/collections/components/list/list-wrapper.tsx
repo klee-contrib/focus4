@@ -34,7 +34,7 @@ export interface ListWrapperProps {
     theme?: ListWrapperStyle;
 }
 
-const lwcInit = {
+export const lwcInit = {
     addItemHandler: () => {
         /*noop */
     },
