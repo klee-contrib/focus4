@@ -16,7 +16,7 @@ import {addDragSource} from "./dnd-utils";
 import {DndDragLayer, DragLayerStyle} from "./drag-layer";
 import {LineProps, LineWrapper, LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps, ListStyle} from "./list-base";
-import {ListWrapperContext} from "./list-wrapper";
+import {ListWrapperContext, lwcInit} from "./list-wrapper";
 
 import * as styles from "./__style__/list.css";
 const Theme = themr("list", styles);
@@ -102,7 +102,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         : LineWrapper;
 
     /** Met à jour `byLine`. */
-    private updateByLine = () => {
+    private readonly updateByLine = () => {
         if (this.ulRef) {
             this.byLine = this.mode === "mosaic" ? Math.floor(this.ulRef.clientWidth / (this.mosaic.width + 10)) : 1;
         }
@@ -168,7 +168,11 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
     @computed
     protected get isAddItemShown() {
-        return !!(!this.props.hideAdditionalItems && this.addItemHandler && this.mode === "mosaic");
+        return !!(
+            !this.props.hideAdditionalItems &&
+            this.addItemHandler !== lwcInit.addItemHandler &&
+            this.mode === "mosaic"
+        );
     }
 
     /** Désactive l'animation de drag and drop sur les lignes. */
