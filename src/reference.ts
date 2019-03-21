@@ -1,4 +1,5 @@
-import {action, computed, extendObservable, IObservableArray, observable} from "mobx";
+import {upperFirst} from "lodash";
+import {action, extendObservable, IObservableArray, observable} from "mobx";
 
 import {config} from "./config";
 
@@ -26,13 +27,13 @@ export function makeReferenceStore<T extends Record<string, {}>>(
 } {
     const referenceStore: any = {};
     for (const ref in refConfig) {
-        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide.
-        referenceStore[`_${ref}`] = observable.shallowArray();
+        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé.
+        referenceStore[`_${ref}`] = observable.array([], {deep: false});
         extendObservable(referenceStore, {
             // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
             [`_${ref}_cache`]: undefined,
             // On définit le getter de la liste de référence par une dérivation MobX.
-            [ref]: computed(() => {
+            get [ref]() {
                 // Si on n'est pas en train de charger et que la donnée n'est pas dans le cache, alors on appelle le service de chargement.
                 if (
                     !referenceStore[`_${ref}_loading`] &&
@@ -48,7 +49,7 @@ export function makeReferenceStore<T extends Record<string, {}>>(
                     setTimeout(
                         () =>
                             referenceLoader(ref).then(
-                                action((refList: {}[]) => {
+                                action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
                                     referenceStore[`_${ref}_cache`] = new Date().getTime();
                                     referenceStore[`_${ref}`].replace(refList);
                                     delete referenceStore[`_${ref}_loading`];
@@ -60,7 +61,7 @@ export function makeReferenceStore<T extends Record<string, {}>>(
 
                 // Dans tous les cas, on renvoie la liste "cachée". Ainsi, sa mise à jour relancera toujours la dérivation.
                 return referenceStore[`_${ref}`];
-            })
+            }
         });
     }
 

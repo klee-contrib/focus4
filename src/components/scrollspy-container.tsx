@@ -54,7 +54,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     @observable protected scrollTop = 0;
 
     /** Map des panels qui se sont enregistrés dans le container. */
-    protected readonly panels = observable.map<PanelDescriptor>();
+    protected readonly panels = observable.map<string, PanelDescriptor>();
 
     /**
      * Enregistre un panel dans le container et retourne son id.

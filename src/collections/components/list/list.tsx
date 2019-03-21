@@ -1,6 +1,6 @@
 import i18next from "i18next";
-import {action, computed, observable} from "mobx";
-import {observer} from "mobx-react";
+import {action, autorun, comparer, computed, observable, reaction} from "mobx";
+import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 import {IconButton} from "react-toolbox/lib/button";
@@ -9,7 +9,6 @@ import {FontIcon} from "react-toolbox/lib/font_icon";
 import {getIcon} from "../../../components";
 import {config} from "../../../config";
 import {themr} from "../../../theme";
-import {classAutorun, classReaction} from "../../../util";
 
 import {ListStoreBase} from "../../store";
 import {OperationListItem} from "./contextual-actions";
@@ -102,6 +101,13 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         ? (addDragSource<T>(this.props.dragItemType || "item", LineWrapper) as typeof LineWrapper)
         : LineWrapper;
 
+    /** Met à jour `byLine`. */
+    private readonly updateByLine = () => {
+        if (this.ulRef) {
+            this.byLine = this.mode === "mosaic" ? Math.floor(this.ulRef.clientWidth / (this.mosaic.width + 10)) : 1;
+        }
+    };
+
     // Tuyauterie pour maintenir `byLine` à jour.
     componentDidMount() {
         super.componentDidMount();
@@ -113,19 +119,21 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         window.removeEventListener("resize", this.updateByLine);
     }
 
-    /** Met à jour `byLine`. */
-    @classAutorun
-    protected readonly updateByLine = () => {
-        if (this.ulRef) {
-            this.byLine = this.mode === "mosaic" ? Math.floor(this.ulRef.clientWidth / (this.mosaic.width + 10)) : 1;
-        }
-    };
+    @disposeOnUnmount
+    protected byLineUpdater = autorun(this.updateByLine);
+
+    /** Ferme le détail. */
+    @action.bound
+    closeDetail() {
+        this.displayedIdx = undefined;
+    }
 
     /** Réaction pour fermer le détail si la liste change. */
-    @classReaction((that: List<any, any>) => () => that.displayedData.length)
-    protected readonly closeDetail = () => {
-        this.displayedIdx = undefined;
-    };
+    @disposeOnUnmount
+    protected detailCloser = reaction(() => this.displayedData.map(this.props.itemKey), this.closeDetail, {
+        fireImmediately: true,
+        equals: comparer.structural
+    });
 
     /** Handler d'ajout d'élément (fusion contexte / props). */
     @computed

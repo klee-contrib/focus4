@@ -1,5 +1,5 @@
 import {isArray, isEmpty, isUndefined, mapValues, omitBy} from "lodash";
-import {action, IObservableArray, isObservableArray, observable} from "mobx";
+import {action, extendObservable, IObservableArray, isObservableArray, observable} from "mobx";
 
 import {Entity, EntityField, FieldEntry, ListEntry, ObjectEntry} from "./types";
 
@@ -152,7 +152,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(
 
     // Cas d'une entrée de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
-        const outputEntry: StoreListNode<EntityStoreNode> = observable([]) as any;
+        const outputEntry: StoreListNode<EntityStoreNode> = observable.array([], {deep: false}) as any;
         outputEntry.$entity = entityMap[trueEntry];
         outputEntry.pushNode = action(function pushNode(this: typeof outputEntry, item: {}) {
             const itemNode = buildEntityEntry(
@@ -171,7 +171,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(
     }
 
     // Cas d'une entrée simple : On parcourt tous les champs de l'entité.
-    return (observable({
+    return ({
         ...mapValues(entityMap[trueEntry].fields, (v, key) => {
             // Cas d'un champ composé ou liste.
             if (!isFieldEntry(v)) {
@@ -193,10 +193,11 @@ export function buildEntityEntry<T extends EntityStoreConfig>(
             }
 
             // On s'assure que les métadonnées du champ ne soient pas observables.
-            return {
-                $entity: observable.ref(entityMap[trueEntry].fields[key]),
-                value: undefined
-            };
+            return extendObservable(
+                {$entity: entityMap[trueEntry].fields[key]},
+                {value: undefined},
+                {value: observable.ref}
+            );
         }),
         set: action(function set(this: EntityStoreNode, entityValue: any) {
             setEntityEntry(this, entityMap, entityMapping, entityValue, trueEntry);
@@ -204,7 +205,7 @@ export function buildEntityEntry<T extends EntityStoreConfig>(
         clear: action(function clear(this: EntityStoreNode) {
             clearEntity(this);
         })
-    }) as any) as EntityStoreNode;
+    } as any) as EntityStoreNode;
 }
 
 /**

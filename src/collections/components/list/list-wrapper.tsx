@@ -47,17 +47,22 @@ export const ListWrapperContext = React.createContext(lwcInit);
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps> {
     /** Objet passé en contexte pour les listes contenues dans le wrapper. */
-    listWrapperContext = observable({
-        /** Handler au clic sur le bouton "Ajouter". */
-        addItemHandler: observable.ref(this.props.addItemHandler || lwcInit.addItemHandler),
-        /** Taile des mosaïques. */
-        mosaic: {
-            width: this.props.mosaicWidth || lwcInit.mosaic.width,
-            height: this.props.mosaicHeight || lwcInit.mosaic.height
+    listWrapperContext = observable(
+        {
+            /** Handler au clic sur le bouton "Ajouter". */
+            addItemHandler: this.props.addItemHandler || lwcInit.addItemHandler,
+            /** Taile des mosaïques. */
+            mosaic: {
+                width: this.props.mosaicWidth || lwcInit.mosaic.width,
+                height: this.props.mosaicHeight || lwcInit.mosaic.height
+            },
+            /** Mode des listes. */
+            mode: this.props.mode || lwcInit.mode
         },
-        /** Mode des listes. */
-        mode: this.props.mode || lwcInit.mode
-    });
+        {
+            addItemHandler: observable.ref
+        }
+    );
 
     // On met à jour l'objet passé en contexte à chaque fois qu'on change les props du composant.
     @action

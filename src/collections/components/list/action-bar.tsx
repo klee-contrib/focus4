@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {reduce} from "lodash";
-import {action, observable} from "mobx";
-import {observer} from "mobx-react";
+import {action, observable, reaction} from "mobx";
+import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 import {Button, IconButton} from "react-toolbox/lib/button";
@@ -11,7 +11,6 @@ import {Input} from "react-toolbox/lib/input";
 import {ButtonMenu, getIcon, MenuItem} from "../../../components";
 import {config} from "../../../config";
 import {themr} from "../../../theme";
-import {classReaction} from "../../../util";
 
 import {isList, isSearch, ListStoreBase} from "../../store";
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
@@ -230,24 +229,27 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     }
 
     /** Réaction permettant de fermer la FacetBox et de mettre à jour sa hauteur à chaque fois que c'est nécessaire (changement de son contenu).  */
-    @classReaction<ActionBar<T>>(that => () => {
-        const {hasFacetBox, store} = that.props;
-        return (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false;
-    })
-    protected closeFacetBox() {
-        const {store, showSingleValuedFacets} = this.props;
+    @disposeOnUnmount
+    protected facetBoxCloser = reaction(
+        () => {
+            const {hasFacetBox, store} = this.props;
+            return (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false;
+        },
+        () => {
+            const {store, showSingleValuedFacets} = this.props;
 
-        // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
-        if (
-            this.displayFacetBox &&
-            isSearch(store) &&
-            store.facets.every(
-                facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
-            )
-        ) {
-            this.displayFacetBox = false;
+            // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
+            if (
+                this.displayFacetBox &&
+                isSearch(store) &&
+                store.facets.every(
+                    facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
+                )
+            ) {
+                this.displayFacetBox = false;
+            }
         }
-    }
+    );
 
     render() {
         const {

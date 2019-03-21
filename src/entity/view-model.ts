@@ -1,6 +1,7 @@
-import {action, autorun, isObservableArray, isObservableObject, observable, untracked} from "mobx";
+import {action, autorun, extendObservable, isObservableArray, observable, untracked} from "mobx";
 
-import {StoreNode, toFlatValues} from "./store";
+import {StoreListNode, StoreNode, toFlatValues} from "./store";
+import {EntityField} from "./types";
 
 export interface ViewModel {
     /** @internal */
@@ -49,7 +50,7 @@ export function createViewModel<T extends StoreNode>(model: T) {
 
 /** Version adaptée de `toJS` de MobX pour prendre en compte `$entity` et les fonctions `set` et `clear`. */
 function clone(source: any): any {
-    if (isObservableArray(source)) {
+    if (isStoreListNode(source)) {
         let res = [];
         const toAdd = source.map(clone);
         res.length = toAdd.length;
@@ -57,7 +58,7 @@ function clone(source: any): any {
             res[i] = toAdd[i];
         }
 
-        res = observable(res);
+        res = observable.array(res, {deep: false});
 
         if ((source as any).$entity) {
             (res as any).$entity = (source as any).$entity;
@@ -70,17 +71,38 @@ function clone(source: any): any {
         }
 
         return res;
-    } else if (isObservableObject(source)) {
+    } else if (isStoreNode(source)) {
         const res: any = {};
         for (const key in source) {
-            if (key === "$entity") {
-                res[key] = observable.ref((source as any)[key]);
-            } else {
-                res[key] = clone((source as any)[key]);
-            }
+            res[key] = clone((source as any)[key]);
         }
-        return observable(res);
+        return res;
+    } else if (isEntityField(source)) {
+        return extendObservable(
+            {
+                $entity: (source as any).$entity
+            },
+            {
+                value: (source as any).value
+            },
+            {
+                value: observable.ref
+            }
+        );
     }
 
     return source;
+}
+
+function isAnyStoreNode(data: any): data is StoreNode | StoreListNode {
+    return data && !!(data as StoreNode).set && !!(data as StoreNode).clear;
+}
+function isStoreListNode(data: any): data is StoreListNode {
+    return isAnyStoreNode(data) && isObservableArray(data);
+}
+function isStoreNode(data: any): data is StoreNode {
+    return isAnyStoreNode(data) && !isObservableArray(data);
+}
+function isEntityField(data: any): data is EntityField<any> {
+    return data && !isObservableArray(data) && !!(data as EntityField<any>).$entity;
 }

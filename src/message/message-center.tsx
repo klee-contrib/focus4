@@ -1,12 +1,10 @@
 import i18next from "i18next";
-import {action, observable} from "mobx";
-import {observer} from "mobx-react";
+import {action, observable, reaction} from "mobx";
+import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import {Snackbar} from "react-toolbox/lib/snackbar";
 
-import {classReaction} from "../util";
-
-import {Message, messageStore} from "./store";
+import {messageStore} from "./store";
 
 import * as theme from "./__style__/snackbar.css";
 
@@ -41,25 +39,29 @@ export class MessageCenter extends React.Component<MessageCenterProps> {
     /** Notifications en attente. */
     private readonly queuedNotifications: Notification[] = [];
 
-    /**
-     * Gère l'ajout d'un message dans le store.
-     * @param message Le message.
-     */
-    @classReaction(() => messageStore.latestMessage)
-    @action
-    handlePushMessage(message: Message) {
-        const {content, type} = message;
-        const {errorDuration = 8000, infoDuration = 3000, successDuration = 3000, warningDuration = 3000} = this.props;
-        const timeout =
-            type === "error"
-                ? errorDuration
-                : type === "info"
-                ? infoDuration
-                : type === "success"
-                ? successDuration
-                : warningDuration;
-        this.showSnackbar({type, content, timeout});
-    }
+    /** Gère l'ajout d'un message dans le store. */
+    @disposeOnUnmount
+    protected pushMessageHander = reaction(
+        () => messageStore.latestMessage!,
+        message => {
+            const {content, type} = message;
+            const {
+                errorDuration = 8000,
+                infoDuration = 3000,
+                successDuration = 3000,
+                warningDuration = 3000
+            } = this.props;
+            const timeout =
+                type === "error"
+                    ? errorDuration
+                    : type === "info"
+                    ? infoDuration
+                    : type === "success"
+                    ? successDuration
+                    : warningDuration;
+            this.showSnackbar({type, content, timeout});
+        }
+    );
 
     /** Affiche la snackbar avec la notification demandée. */
     @action.bound

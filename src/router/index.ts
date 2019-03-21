@@ -166,31 +166,36 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
     });
 
     /** L'objet de retour. */
-    return observable({
-        /** Store actif dans le routeur. */
-        get currentStore() {
-            const store = stores.find(s => s.isActive);
-            if (store) {
-                return store;
-            } else {
-                return {prefix: errorPageName as E, errorCode: errorCode.get()};
+    return observable(
+        {
+            /** Store actif dans le routeur. */
+            get currentStore() {
+                const store = stores.find(s => s.isActive);
+                if (store) {
+                    return store;
+                } else {
+                    return {prefix: errorPageName as E, errorCode: errorCode.get()};
+                }
+            },
+
+            /** Lance le routeur. */
+            start: router.init.bind(router) as () => Promise<void>,
+
+            /** La liste des ViewStores enregistrés dans le routeur. */
+            stores,
+
+            /**
+             * Navigue vers la racine du store du préfixe donné.
+             * @param prefix Le préfixe.
+             */
+            to(prefix: Store["prefix"]) {
+                if (prefix) {
+                    updateUrl(`/${prefix}`);
+                }
             }
         },
-
-        /** Lance le routeur. */
-        start: router.init.bind(router) as () => Promise<void>,
-
-        /** La liste des ViewStores enregistrés dans le routeur. */
-        stores: observable.ref(stores),
-
-        /**
-         * Navigue vers la racine du store du préfixe donné.
-         * @param prefix Le préfixe.
-         */
-        to(prefix: Store["prefix"]) {
-            if (prefix) {
-                updateUrl(`/${prefix}`);
-            }
+        {
+            stores: observable.ref
         }
-    });
+    );
 }

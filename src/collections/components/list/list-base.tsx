@@ -1,6 +1,7 @@
 import i18next from "i18next";
 import {isEqual} from "lodash";
 import {action, computed, observable, observe} from "mobx";
+import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
@@ -38,6 +39,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     @observable displayedCount = this.props.perPage;
 
     /** (Ré)initialise la pagination dès que les données affichées changent. */
+    @disposeOnUnmount
     protected countResetter = observe(
         (this as any) as {displayedData: T[]},
         "displayedData",
@@ -98,7 +100,6 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     componentWillUnmount() {
-        this.countResetter();
         if (this.shouldAttachScrollListener) {
             this.detachScrollListener();
         }

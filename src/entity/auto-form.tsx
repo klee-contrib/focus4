@@ -1,6 +1,6 @@
 import {autobind} from "core-decorators";
 import {some, values as _values} from "lodash";
-import {action, computed, Lambda, observable, ObservableMap, reaction, runInAction} from "mobx";
+import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import {v4} from "uuid";
@@ -55,12 +55,12 @@ export interface ServiceConfig<T, LP> {
 @autobind
 export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
-    static readonly editingMap: ObservableMap<boolean> = observable.map<boolean>();
+    static readonly editingMap = observable.map<string, boolean>();
 
     /** Précise si au moins un formulaire de l'application est en édition. */
     @computed
     static get isOneEdit() {
-        return AutoForm.editingMap.values().some(x => x);
+        return Array.from(AutoForm.editingMap.values()).some(x => x);
     }
 
     // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
@@ -135,7 +135,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
         // On met en place la réaction de chargement.
         if (services.getLoadParams) {
-            this.loadDisposer = reaction(services.getLoadParams, this.load, {compareStructural: true});
+            this.loadDisposer = reaction(services.getLoadParams, this.load, {equals: comparer.structural});
         }
     }
 
@@ -273,7 +273,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     }
 
     /** Fonction de rendu du formulaire à préciser. */
-    abstract renderContent(): React.ReactElement<any> | null;
+    abstract renderContent(): React.ReactElement | null;
     render() {
         const contextClassName = (this.context && this.context.theme && this.context.theme["form"]) || "";
         if (this.hasForm) {
