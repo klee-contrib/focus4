@@ -11,6 +11,7 @@ module.exports = {
         "\\.(css|less)$": "identity-obj-proxy"
     },
     preset: "ts-jest",
+    reporters: ["default", "jest-junit"],
     setupFilesAfterEnv: ["jest-enzyme"],
     snapshotSerializers: ["enzyme-to-json/serializer"],
     testEnvironment: "enzyme",

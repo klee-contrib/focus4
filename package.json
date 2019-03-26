@@ -18,7 +18,8 @@
         "start": "tsc && node scripts/copy-css.js dist",
         "stylelint": "stylelint src/**/*.css",
         "tcm": "node scripts/tcm.js",
-        "test": "jest",
+        "test": "jest --reporters=default",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit",
         "tslint": "tslint --project tsconfig.json --force"
     },
     "dependencies": {
@@ -59,6 +60,7 @@
         "identity-obj-proxy": "3.0.0",
         "jest": "24.5.0",
         "jest-enzyme": "7.0.2",
+        "jest-junit": "6.3.0",
         "react-test-renderer": "16.8.5",
         "shelljs": "0.8.3",
         "stylelint": "9.10.1",
