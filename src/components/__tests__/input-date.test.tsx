@@ -13,6 +13,7 @@ describe("InputDate component", () => {
                     /* */
                 }}
                 value={undefined}
+                type="string"
             />
         );
         // Assert
@@ -32,6 +33,7 @@ describe("Some date formation", () => {
                 }}
                 value={"10/11/2016"}
                 inputFormat={"dd/MM/yy"}
+                type="string"
             />
         );
         // Assert
@@ -48,6 +50,7 @@ describe("Some date formation", () => {
                 }}
                 value={"df/11/2016"}
                 inputFormat={"dd/MM/yyyy"}
+                type="string"
             />
         );
         // Assert
@@ -80,6 +83,7 @@ describe("Some date formation", () => {
                 }}
                 value={"sddqsdqsdq"}
                 inputFormat={"dd/MM/yyyy"}
+                type="string"
             />
         );
         // Assert

@@ -27,8 +27,8 @@ function getStore() {
 function getFormNodes() {
     const entry = getStore().operation;
     const entry2 = getStore().projetTest;
-    const formNode = makeFormNode(entry);
-    const formNode2 = makeFormNode(entry2);
+    const formNode = makeFormNode(null, entry);
+    const formNode2 = makeFormNode(null, entry2);
     return {entry, entry2, formNode, formNode2};
 }
 
@@ -276,10 +276,10 @@ describe("FormNode: Création à partir d'un noeud non-vide", () => {
     entry.replace(operation);
     entry2.replace(projetTest);
 
-    const formNode = makeFormNode(entry);
-    const formNode2 = makeFormNode(entry2);
-    const formNodeB = makeFormNode(entry, {isEmpty: true});
-    const formNodeB2 = makeFormNode(entry2, {isEmpty: true});
+    const formNode = makeFormNode(null, entry);
+    const formNode2 = makeFormNode(null, entry2);
+    const formNodeB = makeFormNode(null, entry, {isEmpty: true});
+    const formNodeB2 = makeFormNode(null, entry2, {isEmpty: true});
 
     test("Un FormNode créé sans options à partir d'une source non vide possède tout son contenu.", () =>
         expect(toFlatValues(formNode)).toEqual(toFlatValues(entry)));
@@ -613,7 +613,7 @@ describe("FormListNode: reset d'un item", () => {
 describe("FormNode: dispose", () => {
     const {entry, formNode} = getFormNodes();
     entry.replace(operation);
-    formNode.form.dispose();
+    formNode.dispose();
     entry.montant.value = 2;
 
     test("Le FormNode n'a pas été mis à jour.", () => expect(formNode.montant.value).toBe(operation.montant));
@@ -642,7 +642,7 @@ describe("FormListNode: dispose", () => {
     test("Après le dispose de la liste, les ajouts et les suppressions ne font plus rien.", async () => {
         await step1;
 
-        formNode2.form.dispose();
+        formNode2.dispose();
         entry2.replace({ligneList: [{id: 41}]});
         expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 54}]);
 
