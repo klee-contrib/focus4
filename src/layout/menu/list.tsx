@@ -48,7 +48,7 @@ export class MainMenuList extends React.Component<MainMenuListProps> {
                                             typeof item !== "number" &&
                                             item &&
                                             item !== true &&
-                                            (item as React.ReactElement<any>).props.route === activeRoute
+                                            (item as React.ReactElement).props.route === activeRoute
                                                 ? theme!.active
                                                 : ""
                                         }`}

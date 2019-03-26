@@ -232,7 +232,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
     @action.bound
     async search(isScroll = false) {
         if (this.blockSearch) {
-            /* tslint:disable */ return; /* tslint:enable */
+            return;
         }
 
         const {query, selectedFacets, groupingKey, sortBy, sortAsc, list, top} = this;
@@ -297,7 +297,6 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
      * @param groupCode Le code de la valeur de groupe en cours.
      */
     getSearchGroupStore(groupCode: string): ListStoreBase<T> {
-        // tslint:disable-next-line:no-this-assignment
         const store = this;
         return observable(
             {

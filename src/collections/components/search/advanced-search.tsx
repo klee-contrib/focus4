@@ -55,7 +55,7 @@ export interface AdvancedSearchProps<T> {
      */
     chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
-    customFacetComponents?: {[facet: string]: React.ReactType<FacetProps>};
+    customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: React.ComponentType<DetailProps<T>>;
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */

@@ -4,7 +4,7 @@ import * as React from "react";
 import {themeable, TReactCSSThemrTheme} from "react-css-themr";
 
 export interface ThemeConsumerProps<T> {
-    children: (theme: T) => React.ReactElement<any>;
+    children: (theme: T) => React.ReactElement;
     theme?: Partial<T>;
 }
 

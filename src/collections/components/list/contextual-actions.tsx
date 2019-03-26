@@ -118,8 +118,8 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
                 return actionLists;
             },
             {
-                customComponents: [] as React.ReactElement<any>[],
-                primaryActions: [] as React.ReactElement<any>[],
+                customComponents: [] as React.ReactElement[],
+                primaryActions: [] as React.ReactElement[],
                 secondaryActions: [] as MenuItemProps[]
             }
         );

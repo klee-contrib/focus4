@@ -7,6 +7,7 @@ export class DocumentHelper {
     // Clairement, on triche pas mal, mais il se trouve que ces évènements-là font parfaitement le boulot attendu.
     constructor() {
         window.addEventListener("focusin", () => (this._activeElement = document.activeElement));
+        // tslint:disable-next-line: deprecation
         window.addEventListener("mousedown", e => (this._activeElement = e.srcElement));
     }
 

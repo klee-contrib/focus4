@@ -204,10 +204,12 @@ const KEYCODE_Z = 90;
 const KEYCODE_Y = 89;
 
 function isUndo(e: KeyboardEvent) {
+    // tslint:disable-next-line: deprecation
     return (e.ctrlKey || e.metaKey) && e.keyCode === (e.shiftKey ? KEYCODE_Y : KEYCODE_Z);
 }
 
 function isRedo(e: KeyboardEvent) {
+    // tslint:disable-next-line: deprecation
     return (e.ctrlKey || e.metaKey) && e.keyCode === (e.shiftKey ? KEYCODE_Z : KEYCODE_Y);
 }
 
