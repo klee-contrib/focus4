@@ -1,17 +1,17 @@
 import i18next from "i18next";
-import {snakeCase} from "lodash";
-import {observable} from "mobx";
-import {observer} from "mobx-react";
+import { snakeCase } from "lodash";
+import { observable } from "mobx";
+import { observer } from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
-import {ProgressBar} from "react-toolbox/lib/progress_bar";
+import { findDOMNode } from "react-dom";
+import { ProgressBar } from "react-toolbox/lib/progress_bar";
 
-import {themr} from "../../theme";
+import { themr } from "../../theme";
 
-import {ButtonHelp} from "../button-help";
-import {ScrollspyContext} from "../scrollspy-container";
-import {PanelButtons, PanelButtonsProps} from "./buttons";
-export {PanelButtons};
+import { ButtonHelp } from "../button-help";
+import { ScrollspyContext } from "../scrollspy-container";
+import { PanelButtons, PanelButtonsProps } from "./buttons";
+export { PanelButtons };
 
 import * as styles from "../__style__/panel.css";
 export type PanelStyle = Partial<typeof styles>;
@@ -57,9 +57,9 @@ export class Panel extends React.Component<PanelProps> {
 
     /** On s'enregistre dans le scrollspy. */
     componentDidMount() {
-        const {hideOnScrollspy, title} = this.props;
+        const { hideOnScrollspy, title } = this.props;
         if (!hideOnScrollspy) {
-            this.id = this.context.registerPanel({title, node: findDOMNode(this) as HTMLDivElement}, this.id);
+            this.id = this.context.registerPanel({ title, node: findDOMNode(this) as HTMLDivElement }, this.id);
         }
 
         // On essaie de savoir si ce panel est inclus dans un formulaire.
@@ -73,9 +73,9 @@ export class Panel extends React.Component<PanelProps> {
     }
 
     /** On se met à jour dans le scrollspy. */
-    componentWillReceiveProps({hideOnScrollspy, title}: PanelProps) {
+    componentWillReceiveProps({ hideOnScrollspy, title }: PanelProps) {
         if (!hideOnScrollspy && title !== this.props.title && this.id) {
-            this.context.updatePanel(this.id, {title, node: findDOMNode(this) as HTMLDivElement});
+            this.context.updatePanel(this.id, { title, node: findDOMNode(this) as HTMLDivElement });
         }
     }
 
@@ -124,7 +124,7 @@ export class Panel extends React.Component<PanelProps> {
                 {theme => (
                     <div className={`${theme.panel} ${loading ? theme.busy : ""} ${editing ? theme.edit : ""}`}>
                         {!hideProgressBar && loading ? (
-                            <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} />
+                            <ProgressBar mode="indeterminate" theme={{ indeterminate: theme.progress }} />
                         ) : null}
                         {title || areButtonsTop ? (
                             <div className={`${theme.title} ${theme.top}`}>

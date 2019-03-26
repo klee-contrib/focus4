@@ -18,7 +18,8 @@
         "start": "tsc && node scripts/copy-css.js dist",
         "stylelint": "stylelint src/**/*.css",
         "tcm": "node scripts/tcm.js",
-        "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && tape -r ts-node/register src/entity/__test__/index.ts | tap-spec",
+        "test": "jest --reporters=default",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit",
         "tslint": "tslint --project tsconfig.json --force"
     },
     "dependencies": {
@@ -49,14 +50,21 @@
         "yester": "0.10.0"
     },
     "devDependencies": {
+        "@types/enzyme": "3.9.1",
+        "@types/jest": "24.0.11",
+        "@types/react-test-renderer": "16.8.1",
         "@types/shelljs": "0.8.3",
-        "@types/tape": "4.2.33",
-        "ignore-styles": "5.0.1",
+        "enzyme": "3.9.0",
+        "enzyme-adapter-react-16": "1.11.2",
+        "enzyme-to-json": "3.3.5",
+        "identity-obj-proxy": "3.0.0",
+        "jest": "24.5.0",
+        "jest-enzyme": "7.0.2",
+        "jest-junit": "6.3.0",
+        "react-test-renderer": "16.8.5",
         "shelljs": "0.8.3",
         "stylelint": "9.10.1",
-        "tap-spec": "5.0.0",
-        "tape": "4.10.1",
-        "ts-node": "8.0.3",
+        "ts-jest": "24.0.0",
         "tslint": "5.13.1",
         "typed-css-modules": "0.3.7",
         "typescript": "3.3.3333"

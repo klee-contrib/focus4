@@ -17,4 +17,10 @@ steps:
       displayName: "npm install and start"
 
     - script: npm test
-      displayName: "npm test"
+      displayName: "npm run test-ci"
+
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+          testRunner: JUnit
+          testResultsFiles: "**/junit.xml"
