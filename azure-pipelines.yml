@@ -16,7 +16,7 @@ steps:
           npm start
       displayName: "npm install and start"
 
-    - script: npm test
+    - script: npm run test-ci
       displayName: "npm run test-ci"
 
     - task: PublishTestResults@2
