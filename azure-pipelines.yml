@@ -8,18 +8,24 @@ steps:
     - task: NodeTool@0
       inputs:
           versionSpec: "10.x"
-      displayName: "Install Node.js"
+      displayName: "Node.js"
 
     - script: |
           npm install
           npm run tcm
-          npm start
-      displayName: "npm install and start"
+      displayName: "Prepare"
+
+    - script: npm run tslint
+      displayName: "TSLint"
+
+    - script: npm start
+      displayName: "Build"
 
     - script: npm run test-ci
-      displayName: "npm run test-ci"
+      displayName: "Test"
 
     - task: PublishTestResults@2
+      displayName: "Test report"
       condition: succeededOrFailed()
       inputs:
           testRunner: JUnit
