@@ -1,3 +1,6 @@
+[![Build Status](https://dev.azure.com/klee-focus/focus4/_apis/build/status/CI)](https://dev.azure.com/klee-focus/focus4/_build/latest?definitionId=1&view=logs) 
+[![npm version](https://badge.fury.io/js/focus4.svg)](https://www.npmjs.com/package/focus4)
+
 # Focus V4
 
 **`Focus V4`** est la version la plus récente du framework Focus, toujours basé sur React, mais cette fois-ci en **[Typescript](http://www.typescriptlang.org)** et **[MobX](http://mobx.js.org)** comme conteneur de state (à la place de `flux` ou `redux`).
