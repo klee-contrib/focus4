@@ -16,6 +16,8 @@ export interface ReferenceDefinition<T = any> {
     valueKey?: keyof T;
 }
 
+const lol = {} as ReferenceList<any>;
+
 export interface ReferenceList<T = any> extends Array<T> {
     /** Propriété représentant le libellé. */
     $labelKey?: keyof T;

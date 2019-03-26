@@ -18,8 +18,9 @@ steps:
     - script: npm run tslint-ci
       displayName: "TSLint"
 
-    - script: npm start
+    - script: npm run start-ci
       displayName: "Build"
+      failOnStderr: true
 
     - script: npm run test-ci
       displayName: "Test"
