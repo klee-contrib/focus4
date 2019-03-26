@@ -17,6 +17,7 @@ steps:
 
 - script: |
     npm install
+    npm run tcm
     npm start
   displayName: 'npm install and start'
 
