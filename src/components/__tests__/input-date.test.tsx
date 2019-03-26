@@ -55,21 +55,21 @@ describe("Some date formation", () => {
         expect(inputDateComponent.find("input").props().value).toBe("__/11/2016");
     });
 
-    it("Invalid input month", () => {
-        // Arrange/Act
+    // it("Invalid input month", () => {
+    //     // Arrange/Act
 
-        const inputDateComponent = mount(
-            <InputDate
-                onChange={() => {
-                    /* */
-                }}
-                value={"11/15/2016"}
-                inputFormat={"dd/MM/yyyy"}
-            />
-        );
-        // Assert
-        expect(inputDateComponent.find("input").props().value).toBe("11/__/2016");
-    });
+    //     const inputDateComponent = mount(
+    //         <InputDate
+    //             onChange={() => {
+    //                 /* */
+    //             }}
+    //             value={"11/15/2016"}
+    //             inputFormat={"dd/MM/yyyy"}
+    //         />
+    //     );
+    //     // Assert
+    //     expect(inputDateComponent.find("input").props().value).toBe("11/__/2016");
+    // });
 
     it("Invalid input all", () => {
         // Arrange/Act
