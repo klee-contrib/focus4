@@ -1,6 +1,3 @@
-import scroll from "smoothscroll-polyfill";
-scroll.polyfill();
-
 import i18next from "i18next";
 import {sortBy, uniqueId} from "lodash";
 import {action, computed, observable, untracked} from "mobx";
