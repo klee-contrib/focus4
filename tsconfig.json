@@ -12,6 +12,7 @@
         "experimentalDecorators": true,
         "skipLibCheck": true,
         "strict": true,
+        "plugins": [{"name": "typescript-tslint-plugin"}],
 
         // Options additionnelles
         "importHelpers": true,

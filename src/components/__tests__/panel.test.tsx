@@ -1,8 +1,8 @@
 // Libs
-import { mount } from "enzyme";
+import {mount} from "enzyme";
 import i18next from "i18next";
 import * as React from "react";
-import { Panel } from "../panel";
+import {Panel} from "../panel";
 
 i18next.init();
 
@@ -25,8 +25,14 @@ describe("Title", () => {
 test.each([["none", 1, 0], ["top", 1, 0], ["bottom", 1, 1], ["both", 1, 1]])(
     "Buttons positions %s / expectedTop : %i / expectedBottom : %i",
     (position: any, expectedTop, expectedBottom) => {
-        const panel = mount(<Panel title="my panel" buttonsPosition={position} theme={{ top: "topClassName", bottom: "bottomClassName" }} />);
+        const panel = mount(
+            <Panel
+                title="my panel"
+                buttonsPosition={position}
+                theme={{top: "topClassName", bottom: "bottomClassName"}}
+            />
+        );
         expect(panel.find(".topClassName").length).toBe(expectedTop);
         expect(panel.find(".bottomClassName").length).toBe(expectedBottom);
-    },
+    }
 );

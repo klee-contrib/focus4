@@ -15,7 +15,7 @@ steps:
           npm run tcm
       displayName: "Prepare"
 
-    - script: npm run tslint
+    - script: npm run tslint-ci
       displayName: "TSLint"
 
     - script: npm start

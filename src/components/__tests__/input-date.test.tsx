@@ -1,7 +1,7 @@
 // Libs
-import { mount } from "enzyme";
+import {mount} from "enzyme";
 import * as React from "react";
-import { InputDate } from "../input-date";
+import {InputDate} from "../input-date";
 
 // Components
 describe("InputDate component", () => {
@@ -22,7 +22,6 @@ describe("InputDate component", () => {
 });
 
 describe("Some date formation", () => {
-
     it("Formatter", () => {
         // Arrange/Act
 
