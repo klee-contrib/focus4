@@ -8,7 +8,7 @@ import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "../../../components";
 import {config} from "../../../config";
-import {EntityField, FieldEntry, stringFor} from "../../../entity";
+import {EntityField, stringFor} from "../../../entity";
 import {themr} from "../../../theme";
 
 import {ListStoreBase} from "../../store";
@@ -35,7 +35,7 @@ export interface LineWrapperProps<T> {
     /** L'élément de liste. */
     data: T;
     /** Le sélecteur pour le champ date, pour une ligne timeline. */
-    dateSelector?: (data: T) => EntityField<FieldEntry<string>>;
+    dateSelector?: (data: T) => EntityField<string>;
     /** Désactive l'animation de drag and drop. */
     disableDragAnimation?: boolean;
     /** Les items en cours de drag dans la liste. */

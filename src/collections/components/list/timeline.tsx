@@ -1,7 +1,7 @@
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {EntityField, FieldEntry} from "../../../entity";
+import {EntityField} from "../../../entity";
 import {themr} from "../../../theme";
 
 import {LineProps, LineWrapper} from "./line";
@@ -15,7 +15,7 @@ export interface TimelineProps<T> extends ListBaseProps<T> {
     /** Les données. */
     data: T[];
     /** Le sélecteur du champ contenant la date. */
-    dateSelector: (data: T) => EntityField<FieldEntry<string>>;
+    dateSelector: (data: T) => EntityField<string>;
     /** Le composant de ligne. */
     TimelineComponent: React.ComponentType<LineProps<T>>;
 }
