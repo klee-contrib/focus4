@@ -142,7 +142,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
      * Effectue la recherche sur le serveur.
      * @param query Le champ texte.
      */
-    @action.bound
+    @action
     async search(query: string) {
         if (this.props.querySearcher && query && query.trim().length) {
             this.isLoading = true;

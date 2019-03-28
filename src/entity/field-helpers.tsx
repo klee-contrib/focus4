@@ -96,7 +96,7 @@ export function fieldFor<
     }
 
     // Si on ne pose pas de ref, on considère qu'on n'a pas de formulaire et donc qu'on attend un comportement par défaut un peu différent.
-    if (!options.innerRef) {
+    if (!options.ref) {
         if (options.isEdit === undefined) {
             options.isEdit = true;
         }
@@ -175,7 +175,7 @@ export function buildFieldProps<
         value,
         $entity: {domain = {}, translationKey, isRequired, name, comment}
     } = field;
-    const {hasLabel = true, innerRef, inputProps = {}, displayProps = {}, labelProps = {}, ...otherOptions} = options;
+    const {hasLabel = true, ref, inputProps = {}, displayProps = {}, labelProps = {}, ...otherOptions} = options;
     const {
         inputProps: inputPropsD = {},
         displayProps: displayPropsD = {},
@@ -191,7 +191,7 @@ export function buildFieldProps<
         displayFormatter,
         inputFormatter,
         hasLabel,
-        innerRef,
+        ref,
         isRequired,
         label: translationKey,
         name,
