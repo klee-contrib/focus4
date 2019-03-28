@@ -39,8 +39,6 @@ export interface FieldProps<
     hasLabel?: boolean;
     /** Pour l'icône de la Tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** A utiliser à la place de `ref`. */
-    innerRef?: (i: Field<T, ICProps, DCProps, LCProps, R, VK, LK>) => void;
     /** Champ en édition. */
     isEdit?: boolean;
     /** Champ requis. */
@@ -57,6 +55,8 @@ export interface FieldProps<
     name: string;
     /** Handler de modification de la valeur. */
     onChange?: (value: T) => void;
+    /** Ref. */
+    ref?: (i: Field<T, ICProps, DCProps, LCProps, R, VK, LK>) => void;
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** CSS. */
