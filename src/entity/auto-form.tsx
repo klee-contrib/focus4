@@ -1,4 +1,3 @@
-import {autobind} from "core-decorators";
 import {some, values as _values} from "lodash";
 import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
 import * as PropTypes from "prop-types";
@@ -52,7 +51,6 @@ export interface ServiceConfig<T, LP> {
 }
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-@autobind
 export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap = observable.map<string, boolean>();
@@ -267,8 +265,8 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         return {
             editing: this.isEdit,
             loading: this.isLoading,
-            save: this.hasForm ? undefined : this.save,
-            toggleEdit: this.toggleEdit
+            save: this.hasForm ? undefined : () => this.save(),
+            toggleEdit: edit => this.toggleEdit(edit)
         };
     }
 
