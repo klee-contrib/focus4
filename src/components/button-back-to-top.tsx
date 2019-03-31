@@ -33,7 +33,7 @@ export function ButtonBackToTop({offset = 100, scrollBehaviour = "smooth", theme
     /** Remonte la page, de façon fluide. */
     const scrollToTop = React.useCallback(
         () =>
-            window.scrollTo({
+            scrollable.scrollTo({
                 top: 0,
                 behavior: scrollBehaviour
             }),
