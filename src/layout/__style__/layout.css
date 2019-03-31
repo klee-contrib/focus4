@@ -74,8 +74,12 @@ footer {
 }
 
 .layout {
-    height: 100vh;
     background-color: var(--layout-background);
+    display: flex;
+}
+
+.scrollable {
+    height: 100vh;
 }
 
 .content {

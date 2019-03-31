@@ -40,17 +40,16 @@ import {
     SelectStyle
 } from "../components";
 import {FieldStyle} from "../entity";
-import {MessageCenter} from "../message";
+import {MessageCenter, MessageCenterProps} from "../message";
 import {LoadingBarStyle} from "../network";
 import {ThemeContext, useTheme} from "../theme";
 
 import {ErrorCenter, ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
-import {LayoutContext, layoutContextInit, LayoutProps, LayoutStyle, styles} from "./types";
+import {LayoutContext, layoutContextInit, LayoutStyle, styles} from "./types";
 
 export {LayoutContent} from "./content";
-export {LayoutFooter} from "./footer";
 export {
     HeaderActions,
     HeaderBarLeft,
@@ -65,8 +64,15 @@ export {
 export {MainMenu, MainMenuItem} from "./menu";
 export {LayoutContext};
 
+/** Props du Layout. */
+export interface LayoutProps extends MessageCenterProps {
+    children?: React.ReactNode;
+    menu?: React.ReactNode;
+    theme?: LayoutStyle;
+}
+
 /** Composant de Layout sans le provider de style. */
-function LayoutBase({theme: pTheme, children, ...messageCenterProps}: LayoutProps) {
+function LayoutBase({theme: pTheme, children, menu, ...messageCenterProps}: LayoutProps) {
     /** Objet passé en contexte pour la hauteur du header top row. */
     const [layoutContext] = React.useState(() => observable(layoutContextInit));
     const theme = useTheme("layout", styles, pTheme);
@@ -75,7 +81,10 @@ function LayoutBase({theme: pTheme, children, ...messageCenterProps}: LayoutProp
         <LayoutContext.Provider value={layoutContext}>
             <ErrorCenter />
             <MessageCenter {...messageCenterProps} />
-            <Scrollable className={theme.layout}>{children}</Scrollable>
+            <div className={theme.layout}>
+                {menu}
+                <Scrollable className={theme.scrollable}>{children}</Scrollable>
+            </div>
         </LayoutContext.Provider>
     );
 }
