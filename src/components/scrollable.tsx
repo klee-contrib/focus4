@@ -13,6 +13,8 @@ export const ScrollableContext = React.createContext<{
     };
     /** Enregistre un évènement de scroll dans le contexte et retourne son disposer. */
     registerScroll(onScroll: (top: number, height: number) => void): () => void;
+    /** Scrolle vers la position demandée. */
+    scrollTo(options?: ScrollToOptions): void;
 }>({} as any);
 
 export class Scrollable extends React.Component<{className?: string}> {
@@ -39,6 +41,11 @@ export class Scrollable extends React.Component<{className?: string}> {
         return () => this.onScrolls.remove(onScroll);
     }
 
+    @action.bound
+    scrollTo(options?: ScrollToOptions) {
+        this.node!.scrollTo(options);
+    }
+
     componentDidMount() {
         this.node!.addEventListener("scroll", this.onScroll);
         this.node!.addEventListener("resize", this.onScroll);
@@ -58,7 +65,12 @@ export class Scrollable extends React.Component<{className?: string}> {
     render() {
         return (
             <ScrollableContext.Provider
-                value={{header: this.header, layout: this.layout, registerScroll: this.registerScroll}}
+                value={{
+                    header: this.header,
+                    layout: this.layout,
+                    registerScroll: this.registerScroll,
+                    scrollTo: this.scrollTo
+                }}
             >
                 <div className={`${this.props.className || ""} ${scrollable}`} ref={div => (this.node = div)}>
                     {this.props.children}
