@@ -2,6 +2,7 @@ import {action, observable} from "mobx";
 import React from "react";
 
 import {scrollable} from "./__style__/scrollable.css";
+import {ButtonBackToTop} from "./button-back-to-top";
 
 export const ScrollableContext = React.createContext<{
     header: {
@@ -17,7 +18,16 @@ export const ScrollableContext = React.createContext<{
     scrollTo(options?: ScrollToOptions): void;
 }>({} as any);
 
-export class Scrollable extends React.Component<{className?: string}> {
+export class Scrollable extends React.Component<{
+    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 100. */
+    backToTopOffset?: number;
+    /** Classe CSS. */
+    className?: string;
+    /** Cache le bouton de retour en haut. */
+    hideBackToTop?: boolean;
+    /** Comportement du scroll. Par défaut : "smooth" */
+    scrollBehaviour?: ScrollBehavior;
+}> {
     node!: HTMLDivElement | null;
     readonly onScrolls = observable<(top: number, height: number) => void>([]);
 
@@ -43,7 +53,8 @@ export class Scrollable extends React.Component<{className?: string}> {
 
     @action.bound
     scrollTo(options?: ScrollToOptions) {
-        this.node!.scrollTo(options);
+        const {scrollBehaviour = "smooth"} = this.props;
+        this.node!.scrollTo({behavior: scrollBehaviour, ...options});
     }
 
     componentDidMount() {
@@ -63,6 +74,7 @@ export class Scrollable extends React.Component<{className?: string}> {
     }
 
     render() {
+        const {backToTopOffset, children, className, hideBackToTop} = this.props;
         return (
             <ScrollableContext.Provider
                 value={{
@@ -72,9 +84,10 @@ export class Scrollable extends React.Component<{className?: string}> {
                     scrollTo: this.scrollTo
                 }}
             >
-                <div className={`${this.props.className || ""} ${scrollable}`} ref={div => (this.node = div)}>
-                    {this.props.children}
+                <div className={`${className || ""} ${scrollable}`} ref={div => (this.node = div)}>
+                    {children}
                 </div>
+                {!hideBackToTop ? <ButtonBackToTop offset={backToTopOffset} /> : null}
             </ScrollableContext.Provider>
         );
     }

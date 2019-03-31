@@ -7,7 +7,6 @@ import {findDOMNode} from "react-dom";
 
 import {themr} from "../theme";
 
-import {ButtonBackToTop} from "./button-back-to-top";
 import {PanelDescriptor} from "./panel";
 import {ScrollableContext} from "./scrollable";
 
@@ -17,16 +16,12 @@ const Theme = themr("scrollspy", styles);
 
 /** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
-    /** Cache le bouton de retour en haut. */
-    hideBackToTop?: boolean;
     /** Menu personnalisé pour le scrollspy. */
     MenuComponent?: React.ComponentType<ScrollspyMenuProps>;
     /** Offset de scroll à partir du moment ou le menu devient fixe, par rapport au header. Par défaut : toutes les marges qui vont bien. */
     menuOffset?: number;
     /** Largeur du menu. Par défaut : 250. */
     menuWidth?: number;
-    /** Comportement du scroll. Par défaut : "smooth" */
-    scrollBehaviour?: ScrollBehavior;
     /** Offset entre la position du panel et la position de scroll au clic sur le menu. Par défaut : 150. */
     scrollToOffset?: number;
     /** CSS. */
@@ -166,19 +161,13 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
         if (panel) {
             window.scrollTo({
                 top: this.getOffsetTop(panel.node),
-                behavior: this.props.scrollBehaviour || "smooth"
+                behavior: "smooth"
             });
         }
     }
 
     render() {
-        const {
-            children,
-            hideBackToTop,
-            MenuComponent = ScrollspyMenu,
-            menuWidth = 250,
-            scrollBehaviour = "smooth"
-        } = this.props;
+        const {children, MenuComponent = ScrollspyMenu, menuWidth = 250} = this.props;
         return (
             <ScrollspyContext.Provider
                 value={{
@@ -204,7 +193,6 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                             <div className={theme.content} style={{marginLeft: menuWidth}}>
                                 {children}
                             </div>
-                            {!hideBackToTop ? <ButtonBackToTop scrollBehaviour={scrollBehaviour} /> : null}
                         </div>
                     )}
                 </Theme>
