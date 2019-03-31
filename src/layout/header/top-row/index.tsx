@@ -1,9 +1,8 @@
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
+import {ScrollableContext} from "../../../components";
 import {themr} from "../../../theme";
-
-import {LayoutContext} from "../../types";
 
 import * as styles from "../__style__/header.css";
 const Theme = themr("header", styles);
@@ -22,8 +21,8 @@ export interface HeaderTopRowProps {
 
 /** Barre du haut dans le header. */
 export class HeaderTopRow extends React.Component<HeaderTopRowProps> {
-    static contextType = LayoutContext;
-    context!: React.ContextType<typeof LayoutContext>;
+    static contextType = ScrollableContext;
+    context!: React.ContextType<typeof ScrollableContext>;
 
     componentDidMount() {
         this.context.header.topRowHeight = (findDOMNode(this) as Element).clientHeight;

@@ -1,6 +1,5 @@
 import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
 
-import {observable} from "mobx";
 import * as React from "react";
 import {ThemeProvider, TReactCSSThemrTheme} from "react-css-themr";
 
@@ -47,7 +46,9 @@ import {ThemeContext, useTheme} from "../theme";
 import {ErrorCenter, ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
-import {LayoutContext, layoutContextInit, LayoutStyle, styles} from "./types";
+
+import * as styles from "./__style__/layout.css";
+export type LayoutStyle = Partial<typeof styles>;
 
 export {LayoutContent} from "./content";
 export {
@@ -62,7 +63,6 @@ export {
     SecondaryAction
 } from "./header";
 export {MainMenu, MainMenuItem} from "./menu";
-export {LayoutContext};
 
 /** Props du Layout. */
 export interface LayoutProps extends MessageCenterProps {
@@ -73,19 +73,16 @@ export interface LayoutProps extends MessageCenterProps {
 
 /** Composant de Layout sans le provider de style. */
 function LayoutBase({theme: pTheme, children, menu, ...messageCenterProps}: LayoutProps) {
-    /** Objet passé en contexte pour la hauteur du header top row. */
-    const [layoutContext] = React.useState(() => observable(layoutContextInit));
     const theme = useTheme("layout", styles, pTheme);
-
     return (
-        <LayoutContext.Provider value={layoutContext}>
+        <>
             <ErrorCenter />
             <MessageCenter {...messageCenterProps} />
             <div className={theme.layout}>
                 {menu}
                 <Scrollable className={theme.scrollable}>{children}</Scrollable>
             </div>
-        </LayoutContext.Provider>
+        </>
     );
 }
 

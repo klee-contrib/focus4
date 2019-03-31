@@ -5,11 +5,11 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {LayoutContext} from "../layout";
 import {themr} from "../theme";
 
 import {ButtonBackToTop} from "./button-back-to-top";
 import {PanelDescriptor} from "./panel";
+import {ScrollableContext} from "./scrollable";
 
 import * as styles from "./__style__/scrollspy-container.css";
 export type ScrollspyStyle = Partial<typeof styles>;
@@ -42,8 +42,8 @@ export const ScrollspyContext = React.createContext({
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
-    static contextType = LayoutContext;
-    context!: React.ContextType<typeof LayoutContext>;
+    static contextType = ScrollableContext;
+    context!: React.ContextType<typeof ScrollableContext>;
 
     /** Offset entre le container et le haut du document. */
     @observable protected offsetTop = 0;

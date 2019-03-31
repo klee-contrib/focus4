@@ -1,10 +1,14 @@
 import * as React from "react";
+
+import {ScrollableContext} from "../components";
 import {useTheme} from "../theme";
-import {LayoutContext, LayoutStyle, styles} from "./types";
+
+import * as styles from "./__style__/layout.css";
+export type LayoutStyle = Partial<typeof styles>;
 
 /** Contenu du Layout. */
 export function LayoutContent(props: {children?: React.ReactNode; theme?: LayoutStyle}) {
-    const context = React.useContext(LayoutContext);
+    const context = React.useContext(ScrollableContext);
     const theme = useTheme("layout", styles, props.theme);
 
     const ref = React.useRef<HTMLDivElement>(null);

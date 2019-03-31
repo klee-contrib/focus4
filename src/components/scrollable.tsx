@@ -4,17 +4,29 @@ import React from "react";
 import {scrollable} from "./__style__/scrollable.css";
 
 export const ScrollableContext = React.createContext<{
+    header: {
+        marginBottom: number;
+        topRowHeight: number;
+    };
+    layout: {
+        contentPaddingTop: number;
+    };
     /** Enregistre un évènement de scroll dans le contexte et retourne son disposer. */
     registerScroll(onScroll: (top: number, height: number) => void): () => void;
-}>({
-    registerScroll() {
-        return () => null;
-    }
-});
+}>({} as any);
 
 export class Scrollable extends React.Component<{className?: string}> {
     node!: HTMLDivElement | null;
     readonly onScrolls = observable<(top: number, height: number) => void>([]);
+
+    @observable header = {
+        marginBottom: 50,
+        topRowHeight: 60
+    };
+
+    @observable layout = {
+        contentPaddingTop: 10
+    };
 
     @action.bound
     registerScroll(onScroll: (top: number, height: number) => void) {
@@ -45,7 +57,9 @@ export class Scrollable extends React.Component<{className?: string}> {
 
     render() {
         return (
-            <ScrollableContext.Provider value={{registerScroll: this.registerScroll}}>
+            <ScrollableContext.Provider
+                value={{header: this.header, layout: this.layout, registerScroll: this.registerScroll}}
+            >
                 <div className={`${this.props.className || ""} ${scrollable}`} ref={div => (this.node = div)}>
                     {this.props.children}
                 </div>
