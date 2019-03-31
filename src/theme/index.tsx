@@ -3,14 +3,20 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {themeable, TReactCSSThemrTheme} from "react-css-themr";
 
+export const ThemeContext = React.createContext({} as TReactCSSThemrTheme);
+
+/** Hook pour récupérer le theme du contexte et le fusionner avec d'autres. */
+export function useTheme<T>(name: string, ...themes: (Partial<T> | undefined)[]): T {
+    const contextTheme = React.useContext(ThemeContext)[name];
+    return (themeable((contextTheme as {}) || {}, ...(themes.filter(Boolean) as {}[])) as unknown) as T;
+}
+
 export interface ThemeConsumerProps<T> {
     children: (theme: T) => React.ReactElement;
     theme?: Partial<T>;
 }
 
 export type ThemeConsumer<T> = React.ComponentClass<ThemeConsumerProps<T>>;
-
-export const ThemeContext = React.createContext({} as TReactCSSThemrTheme);
 
 /**
  * Crée un composant pour injecter le theme souhaité dans un composant, via une render props (à la place du HoC de `react-css-themr`).

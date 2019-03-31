@@ -1,28 +1,30 @@
+import {Observer} from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
 
-import {LayoutContext, LayoutProps, Theme} from "./types";
+import {useTheme} from "../theme";
+
+import {LayoutContext, LayoutProps, styles} from "./types";
 
 /** Contenu du Layout. */
-export class LayoutContent extends React.Component<LayoutProps> {
-    static contextType = LayoutContext;
-    context!: React.ContextType<typeof LayoutContext>;
+export function LayoutContent(props: LayoutProps) {
+    const context = React.useContext(LayoutContext);
+    const theme = useTheme("layout", styles, props.theme);
 
-    componentDidMount() {
-        const paddingTop = window.getComputedStyle(findDOMNode(this) as Element).paddingTop;
-        this.context.layout.contentPaddingTop =
+    const ref = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const paddingTop = window.getComputedStyle(ref.current!).paddingTop;
+        context.layout.contentPaddingTop =
             (paddingTop && paddingTop.endsWith("px") && +paddingTop.replace("px", "")) || 0;
-    }
+    });
 
-    render() {
-        return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div className={theme.content} style={{marginLeft: this.context.layout.menuWidth}}>
-                        {this.props.children}
-                    </div>
-                )}
-            </Theme>
-        );
-    }
+    return (
+        <Observer>
+            {() => (
+                <div ref={ref} className={theme.content} style={{marginLeft: context.layout.menuWidth}}>
+                    {props.children}
+                </div>
+            )}
+        </Observer>
+    );
 }

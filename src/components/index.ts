@@ -12,6 +12,7 @@ export {InputTime, InputTimeProps} from "./input-time";
 export {Label, LabelProps, LabelStyle} from "./label";
 export {Panel, PanelButtons, PanelProps, PanelStyle} from "./panel";
 export {Popin, PopinStyle} from "./popin";
+export {Scrollable} from "./scrollable";
 export {
     ScrollspyContainer,
     ScrollspyContainerProps,

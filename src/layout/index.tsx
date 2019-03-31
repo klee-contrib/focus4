@@ -33,6 +33,7 @@ import {
     LabelStyle,
     PanelStyle,
     PopinStyle,
+    Scrollable,
     ScrollspyStyle,
     SelectCheckboxStyle,
     SelectRadioStyle,
@@ -41,12 +42,12 @@ import {
 import {FieldStyle, FormStyle} from "../entity";
 import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
-import {ThemeContext} from "../theme";
+import {ThemeContext, useTheme} from "../theme";
 
 import {ErrorCenter, ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
-import {LayoutContext, layoutContextInit, LayoutProps, LayoutStyle, Theme} from "./types";
+import {LayoutContext, layoutContextInit, LayoutProps, LayoutStyle, styles} from "./types";
 
 export {LayoutContent} from "./content";
 export {LayoutFooter} from "./footer";
@@ -65,27 +66,18 @@ export {MainMenu, MainMenuItem} from "./menu";
 export {LayoutContext};
 
 /** Composant de Layout sans le provider de style. */
-class LayoutBase extends React.Component<LayoutProps> {
+function LayoutBase({theme: pTheme, children, ...messageCenterProps}: LayoutProps) {
     /** Objet passé en contexte pour la hauteur du header top row. */
+    const [layoutContext] = React.useState(() => observable(layoutContextInit));
+    const theme = useTheme("layout", styles, pTheme);
 
-    readonly layoutContext = observable(layoutContextInit);
-
-    render() {
-        const {theme: pTheme, children, ...messageCenterProps} = this.props;
-        return (
-            <LayoutContext.Provider value={this.layoutContext}>
-                <Theme theme={pTheme}>
-                    {theme => (
-                        <div className={theme.layout}>
-                            <ErrorCenter />
-                            <MessageCenter {...messageCenterProps} />
-                            {children}
-                        </div>
-                    )}
-                </Theme>
-            </LayoutContext.Provider>
-        );
-    }
+    return (
+        <LayoutContext.Provider value={layoutContext}>
+            <ErrorCenter />
+            <MessageCenter {...messageCenterProps} />
+            <Scrollable className={theme.layout}>{children}</Scrollable>
+        </LayoutContext.Provider>
+    );
 }
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */

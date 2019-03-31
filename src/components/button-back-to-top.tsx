@@ -1,16 +1,15 @@
 import scroll from "smoothscroll-polyfill";
 scroll.polyfill();
 
-import {action, observable} from "mobx";
-import {observer} from "mobx-react";
 import * as React from "react";
 import {Button, ButtonTheme} from "react-toolbox/lib/button";
 
-import {themr} from "../theme";
+import {useTheme} from "../theme";
+
+import {ScrollableContext} from "./scrollable";
 
 import * as styles from "./__style__/button-btt.css";
 export type ButtonBackToTopStyle = Partial<typeof styles> & ButtonTheme;
-const Theme = themr("buttonBTT", styles as ButtonBackToTopStyle);
 
 /** Props du bouton de retour en haut de page. */
 export interface ButtonBackToTopProps {
@@ -23,46 +22,27 @@ export interface ButtonBackToTopProps {
 }
 
 /** Bouton de retour en haut de page. */
-@observer
-export class ButtonBackToTop extends React.Component<ButtonBackToTopProps> {
-    @observable isVisible = false;
+export function ButtonBackToTop({offset = 100, scrollBehaviour = "smooth", theme: pTheme}: ButtonBackToTopProps) {
+    const {backToTop, ...theme} = useTheme<ButtonBackToTopStyle>("buttonBTT", styles, pTheme);
+    const scrollable = React.useContext(ScrollableContext);
+    const [isVisible, setIsVisible] = React.useState(false);
 
-    componentDidMount() {
-        window.addEventListener("scroll", this.scrollSpy);
-        window.addEventListener("resize", this.scrollSpy);
-        this.scrollSpy();
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("scroll", this.scrollSpy);
-        window.removeEventListener("resize", this.scrollSpy);
-    }
-
-    /** Détermine si le bouton est visible, c'est-à-dire quand on a dépassé l'offset. */
-    @action.bound
-    scrollSpy() {
-        const {offset = 100} = this.props;
-        this.isVisible = (window.pageYOffset || document.documentElement!.scrollTop) > offset;
-    }
+    /** Permet de n'afficher le bouton que si le scroll a dépassé l'offset. */
+    React.useEffect(() => scrollable.registerScroll(top => setIsVisible(top > offset)), [offset]);
 
     /** Remonte la page, de façon fluide. */
-    @action.bound
-    scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: this.props.scrollBehaviour || "smooth"
-        });
-    }
+    const scrollToTop = React.useCallback(
+        () =>
+            window.scrollTo({
+                top: 0,
+                behavior: scrollBehaviour
+            }),
+        [scrollBehaviour]
+    );
 
-    render() {
-        return this.isVisible ? (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div className={theme.backToTop}>
-                        <Button accent onClick={this.scrollToTop} icon="expand_less" floating theme={theme} />
-                    </div>
-                )}
-            </Theme>
-        ) : null;
-    }
+    return isVisible ? (
+        <div className={backToTop}>
+            <Button accent onClick={scrollToTop} icon="expand_less" floating theme={theme} />
+        </div>
+    ) : null;
 }
