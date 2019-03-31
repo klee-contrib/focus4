@@ -1,11 +1,10 @@
 import * as React from "react";
 
 import {MessageCenterProps} from "../message";
-import {themr} from "../theme";
 
 import * as styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
-export const Theme = themr("layout", styles);
+export {styles};
 
 export interface LayoutProps extends MessageCenterProps {
     children?: React.ReactNode;

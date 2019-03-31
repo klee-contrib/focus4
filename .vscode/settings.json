@@ -2,11 +2,11 @@
     "typescript.tsdk": "./node_modules/typescript/lib",
     "editor.snippetSuggestions": "bottom",
     "files.trimTrailingWhitespace": true,
-    "relativePath.removeExtension": true,
-    "relativePath.ignore": ["**/node_modules/**", "**/dist/**"],
-    "tslint.autoFixOnSave": true,
     "files.associations": {
         "*.css": "postcss"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    }
 }
