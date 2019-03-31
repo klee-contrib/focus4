@@ -2,7 +2,6 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {ChipTheme} from "react-toolbox/lib/chip";
 
-import {ButtonBackToTop} from "../../../components";
 import {themr} from "../../../theme";
 
 import {GroupResult, SearchStore} from "../../store";
@@ -85,8 +84,6 @@ export interface AdvancedSearchProps<T> {
     groupPageSize?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
-    /** Ajoute un bouton de retour en haut de page. Par défault: true */
-    hasBackToTop?: boolean;
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
     /** Affiche le bouton de groupe dans l'ActionBar. */
@@ -349,8 +346,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             MosaicComponent,
             mode,
             mosaicHeight,
-            mosaicWidth,
-            hasBackToTop = true
+            mosaicWidth
         } = this.props;
         return (
             <Theme theme={this.props.theme}>
@@ -371,7 +367,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                                 {this.renderResults()}
                             </ListWrapper>
                         </div>
-                        {hasBackToTop ? <ButtonBackToTop /> : null}
                     </>
                 )}
             </Theme>

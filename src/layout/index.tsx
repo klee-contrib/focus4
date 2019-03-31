@@ -66,13 +66,27 @@ export {MainMenu, MainMenuItem} from "./menu";
 
 /** Props du Layout. */
 export interface LayoutProps extends MessageCenterProps {
+    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 100. */
+    backToTopOffset?: number;
     children?: React.ReactNode;
+    /** Cache le bouton de retour en haut. */
+    hideBackToTop?: boolean;
     menu?: React.ReactNode;
+    /** Comportement du scroll. Par défaut : "smooth" */
+    scrollBehaviour?: ScrollBehavior;
     theme?: LayoutStyle;
 }
 
 /** Composant de Layout sans le provider de style. */
-function LayoutBase({theme: pTheme, children, menu, ...messageCenterProps}: LayoutProps) {
+function LayoutBase({
+    theme: pTheme,
+    children,
+    backToTopOffset,
+    hideBackToTop,
+    menu,
+    scrollBehaviour,
+    ...messageCenterProps
+}: LayoutProps) {
     const theme = useTheme("layout", styles, pTheme);
     return (
         <>
@@ -80,7 +94,14 @@ function LayoutBase({theme: pTheme, children, menu, ...messageCenterProps}: Layo
             <MessageCenter {...messageCenterProps} />
             <div className={theme.layout}>
                 {menu}
-                <Scrollable className={theme.scrollable}>{children}</Scrollable>
+                <Scrollable
+                    backToTopOffset={backToTopOffset}
+                    className={theme.scrollable}
+                    hideBackToTop={hideBackToTop}
+                    scrollBehaviour={scrollBehaviour}
+                >
+                    {children}
+                </Scrollable>
             </div>
         </>
     );
