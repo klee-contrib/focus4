@@ -38,7 +38,7 @@ export class HeaderTopRow extends React.Component<HeaderTopRowProps> {
             <Theme theme={this.props.theme}>
                 {theme => (
                     <div className={theme.topRow}>
-                        <div style={{marginLeft: this.context.layout.menuWidth}}>{this.props.children}</div>
+                        <div>{this.props.children}</div>
                     </div>
                 )}
             </Theme>

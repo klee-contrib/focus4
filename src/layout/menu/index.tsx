@@ -5,7 +5,6 @@ import {IconButtonTheme} from "react-toolbox/lib/button";
 
 import {themr} from "../../theme";
 
-import {LayoutContext} from "../types";
 import {MainMenuItem, MainMenuItemProps} from "./item";
 import {MainMenuList, MainMenuListStyle} from "./list";
 import {MainMenuPanel, MainMenuPanelStyle} from "./panel";
@@ -24,9 +23,8 @@ export interface MainMenuProps {
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 export class MainMenu extends React.Component<MainMenuProps> {
-    static contextType = LayoutContext;
-    context!: React.ContextType<typeof LayoutContext>;
-
+    /** Largeur du menu. */
+    @observable menuWidth = 0;
     /** Index du sous-menu actif. */
     @observable activeMenuIndex?: number;
     /** Position du sous-menu actif */
@@ -61,16 +59,10 @@ export class MainMenu extends React.Component<MainMenuProps> {
 
     // Permet de récupérer et d'actualiser la largeur du menu à l'exécution.
     componentDidMount() {
-        this.getMenuWidth();
+        this.menuWidth = (findDOMNode(this) as Element).clientWidth;
     }
     componentDidUpdate() {
-        this.getMenuWidth();
-    }
-    getMenuWidth() {
-        this.context.layout.menuWidth = (findDOMNode(this) as Element).clientWidth;
-    }
-    componentWillUnmount() {
-        this.context.layout.menuWidth = 0;
+        this.menuWidth = (findDOMNode(this) as Element).clientWidth;
     }
 
     render() {
@@ -85,7 +77,7 @@ export class MainMenu extends React.Component<MainMenuProps> {
                         <MainMenuPanel
                             close={() => (this.showPanel = false)}
                             opened={!!(this.showPanel && this.activeMenuIndex !== undefined && this.subMenu)}
-                            xOffset={this.context.layout.menuWidth || 0}
+                            xOffset={this.menuWidth || 0}
                             yOffset={this.yPosition}
                             theme={theme}
                         >
