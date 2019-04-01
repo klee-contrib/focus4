@@ -1,9 +1,8 @@
 import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
 
-import {omit} from "lodash";
 import {observable} from "mobx";
 import * as React from "react";
-import {TReactCSSThemrTheme} from "react-css-themr";
+import {ThemeProvider, TReactCSSThemrTheme} from "react-css-themr";
 
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox";
@@ -138,9 +137,12 @@ export interface LayoutStyleProviderProps {
  * C'est également le point d'entrée pour la surcharge de CSS via la prop `appTheme`.
  */
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
+    const {appTheme = {}, ...layoutProps} = props;
     return (
-        <ThemeContext.Provider value={(props.appTheme || {}) as TReactCSSThemrTheme}>
-            <LayoutBase {...omit(props, "appTheme")}>{props.children}</LayoutBase>
-        </ThemeContext.Provider>
+        <ThemeProvider theme={appTheme as TReactCSSThemrTheme}>
+            <ThemeContext.Provider value={appTheme as TReactCSSThemrTheme}>
+                <LayoutBase {...layoutProps}>{props.children}</LayoutBase>
+            </ThemeContext.Provider>
+        </ThemeProvider>
     );
 }
