@@ -164,7 +164,7 @@ export class Input extends React.Component<InputProps> {
         if (this.mask) {
             e.preventDefault();
             this.updateMaskSelection();
-            if (this.mask.paste(e.clipboardData.getData("Text"))) {
+            if (this.mask.paste(e.clipboardData!.getData("Text"))) {
                 setTimeout(this.updateInputSelection, 0);
 
                 const {onChange, value} = this.props;
