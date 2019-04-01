@@ -2,7 +2,7 @@ import {observable} from "mobx";
 
 /** Classe permettant de définir un ersatz observable de `document.activeElement`. */
 export class DocumentHelper {
-    @observable private _activeElement!: Element | null;
+    @observable private _activeElement!: EventTarget | null;
 
     // Clairement, on triche pas mal, mais il se trouve que ces évènements-là font parfaitement le boulot attendu.
     constructor() {
