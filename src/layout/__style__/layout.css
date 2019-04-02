@@ -80,6 +80,7 @@ footer {
 
 .scrollable {
     height: 100vh;
+    flex: 1;
 }
 
 .content {

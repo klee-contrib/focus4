@@ -1,9 +1,8 @@
 import i18next from "i18next";
 import {sortBy, uniqueId} from "lodash";
 import {action, computed, observable, untracked} from "mobx";
-import {observer} from "mobx-react";
+import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
 
 import {themr} from "../theme";
 
@@ -47,6 +46,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
 
     /** Map des panels qui se sont enregistrés dans le container. */
     protected readonly panels = observable.map<string, PanelDescriptor>();
+    node!: HTMLDivElement | null;
 
     /**
      * Enregistre un panel dans le container et retourne son id.
@@ -78,27 +78,16 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
         this.panels.set(id, panel);
     }
 
-    componentDidMount() {
-        window.addEventListener("scroll", this.onScroll);
-        window.addEventListener("resize", this.onScroll);
-        this.onScroll();
-    }
-
-    componentDidUpdate() {
-        this.onScroll();
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("scroll", this.onScroll);
-        window.removeEventListener("resize", this.onScroll);
-    }
-
     /** Synchronise le scroll/resize de la page avec les observables qui les représentent. */
-    @action.bound
-    protected onScroll() {
-        this.scrollTop = document.documentElement!.scrollTop || document.body.scrollTop;
-        this.offsetTop = (findDOMNode(this) as Element).getBoundingClientRect().top;
-    }
+    @disposeOnUnmount
+    scrollListener = this.context.registerScroll(
+        action((top: number) => {
+            this.scrollTop = top;
+            if (this.node) {
+                this.offsetTop = this.node.getBoundingClientRect().top;
+            }
+        })
+    );
 
     /** Récupère les panels triés par position dans la page. */
     @computed.struct
@@ -159,10 +148,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     scrollToPanel(sscId: string) {
         const panel = this.panels.get(sscId);
         if (panel) {
-            window.scrollTo({
-                top: this.getOffsetTop(panel.node),
-                behavior: "smooth"
-            });
+            this.context.scrollTo({top: this.getOffsetTop(panel.node)});
         }
     }
 
@@ -178,7 +164,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
             >
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div className={theme.scrollspy}>
+                        <div ref={node => (this.node = node)} className={theme.scrollspy}>
                             <nav style={this.menuPosition}>
                                 <MenuComponent
                                     activeClassName={theme.active}

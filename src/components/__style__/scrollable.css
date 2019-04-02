@@ -1,3 +1,13 @@
+.container {
+    position: relative;
+}
+
+.sticky {
+    position: absolute;
+    z-index: 1;
+}
+
 .scrollable {
     overflow: auto;
+    height: 100%;
 }

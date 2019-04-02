@@ -1,8 +1,11 @@
 import {action, observable} from "mobx";
+import {observer} from "mobx-react";
 import React from "react";
+import {createPortal} from "react-dom";
 
-import {scrollable} from "./__style__/scrollable.css";
 import {ButtonBackToTop} from "./button-back-to-top";
+
+import {container, scrollable, sticky} from "./__style__/scrollable.css";
 
 export const ScrollableContext = React.createContext<{
     header: {
@@ -16,8 +19,11 @@ export const ScrollableContext = React.createContext<{
     registerScroll(onScroll: (top: number, height: number) => void): () => void;
     /** Scrolle vers la position demandée. */
     scrollTo(options?: ScrollToOptions): void;
+    /** Affiche un élement en sticky */
+    sticky(node: React.ReactNode): React.ReactPortal;
 }>({} as any);
 
+@observer
 export class Scrollable extends React.Component<{
     /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 100. */
     backToTopOffset?: number;
@@ -28,6 +34,7 @@ export class Scrollable extends React.Component<{
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
 }> {
+    stickyNode!: HTMLDivElement | null;
     node!: HTMLDivElement | null;
     readonly onScrolls = observable<(top: number, height: number) => void>([]);
 
@@ -39,6 +46,8 @@ export class Scrollable extends React.Component<{
     @observable layout = {
         contentPaddingTop: 10
     };
+
+    @observable width = 0;
 
     @action.bound
     registerScroll(onScroll: (top: number, height: number) => void) {
@@ -57,10 +66,19 @@ export class Scrollable extends React.Component<{
         this.node!.scrollTo({behavior: scrollBehaviour, ...options});
     }
 
+    @action.bound
+    sticky(node: React.ReactNode) {
+        return createPortal(node, this.stickyNode!);
+    }
+
     componentDidMount() {
         this.node!.addEventListener("scroll", this.onScroll);
         this.node!.addEventListener("resize", this.onScroll);
         this.onScroll();
+    }
+
+    componentDidUpdate() {
+        this.width = this.node!.clientWidth;
     }
 
     componentWillUnmount() {
@@ -71,6 +89,7 @@ export class Scrollable extends React.Component<{
     @action.bound
     onScroll() {
         this.onScrolls.forEach(onScroll => onScroll(this.node!.scrollTop, this.node!.clientHeight));
+        this.width = this.node!.clientWidth;
     }
 
     render() {
@@ -81,13 +100,17 @@ export class Scrollable extends React.Component<{
                     header: this.header,
                     layout: this.layout,
                     registerScroll: this.registerScroll,
-                    scrollTo: this.scrollTo
+                    scrollTo: this.scrollTo,
+                    sticky: this.sticky
                 }}
             >
-                <div className={`${className || ""} ${scrollable}`} ref={div => (this.node = div)}>
-                    {children}
+                <div className={`${className || ""} ${container}`}>
+                    <div className={sticky} style={{width: this.width}} ref={div => (this.stickyNode = div)} />
+                    <div className={scrollable} ref={div => (this.node = div)}>
+                        {children}
+                    </div>
+                    {!hideBackToTop ? <ButtonBackToTop offset={backToTopOffset} /> : null}
                 </div>
-                {!hideBackToTop ? <ButtonBackToTop offset={backToTopOffset} /> : null}
             </ScrollableContext.Provider>
         );
     }

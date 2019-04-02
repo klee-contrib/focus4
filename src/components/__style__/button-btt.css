@@ -1,7 +1,7 @@
 @import "react-toolbox/lib/variables.css";
 
 .backToTop {
-    position: fixed;
+    position: absolute;
     bottom: 8%;
     right: 5%;
     z-index: calc(var(--z-index-normal) + 2); /* L'actionbar est à +1 donc on se place à +2 pour être bien au dessus. */
