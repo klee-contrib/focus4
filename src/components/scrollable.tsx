@@ -1,10 +1,10 @@
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import React from "react";
-import {createPortal} from "react-dom";
 
 import {ButtonBackToTop} from "./button-back-to-top";
 
+import {createPortal} from "react-dom";
 import {container, scrollable, sticky} from "./__style__/scrollable.css";
 
 export const ScrollableContext = React.createContext<{
@@ -20,7 +20,7 @@ export const ScrollableContext = React.createContext<{
     /** Scrolle vers la position demandée. */
     scrollTo(options?: ScrollToOptions): void;
     /** Affiche un élement en sticky */
-    sticky(node: React.ReactNode): React.ReactPortal;
+    sticky(node: JSX.Element): React.ReactPortal;
 }>({} as any);
 
 @observer
@@ -34,9 +34,9 @@ export class Scrollable extends React.Component<{
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
 }> {
-    stickyNode!: HTMLDivElement | null;
     node!: HTMLDivElement | null;
-    readonly onScrolls = observable<(top: number, height: number) => void>([]);
+    stickyNode!: HTMLDivElement | null;
+    readonly onScrolls = observable<(top: number, height: number) => void>([], {deep: false});
 
     @observable header = {
         marginBottom: 50,
@@ -67,13 +67,13 @@ export class Scrollable extends React.Component<{
     }
 
     @action.bound
-    sticky(node: React.ReactNode) {
+    sticky(node: JSX.Element) {
         return createPortal(node, this.stickyNode!);
     }
 
     componentDidMount() {
         this.node!.addEventListener("scroll", this.onScroll);
-        this.node!.addEventListener("resize", this.onScroll);
+        window.addEventListener("resize", this.onScroll);
         this.onScroll();
     }
 
@@ -83,7 +83,7 @@ export class Scrollable extends React.Component<{
 
     componentWillUnmount() {
         this.node!.removeEventListener("scroll", this.onScroll);
-        this.node!.removeEventListener("resize", this.onScroll);
+        window.removeEventListener("resize", this.onScroll);
     }
 
     @action.bound
@@ -105,7 +105,7 @@ export class Scrollable extends React.Component<{
                 }}
             >
                 <div className={`${className || ""} ${container}`}>
-                    <div className={sticky} style={{width: this.width}} ref={div => (this.stickyNode = div)} />
+                    <div className={sticky} ref={div => (this.stickyNode = div)} style={{width: this.width}} />
                     <div className={scrollable} ref={div => (this.node = div)}>
                         {children}
                     </div>
@@ -114,4 +114,24 @@ export class Scrollable extends React.Component<{
             </ScrollableContext.Provider>
         );
     }
+}
+
+export function Sticky({
+    condition,
+    children,
+    placeholder
+}: {
+    condition: boolean;
+    children: JSX.Element;
+    placeholder?: JSX.Element;
+}) {
+    const context = React.useContext(ScrollableContext);
+    return condition ? (
+        <>
+            {context.sticky(children)}
+            {placeholder}
+        </>
+    ) : (
+        children
+    );
 }

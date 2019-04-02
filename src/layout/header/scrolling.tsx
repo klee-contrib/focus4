@@ -2,7 +2,7 @@ import {action, computed, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 
-import {ScrollableContext} from "../../components";
+import {ScrollableContext, Sticky} from "../../components";
 import {themr} from "../../theme";
 
 import * as styles from "./__style__/header.css";
@@ -65,34 +65,30 @@ export class HeaderScrolling extends React.Component<HeaderScrollingProps> {
 
     render() {
         return (
-            <Theme theme={this.props.theme}>
-                {theme => {
-                    const header = (
+            <Sticky
+                condition={!this.isDeployed}
+                placeholder={
+                    <div
+                        style={{
+                            height:
+                                (this.props.canDeploy ? this.placeholderHeight : this.context.header.topRowHeight) +
+                                this.context.header.marginBottom,
+                            width: "100%"
+                        }}
+                    />
+                }
+            >
+                <Theme theme={this.props.theme}>
+                    {theme => (
                         <header
                             ref={h => (this.header = h)}
                             className={`${theme.scrolling} ${this.isDeployed ? theme.deployed : theme.undeployed}`}
                         >
                             {this.props.children}
                         </header>
-                    );
-                    return (
-                        <>
-                            {this.isDeployed ? header : this.context.sticky(header)}
-                            {!this.isDeployed ? (
-                                <div
-                                    style={{
-                                        height:
-                                            (this.props.canDeploy
-                                                ? this.placeholderHeight
-                                                : this.context.header.topRowHeight) + this.context.header.marginBottom,
-                                        width: "100%"
-                                    }}
-                                />
-                            ) : null}
-                        </>
-                    );
-                }}
-            </Theme>
+                    )}
+                </Theme>
+            </Sticky>
         );
     }
 }

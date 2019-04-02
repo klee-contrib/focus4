@@ -7,7 +7,7 @@ import * as React from "react";
 import {themr} from "../theme";
 
 import {PanelDescriptor} from "./panel";
-import {ScrollableContext} from "./scrollable";
+import {ScrollableContext, Sticky} from "./scrollable";
 
 import * as styles from "./__style__/scrollspy-container.css";
 export type ScrollspyStyle = Partial<typeof styles>;
@@ -47,6 +47,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     /** Map des panels qui se sont enregistrés dans le container. */
     protected readonly panels = observable.map<string, PanelDescriptor>();
     node!: HTMLDivElement | null;
+    @observable paddingLeft!: string;
 
     /**
      * Enregistre un panel dans le container et retourne son id.
@@ -85,6 +86,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
             this.scrollTop = top;
             if (this.node) {
                 this.offsetTop = this.node.getBoundingClientRect().top;
+                this.paddingLeft = window.getComputedStyle(this.node.parentElement!).paddingLeft!;
             }
         })
     );
@@ -107,17 +109,13 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
 
     /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
     @computed.struct
-    protected get menuPosition() {
+    protected get isSticky() {
         const {
             menuOffset = this.context.header.topRowHeight +
                 this.context.header.marginBottom +
                 this.context.layout.contentPaddingTop
         } = this.props;
-        const isFixed = this.scrollTop !== 0 && this.offsetTop < menuOffset;
-        return {
-            position: isFixed ? ("fixed" as "fixed") : ("absolute" as "absolute"),
-            top: isFixed ? menuOffset : 0
-        };
+        return this.scrollTop !== 0 && this.offsetTop < menuOffset;
     }
 
     /**
@@ -153,7 +151,14 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     }
 
     render() {
-        const {children, MenuComponent = ScrollspyMenu, menuWidth = 250} = this.props;
+        const {
+            children,
+            MenuComponent = ScrollspyMenu,
+            menuOffset = this.context.header.topRowHeight +
+                this.context.header.marginBottom +
+                this.context.layout.contentPaddingTop,
+            menuWidth = 250
+        } = this.props;
         return (
             <ScrollspyContext.Provider
                 value={{
@@ -165,17 +170,25 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                 <Theme theme={this.props.theme}>
                     {theme => (
                         <div ref={node => (this.node = node)} className={theme.scrollspy}>
-                            <nav style={this.menuPosition}>
-                                <MenuComponent
-                                    activeClassName={theme.active}
-                                    activeId={this.activeItem}
-                                    panels={this.sortedPanels.map(([id, {title}]) => ({
-                                        id,
-                                        title: (title && i18next.t(title)) || ""
-                                    }))}
-                                    scrollToPanel={this.scrollToPanel}
-                                />
-                            </nav>
+                            <Sticky condition={this.isSticky}>
+                                <nav
+                                    className={theme.menu}
+                                    style={{
+                                        top: this.isSticky ? menuOffset : 0,
+                                        left: this.isSticky ? this.paddingLeft : undefined
+                                    }}
+                                >
+                                    <MenuComponent
+                                        activeClassName={theme.active}
+                                        activeId={this.activeItem}
+                                        panels={this.sortedPanels.map(([id, {title}]) => ({
+                                            id,
+                                            title: (title && i18next.t(title)) || ""
+                                        }))}
+                                        scrollToPanel={this.scrollToPanel}
+                                    />
+                                </nav>
+                            </Sticky>
                             <div className={theme.content} style={{marginLeft: menuWidth}}>
                                 {children}
                             </div>
