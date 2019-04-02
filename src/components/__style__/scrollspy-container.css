@@ -4,7 +4,11 @@
     position: relative;
 }
 
-.scrollspy nav ul {
+.menu {
+    position: absolute;
+}
+
+.menu ul {
     list-style-type: none;
 
     & li {
