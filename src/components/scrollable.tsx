@@ -1,20 +1,18 @@
+import "intersection-observer";
+
 import {action, observable} from "mobx";
-import {observer} from "mobx-react";
+import {disposeOnUnmount, observer} from "mobx-react";
 import React from "react";
+import {createPortal} from "react-dom";
+import {Transition} from "react-pose";
 
 import {ButtonBackToTop} from "./button-back-to-top";
 
-import {createPortal} from "react-dom";
 import {container, scrollable, sticky} from "./__style__/scrollable.css";
 
 export const ScrollableContext = React.createContext<{
-    header: {
-        marginBottom: number;
-        topRowHeight: number;
-    };
-    layout: {
-        contentPaddingTop: number;
-    };
+    /** Enregistre le header. */
+    registerHeader(node: JSX.Element, element: Element, canDeploy?: boolean): () => void;
     /** Enregistre un évènement de scroll dans le contexte et retourne son disposer. */
     registerScroll(onScroll: (top: number, height: number) => void): () => void;
     /** Scrolle vers la position demandée. */
@@ -34,20 +32,32 @@ export class Scrollable extends React.Component<{
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
 }> {
+    header?: [JSX.Element, Element];
+    observer!: IntersectionObserver;
     node!: HTMLDivElement | null;
     stickyNode!: HTMLDivElement | null;
+
     readonly onScrolls = observable<(top: number, height: number) => void>([], {deep: false});
+    stickies = observable.map<Element, boolean>();
 
-    @observable header = {
-        marginBottom: 50,
-        topRowHeight: 60
-    };
-
-    @observable layout = {
-        contentPaddingTop: 10
-    };
-
+    @observable hasBtt = false;
     @observable width = 0;
+
+    @action.bound
+    registerHeader(node: JSX.Element, element: Element, canDeploy = true) {
+        if (canDeploy) {
+            this.observer.observe(element);
+        }
+        this.stickies.set(element, !canDeploy);
+        this.header = [node, element];
+        return () => {
+            if (canDeploy) {
+                this.observer.unobserve(element);
+            }
+            this.stickies.delete(element);
+            this.header = undefined;
+        };
+    }
 
     @action.bound
     registerScroll(onScroll: (top: number, height: number) => void) {
@@ -71,10 +81,19 @@ export class Scrollable extends React.Component<{
         return createPortal(node, this.stickyNode!);
     }
 
+    /** Permet de n'afficher le bouton que si le scroll a dépassé l'offset. */
+    @disposeOnUnmount
+    bttScroll = this.registerScroll(top => (this.hasBtt = top > (this.props.backToTopOffset || 100)));
+
     componentDidMount() {
         this.node!.addEventListener("scroll", this.onScroll);
         window.addEventListener("resize", this.onScroll);
         this.onScroll();
+
+        this.observer = new IntersectionObserver(
+            entries => entries.forEach(e => this.stickies.set(e.target, !e.isIntersecting)),
+            {root: this.node}
+        );
     }
 
     componentDidUpdate() {
@@ -97,25 +116,40 @@ export class Scrollable extends React.Component<{
         return (
             <ScrollableContext.Provider
                 value={{
-                    header: this.header,
-                    layout: this.layout,
+                    registerHeader: this.registerHeader,
                     registerScroll: this.registerScroll,
                     scrollTo: this.scrollTo,
                     sticky: this.sticky
                 }}
             >
                 <div className={`${className || ""} ${container}`}>
-                    <div className={sticky} ref={div => (this.stickyNode = div)} style={{width: this.width}} />
-                    <div className={scrollable} ref={div => (this.node = div)}>
-                        {children}
-                    </div>
-                    {!hideBackToTop ? <ButtonBackToTop offset={backToTopOffset} /> : null}
+                    <Transition>
+                        {(this.header && this.stickies.get(this.header[1])) || false
+                            ? React.cloneElement(this.header[0], {
+                                  key: "header",
+                                  style: {width: this.width}
+                              })
+                            : undefined}
+                        <div
+                            key="sticky"
+                            className={sticky}
+                            ref={div => (this.stickyNode = div)}
+                            style={{width: this.width}}
+                        />
+                        <div key="scrollable" className={scrollable} ref={div => (this.node = div)}>
+                            {children}
+                        </div>
+                        {!hideBackToTop && this.hasBtt ? (
+                            <ButtonBackToTop key="backtotop" offset={backToTopOffset} />
+                        ) : (
+                            undefined
+                        )}
+                    </Transition>
                 </div>
             </ScrollableContext.Provider>
         );
     }
 }
-
 export function Sticky({
     condition,
     children,

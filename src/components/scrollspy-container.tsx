@@ -110,11 +110,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
     @computed.struct
     protected get isSticky() {
-        const {
-            menuOffset = this.context.header.topRowHeight +
-                this.context.header.marginBottom +
-                this.context.layout.contentPaddingTop
-        } = this.props;
+        const {menuOffset = 120} = this.props;
         return this.scrollTop !== 0 && this.offsetTop < menuOffset;
     }
 
@@ -151,14 +147,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     }
 
     render() {
-        const {
-            children,
-            MenuComponent = ScrollspyMenu,
-            menuOffset = this.context.header.topRowHeight +
-                this.context.header.marginBottom +
-                this.context.layout.contentPaddingTop,
-            menuWidth = 250
-        } = this.props;
+        const {children, MenuComponent = ScrollspyMenu, menuOffset = 120, menuWidth = 250} = this.props;
         return (
             <ScrollspyContext.Provider
                 value={{
@@ -167,9 +156,9 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                     updatePanel: this.updatePanel
                 }}
             >
-                <Theme theme={this.props.theme}>
+                <Theme ref={node => (this.node = node)} theme={this.props.theme}>
                     {theme => (
-                        <div ref={node => (this.node = node)} className={theme.scrollspy}>
+                        <div className={theme.scrollspy}>
                             <Sticky condition={this.isSticky}>
                                 <nav
                                     className={theme.menu}
