@@ -42,6 +42,10 @@
     position: relative;
     color: var(--header-color);
     box-shadow: var(--header-shadow);
+}
+
+.deployed,
+.undeployed {
     margin-bottom: var(--header-margin-bottom);
 }
 
@@ -57,22 +61,25 @@
 
 .undeployed {
     z-index: inherit;
-    box-shadow: none;
+    opacity: 0;
 }
 
-.undeployed .topRow {
-    box-shadow: var(--header-shadow);
-}
-
-.undeployed .content {
-    display: none;
-}
-
-.undeployed .actions {
+.sticky {
     position: absolute;
-    top: 30px;
-    right: 0;
-    z-index: var(--z-index-high);
+    z-index: 1;
+}
+
+.undeployed,
+.sticky {
+    & .content {
+        display: none;
+    }
+
+    & .actions {
+        position: absolute;
+        top: 30px;
+        right: 0;
+    }
 }
 
 .scrolling .actions {

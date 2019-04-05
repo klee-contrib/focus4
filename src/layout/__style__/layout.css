@@ -82,8 +82,3 @@ footer {
     height: 100vh;
     flex: 1;
 }
-
-.content {
-    margin: var(--layout-content-margin);
-    padding: var(--layout-content-padding);
-}

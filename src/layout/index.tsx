@@ -50,7 +50,6 @@ import {MainMenuStyle} from "./menu";
 import * as styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 
-export {LayoutContent} from "./content";
 export {
     HeaderActions,
     HeaderBarLeft,
