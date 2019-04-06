@@ -23,7 +23,7 @@ export const ScrollableContext = React.createContext<{
 
 @observer
 export class Scrollable extends React.Component<{
-    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 100. */
+    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 200. */
     backToTopOffset?: number;
     /** Classe CSS. */
     className?: string;
@@ -33,6 +33,7 @@ export class Scrollable extends React.Component<{
     scrollBehaviour?: ScrollBehavior;
 }> {
     header?: [JSX.Element, Element];
+    stickyHeader?: HTMLElement | null;
     observer!: IntersectionObserver;
     node!: HTMLDivElement | null;
     stickyNode!: HTMLDivElement | null;
@@ -42,6 +43,7 @@ export class Scrollable extends React.Component<{
 
     @observable hasBtt = false;
     @observable width = 0;
+    @observable headerHeight = 0;
 
     @action.bound
     registerHeader(node: JSX.Element, element: Element, canDeploy = true) {
@@ -64,7 +66,7 @@ export class Scrollable extends React.Component<{
         this.onScrolls.push(onScroll);
 
         if (this.node) {
-            onScroll(this.node.scrollTop, this.node.clientHeight);
+            onScroll(this.node.scrollTop + this.headerHeight, this.node.clientHeight);
         }
 
         return () => this.onScrolls.remove(onScroll);
@@ -83,7 +85,7 @@ export class Scrollable extends React.Component<{
 
     /** Permet de n'afficher le bouton que si le scroll a dépassé l'offset. */
     @disposeOnUnmount
-    bttScroll = this.registerScroll(top => (this.hasBtt = top > (this.props.backToTopOffset || 100)));
+    bttScroll = this.registerScroll(top => (this.hasBtt = top > (this.props.backToTopOffset || 200)));
 
     componentDidMount() {
         this.node!.addEventListener("scroll", this.onScroll);
@@ -107,12 +109,13 @@ export class Scrollable extends React.Component<{
 
     @action.bound
     onScroll() {
-        this.onScrolls.forEach(onScroll => onScroll(this.node!.scrollTop, this.node!.clientHeight));
         this.width = this.node!.clientWidth;
+        this.headerHeight = (this.stickyHeader && this.stickyHeader.clientHeight) || 0;
+        this.onScrolls.forEach(onScroll => onScroll(this.node!.scrollTop + this.headerHeight, this.node!.clientHeight));
     }
 
     render() {
-        const {backToTopOffset, children, className, hideBackToTop} = this.props;
+        const {children, className, hideBackToTop} = this.props;
         return (
             <ScrollableContext.Provider
                 value={{
@@ -126,6 +129,7 @@ export class Scrollable extends React.Component<{
                     <Transition>
                         {(this.header && this.stickies.get(this.header[1])) || false
                             ? React.cloneElement(this.header[0], {
+                                  ref: (stickyHeader: any) => (this.stickyHeader = stickyHeader),
                                   key: "header",
                                   style: {width: this.width}
                               })
@@ -134,16 +138,12 @@ export class Scrollable extends React.Component<{
                             key="sticky"
                             className={sticky}
                             ref={div => (this.stickyNode = div)}
-                            style={{width: this.width}}
+                            style={{width: this.width, top: this.headerHeight}}
                         />
                         <div key="scrollable" className={scrollable} ref={div => (this.node = div)}>
                             {children}
                         </div>
-                        {!hideBackToTop && this.hasBtt ? (
-                            <ButtonBackToTop key="backtotop" offset={backToTopOffset} />
-                        ) : (
-                            undefined
-                        )}
+                        {!hideBackToTop && this.hasBtt ? <ButtonBackToTop key="backtotop" /> : undefined}
                     </Transition>
                 </div>
             </ScrollableContext.Provider>
@@ -151,15 +151,17 @@ export class Scrollable extends React.Component<{
     }
 }
 export function Sticky({
-    condition,
+    parentNode: node,
     children,
     placeholder
 }: {
-    condition: boolean;
+    parentNode: HTMLElement | null;
     children: JSX.Element;
     placeholder?: JSX.Element;
 }) {
     const context = React.useContext(ScrollableContext);
+    const [condition, setCondition] = React.useState(false);
+    React.useLayoutEffect(() => context.registerScroll(top => node && setCondition(top >= node.offsetTop)), [node]);
     return condition ? (
         <>
             {context.sticky(children)}

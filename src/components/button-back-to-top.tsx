@@ -14,8 +14,6 @@ export type ButtonBackToTopStyle = Partial<typeof styles> & ButtonTheme;
 
 /** Props du bouton de retour en haut de page. */
 export interface ButtonBackToTopProps {
-    /** Offset avant l'apparition du bouton. Par défaut : 100. */
-    offset?: number;
     /** CSS. */
     theme?: ButtonBackToTopStyle;
 }
