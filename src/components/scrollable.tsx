@@ -1,5 +1,6 @@
 import "intersection-observer";
 
+import {range} from "lodash";
 import {action, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import React from "react";
@@ -13,6 +14,8 @@ import {container, scrollable, sticky} from "./__style__/scrollable.css";
 export const ScrollableContext = React.createContext<{
     /** Enregistre le header. */
     registerHeader(node: JSX.Element, element: Element, canDeploy?: boolean): () => void;
+    /** Enregistre une intersection avec la partie visible. */
+    registerIntersect(node: HTMLElement, onIntersect: (ratio: number) => void): () => void;
     /** Enregistre un évènement de scroll dans le contexte et retourne son disposer. */
     registerScroll(onScroll: (top: number, height: number) => void): () => void;
     /** Scrolle vers la position demandée. */
@@ -34,12 +37,14 @@ export class Scrollable extends React.Component<{
 }> {
     header?: [JSX.Element, Element];
     stickyHeader?: HTMLElement | null;
-    observer!: IntersectionObserver;
+    @observable isHeaderSticky = false;
+
+    @observable.ref observer!: IntersectionObserver;
     node!: HTMLDivElement | null;
     stickyNode!: HTMLDivElement | null;
 
     readonly onScrolls = observable<(top: number, height: number) => void>([], {deep: false});
-    stickies = observable.map<Element, boolean>();
+    readonly onIntersects = observable.map<Element, (ratio: number) => void>([], {deep: false});
 
     @observable hasBtt = false;
     @observable width = 0;
@@ -50,13 +55,13 @@ export class Scrollable extends React.Component<{
         if (canDeploy) {
             this.observer.observe(element);
         }
-        this.stickies.set(element, !canDeploy);
+        this.isHeaderSticky = !canDeploy;
         this.header = [node, element];
         return () => {
             if (canDeploy) {
                 this.observer.unobserve(element);
             }
-            this.stickies.delete(element);
+            this.isHeaderSticky = false;
             this.header = undefined;
         };
     }
@@ -70,6 +75,17 @@ export class Scrollable extends React.Component<{
         }
 
         return () => this.onScrolls.remove(onScroll);
+    }
+
+    @action.bound
+    registerIntersect(node: HTMLElement, onIntersect: (ratio: number) => void) {
+        this.onIntersects.set(node, onIntersect);
+        this.observer.observe(node);
+
+        return () => {
+            this.onIntersects.delete(node);
+            this.observer.unobserve(node);
+        };
     }
 
     @action.bound
@@ -93,8 +109,17 @@ export class Scrollable extends React.Component<{
         this.onScroll();
 
         this.observer = new IntersectionObserver(
-            entries => entries.forEach(e => this.stickies.set(e.target, !e.isIntersecting)),
-            {root: this.node}
+            entries =>
+                entries.forEach(e => {
+                    if (this.header && e.target === this.header[1]) {
+                        this.isHeaderSticky = !e.isIntersecting;
+                    }
+                    const onIntersect = this.onIntersects.get(e.target);
+                    if (onIntersect) {
+                        onIntersect(e.intersectionRatio);
+                    }
+                }),
+            {root: this.node, threshold: range(0, 105, 5).map(t => t / 100)}
         );
     }
 
@@ -103,8 +128,13 @@ export class Scrollable extends React.Component<{
     }
 
     componentWillUnmount() {
-        this.node!.removeEventListener("scroll", this.onScroll);
         window.removeEventListener("resize", this.onScroll);
+        if (this.node) {
+            this.node.removeEventListener("scroll", this.onScroll);
+        }
+        if (this.observer) {
+            this.observer.disconnect();
+        }
     }
 
     @action.bound
@@ -120,6 +150,7 @@ export class Scrollable extends React.Component<{
             <ScrollableContext.Provider
                 value={{
                     registerHeader: this.registerHeader,
+                    registerIntersect: this.registerIntersect,
                     registerScroll: this.registerScroll,
                     scrollTo: this.scrollTo,
                     sticky: this.sticky
@@ -127,7 +158,7 @@ export class Scrollable extends React.Component<{
             >
                 <div className={`${className || ""} ${container}`}>
                     <Transition>
-                        {(this.header && this.stickies.get(this.header[1])) || false
+                        {this.isHeaderSticky && this.header
                             ? React.cloneElement(this.header[0], {
                                   ref: (stickyHeader: any) => (this.stickyHeader = stickyHeader),
                                   key: "header",
@@ -141,7 +172,7 @@ export class Scrollable extends React.Component<{
                             style={{width: this.width, top: this.headerHeight}}
                         />
                         <div key="scrollable" className={scrollable} ref={div => (this.node = div)}>
-                            {children}
+                            {this.observer ? children : null}
                         </div>
                         {!hideBackToTop && this.hasBtt ? <ButtonBackToTop key="backtotop" /> : undefined}
                     </Transition>

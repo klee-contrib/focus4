@@ -1,7 +1,7 @@
 import i18next from "i18next";
-import {sortBy, uniqueId} from "lodash";
+import {maxBy, sortBy, uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
-import {disposeOnUnmount, observer} from "mobx-react";
+import {observer} from "mobx-react";
 import * as React from "react";
 
 import {themr} from "../theme";
@@ -42,11 +42,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     /** Noeud DOM du scrollspy */
     node!: HTMLDivElement | null;
 
-    /** Scroll courant. */
-    @observable protected scrollTop = 0;
-
     /** Map des panels qui se sont enregistrés dans le container. */
-    protected readonly panels = observable.map<string, PanelDescriptor>();
+    protected readonly panels = observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>();
 
     /**
      * Enregistre un panel dans le container et retourne son id.
@@ -55,7 +52,11 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     @action.bound
     protected registerPanel(panel: PanelDescriptor, sscId?: string) {
         sscId = sscId || uniqueId("ssc-panel");
-        this.panels.set(sscId, panel);
+        this.panels.set(sscId, {
+            ...panel,
+            ratio: 0,
+            disposer: this.context.registerIntersect(panel.node, ratio => (this.panels.get(sscId!)!.ratio = ratio))
+        });
         return sscId;
     }
 
@@ -65,21 +66,21 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      */
     @action.bound
     protected removePanel(id: string) {
+        this.panels.get(id)!.disposer();
         this.panels.delete(id);
     }
 
     /**
      * Met à jour un panel.
      * @param id L'id du panel.
-     * @param panel La description du panel.
+     * @param desc La description du panel.
      */
     @action.bound
-    protected updatePanel(id: string, panel: PanelDescriptor) {
-        this.panels.set(id, panel);
+    protected updatePanel(id: string, desc: PanelDescriptor) {
+        const panel = this.panels.get(id)!;
+        panel.node = desc.node;
+        panel.title = desc.title;
     }
-
-    @disposeOnUnmount
-    scrollListener = this.context.registerScroll(action((top: number) => (this.scrollTop = top)));
 
     /** Récupère les panels triés par position dans la page. */
     @computed.struct
@@ -90,11 +91,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     /** Détermine le panel actif dans le menu */
     @computed.struct
     protected get activeItem() {
-        const active = this.sortedPanels
-            .slice()
-            .reverse()
-            .find(([_, {node}]) => this.getOffsetTop(node) <= this.scrollTop);
-        return (active && active[0]) || (this.sortedPanels[0] && this.sortedPanels[0][0]);
+        const panel = maxBy(Array.from(this.panels.entries()), ([_, {ratio}]) => ratio);
+        return (panel && panel[0]) || (this.sortedPanels[0] && this.sortedPanels[0][0]);
     }
 
     /**
