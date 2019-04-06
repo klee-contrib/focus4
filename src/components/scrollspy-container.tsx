@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {sortBy, uniqueId} from "lodash";
-import {action, computed, observable, untracked} from "mobx";
+import {action, computed, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 
@@ -39,15 +39,14 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     static contextType = ScrollableContext;
     context!: React.ContextType<typeof ScrollableContext>;
 
-    /** Offset entre le container et le haut du document. */
-    @observable protected offsetTop = 0;
+    /** Noeud DOM du scrollspy */
+    node!: HTMLDivElement | null;
+
     /** Scroll courant. */
     @observable protected scrollTop = 0;
 
     /** Map des panels qui se sont enregistrés dans le container. */
     protected readonly panels = observable.map<string, PanelDescriptor>();
-    node!: HTMLDivElement | null;
-    @observable paddingLeft!: string;
 
     /**
      * Enregistre un panel dans le container et retourne son id.
@@ -79,17 +78,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
         this.panels.set(id, panel);
     }
 
-    /** Synchronise le scroll/resize de la page avec les observables qui les représentent. */
     @disposeOnUnmount
-    scrollListener = this.context.registerScroll(
-        action((top: number) => {
-            this.scrollTop = top;
-            if (this.node) {
-                this.offsetTop = this.node.getBoundingClientRect().top;
-                this.paddingLeft = window.getComputedStyle(this.node.parentElement!).paddingLeft!;
-            }
-        })
-    );
+    scrollListener = this.context.registerScroll(action((top: number) => (this.scrollTop = top)));
 
     /** Récupère les panels triés par position dans la page. */
     @computed.struct
@@ -107,31 +97,13 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
         return (active && active[0]) || (this.sortedPanels[0] && this.sortedPanels[0][0]);
     }
 
-    /** Détermine la position du menu (absolue avant menuOffset, fixe après) */
-    @computed.struct
-    protected get isSticky() {
-        const {menuOffset = 120} = this.props;
-        return this.scrollTop !== 0 && this.offsetTop < menuOffset;
-    }
-
     /**
      * Récupère l'offset d'un noeud HTML (un panel) par rapport au top du document.
      * @param node Le noeud HTML.
      */
     protected getOffsetTop(node: HTMLElement) {
-        return untracked(() => {
-            // Il y a un bug très bizarre qui fait planter tout MobX à cause de l'accès à la prop, donc on met un untracked pour le contourner.
-            let distance = 0;
-
-            if (node.offsetParent) {
-                do {
-                    distance += node.offsetTop;
-                    node = node.offsetParent as HTMLElement;
-                } while (node);
-            }
-
-            return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
-        });
+        const distance = node.offsetTop + this.node!.offsetTop;
+        return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
     }
 
     /**
@@ -147,7 +119,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     }
 
     render() {
-        const {children, MenuComponent = ScrollspyMenu, menuOffset = 120, menuWidth = 250} = this.props;
+        const {children, MenuComponent = ScrollspyMenu, menuWidth = 250} = this.props;
         return (
             <ScrollspyContext.Provider
                 value={{
@@ -159,14 +131,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                 <Theme ref={node => (this.node = node)} theme={this.props.theme}>
                     {theme => (
                         <div className={theme.scrollspy}>
-                            <Sticky condition={this.isSticky}>
-                                <nav
-                                    className={theme.menu}
-                                    style={{
-                                        top: this.isSticky ? menuOffset : 0,
-                                        left: this.isSticky ? this.paddingLeft : undefined
-                                    }}
-                                >
+                            <Sticky parentNode={this.node}>
+                                <nav className={theme.menu}>
                                     <MenuComponent
                                         activeClassName={theme.active}
                                         activeId={this.activeItem}

@@ -22,25 +22,28 @@ export interface HeaderScrollingProps {
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
-export function HeaderScrolling(props: React.PropsWithChildren<HeaderScrollingProps>) {
-    const context = React.useContext(ScrollableContext);
-    const theme = useTheme("header", styles, props.theme);
-    const ref = React.useRef<Element>(null);
+export const HeaderScrolling = React.forwardRef(
+    (props: React.PropsWithChildren<HeaderScrollingProps>, ref: React.Ref<HTMLElement>) => {
+        const context = React.useContext(ScrollableContext);
+        const theme = useTheme("header", styles, props.theme);
+        const nonStickyRef = React.useRef<Element>(null);
 
-    function children(className: string, headerRef?: React.Ref<Element>) {
-        return (
-            <Header ref={headerRef} className={`${theme.scrolling} ${className}`} style={props.style}>
-                {props.children}
-            </Header>
+        function children(className: string, headerRef?: React.Ref<Element>) {
+            return (
+                <Header ref={headerRef} className={`${theme.scrolling} ${className}`} style={props.style}>
+                    {props.children}
+                </Header>
+            );
+        }
+
+        React.useEffect(
+            () => context.registerHeader(children(theme.sticky, ref), nonStickyRef.current!, props.canDeploy),
+            [props.canDeploy]
         );
+
+        return children(props.canDeploy ? theme.deployed : theme.undeployed, nonStickyRef);
     }
-
-    React.useEffect(() => context.registerHeader(children(theme.sticky), ref.current!, props.canDeploy), [
-        props.canDeploy
-    ]);
-
-    return children(props.canDeploy ? theme.deployed : theme.undeployed, ref);
-}
+);
 
 const Header = posed.header({
     enter: {
