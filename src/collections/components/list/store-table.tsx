@@ -13,8 +13,17 @@ import {Table, TableProps} from "./table";
 export interface StoreTableProps<T> extends TableProps<T> {
     /** Code du groupe à afficher, pour une recherche groupée. */
     groupCode?: string;
-    /** Les colonnes sur lesquelles on peut trier. */
-    sortableColumns?: (keyof T)[];
+    /** La description des colonnes du tableau. */
+    columns: {
+        /** Classe CSS pour la colonne. */
+        className?: string;
+        /** Contenu de la colonne. */
+        content: (data: T) => React.ReactNode;
+        /** Si la colonne est triable, le nom du champ sur lequel on doit trier. */
+        sortKey?: string;
+        /** Libellé du titre de la colonne. */
+        title: string;
+    }[];
     /** Le store contenant la liste. */
     store: ListStoreBase<T>;
 }
@@ -71,32 +80,31 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
         const {
             columns,
             i18nPrefix = "focus",
-            sortableColumns = [],
             store: {sortAsc, sortBy}
         } = this.props;
         return (
             <thead>
                 <tr>
-                    {Object.keys(columns).map(col => (
-                        <th key={col}>
+                    {columns.map(({title, sortKey}) => (
+                        <th key={title}>
                             <div
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    marginBottom: sortableColumns.find(c => c === col) ? -3 : 0
+                                    marginBottom: sortKey ? -3 : 0
                                 }}
                             >
-                                <div>{i18next.t(columns[col])}</div>
-                                {sortableColumns.find(c => c === col) ? (
+                                <div>{i18next.t(title)}</div>
+                                {sortKey ? (
                                     <div style={{marginLeft: 3, display: "flex"}}>
                                         <IconButton
-                                            disabled={sortAsc && sortBy === col}
-                                            onClick={() => this.sort(col, true)}
+                                            disabled={sortAsc && sortBy === sortKey}
+                                            onClick={() => this.sort(sortKey, true)}
                                             icon={getIcon(`${i18nPrefix}.icons.table.sortAsc`)}
                                         />
                                         <IconButton
-                                            disabled={!sortAsc && sortBy === col}
-                                            onClick={() => this.sort(col, false)}
+                                            disabled={!sortAsc && sortBy === sortKey}
+                                            onClick={() => this.sort(sortKey, false)}
                                             icon={getIcon(`${i18nPrefix}.icons.table.sortDesc`)}
                                         />
                                     </div>
