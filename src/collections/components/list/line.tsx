@@ -61,7 +61,7 @@ export interface LineWrapperProps<T> {
     /** CSS. */
     theme?: LineStyle;
     /** Type spécial de ligne. */
-    type?: "table" | "timeline";
+    type?: "timeline";
 }
 
 /** Wrapper de ligne dans une liste. */
@@ -155,9 +155,6 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
         } = this.props;
 
         switch (type) {
-            case "table":
-                // Pour un tableau, on laisse l'utiliseur spécifier ses lignes de tableau directement.
-                return <LineComponent data={data} />;
             case "timeline":
                 // Pour une timeline, on wrappe simplement la ligne dans le conteneur de timeline qui affiche la date et la décoration de timeline.
                 return (
