@@ -351,7 +351,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <>
+                    <div className={theme.container}>
                         {this.renderFacetBox(theme)}
                         <div className={theme.resultContainer}>
                             <ListWrapper
@@ -367,7 +367,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                                 {this.renderResults()}
                             </ListWrapper>
                         </div>
-                    </>
+                    </div>
                 )}
             </Theme>
         );

@@ -82,3 +82,8 @@ footer {
     height: 100vh;
     flex: 1;
 }
+
+.content {
+    padding: 20px 20px 0;
+    box-sizing: border-box;
+}

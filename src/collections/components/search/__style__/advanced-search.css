@@ -1,5 +1,10 @@
 @import "../../../../style/advanced-search.css";
 
+.container {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
 .facetContainer {
     float: left;
     width: var(--advanced-search-facets-width);

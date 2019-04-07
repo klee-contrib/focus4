@@ -1,13 +1,13 @@
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
 import {IconButton} from "react-toolbox/lib/button";
 import Portal from "react-toolbox/lib/hoc/Portal";
 
 import {themr} from "../theme";
 
 import {getIcon} from "./icon";
+import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/popin.css";
 export type PopinStyle = Partial<typeof styles>;
@@ -15,16 +15,22 @@ const Theme = themr("popin", styles);
 
 /** Props de la popin. */
 export interface PopinProps {
+    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 200. */
+    backToTopOffset?: number;
     /** Handler de fermeture de la popin. */
     closePopin: () => void;
+    /** Cache le bouton de retour en haut. */
+    hideBackToTop?: boolean;
+    /** N'affiche pas l'overlay (utile si la popin est dans une autre popin). */
+    hideOverlay?: boolean;
     /** Préfixe i18n pour l'icône de fermeture. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Niveau de la popin, pour savoir dans combien d'autres popins elle se trouve. Par défaut : 0 */
-    level?: number;
     /** Popin ouverte (ou fermée). */
     opened: boolean;
     /** Supprime le clic sur l'overlay pour fermer la popin. */
     preventOverlayClick?: boolean;
+    /** Comportement du scroll. Par défaut : "smooth" */
+    scrollBehaviour?: ScrollBehavior;
     /** CSS. */
     theme?: PopinStyle;
     /** Type de popin. Par défaut : "from-right" */
@@ -46,9 +52,6 @@ export class Popin extends React.Component<PopinProps> {
 
     componentWillUnmount() {
         window.clearTimeout(this.openTimeoutID);
-        if (this.opened || this.willOpen) {
-            this.restoreBodyOverflow();
-        }
     }
 
     componentWillMount() {
@@ -73,50 +76,13 @@ export class Popin extends React.Component<PopinProps> {
             this.willOpen = true;
             this.openTimeoutID = setTimeout(() => (this.willOpen = false), 200); // La popin s'ouvre en 200ms.
             this.opened = true;
-            this.hideBodyOverflow();
         } else {
             this.willClose = true;
-            this.restoreBodyOverflow();
             this.openTimeoutID = setTimeout(() => {
                 this.opened = false;
                 this.willClose = false;
             }, 200);
         }
-    }
-
-    /** Masque l'overflow (selon l'axe Y) du <html> et de l'éventuelle popin parente. */
-    private hideBodyOverflow() {
-        // Si level > 0, alors on a une popin parente et on va la chercher.
-        if (this.props.level) {
-            let parentPopin = findDOMNode(this) as HTMLElement | null;
-            // La popin qu'on cherche est celle de niveau n - 1.
-            while (parentPopin && parentPopin.getAttribute("data-level") !== `${this.props.level - 1}`) {
-                parentPopin = parentPopin.parentElement;
-            }
-            // Si on l'a trouvée, alors on masque son overflow.
-            if (parentPopin) {
-                parentPopin.style.overflowY = "hidden";
-                return;
-            }
-        }
-
-        document.documentElement!.style.overflowY = "hidden";
-    }
-
-    /** Restore l'overflow (selon l'axe Y) du <html> et de l'éventuelle popin parente */
-    private restoreBodyOverflow() {
-        if (this.props.level) {
-            let parentPopin = findDOMNode(this) as HTMLElement | null;
-            while (parentPopin && parentPopin.getAttribute("data-level") !== `${this.props.level - 1}`) {
-                parentPopin = parentPopin.parentElement;
-            }
-            if (parentPopin) {
-                parentPopin.style.overflowY = "auto";
-                return;
-            }
-        }
-
-        document.documentElement!.style.overflowY = "auto";
     }
 
     /** Récupère les deux animations d'ouverture et de fermeture selon le type de popin. */
@@ -146,12 +112,15 @@ export class Popin extends React.Component<PopinProps> {
 
     render() {
         const {
-            i18nPrefix = "focus",
-            level = 0,
+            backToTopOffset,
             children,
             closePopin,
-            type = "from-right",
-            preventOverlayClick
+            hideBackToTop,
+            hideOverlay,
+            i18nPrefix = "focus",
+            preventOverlayClick,
+            scrollBehaviour,
+            type = "from-right"
         } = this.props;
         return this.opened ? (
             <Portal>
@@ -163,7 +132,7 @@ export class Popin extends React.Component<PopinProps> {
                                     this.willClose ? theme.fadeOut : this.willOpen ? theme.fadeIn : ""
                                 }`}
                                 onClick={(!preventOverlayClick && closePopin) || undefined}
-                                style={level > 0 ? {background: "none"} : {}}
+                                style={hideOverlay ? {background: "none"} : {}}
                             >
                                 {!this.willOpen ? (
                                     <IconButton
@@ -172,15 +141,16 @@ export class Popin extends React.Component<PopinProps> {
                                     />
                                 ) : null}
                             </div>
-                            <div
-                                data-level={level}
+                            <Scrollable
+                                backToTopOffset={backToTopOffset}
                                 className={`${theme.popin} ${
                                     type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""
                                 } ${this.animation(theme) || ""}`}
-                                onClick={e => e.stopPropagation()}
+                                hideBackToTop={hideBackToTop}
+                                scrollBehaviour={scrollBehaviour}
                             >
                                 {children}
-                            </div>
+                            </Scrollable>
                         </>
                     )}
                 </Theme>
