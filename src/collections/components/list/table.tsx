@@ -43,16 +43,14 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
     /** Affiche le corps du tableau. */
     protected renderTableBody() {
         const {lineTheme, itemKey, RowComponent} = this.props;
-        const Line = LineWrapper as new () => LineWrapper<T>;
-
         return (
             <tbody>
                 {this.displayedData.map((item, idx) => (
-                    <Line
+                    <LineWrapper
                         key={itemKey(item, idx)}
-                        theme={lineTheme}
                         data={item}
                         LineComponent={RowComponent}
+                        theme={lineTheme}
                         type="table"
                     />
                 ))}
@@ -82,6 +80,5 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
  * @param props Les props du tableau.
  */
 export function tableFor<T>(props: TableProps<T> & {data: T[]}) {
-    const Table2 = Table as any;
-    return <Table2 {...props} />;
+    return <Table<T> {...props} />;
 }

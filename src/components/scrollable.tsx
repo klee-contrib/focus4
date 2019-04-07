@@ -15,7 +15,7 @@ export const ScrollableContext = React.createContext<{
     /** Enregistre le header. */
     registerHeader(node: JSX.Element, element: Element, canDeploy?: boolean): () => void;
     /** Enregistre une intersection avec la partie visible. */
-    registerIntersect(node: HTMLElement, onIntersect: (ratio: number) => void): () => void;
+    registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void): () => void;
     /** Enregistre un évènement de scroll dans le contexte et retourne son disposer. */
     registerScroll(onScroll: (top: number, height: number) => void): () => void;
     /** Scrolle vers la position demandée. */
@@ -44,7 +44,9 @@ export class Scrollable extends React.Component<{
     stickyNode!: HTMLDivElement | null;
 
     readonly onScrolls = observable<(top: number, height: number) => void>([], {deep: false});
-    readonly onIntersects = observable.map<Element, (ratio: number) => void>([], {deep: false});
+    readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
+        deep: false
+    });
 
     @observable hasBtt = false;
     @observable width = 0;
@@ -78,7 +80,7 @@ export class Scrollable extends React.Component<{
     }
 
     @action.bound
-    registerIntersect(node: HTMLElement, onIntersect: (ratio: number) => void) {
+    registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void) {
         this.onIntersects.set(node, onIntersect);
         this.observer.observe(node);
 
@@ -116,7 +118,7 @@ export class Scrollable extends React.Component<{
                     }
                     const onIntersect = this.onIntersects.get(e.target);
                     if (onIntersect) {
-                        onIntersect(e.intersectionRatio);
+                        onIntersect(e.intersectionRatio, e.isIntersecting);
                     }
                 }),
             {root: this.node, threshold: range(0, 105, 5).map(t => t / 100)}

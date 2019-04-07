@@ -82,10 +82,6 @@ export interface ListProps<T> extends ListBaseProps<T> {
 /** Composant de liste standard */
 @observer
 export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extends ListBase<T, P> {
-    // On récupère les infos du ListWrapper dans le contexte.
-    static contextType = ListWrapperContext;
-    context!: React.ContextType<typeof ListWrapperContext>;
-
     /** Nombre de mosaïque par ligne, déterminé à la volée. */
     @observable private byLine!: number;
     /** Index de l'item sur lequel on doit afficher le détail. */
@@ -110,12 +106,10 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
     // Tuyauterie pour maintenir `byLine` à jour.
     componentDidMount() {
-        super.componentDidMount();
         window.addEventListener("resize", this.updateByLine);
     }
 
     componentWillUnmount() {
-        super.componentWillUnmount();
         window.removeEventListener("resize", this.updateByLine);
     }
 
@@ -150,20 +144,20 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     /** Handler d'ajout d'élément (fusion contexte / props). */
     @computed
     protected get addItemHandler() {
-        return this.props.addItemHandler || this.context.addItemHandler;
+        return this.props.addItemHandler || lwcInit.addItemHandler;
     }
 
     /** Mode (fusion contexte / props). */
     @computed
     protected get mode() {
         const {mode, MosaicComponent, LineComponent} = this.props;
-        return mode || (MosaicComponent && !LineComponent && "mosaic") || this.context.mode;
+        return mode || (MosaicComponent && !LineComponent && "mosaic") || lwcInit.mode;
     }
 
     /** Taille de la mosaïque (fusion contexte / props). */
     @computed
     protected get mosaic() {
-        return this.props.mosaic || this.context.mosaic;
+        return this.props.mosaic || lwcInit.mosaic;
     }
 
     /** Les données. */
@@ -212,6 +206,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
             itemKey,
             lineTheme,
             operationList,
+            pageItemIndex = 5,
             hasDragAndDrop
         } = this.props;
 
@@ -228,6 +223,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         return this.displayedData.map((item, idx) => ({
             key: itemKey(item, idx),
             data: item,
+            domRef: this.displayedData.length - idx === pageItemIndex ? this.registerSentinel : undefined,
             disableDragAnimation: this.disableDragAnimation,
             draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
             i18nPrefix,
@@ -350,8 +346,13 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
  * @param props Les props de la liste.
  */
 export function listFor<T>(props: ListProps<T> & {data: T[]}) {
-    const List2 = List as any;
-    return <List2 {...props} />;
+    return <ListWithWrapperContext<T> {...props} />;
+}
+
+function ListWithWrapperContext<T>(props: ListProps<T> & {data: T[]}) {
+    // On récupère les infos du ListWrapper dans le contexte.
+    const {addItemHandler, mode, mosaic} = React.useContext(ListWrapperContext);
+    return <List<T> addItemHandler={addItemHandler} mode={mode} mosaic={mosaic} {...props} />;
 }
 
 /** Props du composant wrapper du détail. */

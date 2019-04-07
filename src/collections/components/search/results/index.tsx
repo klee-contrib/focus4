@@ -11,7 +11,7 @@ import {
     ListStyle,
     LoadingProps,
     OperationListItem,
-    StoreList
+    storeListFor
 } from "../../list";
 
 import {GroupResult, SearchStore} from "../../../store";
@@ -64,8 +64,8 @@ export interface ResultsProps<T> {
     LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Composant de mosaïque. */
     MosaicComponent?: React.ComponentType<LineProps<T>>;
-    /** Offset pour le scroll infini. Par défaut : 250 */
-    offset?: number;
+    /** (Scroll infini) Index de l'item, en partant du bas de la liste affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 5. */
+    pageItemIndex?: number;
     /** Store de recherche. */
     store: SearchStore<T>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
@@ -125,7 +125,7 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
             lineOperationList,
             listPageSize,
             listTheme,
-            offset,
+            pageItemIndex,
             store,
             useGroupActionBars
         } = this.props;
@@ -153,13 +153,13 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
         } else {
             return (
                 <div data-focus="results">
-                    <StoreList
-                        {...this.commonListProps}
-                        operationList={lineOperationList}
-                        offset={offset}
-                        perPage={listPageSize}
-                        theme={listTheme}
-                    />
+                    {storeListFor({
+                        ...this.commonListProps,
+                        operationList: lineOperationList,
+                        pageItemIndex,
+                        perPage: listPageSize,
+                        theme: listTheme
+                    })}
                 </div>
             );
         }

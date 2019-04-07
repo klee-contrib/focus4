@@ -126,9 +126,9 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                     updatePanel: this.updatePanel
                 }}
             >
-                <Theme ref={node => (this.node = node)} theme={this.props.theme}>
+                <Theme theme={this.props.theme}>
                     {theme => (
-                        <div className={theme.scrollspy}>
+                        <div ref={node => (this.node = node)} className={theme.scrollspy}>
                             <Sticky parentNode={this.node}>
                                 <nav className={theme.menu}>
                                     <MenuComponent

@@ -36,6 +36,8 @@ export interface LineWrapperProps<T> {
     data: T;
     /** Le sélecteur pour le champ date, pour une ligne timeline. */
     dateSelector?: (data: T) => EntityField<FieldEntry<string>>;
+    /** Ref vers l'élement DOM racine de la ligne. */
+    domRef?: (element: HTMLElement | null) => void;
     /** Désactive l'animation de drag and drop. */
     disableDragAnimation?: boolean;
     /** Les items en cours de drag dans la liste. */
@@ -45,7 +47,7 @@ export interface LineWrapperProps<T> {
     /** Préfixe i18n. Par défaut: "focus". */
     i18nPrefix?: string;
     /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
-    LineComponent: React.ComponentType<LineProps<T>>;
+    LineComponent: React.ComponentType<LineProps<T> & {ref?: React.Ref<any>}>;
     /** Configuration de la mosaïque (si applicable). */
     mosaic?: {width: number; height: number};
     /** Fonction passée par react-pose qu'il faudra appeler au willUnmount pour qu'il retire l'élément du DOM. */
@@ -144,6 +146,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
             data,
             dateSelector,
             disableDragAnimation,
+            domRef,
             i18nPrefix = "focus",
             LineComponent,
             mosaic,
@@ -160,7 +163,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                 return (
                     <Theme theme={this.props.theme}>
                         {theme => (
-                            <li>
+                            <li ref={domRef}>
                                 <div className={theme.timelineDate}>{stringFor(dateSelector!(data))}</div>
                                 <div className={theme.timelineBadge} />
                                 <div className={theme.timelinePanel}>
@@ -180,6 +183,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                                     this.isSelected ? theme.selected : ""
                                 }`}
                                 connectDragSource={connectDragSource}
+                                ref={domRef}
                                 pose={this.isDragged && !disableDragAnimation ? "dragging" : "idle"}
                                 width={mosaic && mosaic.width}
                                 height={mosaic && mosaic.height}
