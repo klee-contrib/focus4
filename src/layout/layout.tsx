@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import {Scrollable} from "../components";
 import {MessageCenter, MessageCenterProps} from "../message";
 import {useTheme} from "../theme";
 
 import {ErrorCenter} from "./error-center";
+import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;

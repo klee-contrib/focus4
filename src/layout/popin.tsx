@@ -4,9 +4,9 @@ import * as React from "react";
 import {IconButton} from "react-toolbox/lib/button";
 import Portal from "react-toolbox/lib/hoc/Portal";
 
+import {getIcon} from "../components";
 import {themr} from "../theme";
 
-import {getIcon} from "./icon";
 import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/popin.css";

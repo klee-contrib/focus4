@@ -7,26 +7,15 @@ import React from "react";
 import {createPortal} from "react-dom";
 import {Transition} from "react-pose";
 
-import {themr} from "../theme";
+import {ScrollableContext} from "../../components";
+import {themr} from "../../theme";
 
 import {ButtonBackToTop} from "./button-back-to-top";
+export {ButtonBackToTopStyle} from "./button-back-to-top";
 
-import * as styles from "./__style__/scrollable.css";
+import * as styles from "../__style__/scrollable.css";
 const Theme = themr("scrollable", styles);
 export type ScrollableStyle = Partial<typeof styles>;
-
-export const ScrollableContext = React.createContext<{
-    /** Enregistre le header. */
-    registerHeader(node: JSX.Element, element: Element, canDeploy?: boolean): () => void;
-    /** Enregistre une intersection avec la partie visible. */
-    registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void): () => void;
-    /** Enregistre un évènement de scroll dans le contexte et retourne son disposer. */
-    registerScroll(onScroll: (top: number, height: number) => void): () => void;
-    /** Scrolle vers la position demandée. */
-    scrollTo(options?: ScrollToOptions): void;
-    /** Affiche un élement en sticky */
-    sticky(node: JSX.Element): React.ReactPortal;
-}>({} as any);
 
 @observer
 export class Scrollable extends React.Component<{
@@ -58,6 +47,7 @@ export class Scrollable extends React.Component<{
     @observable width = 0;
     @observable headerHeight = 0;
 
+    /** @see ScrollableContext.registerHeader */
     @action.bound
     registerHeader(node: JSX.Element, element: Element, canDeploy = true) {
         if (canDeploy) {
@@ -74,17 +64,7 @@ export class Scrollable extends React.Component<{
         };
     }
 
-    @action.bound
-    registerScroll(onScroll: (top: number, height: number) => void) {
-        this.onScrolls.push(onScroll);
-
-        if (this.node) {
-            onScroll(this.node.scrollTop + this.headerHeight, this.node.clientHeight);
-        }
-
-        return () => this.onScrolls.remove(onScroll);
-    }
-
+    /** @see ScrollableContext.registerIntersect */
     @action.bound
     registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void) {
         this.onIntersects.set(node, onIntersect);
@@ -96,12 +76,26 @@ export class Scrollable extends React.Component<{
         };
     }
 
+    /** @see ScrollableContext.registerScroll */
+    @action.bound
+    registerScroll(onScroll: (top: number, height: number) => void) {
+        this.onScrolls.push(onScroll);
+
+        if (this.node) {
+            onScroll(this.node.scrollTop + this.headerHeight, this.node.clientHeight);
+        }
+
+        return () => this.onScrolls.remove(onScroll);
+    }
+
+    /** @see ScrollableContext.scrollTo */
     @action.bound
     scrollTo(options?: ScrollToOptions) {
         const {scrollBehaviour = "smooth"} = this.props;
         this.node!.scrollTo({behavior: scrollBehaviour, ...options});
     }
 
+    /** @see ScrollableContext.sticky */
     @action.bound
     sticky(node: JSX.Element) {
         return createPortal(node, this.stickyNode!);

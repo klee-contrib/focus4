@@ -11,8 +11,9 @@ import * as React from "react";
 export {React};
 
 export {advancedSearchFor, listFor, tableFor, timelineFor} from "./collections";
-export {Panel, Popin} from "./components";
+export {Panel} from "./components";
 export {AutoForm, displayFor, fieldFor, selectFor, stringFor} from "./entity";
+export {Content, Popin} from "./layout";
 export {injectByName, injectByPropName} from "./ioc";
 export {messageStore} from "./message";
 export {httpDelete, httpGet, httpPost, httpPut, requestStore} from "./network";

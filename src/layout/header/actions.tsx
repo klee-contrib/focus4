@@ -28,7 +28,6 @@ export interface SecondaryAction extends MenuItemProps {
 export interface HeaderActionsProps {
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
-    pose?: string;
     /** Actions principales. */
     primary?: PrimaryAction[];
     /** Actions secondaires. */
