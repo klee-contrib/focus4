@@ -10,7 +10,6 @@
 }
 
 .topRow {
-    z-index: var(--z-index-high);
     background-color: var(--header-toprow-background);
 
     & > div {
@@ -60,13 +59,12 @@
 }
 
 .undeployed {
-    z-index: inherit;
     opacity: 0;
 }
 
 .sticky {
     position: absolute;
-    z-index: 1;
+    z-index: var(--z-index-high);
 }
 
 .undeployed,
