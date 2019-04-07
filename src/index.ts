@@ -10,7 +10,7 @@ import * as React from "react";
 export {React};
 
 export {advancedSearchFor, listFor, tableFor, timelineFor} from "./collections";
-export {Panel, Popin} from "./components";
+export {Panel} from "./components";
 export {
     autocompleteFor,
     Form,
@@ -22,6 +22,7 @@ export {
     selectFor,
     stringFor
 } from "./entity";
+export {Content, Popin} from "./layout";
 export {messageStore} from "./message";
 export {makeReferenceStore} from "./reference";
 export {classAutorun} from "./util";

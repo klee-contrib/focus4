@@ -27,13 +27,9 @@ import {
 import {
     AutocompleteStyle,
     BooleanRadioStyle,
-    ButtonBackToTopStyle,
     DisplayStyle,
     LabelStyle,
     PanelStyle,
-    PopinStyle,
-    ScrollableStyle,
-    ScrollspyStyle,
     SelectCheckboxStyle,
     SelectRadioStyle,
     SelectStyle
@@ -46,6 +42,9 @@ import {ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {LayoutBase, LayoutProps} from "./layout";
 import {MainMenuStyle} from "./menu";
+import {PopinStyle} from "./popin";
+import {ButtonBackToTopStyle, ScrollableStyle} from "./scrollable";
+import {ScrollspyStyle} from "./scrollspy-container";
 
 import * as styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
@@ -62,6 +61,9 @@ export {
     PrimaryAction,
     SecondaryAction
 } from "./header";
+export {Popin} from "./popin";
+export {Scrollable} from "./scrollable";
+export {ScrollspyContainer} from "./scrollspy-container";
 export {MainMenu, MainMenuItem} from "./menu";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */

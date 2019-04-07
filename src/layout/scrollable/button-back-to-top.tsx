@@ -5,11 +5,10 @@ import * as React from "react";
 import posed from "react-pose";
 import {Button, ButtonTheme} from "react-toolbox/lib/button";
 
-import {useTheme} from "../theme";
+import {ScrollableContext} from "../../components";
+import {useTheme} from "../../theme";
 
-import {ScrollableContext} from "./scrollable";
-
-import * as styles from "./__style__/button-btt.css";
+import * as styles from "../__style__/button-btt.css";
 export type ButtonBackToTopStyle = Partial<typeof styles> & ButtonTheme;
 
 /** Props du bouton de retour en haut de page. */

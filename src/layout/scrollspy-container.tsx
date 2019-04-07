@@ -4,10 +4,10 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
+import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "../components";
 import {themr} from "../theme";
 
-import {PanelDescriptor} from "./panel";
-import {ScrollableContext, Sticky} from "./scrollable";
+import {Sticky} from "./scrollable";
 
 import * as styles from "./__style__/scrollspy-container.css";
 export type ScrollspyStyle = Partial<typeof styles>;
@@ -27,12 +27,6 @@ export interface ScrollspyContainerProps {
     theme?: ScrollspyStyle;
 }
 
-export const ScrollspyContext = React.createContext({
-    registerPanel: (() => "") as ScrollspyContainer["registerPanel"],
-    removePanel: (() => null) as ScrollspyContainer["removePanel"],
-    updatePanel: (() => null) as ScrollspyContainer["updatePanel"]
-});
-
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
@@ -45,10 +39,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     /** Map des panels qui se sont enregistrés dans le container. */
     protected readonly panels = observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>();
 
-    /**
-     * Enregistre un panel dans le container et retourne son id.
-     * @param panel La description d'un panel
-     */
+    /** @see ScrollspyContext.registerPanel */
     @action.bound
     protected registerPanel(panel: PanelDescriptor, sscId?: string) {
         sscId = sscId || uniqueId("ssc-panel");
@@ -60,21 +51,14 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
         return sscId;
     }
 
-    /**
-     * Retire un panel du container.
-     * @param id L'id du panel.
-     */
+    /** @see ScrollspyContext.removePanel */
     @action.bound
     protected removePanel(id: string) {
         this.panels.get(id)!.disposer();
         this.panels.delete(id);
     }
 
-    /**
-     * Met à jour un panel.
-     * @param id L'id du panel.
-     * @param desc La description du panel.
-     */
+    /** @see ScrollspyContext.updatePanel */
     @action.bound
     protected updatePanel(id: string, desc: PanelDescriptor) {
         const panel = this.panels.get(id)!;
