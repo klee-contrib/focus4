@@ -61,7 +61,12 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
             <tbody>
                 {this.displayedData.map((item, idx) => (
                     <this.TableLine
-                        ref={this.displayedData.length - idx === pageItemIndex ? this.registerSentinel : undefined}
+                        ref={
+                            this.displayedData.length - idx === pageItemIndex ||
+                            (this.displayedData.length < pageItemIndex && this.displayedData.length - 1 === idx)
+                                ? this.registerSentinel
+                                : undefined
+                        }
                         key={itemKey(item, idx)}
                         data={item}
                     />

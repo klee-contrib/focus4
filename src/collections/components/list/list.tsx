@@ -223,7 +223,11 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         return this.displayedData.map((item, idx) => ({
             key: itemKey(item, idx),
             data: item,
-            domRef: this.displayedData.length - idx === pageItemIndex ? this.registerSentinel : undefined,
+            domRef:
+                this.displayedData.length - idx === pageItemIndex ||
+                (this.displayedData.length < pageItemIndex && this.displayedData.length - 1 === idx)
+                    ? this.registerSentinel
+                    : undefined,
             disableDragAnimation: this.disableDragAnimation,
             draggedItems: hasDragAndDrop ? this.draggedItems : undefined,
             i18nPrefix,

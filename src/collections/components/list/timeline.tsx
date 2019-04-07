@@ -34,7 +34,12 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
                 key={itemKey(item, idx)}
                 data={item}
                 dateSelector={dateSelector}
-                domRef={this.displayedData.length - idx === pageItemIndex ? this.registerSentinel : undefined}
+                domRef={
+                    this.displayedData.length - idx === pageItemIndex ||
+                    (this.displayedData.length < pageItemIndex && this.displayedData.length - 1 === idx)
+                        ? this.registerSentinel
+                        : undefined
+                }
                 LineComponent={TimelineComponent}
                 theme={lineTheme}
                 type="timeline"
