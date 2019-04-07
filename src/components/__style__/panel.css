@@ -3,7 +3,7 @@
 .progress {
     position: absolute;
     height: 3px;
-    z-index: var(--z-index-high);
+    z-index: var(--z-index-normal);
 }
 
 .panel {
