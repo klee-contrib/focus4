@@ -7,9 +7,13 @@ import React from "react";
 import {createPortal} from "react-dom";
 import {Transition} from "react-pose";
 
+import {themr} from "../theme";
+
 import {ButtonBackToTop} from "./button-back-to-top";
 
-import {container, scrollable, sticky} from "./__style__/scrollable.css";
+import * as styles from "./__style__/scrollable.css";
+const Theme = themr("scrollable", styles);
+export type ScrollableStyle = Partial<typeof styles>;
 
 export const ScrollableContext = React.createContext<{
     /** Enregistre le header. */
@@ -34,6 +38,8 @@ export class Scrollable extends React.Component<{
     hideBackToTop?: boolean;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
+    /** CSS. */
+    theme?: ScrollableStyle;
 }> {
     header?: [JSX.Element, Element];
     stickyHeader?: HTMLElement | null;
@@ -158,27 +164,31 @@ export class Scrollable extends React.Component<{
                     sticky: this.sticky
                 }}
             >
-                <div className={`${className || ""} ${container}`}>
-                    <Transition>
-                        {this.isHeaderSticky && this.header
-                            ? React.cloneElement(this.header[0], {
-                                  ref: (stickyHeader: any) => (this.stickyHeader = stickyHeader),
-                                  key: "header",
-                                  style: {width: this.width}
-                              })
-                            : undefined}
-                        <div
-                            key="sticky"
-                            className={sticky}
-                            ref={div => (this.stickyNode = div)}
-                            style={{width: this.width, top: this.headerHeight}}
-                        />
-                        <div key="scrollable" className={scrollable} ref={div => (this.node = div)}>
-                            {this.observer ? children : null}
+                <Theme theme={this.props.theme}>
+                    {theme => (
+                        <div className={`${className || ""} ${theme.container}`}>
+                            <Transition>
+                                {this.isHeaderSticky && this.header
+                                    ? React.cloneElement(this.header[0], {
+                                          ref: (stickyHeader: any) => (this.stickyHeader = stickyHeader),
+                                          key: "header",
+                                          style: {width: this.width}
+                                      })
+                                    : undefined}
+                                <div
+                                    key="sticky"
+                                    className={theme.sticky}
+                                    ref={div => (this.stickyNode = div)}
+                                    style={{width: this.width, top: this.headerHeight}}
+                                />
+                                <div key="scrollable" className={theme.scrollable} ref={div => (this.node = div)}>
+                                    {this.observer ? children : null}
+                                </div>
+                                {!hideBackToTop && this.hasBtt ? <ButtonBackToTop key="backtotop" /> : undefined}
+                            </Transition>
                         </div>
-                        {!hideBackToTop && this.hasBtt ? <ButtonBackToTop key="backtotop" /> : undefined}
-                    </Transition>
-                </div>
+                    )}
+                </Theme>
             </ScrollableContext.Provider>
         );
     }

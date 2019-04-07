@@ -32,24 +32,25 @@ import {
     LabelStyle,
     PanelStyle,
     PopinStyle,
-    Scrollable,
+    ScrollableStyle,
     ScrollspyStyle,
     SelectCheckboxStyle,
     SelectRadioStyle,
     SelectStyle
 } from "../components";
 import {FieldStyle, FormStyle} from "../entity";
-import {MessageCenter, MessageCenterProps} from "../message";
 import {LoadingBarStyle} from "../network";
-import {ThemeContext, useTheme} from "../theme";
+import {ThemeContext} from "../theme";
 
-import {ErrorCenter, ErrorCenterStyle} from "./error-center";
+import {ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
+import {LayoutBase, LayoutProps} from "./layout";
 import {MainMenuStyle} from "./menu";
 
 import * as styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 
+export {Content} from "./content";
 export {
     HeaderActions,
     HeaderBarLeft,
@@ -62,49 +63,6 @@ export {
     SecondaryAction
 } from "./header";
 export {MainMenu, MainMenuItem} from "./menu";
-
-/** Props du Layout. */
-export interface LayoutProps extends MessageCenterProps {
-    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 100. */
-    backToTopOffset?: number;
-    children?: React.ReactNode;
-    /** Cache le bouton de retour en haut. */
-    hideBackToTop?: boolean;
-    menu?: React.ReactNode;
-    /** Comportement du scroll. Par défaut : "smooth" */
-    scrollBehaviour?: ScrollBehavior;
-    theme?: LayoutStyle;
-}
-
-/** Composant de Layout sans le provider de style. */
-function LayoutBase({
-    theme: pTheme,
-    children,
-    backToTopOffset,
-    hideBackToTop,
-    menu,
-    scrollBehaviour,
-    ...messageCenterProps
-}: LayoutProps) {
-    const theme = useTheme("layout", styles, pTheme);
-    return (
-        <>
-            <ErrorCenter />
-            <MessageCenter {...messageCenterProps} />
-            <div className={theme.layout}>
-                {menu}
-                <Scrollable
-                    backToTopOffset={backToTopOffset}
-                    className={theme.scrollable}
-                    hideBackToTop={hideBackToTop}
-                    scrollBehaviour={scrollBehaviour}
-                >
-                    {children}
-                </Scrollable>
-            </div>
-        </>
-    );
-}
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
@@ -134,6 +92,7 @@ export interface LayoutStyleProviderProps {
     mainMenu?: MainMenuStyle;
     panel?: PanelStyle;
     popin?: PopinStyle;
+    scrollable?: ScrollableStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
     select?: SelectStyle;

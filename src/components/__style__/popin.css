@@ -110,7 +110,6 @@
     top: 0;
     width: 50vw;
     height: 100vh;
-    padding: 15px;
     background: var(--popin-background);
     box-shadow: var(--shadow-4p);
     overflow-y: auto;
