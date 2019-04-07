@@ -29,9 +29,9 @@ export class StoreTable<T> extends Table<T, StoreTableProps<T>> {
         return groupCode && isSearch(store) ? store.groups.find(group => group.code === groupCode)!.list : store.list;
     }
 
-    protected get shouldAttachScrollListener() {
-        const {isManualFetch, store} = this.props;
-        return !isManualFetch && isSearch(store);
+    protected get hasInfiniteScroll() {
+        const {isManualFetch, store, perPage} = this.props;
+        return !isManualFetch && (isSearch(store) || !!perPage);
     }
 
     /** Correspond aux données chargées mais non affichées. */

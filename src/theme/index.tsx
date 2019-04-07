@@ -16,7 +16,7 @@ export interface ThemeConsumerProps<T> {
     theme?: Partial<T>;
 }
 
-export type ThemeConsumer<T> = React.ForwardRefExoticComponent<React.RefAttributes<any> & ThemeConsumerProps<T>>;
+export type ThemeConsumer<T> = React.ComponentClass<ThemeConsumerProps<T>>;
 
 /**
  * Crée un composant pour injecter le theme souhaité dans un composant, via une render props (à la place du HoC de `react-css-themr`).
@@ -25,7 +25,7 @@ export type ThemeConsumer<T> = React.ForwardRefExoticComponent<React.RefAttribut
  */
 export function themr<T>(name: string, localTheme?: T): ThemeConsumer<T> {
     @observer
-    class TC extends React.Component<ThemeConsumerProps<T> & {innerRef: any}> {
+    class TC extends React.Component<ThemeConsumerProps<T>> {
         static displayName = `${upperFirst(name)}ThemeConsumer`;
 
         static contextType = ThemeContext;
@@ -33,12 +33,9 @@ export function themr<T>(name: string, localTheme?: T): ThemeConsumer<T> {
 
         render() {
             const {children, theme} = this.props;
-            return React.cloneElement(
-                children(themeable(localTheme || {}, (this.context[name] as {}) || {}, (theme as any) || {}) as any),
-                {ref: this.props.innerRef}
-            );
+            return children(themeable(localTheme || {}, (this.context[name] as {}) || {}, (theme as any) || {}) as any);
         }
     }
 
-    return React.forwardRef<{}, ThemeConsumerProps<T>>((props, ref) => <TC {...props} innerRef={ref} />);
+    return TC;
 }

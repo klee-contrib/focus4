@@ -3,10 +3,9 @@ import {isEqual} from "lodash";
 import {action, computed, observable, observe} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
 import {Button} from "react-toolbox/lib/button";
 
-import {getIcon} from "../../../components";
+import {getIcon, ScrollableContext} from "../../../components";
 
 import {LineStyle} from "./line";
 
@@ -23,8 +22,8 @@ export interface ListBaseProps<T> {
     isManualFetch?: boolean;
     /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
     itemKey: (item: T, idx: number) => string | number | undefined;
-    /** Décalage entre le scroll et le bas de la page en dessous du quel on déclenche le chargement en scroll infini. Par défaut : 250. */
-    offset?: number;
+    /** (Scroll infini) Index de l'item, en partant du bas de la liste affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 5. */
+    pageItemIndex?: number;
     /** Nombre d'éléments par page, ne pagine pas si non renseigné. */
     perPage?: number;
     /** Affiche un bouton "Voir tout" qui effectue cette action. */
@@ -35,6 +34,9 @@ export interface ListBaseProps<T> {
 
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
 export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Component<P> {
+    static contextType = ScrollableContext;
+    context!: React.ContextType<typeof ScrollableContext>;
+
     /** Nombre d'éléments affichés. */
     @observable displayedCount = this.props.perPage;
 
@@ -88,20 +90,22 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
         } ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
     }
 
-    protected get shouldAttachScrollListener() {
+    protected get hasInfiniteScroll() {
         const {isManualFetch, perPage} = this.props;
         return !!(!isManualFetch && perPage);
     }
 
-    componentDidMount() {
-        if (this.shouldAttachScrollListener) {
-            this.attachScrollListener();
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.shouldAttachScrollListener) {
-            this.detachScrollListener();
+    @action.bound
+    protected registerSentinel(listNode: HTMLElement | null) {
+        if (this.hasInfiniteScroll) {
+            if (listNode) {
+                const sentinel = this.context.registerIntersect(listNode, (_, isIntersecting) => {
+                    if (isIntersecting) {
+                        this.handleShowMore();
+                        sentinel();
+                    }
+                });
+            }
         }
     }
 
@@ -141,37 +145,4 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
             return null;
         }
     }
-
-    /** Enregistre un listener sur le scroll pour le scroll infini. */
-    private attachScrollListener() {
-        window.addEventListener("scroll", this.scrollListener);
-        window.addEventListener("resize", this.scrollListener);
-    }
-
-    /** Retire les listeners. */
-    private detachScrollListener() {
-        window.removeEventListener("scroll", this.scrollListener);
-        window.removeEventListener("resize", this.scrollListener);
-    }
-
-    /** Gère le scroll infini. */
-    @action.bound
-    private scrollListener() {
-        const el = findDOMNode(this) as HTMLElement;
-        const scrollTop = window.pageYOffset;
-        if (topOfElement(el) + el.offsetHeight - scrollTop - window.innerHeight < (this.props.offset || 250)) {
-            this.handleShowMore();
-        }
-    }
-}
-
-/**
- * Détermine le sommet de l'élément choisi.
- * @param element L'élément.
- */
-function topOfElement(element: HTMLElement): number {
-    if (!element) {
-        return 0;
-    }
-    return element.offsetTop + topOfElement(element.offsetParent as HTMLElement);
 }

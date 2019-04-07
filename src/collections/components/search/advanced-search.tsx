@@ -132,12 +132,12 @@ export interface AdvancedSearchProps<T> {
     mosaicHeight?: number;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
-    /** Offset pour le scroll infini. Par défaut : 250 */
-    offset?: number;
     /** La liste des actions globales.  */
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string; label: string; order: boolean}[];
+    /** (Scroll infini) Index de l'item, en partant du bas de la liste affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 5. */
+    pageItemIndex?: number;
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -296,7 +296,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             lineOperationList,
             listPageSize,
             MosaicComponent,
-            offset,
+            pageItemIndex,
             store,
             EmptyComponent,
             DetailComponent,
@@ -331,7 +331,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                 listTheme={listTheme}
                 LoadingComponent={LoadingComponent}
                 MosaicComponent={MosaicComponent}
-                offset={offset}
+                pageItemIndex={pageItemIndex}
                 store={store}
                 useGroupActionBars={useGroupActionBars}
             />
