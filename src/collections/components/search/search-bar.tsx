@@ -244,7 +244,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                                     makeField(
                                         () => store.query,
                                         {label: `${i18nPrefix}.search.bar.query`},
-                                        query => (store.query = query),
+                                        query => (store.query = query || ""),
                                         true
                                     )
                                 )}
