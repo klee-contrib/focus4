@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {isFunction} from "lodash";
 import {action, comparer, computed, extendObservable, Lambda, observable, reaction, runInAction} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 
@@ -10,7 +11,7 @@ import {Entity, EntityToType, FormListNode, FormNode, isStoreNode} from "../type
 import {FormProps} from "./form";
 
 /** Configuration additionnelle du formulaire.. */
-export interface FormConfig {
+export interface FormConfig<S extends string = "default"> {
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Appelé au clic sur le bouton "Annuler". */
@@ -20,23 +21,36 @@ export interface FormConfig {
     /** Appelé après le chargement. */
     onFormLoaded?: () => void;
     /** Appelé après la sauvegarde. */
-    onFormSaved?: () => void;
+    onFormSaved?: (save: S) => void;
+    /** Utilise le nom du save dans le message de succès de la sauvegarde (prefix.detail.saved => prefix.detail.name.saved). */
+    useSaveNameForMessages?: boolean;
 }
 
-/** Config d'actions à fournir au formulaire. */
-export interface ActionConfig<T, S extends string = never> {
+/** Config d'actions à fournir au formulaire, avec save unique. */
+export interface ActionConfig<T> {
     /** Fonction pour récupérer la liste des paramètres pour l'action de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
     getLoadParams?: () => any[] | undefined;
     /** Action de chargement. */
     load?: (...args: any[]) => Promise<T>;
     /** Action de sauvegarde. Obligatoire. */
     save: (entity: T) => Promise<T | void>;
-    /** Services de sauvegarde supplémentaires. */
-    saves?: {[P in S]: (entity: T) => Promise<T | void>};
+}
+
+/** Config d'actions à fournir au formulaire, avec saves multiples. */
+export interface ActionConfigMultiple<
+    T,
+    S extends {[key: string]: (entity: T) => Promise<T | void>; default: (entity: T) => Promise<T | void>}
+> {
+    /** Fonction pour récupérer la liste des paramètres pour l'action de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
+    getLoadParams?: () => any[] | undefined;
+    /** Action de chargement. */
+    load?: (...args: any[]) => Promise<T>;
+    /** Actions de sauvegarde. L'action "default" est obligatoire. */
+    save: S;
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export type FormActions<S extends string = never> = {
+export type FormActions<S extends string = "default"> = {
     /** Dispose la réaction de chargement. */
     dispose?: Lambda;
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
@@ -48,14 +62,14 @@ export type FormActions<S extends string = never> = {
     /** Récupère les props à fournir à un Panel pour relier ses boutons aux actions. */
     readonly panelProps: PanelProps;
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
-    load(): void;
+    load(): Promise<void>;
     /** Appelle le service de sauvegarde. */
-    save(): void;
+    save(): Promise<void>;
     /** Handler de clic sur le bouton "Annuler". */
     onClickCancel(): void;
     /** Handler de clic sur le bouton "Modifier". */
     onClickEdit(): void;
-} & {[P in S]: () => void};
+} & {[P in Exclude<S, "default">]: () => Promise<void>};
 
 /**
  * Crée les actions d'un formulaire.
@@ -63,27 +77,57 @@ export type FormActions<S extends string = never> = {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends Entity, U, S extends string = never>(
+export function makeFormActions<T extends Entity, U>(
     componentClass: React.Component | null,
     formNode: FormListNode<T, U>,
-    actions: ActionConfig<EntityToType<T>[], S>,
+    actions: ActionConfig<EntityToType<T>[]>,
     config?: FormConfig
-): FormActions<S>;
-export function makeFormActions<T extends Entity, U, S extends string = never>(
+): FormActions;
+export function makeFormActions<
+    T extends Entity,
+    U,
+    S extends {
+        [key: string]: (entity: EntityToType<T>[]) => Promise<EntityToType<T>[] | void>;
+        default: (entity: EntityToType<T>[]) => Promise<EntityToType<T>[] | void>;
+    }
+>(
+    componentClass: React.Component | null,
+    formNode: FormListNode<T, U>,
+    actions: ActionConfigMultiple<EntityToType<T>[], S>,
+    config?: FormConfig<Extract<keyof S, string>>
+): FormActions<Extract<keyof S, string>>;
+export function makeFormActions<T extends Entity, U>(
     componentClass: React.Component | null,
     formNode: FormNode<T, U>,
-    actions: ActionConfig<EntityToType<T>, S>,
+    actions: ActionConfig<EntityToType<T>>,
     config?: FormConfig
-): FormActions<S>;
-export function makeFormActions<T extends Entity, U, S extends string>(
+): FormActions;
+export function makeFormActions<
+    T extends Entity,
+    U,
+    S extends {
+        [key: string]: (entity: EntityToType<T>) => Promise<EntityToType<T> | void>;
+        default: (entity: EntityToType<T>) => Promise<EntityToType<T> | void>;
+    }
+>(
+    componentClass: React.Component | null,
+    formNode: FormNode<T, U>,
+    actions: ActionConfigMultiple<EntityToType<T>, S>,
+    config?: FormConfig<Extract<keyof S, string>>
+): FormActions<Extract<keyof S, string>>;
+export function makeFormActions<
+    T extends Entity,
+    U,
+    S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}
+>(
     componentClass: React.Component | null,
     formNode: FormNode<T, U> | FormListNode<T, U>,
-    actions: ActionConfig<any, S>,
+    actions: ActionConfig<any> | ActionConfigMultiple<any, S>,
     config: FormConfig = {}
 ) {
     // On se prépare à construire plusieurs actions de sauvegarde.
-    function buildSave(saveService: (entity: any) => Promise<any | void>) {
-        return async function save(this: FormActions<S>) {
+    function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {
+        return async function save(this: FormActions<Extract<keyof S, string>>) {
             this.formContext.forceErrorDisplay = true;
 
             // On ne fait rien si on est déjà en chargement.
@@ -113,12 +157,14 @@ export function makeFormActions<T extends Entity, U, S extends string>(
                 });
 
                 // Pour supprimer le message, il "suffit" de faire en sorte qu'il soit vide.
-                const savedMessage = i18next.t(`${config.i18nPrefix || "focus"}.detail.saved`);
+                const savedMessage = i18next.t(
+                    `${config.i18nPrefix || "focus"}.detail${config.useSaveNameForMessages ? `.${name}` : ""}.saved`
+                );
                 if (savedMessage) {
                     messageStore.addSuccessMessage(savedMessage);
                 }
                 if (config.onFormSaved) {
-                    config.onFormSaved();
+                    config.onFormSaved(name as "default");
                 }
             } finally {
                 this.isLoading = false;
@@ -174,8 +220,6 @@ export function makeFormActions<T extends Entity, U, S extends string>(
                 }
             },
 
-            save: buildSave(actions.save),
-
             onClickCancel() {
                 formNode.form.isEdit = false;
                 formNode.reset();
@@ -201,10 +245,17 @@ export function makeFormActions<T extends Entity, U, S extends string>(
         }
     );
 
-    // On ajoute les services de sauvegardes additionnels.
-    if (actions.saves) {
-        for (const save in actions.saves) {
-            extendObservable(formActions, {[save]: buildSave(actions.saves[save])}, {[save]: action.bound});
+    // On ajoute le ou les actions de sauvegarde.
+    if (isFunction(actions.save)) {
+        extendObservable(
+            formActions,
+            {save: buildSave("default" as Extract<keyof S, string>, actions.save)},
+            {save: action.bound}
+        );
+    } else {
+        for (const save in actions.save) {
+            const name = save === "default" ? "save" : save;
+            extendObservable(formActions, {[name]: buildSave(save, actions.save[save])}, {[name]: action.bound});
         }
     }
 
