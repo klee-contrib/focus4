@@ -26,7 +26,7 @@ export interface LoadingBarProps {
 /** Composant standard pour afficher une barre de chargement sur l'état des requêtes en cours. */
 export const LoadingBar = observer(
     ({i18nPrefix = "focus", progressBarType, theme: pTheme, displayDevBar}: LoadingBarProps) => {
-        const {count, error, pending, success} = requestStore;
+        const {count} = requestStore;
         const completed = +((count.total - count.pending) / count.total) * 100;
         return (
             <Theme theme={pTheme}>
@@ -37,14 +37,15 @@ export const LoadingBar = observer(
                             <ul>
                                 <li>
                                     <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.pending`)}</FontIcon> pending{" "}
-                                    {pending}
+                                    {count.pending}
                                 </li>
                                 <li>
                                     <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.success`)}</FontIcon> success{" "}
-                                    {success}
+                                    {count.success}
                                 </li>
                                 <li>
-                                    <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.error`)}</FontIcon> error {error}
+                                    <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.error`)}</FontIcon> error{" "}
+                                    {count.error}
                                 </li>
                                 <li>
                                     <FontIcon>{getIcon(`${i18nPrefix}.icons.loadingBar.total`)}</FontIcon> total{" "}
