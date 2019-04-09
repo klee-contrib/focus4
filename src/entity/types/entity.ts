@@ -62,7 +62,7 @@ export interface Entity {
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
-    T = any,
+    FT = any,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
@@ -72,10 +72,10 @@ export interface FieldEntry<
     readonly type: "field";
 
     /** Type du champ. */
-    readonly fieldType: T;
+    readonly fieldType: FT;
 
     /** Domaine du champ. */
-    readonly domain: Domain<FieldType<T>, ICProps, SCProps, ACProps, DCProps, LCProps>;
+    readonly domain: Domain<FieldType<FT>, ICProps, SCProps, ACProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -102,13 +102,13 @@ export type FieldEntryType<F> = F extends FieldEntry<"string">
     : never;
 
 /** Transforme le type passé ) un FieldEntry en type effectif. */
-export type FieldType<T> = T extends "string"
+export type FieldType<FT> = FT extends "string"
     ? string
-    : T extends "number"
+    : FT extends "number"
     ? number
-    : T extends "boolean"
+    : FT extends "boolean"
     ? boolean
-    : NonNullable<T>;
+    : NonNullable<FT>;
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
 export interface ObjectEntry<E extends Entity = any> {

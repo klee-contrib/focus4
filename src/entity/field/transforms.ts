@@ -17,15 +17,15 @@ import {
 } from "../types";
 
 export type $Field<
-    T = any,
+    FT = any,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
     LCProps extends BaseLabelProps = any
 > = Partial<
-    FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps> &
-        Domain<FieldType<T>, ICProps, SCProps, ACProps, DCProps, LCProps>
+    FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps> &
+        Domain<FieldType<FT>, ICProps, SCProps, ACProps, DCProps, LCProps>
 >;
 
 /**
@@ -36,50 +36,53 @@ export type $Field<
  * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function makeField<
-    T,
-    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+    T extends FieldType<FT>,
+    FT = "string",
+    ICProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 >(
-    value: () => T,
+    value: () => T | undefined,
     $field?:
-        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>),
-    setter?: (value: T) => void,
+        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
+    setter?: (value: T | undefined) => void,
     isEdit?: boolean | (() => boolean)
-): EntityField<FieldEntry<NonNullable<T>, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
+): EntityField<FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
 /**
  * Construit un `EntityField` à partir d'une valeur quelconque.
  * @param value La valeur.
  * @param $field Les métadonnées pour le champ à créer.
  */
 export function makeField<
-    T,
-    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+    T extends FieldType<FT>,
+    FT = "string",
+    ICProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 >(
-    value: T,
+    value: T | undefined,
     $field?:
-        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>)
-): EntityField<FieldEntry<NonNullable<T>, ICProps, SCProps, ACProps, DCProps, LCProps>>;
+        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
+): EntityField<FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps>>;
 export function makeField<
-    T,
-    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+    T extends FieldType<FT>,
+    FT = "string",
+    ICProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 >(
-    value: T | (() => T),
+    value: T | undefined | (() => T | undefined),
     $field:
-        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
+        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
     setter: Function = () => null,
     isEdit?: boolean | (() => boolean)
 ) {
@@ -98,14 +101,14 @@ export function makeField<
         isFunction(value)
             ? {
                   get value() {
-                      return (value as () => T)() as NonNullable<T>;
+                      return (value as () => T)();
                   },
                   set value(v) {
                       setter(v);
                   }
               }
             : {value}
-    ) as EntityField<FieldEntry<T>>;
+    ) as EntityField<FieldEntry<FT>>;
 
     if (isEdit !== undefined) {
         (field as any).isEdit = isEdit;
@@ -131,10 +134,10 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?:
  * @param $field Les métadonnées à remplacer.
  */
 export function fromField<
-    T,
-    ICDProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCDProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACDProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+    FT,
+    ICDProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
+    SCDProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
+    ACDProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
     DCDProps extends BaseDisplayProps = DisplayProps,
     LCDProps extends BaseLabelProps = LabelProps,
     ICProps extends BaseInputProps = ICDProps,
@@ -143,11 +146,11 @@ export function fromField<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<T, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    field: EntityField<FieldEntry<FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
     $field:
-        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>)
-): EntityField<FieldEntry<T, ICProps, SCProps, ACProps, DCProps, LCProps>> {
+        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
+): EntityField<FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
 }
 
@@ -158,10 +161,10 @@ export function fromField<
  * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function patchField<
-    T,
-    ICDProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCDProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACDProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+    FT,
+    ICDProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
+    SCDProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
+    ACDProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
     DCDProps extends BaseDisplayProps = DisplayProps,
     LCDProps extends BaseLabelProps = LabelProps,
     ICProps extends BaseInputProps = ICDProps,
@@ -170,10 +173,10 @@ export function patchField<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<T, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    field: EntityField<FieldEntry<FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
     $field:
-        | $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<T, ICProps, SCProps, ACProps, DCProps, LCProps>),
+        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {
     const next$field = new$field(field.$field, $field);
@@ -193,12 +196,12 @@ export function patchField<
     }
 }
 
-function new$field<T extends FieldEntry>(old$field: T, $field: $Field | (() => $Field)) {
+function new$field<F extends FieldEntry>(old$field: F, $field: $Field | (() => $Field)) {
     if (isFunction($field)) {
         return observable(
             {
                 get $field() {
-                    return new$fieldCore(old$field, ($field as () => T)());
+                    return new$fieldCore(old$field, ($field as () => F)());
                 }
             },
             {
