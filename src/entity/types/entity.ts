@@ -22,7 +22,7 @@ export interface Domain<
     /** Classe CSS pour le champ. */
     className?: string;
     /** Formatteur pour l'affichage du champ en consulation. */
-    displayFormatter?: (value: T) => string;
+    displayFormatter?: (value: T | undefined) => string;
     /** Liste des validateurs. */
     validator?: Validator<T> | Validator<T>[];
 

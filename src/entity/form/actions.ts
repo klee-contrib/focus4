@@ -239,7 +239,6 @@ export function makeFormActions<
             formProps: computed.struct,
             panelProps: computed.struct,
             load: action.bound,
-            save: action.bound,
             onClickCancel: action.bound,
             onClickEdit: action.bound
         }

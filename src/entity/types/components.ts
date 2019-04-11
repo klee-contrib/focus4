@@ -51,7 +51,7 @@ export interface InputComponents<
     DCProps extends BaseDisplayProps,
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
-    /** Props pour le composant d'entrée utilisateur. */
+    /** Props pour le composant d'input. */
     inputProps?: Partial<OmitWithTheme<ICProps, BaseInputProps>>;
 }
 
@@ -60,7 +60,7 @@ export interface SelectComponents<
     DCProps extends BaseDisplayProps,
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
-    /** Props pour le composant d'autocomplete. */
+    /** Props pour le composant de select. */
     selectProps?: Partial<OmitWithTheme<SCProps, BaseSelectProps>>;
 }
 
@@ -69,7 +69,7 @@ export interface AutocompleteComponents<
     DCProps extends BaseDisplayProps,
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
-    /** Props supplémentaires pour le composant autocomplete. */
+    /** Props pour le composant d'autocomplete. */
     autocompleteProps?: Partial<OmitWithTheme<ACProps, BaseAutocompleteProps>>;
 }
 

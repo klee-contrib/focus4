@@ -8,15 +8,7 @@ import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {themr} from "../../theme";
 
 import {FormContext} from "../form";
-import {
-    BaseInputProps,
-    BaseSelectProps,
-    EntityField,
-    FieldComponents,
-    FieldEntry,
-    FieldEntryType,
-    FormEntityField
-} from "../types";
+import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FieldEntryType, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -41,7 +33,7 @@ export interface FieldOptions<T extends FieldEntry> {
     /** N'affiche jamais le champ en erreur. */
     noError?: boolean;
     /** Handler de modification de la valeur. */
-    onChange?: (value: FieldEntryType<T>) => void;
+    onChange?: (value: FieldEntryType<T> | undefined) => void;
     /** CSS. */
     theme?: FieldStyle;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
@@ -151,7 +143,7 @@ export class Field<T extends FieldEntry> extends React.Component<
             return (
                 <SelectComponent
                     {...domainSCP}
-                    {...selectProps as BaseSelectProps}
+                    {...selectProps}
                     {...props}
                     theme={themeable(domainSCP.theme || {}, selectProps.theme || {})}
                 />

@@ -18,7 +18,10 @@ import {
 import {Field, FieldOptions} from "./field";
 
 function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
-    return action(`on${upperFirst(field.$field.name)}Change`, (value: FieldEntryType<F>) => (field.value = value));
+    return action(
+        `on${upperFirst(field.$field.name)}Change`,
+        (value: FieldEntryType<F> | undefined) => (field.value = value)
+    );
 }
 
 /**
