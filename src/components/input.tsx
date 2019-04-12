@@ -306,7 +306,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
     }
 
     render() {
-        const {mask, hasThousandsSeparator, maxDecimals, ...props} = this.props;
+        const {mask, hasThousandsSeparator, maxDecimals, noNegativeNumbers, ...props} = this.props;
         return (
             <RTInput
                 {...props}
