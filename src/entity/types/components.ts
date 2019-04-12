@@ -1,10 +1,11 @@
-export type Omit<T extends {theme?: object}, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
+export type OmitWithTheme<T extends {theme?: object}, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
 
 export interface BaseInputProps {
     error?: React.ReactNode;
     id?: string;
     name?: string;
     onChange?: (value: any) => void;
+    type?: string;
     theme?: object;
     value?: any;
 }
@@ -40,9 +41,9 @@ export interface BaseLabelProps {
 
 export interface BaseComponents<DCProps extends BaseDisplayProps, LCProps extends BaseLabelProps> {
     /** Props pour le composant d'affichage */
-    displayProps?: Partial<Omit<DCProps, BaseDisplayProps>>;
+    displayProps?: Partial<OmitWithTheme<DCProps, BaseDisplayProps>>;
     /** Props pour le composant de libellé. */
-    labelProps?: Partial<Omit<LCProps, BaseLabelProps>>;
+    labelProps?: Partial<OmitWithTheme<LCProps, BaseLabelProps>>;
 }
 
 export interface InputComponents<
@@ -50,8 +51,8 @@ export interface InputComponents<
     DCProps extends BaseDisplayProps,
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
-    /** Props pour le composant d'entrée utilisateur. */
-    inputProps?: Partial<Omit<ICProps, BaseInputProps>>;
+    /** Props pour le composant d'input. */
+    inputProps?: Partial<OmitWithTheme<ICProps, BaseInputProps>>;
 }
 
 export interface SelectComponents<
@@ -59,8 +60,8 @@ export interface SelectComponents<
     DCProps extends BaseDisplayProps,
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
-    /** Props pour le composant d'autocomplete. */
-    selectProps?: Partial<Omit<SCProps, BaseSelectProps>>;
+    /** Props pour le composant de select. */
+    selectProps?: Partial<OmitWithTheme<SCProps, BaseSelectProps>>;
 }
 
 export interface AutocompleteComponents<
@@ -68,8 +69,8 @@ export interface AutocompleteComponents<
     DCProps extends BaseDisplayProps,
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
-    /** Props supplémentaires pour le composant autocomplete. */
-    autocompleteProps?: Partial<Omit<ACProps, BaseAutocompleteProps>>;
+    /** Props pour le composant d'autocomplete. */
+    autocompleteProps?: Partial<OmitWithTheme<ACProps, BaseAutocompleteProps>>;
 }
 
 export interface FieldComponents<

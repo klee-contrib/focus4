@@ -18,17 +18,15 @@ const Theme = themr("RTTimePicker", styles);
 import {calendar, clock, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
-export interface InputTimeProps extends InputProps {
+export interface InputTimeProps extends InputProps<"string"> {
     /** Composant affiché depuis la gauche ou la droite. */
     displayFrom?: "left" | "right";
     /** Format de l'heure dans l'input. */
     inputFormat?: string;
-    /** Est appelé au clic sur l'horloge ou au blur (n'est pas synchronisé avec le texte). */
-    onChange: (time?: string) => void;
     /** CSS. */
     theme?: TimePickerTheme & InputTheme;
     /** Valeur. */
-    value?: string;
+    value: string | undefined;
 }
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
@@ -191,7 +189,7 @@ export class InputTime extends React.Component<InputTimeProps> {
                         <Input
                             {...inputProps}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                            onChange={(value: string) => (this.timeText = value)}
+                            onChange={value => (this.timeText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showClock = true)}
                             theme={theme}

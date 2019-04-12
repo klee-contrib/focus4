@@ -34,9 +34,11 @@ export async function coreFetch(
         options
     );
 
-    // On crée la requête dans le store de requête.
+    // On crée une première Promise autorésolue ici pour éviter de trigger une mise à jour d'état synchrone avec l'appel du fetch.
+    // Ni React, ni MobX n'apprécient ça.
     const id = v4();
-    requestStore.updateRequest({id, url, status: "pending"});
+    await new Promise(resolve => setTimeout(resolve, 0));
+    requestStore.updateRequest({id, url, status: "pending"}); // On crée la requête dans le store (= la mise à jour d'état en question).
 
     // On lance la requête.
     try {

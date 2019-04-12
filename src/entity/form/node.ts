@@ -1,4 +1,5 @@
 import {extendObservable, observable} from "mobx";
+import {disposeOnUnmount} from "mobx-react";
 
 import {nodeToFormNode, patchNodeEdit} from "../store";
 import {
@@ -25,21 +26,25 @@ export interface FormNodeOptions {
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de synchronisation à son démontage.
  * @param node Le noeud de base
  * @param opts Options du FormNode.
  * @param initializer La fonction d'initialisation (peut contenir des transformations comme `patchField` et retourner des `makeField`).
  */
 export function makeFormNode<T extends Entity, U = {}>(
+    componentClass: React.Component | null,
     node: StoreListNode<T>,
     opts?: FormNodeOptions,
     initializer?: (source: StoreNode<T>) => U
 ): FormListNode<T, U>;
 export function makeFormNode<T extends Entity, U = {}>(
+    componentClass: React.Component | null,
     node: StoreNode<T>,
     opts?: FormNodeOptions,
     initializer?: (source: StoreNode<T>) => U
 ): FormNode<T, U>;
 export function makeFormNode<T extends Entity, U = {}>(
+    componentClass: React.Component | null,
     node: StoreNode<T> | StoreListNode<T>,
     {isEdit, isEmpty}: FormNodeOptions = {},
     initializer: (source: StoreNode<T>) => U = _ => ({} as U)
@@ -48,8 +53,12 @@ export function makeFormNode<T extends Entity, U = {}>(
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");
     }
 
-    const formNode = patchNodeEdit(clone(node, isEmpty, initializer), isEdit || false);
-    nodeToFormNode(formNode, node);
+    const formNode = clone(node, isEmpty, initializer);
+    nodeToFormNode(patchNodeEdit(formNode, isEdit || false), node);
+
+    if (componentClass) {
+        disposeOnUnmount(componentClass, formNode.dispose);
+    }
 
     return formNode;
 }

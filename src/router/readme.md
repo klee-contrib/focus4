@@ -151,10 +151,10 @@ Par exemple, si je veux charger des données qui dépendent de l'ID courant dans
 
 ```tsx
 class Component extends React.Component {
-    @classAutorun
-    load() {
+    @disposeOnUnmount
+    load = autorun(() => {
         viewStore.withView(async ({id}) => id && (this.data = await loadData(+id)));
-    }
+    });
 }
 ```
 

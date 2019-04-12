@@ -4,8 +4,8 @@
 
 import i18next from "i18next";
 export {i18next as i18n};
-export {action, computed, observable} from "mobx";
-export {observer} from "mobx-react";
+export {action, autorun, computed, observable} from "mobx";
+export {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 export {React};
 

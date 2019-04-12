@@ -11,13 +11,17 @@ import {
     BaseSelectProps,
     EntityField,
     FieldEntry,
+    FieldEntryType,
     InputComponents,
     SelectComponents
 } from "../types";
 import {Field, FieldOptions} from "./field";
 
-function getOnChange<T extends FieldEntry>(field: EntityField<T>) {
-    return action(`on${upperFirst(field.$field.name)}Change`, value => (field.value = value));
+function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
+    return action(
+        `on${upperFirst(field.$field.name)}Change`,
+        (value: FieldEntryType<F> | undefined) => (field.value = value)
+    );
 }
 
 /**
@@ -92,8 +96,8 @@ export function selectFor<T extends FieldEntry>(
             {...options}
             selectProps={{
                 values: values.slice(),
-                labelKey: (values && values.$labelKey) || "label",
-                valueKey: (values && values.$valueKey) || "code",
+                labelKey: values.$labelKey,
+                valueKey: values.$valueKey,
                 ...((options.selectProps as {}) || {})
             }}
             inputType="select"
@@ -113,8 +117,7 @@ export function stringFor<T extends FieldEntry>(field: EntityField<T>, values: R
             domain: {displayFormatter = (t: string) => i18next.t(t)}
         }
     } = field;
-    const {$valueKey = "code", $labelKey = "label"} = values;
-    const found = values.find(val => (val as any)[$valueKey] === value);
-    const processedValue = (found && (found as any)[$labelKey]) || value;
+    const found = values.find(val => (val as any)[values.$valueKey] === value);
+    const processedValue = (found && (found as any)[values.$labelKey]) || value;
     return displayFormatter(processedValue);
 }

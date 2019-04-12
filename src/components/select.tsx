@@ -8,7 +8,7 @@ export type SelectStyle = Partial<typeof styles>;
 const Theme = themr("select", styles);
 
 /** Props du Select. */
-export interface SelectProps {
+export interface SelectProps<T extends "string" | "number"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -22,13 +22,15 @@ export interface SelectProps {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange?: (value: any) => void;
+    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** CSS. */
     theme?: SelectStyle;
+    /** Type du champ (number ou string). */
+    type: T;
     /** Libellés des champs sans libellés. */
     unSelectedLabel?: string;
     /** Valeur. */
-    value?: any;
+    value: (T extends "string" ? string : number) | undefined;
     /** Nom du champ de valeur. */
     valueKey: string;
     /** Liste des valeurs. */
@@ -36,20 +38,21 @@ export interface SelectProps {
 }
 
 /** Surcouche de <select> pour s'interfacer avec un <Field>. */
-export function Select({
+export function Select<T extends "string" | "number">({
     disabled,
     error,
     labelKey,
     name,
     onChange,
     theme: pTheme,
+    type,
     value,
     valueKey,
     values,
     hasUndefined = true,
     i18nPrefix = "focus",
     unSelectedLabel = `${i18nPrefix}.select.unselected`
-}: SelectProps) {
+}: SelectProps<T>) {
     // On ajoute l'élément vide si nécessaire.
     let finalValues = values;
     if (hasUndefined) {
@@ -64,7 +67,10 @@ export function Select({
                         disabled={disabled}
                         id={name}
                         name={name}
-                        onChange={({currentTarget: {value: v}}) => onChange && onChange(v || undefined)}
+                        onChange={({currentTarget: {value: val}}) => {
+                            const v = type === "number" ? +val : val;
+                            onChange(v || v === 0 ? (v as any) : undefined);
+                        }}
                         value={value === undefined ? "" : value}
                     >
                         {finalValues.map((val, idx) => {

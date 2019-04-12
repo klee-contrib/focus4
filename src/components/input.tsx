@@ -1,5 +1,8 @@
 import InputMask, {InputMaskFormatOptions, InputMaskSelection} from "inputmask-core";
-import {action} from "mobx";
+import {range} from "lodash";
+import {action, computed, observable} from "mobx";
+import {observer} from "mobx-react";
+import numeral from "numeral";
 import * as React from "react";
 import {Input as RTInput, InputProps as RTInputProps} from "react-toolbox/lib/input";
 
@@ -15,40 +18,79 @@ export interface MaskDefinition {
     placeholderChar?: string;
 }
 
-export interface InputProps extends RTInputProps {
+export interface InputProps<T extends "string" | "number"> extends RTInputProps {
+    /** Pour un input de type "number", affiche les séparateurs de milliers. */
+    hasThousandsSeparator?: boolean;
+    /** Pour un input de type "text", paramètre un masque de saisie. */
     mask?: MaskDefinition;
-    onChange?: (value: any) => void;
+    /** Pour un input de type "number", le nombre maximal de décimales qu'il est possible de saisir. Par défaut : 10. */
+    maxDecimals?: number;
+    /** Pour un input de type "number", interdit la saisie de nombres négatifs. */
+    noNegativeNumbers?: boolean;
+    /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
+    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    /** Type de l'input. */
+    type: T;
+    /** Valeur. */
+    value: (T extends "string" ? string : number) | undefined;
 }
 
-export class Input extends React.Component<InputProps> {
+@observer
+export class Input<T extends "string" | "number"> extends React.Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement;
     protected mask?: InputMask;
 
+    @computed
+    get numberFormat() {
+        const {hasThousandsSeparator, maxDecimals = 10} = this.props;
+        return `${hasThousandsSeparator ? "0," : ""}0${
+            maxDecimals > 0
+                ? `[.][${range(0, maxDecimals)
+                      .map(_ => "0")
+                      .join("")}`
+                : ""
+        }`;
+    }
+
+    @observable numberStringValue =
+        this.props.type === "number"
+            ? this.props.value !== undefined
+                ? numeral(this.props.value).format(this.numberFormat)
+                : ""
+            : undefined;
+
     componentWillMount() {
-        const {mask, value} = this.props;
-        if (mask) {
-            this.mask = new InputMask({...mask, value});
+        const {mask, type, value} = this.props;
+        if (mask && type === "string") {
+            this.mask = new InputMask({...mask, value: value as string});
         }
     }
 
-    componentWillReceiveProps({mask, value}: InputProps) {
+    componentWillReceiveProps({mask, value}: InputProps<T>) {
         // Mets à jour le pattern et la valeur du masque, si applicable.
         if (this.mask && mask && this.props.mask) {
             if (this.props.mask.pattern !== mask.pattern && this.props.value !== value) {
                 if (this.mask.getValue() === this.mask.emptyValue) {
-                    this.mask.setPattern(mask.pattern, {value});
+                    this.mask.setPattern(mask.pattern, {value: value as string});
                 } else {
                     this.mask.setPattern(mask.pattern, {value: this.mask.getRawValue()});
                 }
             } else if (this.props.mask.pattern !== mask.pattern) {
                 this.mask.setPattern(mask.pattern, {value: this.mask.getRawValue()});
             } else if (this.props.value !== value) {
-                this.mask.setValue(value);
+                this.mask.setValue(value as string);
             }
+        }
+
+        if (
+            this.props.type === "number" &&
+            (!this.numberStringValue || value !== numeral(this.numberStringValue).value())
+        ) {
+            this.numberStringValue = value !== undefined ? numeral(value).format(this.numberFormat) : "";
         }
     }
 
-    componentWillUpdate({mask}: InputProps) {
+    componentWillUpdate({mask}: InputProps<T>) {
         if (this.mask && mask && this.props.mask && mask.pattern !== this.props.mask.pattern) {
             this.mask.setPattern(mask.pattern, {
                 value: this.mask.getRawValue(),
@@ -79,15 +121,14 @@ export class Input extends React.Component<InputProps> {
 
     @action.bound
     onKeyDown(e: KeyboardEvent) {
-        const {onChange, value} = this.props;
         if (this.mask) {
             if (isUndo(e)) {
                 e.preventDefault();
                 if (this.mask.undo()) {
                     this.updateInputSelection();
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
                 return;
@@ -96,8 +137,8 @@ export class Input extends React.Component<InputProps> {
                 if (this.mask.redo()) {
                     this.updateInputSelection();
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
                 return;
@@ -109,8 +150,8 @@ export class Input extends React.Component<InputProps> {
                         this.updateInputSelection();
                     }
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
             } else if (e.key === "Delete") {
@@ -123,8 +164,8 @@ export class Input extends React.Component<InputProps> {
                         this.updateInputSelection();
                     }
 
-                    if (onChange && this.value !== value) {
-                        onChange(this.value);
+                    if (this.value !== this.props.value) {
+                        this.onChange(this.value);
                     }
                 }
             }
@@ -147,9 +188,8 @@ export class Input extends React.Component<InputProps> {
             if (this.mask.input(e.key || (e as any).data)) {
                 this.updateInputSelection();
 
-                const {onChange, value} = this.props;
-                if (onChange && this.value !== value) {
-                    onChange(this.value);
+                if (this.value !== this.props.value) {
+                    this.onChange(this.value);
                 }
             }
         }
@@ -167,10 +207,89 @@ export class Input extends React.Component<InputProps> {
             if (this.mask.paste(e.clipboardData!.getData("Text"))) {
                 setTimeout(this.updateInputSelection, 0);
 
-                const {onChange, value} = this.props;
-                if (onChange && this.value !== value) {
-                    onChange(this.value);
+                if (this.value !== this.props.value) {
+                    this.onChange(this.value);
                 }
+            }
+        }
+    }
+
+    private pendingAnimationFrame = false;
+
+    @action.bound
+    onChange(value: string) {
+        if (this.pendingAnimationFrame) {
+            return;
+        }
+
+        const {noNegativeNumbers, onChange, maxDecimals = 10, type} = this.props;
+        if (type === "string") {
+            onChange(value === "" ? undefined : (value as any));
+        } else {
+            if (value === "") {
+                onChange(undefined);
+            } else {
+                if (numeral.locale() === "fr") {
+                    value = value.replace(".", ",");
+                }
+
+                let isNegative = false;
+                if (value.startsWith("-") && !noNegativeNumbers) {
+                    value = value.substring(1);
+                    isNegative = true;
+                }
+
+                const {decimal, thousands} = numeral.localeData().delimiters;
+                const invalidCharRegex = new RegExp(`[^\\d\\${thousands}\\${decimal}]`, "g");
+                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
+                const [left, right, nope] = value.split(decimal);
+
+                if (
+                    ((maxDecimals && (right || "").length <= maxDecimals) || right === undefined) &&
+                    nope === undefined &&
+                    !value.match(invalidCharRegex)
+                ) {
+                    const newValue =
+                        (isNegative ? "-" : "") +
+                        (!left && !right ? "" : numeral(value).format(this.numberFormat)) +
+                        (right === "" ? decimal : "");
+                    const newNumberValue = numeral(newValue).value();
+
+                    this.numberStringValue = newValue;
+                    onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
+                }
+
+                const end = getSelection(this.inputElement).end - (isNegative ? 1 : 0);
+                const ajustedEnd =
+                    Math.max(
+                        0,
+                        value
+                            .slice(0, end)
+                            .replace(invalidCharRegex, "")
+                            .replace(new RegExp(thousands, "g"), "").length +
+                            this.numberStringValue!.split("").filter(c => c === "0").length -
+                            value.split("").filter(c => c === "0").length
+                    ) + (isNegative ? 1 : 0);
+
+                let charCount = 0;
+                const newEnd = this.numberStringValue!.split("").reduce((count, char) => {
+                    if (charCount === ajustedEnd) {
+                        return count;
+                    }
+                    if (char.match(digitDecimalRegex)) {
+                        charCount++;
+                    }
+                    return count + 1;
+                }, 0);
+
+                this.pendingAnimationFrame = true;
+                window.requestAnimationFrame(() => {
+                    setSelection(this.inputElement, {
+                        start: newEnd,
+                        end: newEnd
+                    });
+                    this.pendingAnimationFrame = false;
+                });
             }
         }
     }
@@ -179,21 +298,26 @@ export class Input extends React.Component<InputProps> {
         if (this.mask) {
             const value = this.mask.getValue();
             return value === this.mask.emptyValue || value === undefined ? "" : value;
+        } else if (this.props.type === "string") {
+            return (this.props.value || "") as string;
         } else {
-            return this.props.value === undefined ? "" : this.props.value;
+            return this.numberStringValue!;
         }
     }
 
     render() {
+        const {mask, hasThousandsSeparator, maxDecimals, ...props} = this.props;
         return (
             <RTInput
-                {...this.props}
+                {...props}
                 {...{
                     innerRef: (i: any) => (this.inputElement = i && i.inputNode),
                     onPaste: this.onPaste
                 }}
+                onChange={this.onChange}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
+                type="text"
                 value={this.value}
             />
         );

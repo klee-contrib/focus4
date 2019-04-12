@@ -8,7 +8,7 @@ import {Autocomplete, Display, Input, Label, Select} from "../../components";
 import {themr} from "../../theme";
 
 import {FormContext} from "../form";
-import {BaseInputProps, BaseSelectProps, EntityField, FieldComponents, FieldEntry, FormEntityField} from "../types";
+import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FieldEntryType, FormEntityField} from "../types";
 import {documentHelper} from "./document-helper";
 
 import * as styles from "./__style__/field.css";
@@ -33,7 +33,7 @@ export interface FieldOptions<T extends FieldEntry> {
     /** N'affiche jamais le champ en erreur. */
     noError?: boolean;
     /** Handler de modification de la valeur. */
-    onChange?: (value: T["fieldType"]) => void;
+    onChange?: (value: FieldEntryType<T> | undefined) => void;
     /** CSS. */
     theme?: FieldStyle;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
@@ -80,24 +80,6 @@ export class Field<T extends FieldEntry> extends React.Component<
         this.valueElement!.removeEventListener("mousedown", this.disableHideError);
     }
 
-    /** Appelé lors d'un changement sur l'input. */
-    @action.bound
-    onChange(value: T["fieldType"]) {
-        const {
-            onChange,
-            field: {
-                $field: {domain}
-            }
-        } = this.props;
-        if (onChange) {
-            if (domain.unformatter) {
-                onChange(domain.unformatter(value));
-            } else {
-                onChange(value);
-            }
-        }
-    }
-
     /** Affiche le composant d'affichage (`DisplayComponent`). */
     display() {
         const {field, autocompleteProps = {}, displayProps = {}, selectProps = {}} = this.props;
@@ -124,36 +106,44 @@ export class Field<T extends FieldEntry> extends React.Component<
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
     input() {
-        const {field, inputType = "input", autocompleteProps = {}, inputProps = {}, selectProps = {}} = this.props;
+        const {
+            field,
+            inputType = "input",
+            onChange,
+            autocompleteProps = {},
+            inputProps = {},
+            selectProps = {}
+        } = this.props;
         const {
             value,
             error,
             $field: {
+                fieldType,
                 name,
                 domain: {
                     autocompleteProps: domainACP = {},
                     AutocompleteComponent = Autocomplete,
                     inputProps: domainICP = {},
                     InputComponent = Input,
-                    inputFormatter = (x?: string) => x,
                     selectProps: domainSCP = {},
                     SelectComponent = Select
                 }
             }
         } = field as FormEntityField<T>;
         const props: BaseInputProps = {
-            value: inputFormatter(value),
+            value,
             error: (this.showError && error) || undefined,
             name,
             id: name,
-            onChange: this.onChange
+            type: fieldType === "number" ? "number" : "string",
+            onChange
         };
 
         if (inputType === "select") {
             return (
                 <SelectComponent
                     {...domainSCP}
-                    {...selectProps as BaseSelectProps}
+                    {...selectProps}
                     {...props}
                     theme={themeable(domainSCP.theme || {}, selectProps.theme || {})}
                 />

@@ -8,16 +8,16 @@ export const ProjetEntity = {
     name: "projet",
     fields: {
         id: {
-            type: "field" as "field",
-            fieldType: 0,
+            type: "field",
+            fieldType: "number",
             domain: {},
             isRequired: false,
             name: "id",
             label: "projet.id"
         },
         ligneList: {
-            type: "list" as "list",
+            type: "list",
             entity: LigneEntity
         }
     }
-};
+} as const;

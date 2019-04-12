@@ -1,18 +1,17 @@
 import i18next from "i18next";
-import {isFunction, isNumber} from "lodash";
+import {isFunction} from "lodash";
 import moment from "moment";
 
-import {EntityField, isRegex, Validator} from "./types";
+import {DateValidator, EmailValidator, NumberValidator, RegexValidator, StringValidator, Validator} from "./types";
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
-export function validateField({$field, value}: EntityField): string | undefined {
-    const {
-        isRequired,
-        domain: {validator}
-    } = $field;
-
+export function validateField<T>(
+    value: T,
+    isRequired: boolean,
+    validator?: Validator<T> | Validator<T>[]
+): string | undefined {
     // On vérifie que le champ n'est pas vide et obligatoire.
     if (isRequired && (value === undefined || value === null || (typeof value === "string" && value.trim() === ""))) {
         return i18next.t("focus.validation.required");
@@ -35,64 +34,73 @@ export function validateField({$field, value}: EntityField): string | undefined 
  * @param value La valeur à valider.
  * @param validators Les validateurs.
  */
-function validate(value: any, validators?: Validator[]) {
+function validate<T>(value: T, validators?: Validator<T>[]) {
     const errors: string[] = [];
     if (validators) {
         for (const validator of validators) {
-            let error;
+            let error: string | false | undefined = false;
             if (isFunction(validator)) {
                 error = validator(value);
-            } else {
-                if (isRegex(validator)) {
-                    error = value && !validator.regex.test(value);
-                } else {
-                    switch (validator.type) {
-                        case "email":
-                            error = value && !EMAIL_REGEX.test(value);
-                            break;
-                        case "number":
-                            if (value === undefined || value === null) {
-                                break;
-                            }
-                            if (typeof value === "string" && value.trim() !== value) {
-                                error = true;
-                                break;
-                            }
-                            const n = +value;
-                            if (Number.isNaN(n) || !isNumber(n) || (validator.isInteger && !Number.isInteger(n))) {
-                                error = true;
-                                break;
-                            }
-                            const isMin = validator.min !== undefined && n < validator.min;
-                            const isMax = validator.max !== undefined && n > validator.max;
-                            error = isMin || isMax;
-                            break;
-                        case "string":
-                            const text = `${value || ""}`;
-                            const isMinLength = text.length < (validator.minLength || 0);
-                            const isMaxLength = validator.maxLength !== undefined && text.length > validator.maxLength;
-                            error = isMinLength || isMaxLength;
-                            break;
-                        case "date":
-                            error = !moment(value, moment.ISO_8601).isValid();
-                            break;
-                        case "function":
-                            error = !validator.value(value) && validator.options.translationKey;
-                            break;
-                    }
-                }
+            } else if (typeof value === "string") {
+                const sValidator = validator as Validator<string>;
 
-                if (error === true) {
+                if (isRegexValidator(sValidator)) {
                     error =
-                        validator.errorMessage || `focus.validation.${isRegex(validator) ? "regex" : validator.type}`;
+                        value && !sValidator.regex.test(value)
+                            ? sValidator.errorMessage || "focus.validation.regex"
+                            : false;
+                } else if (isEmailValidator(sValidator)) {
+                    error =
+                        value && !EMAIL_REGEX.test(value) ? sValidator.errorMessage || "focus.validation.email" : false;
+                } else if (isStringValidator(sValidator)) {
+                    const {maxLength, minLength, errorMessage} = sValidator;
+                    const text = `${value || ""}`;
+                    const isMinLength = text.length < (minLength || 0);
+                    const isMaxLength = maxLength !== undefined && text.length > maxLength;
+                    error = isMinLength || isMaxLength ? errorMessage || "focus.validation.string" : undefined;
+                } else if (isDateValidator(sValidator)) {
+                    error = !moment(value, moment.ISO_8601).isValid()
+                        ? sValidator.errorMessage || "focus.validation.date"
+                        : false;
+                }
+            } else if (typeof value === "number") {
+                const numberValidator = validator as Validator<number>;
+
+                if (isNumberValidator(numberValidator)) {
+                    const {min, max, errorMessage, maxDecimals} = numberValidator;
+                    const isMin = min !== undefined && value < min;
+                    const isMax = max !== undefined && value > max;
+                    const isDecimals =
+                        maxDecimals !== undefined && (`${value}`.split(".")[1] || "").length > maxDecimals;
+                    error = isMin || isMax || isDecimals ? errorMessage || "focus.validation.number" : false;
                 }
             }
 
             if (error) {
-                errors.push(error as string); // bug TS (!!)
+                errors.push(error);
             }
         }
     }
 
     return errors;
+}
+
+export function isRegexValidator(validator: Validator<string>): validator is RegexValidator {
+    return !!(validator as RegexValidator).regex;
+}
+
+export function isStringValidator(validator: Validator<string>): validator is StringValidator {
+    return (validator as StringValidator).type === "string";
+}
+
+export function isEmailValidator(validator: Validator<string>): validator is EmailValidator {
+    return (validator as EmailValidator).type === "email";
+}
+
+export function isDateValidator(validator: Validator<string>): validator is DateValidator {
+    return (validator as DateValidator).type === "date";
+}
+
+export function isNumberValidator(validator: Validator<number>): validator is NumberValidator {
+    return (validator as NumberValidator).type === "number";
 }

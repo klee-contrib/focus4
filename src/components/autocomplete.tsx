@@ -33,7 +33,7 @@ export interface AutocompleteResult {
 }
 
 /** Props du composant d'autocomplétion */
-export interface AutocompleteProps extends RTAutocompleteProps {
+export interface AutocompleteProps<T extends "string" | "number"> extends RTAutocompleteProps {
     /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
     isQuickSearch?: boolean;
     /** Service de résolution de code. */
@@ -41,16 +41,18 @@ export interface AutocompleteProps extends RTAutocompleteProps {
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     /** Au changement. */
-    onChange?: (value: any) => void;
+    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    /** Type du champ ("string" ou "number"). */
+    type: T;
     /** Valeur. */
-    value?: any;
+    value: (T extends "string" ? string : number) | undefined;
     /** CSS. */
     theme?: AutocompleteStyle;
 }
 
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
-export class Autocomplete extends React.Component<AutocompleteProps> {
+export class Autocomplete<T extends "string" | "number"> extends React.Component<AutocompleteProps<T>> {
     protected inputElement!: HTMLInputElement | null;
 
     /** Requête d'autocomplete en cours. */
@@ -76,8 +78,8 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
 
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
-        if (value && !isQuickSearch && keyResolver) {
-            this.query = i18next.t((await keyResolver(value)) || "") || value;
+        if ((value || value === 0) && !isQuickSearch && keyResolver) {
+            this.query = `${i18next.t((await keyResolver(value)) || "") || value}`;
         }
     }
 
@@ -123,7 +125,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
      */
     @action.bound
     onValueChange(value: string) {
-        const {isQuickSearch, onChange} = this.props;
+        const {isQuickSearch, onChange, type} = this.props;
 
         if (isQuickSearch && value) {
             this.query = "";
@@ -134,7 +136,8 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
         this.value = value;
 
         if (onChange) {
-            onChange(value);
+            const v = type === "number" ? +value : value;
+            onChange(v || v === 0 ? (v as any) : undefined);
         }
     }
 
@@ -220,6 +223,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
                             onQueryChange={this.onQueryChange}
                             maxLength={undefined}
                             suggestionMatch="disabled"
+                            type="text"
                             theme={theme}
                             innerRef={(ref: any) => (this.autocomplete = ref)}
                             onKeyDown={this.onKeyDown}

@@ -12,22 +12,19 @@ import {Validator} from "./validation";
 
 /** Définition d'un domaine. */
 export interface Domain<
-    ICProps extends BaseInputProps = InputProps,
-    SCProps extends BaseSelectProps = SelectProps,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps,
+    T = unknown,
+    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 > extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Formatteur pour l'affichage du champ en consulation. */
-    displayFormatter?: (value: any) => string;
-    /** Formatteur pour l'affichage du champ en édition. */
-    inputFormatter?: (value: any) => string;
-    /** Formatteur inverse pour convertir l'affichage du champ en la valeur (édition uniquement) */
-    unformatter?: (text: string) => any;
+    displayFormatter?: (value: T | undefined) => string;
     /** Liste des validateurs. */
-    validator?: Validator | Validator[];
+    validator?: Validator<T> | Validator<T>[];
 
     /** Composant personnalisé pour l'autocomplete. */
     AutocompleteComponent?: React.ComponentType<ACProps>;
@@ -41,6 +38,19 @@ export interface Domain<
     SelectComponent?: React.ComponentType<SCProps>;
 }
 
+/** Crée un domaine. */
+export function domain<T>(): <
+    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+    DCProps extends BaseDisplayProps = DisplayProps,
+    LCProps extends BaseLabelProps = LabelProps
+>(
+    d: Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>
+) => Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps> {
+    return d => d;
+}
+
 /** Définition générale d'une entité. */
 export interface Entity {
     /** Nom de l'entité. */
@@ -52,7 +62,7 @@ export interface Entity {
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
-    T = any,
+    FT = any,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
@@ -62,10 +72,10 @@ export interface FieldEntry<
     readonly type: "field";
 
     /** Type du champ. */
-    readonly fieldType: T;
+    readonly fieldType: FT;
 
     /** Domaine du champ. */
-    readonly domain: Domain<ICProps, SCProps, ACProps, DCProps, LCProps>;
+    readonly domain: Domain<FieldType<FT>, ICProps, SCProps, ACProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -80,30 +90,50 @@ export interface FieldEntry<
     readonly comment?: React.ReactNode;
 }
 
+/** Récupère le type d'un FieldEntry, et gère les cas spéciaux "string", "number" et "boolean". */
+export type FieldEntryType<F> = F extends FieldEntry<"string">
+    ? string
+    : F extends FieldEntry<"number">
+    ? number
+    : F extends FieldEntry<"boolean">
+    ? boolean
+    : F extends FieldEntry<infer T>
+    ? NonNullable<T>
+    : never;
+
+/** Transforme le type passé ) un FieldEntry en type effectif. */
+export type FieldType<FT> = FT extends "string"
+    ? string
+    : FT extends "number"
+    ? number
+    : FT extends "boolean"
+    ? boolean
+    : NonNullable<FT>;
+
 /** Métadonnées d'une entrée de type "object" pour une entité. */
-export interface ObjectEntry<T extends Entity = any> {
+export interface ObjectEntry<E extends Entity = any> {
     readonly type: "object";
 
     /** Entité de l'entrée */
-    readonly entity: T;
+    readonly entity: E;
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
-export interface ListEntry<T extends Entity = any> {
+export interface ListEntry<E extends Entity = any> {
     readonly type: "list";
 
     /** Entité de l'entrée */
-    readonly entity: T;
+    readonly entity: E;
 }
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
-export type EntityToType<T extends Entity> = {
-    [P in keyof T["fields"]]?: T["fields"][P] extends FieldEntry
-        ? T["fields"][P]["fieldType"]
-        : T["fields"][P] extends ObjectEntry<infer U>
-        ? EntityToType<U>
-        : T["fields"][P] extends ListEntry<infer V>
-        ? EntityToType<V>[]
+export type EntityToType<E extends Entity> = {
+    [P in keyof E["fields"]]?: E["fields"][P] extends FieldEntry
+        ? FieldEntryType<E["fields"][P]>
+        : E["fields"][P] extends ObjectEntry<infer OE>
+        ? EntityToType<OE>
+        : E["fields"][P] extends ListEntry<infer LE>
+        ? EntityToType<LE>[]
         : never
 };
 
@@ -113,5 +143,5 @@ export interface EntityField<F extends FieldEntry = FieldEntry> {
     readonly $field: F;
 
     /** Valeur. */
-    value: F["fieldType"] | undefined;
+    value: FieldEntryType<F> | undefined;
 }

@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "9.8.6",
+    "version": "9.9.0-rc2",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -70,7 +70,7 @@
         "ts-jest": "24.0.1",
         "tslint": "5.14.0",
         "typed-css-modules": "0.3.7",
-        "typescript": "3.3.4000",
+        "typescript": "3.4.0-rc",
         "typescript-tslint-plugin": "0.3.1"
     }
 }
