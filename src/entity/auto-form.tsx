@@ -133,7 +133,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
 
         // On met en place la réaction de chargement.
         if (services.getLoadParams) {
-            this.loadDisposer = reaction(services.getLoadParams, this.load, {equals: comparer.structural});
+            this.loadDisposer = reaction(services.getLoadParams, () => this.load(), {equals: comparer.structural});
         }
     }
 
