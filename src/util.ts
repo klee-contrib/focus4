@@ -45,11 +45,11 @@ function patchClass<T extends RCL>(
     expression?: WhenExpression<T> | ReactionExpression<T>,
     opts?: IReactionOptions
 ) {
-    if (process.env.NODE_ENV !== "production") {
-        console.warn(
-            "@classAutorun et consorts sont dépréciés : utilisez @disposeOnUnmount sur vos réactions à la place."
-        );
-    }
+    // if (process.env.NODE_ENV !== "production") {
+    //     console.warn(
+    //         "@classAutorun et consorts sont dépréciés : utilisez @disposeOnUnmount sur vos réactions à la place."
+    //     );
+    // }
 
     function componentWillMount(this: T) {
         const r = this[propertyKey].bind(this);

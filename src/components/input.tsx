@@ -1,5 +1,5 @@
 import InputMask, {InputMaskFormatOptions, InputMaskSelection} from "inputmask-core";
-import {range} from "lodash";
+import {range, takeWhile} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import numeral from "numeral";
@@ -47,7 +47,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
             maxDecimals > 0
                 ? `[.][${range(0, maxDecimals)
                       .map(_ => "0")
-                      .join("")}`
+                      .join("")}]`
                 : ""
         }`;
     }
@@ -250,13 +250,23 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
                     !value.match(invalidCharRegex)
                 ) {
                     const newValue =
-                        (isNegative ? "-" : "") +
-                        (!left && !right ? "" : numeral(value).format(this.numberFormat)) +
-                        (right === "" ? decimal : "");
+                        (isNegative ? "-" : "") + // Ajoute le "-" s'il faut.
+                        (!left && !right
+                            ? ""
+                            : // On formatte le nombre avec numeral en gardant tous les "0" de tête.
+                              numeral(value).format(
+                                  range(0, left.replace(new RegExp(thousands, "g"), "").length - 1)
+                                      .map(_ => "0")
+                                      .join("") + this.numberFormat
+                              )) +
+                        (right !== undefined && !+right ? decimal : "") + // Ajoute la virgule si elle était là et a été retirée par le format().
+                        (right ? takeWhile(right.split("").reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
                     const newNumberValue = numeral(newValue).value();
 
-                    this.numberStringValue = newValue;
-                    onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
+                    if (!newValue.includes("NaN")) {
+                        this.numberStringValue = newValue;
+                        onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
+                    }
                 }
 
                 const end = getSelection(this.inputElement).end - (isNegative ? 1 : 0);
