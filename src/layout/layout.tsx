@@ -3,7 +3,6 @@ import * as React from "react";
 import {MessageCenter, MessageCenterProps} from "../message";
 import {useTheme} from "../theme";
 
-import {ErrorCenter} from "./error-center";
 import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/layout.css";
@@ -39,7 +38,6 @@ export function LayoutBase({
     const theme = useTheme("layout", styles, pTheme);
     return (
         <>
-            <ErrorCenter />
             <MessageCenter {...messageCenterProps} />
             <div className={theme.layout}>
                 {menu}
