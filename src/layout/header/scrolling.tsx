@@ -1,5 +1,6 @@
 import * as React from "react";
 import posed from "react-pose";
+import {PoseElementProps} from "react-pose/lib/components/PoseElement/types";
 
 import {ScrollableContext} from "../../components";
 import {useTheme} from "../../theme";
@@ -12,7 +13,6 @@ export interface HeaderScrollingProps {
     /** Précise si le header peut se déployer ou non. */
     canDeploy?: boolean;
     children?: React.ReactNode;
-    style?: React.CSSProperties;
     /** Classes CSS. */
     theme?: {
         deployed?: string;
@@ -23,25 +23,28 @@ export interface HeaderScrollingProps {
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
-export const HeaderScrolling = React.forwardRef((props: HeaderScrollingProps, ref: React.Ref<HTMLElement>) => {
+export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScrollingProps) {
     const context = React.useContext(ScrollableContext);
-    const theme = useTheme("header", styles, props.theme);
-    const nonStickyRef = React.useRef<Element>(null);
+    const theme = useTheme("header", styles, pTheme);
+    const ref = React.useRef<HTMLElement>(null);
 
-    function children(className: string, headerRef?: React.Ref<Element>) {
-        return (
-            <Header ref={headerRef} className={`${theme.scrolling} ${className}`} style={props.style}>
-                {props.children}
-            </Header>
-        );
-    }
+    React.useEffect(
+        () =>
+            context.registerHeader(
+                canDeploy ? Header : FixedHeader,
+                {className: `${theme.scrolling} ${theme.sticky}`, children},
+                ref.current!,
+                canDeploy
+            ),
+        [canDeploy, children]
+    );
 
-    React.useEffect(() => context.registerHeader(children(theme.sticky, ref), nonStickyRef.current!, props.canDeploy), [
-        props.canDeploy
-    ]);
-
-    return children(props.canDeploy ? theme.deployed : theme.undeployed, nonStickyRef);
-});
+    return (
+        <header className={`${theme.scrolling} ${canDeploy ? theme.deployed : theme.undeployed}`} ref={ref}>
+            {children}
+        </header>
+    );
+}
 
 const Header = posed.header({
     enter: {
@@ -53,3 +56,10 @@ const Header = posed.header({
         transition: {type: "spring", stiffness: 170, damping: 26}
     }
 });
+
+const FixedHeader = React.forwardRef<HTMLHeadingElement, PoseElementProps>(
+    ({onPoseComplete, initialPose, popFromFlow, ...props}, ref) => {
+        React.useLayoutEffect(() => onPoseComplete && onPoseComplete("exit"));
+        return <header ref={ref} {...props} />;
+    }
+);

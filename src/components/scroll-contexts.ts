@@ -11,7 +11,12 @@ export const ScrollableContext = React.createContext<{
      * @param canDeploy Précise si le header est toujours sticky ou non.
      * @returns Le disposer.
      */
-    registerHeader(stickyNode: JSX.Element, nonStickyElement: Element, canDeploy?: boolean): () => void;
+    registerHeader(
+        Header: React.ElementType,
+        headerProps: React.HTMLProps<HTMLElement>,
+        nonStickyElement: HTMLElement,
+        canDeploy?: boolean
+    ): () => void;
     /**
      * Enregistre un observateur d'intersection avec le viewport du Scrollable.
      * @param node Le noeud DOM à observer.

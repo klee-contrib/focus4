@@ -31,7 +31,7 @@ export class Scrollable extends React.Component<{
     /** CSS. */
     theme?: ScrollableStyle;
 }> {
-    header?: [JSX.Element, Element];
+    header?: [React.ElementType, React.HTMLProps<HTMLElement>, HTMLElement];
     stickyHeader?: HTMLElement | null;
     @observable isHeaderSticky = false;
 
@@ -52,15 +52,20 @@ export class Scrollable extends React.Component<{
 
     /** @see ScrollableContext.registerHeader */
     @action.bound
-    registerHeader(node: JSX.Element, element: Element, canDeploy = true) {
+    registerHeader(
+        Header: React.ElementType,
+        headerProps: React.HTMLProps<HTMLElement>,
+        nonStickyElement: HTMLElement,
+        canDeploy?: boolean
+    ) {
         if (canDeploy) {
-            this.intersectionObserver.observe(element);
+            this.intersectionObserver.observe(nonStickyElement);
         }
         this.isHeaderSticky = !canDeploy;
-        this.header = [node, element];
+        this.header = [Header, headerProps, nonStickyElement];
         return () => {
             if (canDeploy) {
-                this.intersectionObserver.unobserve(element);
+                this.intersectionObserver.unobserve(nonStickyElement);
             }
             this.isHeaderSticky = false;
             this.header = undefined;
@@ -115,7 +120,7 @@ export class Scrollable extends React.Component<{
         this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
-                    if (this.header && e.target === this.header[1]) {
+                    if (this.header && e.target === this.header[2]) {
                         this.isHeaderSticky = !e.isIntersecting;
                     }
                     const onIntersect = this.onIntersects.get(e.target);
@@ -148,6 +153,7 @@ export class Scrollable extends React.Component<{
 
     render() {
         const {children, className, hideBackToTop} = this.props;
+        const [Header = null, headerProps = null] = (this.isHeaderSticky && this.header) || [];
         return (
             <ScrollableContext.Provider
                 value={{
@@ -162,13 +168,16 @@ export class Scrollable extends React.Component<{
                     {theme => (
                         <div className={`${className || ""} ${theme.container}`}>
                             <Transition>
-                                {this.isHeaderSticky && this.header
-                                    ? React.cloneElement(this.header[0], {
-                                          ref: (stickyHeader: any) => (this.stickyHeader = stickyHeader),
-                                          key: "header",
-                                          style: {width: this.width}
-                                      })
-                                    : undefined}
+                                {Header ? (
+                                    <Header
+                                        {...headerProps}
+                                        ref={(stickyHeader: any) => (this.stickyHeader = stickyHeader)}
+                                        key="header"
+                                        style={{width: this.width}}
+                                    />
+                                ) : (
+                                    undefined
+                                )}
                                 <div
                                     key="sticky"
                                     className={theme.sticky}
