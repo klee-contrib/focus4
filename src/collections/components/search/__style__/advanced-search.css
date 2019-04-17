@@ -1,7 +1,8 @@
 @import "../../../../style/advanced-search.css";
+@import "../../../../style/layout.css";
 
 .container {
-    padding: 20px;
+    padding: var(--content-padding-top) var(--content-padding-side) 0;
     box-sizing: border-box;
 }
 

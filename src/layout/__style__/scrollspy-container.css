@@ -1,8 +1,9 @@
+@import "../../style/layout.css";
 @import "../../style/scrollspy-container.css";
 
 .scrollspy {
     position: relative;
-    padding-right: var(--scrollspy-padding-right);
+    padding-right: var(--content-padding-side);
 }
 
 .menu {
@@ -35,5 +36,5 @@
 
 .menu,
 .content {
-    padding-top: var(--scrollspy-padding-top);
+    padding-top: var(--content-padding-top);
 }

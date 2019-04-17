@@ -11,8 +11,6 @@ import {Table, TableProps} from "./table";
 
 /** Props additionnelles pour un StoreTable. */
 export interface StoreTableProps<T> extends TableProps<T> {
-    /** Code du groupe à afficher, pour une recherche groupée. */
-    groupCode?: string;
     /** La description des colonnes du tableau. */
     columns: {
         /** Classe CSS pour la colonne. */
@@ -24,6 +22,8 @@ export interface StoreTableProps<T> extends TableProps<T> {
         /** Libellé du titre de la colonne. */
         title: string;
     }[];
+    /** Code du groupe à afficher, pour une recherche groupée. */
+    groupCode?: string;
     /** Le store contenant la liste. */
     store: ListStoreBase<T>;
 }
