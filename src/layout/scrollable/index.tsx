@@ -1,5 +1,6 @@
 import "intersection-observer";
 
+import ResizeObserver from "@juggle/resize-observer";
 import {range} from "lodash";
 import {action, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
@@ -34,7 +35,9 @@ export class Scrollable extends React.Component<{
     stickyHeader?: HTMLElement | null;
     @observable isHeaderSticky = false;
 
-    @observable.ref observer!: IntersectionObserver;
+    @observable.ref intersectionObserver!: IntersectionObserver;
+    @observable.ref resizeObserver!: ResizeObserver;
+
     node!: HTMLDivElement | null;
     stickyNode!: HTMLDivElement | null;
 
@@ -51,13 +54,13 @@ export class Scrollable extends React.Component<{
     @action.bound
     registerHeader(node: JSX.Element, element: Element, canDeploy = true) {
         if (canDeploy) {
-            this.observer.observe(element);
+            this.intersectionObserver.observe(element);
         }
         this.isHeaderSticky = !canDeploy;
         this.header = [node, element];
         return () => {
             if (canDeploy) {
-                this.observer.unobserve(element);
+                this.intersectionObserver.unobserve(element);
             }
             this.isHeaderSticky = false;
             this.header = undefined;
@@ -68,11 +71,11 @@ export class Scrollable extends React.Component<{
     @action.bound
     registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void) {
         this.onIntersects.set(node, onIntersect);
-        this.observer.observe(node);
+        this.intersectionObserver.observe(node);
 
         return () => {
             this.onIntersects.delete(node);
-            this.observer.unobserve(node);
+            this.intersectionObserver.unobserve(node);
         };
     }
 
@@ -107,10 +110,9 @@ export class Scrollable extends React.Component<{
 
     componentDidMount() {
         this.node!.addEventListener("scroll", this.onScroll);
-        window.addEventListener("resize", this.onScroll);
-        this.onScroll();
-
-        this.observer = new IntersectionObserver(
+        this.resizeObserver = new ResizeObserver(() => this.onScroll());
+        this.resizeObserver.observe(this.node!);
+        this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
                     if (this.header && e.target === this.header[1]) {
@@ -125,17 +127,15 @@ export class Scrollable extends React.Component<{
         );
     }
 
-    componentDidUpdate() {
-        this.width = this.node!.clientWidth;
-    }
-
     componentWillUnmount() {
-        window.removeEventListener("resize", this.onScroll);
         if (this.node) {
             this.node.removeEventListener("scroll", this.onScroll);
         }
-        if (this.observer) {
-            this.observer.disconnect();
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
+        if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
         }
     }
 
@@ -176,7 +176,7 @@ export class Scrollable extends React.Component<{
                                     style={{width: this.width, top: this.headerHeight}}
                                 />
                                 <div key="scrollable" className={theme.scrollable} ref={div => (this.node = div)}>
-                                    {this.observer ? children : null}
+                                    {this.intersectionObserver ? children : null}
                                 </div>
                                 {!hideBackToTop && this.hasBtt ? <ButtonBackToTop key="backtotop" /> : undefined}
                             </Transition>

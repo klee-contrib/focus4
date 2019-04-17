@@ -38,7 +38,6 @@ import {FieldStyle, FormStyle} from "../entity";
 import {LoadingBarStyle} from "../network";
 import {ThemeContext} from "../theme";
 
-import {ErrorCenterStyle} from "./error-center";
 import {HeaderStyle} from "./header";
 import {LayoutBase, LayoutProps} from "./layout";
 import {MainMenuStyle} from "./menu";
@@ -78,7 +77,6 @@ export interface LayoutStyleProviderProps {
     contextualActions?: ContextualActionsStyle;
     display?: DisplayStyle;
     dragLayer?: DragLayerStyle;
-    errorCenter?: ErrorCenterStyle;
     facet?: FacetStyle;
     facetBox?: FacetBoxStyle;
     field?: FieldStyle;
