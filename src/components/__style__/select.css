@@ -43,5 +43,6 @@
         color: var(--input-text-error-color);
         position: absolute;
         font-size: var(--input-label-font-size);
+        white-space: nowrap;
     }
 }
