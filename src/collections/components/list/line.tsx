@@ -49,7 +49,7 @@ export interface LineWrapperProps<T> {
     /** Configuration de la mosaïque (si applicable). */
     mosaic?: {width: number; height: number};
     /** Fonction passée par react-pose qu'il faudra appeler au willUnmount pour qu'il retire l'élément du DOM. */
-    onPoseComplete?: () => void;
+    onPoseComplete?: (pose: string) => void;
     /** Handler pour ouvrir (et fermer) le détail. */
     openDetail?: () => void;
     /** Actions de ligne. */
@@ -79,7 +79,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
         // Si on n'appelle pas ça, vu que la ligne est posée dans un contexte de transition react-pose à cause du détail,
         // la ligne ne sera jamais retirée du DOM.
         if (onPoseComplete) {
-            onPoseComplete();
+            onPoseComplete("exit");
         }
     }
 
