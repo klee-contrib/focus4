@@ -28,7 +28,7 @@ export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScro
     const theme = useTheme("header", styles, pTheme);
     const ref = React.useRef<HTMLElement>(null);
 
-    React.useEffect(
+    React.useLayoutEffect(
         () =>
             context.registerHeader(
                 canDeploy ? Header : FixedHeader,

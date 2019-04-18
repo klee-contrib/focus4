@@ -34,7 +34,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     context!: React.ContextType<typeof ScrollableContext>;
 
     /** Noeud DOM du scrollspy */
-    node!: HTMLDivElement | null;
+    node?: HTMLDivElement | null;
 
     /** Map des panels qui se sont enregistrés dans le container. */
     protected readonly panels = observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>();
@@ -84,7 +84,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * @param node Le noeud HTML.
      */
     protected getOffsetTop(node: HTMLElement) {
-        const distance = node.offsetTop + this.node!.offsetTop;
+        const distance = node.offsetTop + ((this.node && this.node.offsetTop) || 0);
         return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
     }
 

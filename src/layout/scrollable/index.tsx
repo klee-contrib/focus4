@@ -201,7 +201,7 @@ export function Sticky({
     children,
     placeholder
 }: {
-    parentNode: HTMLElement | null;
+    parentNode?: HTMLElement | null;
     children: JSX.Element;
     placeholder?: JSX.Element;
 }) {
