@@ -82,6 +82,10 @@ export interface AdvancedSearchProps<T> {
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
     groupPageSize?: number;
+    /** Nombre de groupes affichés par page de liste de groupe (pagination locale, indépendante de la recherche). Par défaut: 10. */
+    groupPageListSize?: number;
+    /** (Scroll infini, affichage en groupe) Index du groupe, en partant du bas de la liste de groupe affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 2. */
+    groupPageItemIndex?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Active le drag and drop. */
@@ -287,6 +291,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             lineTheme,
             groupOperationList,
             groupPageSize,
+            groupPageListSize,
+            groupPageItemIndex,
             hasSelection,
             disableDragAnimThreshold,
             i18nPrefix,
@@ -318,6 +324,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                 GroupHeader={GroupHeader}
                 groupOperationList={groupOperationList}
                 groupPageSize={groupPageSize}
+                groupPageListSize={groupPageListSize}
+                groupPageItemIndex={groupPageItemIndex}
                 groupTheme={groupTheme}
                 hasDragAndDrop={hasDragAndDrop}
                 hasSelection={!!hasSelection}
