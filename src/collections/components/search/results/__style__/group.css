@@ -1,10 +1,6 @@
 @import "react-toolbox/lib/colors.css";
 @import "react-toolbox/lib/variables.css";
 
-.container:not(:last-child) {
-    margin-bottom: 20px;
-}
-
 .selectionToggle > .selectionIcon:not([data-react-toolbox="tooltip"]) {
     font-size: 24px;
     vertical-align: initial;
@@ -24,6 +20,6 @@
     margin-right: 5px;
 }
 
-.container:first-child .header {
+.header {
     margin-top: 20px;
 }

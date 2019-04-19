@@ -125,7 +125,7 @@ export class Group<T> extends React.Component<GroupProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div className={theme.container}>
+                    <>
                         {useGroupActionBars ? (
                             <ActionBar
                                 group={{code: group.code, label: group.label, totalCount: group.totalCount}}
@@ -169,7 +169,7 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                             store: this.store,
                             theme: listTheme
                         })}
-                    </div>
+                    </>
                 )}
             </Theme>
         );
