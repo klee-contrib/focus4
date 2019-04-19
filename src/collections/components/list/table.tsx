@@ -1,8 +1,8 @@
 import i18next from "i18next";
-import {observer} from "mobx-react";
+import {observer, Observer} from "mobx-react";
 import * as React from "react";
 
-import {themr} from "../../../theme";
+import {themr, useTheme} from "../../../theme";
 
 import {ListBase, ListBaseProps} from "./list-base";
 
@@ -46,19 +46,19 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
     }
 
     /** Ligne de table. */
-    protected TableLine = React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) => (
-        <tr ref={ref}>
-            {this.props.columns.map(({className, content}, idx) => (
-                <td
-                    className={className}
-                    key={idx}
-                    onClick={() => (this.props.onLineClick ? this.props.onLineClick(data) : undefined)}
-                >
-                    {content(data)}
-                </td>
-            ))}
-        </tr>
-    ));
+    protected TableLine = React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) => {
+        const {onLineClick, theme} = this.props;
+        const {clickable} = useTheme("list", styles, theme);
+        return (
+            <tr ref={ref} className={onLineClick ? clickable : undefined}>
+                {this.props.columns.map(({className, content}, idx) => (
+                    <td className={className} key={idx} onClick={() => (onLineClick ? onLineClick(data) : undefined)}>
+                        <Observer>{() => content(data)}</Observer>
+                    </td>
+                ))}
+            </tr>
+        );
+    });
 
     /** Affiche le corps du tableau. */
     protected renderTableBody() {
