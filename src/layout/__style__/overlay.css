@@ -11,7 +11,8 @@
     bottom: 0;
     background: var(--overlay-color);
     opacity: var(--overlay-opacity);
-    transition: opacity var(--animation-duration);
+    transition: opacity var(--animation-duration) var(--animation-curve-default);
+    transition-delay: var(--animation-delay);
 }
 
 .exit {
