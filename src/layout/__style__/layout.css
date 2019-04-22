@@ -82,6 +82,7 @@ footer {
     height: 100vh;
     flex: 1;
     min-width: 0;
+    overflow-x: hidden;
 }
 
 .content {

@@ -48,11 +48,11 @@ export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScro
 
 const Header = posed.header({
     enter: {
-        transform: "translateY(0%)",
+        y: "0%",
         transition: {type: "spring", stiffness: 170, damping: 26}
     },
     exit: {
-        transform: "translateY(-105%)",
+        y: "-105%",
         transition: {type: "spring", stiffness: 170, damping: 26}
     }
 });
