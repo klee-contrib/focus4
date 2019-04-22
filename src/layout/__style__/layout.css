@@ -9,6 +9,8 @@ html {
 
 body {
     margin: 0;
+    animation-duration: var(--animation-duration);
+    animation-delay: var(--animation-delay);
 }
 
 fieldset {

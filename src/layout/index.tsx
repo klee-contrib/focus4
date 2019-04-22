@@ -38,6 +38,7 @@ import {FieldStyle} from "../entity";
 import {LoadingBarStyle} from "../network";
 import {ThemeContext} from "../theme";
 
+import {DialogStyle} from "./dialog";
 import {HeaderStyle} from "./header";
 import {LayoutBase, LayoutProps} from "./layout";
 import {MainMenuStyle} from "./menu";
@@ -50,6 +51,7 @@ import * as styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 
 export {Content} from "./content";
+export {Dialog} from "./dialog";
 export {
     HeaderActions,
     HeaderBarLeft,
@@ -76,6 +78,7 @@ export interface LayoutStyleProviderProps {
     booleanRadio?: BooleanRadioStyle;
     buttonBTT?: ButtonBackToTopStyle;
     contextualActions?: ContextualActionsStyle;
+    dialog?: DialogStyle;
     display?: DisplayStyle;
     dragLayer?: DragLayerStyle;
     facet?: FacetStyle;

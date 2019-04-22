@@ -1,12 +1,11 @@
 import * as React from "react";
 import {IconButton} from "react-toolbox/lib/button";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
-import {EndHandler} from "react-transition-group/Transition";
 
 import {getIcon, ScrollableContext} from "../components";
 import {useTheme} from "../theme";
 
-import {Overlay, overlayStyles} from "./overlay";
+import {cssTransitionProps, Overlay, overlayStyles} from "./overlay";
 import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/popin.css";
@@ -80,18 +79,4 @@ export function Popin({
         </TransitionGroup>,
         "root"
     );
-}
-
-function cssTransitionProps(theme: {enter: string; exit: string}) {
-    return {
-        addEndListener: ((node, done) => {
-            node.addEventListener("transitionend", done, false);
-        }) as EndHandler,
-        timeout: {},
-        classNames: {
-            enter: theme.exit,
-            enterActive: theme.enter,
-            exitActive: theme.exit
-        }
-    };
 }

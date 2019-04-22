@@ -9,7 +9,8 @@
     background: var(--popin-background);
     box-shadow: var(--shadow-4p);
     box-sizing: border-box;
-    transition: transform var(--animation-duration);
+    transition: transform var(--animation-duration) var(--animation-curve-default);
+    transition-delay: var(--animation-delay);
     transform: translateX(0%);
 }
 

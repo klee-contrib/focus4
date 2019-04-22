@@ -1,0 +1,78 @@
+@import "react-toolbox/lib/dialog/config.css";
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+
+.wrapper {
+    z-index: var(--z-index-higher);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog {
+    background-color: var(--dialog-color-white);
+    border-radius: var(--dialog-border-radius);
+    box-shadow: var(--zdepth-shadow-5);
+    display: flex;
+    flex-direction: column;
+    min-width: 50%;
+    max-width: 96%;
+    overflow: var(--overflow);
+    opacity: 1;
+    transform: translateY(0%);
+    transition: opacity var(--animation-duration) var(--animation-curve-default),
+        transform var(--animation-duration) var(--animation-curve-default);
+    transition-delay: var(--animation-delay);
+}
+
+.exit .dialog {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--dialog-translate-y)));
+}
+
+.enter .dialog {
+    opacity: 1;
+    transform: translateY(0%);
+}
+
+.title {
+    color: var(--dialog-color-title);
+    flex-grow: 0;
+    font-size: calc(2 * var(--unit));
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin: 0 0 calc(1.6 * var(--unit));
+}
+
+.body {
+    color: var(--color-text-secondary);
+    flex-grow: 2;
+    padding: var(--dialog-content-padding);
+
+    & p {
+        font-size: calc(1.4 * var(--unit));
+        font-weight: 400;
+        letter-spacing: 0;
+        line-height: calc(2.4 * var(--unit));
+        margin: 0;
+    }
+}
+
+.navigation {
+    flex-grow: 0;
+    padding: var(--dialog-navigation-padding);
+    text-align: right;
+}
+
+.button {
+    margin-left: var(--dialog-navigation-padding);
+    min-width: 0;
+    padding-left: var(--dialog-navigation-padding);
+    padding-right: var(--dialog-navigation-padding);
+}
