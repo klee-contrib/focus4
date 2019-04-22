@@ -9,6 +9,8 @@
     background: var(--popin-background);
     box-shadow: var(--shadow-4p);
     box-sizing: border-box;
+    transition: transform var(--animation-duration);
+    transform: translateX(0%);
 }
 
 .left {
@@ -30,4 +32,18 @@
     & > [data-react-toolbox="font-icon"] {
         font-size: 24px;
     }
+}
+.exit {
+    &.right {
+        transform: translateX(100%);
+    }
+
+    &.left {
+        transform: translateX(-100%);
+    }
+}
+
+.enter.left,
+.enter.right {
+    transform: translateX(0%);
 }

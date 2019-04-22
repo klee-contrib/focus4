@@ -1,11 +1,12 @@
 import * as React from "react";
-import posed, {Transition} from "react-pose";
 import {IconButton} from "react-toolbox/lib/button";
+import {CSSTransition, TransitionGroup} from "react-transition-group";
+import {EndHandler} from "react-transition-group/Transition";
 
 import {getIcon, ScrollableContext} from "../components";
 import {useTheme} from "../theme";
 
-import {Overlay} from "./overlay";
+import {Overlay, overlayStyles} from "./overlay";
 import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/popin.css";
@@ -47,42 +48,50 @@ export function Popin({
     type = "from-right"
 }: React.PropsWithChildren<PopinProps>) {
     const theme = useTheme("popin", styles, pTheme);
+    const oTheme = useTheme("overlay", overlayStyles);
     const context = React.useContext(ScrollableContext);
 
     return context.portal(
-        <Transition>
-            {opened ? <Overlay key="overlay" onClick={(!preventOverlayClick && closePopin) || undefined} /> : undefined}
+        <TransitionGroup component={null}>
             {opened ? (
-                <PopinScrollable
-                    key="scrollable"
-                    backToTopOffset={backToTopOffset}
-                    className={`${theme.popin} ${
-                        type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""
-                    }`}
-                    hideBackToTop={hideBackToTop}
-                    scrollBehaviour={scrollBehaviour}
-                    type={type}
-                >
-                    <IconButton
-                        className={theme.close}
-                        icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
-                        onClick={closePopin}
-                    />
-                    {children}
-                </PopinScrollable>
-            ) : (
-                undefined
-            )}
-        </Transition>,
+                <CSSTransition {...cssTransitionProps(oTheme)}>
+                    <Overlay onClick={(!preventOverlayClick && closePopin) || undefined} />
+                </CSSTransition>
+            ) : null}
+            {opened ? (
+                <CSSTransition {...cssTransitionProps(theme)}>
+                    <Scrollable
+                        backToTopOffset={backToTopOffset}
+                        className={`${theme.popin} ${
+                            type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""
+                        }`}
+                        hideBackToTop={hideBackToTop}
+                        scrollBehaviour={scrollBehaviour}
+                    >
+                        <IconButton
+                            className={theme.close}
+                            icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
+                            onClick={closePopin}
+                        />
+                        {children}
+                    </Scrollable>
+                </CSSTransition>
+            ) : null}
+        </TransitionGroup>,
         "root"
     );
 }
 
-const PopinScrollable = posed(Scrollable)({
-    props: {type: "from-right"},
-    enter: {x: "0%", transition: {type: "tween"}},
-    exit: {
-        x: ({type}: {type: "from-right" | "from-left"}) => `${type === "from-right" ? "" : "-"}100%`,
-        transition: {type: "tween"}
-    }
-});
+function cssTransitionProps(theme: {enter: string; exit: string}) {
+    return {
+        addEndListener: ((node, done) => {
+            node.addEventListener("transitionend", done, false);
+        }) as EndHandler,
+        timeout: {},
+        classNames: {
+            enter: theme.exit,
+            enterActive: theme.enter,
+            exitActive: theme.exit
+        }
+    };
+}

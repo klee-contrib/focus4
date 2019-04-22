@@ -10,4 +10,14 @@
     right: 0;
     bottom: 0;
     background: var(--overlay-color);
+    opacity: var(--overlay-opacity);
+    transition: opacity var(--animation-duration);
+}
+
+.exit {
+    opacity: 0;
+}
+
+.enter {
+    opacity: var(--overlay-opacity);
 }
