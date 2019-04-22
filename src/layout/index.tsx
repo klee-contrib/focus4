@@ -41,6 +41,7 @@ import {ThemeContext} from "../theme";
 import {HeaderStyle} from "./header";
 import {LayoutBase, LayoutProps} from "./layout";
 import {MainMenuStyle} from "./menu";
+import {OverlayStyle} from "./overlay";
 import {PopinStyle} from "./popin";
 import {ButtonBackToTopStyle, ScrollableStyle} from "./scrollable";
 import {ScrollspyStyle} from "./scrollspy-container";
@@ -90,6 +91,7 @@ export interface LayoutStyleProviderProps {
     list?: ListStyle;
     listWrapper?: ListWrapperStyle;
     mainMenu?: MainMenuStyle;
+    overlay?: OverlayStyle;
     panel?: PanelStyle;
     popin?: PopinStyle;
     scrollable?: ScrollableStyle;

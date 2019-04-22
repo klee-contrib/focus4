@@ -36,11 +36,12 @@ export const ScrollableContext = React.createContext<{
      */
     scrollTo(options?: ScrollToOptions): void;
     /**
-     * Affiche un élement dans la zone sticky du Scrollable.
+     * Affiche un élement dans le Scrollable.
      * @param node Le noeud React.
+     * @param dest La racine ou la zone sticky du scrollable.
      * @returns Le Portal associé.
      */
-    sticky(node: JSX.Element): React.ReactPortal;
+    portal(node: JSX.Element, dest: "root" | "sticky"): React.ReactPortal;
 }>({} as any);
 
 /** Contexte d'un ScrollspyContainer, expose les méthodes associées. */

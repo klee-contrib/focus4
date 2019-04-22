@@ -84,18 +84,18 @@ export function HeaderActions({
 
 const PosedDiv = posed.div({
     enter: {
-        transform: "translateY(0%)",
+        y: "0%",
         opacity: 1,
         transition: {
-            transform: {type: "spring", stiffness: 170, damping: 26},
+            y: {type: "spring", stiffness: 170, damping: 26},
             opacity: "tween"
         }
     },
     exit: {
-        transform: "translateY(-50%)",
+        y: "-50%",
         opacity: 0.3,
         transition: {
-            transform: {type: "spring", stiffness: 170, damping: 26},
+            y: {type: "spring", stiffness: 170, damping: 26},
             opacity: "tween"
         }
     }

@@ -1,11 +1,12 @@
 import "intersection-observer";
 
-import ResizeObserver from "@juggle/resize-observer";
+import ResizeObserverPolyfill from "@juggle/resize-observer";
+import {ResizeObserverCallback} from "@juggle/resize-observer/lib/ResizeObserverCallback";
 import {range} from "lodash";
 import {action, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import React from "react";
-import {createPortal} from "react-dom";
+import {createPortal, findDOMNode} from "react-dom";
 import {Transition} from "react-pose";
 
 import {ScrollableContext} from "../../components";
@@ -18,25 +19,33 @@ import * as styles from "../__style__/scrollable.css";
 const Theme = themr("scrollable", styles);
 export type ScrollableStyle = Partial<typeof styles>;
 
-@observer
-export class Scrollable extends React.Component<{
+const ResizeObserver: new (callback: ResizeObserverCallback) => ResizeObserverPolyfill =
+    (window as any).ResizeObserver || ResizeObserverPolyfill;
+
+export interface ScrollableProps {
     /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 200. */
     backToTopOffset?: number;
     /** Classe CSS. */
     className?: string;
+    /** @internal */
+    /** Ref vers le div container. */
+    innerRef?: React.Ref<HTMLDivElement>;
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
     /** CSS. */
     theme?: ScrollableStyle;
-}> {
+}
+
+@observer
+class ScrollableComponent extends React.Component<ScrollableProps> {
     header?: [React.ElementType, React.HTMLProps<HTMLElement>, HTMLElement];
     stickyHeader?: HTMLElement | null;
     @observable isHeaderSticky = false;
 
     @observable.ref intersectionObserver!: IntersectionObserver;
-    @observable.ref resizeObserver!: ResizeObserver;
+    @observable.ref resizeObserver!: ResizeObserverPolyfill;
 
     node!: HTMLDivElement | null;
     stickyNode!: HTMLDivElement | null;
@@ -103,10 +112,10 @@ export class Scrollable extends React.Component<{
         this.node!.scrollTo({behavior: scrollBehaviour, ...options});
     }
 
-    /** @see ScrollableContext.sticky */
+    /** @see ScrollableContext.portal */
     @action.bound
-    sticky(node: JSX.Element) {
-        return createPortal(node, this.stickyNode!);
+    portal(node: JSX.Element, dest: "root" | "sticky") {
+        return createPortal(node, dest === "root" ? (findDOMNode(this) as Element) : this.stickyNode!);
     }
 
     /** Permet de n'afficher le bouton que si le scroll a dépassé l'offset. */
@@ -152,7 +161,7 @@ export class Scrollable extends React.Component<{
     }
 
     render() {
-        const {children, className, hideBackToTop} = this.props;
+        const {children, className, hideBackToTop, innerRef} = this.props;
         const [Header = null, headerProps = null] = (this.isHeaderSticky && this.header) || [];
         return (
             <ScrollableContext.Provider
@@ -161,12 +170,12 @@ export class Scrollable extends React.Component<{
                     registerIntersect: this.registerIntersect,
                     registerScroll: this.registerScroll,
                     scrollTo: this.scrollTo,
-                    sticky: this.sticky
+                    portal: this.portal
                 }}
             >
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div className={`${className || ""} ${theme.container}`}>
+                        <div ref={innerRef} className={`${className || ""} ${theme.container}`}>
                             <Transition>
                                 {Header ? (
                                     <Header
@@ -210,10 +219,14 @@ export function Sticky({
     React.useLayoutEffect(() => context.registerScroll(top => node && setCondition(top >= node.offsetTop)), [node]);
     return condition ? (
         <>
-            {context.sticky(children)}
+            {context.portal(children, "sticky")}
             {placeholder}
         </>
     ) : (
         children
     );
 }
+
+export const Scrollable = React.forwardRef<HTMLDivElement, React.PropsWithChildren<ScrollableProps>>((props, ref) => (
+    <ScrollableComponent {...props} innerRef={ref} />
+));
