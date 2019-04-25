@@ -77,7 +77,13 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
         if (value && !isQuickSearch && keyResolver) {
-            this.query = i18next.t((await keyResolver(value)) || "") || value;
+            const label = i18next.t((await keyResolver(value)) || "");
+            runInAction(() => {
+                this.query = label || value;
+                if (label) {
+                    this.data.set(value, label);
+                }
+            });
         }
     }
 
