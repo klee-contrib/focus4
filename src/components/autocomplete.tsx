@@ -117,6 +117,10 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
         if (isQuickSearch) {
             this.value = "";
         }
+
+        if (!this.query) {
+            this.data.clear();
+        }
     }
 
     /**
