@@ -60,9 +60,16 @@ export class MainMenu extends React.Component<MainMenuProps> {
     // Permet de récupérer et d'actualiser la largeur du menu à l'exécution.
     componentDidMount() {
         this.menuWidth = (findDOMNode(this) as Element).clientWidth;
+        window.addEventListener("resize", this.componentDidUpdate);
     }
+
+    @action.bound
     componentDidUpdate() {
         this.menuWidth = (findDOMNode(this) as Element).clientWidth;
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.componentDidUpdate);
     }
 
     render() {
