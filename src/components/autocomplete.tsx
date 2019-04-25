@@ -115,6 +115,10 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
         if (isQuickSearch) {
             this.value = "";
         }
+
+        if (!this.query) {
+            this.data.clear();
+        }
     }
 
     /**
