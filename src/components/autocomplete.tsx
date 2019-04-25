@@ -62,7 +62,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
     @observable protected query = "";
 
     /** Résultat de la recherche d'autocomplétion. */
-    protected readonly data = observable.map<string>();
+    protected readonly data = observable.map<T extends "string" ? string : number>();
 
     /** Résultats sous format JSON, pour l'autocomplete. */
     @computed.struct
@@ -79,7 +79,13 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
     async componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
         if ((value || value === 0) && !isQuickSearch && keyResolver) {
-            this.query = `${i18next.t((await keyResolver(value)) || "") || value}`;
+            const label = i18next.t((await keyResolver(value)) || "");
+            runInAction(() => {
+                this.query = label || `${value}`;
+                if (label) {
+                    this.data.set(value, label);
+                }
+            });
         }
     }
 
@@ -98,10 +104,12 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
      */
     @action.bound
     onQueryChange(query: string) {
-        const {onQueryChange, onChange, isQuickSearch} = this.props;
+        const {onQueryChange, onChange, isQuickSearch, type} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
-        const label = this.value && this.data.get(this.value);
+        const label =
+            this.value &&
+            this.data.get((type === "number" ? +this.value : this.value) as T extends "string" ? string : number);
         if (label !== query && onChange) {
             onChange(undefined);
         }
@@ -140,8 +148,8 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
         this.value = value;
 
         if (onChange) {
-            const v = type === "number" ? +value : value;
-            onChange(v || v === 0 ? (v as any) : undefined);
+            const v = (type === "number" ? +value : value) as T extends "string" ? string : number;
+            onChange(v || v === 0 ? v : undefined);
         }
     }
 
