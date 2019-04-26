@@ -2,7 +2,8 @@ import {debounce, flatten} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
 import {config} from "../../config";
-import {buildNode, Entity, EntityToType, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../../entity";
+import {buildNode, nodeToFormNode, toFlatValues} from "../../entity/store";
+import {Entity, EntityToType, FormEntityField, FormNode} from "../../entity/types";
 
 import {ListStoreBase} from "./base";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
