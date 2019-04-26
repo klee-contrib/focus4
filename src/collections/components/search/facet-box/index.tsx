@@ -34,7 +34,7 @@ export interface FacetBoxProps<T> {
      */
     chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
-    customFacetComponents?: {[facet: string]: React.ReactType<FacetProps>};
+    customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
@@ -65,7 +65,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
             store
         } = this.props;
         if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
-            let FacetComponent: React.ReactType<FacetProps> = Facet;
+            let FacetComponent: React.ElementType<FacetProps> = Facet;
 
             const FacetCustom = customFacetComponents[facet.code];
             if (FacetCustom) {

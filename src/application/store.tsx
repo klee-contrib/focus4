@@ -14,13 +14,13 @@ export interface ApplicationAction {
     /** Précise si le header peut se déployer ou non. */
     canDeploy?: boolean;
     /** Composant de header gauche. */
-    barLeft?: React.ReactElement<any>;
+    barLeft?: React.ReactElement;
     /** Composant de header droit. */
-    barRight?: React.ReactElement<any>;
+    barRight?: React.ReactElement;
     /** Composant de cartridge, affiché en mode déployé. */
-    cartridge?: React.ReactElement<any>;
+    cartridge?: React.ReactElement;
     /** Composant de résumé, affiché en mode replié. */
-    summary?: React.ReactElement<any>;
+    summary?: React.ReactElement;
 }
 
 /** Store applicatif, regroupant des informations tranverses, et en particulier la gestion du header. */

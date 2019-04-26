@@ -59,9 +59,11 @@ function patchClass<T extends RCL>(
         this[`${type}_${propertyKey}`]();
     }
 
+    // tslint:disable-next-line: deprecation
     const baseCWM = instance.componentWillMount;
     const baseCWUM = instance.componentWillUnmount;
 
+    // tslint:disable-next-line: deprecation
     instance.componentWillMount = !baseCWM
         ? componentWillMount
         : function(this: RCL) {

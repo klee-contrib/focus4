@@ -20,7 +20,7 @@ const Theme = themr("searchBar", styles);
 /** Props de la SearchBar. */
 export interface SearchBarProps<T, C extends StoreNode> {
     /** Rendu du composant du critère. */
-    criteriaComponent?: React.ReactElement<any>;
+    criteriaComponent?: React.ReactElement;
     /** Désactive la gestion des critères dans le champ texte. */
     disableInputCriteria?: boolean;
     /** Préfixe i18n pour les libellés et les icônes. Par défaut : "focus" */

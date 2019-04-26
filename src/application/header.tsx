@@ -26,4 +26,5 @@ export const Header = observer(() => (
     </HeaderScrolling>
 ));
 
+// tslint:disable-next-line: no-default-export
 export default Header;

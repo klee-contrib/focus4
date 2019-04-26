@@ -29,7 +29,7 @@ export interface SearchProperties {
 }
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T>{
+export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBase<T> {
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
 
