@@ -163,6 +163,10 @@ export function makeFormActions<
                 if (savedMessage) {
                     messageStore.addSuccessMessage(savedMessage);
                 }
+
+                // On ne force plus l'affichage des erreurs une fois la sauvegarde effectuée, puisqu'il n'y a plus.
+                this.formContext.forceErrorDisplay = false;
+
                 if (config.onFormSaved) {
                     config.onFormSaved(name as "default");
                 }
