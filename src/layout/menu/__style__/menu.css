@@ -1,48 +1,5 @@
 @import "../../../style/menu.css";
 
-.animate {
-    animation-duration: 0.2s;
-    animation-fill-mode: both;
-}
-
-@keyframes aOpen {
-    0% {
-        opacity: 0;
-        transform: translate3d(-500px, 0, 0);
-    }
-
-    5% {
-        opacity: 1;
-    }
-
-    to {
-        transform: none;
-    }
-}
-
-@keyframes aClose {
-    0% {
-        transform: none;
-    }
-
-    95% {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 0;
-        transform: translate3d(-500px, 0, 0);
-    }
-}
-
-.open {
-    animation-name: aOpen;
-}
-
-.close {
-    animation-name: aClose;
-}
-
 .menu {
     height: 100vh;
     z-index: calc(var(--z-index-high) + 1);
@@ -54,7 +11,6 @@
     position: relative;
     background: var(--main-menu-background);
     height: 100%;
-    z-index: calc(var(--z-index-high) + 2);
     overflow: auto;
 }
 
@@ -89,16 +45,7 @@
 }
 
 .panel {
-    position: absolute;
-    z-index: var(--z-index-high);
-    transition: top 0.1s ease-out;
-}
-
-.panelWrapper {
-    position: absolute;
-    height: 100vh;
-    width: 100vw;
-    top: 0;
+    position: fixed;
 }
 
 .active {
