@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {observer, Observer} from "mobx-react";
+import {observer, useObserver} from "mobx-react";
 import * as React from "react";
 
 import {themr, useTheme} from "../../../theme";
@@ -49,15 +49,15 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
     protected TableLine = React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) => {
         const {onLineClick, theme} = this.props;
         const {clickable} = useTheme("list", styles, theme);
-        return (
+        return useObserver(() => (
             <tr ref={ref} className={onLineClick ? clickable : undefined}>
                 {this.props.columns.map(({className, content}, idx) => (
                     <td className={className} key={idx} onClick={() => (onLineClick ? onLineClick(data) : undefined)}>
-                        <Observer>{() => content(data)}</Observer>
+                        {content(data)}
                     </td>
                 ))}
             </tr>
-        );
+        ));
     });
 
     /** Affiche le corps du tableau. */
