@@ -1,5 +1,5 @@
 import {observable} from "mobx";
-import {useObserver} from "mobx-react";
+import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {useTheme} from "../../theme";

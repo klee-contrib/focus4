@@ -1,9 +1,8 @@
 import * as React from "react";
 
-import {themr} from "../../../theme";
+import {useTheme} from "../../../theme";
 
 import * as styles from "../__style__/header.css";
-const Theme = themr("header", styles);
 
 /** Props du HeaderSummary. */
 export interface HeaderSummaryProps {
@@ -14,7 +13,7 @@ export interface HeaderSummaryProps {
     };
 }
 
-/** Summary, doit être affiché dans `HeaderTopRow` et est masqué si le header est replié. */
 export function HeaderSummary({children, theme: pTheme}: HeaderSummaryProps) {
-    return <Theme theme={pTheme}>{theme => <div className={`${theme.item} ${theme.middle}`}>{children}</div>}</Theme>;
+    const theme = useTheme("header", styles, pTheme);
+    return <div className={`${theme.item} ${theme.middle}`}>{children}</div>;
 }

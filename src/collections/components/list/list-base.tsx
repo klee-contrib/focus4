@@ -8,6 +8,7 @@ import {getIcon, ScrollableContext} from "../../../components";
 
 import {LineStyle} from "./line";
 
+import {disposeOnUnmount} from "mobx-react";
 import * as styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
@@ -40,6 +41,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     @observable displayedCount = this.props.perPage;
 
     /** (Ré)initialise la pagination dès que les données affichées changent. */
+    @disposeOnUnmount
     protected countResetter = observe(
         (this as any) as {displayedData: T[]},
         "displayedData",
@@ -55,10 +57,6 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
             }
         }
     );
-
-    componentWillUnmount() {
-        this.countResetter();
-    }
 
     /** Les données. */
     protected abstract get data(): T[];

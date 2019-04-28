@@ -2,11 +2,10 @@ import i18next from "i18next";
 import React from "react";
 import {RadioButton, RadioGroup} from "react-toolbox/lib/radio";
 
-import {themr} from "../theme";
+import {useTheme} from "../theme";
 
 import * as styles from "./__style__/boolean-radio.css";
 export type BooleanRadioStyle = Partial<typeof styles>;
-const Theme = themr("booleanRadio", styles);
 
 export interface BooleanRadioProps {
     /** Disabled radio-select, default to: false */
@@ -37,22 +36,19 @@ export function BooleanRadio({
     theme: pTheme,
     value
 }: BooleanRadioProps) {
+    const theme = useTheme("booleanRadio", styles, pTheme);
     return (
-        <Theme theme={pTheme}>
-            {theme => (
-                <>
-                    <RadioGroup
-                        name={name}
-                        value={value === true ? "true" : value === false ? "false" : undefined}
-                        onChange={(x: string) => onChange(x === "true")}
-                        className={theme.radio}
-                    >
-                        <RadioButton label={i18next.t(labelYes)} value="true" disabled={disabled} />
-                        <RadioButton label={i18next.t(labelNo)} value="false" disabled={disabled} />
-                    </RadioGroup>
-                    {error ? <div>{error}</div> : null}
-                </>
-            )}
-        </Theme>
+        <>
+            <RadioGroup
+                name={name}
+                value={value === true ? "true" : value === false ? "false" : undefined}
+                onChange={(x: string) => onChange(x === "true")}
+                className={theme.radio}
+            >
+                <RadioButton label={i18next.t(labelYes)} value="true" disabled={disabled} />
+                <RadioButton label={i18next.t(labelNo)} value="false" disabled={disabled} />
+            </RadioGroup>
+            {error ? <div>{error}</div> : null}
+        </>
     );
 }

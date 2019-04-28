@@ -1,5 +1,6 @@
 import i18next from "i18next";
-import {observer, useObserver} from "mobx-react";
+import {observer} from "mobx-react";
+import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {themr, useTheme} from "../../../theme";

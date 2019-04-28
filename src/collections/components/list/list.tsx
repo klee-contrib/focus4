@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {action, autorun, comparer, computed, observable, reaction} from "mobx";
-import {observer} from "mobx-react";
+import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 import {IconButton} from "react-toolbox/lib/button";
@@ -110,12 +110,10 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     }
 
     componentWillUnmount() {
-        super.componentWillUnmount();
         window.removeEventListener("resize", this.updateByLine);
-        this.byLineUpdater();
-        this.detailCloser();
     }
 
+    @disposeOnUnmount
     protected byLineUpdater = autorun(this.updateByLine);
 
     /** Toggle le détail depuis la ligne. */
@@ -137,6 +135,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     }
 
     /** Réaction pour fermer le détail si la liste change. */
+    @disposeOnUnmount
     protected detailCloser = reaction(() => this.displayedData.map(this.props.itemKey), this.closeDetail, {
         fireImmediately: true,
         equals: comparer.structural
