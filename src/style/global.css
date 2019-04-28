@@ -1,0 +1,70 @@
+@import "react-toolbox/lib/colors.css";
+@import "react-toolbox/lib/variables.css";
+
+html {
+    color: var(--color-black);
+    font-size: var(--font-size-small);
+    line-height: 1.4;
+    font-family: var(--preferred-font);
+}
+
+body {
+    margin: 0;
+    animation-duration: var(--animation-duration);
+    animation-delay: var(--animation-delay);
+    animation-timing-function: var(--animation-curve-default);
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 24px 0;
+    font-weight: var(--font-weight-normal);
+}
+
+h1 {
+    font-size: calc(3.5 * var(--font-size));
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: calc(2.8 * var(--font-size));
+    line-height: 48px;
+}
+
+h3 {
+    font-size: calc(2.2 * var(--font-size));
+    line-height: 40px;
+}
+
+h4 {
+    font-size: calc(1.5 * var(--font-size));
+    line-height: 32px;
+}
+
+h5 {
+    font-size: calc(1.25 * var(--font-size));
+    font-weight: var(--font-weight-semi-bold);
+    line-height: 1;
+    letter-spacing: 0.02em;
+}
+
+h6 {
+    font-size: var(--font-size);
+    line-height: 24px;
+    letter-spacing: 0.04em;
+}

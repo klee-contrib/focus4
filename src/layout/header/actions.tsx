@@ -6,6 +6,7 @@ import Tooltip, {TooltipProps} from "react-toolbox/lib/tooltip";
 
 const TooltipButton = Tooltip(Button);
 
+import {defaultPose} from "../../animation";
 import {ButtonMenu, getIcon, MenuItem} from "../../components";
 import {useTheme} from "../../theme";
 
@@ -86,17 +87,11 @@ const PosedDiv = posed.div({
     enter: {
         y: "0%",
         opacity: 1,
-        transition: {
-            y: {type: "spring", stiffness: 170, damping: 26},
-            opacity: "tween"
-        }
+        ...defaultPose
     },
     exit: {
         y: "-50%",
         opacity: 0.3,
-        transition: {
-            y: {type: "spring", stiffness: 170, damping: 26},
-            opacity: "tween"
-        }
+        ...defaultPose
     }
 });

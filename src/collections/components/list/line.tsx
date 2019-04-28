@@ -6,8 +6,8 @@ import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
 import {IconButton} from "react-toolbox/lib/button";
 
+import {springPose} from "../../../animation";
 import {getIcon} from "../../../components";
-import {config} from "../../../config";
 import {EntityField, FieldEntry, stringFor} from "../../../entity";
 import {themr} from "../../../theme";
 
@@ -236,12 +236,12 @@ const DraggableLi = posed(
         applyAtStart: {opacity: 0},
         width: ({width}: {width?: number}) => (width ? 0 : undefined),
         height: 0,
-        transition: config.poseTransition
+        ...springPose
     },
     idle: {
         applyAtStart: {opacity: 1},
         width: ({width}: {width?: number}) => width || "100%",
         height: ({height}: {height?: number}) => height || "auto",
-        transition: config.poseTransition
+        ...springPose
     }
 });

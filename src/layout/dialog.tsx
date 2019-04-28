@@ -3,10 +3,11 @@ import {Button} from "react-toolbox/lib/button";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
+import {cssTransitionProps} from "../animation";
 import {ScrollableContext} from "../components";
 import {useTheme} from "../theme";
 
-import {cssTransitionProps, Overlay, overlayStyles} from "./overlay";
+import {Overlay, overlayStyles} from "./overlay";
 
 import * as styles from "./__style__/dialog.css";
 export type DialogStyle = Partial<typeof styles>;

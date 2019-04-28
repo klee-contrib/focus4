@@ -4,6 +4,7 @@ import * as React from "react";
 import posed, {Transition} from "react-pose";
 import {Button, ButtonProps, IconButton, IconButtonTheme} from "react-toolbox/lib/button";
 
+import {defaultPose} from "../../animation";
 import {useTheme} from "../../theme";
 
 import {MenuContext} from "./context";
@@ -90,13 +91,11 @@ const PosedDiv = posed.div({
     enter: {
         width: "auto",
         opacity: 1,
-        delay: 70,
-        transition: {type: "tween", duration: 350, ease: [0.4, 0, 0.2, 1]}
+        ...defaultPose
     },
     exit: {
         width: 0,
         opacity: 0.7,
-        delay: 70,
-        transition: {type: "tween", duration: 350, ease: [0.4, 0, 0.2, 1]}
+        ...defaultPose
     }
 });

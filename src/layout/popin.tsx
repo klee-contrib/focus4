@@ -2,10 +2,11 @@ import * as React from "react";
 import {IconButton} from "react-toolbox/lib/button";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
+import {cssTransitionProps} from "../animation";
 import {getIcon, ScrollableContext} from "../components";
 import {useTheme} from "../theme";
 
-import {cssTransitionProps, Overlay, overlayStyles} from "./overlay";
+import {Overlay, overlayStyles} from "./overlay";
 import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/popin.css";

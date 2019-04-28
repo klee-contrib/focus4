@@ -35,23 +35,3 @@ export function Overlay({children, onClick, theme: pTheme}: React.PropsWithChild
         </div>
     );
 }
-
-export function cssTransitionProps(theme: {enter: string; exit: string}) {
-    const {animationDelay, animationDuration} = window.getComputedStyle(document.body);
-    return {
-        timeout: toMs(animationDelay) + toMs(animationDuration),
-        classNames: {
-            enter: theme.exit,
-            enterActive: theme.enter,
-            exitActive: theme.exit
-        }
-    };
-}
-
-function toMs(d: string) {
-    if (d.endsWith("s")) {
-        return +d.substring(0, d.length - 1) * 1000;
-    } else {
-        return +d.substring(0, d.length - 2);
-    }
-}
