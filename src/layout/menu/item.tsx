@@ -34,7 +34,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                 const liRect = li.current!.getBoundingClientRect();
                 state.hasSubMenu = !state.hasSubMenu;
                 state.top = liRect.top;
-                state.left = liRect.width;
+                state.left = liRect.left + liRect.width;
             }
             if (onClick) {
                 onClick();
@@ -88,13 +88,15 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
 
 const PosedDiv = posed.div({
     enter: {
-        x: "0%",
+        width: "auto",
         opacity: 1,
-        transition: {type: "tween"}
+        delay: 70,
+        transition: {type: "tween", duration: 350, ease: [0.4, 0, 0.2, 1]}
     },
     exit: {
-        x: "-100%",
-        opacity: 0,
-        transition: {type: "tween"}
+        width: 0,
+        opacity: 0.7,
+        delay: 70,
+        transition: {type: "tween", duration: 350, ease: [0.4, 0, 0.2, 1]}
     }
 });
