@@ -1,13 +1,12 @@
 import i18next from "i18next";
 import React from "react";
 
-import {themr} from "../theme";
+import {useTheme} from "../theme";
 
 import {Checkbox} from "./checkbox";
 
 import * as styles from "./__style__/select-checkbox.css";
 export type SelectCheckboxStyle = Partial<typeof styles>;
-const Theme = themr("selectCheckbox", styles);
 
 function clickHandlerFactory(
     isDisabled: boolean,
@@ -73,40 +72,37 @@ export function SelectCheckbox<T extends "string" | "number">({
     valueKey,
     values
 }: SelectCheckboxProps<T>) {
+    const theme = useTheme("selectCheckbox", styles, pTheme);
     return (
-        <Theme theme={pTheme}>
-            {theme => (
-                <div className={theme.select}>
-                    {label && <h5>{i18next.t(label)}</h5>}
-                    <ul>
-                        {values.map(option => {
-                            const optVal = (option as any)[valueKey];
-                            const optLabel = (option as any)[labelKey];
+        <div className={theme.select}>
+            {label && <h5>{i18next.t(label)}</h5>}
+            <ul>
+                {values.map(option => {
+                    const optVal = (option as any)[valueKey];
+                    const optLabel = (option as any)[labelKey];
 
-                            const isSelected = value ? !!(value as any).find((val: any) => optVal === val) : false;
-                            const clickHandler = clickHandlerFactory(disabled, isSelected, value, optVal, onChange);
+                    const isSelected = value ? !!(value as any).find((val: any) => optVal === val) : false;
+                    const clickHandler = clickHandlerFactory(disabled, isSelected, value, optVal, onChange);
 
-                            return (
-                                <li key={optVal} onClick={clickHandler} className={theme!.option}>
-                                    <Checkbox
-                                        name={`${name}-${optVal}`}
-                                        value={isSelected}
-                                        onClick={clickHandler}
-                                        disabled={
-                                            disabled ||
-                                            (maxSelectable !== undefined &&
-                                                maxSelectable === (value && value.length) &&
-                                                !isSelected)
-                                        }
-                                        label={i18next.t(optLabel)}
-                                    />
-                                </li>
-                            );
-                        })}
-                    </ul>
-                    {error ? <div>{error}</div> : null}
-                </div>
-            )}
-        </Theme>
+                    return (
+                        <li key={optVal} onClick={clickHandler} className={theme!.option}>
+                            <Checkbox
+                                name={`${name}-${optVal}`}
+                                value={isSelected}
+                                onClick={clickHandler}
+                                disabled={
+                                    disabled ||
+                                    (maxSelectable !== undefined &&
+                                        maxSelectable === (value && value.length) &&
+                                        !isSelected)
+                                }
+                                label={i18next.t(optLabel)}
+                            />
+                        </li>
+                    );
+                })}
+            </ul>
+            {error ? <div>{error}</div> : null}
+        </div>
     );
 }
