@@ -8,8 +8,8 @@ import {Button, IconButton} from "react-toolbox/lib/button";
 import {ChipTheme} from "react-toolbox/lib/chip";
 import {Input} from "react-toolbox/lib/input";
 
+import {defaultPose} from "../../../animation";
 import {ButtonMenu, getIcon, MenuItem} from "../../../components";
-import {config} from "../../../config";
 import {themr} from "../../../theme";
 
 import {isList, isSearch, ListStoreBase} from "../../store";
@@ -332,10 +332,10 @@ export function actionBarFor<T>(props: ActionBarProps<T>) {
 const PanningDiv = posed.div({
     exit: {
         height: 0,
-        transition: config.poseTransition
+        ...defaultPose
     },
     enter: {
         height: "auto",
-        transition: config.poseTransition
+        ...defaultPose
     }
 });

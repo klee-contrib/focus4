@@ -6,8 +6,8 @@ import posed, {Transition} from "react-pose";
 import {IconButton} from "react-toolbox/lib/button";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
+import {defaultPose} from "../../../animation";
 import {getIcon} from "../../../components";
-import {config} from "../../../config";
 import {themr} from "../../../theme";
 
 import {ListStoreBase} from "../../store";
@@ -424,12 +424,12 @@ const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
         applyAtStart: {overflow: "hidden"},
         applyAtEnd: {overflow: "visible"},
         height: "auto",
-        transition: config.poseTransition
+        ...defaultPose
     },
     exit: {
         applyAtStart: {overflow: "hidden"},
         applyAtEnd: {overflow: "visible"},
         height: 0,
-        transition: config.poseTransition
+        ...defaultPose
     }
 });
