@@ -16,17 +16,18 @@ const overlays = observable<() => void>([]);
 function onOverlayClick() {
     overlays[overlays.length - 1]();
 }
+function noop() {
+    /* */
+}
 
 export function Overlay({children, onClick, theme: pTheme}: React.PropsWithChildren<OverlayProps>) {
     const theme = useTheme("overlay", styles, pTheme);
 
     React.useEffect(() => {
-        if (onClick) {
-            overlays.push(onClick);
-            return () => {
-                overlays.remove(onClick);
-            };
-        }
+        overlays.push(onClick || noop);
+        return () => {
+            overlays.remove(onClick || noop);
+        };
     }, [onClick]);
 
     return (

@@ -9,9 +9,6 @@
     background: var(--popin-background);
     box-shadow: var(--shadow-4p);
     box-sizing: border-box;
-    transition: transform var(--animation-duration) var(--animation-curve-default);
-    transition-delay: var(--animation-delay);
-    transform: translateX(0%);
 }
 
 .left {
@@ -34,7 +31,9 @@
         font-size: 24px;
     }
 }
-.exit {
+
+.enter,
+.exit.exitActive {
     &.right {
         transform: translateX(100%);
     }
@@ -44,7 +43,16 @@
     }
 }
 
-.enter.left,
-.enter.right {
-    transform: translateX(0%);
+.enter.enterActive,
+.exit {
+    &.left,
+    &.right {
+        transform: translateX(0%);
+    }
+}
+
+.enterActive,
+.exitActive {
+    transition: transform var(--animation-duration) var(--animation-curve-default);
+    transition-delay: var(--animation-delay);
 }

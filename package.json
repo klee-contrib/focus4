@@ -14,7 +14,7 @@
         "clean": "node scripts/clean.js",
         "prepublishOnly": "node scripts/clean.js && node scripts/tcm.js && tsc --outDir ./ && node scripts/copy-css.js ./",
         "postinstall": "node scripts/patch-types-react.js",
-        "postpublish": "rm -rf config.js config.d.ts index.js index.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf collections components entity layout message network router style testing translation theme",
+        "postpublish": "rm -rf animation.js animation.d.ts config.js config.d.ts index.js index.d.ts reference.js reference.d.ts user.js user.d.ts util.js util.d.ts && rm -rf collections components entity layout message network router style testing translation theme",
         "start": "tsc && node scripts/copy-css.js dist",
         "start-ci": "tsc | sed -E 's|(.+)\\((.+),(.+)\\): (\\w+) (.+): (.+)|\\#\\#vso[task.logissue type=\\4;sourcepath='$PWD'/\\1;linenumber=\\2;columnnumber=\\3;code=\\5]\\6|g' 1>&2",
         "stylelint": "stylelint src/**/*.css",

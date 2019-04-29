@@ -21,13 +21,24 @@ export const springPose = {
     transition: {type: "spring", stiffness: 170, damping: 26, restDelta: 1, restSpeed: 1000} as AnimationDef
 };
 
-export function cssTransitionProps(theme: {enter: string; exit: string}) {
+export function cssTransitionProps({
+    enter,
+    enterActive,
+    exit,
+    exitActive
+}: {
+    enter: string;
+    enterActive: string;
+    exit: string;
+    exitActive: string;
+}) {
     return {
         timeout: delay + duration,
         classNames: {
-            enter: theme.exit,
-            enterActive: theme.enter,
-            exitActive: theme.exit
+            enter,
+            enterActive,
+            exit,
+            exitActive
         }
     };
 }
