@@ -23,21 +23,25 @@
     min-width: 50%;
     max-width: 96%;
     overflow: var(--overflow);
-    opacity: 1;
-    transform: translateY(0%);
-    transition: opacity var(--animation-duration) var(--animation-curve-default),
-        transform var(--animation-duration) var(--animation-curve-default);
-    transition-delay: var(--animation-delay);
 }
 
-.exit .dialog {
+.enter .dialog,
+.exit.exitActive .dialog {
     opacity: 0;
     transform: translateY(calc(-1 * var(--dialog-translate-y)));
 }
 
-.enter .dialog {
+.enter.enterActive .dialog,
+.exit .dialog {
     opacity: 1;
     transform: translateY(0%);
+}
+
+.enterActive .dialog,
+.exitActive .dialog {
+    transition: opacity var(--animation-duration) var(--animation-curve-default),
+        transform var(--animation-duration) var(--animation-curve-default);
+    transition-delay: var(--animation-delay);
 }
 
 .title {

@@ -11,14 +11,20 @@
     bottom: 0;
     background: var(--overlay-color);
     opacity: var(--overlay-opacity);
-    transition: opacity var(--animation-duration) var(--animation-curve-default);
-    transition-delay: var(--animation-delay);
 }
 
-.exit {
+.enter,
+.exit.exitActive {
     opacity: 0;
 }
 
-.enter {
+.enter.enterActive,
+.exit {
     opacity: var(--overlay-opacity);
+}
+
+.enterActive,
+.exitActive {
+    transition: opacity var(--animation-duration) var(--animation-curve-default);
+    transition-delay: var(--animation-delay);
 }

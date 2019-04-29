@@ -20,6 +20,8 @@ export interface PopinProps {
     closePopin: () => void;
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
+    /** Cache le bouton pour fermer la popin. */
+    hideCloseButton?: boolean;
     /** Préfixe i18n pour l'icône de fermeture. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Popin ouverte (ou fermée). */
@@ -40,6 +42,7 @@ export function Popin({
     children,
     closePopin,
     hideBackToTop,
+    hideCloseButton,
     i18nPrefix = "focus",
     opened,
     preventOverlayClick,
@@ -68,11 +71,13 @@ export function Popin({
                         hideBackToTop={hideBackToTop}
                         scrollBehaviour={scrollBehaviour}
                     >
-                        <IconButton
-                            className={theme.close}
-                            icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
-                            onClick={closePopin}
-                        />
+                        {!hideCloseButton ? (
+                            <IconButton
+                                className={theme.close}
+                                icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
+                                onClick={closePopin}
+                            />
+                        ) : null}
                         {children}
                     </Scrollable>
                 </CSSTransition>
