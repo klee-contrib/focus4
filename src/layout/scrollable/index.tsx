@@ -1,13 +1,14 @@
 import "intersection-observer";
 
-import {range} from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {memoize, range} from "lodash";
+import {action, autorun, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import {spring, styler} from "popmotion";
 import React from "react";
 import {createPortal, findDOMNode} from "react-dom";
 import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";
+import {Styler} from "stylefire";
 
 import {springPose} from "../../animation";
 import {ScrollableContext} from "../../components";
@@ -41,7 +42,8 @@ export interface ScrollableProps {
 @observer
 class ScrollableComponent extends React.Component<ScrollableProps> {
     header?: [React.ElementType, React.HTMLProps<HTMLElement>, HTMLElement];
-    node!: HTMLDivElement;
+    containerNode!: HTMLDivElement;
+    scrollableNode!: HTMLDivElement;
     stickyNode!: HTMLDivElement;
 
     @observable.ref intersectionObserver!: IntersectionObserver;
@@ -50,18 +52,8 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
         deep: false
     });
-    readonly stickies = observable.map<React.Key, [React.RefObject<HTMLElement>, HTMLElement]>(new Map(), {
-        deep: false
-    });
-
-    @computed
-    get stickyStylers() {
-        return Array.from(this.stickies.values())
-            .map(([stickyRef, parentNode]) =>
-                stickyRef.current ? ([styler(stickyRef.current), parentNode] as const) : []
-            )
-            .filter(x => x.length);
-    }
+    readonly stickyStylers = new Map<React.Key, Styler>();
+    readonly stickyParentNodes = new Map<React.Key, HTMLElement>();
 
     @observable hasBtt = false;
     @observable headerHeight = 0;
@@ -106,7 +98,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     @action.bound
     scrollTo(options?: ScrollToOptions) {
         const {scrollBehaviour = "smooth"} = this.props;
-        this.node.scrollTo({behavior: scrollBehaviour, ...options});
+        this.scrollableNode.scrollTo({behavior: scrollBehaviour, ...options});
     }
 
     /** @see ScrollableContext.portal */
@@ -116,23 +108,34 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             if (!node.key) {
                 throw new Error("Un élément sticky doit avoir une key.");
             }
-
-            if (!this.stickies.has(node.key)) {
-                this.stickies.set(node.key, [React.createRef(), parentNode]);
-            }
-
-            const [stickyRef] = this.stickies.get(node.key)!;
-
-            return createPortal(React.cloneElement(node, {ref: stickyRef}), this.stickyNode);
+            this.stickyParentNodes.set(node.key, parentNode);
+            return createPortal(React.cloneElement(node, {ref: this.setRef(node.key)}), this.stickyNode);
         } else {
-            return createPortal(node, findDOMNode(this) as Element);
+            return createPortal(node, this.containerNode);
         }
     }
 
+    setRef = memoize((key: React.Key) => (ref: HTMLElement | null) => {
+        if (!ref && this.stickyStylers.has(key)) {
+            this.stickyStylers.delete(key);
+            this.stickyParentNodes.delete(key);
+        } else if (ref && !this.stickyStylers.has(key)) {
+            const stickyRef = styler(ref);
+            this.stickyStylers.set(key, stickyRef);
+            stickyRef.set({
+                top:
+                    this.stickyParentNodes.get(key)!.offsetTop -
+                    this.scrollableNode.scrollTop -
+                    this.stickyNode.offsetTop
+            });
+        }
+    });
+
     componentDidMount() {
-        this.node.addEventListener("scroll", this.onScroll);
+        this.containerNode = findDOMNode(this) as HTMLDivElement;
+        this.scrollableNode.addEventListener("scroll", this.onScroll);
         this.resizeObserver = new ResizeObserver(() => this.onScroll());
-        this.resizeObserver.observe(this.node);
+        this.resizeObserver.observe(this.scrollableNode);
         this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
@@ -144,13 +147,13 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                         onIntersect(e.intersectionRatio, e.isIntersecting);
                     }
                 }),
-            {root: this.node, threshold: range(0, 105, 5).map(t => t / 100)}
+            {root: this.scrollableNode, threshold: range(0, 105, 5).map(t => t / 100)}
         );
     }
 
     componentWillUnmount() {
-        if (this.node) {
-            this.node.removeEventListener("scroll", this.onScroll);
+        if (this.scrollableNode) {
+            this.scrollableNode.removeEventListener("scroll", this.onScroll);
         }
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
@@ -160,23 +163,17 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         }
     }
 
-    initIEorEdge = false;
-
     @action.bound
     onScroll() {
-        this.width = this.node.clientWidth;
-        this.hasBtt = this.node.scrollTop + this.headerHeight > (this.props.backToTopOffset || 200);
+        this.width = this.scrollableNode.clientWidth;
+        this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 200);
 
         if (!isIEorEdge()) {
-            this.stickyStylers.forEach(([stickyRef, parentNode]) => {
+            this.stickyStylers.forEach((stickyRef, key) => {
+                const parentNode = this.stickyParentNodes.get(key)!;
                 stickyRef.set({
-                    top: Math.max(0, parentNode.offsetTop - this.node.scrollTop - this.stickyNode.offsetTop)
+                    top: Math.max(0, parentNode.offsetTop - this.scrollableNode.scrollTop - this.stickyNode.offsetTop)
                 });
-            });
-        } else if (!this.initIEorEdge) {
-            this.stickyStylers.forEach(([stickyRef, parentNode]) => {
-                stickyRef.set({top: parentNode.offsetTop});
-                this.initIEorEdge = true;
             });
         }
     }
@@ -189,16 +186,18 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             spring({...springPose.transition, ...transition}).start((top: number) => {
                 sticky.set({top});
                 if (!isIEorEdge()) {
-                    this.stickyStylers.forEach(([stickyRef, parentNode]) =>
+                    this.stickyStylers.forEach((stickyRef, key) => {
+                        const parentNode = this.stickyParentNodes.get(key)!;
                         stickyRef.set({
-                            top: Math.max(0, parentNode.offsetTop - this.node.scrollTop - top)
-                        })
-                    );
+                            top: Math.max(0, parentNode.offsetTop - this.scrollableNode.scrollTop - top)
+                        });
+                    });
                 }
             });
 
             if (isIEorEdge()) {
-                this.stickyStylers.forEach(([stickyRef, parentNode]) => {
+                this.stickyStylers.forEach((stickyRef, key) => {
+                    const parentNode = this.stickyParentNodes.get(key)!;
                     const transition2 = this.isHeaderSticky
                         ? {from: parentNode.offsetTop, to: 0}
                         : {from: 0, to: parentNode.offsetTop};
@@ -247,7 +246,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                                 <div
                                     key="scrollable"
                                     className={theme.scrollable}
-                                    ref={div => div && (this.node = div)}
+                                    ref={div => div && (this.scrollableNode = div)}
                                 >
                                     {this.intersectionObserver ? children : null}
                                 </div>
