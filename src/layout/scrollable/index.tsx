@@ -1,15 +1,13 @@
 import "intersection-observer";
-(document as any).msCSSOMElementFloatMetrics = true;
 
-import ResizeObserverPolyfill from "@juggle/resize-observer";
-import {ResizeObserverCallback} from "@juggle/resize-observer/lib/ResizeObserverCallback";
 import {range} from "lodash";
-import {action, autorun, observable} from "mobx";
+import {action, autorun, computed, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import {spring, styler} from "popmotion";
 import React from "react";
 import {createPortal, findDOMNode} from "react-dom";
 import {Transition} from "react-pose";
+import ResizeObserverPolyfill from "resize-observer-polyfill";
 
 import {springPose} from "../../animation";
 import {ScrollableContext} from "../../components";
@@ -22,8 +20,7 @@ import * as styles from "../__style__/scrollable.css";
 const Theme = themr("scrollable", styles);
 export type ScrollableStyle = Partial<typeof styles>;
 
-const ResizeObserver: new (callback: ResizeObserverCallback) => ResizeObserverPolyfill =
-    (window as any).ResizeObserver || ResizeObserverPolyfill;
+const ResizeObserver = (window as any).ResizeObserver || ResizeObserverPolyfill;
 
 export interface ScrollableProps {
     /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 200. */
@@ -53,7 +50,18 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
         deep: false
     });
-    readonly stickies = new Map<React.Key, [React.RefObject<HTMLElement>, HTMLElement]>();
+    readonly stickies = observable.map<React.Key, [React.RefObject<HTMLElement>, HTMLElement]>(new Map(), {
+        deep: false
+    });
+
+    @computed
+    get stickyStylers() {
+        return Array.from(this.stickies.values())
+            .map(([stickyRef, parentNode]) =>
+                stickyRef.current ? ([styler(stickyRef.current), parentNode] as const) : []
+            )
+            .filter(x => x.length);
+    }
 
     @observable hasBtt = false;
     @observable headerHeight = 0;
@@ -152,17 +160,25 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         }
     }
 
+    initIEorEdge = false;
+
     @action.bound
     onScroll() {
         this.width = this.node.clientWidth;
         this.hasBtt = this.node.scrollTop + this.headerHeight > (this.props.backToTopOffset || 200);
-        this.stickies.forEach(([stickyRef, parentNode]) => {
-            if (stickyRef.current) {
-                styler(stickyRef.current).set({
+
+        if (!isIEorEdge()) {
+            this.stickyStylers.forEach(([stickyRef, parentNode]) => {
+                stickyRef.set({
                     top: Math.max(0, parentNode.offsetTop - this.node.scrollTop - this.stickyNode.offsetTop)
                 });
-            }
-        });
+            });
+        } else if (!this.initIEorEdge) {
+            this.stickyStylers.forEach(([stickyRef, parentNode]) => {
+                stickyRef.set({top: parentNode.offsetTop});
+                this.initIEorEdge = true;
+            });
+        }
     }
 
     @disposeOnUnmount
@@ -172,14 +188,27 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             const sticky = styler(this.stickyNode);
             spring({...springPose.transition, ...transition}).start((top: number) => {
                 sticky.set({top});
-                this.stickies.forEach(([stickyRef, parentNode]) => {
-                    if (stickyRef.current) {
-                        styler(stickyRef.current).set({
+                if (!isIEorEdge()) {
+                    this.stickyStylers.forEach(([stickyRef, parentNode]) =>
+                        stickyRef.set({
                             top: Math.max(0, parentNode.offsetTop - this.node.scrollTop - top)
-                        });
-                    }
-                });
+                        })
+                    );
+                }
             });
+
+            if (isIEorEdge()) {
+                this.stickyStylers.forEach(([stickyRef, parentNode]) => {
+                    const transition2 = this.isHeaderSticky
+                        ? {from: parentNode.offsetTop, to: 0}
+                        : {from: 0, to: parentNode.offsetTop};
+                    spring({...springPose.transition, ...transition2}).start((top: number) => {
+                        stickyRef.set({
+                            top
+                        });
+                    });
+                });
+            }
         }
     });
 
@@ -235,3 +264,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
 export const Scrollable = React.forwardRef<HTMLDivElement, React.PropsWithChildren<ScrollableProps>>((props, ref) => (
     <ScrollableComponent {...props} innerRef={ref} />
 ));
+
+function isIEorEdge() {
+    return navigator.userAgent.match(/(Trident|Edge)/);
+}
