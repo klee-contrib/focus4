@@ -7,8 +7,6 @@ import * as React from "react";
 import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "../components";
 import {themr} from "../theme";
 
-import {Sticky} from "./scrollable";
-
 import * as styles from "./__style__/scrollspy-container.css";
 export type ScrollspyStyle = Partial<typeof styles>;
 const Theme = themr("scrollspy", styles);
@@ -113,8 +111,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                 <Theme theme={this.props.theme}>
                     {theme => (
                         <div ref={node => (this.node = node)} className={theme.scrollspy}>
-                            <Sticky parentNode={this.node}>
-                                <nav className={theme.menu}>
+                            {this.context.portal(
+                                <nav className={theme.menu} key="scrollspy">
                                     <MenuComponent
                                         activeClassName={theme.active}
                                         activeId={this.activeItem}
@@ -124,8 +122,9 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                                         }))}
                                         scrollToPanel={this.scrollToPanel}
                                     />
-                                </nav>
-                            </Sticky>
+                                </nav>,
+                                this.node
+                            )}
                             <div className={theme.content} style={{marginLeft: menuWidth}}>
                                 {children}
                             </div>

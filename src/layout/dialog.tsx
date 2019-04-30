@@ -59,7 +59,6 @@ export function Dialog({
                     </div>
                 </CSSTransition>
             ) : null}
-        </TransitionGroup>,
-        "root"
+        </TransitionGroup>
     );
 }

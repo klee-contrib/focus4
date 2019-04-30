@@ -25,12 +25,6 @@ export const ScrollableContext = React.createContext<{
      */
     registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void): () => void;
     /**
-     * Enregistre un listener sur le scroll du Scrollable.
-     * @param onScroll Le listener
-     * @returns Le disposer.
-     */
-    registerScroll(onScroll: (top: number, height: number) => void): () => void;
-    /**
      * Scrolle vers la position demandée.
      * @param options Options.
      */
@@ -38,10 +32,10 @@ export const ScrollableContext = React.createContext<{
     /**
      * Affiche un élement dans le Scrollable.
      * @param node Le noeud React.
-     * @param dest La racine ou la zone sticky du scrollable.
+     * @param parentNode SI renseigné, le noeud sera placé en zone sticky et suivra la position de ce noeud.
      * @returns Le Portal associé.
      */
-    portal(node: JSX.Element, dest: "root" | "sticky"): React.ReactPortal;
+    portal(node: JSX.Element, parentNode?: HTMLElement | null): React.ReactPortal;
 }>({} as any);
 
 /** Contexte d'un ScrollspyContainer, expose les méthodes associées. */
