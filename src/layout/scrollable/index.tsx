@@ -1,6 +1,6 @@
 import "intersection-observer";
 
-import {memoize, range} from "lodash";
+import {debounce, memoize, range} from "lodash";
 import {action, autorun, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import {spring, styler} from "popmotion";
@@ -167,14 +167,21 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     onScroll() {
         this.width = this.scrollableNode.clientWidth;
         this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 200);
+        if (isIEorEdge()) {
+            this.onScrollCoreDebounced();
+        } else {
+            this.onScrollCore();
+        }
+    }
 
+    onScrollCoreDebounced = debounce(() => this.onScrollCore(), 50);
+    onScrollCore() {
         if (!isIEorEdge()) {
-            this.stickyStylers.forEach((stickyRef, key) => {
-                const parentNode = this.stickyParentNodes.get(key)!;
-                stickyRef.set({
-                    top: Math.max(0, parentNode.offsetTop - this.scrollableNode.scrollTop - this.stickyNode.offsetTop)
-                });
-            });
+            this.setStickyRefs(this.stickyNode.offsetTop);
+        } else {
+            this.animateStickyRefs(
+                parentOffsetTop => parentOffsetTop - this.scrollableNode.scrollTop - this.stickyNode.offsetTop
+            );
         }
     }
 
@@ -185,31 +192,42 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             const sticky = styler(this.stickyNode);
             spring({...springPose.transition, ...transition}).start((top: number) => {
                 sticky.set({top});
-                if (!isIEorEdge()) {
-                    this.stickyStylers.forEach((stickyRef, key) => {
-                        const parentNode = this.stickyParentNodes.get(key)!;
-                        stickyRef.set({
-                            top: Math.max(0, parentNode.offsetTop - this.scrollableNode.scrollTop - top)
-                        });
-                    });
+                this.setStickyRefs(top);
+                if (isIEorEdge()) {
+                    this.onScrollCoreDebounced.cancel();
                 }
             });
 
             if (isIEorEdge()) {
-                this.stickyStylers.forEach((stickyRef, key) => {
-                    const parentNode = this.stickyParentNodes.get(key)!;
-                    const transition2 = this.isHeaderSticky
-                        ? {from: parentNode.offsetTop, to: 0}
-                        : {from: 0, to: parentNode.offsetTop};
-                    spring({...springPose.transition, ...transition2}).start((top: number) => {
-                        stickyRef.set({
-                            top
-                        });
-                    });
-                });
+                if (this.isHeaderSticky) {
+                    this.animateStickyRefs(() => 0);
+                }
             }
         }
     });
+
+    setStickyRefs(offsetTop: number) {
+        this.stickyStylers.forEach((stickyRef, key) => {
+            const parentNode = this.stickyParentNodes.get(key)!;
+            stickyRef.set({
+                top: Math.max(0, parentNode.offsetTop - this.scrollableNode.scrollTop - offsetTop)
+            });
+        });
+    }
+
+    animateStickyRefs(to: (parentOffsetTop: number) => number) {
+        this.stickyStylers.forEach((stickyRef, key) => {
+            const parentNode = this.stickyParentNodes.get(key)!;
+            const transition = {from: stickyRef.get("top"), to: Math.max(0, to(parentNode.offsetTop))};
+            if (transition.from !== transition.to) {
+                spring({...springPose.transition, ...transition}).start((top: number) => {
+                    stickyRef.set({
+                        top
+                    });
+                });
+            }
+        });
+    }
 
     render() {
         const {children, className, hideBackToTop, innerRef} = this.props;
