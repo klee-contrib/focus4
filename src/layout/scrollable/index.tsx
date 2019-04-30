@@ -1,14 +1,17 @@
 import "intersection-observer";
+(document as any).msCSSOMElementFloatMetrics = true;
 
 import ResizeObserverPolyfill from "@juggle/resize-observer";
 import {ResizeObserverCallback} from "@juggle/resize-observer/lib/ResizeObserverCallback";
 import {range} from "lodash";
-import {action, observable} from "mobx";
+import {action, autorun, observable} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
+import {spring, styler} from "popmotion";
 import React from "react";
 import {createPortal, findDOMNode} from "react-dom";
 import {Transition} from "react-pose";
 
+import {springPose} from "../../animation";
 import {ScrollableContext} from "../../components";
 import {themr} from "../../theme";
 
@@ -41,23 +44,21 @@ export interface ScrollableProps {
 @observer
 class ScrollableComponent extends React.Component<ScrollableProps> {
     header?: [React.ElementType, React.HTMLProps<HTMLElement>, HTMLElement];
-    stickyHeader?: HTMLElement | null;
-    @observable isHeaderSticky = false;
+    node!: HTMLDivElement;
+    stickyNode!: HTMLDivElement;
 
     @observable.ref intersectionObserver!: IntersectionObserver;
     @observable.ref resizeObserver!: ResizeObserverPolyfill;
 
-    node!: HTMLDivElement | null;
-    stickyNode!: HTMLDivElement | null;
-
-    readonly onScrolls = observable<(top: number, height: number) => void>([], {deep: false});
     readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
         deep: false
     });
+    readonly stickies = new Map<React.Key, [React.RefObject<HTMLElement>, HTMLElement]>();
 
     @observable hasBtt = false;
-    @observable width = 0;
     @observable headerHeight = 0;
+    @observable isHeaderSticky = false;
+    @observable width = 0;
 
     /** @see ScrollableContext.registerHeader */
     @action.bound
@@ -93,39 +94,37 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         };
     }
 
-    /** @see ScrollableContext.registerScroll */
-    @action.bound
-    registerScroll(onScroll: (top: number, height: number) => void) {
-        this.onScrolls.push(onScroll);
-
-        if (this.node) {
-            onScroll(this.node.scrollTop + this.headerHeight, this.node.clientHeight);
-        }
-
-        return () => this.onScrolls.remove(onScroll);
-    }
-
     /** @see ScrollableContext.scrollTo */
     @action.bound
     scrollTo(options?: ScrollToOptions) {
         const {scrollBehaviour = "smooth"} = this.props;
-        this.node!.scrollTo({behavior: scrollBehaviour, ...options});
+        this.node.scrollTo({behavior: scrollBehaviour, ...options});
     }
 
     /** @see ScrollableContext.portal */
     @action.bound
-    portal(node: JSX.Element, dest: "root" | "sticky") {
-        return createPortal(node, dest === "root" ? (findDOMNode(this) as Element) : this.stickyNode!);
+    portal(node: JSX.Element, parentNode?: HTMLElement | null) {
+        if (parentNode) {
+            if (!node.key) {
+                throw new Error("Un élément sticky doit avoir une key.");
+            }
+
+            if (!this.stickies.has(node.key)) {
+                this.stickies.set(node.key, [React.createRef(), parentNode]);
+            }
+
+            const [stickyRef] = this.stickies.get(node.key)!;
+
+            return createPortal(React.cloneElement(node, {ref: stickyRef}), this.stickyNode);
+        } else {
+            return createPortal(node, findDOMNode(this) as Element);
+        }
     }
 
-    /** Permet de n'afficher le bouton que si le scroll a dépassé l'offset. */
-    @disposeOnUnmount
-    bttScroll = this.registerScroll(top => (this.hasBtt = top > (this.props.backToTopOffset || 200)));
-
     componentDidMount() {
-        this.node!.addEventListener("scroll", this.onScroll);
+        this.node.addEventListener("scroll", this.onScroll);
         this.resizeObserver = new ResizeObserver(() => this.onScroll());
-        this.resizeObserver.observe(this.node!);
+        this.resizeObserver.observe(this.node);
         this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
@@ -155,10 +154,34 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
 
     @action.bound
     onScroll() {
-        this.width = this.node!.clientWidth;
-        this.headerHeight = (this.stickyHeader && this.stickyHeader.clientHeight) || 0;
-        this.onScrolls.forEach(onScroll => onScroll(this.node!.scrollTop + this.headerHeight, this.node!.clientHeight));
+        this.width = this.node.clientWidth;
+        this.hasBtt = this.node.scrollTop + this.headerHeight > (this.props.backToTopOffset || 200);
+        this.stickies.forEach(([stickyRef, parentNode]) => {
+            if (stickyRef.current) {
+                styler(stickyRef.current).set({
+                    top: Math.max(0, parentNode.offsetTop - this.node.scrollTop - this.stickyNode.offsetTop)
+                });
+            }
+        });
     }
+
+    @disposeOnUnmount
+    followHeader = autorun(() => {
+        const transition = this.isHeaderSticky ? {from: 0, to: this.headerHeight} : {from: this.headerHeight, to: 0};
+        if (transition.from !== transition.to) {
+            const sticky = styler(this.stickyNode);
+            spring({...springPose.transition, ...transition}).start((top: number) => {
+                sticky.set({top});
+                this.stickies.forEach(([stickyRef, parentNode]) => {
+                    if (stickyRef.current) {
+                        styler(stickyRef.current).set({
+                            top: Math.max(0, parentNode.offsetTop - this.node.scrollTop - top)
+                        });
+                    }
+                });
+            });
+        }
+    });
 
     render() {
         const {children, className, hideBackToTop, innerRef} = this.props;
@@ -168,7 +191,6 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                 value={{
                     registerHeader: this.registerHeader,
                     registerIntersect: this.registerIntersect,
-                    registerScroll: this.registerScroll,
                     scrollTo: this.scrollTo,
                     portal: this.portal
                 }}
@@ -180,7 +202,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                                 {Header ? (
                                     <Header
                                         {...headerProps}
-                                        ref={(stickyHeader: any) => (this.stickyHeader = stickyHeader)}
+                                        ref={(ref: any) => (this.headerHeight = (ref && ref.clientHeight) || 0)}
                                         key="header"
                                         style={{width: this.width}}
                                     />
@@ -190,10 +212,14 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                                 <div
                                     key="sticky"
                                     className={theme.sticky}
-                                    ref={div => (this.stickyNode = div)}
-                                    style={{width: this.width, top: this.headerHeight}}
+                                    ref={div => div && (this.stickyNode = div)}
+                                    style={{width: this.width}}
                                 />
-                                <div key="scrollable" className={theme.scrollable} ref={div => (this.node = div)}>
+                                <div
+                                    key="scrollable"
+                                    className={theme.scrollable}
+                                    ref={div => div && (this.node = div)}
+                                >
                                     {this.intersectionObserver ? children : null}
                                 </div>
                                 {!hideBackToTop && this.hasBtt ? <ButtonBackToTop key="backtotop" /> : undefined}
@@ -204,27 +230,6 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             </ScrollableContext.Provider>
         );
     }
-}
-export function Sticky({
-    parentNode: node,
-    children,
-    placeholder
-}: {
-    parentNode?: HTMLElement | null;
-    children: JSX.Element;
-    placeholder?: JSX.Element;
-}) {
-    const context = React.useContext(ScrollableContext);
-    const [condition, setCondition] = React.useState(false);
-    React.useLayoutEffect(() => context.registerScroll(top => node && setCondition(top >= node.offsetTop)), [node]);
-    return condition ? (
-        <>
-            {context.portal(children, "sticky")}
-            {placeholder}
-        </>
-    ) : (
-        children
-    );
 }
 
 export const Scrollable = React.forwardRef<HTMLDivElement, React.PropsWithChildren<ScrollableProps>>((props, ref) => (

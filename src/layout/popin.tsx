@@ -82,7 +82,6 @@ export function Popin({
                     </Scrollable>
                 </CSSTransition>
             ) : null}
-        </TransitionGroup>,
-        "root"
+        </TransitionGroup>
     );
 }
