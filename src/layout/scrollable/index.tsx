@@ -2,11 +2,10 @@ import "intersection-observer";
 
 import {debounce, memoize, range} from "lodash";
 import {action, autorun, observable} from "mobx";
-import {disposeOnUnmount, observer} from "mobx-react";
-import {spring, styler} from "popmotion";
+import {disposeOnUnmount, observer, Observer} from "mobx-react";
+import {ColdSubscription, spring, styler} from "popmotion";
 import React from "react";
 import {createPortal, findDOMNode} from "react-dom";
-import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";
 import {Styler} from "stylefire";
 
@@ -50,6 +49,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     @observable.ref containerNode!: HTMLDivElement;
     @observable.ref scrollableNode!: HTMLDivElement;
     @observable.ref stickyNode!: HTMLDivElement;
+    @observable.ref stickyHeader: HTMLElement | null = null;
 
     @observable.ref intersectionObserver!: IntersectionObserver;
     @observable.ref resizeObserver!: ResizeObserverPolyfill;
@@ -75,6 +75,8 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     ) {
         if (canDeploy) {
             this.intersectionObserver.observe(nonStickyElement);
+        } else {
+            styler(this.stickyNode).set({top: this.headerHeight});
         }
         this.isHeaderSticky = !canDeploy;
         this.header = {Header, headerProps, nonStickyElement, canDeploy};
@@ -129,9 +131,9 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             this.stickyStylers.set(key, stickyRef);
             stickyRef.set({
                 top:
-                    this.stickyParentNodes.get(key)!.offsetTop -
+                    getOffsetTop(this.stickyParentNodes.get(key)!, this.scrollableNode) -
                     this.scrollableNode.scrollTop -
-                    this.stickyNode.offsetTop
+                    (this.isHeaderSticky ? this.stickyNode.offsetTop : 0)
             });
         }
     });
@@ -154,6 +156,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                 }),
             {root: this.scrollableNode, threshold: range(0, 105, 5).map(t => t / 100)}
         );
+        styler(this.stickyNode).set({top: this.headerHeight});
     }
 
     componentWillUnmount() {
@@ -190,13 +193,23 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         }
     }
 
+    stickySpring?: ColdSubscription;
+
     @disposeOnUnmount
     followHeader = autorun(() => {
-        const transition = this.isHeaderSticky ? {from: 0, to: this.headerHeight} : {from: this.headerHeight, to: 0};
-        if (transition.from !== transition.to) {
-            const sticky = styler(this.stickyNode);
-            if (this.header!.canDeploy) {
-                spring({...springPose.transition, ...transition}).start((top: number) => {
+        if (!this.stickyNode) {
+            return;
+        }
+
+        const sticky = styler(this.stickyNode);
+        const from = sticky.get("top");
+        const to = this.isHeaderSticky ? this.headerHeight : 0;
+        if (this.header && from !== to) {
+            if (this.stickySpring) {
+                this.stickySpring.stop();
+            }
+            if (this.header.canDeploy) {
+                this.stickySpring = spring({...springPose.transition, from, to}).start((top: number) => {
                     sticky.set({top});
                     this.setStickyRefs(top);
                     if (isIEorEdge()) {
@@ -204,8 +217,8 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                     }
                 });
             } else {
-                sticky.set({top: transition.to});
-                this.setStickyRefs(transition.to);
+                sticky.set({top: to});
+                this.setStickyRefs(to);
             }
         }
 
@@ -220,7 +233,10 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.stickyStylers.forEach((stickyRef, key) => {
             const parentNode = this.stickyParentNodes.get(key)!;
             stickyRef.set({
-                top: Math.max(0, parentNode.offsetTop - this.scrollableNode.scrollTop - offsetTop)
+                top: Math.max(
+                    0,
+                    getOffsetTop(parentNode, this.scrollableNode) - this.scrollableNode.scrollTop - offsetTop
+                )
             });
         });
     }
@@ -228,7 +244,10 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     animateStickyRefs(to: (parentOffsetTop: number) => number) {
         this.stickyStylers.forEach((stickyRef, key) => {
             const parentNode = this.stickyParentNodes.get(key)!;
-            const transition = {from: stickyRef.get("top"), to: Math.max(0, to(parentNode.offsetTop))};
+            const transition = {
+                from: stickyRef.get("top"),
+                to: Math.max(0, to(getOffsetTop(parentNode, this.scrollableNode)))
+            };
             if (transition.from !== transition.to) {
                 spring({...springPose.transition, ...transition}).start((top: number) => {
                     stickyRef.set({
@@ -239,16 +258,20 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         });
     }
 
-    setHeaderHeight = (ref: any) => {
-        if (ref && this.header) {
-            const marginBottom = window.getComputedStyle(ref).marginBottom || "0px";
-            this.headerHeight = ref.clientHeight + +marginBottom.substring(0, marginBottom.length - 2);
+    @disposeOnUnmount
+    setHeaderHeight = autorun(() => {
+        if (this.stickyHeader && this.isHeaderSticky) {
+            const marginBottom = window.getComputedStyle(this.stickyHeader).marginBottom || "0px";
+            this.headerHeight = this.stickyHeader.clientHeight + +marginBottom.substring(0, marginBottom.length - 2);
+        } else {
+            this.headerHeight = 0;
         }
-    };
+    });
+
+    setStickyHeader = (ref: HTMLElement | null) => (this.stickyHeader = ref);
 
     render() {
         const {children, className, hideBackToTop, innerRef} = this.props;
-        const {Header = null, headerProps = null} = (this.isHeaderSticky && this.header) || {};
         return (
             <ScrollableContext.Provider
                 value={{
@@ -261,32 +284,34 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                 <Theme theme={this.props.theme}>
                     {theme => (
                         <div ref={innerRef} className={`${className || ""} ${theme.container}`}>
-                            <Transition>
-                                {Header ? (
-                                    <Header
-                                        {...headerProps}
-                                        ref={this.setHeaderHeight}
-                                        key="header"
-                                        style={{width: this.width}}
-                                    />
-                                ) : (
-                                    undefined
-                                )}
-                                <div
-                                    key="sticky"
-                                    className={theme.sticky}
-                                    ref={div => div && (this.stickyNode = div)}
-                                    style={{width: this.width}}
-                                />
-                                <div
-                                    key="scrollable"
-                                    className={theme.scrollable}
-                                    ref={div => div && (this.scrollableNode = div)}
-                                >
-                                    {this.intersectionObserver ? children : null}
-                                </div>
-                                {!hideBackToTop && this.hasBtt ? <ButtonBackToTop key="backtotop" /> : undefined}
-                            </Transition>
+                            <div className={theme.scrollable} ref={div => div && (this.scrollableNode = div)}>
+                                {this.intersectionObserver ? children : null}
+                            </div>
+                            <div
+                                className={theme.sticky}
+                                ref={div => div && (this.stickyNode = div)}
+                                style={{width: this.width}}
+                            />
+                            <Observer>
+                                {() => {
+                                    const {Header = null, headerProps = null} = this.header || {};
+                                    return (
+                                        <>
+                                            {Header ? (
+                                                <Header
+                                                    {...headerProps}
+                                                    ref={this.setStickyHeader}
+                                                    pose={this.isHeaderSticky ? "enter" : "exit"}
+                                                    style={{width: this.width}}
+                                                />
+                                            ) : null}
+                                            {!hideBackToTop ? (
+                                                <ButtonBackToTop pose={this.hasBtt ? "enter" : "exit"} />
+                                            ) : null}
+                                        </>
+                                    );
+                                }}
+                            </Observer>
                         </div>
                     )}
                 </Theme>
@@ -301,4 +326,12 @@ export const Scrollable = React.forwardRef<HTMLDivElement, React.PropsWithChildr
 
 function isIEorEdge() {
     return navigator.userAgent.match(/(Trident|Edge)/);
+}
+
+function getOffsetTop(node: HTMLElement, container: HTMLElement) {
+    let distance = node.offsetTop;
+    if (node.offsetParent && node.offsetParent !== container) {
+        distance += getOffsetTop(node.offsetParent as HTMLElement, container);
+    }
+    return distance;
 }

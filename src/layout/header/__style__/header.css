@@ -65,6 +65,7 @@
 .sticky {
     position: absolute;
     z-index: var(--z-index-high);
+    top: 0;
 }
 
 .undeployed,
