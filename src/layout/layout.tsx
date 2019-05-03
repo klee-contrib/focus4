@@ -11,7 +11,7 @@ export {styles};
 
 /** Props du Layout. */
 export interface LayoutProps extends MessageCenterProps {
-    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 200. */
+    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 300. */
     backToTopOffset?: number;
     /** Children. */
     children?: React.ReactNode;

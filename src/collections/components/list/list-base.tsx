@@ -1,6 +1,7 @@
 import i18next from "i18next";
 import {isEqual} from "lodash";
 import {action, computed, observable, observe} from "mobx";
+import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
 import {Button} from "react-toolbox/lib/button";
 
@@ -8,7 +9,6 @@ import {getIcon, ScrollableContext} from "../../../components";
 
 import {LineStyle} from "./line";
 
-import {disposeOnUnmount} from "mobx-react";
 import * as styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
