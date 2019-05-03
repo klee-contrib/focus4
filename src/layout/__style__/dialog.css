@@ -12,6 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 .dialog {
@@ -23,6 +24,7 @@
     min-width: 50%;
     max-width: 96%;
     overflow: var(--overflow);
+    pointer-events: auto;
 }
 
 .enter .dialog,

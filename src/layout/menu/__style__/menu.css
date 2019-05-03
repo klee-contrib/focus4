@@ -3,6 +3,7 @@
 .menu {
     height: 100vh;
     z-index: calc(var(--z-index-high) + 1);
+    position: relative;
 }
 
 .list {
