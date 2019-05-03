@@ -6,6 +6,7 @@ import {disposeOnUnmount, observer, Observer} from "mobx-react";
 import {ColdSubscription, spring, styler} from "popmotion";
 import React from "react";
 import {createPortal, findDOMNode} from "react-dom";
+import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";
 import {Styler} from "stylefire";
 
@@ -23,7 +24,7 @@ export type ScrollableStyle = Partial<typeof styles>;
 const ResizeObserver = (window as any).ResizeObserver || ResizeObserverPolyfill;
 
 export interface ScrollableProps {
-    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 200. */
+    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 300. */
     backToTopOffset?: number;
     /** Classe CSS. */
     className?: string;
@@ -174,7 +175,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     @action.bound
     onScroll() {
         this.width = this.scrollableNode.clientWidth;
-        this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 200);
+        this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 300);
         if (isIEorEdge()) {
             this.onScrollCoreDebounced();
         } else {
@@ -294,21 +295,25 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                             />
                             <Observer>
                                 {() => {
-                                    const {Header = null, headerProps = null} = this.header || {};
+                                    const {Header = null, headerProps = {}} = this.header || {};
                                     return (
-                                        <>
-                                            {Header ? (
+                                        <Transition>
+                                            {Header && this.isHeaderSticky ? (
                                                 <Header
                                                     {...headerProps}
+                                                    key={headerProps.key || "header"}
                                                     ref={this.setStickyHeader}
-                                                    pose={this.isHeaderSticky ? "enter" : "exit"}
                                                     style={{width: this.width}}
                                                 />
-                                            ) : null}
-                                            {!hideBackToTop ? (
-                                                <ButtonBackToTop pose={this.hasBtt ? "enter" : "exit"} />
-                                            ) : null}
-                                        </>
+                                            ) : (
+                                                undefined
+                                            )}
+                                            {!hideBackToTop && this.hasBtt ? (
+                                                <ButtonBackToTop key="back-to-top" />
+                                            ) : (
+                                                undefined
+                                            )}
+                                        </Transition>
                                     );
                                 }}
                             </Observer>

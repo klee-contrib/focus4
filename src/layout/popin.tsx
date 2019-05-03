@@ -14,7 +14,7 @@ export type PopinStyle = Partial<typeof styles>;
 
 /** Props de la popin. */
 export interface PopinProps {
-    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 200. */
+    /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 300. */
     backToTopOffset?: number;
     /** Handler de fermeture de la popin. */
     closePopin: () => void;
