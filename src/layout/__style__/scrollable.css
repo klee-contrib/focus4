@@ -7,6 +7,12 @@
 .sticky {
     position: absolute;
     z-index: var(--z-index-high);
+    pointer-events: none;
+
+    & > * {
+        pointer-events: auto;
+        position: absolute;
+    }
 }
 
 .scrollable {

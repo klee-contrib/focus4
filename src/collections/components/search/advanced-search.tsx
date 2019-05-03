@@ -2,6 +2,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {ChipTheme} from "react-toolbox/lib/chip";
 
+import {ScrollableContext} from "../../../components";
 import {themr} from "../../../theme";
 
 import {GroupResult, SearchStore} from "../../store";
@@ -23,6 +24,7 @@ import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
 import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
 
+import {observable} from "mobx";
 import * as styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 const Theme = themr("advancedSearch", styles);
@@ -66,7 +68,7 @@ export interface AdvancedSearchProps<T> {
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
-    facetBoxPosition?: "action-bar" | "left" | "none";
+    facetBoxPosition?: "action-bar" | "left" | "sticky" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: FacetBoxStyle;
     /**
@@ -161,6 +163,10 @@ export interface AdvancedSearchProps<T> {
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
 @observer
 export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
+    static contextType = ScrollableContext;
+    context!: React.ContextType<typeof ScrollableContext>;
+    @observable.ref rootNode?: HTMLDivElement;
+
     componentWillMount() {
         const {searchOnMount = true, store} = this.props;
         if (searchOnMount) {
@@ -182,22 +188,26 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             store
         } = this.props;
 
+        const facetBox = (
+            <div className={theme.facetContainer} key="facet-box">
+                <FacetBox
+                    chipKeyResolver={chipKeyResolver}
+                    chipThemer={chipThemer}
+                    customFacetComponents={customFacetComponents}
+                    i18nPrefix={i18nPrefix}
+                    nbDefaultDataList={nbDefaultDataListFacet}
+                    sections={facetSections}
+                    showSingleValuedFacets={showSingleValuedFacets}
+                    store={store}
+                    theme={facetBoxTheme}
+                />
+            </div>
+        );
+
         if (facetBoxPosition === "left") {
-            return (
-                <div className={theme.facetContainer}>
-                    <FacetBox
-                        chipKeyResolver={chipKeyResolver}
-                        chipThemer={chipThemer}
-                        customFacetComponents={customFacetComponents}
-                        i18nPrefix={i18nPrefix}
-                        nbDefaultDataList={nbDefaultDataListFacet}
-                        sections={facetSections}
-                        showSingleValuedFacets={showSingleValuedFacets}
-                        store={store}
-                        theme={facetBoxTheme}
-                    />
-                </div>
-            );
+            return facetBox;
+        } else if (facetBoxPosition === "sticky") {
+            return this.context.portal(facetBox, this.rootNode);
         } else {
             return null;
         }
@@ -346,9 +356,12 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         );
     }
 
+    setRef = (node: HTMLDivElement) => (this.rootNode = node);
+
     render() {
         const {
             addItemHandler,
+            facetBoxPosition = "left",
             i18nPrefix,
             LineComponent,
             MosaicComponent,
@@ -359,9 +372,15 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div className={theme.container}>
+                    <div ref={this.setRef}>
                         {this.renderFacetBox(theme)}
-                        <div className={theme.resultContainer}>
+                        <div
+                            className={`${theme.resultContainer} ${
+                                facetBoxPosition === "sticky" || facetBoxPosition === "left"
+                                    ? theme.resultContainerWithFacetBox
+                                    : ""
+                            }`}
+                        >
                             <ListWrapper
                                 addItemHandler={addItemHandler}
                                 canChangeMode={!!(LineComponent && MosaicComponent)}

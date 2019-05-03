@@ -41,10 +41,15 @@ export interface ScrollableProps {
 
 @observer
 class ScrollableComponent extends React.Component<ScrollableProps> {
-    header?: [React.ElementType, React.HTMLProps<HTMLElement>, HTMLElement];
-    containerNode!: HTMLDivElement;
-    scrollableNode!: HTMLDivElement;
-    stickyNode!: HTMLDivElement;
+    @observable.ref header?: {
+        Header: React.ElementType;
+        headerProps: React.HTMLProps<HTMLElement>;
+        nonStickyElement: HTMLElement;
+        canDeploy: boolean;
+    };
+    @observable.ref containerNode!: HTMLDivElement;
+    @observable.ref scrollableNode!: HTMLDivElement;
+    @observable.ref stickyNode!: HTMLDivElement;
 
     @observable.ref intersectionObserver!: IntersectionObserver;
     @observable.ref resizeObserver!: ResizeObserverPolyfill;
@@ -52,8 +57,8 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
         deep: false
     });
-    readonly stickyStylers = new Map<React.Key, Styler>();
-    readonly stickyParentNodes = new Map<React.Key, HTMLElement>();
+    readonly stickyStylers = observable.map<React.Key, Styler>({}, {deep: false});
+    readonly stickyParentNodes = observable.map<React.Key, HTMLElement>({}, {deep: false});
 
     @observable hasBtt = false;
     @observable headerHeight = 0;
@@ -66,13 +71,13 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         Header: React.ElementType,
         headerProps: React.HTMLProps<HTMLElement>,
         nonStickyElement: HTMLElement,
-        canDeploy?: boolean
+        canDeploy = true
     ) {
         if (canDeploy) {
             this.intersectionObserver.observe(nonStickyElement);
         }
         this.isHeaderSticky = !canDeploy;
-        this.header = [Header, headerProps, nonStickyElement];
+        this.header = {Header, headerProps, nonStickyElement, canDeploy};
         return () => {
             if (canDeploy) {
                 this.intersectionObserver.unobserve(nonStickyElement);
@@ -139,7 +144,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
-                    if (this.header && e.target === this.header[2]) {
+                    if (this.header && e.target === this.header.nonStickyElement) {
                         this.isHeaderSticky = !e.isIntersecting;
                     }
                     const onIntersect = this.onIntersects.get(e.target);
@@ -190,18 +195,23 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         const transition = this.isHeaderSticky ? {from: 0, to: this.headerHeight} : {from: this.headerHeight, to: 0};
         if (transition.from !== transition.to) {
             const sticky = styler(this.stickyNode);
-            spring({...springPose.transition, ...transition}).start((top: number) => {
-                sticky.set({top});
-                this.setStickyRefs(top);
-                if (isIEorEdge()) {
-                    this.onScrollCoreDebounced.cancel();
-                }
-            });
+            if (this.header!.canDeploy) {
+                spring({...springPose.transition, ...transition}).start((top: number) => {
+                    sticky.set({top});
+                    this.setStickyRefs(top);
+                    if (isIEorEdge()) {
+                        this.onScrollCoreDebounced.cancel();
+                    }
+                });
+            } else {
+                sticky.set({top: transition.to});
+                this.setStickyRefs(transition.to);
+            }
+        }
 
-            if (isIEorEdge()) {
-                if (this.isHeaderSticky) {
-                    this.animateStickyRefs(() => 0);
-                }
+        if (isIEorEdge()) {
+            if (this.isHeaderSticky) {
+                this.animateStickyRefs(() => 0);
             }
         }
     });
@@ -229,9 +239,16 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         });
     }
 
+    setHeaderHeight = (ref: any) => {
+        if (ref && this.header) {
+            const marginBottom = window.getComputedStyle(ref).marginBottom || "0px";
+            this.headerHeight = ref.clientHeight + +marginBottom.substring(0, marginBottom.length - 2);
+        }
+    };
+
     render() {
         const {children, className, hideBackToTop, innerRef} = this.props;
-        const [Header = null, headerProps = null] = (this.isHeaderSticky && this.header) || [];
+        const {Header = null, headerProps = null} = (this.isHeaderSticky && this.header) || {};
         return (
             <ScrollableContext.Provider
                 value={{
@@ -248,7 +265,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                                 {Header ? (
                                     <Header
                                         {...headerProps}
-                                        ref={(ref: any) => (this.headerHeight = (ref && ref.clientHeight) || 0)}
+                                        ref={this.setHeaderHeight}
                                         key="header"
                                         style={{width: this.width}}
                                     />
