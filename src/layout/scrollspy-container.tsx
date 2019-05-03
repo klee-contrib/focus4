@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {maxBy, sortBy, uniqueId} from "lodash";
+import {max, sortBy, uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -73,7 +73,8 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     /** Détermine le panel actif dans le menu */
     @computed.struct
     protected get activeItem() {
-        const panel = maxBy(Array.from(this.panels.entries()), ([_, {ratio}]) => ratio);
+        const maxRatio = max(this.sortedPanels.map(([_, {ratio}]) => ratio));
+        const panel = this.sortedPanels.find(([_, {ratio}]) => ratio === maxRatio);
         return (panel && panel[0]) || (this.sortedPanels[0] && this.sortedPanels[0][0]);
     }
 

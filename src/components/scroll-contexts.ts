@@ -6,7 +6,8 @@ import {PanelDescriptor} from "./panel";
 export const ScrollableContext = React.createContext<{
     /**
      * Enregistre le header dans le Scrollable
-     * @param stickyNode Le noeud React représentant le header sticky.
+     * @param Header Le composant de header.
+     * @param headerProps Les props du composant de header.
      * @param nonStickyElement Le noeud DOM représentant le header non sticky.
      * @param canDeploy Précise si le header est toujours sticky ou non.
      * @returns Le disposer.
