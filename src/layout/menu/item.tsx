@@ -45,18 +45,6 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
         []
     );
 
-    React.useLayoutEffect(() => {
-        const render = label
-            ? ([
-                  li,
-                  <Button {...otherProps} icon={icon} label={label} onClick={onItemClick} theme={theme} />,
-                  route
-              ] as const)
-            : ([li, <IconButton {...otherProps} icon={icon} onClick={onItemClick} theme={theme} />, route] as const);
-        context.addItem(render);
-        return () => context.removeItem(render);
-    }, []);
-
     const onDocumentClick = React.useCallback((e: MouseEvent) => {
         if (panel.current && li.current) {
             if (!panel.current.contains(e.target as Node) && !li.current.contains(e.target as Node)) {
@@ -71,19 +59,30 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
     }, []);
 
     return useObserver(() => (
-        <Transition>
-            {state.hasSubMenu && (
-                <PosedDiv key="panel" ref={panel} className={theme.panel} style={state}>
-                    <MainMenuList
-                        activeRoute={context.activeRoute}
-                        closePanel={() => (state.hasSubMenu = false)}
-                        theme={theme}
-                    >
-                        {children}
-                    </MainMenuList>
-                </PosedDiv>
+        <>
+            <li ref={li} className={`${theme.item} ${route === context.activeRoute ? theme.active : ""}`}>
+                {label ? (
+                    <Button {...otherProps} icon={icon} label={label} onClick={onItemClick} theme={theme} />
+                ) : (
+                    <IconButton {...otherProps} icon={icon} onClick={onItemClick} theme={theme} />
+                )}
+            </li>
+            {context.renderSubMenu(
+                <Transition>
+                    {state.hasSubMenu && (
+                        <PosedDiv key="panel" ref={panel} className={theme.panel} style={state}>
+                            <MainMenuList
+                                activeRoute={context.activeRoute}
+                                closePanel={() => (state.hasSubMenu = false)}
+                                theme={theme}
+                            >
+                                {children}
+                            </MainMenuList>
+                        </PosedDiv>
+                    )}
+                </Transition>
             )}
-        </Transition>
+        </>
     ));
 }
 
