@@ -1,11 +1,10 @@
-import {observable} from "mobx";
-import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {useTheme} from "../../theme";
 
 import {MenuContext} from "./context";
 
+import {createPortal} from "react-dom";
 import * as styles from "./__style__/menu.css";
 
 export interface MainMenuListStyle {
@@ -32,36 +31,24 @@ export function MainMenuList({
     theme: pTheme
 }: React.PropsWithChildren<MainMenuListProps>) {
     const theme = useTheme("mainMenu", styles, pTheme);
-    const [items] = React.useState(() =>
-        observable<readonly [React.RefObject<HTMLLIElement>, React.ReactElement, string | undefined]>([], {deep: false})
-    );
+    const [ref, setRef] = React.useState<HTMLUListElement | null>(null);
     return (
         <MenuContext.Provider
             value={{
                 activeRoute,
-                addItem: i => items.push(i),
                 closePanel:
                     closePanel ||
                     (() => {
                         /* */
                     }),
-                removeItem: i => items.remove(i)
+                renderSubMenu(subMenu) {
+                    return (ref && createPortal(subMenu, ref)) || null;
+                }
             }}
         >
-            {useObserver(() => (
-                <ul className={theme!.list}>
-                    {children}
-                    {items.map(([ref, item, route], idx) => (
-                        <li
-                            ref={ref}
-                            className={`${theme.item} ${route === activeRoute ? theme.active : ""}`}
-                            key={idx}
-                        >
-                            {item}
-                        </li>
-                    ))}
-                </ul>
-            ))}
+            <ul ref={setRef} className={theme!.list}>
+                {children}
+            </ul>
         </MenuContext.Provider>
     );
 }
