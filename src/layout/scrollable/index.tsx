@@ -1,7 +1,7 @@
 import "intersection-observer";
 
 import {debounce, memoize, range} from "lodash";
-import {action, autorun, observable} from "mobx";
+import {action, autorun, computed, observable} from "mobx";
 import {disposeOnUnmount, observer, Observer} from "mobx-react";
 import {ColdSubscription, spring, styler} from "popmotion";
 import React from "react";
@@ -65,6 +65,11 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     @observable headerHeight = 0;
     @observable isHeaderSticky = false;
     @observable width = 0;
+
+    @computed
+    get stickyOffsetTop() {
+        return this.isHeaderSticky ? this.stickyNode.offsetTop : 0;
+    }
 
     /** @see ScrollableContext.registerHeader */
     @action.bound
@@ -134,10 +139,14 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                 top:
                     getOffsetTop(this.stickyParentNodes.get(key)!, this.scrollableNode) -
                     this.scrollableNode.scrollTop -
-                    (this.isHeaderSticky ? this.stickyNode.offsetTop : 0)
+                    this.stickyOffsetTop
             });
         }
     });
+
+    componentWillReceiveProps() {
+        this.scrollTo({top: 0, behavior: "auto"});
+    }
 
     componentDidMount() {
         this.containerNode = findDOMNode(this) as HTMLDivElement;
@@ -186,10 +195,10 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     onScrollCoreDebounced = debounce(() => this.onScrollCore(), 50);
     onScrollCore() {
         if (!isIEorEdge()) {
-            this.setStickyRefs(this.stickyNode.offsetTop);
+            this.setStickyRefs(this.stickyOffsetTop);
         } else {
             this.animateStickyRefs(
-                parentOffsetTop => parentOffsetTop - this.scrollableNode.scrollTop - this.stickyNode.offsetTop
+                parentOffsetTop => parentOffsetTop - this.scrollableNode.scrollTop - this.stickyOffsetTop
             );
         }
     }
