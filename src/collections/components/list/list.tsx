@@ -122,9 +122,21 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     @disposeOnUnmount
     protected byLineUpdater = autorun(this.updateByLine);
 
+    /** Toggle le détail depuis la ligne. */
+    @action.bound
+    protected toggleDetail(idx: number, {onOpen, onClose}: {onOpen?: () => void; onClose?: () => void} = {}) {
+        this.displayedIdx = this.displayedIdx !== idx ? idx : undefined;
+        if (this.displayedIdx && onOpen) {
+            onOpen();
+        }
+        if (!this.displayedIdx && onClose) {
+            onClose();
+        }
+    }
+
     /** Ferme le détail. */
     @action.bound
-    closeDetail() {
+    protected closeDetail() {
         this.displayedIdx = undefined;
     }
 
@@ -221,19 +233,13 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
             i18nPrefix,
             mosaic: this.mode === "mosaic" ? this.mosaic : undefined,
             LineComponent: Component,
-            openDetail: canOpenDetail(item) && DetailComponent ? () => this.onLineClick(idx) : undefined,
+            toggleDetail:
+                canOpenDetail(item) && DetailComponent
+                    ? (callbacks?: {}) => this.toggleDetail(idx, callbacks)
+                    : undefined,
             operationList,
             theme: lineTheme
         }));
-    }
-
-    /**
-     * Ouvre le détail au clic sur un élément.
-     * @param idx L'index de l'élément cliqué.
-     */
-    @action.bound
-    protected onLineClick(idx: number) {
-        this.displayedIdx = this.displayedIdx !== idx ? idx : undefined;
     }
 
     /** Construit les lignes de la liste à partir des données, en tenant compte du mode et de l'affichage du détail. */
