@@ -22,8 +22,8 @@ const Theme = themr("line", styles);
 export interface LineProps<T> {
     /** Elément de la liste. */
     data: T;
-    /** Handler pour ouvrir le détail. */
-    openDetail?: () => void;
+    /** Handler pour ouvrir et fermer le détail. */
+    toggleDetail?: (callbacks?: {onOpen?: () => void; onClose?: () => void}) => void;
 }
 
 /** Props du wrapper autour des lignes de liste. */
@@ -50,12 +50,12 @@ export interface LineWrapperProps<T> {
     mosaic?: {width: number; height: number};
     /** Fonction passée par react-pose qu'il faudra appeler au willUnmount pour qu'il retire l'élément du DOM. */
     onPoseComplete?: (pose: string) => void;
-    /** Handler pour ouvrir (et fermer) le détail. */
-    openDetail?: () => void;
     /** Actions de ligne. */
     operationList?: (data: T) => OperationListItem<T>[];
     /** Store de liste associé à la ligne. */
     store?: ListStoreBase<T>;
+    /** Handler pour ouvrir et fermer le détail. */
+    toggleDetail?: (callbacks?: {onOpen?: () => void; onClose?: () => void}) => void;
     /** CSS. */
     theme?: LineStyle;
     /** Type spécial de ligne. */
@@ -147,7 +147,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
             i18nPrefix = "focus",
             LineComponent,
             mosaic,
-            openDetail,
+            toggleDetail,
             type
         } = this.props;
 
@@ -184,7 +184,7 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                                 width={mosaic && mosaic.width}
                                 height={mosaic && mosaic.height}
                             >
-                                <LineComponent data={data} openDetail={openDetail} />
+                                <LineComponent data={data} toggleDetail={toggleDetail} />
                                 {this.isSelectable ? (
                                     <IconButton
                                         className={`${theme.checkbox} ${
