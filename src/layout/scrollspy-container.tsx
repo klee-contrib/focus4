@@ -32,7 +32,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     context!: React.ContextType<typeof ScrollableContext>;
 
     /** Noeud DOM du scrollspy */
-    node?: HTMLDivElement | null;
+    node = React.createRef<HTMLDivElement>();
 
     /** Map des panels qui se sont enregistrés dans le container. */
     protected readonly panels = observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>();
@@ -40,6 +40,11 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     /** @see ScrollspyContext.registerPanel */
     @action.bound
     protected registerPanel(name: string, panel: PanelDescriptor) {
+        // Le panel ne sera pas enregistré s'il n'est pas contenu dans le scrollspy (ex: dans une popin).
+        if (!this.node.current!.contains(panel.node)) {
+            return;
+        }
+
         if (this.panels.has(name)) {
             panel.node = panel.node;
             panel.title = panel.title;
@@ -75,7 +80,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * @param node Le noeud HTML.
      */
     protected getOffsetTop(node: HTMLElement) {
-        const distance = node.offsetTop + ((this.node && this.node.offsetTop) || 0);
+        const distance = node.offsetTop + (this.node.current!.offsetTop || 0);
         return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
     }
 
@@ -97,7 +102,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
             <ScrollspyContext.Provider value={{registerPanel: this.registerPanel}}>
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div ref={node => (this.node = node)} className={theme.scrollspy}>
+                        <div ref={this.node} className={theme.scrollspy}>
                             {this.context.portal(
                                 <nav className={theme.menu} key="scrollspy">
                                     <MenuComponent
@@ -110,7 +115,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                                         scrollToPanel={this.scrollToPanel}
                                     />
                                 </nav>,
-                                this.node
+                                this.node.current
                             )}
                             <div className={theme.content} style={{marginLeft: menuWidth}}>
                                 {children}

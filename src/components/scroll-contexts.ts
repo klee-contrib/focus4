@@ -46,7 +46,7 @@ export const ScrollspyContext = React.createContext({
      * @param name L'id du panel souhaité.
      * @param panel La description d'un panel
      */
-    registerPanel(name: string, panel: PanelDescriptor) {
+    registerPanel(name: string, panel: PanelDescriptor): (() => void) | undefined {
         return () => {
             // tslint:disable-next-line: no-unused-expression
             name;
