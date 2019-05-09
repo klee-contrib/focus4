@@ -42,21 +42,16 @@ export const ScrollableContext = React.createContext<{
 /** Contexte d'un ScrollspyContainer, expose les méthodes associées. */
 export const ScrollspyContext = React.createContext({
     /**
-     * Enregistre un panel dans le container et retourne son id.
+     * Enregistre un panel dans le Scrollspu
+     * @param name L'id du panel souhaité.
      * @param panel La description d'un panel
-     * @param sscId L'id du panel souhaité.
-     * @returns L'id du panel.
      */
-    registerPanel: (() => "") as (panel: PanelDescriptor, sscId?: string) => string,
-    /**
-     * Retire un panel du container.
-     * @param id L'id du panel.
-     */
-    removePanel: (() => null) as (id: string) => void,
-    /**
-     * Met à jour un panel.
-     * @param id L'id du panel.
-     * @param desc La description du panel.
-     */
-    updatePanel: (() => null) as (id: string, desc: PanelDescriptor) => void
+    registerPanel(name: string, panel: PanelDescriptor) {
+        return () => {
+            // tslint:disable-next-line: no-unused-expression
+            name;
+            // tslint:disable-next-line: no-unused-expression
+            panel;
+        };
+    }
 });
