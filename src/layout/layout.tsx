@@ -45,6 +45,7 @@ export function LayoutBase({
                     backToTopOffset={backToTopOffset}
                     className={theme.scrollable}
                     hideBackToTop={hideBackToTop}
+                    resetScrollOnChildrenChange
                     scrollBehaviour={scrollBehaviour}
                 >
                     {children}

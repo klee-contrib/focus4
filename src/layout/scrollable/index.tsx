@@ -26,6 +26,8 @@ const ResizeObserver = (window as any).ResizeObserver || ResizeObserverPolyfill;
 export interface ScrollableProps {
     /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 300. */
     backToTopOffset?: number;
+    /** Children. */
+    children?: React.ReactNode;
     /** Classe CSS. */
     className?: string;
     /** @internal */
@@ -35,6 +37,8 @@ export interface ScrollableProps {
     hideBackToTop?: boolean;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
+    /** Reset le scroll (à 0) dès que les children du scrollable changent.  */
+    resetScrollOnChildrenChange?: boolean;
     /** CSS. */
     theme?: ScrollableStyle;
 }
@@ -144,8 +148,10 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         }
     });
 
-    componentWillReceiveProps() {
-        this.scrollTo({top: 0, behavior: "auto"});
+    componentWillReceiveProps(props: ScrollableProps) {
+        if (props.resetScrollOnChildrenChange && props.children !== this.props.children) {
+            this.scrollTo({top: 0, behavior: "auto"});
+        }
     }
 
     componentDidMount() {
