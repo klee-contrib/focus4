@@ -12,15 +12,24 @@ export interface PanelButtonsProps {
     i18nPrefix?: string;
     /** En cours de chargement */
     loading?: boolean;
-    /** Fonction pour changer de mode. */
-    toggleEdit?: (edit: boolean) => void;
+    /** Appelé au clic sur le bouton "Annuler". */
+    onClickCancel?: () => void;
+    /** Appelé au clic sur le bouton "Modifier". */
+    onClickEdit?: () => void;
     /** Handler du bouton save. */
     save?: () => void;
 }
 
 /** Buttons par défaut du panel : edit / save / cancel. */
-export function PanelButtons({editing, i18nPrefix = "focus", loading, toggleEdit, save}: PanelButtonsProps) {
-    if (toggleEdit) {
+export function PanelButtons({
+    editing,
+    i18nPrefix = "focus",
+    loading,
+    onClickCancel,
+    onClickEdit,
+    save
+}: PanelButtonsProps) {
+    if (onClickCancel && onClickEdit) {
         if (editing) {
             return (
                 <span>
@@ -35,7 +44,7 @@ export function PanelButtons({editing, i18nPrefix = "focus", loading, toggleEdit
                     <Button
                         icon={getIcon(`${i18nPrefix}.icons.button.cancel`)}
                         label={i18next.t(`${i18nPrefix}.button.cancel`)}
-                        onClick={() => toggleEdit(false)}
+                        onClick={onClickCancel}
                         disabled={loading}
                     />
                 </span>
@@ -45,11 +54,11 @@ export function PanelButtons({editing, i18nPrefix = "focus", loading, toggleEdit
                 <Button
                     icon={getIcon(`${i18nPrefix}.icons.button.edit`)}
                     label={i18next.t(`${i18nPrefix}.button.edit`)}
-                    onClick={() => toggleEdit(true)}
+                    onClick={onClickEdit}
                 />
             );
         }
+    } else {
+        return null;
     }
-
-    return null;
 }

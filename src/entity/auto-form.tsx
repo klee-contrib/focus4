@@ -266,7 +266,8 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
             editing: this.isEdit,
             loading: this.isLoading,
             save: this.hasForm ? undefined : () => this.save(),
-            toggleEdit: edit => this.toggleEdit(edit)
+            onClickCancel: () => this.toggleEdit(false),
+            onClickEdit: () => this.toggleEdit(true)
         };
     }
 

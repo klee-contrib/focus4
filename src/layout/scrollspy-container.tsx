@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {max, sortBy, uniqueId} from "lodash";
+import {max, sortBy} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
@@ -39,29 +39,21 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
 
     /** @see ScrollspyContext.registerPanel */
     @action.bound
-    protected registerPanel(panel: PanelDescriptor, sscId?: string) {
-        sscId = sscId || uniqueId("ssc-panel");
-        this.panels.set(sscId, {
-            ...panel,
-            ratio: 0,
-            disposer: this.context.registerIntersect(panel.node, ratio => (this.panels.get(sscId!)!.ratio = ratio))
-        });
-        return sscId;
-    }
-
-    /** @see ScrollspyContext.removePanel */
-    @action.bound
-    protected removePanel(id: string) {
-        this.panels.get(id)!.disposer();
-        this.panels.delete(id);
-    }
-
-    /** @see ScrollspyContext.updatePanel */
-    @action.bound
-    protected updatePanel(id: string, desc: PanelDescriptor) {
-        const panel = this.panels.get(id)!;
-        panel.node = desc.node;
-        panel.title = desc.title;
+    protected registerPanel(name: string, panel: PanelDescriptor) {
+        if (this.panels.has(name)) {
+            panel.node = panel.node;
+            panel.title = panel.title;
+        } else {
+            this.panels.set(name, {
+                ...panel,
+                ratio: 0,
+                disposer: this.context.registerIntersect(panel.node, ratio => (this.panels.get(name)!.ratio = ratio))
+            });
+        }
+        return () => {
+            this.panels.get(name)!.disposer();
+            this.panels.delete(name);
+        };
     }
 
     /** Récupère les panels triés par position dans la page. */
@@ -89,11 +81,11 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
 
     /**
      * Scrolle la page vers le panel demandé.
-     * @param sscId Le panel cible.
+     * @param name Le panel cible.
      */
     @action.bound
-    scrollToPanel(sscId: string) {
-        const panel = this.panels.get(sscId);
+    scrollToPanel(name: string) {
+        const panel = this.panels.get(name);
         if (panel) {
             this.context.scrollTo({top: this.getOffsetTop(panel.node)});
         }
@@ -102,13 +94,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     render() {
         const {children, MenuComponent = ScrollspyMenu, menuWidth = 250} = this.props;
         return (
-            <ScrollspyContext.Provider
-                value={{
-                    registerPanel: this.registerPanel,
-                    removePanel: this.removePanel,
-                    updatePanel: this.updatePanel
-                }}
-            >
+            <ScrollspyContext.Provider value={{registerPanel: this.registerPanel}}>
                 <Theme theme={this.props.theme}>
                     {theme => (
                         <div ref={node => (this.node = node)} className={theme.scrollspy}>
