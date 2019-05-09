@@ -6,7 +6,7 @@
 
 .calendar {
     position: absolute;
-    z-index: var(--z-index-high);
+    z-index: var(--z-index-normal);
     width: var(--input-date-width);
     box-shadow: var(--input-date-shadow);
     background: var(--color-white);

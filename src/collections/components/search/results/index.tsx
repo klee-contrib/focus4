@@ -8,10 +8,11 @@ import {
     EmptyProps,
     LineProps,
     LineStyle,
+    listFor,
     ListStyle,
     LoadingProps,
     OperationListItem,
-    StoreList
+    storeListFor
 } from "../../list";
 
 import {GroupResult, SearchStore} from "../../../store";
@@ -38,6 +39,10 @@ export interface ResultsProps<T> {
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
     groupPageSize?: number;
+    /** Nombre de groupes affichés par page de liste de groupe (pagination locale, indépendante de la recherche). Par défaut: 10. */
+    groupPageListSize?: number;
+    /** (Scroll infini, affichage en groupe) Index du groupe, en partant du bas de la liste de groupe affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 2. */
+    groupPageItemIndex?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
     /** Active le drag and drop. */
@@ -64,8 +69,8 @@ export interface ResultsProps<T> {
     LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Composant de mosaïque. */
     MosaicComponent?: React.ComponentType<LineProps<T>>;
-    /** Offset pour le scroll infini. Par défaut : 250 */
-    offset?: number;
+    /** (Scroll infini) Index de l'item, en partant du bas de la liste affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 5. */
+    pageItemIndex?: number;
     /** Store de recherche. */
     store: SearchStore<T>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
@@ -121,11 +126,14 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
             GroupHeader,
             groupOperationList,
             groupPageSize,
+            groupPageListSize = 10,
+            groupPageItemIndex = 2,
             groupTheme,
+            isManualFetch,
             lineOperationList,
             listPageSize,
             listTheme,
-            offset,
+            pageItemIndex,
             store,
             useGroupActionBars
         } = this.props;
@@ -134,32 +142,39 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
         if (filteredGroups.length) {
             return (
                 <div data-focus="results">
-                    {filteredGroups.map(group => (
-                        <Group
-                            {...this.commonListProps}
-                            group={group}
-                            GroupHeader={GroupHeader}
-                            groupOperationList={groupOperationList && groupOperationList(group)}
-                            key={group.code}
-                            lineOperationList={lineOperationList}
-                            listTheme={listTheme}
-                            perPage={groupPageSize}
-                            theme={groupTheme}
-                            useGroupActionBars={useGroupActionBars}
-                        />
-                    ))}
+                    {listFor({
+                        data: filteredGroups,
+                        itemKey: data => data.code,
+                        LineComponent: ({data}) => (
+                            <Group
+                                {...this.commonListProps}
+                                group={data}
+                                GroupHeader={GroupHeader}
+                                groupOperationList={groupOperationList && groupOperationList(data)}
+                                key={data.code}
+                                lineOperationList={lineOperationList}
+                                listTheme={listTheme}
+                                perPage={groupPageSize}
+                                theme={groupTheme}
+                                useGroupActionBars={useGroupActionBars}
+                            />
+                        ),
+                        isManualFetch,
+                        perPage: groupPageListSize,
+                        pageItemIndex: groupPageItemIndex
+                    })}
                 </div>
             );
         } else {
             return (
                 <div data-focus="results">
-                    <StoreList
-                        {...this.commonListProps}
-                        operationList={lineOperationList}
-                        offset={offset}
-                        perPage={listPageSize}
-                        theme={listTheme}
-                    />
+                    {storeListFor({
+                        ...this.commonListProps,
+                        operationList: lineOperationList,
+                        pageItemIndex,
+                        perPage: listPageSize,
+                        theme: listTheme
+                    })}
                 </div>
             );
         }

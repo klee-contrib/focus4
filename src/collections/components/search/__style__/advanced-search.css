@@ -1,17 +1,20 @@
 @import "../../../../style/advanced-search.css";
+@import "../../../../style/layout.css";
 
 .facetContainer {
     float: left;
     width: var(--advanced-search-facets-width);
-    box-sizing: border-box;
+    padding: var(--content-padding-top) var(--advanced-search-facets-margin-right) 0 var(--content-padding-side);
+    box-sizing: content-box;
 }
 
 .resultContainer {
     width: 100%;
+    padding: var(--content-padding-top) var(--content-padding-side) 0;
     box-sizing: border-box;
 }
 
-.facetContainer + .resultContainer {
+.resultContainerWithFacetBox {
     width: calc(100% - var(--advanced-search-facets-width) - var(--advanced-search-facets-margin-right));
     margin-left: calc(var(--advanced-search-facets-width) + var(--advanced-search-facets-margin-right));
 }

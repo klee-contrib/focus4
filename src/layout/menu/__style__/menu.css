@@ -1,66 +1,19 @@
 @import "../../../style/menu.css";
 
-.animate {
-    animation-duration: 0.2s;
-    animation-fill-mode: both;
-}
-
-@keyframes aOpen {
-    0% {
-        opacity: 0;
-        transform: translate3d(-500px, 0, 0);
-    }
-
-    5% {
-        opacity: 1;
-    }
-
-    to {
-        transform: none;
-    }
-}
-
-@keyframes aClose {
-    0% {
-        transform: none;
-    }
-
-    95% {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 0;
-        transform: translate3d(-500px, 0, 0);
-    }
-}
-
-.open {
-    animation-name: aOpen;
-}
-
-.close {
-    animation-name: aClose;
-}
-
 .menu {
-    position: fixed;
-    top: 0;
-    left: 0;
     height: 100vh;
-    z-index: var(--z-index-high);
+    z-index: calc(var(--z-index-high) + 1);
+    position: relative;
 }
 
 .list {
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     margin: 0;
     position: relative;
     background: var(--main-menu-background);
     height: 100%;
-    z-index: calc(var(--z-index-high) + 1);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .item {
@@ -94,16 +47,7 @@
 }
 
 .panel {
-    position: absolute;
-    z-index: calc(var(--z-index-high) - 1);
-    transition: top 0.1s ease-out;
-}
-
-.panelWrapper {
-    position: absolute;
-    height: 100vh;
-    width: 100vw;
-    top: 0;
+    position: fixed;
 }
 
 .active {

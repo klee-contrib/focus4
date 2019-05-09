@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     background-color: var(--color-white);
-    z-index: var(--z-index-higher);
+    z-index: var(--z-index-normal);
     position: relative;
     height: 41px;
     border-radius: 2px;
@@ -59,7 +59,7 @@
     position: absolute;
     font-size: 12px;
     display: block;
-    z-index: var(--z-index-higher);
+    z-index: var(--z-index-normal);
     bottom: -20px;
     left: 43px;
 }
@@ -76,7 +76,7 @@
 .criteria {
     position: absolute;
     top: 43px;
-    z-index: var(--z-index-higher);
+    z-index: var(--z-index-normal);
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 100%;
@@ -92,7 +92,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: calc(var(--z-index-higher) - 1);
+    z-index: calc(var(--z-index-normal) - 1);
     background: rgba(0, 0, 0, 0.15);
 }
 

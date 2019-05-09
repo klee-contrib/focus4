@@ -1,9 +1,8 @@
 import * as React from "react";
 
-import {themr} from "../../../theme";
+import {useTheme} from "../../../theme";
 
 import * as styles from "../__style__/header.css";
-const Theme = themr("header", styles);
 
 /** Props du HeaderBarLeft. */
 export interface HeaderBarLeftProps {
@@ -16,5 +15,6 @@ export interface HeaderBarLeftProps {
 
 /** Barre du haut à gauche, doit être affiché dans `HeaderTopRow`. */
 export function HeaderBarLeft({children, theme: pTheme}: HeaderBarLeftProps) {
-    return <Theme theme={pTheme}>{theme => <div className={`${theme.item} ${theme.left}`}>{children}</div>}</Theme>;
+    const theme = useTheme("header", styles, pTheme);
+    return <div className={`${theme.item} ${theme.left}`}>{children}</div>;
 }

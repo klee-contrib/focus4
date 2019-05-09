@@ -14,7 +14,7 @@ Il est également possible de générer automatiquement des types pour ces impor
 
 ### Injection de classes CSS
 
-Le scoping des classes est une fonctionnalité à double tranchant, car elle va nous empêcher de surcharger directement le CSS des composants de la librairie. Pour résoudre ce problème, on va utilise la librairie [`react-css-themr`](https://github.com/javivelasco/react-css-themr), fournie avec React Toolbox, qui permet de faire de la fusion de modules CSS. Avec l'aide de l'API de Context de React (< 16 pour l'instant), on va construire un combo _Provider_/_Consumer_ (`ThemeProvider` et `themr()`) autour d'une propriété `theme` qui contient les classes CSS à utiliser dans un composant. La fonction `themr` va créer un composant qui va permettre de fusionner les classes issues du style par défaut (celui du framework), celui passé dans le `ThemeProvider` (le vôtre) et celui passé en Props.
+Le scoping des classes est une fonctionnalité à double tranchant, car elle va nous empêcher de surcharger directement le CSS des composants de la librairie. Pour résoudre ce problème, on va utilise la librairie [`react-css-themr`](https://github.com/javivelasco/react-css-themr), fournie avec React Toolbox, qui permet de faire de la fusion de modules CSS. Avec l'aide de l'API de Context de React, on va construire un combo _Provider_/_Consumer_ (`ThemeProvider` et `themr()`) autour d'une propriété `theme` qui contient les classes CSS à utiliser dans un composant. La fonction `themr` va créer un composant qui va permettre de fusionner les classes issues du style par défaut (celui du framework), celui passé dans le `ThemeProvider` (le vôtre) et celui passé en Props.
 
 Par exemple, le `Display` est défini ainsi:
 
@@ -60,4 +60,22 @@ ReactDOM.render(
         {/* Votre appli */}
     </Layout>
 );
+```
+
+Dans un composant fonction, on peut désormais utiliser des hooks, donc il est possible de consommer un theme via `useTheme` de la façon suivante :
+
+```tsx
+// Imports
+import * as styles from "./__style__/display.css";
+export type DisplayStyle = Partial<typeof styles>;
+
+function Display(props) {
+    const theme = useTheme("display", styles, props.theme);
+    /* bla bla */
+    return (
+        <div data-focus="display" className={theme.display}>
+            {(formatter && formatter(displayed)) || displayed}
+        </div>
+    );
+}
 ```

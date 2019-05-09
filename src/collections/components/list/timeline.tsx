@@ -28,14 +28,20 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
     }
 
     private renderLines() {
-        const {lineTheme, itemKey, TimelineComponent, dateSelector} = this.props;
+        const {lineTheme, itemKey, TimelineComponent, dateSelector, pageItemIndex = 5} = this.props;
         return this.displayedData.map((item, idx) => (
             <LineWrapper
                 key={itemKey(item, idx)}
-                theme={lineTheme}
                 data={item}
                 dateSelector={dateSelector}
+                domRef={
+                    this.displayedData.length - idx === pageItemIndex ||
+                    (this.displayedData.length < pageItemIndex && this.displayedData.length - 1 === idx)
+                        ? this.registerSentinel
+                        : undefined
+                }
                 LineComponent={TimelineComponent}
+                theme={lineTheme}
                 type="timeline"
             />
         ));

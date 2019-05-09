@@ -2,7 +2,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {ChipTheme} from "react-toolbox/lib/chip";
 
-import {ButtonBackToTop} from "../../../components";
+import {ScrollableContext} from "../../../components";
 import {themr} from "../../../theme";
 
 import {GroupResult, SearchStore} from "../../store";
@@ -24,6 +24,7 @@ import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
 import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
 
+import {observable} from "mobx";
 import * as styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 const Theme = themr("advancedSearch", styles);
@@ -67,7 +68,7 @@ export interface AdvancedSearchProps<T> {
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
-    facetBoxPosition?: "action-bar" | "left" | "none";
+    facetBoxPosition?: "action-bar" | "left" | "sticky" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: FacetBoxStyle;
     /**
@@ -83,10 +84,12 @@ export interface AdvancedSearchProps<T> {
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
     groupPageSize?: number;
+    /** Nombre de groupes affichés par page de liste de groupe (pagination locale, indépendante de la recherche). Par défaut: 10. */
+    groupPageListSize?: number;
+    /** (Scroll infini, affichage en groupe) Index du groupe, en partant du bas de la liste de groupe affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 2. */
+    groupPageItemIndex?: number;
     /** CSS des groupes. */
     groupTheme?: GroupStyle;
-    /** Ajoute un bouton de retour en haut de page. Par défault: true */
-    hasBackToTop?: boolean;
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
     /** Affiche le bouton de groupe dans l'ActionBar. */
@@ -135,12 +138,12 @@ export interface AdvancedSearchProps<T> {
     mosaicHeight?: number;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
-    /** Offset pour le scroll infini. Par défaut : 250 */
-    offset?: number;
     /** La liste des actions globales.  */
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string; label: string; order: boolean}[];
+    /** (Scroll infini) Index de l'item, en partant du bas de la liste affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 5. */
+    pageItemIndex?: number;
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -160,6 +163,10 @@ export interface AdvancedSearchProps<T> {
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
 @observer
 export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
+    static contextType = ScrollableContext;
+    context!: React.ContextType<typeof ScrollableContext>;
+    @observable.ref rootNode?: HTMLDivElement;
+
     componentWillMount() {
         const {searchOnMount = true, store} = this.props;
         if (searchOnMount) {
@@ -181,22 +188,26 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             store
         } = this.props;
 
+        const facetBox = (
+            <div className={theme.facetContainer} key="facet-box">
+                <FacetBox
+                    chipKeyResolver={chipKeyResolver}
+                    chipThemer={chipThemer}
+                    customFacetComponents={customFacetComponents}
+                    i18nPrefix={i18nPrefix}
+                    nbDefaultDataList={nbDefaultDataListFacet}
+                    sections={facetSections}
+                    showSingleValuedFacets={showSingleValuedFacets}
+                    store={store}
+                    theme={facetBoxTheme}
+                />
+            </div>
+        );
+
         if (facetBoxPosition === "left") {
-            return (
-                <div className={theme.facetContainer}>
-                    <FacetBox
-                        chipKeyResolver={chipKeyResolver}
-                        chipThemer={chipThemer}
-                        customFacetComponents={customFacetComponents}
-                        i18nPrefix={i18nPrefix}
-                        nbDefaultDataList={nbDefaultDataListFacet}
-                        sections={facetSections}
-                        showSingleValuedFacets={showSingleValuedFacets}
-                        store={store}
-                        theme={facetBoxTheme}
-                    />
-                </div>
-            );
+            return facetBox;
+        } else if (facetBoxPosition === "sticky") {
+            return this.context.portal(facetBox, this.rootNode);
         } else {
             return null;
         }
@@ -290,6 +301,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             lineTheme,
             groupOperationList,
             groupPageSize,
+            groupPageListSize,
+            groupPageItemIndex,
             hasSelection,
             disableDragAnimThreshold,
             i18nPrefix,
@@ -299,7 +312,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             lineOperationList,
             listPageSize,
             MosaicComponent,
-            offset,
+            pageItemIndex,
             store,
             EmptyComponent,
             DetailComponent,
@@ -321,6 +334,8 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                 GroupHeader={GroupHeader}
                 groupOperationList={groupOperationList}
                 groupPageSize={groupPageSize}
+                groupPageListSize={groupPageListSize}
+                groupPageItemIndex={groupPageItemIndex}
                 groupTheme={groupTheme}
                 hasDragAndDrop={hasDragAndDrop}
                 hasSelection={!!hasSelection}
@@ -334,30 +349,38 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                 listTheme={listTheme}
                 LoadingComponent={LoadingComponent}
                 MosaicComponent={MosaicComponent}
-                offset={offset}
+                pageItemIndex={pageItemIndex}
                 store={store}
                 useGroupActionBars={useGroupActionBars}
             />
         );
     }
 
+    setRef = (node: HTMLDivElement) => (this.rootNode = node);
+
     render() {
         const {
             addItemHandler,
+            facetBoxPosition = "left",
             i18nPrefix,
             LineComponent,
             MosaicComponent,
             mode,
             mosaicHeight,
-            mosaicWidth,
-            hasBackToTop = true
+            mosaicWidth
         } = this.props;
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <>
+                    <div ref={this.setRef}>
                         {this.renderFacetBox(theme)}
-                        <div className={theme.resultContainer}>
+                        <div
+                            className={`${theme.resultContainer} ${
+                                facetBoxPosition === "sticky" || facetBoxPosition === "left"
+                                    ? theme.resultContainerWithFacetBox
+                                    : ""
+                            }`}
+                        >
                             <ListWrapper
                                 addItemHandler={addItemHandler}
                                 canChangeMode={!!(LineComponent && MosaicComponent)}
@@ -371,8 +394,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                                 {this.renderResults()}
                             </ListWrapper>
                         </div>
-                        {hasBackToTop ? <ButtonBackToTop /> : null}
-                    </>
+                    </div>
                 )}
             </Theme>
         );

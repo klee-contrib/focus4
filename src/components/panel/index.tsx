@@ -9,7 +9,7 @@ import {ProgressBar} from "react-toolbox/lib/progress_bar";
 import {themr} from "../../theme";
 
 import {ButtonHelp} from "../button-help";
-import {ScrollspyContext} from "../scrollspy-container";
+import {ScrollspyContext} from "../scroll-contexts";
 import {PanelButtons, PanelButtonsProps} from "./buttons";
 export {PanelButtons};
 

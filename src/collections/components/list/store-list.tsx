@@ -5,6 +5,7 @@ import * as React from "react";
 
 import {isSearch, ListStoreBase} from "../../store";
 import {List, ListProps} from "./list";
+import {ListWrapperContext} from "./list-wrapper";
 
 /** Props additionnelles pour un StoreList. */
 export interface StoreListProps<T> extends ListProps<T> {
@@ -36,7 +37,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
         }
     }
 
-    protected get shouldAttachScrollListener() {
+    protected get hasInfiniteScroll() {
         const {isManualFetch, store, perPage} = this.props;
         return !isManualFetch && (isSearch(store) || !!perPage);
     }
@@ -106,5 +107,11 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
  * @param props Les props de la liste.
  */
 export function storeListFor<T>(props: ListProps<T> & StoreListProps<T>) {
-    return <StoreList {...props} />;
+    return <StoreListWithWrapperContext<T> {...props} />;
+}
+
+function StoreListWithWrapperContext<T>(props: ListProps<T> & StoreListProps<T>) {
+    // On récupère les infos du ListWrapper dans le contexte.
+    const {addItemHandler, mode, mosaic} = React.useContext(ListWrapperContext);
+    return <StoreList<T> addItemHandler={addItemHandler} mode={mode} mosaic={mosaic} {...props} />;
 }
