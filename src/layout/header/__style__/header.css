@@ -10,7 +10,6 @@
 }
 
 .topRow {
-    z-index: var(--z-index-high);
     background-color: var(--header-toprow-background);
 
     & > div {
@@ -42,6 +41,10 @@
     position: relative;
     color: var(--header-color);
     box-shadow: var(--header-shadow);
+}
+
+.deployed,
+.undeployed {
     margin-bottom: var(--header-margin-bottom);
 }
 
@@ -56,28 +59,26 @@
 }
 
 .undeployed {
-    z-index: inherit;
-    overflow-y: hidden;
-    box-shadow: none;
+    opacity: 0;
 }
 
-.undeployed .topRow {
-    box-shadow: var(--header-shadow);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-
-.undeployed .content {
-    display: none;
-}
-
-.undeployed .actions {
-    position: fixed;
-    top: 30px;
-    right: 0;
+.sticky {
+    position: absolute;
     z-index: var(--z-index-high);
+    top: 0;
+}
+
+.undeployed,
+.sticky {
+    & .content {
+        display: none;
+    }
+
+    & .actions {
+        position: absolute;
+        top: 30px;
+        right: 0;
+    }
 }
 
 .scrolling .actions {

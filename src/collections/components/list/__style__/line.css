@@ -75,7 +75,6 @@
     top: 25px;
     margin-left: -45px;
     background-color: #999;
-    z-index: var(--z-index-high);
     border-radius: 50%;
 }
 

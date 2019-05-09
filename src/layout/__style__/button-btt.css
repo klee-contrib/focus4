@@ -1,0 +1,8 @@
+@import "react-toolbox/lib/variables.css";
+
+.backToTop {
+    position: absolute;
+    bottom: 8%;
+    right: 5%;
+    z-index: var(--z-index-high);
+}

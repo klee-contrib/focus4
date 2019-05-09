@@ -1,0 +1,21 @@
+@import "react-toolbox/lib/variables.css";
+
+.container {
+    position: relative;
+}
+
+.sticky {
+    position: absolute;
+    z-index: var(--z-index-high);
+    pointer-events: none;
+
+    & > * {
+        pointer-events: auto;
+        position: absolute;
+    }
+}
+
+.scrollable {
+    overflow: auto;
+    height: 100%;
+}

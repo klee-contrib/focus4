@@ -1,11 +1,19 @@
+@import "../../style/layout.css";
 @import "../../style/scrollspy-container.css";
 
 .scrollspy {
     position: relative;
+    padding-right: var(--content-padding-side);
 }
 
-.scrollspy nav ul {
+.menu {
+    position: absolute;
+    padding-left: var(--scrollspy-padding-left);
+}
+
+.menu ul {
     list-style-type: none;
+    padding: 0;
 
     & li {
         padding: 2.5px 10px;
@@ -26,6 +34,7 @@
     }
 }
 
-/* stylelint-disable */
+.menu,
 .content {
+    padding-top: var(--content-padding-top);
 }

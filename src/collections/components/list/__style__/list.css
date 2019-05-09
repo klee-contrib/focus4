@@ -168,3 +168,7 @@
 .table th:last-of-type {
     padding-right: 24px;
 }
+
+.clickable {
+    cursor: pointer;
+}

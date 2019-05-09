@@ -1,0 +1,58 @@
+@import "../../style/popin.css";
+
+.popin {
+    z-index: var(--z-index-higher);
+    position: absolute;
+    top: 0;
+    min-width: 50vw;
+    height: 100%;
+    background: var(--popin-background);
+    box-shadow: var(--shadow-4p);
+    box-sizing: border-box;
+}
+
+.left {
+    left: 0;
+}
+
+.right {
+    right: 0;
+}
+
+.close {
+    z-index: var(--z-index-higher);
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    left: -45px;
+    color: white !important;
+
+    & > [data-react-toolbox="font-icon"] {
+        font-size: 24px;
+    }
+}
+
+.enter,
+.exit.exitActive {
+    &.right {
+        transform: translateX(100%);
+    }
+
+    &.left {
+        transform: translateX(-100%);
+    }
+}
+
+.enter.enterActive,
+.exit {
+    &.left,
+    &.right {
+        transform: translateX(0%);
+    }
+}
+
+.enterActive,
+.exitActive {
+    transition: transform var(--animation-duration) var(--animation-curve-default);
+    transition-delay: var(--animation-delay);
+}

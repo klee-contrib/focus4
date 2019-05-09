@@ -1,28 +1,8 @@
-import * as React from "react";
-import {findDOMNode} from "react-dom";
+import React from "react";
+import {useTheme} from "../theme";
+import {LayoutStyle, styles} from "./layout";
 
-import {LayoutContext, LayoutProps, Theme} from "./types";
-
-/** Contenu du Layout. */
-export class LayoutContent extends React.Component<LayoutProps> {
-    static contextType = LayoutContext;
-    context!: React.ContextType<typeof LayoutContext>;
-
-    componentDidMount() {
-        const paddingTop = window.getComputedStyle(findDOMNode(this) as Element).paddingTop;
-        this.context.layout.contentPaddingTop =
-            (paddingTop && paddingTop.endsWith("px") && +paddingTop.replace("px", "")) || 0;
-    }
-
-    render() {
-        return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div className={theme.content} style={{marginLeft: this.context.layout.menuWidth}}>
-                        {this.props.children}
-                    </div>
-                )}
-            </Theme>
-        );
-    }
+export function Content(props: {children?: React.ReactNode; theme?: LayoutStyle}) {
+    const theme = useTheme("layout", styles, props.theme);
+    return <div className={theme.content}>{props.children}</div>;
 }

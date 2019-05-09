@@ -1,6 +1,3 @@
-import scroll from "smoothscroll-polyfill";
-scroll.polyfill();
-
 import i18next from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
@@ -21,7 +18,7 @@ import {
     ListStyle,
     LoadingProps,
     OperationListItem,
-    StoreList
+    storeListFor
 } from "../../list";
 
 import * as styles from "./__style__/group.css";
@@ -128,7 +125,7 @@ export class Group<T> extends React.Component<GroupProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div className={theme.container}>
+                    <>
                         {useGroupActionBars ? (
                             <ActionBar
                                 group={{code: group.code, label: group.label, totalCount: group.totalCount}}
@@ -148,31 +145,31 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                                 <GroupHeader group={group} />
                             </div>
                         )}
-                        <StoreList
-                            canOpenDetail={canOpenDetail}
-                            DetailComponent={DetailComponent}
-                            disableDragAnimThreshold={disableDragAnimThreshold}
-                            dragItemType={dragItemType}
-                            dragLayerTheme={dragLayerTheme}
-                            EmptyComponent={EmptyComponent}
-                            groupCode={group.code}
-                            hasDragAndDrop={hasDragAndDrop}
-                            hasSelection={hasSelection}
-                            hideAdditionalItems={true}
-                            i18nPrefix={i18nPrefix}
-                            isManualFetch={true}
-                            itemKey={itemKey}
-                            LineComponent={LineComponent}
-                            lineTheme={lineTheme}
-                            LoadingComponent={LoadingComponent}
-                            MosaicComponent={MosaicComponent}
-                            operationList={lineOperationList}
-                            perPage={perPage}
-                            showAllHandler={group.list.length < group.totalCount ? this.showAllHandler : undefined}
-                            store={this.store}
-                            theme={listTheme}
-                        />
-                    </div>
+                        {storeListFor({
+                            canOpenDetail,
+                            DetailComponent,
+                            disableDragAnimThreshold,
+                            dragItemType,
+                            dragLayerTheme,
+                            EmptyComponent,
+                            groupCode: group.code,
+                            hasDragAndDrop,
+                            hasSelection,
+                            hideAdditionalItems: true,
+                            i18nPrefix,
+                            isManualFetch: true,
+                            itemKey,
+                            LineComponent,
+                            lineTheme,
+                            LoadingComponent,
+                            MosaicComponent,
+                            operationList: lineOperationList,
+                            perPage,
+                            showAllHandler: group.list.length < group.totalCount ? this.showAllHandler : undefined,
+                            store: this.store,
+                            theme: listTheme
+                        })}
+                    </>
                 )}
             </Theme>
         );

@@ -1,6 +1,5 @@
 import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
 
-import {observable} from "mobx";
 import * as React from "react";
 import {ThemeProvider, TReactCSSThemrTheme} from "react-css-themr";
 
@@ -28,28 +27,31 @@ import {
 import {
     AutocompleteStyle,
     BooleanRadioStyle,
-    ButtonBackToTopStyle,
     DisplayStyle,
     LabelStyle,
     PanelStyle,
-    PopinStyle,
-    ScrollspyStyle,
     SelectCheckboxStyle,
     SelectRadioStyle,
     SelectStyle
 } from "../components";
 import {FieldStyle, FormStyle} from "../entity";
-import {MessageCenter} from "../message";
 import {LoadingBarStyle} from "../network";
 import {ThemeContext} from "../theme";
 
-import {ErrorCenter, ErrorCenterStyle} from "./error-center";
+import {DialogStyle} from "./dialog";
 import {HeaderStyle} from "./header";
+import {LayoutBase, LayoutProps} from "./layout";
 import {MainMenuStyle} from "./menu";
-import {LayoutContext, layoutContextInit, LayoutProps, LayoutStyle, Theme} from "./types";
+import {OverlayStyle} from "./overlay";
+import {PopinStyle} from "./popin";
+import {ButtonBackToTopStyle, ScrollableStyle} from "./scrollable";
+import {ScrollspyStyle} from "./scrollspy-container";
 
-export {LayoutContent} from "./content";
-export {LayoutFooter} from "./footer";
+import * as styles from "./__style__/layout.css";
+export type LayoutStyle = Partial<typeof styles>;
+
+export {Content} from "./content";
+export {Dialog} from "./dialog";
 export {
     HeaderActions,
     HeaderBarLeft,
@@ -61,32 +63,10 @@ export {
     PrimaryAction,
     SecondaryAction
 } from "./header";
+export {Popin} from "./popin";
+export {Scrollable} from "./scrollable";
+export {ScrollspyContainer} from "./scrollspy-container";
 export {MainMenu, MainMenuItem} from "./menu";
-export {LayoutContext};
-
-/** Composant de Layout sans le provider de style. */
-class LayoutBase extends React.Component<LayoutProps> {
-    /** Objet passé en contexte pour la hauteur du header top row. */
-
-    readonly layoutContext = observable(layoutContextInit);
-
-    render() {
-        const {theme: pTheme, children, ...messageCenterProps} = this.props;
-        return (
-            <LayoutContext.Provider value={this.layoutContext}>
-                <Theme theme={pTheme}>
-                    {theme => (
-                        <div className={theme.layout}>
-                            <ErrorCenter />
-                            <MessageCenter {...messageCenterProps} />
-                            {children}
-                        </div>
-                    )}
-                </Theme>
-            </LayoutContext.Provider>
-        );
-    }
-}
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
@@ -98,9 +78,9 @@ export interface LayoutStyleProviderProps {
     booleanRadio?: BooleanRadioStyle;
     buttonBTT?: ButtonBackToTopStyle;
     contextualActions?: ContextualActionsStyle;
+    dialog?: DialogStyle;
     display?: DisplayStyle;
     dragLayer?: DragLayerStyle;
-    errorCenter?: ErrorCenterStyle;
     facet?: FacetStyle;
     facetBox?: FacetBoxStyle;
     field?: FieldStyle;
@@ -114,8 +94,10 @@ export interface LayoutStyleProviderProps {
     list?: ListStyle;
     listWrapper?: ListWrapperStyle;
     mainMenu?: MainMenuStyle;
+    overlay?: OverlayStyle;
     panel?: PanelStyle;
     popin?: PopinStyle;
+    scrollable?: ScrollableStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: SearchBarStyle;
     select?: SelectStyle;
