@@ -1,0 +1,30 @@
+{
+    "name": "@focus4/components",
+    "version": "10.0.0",
+    "description": "Focus v4 (Typescript + MobX)",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/get-focus/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/get-focus/focus4",
+    "scripts": {
+        "start": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@focus4/stores": "10.0.0",
+        "@focus4/styling": "10.0.0",
+        "@types/i18next": "12.1.0",
+        "@types/numeral": "0.0.25",
+        "@types/react-dom": "16.8.4",
+        "i18next": "15.1.0",
+        "inputmask-core": "2.2.0",
+        "lodash-decorators": "6.0.1",
+        "moment": "2.24.0",
+        "moment-timezone": "0.5.25",
+        "numeral": "2.0.6",
+        "react-dom": "16.8.6"
+    }
+}

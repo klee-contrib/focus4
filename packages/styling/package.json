@@ -1,0 +1,24 @@
+{
+    "name": "@focus4/styling",
+    "version": "10.0.0",
+    "description": "Focus v4 (Typescript + MobX)",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/get-focus/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/get-focus/focus4",
+    "scripts": {
+        "start": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@focus4/core": "10.0.0",
+        "@types/react": "16.8.17",
+        "mobx-react": "5.4.3",
+        "mobx-react-lite": "1.2.0",
+        "react": "16.8.6",
+        "react-toolbox": "2.0.0-beta.13"
+    }
+}

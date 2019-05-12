@@ -1,0 +1,11 @@
+.select {
+    & ul {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+.title,
+.option {
+    margin-bottom: 4px;
+}

@@ -1,0 +1,25 @@
+{
+    "name": "@focus4/stores",
+    "version": "10.0.0",
+    "description": "Focus v4 (Typescript + MobX)",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/get-focus/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/get-focus/focus4",
+    "scripts": {
+        "start": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@focus4/core": "10.0.0",
+        "@types/i18next": "12.1.0",
+        "@types/numeral": "0.0.25",
+        "i18next": "15.1.0",
+        "lodash-decorators": "6.0.1",
+        "moment": "2.24.0",
+        "numeral": "2.0.6"
+    }
+}

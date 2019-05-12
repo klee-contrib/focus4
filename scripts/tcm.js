@@ -6,7 +6,7 @@ const {camelCase, flatten} = require("lodash");
 
 const creator = new DtsCreator({rootDir: "./", searchDir: "./"});
 
-glob("src/!(style)/**/*.css", null, (_, files) => {
+glob("packages/!(styling)/**/*.css", null, (_, files) => {
     files.forEach(f => {
         creator
             .create(f, null, false)
@@ -19,9 +19,9 @@ glob("src/!(style)/**/*.css", null, (_, files) => {
     });
 });
 
-glob("src/style/*.css", null, (_, files) => {
+glob("packages/styling/src/style/*.css", null, (_, files) => {
     fs.writeFileSync(
-        "src/style/variables.d.ts",
+        "packages/styling/src/style/variables.d.ts",
         [
             "export interface CSSVariables {",
             ...flatten(
@@ -40,5 +40,5 @@ glob("src/style/*.css", null, (_, files) => {
             ""
         ].join("\r\n")
     );
-    console.log("Wrote " + chalk.green("src/style/variables.d.ts"));
+    console.log("Wrote " + chalk.green("packages/styling/src/variables.d.ts"));
 });

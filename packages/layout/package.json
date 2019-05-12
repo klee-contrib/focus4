@@ -1,0 +1,24 @@
+{
+    "name": "@focus4/stores",
+    "version": "10.0.0",
+    "description": "Focus v4 (Typescript + MobX)",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/get-focus/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/get-focus/focus4",
+    "scripts": {
+        "start": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@focus4/collections": "10.0.0",
+        "@types/react-transition-group": "2.9.1",
+        "intersection-observer": "0.7.0",
+        "react-transition-group": "4.0.1",
+        "resize-observer-polyfill": "1.5.1",
+        "smoothscroll-polyfill": "0.4.4"
+    }
+}
