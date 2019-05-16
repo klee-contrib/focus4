@@ -1,12 +1,12 @@
 // Définitions de styles manquants de libraries externes pour pouvoir compiler certains composants.
 
 declare module "smoothscroll-polyfill";
-
+declare module "moment-timezone"
 declare module "react-toolbox/lib/date_picker/theme.css";
 declare module "react-toolbox/lib/time_picker/theme.css";
 
 declare module "react-toolbox/lib/date_picker/Calendar" {
-    import {DatePickerLocale} from "react-toolbox/lib/date_picker";
+    import { DatePickerLocale } from "react-toolbox/lib/date_picker";
 
     interface CalendarProps {
         disabledDates?: Date[];
@@ -54,7 +54,7 @@ declare module "inputmask-core" {
 
     interface InputMaskOptions {
         pattern: string;
-        formatCharacters?: {[key: string]: InputMaskFormatOptions | null};
+        formatCharacters?: { [key: string]: InputMaskFormatOptions | null };
         placeholderChar?: string;
         value?: string;
         selection?: InputMaskSelection;
@@ -70,7 +70,7 @@ declare module "inputmask-core" {
         getRawValue(): string | undefined;
         getValue(): string | undefined;
 
-        setPattern(pattern: string, options?: {selection?: InputMaskSelection; value?: string | undefined}): void;
+        setPattern(pattern: string, options?: { selection?: InputMaskSelection; value?: string | undefined }): void;
         setSelection(selection: InputMaskSelection): void;
         setValue(value: string | undefined): void;
 

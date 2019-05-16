@@ -1,21 +1,21 @@
-import {uniqueId} from "lodash";
-import {action, observable} from "mobx";
-import {observer} from "mobx-react";
-import moment from "moment";
+import { uniqueId } from "lodash";
+import { action, observable } from "mobx";
+import { observer } from "mobx-react";
+import moment from "moment-timezone";
 import * as React from "react";
-import {findDOMNode} from "react-dom";
-import {IconButton} from "react-toolbox/lib/button";
-import {InputTheme} from "react-toolbox/lib/input";
-import {TimePickerTheme} from "react-toolbox/lib/time_picker";
+import { findDOMNode } from "react-dom";
+import { IconButton } from "react-toolbox/lib/button";
+import { InputTheme } from "react-toolbox/lib/input";
+import { TimePickerTheme } from "react-toolbox/lib/time_picker";
 import Clock from "react-toolbox/lib/time_picker/Clock";
 
-import {Input, InputProps} from "../components";
-import {themr} from "../theme";
+import { Input, InputProps } from "../components";
+import { themr } from "../theme";
 
 import * as styles from "react-toolbox/lib/time_picker/theme.css";
 const Theme = themr("RTTimePicker", styles);
 
-import {calendar, clock, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
+import { calendar, clock, down, fromRight, input, toggle, up } from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
 export interface InputTimeProps extends InputProps {
@@ -29,6 +29,8 @@ export interface InputTimeProps extends InputProps {
     theme?: TimePickerTheme & InputTheme;
     /** Valeur. */
     value?: string;
+    /** Code Timezone que l'on souhaite appliquer au TimePicker dans le cas d'une Timezone différente de celle du navigateur (https://momentjs.com/timezone/) */
+    timezoneCode?: string;
 }
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
@@ -67,7 +69,7 @@ export class InputTime extends React.Component<InputTimeProps> {
     }
 
     @action
-    componentWillReceiveProps({value}: InputTimeProps) {
+    componentWillReceiveProps({ value }: InputTimeProps) {
         this.time = this.toMoment(value);
         this.timeText = this.formatTime(value);
     }
@@ -112,9 +114,19 @@ export class InputTime extends React.Component<InputTimeProps> {
         }
     }
 
+    /** Recupère la date pour le TimePicker */
+    getTime() {
+        const { timezoneCode } = this.props;
+        // Vérifie que la timezone existe
+        if (timezoneCode && moment.tz.zone(timezoneCode)) {
+            return getPickerTime(this.time.toDate(), timezoneCode);
+        }
+        return this.time.toDate();
+    }
+
     /** Formatte l'heure (ISO String) en entrée. */
     formatTime(value?: string) {
-        const {inputFormat = "HH:mm"} = this.props;
+        const { inputFormat = "HH:mm" } = this.props;
         if (isISOString(value)) {
             return moment(value, moment.ISO_8601).format(inputFormat);
         } else {
@@ -124,7 +136,7 @@ export class InputTime extends React.Component<InputTimeProps> {
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
     @action.bound
-    onDocumentClick({target}: Event) {
+    onDocumentClick({ target }: Event) {
         let parent = target as HTMLElement | null;
 
         while (parent && parent.getAttribute("data-id") !== this._inputTimeId) {
@@ -140,7 +152,7 @@ export class InputTime extends React.Component<InputTimeProps> {
     /** Appelé lorsqu'on quitte le champ texte. */
     @action.bound
     onInputBlur() {
-        const {inputFormat = "HH:mm", onChange} = this.props;
+        const { inputFormat = "HH:mm", onChange } = this.props;
         const text = (this.timeText || "").trim() || undefined;
 
         const time = moment(text, inputFormat, true);
@@ -160,7 +172,12 @@ export class InputTime extends React.Component<InputTimeProps> {
     /** Au clic sur l'horloge. */
     @action.bound
     onClockChange(time: Date) {
-        this.props.onChange(moment(time).format());
+        const { timezoneCode } = this.props;
+        // Vérifie que la timezone existe
+        if (timezoneCode && moment.tz.zone(timezoneCode)) {
+            time = getTimezoneTime(this.time.toDate(), timezoneCode);
+        }
+        return this.props.onChange(moment(time).format());
     }
 
     @action.bound
@@ -175,7 +192,7 @@ export class InputTime extends React.Component<InputTimeProps> {
 
     /** Ferme l'horloge lorsqu'on appuie sur Entrée ou Tab. */
     @action.bound
-    handleKeyDown({key}: KeyboardEvent) {
+    handleKeyDown({ key }: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showClock = false;
             this.onInputBlur();
@@ -183,14 +200,14 @@ export class InputTime extends React.Component<InputTimeProps> {
     }
 
     render() {
-        const {theme: pTheme, inputFormat = "HH:mm", displayFrom = "left", ...inputProps} = this.props;
+        const { theme: pTheme, inputFormat = "HH:mm", displayFrom = "left", ...inputProps } = this.props;
         return (
             <Theme theme={pTheme}>
                 {theme => (
                     <div data-focus="input-time" data-id={this._inputTimeId} className={input}>
                         <Input
                             {...inputProps}
-                            mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                            mask={{ pattern: inputFormat.replace(/\w/g, "1") }}
                             onChange={(value: string) => (this.timeText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showClock = true)}
@@ -202,9 +219,9 @@ export class InputTime extends React.Component<InputTimeProps> {
                                 ref={clo => (this.clock = clo)}
                                 className={`${calendar} ${theme!.dialog} ${
                                     this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay
-                                } ${displayFrom === "right" ? fromRight : ""} ${
+                                    } ${displayFrom === "right" ? fromRight : ""} ${
                                     this.clockPosition === "up" ? up : down
-                                }`}
+                                    }`}
                             >
                                 <header className={theme!.header}>
                                     <span
@@ -224,7 +241,7 @@ export class InputTime extends React.Component<InputTimeProps> {
                                     </span>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle}}
+                                        theme={{ toggle }}
                                         onClick={() => (this.showClock = false)}
                                     />
                                 </header>
@@ -236,7 +253,7 @@ export class InputTime extends React.Component<InputTimeProps> {
                                         onChange={this.onClockChange}
                                         onHandMoved={this.onHandMoved}
                                         theme={theme}
-                                        time={this.time.toDate()}
+                                        time={this.getTime()}
                                     />
                                 </div>
                             </div>
@@ -253,6 +270,31 @@ function isISOString(value?: string) {
     return moment(value, moment.ISO_8601, true).isValid();
 }
 
+/** Détermine la date pour le picker en prenant en compte la timezone */
+function getPickerTime(tzDate: Date, timezoneCode: string) {
+    const tzUTCOffset = moment.tz(tzDate, timezoneCode).utcOffset();
+    const utcDate = new Date();
+    utcDate.setTime(tzDate.getTime() + tzUTCOffset * 60000);
+
+    const pickerDate = new Date();
+    const pickerOffset = pickerDate.getTimezoneOffset();
+    pickerDate.setTime(utcDate.getTime() + pickerOffset * 60000);
+
+    return pickerDate;
+};
+
+/** Détermine la date pour retourné en prenant en compte la timezone */
+function getTimezoneTime(pickerDate: Date, timezoneCode: string) {
+    const pickerOffset = pickerDate.getTimezoneOffset();
+    const utcDate = new Date();
+    utcDate.setTime(pickerDate.getTime() - pickerOffset * 60000);
+
+    const tzOffset = moment.tz(pickerDate, timezoneCode).utcOffset();
+    const tzDate = new Date();
+    tzDate.setTime(utcDate.getTime() - tzOffset * 60000);
+    return tzDate;
+};
+
 /** Retourne le parent le plus proche qui est scrollable. */
 function getScrollParent(element: Element, includeHidden = false) {
     let style = getComputedStyle(element);
@@ -262,7 +304,7 @@ function getScrollParent(element: Element, includeHidden = false) {
     if (style.position === "fixed") {
         return document.body;
     }
-    for (let parent: Element | null = element; (parent = parent.parentElement); ) {
+    for (let parent: Element | null = element; (parent = parent.parentElement);) {
         style = getComputedStyle(parent);
         if (excludeStaticParent && style.position === "static") {
             continue;

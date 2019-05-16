@@ -1,20 +1,21 @@
-import {uniqueId} from "lodash";
-import {action, computed, observable} from "mobx";
-import {observer} from "mobx-react";
-import moment from "moment";
+import { uniqueId } from "lodash";
+import { action, computed, observable } from "mobx";
+import { observer } from "mobx-react";
+import moment from "moment-timezone";
 import * as React from "react";
-import {IconButton} from "react-toolbox/lib/button";
-import {DatePickerProps, DatePickerTheme} from "react-toolbox/lib/date_picker";
+import { IconButton } from "react-toolbox/lib/button";
+import { DatePickerProps, DatePickerTheme } from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
-import {InputTheme} from "react-toolbox/lib/input";
+import { InputTheme } from "react-toolbox/lib/input";
 
-import {Input, InputProps} from "../components";
-import {themr} from "../theme";
+import { Input, InputProps } from "../components";
+import { themr } from "../theme";
 
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
 const Theme = themr("RTDatePicker", styles);
 
-import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
+import { Moment } from "moment";
+import { calendar, down, fromRight, input, toggle, up } from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
 
@@ -51,6 +52,11 @@ export interface InputDateProps extends InputProps {
     value?: string;
     /* Autres props du Calendar React */
     calendarProps?: DatePickerProps;
+    /**
+     * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://momentjs.com/timezone/)
+     * Incompatible avec l'usage de ISOStringFormat
+     */
+    timezoneCode?: string;
 }
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
@@ -81,7 +87,7 @@ export class InputDate extends React.Component<InputDateProps> {
     }
 
     @action
-    componentWillReceiveProps({value}: InputDateProps) {
+    componentWillReceiveProps({ value }: InputDateProps) {
         this.date = this.toMoment(value);
         this.dateText = this.formatDate(value);
     }
@@ -109,7 +115,12 @@ export class InputDate extends React.Component<InputDateProps> {
 
     @computed
     get jsDate() {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const { timezoneCode } = this.props
+        // Vérifie que la timezone existe
+        if (timezoneCode && moment.tz.zone(timezoneCode)) {
+            return getPickerDate(this.date.toDate(), timezoneCode);
+        }
+        const { ISOStringFormat = "utc-midnight" } = this.props;
         if (ISOStringFormat === "utc-midnight") {
             return new Date(this.date.year(), this.date.month(), this.date.date());
         } else {
@@ -124,7 +135,7 @@ export class InputDate extends React.Component<InputDateProps> {
 
     /** Convertit le texte en objet MomentJS. */
     toMoment(value?: string) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const { ISOStringFormat = "utc-midnight" } = this.props;
         const m = ISOStringFormat === "utc-midnight" ? moment.utc : moment;
 
         if (isISOString(value)) {
@@ -140,7 +151,7 @@ export class InputDate extends React.Component<InputDateProps> {
 
     /** Formatte la date (ISO String) en entrée selon le format demandé. */
     formatDate(value?: string) {
-        const {inputFormat = "MM/DD/YYYY"} = this.props;
+        const { inputFormat = "MM/DD/YYYY" } = this.props;
         if (isISOString(value)) {
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
             return moment(value, moment.ISO_8601).format(inputFormat);
@@ -151,7 +162,7 @@ export class InputDate extends React.Component<InputDateProps> {
 
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
     @action.bound
-    onDocumentClick({target}: Event) {
+    onDocumentClick({ target }: Event) {
         let parent = target as HTMLElement | null;
 
         while (parent && parent.getAttribute("data-id") !== this._inputDateId) {
@@ -167,7 +178,7 @@ export class InputDate extends React.Component<InputDateProps> {
     /** Appelé lorsqu'on quitte le champ texte. */
     @action.bound
     onInputBlur() {
-        const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
+        const { inputFormat = "MM/DD/YYYY", onChange } = this.props;
         const text = (this.dateText || "").trim() || undefined;
 
         const date = this.transformDate(text, inputFormat, true);
@@ -183,26 +194,30 @@ export class InputDate extends React.Component<InputDateProps> {
     /** Au clic sur le calendrier. */
     @action.bound
     onCalendarChange(date: Date, dayClick: boolean) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
-
-        // La date reçue est toujours à minuit en "local-midnight".
-        if (ISOStringFormat === "utc-midnight") {
-            // Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
-            date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
-        }
-
-        const correctedDate = this.transformDate(date).format();
-        this.props.onChange(correctedDate);
-        if (!dayClick) {
-            this.calendarDisplay = "months";
+        const { ISOStringFormat = "utc-midnight", timezoneCode } = this.props;
+        // Vérifie que la timezone existe
+        if (timezoneCode && moment.tz.zone(timezoneCode)) {
+            date = getTimezoneTime(this.date.toDate(), timezoneCode);
         } else {
-            this.showCalendar = false;
+            // La date reçue est toujours à minuit en "local-midnight".
+            if (ISOStringFormat === "utc-midnight") {
+                // Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
+                date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
+            }
+
+            const correctedDate = this.transformDate(date).format();
+            this.props.onChange(correctedDate);
+            if (!dayClick) {
+                this.calendarDisplay = "months";
+            } else {
+                this.showCalendar = false;
+            }
         }
     }
 
     /** Ferme le calendrier lorsqu'on appuie sur Entrée ou Tab. */
     @action.bound
-    handleKeyDown({key}: KeyboardEvent) {
+    handleKeyDown({ key }: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
             this.showCalendar = false;
             this.onInputBlur();
@@ -210,10 +225,10 @@ export class InputDate extends React.Component<InputDateProps> {
     }
 
     /** Transforme la date selon le format de date/timezone souhaité. */
-    transformDate(date: Date): moment.Moment; // Depuis le calendrier.
-    transformDate(date: string | undefined, inputFormat: string, strict: true): moment.Moment; // Depuis la saisie manuelle.
+    transformDate(date: Date): Moment; // Depuis le calendrier.
+    transformDate(date: string | undefined, inputFormat: string, strict: true): Moment; // Depuis la saisie manuelle.
     transformDate(...params: any[]) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const { ISOStringFormat = "utc-midnight" } = this.props;
 
         // Dans les deux cas, la date d'entrée est bien en "local-midnight".
         if (ISOStringFormat === "local-midnight") {
@@ -241,7 +256,7 @@ export class InputDate extends React.Component<InputDateProps> {
                     <div data-focus="input-date" data-id={this._inputDateId} className={input}>
                         <Input
                             {...inputProps}
-                            mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                            mask={{ pattern: inputFormat.replace(/\w/g, "1") }}
                             onChange={(value: string) => (this.dateText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showCalendar = true)}
@@ -253,7 +268,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                 ref={cal => (this.calendar = cal)}
                                 className={`${calendar} ${displayFrom === "right" ? fromRight : ""} ${
                                     this.calendarPosition === "up" ? up : down
-                                }`}
+                                    }`}
                             >
                                 <header
                                     className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}
@@ -277,7 +292,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                     </h3>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle}}
+                                        theme={{ toggle }}
                                         onClick={() => (this.showCalendar = false)}
                                     />
                                 </header>
@@ -311,3 +326,28 @@ export class InputDate extends React.Component<InputDateProps> {
 function isISOString(value?: string) {
     return moment(value, moment.ISO_8601, true).isValid();
 }
+
+/** Détermine la date pour le picker en prenant en compte la timezone */
+function getPickerDate(tzDate: Date, timezoneCode: string) {
+    const tzUTCOffset = moment.tz(tzDate, timezoneCode).utcOffset();
+    const utcDate = new Date();
+    utcDate.setTime(tzDate.getTime() + tzUTCOffset * 60000);
+
+    const pickerDate = new Date();
+    const pickerOffset = pickerDate.getTimezoneOffset();
+    pickerDate.setTime(utcDate.getTime() + pickerOffset * 60000);
+
+    return pickerDate;
+};
+
+/** Détermine la date pour retourné en prenant en compte la timezone */
+function getTimezoneTime(pickerDate: Date, timezoneCode: string) {
+    const pickerOffset = pickerDate.getTimezoneOffset();
+    const utcDate = new Date();
+    utcDate.setTime(pickerDate.getTime() - pickerOffset * 60000);
+
+    const tzOffset = moment.tz(pickerDate, timezoneCode).utcOffset();
+    const tzDate = new Date();
+    tzDate.setTime(utcDate.getTime() - tzOffset * 60000);
+    return tzDate;
+};
