@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "8.10.0",
+    "version": "8.10.1",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -24,6 +24,7 @@
     "dependencies": {
         "@types/i18next": "12.1.0",
         "@types/lodash": "4.14.123",
+        "@types/moment-timezone": "0.5.12",
         "@types/numeral": "0.0.25",
         "@types/react": "16.8.14",
         "@types/react-dom": "16.8.4",
@@ -42,7 +43,7 @@
         "mobx-react": "5.4.3",
         "mobx-react-lite": "1.2.0",
         "moment": "2.24.0",
-        "moment-timezone": "^0.5.25",
+        "moment-timezone": "0.5.25",
         "numeral": "2.0.6",
         "react": "16.8.6",
         "react-dnd": "7.4.5",
