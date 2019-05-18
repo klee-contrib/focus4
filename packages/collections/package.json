@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "10.0.0",
+    "version": "10.0.0-preview",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -14,7 +14,7 @@
         "start": "tsc --noEmit"
     },
     "dependencies": {
-        "@focus4/components": "10.0.0",
+        "@focus4/components": "10.0.0-preview",
         "react-dnd": "7.4.5",
         "react-dnd-html5-backend": "7.4.4",
         "react-pose": "4.0.8"

@@ -1,6 +1,6 @@
 {
-    "name": "@focus4/stores",
-    "version": "10.0.0",
+    "name": "@focus4/layout",
+    "version": "10.0.0-preview",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -14,7 +14,7 @@
         "start": "tsc --noEmit"
     },
     "dependencies": {
-        "@focus4/collections": "10.0.0",
+        "@focus4/collections": "10.0.0-preview",
         "@types/react-transition-group": "2.9.1",
         "intersection-observer": "0.7.0",
         "react-transition-group": "4.0.1",

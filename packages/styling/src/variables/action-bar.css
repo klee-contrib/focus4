@@ -1,6 +1,3 @@
-@import "react-toolbox/lib/colors.css";
-@import "react-toolbox/lib/variables.css";
-
 :root {
     --action-bar-background: var(--color-white);
     --action-bar-facetbox-background: var(--palette-grey-200);

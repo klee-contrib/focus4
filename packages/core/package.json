@@ -1,17 +1,18 @@
 {
     "name": "@focus4/core",
-    "version": "10.0.0",
-    "description": "Focus v4 (Typescript + MobX)",
-    "main": "index.js",
+    "version": "10.0.0-preview",
+    "description": "Focus v4, core module",
+    "main": "lib/focus4.core.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/get-focus/focus4.git"
+        "url": "https://github.com/KleeGroup/focus4.git"
     },
     "author": "damien.frikha@kleegroup.com",
     "license": "MIT",
-    "homepage": "https://github.com/get-focus/focus4",
+    "homepage": "https://github.com/KleeGroup/focus4/packages/core",
     "scripts": {
-        "start": "tsc --noEmit"
+        "prepare": "rollup -cm",
+        "start": "rollup -cw"
     },
     "dependencies": {
         "@types/lodash": "4.14.126",

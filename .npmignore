@@ -1,9 +1,11 @@
 .vscode
 .npmrc
 dist
+src
 scripts/clean.js
 scripts/copy-css.js
 scripts/tcm.js
 .stylelintrc.json
+rollup.config.json
 tsconfig.json
 tslint.json

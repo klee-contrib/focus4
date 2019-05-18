@@ -1,6 +1,6 @@
 {
     "name": "@focus4/stores",
-    "version": "10.0.0",
+    "version": "10.0.0-preview",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -14,7 +14,7 @@
         "start": "tsc --noEmit"
     },
     "dependencies": {
-        "@focus4/core": "10.0.0",
+        "@focus4/core": "10.0.0-preview",
         "@types/i18next": "12.1.0",
         "@types/numeral": "0.0.25",
         "i18next": "15.1.0",

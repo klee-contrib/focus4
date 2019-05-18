@@ -1,6 +1,3 @@
-@import "react-toolbox/lib/colors.css";
-@import "react-toolbox/lib/variables.css";
-
 :root {
     --input-date-shadow: var(--shadow-4p);
     --input-date-width: 330px;

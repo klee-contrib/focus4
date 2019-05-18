@@ -22,7 +22,7 @@
 
         // Spécifique librairie
         "declaration": true,
-        "inlineSourceMap": true,
+        "sourceMap": true,
         "outDir": "dist",
         "stripInternal": true
     },

@@ -1,5 +1,3 @@
-import "./style/global.css";
-
 const {animationDelay, animationDuration, animationTimingFunction} = window.getComputedStyle(document.body);
 
 export const delay = toMs(animationDelay);

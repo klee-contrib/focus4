@@ -1,6 +1,6 @@
 import {isArray} from "lodash";
 
-import {messageStore} from "../message";
+import {messageStore} from "../stores/message";
 
 /** Format attendu des erreurs JSON issues du serveur. */
 export interface ErrorResponse {
