@@ -14,7 +14,6 @@ import {themr} from "../theme";
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
 const Theme = themr("RTDatePicker", styles);
 
-import {Moment} from "moment";
 import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
@@ -223,8 +222,8 @@ export class InputDate extends React.Component<InputDateProps> {
     }
 
     /** Transforme la date selon le format de date/timezone souhaité. */
-    transformDate(date: Date): Moment; // Depuis le calendrier.
-    transformDate(date: string | undefined, inputFormat: string, strict: true): Moment; // Depuis la saisie manuelle.
+    transformDate(date: Date): moment.Moment; // Depuis le calendrier.
+    transformDate(date: string | undefined, inputFormat: string, strict: true): moment.Moment; // Depuis la saisie manuelle.
     transformDate(...params: any[]) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 

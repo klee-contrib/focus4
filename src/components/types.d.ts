@@ -1,7 +1,6 @@
 // Définitions de styles manquants de libraries externes pour pouvoir compiler certains composants.
 
 declare module "smoothscroll-polyfill";
-declare module "moment-timezone";
 declare module "react-toolbox/lib/date_picker/theme.css";
 declare module "react-toolbox/lib/time_picker/theme.css";
 
