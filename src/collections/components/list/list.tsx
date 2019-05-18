@@ -124,13 +124,16 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
 
     /** Toggle le détail depuis la ligne. */
     @action.bound
-    protected toggleDetail(idx: number, {onOpen, onClose}: {onOpen?: () => void; onClose?: () => void} = {}) {
+    protected async toggleDetail(
+        idx: number,
+        {onOpen, onClose}: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void} = {}
+    ) {
         this.displayedIdx = this.displayedIdx !== idx ? idx : undefined;
         if (this.displayedIdx && onOpen) {
-            onOpen();
+            await onOpen();
         }
         if (!this.displayedIdx && onClose) {
-            onClose();
+            await onClose();
         }
     }
 

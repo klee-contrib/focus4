@@ -23,7 +23,7 @@ export interface LineProps<T> {
     /** Elément de la liste. */
     data: T;
     /** Handler pour ouvrir et fermer le détail. */
-    toggleDetail?: (callbacks?: {onOpen?: () => void; onClose?: () => void}) => void;
+    toggleDetail?: (callbacks?: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void}) => void;
 }
 
 /** Props du wrapper autour des lignes de liste. */
@@ -55,7 +55,7 @@ export interface LineWrapperProps<T> {
     /** Store de liste associé à la ligne. */
     store?: ListStoreBase<T>;
     /** Handler pour ouvrir et fermer le détail. */
-    toggleDetail?: (callbacks?: {onOpen?: () => void; onClose?: () => void}) => void;
+    toggleDetail?: (callbacks?: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void}) => void;
     /** CSS. */
     theme?: LineStyle;
     /** Type spécial de ligne. */
