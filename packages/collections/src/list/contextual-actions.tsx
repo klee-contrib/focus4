@@ -6,9 +6,10 @@ import Tooltip from "react-toolbox/lib/tooltip";
 import {ButtonMenu, getIcon} from "@focus4/components";
 import {themr} from "@focus4/styling";
 
-import styles from "./__style__/contextual-actions.css";
-export type ContextualActionsStyle = Partial<typeof styles>;
-const Theme = themr("contextualActions", styles);
+import contextualActionsStyles from "./__style__/contextual-actions.css";
+export {contextualActionsStyles};
+export type ContextualActionsStyle = Partial<typeof contextualActionsStyles>;
+const Theme = themr("contextualActions", contextualActionsStyles);
 
 const TooltipButton = Tooltip(Button);
 const TooltipIconButton = Tooltip(IconButton);

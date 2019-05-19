@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {reduce} from "lodash";
-import {action, observable, reaction} from "mobx";
+import {action, IReactionDisposer, observable, reaction} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
@@ -15,9 +15,10 @@ import {defaultPose, themr} from "@focus4/styling";
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import styles from "./__style__/action-bar.css";
-export type ActionBarStyle = Partial<typeof styles>;
-const Theme = themr("actionBar", styles);
+import actionBarStyles from "./__style__/action-bar.css";
+export {actionBarStyles};
+export type ActionBarStyle = Partial<typeof actionBarStyles>;
+const Theme = themr("actionBar", actionBarStyles);
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
@@ -229,7 +230,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 
     /** Réaction permettant de fermer la FacetBox et de mettre à jour sa hauteur à chaque fois que c'est nécessaire (changement de son contenu).  */
     @disposeOnUnmount
-    protected facetBoxCloser = reaction(
+    protected facetBoxCloser: IReactionDisposer = reaction(
         () => {
             const {hasFacetBox, store} = this.props;
             return (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false;

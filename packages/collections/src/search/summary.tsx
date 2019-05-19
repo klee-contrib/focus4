@@ -12,9 +12,10 @@ import {themr} from "@focus4/styling";
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 import {removeFacetValue} from "./facet-box";
 
-import styles from "./__style__/summary.css";
-export type SummaryStyle = Partial<typeof styles>;
-const Theme = themr("summary", styles);
+import summaryStyles from "./__style__/summary.css";
+export {summaryStyles};
+export type SummaryStyle = Partial<typeof summaryStyles>;
+const Theme = themr("summary", summaryStyles);
 
 /** Props du ListSummary. */
 export interface ListSummaryProps<T> {

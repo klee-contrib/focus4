@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {action, autorun, comparer, computed, observable, reaction} from "mobx";
+import {action, autorun, comparer, computed, IObservableArray, IReactionDisposer, observable, reaction} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
@@ -17,8 +17,8 @@ import {LineProps, LineWrapper, LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps, ListStyle} from "./list-base";
 import {ListWrapperContext, lwcInit} from "./list-wrapper";
 
-import styles from "./__style__/list.css";
-const Theme = themr("list", styles);
+import listStyles from "./__style__/list.css";
+const Theme = themr("list", listStyles);
 
 /** Props de base d'un composant de détail. */
 export interface DetailProps<T> {
@@ -89,7 +89,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     @observable private ulRef?: HTMLUListElement | null;
 
     /** Liste des éléments sélectionnés par le drag and drop. */
-    protected readonly draggedItems = observable<T>([]);
+    protected readonly draggedItems: IObservableArray<T> = observable<T>([]);
 
     /** LineWrapper (avec la DragSource, pour une liste avec drag and drop). */
     private readonly LineWrapper = this.props.hasDragAndDrop
@@ -113,7 +113,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
     }
 
     @disposeOnUnmount
-    protected byLineUpdater = autorun(this.updateByLine);
+    protected byLineUpdater: IReactionDisposer = autorun(this.updateByLine);
 
     /** Toggle le détail depuis la ligne. */
     @action.bound

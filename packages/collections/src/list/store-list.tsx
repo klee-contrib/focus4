@@ -5,6 +5,7 @@ import * as React from "react";
 
 import {isSearch, ListStoreBase} from "@focus4/stores";
 
+import {LineWrapperProps} from "./line";
 import {List, ListProps} from "./list";
 import {ListWrapperContext} from "./list-wrapper";
 
@@ -79,7 +80,7 @@ export class StoreList<T> extends List<T, StoreListProps<T>> {
      * Quelques props supplémentaires à ajouter pour la sélection.
      * @param Component Le composant de ligne.
      */
-    protected getItems() {
+    protected getItems(): LineWrapperProps<T>[] {
         const {hasSelection = false, store} = this.props;
         return super.getItems().map(props => ({
             ...props,

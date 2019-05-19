@@ -21,9 +21,10 @@ import {
     storeListFor
 } from "../../list";
 
-import styles from "./__style__/group.css";
-export type GroupStyle = Partial<typeof styles>;
-const Theme = themr("group", styles);
+import groupStyles from "../__style__/group.css";
+export {groupStyles};
+export type GroupStyle = Partial<typeof groupStyles>;
+const Theme = themr("group", groupStyles);
 
 /** Props du composant de groupe. */
 export interface GroupProps<T> {

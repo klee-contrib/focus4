@@ -1,3 +1,4 @@
+import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {ChipTheme} from "react-toolbox/lib/chip";
@@ -24,10 +25,10 @@ import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
 import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
 
-import {observable} from "mobx";
-import styles from "./__style__/advanced-search.css";
-export type AdvancedSearchStyle = Partial<typeof styles>;
-const Theme = themr("advancedSearch", styles);
+import advancedSearchStyles from "./__style__/advanced-search.css";
+export {advancedSearchStyles};
+export type AdvancedSearchStyle = Partial<typeof advancedSearchStyles>;
+const Theme = themr("advancedSearch", advancedSearchStyles);
 
 /** Props de l'AdvancedSearch. */
 export interface AdvancedSearchProps<T> {

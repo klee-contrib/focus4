@@ -7,13 +7,14 @@ import {Button, IconButton} from "react-toolbox/lib/button";
 import {Dropdown} from "react-toolbox/lib/dropdown";
 import {FontIcon} from "react-toolbox/lib/font_icon";
 
-import {fieldFor, getIcon} from "@focus4/components";
-import {Entity, FormEntityField, makeField, SearchStore, toFlatValues} from "@focus4/stores";
+import {fieldFor, getIcon, makeField} from "@focus4/components";
+import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
-import styles from "./__style__/search-bar.css";
-export type SearchBarStyle = Partial<typeof styles>;
-const Theme = themr("searchBar", styles);
+import searchBarStyles from "./__style__/search-bar.css";
+export {searchBarStyles};
+export type SearchBarStyle = Partial<typeof searchBarStyles>;
+const Theme = themr("searchBar", searchBarStyles);
 
 /** Props de la SearchBar. */
 export interface SearchBarProps<T, C extends Entity> {

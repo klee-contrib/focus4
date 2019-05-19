@@ -15,7 +15,8 @@ import {Input, InputProps} from "./input";
 import styles from "react-toolbox/lib/date_picker/theme.css";
 const Theme = themr("RTDatePicker", styles);
 
-import focusStyles from "./__style__/input-date.css";
+import inputDateStyles from "./__style__/input-date.css";
+export {inputDateStyles};
 
 const Calendar = calendarFactory(IconButton);
 
@@ -270,7 +271,7 @@ export class InputDate extends React.Component<InputDateProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-date" data-id={this._inputDateId} className={focusStyles.input}>
+                    <div data-focus="input-date" data-id={this._inputDateId} className={inputDateStyles.input}>
                         <Input
                             {...inputProps}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
@@ -283,9 +284,9 @@ export class InputDate extends React.Component<InputDateProps> {
                         {this.showCalendar ? (
                             <div
                                 ref={cal => (this.calendar = cal)}
-                                className={`${focusStyles.calendar} ${
-                                    displayFrom === "right" ? focusStyles.fromRight : ""
-                                } ${this.calendarPosition === "up" ? focusStyles.up : focusStyles.down}`}
+                                className={`${inputDateStyles.calendar} ${
+                                    displayFrom === "right" ? inputDateStyles.fromRight : ""
+                                } ${this.calendarPosition === "up" ? inputDateStyles.up : inputDateStyles.down}`}
                             >
                                 <header
                                     className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}
@@ -306,7 +307,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                     </h3>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: focusStyles.toggle}}
+                                        theme={{toggle: inputDateStyles.toggle}}
                                         onClick={() => (this.showCalendar = false)}
                                     />
                                 </header>

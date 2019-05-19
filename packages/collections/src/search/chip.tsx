@@ -2,8 +2,9 @@ import i18next from "i18next";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {themeable} from "react-css-themr";
 import {Chip, ChipTheme} from "react-toolbox/lib/chip";
+
+import {themeable} from "@focus4/core";
 
 /** Type de Chip pour la recherche. */
 export type ChipType = "filter" | "facet" | "sort" | "group";

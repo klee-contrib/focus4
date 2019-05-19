@@ -9,8 +9,9 @@ import {ButtonHelp} from "./button-help";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 import {ScrollspyContext} from "./scroll-contexts";
 
-import styles from "./__style__/panel.css";
-export type PanelStyle = Partial<typeof styles>;
+import panelStyles from "./__style__/panel.css";
+export {panelStyles};
+export type PanelStyle = Partial<typeof panelStyles>;
 
 /** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {
@@ -61,7 +62,7 @@ export function Panel({
 
     const [isInForm, setIsInForm] = React.useState(false);
     const ref = React.useRef<HTMLDivElement>(null);
-    const theme = useTheme("panel", styles, pTheme);
+    const theme = useTheme("panel", panelStyles, pTheme);
 
     /** On récupère le contexte posé par le scrollspy parent. */
     const scrollSpyContext = React.useContext(ScrollspyContext);

@@ -1,5 +1,3 @@
-@import "../../../../style/action-bar.css";
-
 .container {
     position: relative;
     margin: var(--action-bar-margin);

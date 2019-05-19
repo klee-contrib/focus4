@@ -4,9 +4,10 @@ import * as React from "react";
 
 import {themr} from "@focus4/styling";
 
-import styles from "./__style__/display.css";
-export type DisplayStyle = Partial<typeof styles>;
-const Theme = themr("display", styles);
+import displayStyles from "./__style__/display.css";
+export {displayStyles};
+export type DisplayStyle = Partial<typeof displayStyles>;
+const Theme = themr("display", displayStyles);
 
 /** Props du composant d'affichage. */
 export interface DisplayProps {

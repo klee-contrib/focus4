@@ -4,16 +4,18 @@ import * as React from "react";
 import {ChipTheme} from "react-toolbox/lib/chip";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {themr} from "@focus4/styling";
+import {themr, useTheme} from "@focus4/styling";
 
 import {ChipType} from "../chip";
-import {Facet, FacetProps, FacetStyle, FacetTheme} from "./facet";
+import {Facet, FacetProps, FacetStyle} from "./facet";
 import {addFacetValue, removeFacetValue, shouldDisplayFacet} from "./utils";
 export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps, FacetStyle};
 
-import styles from "./__style__/facet-box.css";
-export type FacetBoxStyle = Partial<typeof styles>;
-const Theme = themr("facetBox", styles);
+import facetBoxStyles from "../__style__/facet-box.css";
+import facetStyles from "../__style__/facet.css";
+export {facetBoxStyles, facetStyles};
+export type FacetBoxStyle = Partial<typeof facetBoxStyles>;
+const Theme = themr("facetBox", facetBoxStyles);
 
 /** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
@@ -69,7 +71,10 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
 
             const FacetCustom = customFacetComponents[facet.code];
             if (FacetCustom) {
-                FacetComponent = props => <FacetTheme>{theme => <FacetCustom {...props} theme={theme} />}</FacetTheme>;
+                FacetComponent = props => {
+                    const theme = useTheme("facet", facetStyles);
+                    return <FacetCustom {...props} theme={theme} />;
+                };
             }
 
             return (

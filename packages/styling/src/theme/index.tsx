@@ -7,7 +7,7 @@ import {themeable, TReactCSSThemrTheme} from "@focus4/core";
 export const ThemeContext = React.createContext({} as TReactCSSThemrTheme);
 
 /** Hook pour récupérer le theme du contexte et le fusionner avec d'autres. */
-export function useTheme<T>(name: string, ...themes: (Partial<T> | undefined)[]): T {
+export function useTheme<T = any>(name: string, ...themes: (Partial<T> | undefined)[]): T {
     const contextTheme = React.useContext(ThemeContext)[name];
     return (themeable((contextTheme as {}) || {}, ...(themes.filter(Boolean) as {}[])) as unknown) as T;
 }

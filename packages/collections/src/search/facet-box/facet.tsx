@@ -11,9 +11,9 @@ import {themr} from "@focus4/styling";
 import {ChipType, SearchChip} from "../chip";
 import {addFacetValue, removeFacetValue} from "./utils";
 
-import styles from "./__style__/facet.css";
-export type FacetStyle = Partial<typeof styles>;
-export const FacetTheme = themr("facet", styles);
+import facetStyles from "../__style__/facet.css";
+export type FacetStyle = Partial<typeof facetStyles>;
+const Theme = themr("facet", facetStyles);
 
 /** Props de Facet. */
 export interface FacetProps {
@@ -112,7 +112,7 @@ export class Facet extends React.Component<FacetProps> {
     render() {
         const {facet} = this.props;
         return (
-            <FacetTheme theme={this.props.theme}>
+            <Theme theme={this.props.theme}>
                 {theme => (
                     <div
                         className={`${theme.facet} ${facet.isMultiSelectable ? theme.multiSelect : ""}`}
@@ -123,7 +123,7 @@ export class Facet extends React.Component<FacetProps> {
                         {this.renderShowAllDataList(theme)}
                     </div>
                 )}
-            </FacetTheme>
+            </Theme>
         );
     }
 }

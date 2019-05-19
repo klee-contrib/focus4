@@ -16,8 +16,8 @@ import {
     OperationListItem,
     storeListFor
 } from "../../list";
-import {Group, GroupStyle} from "./group";
-export {GroupStyle};
+import {Group, GroupStyle, groupStyles} from "./group";
+export {GroupStyle, groupStyles};
 
 /** Props de Results. */
 export interface ResultsProps<T> {

@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import typescript from "rollup-plugin-typescript2";
 import pkg from "./package.json";
 
@@ -8,7 +9,7 @@ export default {
         if (warning.code === "CIRCULAR_DEPENDENCY") {
             return;
         }
-        console.warn(`(!) ${warning.message}`);
+        console.warn(chalk.yellow(`(!) ${warning.message}`));
     },
     output: {
         format: "esm",

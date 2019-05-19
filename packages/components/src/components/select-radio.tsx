@@ -4,8 +4,9 @@ import {RadioButton, RadioGroup} from "react-toolbox/lib/radio";
 
 import {useTheme} from "@focus4/styling";
 
-import styles from "./__style__/select-radio.css";
-export type SelectRadioStyle = Partial<typeof styles>;
+import selectRadioStyles from "./__style__/select-radio.css";
+export {selectRadioStyles};
+export type SelectRadioStyle = Partial<typeof selectRadioStyles>;
 
 /** Props du SelectRadio. */
 export interface SelectRadioProps<T extends "string" | "number"> {
@@ -55,7 +56,7 @@ export function SelectRadio<T extends "string" | "number">({
     valueKey,
     values
 }: SelectRadioProps<T>) {
-    const theme = useTheme("selectRadio", styles, pTheme);
+    const theme = useTheme("selectRadio", selectRadioStyles, pTheme);
 
     let definitiveValues = values;
     if (hasUndefined && undefinedPosition === "bottom") {

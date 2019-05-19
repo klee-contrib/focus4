@@ -3,8 +3,9 @@ import * as React from "react";
 
 import {useTheme} from "@focus4/styling";
 
-import styles from "./__style__/select.css";
-export type SelectStyle = Partial<typeof styles>;
+import selectStyles from "./__style__/select.css";
+export {selectStyles};
+export type SelectStyle = Partial<typeof selectStyles>;
 
 /** Props du Select. */
 export interface SelectProps<T extends "string" | "number"> {
@@ -52,7 +53,7 @@ export function Select<T extends "string" | "number">({
     i18nPrefix = "focus",
     unSelectedLabel = `${i18nPrefix}.select.unselected`
 }: SelectProps<T>) {
-    const theme = useTheme("select", styles, pTheme);
+    const theme = useTheme("select", selectStyles, pTheme);
 
     // On ajoute l'élément vide si nécessaire.
     let finalValues = values;

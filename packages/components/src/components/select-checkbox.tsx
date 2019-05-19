@@ -5,8 +5,9 @@ import {useTheme} from "@focus4/styling";
 
 import {Checkbox} from "./checkbox";
 
-import styles from "./__style__/select-checkbox.css";
-export type SelectCheckboxStyle = Partial<typeof styles>;
+import selectCheckboxStyles from "./__style__/select-checkbox.css";
+export {selectCheckboxStyles};
+export type SelectCheckboxStyle = Partial<typeof selectCheckboxStyles>;
 
 function clickHandlerFactory(
     isDisabled: boolean,
@@ -72,7 +73,7 @@ export function SelectCheckbox<T extends "string" | "number">({
     valueKey,
     values
 }: SelectCheckboxProps<T>) {
-    const theme = useTheme("selectCheckbox", styles, pTheme);
+    const theme = useTheme("selectCheckbox", selectCheckboxStyles, pTheme);
     return (
         <div className={theme.select}>
             {label && <h5>{i18next.t(label)}</h5>}

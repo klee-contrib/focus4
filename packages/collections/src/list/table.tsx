@@ -7,8 +7,8 @@ import {themr, useTheme} from "@focus4/styling";
 
 import {ListBase, ListBaseProps} from "./list-base";
 
-import styles from "./__style__/list.css";
-const Theme = themr("list", styles);
+import listStyles from "./__style__/list.css";
+const Theme = themr("list", listStyles);
 
 /** Colonne de tableau. */
 export interface TableColumn<T> {
@@ -55,7 +55,7 @@ export class Table<
     /** Ligne de table. */
     protected TableLine = React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) => {
         const {onLineClick, lineClassName, theme} = this.props;
-        const {clickable} = useTheme("list", styles, theme);
+        const {clickable} = useTheme("list", listStyles, theme);
         return useObserver(() => (
             <tr ref={ref} className={`${lineClassName ? lineClassName(data) : ""} ${onLineClick ? clickable : ""}`}>
                 {((this.props as any).columns as TableColumn<T>[]).map(({className, content}, idx) => (

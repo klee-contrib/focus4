@@ -12,9 +12,10 @@ import {springPose, themr} from "@focus4/styling";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import styles from "./__style__/line.css";
-export type LineStyle = Partial<typeof styles>;
-const Theme = themr("line", styles);
+import lineStyles from "./__style__/line.css";
+export {lineStyles};
+export type LineStyle = Partial<typeof lineStyles>;
+const Theme = themr("line", lineStyles);
 
 /** Props de base d'un composant de lingne. */
 export interface LineProps<T> {

@@ -15,9 +15,10 @@ import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
 import {themr} from "@focus4/styling";
 
-import styles from "./__style__/autocomplete.css";
-export type AutocompleteStyle = Partial<typeof styles> & AutocompleteTheme & InputTheme;
-const Theme = themr("autocomplete", styles);
+import autocompleteStyles from "./__style__/autocomplete.css";
+export {autocompleteStyles};
+export type AutocompleteStyle = Partial<typeof autocompleteStyles> & AutocompleteTheme & InputTheme;
+const Theme = themr("autocomplete", autocompleteStyles);
 
 /** Résultat du service de recherche. */
 export interface AutocompleteResult {

@@ -4,8 +4,9 @@ import {RadioButton, RadioGroup} from "react-toolbox/lib/radio";
 
 import {useTheme} from "@focus4/styling";
 
-import styles from "./__style__/boolean-radio.css";
-export type BooleanRadioStyle = Partial<typeof styles>;
+import booleanRadioStyles from "./__style__/boolean-radio.css";
+export {booleanRadioStyles};
+export type BooleanRadioStyle = Partial<typeof booleanRadioStyles>;
 
 export interface BooleanRadioProps {
     /** Disabled radio-select, default to: false */
@@ -36,7 +37,7 @@ export function BooleanRadio({
     theme: pTheme,
     value
 }: BooleanRadioProps) {
-    const theme = useTheme("booleanRadio", styles, pTheme);
+    const theme = useTheme("booleanRadio", booleanRadioStyles, pTheme);
     return (
         <>
             <RadioGroup

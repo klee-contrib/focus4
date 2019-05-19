@@ -8,9 +8,10 @@ import Tooltip from "react-toolbox/lib/tooltip";
 import {getIcon} from "@focus4/components";
 import {themr} from "@focus4/styling";
 
-import styles from "./__style__/list-wrapper.css";
-export type ListWrapperStyle = Partial<typeof styles>;
-const Theme = themr("listWrapper", styles);
+import listWrapperStyles from "./__style__/list-wrapper.css";
+export {listWrapperStyles};
+export type ListWrapperStyle = Partial<typeof listWrapperStyles>;
+const Theme = themr("listWrapper", listWrapperStyles);
 
 const IconButton = Tooltip(IB);
 
@@ -47,7 +48,7 @@ export const ListWrapperContext = React.createContext(lwcInit);
 @observer
 export class ListWrapper extends React.Component<ListWrapperProps> {
     /** Objet passé en contexte pour les listes contenues dans le wrapper. */
-    listWrapperContext = observable(
+    listWrapperContext: typeof lwcInit = observable(
         {
             /** Handler au clic sur le bouton "Ajouter". */
             addItemHandler: this.props.addItemHandler || lwcInit.addItemHandler,

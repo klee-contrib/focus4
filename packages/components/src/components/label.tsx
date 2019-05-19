@@ -8,9 +8,10 @@ import {themr} from "@focus4/styling";
 
 import {getIcon} from "./icon";
 
-import styles from "./__style__/label.css";
-export type LabelStyle = Partial<typeof styles>;
-const Theme = themr("label", styles);
+import labelStyles from "./__style__/label.css";
+export {labelStyles};
+export type LabelStyle = Partial<typeof labelStyles>;
+const Theme = themr("label", labelStyles);
 
 /** Props du Label. */
 export interface LabelProps {

@@ -1,6 +1,3 @@
-@import "../../../../style/advanced-search.css";
-@import "../../../../style/layout.css";
-
 .facetContainer {
     float: left;
     width: var(--advanced-search-facets-width);

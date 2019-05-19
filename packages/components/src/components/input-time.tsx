@@ -16,7 +16,7 @@ import {Input, InputProps} from "./input";
 import styles from "react-toolbox/lib/time_picker/theme.css";
 const Theme = themr("RTTimePicker", styles);
 
-import focusStyles from "./__style__/input-date.css";
+import inputDateStyles from "./__style__/input-date.css";
 
 /** Props de l'InputTime. */
 export interface InputTimeProps extends InputProps<"string"> {
@@ -212,7 +212,7 @@ export class InputTime extends React.Component<InputTimeProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-time" data-id={this._inputTimeId} className={focusStyles.input}>
+                    <div data-focus="input-time" data-id={this._inputTimeId} className={inputDateStyles.input}>
                         <Input
                             {...inputProps}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
@@ -225,10 +225,10 @@ export class InputTime extends React.Component<InputTimeProps> {
                         {this.showClock ? (
                             <div
                                 ref={clo => (this.clock = clo)}
-                                className={`${focusStyles.calendar} ${theme!.dialog} ${
+                                className={`${inputDateStyles.calendar} ${theme!.dialog} ${
                                     this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay
-                                } ${displayFrom === "right" ? focusStyles.fromRight : ""} ${
-                                    this.clockPosition === "up" ? focusStyles.up : focusStyles.down
+                                } ${displayFrom === "right" ? inputDateStyles.fromRight : ""} ${
+                                    this.clockPosition === "up" ? inputDateStyles.up : inputDateStyles.down
                                 }`}
                             >
                                 <header className={theme!.header}>
@@ -249,11 +249,11 @@ export class InputTime extends React.Component<InputTimeProps> {
                                     </span>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: focusStyles.toggle}}
+                                        theme={{toggle: inputDateStyles.toggle}}
                                         onClick={() => (this.showClock = false)}
                                     />
                                 </header>
-                                <div className={`${theme!.clockWrapper} ${focusStyles.clock}`}>
+                                <div className={`${theme!.clockWrapper} ${inputDateStyles.clock}`}>
                                     <Clock
                                         ref={c => (this.clockComp = c)}
                                         display={this.clockDisplay}

@@ -2,8 +2,9 @@ import * as React from "react";
 
 import {useTheme} from "@focus4/styling";
 
-import styles from "./__style__/form.css";
-export type FormStyle = Partial<typeof styles>;
+import formStyles from "./__style__/form.css";
+export {formStyles};
+export type FormStyle = Partial<typeof formStyles>;
 
 /** Options additionnelles du Form. */
 export interface FormProps {
@@ -23,7 +24,7 @@ export const FormContext = React.createContext({forceErrorDisplay: false});
 
 /** Composant de formulaire */
 export function Form(props: FormProps) {
-    const theme = useTheme("form", styles, props.theme);
+    const theme = useTheme("form", formStyles, props.theme);
     return (
         <FormContext.Provider value={props.formContext}>
             {props.noForm ? (

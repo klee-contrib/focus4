@@ -18,9 +18,10 @@ import {Autocomplete, Display, Input, Label, Select} from "../components";
 import {documentHelper} from "./document-helper";
 import {FormContext} from "./form";
 
-import styles from "./__style__/field.css";
-export type FieldStyle = Partial<typeof styles>;
-const Theme = themr("field", styles);
+import fieldStyles from "./__style__/field.css";
+export {fieldStyles};
+export type FieldStyle = Partial<typeof fieldStyles>;
+const Theme = themr("field", fieldStyles);
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
 export interface FieldOptions<T extends FieldEntry> {

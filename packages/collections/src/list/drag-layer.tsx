@@ -5,8 +5,9 @@ import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {useTheme} from "@focus4/styling";
 
-import styles from "./__style__/drag-layer.css";
-export type DragLayerStyle = Partial<typeof styles>;
+import dragLayerStyles from "./__style__/drag-layer.css";
+export {dragLayerStyles};
+export type DragLayerStyle = Partial<typeof dragLayerStyles>;
 
 /** Props du layer de drag an drop. */
 export interface DndDragLayerProps {
@@ -33,7 +34,7 @@ export const DndDragLayer = DragLayer<DndDragLayerProps>(monitor => ({
     item,
     theme: pTheme
 }: DndDragLayerProps) {
-    const theme = useTheme("dragLayer", styles, pTheme);
+    const theme = useTheme("dragLayer", dragLayerStyles, pTheme);
 
     if (!isDragging || !item || !item.dragged) {
         return <div />;

@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {isEqual} from "lodash";
-import {action, computed, observable, observe} from "mobx";
+import {action, computed, Lambda, observable, observe} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
 import {Button} from "react-toolbox/lib/button";
@@ -9,8 +9,9 @@ import {getIcon, ScrollableContext} from "@focus4/components";
 
 import {LineStyle} from "./line";
 
-import styles from "./__style__/list.css";
-export type ListStyle = Partial<typeof styles>;
+import listStyles from "./__style__/list.css";
+export {listStyles};
+export type ListStyle = Partial<typeof listStyles>;
 
 /** Props de base pour un composant de liste. */
 export interface ListBaseProps<T> {
@@ -42,7 +43,7 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
 
     /** (Ré)initialise la pagination dès que les données affichées changent. */
     @disposeOnUnmount
-    protected countResetter = observe(
+    protected countResetter: Lambda = observe(
         (this as any) as {displayedData: T[]},
         "displayedData",
         ({oldValue, newValue}) => {
