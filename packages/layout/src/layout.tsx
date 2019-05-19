@@ -5,7 +5,7 @@ import {useTheme} from "@focus4/styling";
 import {Scrollable} from "./scrollable";
 import {MessageCenter, MessageCenterProps} from "./utils";
 
-import * as styles from "./__style__/layout.css";
+import styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 export {styles};
 

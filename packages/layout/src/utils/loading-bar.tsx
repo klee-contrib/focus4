@@ -7,7 +7,7 @@ import {getIcon} from "@focus4/components";
 import {requestStore} from "@focus4/core";
 import {useTheme} from "@focus4/styling";
 
-import * as styles from "./__style__/loading-bar.css";
+import styles from "./__style__/loading-bar.css";
 export type LoadingBarStyle = Partial<typeof styles> & ProgressBarTheme;
 
 export interface LoadingBarProps {

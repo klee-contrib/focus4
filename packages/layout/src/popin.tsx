@@ -8,7 +8,7 @@ import {cssTransitionProps, useTheme} from "@focus4/styling";
 import {Overlay} from "./overlay";
 import {Scrollable} from "./scrollable";
 
-import * as styles from "./__style__/popin.css";
+import styles from "./__style__/popin.css";
 export type PopinStyle = Partial<typeof styles>;
 
 /** Props de la popin. */

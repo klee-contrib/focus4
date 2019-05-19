@@ -25,7 +25,7 @@ import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
 
 import {observable} from "mobx";
-import * as styles from "./__style__/advanced-search.css";
+import styles from "./__style__/advanced-search.css";
 export type AdvancedSearchStyle = Partial<typeof styles>;
 const Theme = themr("advancedSearch", styles);
 

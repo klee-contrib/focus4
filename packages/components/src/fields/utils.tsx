@@ -13,7 +13,7 @@ import {
     SelectComponents
 } from "@focus4/stores";
 
-import {AutocompleteResult} from "../autocomplete";
+import {AutocompleteResult} from "../components/autocomplete";
 
 import {Field, FieldOptions} from "./field";
 

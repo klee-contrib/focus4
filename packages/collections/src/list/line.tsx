@@ -12,7 +12,7 @@ import {springPose, themr} from "@focus4/styling";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import * as styles from "./__style__/line.css";
+import styles from "./__style__/line.css";
 export type LineStyle = Partial<typeof styles>;
 const Theme = themr("line", styles);
 

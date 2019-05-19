@@ -8,7 +8,7 @@ import Tooltip from "react-toolbox/lib/tooltip";
 import {getIcon} from "@focus4/components";
 import {themr} from "@focus4/styling";
 
-import * as styles from "./__style__/list-wrapper.css";
+import styles from "./__style__/list-wrapper.css";
 export type ListWrapperStyle = Partial<typeof styles>;
 const Theme = themr("listWrapper", styles);
 

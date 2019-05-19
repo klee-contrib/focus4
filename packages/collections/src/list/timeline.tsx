@@ -7,7 +7,7 @@ import {themr} from "@focus4/styling";
 import {LineProps, LineWrapper} from "./line";
 import {ListBase, ListBaseProps} from "./list-base";
 
-import * as styles from "./__style__/list.css";
+import styles from "./__style__/list.css";
 const Theme = themr("list", styles);
 
 /** Props du composant de TimeLine. */

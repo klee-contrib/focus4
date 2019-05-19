@@ -7,7 +7,7 @@ import * as React from "react";
 import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "@focus4/components";
 import {themr} from "@focus4/styling";
 
-import * as styles from "./__style__/scrollspy-container.css";
+import styles from "./__style__/scrollspy-container.css";
 export type ScrollspyStyle = Partial<typeof styles>;
 const Theme = themr("scrollspy", styles);
 

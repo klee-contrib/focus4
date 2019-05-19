@@ -9,7 +9,7 @@ import {getIcon, ScrollableContext} from "@focus4/components";
 
 import {LineStyle} from "./line";
 
-import * as styles from "./__style__/list.css";
+import styles from "./__style__/list.css";
 export type ListStyle = Partial<typeof styles>;
 
 /** Props de base pour un composant de liste. */

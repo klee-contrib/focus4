@@ -8,7 +8,7 @@ import {Button, ButtonTheme} from "react-toolbox/lib/button";
 import {ScrollableContext} from "@focus4/components";
 import {useTheme} from "@focus4/styling";
 
-import * as styles from "../__style__/button-btt.css";
+import styles from "../__style__/button-btt.css";
 export type ButtonBackToTopStyle = Partial<typeof styles> & ButtonTheme;
 
 /** Props du bouton de retour en haut de page. */

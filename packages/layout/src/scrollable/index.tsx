@@ -16,7 +16,7 @@ import {springPose, themr} from "@focus4/styling";
 import {ButtonBackToTop} from "./button-back-to-top";
 export {ButtonBackToTopStyle} from "./button-back-to-top";
 
-import * as styles from "../__style__/scrollable.css";
+import styles from "../__style__/scrollable.css";
 const Theme = themr("scrollable", styles);
 export type ScrollableStyle = Partial<typeof styles>;
 

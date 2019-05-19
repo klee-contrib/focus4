@@ -8,7 +8,7 @@ import {cssTransitionProps, useTheme} from "@focus4/styling";
 
 import {Overlay} from "./overlay";
 
-import * as styles from "./__style__/dialog.css";
+import styles from "./__style__/dialog.css";
 export type DialogStyle = Partial<typeof styles>;
 
 export function Dialog({

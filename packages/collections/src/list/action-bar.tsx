@@ -15,7 +15,7 @@ import {defaultPose, themr} from "@focus4/styling";
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import * as styles from "./__style__/action-bar.css";
+import styles from "./__style__/action-bar.css";
 export type ActionBarStyle = Partial<typeof styles>;
 const Theme = themr("actionBar", styles);
 

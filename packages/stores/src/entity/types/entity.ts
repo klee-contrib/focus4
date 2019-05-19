@@ -1,4 +1,4 @@
-import {AutocompleteProps, DisplayProps, InputProps, LabelProps, SelectProps} from "??";
+import {ComponentType} from "react";
 
 import {
     BaseAutocompleteProps,
@@ -13,11 +13,11 @@ import {Validator} from "./validation";
 /** Définition d'un domaine. */
 export interface Domain<
     T = unknown,
-    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
-    DCProps extends BaseDisplayProps = DisplayProps,
-    LCProps extends BaseLabelProps = LabelProps
+    ICProps extends BaseInputProps = any,
+    SCProps extends BaseSelectProps = any,
+    ACProps extends BaseAutocompleteProps = any,
+    DCProps extends BaseDisplayProps = any,
+    LCProps extends BaseLabelProps = any
 > extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
     /** Classe CSS pour le champ. */
     className?: string;
@@ -27,28 +27,15 @@ export interface Domain<
     validator?: Validator<T> | Validator<T>[];
 
     /** Composant personnalisé pour l'autocomplete. */
-    AutocompleteComponent?: React.ComponentType<ACProps>;
+    AutocompleteComponent?: ComponentType<ACProps>;
     /** Composant personnalisé pour l'affichage. */
-    DisplayComponent?: React.ComponentType<DCProps>;
+    DisplayComponent?: ComponentType<DCProps>;
     /** Composant personnalisé pour le libellé. */
-    LabelComponent?: React.ComponentType<LCProps>;
+    LabelComponent?: ComponentType<LCProps>;
     /** Composant personnalisé pour l'entrée utilisateur. */
-    InputComponent?: React.ComponentType<ICProps>;
+    InputComponent?: ComponentType<ICProps>;
     /** Composant personnalisé pour le select. */
-    SelectComponent?: React.ComponentType<SCProps>;
-}
-
-/** Crée un domaine. */
-export function domain<T>(): <
-    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
-    DCProps extends BaseDisplayProps = DisplayProps,
-    LCProps extends BaseLabelProps = LabelProps
->(
-    d: Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>
-) => Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps> {
-    return d => d;
+    SelectComponent?: ComponentType<SCProps>;
 }
 
 /** Définition générale d'une entité. */

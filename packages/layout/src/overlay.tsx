@@ -6,7 +6,7 @@ import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {cssTransitionProps, useTheme} from "@focus4/styling";
 
-import * as styles from "./__style__/overlay.css";
+import styles from "./__style__/overlay.css";
 export type OverlayStyle = Partial<typeof styles>;
 export {styles as overlayStyles};
 

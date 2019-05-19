@@ -7,7 +7,7 @@ import {themr, useTheme} from "@focus4/styling";
 
 import {ListBase, ListBaseProps} from "./list-base";
 
-import * as styles from "./__style__/list.css";
+import styles from "./__style__/list.css";
 const Theme = themr("list", styles);
 
 /** Colonne de tableau. */

@@ -5,7 +5,7 @@ import {PoseElementProps} from "react-pose/lib/components/PoseElement/types";
 import {ScrollableContext} from "@focus4/components";
 import {springPose, useTheme} from "@focus4/styling";
 
-import * as styles from "./__style__/header.css";
+import styles from "./__style__/header.css";
 export type HeaderStyle = Partial<typeof styles>;
 
 /** Props du conteneur de header. */

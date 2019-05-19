@@ -2,7 +2,7 @@ import * as React from "react";
 
 import {useTheme} from "@focus4/styling";
 
-import * as styles from "../__style__/header.css";
+import styles from "../__style__/header.css";
 
 export {HeaderBarLeft} from "./bar-left";
 export {HeaderBarRight} from "./bar-right";

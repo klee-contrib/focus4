@@ -1,0 +1,39 @@
+.input {
+    position: relative;
+}
+
+.calendar {
+    position: absolute;
+    z-index: var(--z-index-normal);
+    width: var(--input-date-width);
+    box-shadow: var(--input-date-shadow);
+    background: var(--color-white);
+
+    & header {
+        box-sizing: border-box;
+    }
+
+    & .clock {
+        position: static;
+        height: 300px;
+    }
+}
+
+.toggle {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    color: var(--color-white) !important;
+}
+
+.fromRight {
+    right: 0;
+}
+
+.up {
+    bottom: 60px;
+}
+
+.down {
+    top: 60px;
+}

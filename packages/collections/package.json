@@ -11,6 +11,7 @@
     "license": "MIT",
     "homepage": "https://github.com/get-focus/focus4",
     "scripts": {
+        "postinstall": "node postinstall.js",
         "start": "tsc --noEmit"
     },
     "dependencies": {

@@ -10,7 +10,7 @@ import {MainMenuList, MainMenuListStyle} from "./list";
 
 export {MainMenuItem};
 
-import * as styles from "./__style__/menu.css";
+import styles from "./__style__/menu.css";
 export type MainMenuStyle = Partial<typeof styles> & IconButtonTheme;
 
 /** Props du Menu. */

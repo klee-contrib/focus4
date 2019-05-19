@@ -17,7 +17,7 @@ import {LineProps, LineWrapper, LineWrapperProps} from "./line";
 import {ListBase, ListBaseProps, ListStyle} from "./list-base";
 import {ListWrapperContext, lwcInit} from "./list-wrapper";
 
-import * as styles from "./__style__/list.css";
+import styles from "./__style__/list.css";
 const Theme = themr("list", styles);
 
 /** Props de base d'un composant de détail. */

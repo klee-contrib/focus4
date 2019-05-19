@@ -21,7 +21,7 @@ import {
     storeListFor
 } from "../../list";
 
-import * as styles from "./__style__/group.css";
+import styles from "./__style__/group.css";
 export type GroupStyle = Partial<typeof styles>;
 const Theme = themr("group", styles);
 

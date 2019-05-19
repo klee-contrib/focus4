@@ -5,7 +5,7 @@ import {useTheme} from "@focus4/styling";
 
 import {MenuContext} from "./context";
 
-import * as styles from "./__style__/menu.css";
+import styles from "./__style__/menu.css";
 
 export interface MainMenuListStyle {
     active?: string;

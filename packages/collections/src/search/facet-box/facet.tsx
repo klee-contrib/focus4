@@ -11,7 +11,7 @@ import {themr} from "@focus4/styling";
 import {ChipType, SearchChip} from "../chip";
 import {addFacetValue, removeFacetValue} from "./utils";
 
-import * as styles from "./__style__/facet.css";
+import styles from "./__style__/facet.css";
 export type FacetStyle = Partial<typeof styles>;
 export const FacetTheme = themr("facet", styles);
 

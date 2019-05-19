@@ -1,12 +1,9 @@
-import {disposeOnUnmount} from "??";
 import i18next from "i18next";
 import {isFunction} from "lodash";
 import {action, comparer, computed, extendObservable, Lambda, observable, reaction, runInAction} from "mobx";
 
-import {PanelProps} from "../../../../../src/components";
-import {messageStore} from "../../../../../src/message";
+import {messageStore} from "@focus4/core";
 
-import {FormProps} from "../../../../../src/entity/form/form";
 import {toFlatValues} from "../store";
 import {Entity, EntityToType, FormListNode, FormNode, isStoreNode} from "../types";
 
@@ -51,22 +48,40 @@ export interface ActionConfigMultiple<
     save: S;
 }
 
-/** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export type FormActions<S extends string = "default"> = {
-    /** Dispose la réaction de chargement. */
-    dispose?: Lambda;
+/** Props passées au composant de panel. */
+export interface ActionsPanelProps {
+    /** Formulaire en édition. */
+    editing: boolean;
+    /** Formulaire en chargement. */
+    loading: boolean;
+    /** Appelé au clic sur le bouton "Annuler". */
+    onClickCancel(): void;
+    /** Appelé au clic sur le bouton "Modifier". */
+    onClickEdit(): void;
+    /** Appelle le service de sauvegarde. */
+    save(): Promise<void>;
+}
+
+/** Props passées au composant de formulaire. */
+export interface ActionsFormProps {
     /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
     readonly formContext: {forceErrorDisplay: boolean};
+    /** Appelle le service de sauvegarde. */
+    save(): Promise<void>;
+}
+
+/** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
+export type FormActions<S extends string = "default"> = ActionsFormProps & {
+    /** Dispose la réaction de chargement. */
+    dispose?: Lambda;
     /** Formulaire en chargement. */
     isLoading: boolean;
     /** Récupère les props à fournir à un Form pour lui fournir les actions. */
-    readonly formProps: FormProps;
+    readonly formProps: ActionsFormProps;
     /** Récupère les props à fournir à un Panel pour relier ses boutons aux actions. */
-    readonly panelProps: PanelProps;
+    readonly panelProps: ActionsPanelProps;
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
     load(): Promise<void>;
-    /** Appelle le service de sauvegarde. */
-    save(): Promise<void>;
     /** Handler de clic sur le bouton "Annuler". */
     onClickCancel(): void;
     /** Handler de clic sur le bouton "Modifier". */
@@ -79,13 +94,12 @@ export type FormActions<S extends string = "default"> = {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<T extends Entity, U>(
-    componentClass: React.Component | null,
+export function makeFormActionsCore<T extends Entity, U>(
     formNode: FormListNode<T, U>,
     actions: ActionConfig<EntityToType<T>[]>,
     config?: FormConfig
 ): FormActions;
-export function makeFormActions<
+export function makeFormActionsCore<
     T extends Entity,
     U,
     S extends {
@@ -93,18 +107,16 @@ export function makeFormActions<
         default: (entity: EntityToType<T>[]) => Promise<EntityToType<T>[] | void>;
     }
 >(
-    componentClass: React.Component | null,
     formNode: FormListNode<T, U>,
     actions: ActionConfigMultiple<EntityToType<T>[], S>,
     config?: FormConfig<Extract<keyof S, string>>
 ): FormActions<Extract<keyof S, string>>;
-export function makeFormActions<T extends Entity, U>(
-    componentClass: React.Component | null,
+export function makeFormActionsCore<T extends Entity, U>(
     formNode: FormNode<T, U>,
     actions: ActionConfig<EntityToType<T>>,
     config?: FormConfig
 ): FormActions;
-export function makeFormActions<
+export function makeFormActionsCore<
     T extends Entity,
     U,
     S extends {
@@ -112,17 +124,15 @@ export function makeFormActions<
         default: (entity: EntityToType<T>) => Promise<EntityToType<T> | void>;
     }
 >(
-    componentClass: React.Component | null,
     formNode: FormNode<T, U>,
     actions: ActionConfigMultiple<EntityToType<T>, S>,
     config?: FormConfig<Extract<keyof S, string>>
 ): FormActions<Extract<keyof S, string>>;
-export function makeFormActions<
+export function makeFormActionsCore<
     T extends Entity,
     U,
     S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}
 >(
-    componentClass: React.Component | null,
     formNode: FormNode<T, U> | FormListNode<T, U>,
     actions: ActionConfig<any> | ActionConfigMultiple<any, S>,
     config: FormConfig = {}
@@ -191,14 +201,14 @@ export function makeFormActions<
             formContext: {forceErrorDisplay: false},
             isLoading: false,
 
-            get formProps(): FormProps {
+            get formProps(): ActionsFormProps {
                 return {
                     formContext: this.formContext,
                     save: this.save
                 };
             },
 
-            get panelProps(): PanelProps {
+            get panelProps(): ActionsPanelProps {
                 return {
                     editing: formNode.form.isEdit,
                     loading: this.isLoading,
@@ -275,11 +285,6 @@ export function makeFormActions<
     // On met en place la réaction de chargement.
     if (actions.getLoadParams) {
         formActions.dispose = reaction(actions.getLoadParams, formActions.load, {equals: comparer.structural});
-
-        // Et on la lie au composant, si renseigné.
-        if (componentClass) {
-            disposeOnUnmount(componentClass, formActions.dispose);
-        }
     }
 
     // On appelle le chargement.

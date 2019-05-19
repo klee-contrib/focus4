@@ -1,14 +1,3 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@focus4/collections": ["../collections/src"],
-            "@focus4/components": ["../components/src"],
-            "@focus4/core": ["../core/src"],
-            "@focus4/stores": ["../stores/src"],
-            "@focus4/styling": ["../styling/src"]
-        }
-    },
-    "include": ["src"]
+    "extends": "../../tsconfig.json"
 }

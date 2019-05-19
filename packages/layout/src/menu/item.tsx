@@ -9,7 +9,7 @@ import {defaultPose, useTheme} from "@focus4/styling";
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
 
-import * as styles from "./__style__/menu.css";
+import styles from "./__style__/menu.css";
 
 /** Props du MenuItem. */
 export interface MainMenuItemProps extends ButtonProps {

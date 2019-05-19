@@ -48,7 +48,7 @@ import {ButtonBackToTopStyle, ScrollableStyle} from "./scrollable";
 import {ScrollspyStyle} from "./scrollspy-container";
 import {LoadingBarStyle} from "./utils";
 
-import * as styles from "./__style__/layout.css";
+import styles from "./__style__/layout.css";
 export type LayoutStyle = Partial<typeof styles>;
 
 export {Content} from "./content";

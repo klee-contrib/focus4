@@ -12,7 +12,7 @@ import {themr} from "@focus4/styling";
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 import {removeFacetValue} from "./facet-box";
 
-import * as styles from "./__style__/summary.css";
+import styles from "./__style__/summary.css";
 export type SummaryStyle = Partial<typeof styles>;
 const Theme = themr("summary", styles);
 

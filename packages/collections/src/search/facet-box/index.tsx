@@ -11,7 +11,7 @@ import {Facet, FacetProps, FacetStyle, FacetTheme} from "./facet";
 import {addFacetValue, removeFacetValue, shouldDisplayFacet} from "./utils";
 export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps, FacetStyle};
 
-import * as styles from "./__style__/facet-box.css";
+import styles from "./__style__/facet-box.css";
 export type FacetBoxStyle = Partial<typeof styles>;
 const Theme = themr("facetBox", styles);
 

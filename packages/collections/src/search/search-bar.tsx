@@ -11,7 +11,7 @@ import {fieldFor, getIcon} from "@focus4/components";
 import {Entity, FormEntityField, makeField, SearchStore, toFlatValues} from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
-import * as styles from "./__style__/search-bar.css";
+import styles from "./__style__/search-bar.css";
 export type SearchBarStyle = Partial<typeof styles>;
 const Theme = themr("searchBar", styles);
 

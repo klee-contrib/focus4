@@ -1,7 +1,15 @@
-export {makeFormActions, makeFormNode} from "./form";
+export {
+    FormNodeOptions,
+    makeFormActionsCore,
+    makeFormNodeCore,
+    ActionConfig,
+    ActionConfigMultiple,
+    FormActions,
+    FormConfig
+} from "./form";
 export {buildNode, makeEntityStore, nodeToFormNode, patchNodeEdit, toFlatValues} from "./store";
 export {stringFor} from "./string-for";
-export {cloneField, fromField, makeField, patchField} from "./transforms";
+export {$Field, cloneField, fromFieldCore, makeFieldCore, patchFieldCore} from "./transforms";
 export {
     AutocompleteComponents,
     BaseAutocompleteProps,
@@ -15,7 +23,6 @@ export {
     FormListNode,
     InputComponents,
     SelectComponents,
-    domain,
     Domain,
     Entity,
     EntityField,
@@ -26,5 +33,12 @@ export {
     ListEntry,
     ObjectEntry,
     StoreListNode,
-    StoreNode
+    StoreNode,
+    isAnyFormNode,
+    isAnyStoreNode,
+    isEntityField,
+    isFormListNode,
+    isFormNode,
+    isStoreListNode,
+    isStoreNode
 } from "./types";

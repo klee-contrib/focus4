@@ -1,4 +1,3 @@
-import {Omit} from "lodash";
 import {IObservableArray, Lambda} from "mobx";
 
 import {Entity, EntityField, EntityToType, FieldEntry} from "./entity";

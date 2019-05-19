@@ -2,7 +2,7 @@ import * as React from "react";
 
 import {useTheme} from "@focus4/styling";
 
-import * as styles from "./__style__/form.css";
+import styles from "./__style__/form.css";
 export type FormStyle = Partial<typeof styles>;
 
 /** Options additionnelles du Form. */

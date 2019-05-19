@@ -9,7 +9,7 @@ const TooltipButton = Tooltip(Button);
 import {ButtonMenu, getIcon, MenuItem} from "@focus4/components";
 import {defaultPose, useTheme} from "@focus4/styling";
 
-import * as styles from "./__style__/header.css";
+import styles from "./__style__/header.css";
 
 /** Action principale, affichée dans son propre bouton. */
 export type PrimaryAction = ButtonProps &

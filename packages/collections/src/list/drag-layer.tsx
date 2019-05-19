@@ -5,7 +5,7 @@ import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {useTheme} from "@focus4/styling";
 
-import * as styles from "./__style__/drag-layer.css";
+import styles from "./__style__/drag-layer.css";
 export type DragLayerStyle = Partial<typeof styles>;
 
 /** Props du layer de drag an drop. */

@@ -1,9 +1,9 @@
 import i18next from "i18next";
 import {action, computed, observable} from "mobx";
 import * as React from "react";
-import {themeable} from "react-css-themr";
 import {findDOMNode} from "react-dom";
 
+import {themeable} from "@focus4/core";
 import {
     BaseInputProps,
     EntityField,
@@ -13,12 +13,12 @@ import {
     FormEntityField
 } from "@focus4/stores";
 import {themr} from "@focus4/styling";
-import {Autocomplete, Display, Input, Label, Select} from "../";
 
+import {Autocomplete, Display, Input, Label, Select} from "../components";
 import {documentHelper} from "./document-helper";
 import {FormContext} from "./form";
 
-import * as styles from "./__style__/field.css";
+import styles from "./__style__/field.css";
 export type FieldStyle = Partial<typeof styles>;
 const Theme = themr("field", styles);
 

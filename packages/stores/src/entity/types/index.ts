@@ -10,7 +10,6 @@ export {
     FieldComponents
 } from "./components";
 export {
-    domain,
     Domain,
     Entity,
     EntityField,
