@@ -175,7 +175,7 @@ export class InputTime extends React.Component<InputTimeProps> {
         const {timezoneCode} = this.props;
         // Vérifie que la timezone existe
         if (timezoneCode && moment.tz.zone(timezoneCode)) {
-            time = getTimezoneTime(this.time.toDate(), timezoneCode);
+            time = getTimezoneTime(time, timezoneCode);
         }
         return this.props.onChange(moment(time).format());
     }

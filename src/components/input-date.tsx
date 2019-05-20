@@ -196,21 +196,20 @@ export class InputDate extends React.Component<InputDateProps> {
         const {ISOStringFormat = "utc-midnight", timezoneCode} = this.props;
         // Vérifie que la timezone existe
         if (timezoneCode && moment.tz.zone(timezoneCode)) {
-            date = getTimezoneTime(this.date.toDate(), timezoneCode);
+            date = getTimezoneTime(date, timezoneCode);
         } else {
             // La date reçue est toujours à minuit en "local-midnight".
             if (ISOStringFormat === "utc-midnight") {
                 // Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
                 date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
             }
-
-            const correctedDate = this.transformDate(date).format();
-            this.props.onChange(correctedDate);
-            if (!dayClick) {
-                this.calendarDisplay = "months";
-            } else {
-                this.showCalendar = false;
-            }
+        }
+        const correctedDate = this.transformDate(date).format();
+        this.props.onChange(correctedDate);
+        if (!dayClick) {
+            this.calendarDisplay = "months";
+        } else {
+            this.showCalendar = false;
         }
     }
 
