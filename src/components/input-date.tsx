@@ -14,6 +14,7 @@ import {themr} from "../theme";
 import * as styles from "react-toolbox/lib/date_picker/theme.css";
 const Theme = themr("RTDatePicker", styles);
 
+import {Moment} from "moment";
 import {calendar, down, fromRight, input, toggle, up} from "./__style__/input-date.css";
 
 const Calendar = calendarFactory(IconButton);
@@ -194,21 +195,20 @@ export class InputDate extends React.Component<InputDateProps> {
         const {ISOStringFormat = "utc-midnight", timezoneCode} = this.props;
         // Vérifie que la timezone existe
         if (timezoneCode && moment.tz.zone(timezoneCode)) {
-            date = getTimezoneTime(this.date.toDate(), timezoneCode);
+            date = getTimezoneTime(date, timezoneCode);
         } else {
             // La date reçue est toujours à minuit en "local-midnight".
             if (ISOStringFormat === "utc-midnight") {
                 // Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
                 date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
             }
-
-            const correctedDate = this.transformDate(date).format();
-            this.props.onChange(correctedDate);
-            if (!dayClick) {
-                this.calendarDisplay = "months";
-            } else {
-                this.showCalendar = false;
-            }
+        }
+        const correctedDate = this.transformDate(date).format();
+        this.props.onChange(correctedDate);
+        if (!dayClick) {
+            this.calendarDisplay = "months";
+        } else {
+            this.showCalendar = false;
         }
     }
 
@@ -222,8 +222,8 @@ export class InputDate extends React.Component<InputDateProps> {
     }
 
     /** Transforme la date selon le format de date/timezone souhaité. */
-    transformDate(date: Date): moment.Moment; // Depuis le calendrier.
-    transformDate(date: string | undefined, inputFormat: string, strict: true): moment.Moment; // Depuis la saisie manuelle.
+    transformDate(date: Date): Moment; // Depuis le calendrier.
+    transformDate(date: string | undefined, inputFormat: string, strict: true): Moment; // Depuis la saisie manuelle.
     transformDate(...params: any[]) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 
@@ -234,6 +234,18 @@ export class InputDate extends React.Component<InputDateProps> {
             return moment.utc(...params);
         } else {
             return moment(...params).utcOffset(0);
+        }
+    }
+
+    displayedDate() {
+        const {timezoneCode, ISOStringFormat} = this.props;
+        if (timezoneCode && moment.tz.zone(timezoneCode)) {
+            return this.date.tz(timezoneCode);
+        } else {
+            if (ISOStringFormat === "local-utc-midnight") {
+                return this.date.clone().local();
+            }
+            return this.date;
         }
     }
 
@@ -275,17 +287,14 @@ export class InputDate extends React.Component<InputDateProps> {
                                         className={theme!.year}
                                         onClick={() => (this.calendarDisplay = "years")}
                                     >
-                                        {this.date.year()}
+                                        {this.displayedDate().year()}
                                     </span>
                                     <h3
                                         id="months"
                                         className={theme!.date}
                                         onClick={() => (this.calendarDisplay = "months")}
                                     >
-                                        {(ISOStringFormat === "local-utc-midnight"
-                                            ? this.date.clone().local()
-                                            : this.date
-                                        ).format(calendarFormat)}
+                                        {this.displayedDate().format(calendarFormat)}
                                     </h3>
                                     <IconButton
                                         icon="clear"
