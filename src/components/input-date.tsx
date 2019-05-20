@@ -132,10 +132,13 @@ export class InputDate extends React.Component<InputDateProps> {
 
     /** Convertit le texte en objet MomentJS. */
     toMoment(value?: string) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+        const {ISOStringFormat = "utc-midnight", timezoneCode} = this.props;
         const m = ISOStringFormat === "utc-midnight" ? moment.utc : moment;
 
         if (isISOString(value)) {
+            if (timezoneCode && moment.tz.zone(timezoneCode)) {
+                return moment(value, moment.ISO_8601).tz(timezoneCode);
+            }
             return m(value, moment.ISO_8601);
         } else {
             return m()
@@ -148,8 +151,13 @@ export class InputDate extends React.Component<InputDateProps> {
 
     /** Formatte la date (ISO String) en entrée selon le format demandé. */
     formatDate(value?: string) {
-        const {inputFormat = "MM/DD/YYYY"} = this.props;
+        const {inputFormat = "MM/DD/YYYY", timezoneCode} = this.props;
         if (isISOString(value)) {
+            if (timezoneCode && moment.tz.zone(timezoneCode)) {
+                return moment(value, moment.ISO_8601)
+                    .tz(timezoneCode)
+                    .format(inputFormat);
+            }
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
             return moment(value, moment.ISO_8601).format(inputFormat);
         } else {
