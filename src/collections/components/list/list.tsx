@@ -122,13 +122,15 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         idx: number,
         {onOpen, onClose}: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void} = {}
     ) {
-        this.displayedIdx = this.displayedIdx !== idx ? idx : undefined;
-        if (this.displayedIdx && onOpen) {
+        const displayedIdx = this.displayedIdx !== idx ? idx : undefined;
+        if (displayedIdx && onOpen) {
             await onOpen();
         }
-        if (!this.displayedIdx && onClose) {
+        if (!displayedIdx && onClose) {
             await onClose();
         }
+
+        this.displayedIdx = displayedIdx;
     }
 
     /** Ferme le détail. */
