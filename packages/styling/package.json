@@ -16,8 +16,8 @@
     },
     "dependencies": {
         "@focus4/core": "10.0.0-preview",
-        "@types/lodash": "4.14.129",
-        "@types/react": "16.8.17",
+        "@types/lodash": "4.14.130",
+        "@types/react": "16.8.18",
         "lodash": "4.17.11",
         "material-design-icons-iconfont": "5.0.1",
         "mobx-react": "5.4.4",

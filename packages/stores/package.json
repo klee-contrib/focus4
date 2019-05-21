@@ -12,16 +12,24 @@
     "homepage": "https://github.com/KleeGroup/focus4/packages/stores",
     "scripts": {
         "prepare": "rollup -cm",
-        "start": "rollup -cw"
+        "start": "rollup -cw",
+        "test": "jest --reporters=default",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
     },
     "dependencies": {
         "@focus4/core": "10.0.0-preview",
         "@types/i18next": "12.1.0",
-        "@types/lodash": "4.14.129",
-        "i18next": "15.1.1",
+        "@types/lodash": "4.14.130",
+        "i18next": "15.1.2",
         "lodash": "4.17.11",
         "mobx": "4.9.4",
         "moment": "2.24.0",
         "tslib": "1.9.3"
+    },
+    "devDependencies": {
+        "@types/jest": "24.0.13",
+        "jest": "24.8.0",
+        "jest-junit": "6.4.0",
+        "ts-jest": "24.0.2"
     }
 }

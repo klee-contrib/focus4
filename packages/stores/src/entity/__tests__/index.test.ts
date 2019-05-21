@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {isObservableArray} from "mobx";
 
-import {makeFormNode} from "../../../../../src/entity/form";
+import {makeFormNodeCore} from "../form";
 import {makeEntityStore, toFlatValues} from "../store";
 import {LigneEntity} from "./ligne";
 import {OperationEntity} from "./operation";
@@ -27,8 +27,8 @@ function getStore() {
 function getFormNodes() {
     const entry = getStore().operation;
     const entry2 = getStore().projetTest;
-    const formNode = makeFormNode(null, entry);
-    const formNode2 = makeFormNode(null, entry2);
+    const formNode = makeFormNodeCore(entry);
+    const formNode2 = makeFormNodeCore(entry2);
     return {entry, entry2, formNode, formNode2};
 }
 
@@ -276,10 +276,10 @@ describe("FormNode: Création à partir d'un noeud non-vide", () => {
     entry.replace(operation);
     entry2.replace(projetTest);
 
-    const formNode = makeFormNode(null, entry);
-    const formNode2 = makeFormNode(null, entry2);
-    const formNodeB = makeFormNode(null, entry, {isEmpty: true});
-    const formNodeB2 = makeFormNode(null, entry2, {isEmpty: true});
+    const formNode = makeFormNodeCore(entry);
+    const formNode2 = makeFormNodeCore(entry2);
+    const formNodeB = makeFormNodeCore(entry, {isEmpty: true});
+    const formNodeB2 = makeFormNodeCore(entry2, {isEmpty: true});
 
     test("Un FormNode créé sans options à partir d'une source non vide possède tout son contenu.", () =>
         expect(toFlatValues(formNode)).toEqual(toFlatValues(entry)));

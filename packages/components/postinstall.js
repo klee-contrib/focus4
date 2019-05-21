@@ -4,6 +4,7 @@ const path = require("path");
 // Corrige l'autocomplete qui renvoie l'id du champ si on appuie sur Entrée sans suggestions.
 [
     path.resolve(__dirname, "./node_modules/react-toolbox/lib/autocomplete/Autocomplete.js"),
+    path.resolve(__dirname, "../../node_modules/react-toolbox/lib/autocomplete/Autocomplete.js"),
     path.resolve(__dirname, "../../react-toolbox/lib/autocomplete/Autocomplete.js")
 ].forEach(typeFile => {
     fs.readFile(typeFile, "utf8", function(err, data) {

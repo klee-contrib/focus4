@@ -13,19 +13,21 @@
     "scripts": {
         "postinstall": "node postinstall.js",
         "prepare": "rollup -cm",
-        "start": "rollup -cw"
+        "start": "rollup -cw",
+        "test": "jest --reporters=default",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
     },
     "dependencies": {
         "@focus4/core": "10.0.0-preview",
         "@focus4/stores": "10.0.0-preview",
         "@focus4/styling": "10.0.0-preview",
         "@types/i18next": "12.1.0",
-        "@types/lodash": "4.14.129",
+        "@types/lodash": "4.14.130",
         "@types/moment-timezone": "0.5.12",
         "@types/numeral": "0.0.25",
-        "@types/react": "16.8.17",
+        "@types/react": "16.8.18",
         "@types/react-dom": "16.8.4",
-        "i18next": "15.1.1",
+        "i18next": "15.1.2",
         "inputmask-core": "2.2.0",
         "lodash": "4.17.11",
         "lodash-decorators": "6.0.1",
@@ -38,5 +40,20 @@
         "react-dom": "16.8.6",
         "react-toolbox": "2.0.0-beta.13",
         "tslib": "1.9.3"
+    },
+    "devDependencies": {
+        "@types/enzyme": "3.9.2",
+        "@types/jest": "24.0.13",
+        "@types/react-test-renderer": "16.8.1",
+        "enzyme": "3.9.0",
+        "enzyme-adapter-react-16": "1.13.1",
+        "enzyme-to-json": "3.3.5",
+        "identity-obj-proxy": "3.0.0",
+        "jest": "24.8.0",
+        "jest-enzyme": "7.0.2",
+        "jest-junit": "6.4.0",
+        "postcss-import": "12.0.1",
+        "react-test-renderer": "16.8.6",
+        "ts-jest": "24.0.2"
     }
 }

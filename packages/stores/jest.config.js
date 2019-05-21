@@ -7,14 +7,12 @@ module.exports = {
             }
         }
     },
-    moduleNameMapper: {
-        "\\.(css|less)$": "identity-obj-proxy"
-    },
     preset: "ts-jest",
     reporters: ["default", "jest-junit"],
-    setupFilesAfterEnv: ["jest-enzyme"],
-    snapshotSerializers: ["enzyme-to-json/serializer"],
-    testEnvironment: "enzyme",
     testMatch: ["**/?(*.)+(spec|test).ts?(x)"],
-    verbose: true
+    verbose: true,
+    moduleNameMapper: {
+        "@focus4/core": "<rootDir>/../../core/src/focus4.core.ts"
+    },
+    rootDir: "src"
 };
