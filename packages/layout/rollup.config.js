@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import fs from "fs";
 import glob from "glob";
 import typescript from "rollup-plugin-typescript2";
@@ -15,37 +14,36 @@ glob.sync("src/**/*.css").forEach(css => {
 
 export default [
     {
-        input: "src/focus4.collections.ts",
-        onwarn: warning => {
-            if (warning.code === "CIRCULAR_DEPENDENCY") {
-                return;
-            }
-            console.warn(chalk.yellow(`(!) ${warning.message}`));
-        },
+        input: "src/focus4.layout.tsx",
         plugins: [
             postcss({extract: true, modules: true, writeDefinitions: true}),
             typescript(),
             copy([
-                {files: "src/list/**/*.css.d.ts", dest: "lib/list"},
-                {files: "src/search/**/*.css.d.ts", dest: "lib/search"}
+                {files: "src/header/**/*.css.d.ts", dest: "lib/header"},
+                {files: "src/menu/**/*.css.d.ts", dest: "lib/menu"},
+                {files: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"},
+                {files: "src/scrollable/**/*.css.d.ts", dest: "lib/scrollable"},
+                {files: "src/utils/**/*.css.d.ts", dest: "lib/utils"}
             ])
         ],
         treeshake: {
-            moduleSideEffects: false
+            moduleSideEffects: ["intersection-observer"]
         },
         output: {
             format: "esm",
-            file: "lib/focus4.collections.js"
+            file: "lib/focus4.layout.js"
         },
         external: [
             ...Object.keys(pkg.dependencies || {}),
+            "popmotion",
+            "stylefire",
+            "react-css-themr",
             "react-toolbox/lib/button",
-            "react-toolbox/lib/input",
+            "react-toolbox/lib/snackbar",
             "react-toolbox/lib/menu",
             "react-toolbox/lib/tooltip",
             "react-toolbox/lib/font_icon",
-            "react-toolbox/lib/dropdown",
-            "react-toolbox/lib/chip"
+            "react-toolbox/lib/progress_bar"
         ]
     }
 ];

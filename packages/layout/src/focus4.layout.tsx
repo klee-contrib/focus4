@@ -1,5 +1,3 @@
-import "!style-loader!css-loader!material-design-icons-iconfont/dist/material-design-icons.css";
-
 import * as React from "react";
 import {ThemeProvider, TReactCSSThemrTheme} from "react-css-themr";
 
@@ -10,20 +8,6 @@ import {InputTheme} from "react-toolbox/lib/input";
 import {MenuTheme} from "react-toolbox/lib/menu";
 import {TabsTheme} from "react-toolbox/lib/tabs";
 
-import {
-    ActionBarStyle,
-    AdvancedSearchStyle,
-    ContextualActionsStyle,
-    DragLayerStyle,
-    FacetBoxStyle,
-    FacetStyle,
-    GroupStyle,
-    LineStyle,
-    ListStyle,
-    ListWrapperStyle,
-    SearchBarStyle,
-    SummaryStyle
-} from "@focus4/collections";
 import {
     AutocompleteStyle,
     BooleanRadioStyle,
@@ -38,21 +22,20 @@ import {
 } from "@focus4/components";
 import {ThemeContext} from "@focus4/styling";
 
-import {DialogStyle} from "./dialog";
 import {HeaderStyle} from "./header";
-import {LayoutBase, LayoutProps} from "./layout";
 import {MainMenuStyle} from "./menu";
-import {OverlayStyle} from "./overlay";
-import {PopinStyle} from "./popin";
+import {
+    DialogStyle,
+    LayoutBase,
+    LayoutProps,
+    LayoutStyle,
+    OverlayStyle,
+    PopinStyle,
+    ScrollspyStyle
+} from "./presentation";
 import {ButtonBackToTopStyle, ScrollableStyle} from "./scrollable";
-import {ScrollspyStyle} from "./scrollspy-container";
 import {LoadingBarStyle} from "./utils";
 
-import styles from "./__style__/layout.css";
-export type LayoutStyle = Partial<typeof styles>;
-
-export {Content} from "./content";
-export {Dialog} from "./dialog";
 export {
     HeaderActions,
     HeaderBarLeft,
@@ -62,49 +45,60 @@ export {
     HeaderSummary,
     HeaderTopRow,
     PrimaryAction,
-    SecondaryAction
+    SecondaryAction,
+    headerStyles
 } from "./header";
-export {Popin} from "./popin";
-export {Scrollable} from "./scrollable";
-export {ScrollspyContainer} from "./scrollspy-container";
-export {MainMenu, MainMenuItem} from "./menu";
+export {
+    Content,
+    Dialog,
+    Popin,
+    ScrollspyContainer,
+    dialogStyles,
+    layoutStyles,
+    overlayStyles,
+    popinStyles,
+    scrollspyStyles
+} from "./presentation";
+export {MainMenu, MainMenuItem, mainMenuStyles} from "./menu";
+export {Scrollable, buttonBTTStyles, scrollableStyles} from "./scrollable";
+export {loadingBarStyles, snackbarStyles} from "./utils";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
     [key: string]: {} | undefined;
 
-    actionBar?: ActionBarStyle;
-    advancedSearch?: AdvancedSearchStyle;
+    actionBar?: {};
+    advancedSearch?: {};
     autocomplete?: AutocompleteStyle;
     booleanRadio?: BooleanRadioStyle;
     buttonBTT?: ButtonBackToTopStyle;
-    contextualActions?: ContextualActionsStyle;
+    contextualActions?: {};
     dialog?: DialogStyle;
     display?: DisplayStyle;
-    dragLayer?: DragLayerStyle;
-    facet?: FacetStyle;
-    facetBox?: FacetBoxStyle;
+    dragLayer?: {};
+    facet?: {};
+    facetBox?: {};
     field?: FieldStyle;
     form?: FormStyle;
-    group?: GroupStyle;
+    group?: {};
     header?: HeaderStyle;
     label?: LabelStyle;
     layout?: LayoutStyle;
     loadingBar?: LoadingBarStyle;
-    line?: LineStyle;
-    list?: ListStyle;
-    listWrapper?: ListWrapperStyle;
+    line?: {};
+    list?: {};
+    listWrapper?: {};
     mainMenu?: MainMenuStyle;
     overlay?: OverlayStyle;
     panel?: PanelStyle;
     popin?: PopinStyle;
     scrollable?: ScrollableStyle;
     scrollspy?: ScrollspyStyle;
-    searchBar?: SearchBarStyle;
+    searchBar?: {};
     select?: SelectStyle;
     selectCheckbox?: SelectCheckboxStyle;
     selectRadio?: SelectRadioStyle;
-    summary?: SummaryStyle;
+    summary?: {};
 
     RTButton?: ButtonTheme;
     RTCheckbox?: CheckboxTheme;

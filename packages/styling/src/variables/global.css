@@ -1,6 +1,3 @@
-@import "react-toolbox/lib/colors.css";
-@import "react-toolbox/lib/variables.css";
-
 html {
     color: var(--color-black);
     font-size: var(--font-size-small);

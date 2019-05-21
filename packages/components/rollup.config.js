@@ -23,6 +23,9 @@ export default [
                 {files: "src/fields/**/*.css.d.ts", dest: "lib/fields"}
             ])
         ],
+        treeshake: {
+            moduleSideEffects: false
+        },
         output: {
             format: "esm",
             file: "lib/focus4.components.js"

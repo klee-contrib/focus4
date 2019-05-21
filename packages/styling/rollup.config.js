@@ -35,6 +35,9 @@ export default [
     {
         input: "src/focus4.styling.ts",
         plugins: [typescript(), postcss({extract: true, plugins: [postcssImport()]})],
+        treeshake: {
+            moduleSideEffects: false
+        },
         output: {
             format: "esm",
             file: "lib/focus4.styling.js"

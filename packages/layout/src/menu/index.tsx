@@ -4,14 +4,15 @@ import {IconButtonTheme} from "react-toolbox/lib/button";
 
 import {useTheme} from "@focus4/styling";
 
-import {Overlay} from "../overlay";
+import {Overlay} from "../presentation/overlay";
 import {MainMenuItem} from "./item";
 import {MainMenuList, MainMenuListStyle} from "./list";
 
 export {MainMenuItem};
 
-import styles from "./__style__/menu.css";
-export type MainMenuStyle = Partial<typeof styles> & IconButtonTheme;
+import mainMenuStyles from "./__style__/menu.css";
+export {mainMenuStyles};
+export type MainMenuStyle = Partial<typeof mainMenuStyles> & IconButtonTheme;
 
 /** Props du Menu. */
 export interface MainMenuProps {
@@ -22,7 +23,7 @@ export interface MainMenuProps {
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 export function MainMenu({activeRoute, children, showOverlay, theme: pTheme}: React.PropsWithChildren<MainMenuProps>) {
-    const theme = useTheme("mainMenu", styles, pTheme);
+    const theme = useTheme("mainMenu", mainMenuStyles, pTheme);
     return useObserver(() => (
         <nav className={theme.menu}>
             <MainMenuList activeRoute={activeRoute} theme={theme}>

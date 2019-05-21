@@ -8,8 +8,9 @@ import {Button, ButtonTheme} from "react-toolbox/lib/button";
 import {ScrollableContext} from "@focus4/components";
 import {useTheme} from "@focus4/styling";
 
-import styles from "../__style__/button-btt.css";
-export type ButtonBackToTopStyle = Partial<typeof styles> & ButtonTheme;
+import buttonBTTStyles from "./__style__/button-btt.css";
+export {buttonBTTStyles};
+export type ButtonBackToTopStyle = Partial<typeof buttonBTTStyles> & ButtonTheme;
 
 /** Props du bouton de retour en haut de page. */
 export interface ButtonBackToTopProps {
@@ -20,7 +21,7 @@ export interface ButtonBackToTopProps {
 /** Bouton de retour en haut de page. */
 export const ButtonBackToTop = posed(
     React.forwardRef<HTMLDivElement, ButtonBackToTopProps>(({theme: pTheme}, ref) => {
-        const {backToTop, ...theme} = useTheme<ButtonBackToTopStyle>("buttonBTT", styles, pTheme);
+        const {backToTop, ...theme} = useTheme<ButtonBackToTopStyle>("buttonBTT", buttonBTTStyles, pTheme);
         const scrollable = React.useContext(ScrollableContext);
 
         return (

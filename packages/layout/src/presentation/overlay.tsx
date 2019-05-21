@@ -6,9 +6,9 @@ import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {cssTransitionProps, useTheme} from "@focus4/styling";
 
-import styles from "./__style__/overlay.css";
-export type OverlayStyle = Partial<typeof styles>;
-export {styles as overlayStyles};
+import overlayStyles from "./__style__/overlay.css";
+export {overlayStyles};
+export type OverlayStyle = Partial<typeof overlayStyles>;
 
 export interface OverlayProps {
     active: boolean;
@@ -35,7 +35,7 @@ export function Overlay({
     onClick,
     theme: pTheme
 }: React.PropsWithChildren<OverlayProps>) {
-    const theme = useTheme("overlay", styles, pTheme);
+    const theme = useTheme("overlay", overlayStyles, pTheme);
 
     React.useEffect(() => {
         if (isAdditional || !active) {

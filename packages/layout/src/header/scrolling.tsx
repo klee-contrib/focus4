@@ -5,8 +5,9 @@ import {PoseElementProps} from "react-pose/lib/components/PoseElement/types";
 import {ScrollableContext} from "@focus4/components";
 import {springPose, useTheme} from "@focus4/styling";
 
-import styles from "./__style__/header.css";
-export type HeaderStyle = Partial<typeof styles>;
+import headerStyles from "./__style__/header.css";
+export {headerStyles};
+export type HeaderStyle = Partial<typeof headerStyles>;
 
 /** Props du conteneur de header. */
 export interface HeaderScrollingProps {
@@ -25,7 +26,7 @@ export interface HeaderScrollingProps {
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
 export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScrollingProps) {
     const context = React.useContext(ScrollableContext);
-    const theme = useTheme("header", styles, pTheme);
+    const theme = useTheme("header", headerStyles, pTheme);
     const ref = React.useRef<HTMLElement>(null);
 
     React.useLayoutEffect(

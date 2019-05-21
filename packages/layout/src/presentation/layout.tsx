@@ -2,12 +2,12 @@ import * as React from "react";
 
 import {useTheme} from "@focus4/styling";
 
-import {Scrollable} from "./scrollable";
-import {MessageCenter, MessageCenterProps} from "./utils";
+import {Scrollable} from "../scrollable";
+import {MessageCenter, MessageCenterProps} from "../utils";
 
-import styles from "./__style__/layout.css";
-export type LayoutStyle = Partial<typeof styles>;
-export {styles};
+import layoutStyles from "./__style__/layout.css";
+export {layoutStyles};
+export type LayoutStyle = Partial<typeof layoutStyles>;
 
 /** Props du Layout. */
 export interface LayoutProps extends MessageCenterProps {
@@ -35,7 +35,7 @@ export function LayoutBase({
     scrollBehaviour,
     ...messageCenterProps
 }: LayoutProps) {
-    const theme = useTheme("layout", styles, pTheme);
+    const theme = useTheme("layout", layoutStyles, pTheme);
     return (
         <>
             <MessageCenter {...messageCenterProps} />

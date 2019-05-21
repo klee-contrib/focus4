@@ -4,12 +4,15 @@ import pkg from "./package.json";
 
 export default {
     input: "src/focus4.stores.ts",
-    plugins: [typescript()],
     onwarn: warning => {
         if (warning.code === "CIRCULAR_DEPENDENCY") {
             return;
         }
         console.warn(chalk.yellow(`(!) ${warning.message}`));
+    },
+    plugins: [typescript()],
+    treeshake: {
+        moduleSideEffects: false
     },
     output: {
         format: "esm",

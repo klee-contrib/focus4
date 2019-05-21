@@ -3,13 +3,13 @@ import {Button} from "react-toolbox/lib/button";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {ScrollableContext} from "@focus4/components";
-import {cssTransitionProps, useTheme} from "@focus4/styling";
+import {cssTransitionProps, ScrollableContext, useTheme} from "@focus4/styling";
 
 import {Overlay} from "./overlay";
 
-import styles from "./__style__/dialog.css";
-export type DialogStyle = Partial<typeof styles>;
+import dialogStyles from "./__style__/dialog.css";
+export {dialogStyles};
+export type DialogStyle = Partial<typeof dialogStyles>;
 
 export function Dialog({
     active = false,
@@ -20,7 +20,7 @@ export function Dialog({
     title,
     theme: pTheme
 }: DialogProps & {theme?: DialogStyle}) {
-    const theme = useTheme("dialog", styles, pTheme);
+    const theme = useTheme("dialog", dialogStyles, pTheme);
     const context = React.useContext(ScrollableContext);
 
     return context.portal(

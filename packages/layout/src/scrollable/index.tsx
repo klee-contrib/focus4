@@ -14,11 +14,12 @@ import {ScrollableContext} from "@focus4/components";
 import {springPose, themr} from "@focus4/styling";
 
 import {ButtonBackToTop} from "./button-back-to-top";
-export {ButtonBackToTopStyle} from "./button-back-to-top";
+export {ButtonBackToTopStyle, buttonBTTStyles} from "./button-back-to-top";
 
-import styles from "../__style__/scrollable.css";
-const Theme = themr("scrollable", styles);
-export type ScrollableStyle = Partial<typeof styles>;
+import scrollableStyles from "./__style__/scrollable.css";
+export {scrollableStyles};
+const Theme = themr("scrollable", scrollableStyles);
+export type ScrollableStyle = Partial<typeof scrollableStyles>;
 
 const ResizeObserver = (window as any).ResizeObserver || ResizeObserverPolyfill;
 

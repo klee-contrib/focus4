@@ -7,8 +7,9 @@ import {getIcon} from "@focus4/components";
 import {requestStore} from "@focus4/core";
 import {useTheme} from "@focus4/styling";
 
-import styles from "./__style__/loading-bar.css";
-export type LoadingBarStyle = Partial<typeof styles> & ProgressBarTheme;
+import loadingBarStyles from "./__style__/loading-bar.css";
+export {loadingBarStyles};
+export type LoadingBarStyle = Partial<typeof loadingBarStyles> & ProgressBarTheme;
 
 export interface LoadingBarProps {
     /** Affiche la barre de dev qui montre l'état du RequestStore. */
@@ -23,7 +24,7 @@ export interface LoadingBarProps {
 
 /** Composant standard pour afficher une barre de chargement sur l'état des requêtes en cours. */
 export function LoadingBar({i18nPrefix = "focus", progressBarType, theme: pTheme, displayDevBar}: LoadingBarProps) {
-    const theme = useTheme("loadingBar", styles, pTheme);
+    const theme = useTheme("loadingBar", loadingBarStyles, pTheme);
     return useObserver(() => {
         const {count} = requestStore;
         const completed = +((count.total - count.pending) / count.total) * 100;

@@ -1,15 +1,16 @@
 import i18next from "i18next";
 import {max, sortBy} from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "@focus4/components";
 import {themr} from "@focus4/styling";
 
-import styles from "./__style__/scrollspy-container.css";
-export type ScrollspyStyle = Partial<typeof styles>;
-const Theme = themr("scrollspy", styles);
+import scrollspyStyles from "./__style__/scrollspy-container.css";
+export {scrollspyStyles};
+export type ScrollspyStyle = Partial<typeof scrollspyStyles>;
+const Theme = themr("scrollspy", scrollspyStyles);
 
 /** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
@@ -28,14 +29,17 @@ export interface ScrollspyContainerProps {
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
 @observer
 export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
-    static contextType = ScrollableContext;
+    static contextType: any = ScrollableContext;
     context!: React.ContextType<typeof ScrollableContext>;
 
     /** Noeud DOM du scrollspy */
     node = React.createRef<HTMLDivElement>();
 
     /** Map des panels qui se sont enregistrés dans le container. */
-    protected readonly panels = observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>();
+    protected readonly panels: ObservableMap<
+        string,
+        PanelDescriptor & {ratio: number; disposer: () => void}
+    > = observable.map();
 
     /** @see ScrollspyContext.registerPanel */
     @action.bound

@@ -19,6 +19,7 @@
         "@types/lodash": "4.14.129",
         "@types/react": "16.8.17",
         "lodash": "4.17.11",
+        "material-design-icons-iconfont": "5.0.1",
         "mobx-react": "5.4.4",
         "react": "16.8.6",
         "react-toolbox": "2.0.0-beta.13",

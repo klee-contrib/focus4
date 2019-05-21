@@ -1,12 +1,13 @@
 import i18next from "i18next";
-import {action, observable, reaction} from "mobx";
+import {action, IReactionDisposer, observable, reaction} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
-import {Snackbar} from "react-toolbox/lib/snackbar";
+import {Snackbar, SnackbarTheme} from "react-toolbox/lib/snackbar";
 
 import {messageStore} from "@focus4/core";
 
-import * as theme from "./__style__/snackbar.css";
+import * as snackbarStyles from "./__style__/snackbar.css";
+export {snackbarStyles};
 
 export interface MessageCenterProps {
     /** Temps en ms d'affichage des messages d'erreur (par défaut: 8000). */
@@ -41,7 +42,7 @@ export class MessageCenter extends React.Component<MessageCenterProps> {
 
     /** Gère l'ajout d'un message dans le store. */
     @disposeOnUnmount
-    protected pushMessageHander = reaction(
+    protected pushMessageHander: IReactionDisposer = reaction(
         () => messageStore.latestMessage!,
         message => {
             const {content, type} = message;
@@ -96,7 +97,7 @@ export class MessageCenter extends React.Component<MessageCenterProps> {
                 onClick={this.closeSnackbar}
                 onTimeout={this.closeSnackbar}
                 timeout={timeout}
-                theme={theme}
+                theme={snackbarStyles as SnackbarTheme}
                 type={
                     type === "error" ? "cancel" : type === "success" ? "accept" : type === "warning" ? type : undefined
                 }

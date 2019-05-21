@@ -21,7 +21,7 @@ export interface MainMenuItemProps extends ButtonProps {
 
 /** Elément de menu. */
 export function MainMenuItem({label, icon, onClick, route, children, theme: pTheme, ...otherProps}: MainMenuItemProps) {
-    const theme = useTheme("mainMenu", styles, pTheme);
+    const theme = useTheme("mainMenu", styles, pTheme as {});
     const context = React.useContext(MenuContext);
     const [state] = React.useState(() => observable({hasSubMenu: false, top: 0, left: 0}));
 

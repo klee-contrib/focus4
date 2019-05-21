@@ -1,7 +1,3 @@
-@import "react-toolbox/lib/overlay/config.css";
-@import "react-toolbox/lib/colors.css";
-@import "react-toolbox/lib/variables.css";
-
 .overlay {
     z-index: var(--z-index-higher);
     position: absolute;

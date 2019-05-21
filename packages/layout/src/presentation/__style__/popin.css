@@ -1,5 +1,3 @@
-@import "../../style/popin.css";
-
 .popin {
     z-index: var(--z-index-higher);
     position: absolute;
