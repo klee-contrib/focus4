@@ -1,7 +1,7 @@
 // @ts-check
 // @ts-ignore
 import pkg from "./package.json";
-import {onwarn} from "../../scripts/onwarn";
+import {onwarn, abortOnError} from "../../scripts/rollup";
 
 import chalk from "chalk";
 import fs from "fs";
@@ -39,7 +39,11 @@ glob("./src/variables/*.css", null, (_, files) => {
 const configs = [
     {
         input: "src/focus4.styling.ts",
-        plugins: [typescript({abortOnError: false}), postcss({extract: true, plugins: [postcssImport()]})],
+        plugins: [
+            typescript({abortOnError: false}),
+            postcss({extract: true, plugins: [postcssImport()]}),
+            abortOnError
+        ],
         treeshake: {
             moduleSideEffects: false
         },
@@ -52,7 +56,7 @@ const configs = [
     },
     {
         input: "src/css.ts",
-        plugins: [typescript({abortOnError: false})],
+        plugins: [typescript({abortOnError: false}), abortOnError],
         output: {
             format: "cjs",
             file: "lib/css.js"

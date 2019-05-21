@@ -17,7 +17,6 @@ steps:
       displayName: "Bootstrap"
       env:
           CI: true
-      failOnStderr: true
 
     - script: npm run tslint-ci
       displayName: "TSLint"

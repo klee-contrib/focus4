@@ -1,7 +1,7 @@
 // @ts-check
 // @ts-ignore
 import pkg from "./package.json";
-import {onwarn} from "../../scripts/onwarn";
+import {onwarn, abortOnError} from "../../scripts/rollup";
 
 import fs from "fs";
 import glob from "glob";
@@ -29,7 +29,8 @@ const config = {
             {files: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"},
             {files: "src/scrollable/**/*.css.d.ts", dest: "lib/scrollable"},
             {files: "src/utils/**/*.css.d.ts", dest: "lib/utils"}
-        ])
+        ]),
+        abortOnError
     ],
     treeshake: {
         moduleSideEffects: ["intersection-observer"]

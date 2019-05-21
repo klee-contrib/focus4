@@ -1,7 +1,7 @@
 // @ts-check
 // @ts-ignore
 import pkg from "./package.json";
-import {onwarn} from "../../scripts/onwarn";
+import {onwarn, abortOnError} from "../../scripts/rollup";
 
 import fs from "fs";
 import glob from "glob";
@@ -26,7 +26,8 @@ const config = {
         copy([
             {files: "src/list/**/*.css.d.ts", dest: "lib/list"},
             {files: "src/search/**/*.css.d.ts", dest: "lib/search"}
-        ])
+        ]),
+        abortOnError
     ],
     treeshake: {
         moduleSideEffects: false
