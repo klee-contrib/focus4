@@ -129,10 +129,10 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
         {onOpen, onClose}: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void} = {}
     ) {
         const displayedIdx = this.displayedIdx !== idx ? idx : undefined;
-        if (displayedIdx && onOpen) {
+        if (displayedIdx !== undefined && onOpen) {
             await onOpen();
         }
-        if (!displayedIdx && onClose) {
+        if (displayedIdx === undefined && onClose) {
             await onClose();
         }
 
