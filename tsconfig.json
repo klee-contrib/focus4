@@ -23,8 +23,7 @@
         // Spécifique librairie
         "declaration": true,
         "sourceMap": true,
-        "outDir": "dist",
         "stripInternal": true
     },
-    "exclude": ["dist", "node_modules", "**/__tests__/**"]
+    "exclude": ["**/lib/**", "**/__tests__/**", "node_modules"]
 }

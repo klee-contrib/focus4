@@ -1,3 +1,8 @@
+// @ts-check
+// @ts-ignore
+import pkg from "./package.json";
+import {onwarn} from "../../scripts/onwarn";
+
 import chalk from "chalk";
 import fs from "fs";
 import glob from "glob";
@@ -5,7 +10,6 @@ import {camelCase, flatten} from "lodash";
 import postcssImport from "postcss-import";
 import typescript from "rollup-plugin-typescript2";
 import postcss from "rollup-plugin-postcss";
-import pkg from "./package.json";
 
 glob("./src/variables/*.css", null, (_, files) => {
     fs.writeFileSync(
@@ -31,10 +35,11 @@ glob("./src/variables/*.css", null, (_, files) => {
     console.log("Wrote " + chalk.green("packages/styling/src/variables/variables.d.ts"));
 });
 
-export default [
+/** @type {import("rollup").RollupOptions[]} */
+const configs = [
     {
         input: "src/focus4.styling.ts",
-        plugins: [typescript(), postcss({extract: true, plugins: [postcssImport()]})],
+        plugins: [typescript({abortOnError: false}), postcss({extract: true, plugins: [postcssImport()]})],
         treeshake: {
             moduleSideEffects: false
         },
@@ -42,15 +47,19 @@ export default [
             format: "esm",
             file: "lib/focus4.styling.js"
         },
-        external: [...Object.keys(pkg.dependencies || {})]
+        external: [...Object.keys(pkg.dependencies || {})],
+        onwarn
     },
     {
         input: "src/css.ts",
-        plugins: [typescript()],
+        plugins: [typescript({abortOnError: false})],
         output: {
             format: "cjs",
             file: "lib/css.js"
         },
-        external: [...Object.keys(pkg.dependencies || {})]
+        external: [...Object.keys(pkg.dependencies || {})],
+        onwarn
     }
 ];
+
+export default configs;

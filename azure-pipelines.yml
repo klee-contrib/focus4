@@ -10,17 +10,17 @@ steps:
           versionSpec: "10.x"
       displayName: "Node.js"
 
-    - script: |
-          npm install
-          npm run tcm
-      displayName: "Prepare"
+    - script: npm install
+      displayName: "Install"
+
+    - script: npm run bootstrap
+      displayName: "Bootstrap"
+      env:
+          CI: true
+      failOnStderr: true
 
     - script: npm run tslint-ci
       displayName: "TSLint"
-
-    - script: npm run start-ci
-      displayName: "Build"
-      failOnStderr: true
 
     - script: npm run test-ci
       displayName: "Test"

@@ -12,12 +12,11 @@
     "homepage": "https://github.com/KleeGroup/focus4",
     "scripts": {
         "bootstrap": "lerna bootstrap",
-        "clean": "lerna clean --yes && node clean.js",
-        "start-ci": "tsc --noEmit | sed -E 's|(.+)\\((.+),(.+)\\): (\\w+) (.+): (.+)|\\#\\#vso[task.logissue type=\\4;sourcepath='$PWD'/\\1;linenumber=\\2;columnnumber=\\3;code=\\5]\\6|g' 1>&2",
+        "clean": "lerna clean --yes && node scripts/clean.js",
         "stylelint": "stylelint packages/**/*.css",
         "test": "jest --reporters=default",
         "test-ci": "jest --ci --reporters=default --reporters=jest-junit",
-        "tslint": "tslint --project tsconfig.json --force | sed 's|WARNING: .*/src/|Warning: src/|g'",
+        "tslint": "tslint --project tsconfig.json --force",
         "tslint-ci": "tslint --project tsconfig.json --force | sed -E 's|(.+): (.+):(.+):(.+) - (.+)|\\#\\#vso[task.logissue type=\\L\\1\\E;sourcepath=\\2;linenumber=\\3;columnnumber=\\4;]\\5|g'"
     },
     "devDependencies": {

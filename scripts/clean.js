@@ -1,3 +1,4 @@
+// @ts-check
 const fs = require("fs");
 const glob = require("glob");
 const rimraf = require("rimraf");
