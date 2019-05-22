@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "9.10.0",
+    "version": "10.0.0-alpha.0",
     "description": "Focus v4, collections module",
     "main": "lib/focus4.collections.js",
     "repository": {
@@ -16,10 +16,10 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@focus4/core": "9.10.0",
-        "@focus4/components": "9.10.0",
-        "@focus4/stores": "9.10.0",
-        "@focus4/styling": "9.10.0",
+        "@focus4/components": "^10.0.0-alpha.0",
+        "@focus4/core": "^10.0.0-alpha.0",
+        "@focus4/stores": "^10.0.0-alpha.0",
+        "@focus4/styling": "^10.0.0-alpha.0",
         "@types/i18next": "12.1.0",
         "@types/lodash": "4.14.130",
         "@types/react": "16.8.18",
