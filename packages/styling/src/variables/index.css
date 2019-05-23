@@ -12,10 +12,9 @@
 @import "./scrollspy-container.css";
 @import "./select.css";
 @import "./snackbar.css";
+@import "./table.css";
 
 @import "react-toolbox/lib/dialog/config.css";
 @import "react-toolbox/lib/overlay/config.css";
 
 @import "./global.css";
-
-@import "material-design-icons-iconfont/dist/material-design-icons.css";

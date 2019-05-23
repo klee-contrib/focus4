@@ -8,8 +8,8 @@
     box-sizing: border-box;
 }
 
-.checkbox,
-.actions {
+.line .checkbox,
+.line .actions {
     opacity: 0;
     position: absolute;
 }
