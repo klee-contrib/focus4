@@ -49,9 +49,9 @@ const configs = [
         },
         output: {
             format: "esm",
-            file: "lib/focus4.styling.js"
+            file: pkg.main
         },
-        external: [...Object.keys(pkg.dependencies || {})],
+        external: [...Object.keys(pkg.dependencies || {}), "lodash", "react", "tslib"],
         onwarn
     },
     {
@@ -61,7 +61,7 @@ const configs = [
             format: "cjs",
             file: "lib/css.js"
         },
-        external: [...Object.keys(pkg.dependencies || {})],
+        external: [...Object.keys(pkg.dependencies || {}), "lodash", "tslib"],
         onwarn
     }
 ];

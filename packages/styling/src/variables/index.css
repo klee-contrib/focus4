@@ -14,7 +14,11 @@
 @import "./snackbar.css";
 @import "./table.css";
 
+@import "react-toolbox/lib/autocomplete/config.css";
+@import "react-toolbox/lib/avatar/config.css";
+@import "react-toolbox/lib/chip/config.css";
 @import "react-toolbox/lib/dialog/config.css";
+@import "react-toolbox/lib/input/config.css";
 @import "react-toolbox/lib/overlay/config.css";
 
 @import "./global.css";

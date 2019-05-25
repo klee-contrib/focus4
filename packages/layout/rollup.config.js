@@ -41,15 +41,25 @@ const config = {
     },
     external: [
         ...Object.keys(pkg.dependencies || {}),
+        "i18next",
+        "lodash",
+        "mobx",
+        "mobx-react",
+        "mobx-react-lite",
+        "moment",
         "popmotion",
-        "stylefire",
+        "react",
         "react-css-themr",
+        "react-dom",
+        "react-pose",
         "react-toolbox/lib/button",
         "react-toolbox/lib/snackbar",
         "react-toolbox/lib/menu",
         "react-toolbox/lib/tooltip",
         "react-toolbox/lib/font_icon",
-        "react-toolbox/lib/progress_bar"
+        "react-toolbox/lib/progress_bar",
+        "stylefire",
+        "tslib"
     ],
     onwarn
 };

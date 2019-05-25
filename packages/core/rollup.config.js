@@ -14,7 +14,7 @@ const config = {
     },
     output: {
         format: "esm",
-        file: "lib/focus4.core.js"
+        file: pkg.main
     },
     external: [...Object.keys(pkg.dependencies || {})],
     onwarn

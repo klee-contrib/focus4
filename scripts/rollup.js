@@ -11,10 +11,13 @@ export function onwarn({code, message, plugin}) {
     if (code === "CIRCULAR_DEPENDENCY") {
         return;
     }
-    if (plugin == "rpt2") {
+    if (plugin === "postcss") {
+        return;
+    }
+    if (plugin === "rpt2") {
         rpt2WarningCount++;
     }
-    if (plugin == "rpt2" && process.env.CI) {
+    if (plugin === "rpt2" && process.env.CI) {
         const [
             _,
             path,
@@ -29,7 +32,7 @@ export function onwarn({code, message, plugin}) {
         );
         return;
     }
-    console.warn((plugin == "rpt2" ? chalk.red : chalk.yellow)(`(!) ${message}`));
+    console.warn((plugin === "rpt2" ? chalk.red : chalk.yellow)(`(!) ${message}`));
 }
 
 /** @type {import("rollup").Plugin} warning */

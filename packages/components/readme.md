@@ -1,5 +1,7 @@
 # Module `components`
 
-Contient quelques composants génériques...
+Contient :
 
-Tout sera bientôt migré vers son propre package (probablement `@kleegroup/components`) dans un futur proche, complet avec tous les réexports de `react-toolbox`.
+-   Une panoplie de composants "basiques" qui complètent ceux du module `toolbox` (à voir si certains ne devraient pas remonter dedans)
+-   Les composants de champs liés aux formulaires du module `stores`
+-   Les spécialisations "React" de certains des composants de `stores`

@@ -10,7 +10,6 @@
         // Options obligatoires
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
-        "skipLibCheck": true,
         "strict": true,
         "plugins": [{"name": "typescript-tslint-plugin"}],
 

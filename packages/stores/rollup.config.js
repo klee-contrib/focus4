@@ -14,9 +14,9 @@ const config = {
     },
     output: {
         format: "esm",
-        file: "lib/focus4.stores.js"
+        file: pkg.main
     },
-    external: [...Object.keys(pkg.dependencies || {})],
+    external: [...Object.keys(pkg.dependencies || {}), "lodash", "mobx", "tslib"],
     onwarn
 };
 

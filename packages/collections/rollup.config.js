@@ -38,13 +38,20 @@ const config = {
     },
     external: [
         ...Object.keys(pkg.dependencies || {}),
+        "i18next",
+        "lodash",
+        "mobx",
+        "mobx-react",
+        "mobx-react-lite",
+        "react",
         "react-toolbox/lib/button",
         "react-toolbox/lib/input",
         "react-toolbox/lib/menu",
         "react-toolbox/lib/tooltip",
         "react-toolbox/lib/font_icon",
         "react-toolbox/lib/dropdown",
-        "react-toolbox/lib/chip"
+        "react-toolbox/lib/chip",
+        "tslib"
     ],
     onwarn
 };

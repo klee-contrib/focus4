@@ -22,7 +22,7 @@ const config = {
     plugins: [
         // @ts-ignore
         postcss({extract: true, modules: true, writeDefinitions: true}),
-        typescript(),
+        typescript({abortOnError: false}),
         copy([
             {files: "src/components/**/*.css.d.ts", dest: "lib/components"},
             {files: "src/fields/**/*.css.d.ts", dest: "lib/fields"}
@@ -38,6 +38,12 @@ const config = {
     },
     external: [
         ...Object.keys(pkg.dependencies || {}),
+        "i18next",
+        "lodash",
+        "mobx",
+        "mobx-react",
+        "moment",
+        "react",
         "react-toolbox/lib/autocomplete",
         "react-toolbox/lib/progress_bar",
         "react-toolbox/lib/radio",
@@ -53,7 +59,8 @@ const config = {
         "react-toolbox/lib/time_picker/Clock",
         "react-toolbox/lib/time_picker/theme.css",
         "react-toolbox/lib/font_icon",
-        "react-toolbox/lib/switch"
+        "react-toolbox/lib/switch",
+        "tslib"
     ],
     onwarn
 };

@@ -19,12 +19,8 @@
     "dependencies": {
         "@focus4/core": "^10.0.0-alpha.1",
         "@types/i18next": "12.1.0",
-        "@types/lodash": "4.14.130",
         "i18next": "15.1.2",
-        "lodash": "4.17.11",
-        "mobx": "4.9.4",
-        "moment": "2.24.0",
-        "tslib": "1.9.3"
+        "moment": "2.24.0"
     },
     "devDependencies": {
         "@types/jest": "24.0.13",

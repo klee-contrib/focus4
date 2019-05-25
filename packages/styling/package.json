@@ -16,13 +16,11 @@
     },
     "dependencies": {
         "@focus4/core": "^10.0.0-alpha.1",
-        "@types/lodash": "4.14.130",
-        "@types/react": "16.8.18",
-        "lodash": "4.17.11",
         "material-design-icons-iconfont": "5.0.1",
         "mobx-react": "5.4.4",
-        "react": "16.8.6",
-        "react-toolbox": "2.0.0-beta.13",
-        "tslib": "1.9.3"
+        "react": "16.8.6"
+    },
+    "devDependencies": {
+        "react-toolbox": "2.0.0-beta.13"
     }
 }
