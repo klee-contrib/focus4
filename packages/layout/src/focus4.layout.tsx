@@ -1,12 +1,4 @@
 import * as React from "react";
-import {ThemeProvider, TReactCSSThemrTheme} from "react-css-themr";
-
-import {ButtonTheme} from "react-toolbox/lib/button";
-import {CheckboxTheme} from "react-toolbox/lib/checkbox";
-import {ChipTheme} from "react-toolbox/lib/chip";
-import {InputTheme} from "react-toolbox/lib/input";
-import {MenuTheme} from "react-toolbox/lib/menu";
-import {TabsTheme} from "react-toolbox/lib/tabs";
 
 import {
     AutocompleteStyle,
@@ -20,7 +12,9 @@ import {
     SelectRadioStyle,
     SelectStyle
 } from "@focus4/components";
+import {TReactCSSThemrTheme} from "@focus4/core";
 import {ThemeContext} from "@focus4/styling";
+import {ButtonTheme, CheckboxTheme, ChipTheme, InputTheme, MenuTheme} from "@focus4/toolbox";
 
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
@@ -105,7 +99,6 @@ export interface LayoutStyleProviderProps {
     RTChip?: ChipTheme;
     RTInput?: InputTheme;
     RTMenu?: MenuTheme;
-    RTTabs?: TabsTheme;
 }
 
 /**
@@ -116,10 +109,8 @@ export interface LayoutStyleProviderProps {
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     const {appTheme = {}, ...layoutProps} = props;
     return (
-        <ThemeProvider theme={appTheme as TReactCSSThemrTheme}>
-            <ThemeContext.Provider value={appTheme as TReactCSSThemrTheme}>
-                <LayoutBase {...layoutProps}>{props.children}</LayoutBase>
-            </ThemeContext.Provider>
-        </ThemeProvider>
+        <ThemeContext.Provider value={appTheme as TReactCSSThemrTheme}>
+            <LayoutBase {...layoutProps}>{props.children}</LayoutBase>
+        </ThemeContext.Provider>
     );
 }

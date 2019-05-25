@@ -2,11 +2,10 @@ import i18next from "i18next";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {Button, IconButton as IB} from "react-toolbox/lib/button";
-import Tooltip from "react-toolbox/lib/tooltip";
 
 import {getIcon} from "@focus4/components";
 import {themr} from "@focus4/styling";
+import {Button, IconButton as IB, Tooltip} from "@focus4/toolbox";
 
 import listWrapperStyles from "./__style__/list-wrapper.css";
 export {listWrapperStyles};

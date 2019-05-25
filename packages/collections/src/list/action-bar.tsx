@@ -4,13 +4,11 @@ import {action, IReactionDisposer, observable, reaction} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
-import {Button, IconButton} from "react-toolbox/lib/button";
-import {ChipTheme} from "react-toolbox/lib/chip";
-import {Input} from "react-toolbox/lib/input";
 
 import {ButtonMenu, getIcon, MenuItem} from "@focus4/components";
 import {isList, isSearch, ListStoreBase} from "@focus4/stores";
 import {defaultPose, themr} from "@focus4/styling";
+import {Button, ChipTheme, IconButton, Input} from "@focus4/toolbox";
 
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";

@@ -2,9 +2,8 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
-import {Button, ButtonProps} from "react-toolbox/lib/button";
-import {IconMenu, Menu, MenuItem, MenuProps} from "react-toolbox/lib/menu";
-import Tooltip, {TooltipProps} from "react-toolbox/lib/tooltip";
+
+import {Button, ButtonProps, IconMenu, Menu, MenuItem, MenuProps, Tooltip, TooltipProps} from "@focus4/toolbox";
 
 export {MenuItem, IconMenu};
 

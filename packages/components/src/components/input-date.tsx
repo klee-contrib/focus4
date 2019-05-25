@@ -3,22 +3,16 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import * as React from "react";
-import {IconButton} from "react-toolbox/lib/button";
-import {DatePickerProps, DatePickerTheme} from "react-toolbox/lib/date_picker";
-import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
-import {InputTheme} from "react-toolbox/lib/input";
 
 import {themr} from "@focus4/styling";
+import {Calendar, CalendarProps, datePickerTheme, DatePickerTheme, IconButton, InputTheme} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
-import styles from "react-toolbox/lib/date_picker/theme.css";
-const Theme = themr("RTDatePicker", styles);
+const Theme = themr("RTDatePicker", datePickerTheme);
 
 import inputDateStyles from "./__style__/input-date.css";
 export {inputDateStyles};
-
-const Calendar = calendarFactory(IconButton);
 
 export interface InputDateProps extends InputProps<"string"> {
     /** Format de l'affichage de la date dans le calendrier. */
@@ -50,7 +44,7 @@ export interface InputDateProps extends InputProps<"string"> {
     /** Valeur. */
     value: string | undefined;
     /* Autres props du Calendar React */
-    calendarProps?: DatePickerProps;
+    calendarProps?: CalendarProps;
     /**
      * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://momentjs.com/timezone/)
      * Incompatible avec l'usage de ISOStringFormat

@@ -1,8 +1,8 @@
 import * as React from "react";
-import {IconButton} from "react-toolbox/lib/button";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {cssTransitionProps, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {IconButton} from "@focus4/toolbox";
 
 import {Scrollable} from "../scrollable";
 import {Overlay} from "./overlay";

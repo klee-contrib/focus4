@@ -16,8 +16,9 @@ import {Chip} from "./chip";
 import {Input} from "./input";
 
 const RTAutocomplete = autocompleteFactory(Chip, Input);
-
 export const Autocomplete = React.forwardRef<AutocompleteType, AutocompleteProps>((props, ref) => {
     const theme = useTheme(AUTOCOMPLETE, autocompleteTheme, props.theme);
     return <RTAutocomplete ref={ref} {...props} theme={theme} />;
 });
+
+export {AutocompleteProps, AutocompleteTheme};

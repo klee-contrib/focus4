@@ -1,8 +1,8 @@
 import {useObserver} from "mobx-react-lite";
 import * as React from "react";
-import {IconButtonTheme} from "react-toolbox/lib/button";
 
 import {useTheme} from "@focus4/styling";
+import {IconButtonTheme} from "@focus4/toolbox";
 
 import {Overlay} from "../presentation/overlay";
 import {MainMenuItem} from "./item";

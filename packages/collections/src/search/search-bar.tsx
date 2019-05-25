@@ -3,13 +3,11 @@ import {difference, toPairs} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {Button, IconButton} from "react-toolbox/lib/button";
-import {Dropdown} from "react-toolbox/lib/dropdown";
-import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {fieldFor, getIcon, makeField} from "@focus4/components";
 import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
 import {themr} from "@focus4/styling";
+import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarStyles from "./__style__/search-bar.css";
 export {searchBarStyles};

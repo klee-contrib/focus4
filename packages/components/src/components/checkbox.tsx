@@ -1,5 +1,6 @@
 import * as React from "react";
-import {Checkbox as RTCheckbox, CheckboxProps as RTCheckboxProps} from "react-toolbox/lib/checkbox";
+
+import {Checkbox as RTCheckbox, CheckboxProps as RTCheckboxProps} from "@focus4/toolbox";
 
 /** Props du Checkbox. */
 export interface CheckboxProps extends RTCheckboxProps {

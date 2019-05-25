@@ -1,8 +1,8 @@
 import i18next from "i18next";
 import React from "react";
-import {RadioButton, RadioGroup} from "react-toolbox/lib/radio";
 
 import {useTheme} from "@focus4/styling";
+import {RadioButton, RadioGroup} from "@focus4/toolbox";
 
 import selectRadioStyles from "./__style__/select-radio.css";
 export {selectRadioStyles};

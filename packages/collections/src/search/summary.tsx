@@ -2,12 +2,11 @@ import i18next from "i18next";
 import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {Button} from "react-toolbox/lib/button";
-import {ChipTheme} from "react-toolbox/lib/chip";
 
 import {getIcon} from "@focus4/components";
 import {FormEntityField, SearchStore} from "@focus4/stores";
 import {themr} from "@focus4/styling";
+import {Button, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 import {removeFacetValue} from "./facet-box";

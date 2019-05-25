@@ -1,9 +1,9 @@
 import i18next from "i18next";
 import * as React from "react";
 import {DragLayer} from "react-dnd";
-import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {useTheme} from "@focus4/styling";
+import {FontIcon} from "@focus4/toolbox";
 
 import dragLayerStyles from "./__style__/drag-layer.css";
 export {dragLayerStyles};

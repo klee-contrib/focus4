@@ -10,8 +10,9 @@ export {inputTheme};
 import {FontIcon} from "./font-icon";
 
 const RTInput = inputFactory(FontIcon);
-
 export const Input = React.forwardRef<InputType, InputProps>((props, ref) => {
     const theme = useTheme(INPUT, inputTheme, props.theme);
     return <RTInput ref={ref} {...props} theme={theme} />;
 });
+
+export {InputProps, InputTheme};

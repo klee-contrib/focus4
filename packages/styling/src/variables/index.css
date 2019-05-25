@@ -1,6 +1,24 @@
 @import "react-toolbox/lib/colors.css";
 @import "react-toolbox/lib/variables.css";
 
+@import "react-toolbox/lib/autocomplete/config.css";
+@import "react-toolbox/lib/avatar/config.css";
+@import "react-toolbox/lib/button/config.css";
+@import "react-toolbox/lib/checkbox/config.css";
+@import "react-toolbox/lib/chip/config.css";
+@import "react-toolbox/lib/date_picker/config.css";
+@import "react-toolbox/lib/dialog/config.css";
+@import "react-toolbox/lib/dropdown/config.css";
+@import "react-toolbox/lib/input/config.css";
+@import "react-toolbox/lib/menu/config.css";
+@import "react-toolbox/lib/overlay/config.css";
+@import "react-toolbox/lib/progress_bar/config.css";
+@import "react-toolbox/lib/radio/config.css";
+@import "react-toolbox/lib/ripple/config.css";
+@import "react-toolbox/lib/switch/config.css";
+@import "react-toolbox/lib/time_picker/config.css";
+@import "react-toolbox/lib/tooltip/config.css";
+
 @import "./action-bar.css";
 @import "./advanced-search.css";
 @import "./header.css";
@@ -13,12 +31,5 @@
 @import "./select.css";
 @import "./snackbar.css";
 @import "./table.css";
-
-@import "react-toolbox/lib/autocomplete/config.css";
-@import "react-toolbox/lib/avatar/config.css";
-@import "react-toolbox/lib/chip/config.css";
-@import "react-toolbox/lib/dialog/config.css";
-@import "react-toolbox/lib/input/config.css";
-@import "react-toolbox/lib/overlay/config.css";
 
 @import "./global.css";

@@ -10,8 +10,9 @@ export {chipTheme};
 import {Avatar} from "./avatar";
 
 const RTChip = chipFactory(Avatar);
-
 export const Chip = React.forwardRef<ChipType, ChipProps>((props, ref) => {
     const theme = useTheme(CHIP, chipTheme, props.theme);
     return <RTChip ref={ref} {...props} theme={theme} />;
 });
+
+export {ChipProps, ChipTheme};

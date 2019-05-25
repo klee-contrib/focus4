@@ -1,6 +1,7 @@
 import i18next from "i18next";
 import * as React from "react";
-import {Button} from "react-toolbox/lib/button";
+
+import {Button} from "@focus4/toolbox";
 
 import {getIcon} from "./icon";
 

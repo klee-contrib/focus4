@@ -4,17 +4,13 @@ import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
-import {IconButton} from "react-toolbox/lib/button";
-import {InputTheme} from "react-toolbox/lib/input";
-import {TimePickerTheme} from "react-toolbox/lib/time_picker";
-import Clock from "react-toolbox/lib/time_picker/Clock";
 
 import {themr} from "@focus4/styling";
+import {Clock, IconButton, InputTheme, timePickerTheme, TimePickerTheme} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
-import styles from "react-toolbox/lib/time_picker/theme.css";
-const Theme = themr("RTTimePicker", styles);
+const Theme = themr("RTTimePicker", timePickerTheme);
 
 import inputDateStyles from "./__style__/input-date.css";
 

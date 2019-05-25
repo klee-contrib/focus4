@@ -1,9 +1,9 @@
 import React from "react";
-import {Button} from "react-toolbox/lib/button";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {cssTransitionProps, ScrollableContext, useTheme} from "@focus4/styling";
+import {Button} from "@focus4/toolbox";
 
 import {Overlay} from "./overlay";
 

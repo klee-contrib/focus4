@@ -1,9 +1,7 @@
 import * as React from "react";
 import posed from "react-pose";
-import {Button, ButtonProps} from "react-toolbox/lib/button";
-import {MenuItemProps} from "react-toolbox/lib/menu";
-import Tooltip, {TooltipProps} from "react-toolbox/lib/tooltip";
 
+import {Button, ButtonProps, MenuItemProps, Tooltip, TooltipProps} from "@focus4/toolbox";
 const TooltipButton = Tooltip(Button);
 
 import {ButtonMenu, getIcon, MenuItem} from "@focus4/components";

@@ -3,9 +3,9 @@ import {isEqual} from "lodash";
 import {action, computed, Lambda, observable, observe} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
-import {Button} from "react-toolbox/lib/button";
 
 import {getIcon, ScrollableContext} from "@focus4/components";
+import {Button} from "@focus4/toolbox";
 
 import {LineStyle} from "./line";
 

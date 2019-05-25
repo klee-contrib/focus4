@@ -1,5 +1,6 @@
 import * as React from "react";
-import {Switch as RTSwitch, SwitchProps as RTSwitchProps} from "react-toolbox/lib/switch";
+
+import {Switch as RTSwitch, SwitchProps as RTSwitchProps} from "@focus4/toolbox";
 
 /** Props du Switch. */
 export interface SwitchProps extends RTSwitchProps {

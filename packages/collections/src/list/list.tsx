@@ -3,12 +3,11 @@ import {action, autorun, comparer, computed, IObservableArray, IReactionDisposer
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
-import {IconButton} from "react-toolbox/lib/button";
-import {FontIcon} from "react-toolbox/lib/font_icon";
 
 import {getIcon} from "@focus4/components";
 import {ListStoreBase} from "@focus4/stores";
 import {defaultPose, themr} from "@focus4/styling";
+import {FontIcon, IconButton} from "@focus4/toolbox";
 
 import {OperationListItem} from "./contextual-actions";
 import {addDragSource} from "./dnd-utils";

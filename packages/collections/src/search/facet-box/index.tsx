@@ -1,10 +1,10 @@
 import i18next from "i18next";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {ChipTheme} from "react-toolbox/lib/chip";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
 import {themr, useTheme} from "@focus4/styling";
+import {ChipTheme} from "@focus4/toolbox";
 
 import {ChipType} from "../chip";
 import {Facet, FacetProps, FacetStyle} from "./facet";

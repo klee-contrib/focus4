@@ -4,7 +4,8 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import numeral from "numeral";
 import * as React from "react";
-import {Input as RTInput, InputProps as RTInputProps} from "react-toolbox/lib/input";
+
+import {Input as RTInput, InputProps as RTInputProps} from "@focus4/toolbox";
 
 /** Définition d'un masque de saisie. */
 export interface MaskDefinition {
@@ -321,9 +322,9 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
             <RTInput
                 {...props}
                 {...{
-                    innerRef: (i: any) => (this.inputElement = i && i.inputNode),
                     onPaste: this.onPaste
                 }}
+                ref={i => (this.inputElement = i && (i as any).inputNode)}
                 onChange={this.onChange}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}

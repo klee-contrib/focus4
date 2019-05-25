@@ -5,15 +5,15 @@ import {action, computed, observable, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
+
+import {themr} from "@focus4/styling";
 import {
     Autocomplete as RTAutocomplete,
     AutocompleteProps as RTAutocompleteProps,
-    AutocompleteTheme
-} from "react-toolbox/lib/autocomplete";
-import {InputTheme} from "react-toolbox/lib/input";
-import {ProgressBar} from "react-toolbox/lib/progress_bar";
-
-import {themr} from "@focus4/styling";
+    AutocompleteTheme,
+    InputTheme,
+    ProgressBar
+} from "@focus4/toolbox";
 
 import autocompleteStyles from "./__style__/autocomplete.css";
 export {autocompleteStyles};
@@ -236,7 +236,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
                             suggestionMatch="disabled"
                             type="text"
                             theme={theme}
-                            innerRef={(ref: any) => (this.autocomplete = ref)}
+                            ref={ref => (this.autocomplete = ref)}
                             onKeyDown={this.onKeyDown}
                         />
                         {this.isLoading ? (

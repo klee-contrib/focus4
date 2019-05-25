@@ -1,9 +1,9 @@
 import i18next from "i18next";
 import {snakeCase} from "lodash";
 import * as React from "react";
-import {ProgressBar} from "react-toolbox/lib/progress_bar";
 
 import {useTheme} from "@focus4/styling";
+import {ProgressBar} from "@focus4/toolbox";
 
 import {ButtonHelp} from "./button-help";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";

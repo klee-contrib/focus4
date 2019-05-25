@@ -2,9 +2,9 @@ import i18next from "i18next";
 import {action, IReactionDisposer, observable, reaction} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
-import {Snackbar, SnackbarTheme} from "react-toolbox/lib/snackbar";
 
 import {messageStore} from "@focus4/core";
+import {Snackbar, SnackbarTheme} from "@focus4/toolbox";
 
 import * as snackbarStyles from "./__style__/snackbar.css";
 export {snackbarStyles};

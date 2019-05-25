@@ -2,10 +2,10 @@ import i18next from "i18next";
 import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "@focus4/components";
 import {isSearch, ListStoreBase} from "@focus4/stores";
+import {IconButton} from "@focus4/toolbox";
 
 import {Table, TableColumn, TableProps} from "./table";
 

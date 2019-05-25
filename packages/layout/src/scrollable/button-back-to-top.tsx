@@ -3,10 +3,10 @@ scroll.polyfill();
 
 import * as React from "react";
 import posed from "react-pose";
-import {Button, ButtonTheme} from "react-toolbox/lib/button";
 
 import {ScrollableContext} from "@focus4/components";
 import {useTheme} from "@focus4/styling";
+import {Button, ButtonTheme} from "@focus4/toolbox";
 
 import buttonBTTStyles from "./__style__/button-btt.css";
 export {buttonBTTStyles};

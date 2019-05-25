@@ -4,11 +4,11 @@ import * as React from "react";
 import {ConnectDragPreview, ConnectDragSource} from "react-dnd";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
-import {IconButton} from "react-toolbox/lib/button";
 
 import {getIcon} from "@focus4/components";
 import {EntityField, FieldEntry, ListStoreBase, stringFor} from "@focus4/stores";
 import {springPose, themr} from "@focus4/styling";
+import {IconButton} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 

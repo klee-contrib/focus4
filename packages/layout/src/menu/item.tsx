@@ -2,9 +2,9 @@ import {action, observable} from "mobx";
 import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
-import {Button, ButtonProps, IconButton, IconButtonTheme} from "react-toolbox/lib/button";
 
 import {defaultPose, useTheme} from "@focus4/styling";
+import {Button, ButtonProps, IconButton, IconButtonTheme} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
