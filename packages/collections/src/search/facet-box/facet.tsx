@@ -3,10 +3,9 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {Checkbox} from "@focus4/components";
 import {FacetOutput, SearchStore} from "@focus4/stores";
 import {themr} from "@focus4/styling";
-import {ChipTheme} from "@focus4/toolbox";
+import {Checkbox, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip} from "../chip";
 import {addFacetValue, removeFacetValue} from "./utils";

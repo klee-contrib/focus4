@@ -51,7 +51,7 @@ const configs = [
             format: "esm",
             file: pkg.main
         },
-        external: [...Object.keys(pkg.dependencies || {}), "lodash", "react", "tslib"],
+        external: [...Object.keys(pkg.dependencies || {}), "i18next", "lodash", "react", "tslib"],
         onwarn
     },
     {

@@ -1,20 +1,29 @@
 import * as React from "react";
 
-import {
-    AutocompleteStyle,
-    BooleanRadioStyle,
-    DisplayStyle,
-    FieldStyle,
-    FormStyle,
-    LabelStyle,
-    PanelStyle,
-    SelectCheckboxStyle,
-    SelectRadioStyle,
-    SelectStyle
-} from "@focus4/components";
 import {TReactCSSThemrTheme} from "@focus4/core";
 import {ThemeContext} from "@focus4/styling";
-import {ButtonTheme, CheckboxTheme, ChipTheme, InputTheme, MenuTheme} from "@focus4/toolbox";
+import {
+    AutocompleteTheme,
+    AvatarTheme,
+    BrowseButtonTheme,
+    ButtonTheme,
+    CheckboxTheme,
+    ChipTheme,
+    DatePickerTheme,
+    DropdownTheme,
+    IconButtonTheme,
+    IconMenuTheme,
+    InputTheme,
+    MenuItemTheme,
+    MenuTheme,
+    ProgressBarTheme,
+    RadioTheme,
+    RippleTheme,
+    SnackbarTheme,
+    SwitchTheme,
+    TimePickerTheme,
+    TooltipTheme
+} from "@focus4/toolbox";
 
 import {HeaderStyle} from "./header";
 import {MainMenuStyle} from "./menu";
@@ -59,24 +68,22 @@ export {loadingBarStyles, snackbarStyles} from "./utils";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
-    [key: string]: {} | undefined;
-
     actionBar?: {};
     advancedSearch?: {};
-    autocomplete?: AutocompleteStyle;
-    booleanRadio?: BooleanRadioStyle;
+    autocomplete?: {};
+    booleanRadio?: {};
     buttonBTT?: ButtonBackToTopStyle;
     contextualActions?: {};
     dialog?: DialogStyle;
-    display?: DisplayStyle;
+    display?: {};
     dragLayer?: {};
     facet?: {};
     facetBox?: {};
-    field?: FieldStyle;
-    form?: FormStyle;
+    field?: {};
+    form?: {};
     group?: {};
     header?: HeaderStyle;
-    label?: LabelStyle;
+    label?: {};
     layout?: LayoutStyle;
     loadingBar?: LoadingBarStyle;
     line?: {};
@@ -84,21 +91,32 @@ export interface LayoutStyleProviderProps {
     listWrapper?: {};
     mainMenu?: MainMenuStyle;
     overlay?: OverlayStyle;
-    panel?: PanelStyle;
+    panel?: {};
     popin?: PopinStyle;
     scrollable?: ScrollableStyle;
     scrollspy?: ScrollspyStyle;
     searchBar?: {};
-    select?: SelectStyle;
-    selectCheckbox?: SelectCheckboxStyle;
-    selectRadio?: SelectRadioStyle;
+    select?: {};
+    selectCheckbox?: {};
+    selectRadio?: {};
     summary?: {};
 
-    RTButton?: ButtonTheme;
+    RTAutocomplete?: AutocompleteTheme;
+    RTAvatar?: AvatarTheme;
+    RTButton?: ButtonTheme & BrowseButtonTheme & IconButtonTheme;
     RTCheckbox?: CheckboxTheme;
     RTChip?: ChipTheme;
+    RTDatePicker?: DatePickerTheme;
+    RTDropdown?: DropdownTheme;
     RTInput?: InputTheme;
-    RTMenu?: MenuTheme;
+    RTMenu?: IconMenuTheme & MenuItemTheme & MenuTheme;
+    RTProgressBar?: ProgressBarTheme;
+    RTRadio?: RadioTheme;
+    RTRipple?: RippleTheme;
+    RTSnackbar?: SnackbarTheme;
+    RTSwitch?: SwitchTheme;
+    RTTimePicker?: TimePickerTheme;
+    RTTooltip?: TooltipTheme;
 }
 
 /**

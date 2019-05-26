@@ -3,9 +3,8 @@ import {computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {getIcon} from "@focus4/components";
 import {FormEntityField, SearchStore} from "@focus4/stores";
-import {themr} from "@focus4/styling";
+import {getIcon, themr} from "@focus4/styling";
 import {Button, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";

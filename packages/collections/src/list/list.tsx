@@ -4,9 +4,8 @@ import {disposeOnUnmount, observer} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 
-import {getIcon} from "@focus4/components";
 import {ListStoreBase} from "@focus4/stores";
-import {defaultPose, themr} from "@focus4/styling";
+import {defaultPose, getIcon, themr} from "@focus4/styling";
 import {FontIcon, IconButton} from "@focus4/toolbox";
 
 import {OperationListItem} from "./contextual-actions";

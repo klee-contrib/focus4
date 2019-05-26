@@ -15,7 +15,6 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@focus4/components": "^10.0.0-alpha.1",
         "@focus4/core": "^10.0.0-alpha.1",
         "@focus4/styling": "^10.0.0-alpha.1",
         "@focus4/toolbox": "^10.0.0-alpha.1",

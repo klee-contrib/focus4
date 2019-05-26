@@ -1,8 +1,7 @@
 import * as React from "react";
 
-import {ButtonMenu, getIcon} from "@focus4/components";
-import {themr} from "@focus4/styling";
-import {Button, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
+import {getIcon, themr} from "@focus4/styling";
+import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
 
 import contextualActionsStyles from "./__style__/contextual-actions.css";
 export {contextualActionsStyles};

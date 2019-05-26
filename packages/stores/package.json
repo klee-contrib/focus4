@@ -18,8 +18,6 @@
     },
     "dependencies": {
         "@focus4/core": "^10.0.0-alpha.1",
-        "@types/i18next": "12.1.0",
-        "i18next": "15.1.2",
         "moment": "2.24.0"
     },
     "devDependencies": {

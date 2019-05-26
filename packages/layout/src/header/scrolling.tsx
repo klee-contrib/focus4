@@ -2,8 +2,7 @@ import * as React from "react";
 import posed from "react-pose";
 import {PoseElementProps} from "react-pose/lib/components/PoseElement/types";
 
-import {ScrollableContext} from "@focus4/components";
-import {springPose, useTheme} from "@focus4/styling";
+import {ScrollableContext, springPose, useTheme} from "@focus4/styling";
 
 import headerStyles from "./__style__/header.css";
 export {headerStyles};

@@ -2,8 +2,7 @@ import i18next from "i18next";
 import React from "react";
 
 import {useTheme} from "@focus4/styling";
-
-import {Checkbox} from "./checkbox";
+import {Checkbox} from "@focus4/toolbox";
 
 import selectCheckboxStyles from "./__style__/select-checkbox.css";
 export {selectCheckboxStyles};

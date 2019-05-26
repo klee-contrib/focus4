@@ -1,11 +1,9 @@
 import * as React from "react";
 import posed from "react-pose";
 
-import {Button, ButtonProps, MenuItemProps, tooltipFactory, TooltipProps} from "@focus4/toolbox";
+import {defaultPose, getIcon, useTheme} from "@focus4/styling";
+import {Button, ButtonMenu, ButtonProps, MenuItem, MenuItemProps, tooltipFactory, TooltipProps} from "@focus4/toolbox";
 const TooltipButton = tooltipFactory()(Button);
-
-import {ButtonMenu, getIcon, MenuItem} from "@focus4/components";
-import {defaultPose, useTheme} from "@focus4/styling";
 
 import styles from "./__style__/header.css";
 

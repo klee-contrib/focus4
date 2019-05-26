@@ -1,9 +1,8 @@
 import i18next from "i18next";
 import * as React from "react";
 
+import {getIcon} from "@focus4/styling";
 import {IconButton, tooltipFactory} from "@focus4/toolbox";
-
-import {getIcon} from "./icon";
 
 const Button = tooltipFactory()(IconButton);
 

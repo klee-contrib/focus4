@@ -28,6 +28,8 @@ const config = {
     external: [
         ...Object.keys(pkg.dependencies || {}),
         "classnames",
+        "mobx",
+        "mobx-react",
         "ramda/src/dissoc",
         "react",
         "react-dom",

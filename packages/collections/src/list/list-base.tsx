@@ -4,7 +4,7 @@ import {action, computed, Lambda, observable, observe} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
 
-import {getIcon, ScrollableContext} from "@focus4/components";
+import {getIcon, ScrollableContext} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import {LineStyle} from "./line";

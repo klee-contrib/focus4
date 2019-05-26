@@ -22,7 +22,7 @@ const config = {
     plugins: [
         // @ts-ignore
         postcss({extract: true, modules: true, writeDefinitions: true}),
-        typescript(),
+        typescript({abortOnError: false}),
         copy([
             {files: "src/list/**/*.css.d.ts", dest: "lib/list"},
             {files: "src/search/**/*.css.d.ts", dest: "lib/search"}

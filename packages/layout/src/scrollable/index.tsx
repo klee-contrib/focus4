@@ -10,8 +10,7 @@ import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";
 import {Styler} from "stylefire";
 
-import {ScrollableContext} from "@focus4/components";
-import {springPose, themr} from "@focus4/styling";
+import {ScrollableContext, springPose, themr} from "@focus4/styling";
 
 import {ButtonBackToTop} from "./button-back-to-top";
 export {ButtonBackToTopStyle, buttonBTTStyles} from "./button-back-to-top";

@@ -1,11 +1,9 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {themr} from "@focus4/styling";
+import {getIcon, themr} from "@focus4/styling";
 import {FontIcon, tooltipFactory} from "@focus4/toolbox";
 const TooltipIcon = tooltipFactory()(FontIcon);
-
-import {getIcon} from "./icon";
 
 import labelStyles from "./__style__/label.css";
 export {labelStyles};

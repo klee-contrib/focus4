@@ -1,4 +1,15 @@
 import "./variables/index.css";
 
-export {cssTransitionProps, defaultPose, delay, duration, ease, springPose} from "./animation";
+export {
+    PanelDescriptor,
+    ScrollableContext,
+    ScrollspyContext,
+    cssTransitionProps,
+    defaultPose,
+    delay,
+    duration,
+    ease,
+    getIcon,
+    springPose
+} from "./utils";
 export {ThemeConsumer, ThemeConsumerProps, ThemeContext, themr, useTheme} from "./theme";

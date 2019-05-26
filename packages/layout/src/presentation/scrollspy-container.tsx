@@ -4,8 +4,7 @@ import {action, computed, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "@focus4/components";
-import {themr} from "@focus4/styling";
+import {PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
 
 import scrollspyStyles from "./__style__/scrollspy-container.css";
 export {scrollspyStyles};

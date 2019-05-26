@@ -1,9 +1,8 @@
 import i18next from "i18next";
 import * as React from "react";
 
+import {getIcon} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
-
-import {getIcon} from "./icon";
 
 /** Props des boutons du Panel. */
 export interface PanelButtonsProps {

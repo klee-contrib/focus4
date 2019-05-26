@@ -4,9 +4,9 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {fieldFor, getIcon, makeField} from "@focus4/components";
+import {fieldFor, makeField} from "@focus4/components";
 import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
-import {themr} from "@focus4/styling";
+import {getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarStyles from "./__style__/search-bar.css";

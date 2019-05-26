@@ -5,9 +5,8 @@ import {ConnectDragPreview, ConnectDragSource} from "react-dnd";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
 
-import {getIcon} from "@focus4/components";
 import {EntityField, FieldEntry, ListStoreBase, stringFor} from "@focus4/stores";
-import {springPose, themr} from "@focus4/styling";
+import {getIcon, springPose, themr} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";

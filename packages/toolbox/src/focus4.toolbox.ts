@@ -20,6 +20,8 @@ export {Dropdown, DropdownProps, DropdownTheme, dropdownTheme} from "./component
 export {FontIcon} from "./components/font-icon";
 export {Input, InputProps, InputTheme, inputTheme} from "./components/input";
 export {
+    ButtonMenu,
+    ButtonMenuProps,
     IconMenu,
     IconMenuProps,
     IconMenuTheme,

@@ -3,8 +3,8 @@ import {action, computed} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {getIcon} from "@focus4/components";
 import {isSearch, ListStoreBase} from "@focus4/stores";
+import {getIcon} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {Table, TableColumn, TableProps} from "./table";

@@ -1,6 +1,9 @@
 import * as React from "react";
 
-import {PanelDescriptor} from "./panel";
+export interface PanelDescriptor {
+    node: HTMLDivElement;
+    title?: string;
+}
 
 /** Contexte d'un Scrollable, expose les méthodes associées. */
 export const ScrollableContext = React.createContext<{

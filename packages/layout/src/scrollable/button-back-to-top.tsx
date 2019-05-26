@@ -4,8 +4,7 @@ scroll.polyfill();
 import * as React from "react";
 import posed from "react-pose";
 
-import {ScrollableContext} from "@focus4/components";
-import {useTheme} from "@focus4/styling";
+import {ScrollableContext, useTheme} from "@focus4/styling";
 import {Button, ButtonTheme} from "@focus4/toolbox";
 
 import buttonBTTStyles from "./__style__/button-btt.css";
