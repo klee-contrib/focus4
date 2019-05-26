@@ -37,4 +37,4 @@ export {RadioButton, RadioButtonProps, RadioGroup, RadioGroupProps, RadioTheme, 
 export {RippleOptions, RippleProps, RippleTheme, rippleFactory, rippleTheme} from "./components/ripple";
 export {Snackbar, SnackbarProps, SnackbarTheme, snackbarTheme} from "./components/snackbar";
 export {Switch, SwitchProps, SwitchTheme, switchTheme} from "./components/switch";
-export {Tooltip, TooltipProps, TooltipTheme, tooltipTheme} from "./components/tooltip";
+export {TooltipOptions, TooltipProps, TooltipTheme, tooltipFactory, tooltipTheme} from "./components/tooltip";

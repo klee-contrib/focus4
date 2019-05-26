@@ -3,11 +3,11 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {Button, ButtonProps, IconMenu, Menu, MenuItem, MenuProps, Tooltip, TooltipProps} from "@focus4/toolbox";
+import {Button, ButtonProps, IconMenu, Menu, MenuItem, MenuProps, tooltipFactory, TooltipProps} from "@focus4/toolbox";
 
 export {MenuItem, IconMenu};
 
-const TooltipButton = Tooltip(Button);
+const TooltipButton = tooltipFactory()(Button);
 
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
 export interface ButtonMenuProps extends MenuProps {
@@ -85,7 +85,7 @@ export class ButtonMenu extends React.Component<ButtonMenuProps> {
         return (
             <div data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
                 <FinalButton
-                    ref={i => (this.button = i)}
+                    ref={(i: any) => (this.button = i)}
                     {...buttonProps}
                     onClick={this.onClick}
                     icon={this.isOpened && openedIcon ? openedIcon : icon}

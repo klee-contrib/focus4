@@ -2,8 +2,8 @@ import i18next from "i18next";
 import * as React from "react";
 
 import {themr} from "@focus4/styling";
-import {FontIcon, Tooltip} from "@focus4/toolbox";
-const TooltipIcon = Tooltip(FontIcon);
+import {FontIcon, tooltipFactory} from "@focus4/toolbox";
+const TooltipIcon = tooltipFactory()(FontIcon);
 
 import {getIcon} from "./icon";
 

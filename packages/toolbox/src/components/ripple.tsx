@@ -14,43 +14,42 @@ const rippleTheme: RippleTheme = rtRippleTheme;
 export {rippleTheme, RippleTheme};
 
 export interface RippleOptions {
-    centered?: boolean;
     className?: string;
-    multiple?: boolean;
-    passthrough?: boolean;
-    spread?: number;
+    rippleCentered?: boolean;
+    rippleMultiple?: boolean;
+    ripplePassthrough?: boolean;
+    rippleSpread?: number;
     theme?: RippleTheme;
 }
 
-export interface RippleProps<P> extends ReactToolbox.Props, RippleOptions {
+export interface RippleProps extends ReactToolbox.Props, RippleOptions {
     children?: React.ReactNode;
-    ComposedComponent: React.ComponentType<P>;
     disabled?: boolean;
     onRippleEnded?: Function;
     ripple?: boolean;
 }
 
-export const rippleFactory = ({
-    centered = false,
+export function rippleFactory({
     className = "",
-    multiple = true,
-    passthrough = true,
-    spread = 2,
+    rippleCentered = false,
+    rippleMultiple = true,
+    ripplePassthrough = true,
+    rippleSpread = 2,
     theme = {}
-}: RippleOptions) =>
-    function Ripple<P>(ComposedComponent: React.ComponentType<P>) {
-        return React.forwardRef<RippledComponent<P>, P & RippleProps<P>>((p, ref) => {
+}: RippleOptions = {}) {
+    return function Ripple<P>(ComposedComponent: React.ComponentType<P> | "string") {
+        return React.forwardRef<RippledComponent<P>, P & RippleProps>((p, ref) => {
             const finalTheme = useTheme(RIPPLE, rippleTheme, p.theme, theme);
             return (
                 <RippledComponent
                     ref={ref}
-                    centered={centered}
                     className={className}
                     disabled={false}
-                    multiple={multiple}
-                    passthrough={passthrough}
-                    spread={spread}
                     ripple={true}
+                    rippleCentered={rippleCentered}
+                    rippleMultiple={rippleMultiple}
+                    ripplePassthrough={ripplePassthrough}
+                    rippleSpread={rippleSpread}
                     {...p}
                     theme={finalTheme}
                     ComposedComponent={ComposedComponent}
@@ -58,6 +57,7 @@ export const rippleFactory = ({
             );
         });
     };
+}
 
 interface RippleEntry {
     active: boolean;
@@ -72,7 +72,10 @@ interface RippleState {
     ripples: {[key: string]: RippleEntry};
 }
 
-class RippledComponent<P> extends React.Component<RippleProps<P>, RippleState> {
+class RippledComponent<P> extends React.Component<
+    RippleProps & {ComposedComponent: React.ComponentType<P> | "string"},
+    RippleState
+> {
     state: RippleState = {
         ripples: {}
     };
@@ -81,7 +84,7 @@ class RippledComponent<P> extends React.Component<RippleProps<P>, RippleState> {
     rippleNodes: {[key: string]: HTMLElement} = {};
     touchCache = false;
 
-    componentDidUpdate(_: RippleProps<P>, prevState: RippleState) {
+    componentDidUpdate(_: RippleProps, prevState: RippleState) {
         // If a new ripple was just added, add a remove event listener to its animation
         if (Object.keys(prevState.ripples).length < Object.keys(this.state.ripples).length) {
             this.addRippleRemoveEventListener(this.getLastKey());
@@ -104,11 +107,11 @@ class RippledComponent<P> extends React.Component<RippleProps<P>, RippleState> {
      */
     getDescriptor(x: number, y: number) {
         const {left, top, height, width} = (findDOMNode(this) as Element).getBoundingClientRect();
-        const {centered, spread} = this.props;
+        const {rippleCentered, rippleSpread} = this.props;
         return {
-            left: centered ? 0 : x - left - width / 2,
-            top: centered ? 0 : y - top - height / 2,
-            width: width * spread!
+            left: rippleCentered ? 0 : x - left - width / 2,
+            top: rippleCentered ? 0 : y - top - height / 2,
+            width: width * rippleSpread!
         };
     }
 
@@ -179,7 +182,7 @@ class RippledComponent<P> extends React.Component<RippleProps<P>, RippleState> {
         if (this.rippleShouldTrigger(isTouch)) {
             const {top, left, width} = this.getDescriptor(x, y);
             const noRipplesActive = Object.keys(this.state.ripples).length === 0;
-            const key = this.props.multiple || noRipplesActive ? this.getNextKey() : this.getLastKey();
+            const key = this.props.rippleMultiple || noRipplesActive ? this.getNextKey() : this.getLastKey();
             const endRipple = this.addRippleDeactivateEventListener(isTouch, key);
             const initialState = {
                 active: false,
@@ -299,15 +302,15 @@ class RippledComponent<P> extends React.Component<RippleProps<P>, RippleState> {
 
     render() {
         const {
+            className,
             children,
             disabled,
-            ripple,
             onRippleEnded,
-            centered,
-            className,
-            multiple,
-            passthrough,
-            spread,
+            ripple,
+            rippleCentered,
+            rippleMultiple,
+            ripplePassthrough,
+            rippleSpread,
             theme,
             ComposedComponent,
             ...other
@@ -319,7 +322,7 @@ class RippledComponent<P> extends React.Component<RippleProps<P>, RippleState> {
             onTouchStart: this.handleTouchStart,
             ...other
         };
-        const finalProps = passthrough ? {...childProps, theme, disabled} : childProps;
+        const finalProps = ripplePassthrough ? {...childProps, theme, disabled} : childProps;
 
         return !ripple
             ? React.createElement(ComposedComponent, finalProps as any, children)

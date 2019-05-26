@@ -10,7 +10,7 @@ export {switchTheme};
 
 import {rippleFactory} from "./ripple";
 
-const RTThumb = thumbFactory(rippleFactory({centered: true, spread: 2.6}));
+const RTThumb = thumbFactory(rippleFactory({rippleCentered: true, rippleSpread: 2.6}));
 const Thumb = React.forwardRef<unknown, unknown>((props, ref) => {
     const theme = useTheme(SWITCH, switchTheme);
     return <RTThumb ref={ref} {...props} theme={theme} />;

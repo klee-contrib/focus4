@@ -20,6 +20,6 @@ declare module "react-toolbox/lib/date_picker/Calendar";
 declare module "react-toolbox/lib/radio/Radio";
 declare module "react-toolbox/lib/switch/Thumb";
 declare module "react-toolbox/lib/time_picker/Clock";
-declare module "react-toolbox/lib/tooltip/Tooltip";
 declare module "react-toolbox/lib/utils/events";
 declare module "react-toolbox/lib/utils/prefixer";
+declare module "react-toolbox/lib/utils/utils";

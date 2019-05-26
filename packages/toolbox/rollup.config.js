@@ -56,9 +56,9 @@ const config = {
         "react-toolbox/lib/switch/Thumb",
         "react-toolbox/lib/switch/Switch",
         "react-toolbox/lib/time_picker/Clock",
-        "react-toolbox/lib/tooltip/Tooltip",
         "react-toolbox/lib/utils/events",
         "react-toolbox/lib/utils/prefixer",
+        "react-toolbox/lib/utils/utils",
         "tslib"
     ],
     onwarn

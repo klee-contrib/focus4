@@ -23,19 +23,19 @@ export {buttonTheme};
 import {FontIcon} from "./font-icon";
 import {rippleFactory} from "./ripple";
 
-const RTButton = buttonFactory(rippleFactory({centered: false}), FontIcon);
+const RTButton = buttonFactory(rippleFactory({rippleCentered: false}), FontIcon);
 export const Button = React.forwardRef<ButtonType, ButtonProps>((props, ref) => {
     const theme = useTheme(BUTTON, buttonTheme, props.theme);
     return <RTButton ref={ref} {...props} theme={theme} />;
 });
 
-const RTIconButton = iconButtonFactory(rippleFactory({centered: true}), FontIcon);
+const RTIconButton = iconButtonFactory(rippleFactory({rippleCentered: true}), FontIcon);
 export const IconButton = React.forwardRef<IconButtonType, IconButtonProps>((props, ref) => {
     const theme = useTheme(BUTTON, buttonTheme, props.theme);
     return <RTIconButton ref={ref} {...props} theme={theme} />;
 });
 
-const RTBrowseButton = browseButtonFactory(rippleFactory({centered: false}), FontIcon);
+const RTBrowseButton = browseButtonFactory(rippleFactory({rippleCentered: false}), FontIcon);
 export const BrowseButton = React.forwardRef<BrowseButtonType, BrowseButtonProps>((props, ref) => {
     const theme = useTheme(BUTTON, buttonTheme, props.theme);
     return <RTBrowseButton ref={ref} {...props} theme={theme} />;

@@ -2,15 +2,15 @@ import * as React from "react";
 
 import {ButtonMenu, getIcon} from "@focus4/components";
 import {themr} from "@focus4/styling";
-import {Button, IconButton, IconMenu, MenuItem, MenuItemProps, Tooltip} from "@focus4/toolbox";
+import {Button, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
 
 import contextualActionsStyles from "./__style__/contextual-actions.css";
 export {contextualActionsStyles};
 export type ContextualActionsStyle = Partial<typeof contextualActionsStyles>;
 const Theme = themr("contextualActions", contextualActionsStyles);
 
-const TooltipButton = Tooltip(Button);
-const TooltipIconButton = Tooltip(IconButton);
+const TooltipButton = tooltipFactory()(Button);
+const TooltipIconButton = tooltipFactory()(IconButton);
 
 /** Props passée à un composant d'action custom. */
 export interface OperationListItemComponentProps<T> {

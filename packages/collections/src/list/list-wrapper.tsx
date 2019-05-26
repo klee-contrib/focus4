@@ -5,14 +5,14 @@ import * as React from "react";
 
 import {getIcon} from "@focus4/components";
 import {themr} from "@focus4/styling";
-import {Button, IconButton as IB, Tooltip} from "@focus4/toolbox";
+import {Button, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
 
 import listWrapperStyles from "./__style__/list-wrapper.css";
 export {listWrapperStyles};
 export type ListWrapperStyle = Partial<typeof listWrapperStyles>;
 const Theme = themr("listWrapper", listWrapperStyles);
 
-const IconButton = Tooltip(IB);
+const IconButton = tooltipFactory()(IB);
 
 /** Props du wrapper de liste. */
 export interface ListWrapperProps {

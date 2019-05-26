@@ -1,11 +1,11 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {IconButton, Tooltip} from "@focus4/toolbox";
+import {IconButton, tooltipFactory} from "@focus4/toolbox";
 
 import {getIcon} from "./icon";
 
-const Button = Tooltip(IconButton);
+const Button = tooltipFactory()(IconButton);
 
 /** Affiche un bouton pour ouvrir le centre d'aide. */
 export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string; i18nPrefix?: string}) {

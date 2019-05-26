@@ -15,7 +15,7 @@ export {checkboxTheme};
 
 import {rippleFactory} from "./ripple";
 
-const RTCheckbox = checkboxFactory(checkFactory(rippleFactory({centered: true, spread: 2.6})));
+const RTCheckbox = checkboxFactory(checkFactory(rippleFactory({rippleCentered: true, rippleSpread: 2.6})));
 export const Checkbox = React.forwardRef<CheckboxType, CheckboxProps>((props, ref) => {
     const theme = useTheme(CHECKBOX, checkboxTheme, props.theme);
     return <RTCheckbox ref={ref} {...props} theme={theme} />;
