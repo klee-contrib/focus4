@@ -7,7 +7,6 @@ import {FontIconProps} from "react-toolbox/lib/font_icon";
 import {InputProps} from "react-toolbox/lib/input";
 import {MenuItem, MenuItemProps, Menu, MenuProps} from "react-toolbox/lib/menu";
 import {RadioButton, RadioButtonProps, RadioGroup} from "react-toolbox/lib/radio";
-import {RippledComponentFactory} from "react-toolbox/lib/ripple";
 import {Snackbar} from "react-toolbox/lib/snackbar";
 import {Switch} from "react-toolbox/lib/switch";
 
@@ -21,22 +20,13 @@ declare module "react-toolbox/lib/avatar/Avatar" {
     export function avatarFactory(FontIcon: React.ComponentType<FontIconProps>): typeof Avatar;
 }
 declare module "react-toolbox/lib/button/Button" {
-    export function buttonFactory(
-        Ripple: RippledComponentFactory,
-        FontIcon: React.ComponentType<FontIconProps>
-    ): typeof Button;
+    export function buttonFactory(Ripple: any, FontIcon: React.ComponentType<FontIconProps>): typeof Button;
 }
 declare module "react-toolbox/lib/button/BrowseButton" {
-    export function browseButtonFactory(
-        Ripple: RippledComponentFactory,
-        FontIcon: React.ComponentType<FontIconProps>
-    ): typeof BrowseButton;
+    export function browseButtonFactory(Ripple: any, FontIcon: React.ComponentType<FontIconProps>): typeof BrowseButton;
 }
 declare module "react-toolbox/lib/button/IconButton" {
-    export function iconButtonFactory(
-        Ripple: RippledComponentFactory,
-        FontIcon: React.ComponentType<FontIconProps>
-    ): typeof IconButton;
+    export function iconButtonFactory(Ripple: any, FontIcon: React.ComponentType<FontIconProps>): typeof IconButton;
 }
 declare module "react-toolbox/lib/checkbox/Checkbox" {
     export function checkboxFactory(Check: any): typeof Checkbox;
@@ -51,7 +41,7 @@ declare module "react-toolbox/lib/input/Input" {
     export function inputFactory(FontIcon: React.ComponentType<FontIconProps>): typeof Input;
 }
 declare module "react-toolbox/lib/menu/MenuItem" {
-    export function menuItemFactory(Ripple: RippledComponentFactory): typeof MenuItem;
+    export function menuItemFactory(Ripple: any): typeof MenuItem;
 }
 declare module "react-toolbox/lib/menu/Menu" {
     export function menuFactory(MenuItem: React.ComponentType<MenuItemProps>): typeof Menu;

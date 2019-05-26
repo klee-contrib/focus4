@@ -34,7 +34,7 @@ export {
 } from "./components/menu";
 export {ProgressBar, ProgressBarProps, ProgressBarTheme, progressBarTheme} from "./components/progress-bar";
 export {RadioButton, RadioButtonProps, RadioGroup, RadioGroupProps, RadioTheme, radioTheme} from "./components/radio";
-export {RippleProps, RippleTheme, rippleFactory, rippleTheme} from "./components/ripple";
+export {RippleOptions, RippleProps, RippleTheme, rippleFactory, rippleTheme} from "./components/ripple";
 export {Snackbar, SnackbarProps, SnackbarTheme, snackbarTheme} from "./components/snackbar";
 export {Switch, SwitchProps, SwitchTheme, switchTheme} from "./components/switch";
 export {Tooltip, TooltipProps, TooltipTheme, tooltipTheme} from "./components/tooltip";

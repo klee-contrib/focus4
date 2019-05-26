@@ -27,7 +27,10 @@ const config = {
     },
     external: [
         ...Object.keys(pkg.dependencies || {}),
+        "classnames",
+        "ramda/src/dissoc",
         "react",
+        "react-dom",
         "react-toolbox/lib/autocomplete/Autocomplete",
         "react-toolbox/lib/avatar/Avatar",
         "react-toolbox/lib/button/Button",
@@ -49,12 +52,13 @@ const config = {
         "react-toolbox/lib/radio/Radio",
         "react-toolbox/lib/radio/RadioButton",
         "react-toolbox/lib/radio/RadioGroup",
-        "react-toolbox/lib/ripple/Ripple",
         "react-toolbox/lib/snackbar/Snackbar",
         "react-toolbox/lib/switch/Thumb",
         "react-toolbox/lib/switch/Switch",
         "react-toolbox/lib/time_picker/Clock",
         "react-toolbox/lib/tooltip/Tooltip",
+        "react-toolbox/lib/utils/events",
+        "react-toolbox/lib/utils/prefixer",
         "tslib"
     ],
     onwarn
