@@ -198,7 +198,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
             const newValue = targetValue === void 0 ? (event!.target! as any).id : targetValue;
 
             if (this.autocomplete.isValueAnObject()) {
-                const newItem = Array.from(source).reduce((obj: any, [k, value]: any) => {
+                const newItem = Array.from(source).reduce<{[key: string]: any}>((obj: any, [k, value]: any) => {
                     if (k === newValue) {
                         (obj as any)[k] = value;
                     }
