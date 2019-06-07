@@ -21,6 +21,8 @@ export interface TableProps<T> extends ListBaseProps<T> {
         /** Libellé du titre de la colonne. */
         title: string;
     }[];
+    /** Classe CSS pour une ligne. */
+    lineClassName?: (data: T) => string;
     /** Appelé au clic sur une ligne. */
     onLineClick?: (data: T) => void;
 }
@@ -48,10 +50,10 @@ export class Table<T, P extends TableProps<T> = TableProps<T> & {data: T[]}> ext
 
     /** Ligne de table. */
     protected TableLine = React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) => {
-        const {onLineClick, theme} = this.props;
+        const {onLineClick, lineClassName, theme} = this.props;
         const {clickable} = useTheme("list", styles, theme);
         return useObserver(() => (
-            <tr ref={ref} className={onLineClick ? clickable : undefined}>
+            <tr ref={ref} className={`${lineClassName ? lineClassName(data) : ""} ${onLineClick ? clickable : ""}`}>
                 {this.props.columns.map(({className, content}, idx) => (
                     <td className={className} key={idx} onClick={() => (onLineClick ? onLineClick(data) : undefined)}>
                         {content(data)}
