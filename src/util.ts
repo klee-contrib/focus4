@@ -45,7 +45,7 @@ function patchClass<T extends RCL>(
     function componentWillMount(this: T) {
         const r = this[propertyKey].bind(this);
 
-        this[`${type}_${propertyKey}`] =
+        (this as any)[`${type}_${propertyKey}`] =
             type === "autorun"
                 ? autorun(r)
                 : type === "reaction"
