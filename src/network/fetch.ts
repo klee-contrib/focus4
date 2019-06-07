@@ -56,6 +56,8 @@ export async function coreFetch(
                 return await response.json();
             } else if (contentType && contentType.includes("text/plain")) {
                 return await response.text();
+            } else if (response.status === 204) {
+                return null; // Cas réponse vide.
             } else {
                 return response;
             }
