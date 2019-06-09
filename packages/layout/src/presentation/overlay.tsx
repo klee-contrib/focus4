@@ -1,7 +1,7 @@
 import {isFunction} from "lodash";
 import {computed, observable} from "mobx";
 import {useObserver} from "mobx-react-lite";
-import React from "react";
+import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {cssTransitionProps, useTheme} from "@focus4/styling";

@@ -1,4 +1,4 @@
-import "./variables/index.css";
+import "./global.css";
 
 export {
     PanelDescriptor,

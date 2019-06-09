@@ -2,7 +2,7 @@ npm-debug.log
 node_modules
 lib
 *.css.d.ts
-variables.ts
+**/variables/variables.ts
 .history
 .rpt2_cache
 lerna-debug.log

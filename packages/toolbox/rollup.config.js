@@ -68,7 +68,7 @@ const config = {
         "react-toolbox/lib/menu/IconMenu",
         "react-toolbox/lib/menu/MenuDivider",
         "react-toolbox/lib/navigation/Navigation",
-        "react-toolbox/lib/progress_bar",
+        "react-toolbox/lib/progress_bar/ProgressBar",
         "react-toolbox/lib/radio/Radio",
         "react-toolbox/lib/radio/RadioButton",
         "react-toolbox/lib/radio/RadioGroup",

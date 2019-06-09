@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {TIME_PICKER} from "react-toolbox/lib/identifiers";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import RTClock from "react-toolbox/lib/time_picker/Clock";

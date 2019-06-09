@@ -1,6 +1,10 @@
 import * as React from "react";
 import {PROGRESS_BAR} from "react-toolbox/lib/identifiers";
-import {ProgressBar as RTProgressBar, ProgressBarProps, ProgressBarTheme} from "react-toolbox/lib/progress_bar";
+import {
+    ProgressBar as RTProgressBar,
+    ProgressBarProps,
+    ProgressBarTheme
+} from "react-toolbox/lib/progress_bar/ProgressBar";
 
 import {useTheme} from "@focus4/styling";
 import rtProgressBarTheme from "react-toolbox/components/progress_bar/theme.css";

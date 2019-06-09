@@ -7,6 +7,7 @@ import chalk from "chalk";
 import fs from "fs";
 import glob from "glob";
 import {camelCase, flatten} from "lodash";
+import postcssColor from "postcss-color-function";
 import postcssImport from "postcss-import";
 import typescript from "rollup-plugin-typescript2";
 import postcss from "rollup-plugin-postcss";
@@ -39,11 +40,7 @@ glob("./src/variables/*.css", null, (_, files) => {
 const configs = [
     {
         input: "src/focus4.styling.ts",
-        plugins: [
-            typescript({abortOnError: false}),
-            postcss({extract: true, plugins: [postcssImport()]}),
-            abortOnError
-        ],
+        plugins: [typescript({abortOnError: false}), postcss({extract: true}), abortOnError],
         treeshake: {
             moduleSideEffects: false
         },
@@ -55,11 +52,15 @@ const configs = [
         onwarn
     },
     {
-        input: "src/css.ts",
-        plugins: [typescript({abortOnError: false}), abortOnError],
+        input: "src/variables.ts",
+        plugins: [
+            typescript({abortOnError: false}),
+            postcss({extract: true, plugins: [postcssImport(), postcssColor()]}),
+            abortOnError
+        ],
         output: {
             format: "cjs",
-            file: "lib/css.js"
+            file: "lib/variables.js"
         },
         external: [...Object.keys(pkg.dependencies || {}), "lodash", "tslib"],
         onwarn

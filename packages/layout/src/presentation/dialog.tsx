@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 

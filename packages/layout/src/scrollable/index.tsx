@@ -4,7 +4,7 @@ import {debounce, memoize, range} from "lodash";
 import {action, autorun, computed, observable} from "mobx";
 import {disposeOnUnmount, observer, Observer} from "mobx-react";
 import {ColdSubscription, spring, styler} from "popmotion";
-import React from "react";
+import * as React from "react";
 import {createPortal, findDOMNode} from "react-dom";
 import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";

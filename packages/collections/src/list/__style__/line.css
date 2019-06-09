@@ -8,13 +8,13 @@
     box-sizing: border-box;
 }
 
-.line .checkbox,
-.line .actions {
+.checkbox,
+.actions {
     opacity: 0;
     position: absolute;
 }
 
-.line .checkbox {
+.checkbox {
     top: calc(50% - 18px);
     left: 10px;
 }

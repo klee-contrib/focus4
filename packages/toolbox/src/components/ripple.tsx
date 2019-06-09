@@ -14,7 +14,6 @@ const rippleTheme: RippleTheme = rtRippleTheme;
 export {rippleTheme, RippleTheme};
 
 export interface RippleOptions {
-    className?: string;
     rippleCentered?: boolean;
     rippleMultiple?: boolean;
     ripplePassthrough?: boolean;
@@ -30,7 +29,6 @@ export interface RippleProps extends ReactToolbox.Props, RippleOptions {
 }
 
 export function rippleFactory({
-    className = "",
     rippleCentered = false,
     rippleMultiple = true,
     ripplePassthrough = true,
@@ -43,7 +41,6 @@ export function rippleFactory({
             return (
                 <RippledComponent
                     ref={ref}
-                    className={className}
                     disabled={false}
                     ripple={true}
                     rippleCentered={rippleCentered}
@@ -274,17 +271,13 @@ class RippledComponent<P> extends React.Component<
         };
     }
 
-    renderRipple(key: string, className: string, {active, left, restarting, top, width}: RippleEntry) {
+    renderRipple(key: string, {active, left, restarting, top, width}: RippleEntry) {
         const scale = restarting ? 0 : 1;
         const transform = `translate3d(${-width / 2 + left}px, ${-width / 2 + top}px, 0) scale(${scale})`;
-        const _className = classnames(
-            this.props.theme!.ripple,
-            {
-                [this.props.theme!.rippleActive!]: active,
-                [this.props.theme!.rippleRestarting!]: restarting
-            },
-            className
-        );
+        const _className = classnames(this.props.theme!.ripple, {
+            [this.props.theme!.rippleActive!]: active,
+            [this.props.theme!.rippleRestarting!]: restarting
+        });
         return (
             <span key={key} data-react-toolbox="ripple" className={this.props.theme!.rippleWrapper}>
                 <span
@@ -302,7 +295,6 @@ class RippledComponent<P> extends React.Component<
 
     render() {
         const {
-            className,
             children,
             disabled,
             onRippleEnded,
@@ -316,7 +308,7 @@ class RippledComponent<P> extends React.Component<
             ...other
         } = this.props;
         const {ripples} = this.state;
-        const childRipples = Object.keys(ripples).map(key => this.renderRipple(key, className!, ripples[key]));
+        const childRipples = Object.keys(ripples).map(key => this.renderRipple(key, ripples[key]));
         const childProps = {
             onMouseDown: this.handleMouseDown,
             onTouchStart: this.handleTouchStart,

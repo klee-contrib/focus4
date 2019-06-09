@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import React from "react";
+import * as React from "react";
 
 import {useTheme} from "@focus4/styling";
 import {RadioButton, RadioGroup} from "@focus4/toolbox";

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {DatePickerLocale, DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {DATE_PICKER} from "react-toolbox/lib/identifiers";
