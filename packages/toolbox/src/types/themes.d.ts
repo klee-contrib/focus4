@@ -1,17 +1,24 @@
+declare module "react-toolbox/components/app_bar/theme.css";
 declare module "react-toolbox/components/autocomplete/theme.css";
 declare module "react-toolbox/components/avatar/theme.css";
 declare module "react-toolbox/components/button/theme.css";
 declare module "react-toolbox/components/checkbox/theme.css";
+declare module "react-toolbox/components/card/theme.css";
 declare module "react-toolbox/components/chip/theme.css";
 declare module "react-toolbox/components/date_picker/theme.css";
 declare module "react-toolbox/components/dropdown/theme.css";
 declare module "react-toolbox/components/input/theme.css";
+declare module "react-toolbox/components/link/theme.css";
+declare module "react-toolbox/components/list/theme.css";
 declare module "react-toolbox/components/menu/theme.css";
+declare module "react-toolbox/components/navigation/theme.css";
 declare module "react-toolbox/components/progress_bar/theme.css";
 declare module "react-toolbox/components/radio/theme.css";
 declare module "react-toolbox/components/ripple/theme.css";
+declare module "react-toolbox/components/slider/theme.css";
 declare module "react-toolbox/components/snackbar/theme.css";
 declare module "react-toolbox/components/switch/theme.css";
+declare module "react-toolbox/components/tabs/theme.css";
 declare module "react-toolbox/components/time_picker/theme.css";
 declare module "react-toolbox/components/tooltip/theme.css";
 

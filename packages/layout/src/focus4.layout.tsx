@@ -3,10 +3,12 @@ import * as React from "react";
 import {TReactCSSThemrTheme} from "@focus4/core";
 import {ThemeContext} from "@focus4/styling";
 import {
+    AppBarTheme,
     AutocompleteTheme,
     AvatarTheme,
     BrowseButtonTheme,
     ButtonTheme,
+    CardTheme,
     CheckboxTheme,
     ChipTheme,
     DatePickerTheme,
@@ -14,13 +16,18 @@ import {
     IconButtonTheme,
     IconMenuTheme,
     InputTheme,
+    LinkTheme,
+    ListTheme,
     MenuItemTheme,
     MenuTheme,
+    NavigationTheme,
     ProgressBarTheme,
     RadioTheme,
     RippleTheme,
+    SliderTheme,
     SnackbarTheme,
     SwitchTheme,
+    TabsTheme,
     TimePickerTheme,
     TooltipTheme
 } from "@focus4/toolbox";
@@ -101,20 +108,27 @@ export interface LayoutStyleProviderProps {
     selectRadio?: {};
     summary?: {};
 
+    RTAppBar?: AppBarTheme;
     RTAutocomplete?: AutocompleteTheme;
     RTAvatar?: AvatarTheme;
     RTButton?: ButtonTheme & BrowseButtonTheme & IconButtonTheme;
+    RTCard?: CardTheme;
     RTCheckbox?: CheckboxTheme;
     RTChip?: ChipTheme;
     RTDatePicker?: DatePickerTheme;
     RTDropdown?: DropdownTheme;
     RTInput?: InputTheme;
+    RTLink?: LinkTheme;
+    RTList?: ListTheme;
     RTMenu?: IconMenuTheme & MenuItemTheme & MenuTheme;
+    RTNavigation?: NavigationTheme;
     RTProgressBar?: ProgressBarTheme;
     RTRadio?: RadioTheme;
     RTRipple?: RippleTheme;
+    RTSlider?: SliderTheme;
     RTSnackbar?: SnackbarTheme;
     RTSwitch?: SwitchTheme;
+    RTTabs?: TabsTheme;
     RTTimePicker?: TimePickerTheme;
     RTTooltip?: TooltipTheme;
 }

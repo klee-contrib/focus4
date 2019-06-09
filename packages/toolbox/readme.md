@@ -13,8 +13,9 @@ Quasiment tout ce qui est présenté ici est applicable : [https://react-toolbox
 
 Différences :
 
--   Dialog a été recopié/réimplémenté dans `layout` (l'overlay aussi)
--   Seuls `Calendar` et `Clock` sont exposés (les pickers entiers utilise le dialog qui n'est pas disponible). `InputDate` et `InputTime` de `components` est probablement ce que vous cherchez de toute manière.
+-   `Layout` (ainsi que `Drawer`) est remplacé par le `Layout` (avec `MainMenu`) du module `layout`. De même, `Table` est remplacé par `tableFor` du module `collections` (`List` reste disponible).
+-   `Dialog` a été recopié/réimplémenté dans `layout` (l'overlay aussi)
+-   Seuls `Calendar` et `Clock` sont exposés (les pickers entiers utilise le dialog qui n'est pas disponible). `InputDate` et `InputTime` de `components` sont probablement ce que vous cherchez de toute manière.
 -   `Checkbox` et `Switch` peuvent prendre `value` à la place de `checked`
 -   `ButtonMenu` a été ajouté en plus de `IconMenu`
 -   Les ripples et tooltips ont été recopiés/réimplémentés (parce qu'ils incluaient d'office le CSS)
