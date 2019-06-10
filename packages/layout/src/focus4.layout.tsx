@@ -52,26 +52,48 @@ export {
     HeaderBarRight,
     HeaderContent,
     HeaderScrolling,
+    HeaderStyle,
     HeaderSummary,
     HeaderTopRow,
     PrimaryAction,
     SecondaryAction,
     headerStyles
 } from "./header";
+export {MainMenu, MainMenuItem, MainMenuProps, MainMenuStyle, mainMenuStyles} from "./menu";
 export {
     Content,
     Dialog,
+    DialogStyle,
+    LayoutBase,
+    LayoutProps,
+    LayoutStyle,
+    OverlayStyle,
     Popin,
+    PopinStyle,
     ScrollspyContainer,
+    ScrollspyStyle,
     dialogStyles,
     layoutStyles,
     overlayStyles,
     popinStyles,
     scrollspyStyles
 } from "./presentation";
-export {MainMenu, MainMenuItem, mainMenuStyles} from "./menu";
-export {Scrollable, buttonBTTStyles, scrollableStyles} from "./scrollable";
-export {loadingBarStyles, snackbarStyles} from "./utils";
+export {
+    ButtonBackToTopStyle,
+    Scrollable,
+    ScrollableProps,
+    ScrollableStyle,
+    buttonBTTStyles,
+    scrollableStyles
+} from "./scrollable";
+export {
+    LoadingBar,
+    LoadingBarStyle,
+    MessageCenter,
+    MessageCenterProps,
+    loadingBarStyles,
+    snackbarStyles
+} from "./utils";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {

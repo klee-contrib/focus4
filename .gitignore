@@ -6,3 +6,5 @@ lib
 .history
 .rpt2_cache
 lerna-debug.log
+packages/all/*.js
+packages/all/*.d.ts

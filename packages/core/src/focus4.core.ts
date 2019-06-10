@@ -1,5 +1,5 @@
 export {coreFetch, requestStore} from "./network";
-export {makeRouter, ViewStore} from "./router";
+export {RouterConfig, ViewStore, makeRouter} from "./router";
 export {messageStore, UserStore} from "./stores";
 import {fr, icons} from "./translation";
 export const translation = {fr, icons};

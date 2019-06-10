@@ -60,4 +60,11 @@ export {
     stringFor,
     toFlatValues
 } from "./entity";
-export {ReferenceList, makeReferenceList, makeReferenceStore} from "./reference";
+export {
+    AsList,
+    ReferenceDefinition,
+    ReferenceList,
+    ReferenceLoader,
+    makeReferenceList,
+    makeReferenceStore
+} from "./reference";

@@ -1,6 +1,6 @@
 {
     "name": "focus4-packages",
-    "version": "10.0.0-alpha.3",
+    "version": "10.0.0-beta.1",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "",
     "repository": {
@@ -13,7 +13,7 @@
     "scripts": {
         "bootstrap": "lerna bootstrap --hoist",
         "clean": "lerna clean --yes && node scripts/clean.js",
-        "publish": "lerna publish",
+        "publish": "lerna publish --dist-tag beta",
         "stylelint": "stylelint packages/**/*.css",
         "test": "lerna run test",
         "test-ci": "lerna run test-ci",
