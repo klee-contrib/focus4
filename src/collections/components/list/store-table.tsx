@@ -7,21 +7,18 @@ import {IconButton} from "react-toolbox/lib/button";
 import {getIcon} from "../../../components";
 
 import {isSearch, ListStoreBase} from "../../store";
-import {Table, TableProps} from "./table";
+import {Table, TableColumn, TableProps} from "./table";
+
+/** Définition de colonne pour StoreTable. */
+export interface StoreTableColumn<T> extends TableColumn<T> {
+    /** Si la colonne est triable, le nom du champ sur lequel on doit trier. */
+    sortKey?: string;
+}
 
 /** Props additionnelles pour un StoreTable. */
 export interface StoreTableProps<T> extends TableProps<T> {
     /** La description des colonnes du tableau. */
-    columns: {
-        /** Classe CSS pour la colonne. */
-        className?: string;
-        /** Contenu de la colonne. */
-        content: (data: T) => React.ReactNode;
-        /** Si la colonne est triable, le nom du champ sur lequel on doit trier. */
-        sortKey?: string;
-        /** Libellé du titre de la colonne. */
-        title: string;
-    }[];
+    columns: StoreTableColumn<T>[];
     /** Code du groupe à afficher, pour une recherche groupée. */
     groupCode?: string;
     /** Le store contenant la liste. */
