@@ -1,5 +1,16 @@
 export {Field, FieldStyle} from "./field";
-export {autocompleteFor, fieldFor, fromField, makeField, patchField, selectFor, stringFor} from "./field";
+export {
+    AutocompleteForOptions,
+    FieldForOptions,
+    SelectForOptions,
+    autocompleteFor,
+    fieldFor,
+    fromField,
+    makeField,
+    patchField,
+    selectFor,
+    stringFor
+} from "./field";
 export {ActionConfig, Form, FormStyle, makeFormActions, makeFormNode} from "./form";
 export {buildNode, makeEntityStore, nodeToFormNode, patchNodeEdit, toFlatValues} from "./store";
 export {
