@@ -18,6 +18,8 @@ export interface FormConfig<S extends string = "default"> {
     onClickCancel?: () => void;
     /** Appelé au clic sur le bouton "Modifier". */
     onClickEdit?: () => void;
+    /** Appelé en cas d'erreur pendant la sauvgarde. */
+    onFormError?: (e: any) => void;
     /** Appelé après le chargement. */
     onFormLoaded?: () => void;
     /** Appelé après la sauvegarde. */
@@ -135,12 +137,15 @@ export function makeFormActions<
                 return;
             }
 
-            // On ne sauvegarde que si la validation est en succès.
-            if (formNode.form && !formNode.form.isValid) {
-                return Promise.reject({error: "Le formulaire est invalide", detail: formNode.form.errors});
-            }
-
             try {
+                // On ne sauvegarde que si la validation est en succès.
+                if (formNode.form && !formNode.form.isValid) {
+                    throw {
+                        $validationError: true,
+                        detail: formNode.form.errors
+                    };
+                }
+
                 this.isLoading = true;
                 const data = await saveService(toFlatValues(formNode));
                 runInAction("afterSave", () => {
@@ -170,6 +175,11 @@ export function makeFormActions<
                 if (config.onFormSaved) {
                     config.onFormSaved(name as "default");
                 }
+            } catch (e) {
+                if (config.onFormError) {
+                    config.onFormError(e);
+                }
+                throw e;
             } finally {
                 this.isLoading = false;
             }
