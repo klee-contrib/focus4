@@ -58,7 +58,7 @@ export function Overlay({
             ) : (
                 active
             )) ? (
-                <CSSTransition {...cssTransitionProps(theme)}>
+                <CSSTransition {...cssTransitionProps(theme as any)}>
                     <div className={theme.overlay} onClick={onOverlayClick}>
                         {children}
                     </div>

@@ -28,7 +28,7 @@ export function Dialog({
             <Overlay active={active} onClick={onOverlayClick as () => void} />
             <TransitionGroup component={null}>
                 {active ? (
-                    <CSSTransition {...cssTransitionProps(theme)}>
+                    <CSSTransition {...cssTransitionProps(theme as any)}>
                         <div className={theme.wrapper}>
                             <div
                                 data-react-toolbox="dialog"

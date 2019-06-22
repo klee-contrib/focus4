@@ -57,7 +57,7 @@ export function Popin({
             <Overlay active={opened} onClick={(!preventOverlayClick && closePopin) || undefined} />
             <TransitionGroup component={null}>
                 {opened ? (
-                    <CSSTransition {...cssTransitionProps(theme)}>
+                    <CSSTransition {...cssTransitionProps(theme as any)}>
                         <Scrollable
                             backToTopOffset={backToTopOffset}
                             className={`${theme.popin} ${
