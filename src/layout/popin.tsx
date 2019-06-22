@@ -6,7 +6,7 @@ import {cssTransitionProps} from "../animation";
 import {getIcon, ScrollableContext} from "../components";
 import {useTheme} from "../theme";
 
-import {Overlay, overlayStyles} from "./overlay";
+import {Overlay} from "./overlay";
 import {Scrollable} from "./scrollable";
 
 import * as styles from "./__style__/popin.css";
@@ -51,37 +51,34 @@ export function Popin({
     type = "from-right"
 }: React.PropsWithChildren<PopinProps>) {
     const theme = useTheme("popin", styles, pTheme);
-    const oTheme = useTheme("overlay", overlayStyles);
     const context = React.useContext(ScrollableContext);
 
     return context.portal(
-        <TransitionGroup component={null}>
-            {opened ? (
-                <CSSTransition {...cssTransitionProps(oTheme)}>
-                    <Overlay onClick={(!preventOverlayClick && closePopin) || undefined} />
-                </CSSTransition>
-            ) : null}
-            {opened ? (
-                <CSSTransition {...cssTransitionProps(theme)}>
-                    <Scrollable
-                        backToTopOffset={backToTopOffset}
-                        className={`${theme.popin} ${
-                            type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""
-                        }`}
-                        hideBackToTop={hideBackToTop}
-                        scrollBehaviour={scrollBehaviour}
-                    >
-                        {!hideCloseButton ? (
-                            <IconButton
-                                className={theme.close}
-                                icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
-                                onClick={closePopin}
-                            />
-                        ) : null}
-                        {children}
-                    </Scrollable>
-                </CSSTransition>
-            ) : null}
-        </TransitionGroup>
+        <>
+            <Overlay active={opened} onClick={(!preventOverlayClick && closePopin) || undefined} />
+            <TransitionGroup component={null}>
+                {opened ? (
+                    <CSSTransition {...cssTransitionProps(theme)}>
+                        <Scrollable
+                            backToTopOffset={backToTopOffset}
+                            className={`${theme.popin} ${
+                                type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""
+                            }`}
+                            hideBackToTop={hideBackToTop}
+                            scrollBehaviour={scrollBehaviour}
+                        >
+                            {!hideCloseButton ? (
+                                <IconButton
+                                    className={theme.close}
+                                    icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
+                                    onClick={closePopin}
+                                />
+                            ) : null}
+                            {children}
+                        </Scrollable>
+                    </CSSTransition>
+                ) : null}
+            </TransitionGroup>
+        </>
     );
 }
