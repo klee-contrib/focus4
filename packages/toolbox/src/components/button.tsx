@@ -24,10 +24,12 @@ import {FontIcon} from "./font-icon";
 import {rippleFactory} from "./ripple";
 
 const RTButton = buttonFactory(rippleFactory({rippleCentered: false}), FontIcon);
-export const Button = React.forwardRef<ButtonType, ButtonProps>((props, ref) => {
-    const theme = useTheme(BUTTON, buttonTheme, props.theme);
-    return <RTButton ref={ref} {...props} theme={theme} />;
-});
+export const Button: React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<ButtonType>> = React.forwardRef(
+    (props, ref) => {
+        const theme = useTheme(BUTTON, buttonTheme, props.theme);
+        return <RTButton ref={ref} {...props} theme={theme} />;
+    }
+);
 
 const RTIconButton = iconButtonFactory(rippleFactory({rippleCentered: true}), FontIcon);
 export const IconButton = React.forwardRef<IconButtonType, IconButtonProps>((props, ref) => {

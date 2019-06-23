@@ -7,9 +7,11 @@ import rtLinkTheme from "react-toolbox/components/link/theme.css";
 const linkTheme: LinkTheme = rtLinkTheme;
 export {linkTheme};
 
-export const Link = React.forwardRef<RTLink, LinkProps>((props, ref) => {
-    const theme = useTheme(LINK, linkTheme, props.theme);
-    return <RTLink ref={ref} {...props} theme={theme} />;
-});
+export const Link: React.ForwardRefExoticComponent<LinkProps & React.RefAttributes<RTLink>> = React.forwardRef(
+    (props, ref) => {
+        const theme = useTheme(LINK, linkTheme, props.theme);
+        return <RTLink ref={ref} {...props} theme={theme} />;
+    }
+);
 
 export {LinkProps, LinkTheme};

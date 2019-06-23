@@ -18,10 +18,12 @@ const TabContent = React.forwardRef<RTTabContent, TabContentProps>((props, ref) 
 });
 
 const RTTab = tabFactory(rippleFactory({rippleCentered: false}), FontIcon);
-export const Tab = React.forwardRef<TabType, TabProps>((props, ref) => {
-    const theme = useTheme(TABS, tabsTheme as TabTheme, props.theme);
-    return <RTTab ref={ref} {...props} theme={theme} />;
-});
+export const Tab: React.ForwardRefExoticComponent<TabProps & React.RefAttributes<TabType>> = React.forwardRef(
+    (props, ref) => {
+        const theme = useTheme(TABS, tabsTheme as TabTheme, props.theme);
+        return <RTTab ref={ref} {...props} theme={theme} />;
+    }
+);
 
 const RTTabs = tabsFactory(Tab, TabContent, FontIcon);
 export const Tabs = React.forwardRef<TabsType, TabsProps>((props, ref) => {

@@ -18,22 +18,30 @@ export {cardTheme};
 
 import {Avatar} from "./avatar";
 
-export const Card = React.forwardRef<RTCard, CardProps>((props, ref) => {
-    const theme = useTheme(CARD, cardTheme, props.theme);
-    return <RTCard ref={ref} {...props} theme={theme} />;
-});
+export const Card: React.ForwardRefExoticComponent<CardProps & React.RefAttributes<RTCard>> = React.forwardRef(
+    (props, ref) => {
+        const theme = useTheme(CARD, cardTheme, props.theme);
+        return <RTCard ref={ref} {...props} theme={theme} />;
+    }
+);
 
-export const CardActions = React.forwardRef<RTCardActions, CardActionsProps>((props, ref) => {
+export const CardActions: React.ForwardRefExoticComponent<
+    CardActionsProps & React.RefAttributes<RTCardActions>
+> = React.forwardRef((props, ref) => {
     const theme = useTheme(CARD, cardTheme as CardActionsTheme, props.theme);
     return <RTCardActions ref={ref} {...props} theme={theme} />;
 });
 
-export const CardMedia = React.forwardRef<RTCardMedia, CardMediaProps>((props, ref) => {
+export const CardMedia: React.ForwardRefExoticComponent<
+    CardMediaProps & React.RefAttributes<RTCardMedia>
+> = React.forwardRef((props, ref) => {
     const theme = useTheme(CARD, cardTheme as CardMediaTheme, props.theme);
     return <RTCardMedia ref={ref} {...props} theme={theme} />;
 });
 
-export const CardText = React.forwardRef<RTCardText, CardTextProps>((props, ref) => {
+export const CardText: React.ForwardRefExoticComponent<
+    CardTextProps & React.RefAttributes<RTCardText>
+> = React.forwardRef((props, ref) => {
     const theme = useTheme(CARD, cardTheme as CardTextTheme, props.theme);
     return <RTCardText ref={ref} {...props} theme={theme} />;
 });

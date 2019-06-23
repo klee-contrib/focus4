@@ -1,8 +1,16 @@
-export {AdvancedSearch, advancedSearchFor, AdvancedSearchStyle, advancedSearchStyles} from "./advanced-search";
-export {ChipType} from "./chip";
+export {
+    AdvancedSearch,
+    AdvancedSearchProps,
+    advancedSearchFor,
+    AdvancedSearchStyle,
+    advancedSearchStyles
+} from "./advanced-search";
+export {ChipType, SearchChip, SearchChipProps} from "./chip";
 export {
     FacetBox,
+    FacetBoxProps,
     FacetBoxStyle,
+    FacetProps,
     FacetStyle,
     addFacetValue,
     facetBoxStyles,
@@ -10,6 +18,6 @@ export {
     removeFacetValue,
     shouldDisplayFacet
 } from "./facet-box";
-export {Results, resultsFor, GroupStyle, groupStyles} from "./results";
-export {SearchBar, SearchBarStyle, searchBarStyles} from "./search-bar";
-export {Summary, SummaryStyle, summaryStyles} from "./summary";
+export {Results, ResultsProps, resultsFor, GroupStyle, groupStyles} from "./results";
+export {SearchBar, SearchBarProps, SearchBarStyle, searchBarStyles} from "./search-bar";
+export {Summary, SummaryProps, SummaryStyle, summaryStyles} from "./summary";

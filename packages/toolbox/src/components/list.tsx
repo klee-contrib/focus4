@@ -62,7 +62,9 @@ export const ListSubHeader = React.forwardRef<RTListSubHeader, ListSubHeaderProp
     return <RTListSubHeader ref={ref} {...props} theme={theme} />;
 });
 
-export const ListItemText = React.forwardRef<RTListItemText, ListItemTextProps>((props, ref) => {
+export const ListItemText: React.ForwardRefExoticComponent<
+    ListItemTextProps & React.RefAttributes<RTListItemText>
+> = React.forwardRef((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemTextTheme, props.theme);
     return <RTListItemText ref={ref} {...props} theme={theme} />;
 });

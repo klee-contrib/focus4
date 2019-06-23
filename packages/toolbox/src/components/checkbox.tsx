@@ -24,7 +24,9 @@ export interface CheckboxProps extends RTCheckboxProps {
 }
 
 const RTCheckbox = checkboxFactory(checkFactory(rippleFactory({rippleCentered: true, rippleSpread: 2.6})));
-export const Checkbox = React.forwardRef<CheckboxType, CheckboxProps>((props, ref) => {
+export const Checkbox: React.ForwardRefExoticComponent<
+    CheckboxProps & React.RefAttributes<CheckboxType>
+> = React.forwardRef((props, ref) => {
     const theme = useTheme(CHECKBOX, checkboxTheme, props.theme);
 
     // On remplace `value` par `checked`.

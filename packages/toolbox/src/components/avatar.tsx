@@ -10,9 +10,11 @@ export {avatarTheme};
 import {FontIcon} from "./font-icon";
 
 const RTAvatar = avatarFactory(FontIcon);
-export const Avatar = React.forwardRef<AvatarType, AvatarProps>((props, ref) => {
-    const theme = useTheme(AVATAR, avatarTheme, props.theme);
-    return <RTAvatar ref={ref} {...props} theme={theme} />;
-});
+export const Avatar: React.ForwardRefExoticComponent<AvatarProps & React.RefAttributes<AvatarType>> = React.forwardRef(
+    (props, ref) => {
+        const theme = useTheme(AVATAR, avatarTheme, props.theme);
+        return <RTAvatar ref={ref} {...props} theme={theme} />;
+    }
+);
 
 export {AvatarProps, AvatarTheme};

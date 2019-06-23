@@ -15,8 +15,8 @@ export {summaryStyles};
 export type SummaryStyle = Partial<typeof summaryStyles>;
 const Theme = themr("summary", summaryStyles);
 
-/** Props du ListSummary. */
-export interface ListSummaryProps<T> {
+/** Props du Summary. */
+export interface SummaryProps<T> {
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
     /**
@@ -61,7 +61,7 @@ export interface ListSummaryProps<T> {
 
 /** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
 @observer
-export class Summary<T> extends React.Component<ListSummaryProps<T>> {
+export class Summary<T> extends React.Component<SummaryProps<T>> {
     /** Liste des filtres à afficher. */
     @computed.struct
     protected get filterList() {
