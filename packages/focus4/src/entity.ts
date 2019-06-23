@@ -12,7 +12,7 @@ export {
     makeFormNode,
     patchField,
     selectFor
-} from "@focus4/components";
+} from "@focus4/forms";
 export {
     ActionConfig,
     Domain,

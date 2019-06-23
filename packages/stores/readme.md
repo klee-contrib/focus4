@@ -107,7 +107,7 @@ C'est la fonction principale, elle permet d'afficher un champ avec son libellé,
 -   `field`, un `EntityField`
 -   `options`, les différentes options à passer au champ. Il ne s'agit uniquement de props pour le composant de Field, et _il n'y est pas possible de surcharger les métadonnées du champ_.
 
-Le composant de Field utilisera ses composants par défaut si le domaine ne les renseignent pas (`Input`, `Display` et `Label` de `components`).
+Le composant de Field utilisera ses composants par défaut si le domaine ne les renseignent pas (`Input`, `Display` et `Label` de `forms`).
 
 ### `selectFor(field, values, options?)`
 

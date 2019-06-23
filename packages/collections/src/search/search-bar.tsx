@@ -4,7 +4,7 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {fieldFor, makeField} from "@focus4/components";
+import {fieldFor, makeField} from "@focus4/forms";
 import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
 import {getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";

@@ -18,7 +18,7 @@ glob.sync("src/**/*.css").forEach(css => {
 
 /** @type {import("rollup").RollupOptions} */
 const config = {
-    input: "src/focus4.components.ts",
+    input: "src/focus4.forms.ts",
     plugins: [
         // @ts-ignore
         postcss({extract: true, modules: true, writeDefinitions: true}),
@@ -34,7 +34,7 @@ const config = {
     },
     output: {
         format: "esm",
-        file: "lib/focus4.components.js"
+        file: "lib/focus4.forms.js"
     },
     external: [
         ...Object.keys(pkg.dependencies || {}),

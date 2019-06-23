@@ -1,15 +1,15 @@
 {
-    "name": "@focus4/components",
+    "name": "@focus4/forms",
     "version": "10.0.0-beta.1",
-    "description": "Focus v4, components module",
-    "main": "lib/focus4.components.js",
+    "description": "Focus v4, forms module",
+    "main": "lib/focus4.forms.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/KleeGroup/focus4.git"
     },
     "author": "damien.frikha@kleegroup.com",
     "license": "MIT",
-    "homepage": "https://github.com/KleeGroup/focus4/packages/components",
+    "homepage": "https://github.com/KleeGroup/focus4/packages/forms",
     "scripts": {
         "prepare": "rollup -cm",
         "start": "rollup -cw",

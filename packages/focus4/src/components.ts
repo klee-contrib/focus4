@@ -32,6 +32,6 @@ export {
     SelectRadio,
     SelectRadioProps,
     SelectRadioStyle
-} from "@focus4/components";
+} from "@focus4/forms";
 export {getIcon, PanelDescriptor, ScrollableContext, ScrollspyContext} from "@focus4/styling";
 export {ButtonMenu, Checkbox, CheckboxProps, IconMenu, MenuItem, Switch, SwitchProps} from "@focus4/toolbox";
