@@ -70,7 +70,7 @@ interface RippleState {
 }
 
 class RippledComponent<P> extends React.Component<
-    RippleProps & {ComposedComponent: React.ComponentType<P> | "string"},
+    RippleProps & {ComposedComponent: React.ComponentType<P> | string},
     RippleState
 > {
     state: RippleState = {
@@ -316,8 +316,11 @@ class RippledComponent<P> extends React.Component<
         };
         const finalProps = ripplePassthrough ? {...childProps, theme, disabled} : childProps;
 
-        return !ripple
-            ? React.createElement(ComposedComponent, finalProps as any, children)
-            : React.createElement(ComposedComponent, finalProps as any, [children, childRipples]);
+        return (
+            <ComposedComponent {...finalProps as any}>
+                {children}
+                {ripple ? childRipples : null}
+            </ComposedComponent>
+        );
     }
 }

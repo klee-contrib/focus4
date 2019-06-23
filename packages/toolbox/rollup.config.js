@@ -3,7 +3,6 @@
 import pkg from "./package.json";
 import {onwarn, abortOnError} from "../../scripts/rollup";
 
-import postcssColor from "postcss-color-function";
 import postcssImport from "postcss-import";
 import resolve from "rollup-plugin-node-resolve";
 import postcss from "rollup-plugin-postcss";
@@ -13,7 +12,7 @@ import typescript from "rollup-plugin-typescript2";
 const config = {
     input: "src/focus4.toolbox.ts",
     plugins: [
-        postcss({extract: true, modules: true, plugins: [postcssImport({load: () => ""}), postcssColor()]}),
+        postcss({extract: true, modules: true, plugins: [postcssImport({load: () => ""})]}),
         resolve(),
         typescript({abortOnError: false}),
         abortOnError

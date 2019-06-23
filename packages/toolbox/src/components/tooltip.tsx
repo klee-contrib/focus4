@@ -73,7 +73,7 @@ export function tooltipFactory({
 }
 
 class TooltippedComponent<P> extends React.Component<
-    TooltipProps & {ComposedComponent: React.ComponentType<P> | "string"}
+    TooltipProps & {ComposedComponent: React.ComponentType<P> | string}
 > {
     state = {
         active: false,
@@ -240,24 +240,25 @@ class TooltippedComponent<P> extends React.Component<
         const shouldPass = typeof ComposedComponent !== "string" && tooltipPassthrough;
         const finalProps = shouldPass ? {...childProps, theme} : childProps;
 
-        return React.createElement(
-            ComposedComponent,
-            finalProps as any,
-            children,
-            visible &&
-                createPortal(
-                    <span
-                        ref={node => {
-                            this.tooltipNode = node;
-                        }}
-                        className={_className}
-                        data-react-toolbox="tooltip"
-                        style={{top, left}}
-                    >
-                        <span className={theme!.tooltipInner}>{tooltip}</span>
-                    </span>,
-                    document.body
-                )
+        return (
+            <>
+                <ComposedComponent {...finalProps as any}>{children}</ComposedComponent>
+                {visible
+                    ? createPortal(
+                          <span
+                              ref={node => {
+                                  this.tooltipNode = node;
+                              }}
+                              className={_className}
+                              data-react-toolbox="tooltip"
+                              style={{top, left}}
+                          >
+                              <span className={theme!.tooltipInner}>{tooltip}</span>
+                          </span>,
+                          document.body
+                      )
+                    : null}
+            </>
         );
     }
 }

@@ -7,7 +7,6 @@ import chalk from "chalk";
 import fs from "fs";
 import glob from "glob";
 import {camelCase, flatten} from "lodash";
-import postcssColor from "postcss-color-function";
 import postcssImport from "postcss-import";
 import typescript from "rollup-plugin-typescript2";
 import postcss from "rollup-plugin-postcss";
@@ -55,7 +54,7 @@ const configs = [
         input: "src/variables.ts",
         plugins: [
             typescript({abortOnError: false}),
-            postcss({extract: true, plugins: [postcssImport(), postcssColor()]}),
+            postcss({extract: true, plugins: [postcssImport()]}),
             abortOnError
         ],
         output: {
