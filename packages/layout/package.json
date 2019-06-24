@@ -1,6 +1,6 @@
 {
     "name": "@focus4/layout",
-    "version": "10.0.0-beta.3",
+    "version": "10.0.0-beta.4",
     "description": "Focus v4, layout module",
     "main": "lib/focus4.layout.js",
     "repository": {
@@ -17,7 +17,7 @@
     "dependencies": {
         "@focus4/core": "^10.0.0-beta.2",
         "@focus4/styling": "^10.0.0-beta.2",
-        "@focus4/toolbox": "^10.0.0-beta.3",
+        "@focus4/toolbox": "^10.0.0-beta.4",
         "@types/react-transition-group": "2.9.2",
         "intersection-observer": "0.7.0",
         "react-transition-group": "4.1.0",
