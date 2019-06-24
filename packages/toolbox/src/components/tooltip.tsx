@@ -51,7 +51,7 @@ export function tooltipFactory({
     tooltipShowOnClick = false,
     theme = {}
 }: TooltipOptions = {}) {
-    return function Tooltip<P>(ComposedComponent: React.ComponentType<P> | "string") {
+    return function Tooltip<P>(ComposedComponent: React.ComponentType<P> | string) {
         return React.forwardRef<TooltippedComponent<P>, P & TooltipProps>((p, ref) => {
             const finalTheme = useTheme(TOOLTIP, tooltipTheme, p.theme, theme);
             return (

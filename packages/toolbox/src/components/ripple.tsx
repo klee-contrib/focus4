@@ -35,7 +35,7 @@ export function rippleFactory({
     rippleSpread = 2,
     theme = {}
 }: RippleOptions = {}) {
-    return function Ripple<P>(ComposedComponent: React.ComponentType<P> | "string") {
+    return function Ripple<P>(ComposedComponent: React.ComponentType<P> | string) {
         return React.forwardRef<RippledComponent<P>, P & RippleProps>((p, ref) => {
             const finalTheme = useTheme(RIPPLE, rippleTheme, p.theme, theme);
             return (
