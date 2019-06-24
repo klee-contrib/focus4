@@ -5,7 +5,7 @@ import {TabContent as RTTabContent, TabContentProps, TabContentTheme} from "reac
 import {Tabs as TabsType, tabsFactory, TabsProps, TabsTheme} from "react-toolbox/lib/tabs/Tabs";
 
 import {useTheme} from "@focus4/styling";
-import rtTabsTheme from "react-toolbox/components/tooltip/theme.css";
+import rtTabsTheme from "react-toolbox/components/tabs/theme.css";
 const tabsTheme: TabsTheme = rtTabsTheme;
 export {tabsTheme};
 
