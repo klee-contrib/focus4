@@ -20,7 +20,7 @@
         "@focus4/toolbox": "^10.0.0-beta.6",
         "@types/react-transition-group": "2.9.2",
         "intersection-observer": "0.7.0",
-        "react-transition-group": "4.1.0",
+        "react-transition-group": "4.1.1",
         "resize-observer-polyfill": "1.5.1",
         "smoothscroll-polyfill": "0.4.4"
     }
