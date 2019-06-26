@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "9.10.3",
+    "version": "9.10.4",
     "description": "Focus v4 (Typescript + MobX)",
     "main": "index.js",
     "repository": {
@@ -41,7 +41,7 @@
         "material-design-icons-iconfont": "5.0.1",
         "mobx": "4.10.0",
         "mobx-react": "5.4.3",
-        "mobx-react-lite": "1.4.0",
+        "mobx-react-lite": "1.4.1",
         "moment": "2.24.0",
         "moment-timezone": "0.5.25",
         "numeral": "2.0.6",
