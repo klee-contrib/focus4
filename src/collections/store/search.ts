@@ -210,7 +210,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
     @action.bound
     clear() {
         this.serverCount = 0;
-        this.selectedList.clear();
+        this.selectedItems.clear();
         this.facets.clear();
         this.list.clear();
         this.groups.clear();
@@ -242,7 +242,7 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
         // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
         if (!isScroll) {
-            this.selectedList.clear();
+            this.selectedItems.clear();
         }
 
         const response = await this.service(data);
@@ -335,12 +335,12 @@ export class SearchStore<T = any, C extends StoreNode = any> extends ListStoreBa
 
                     this.list.forEach(item => {
                         if (store.selectedItems.has(item)) {
-                            store.selectedList.remove(item);
+                            store.selectedItems.delete(item);
                         }
                     });
 
                     if (!areAllItemsIn) {
-                        store.selectedList.push(...this.selectionnableList);
+                        this.selectionnableList.forEach(item => store.selectedItems.add(item));
                     }
                 }
             },
