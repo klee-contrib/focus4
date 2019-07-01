@@ -102,7 +102,11 @@ export function Panel({
     const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
     return (
-        <div ref={ref} id={name} className={`${theme.panel} ${loading ? theme.busy : ""} ${editing ? theme.edit : ""}`}>
+        <div
+            ref={ref}
+            id={name ? `panel-${name}` : undefined}
+            className={`${theme.panel} ${loading ? theme.busy : ""} ${editing ? theme.edit : ""}`}
+        >
             {!hideProgressBar && loading ? (
                 <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} />
             ) : null}

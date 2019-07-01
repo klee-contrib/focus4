@@ -148,6 +148,7 @@ export function ScrollspyMenu({activeId, activeClassName, panels, scrollToPanel}
                 <li
                     className={activeId === id ? activeClassName : undefined}
                     key={id}
+                    id={`menu-${id}`}
                     onClick={() => scrollToPanel(id)}
                 >
                     {title}
