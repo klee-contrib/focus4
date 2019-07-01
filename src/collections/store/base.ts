@@ -1,4 +1,4 @@
-import {action, computed, IObservableArray, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 
 /** Statut de la séléection */
 export type SelectionStatus = "none" | "partial" | "selected";
@@ -14,13 +14,13 @@ export abstract class ListStoreBase<T> {
 
     /** Permet d'omettre certains élements de la liste de la sélection. */
     @observable isItemSelectionnable: (data: T) => boolean = () => true;
-    /** Liste des éléments séléctionnés */
-    readonly selectedList: IObservableArray<T> = observable<T>([]);
-
     /** Set contenant les éléments sélectionnés. */
+    readonly selectedItems = observable.set<T>();
+
+    /** Liste des éléments séléctionnés */
     @computed
-    get selectedItems() {
-        return new Set(this.selectedList);
+    get selectedList(): ReadonlyArray<T> {
+        return Array.from(this.selectedItems);
     }
 
     /** Etat de la sélection (aucune, partielle, totale). */
@@ -55,9 +55,9 @@ export abstract class ListStoreBase<T> {
     @action.bound
     toggle(item: T) {
         if (this.selectedItems.has(item)) {
-            this.selectedList.remove(item);
+            this.selectedItems.delete(item);
         } else if (this.isItemSelectionnable(item)) {
-            this.selectedList.push(item);
+            this.selectedItems.add(item);
         }
     }
 
@@ -65,9 +65,9 @@ export abstract class ListStoreBase<T> {
     @action.bound
     toggleAll() {
         if (this.selectedItems.size === this.selectionnableList.length) {
-            this.selectedList.clear();
+            this.selectedItems.clear();
         } else {
-            this.selectedList.replace(this.selectionnableList);
+            this.selectedItems.replace(this.selectionnableList);
         }
     }
 }
