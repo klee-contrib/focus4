@@ -407,7 +407,9 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         }
 
         if (isField(field)) {
-            options.ref = f => (this.fields[field.$entity.translationKey] = f);
+            if (!options.ref) {
+                options.ref = f => (this.fields[field.$entity.translationKey] = f);
+            }
             if (!options.error) {
                 options.error = this.errors[field.$entity.translationKey];
             }
