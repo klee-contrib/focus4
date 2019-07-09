@@ -55,7 +55,9 @@ export {
     selectStyles
 } from "./components";
 export {
+    $entity,
     AutoForm,
+    AutoFormOptions,
     Domain,
     Entity,
     EntityField,
@@ -63,6 +65,7 @@ export {
     FieldEntry,
     FieldProps,
     FieldStyle,
+    FormStyle,
     ListEntry,
     ObjectEntry,
     ServiceConfig,
@@ -75,6 +78,9 @@ export {
     createViewModel,
     displayFor,
     fieldFor,
+    fieldStyles,
+    formStyles,
+    isField,
     makeEntityStore,
     selectFor,
     stringFor,

@@ -1,10 +1,11 @@
 import {some, values as _values} from "lodash";
 import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import {v4} from "uuid";
 
 import {classAutorun, messageStore} from "@focus4/core";
+import {formStyles} from "@focus4/forms";
+import {themr} from "@focus4/styling";
 
 import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../components";
 
@@ -15,7 +16,7 @@ import {createViewModel, ViewModel} from "./view-model";
 
 import {displayFor, fieldFor, isField, selectFor, stringFor} from "./field-helpers";
 
-import {form} from "./__style__/auto-form.css";
+const Theme = themr("form", formStyles);
 
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions<E> {
@@ -60,10 +61,6 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     static get isOneEdit() {
         return Array.from(AutoForm.editingMap.values()).some(x => x);
     }
-
-    // On ne peut pas injecter le contexte dans le form (héritage...) donc on va le chercher directement pour le style CSS.
-    static contextTypes = {theme: PropTypes.object};
-    context!: {theme: {[key: string]: {[key: string]: any}}};
 
     /** Identifiant unique du formulaire. */
     formId = v4();
@@ -274,18 +271,21 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     /** Fonction de rendu du formulaire à préciser. */
     abstract renderContent(): React.ReactElement | null;
     render() {
-        const contextClassName = (this.context && this.context.theme && this.context.theme["form"]) || "";
         if (this.hasForm) {
             return (
-                <form
-                    className={`${form} ${contextClassName} ${this.className}`}
-                    onSubmit={e => {
-                        e.preventDefault();
-                        this.save();
-                    }}
-                >
-                    <fieldset>{this.renderContent()}</fieldset>
-                </form>
+                <Theme theme={{form: this.className}}>
+                    {theme => (
+                        <form
+                            className={theme.form}
+                            onSubmit={e => {
+                                e.preventDefault();
+                                this.save();
+                            }}
+                        >
+                            <fieldset>{this.renderContent()}</fieldset>
+                        </form>
+                    )}
+                </Theme>
             );
         } else {
             return this.renderContent();
