@@ -32,7 +32,7 @@
         "@types/react": "16.8.22",
         "@types/react-dom": "16.8.4",
         "@types/react-transition-group": "2.9.2",
-        "@types/uuid": "3.4.4",
+        "@types/uuid": "3.4.5",
         "i18next": "17.0.4",
         "inputmask-core": "2.2.0",
         "intersection-observer": "0.7.0",
