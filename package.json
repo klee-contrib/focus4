@@ -76,7 +76,7 @@
         "stylelint": "10.1.0",
         "ts-jest": "24.0.2",
         "tslint": "5.18.0",
-        "typed-css-modules": "0.3.7",
+        "typed-css-modules": "0.6.0",
         "typescript": "3.5.2",
         "typescript-tslint-plugin": "0.5.2"
     }
