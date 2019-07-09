@@ -60,7 +60,7 @@
         "yester": "0.10.0"
     },
     "devDependencies": {
-        "@types/enzyme": "3.9.3",
+        "@types/enzyme": "3.9.4",
         "@types/jest": "24.0.15",
         "@types/react-test-renderer": "16.8.2",
         "@types/shelljs": "0.8.5",
