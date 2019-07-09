@@ -1,5 +1,23 @@
 {
-  "extends": [
-    "config:base"
-  ]
+    "assignees": ["c3dr0x", "JabX"],
+    "separateMinorPatch": true,
+    "rebaseStalePrs": true,
+    "semanticCommits": true,
+    "semanticCommitType": "chore",
+    "commitMessageTopic": "{{depName}}",
+    "semanticCommitScope": null,
+    "branchPrefix": "deps/webpack-focus-",
+    "extends": ["config:base"],
+    "major": {
+        "semanticCommitType": "feat",
+        "labels": ["dependencies", "dep:major"]
+    },
+    "minor": {
+        "semanticCommitType": "fix",
+        "labels": ["dependencies", "dep:minor"]
+    },
+    "patch": {
+        "semanticCommitType": "chore",
+        "labels": ["dependencies", "dep:patch"]
+    }
 }
