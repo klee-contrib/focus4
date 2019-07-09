@@ -43,7 +43,7 @@
         "mobx-react": "5.4.3",
         "mobx-react-lite": "1.4.1",
         "moment": "2.24.0",
-        "moment-timezone": "0.5.25",
+        "moment-timezone": "0.5.26",
         "numeral": "2.0.6",
         "react": "16.8.6",
         "react-dnd": "7.7.0",
