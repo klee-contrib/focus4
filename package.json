@@ -36,7 +36,7 @@
         "i18next": "17.0.4",
         "inputmask-core": "2.2.0",
         "intersection-observer": "0.7.0",
-        "lodash": "4.17.11",
+        "lodash": "4.17.14",
         "lodash-decorators": "6.0.1",
         "material-design-icons-iconfont": "5.0.1",
         "mobx": "4.10.0",
