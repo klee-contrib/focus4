@@ -2,89 +2,6 @@
 
 Remplace `forms` et `stores` pour un projet qui utilise les anciens formulaires (pré-v9).
 
-## Incompatibilités avec le module `collections` à résoudre
-
--   Les différents `isSearch`, même si en vrai ça doit quand même marcher puisqu'au runtime c'est le même test.
--   Le SearchStore n'est pas le même, donc c'est chiant pour les composants qui le demande en props, mais ça marche parce qu'ils ont la même API (aux critères près) ?
--   dateSelector sur la ligne/timeline -> utilise EntityField<FieldEntry> + stringFor
--   La SearchBar, pour la saisie des critères
--   Le Summary, qui veut afficher les critères
-
-## EntityStore
-
-Un `EntityStore` sert à stocker des **entités**, c'est-à-dire des objets structurés (mappés sur les beans et DTOs du serveur) avec leurs _métadonnées_.
-
-Si vous cherchez à stocker des primitives ou des objets pour lesquels vous n'avez pas besoin de métadonnées, vous n'avez pas besoin de ce store et vous pouvez directement utiliser des observables pour stocker vos valeurs. MobX s'occupe déjà automatiquement de tous les abonnements des observables utilisées ; l'`EntityStore` n'en est qu'une surcouche spécialisée dans l'usage avec les métadonnées.
-
-Il remplace à l'usage le `CoreStore` de `focus-core`, mais ne doit donc pas être utilisé systématiquement.
-
-Par exemple, un objet `operation` de la forme:
-
-```ts
-{
-    id: 1,
-    number: "1.3",
-    amount: 34.3
-}
-```
-
-sera stocké dans un `EntityStore` sous la forme :
-
-```ts
-{
-    operation: {
-        id: {
-            $entity: {type: "field", isRequired: true, domain: DO_ID, translationKey: "operation.id"},
-            value: 1
-        },
-        number: {
-            $entity: {type: "field", isRequired: false, domain: DO_NUMBER, translationKey: "operation.number"},
-            value: "1.3"
-        },
-        amount: {
-            $entity: {type: "field", isRequired: true, domain: DO_AMOUNT, translationKey: "operation.amount"},
-            value: 34.3
-        }
-    }
-}
-```
-
-### Mais quel est donc l'intérêt ?
-
-Lorsque l'on veut afficher un champ issu d'un store dans Focus, on utilise la fonction `fieldFor` (et consorts) de la manière suivante : `this.fieldFor('amount')` (ou `this.props.fieldFor('amount')` pour la v3). Pour que ça marche, `fieldFor` doit être capable de retrouver à quelle propriété du noeud de store en cours (quel store en cours d'ailleurs ?) `amount` correspond, et à quelle propriété de l'entité en cours (quelle entité en cours d'ailleurs ?) `amount` correspond. Pour faire la correspondance, il est nécessaire de spécifier dans le composant qui utilise `fieldFor` un store, un noeud de store (ou un sélecteur sur le store pour la v3) ainsi que le nom de l'entité correspondante.
-
-#### Listons les problèmes liés à cette approche :
-
--   `fieldFor` est lié à la configuration du composant et ne peut donc pas être utilisé en dehors du cadre d'un composant avec au moins 2 mixins (v2) (`builtInComponents` + `storeBehaviour`) ou 3 connecteurs (v3) (`connectToMetadata` + `connectToForm` + `connectToFieldHelpers`). Youhou au moins c'est cohérent avec le numéro de version !
--   `fieldFor` (et même le composant en général, puis qu'ils sont indissociables) ne vérifie pas si les données dans le store et l'entité correspondent.
--   `fieldFor` accepte une chaîne de caractères comme identifiant pour le champ, ce qui n'est pas vérifiable statiquement et est un nid à problèmes, en particulier dès qu'on à le malheur de faire un peu de refactoring.
-
-#### La solution proposée par l'EntityStore :
-
-Grâce à MobX, on n'a plus besoin de connecteurs ou de mixins pour lier du state global à des composants, donc on n'a pas vraiment envie d'en rajouter pour gérer une map d'`entityDefinition` qui en plus ne changera jamais.
-
-Du coup, ce qu'on va faire, c'est construire des stores à partir des `entityDefinition`s et les remplir avec notre state.
-
-`fieldFor` est donc maintenant une fonction _de la librairie_ qui s'utilise comme ça : **`fieldFor(store.operation.amount)`**.
-
-`store.operation.amount` contient la valeur de la propriété `amount`, les métadonnées de la propriété `amount` et est directement le noeud de store qui existe et qui est vérifiable à la compilation (avec du Typescript bien entendu).
-
-Et on retrouve le même fonctionnement d'avant.
-
-_Note : Dans le cas du formulaire (`AutoForm`, voir plus bas), `fieldFor` redevient `this.fieldFor` car il ajoute également les propriétés `isEdit`, `onChange`, `ref` et `error`. Ce choix a été fait pour simplifier l'usage particulier du formulaire, dont l'utilisation dans Focus V4 doit rester plus que jamais limitée à des vrais formulaires. Cela ne contradit pas les idées qui ont été exposées au-dessus._
-
-### Description
-
-Un `EntityStore` contient des _items_ (`EntityStoreItem`) qui peuvent être soit un noeud (`EntityStoreNode`), soit une liste de noeuds (`StoreListNode<EntityStoreNode>`). Un `EntityStoreNode` contient des _valeurs_ (`EntityValue`) qui peuvent être soit des _primitives_, soit un autre _item_. Chaque `EntityValue` se présente sous la forme `{$entity, value}` où `$entity` est la métadonnée associée à la valeur. Chaque _item_ (objet ou liste), ainsi que le store lui-même, est également muni de deux méthodes `set(data)` et `clear()`, permettant respectivement de les remplir ou de les vider.
-
-Un `StoreNode`, qui est la partie commune à tous les _items_ (objet ou liste) d'un store, est conçu pour être utilisé par les `fieldHelpers` (`fieldFor`, `selectFor`...) et par extension par l'`AutoForm`, qui sont des composants qui consomment des métadonnées. Le `fieldHelper` prend en entrée une `EntityValue` (`{$entity, value}`) qui vient à priori d'un `StoreNode`, mais peut également être construite à la main sur place.
-
-La modification du store ou de l'une de ses entrées n'est pas limitée à l'usage des méthodes `set()` ou `clear()`. Etant toujours une observable MobX, il est tout à fait possible d'affecter des valeurs directement, comme `store.operation.id.value = undefined` par exemple. Ca peut être utile car **`set()` ne mettra à jour que les valeurs qu'il reçoit**. Pour un array, la méthode `set()` prend un array en paramètre qui remplacera toutes les valeurs courantes.
-
-Un `EntityStore` peut contenir des objets avec autant de niveau de composition que l'on veut, que ça soit des objets dans des objets ou des dans arrays ou des arrays dans des objets... L'arbre des entités et propriétés est généré à la création du store pour les objets, et la méthode `set` de l'array (`StoreListNode`) va construire l'arbre de chaque entité dans l'array à l'insertion. A noter du coup que pour des listes, on ne gère que le remplacement de toutes les valeurs de la liste à chaque fois. Pour ajouter un seul élément (par exemple), il est nécessaire de reconstruire à la main le noeud lié à l'objet de l'array. Pour une primitive, ça serait simplement un `{$entity: Entity.fields.field, value: 2}` par exemple à ajouter. Pour un objet, le plus simple serait de reprendre un noeud issu d'une autre entrée de store pour l'ajouter (et éventuellement d'en faire un `deepClone`). Cette utilisation semble néanmoins marginale : la plupart du temps, on va récupérer la liste entière du serveur et la `set` directement dans le store.
-
-**Remarque importante** : Cela a été précisé à de nombreuses reprises dans la présentation mais l'accent jamais mis dessus : **`store.operation.id` n'est _pas_ la valeur dans le store**, c'est **`store.operation.id.value`**. En particulier, quelque soit la valeur de `id`, **`store.operation.id` est toujours défini et vaut `{$entity, value}`**, même si `value` vaut `undefined`.
-
 ### API
 
 #### `displayFor(field, options?)`
@@ -116,55 +33,6 @@ La fonction `stringFor` affiche la représentation textuelle d'un champ de store
 
 -   `field`, comme `selectFor`
 -   `options`, comme `fieldFor`, même si finalement très peu d'options sont réellement utilisées.
-
-#### `makeEntityStore(simpleNodes, listNodes, entities, entityMapping?)`
-
-La fonction `makeEntityStore` permet de créer un nouvel `EntityStore`. Elle prend comme paramètres :
-
--   `simpleNodes`, un objet dont les propriétés décrivent tous les noeuds "simples" du store (la valeur n'importe peu, mais il convient de la typer avec le type de noeud).
--   `listNodes`, un objet dont les propriétés décrivent tous les noeuds "listes" du store (la valeur n'importe peu, mais il convient de la typer avec le type de l'**objet** du noeud, sans la liste).
--   `entityList`, la liste des toutes les entités utilisées par les noeuds du store (y compris les composées).
--   `entityMapping` (facultatif), un objet contenant les mappings "nom du noeud": "nom de l'entité", pour spécifier les cas ou les noms sont différents.
-
-#### `toFlatValues(entityStoreItem)`
-
-La fonction `toFlatValues` prend une **entrée** est la met à plat en enlevant toutes les métadonnées.
-
-### Ce qui faut générer pour un `EntityStore`
-
-Pour pouvoir pleinement profiter d'un `EntityStore`, il est vivement conseillé de générer automatiquement les 3 objets/types à partir du modèle du serveur. Ces trois objets, pour un objet `Operation`:
-
--   Le type **`Operation`**, qui est une bête interface représentant le type "plat", dont tous les champs sont **optionnels**.
--   Le type **`OperationNode`**, qui est l'`EntityStoreNode` correspondant, dont tous les champs sont **obligatoires**. C'est le type `Operation` avec toutes ses valeurs wrappées dans des `EntityValue` et `StoreListNode`, et avec les méthodes `set()` et `clear()` correspondantes.
--   L'objet **`OperationEntity`**, qui est l'objet contenant les métadonnées.
-
-### Exemple de création (d'après les tests)
-
-```ts
-const store = makeEntityStore(
-    {
-        // Noeuds "simples"
-        operation: {} as OperationNode,
-        projetTest: {} as ProjetNode
-    },
-    {
-        // Noeuds "listes"
-        structureList: {} as StructureNode
-    },
-    [
-        // Entités
-        OperationEntity,
-        ProjetEntity,
-        StructureEntity,
-        LigneEntity
-    ],
-    {
-        // Mappings
-        projetTest: "projet",
-        structureList: "structure"
-    }
-);
-```
 
 ## AutoForm
 
@@ -208,7 +76,7 @@ Il est important de noter que puisque les valeurs de stores sont toutes stockée
 
 -   Chaque `Field` gère ses erreurs et expose un champ dérivé `error` qui contient le message d'erreur courant (ou `undefined` du coup s'il n'y en a pas), surchargeable par la prop `error` (passée au `Field` par `this.fieldFor` dans le cas d'une erreur serveur). Pour la validation du formulaire, on parcourt tous les champs (d'où la `ref` passée par `this.fieldFor`) et on regarde s'il y a des erreurs.
 -   `onChange` et `isEdit`, passés aux `Field`s par `this.fieldFor` permettent respectivement de synchroniser `this.entity` avec les valeurs courantes des champs et de spécifier l'état du formulaire.
--   La suppression des actions à entraîné une migration des fonctionnalités annexes de `l'actionBuilder` et du `CoreStore`, en particulier sur la gestion des erreurs. Le traitement des erreurs de services à été décalé dans `coreFetch` (exposé par `httpGet`, `httpPost`...) dans le module `network` (ce qui fait que toutes les erreurs de services vont s'enregistrer dans le `MessageCenter`, pas seulement quand on utilise des actions), et le stockage des erreurs de validation a été déplacé dans le formulaire. De même, l'état `isLoading` est porté par le formulaire.
+-   La suppression des actions à entraîné une migration des fonctionnalités annexes de `l'actionBuilder` et du `CoreStore`, en particulier sur la gestion des erreurs. Le traitement des erreurs de services à été décalé dans `coreFetch` dans le module `network` (ce qui fait que toutes les erreurs de services vont s'enregistrer dans le `MessageCenter`, pas seulement quand on utilise des actions), et le stockage des erreurs de validation a été déplacé dans le formulaire. De même, l'état `isLoading` est porté par le formulaire.
 -   Le formulaire possède également des méthodes à surcharger `onFormLoaded`, `onFormSaved` et `onFormDeleted` pour placer des actions après ces évènements.
 
 ### Exemple de formulaire (issu du starter kit)

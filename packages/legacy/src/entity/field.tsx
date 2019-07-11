@@ -1,17 +1,16 @@
 import {autobind} from "core-decorators";
-import i18next from "i18next";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {themeable} from "@focus4/core";
 import {FieldStyle, fieldStyles} from "@focus4/forms";
+import {validateField} from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
 import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
 
-import {Domain} from "./types";
-import {validate} from "./validation";
+import {Domain} from "./domain";
 
 const Theme = themr("field", fieldStyles);
 
@@ -96,32 +95,14 @@ export class Field<
     /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
     @computed
     get error(): string | undefined {
-        const {error, value} = this.props;
+        const {error, value, isRequired = false, validator} = this.props;
 
         // On priorise l'éventuelle erreur passée en props.
         if (error !== undefined) {
             return error || undefined;
         }
 
-        // On vérifie que le champ n'est pas vide et obligatoire.
-        const {isRequired, validator, label = ""} = this.props;
-        if (
-            isRequired &&
-            (value === undefined || value === null || (typeof value === "string" && value.trim() === ""))
-        ) {
-            return i18next.t("focus.validation.required");
-        }
-
-        // On applique le validateur du domaine.
-        if (validator && value !== undefined && value !== null) {
-            const validStat = validate({value, name: i18next.t(label)}, validator);
-            if (validStat.errors.length) {
-                return i18next.t(validStat.errors.join(", "));
-            }
-        }
-
-        // Pas d'erreur.
-        return undefined;
+        return validateField(value, isRequired, validator);
     }
 
     /** Appelé lors d'un changement sur l'input. */

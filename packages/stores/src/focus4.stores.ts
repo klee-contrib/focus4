@@ -58,7 +58,8 @@ export {
     patchFieldCore,
     patchNodeEdit,
     stringFor,
-    toFlatValues
+    toFlatValues,
+    validateField
 } from "./entity";
 export {
     AsList,

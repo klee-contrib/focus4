@@ -1,7 +1,15 @@
-import {action, autorun, extendObservable, isObservableArray, observable, untracked} from "mobx";
+import {action, autorun, extendObservable, observable, untracked} from "mobx";
 
-import {StoreListNode, StoreNode, toFlatValues} from "./store";
-import {EntityField} from "./types";
+import {
+    Entity,
+    EntityToType,
+    isEntityField,
+    isStoreListNode,
+    isStoreNode,
+    StoreListNode,
+    StoreNode,
+    toFlatValues
+} from "@focus4/stores";
 
 export interface ViewModel {
     /** @internal */
@@ -23,13 +31,19 @@ export interface ViewModel {
  * Le ViewModel est un clone d'un model qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du model réinitialise le viewModel.
  */
-export function createViewModel<T extends StoreNode>(model: T) {
-    const viewModel = clone(model) as T & ViewModel;
+export function createViewModel<E extends Entity>(
+    model: StoreNode<E> | StoreListNode<E>
+): (StoreNode<E> | StoreListNode<E>) & ViewModel {
+    const viewModel = clone(model) as (StoreNode<E> | StoreListNode<E>) & ViewModel;
 
     // La fonction `reset` va simplement vider et reremplir le viewModel avec les valeurs du model.
     const reset = () => {
         untracked(() => viewModel.clear());
-        viewModel.set(toFlatValues(model as any));
+        if (isStoreListNode(viewModel) && isStoreListNode(model)) {
+            viewModel.replaceNodes(toFlatValues(model));
+        } else if (isStoreNode(viewModel) && isStoreNode(model)) {
+            viewModel.replace(toFlatValues(model) as EntityToType<E>);
+        }
     };
 
     viewModel.reset = action(reset);
@@ -51,39 +65,27 @@ export function createViewModel<T extends StoreNode>(model: T) {
 /** Version adaptée de `toJS` de MobX pour prendre en compte `$entity` et les fonctions `set` et `clear`. */
 function clone(source: any): any {
     if (isStoreListNode(source)) {
-        let res = [];
-        const toAdd = source.map(clone);
-        res.length = toAdd.length;
-        for (let i = 0; i < toAdd.length; i++) {
-            res[i] = toAdd[i];
-        }
+        const res = observable.array([] as any[], {deep: false}) as StoreListNode;
 
-        res = observable.array(res, {deep: false});
-
-        if ((source as any).$entity) {
-            (res as any).$entity = (source as any).$entity;
-        }
-        if ((source as any).pushNode) {
-            (res as any).pushNode = (source as any).pushNode;
-        }
-        if ((source as any).set) {
-            (res as any).set = (source as any).set;
-        }
+        (res as any).$entity = source.$entity;
+        res.pushNode = source.pushNode;
+        res.replaceNodes = source.replaceNodes;
+        res.setNodes = source.setNodes;
 
         return res;
     } else if (isStoreNode(source)) {
-        const res: any = {};
+        const res: typeof source = {} as any;
         for (const key in source) {
-            res[key] = clone((source as any)[key]);
+            (res as any)[key] = clone((source as any)[key]);
         }
         return res;
     } else if (isEntityField(source)) {
         return extendObservable(
             {
-                $entity: (source as any).$entity
+                $field: source.$field
             },
             {
-                value: (source as any).value
+                value: source.value
             },
             {
                 value: observable.ref
@@ -92,17 +94,4 @@ function clone(source: any): any {
     }
 
     return source;
-}
-
-function isAnyStoreNode(data: any): data is StoreNode | StoreListNode {
-    return data && !!(data as StoreNode).set && !!(data as StoreNode).clear;
-}
-function isStoreListNode(data: any): data is StoreListNode {
-    return isAnyStoreNode(data) && isObservableArray(data);
-}
-function isStoreNode(data: any): data is StoreNode {
-    return isAnyStoreNode(data) && !isObservableArray(data);
-}
-function isEntityField(data: any): data is EntityField<any> {
-    return data && !isObservableArray(data) && !!(data as EntityField<any>).$entity;
 }

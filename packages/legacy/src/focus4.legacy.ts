@@ -1,16 +1,4 @@
 export {
-    FacetItem,
-    FacetOutput,
-    GroupResult,
-    ListStore,
-    ListStoreBase,
-    QueryInput,
-    QueryOutput,
-    SearchStore,
-    isList,
-    isSearch
-} from "./collections";
-export {
     Autocomplete,
     AutocompleteProps,
     AutocompleteResult,
@@ -55,7 +43,7 @@ export {
     selectStyles
 } from "./components";
 export {
-    $entity,
+    $field,
     AutoForm,
     AutoFormOptions,
     Domain,
@@ -71,10 +59,9 @@ export {
     ServiceConfig,
     StoreListNode,
     StoreNode,
-    StoreType,
     ViewModel,
-    buildEntityEntry,
     buildFieldProps,
+    buildNode,
     createViewModel,
     displayFor,
     fieldFor,
@@ -85,6 +72,6 @@ export {
     selectFor,
     stringFor,
     toFlatValues,
-    validate
+    validateField
 } from "./entity";
 export {AsList, ReferenceLoader, makeReferenceStore} from "./reference";

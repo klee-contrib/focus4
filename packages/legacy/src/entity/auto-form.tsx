@@ -5,13 +5,12 @@ import {v4} from "uuid";
 
 import {classAutorun, messageStore} from "@focus4/core";
 import {formStyles} from "@focus4/forms";
+import {Entity, EntityField, FieldEntry, isStoreListNode, StoreListNode, StoreNode, toFlatValues} from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
 import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../components";
 
 import {Field, FieldProps} from "./field";
-import {StoreNode, toFlatValues} from "./store";
-import {Domain, EntityField} from "./types";
 import {createViewModel, ViewModel} from "./view-model";
 
 import {displayFor, fieldFor, isField, selectFor, stringFor} from "./field-helpers";
@@ -19,12 +18,12 @@ import {displayFor, fieldFor, isField, selectFor, stringFor} from "./field-helpe
 const Theme = themr("form", formStyles);
 
 /** Options additionnelles de l'AutoForm. */
-export interface AutoFormOptions<E> {
+export interface AutoFormOptions<E extends Entity> {
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
 
     /** ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
-    entity?: E & ViewModel;
+    entity?: (StoreNode<E> | StoreListNode<E>) & ViewModel;
 
     /** Par défaut: true */
     hasForm?: boolean;
@@ -52,7 +51,7 @@ export interface ServiceConfig<T, LP> {
 }
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P> {
+export abstract class AutoForm<P, E extends Entity> extends React.Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap = observable.map<string, boolean>();
 
@@ -66,13 +65,13 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
     formId = v4();
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
-    entity!: E & ViewModel;
+    entity!: (StoreNode<E> | StoreListNode<E>) & ViewModel;
 
     /** Services. */
     services!: ServiceConfig<any, any>;
 
     /** Noeud de store à partir du quel le formulaire a été créé. */
-    storeData!: E;
+    storeData!: StoreNode<E> | StoreListNode<E>;
 
     /** Erreurs sur les champs issues du serveur. */
     @observable errors: Record<string, string> = {};
@@ -115,7 +114,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param options Options additionnelles.
      */
     formInit(
-        storeData: E,
+        storeData: StoreNode<E> | StoreListNode<E>,
         services: ServiceConfig<any, any>,
         {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}
     ) {
@@ -191,7 +190,11 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
                 this.storeData.clear();
                 const data = await load(...params);
                 runInAction(() => {
-                    this.storeData.set(data || {});
+                    if (isStoreListNode(this.storeData)) {
+                        this.storeData.replaceNodes(data || []);
+                    } else {
+                        this.storeData.replace(data || {});
+                    }
                     this.isLoading = false;
                 });
                 this.onFormLoaded();
@@ -210,7 +213,12 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
                 runInAction(() => {
                     this.isLoading = false;
                     this.isEdit = false;
-                    this.storeData.set(data); // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
+                    // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
+                    if (isStoreListNode(this.storeData)) {
+                        this.storeData.replaceNodes(data);
+                    } else {
+                        this.storeData.replace(data);
+                    }
                 });
                 this.onFormSaved();
             } catch (e) {
@@ -308,7 +316,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
+        field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, any, DCProps, LCProps>>
     ): JSX.Element;
     displayFor<
@@ -318,7 +326,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>> | T,
+        field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, any, DCProps, LCProps>> = {}
     ) {
         return displayFor(field as any, options);
@@ -342,7 +350,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>>,
+        field: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
     ): JSX.Element;
     fieldFor<
@@ -354,7 +362,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<T, Domain<ICDomainProps, DCDomainProps, LCDomainProps>> | T,
+        field: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps>> = {}
     ) {
         return fieldFor(field as any, this.setFieldOptions(field, options));
@@ -377,7 +385,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
         ValueKey extends string = "code",
         LabelKey extends string = "label"
     >(
-        field: EntityField<T, Domain<any, DCDomainProps, LCDomainProps>>,
+        field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>>,
         values: R[],
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
     ) {
@@ -390,7 +398,7 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param options Les options du champ.
      */
     stringFor<T, R, ValueKey extends string = "code", LabelKey extends string = "label">(
-        field: EntityField<T>,
+        field: EntityField<FieldEntry<T>>,
         options: Partial<FieldProps<T, {}, {}, {}, R, ValueKey, LabelKey>> = {}
     ) {
         return stringFor(field, options);
@@ -401,17 +409,20 @@ export abstract class AutoForm<P, E extends StoreNode> extends React.Component<P
      * @param field La définition du champ.
      * @param options Les options du champ.
      */
-    private setFieldOptions<T, IC, DC, LC>(field: EntityField<T> | T, options: Partial<FieldProps<T, IC, DC, LC>>) {
+    private setFieldOptions<T, IC, DC, LC>(
+        field: EntityField<FieldEntry<T>> | T,
+        options: Partial<FieldProps<T, IC, DC, LC>>
+    ) {
         if (options.isEdit === undefined) {
             options.isEdit = this.isEdit;
         }
 
         if (isField(field)) {
             if (!options.ref) {
-                options.ref = f => (this.fields[field.$entity.translationKey] = f);
+                options.ref = f => (this.fields[field.$field.label] = f);
             }
             if (!options.error) {
-                options.error = this.errors[field.$entity.translationKey];
+                options.error = this.errors[field.$field.label];
             }
         }
 
