@@ -5,25 +5,24 @@ import {v4} from "uuid";
 
 import {classAutorun, messageStore} from "@focus4/core";
 import {formStyles} from "@focus4/forms";
-import {Entity, EntityField, FieldEntry, isStoreListNode, StoreListNode, StoreNode, toFlatValues} from "@focus4/stores";
+import {EntityField, FieldEntry, isStoreListNode, StoreListNode, StoreNode, toFlatValues} from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
 import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../components";
 
 import {Field, FieldProps} from "./field";
-import {createViewModel, ViewModel} from "./view-model";
-
 import {displayFor, fieldFor, isField, selectFor, stringFor} from "./field-helpers";
+import {createViewModel, ViewModel} from "./view-model";
 
 const Theme = themr("form", formStyles);
 
 /** Options additionnelles de l'AutoForm. */
-export interface AutoFormOptions<E extends Entity> {
+export interface AutoFormOptions<ST extends StoreNode | StoreListNode> {
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
 
     /** ViewModel externe de `storeData`, s'il y a besoin d'externaliser le state interne du formulaire. */
-    entity?: (StoreNode<E> | StoreListNode<E>) & ViewModel;
+    entity?: ST & ViewModel;
 
     /** Par défaut: true */
     hasForm?: boolean;
@@ -51,7 +50,7 @@ export interface ServiceConfig<T, LP> {
 }
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export abstract class AutoForm<P, E extends Entity> extends React.Component<P> {
+export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends React.Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap = observable.map<string, boolean>();
 
@@ -65,13 +64,13 @@ export abstract class AutoForm<P, E extends Entity> extends React.Component<P> {
     formId = v4();
 
     /** Etat courant du formulaire, copié depuis `storeData`. Sera réinitialisé à chaque modification de ce dernier. */
-    entity!: (StoreNode<E> | StoreListNode<E>) & ViewModel;
+    entity!: ST & ViewModel;
 
     /** Services. */
     services!: ServiceConfig<any, any>;
 
     /** Noeud de store à partir du quel le formulaire a été créé. */
-    storeData!: StoreNode<E> | StoreListNode<E>;
+    storeData!: ST;
 
     /** Erreurs sur les champs issues du serveur. */
     @observable errors: Record<string, string> = {};
@@ -114,9 +113,9 @@ export abstract class AutoForm<P, E extends Entity> extends React.Component<P> {
      * @param options Options additionnelles.
      */
     formInit(
-        storeData: StoreNode<E> | StoreListNode<E>,
+        storeData: ST,
         services: ServiceConfig<any, any>,
-        {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<E> = {}
+        {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<ST> = {}
     ) {
         this.storeData = storeData;
         this.services = services;

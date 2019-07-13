@@ -18,6 +18,6 @@ export {
     removeFacetValue,
     shouldDisplayFacet
 } from "./facet-box";
-export {Results, ResultsProps, resultsFor, GroupStyle, groupStyles} from "./results";
+export {Group, GroupStyle, Results, ResultsProps, groupStyles, resultsFor} from "./results";
 export {SearchBar, SearchBarProps, SearchBarStyle, searchBarStyles} from "./search-bar";
 export {Summary, SummaryProps, SummaryStyle, summaryStyles} from "./summary";

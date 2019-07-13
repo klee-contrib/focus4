@@ -1,15 +1,6 @@
 import {action, autorun, extendObservable, observable, untracked} from "mobx";
 
-import {
-    Entity,
-    EntityToType,
-    isEntityField,
-    isStoreListNode,
-    isStoreNode,
-    StoreListNode,
-    StoreNode,
-    toFlatValues
-} from "@focus4/stores";
+import {isEntityField, isStoreListNode, isStoreNode, StoreListNode, StoreNode, toFlatValues} from "@focus4/stores";
 
 export interface ViewModel {
     /** @internal */
@@ -31,10 +22,8 @@ export interface ViewModel {
  * Le ViewModel est un clone d'un model qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du model réinitialise le viewModel.
  */
-export function createViewModel<E extends Entity>(
-    model: StoreNode<E> | StoreListNode<E>
-): (StoreNode<E> | StoreListNode<E>) & ViewModel {
-    const viewModel = clone(model) as (StoreNode<E> | StoreListNode<E>) & ViewModel;
+export function createViewModel<ST extends StoreNode | StoreListNode>(model: ST): ST & ViewModel {
+    const viewModel = clone(model) as ST & ViewModel;
 
     // La fonction `reset` va simplement vider et reremplir le viewModel avec les valeurs du model.
     const reset = () => {
@@ -42,7 +31,7 @@ export function createViewModel<E extends Entity>(
         if (isStoreListNode(viewModel) && isStoreListNode(model)) {
             viewModel.replaceNodes(toFlatValues(model));
         } else if (isStoreNode(viewModel) && isStoreNode(model)) {
-            viewModel.replace(toFlatValues(model) as EntityToType<E>);
+            viewModel.replace(toFlatValues(model) as any);
         }
     };
 

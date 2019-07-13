@@ -23,7 +23,7 @@ export interface FieldProps<
     R = any, // Type de la liste de référence associée.
     VK extends string = any, // Nom de la propriété de valeur (liste de référence).
     LK extends string = any // Nom de la propriété de libellé (liste de référence).
-> extends Domain<ICProps, DCProps, LCProps> {
+> extends Domain<T, ICProps, DCProps, LCProps> {
     /** Commentaire à afficher dans la tooltip. */
     comment?: string;
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */

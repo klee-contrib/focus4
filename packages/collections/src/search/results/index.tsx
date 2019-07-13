@@ -17,7 +17,7 @@ import {
     storeListFor
 } from "../../list";
 import {Group, GroupStyle, groupStyles} from "./group";
-export {GroupStyle, groupStyles};
+export {Group, GroupStyle, groupStyles};
 
 /** Props de Results. */
 export interface ResultsProps<T> {

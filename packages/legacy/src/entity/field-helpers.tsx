@@ -186,7 +186,7 @@ export function buildFieldProps<
         inputFormatter = (x: any) => x,
         unformatter = (x: any) => x,
         ...otherDomain
-    } = domain as Domain<ICProps, DCProps, LCProps>;
+    } = domain as Domain<T, ICProps, DCProps, LCProps>;
 
     return {
         ...otherDomain,

@@ -57,6 +57,7 @@ export {
     FacetBoxStyle,
     FacetProps,
     FacetStyle,
+    Group,
     GroupStyle,
     Results,
     ResultsProps,
