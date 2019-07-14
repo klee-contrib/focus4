@@ -13,6 +13,7 @@ import {
     ListEntry,
     NodeToType,
     ObjectEntry,
+    RecursiveListEntry,
     StoreListNode,
     StoreNode
 } from "../types";
@@ -118,13 +119,16 @@ export function buildNode<T extends Entity>(entity: T | T[]): StoreNode<T> | Sto
 
     // Cas d'un noeud simple : On parcourt tous les champs de l'entité.
     return {
-        ...mapValues(entity.fields, (field: FieldEntry | ObjectEntry | ListEntry) => {
-            if (field.type === "list") {
-                return buildNode([field.entity]);
-            } else if (field.type === "object") {
-                return buildNode(field.entity);
-            } else {
-                return extendObservable({$field: field}, {value: undefined}, {value: observable.ref});
+        ...mapValues(entity.fields, (field: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry) => {
+            switch (field.type) {
+                case "list":
+                    return buildNode([field.entity]);
+                case "recursive-list":
+                    return buildNode([entity]);
+                case "object":
+                    return buildNode(field.entity);
+                default:
+                    return extendObservable({$field: field}, {value: undefined}, {value: observable.ref});
             }
         }),
 

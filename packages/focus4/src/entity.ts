@@ -24,6 +24,7 @@ export {
     FormNode,
     ListEntry,
     ObjectEntry,
+    RecursiveListEntry,
     StoreListNode,
     StoreNode,
     buildNode,

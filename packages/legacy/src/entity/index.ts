@@ -5,6 +5,7 @@ export {
     ObjectEntry,
     ListEntry,
     EntityField,
+    RecursiveListEntry,
     StoreListNode,
     StoreNode,
     buildNode,

@@ -18,7 +18,8 @@ export {
     FieldEntryType,
     FieldType,
     ListEntry,
-    ObjectEntry
+    ObjectEntry,
+    RecursiveListEntry
 } from "./entity";
 export {FormEntityField, FormListNode, FormNode} from "./form";
 export {NodeToType, StoreListNode, StoreNode} from "./store";

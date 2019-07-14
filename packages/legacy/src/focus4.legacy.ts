@@ -57,6 +57,7 @@ export {
     FormStyle,
     ListEntry,
     ObjectEntry,
+    RecursiveListEntry,
     ServiceConfig,
     StoreListNode,
     StoreNode,

@@ -44,7 +44,7 @@ export interface Entity {
     readonly name: string;
 
     /** Liste des champs de l'entité. */
-    readonly fields: {[key: string]: FieldEntry | ObjectEntry | ListEntry};
+    readonly fields: {[key: string]: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry};
 }
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
@@ -113,6 +113,11 @@ export interface ListEntry<E extends Entity = any> {
     readonly entity: E;
 }
 
+/** Métadonnées d'une entrée de type "recursive-list" pour une entité. */
+export interface RecursiveListEntry {
+    readonly type: "recursive-list";
+}
+
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
 export type EntityToType<E extends Entity> = {
     [P in keyof E["fields"]]?: E["fields"][P] extends FieldEntry
@@ -121,6 +126,8 @@ export type EntityToType<E extends Entity> = {
         ? EntityToType<OE>
         : E["fields"][P] extends ListEntry<infer LE>
         ? EntityToType<LE>[]
+        : E["fields"][P] extends RecursiveListEntry
+        ? EntityToType<E>[]
         : never
 };
 

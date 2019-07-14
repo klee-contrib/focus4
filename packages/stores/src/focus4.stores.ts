@@ -37,6 +37,7 @@ export {
     InputComponents,
     ListEntry,
     ObjectEntry,
+    RecursiveListEntry,
     SelectComponents,
     StoreListNode,
     StoreNode,

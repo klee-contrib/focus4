@@ -1,6 +1,15 @@
 import {IObservableArray} from "mobx";
 
-import {Entity, EntityField, EntityToType, FieldEntry, FieldEntryType, ListEntry, ObjectEntry} from "./entity";
+import {
+    Entity,
+    EntityField,
+    EntityToType,
+    FieldEntry,
+    FieldEntryType,
+    ListEntry,
+    ObjectEntry,
+    RecursiveListEntry
+} from "./entity";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
 export type EntityToNode<E extends Entity> = {
@@ -10,6 +19,8 @@ export type EntityToNode<E extends Entity> = {
         ? StoreNode<OE>
         : E["fields"][P] extends ListEntry<infer LE>
         ? StoreListNode<LE>
+        : E["fields"][P] extends RecursiveListEntry
+        ? StoreListNode<E>
         : never
 };
 

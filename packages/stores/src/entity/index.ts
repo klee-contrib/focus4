@@ -32,6 +32,7 @@ export {
     FormNode,
     ListEntry,
     ObjectEntry,
+    RecursiveListEntry,
     StoreListNode,
     StoreNode,
     isAnyFormNode,
