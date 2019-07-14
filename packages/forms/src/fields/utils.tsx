@@ -7,7 +7,7 @@ import {
     BaseSelectProps,
     EntityField,
     FieldEntry,
-    FieldEntryType,
+    FieldType,
     InputComponents,
     ReferenceList,
     SelectComponents
@@ -20,16 +20,16 @@ import {Field, FieldOptions} from "./field";
 function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
     return action(
         `on${upperFirst(field.$field.name)}Change`,
-        (value: FieldEntryType<F> | undefined) => (field.value = value)
+        (value: FieldType<F["fieldType"]> | undefined) => (field.value = value)
     );
 }
 
 /** Options pour `autocompleteFor` */
-export type AutocompleteForOptions<T extends FieldEntry> = Partial<FieldOptions<T>> &
+export type AutocompleteForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     AutocompleteComponents<
-        NonNullable<T["domain"]["autocompleteProps"]>,
-        NonNullable<T["domain"]["displayProps"]>,
-        NonNullable<T["domain"]["labelProps"]>
+        NonNullable<F["domain"]["autocompleteProps"]>,
+        NonNullable<F["domain"]["displayProps"]>,
+        NonNullable<F["domain"]["labelProps"]>
     > & {
         /** Service de résolution de code. */
         keyResolver?: (key: number | string) => Promise<string | undefined>;
@@ -38,19 +38,19 @@ export type AutocompleteForOptions<T extends FieldEntry> = Partial<FieldOptions<
     };
 
 /** Options pour `fieldFor` */
-export type FieldForOptions<T extends FieldEntry> = Partial<FieldOptions<T>> &
+export type FieldForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     InputComponents<
-        NonNullable<T["domain"]["inputProps"]>,
-        NonNullable<T["domain"]["displayProps"]>,
-        NonNullable<T["domain"]["labelProps"]>
+        NonNullable<F["domain"]["inputProps"]>,
+        NonNullable<F["domain"]["displayProps"]>,
+        NonNullable<F["domain"]["labelProps"]>
     >;
 
 /** Options pour `selectFor`. */
-export type SelectForOptions<T extends FieldEntry> = Partial<FieldOptions<T>> &
+export type SelectForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     SelectComponents<
-        NonNullable<T["domain"]["selectProps"]> & BaseSelectProps,
-        NonNullable<T["domain"]["displayProps"]>,
-        NonNullable<T["domain"]["labelProps"]>
+        NonNullable<F["domain"]["selectProps"]> & BaseSelectProps,
+        NonNullable<F["domain"]["displayProps"]>,
+        NonNullable<F["domain"]["labelProps"]>
     >;
 
 /**
@@ -59,7 +59,7 @@ export type SelectForOptions<T extends FieldEntry> = Partial<FieldOptions<T>> &
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function autocompleteFor<T extends FieldEntry>(field: EntityField<T>, options: AutocompleteForOptions<T>) {
+export function autocompleteFor<F extends FieldEntry>(field: EntityField<F>, options: AutocompleteForOptions<F>) {
     const {keyResolver, querySearcher, ...otherOptions} = options;
     return (
         <Field
@@ -77,7 +77,7 @@ export function autocompleteFor<T extends FieldEntry>(field: EntityField<T>, opt
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
-export function fieldFor<T extends FieldEntry>(field: EntityField<T>, options: FieldForOptions<T> = {}) {
+export function fieldFor<F extends FieldEntry>(field: EntityField<F>, options: FieldForOptions<F> = {}) {
     return <Field field={field} onChange={getOnChange(field)} {...options} inputType="input" />;
 }
 
@@ -87,10 +87,10 @@ export function fieldFor<T extends FieldEntry>(field: EntityField<T>, options: F
  * @param values La liste de référence.
  * @param options Les options du champ.
  */
-export function selectFor<T extends FieldEntry>(
-    field: EntityField<T>,
+export function selectFor<F extends FieldEntry>(
+    field: EntityField<F>,
     values: ReferenceList,
-    options: SelectForOptions<T> = {}
+    options: SelectForOptions<F> = {}
 ) {
     return (
         <Field

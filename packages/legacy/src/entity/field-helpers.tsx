@@ -3,7 +3,7 @@ import {find, result} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
 
-import {EntityField, FieldEntry} from "@focus4/stores";
+import {EntityField, FieldEntry, FieldEntryType} from "@focus4/stores";
 
 import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../components";
 
@@ -36,7 +36,7 @@ export function displayFor<
     DCProps = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>>,
+    field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>>,
     options?: Partial<FieldProps<T, any, DCProps, LCProps>>
 ): JSX.Element;
 export function displayFor<
@@ -46,7 +46,7 @@ export function displayFor<
     DCProps = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>> | T,
+    field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>> | T,
     options: Partial<FieldProps<T, any, DCProps, LCProps>> = {}
 ) {
     options.isEdit = false;
@@ -73,7 +73,7 @@ export function fieldFor<
     DCProps = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
+    field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
     options?: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
 ): JSX.Element;
 export function fieldFor<
@@ -85,10 +85,10 @@ export function fieldFor<
     DCProps = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>> | T,
+    field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>> | T,
     options: Partial<FieldProps<T, ICProps, DCProps, LCProps>> = {}
 ) {
-    let trueField: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>;
+    let trueField: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>;
     if (isField(field)) {
         trueField = field;
         // On renseigne `onChange` si on est dans un field avec le comportement attendu la plupart du temps.
@@ -131,7 +131,7 @@ export function selectFor<
     ValueKey extends string = "code",
     LabelKey extends string = "label"
 >(
-    field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>>,
+    field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>>,
     values: R[],
     options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
 ) {
@@ -170,7 +170,7 @@ export function buildFieldProps<
     DCProps = DCDomainProps,
     LCProps = LCDomainProps
 >(
-    field: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
+    field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
     options: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
 ) {
     const {
@@ -212,7 +212,7 @@ export function buildFieldProps<
  * @param field Le champ ou la valeur.
  */
 export function isField<T, IC, DC, LC>(
-    field: EntityField<FieldEntry<T, IC, any, any, DC, LC>> | T
-): field is EntityField<FieldEntry<T, IC, any, any, DC, LC>> {
+    field: EntityField<FieldEntry<T, FieldEntryType<T>, IC, any, any, DC, LC>> | T
+): field is EntityField<FieldEntry<T, FieldEntryType<T>, IC, any, any, DC, LC>> {
     return !!(field && (field as EntityField<FieldEntry<T>>).$field);
 }

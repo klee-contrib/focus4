@@ -7,7 +7,7 @@ import {
     BaseSelectProps,
     EntityField,
     FieldEntry,
-    FieldType,
+    FieldEntryType,
     fromFieldCore,
     makeFieldCore,
     patchFieldCore
@@ -23,8 +23,8 @@ import {AutocompleteProps, DisplayProps, InputProps, LabelProps, SelectProps} fr
  * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function makeField<
-    T extends FieldType<FT>,
-    FT = "string",
+    T,
+    FT extends FieldEntryType<T> = FieldEntryType<T>,
     ICProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
     SCProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
     ACProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
@@ -33,19 +33,19 @@ export function makeField<
 >(
     value: () => T | undefined,
     $field?:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
+        | $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
     setter?: (value: T | undefined) => void,
     isEdit?: boolean | (() => boolean)
-): EntityField<FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
+): EntityField<FieldEntry<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
 /**
  * Construit un `EntityField` à partir d'une valeur quelconque.
  * @param value La valeur.
  * @param $field Les métadonnées pour le champ à créer.
  */
 export function makeField<
-    T extends FieldType<FT>,
-    FT = "string",
+    T,
+    FT extends FieldEntryType<T> = FieldEntryType<T>,
     ICProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
     SCProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
     ACProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
@@ -54,12 +54,12 @@ export function makeField<
 >(
     value: T | undefined,
     $field?:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
-): EntityField<FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps>>;
+        | $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
+): EntityField<FieldEntry<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>>;
 export function makeField<
-    T extends FieldType<FT>,
-    FT = "string",
+    T,
+    FT extends FieldEntryType<T> = FieldEntryType<T>,
     ICProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
     SCProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
     ACProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
@@ -68,8 +68,8 @@ export function makeField<
 >(
     value: T | undefined | (() => T | undefined),
     $field:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
+        | $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
     setter: (value: T | undefined) => void = () => null,
     isEdit?: boolean | (() => boolean)
 ) {
@@ -82,7 +82,8 @@ export function makeField<
  * @param $field Les métadonnées à remplacer.
  */
 export function fromField<
-    FT,
+    DT,
+    FT extends FieldEntryType<DT> = FieldEntryType<DT>,
     ICDProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
     SCDProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
     ACDProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
@@ -94,11 +95,11 @@ export function fromField<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    field: EntityField<FieldEntry<DT, FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
     $field:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
-): EntityField<FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
+        | $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
+): EntityField<FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return fromFieldCore(field, $field);
 }
 
@@ -109,7 +110,8 @@ export function fromField<
  * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function patchField<
-    FT,
+    DT,
+    FT extends FieldEntryType<DT> = FieldEntryType<DT>,
     ICDProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
     SCDProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
     ACDProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
@@ -121,10 +123,10 @@ export function patchField<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    field: EntityField<FieldEntry<DT, FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
     $field:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
+        | $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {
     patchFieldCore(field, $field, isEdit);

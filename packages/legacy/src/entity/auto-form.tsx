@@ -5,7 +5,15 @@ import {v4} from "uuid";
 
 import {classAutorun, messageStore} from "@focus4/core";
 import {formStyles} from "@focus4/forms";
-import {EntityField, FieldEntry, isStoreListNode, StoreListNode, StoreNode, toFlatValues} from "@focus4/stores";
+import {
+    EntityField,
+    FieldEntry,
+    FieldEntryType,
+    isStoreListNode,
+    StoreListNode,
+    StoreNode,
+    toFlatValues
+} from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
 import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../components";
@@ -315,7 +323,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>>,
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, any, DCProps, LCProps>>
     ): JSX.Element;
     displayFor<
@@ -325,7 +333,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>> | T,
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, any, DCProps, LCProps>> = {}
     ) {
         return displayFor(field as any, options);
@@ -349,7 +357,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
         options?: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
     ): JSX.Element;
     fieldFor<
@@ -361,7 +369,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         DCProps = DCDomainProps,
         LCProps = LCDomainProps
     >(
-        field: EntityField<FieldEntry<T, ICDomainProps, any, any, DCDomainProps, LCDomainProps>> | T,
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>> | T,
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps>> = {}
     ) {
         return fieldFor(field as any, this.setFieldOptions(field, options));
@@ -384,7 +392,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         ValueKey extends string = "code",
         LabelKey extends string = "label"
     >(
-        field: EntityField<FieldEntry<T, any, any, any, DCDomainProps, LCDomainProps>>,
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>>,
         values: R[],
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
     ) {

@@ -90,12 +90,12 @@ export function makeEntityStore<T extends Record<string, Entity | Entity[] | Ent
  * Construit un noeud à partir d'une entité, potentiellement de façon récursive.
  * @param entity L'entité de base (dans une liste pour un noeud liste).
  */
-export function buildNode<T extends Entity>(entity: T): StoreNode<T>;
-export function buildNode<T extends Entity>(entity: T[]): StoreListNode<T>;
-export function buildNode<T extends Entity>(entity: T | T[]): StoreNode<T> | StoreListNode<T> {
+export function buildNode<E extends Entity>(entity: E): StoreNode<E>;
+export function buildNode<E extends Entity>(entity: E[]): StoreListNode<E>;
+export function buildNode<E extends Entity>(entity: E | E[]): StoreNode<E> | StoreListNode<E> {
     // Cas d'un noeud de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
-        const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<T>;
+        const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<E>;
 
         (outputEntry as any).$entity = entity[0];
 
@@ -132,15 +132,15 @@ export function buildNode<T extends Entity>(entity: T | T[]): StoreNode<T> | Sto
             }
         }),
 
-        clear: action("node.clear", function clear(this: StoreNode<T>) {
+        clear: action("node.clear", function clear(this: StoreNode<E>) {
             clearNode(this);
         }),
 
-        replace: action("node.replace", function replace(this: StoreNode<T>, entityValue: any) {
+        replace: action("node.replace", function replace(this: StoreNode<E>, entityValue: any) {
             replaceNode(this, entityValue);
         }),
 
-        set: action("node.set", function set(this: StoreNode<T>, entityValue: any) {
+        set: action("node.set", function set(this: StoreNode<E>, entityValue: any) {
             setNode(this, entityValue);
         })
     } as any;
@@ -150,7 +150,7 @@ export function buildNode<T extends Entity>(entity: T | T[]): StoreNode<T> | Sto
  * Vide un noeud de store.
  * @param entity Le noeud.
  */
-function clearNode<T extends Entity>(entity: StoreNode<T>) {
+function clearNode<E extends Entity>(entity: StoreNode<E>) {
     // Cas du noeud de liste : On vide simplement la liste.
     if (isStoreListNode(entity)) {
         entity.replace([]);
@@ -180,18 +180,18 @@ function clearNode<T extends Entity>(entity: StoreNode<T>) {
  * @param node Le noeud à remplacer.
  * @param value La valeur du noeud.
  */
-export function replaceNode<T extends Entity>(node: StoreNode<T>, value: EntityToType<T> | StoreNode<T>): StoreNode<T>;
-export function replaceNode<T extends Entity>(
-    node: StoreListNode<T>,
-    value: EntityToType<T>[] | StoreListNode<T>
-): StoreListNode<T>;
-export function replaceNode<T extends Entity>(
-    node: StoreNode<T> | StoreListNode<T>,
-    value: EntityToType<T> | EntityToType<T>[] | StoreNode<T> | StoreListNode<T>
-): StoreNode<T> | StoreListNode<T> {
-    if (isStoreListNode<T>(node) && (isArray(value) || isObservableArray(value))) {
+export function replaceNode<E extends Entity>(node: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
+export function replaceNode<E extends Entity>(
+    node: StoreListNode<E>,
+    value: EntityToType<E>[] | StoreListNode<E>
+): StoreListNode<E>;
+export function replaceNode<E extends Entity>(
+    node: StoreNode<E> | StoreListNode<E>,
+    value: EntityToType<E> | EntityToType<E>[] | StoreNode<E> | StoreListNode<E>
+): StoreNode<E> | StoreListNode<E> {
+    if (isStoreListNode<E>(node) && (isArray(value) || isObservableArray(value))) {
         // On remplace la liste existante par une nouvelle liste de noeuds construit à partir de `value`.
-        node.replace((value as (EntityToType<T> | StoreNode<T>)[]).map(item => getNodeForList(node, item)));
+        node.replace((value as (EntityToType<E> | StoreNode<E>)[]).map(item => getNodeForList(node, item)));
     } else if (isStoreNode(node) && isObject(value)) {
         // On affecte chaque valeur du noeud avec la valeur demandée, et on réappelle `replaceNode` si la valeur n'est pas primitive.
         for (const entry in node) {
@@ -224,16 +224,16 @@ export function replaceNode<T extends Entity>(
  * @param node Le noeud à remplir.
  * @param value La valeur du noeud.
  */
-export function setNode<T extends Entity>(node: StoreNode<T>, value: EntityToType<T> | StoreNode<T>): StoreNode<T>;
-export function setNode<T extends Entity>(
-    node: StoreListNode<T>,
-    value: EntityToType<T>[] | StoreListNode<T>
-): StoreListNode<T>;
-export function setNode<T extends Entity>(
-    node: StoreNode<T> | StoreListNode<T>,
-    value: EntityToType<T> | EntityToType<T>[] | StoreNode<T> | StoreListNode<T>
-): StoreNode<T> | StoreListNode<T> {
-    if (isStoreListNode<T>(node) && (isArray(value) || isObservableArray(value))) {
+export function setNode<E extends Entity>(node: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
+export function setNode<E extends Entity>(
+    node: StoreListNode<E>,
+    value: EntityToType<E>[] | StoreListNode<E>
+): StoreListNode<E>;
+export function setNode<E extends Entity>(
+    node: StoreNode<E> | StoreListNode<E>,
+    value: EntityToType<E> | EntityToType<E>[] | StoreNode<E> | StoreListNode<E>
+): StoreNode<E> | StoreListNode<E> {
+    if (isStoreListNode<E>(node) && (isArray(value) || isObservableArray(value))) {
         // On va appeler récursivement `setNode` sur tous les éléments de la liste.
         (value as {}[]).forEach((item, i) => {
             if (i >= node.length) {
@@ -267,13 +267,13 @@ export function setNode<T extends Entity>(
  * @param list Le noeud de liste.
  * @param item L'item à ajouter (classique ou noeud).
  */
-export function getNodeForList<T extends Entity>(list: StoreListNode<T>, item: EntityToType<T> | StoreNode<T>) {
-    const node = buildNode<T>(list.$entity);
+export function getNodeForList<E extends Entity>(list: StoreListNode<E>, item: EntityToType<E> | StoreNode<E>) {
+    const node = buildNode<E>(list.$entity);
     if (list.$initializer) {
         Object.assign(node, list.$initializer(node) || {});
     }
     if (isFormListNode(list)) {
-        nodeToFormNode<T>(node, isStoreNode<T>(item) ? item : node, list);
+        nodeToFormNode<E>(node, isStoreNode<E>(item) ? item : node, list);
     }
     setNode(node, item);
     return node;

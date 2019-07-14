@@ -12,19 +12,20 @@ import {
     Domain,
     EntityField,
     FieldEntry,
-    FieldType
+    FieldEntryType
 } from "./types";
 
 export type $Field<
-    FT = any,
+    DT = any,
+    FT extends FieldEntryType<DT> = FieldEntryType<DT>,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
     LCProps extends BaseLabelProps = any
 > = Partial<
-    FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps> &
-        Domain<FieldType<FT>, ICProps, SCProps, ACProps, DCProps, LCProps>
+    FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps> &
+        Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>
 >;
 
 /**
@@ -35,8 +36,8 @@ export type $Field<
  * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function makeFieldCore<
-    T extends FieldType<FT>,
-    FT,
+    T,
+    FT extends FieldEntryType<T>,
     ICProps extends BaseInputProps,
     SCProps extends BaseSelectProps,
     ACProps extends BaseAutocompleteProps,
@@ -45,8 +46,8 @@ export function makeFieldCore<
 >(
     value: T | undefined | (() => T | undefined),
     $field:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
+        | $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
     setter: (value: T | undefined) => void = () => null,
     isEdit?: boolean | (() => boolean)
 ) {
@@ -98,7 +99,8 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?:
  * @param $field Les métadonnées à remplacer.
  */
 export function fromFieldCore<
-    FT,
+    DT,
+    FT extends FieldEntryType<DT>,
     ICDProps extends BaseInputProps,
     SCDProps extends BaseSelectProps,
     ACDProps extends BaseAutocompleteProps,
@@ -110,11 +112,11 @@ export function fromFieldCore<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    field: EntityField<FieldEntry<DT, FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
     $field:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
-): EntityField<FieldEntry<FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
+        | $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
+): EntityField<FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
 }
 
@@ -125,7 +127,8 @@ export function fromFieldCore<
  * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
 export function patchFieldCore<
-    FT,
+    DT,
+    FT extends FieldEntryType<DT>,
     ICDProps extends BaseInputProps,
     SCDProps extends BaseSelectProps,
     ACDProps extends BaseAutocompleteProps,
@@ -137,10 +140,10 @@ export function patchFieldCore<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    field: EntityField<FieldEntry<DT, FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
     $field:
-        | $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
+        | $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
+        | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
     isEdit?: boolean | (() => boolean)
 ) {
     const next$field = new$field(field.$field, $field);

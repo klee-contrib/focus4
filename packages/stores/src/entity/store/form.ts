@@ -33,9 +33,9 @@ import {getNodeForList, replaceNode} from "./store";
  * @param sourceNode Le node origine du FormNode.
  * @param parentNode Le node parent.
  */
-export function nodeToFormNode<T extends Entity = any, U = {}>(
-    node: StoreNode<T> & U | StoreListNode<T, U>,
-    sourceNode: StoreNode<T> | StoreListNode<T>,
+export function nodeToFormNode<E extends Entity = any, U = {}>(
+    node: StoreNode<E> & U | StoreListNode<E, U>,
+    sourceNode: StoreNode<E> | StoreListNode<E>,
     parentNode?: FormNode | FormListNode
 ) {
     const {$tempEdit} = node;
@@ -198,8 +198,8 @@ export function nodeToFormNode<T extends Entity = any, U = {}>(
  * @param node Le noeud de store.
  * @param isEdit L'état initial ou la condition d'édition.
  */
-export function patchNodeEdit<T extends Entity = any, U = {}>(
-    node: StoreNode<T> | StoreListNode<T, U>,
+export function patchNodeEdit<E extends Entity = any, U = {}>(
+    node: StoreNode<E> | StoreListNode<E, U>,
     isEdit: boolean | (() => boolean)
 ) {
     node.$tempEdit = isEdit;

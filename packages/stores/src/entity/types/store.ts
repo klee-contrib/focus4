@@ -5,7 +5,7 @@ import {
     EntityField,
     EntityToType,
     FieldEntry,
-    FieldEntryType,
+    FieldType,
     ListEntry,
     ObjectEntry,
     RecursiveListEntry
@@ -31,7 +31,7 @@ export type NodeToType<T> = T extends StoreListNode<infer LE>
     ? EntityToType<OE>
     : {
           [P in keyof T]?: T[P] extends EntityField<infer F>
-              ? FieldEntryType<F>
+              ? FieldType<F["fieldType"]>
               : T[P] extends StoreNode<infer sOE>
               ? EntityToType<sOE>
               : T[P] extends StoreListNode<infer sLE>

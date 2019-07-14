@@ -49,7 +49,8 @@ export interface Entity {
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
-    FT = any,
+    DT = any,
+    FT extends FieldEntryType<DT> = FieldEntryType<DT>,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
@@ -62,7 +63,7 @@ export interface FieldEntry<
     readonly fieldType: FT;
 
     /** Domaine du champ. */
-    readonly domain: Domain<FieldType<FT>, ICProps, SCProps, ACProps, DCProps, LCProps>;
+    readonly domain: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -77,18 +78,16 @@ export interface FieldEntry<
     readonly comment?: React.ReactNode;
 }
 
-/** Récupère le type d'un FieldEntry, et gère les cas spéciaux "string", "number" et "boolean". */
-export type FieldEntryType<F> = F extends FieldEntry<"string">
-    ? string
-    : F extends FieldEntry<"number">
-    ? number
-    : F extends FieldEntry<"boolean">
-    ? boolean
-    : F extends FieldEntry<infer T>
-    ? NonNullable<T>
-    : never;
+/** Transforme un type effectif en un type à passer à un FieldEntry. */
+export type FieldEntryType<T> = T extends string
+    ? "string"
+    : T extends number
+    ? "number"
+    : T extends boolean
+    ? "boolean"
+    : NonNullable<T>;
 
-/** Transforme le type passé ) un FieldEntry en type effectif. */
+/** Transforme le type passé à un FieldEntry en type effectif. */
 export type FieldType<FT> = FT extends "string"
     ? string
     : FT extends "number"
@@ -121,7 +120,7 @@ export interface RecursiveListEntry {
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
 export type EntityToType<E extends Entity> = {
     [P in keyof E["fields"]]?: E["fields"][P] extends FieldEntry
-        ? FieldEntryType<E["fields"][P]>
+        ? FieldType<E["fields"][P]["fieldType"]>
         : E["fields"][P] extends ObjectEntry<infer OE>
         ? EntityToType<OE>
         : E["fields"][P] extends ListEntry<infer LE>
@@ -137,5 +136,5 @@ export interface EntityField<F extends FieldEntry = FieldEntry> {
     readonly $field: F;
 
     /** Valeur. */
-    value: FieldEntryType<F> | undefined;
+    value: FieldType<F["fieldType"]> | undefined;
 }

@@ -4,14 +4,7 @@ import * as React from "react";
 import {findDOMNode} from "react-dom";
 
 import {themeable} from "@focus4/core";
-import {
-    BaseInputProps,
-    EntityField,
-    FieldComponents,
-    FieldEntry,
-    FieldEntryType,
-    FormEntityField
-} from "@focus4/stores";
+import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FieldType, FormEntityField} from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
 import {Autocomplete, Display, Input, Label, Select} from "../components";
@@ -24,7 +17,7 @@ export type FieldStyle = Partial<typeof fieldStyles>;
 const Theme = themr("field", fieldStyles);
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
-export interface FieldOptions<T extends FieldEntry> {
+export interface FieldOptions<F extends FieldEntry> {
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
     /** Affiche le label. */
@@ -41,7 +34,7 @@ export interface FieldOptions<T extends FieldEntry> {
     /** N'affiche jamais le champ en erreur. */
     noError?: boolean;
     /** Handler de modification de la valeur. */
-    onChange?: (value: FieldEntryType<T> | undefined) => void;
+    onChange?: (value: FieldType<F["fieldType"]> | undefined) => void;
     /** CSS. */
     theme?: FieldStyle;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
@@ -49,8 +42,8 @@ export interface FieldOptions<T extends FieldEntry> {
 }
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-export class Field<T extends FieldEntry> extends React.Component<
-    {field: EntityField<T>} & FieldOptions<T> & FieldComponents
+export class Field<F extends FieldEntry> extends React.Component<
+    {field: EntityField<F>} & FieldOptions<F> & FieldComponents
 > {
     // On récupère le forceErrorDisplay du form depuis le contexte.
     static contextType = FormContext;
@@ -59,7 +52,7 @@ export class Field<T extends FieldEntry> extends React.Component<
     /** <div /> contenant le composant de valeur (input ou display). */
     @observable private valueElement?: Element | null;
     /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
-    @observable private hideErrorOnInit = (this.props.field as FormEntityField<T>).isEdit && !this.props.field.value;
+    @observable private hideErrorOnInit = (this.props.field as FormEntityField<F>).isEdit && !this.props.field.value;
 
     /** Détermine si on affiche l'erreur ou pas. En plus des surcharges du form et du field lui-même, l'erreur est masquée si le champ est en cours de saisie. */
     @computed
@@ -137,7 +130,7 @@ export class Field<T extends FieldEntry> extends React.Component<
                     SelectComponent = Select
                 }
             }
-        } = field as FormEntityField<T>;
+        } = field as FormEntityField<F>;
         const props: BaseInputProps = {
             value,
             error: (this.showError && error) || undefined,
@@ -200,7 +193,7 @@ export class Field<T extends FieldEntry> extends React.Component<
                             isRequired,
                             domain: {className = "", LabelComponent = Label, labelProps: domainLCP = {}}
                         }
-                    } = field as FormEntityField<T>;
+                    } = field as FormEntityField<F>;
 
                     return (
                         <div

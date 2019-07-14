@@ -29,20 +29,20 @@ export interface FormNodeOptions {
  * @param opts Options du FormNode.
  * @param initializer La fonction d'initialisation (peut contenir des transformations comme `patchField` et retourner des `makeField`).
  */
-export function makeFormNodeCore<T extends Entity, U = {}>(
-    node: StoreListNode<T>,
+export function makeFormNodeCore<E extends Entity, U = {}>(
+    node: StoreListNode<E>,
     opts?: FormNodeOptions,
-    initializer?: (source: StoreNode<T>) => U
-): FormListNode<T, U>;
-export function makeFormNodeCore<T extends Entity, U = {}>(
-    node: StoreNode<T>,
+    initializer?: (source: StoreNode<E>) => U
+): FormListNode<E, U>;
+export function makeFormNodeCore<E extends Entity, U = {}>(
+    node: StoreNode<E>,
     opts?: FormNodeOptions,
-    initializer?: (source: StoreNode<T>) => U
-): FormNode<T, U>;
-export function makeFormNodeCore<T extends Entity, U = {}>(
-    node: StoreNode<T> | StoreListNode<T>,
+    initializer?: (source: StoreNode<E>) => U
+): FormNode<E, U>;
+export function makeFormNodeCore<E extends Entity, U = {}>(
+    node: StoreNode<E> | StoreListNode<E>,
     {isEdit, isEmpty}: FormNodeOptions = {},
-    initializer: (source: StoreNode<T>) => U = _ => ({} as U)
+    initializer: (source: StoreNode<E>) => U = _ => ({} as U)
 ) {
     if (isAnyFormNode(node)) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");

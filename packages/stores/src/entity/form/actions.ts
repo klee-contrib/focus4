@@ -94,46 +94,46 @@ export type FormActions<S extends string = "default"> = ActionsFormProps & {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActionsCore<T extends Entity, U>(
-    formNode: FormListNode<T, U>,
-    actions: ActionConfig<EntityToType<T>[]>,
+export function makeFormActionsCore<E extends Entity, U>(
+    formNode: FormListNode<E, U>,
+    actions: ActionConfig<EntityToType<E>[]>,
     config?: FormConfig
 ): FormActions;
 export function makeFormActionsCore<
-    T extends Entity,
+    E extends Entity,
     U,
     S extends {
-        [key: string]: (entity: EntityToType<T>[]) => Promise<EntityToType<T>[] | void>;
-        default: (entity: EntityToType<T>[]) => Promise<EntityToType<T>[] | void>;
+        [key: string]: (entity: EntityToType<E>[]) => Promise<EntityToType<E>[] | void>;
+        default: (entity: EntityToType<E>[]) => Promise<EntityToType<E>[] | void>;
     }
 >(
-    formNode: FormListNode<T, U>,
-    actions: ActionConfigMultiple<EntityToType<T>[], S>,
+    formNode: FormListNode<E, U>,
+    actions: ActionConfigMultiple<EntityToType<E>[], S>,
     config?: FormConfig<Extract<keyof S, string>>
 ): FormActions<Extract<keyof S, string>>;
-export function makeFormActionsCore<T extends Entity, U>(
-    formNode: FormNode<T, U>,
-    actions: ActionConfig<EntityToType<T>>,
+export function makeFormActionsCore<E extends Entity, U>(
+    formNode: FormNode<E, U>,
+    actions: ActionConfig<EntityToType<E>>,
     config?: FormConfig
 ): FormActions;
 export function makeFormActionsCore<
-    T extends Entity,
+    E extends Entity,
     U,
     S extends {
-        [key: string]: (entity: EntityToType<T>) => Promise<EntityToType<T> | void>;
-        default: (entity: EntityToType<T>) => Promise<EntityToType<T> | void>;
+        [key: string]: (entity: EntityToType<E>) => Promise<EntityToType<E> | void>;
+        default: (entity: EntityToType<E>) => Promise<EntityToType<E> | void>;
     }
 >(
-    formNode: FormNode<T, U>,
-    actions: ActionConfigMultiple<EntityToType<T>, S>,
+    formNode: FormNode<E, U>,
+    actions: ActionConfigMultiple<EntityToType<E>, S>,
     config?: FormConfig<Extract<keyof S, string>>
 ): FormActions<Extract<keyof S, string>>;
 export function makeFormActionsCore<
-    T extends Entity,
+    E extends Entity,
     U,
     S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}
 >(
-    formNode: FormNode<T, U> | FormListNode<T, U>,
+    formNode: FormNode<E, U> | FormListNode<E, U>,
     actions: ActionConfig<any> | ActionConfigMultiple<any, S>,
     config: FormConfig = {}
 ) {
@@ -163,7 +163,7 @@ export function makeFormActionsCore<
                     formNode.form.isEdit = false;
                     if (data) {
                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                        if (isStoreNode(formNode.sourceNode)) {
+                        if (isStoreNode<E>(formNode.sourceNode)) {
                             formNode.sourceNode.replace(data);
                         } else {
                             formNode.sourceNode.replaceNodes(data);
@@ -228,7 +228,7 @@ export function makeFormActionsCore<
                         this.isLoading = true;
                         const data = await load(...params);
                         runInAction("afterLoad", () => {
-                            if (isStoreNode(formNode.sourceNode)) {
+                            if (isStoreNode<E>(formNode.sourceNode)) {
                                 formNode.sourceNode.replace(data);
                             } else {
                                 formNode.sourceNode.replaceNodes(data);

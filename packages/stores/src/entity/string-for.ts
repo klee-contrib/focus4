@@ -8,7 +8,7 @@ import {EntityField, FieldEntry} from "./types";
  * @param field La définition de champ.
  * @param values L'éventulle liste de référence associée.
  */
-export function stringFor<T extends FieldEntry>(field: EntityField<T>, values: ReferenceList = [] as any) {
+export function stringFor<F extends FieldEntry>(field: EntityField<F>, values: ReferenceList = [] as any) {
     const {
         value,
         $field: {
