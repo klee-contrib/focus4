@@ -68,7 +68,7 @@ export function Select<T extends "string" | "number">({
                 id={name}
                 name={name}
                 onChange={({currentTarget: {value: val}}) => {
-                    const v = type === "number" ? +val : val;
+                    const v = type === "number" ? parseFloat(val) : val;
                     onChange(v || v === 0 ? (v as any) : undefined);
                 }}
                 value={value === undefined ? "" : value}
