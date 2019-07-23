@@ -30,7 +30,7 @@
         "@types/moment-timezone": "0.5.12",
         "@types/numeral": "0.0.25",
         "@types/react": "16.8.22",
-        "@types/react-dom": "16.8.4",
+        "@types/react-dom": "16.8.5",
         "@types/react-transition-group": "2.9.2",
         "@types/uuid": "3.4.4",
         "i18next": "17.0.4",
