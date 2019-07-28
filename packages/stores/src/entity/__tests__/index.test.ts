@@ -568,6 +568,15 @@ describe("FormNode: propagation isEdit et isValid", () => {
     });
 });
 
+describe("FormNode: clear du storeNode", () => {
+    const {entry, formNode} = getFormNodes();
+    entry.replace(operation);
+    entry.clear();
+
+    test("Le FormNode est bien vide après un clear du StoreNode.", () =>
+        expect(toFlatValues(formNode)).toEqual({structure: {}}));
+});
+
 describe("FormNode: reset global", () => {
     const {entry, formNode} = getFormNodes();
     entry.replace(operation);
