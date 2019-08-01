@@ -162,7 +162,7 @@ export class Field<
             name,
             id: name,
             onChange: this.onChange,
-            theme: themeable(inputProps.theme || ({} as any), theme!.input as any)
+            theme: themeable({error: theme.error!}, inputProps.theme || ({} as any), theme!.input as any)
         };
 
         if (values) {

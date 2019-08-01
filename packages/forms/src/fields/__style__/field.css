@@ -29,3 +29,7 @@
 .invalid .label label {
     color: var(--input-text-error-color);
 }
+
+.error {
+    white-space: nowrap;
+}

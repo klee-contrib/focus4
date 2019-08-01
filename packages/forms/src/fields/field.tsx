@@ -106,7 +106,7 @@ export class Field<F extends FieldEntry> extends React.Component<
     }
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
-    input() {
+    input(theme: FieldStyle) {
         const {
             field,
             inputType = "input",
@@ -146,7 +146,7 @@ export class Field<F extends FieldEntry> extends React.Component<
                     {...domainSCP}
                     {...selectProps}
                     {...props}
-                    theme={themeable(domainSCP.theme || {}, selectProps.theme || {})}
+                    theme={themeable({error: theme.error!}, domainSCP.theme || {}, selectProps.theme || {})}
                 />
             );
         } else if (inputType === "autocomplete") {
@@ -155,7 +155,7 @@ export class Field<F extends FieldEntry> extends React.Component<
                     {...domainACP}
                     {...autocompleteProps}
                     {...props}
-                    theme={themeable(domainACP.theme || {}, autocompleteProps.theme || {})}
+                    theme={themeable({error: theme.error!}, domainACP.theme || {}, autocompleteProps.theme || {})}
                 />
             );
         } else {
@@ -164,7 +164,7 @@ export class Field<F extends FieldEntry> extends React.Component<
                     {...domainICP}
                     {...inputProps}
                     {...props}
-                    theme={themeable(domainICP.theme || {}, inputProps.theme || {})}
+                    theme={themeable({error: theme.error!}, domainICP.theme || {}, inputProps.theme || {})}
                 />
             );
         }
@@ -221,7 +221,7 @@ export class Field<F extends FieldEntry> extends React.Component<
                                 style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
                                 className={`${theme.value} ${className}`}
                             >
-                                {isEdit ? this.input() : this.display()}
+                                {isEdit ? this.input(theme) : this.display()}
                             </div>
                         </div>
                     );
