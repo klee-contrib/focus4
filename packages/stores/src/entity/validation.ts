@@ -57,7 +57,7 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                     ? validator.errorMessage || "focus.validation.date"
                     : false;
             } else if (isNumberValidator(validator)) {
-                const val = typeof value === "number" ? value : parseFloat(value as any);
+                const val = +value;
 
                 const {min, max, errorMessage, maxDecimals} = validator;
                 const isMin = min !== undefined && val < min;
