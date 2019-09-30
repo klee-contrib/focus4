@@ -1,4 +1,3 @@
-export {Header, applicationStore} from "./application";
 export {
     Autocomplete,
     AutocompleteProps,
