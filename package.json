@@ -39,7 +39,7 @@
         "lodash": "4.17.11",
         "lodash-decorators": "6.0.1",
         "material-design-icons-iconfont": "5.0.1",
-        "mobx": "4.10.0",
+        "mobx": "4.13.1",
         "mobx-react": "5.4.3",
         "mobx-react-lite": "1.4.1",
         "moment": "2.24.0",
