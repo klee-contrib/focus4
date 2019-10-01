@@ -33,7 +33,7 @@
         "@types/react-dom": "16.8.4",
         "@types/react-transition-group": "2.9.2",
         "@types/uuid": "3.4.4",
-        "i18next": "17.0.4",
+        "i18next": "17.0.16",
         "inputmask-core": "2.2.0",
         "intersection-observer": "0.7.0",
         "lodash": "4.17.11",
