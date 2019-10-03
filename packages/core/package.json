@@ -15,7 +15,6 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@types/i18next": "13.0.0",
         "@types/lodash": "4.14.141",
         "@types/react": "16.9.4",
         "@types/uuid": "3.4.5",
