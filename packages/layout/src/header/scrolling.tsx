@@ -12,6 +12,7 @@ export type HeaderStyle = Partial<typeof headerStyles>;
 export interface HeaderScrollingProps {
     /** Précise si le header peut se déployer ou non. */
     canDeploy?: boolean;
+    /** Children. */
     children?: React.ReactNode;
     /** Classes CSS. */
     theme?: {
@@ -28,16 +29,13 @@ export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScro
     const theme = useTheme("header", headerStyles, pTheme);
     const ref = React.useRef<HTMLElement>(null);
 
-    React.useLayoutEffect(
-        () =>
-            context.registerHeader(
-                canDeploy ? Header : FixedHeader,
-                {className: `${theme.scrolling} ${theme.sticky}`, children},
-                ref.current!,
-                canDeploy
-            ),
-        [canDeploy, children]
-    );
+    React.useLayoutEffect(() => context.registerHeader(canDeploy ? Header : FixedHeader, ref.current!, canDeploy), [
+        canDeploy
+    ]);
+
+    React.useLayoutEffect(() => context.setHeaderProps({className: `${theme.scrolling} ${theme.sticky}`, children}), [
+        children
+    ]);
 
     return (
         <header className={`${theme.scrolling} ${canDeploy ? theme.deployed : theme.undeployed}`} ref={ref}>
