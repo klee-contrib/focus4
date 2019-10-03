@@ -21,15 +21,6 @@
         "@focus4/stores": "^10.0.0-beta.15",
         "@focus4/styling": "^10.0.0-beta.8",
         "@focus4/toolbox": "^10.0.0-beta.8",
-        "@types/moment-timezone": "0.5.12",
-        "@types/numeral": "0.0.25",
-        "@types/react-dom": "16.8.4",
-        "core-decorators": "0.20.0",
-        "inputmask-core": "2.2.0",
-        "lodash-decorators": "6.0.1",
-        "moment": "2.24.0",
-        "moment-timezone": "0.5.25",
-        "numeral": "2.0.6",
-        "react-dom": "16.8.6"
+        "core-decorators": "0.20.0"
     }
 }

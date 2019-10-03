@@ -119,7 +119,7 @@ export interface RecursiveListEntry {
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
 export type EntityToType<E extends Entity> = {
-    [P in keyof E["fields"]]?: E["fields"][P] extends FieldEntry
+    -readonly [P in keyof E["fields"]]?: E["fields"][P] extends FieldEntry
         ? FieldType<E["fields"][P]["fieldType"]>
         : E["fields"][P] extends ObjectEntry<infer OE>
         ? EntityToType<OE>
@@ -127,7 +127,7 @@ export type EntityToType<E extends Entity> = {
         ? EntityToType<LE>[]
         : E["fields"][P] extends RecursiveListEntry
         ? EntityToType<E>[]
-        : never
+        : never;
 };
 
 /** Définition de champ dans un store. */

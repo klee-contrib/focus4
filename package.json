@@ -13,7 +13,7 @@
     "scripts": {
         "bootstrap": "lerna bootstrap --hoist",
         "clean": "lerna clean --yes && node scripts/clean.js",
-        "publish": "lerna publish --dist-tag beta",
+        "publish": "lerna publish --dist-tag rc",
         "stylelint": "stylelint packages/**/*.css",
         "test": "lerna run test",
         "test-ci": "lerna run test-ci",
@@ -21,16 +21,16 @@
         "tslint-ci": "tslint --project tsconfig.json --force | sed -E 's|(.+): (.+):(.+):(.+) - (.+)|\\#\\#vso[task.logissue type=\\L\\1\\E;sourcepath=\\2;linenumber=\\3;columnnumber=\\4;]\\5|g'"
     },
     "devDependencies": {
-        "lerna": "3.15.0",
+        "lerna": "3.16.4",
         "postcss-import": "12.0.1",
-        "rollup": "1.16.2",
-        "rollup-plugin-copy-glob": "0.3.0",
-        "rollup-plugin-node-resolve": "5.1.0",
+        "rollup": "1.23.0",
+        "rollup-plugin-copy-glob": "0.3.1",
+        "rollup-plugin-node-resolve": "5.2.0",
         "rollup-plugin-postcss-modules": "2.0.1",
-        "rollup-plugin-typescript2": "0.21.2",
-        "stylelint": "10.1.0",
-        "tslint": "5.18.0",
-        "typescript": "3.5.2",
-        "typescript-tslint-plugin": "0.5.2"
+        "rollup-plugin-typescript2": "0.24.3",
+        "stylelint": "11.0.0",
+        "tslint": "5.20.0",
+        "typescript": "3.6.3",
+        "typescript-tslint-plugin": "0.5.4"
     }
 }
