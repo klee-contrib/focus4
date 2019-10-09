@@ -71,8 +71,6 @@ export {
     isField,
     makeEntityStore,
     selectFor,
-    stringFor,
     toFlatValues,
     validateField
 } from "./entity";
-export {AsList, ReferenceLoader, makeReferenceStore} from "./reference";

@@ -19,7 +19,7 @@ import {themr} from "@focus4/styling";
 import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../components";
 
 import {Field, FieldProps} from "./field";
-import {displayFor, fieldFor, isField, selectFor, stringFor} from "./field-helpers";
+import {displayFor, fieldFor, isField, selectFor} from "./field-helpers";
 import {createViewModel, ViewModel} from "./view-model";
 
 const Theme = themr("form", formStyles);
@@ -397,18 +397,6 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
     ) {
         return selectFor(field, values as any, this.setFieldOptions(field, options));
-    }
-
-    /**
-     * Récupère le texte correspondant à un champ.
-     * @param field La définition de champ.
-     * @param options Les options du champ.
-     */
-    stringFor<T, R, ValueKey extends string = "code", LabelKey extends string = "label">(
-        field: EntityField<FieldEntry<T>>,
-        options: Partial<FieldProps<T, {}, {}, {}, R, ValueKey, LabelKey>> = {}
-    ) {
-        return stringFor(field, options);
     }
 
     /**

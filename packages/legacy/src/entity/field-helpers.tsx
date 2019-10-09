@@ -1,9 +1,8 @@
 import i18next from "i18next";
-import {find, result} from "lodash";
 import {action} from "mobx";
 import * as React from "react";
 
-import {EntityField, FieldEntry, FieldEntryType} from "@focus4/stores";
+import {EntityField, FieldEntry, FieldEntryType, ReferenceList} from "@focus4/stores";
 
 import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../components";
 
@@ -136,22 +135,19 @@ export function selectFor<
     options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
 ) {
     options.InputComponent = (options.InputComponent as any) || Select;
-    options.values = values.slice(); // On s'assure que la liste de référence passée au composant ne soit pas observable.
-    return fieldFor(field, options);
-}
 
-/**
- * Récupère le texte correspondant à un champ.
- * @param field La définition de champ.
- * @param options Les options du champ.
- */
-export function stringFor<T, R, ValueKey extends string = "code", LabelKey extends string = "label">(
-    field: EntityField<FieldEntry<T>>,
-    options: Partial<FieldProps<T, {}, {}, {}, R, ValueKey, LabelKey>> = {}
-) {
-    const {displayFormatter, valueKey = "code", labelKey = "label", values, value} = buildFieldProps(field, options);
-    const processedValue = values ? result(find(values, {[valueKey]: value}), labelKey) : value;
-    return displayFormatter!(processedValue);
+    // On s'assure que la liste de référence passée au composant ne soit pas observable.
+    options.values = values.slice();
+
+    // On récupère les infos de la ReferenceList si jamais on en a passé une et qu'on a rien surchargé.
+    if (!options.labelKey) {
+        options.labelKey = (values as ReferenceList).$labelKey;
+    }
+    if (!options.valueKey) {
+        options.valueKey = (values as ReferenceList).$valueKey;
+    }
+
+    return fieldFor(field, options);
 }
 
 /**
