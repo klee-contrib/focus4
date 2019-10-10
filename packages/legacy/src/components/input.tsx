@@ -189,10 +189,8 @@ export class Input extends React.Component<InputProps> {
         return (
             <RTInput
                 {...this.props}
-                {...{
-                    innerRef: (i: any) => (this.inputElement = i && i.inputNode),
-                    onPaste: this.onPaste
-                }}
+                {...{onPaste: this.onPaste}}
+                ref={i => (this.inputElement = i && (i as any).inputNode)}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
                 value={this.value}
