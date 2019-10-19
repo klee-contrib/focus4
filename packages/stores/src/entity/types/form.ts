@@ -11,7 +11,7 @@ export type NodeToForm<E extends Entity, A = {}> = {
         ? FormListNode<LE, LA>
         : (StoreNode<E> & A)[P] extends EntityField<infer F>
         ? FormEntityField<F>
-        : (StoreNode<E> & A)[P]
+        : (StoreNode<E> & A)[P];
 };
 
 /** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
@@ -23,12 +23,12 @@ export type NodeToErrors<E extends Entity, A = {}> = Omit<
             ? NodeToErrors<LE, LA>[]
             : (StoreNode<E> & A)[P] extends EntityField
             ? string
-            : never
+            : never;
     },
     {
         [P in keyof (StoreNode<E> & A)]: (StoreNode<E> & A)[P] extends StoreNode | StoreListNode | EntityField
             ? never
-            : P
+            : P;
     }[keyof (StoreNode<E> & A)]
 >;
 
@@ -47,19 +47,19 @@ export type FormNode<E extends Entity = any, A = {}> = NodeToForm<E, A> & {
     };
 
     /** Vide l'objet (récursivement). */
-    clear(): void;
+    clear(): FormNode<E, A>;
 
     /** Désactive la synchronisation entre ce FormNode et son noeud source. */
     dispose(): void;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<E>): void;
+    replace(data: EntityToType<E>): FormNode<E, A>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<E>): void;
+    set(data: EntityToType<E>): FormNode<E, A>;
 
     /** StoreNode original. */
     readonly sourceNode: StoreNode<E>;
@@ -92,16 +92,16 @@ export interface FormListNode<E extends Entity = any, A = {}> extends IObservabl
     dispose(): void;
 
     /** Ajoute un élément à la liste. */
-    pushNode(...items: EntityToType<E>[]): void;
+    pushNode(...items: EntityToType<E>[]): number;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: (EntityToType<E> & NodeToType<A>)[]): void;
+    replaceNodes(data: (EntityToType<E> & NodeToType<A>)[]): FormListNode<E, A>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): void;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    setNodes(data: (EntityToType<E> & NodeToType<A>)[]): void;
+    setNodes(data: (EntityToType<E> & NodeToType<A>)[]): FormListNode<E, A>;
 
     /** StoreNode original. */
     readonly sourceNode: StoreListNode<E>;

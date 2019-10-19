@@ -21,7 +21,7 @@ export type EntityToNode<E extends Entity> = {
         ? StoreListNode<LE>
         : E["fields"][P] extends RecursiveListEntry
         ? StoreListNode<E>
-        : never
+        : never;
 };
 
 /** Génère l'objet JS "normal" équivalent à un noeud de store. */
@@ -36,7 +36,7 @@ export type NodeToType<T> = T extends StoreListNode<infer LE>
               ? EntityToType<sOE>
               : T[P] extends StoreListNode<infer sLE>
               ? EntityToType<sLE>[]
-              : T[P]
+              : T[P];
       };
 
 /** Noeud de store simple. */
@@ -46,13 +46,13 @@ export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
     $tempEdit?: boolean | (() => boolean);
 
     /** Vide l'objet (récursivement). */
-    clear(): void;
+    clear(): StoreNode<E>;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<E>): void;
+    replace(data: EntityToType<E>): StoreNode<E>;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<E>): void;
+    set(data: EntityToType<E>): StoreNode<E>;
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
@@ -68,11 +68,11 @@ export interface StoreListNode<E extends Entity = any, A = {}> extends IObservab
     $initializer?: (source: StoreNode<E>) => A | void;
 
     /** Ajoute un élément à la liste. */
-    pushNode(...items: EntityToType<E>[]): void;
+    pushNode(...items: EntityToType<E>[]): number;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: EntityToType<E>[]): void;
+    replaceNodes(data: EntityToType<E>[]): StoreListNode<E, A>;
 
     /** Met à jour le noeud de liste à partir de la liste fournie. */
-    setNodes(data: EntityToType<E>[]): void;
+    setNodes(data: EntityToType<E>[]): StoreListNode<E, A>;
 }

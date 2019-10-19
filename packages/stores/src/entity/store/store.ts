@@ -25,7 +25,7 @@ export type ExtractEntities<T> = {
         ? StoreNode<T[P]>
         : T[P] extends Entity[]
         ? StoreListNode<T[P][0]>
-        : T[P]
+        : T[P];
 };
 
 /** Récupère les types associés aux entités définies dans T. */
@@ -35,15 +35,15 @@ export type ExtractTypes<T> = Partial<
             ? EntityToType<T[P]>
             : T[P] extends Entity[]
             ? EntityToType<T[P][0]>[]
-            : NodeToType<T[P]>
+            : NodeToType<T[P]>;
     }
 >;
 
 /** Définition d'un store d'entité à partir des entités définies dans T. */
 export type EntityStore<T = any> = ExtractEntities<T> & {
-    clear(): void;
-    replace(data: ExtractTypes<T>): void;
-    set(data: ExtractTypes<T>): void;
+    clear(): EntityStore<T>;
+    replace(data: ExtractTypes<T>): EntityStore<T>;
+    set(data: ExtractTypes<T>): EntityStore<T>;
 };
 
 /**
@@ -72,15 +72,15 @@ export function makeEntityStore<T extends Record<string, Entity | Entity[] | Ent
     */
 
     entityStore.clear = action("node.clear", function clear(this: EntityStore<T>) {
-        clearNode(this as any);
+        return clearNode(this as any) as any;
     });
 
     entityStore.replace = action("node.replace", function replace(this: EntityStore<T>, data: {}) {
-        replaceNode(this as any, data);
+        return replaceNode(this as any, data) as any;
     });
 
     entityStore.set = action("node.set", function set(this: EntityStore<T>, data: {}) {
-        setNode(this as any, data);
+        return setNode(this as any, data) as any;
     });
 
     return entityStore as any;
@@ -100,18 +100,18 @@ export function buildNode<E extends Entity>(entity: E | E[]): StoreNode<E> | Sto
         (outputEntry as any).$entity = entity[0];
 
         outputEntry.pushNode = action("pushNode", function pushNode(this: typeof outputEntry, ...items: {}[]) {
-            this.push(...items.map(item => getNodeForList(this, item)));
+            return this.push(...items.map(item => getNodeForList(this, item)));
         });
 
         outputEntry.replaceNodes = action("replaceNodes", function replaceNodes(
             this: typeof outputEntry,
             values: {}[]
         ) {
-            replaceNode(this, values);
+            return replaceNode(this, values);
         });
 
         outputEntry.setNodes = action("setNodes", function set(this: typeof outputEntry, values: {}[]) {
-            setNode(this, values);
+            return setNode(this, values);
         });
 
         return outputEntry;
@@ -133,46 +133,50 @@ export function buildNode<E extends Entity>(entity: E | E[]): StoreNode<E> | Sto
         }),
 
         clear: action("node.clear", function clear(this: StoreNode<E>) {
-            clearNode(this);
+            return clearNode(this);
         }),
 
         replace: action("node.replace", function replace(this: StoreNode<E>, entityValue: any) {
-            replaceNode(this, entityValue);
+            return replaceNode(this, entityValue);
         }),
 
         set: action("node.set", function set(this: StoreNode<E>, entityValue: any) {
-            setNode(this, entityValue);
+            return setNode(this, entityValue);
         })
     } as any;
 }
 
 /**
  * Vide un noeud de store.
- * @param entity Le noeud.
+ * @param node Le noeud.
  */
-function clearNode<E extends Entity>(entity: StoreNode<E>) {
+function clearNode<E extends Entity>(node: StoreNode<E>): StoreNode<E>;
+function clearNode<E extends Entity>(node: StoreListNode<E>): StoreListNode<E>;
+function clearNode<E extends Entity>(node: StoreNode<E> | StoreListNode<E>) {
     // Cas du noeud de liste : On vide simplement la liste.
-    if (isStoreListNode(entity)) {
-        entity.replace([]);
+    if (isStoreListNode(node)) {
+        node.clear();
     } else {
         // Cas du noeud simple, on parcourt chaque champ.
-        for (const key in entity) {
+        for (const key in node) {
             if (key === "sourceNode") {
                 continue; // Pas touche.
             }
-            const entryItem = (entity as any)[key];
+            const entryItem = (node as any)[key];
             if (isStoreListNode(entryItem)) {
                 // Cas noeud de liste -> on vide la liste.
                 entryItem.clear();
             } else if (isStoreNode(entryItem)) {
                 // Cas noeud de store -> `clearEntity`.
-                clearNode(entryItem as StoreNode);
+                clearNode(entryItem);
             } else if (entryItem.value !== undefined && !isComputedProp(entryItem, "value")) {
                 // Cas primitive -> on met à `undefined`.
                 entryItem.value = undefined;
             }
         }
     }
+
+    return node;
 }
 
 /**
