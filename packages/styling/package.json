@@ -18,8 +18,8 @@
         "@focus4/core": "^10.0.0-rc.2",
         "material-design-icons-iconfont": "5.0.1",
         "mobx-react": "5.4.4",
-        "mobx-react-lite": "1.4.1",
-        "react": "16.10.1"
+        "mobx-react-lite": "1.5.0",
+        "react": "16.10.2"
     },
     "devDependencies": {
         "react-toolbox": "2.0.0-beta.13"

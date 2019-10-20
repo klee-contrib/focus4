@@ -23,6 +23,6 @@
         "@focus4/toolbox": "^10.0.0-rc.2",
         "react-dnd": "7.7.0",
         "react-dnd-html5-backend": "7.7.0",
-        "react-pose": "4.0.8"
+        "react-pose": "4.0.9"
     }
 }

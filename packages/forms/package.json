@@ -23,26 +23,26 @@
         "@focus4/toolbox": "^10.0.0-rc.2",
         "@types/moment-timezone": "0.5.12",
         "@types/numeral": "0.0.26",
-        "@types/react-dom": "16.9.1",
+        "@types/react-dom": "16.9.2",
         "inputmask-core": "2.2.0",
         "lodash-decorators": "6.0.1",
-        "moment-timezone": "0.5.26",
+        "moment-timezone": "0.5.27",
         "numeral": "2.0.6",
-        "react-dom": "16.10.1"
+        "react-dom": "16.10.2"
     },
     "devDependencies": {
         "@types/enzyme": "3.10.3",
-        "@types/jest": "24.0.18",
-        "@types/react-test-renderer": "16.9.0",
+        "@types/jest": "24.0.19",
+        "@types/react-test-renderer": "16.9.1",
         "enzyme": "3.10.0",
-        "enzyme-adapter-react-16": "1.14.0",
-        "enzyme-to-json": "3.4.2",
+        "enzyme-adapter-react-16": "1.15.1",
+        "enzyme-to-json": "3.4.3",
         "identity-obj-proxy": "3.0.0",
         "jest": "24.9.0",
         "jest-enzyme": "7.1.1",
         "jest-junit": "8.0.0",
         "postcss-import": "12.0.1",
-        "react-test-renderer": "16.10.1",
+        "react-test-renderer": "16.10.2",
         "ts-jest": "24.1.0"
     }
 }

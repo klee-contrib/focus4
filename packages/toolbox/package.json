@@ -19,7 +19,7 @@
         "@focus4/core": "^10.0.0-rc.2",
         "@focus4/styling": "^10.0.0-rc.2",
         "@types/classnames": "2.2.9",
-        "@types/ramda": "0.26.26",
+        "@types/ramda": "0.26.33",
         "react-toolbox": "2.0.0-beta.13"
     }
 }
