@@ -17,7 +17,7 @@
     "dependencies": {
         "@focus4/core": "^10.0.0",
         "material-design-icons-iconfont": "5.0.1",
-        "mobx-react": "5.4.4",
+        "mobx-react": "6.1.4",
         "mobx-react-lite": "1.5.0",
         "react": "16.10.2"
     },
