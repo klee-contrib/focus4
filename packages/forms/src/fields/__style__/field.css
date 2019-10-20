@@ -1,0 +1,35 @@
+.field {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.label,
+.value {
+    flex-shrink: 0;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.edit.required .label label::after {
+    content: "*";
+    margin-left: 3px;
+}
+
+.edit [data-react-toolbox="input"],
+.edit [data-focus="select"] {
+    margin-top: -27px;
+    margin-bottom: -15px;
+}
+
+.edit.invalid [data-react-toolbox="input"] {
+    margin-top: -28px;
+}
+
+.invalid .label label {
+    color: var(--input-text-error-color);
+}
+
+.error {
+    white-space: nowrap;
+}

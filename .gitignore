@@ -1,6 +1,10 @@
 npm-debug.log
 node_modules
-dist
+lib
 *.css.d.ts
-variables.d.ts
+**/variables/variables.ts
 .history
+.rpt2_cache
+lerna-debug.log
+packages/focus4/*.js
+packages/focus4/*.d.ts

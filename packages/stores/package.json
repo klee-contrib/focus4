@@ -1,0 +1,29 @@
+{
+    "name": "@focus4/stores",
+    "version": "10.0.0-rc.2",
+    "description": "Focus v4, stores module",
+    "main": "lib/focus4.stores.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KleeGroup/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/KleeGroup/focus4/packages/stores",
+    "scripts": {
+        "prepare": "rollup -cm",
+        "start": "rollup -cw",
+        "test": "jest --reporters=default",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
+    },
+    "dependencies": {
+        "@focus4/core": "^10.0.0-rc.2",
+        "moment": "2.24.0"
+    },
+    "devDependencies": {
+        "@types/jest": "24.0.18",
+        "jest": "24.9.0",
+        "jest-junit": "8.0.0",
+        "ts-jest": "24.1.0"
+    }
+}

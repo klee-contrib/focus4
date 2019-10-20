@@ -1,0 +1,26 @@
+{
+    "name": "focus4",
+    "version": "10.0.0-rc.2",
+    "description": "Focus v4, all modules",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KleeGroup/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/KleeGroup/focus4/packages/focus4",
+    "scripts": {
+        "prepare": "tsc",
+        "start": "tsc --watch"
+    },
+    "dependencies": {
+        "@focus4/collections": "^10.0.0-rc.2",
+        "@focus4/core": "^10.0.0-rc.2",
+        "@focus4/forms": "^10.0.0-rc.2",
+        "@focus4/layout": "^10.0.0-rc.2",
+        "@focus4/stores": "^10.0.0-rc.2",
+        "@focus4/styling": "^10.0.0-rc.2",
+        "@focus4/toolbox": "^10.0.0-rc.2"
+    }
+}

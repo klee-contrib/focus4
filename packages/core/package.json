@@ -1,0 +1,29 @@
+{
+    "name": "@focus4/core",
+    "version": "10.0.0-rc.2",
+    "description": "Focus v4, core module",
+    "main": "lib/focus4.core.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KleeGroup/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/KleeGroup/focus4/packages/core",
+    "scripts": {
+        "prepare": "rollup -cm",
+        "start": "rollup -cw"
+    },
+    "dependencies": {
+        "@types/lodash": "4.14.141",
+        "@types/react": "16.9.4",
+        "@types/uuid": "3.4.5",
+        "i18next": "17.0.18",
+        "lodash": "4.17.15",
+        "mobx": "4.14.0",
+        "tslib": "1.10.0",
+        "uuid": "3.3.3",
+        "whatwg-fetch": "3.0.0",
+        "yester": "0.10.0"
+    }
+}

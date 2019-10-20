@@ -1,0 +1,28 @@
+{
+    "name": "@focus4/collections",
+    "version": "10.0.0-rc.2",
+    "description": "Focus v4, collections module",
+    "main": "lib/focus4.collections.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KleeGroup/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/KleeGroup/focus4/packages/collections",
+    "scripts": {
+        "postinstall": "node postinstall.js",
+        "prepare": "rollup -cm",
+        "start": "rollup -cw"
+    },
+    "dependencies": {
+        "@focus4/core": "^10.0.0-rc.2",
+        "@focus4/forms": "^10.0.0-rc.2",
+        "@focus4/stores": "^10.0.0-rc.2",
+        "@focus4/styling": "^10.0.0-rc.2",
+        "@focus4/toolbox": "^10.0.0-rc.2",
+        "react-dnd": "7.7.0",
+        "react-dnd-html5-backend": "7.7.0",
+        "react-pose": "4.0.8"
+    }
+}

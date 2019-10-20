@@ -1,9 +1,0 @@
-@import "react-toolbox/lib/colors.css";
-@import "react-toolbox/lib/variables.css";
-@import "react-toolbox/lib/input/config.css";
-
-:root {
-    --select-height: 36px;
-    --select-arrow-color: var(--color-black);
-    --select-line-color: var(--input-text-bottom-border-color);
-}

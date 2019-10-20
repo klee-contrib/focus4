@@ -1,0 +1,172 @@
+.list ul,
+.mosaic ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mosaic ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.timeline {
+    list-style: none;
+    padding: 20px 0;
+    position: relative;
+    margin-left: 100px;
+}
+
+.timeline::before {
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    content: " ";
+    width: 3px;
+    background-color: #eee;
+}
+
+.timeline > li {
+    margin-bottom: 10px;
+    margin-left: 38px;
+    position: relative;
+}
+
+.timeline > li::before,
+.timeline > li::after {
+    content: " ";
+    display: table;
+}
+
+.timeline > li::after {
+    clear: both;
+}
+
+.mosaicAdd {
+    border: 1px dashed #ccc;
+    padding: 65px 20px;
+    margin: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 18px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.mosaicAdd:hover {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.add {
+    display: block;
+    text-align: center;
+    font-size: 24px;
+}
+
+.detailWrapper {
+    width: 100%;
+    position: relative;
+    display: inline-block;
+}
+
+.detail {
+    padding: 10px;
+    background: #e8e8e8;
+    margin: 20px 0;
+}
+
+.detail > button {
+    position: absolute;
+    right: 4px;
+    top: 24px;
+}
+
+.triangle {
+    position: absolute;
+    top: 5px;
+    left: calc(50% - 7.5px);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 15px 15px;
+    border-color: transparent transparent #e8e8e8;
+}
+
+.loading {
+    padding: 5px;
+}
+
+.bottomRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.bottomRow button {
+    margin: 0;
+}
+
+.bottomRow button:global(:not(.mdl-button--raised)) {
+    font-weight: bold;
+    text-transform: none;
+}
+
+/* Ci-dessous, recopie du CSS du tableau react-toolbox */
+
+.table {
+    background-color: var(--color-white);
+    border-collapse: collapse;
+    font-size: var(--table-font-size);
+    width: 100%;
+}
+
+.table thead {
+    padding-bottom: calc(0.3 * var(--unit));
+    white-space: nowrap;
+}
+
+.table tbody tr {
+    transition-duration: 0.28s;
+    transition-property: background-color;
+    transition-timing-function: var(--animation-curve-default);
+
+    &:hover {
+        background-color: var(--table-hover-color);
+    }
+}
+
+.table td,
+.table th {
+    color: var(--table-row-color);
+    padding: 0 var(--table-column-padding);
+    text-align: left;
+}
+
+.table td {
+    border-bottom: var(--table-dividers);
+    border-top: var(--table-dividers);
+    height: var(--table-row-height);
+}
+
+.table th {
+    color: var(--table-header-color);
+    font-weight: var(--font-weight-bold);
+    height: var(--table-row-height);
+    line-height: calc(2.4 * var(--unit));
+    text-overflow: ellipsis;
+}
+
+.table td:first-of-type,
+.table th:first-of-type {
+    padding-left: 24px;
+}
+
+.table td:last-of-type,
+.table th:last-of-type {
+    padding-right: 24px;
+}
+
+.clickable {
+    cursor: pointer;
+}

@@ -1,0 +1,48 @@
+{
+    "name": "@focus4/forms",
+    "version": "10.0.0-rc.2",
+    "description": "Focus v4, forms module",
+    "main": "lib/focus4.forms.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KleeGroup/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/KleeGroup/focus4/packages/forms",
+    "scripts": {
+        "prepare": "rollup -cm",
+        "start": "rollup -cw",
+        "test": "jest --reporters=default",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
+    },
+    "dependencies": {
+        "@focus4/core": "^10.0.0-rc.2",
+        "@focus4/stores": "^10.0.0-rc.2",
+        "@focus4/styling": "^10.0.0-rc.2",
+        "@focus4/toolbox": "^10.0.0-rc.2",
+        "@types/moment-timezone": "0.5.12",
+        "@types/numeral": "0.0.26",
+        "@types/react-dom": "16.9.1",
+        "inputmask-core": "2.2.0",
+        "lodash-decorators": "6.0.1",
+        "moment-timezone": "0.5.26",
+        "numeral": "2.0.6",
+        "react-dom": "16.10.1"
+    },
+    "devDependencies": {
+        "@types/enzyme": "3.10.3",
+        "@types/jest": "24.0.18",
+        "@types/react-test-renderer": "16.9.0",
+        "enzyme": "3.10.0",
+        "enzyme-adapter-react-16": "1.14.0",
+        "enzyme-to-json": "3.4.2",
+        "identity-obj-proxy": "3.0.0",
+        "jest": "24.9.0",
+        "jest-enzyme": "7.1.1",
+        "jest-junit": "8.0.0",
+        "postcss-import": "12.0.1",
+        "react-test-renderer": "16.10.1",
+        "ts-jest": "24.1.0"
+    }
+}

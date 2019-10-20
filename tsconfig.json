@@ -10,7 +10,6 @@
         // Options obligatoires
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
-        "skipLibCheck": true,
         "strict": true,
         "plugins": [{"name": "typescript-tslint-plugin"}],
 
@@ -22,9 +21,8 @@
 
         // Spécifique librairie
         "declaration": true,
-        "inlineSourceMap": true,
-        "outDir": "dist",
+        "sourceMap": true,
         "stripInternal": true
     },
-    "exclude": ["dist", "node_modules", "./src/**/__test__/*"]
+    "exclude": ["**/lib/**", "**/__tests__/**", "node_modules"]
 }

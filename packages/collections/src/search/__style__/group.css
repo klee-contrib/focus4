@@ -1,0 +1,22 @@
+.selectionToggle > .selectionIcon:not([data-react-toolbox="tooltip"]) {
+    font-size: 24px;
+    vertical-align: initial;
+}
+
+.header {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    font-size: var(--font-size-big);
+    line-height: 36px;
+    height: 46px;
+    display: flex;
+}
+
+.header > button {
+    margin-right: 5px;
+}
+
+.header {
+    margin-top: 20px;
+}

@@ -1,0 +1,59 @@
+.menu {
+    height: 100vh;
+    z-index: calc(var(--z-index-high) + 1);
+    position: relative;
+}
+
+.list {
+    padding: 0;
+    margin: 0;
+    position: relative;
+    background: var(--main-menu-background);
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.toggle,
+.toggle > .rippleWrapper {
+    border-radius: 0;
+}
+
+.button,
+.button.neutral:not([disabled]),
+.toggle,
+.toggle.neutral:not([disabled]) {
+    height: var(--main-menu-item-height);
+    color: var(--main-menu-item-color);
+    min-width: var(--main-menu-item-height);
+}
+
+.button {
+    text-align: left;
+}
+
+.button > .icon,
+.toggle > .icon {
+    width: 24px;
+    font-size: 24px;
+}
+
+.panel {
+    position: fixed;
+}
+
+.active {
+    background: var(--main-menu-item-active-background);
+
+    & .icon,
+    & .button.neutral:not([disabled]),
+    & .toggle {
+        color: var(--main-menu-item-active-color);
+    }
+}
