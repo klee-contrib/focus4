@@ -19,9 +19,9 @@
         "@focus4/styling": "^11.0.0-preview.2",
         "@focus4/toolbox": "^11.0.0-preview.2",
         "intersection-observer": "0.12.0",
-        "popmotion": "8.7.3",
-        "react-pose": "4.0.9",
+        "framer-motion": "4.1.17",
         "resize-observer-polyfill": "1.5.1",
-        "smoothscroll-polyfill": "0.4.4"
+        "smoothscroll-polyfill": "0.4.4",
+        "stylefire": "7.0.3"
     }
 }

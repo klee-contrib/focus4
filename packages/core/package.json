@@ -15,10 +15,10 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@types/lodash": "4.14.170",
-        "@types/react": "17.0.12",
-        "@types/uuid": "8.3.0",
-        "i18next": "20.3.2",
+        "@types/lodash": "4.14.171",
+        "@types/react": "17.0.14",
+        "@types/uuid": "8.3.1",
+        "i18next": "20.3.3",
         "lodash": "4.17.21",
         "mobx": "4.15.7",
         "mobx-utils": "5.6.2",
