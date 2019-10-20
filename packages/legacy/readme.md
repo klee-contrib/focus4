@@ -1,6 +1,6 @@
 # (LEGACY) Module `legacy`
 
-Remplace `forms` et `stores` pour un projet qui utilise les anciens formulaires (pré-v9).
+Permet d'utiliser les anciens formulaires (pré-v9) à partir du module `stores`.
 
 ### API
 
@@ -26,13 +26,6 @@ La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affic
 -   `options`, comme `fieldfor`.
 
 `selectFor` vérifie également le type de la liste de référence en fonction du type du champ et de la présence des propriétés de bon type `valueKey` et `labelKey`. Par défaut, il cherche des propriétés `code` et `label`, qui sont surchargeables dans les options. Attention de bien caster `valueKey` et `labelKey` en eux-même (par exemple `{valueKey: "id" as "id}`) pour que l'inférence de type cherche bien la propriété `id` et non toutes les propriétés de l'objet.
-
-### `stringFor(field, options?)`
-
-La fonction `stringFor` affiche la représentation textuelle d'un champ de store, en utilisant si besoin le formatteur et une liste de référence. Les paramètres sont :
-
--   `field`, comme `selectFor`
--   `options`, comme `fieldFor`, même si finalement très peu d'options sont réellement utilisées.
 
 ## AutoForm
 
