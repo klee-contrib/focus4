@@ -23,7 +23,7 @@
         "@focus4/toolbox": "^10.0.0-rc.2",
         "@types/moment-timezone": "0.5.12",
         "@types/numeral": "0.0.26",
-        "@types/react-dom": "16.9.1",
+        "@types/react-dom": "16.9.2",
         "inputmask-core": "2.2.0",
         "lodash-decorators": "6.0.1",
         "moment-timezone": "0.5.26",
