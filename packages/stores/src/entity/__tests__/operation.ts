@@ -1,4 +1,4 @@
-import {EntityToType, StoreNode} from "../types";
+import {Domain, EntityToType, StoreNode} from "../types";
 import {StructureEntity} from "./structure";
 
 export type Operation = EntityToType<typeof OperationEntity>;
@@ -10,7 +10,7 @@ export const OperationEntity = {
         id: {
             type: "field",
             fieldType: "number",
-            domain: {},
+            domain: {} as Domain<number>,
             isRequired: false,
             name: "id",
             label: "operation.id"
@@ -18,7 +18,7 @@ export const OperationEntity = {
         numero: {
             type: "field",
             fieldType: "string",
-            domain: {},
+            domain: {} as Domain<string>,
             isRequired: true,
             name: "numero",
             label: "operation.numero"
@@ -26,7 +26,7 @@ export const OperationEntity = {
         montant: {
             type: "field",
             fieldType: "number",
-            domain: {},
+            domain: {} as Domain<number>,
             isRequired: false,
             name: "montant",
             label: "operation.montant"

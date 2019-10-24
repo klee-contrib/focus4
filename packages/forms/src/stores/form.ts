@@ -4,7 +4,6 @@ import {
     ActionConfig,
     ActionConfigMultiple,
     Entity,
-    EntityToType,
     FormActions,
     FormConfig,
     FormListNode,
@@ -12,6 +11,7 @@ import {
     FormNodeOptions,
     makeFormActionsCore,
     makeFormNodeCore,
+    NodeToType,
     StoreListNode,
     StoreNode
 } from "@focus4/stores";
@@ -59,51 +59,30 @@ export function makeFormNode<E extends Entity, U = {}>(
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActions<E extends Entity, U>(
+export function makeFormActions<FN extends FormListNode | FormNode>(
     componentClass: React.Component | null,
-    formNode: FormListNode<E, U>,
-    actions: ActionConfig<EntityToType<E>[]>,
+    formNode: FN,
+    actions: ActionConfig<NodeToType<FN>>,
     config?: FormConfig
 ): FormActions;
 export function makeFormActions<
-    E extends Entity,
-    U,
+    FN extends FormListNode | FormNode,
     S extends {
-        [key: string]: (entity: EntityToType<E>[]) => Promise<EntityToType<E>[] | void>;
-        default: (entity: EntityToType<E>[]) => Promise<EntityToType<E>[] | void>;
+        [key: string]: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
+        default: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
     }
 >(
     componentClass: React.Component | null,
-    formNode: FormListNode<E, U>,
-    actions: ActionConfigMultiple<EntityToType<E>[], S>,
-    config?: FormConfig<Extract<keyof S, string>>
-): FormActions<Extract<keyof S, string>>;
-export function makeFormActions<E extends Entity, U>(
-    componentClass: React.Component | null,
-    formNode: FormNode<E, U>,
-    actions: ActionConfig<EntityToType<E>>,
-    config?: FormConfig
-): FormActions;
-export function makeFormActions<
-    E extends Entity,
-    U,
-    S extends {
-        [key: string]: (entity: EntityToType<E>) => Promise<EntityToType<E> | void>;
-        default: (entity: EntityToType<E>) => Promise<EntityToType<E> | void>;
-    }
->(
-    componentClass: React.Component | null,
-    formNode: FormNode<E, U>,
-    actions: ActionConfigMultiple<EntityToType<E>, S>,
+    formNode: FN,
+    actions: ActionConfigMultiple<NodeToType<FN>, S>,
     config?: FormConfig<Extract<keyof S, string>>
 ): FormActions<Extract<keyof S, string>>;
 export function makeFormActions<
-    E extends Entity,
-    U,
+    FN extends FormListNode | FormNode,
     S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}
 >(
     componentClass: React.Component | null,
-    formNode: FormNode<E, U> | FormListNode<E, U>,
+    formNode: FN,
     actions: ActionConfig<any> | ActionConfigMultiple<any, S>,
     config: FormConfig = {}
 ) {

@@ -67,6 +67,9 @@ export interface StoreListNode<E extends Entity = any, A = {}> extends IObservab
     /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
     $initializer?: (source: StoreNode<E>) => A | void;
 
+    /** Fonction de modification d'un objet, appelé à la création. */
+    $nodeBuilder?: <NE extends Entity>(source: StoreNode<E>) => StoreNode<NE>;
+
     /** Ajoute un élément à la liste. */
     pushNode(...items: EntityToType<E>[]): number;
 

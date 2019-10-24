@@ -1,4 +1,4 @@
-import {EntityToType, StoreNode} from "../types";
+import {Domain, EntityToType, StoreNode} from "../types";
 import {LigneEntity} from "./ligne";
 
 export type Projet = EntityToType<typeof ProjetEntity>;
@@ -10,7 +10,7 @@ export const ProjetEntity = {
         id: {
             type: "field",
             fieldType: "number",
-            domain: {},
+            domain: {} as Domain<number>,
             isRequired: false,
             name: "id",
             label: "projet.id"

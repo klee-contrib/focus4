@@ -5,7 +5,7 @@ import {action, comparer, computed, extendObservable, Lambda, observable, reacti
 import {messageStore} from "@focus4/core";
 
 import {toFlatValues} from "../store";
-import {Entity, EntityToType, FormListNode, FormNode, isStoreNode} from "../types";
+import {FormListNode, FormNode, isStoreNode, NodeToType} from "../types";
 
 /** Configuration additionnelle du formulaire.. */
 export interface FormConfig<S extends string = "default"> {
@@ -94,49 +94,26 @@ export type FormActions<S extends string = "default"> = ActionsFormProps & {
  * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
  * @param config Configuration additionnelle.
  */
-export function makeFormActionsCore<E extends Entity, U>(
-    formNode: FormListNode<E, U>,
-    actions: ActionConfig<EntityToType<E>[]>,
+export function makeFormActionsCore<FN extends FormListNode | FormNode>(
+    formNode: FN,
+    actions: ActionConfig<NodeToType<FN>>,
     config?: FormConfig
 ): FormActions;
 export function makeFormActionsCore<
-    E extends Entity,
-    U,
+    FN extends FormListNode | FormNode,
     S extends {
-        [key: string]: (entity: EntityToType<E>[]) => Promise<EntityToType<E>[] | void>;
-        default: (entity: EntityToType<E>[]) => Promise<EntityToType<E>[] | void>;
+        [key: string]: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
+        default: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
     }
 >(
-    formNode: FormListNode<E, U>,
-    actions: ActionConfigMultiple<EntityToType<E>[], S>,
-    config?: FormConfig<Extract<keyof S, string>>
-): FormActions<Extract<keyof S, string>>;
-export function makeFormActionsCore<E extends Entity, U>(
-    formNode: FormNode<E, U>,
-    actions: ActionConfig<EntityToType<E>>,
-    config?: FormConfig
-): FormActions;
-export function makeFormActionsCore<
-    E extends Entity,
-    U,
-    S extends {
-        [key: string]: (entity: EntityToType<E>) => Promise<EntityToType<E> | void>;
-        default: (entity: EntityToType<E>) => Promise<EntityToType<E> | void>;
-    }
->(
-    formNode: FormNode<E, U>,
-    actions: ActionConfigMultiple<EntityToType<E>, S>,
+    formNode: FN,
+    actions: ActionConfigMultiple<NodeToType<FN>, S>,
     config?: FormConfig<Extract<keyof S, string>>
 ): FormActions<Extract<keyof S, string>>;
 export function makeFormActionsCore<
-    E extends Entity,
-    U,
+    FN extends FormListNode | FormNode,
     S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}
->(
-    formNode: FormNode<E, U> | FormListNode<E, U>,
-    actions: ActionConfig<any> | ActionConfigMultiple<any, S>,
-    config: FormConfig = {}
-) {
+>(formNode: FN, actions: ActionConfig<any> | ActionConfigMultiple<any, S>, config: FormConfig = {}) {
     // On se prépare à construire plusieurs actions de sauvegarde.
     function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {
         return async function save(this: FormActions<Extract<keyof S, string>>) {
@@ -163,7 +140,7 @@ export function makeFormActionsCore<
                     formNode.form.isEdit = false;
                     if (data) {
                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                        if (isStoreNode<E>(formNode.sourceNode)) {
+                        if (isStoreNode(formNode.sourceNode)) {
                             formNode.sourceNode.replace(data);
                         } else {
                             formNode.sourceNode.replaceNodes(data);
@@ -228,7 +205,7 @@ export function makeFormActionsCore<
                         this.isLoading = true;
                         const data = await load(...params);
                         runInAction("afterLoad", () => {
-                            if (isStoreNode<E>(formNode.sourceNode)) {
+                            if (isStoreNode(formNode.sourceNode)) {
                                 formNode.sourceNode.replace(data);
                             } else {
                                 formNode.sourceNode.replaceNodes(data);

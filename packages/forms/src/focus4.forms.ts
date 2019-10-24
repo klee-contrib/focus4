@@ -58,4 +58,13 @@ export {
     formStyles,
     selectFor
 } from "./fields";
-export {domain, fromField, makeField, makeFormActions, makeFormNode, patchField} from "./stores";
+export {
+    domain,
+    fromField,
+    makeField,
+    makeFormActions,
+    makeFormNode,
+    patchField,
+    FormListNodeBuilder,
+    FormNodeBuilder
+} from "./stores";

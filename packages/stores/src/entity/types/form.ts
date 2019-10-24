@@ -17,19 +17,19 @@ export type NodeToForm<E extends Entity, A = {}> = {
 /** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
 export type NodeToErrors<E extends Entity, A = {}> = Omit<
     {
-        readonly [P in keyof (StoreNode<E> & A)]?: (StoreNode<E> & A)[P] extends StoreNode<infer OE>
+        readonly [P in keyof (FormNode<E> & A)]?: (FormNode<E> & A)[P] extends FormNode<infer OE>
             ? NodeToErrors<OE>
-            : (StoreNode<E> & A)[P] extends StoreListNode<infer LE, infer LA>
+            : (FormNode<E> & A)[P] extends FormListNode<infer LE, infer LA>
             ? NodeToErrors<LE, LA>[]
-            : (StoreNode<E> & A)[P] extends EntityField
+            : (FormNode<E> & A)[P] extends FormEntityField
             ? string
             : never;
     },
     {
-        [P in keyof (StoreNode<E> & A)]: (StoreNode<E> & A)[P] extends StoreNode | StoreListNode | EntityField
+        [P in keyof (FormNode<E> & A)]: (FormNode<E> & A)[P] extends FormNode | FormListNode | FormEntityField
             ? never
             : P;
-    }[keyof (StoreNode<E> & A)]
+    }[keyof (FormNode<E> & A)]
 >;
 
 /** Champs additionnels pour un noeud de formulaire. */
@@ -56,7 +56,7 @@ export type FormNode<E extends Entity = any, A = {}> = NodeToForm<E, A> & {
     replace(data: EntityToType<E>): FormNode<E, A>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
-    reset(): void;
+    reset(): FormNode<E, A>;
 
     /** Met à jour les champs donnés dans le noeud. */
     set(data: EntityToType<E>): FormNode<E, A>;
@@ -81,8 +81,11 @@ export interface FormListNode<E extends Entity = any, A = {}> extends IObservabl
         readonly errors: NodeToErrors<E, A>[];
     };
 
-    /** Fonction d'initialisation pour les items du noeud liste. */
+    /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
     $initializer?: (source: StoreNode<E>) => A | void;
+
+    /** Fonction de modification d'un objet, appelé à la création. */
+    $nodeBuilder?: <NE extends Entity>(source: StoreNode<E>) => StoreNode<NE>;
 
     /** @internal */
     /** Dispose l'observer qui suit l'ajout et la suppression d'élement dans la liste source. */

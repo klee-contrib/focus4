@@ -272,9 +272,11 @@ export function setNode<E extends Entity>(
  * @param item L'item à ajouter (classique ou noeud).
  */
 export function getNodeForList<E extends Entity>(list: StoreListNode<E>, item: EntityToType<E> | StoreNode<E>) {
-    const node = buildNode<E>(list.$entity);
+    let node = buildNode<E>(list.$entity);
     if (list.$initializer) {
         Object.assign(node, list.$initializer(node) || {});
+    } else if (list.$nodeBuilder) {
+        node = list.$nodeBuilder(node);
     }
     if (isFormListNode(list)) {
         nodeToFormNode<E>(node, isStoreNode<E>(item) ? item : node, list);

@@ -45,7 +45,7 @@ export function nodeToFormNode<E extends Entity = any, U = {}>(
 
     (node as any).reset = action("formNode.reset", () => {
         node.clear();
-        replaceNode(node as any, sourceNode as any);
+        return replaceNode(node as any, sourceNode as any);
     });
 
     (node as any).sourceNode = sourceNode;
