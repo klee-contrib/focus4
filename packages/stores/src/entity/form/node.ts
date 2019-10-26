@@ -1,6 +1,6 @@
 import {extendObservable, observable} from "mobx";
 
-import {nodeToFormNode, patchNodeEdit} from "../store";
+import {nodeToFormNode} from "../store";
 import {
     Entity,
     FormListNode,
@@ -21,14 +21,7 @@ export interface FormNodeOptions {
     isEmpty?: boolean;
 }
 
-/**
- * Construit un FormNode à partir d'un StoreNode.
- * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
- * Toute mise à jour du StoreNode réinitialise le FormNode.
- * @param node Le noeud de base
- * @param opts Options du FormNode.
- * @param initializer La fonction d'initialisation (peut contenir des transformations comme `patchField` et retourner des `makeField`).
- */
+/** @deprecated Utiliser `new Form(List)NodeBuilder(node).build() à la place.` */
 export function makeFormNodeCore<E extends Entity, U = {}>(
     node: StoreListNode<E>,
     opts?: FormNodeOptions,
@@ -49,7 +42,8 @@ export function makeFormNodeCore<E extends Entity, U = {}>(
     }
 
     const formNode = clone(node, isEmpty, initializer);
-    nodeToFormNode(patchNodeEdit(formNode, isEdit || false), node);
+    formNode.$tempEdit = isEdit || false;
+    nodeToFormNode(formNode, node);
 
     return formNode;
 }

@@ -20,30 +20,14 @@ import {
     StoreNode
 } from "@focus4/stores";
 
-/**
- * Construit un FormNode à partir d'un StoreNode.
- * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
- * Toute mise à jour du StoreNode réinitialise le FormNode.
- * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de synchronisation à son démontage.
- * @param node Le noeud de base
- * @param opts Options du FormNode.
- * @param initializer La fonction d'initialisation (peut contenir des transformations comme `patchField` et retourner des `makeField`).
- */
+/** @deprecated Utiliser `makeFormNode(node).build(this)` */
 export function makeFormNode<E extends Entity, U = {}>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
     opts?: FormNodeOptions,
     initializer?: (source: StoreNode<E>) => U
 ): FormListNode<E, U>;
-/**
- * Construit un FormNode à partir d'un StoreNode.
- * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
- * Toute mise à jour du StoreNode réinitialise le FormNode.
- * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de synchronisation à son démontage.
- * @param node Le noeud de base
- * @param opts Options du FormNode.
- * @param initializer La fonction d'initialisation (peut contenir des transformations comme `patchField` et retourner des `makeField`).
- */
+/** @deprecated Utiliser `makeFormNode(node).build(this)` */
 export function makeFormNode<E extends Entity, U = {}>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
@@ -58,9 +42,9 @@ export function makeFormNode<E extends Entity, U = {}>(
  */
 export function makeFormNode<E extends Entity>(node: StoreNode<E>): FormNodeBuilderClass<E>;
 /**
- * Construit un FormNode à partir d'un StoreNode.
- * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
- * Toute mise à jour du StoreNode réinitialise le FormNode.
+ * Construit un FormListNode à partir d'un StoreListNode.
+ * Le FormListNode est un clone d'un StoreListNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
+ * Toute mise à jour du StoreListNode réinitialise le FormListNode.
  * @param node Le noeud de base
  */
 export function makeFormNode<E extends Entity>(node: StoreListNode<E>): FormListNodeBuilderClass<E>;

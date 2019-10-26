@@ -1,7 +1,8 @@
 import {extendObservable} from "mobx";
 import {ComponentType} from "react";
 
-import {$Field, makeFieldCore, patchFieldCore} from "../../transforms";
+import {isFunction} from "lodash";
+import {$Field, makeFieldCore, new$field} from "../../transforms";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -26,12 +27,12 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
     }
 
     /**
-     * Initialise l'état d'édition du FormEntityField.
+     * Initialise l'état d'édition du champ.
      * @param value Etat d'édition initial.
      */
     edit(value: boolean): FormEntityFieldBuilder<F>;
     /**
-     * Force l'état d'édition du FormEntityField.
+     * Force l'état d'édition du champ.
      * @param value Condition d'édition.
      */
     edit(value: () => boolean): FormEntityFieldBuilder<F>;
@@ -41,7 +42,7 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
         return this;
     }
     /**
-     * Modifie les métadonnées du FormEntityField.
+     * Modifie les métadonnées du champ.
      * @param $field Métadonnées du champ à remplacer;
      */
     metadata<
@@ -55,7 +56,19 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
             | $Field<DomainType<F>, F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>
             | (() => $Field<DomainType<F>, F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>)
     ): FormEntityFieldBuilder<FieldEntry<DomainType<F>, F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>> {
-        patchFieldCore(this.field, $field);
+        const next$field = new$field(this.field.$field, $field);
+        if (isFunction($field)) {
+            // @ts-ignore
+            delete this.field.$field;
+            extendObservable(this.field, {
+                get $field() {
+                    return next$field.$field;
+                }
+            });
+        } else {
+            // @ts-ignore
+            this.field.$field = next$field.$field;
+        }
         // @ts-ignore
         return this;
     }

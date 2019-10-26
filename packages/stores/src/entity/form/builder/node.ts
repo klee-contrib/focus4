@@ -1,7 +1,7 @@
 import {isFunction} from "lodash";
 import {extendObservable, observable} from "mobx";
 
-import {nodeToFormNode, patchNodeEdit} from "../../store";
+import {nodeToFormNode} from "../../store";
 import {
     Entity,
     FieldEntry,
@@ -69,7 +69,8 @@ export class FormNodeBuilder<E extends Entity> {
      * Construit le FormNode à partir de la configuration renseignée.
      */
     build(_: any): FormNode<E> {
-        nodeToFormNode(patchNodeEdit(this.node, this.isEdit), this.sourceNode);
+        this.node.$tempEdit = this.isEdit;
+        nodeToFormNode(this.node, this.sourceNode);
 
         // @ts-ignore
         return this.node;
@@ -140,7 +141,8 @@ export class FormNodeBuilder<E extends Entity> {
 
     /** @internal */
     collect() {
-        return patchNodeEdit(this.node, this.isEdit);
+        this.node.$tempEdit = this.isEdit;
+        return this.node;
     }
 }
 

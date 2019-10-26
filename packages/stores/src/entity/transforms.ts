@@ -120,12 +120,7 @@ export function fromFieldCore<
     return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
 }
 
-/**
- * Patche un `EntityField` pour modifier ses métadonnées (inclus tout ce qui est définit dans le domaine). Cette fonction **MODIFIE** le champ donné.
- * @param field Le champ.
- * @param $field Les métadonnées à remplacer.
- * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
- */
+/** @deprecated Utiliser `new Form(List)NodeBuilder(node).patch() à la place.` */
 export function patchFieldCore<
     DT,
     FT extends FieldEntryType<DT>,
@@ -163,7 +158,8 @@ export function patchFieldCore<
     }
 }
 
-function new$field<F extends FieldEntry>(old$field: F, $field: $Field | (() => $Field)) {
+/** @internal */
+export function new$field<F extends FieldEntry>(old$field: F, $field: $Field | (() => $Field)) {
     if (isFunction($field)) {
         return observable(
             {

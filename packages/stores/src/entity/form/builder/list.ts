@@ -1,6 +1,6 @@
 import {isFunction} from "lodash";
 
-import {nodeToFormNode, patchNodeEdit} from "../../store";
+import {nodeToFormNode} from "../../store";
 import {Entity, FormListNode, StoreListNode} from "../../types";
 import {clone, FormNodeBuilder} from "./node";
 
@@ -21,7 +21,8 @@ export class FormListNodeBuilder<E extends Entity> {
      * Construit le FormListNode à partir de la configuration renseignée.
      */
     build(_: any): FormListNode<E> {
-        nodeToFormNode(patchNodeEdit(this.node, this.isEdit), this.sourceNode);
+        this.node.$tempEdit = this.isEdit;
+        nodeToFormNode(this.node, this.sourceNode);
 
         // @ts-ignore
         return this.node;
@@ -57,6 +58,7 @@ export class FormListNodeBuilder<E extends Entity> {
 
     /** @internal */
     collect() {
-        return patchNodeEdit(this.node, this.isEdit);
+        this.node.$tempEdit = this.isEdit;
+        return this.node;
     }
 }
