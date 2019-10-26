@@ -1,11 +1,11 @@
 export {
+    ActionsFormProps,
+    ActionsPanelProps,
+    FormActionsBuilder,
     FormNodeOptions,
     makeFormActionsCore,
     makeFormNodeCore,
-    ActionConfig,
-    ActionConfigMultiple,
     FormActions,
-    FormConfig,
     FormListNodeBuilder,
     FormNodeBuilder
 } from "./form";

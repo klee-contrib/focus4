@@ -1,16 +1,15 @@
 import {disposeOnUnmount} from "mobx-react";
 
 import {
-    ActionConfig,
-    ActionConfigMultiple,
     Entity,
     FormActions,
-    FormConfig,
+    FormActionsBuilder,
     FormListNode,
     FormListNodeBuilder,
     FormNode,
     FormNodeBuilder,
     FormNodeOptions,
+    isAnyFormNode,
     isStoreListNode,
     isStoreNode,
     makeFormActionsCore,
@@ -19,6 +18,7 @@ import {
     StoreListNode,
     StoreNode
 } from "@focus4/stores";
+import {ActionConfig, ActionConfigMultiple, FormConfig} from "@focus4/stores/lib/entity/form/actions-legacy";
 
 /** @deprecated Utiliser `makeFormNode(node).build(this)` */
 export function makeFormNode<E extends Entity, U = {}>(
@@ -63,6 +63,57 @@ export function makeFormNode(
     }
 }
 
+/**
+ * Crée les actions d'un formulaire.
+ * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
+ * @param formNode Le FormNode du formulaire.
+ * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
+ * @param config Configuration additionnelle.
+ * @deprecated Utiliser makeFormActions(node).build() à la place.
+ */
+export function makeFormActions<FN extends FormListNode | FormNode>(
+    componentClass: React.Component | null,
+    formNode: FN,
+    actions: ActionConfig<NodeToType<FN>>,
+    config?: FormConfig
+): FormActions;
+export function makeFormActions<
+    FN extends FormListNode | FormNode,
+    S extends {
+        [key: string]: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
+        default: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
+    }
+>(
+    componentClass: React.Component | null,
+    formNode: FN,
+    actions: ActionConfigMultiple<NodeToType<FN>, S>,
+    config?: FormConfig<Extract<keyof S, string>>
+): FormActions<Extract<keyof S, string>>;
+/**
+ * Crée les actions d'un formulaire.
+ * @param formNode Le FormNode du formulaire.
+ */
+export function makeFormActions<FN extends FormListNode | FormNode>(formNode: FN): FormActionsBuilderClass<FN>;
+export function makeFormActions<
+    FN extends FormListNode | FormNode,
+    S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}
+>(
+    firstArg: React.Component | FN | null,
+    formNode?: FN,
+    actions?: ActionConfig<any> | ActionConfigMultiple<any, S>,
+    config: FormConfig = {}
+): any {
+    if (isAnyFormNode(firstArg)) {
+        return new FormActionsBuilder(firstArg);
+    } else {
+        return withDisposer(
+            makeFormActionsCore(formNode as any, actions as any, config),
+            firstArg as any,
+            actions!.getLoadParams
+        );
+    }
+}
+
 class FormListNodeBuilderClass<E extends Entity> extends FormListNodeBuilder<E> {
     constructor(node: StoreListNode<E>) {
         super(node);
@@ -91,52 +142,27 @@ class FormNodeBuilderClass<E extends Entity> extends FormNodeBuilder<E> {
     }
 }
 
-function withDisposer(formNode: any, componentClass: React.Component | null) {
-    if (componentClass) {
+class FormActionsBuilderClass<
+    FN extends FormNode | FormListNode,
+    A extends ReadonlyArray<any> = never,
+    S extends string = never
+> extends FormActionsBuilder<FN, A, S> {
+    constructor(node: FN) {
+        super(node);
+    }
+
+    /**
+     * Construit le FormNode.
+     * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de synchronisation à son démontage.
+     */
+    build(componentClass: React.Component | null) {
+        return withDisposer(super.build({}), componentClass, this.getLoadParams) as FormActions<S>;
+    }
+}
+
+function withDisposer(formNode: any, componentClass: React.Component | null, getLoadParams: any = {}) {
+    if (componentClass && getLoadParams && formNode.dispose) {
         disposeOnUnmount(componentClass, formNode.dispose);
     }
     return formNode;
-}
-
-/**
- * Crée les actions d'un formulaire.
- * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
- * @param formNode Le FormNode du formulaire.
- * @param actions La config d'actions pour le formulaire ({getLoadParams, load, save}).
- * @param config Configuration additionnelle.
- */
-export function makeFormActions<FN extends FormListNode | FormNode>(
-    componentClass: React.Component | null,
-    formNode: FN,
-    actions: ActionConfig<NodeToType<FN>>,
-    config?: FormConfig
-): FormActions;
-export function makeFormActions<
-    FN extends FormListNode | FormNode,
-    S extends {
-        [key: string]: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
-        default: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
-    }
->(
-    componentClass: React.Component | null,
-    formNode: FN,
-    actions: ActionConfigMultiple<NodeToType<FN>, S>,
-    config?: FormConfig<Extract<keyof S, string>>
-): FormActions<Extract<keyof S, string>>;
-export function makeFormActions<
-    FN extends FormListNode | FormNode,
-    S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}
->(
-    componentClass: React.Component | null,
-    formNode: FN,
-    actions: ActionConfig<any> | ActionConfigMultiple<any, S>,
-    config: FormConfig = {}
-) {
-    const formActions = makeFormActionsCore(formNode as any, actions as any, config);
-
-    if (actions.getLoadParams && componentClass && formActions.dispose) {
-        disposeOnUnmount(componentClass, formActions.dispose);
-    }
-
-    return formActions;
 }

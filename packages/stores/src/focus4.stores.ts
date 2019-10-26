@@ -12,8 +12,8 @@ export {
 } from "./collections";
 export {
     $Field,
-    ActionConfig,
-    ActionConfigMultiple,
+    ActionsFormProps,
+    ActionsPanelProps,
     AutocompleteComponents,
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -29,7 +29,7 @@ export {
     FieldEntryType,
     FieldType,
     FormActions,
-    FormConfig,
+    FormActionsBuilder,
     FormEntityField,
     FormListNode,
     FormListNodeBuilder,
