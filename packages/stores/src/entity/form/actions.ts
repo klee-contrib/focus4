@@ -158,7 +158,7 @@ export class FormActionsBuilder<
     }
 
     /** Construit le FormActions. */
-    build(_: any): FormActions<S> {
+    build(): FormActions<S> {
         const {getLoadParams, loadService, saveServices, formNode, prefix, saveNamesForMessages, handlers} = this;
         // On se prépare à construire plusieurs actions de sauvegarde.
         function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {

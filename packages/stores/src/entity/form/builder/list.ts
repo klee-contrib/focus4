@@ -20,7 +20,7 @@ export class FormListNodeBuilder<E extends Entity> {
     /**
      * Construit le FormListNode à partir de la configuration renseignée.
      */
-    build(_: any): FormListNode<E> {
+    build(): FormListNode<E> {
         this.node.$tempEdit = this.isEdit;
         nodeToFormNode(this.node, this.sourceNode);
 
