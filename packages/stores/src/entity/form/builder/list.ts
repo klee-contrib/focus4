@@ -1,7 +1,7 @@
-import {Entity, FormListNode, nodeToFormNode, patchNodeEdit, StoreListNode} from "@focus4/stores";
 import {isFunction} from "lodash";
-import {disposeOnUnmount} from "mobx-react";
 
+import {nodeToFormNode, patchNodeEdit} from "../../store";
+import {Entity, FormListNode, StoreListNode} from "../../types";
 import {clone, FormNodeBuilder} from "./node";
 
 export class FormListNodeBuilder<E extends Entity> {
@@ -19,15 +19,9 @@ export class FormListNodeBuilder<E extends Entity> {
 
     /**
      * Construit le FormListNode à partir de la configuration renseignée.
-     * @param componentClass Le composant (classe) lié au FormListNode, pour disposer la réaction de synchronisation à son démontage.
      */
-    build(componentClass: React.Component | null): FormListNode<E> {
+    build(_: any): FormListNode<E> {
         nodeToFormNode(patchNodeEdit(this.node, this.isEdit), this.sourceNode);
-
-        if (componentClass) {
-            // @ts-ignore
-            disposeOnUnmount(componentClass, this.node.dispose);
-        }
 
         // @ts-ignore
         return this.node;

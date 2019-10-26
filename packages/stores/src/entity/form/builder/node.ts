@@ -1,3 +1,7 @@
+import {isFunction} from "lodash";
+import {extendObservable, observable} from "mobx";
+
+import {nodeToFormNode, patchNodeEdit} from "../../store";
 import {
     Entity,
     FieldEntry,
@@ -6,17 +10,11 @@ import {
     isStoreListNode,
     isStoreNode,
     ListEntry,
-    nodeToFormNode,
     ObjectEntry,
-    patchNodeEdit,
     RecursiveListEntry,
     StoreListNode,
     StoreNode
-} from "@focus4/stores";
-import {isFunction} from "lodash";
-import {extendObservable, observable} from "mobx";
-import {disposeOnUnmount} from "mobx-react";
-
+} from "../../types";
 import {FormEntityFieldBuilder} from "./field";
 import {FormListNodeBuilder} from "./list";
 
@@ -69,15 +67,9 @@ export class FormNodeBuilder<E extends Entity> {
 
     /**
      * Construit le FormNode à partir de la configuration renseignée.
-     * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de synchronisation à son démontage.
      */
-    build(componentClass: React.Component | null): FormNode<E> {
+    build(_: any): FormNode<E> {
         nodeToFormNode(patchNodeEdit(this.node, this.isEdit), this.sourceNode);
-
-        if (componentClass) {
-            // @ts-ignore
-            disposeOnUnmount(componentClass, this.node.dispose);
-        }
 
         // @ts-ignore
         return this.node;

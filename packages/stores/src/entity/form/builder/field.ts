@@ -1,5 +1,8 @@
+import {extendObservable} from "mobx";
+import {ComponentType} from "react";
+
+import {$Field, makeFieldCore, patchFieldCore} from "../../transforms";
 import {
-    $Field,
     BaseAutocompleteProps,
     BaseDisplayProps,
     BaseInputProps,
@@ -9,11 +12,7 @@ import {
     EntityField,
     FieldEntry,
     FieldType
-} from "@focus4/stores";
-import {extendObservable} from "mobx";
-import {ComponentType} from "react";
-
-import {makeField, patchField} from "../transforms";
+} from "../../types";
 
 type DomainType<F extends FieldEntry> = F["domain"] extends Domain<infer T> ? T : never;
 type ComponentPropsType<C extends ComponentType | undefined> = C extends ComponentType<infer P> ? P : never;
@@ -23,7 +22,7 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
     field: EntityField<F>;
 
     constructor(field?: EntityField<F>) {
-        this.field = field || (makeField(null) as any);
+        this.field = field || (makeFieldCore(null) as any);
     }
 
     /**
@@ -56,7 +55,7 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
             | $Field<DomainType<F>, F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>
             | (() => $Field<DomainType<F>, F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>)
     ): FormEntityFieldBuilder<FieldEntry<DomainType<F>, F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>> {
-        patchField(this.field, $field);
+        patchFieldCore(this.field, $field);
         // @ts-ignore
         return this;
     }

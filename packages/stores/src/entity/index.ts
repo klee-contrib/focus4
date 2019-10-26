@@ -5,7 +5,9 @@ export {
     ActionConfig,
     ActionConfigMultiple,
     FormActions,
-    FormConfig
+    FormConfig,
+    FormListNodeBuilder,
+    FormNodeBuilder
 } from "./form";
 export {buildNode, makeEntityStore, nodeToFormNode, patchNodeEdit, toFlatValues} from "./store";
 export {stringFor} from "./string-for";
