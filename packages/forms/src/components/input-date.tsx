@@ -268,6 +268,7 @@ export class InputDate extends React.Component<InputDateProps> {
                     <div data-focus="input-date" data-id={this._inputDateId} className={inputDateStyles.input}>
                         <Input
                             {...inputProps}
+                            {...{autocomplete: "off"}}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                             onChange={value => (this.dateText = value)}
                             onKeyDown={this.handleKeyDown}
