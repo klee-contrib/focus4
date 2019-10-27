@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 
 import {
     Entity,
+    EntityToType,
     FormActions,
     FormActionsBuilder,
     FormListNode,
@@ -20,14 +21,14 @@ import {
 } from "@focus4/stores";
 import {ActionConfig, ActionConfigMultiple, FormConfig} from "@focus4/stores/lib/entity/form/actions-legacy";
 
-/** @deprecated Utiliser `makeFormNode(node).build(this)` */
+/** @deprecated Utiliser `makeFormNode(this, node, builder)` à la place. */
 export function makeFormNode<E extends Entity, U = {}>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
     opts?: FormNodeOptions,
     initializer?: (source: StoreNode<E>) => U
 ): FormListNode<E, U>;
-/** @deprecated Utiliser `makeFormNode(node).build(this)` */
+/** @deprecated Utiliser `makeFormNode(this, node, builder)` à la place. */
 export function makeFormNode<E extends Entity, U = {}>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
@@ -84,7 +85,8 @@ export function makeFormNode(
  */
 export function useFormNode<E extends Entity, NE extends Entity>(
     node: StoreListNode<E>,
-    builder: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>
+    builder: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
+    initialState?: EntityToType<E>[] | (() => EntityToType<E>[])
 ): FormListNode<NE>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
@@ -95,17 +97,30 @@ export function useFormNode<E extends Entity, NE extends Entity>(
  */
 export function useFormNode<E extends Entity, NE extends Entity>(
     node: StoreNode<E>,
-    builder: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>
+    builder: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
+    initialState?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE>;
-export function useFormNode(node: StoreNode | StoreListNode, builder: Function) {
+export function useFormNode(node: StoreNode | StoreListNode, builder: Function, initialState: any) {
     const [formNode] = isStoreListNode(node)
-        ? useState(() => builder(new FormListNodeBuilder(node)).build())
-        : useState(() => builder(new FormNodeBuilder(node)).build());
+        ? useState(() => {
+              const fn = builder(new FormListNodeBuilder(node)).build();
+              if (initialState) {
+                  fn.replaceNodes(isFunction(initialState) ? initialState() : initialState);
+              }
+              return fn;
+          })
+        : useState(() => {
+              const fn = builder(new FormNodeBuilder(node)).build();
+              if (initialState) {
+                  fn.replace(isFunction(initialState) ? initialState() : initialState);
+              }
+              return fn;
+          });
     useEffect(() => formNode.dispose, []);
     return formNode;
 }
 
-/** @deprecated Utiliser makeFormActions(node).build() à la place. */
+/** @deprecated Utiliser makeFormActions(node, builder) à la place. */
 export function makeFormActions<FN extends FormListNode | FormNode>(
     componentClass: React.Component | null,
     formNode: FN,
