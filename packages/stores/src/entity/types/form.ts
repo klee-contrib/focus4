@@ -82,7 +82,7 @@ export interface FormListNode<E extends Entity = any, A = {}> extends IObservabl
     };
 
     /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
-    /** @decprecated Utiliser makeFormNode(node).items() à la place. */
+    /** @deprecated Utiliser makeFormNode(node).items() à la place. */
     $initializer?: (source: StoreNode<E>) => A | void;
 
     /** Fonction de modification d'un objet, appelé à la création. */

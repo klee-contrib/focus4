@@ -46,7 +46,7 @@ export function makeFormNode<E extends Entity, U = {}>(
 export function makeFormNode<E extends Entity, NE extends Entity>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
-    builder: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>
+    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>
 ): FormNode<E>;
 /**
  * Construit un FormListNode à partir d'un StoreListNode.
@@ -59,12 +59,12 @@ export function makeFormNode<E extends Entity, NE extends Entity>(
 export function makeFormNode<E extends Entity, NE extends Entity>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
-    builder: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>
+    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>
 ): FormListNode<E>;
 export function makeFormNode(
     componentClass: React.Component | null,
     node: StoreNode | StoreListNode = {} as StoreNode,
-    opts: FormNodeOptions | Function = {},
+    opts: FormNodeOptions | Function = {isEmpty: true},
     initializer: (source: StoreNode) => {} = _ => ({})
 ): any {
     const formNode = !isFunction(opts)
@@ -85,7 +85,7 @@ export function makeFormNode(
  */
 export function useFormNode<E extends Entity, NE extends Entity>(
     node: StoreListNode<E>,
-    builder: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
+    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
     initialState?: EntityToType<E>[] | (() => EntityToType<E>[])
 ): FormListNode<NE>;
 /**
@@ -97,10 +97,10 @@ export function useFormNode<E extends Entity, NE extends Entity>(
  */
 export function useFormNode<E extends Entity, NE extends Entity>(
     node: StoreNode<E>,
-    builder: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
+    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
     initialState?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE>;
-export function useFormNode(node: StoreNode | StoreListNode, builder: Function, initialState: any) {
+export function useFormNode(node: StoreNode | StoreListNode, builder: Function = (x: any) => x, initialState: any) {
     const [formNode] = isStoreListNode(node)
         ? useState(() => {
               const fn = builder(new FormListNodeBuilder(node)).build();
