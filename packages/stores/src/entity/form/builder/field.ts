@@ -12,7 +12,7 @@ import {
     Domain,
     EntityField,
     FieldEntry,
-    FieldType
+    FieldEntryType
 } from "../../types";
 
 type DomainType<F extends FieldEntry> = F["domain"] extends Domain<infer T> ? T : never;
@@ -78,12 +78,22 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
      * @param get Getter.
      * @param set Setter (optionnel).
      */
-    value(
-        get: () => FieldType<F["fieldType"]> | undefined,
-        set: (value: FieldType<F["fieldType"]> | undefined) => void = () => {
+    value<T>(
+        get: () => T | undefined,
+        set: (value: T | undefined) => void = () => {
             /**/
         }
-    ) {
+    ): FormEntityFieldBuilder<
+        FieldEntry<
+            T,
+            FieldEntryType<T>,
+            ComponentPropsType<F["domain"]["InputComponent"]>,
+            ComponentPropsType<F["domain"]["SelectComponent"]>,
+            ComponentPropsType<F["domain"]["AutocompleteComponent"]>,
+            ComponentPropsType<F["domain"]["DisplayComponent"]>,
+            ComponentPropsType<F["domain"]["LabelComponent"]>
+        >
+    > {
         delete this.field.value;
         extendObservable(this.field, {
             get value() {

@@ -3,6 +3,11 @@ import {extendObservable, observable} from "mobx";
 
 import {nodeToFormNode} from "../../store";
 import {
+    BaseAutocompleteProps,
+    BaseDisplayProps,
+    BaseInputProps,
+    BaseLabelProps,
+    BaseSelectProps,
     Entity,
     FieldEntry,
     FormNode,
@@ -57,7 +62,20 @@ export class FormNodeBuilder<E extends Entity> {
      */
     add<FE extends string, NFE extends FieldEntry>(
         name: FE,
-        builder: (b: FormEntityFieldBuilder<FieldEntry>, node: StoreNode<E>) => FormEntityFieldBuilder<NFE>
+        builder: (
+            b: FormEntityFieldBuilder<
+                FieldEntry<
+                    unknown,
+                    unknown,
+                    BaseInputProps,
+                    BaseSelectProps,
+                    BaseAutocompleteProps,
+                    BaseDisplayProps,
+                    BaseLabelProps
+                >
+            >,
+            node: StoreNode<E>
+        ) => FormEntityFieldBuilder<NFE>
     ): FormNodeBuilder<E & {readonly fields: {[P in FE]: NFE}}> {
         // @ts-ignore
         this.node[name] = builder(new FormEntityFieldBuilder(), this.node).collect();

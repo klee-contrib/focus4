@@ -6,7 +6,7 @@ import {action, comparer, computed, extendObservable, Lambda, observable, reacti
 import {toFlatValues} from "../store";
 import {FormListNode, FormNode, isStoreNode, NodeToType} from "../types";
 
-type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save" | "cancel";
+type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
 
 /** Props passées au composant de formulaire. */
 export interface ActionsFormProps {

@@ -47,7 +47,7 @@ export function makeFormNode<E extends Entity, NE extends Entity>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>
-): FormNode<E>;
+): FormNode<NE>;
 /**
  * Construit un FormListNode à partir d'un StoreListNode.
  * Le FormListNode est un clone d'un StoreListNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
@@ -60,7 +60,7 @@ export function makeFormNode<E extends Entity, NE extends Entity>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>
-): FormListNode<E>;
+): FormListNode<NE>;
 export function makeFormNode(
     componentClass: React.Component | null,
     node: StoreNode | StoreListNode = {} as StoreNode,
