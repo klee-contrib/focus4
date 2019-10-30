@@ -16,9 +16,9 @@
     },
     "dependencies": {
         "@types/lodash": "4.14.144",
-        "@types/react": "16.9.9",
-        "@types/uuid": "3.4.5",
-        "i18next": "17.2.0",
+        "@types/react": "16.9.11",
+        "@types/uuid": "3.4.6",
+        "i18next": "19.0.0",
         "lodash": "4.17.15",
         "mobx": "4.14.1",
         "tslib": "1.10.0",
