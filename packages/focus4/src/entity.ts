@@ -14,7 +14,6 @@ export {
     selectFor
 } from "@focus4/forms";
 export {
-    ActionConfig,
     Domain,
     Entity,
     EntityField,

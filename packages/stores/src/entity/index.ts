@@ -1,11 +1,13 @@
 export {
+    ActionsFormProps,
+    ActionsPanelProps,
+    FormActionsBuilder,
     FormNodeOptions,
     makeFormActionsCore,
     makeFormNodeCore,
-    ActionConfig,
-    ActionConfigMultiple,
     FormActions,
-    FormConfig
+    FormListNodeBuilder,
+    FormNodeBuilder
 } from "./form";
 export {buildNode, makeEntityStore, nodeToFormNode, patchNodeEdit, toFlatValues} from "./store";
 export {stringFor} from "./string-for";
@@ -32,6 +34,7 @@ export {
     FormNode,
     ListEntry,
     ObjectEntry,
+    NodeToType,
     RecursiveListEntry,
     StoreListNode,
     StoreNode,

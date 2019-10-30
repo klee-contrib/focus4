@@ -103,12 +103,7 @@ export function fromField<
     return fromFieldCore(field, $field);
 }
 
-/**
- * Patche un `EntityField` pour modifier ses métadonnées (inclus tout ce qui est définit dans le domaine). Cette fonction **MODIFIE** le champ donné.
- * @param field Le champ.
- * @param $field Les métadonnées à remplacer.
- * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
- */
+/** @deprecated Utiliser `makeFormNode(node).patch() à la place.` */
 export function patchField<
     DT,
     FT extends FieldEntryType<DT> = FieldEntryType<DT>,

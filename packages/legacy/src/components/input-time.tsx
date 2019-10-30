@@ -212,6 +212,7 @@ export class InputTime extends React.Component<InputTimeProps> {
                     <div data-focus="input-time" data-id={this._inputTimeId} className={inputDateStyles.input}>
                         <Input
                             {...inputProps}
+                            {...{autocomplete: "off"}}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                             onChange={(value: string) => (this.timeText = value)}
                             onKeyDown={this.handleKeyDown}

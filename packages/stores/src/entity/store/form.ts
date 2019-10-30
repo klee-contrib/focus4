@@ -45,7 +45,7 @@ export function nodeToFormNode<E extends Entity = any, U = {}>(
 
     (node as any).reset = action("formNode.reset", () => {
         node.clear();
-        replaceNode(node as any, sourceNode as any);
+        return replaceNode(node as any, sourceNode as any);
     });
 
     (node as any).sourceNode = sourceNode;
@@ -193,11 +193,7 @@ export function nodeToFormNode<E extends Entity = any, U = {}>(
     }
 }
 
-/**
- * Ajoute une condition d'édition à un StoreNode (dans un FormNode).
- * @param node Le noeud de store.
- * @param isEdit L'état initial ou la condition d'édition.
- */
+/** @deprecated Utiliser `new Form(List)NodeBuilder(node).edit() à la place.` */
 export function patchNodeEdit<E extends Entity = any, U = {}>(
     node: StoreNode<E> | StoreListNode<E, U>,
     isEdit: boolean | (() => boolean)
