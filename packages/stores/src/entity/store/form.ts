@@ -33,8 +33,8 @@ import {getNodeForList, replaceNode} from "./store";
  * @param sourceNode Le node origine du FormNode.
  * @param parentNode Le node parent.
  */
-export function nodeToFormNode<E extends Entity = any, U = {}>(
-    node: StoreNode<E> & U | StoreListNode<E, U>,
+export function nodeToFormNode<E extends Entity = any>(
+    node: StoreNode<E> | StoreListNode<E>,
     sourceNode: StoreNode<E> | StoreListNode<E>,
     parentNode?: FormNode | FormListNode
 ) {
@@ -194,8 +194,8 @@ export function nodeToFormNode<E extends Entity = any, U = {}>(
 }
 
 /** @deprecated Utiliser `new Form(List)NodeBuilder(node).edit() à la place.` */
-export function patchNodeEdit<E extends Entity = any, U = {}>(
-    node: StoreNode<E> | StoreListNode<E, U>,
+export function patchNodeEdit<E extends Entity = any>(
+    node: StoreNode<E> | StoreListNode<E>,
     isEdit: boolean | (() => boolean)
 ) {
     node.$tempEdit = isEdit;

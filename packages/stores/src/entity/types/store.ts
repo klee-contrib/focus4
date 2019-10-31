@@ -1,15 +1,6 @@
 import {IObservableArray} from "mobx";
 
-import {
-    Entity,
-    EntityField,
-    EntityToType,
-    FieldEntry,
-    FieldType,
-    ListEntry,
-    ObjectEntry,
-    RecursiveListEntry
-} from "./entity";
+import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
 export type EntityToNode<E extends Entity> = {
@@ -23,21 +14,6 @@ export type EntityToNode<E extends Entity> = {
         ? StoreListNode<E>
         : never;
 };
-
-/** Génère l'objet JS "normal" équivalent à un noeud de store. */
-export type NodeToType<T> = T extends StoreListNode<infer LE>
-    ? EntityToType<LE>[]
-    : T extends StoreNode<infer OE>
-    ? EntityToType<OE>
-    : {
-          [P in keyof T]?: T[P] extends EntityField<infer F>
-              ? FieldType<F["fieldType"]>
-              : T[P] extends StoreNode<infer sOE>
-              ? EntityToType<sOE>
-              : T[P] extends StoreListNode<infer sLE>
-              ? EntityToType<sLE>[]
-              : T[P];
-      };
 
 /** Noeud de store simple. */
 export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
@@ -56,7 +32,7 @@ export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<E extends Entity = any, A = {}> extends IObservableArray<StoreNode<E>> {
+export interface StoreListNode<E extends Entity = any> extends IObservableArray<StoreNode<E>> {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
@@ -66,7 +42,7 @@ export interface StoreListNode<E extends Entity = any, A = {}> extends IObservab
 
     /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
     /** @deprecated Utiliser makeFormNode(node).items() à la place. */
-    $initializer?: (source: StoreNode<E>) => A | void;
+    $initializer?: (source: StoreNode<E>) => {} | void;
 
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */
@@ -76,8 +52,8 @@ export interface StoreListNode<E extends Entity = any, A = {}> extends IObservab
     pushNode(...items: EntityToType<E>[]): number;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: EntityToType<E>[]): StoreListNode<E, A>;
+    replaceNodes(data: EntityToType<E>[]): StoreListNode<E>;
 
     /** Met à jour le noeud de liste à partir de la liste fournie. */
-    setNodes(data: EntityToType<E>[]): StoreListNode<E, A>;
+    setNodes(data: EntityToType<E>[]): StoreListNode<E>;
 }

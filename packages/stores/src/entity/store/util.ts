@@ -1,13 +1,24 @@
 import {isUndefined, mapValues, omitBy} from "lodash";
 import {isComputedProp} from "mobx";
 
-import {isEntityField, isStoreListNode, isStoreNode, NodeToType} from "../types";
+import {
+    FormListNode,
+    FormNode,
+    isEntityField,
+    isStoreListNode,
+    isStoreNode,
+    NodeToType,
+    StoreListNode,
+    StoreNode
+} from "../types";
 
 /**
  * Met à plat un noeud de store pour récupèrer sa valeur "brute".
  * @param entityStoreItem Le noeud de store à mettre à plat.
  */
-export function toFlatValues<T extends object>(storeNode: T): NodeToType<T> {
+export function toFlatValues<SN extends FormNode | FormListNode | StoreNode | StoreListNode>(
+    storeNode: SN
+): NodeToType<SN> {
     // Cas entrée liste : on appelle `toFlatValues` sur chaque élément.
     if (isStoreListNode(storeNode)) {
         return storeNode.map(toFlatValues) as any;

@@ -22,20 +22,20 @@ export interface FormNodeOptions {
 }
 
 /** @deprecated Utiliser `new Form(List)NodeBuilder(node).build() à la place.` */
-export function makeFormNodeCore<E extends Entity, U = {}>(
+export function makeFormNodeCore<E extends Entity>(
     node: StoreListNode<E>,
     opts?: FormNodeOptions,
-    initializer?: (source: StoreNode<E>) => U
-): FormListNode<E, U>;
-export function makeFormNodeCore<E extends Entity, U = {}>(
+    initializer?: (source: StoreNode<E>) => {}
+): FormListNode<E>;
+export function makeFormNodeCore<E extends Entity>(
     node: StoreNode<E>,
     opts?: FormNodeOptions,
-    initializer?: (source: StoreNode<E>) => U
-): FormNode<E, U>;
-export function makeFormNodeCore<E extends Entity, U = {}>(
+    initializer?: (source: StoreNode<E>) => {}
+): FormNode<E>;
+export function makeFormNodeCore<E extends Entity>(
     node: StoreNode<E> | StoreListNode<E>,
     {isEdit, isEmpty}: FormNodeOptions = {},
-    initializer: (source: StoreNode<E>) => U = _ => ({} as U)
+    initializer: (source: StoreNode<E>) => {} = _ => ({})
 ) {
     if (isAnyFormNode(node)) {
         throw new Error("Impossible de créer un FormNode à partir d'un autre FormNode.");

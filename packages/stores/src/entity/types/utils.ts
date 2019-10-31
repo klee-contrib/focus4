@@ -1,8 +1,19 @@
 import {isObservableArray} from "mobx";
 
-import {Entity, EntityField} from "./entity";
+import {Entity, EntityField, EntityToType} from "./entity";
 import {FormListNode, FormNode} from "./form";
 import {StoreListNode, StoreNode} from "./store";
+
+/** Génère l'objet JS "normal" équivalent à un noeud de store. */
+export type NodeToType<SN> = SN extends FormListNode<infer LEF>
+    ? EntityToType<LEF>[]
+    : SN extends FormNode<infer OEF>
+    ? EntityToType<OEF>
+    : SN extends StoreListNode<infer LE>
+    ? EntityToType<LE>[]
+    : SN extends StoreNode<infer OE>
+    ? EntityToType<OE>
+    : never;
 
 export function isEntityField(data: any): data is EntityField {
     return data && !!(data as EntityField).$field;

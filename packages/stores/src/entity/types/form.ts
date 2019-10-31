@@ -1,39 +1,38 @@
 import {IObservableArray, Lambda} from "mobx";
 
-import {Entity, EntityField, EntityToType, FieldEntry} from "./entity";
-import {NodeToType, StoreListNode, StoreNode} from "./store";
+import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
+import {StoreListNode, StoreNode} from "./store";
 
-/** Transforme les nodes et fields d'un noeud en leur équivalent dans un formulaire. */
-export type NodeToForm<E extends Entity, A = {}> = {
-    readonly [P in keyof (StoreNode<E> & A)]: (StoreNode<E> & A)[P] extends StoreNode<infer OE>
+/** Génère les entrées de noeud de formulaire équivalent à une entité. */
+export type EntityToForm<E extends Entity> = {
+    readonly [P in keyof E["fields"]]: E["fields"][P] extends FieldEntry
+        ? FormEntityField<E["fields"][P]>
+        : E["fields"][P] extends ObjectEntry<infer OE>
         ? FormNode<OE>
-        : (StoreNode<E> & A)[P] extends StoreListNode<infer LE, infer LA>
-        ? FormListNode<LE, LA>
-        : (StoreNode<E> & A)[P] extends EntityField<infer F>
-        ? FormEntityField<F>
-        : (StoreNode<E> & A)[P];
+        : E["fields"][P] extends ListEntry<infer LE>
+        ? FormListNode<LE>
+        : E["fields"][P] extends RecursiveListEntry
+        ? FormListNode<E>
+        : never;
 };
-
 /** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
-export type NodeToErrors<E extends Entity, A = {}> = Omit<
+export type NodeToErrors<E extends Entity> = Omit<
     {
-        readonly [P in keyof (FormNode<E> & A)]?: (FormNode<E> & A)[P] extends FormNode<infer OE>
+        readonly [P in keyof (FormNode<E>)]?: (FormNode<E>)[P] extends FormNode<infer OE>
             ? NodeToErrors<OE>
-            : (FormNode<E> & A)[P] extends FormListNode<infer LE, infer LA>
-            ? NodeToErrors<LE, LA>[]
-            : (FormNode<E> & A)[P] extends FormEntityField
+            : (FormNode<E>)[P] extends FormListNode<infer LE>
+            ? NodeToErrors<LE>[]
+            : (FormNode<E>)[P] extends FormEntityField
             ? string
             : never;
     },
     {
-        [P in keyof (FormNode<E> & A)]: (FormNode<E> & A)[P] extends FormNode | FormListNode | FormEntityField
-            ? never
-            : P;
-    }[keyof (FormNode<E> & A)]
+        [P in keyof (FormNode<E>)]: (FormNode<E>)[P] extends FormNode | FormListNode | FormEntityField ? never : P;
+    }[keyof (FormNode<E>)]
 >;
 
 /** Champs additionnels pour un noeud de formulaire. */
-export type FormNode<E extends Entity = any, A = {}> = NodeToForm<E, A> & {
+export type FormNode<E extends Entity = any> = EntityToForm<E> & {
     /** Données liée à un FormNode. */
     readonly form: {
         /** Précise si le formulaire associé est en édition ou non. */
@@ -43,29 +42,29 @@ export type FormNode<E extends Entity = any, A = {}> = NodeToForm<E, A> & {
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: NodeToErrors<E, A>;
+        readonly errors: NodeToErrors<E>;
     };
 
     /** Vide l'objet (récursivement). */
-    clear(): FormNode<E, A>;
+    clear(): FormNode<E>;
 
     /** Désactive la synchronisation entre ce FormNode et son noeud source. */
     dispose(): void;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<E>): FormNode<E, A>;
+    replace(data: EntityToType<E>): FormNode<E>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
-    reset(): FormNode<E, A>;
+    reset(): FormNode<E>;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<E>): FormNode<E, A>;
+    set(data: EntityToType<E>): FormNode<E>;
 
     /** StoreNode original. */
     readonly sourceNode: StoreNode<E>;
 };
 
-export interface FormListNode<E extends Entity = any, A = {}> extends IObservableArray<FormNode<E, A>> {
+export interface FormListNode<E extends Entity = any> extends IObservableArray<FormNode<E>> {
     /** Métadonnées. */
     readonly $entity: E;
 
@@ -78,12 +77,12 @@ export interface FormListNode<E extends Entity = any, A = {}> extends IObservabl
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: NodeToErrors<E, A>[];
+        readonly errors: NodeToErrors<E>[];
     };
 
     /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
     /** @deprecated Utiliser makeFormNode(node).items() à la place. */
-    $initializer?: (source: StoreNode<E>) => A | void;
+    $initializer?: (source: StoreNode<E>) => {} | void;
 
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */
@@ -100,13 +99,13 @@ export interface FormListNode<E extends Entity = any, A = {}> extends IObservabl
     pushNode(...items: EntityToType<E>[]): number;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: (EntityToType<E> & NodeToType<A>)[]): FormListNode<E, A>;
+    replaceNodes(data: EntityToType<E>[]): FormListNode<E>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
-    reset(): void;
+    reset(): FormListNode<E>;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    setNodes(data: (EntityToType<E> & NodeToType<A>)[]): FormListNode<E, A>;
+    setNodes(data: EntityToType<E>[]): FormListNode<E>;
 
     /** StoreNode original. */
     readonly sourceNode: StoreListNode<E>;

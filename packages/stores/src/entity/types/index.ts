@@ -22,8 +22,9 @@ export {
     RecursiveListEntry
 } from "./entity";
 export {FormEntityField, FormListNode, FormNode} from "./form";
-export {NodeToType, StoreListNode, StoreNode} from "./store";
+export {StoreListNode, StoreNode} from "./store";
 export {
+    NodeToType,
     isEntityField,
     isAnyFormNode,
     isFormListNode,

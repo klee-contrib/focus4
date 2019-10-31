@@ -21,32 +21,20 @@ import {
 } from "@focus4/stores";
 import {ActionConfig, ActionConfigMultiple, FormConfig} from "@focus4/stores/lib/entity/form/actions-legacy";
 
-/** @deprecated Utiliser `makeFormNode(this, node, builder)` à la place. */
-export function makeFormNode<E extends Entity, U = {}>(
-    componentClass: React.Component | null,
-    node: StoreListNode<E>,
-    opts?: FormNodeOptions,
-    initializer?: (source: StoreNode<E>) => U
-): FormListNode<E, U>;
-/** @deprecated Utiliser `makeFormNode(this, node, builder)` à la place. */
-export function makeFormNode<E extends Entity, U = {}>(
-    componentClass: React.Component | null,
-    node: StoreNode<E>,
-    opts?: FormNodeOptions,
-    initializer?: (source: StoreNode<E>) => U
-): FormNode<E, U>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
  * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
  * @param node Le noeud de base
- * @param builder Le configurateur.
+ * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
  */
 export function makeFormNode<E extends Entity, NE extends Entity>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
-    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>
+    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
+    initialData?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE>;
 /**
  * Construit un FormListNode à partir d'un StoreListNode.
@@ -54,24 +42,53 @@ export function makeFormNode<E extends Entity, NE extends Entity>(
  * Toute mise à jour du StoreListNode réinitialise le FormListNode.
  * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
  * @param node Le noeud de base
- * @param builder Le configurateur.
+ * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
  */
 export function makeFormNode<E extends Entity, NE extends Entity>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
-    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>
+    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
+    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
 ): FormListNode<NE>;
+/** @deprecated Utiliser `makeFormNode(this, node, builder)` à la place. */
+export function makeFormNode<E extends Entity>(
+    componentClass: React.Component | null,
+    node: StoreListNode<E>,
+    opts?: FormNodeOptions,
+    initializer?: (source: StoreNode<E>) => {}
+): FormListNode<E>;
+/** @deprecated Utiliser `makeFormNode(this, node, builder)` à la place. */
+export function makeFormNode<E extends Entity>(
+    componentClass: React.Component | null,
+    node: StoreNode<E>,
+    opts?: FormNodeOptions,
+    initializer?: (source: StoreNode<E>) => {}
+): FormNode<E>;
 export function makeFormNode(
     componentClass: React.Component | null,
     node: StoreNode | StoreListNode = {} as StoreNode,
     opts: FormNodeOptions | Function = {isEmpty: true},
-    initializer: (source: StoreNode) => {} = _ => ({})
+    initializer: object = () => {
+        /* */
+    }
 ): any {
-    const formNode = !isFunction(opts)
-        ? makeFormNodeCore(node as any, opts as any, initializer)
-        : isStoreListNode(node)
-        ? opts(new FormListNodeBuilder(node)).build()
-        : opts(new FormNodeBuilder(node)).build();
+    let formNode;
+    if (isFunction(opts)) {
+        if (isStoreListNode(node)) {
+            formNode = opts(new FormListNodeBuilder(node)).build();
+            if (initializer) {
+                formNode.replaceNodes(isFunction(initializer) ? initializer() : initializer);
+            }
+        } else {
+            formNode = opts(new FormNodeBuilder(node)).build();
+            if (initializer) {
+                formNode.replace(isFunction(initializer) ? initializer() : initializer);
+            }
+        }
+    } else {
+        formNode = makeFormNodeCore(node as any, opts as any, initializer as any);
+    }
 
     return withDisposer(formNode, componentClass);
 }
@@ -82,11 +99,12 @@ export function makeFormNode(
  * Toute mise à jour du StoreListNode réinitialise le FormListNode.
  * @param node Le noeud de base
  * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
  */
 export function useFormNode<E extends Entity, NE extends Entity>(
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
-    initialState?: EntityToType<E>[] | (() => EntityToType<E>[])
+    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
 ): FormListNode<NE>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
@@ -94,25 +112,26 @@ export function useFormNode<E extends Entity, NE extends Entity>(
  * Toute mise à jour du StoreNode réinitialise le FormNode.
  * @param node Le noeud de base
  * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
  */
 export function useFormNode<E extends Entity, NE extends Entity>(
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
-    initialState?: EntityToType<E> | (() => EntityToType<E>)
+    initialData?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE>;
-export function useFormNode(node: StoreNode | StoreListNode, builder: Function = (x: any) => x, initialState: any) {
+export function useFormNode(node: StoreNode | StoreListNode, builder: Function = (x: any) => x, initialData: any) {
     const [formNode] = isStoreListNode(node)
         ? useState(() => {
               const fn = builder(new FormListNodeBuilder(node)).build();
-              if (initialState) {
-                  fn.replaceNodes(isFunction(initialState) ? initialState() : initialState);
+              if (initialData) {
+                  fn.replaceNodes(isFunction(initialData) ? initialData() : initialData);
               }
               return fn;
           })
         : useState(() => {
               const fn = builder(new FormNodeBuilder(node)).build();
-              if (initialState) {
-                  fn.replace(isFunction(initialState) ? initialState() : initialState);
+              if (initialData) {
+                  fn.replace(isFunction(initialData) ? initialData() : initialData);
               }
               return fn;
           });
@@ -120,6 +139,21 @@ export function useFormNode(node: StoreNode | StoreListNode, builder: Function =
     return formNode;
 }
 
+/**
+ * Crée les actions d'un formulaire.
+ * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
+ * @param formNode Le FormNode du formulaire.
+ * @param builder Le configurateur.
+ */
+export function makeFormActions<
+    FN extends FormNode | FormListNode,
+    A extends ReadonlyArray<any> = never,
+    S extends string = never
+>(
+    componentClass: React.Component | null,
+    formNode: FN,
+    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, S>
+): FormActions<S>;
 /** @deprecated Utiliser makeFormActions(node, builder) à la place. */
 export function makeFormActions<FN extends FormListNode | FormNode>(
     componentClass: React.Component | null,
@@ -139,21 +173,6 @@ export function makeFormActions<
     actions: ActionConfigMultiple<NodeToType<FN>, S>,
     config?: FormConfig<Extract<keyof S, string>>
 ): FormActions<Extract<keyof S, string>>;
-/**
- * Crée les actions d'un formulaire.
- * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
- * @param formNode Le FormNode du formulaire.
- * @param builder Le configurateur.
- */
-export function makeFormActions<
-    FN extends FormNode | FormListNode,
-    A extends ReadonlyArray<any> = never,
-    S extends string = never
->(
-    componentClass: React.Component | null,
-    formNode: FN,
-    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, S>
-): FormActions<S>;
 export function makeFormActions<
     FN extends FormListNode | FormNode,
     S extends {[key: string]: (entity: any) => Promise<any>; default: (entity: any) => Promise<any>}

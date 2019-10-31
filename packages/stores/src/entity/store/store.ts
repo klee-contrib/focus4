@@ -11,7 +11,6 @@ import {
     isStoreListNode,
     isStoreNode,
     ListEntry,
-    NodeToType,
     ObjectEntry,
     RecursiveListEntry,
     StoreListNode,
@@ -19,46 +18,33 @@ import {
 } from "../types";
 import {nodeToFormNode} from "./form";
 
-/** Récupère les noeuds de store associés aux entités définies dans T. */
-export type ExtractEntities<T> = {
-    readonly [P in keyof T]: T[P] extends Entity
-        ? StoreNode<T[P]>
-        : T[P] extends Entity[]
-        ? StoreListNode<T[P][0]>
-        : T[P];
-};
-
-/** Récupère les types associés aux entités définies dans T. */
-export type ExtractTypes<T> = Partial<
-    {
-        [P in keyof T]: T[P] extends Entity
-            ? EntityToType<T[P]>
+export interface ConfigToEntities<T> {
+    readonly name: string;
+    readonly fields: {
+        readonly [P in keyof T]: T[P] extends Entity
+            ? ObjectEntry<T[P]>
             : T[P] extends Entity[]
-            ? EntityToType<T[P][0]>[]
-            : NodeToType<T[P]>;
-    }
->;
-
-/** Définition d'un store d'entité à partir des entités définies dans T. */
-export type EntityStore<T = any> = ExtractEntities<T> & {
-    clear(): EntityStore<T>;
-    replace(data: ExtractTypes<T>): EntityStore<T>;
-    set(data: ExtractTypes<T>): EntityStore<T>;
-};
+            ? ListEntry<T[P][0]>
+            : T[P] extends StoreNode<infer E>
+            ? ObjectEntry<E>
+            : never;
+    };
+}
 
 /**
  * Construit un store d'entité à partir de la config et les entités données.
  * Le store d'entité inclut les métadonnées pour tous les champs des entités utilsées.
  * @param config Un objet dont les propriétés décrivent tous les noeuds du store.
  */
-export function makeEntityStore<T extends Record<string, Entity | Entity[] | EntityStore>>(config: T): EntityStore<T> {
-    const entityStore: EntityStore<T> = {} as any;
+export function makeEntityStore<C extends Record<string, Entity | Entity[] | StoreNode>>(
+    config: C
+): StoreNode<ConfigToEntities<C>> {
+    const entityStore: StoreNode<ConfigToEntities<C>> = {} as any;
 
     // On construit chaque noeud à partir de la config.
     for (const key in config) {
-        const item = config[key] as Entity | Entity[] | EntityStore;
-        if (isAnyStoreNode(item)) {
-            // On fait passer tels quels les éventuels champs additionnels (ex: store composé).
+        const item = config[key] as Entity | Entity[] | StoreNode;
+        if (isStoreNode(item)) {
             entityStore[key] = item as any;
         } else {
             entityStore[key] = buildNode(item as any) as any;
@@ -71,15 +57,15 @@ export function makeEntityStore<T extends Record<string, Entity | Entity[] | Ent
         Typescript empêchera d'appeler la fonction dans le mauvais contexte de toute façon.
     */
 
-    entityStore.clear = action("node.clear", function clear(this: EntityStore<T>) {
+    entityStore.clear = action("node.clear", function clear(this: StoreNode<ConfigToEntities<C>>) {
         return clearNode(this as any) as any;
     });
 
-    entityStore.replace = action("node.replace", function replace(this: EntityStore<T>, data: {}) {
+    entityStore.replace = action("node.replace", function replace(this: StoreNode<ConfigToEntities<C>>, data: {}) {
         return replaceNode(this as any, data) as any;
     });
 
-    entityStore.set = action("node.set", function set(this: EntityStore<T>, data: {}) {
+    entityStore.set = action("node.set", function set(this: StoreNode<ConfigToEntities<C>>, data: {}) {
         return setNode(this as any, data) as any;
     });
 
