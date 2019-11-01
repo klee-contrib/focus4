@@ -84,15 +84,17 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
             /**/
         }
     ): FormEntityFieldBuilder<
-        FieldEntry<
-            T,
-            FieldEntryType<T>,
-            ComponentPropsType<F["domain"]["InputComponent"]>,
-            ComponentPropsType<F["domain"]["SelectComponent"]>,
-            ComponentPropsType<F["domain"]["AutocompleteComponent"]>,
-            ComponentPropsType<F["domain"]["DisplayComponent"]>,
-            ComponentPropsType<F["domain"]["LabelComponent"]>
-        >
+        DomainType<F> extends T
+            ? F
+            : FieldEntry<
+                  T,
+                  FieldEntryType<T>,
+                  ComponentPropsType<F["domain"]["InputComponent"]>,
+                  ComponentPropsType<F["domain"]["SelectComponent"]>,
+                  ComponentPropsType<F["domain"]["AutocompleteComponent"]>,
+                  ComponentPropsType<F["domain"]["DisplayComponent"]>,
+                  ComponentPropsType<F["domain"]["LabelComponent"]>
+              >
     > {
         delete this.field.value;
         extendObservable(this.field, {
@@ -103,6 +105,7 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
                 set(v);
             }
         });
+        // @ts-ignore
         return this;
     }
 
