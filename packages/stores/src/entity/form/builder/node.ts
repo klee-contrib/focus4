@@ -47,7 +47,7 @@ export class FormNodeBuilder<E extends Entity> {
     /** @internal */
     sourceNode: StoreNode<E>;
     /** @internal */
-    isEdit: boolean | (() => boolean) = false;
+    isEdit?: boolean | (() => boolean);
 
     constructor(node: StoreNode<E>) {
         this.node = clone(node);
@@ -87,7 +87,7 @@ export class FormNodeBuilder<E extends Entity> {
      * Construit le FormNode à partir de la configuration renseignée.
      */
     build(): FormNode<E> {
-        this.node.$tempEdit = this.isEdit;
+        this.node.$tempEdit = this.isEdit || false;
         nodeToFormNode(this.node, this.sourceNode);
 
         // @ts-ignore
