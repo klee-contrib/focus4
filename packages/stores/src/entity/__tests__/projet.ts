@@ -5,19 +5,16 @@ export type Projet = EntityToType<typeof ProjetEntity>;
 export type ProjetNode = StoreNode<typeof ProjetEntity>;
 
 export const ProjetEntity = {
-    name: "projet",
-    fields: {
-        id: {
-            type: "field",
-            fieldType: "number",
-            domain: {} as Domain<number>,
-            isRequired: false,
-            name: "id",
-            label: "projet.id"
-        },
-        ligneList: {
-            type: "list",
-            entity: LigneEntity
-        }
+    id: {
+        type: "field",
+        fieldType: "number",
+        domain: {} as Domain<number>,
+        isRequired: false,
+        name: "id",
+        label: "projet.id"
+    },
+    ligneList: {
+        type: "list",
+        entity: LigneEntity
     }
 } as const;

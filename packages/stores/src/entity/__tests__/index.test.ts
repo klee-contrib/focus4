@@ -48,16 +48,16 @@ const projetTest = {ligneList: [{id: 5}, {id: 6}, {id: 7}]};
 describe("EntityStore: Création", () => {
     const store = getStore();
 
-    const {id, numero, montant} = OperationEntity.fields;
+    const {id, numero, montant} = OperationEntity;
     test("L'entrée 'operation' a bien la forme attendue", () =>
         expect(store.operation).toEqual({
             id: {$field: id, value: undefined},
             numero: {$field: numero, value: undefined},
             montant: {$field: montant, value: undefined},
             structure: {
-                id: {$field: StructureEntity.fields.id, value: undefined},
-                nom: {$field: StructureEntity.fields.nom, value: undefined},
-                siret: {$field: StructureEntity.fields.siret, value: undefined},
+                id: {$field: StructureEntity.id, value: undefined},
+                nom: {$field: StructureEntity.nom, value: undefined},
+                siret: {$field: StructureEntity.siret, value: undefined},
                 set: store.operation.structure.set,
                 clear: store.operation.structure.clear,
                 replace: store.operation.structure.replace
@@ -77,7 +77,7 @@ describe("EntityStore: Création", () => {
         expect(store.projetTest.ligneList.$entity).toEqual(LigneEntity));
 
     test("Le sous-store est bien accessible", () =>
-        expect(store.subStore.structure.id.$field).toEqual(StructureEntity.fields.id));
+        expect(store.subStore.structure.id.$field).toEqual(StructureEntity.id));
 });
 
 describe("EntityStore: Replace global", () => {
@@ -157,7 +157,7 @@ describe("EntityStore: Ajout élément dans une liste", () => {
 
     test("La liste 'structureList' possède bien un élément de plus.", () => expect(store.structureList.length).toBe(4));
     test("L'élément ajouté est bien un node avec les bonnes métadonnées.", () =>
-        expect(store.structureList[3].id.$field).toEqual(StructureEntity.fields.id));
+        expect(store.structureList[3].id.$field).toEqual(StructureEntity.id));
     test("L'élement ajouté possède bien les valeurs attendues", () => expect(store.structureList[3].id.value).toBe(8));
 });
 

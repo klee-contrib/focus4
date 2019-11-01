@@ -5,13 +5,13 @@ import {StoreListNode, StoreNode} from "./store";
 
 /** Génère les entrées de noeud de formulaire équivalent à une entité. */
 export type EntityToForm<E extends Entity> = {
-    readonly [P in keyof E["fields"]]: E["fields"][P] extends FieldEntry
-        ? FormEntityField<E["fields"][P]>
-        : E["fields"][P] extends ObjectEntry<infer OE>
+    readonly [P in keyof E]: E[P] extends FieldEntry
+        ? FormEntityField<E[P]>
+        : E[P] extends ObjectEntry<infer OE>
         ? FormNode<OE>
-        : E["fields"][P] extends ListEntry<infer LE>
+        : E[P] extends ListEntry<infer LE>
         ? FormListNode<LE>
-        : E["fields"][P] extends RecursiveListEntry
+        : E[P] extends RecursiveListEntry
         ? FormListNode<E>
         : never;
 };

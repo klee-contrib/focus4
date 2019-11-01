@@ -4,13 +4,13 @@ import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, R
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
 export type EntityToNode<E extends Entity> = {
-    readonly [P in keyof E["fields"]]: E["fields"][P] extends FieldEntry
-        ? EntityField<E["fields"][P]>
-        : E["fields"][P] extends ObjectEntry<infer OE>
+    readonly [P in keyof E]: E[P] extends FieldEntry
+        ? EntityField<E[P]>
+        : E[P] extends ObjectEntry<infer OE>
         ? StoreNode<OE>
-        : E["fields"][P] extends ListEntry<infer LE>
+        : E[P] extends ListEntry<infer LE>
         ? StoreListNode<LE>
-        : E["fields"][P] extends RecursiveListEntry
+        : E[P] extends RecursiveListEntry
         ? StoreListNode<E>
         : never;
 };

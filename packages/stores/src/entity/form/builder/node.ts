@@ -23,15 +23,9 @@ import {
 import {FormEntityFieldBuilder} from "./field";
 import {FormListNodeBuilder} from "./list";
 
-type FieldsOf<E extends Entity> = {
-    [P in keyof E["fields"]]: E["fields"][P] extends FieldEntry ? P : never;
-}[keyof E["fields"]];
-type ObjectsOf<E extends Entity> = {
-    [P in keyof E["fields"]]: E["fields"][P] extends ObjectEntry ? P : never;
-}[keyof E["fields"]];
-type ListsOf<E extends Entity> = {
-    [P in keyof E["fields"]]: E["fields"][P] extends ListEntry | RecursiveListEntry ? P : never;
-}[keyof E["fields"]];
+type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
+type ObjectsOf<E extends Entity> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
+type ListsOf<E extends Entity> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
 
 type EntryToEntity<E> = E extends ObjectEntry<infer E1>
     ? E1
@@ -109,14 +103,14 @@ export class FormNodeBuilder<E extends Entity> {
      * @param value Etat d'édition initial.
      * @param params Les champs.
      */
-    edit(value: boolean, ...params: (keyof E["fields"])[]): FormNodeBuilder<E>;
+    edit(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E>;
     /**
      * Force l'état d'édition de plusieurs champs/noeuds du FormNode.
      * @param value Condition d'édition.
      * @param params Les champs.
      */
-    edit(value: (node: StoreNode<E>) => boolean, ...params: (keyof E["fields"])[]): FormNodeBuilder<E>;
-    edit(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E["fields"])[]): FormNodeBuilder<E> {
+    edit(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E>;
+    edit(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E> {
         const isEdit = isFunction(value) ? () => value(this.node) : value;
         if (!params.length) {
             this.isEdit = isEdit;
@@ -145,15 +139,8 @@ export class FormNodeBuilder<E extends Entity> {
      */
     patch<F extends FieldsOf<E>, NFE extends FieldEntry>(
         field: F,
-        builder: (b: FormEntityFieldBuilder<E["fields"][F]>, node: StoreNode<E>) => FormEntityFieldBuilder<NFE>
-    ): FormNodeBuilder<
-        E["fields"][F] extends NFE
-            ? E
-            : {
-                  readonly name: E["name"];
-                  readonly fields: Omit<E["fields"], F> & {[_ in F]: NFE};
-              }
-    >;
+        builder: (b: FormEntityFieldBuilder<E[F]>, node: StoreNode<E>) => FormEntityFieldBuilder<NFE>
+    ): FormNodeBuilder<E[F] extends NFE ? E : Omit<E, F> & {[_ in F]: NFE}>;
     /**
      * Modifie un noeud du FormNode.
      * @param node Nom du noeud.
@@ -161,15 +148,8 @@ export class FormNodeBuilder<E extends Entity> {
      */
     patch<L extends ListsOf<E>, NE extends Entity>(
         node: L,
-        builder: (b: FormListNodeBuilder<EntryToEntity<E["fields"][L]>>, node: StoreNode<E>) => FormListNodeBuilder<NE>
-    ): FormNodeBuilder<
-        E["fields"][L] extends NE
-            ? E
-            : {
-                  readonly name: E["name"];
-                  readonly fields: Omit<E["fields"], L> & {[_ in L]: ListEntry<NE>};
-              }
-    >;
+        builder: (b: FormListNodeBuilder<EntryToEntity<E[L]>>, node: StoreNode<E>) => FormListNodeBuilder<NE>
+    ): FormNodeBuilder<E[L] extends NE ? E : Omit<E, L> & {[_ in L]: ListEntry<NE>}>;
     /**
      * Modifie un noeud du FormNode.
      * @param node Nom du noeud.
@@ -177,16 +157,9 @@ export class FormNodeBuilder<E extends Entity> {
      */
     patch<O extends ObjectsOf<E>, NE extends Entity>(
         node: O,
-        builder: (b: FormNodeBuilder<EntryToEntity<E["fields"][O]>>, node: StoreNode<E>) => FormNodeBuilder<NE>
-    ): FormNodeBuilder<
-        E["fields"][O] extends NE
-            ? E
-            : {
-                  readonly name: E["name"];
-                  readonly fields: Omit<E["fields"], O> & {[_ in O]: ObjectEntry<NE>};
-              }
-    >;
-    patch(node: keyof E["fields"], builder: Function): any {
+        builder: (b: FormNodeBuilder<EntryToEntity<E[O]>>, node: StoreNode<E>) => FormNodeBuilder<NE>
+    ): FormNodeBuilder<E[O] extends NE ? E : Omit<E, O> & {[_ in O]: ObjectEntry<NE>}>;
+    patch(node: keyof E, builder: Function): any {
         const child = this.node[node];
         if (isStoreListNode(child)) {
             this.node[node] = builder(new FormListNodeBuilder(child), this.node).collect();

@@ -40,11 +40,7 @@ export interface Domain<
 
 /** Définition générale d'une entité. */
 export interface Entity {
-    /** Nom de l'entité. */
-    readonly name: string;
-
-    /** Liste des champs de l'entité. */
-    readonly fields: {[key: string]: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry};
+    [key: string]: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry;
 }
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
@@ -119,13 +115,13 @@ export interface RecursiveListEntry {
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
 export type EntityToType<E extends Entity> = {
-    -readonly [P in keyof E["fields"]]?: E["fields"][P] extends FieldEntry
-        ? FieldType<E["fields"][P]["fieldType"]>
-        : E["fields"][P] extends ObjectEntry<infer OE>
+    -readonly [P in keyof E]?: E[P] extends FieldEntry
+        ? FieldType<E[P]["fieldType"]>
+        : E[P] extends ObjectEntry<infer OE>
         ? EntityToType<OE>
-        : E["fields"][P] extends ListEntry<infer LE>
+        : E[P] extends ListEntry<infer LE>
         ? EntityToType<LE>[]
-        : E["fields"][P] extends RecursiveListEntry
+        : E[P] extends RecursiveListEntry
         ? EntityToType<E>[]
         : never;
 };

@@ -18,18 +18,15 @@ import {
 } from "../types";
 import {nodeToFormNode} from "./form";
 
-export interface ConfigToEntities<T> {
-    readonly name: string;
-    readonly fields: {
-        readonly [P in keyof T]: T[P] extends Entity
-            ? ObjectEntry<T[P]>
-            : T[P] extends Entity[]
-            ? ListEntry<T[P][0]>
-            : T[P] extends StoreNode<infer E>
-            ? ObjectEntry<E>
-            : never;
-    };
-}
+export type ConfigToEntities<T> = {
+    readonly [P in keyof T]: T[P] extends Entity
+        ? ObjectEntry<T[P]>
+        : T[P] extends Entity[]
+        ? ListEntry<T[P][0]>
+        : T[P] extends StoreNode<infer E>
+        ? ObjectEntry<E>
+        : never;
+};
 
 /**
  * Construit un store d'entité à partir de la config et les entités données.
@@ -105,7 +102,7 @@ export function buildNode<E extends Entity>(entity: E | E[]): StoreNode<E> | Sto
 
     // Cas d'un noeud simple : On parcourt tous les champs de l'entité.
     return {
-        ...mapValues(entity.fields, (field: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry) => {
+        ...mapValues(entity, (field: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry) => {
             switch (field.type) {
                 case "list":
                     return buildNode([field.entity]);
