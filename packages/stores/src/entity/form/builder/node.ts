@@ -163,7 +163,7 @@ export class FormNodeBuilder<E extends Entity> {
         node: L,
         builder: (b: FormListNodeBuilder<EntryToEntity<E["fields"][L]>>, node: StoreNode<E>) => FormListNodeBuilder<NE>
     ): FormNodeBuilder<
-        E extends NE
+        E["fields"][L] extends NE
             ? E
             : {
                   readonly name: E["name"];
@@ -179,7 +179,7 @@ export class FormNodeBuilder<E extends Entity> {
         node: O,
         builder: (b: FormNodeBuilder<EntryToEntity<E["fields"][O]>>, node: StoreNode<E>) => FormNodeBuilder<NE>
     ): FormNodeBuilder<
-        E extends NE
+        E["fields"][O] extends NE
             ? E
             : {
                   readonly name: E["name"];
