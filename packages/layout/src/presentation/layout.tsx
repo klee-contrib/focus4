@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 
 import {Scrollable} from "../scrollable";
 import {MessageCenter, MessageCenterProps} from "../utils";
 
-import layoutStyles from "./__style__/layout.css";
+import layoutStyles, {LayoutCss} from "./__style__/layout.css";
 export {layoutStyles};
-export type LayoutStyle = Partial<typeof layoutStyles>;
+export type LayoutStyle = CSSToStrings<LayoutCss>;
 
 /** Props du Layout. */
 export interface LayoutProps extends MessageCenterProps {

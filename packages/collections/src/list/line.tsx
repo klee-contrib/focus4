@@ -6,14 +6,14 @@ import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
 
 import {EntityField, FieldEntry, ListStoreBase, stringFor} from "@focus4/stores";
-import {getIcon, springPose, themr} from "@focus4/styling";
+import {CSSToStrings, getIcon, springPose, themr} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import lineStyles from "./__style__/line.css";
+import lineStyles, {LineCss} from "./__style__/line.css";
 export {lineStyles};
-export type LineStyle = Partial<typeof lineStyles>;
+export type LineStyle = CSSToStrings<LineCss>;
 const Theme = themr("line", lineStyles);
 
 /** Props de base d'un composant de lingne. */

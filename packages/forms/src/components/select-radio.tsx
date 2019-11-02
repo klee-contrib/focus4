@@ -1,12 +1,12 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 import {RadioButton, RadioGroup} from "@focus4/toolbox";
 
-import selectRadioStyles from "./__style__/select-radio.css";
+import selectRadioStyles, {SelectRadioCss} from "./__style__/select-radio.css";
 export {selectRadioStyles};
-export type SelectRadioStyle = Partial<typeof selectRadioStyles>;
+export type SelectRadioStyle = CSSToStrings<SelectRadioCss>;
 
 /** Props du SelectRadio. */
 export interface SelectRadioProps<T extends "string" | "number"> {

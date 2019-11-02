@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
-import {getIcon, themr} from "@focus4/styling";
+import {CSSToStrings, getIcon, themr} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {
@@ -20,9 +20,9 @@ import {
     storeListFor
 } from "../../list";
 
-import groupStyles from "../__style__/group.css";
+import groupStyles, {GroupCss} from "../__style__/group.css";
 export {groupStyles};
-export type GroupStyle = Partial<typeof groupStyles>;
+export type GroupStyle = CSSToStrings<GroupCss>;
 const Theme = themr("group", groupStyles);
 
 /** Props du composant de groupe. */

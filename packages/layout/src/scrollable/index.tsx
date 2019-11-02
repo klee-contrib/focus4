@@ -10,15 +10,15 @@ import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";
 import {Styler} from "stylefire";
 
-import {ScrollableContext, springPose, themr} from "@focus4/styling";
+import {CSSToStrings, ScrollableContext, springPose, themr} from "@focus4/styling";
 
 import {ButtonBackToTop} from "./button-back-to-top";
-export {ButtonBackToTopStyle, buttonBTTStyles} from "./button-back-to-top";
+export {ButtonBttStyle, buttonBttStyles} from "./button-back-to-top";
 
-import scrollableStyles from "./__style__/scrollable.css";
+import scrollableStyles, {ScrollableCss} from "./__style__/scrollable.css";
 export {scrollableStyles};
 const Theme = themr("scrollable", scrollableStyles);
-export type ScrollableStyle = Partial<typeof scrollableStyles>;
+export type ScrollableStyle = CSSToStrings<ScrollableCss>;
 
 const ResizeObserver = (window as any).ResizeObserver || ResizeObserverPolyfill;
 

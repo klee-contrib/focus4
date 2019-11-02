@@ -3,12 +3,12 @@ import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {getIcon, themr} from "@focus4/styling";
+import {CSSToStrings, getIcon, themr} from "@focus4/styling";
 import {Button, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
 
-import listWrapperStyles from "./__style__/list-wrapper.css";
+import listWrapperStyles, {ListWrapperCss} from "./__style__/list-wrapper.css";
 export {listWrapperStyles};
-export type ListWrapperStyle = Partial<typeof listWrapperStyles>;
+export type ListWrapperStyle = CSSToStrings<ListWrapperCss>;
 const Theme = themr("listWrapper", listWrapperStyles);
 
 const IconButton = tooltipFactory()(IB);

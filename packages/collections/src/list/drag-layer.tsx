@@ -2,12 +2,12 @@ import i18next from "i18next";
 import * as React from "react";
 import {useDragLayer} from "react-dnd";
 
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
-import dragLayerStyles from "./__style__/drag-layer.css";
+import dragLayerStyles, {DragLayerCss} from "./__style__/drag-layer.css";
 export {dragLayerStyles};
-export type DragLayerStyle = Partial<typeof dragLayerStyles>;
+export type DragLayerStyle = CSSToStrings<DragLayerCss>;
 
 /** Props du layer de drag an drop. */
 export interface DndDragLayerProps {

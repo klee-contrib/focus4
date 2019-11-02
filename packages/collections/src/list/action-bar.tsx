@@ -6,15 +6,15 @@ import * as React from "react";
 import posed, {Transition} from "react-pose";
 
 import {isList, isSearch, ListStoreBase} from "@focus4/stores";
-import {defaultPose, getIcon, themr} from "@focus4/styling";
+import {CSSToStrings, defaultPose, getIcon, themr} from "@focus4/styling";
 import {Button, ButtonMenu, ChipTheme, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import actionBarStyles from "./__style__/action-bar.css";
+import actionBarStyles, {ActionBarCss} from "./__style__/action-bar.css";
 export {actionBarStyles};
-export type ActionBarStyle = Partial<typeof actionBarStyles>;
+export type ActionBarStyle = CSSToStrings<ActionBarCss>;
 const Theme = themr("actionBar", actionBarStyles);
 
 /** Props de l'ActionBar. */

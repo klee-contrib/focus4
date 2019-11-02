@@ -1,12 +1,12 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
-import selectCheckboxStyles from "./__style__/select-checkbox.css";
+import selectCheckboxStyles, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
 export {selectCheckboxStyles};
-export type SelectCheckboxStyle = Partial<typeof selectCheckboxStyles>;
+export type SelectCheckboxStyle = CSSToStrings<SelectCheckboxCss>;
 
 function clickHandlerFactory(
     isDisabled: boolean,

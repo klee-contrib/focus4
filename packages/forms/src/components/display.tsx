@@ -2,11 +2,11 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {themr} from "@focus4/styling";
+import {CSSToStrings, themr} from "@focus4/styling";
 
-import displayStyles from "./__style__/display.css";
+import displayStyles, {DisplayCss} from "./__style__/display.css";
 export {displayStyles};
-export type DisplayStyle = Partial<typeof displayStyles>;
+export type DisplayStyle = CSSToStrings<DisplayCss>;
 const Theme = themr("display", displayStyles);
 
 /** Props du composant d'affichage. */

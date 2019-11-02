@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import {getIcon, themr} from "@focus4/styling";
+import {CSSToStrings, getIcon, themr} from "@focus4/styling";
 import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
 
-import contextualActionsStyles from "./__style__/contextual-actions.css";
+import contextualActionsStyles, {ContextualActionsCss} from "./__style__/contextual-actions.css";
 export {contextualActionsStyles};
-export type ContextualActionsStyle = Partial<typeof contextualActionsStyles>;
+export type ContextualActionsStyle = CSSToStrings<ContextualActionsCss>;
 const Theme = themr("contextualActions", contextualActionsStyles);
 
 const TooltipButton = tooltipFactory()(Button);

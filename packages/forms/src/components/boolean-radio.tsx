@@ -1,12 +1,12 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 import {RadioButton, RadioGroup} from "@focus4/toolbox";
 
-import booleanRadioStyles from "./__style__/boolean-radio.css";
+import booleanRadioStyles, {BooleanRadioCss} from "./__style__/boolean-radio.css";
 export {booleanRadioStyles};
-export type BooleanRadioStyle = Partial<typeof booleanRadioStyles>;
+export type BooleanRadioStyle = CSSToStrings<BooleanRadioCss>;
 
 export interface BooleanRadioProps {
     /** Disabled radio-select, default to: false */

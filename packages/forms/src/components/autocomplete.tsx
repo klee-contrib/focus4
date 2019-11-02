@@ -6,7 +6,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {themr} from "@focus4/styling";
+import {CSSToStrings, themr} from "@focus4/styling";
 import {
     Autocomplete as RTAutocomplete,
     AutocompleteProps as RTAutocompleteProps,
@@ -15,9 +15,9 @@ import {
     ProgressBar
 } from "@focus4/toolbox";
 
-import autocompleteStyles from "./__style__/autocomplete.css";
+import autocompleteStyles, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteStyles};
-export type AutocompleteStyle = Partial<typeof autocompleteStyles> & AutocompleteTheme & InputTheme;
+export type AutocompleteStyle = CSSToStrings<AutocompleteCss> & AutocompleteTheme & InputTheme;
 const Theme = themr("autocomplete", autocompleteStyles);
 
 /** Résultat du service de recherche. */

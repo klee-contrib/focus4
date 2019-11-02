@@ -1,13 +1,13 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {getIcon, useTheme} from "@focus4/styling";
+import {CSSToStrings, getIcon, useTheme} from "@focus4/styling";
 import {FontIcon, tooltipFactory} from "@focus4/toolbox";
 const TooltipIcon = tooltipFactory()(FontIcon);
 
-import labelStyles from "./__style__/label.css";
+import labelStyles, {LabelCss} from "./__style__/label.css";
 export {labelStyles};
-export type LabelStyle = Partial<typeof labelStyles>;
+export type LabelStyle = CSSToStrings<LabelCss>;
 
 /** Props du Label. */
 export interface LabelProps {

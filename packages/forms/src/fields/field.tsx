@@ -5,15 +5,15 @@ import * as React from "react";
 
 import {themeable} from "@focus4/core";
 import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FieldType, FormEntityField} from "@focus4/stores";
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 
 import {Autocomplete, Display, Input, Label, Select} from "../components";
 import {documentHelper} from "./document-helper";
 import {FormContext} from "./form";
 
-import fieldStyles from "./__style__/field.css";
+import fieldStyles, {FieldCss} from "./__style__/field.css";
 export {fieldStyles};
-export type FieldStyle = Partial<typeof fieldStyles>;
+export type FieldStyle = CSSToStrings<FieldCss>;
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
 export interface FieldOptions<F extends FieldEntry> {

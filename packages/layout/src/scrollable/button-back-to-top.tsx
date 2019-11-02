@@ -4,23 +4,23 @@ scroll.polyfill();
 import * as React from "react";
 import posed from "react-pose";
 
-import {ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSToStrings, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button, ButtonTheme} from "@focus4/toolbox";
 
-import buttonBTTStyles from "./__style__/button-btt.css";
-export {buttonBTTStyles};
-export type ButtonBackToTopStyle = Partial<typeof buttonBTTStyles> & ButtonTheme;
+import buttonBttStyles, {ButtonBttCss} from "./__style__/button-btt.css";
+export {buttonBttStyles};
+export type ButtonBttStyle = CSSToStrings<ButtonBttCss> & ButtonTheme;
 
 /** Props du bouton de retour en haut de page. */
 export interface ButtonBackToTopProps {
     /** CSS. */
-    theme?: ButtonBackToTopStyle;
+    theme?: ButtonBttStyle;
 }
 
 /** Bouton de retour en haut de page. */
 export const ButtonBackToTop = posed(
     React.forwardRef<HTMLDivElement, ButtonBackToTopProps>(({theme: pTheme}, ref) => {
-        const {backToTop, ...theme} = useTheme<ButtonBackToTopStyle>("buttonBTT", buttonBTTStyles, pTheme);
+        const {backToTop, ...theme} = useTheme<ButtonBttStyle>("buttonBTT", buttonBttStyles, pTheme);
         const scrollable = React.useContext(ScrollableContext);
 
         return (

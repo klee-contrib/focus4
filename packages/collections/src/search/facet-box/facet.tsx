@@ -4,14 +4,14 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {themr} from "@focus4/styling";
+import {CSSToStrings, themr} from "@focus4/styling";
 import {Checkbox, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip} from "../chip";
 import {addFacetValue, removeFacetValue} from "./utils";
 
-import facetStyles from "../__style__/facet.css";
-export type FacetStyle = Partial<typeof facetStyles>;
+import facetStyles, {FacetCss} from "../__style__/facet.css";
+export type FacetStyle = CSSToStrings<FacetCss>;
 const Theme = themr("facet", facetStyles);
 
 /** Props de Facet. */

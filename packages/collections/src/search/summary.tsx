@@ -4,15 +4,15 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FormEntityField, SearchStore} from "@focus4/stores";
-import {getIcon, themr} from "@focus4/styling";
+import {CSSToStrings, getIcon, themr} from "@focus4/styling";
 import {Button, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 import {removeFacetValue} from "./facet-box";
 
-import summaryStyles from "./__style__/summary.css";
+import summaryStyles, {SummaryCss} from "./__style__/summary.css";
 export {summaryStyles};
-export type SummaryStyle = Partial<typeof summaryStyles>;
+export type SummaryStyle = CSSToStrings<SummaryCss>;
 const Theme = themr("summary", summaryStyles);
 
 /** Props du Summary. */

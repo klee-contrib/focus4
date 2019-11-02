@@ -4,11 +4,11 @@ import {action, computed, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
+import {CSSToStrings, PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
 
-import scrollspyStyles from "./__style__/scrollspy-container.css";
+import scrollspyStyles, {ScrollspyCss} from "./__style__/scrollspy.css";
 export {scrollspyStyles};
-export type ScrollspyStyle = Partial<typeof scrollspyStyles>;
+export type ScrollspyStyle = CSSToStrings<ScrollspyCss>;
 const Theme = themr("scrollspy", scrollspyStyles);
 
 /** Props du ScrollspyContainer. */

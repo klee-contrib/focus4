@@ -1,11 +1,11 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 
-import selectStyles from "./__style__/select.css";
+import selectStyles, {SelectCss} from "./__style__/select.css";
 export {selectStyles};
-export type SelectStyle = Partial<typeof selectStyles>;
+export type SelectStyle = CSSToStrings<SelectCss>;
 
 /** Props du Select. */
 export interface SelectProps<T extends "string" | "number"> {

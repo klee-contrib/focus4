@@ -4,11 +4,11 @@ import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {cssTransitionProps, useTheme} from "@focus4/styling";
+import {CSSToStrings, cssTransitionProps, useTheme} from "@focus4/styling";
 
-import overlayStyles from "./__style__/overlay.css";
+import overlayStyles, {OverlayCss} from "./__style__/overlay.css";
 export {overlayStyles};
-export type OverlayStyle = Partial<typeof overlayStyles>;
+export type OverlayStyle = CSSToStrings<OverlayCss>;
 
 export interface OverlayProps {
     active: boolean;

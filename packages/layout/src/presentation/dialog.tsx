@@ -2,14 +2,14 @@ import * as React from "react";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {cssTransitionProps, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSToStrings, cssTransitionProps, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import {Overlay} from "./overlay";
 
-import dialogStyles from "./__style__/dialog.css";
+import dialogStyles, {DialogCss} from "./__style__/dialog.css";
 export {dialogStyles};
-export type DialogStyle = Partial<typeof dialogStyles>;
+export type DialogStyle = CSSToStrings<DialogCss>;
 
 export function Dialog({
     active = false,

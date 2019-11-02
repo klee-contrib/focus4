@@ -1,7 +1,7 @@
 import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSToStrings, useTheme} from "@focus4/styling";
 import {IconButtonTheme} from "@focus4/toolbox";
 
 import {Overlay} from "../presentation/overlay";
@@ -10,9 +10,9 @@ import {MainMenuList, MainMenuListStyle} from "./list";
 
 export {MainMenuItem};
 
-import mainMenuStyles from "./__style__/menu.css";
+import mainMenuStyles, {MainMenuCss} from "./__style__/main-menu.css";
 export {mainMenuStyles};
-export type MainMenuStyle = Partial<typeof mainMenuStyles> & IconButtonTheme;
+export type MainMenuStyle = CSSToStrings<MainMenuCss> & IconButtonTheme;
 
 /** Props du Menu. */
 export interface MainMenuProps {

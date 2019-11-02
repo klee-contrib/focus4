@@ -43,7 +43,7 @@ import {
     PopinStyle,
     ScrollspyStyle
 } from "./presentation";
-import {ButtonBackToTopStyle, ScrollableStyle} from "./scrollable";
+import {ButtonBttStyle, ScrollableStyle} from "./scrollable";
 import {LoadingBarStyle} from "./utils";
 
 export {
@@ -79,11 +79,11 @@ export {
     scrollspyStyles
 } from "./presentation";
 export {
-    ButtonBackToTopStyle,
+    ButtonBttStyle,
     Scrollable,
     ScrollableProps,
     ScrollableStyle,
-    buttonBTTStyles,
+    buttonBttStyles,
     scrollableStyles
 } from "./scrollable";
 export {
@@ -101,7 +101,7 @@ export interface LayoutStyleProviderProps {
     advancedSearch?: {};
     autocomplete?: {};
     booleanRadio?: {};
-    buttonBTT?: ButtonBackToTopStyle;
+    buttonBTT?: ButtonBttStyle;
     contextualActions?: {};
     dialog?: DialogStyle;
     display?: {};

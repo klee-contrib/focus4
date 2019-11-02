@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {GroupResult, SearchStore} from "@focus4/stores";
-import {ScrollableContext, themr} from "@focus4/styling";
+import {CSSToStrings, ScrollableContext, themr} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
 import {
@@ -24,9 +24,9 @@ import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
 import {GroupStyle, Results} from "./results";
 import {Summary, SummaryStyle} from "./summary";
 
-import advancedSearchStyles from "./__style__/advanced-search.css";
+import advancedSearchStyles, {AdvancedSearchCss} from "./__style__/advanced-search.css";
 export {advancedSearchStyles};
-export type AdvancedSearchStyle = Partial<typeof advancedSearchStyles>;
+export type AdvancedSearchStyle = CSSToStrings<AdvancedSearchCss>;
 const Theme = themr("advancedSearch", advancedSearchStyles);
 
 /** Props de l'AdvancedSearch. */

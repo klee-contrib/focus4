@@ -2,11 +2,11 @@ import * as React from "react";
 import posed from "react-pose";
 import {PoseElementProps} from "react-pose/lib/components/PoseElement/types";
 
-import {ScrollableContext, springPose, useTheme} from "@focus4/styling";
+import {CSSToStrings, ScrollableContext, springPose, useTheme} from "@focus4/styling";
 
-import headerStyles from "./__style__/header.css";
+import headerStyles, {HeaderCss} from "./__style__/header.css";
 export {headerStyles};
-export type HeaderStyle = Partial<typeof headerStyles>;
+export type HeaderStyle = CSSToStrings<HeaderCss>;
 
 /** Props du conteneur de header. */
 export interface HeaderScrollingProps {

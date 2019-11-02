@@ -2,12 +2,12 @@ import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {requestStore} from "@focus4/core";
-import {getIcon, useTheme} from "@focus4/styling";
+import {CSSToStrings, getIcon, useTheme} from "@focus4/styling";
 import {FontIcon, ProgressBar, ProgressBarTheme} from "@focus4/toolbox";
 
-import loadingBarStyles from "./__style__/loading-bar.css";
+import loadingBarStyles, {LoadingBarCss} from "./__style__/loading-bar.css";
 export {loadingBarStyles};
-export type LoadingBarStyle = Partial<typeof loadingBarStyles> & ProgressBarTheme;
+export type LoadingBarStyle = CSSToStrings<LoadingBarCss> & ProgressBarTheme;
 
 export interface LoadingBarProps {
     /** Affiche la barre de dev qui montre l'état du RequestStore. */

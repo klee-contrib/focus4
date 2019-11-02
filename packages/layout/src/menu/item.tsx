@@ -9,7 +9,7 @@ import {Button, ButtonProps, IconButton, IconButtonTheme} from "@focus4/toolbox"
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
 
-import styles from "./__style__/menu.css";
+import styles from "./__style__/main-menu.css";
 
 /** Props du MenuItem. */
 export interface MainMenuItemProps extends ButtonProps {

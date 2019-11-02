@@ -6,12 +6,12 @@ import * as React from "react";
 
 import {fieldFor, makeField} from "@focus4/forms";
 import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
-import {getIcon, themr} from "@focus4/styling";
+import {CSSToStrings, getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
-import searchBarStyles from "./__style__/search-bar.css";
+import searchBarStyles, {SearchBarCss} from "./__style__/search-bar.css";
 export {searchBarStyles};
-export type SearchBarStyle = Partial<typeof searchBarStyles>;
+export type SearchBarStyle = CSSToStrings<SearchBarCss>;
 const Theme = themr("searchBar", searchBarStyles);
 
 /** Props de la SearchBar. */

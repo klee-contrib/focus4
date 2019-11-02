@@ -21,7 +21,6 @@ Par exemple, le `Display` est défini ainsi:
 ```tsx
 // Imports
 import styles from "./__style__/display.css";
-export type DisplayStyle = Partial<typeof styles>;
 const Theme = themr("display", styles);
 
 /* bla bla */
@@ -67,7 +66,6 @@ Dans un composant fonction, on peut désormais utiliser des hooks, donc il est p
 ```tsx
 // Imports
 import styles from "./__style__/display.css";
-export type DisplayStyle = Partial<typeof styles>;
 
 function Display(props) {
     const theme = useTheme("display", styles, props.theme);

@@ -19,17 +19,7 @@
     display: flex;
     align-items: center;
 
-    &.top {
-        border-bottom: var(--panel-title-border);
-        justify-content: space-between;
-    }
-
-    &.bottom {
-        border-top: var(--panel-title-border);
-        justify-content: flex-end;
-    }
-
-    & h3 {
+    h3 {
         margin: 0;
         padding: 2px 0;
         font-size: 22px;
@@ -43,11 +33,21 @@
     }
 }
 
+.title--top {
+    border-bottom: var(--panel-title-border);
+    justify-content: space-between;
+}
+
+.title--bottom {
+    border-top: var(--panel-title-border);
+    justify-content: flex-end;
+}
+
 .actions {
     display: none;
 }
 
-.edit,
+.panel--editing,
 .panel:hover {
     & > .title > .actions {
         display: block;
@@ -61,7 +61,7 @@
     position: relative;
 }
 
-.busy .content::after {
+.panel--loading .content::after {
     content: "";
     position: absolute;
     top: 0;

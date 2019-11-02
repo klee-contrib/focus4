@@ -2,15 +2,15 @@ import i18next from "i18next";
 import {snakeCase} from "lodash";
 import * as React from "react";
 
-import {ScrollspyContext, useTheme} from "@focus4/styling";
+import {CSSToStrings, ScrollspyContext, useTheme} from "@focus4/styling";
 import {ProgressBar} from "@focus4/toolbox";
 
 import {ButtonHelp} from "./button-help";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
-import panelStyles from "./__style__/panel.css";
+import panelStyles, {PanelCss} from "./__style__/panel.css";
 export {panelStyles};
-export type PanelStyle = Partial<typeof panelStyles>;
+export type PanelStyle = CSSToStrings<PanelCss>;
 
 /** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {
@@ -99,13 +99,15 @@ export function Panel({
         <div
             ref={ref}
             id={name ? `panel-${name}` : undefined}
-            className={`${theme.panel} ${loading ? theme.busy : ""} ${editing ? theme.edit : ""}`}
+            className={`${theme.panel} ${loading ? theme["panel--loading"] : ""} ${
+                editing ? theme["panel--editing"] : ""
+            }`}
         >
             {!hideProgressBar && loading ? (
                 <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} />
             ) : null}
             {title || areButtonsTop ? (
-                <div className={`${theme.title} ${theme.top}`}>
+                <div className={`${theme.title} ${theme["title--top"]}`}>
                     {title ? (
                         <h3>
                             <span>{i18next.t(title)}</span>
@@ -116,7 +118,7 @@ export function Panel({
                 </div>
             ) : null}
             <div className={theme.content}>{children}</div>
-            {areButtonsDown ? <div className={`${theme.title} ${theme.bottom}`}>{buttons}</div> : null}
+            {areButtonsDown ? <div className={`${theme.title} ${theme["title--bottom"]}`}>{buttons}</div> : null}
         </div>
     );
 }

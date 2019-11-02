@@ -5,16 +5,32 @@ import * as React from "react";
 import {themeable, TReactCSSThemrTheme} from "@focus4/core";
 
 export const ThemeContext = React.createContext({} as TReactCSSThemrTheme);
+export type CSSMod<N extends string, T> = string & N & T & {_mod: void};
+export type CSSElement<T> = string & T & {_element: void};
+export type CSSToStrings<T> = {[P in keyof T]?: string};
+
+type Elements<T> = {[P in keyof T]: T[P] extends CSSElement<infer _> ? P : never}[keyof T];
+type Mods<T, A> = {[P in keyof T]: T[P] extends CSSMod<infer N, A> ? N : never}[keyof T];
+type ToBem<T> = Pick<
+    {
+        [P in keyof T]: T[P] extends CSSElement<infer A> ? ((mods?: {[Q in Mods<T, A>]?: boolean}) => string) : never;
+    },
+    Elements<T>
+>;
+
+export function toBem<T>(css: T): ToBem<T> {
+    return css as any;
+}
 
 /** Hook pour récupérer le theme du contexte et le fusionner avec d'autres. */
-export function useTheme<T = any>(name: string, ...themes: (Partial<T> | undefined)[]): T {
+export function useTheme<T = any>(name: string, ...themes: (T | CSSToStrings<T> | undefined)[]): T {
     const contextTheme = React.useContext(ThemeContext)[name];
     return (themeable((contextTheme as {}) || {}, ...(themes.filter(Boolean) as {}[])) as unknown) as T;
 }
 
 export interface ThemeConsumerProps<T> {
     children: (theme: T) => React.ReactElement;
-    theme?: Partial<T>;
+    theme?: T | CSSToStrings<T>;
 }
 
 export type ThemeConsumer<T> = React.ComponentClass<ThemeConsumerProps<T>>;

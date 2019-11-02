@@ -29,7 +29,7 @@ test.each([["none", 1, 0], ["top", 1, 0], ["bottom", 1, 1], ["both", 1, 1]])(
             <Panel
                 title="my panel"
                 buttonsPosition={position}
-                theme={{top: "topClassName", bottom: "bottomClassName"}}
+                theme={{"title--top": "topClassName", "title--bottom": "bottomClassName"}}
             />
         );
         expect(panel.find(".topClassName").length).toBe(expectedTop);

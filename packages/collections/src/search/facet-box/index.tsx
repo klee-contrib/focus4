@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {themr, useTheme} from "@focus4/styling";
+import {CSSToStrings, themr, useTheme} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
 import {ChipType} from "../chip";
@@ -11,10 +11,10 @@ import {Facet, FacetProps, FacetStyle} from "./facet";
 import {addFacetValue, removeFacetValue, shouldDisplayFacet} from "./utils";
 export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps, FacetStyle};
 
-import facetBoxStyles from "../__style__/facet-box.css";
+import facetBoxStyles, {FacetBoxCss} from "../__style__/facet-box.css";
 import facetStyles from "../__style__/facet.css";
 export {facetBoxStyles, facetStyles};
-export type FacetBoxStyle = Partial<typeof facetBoxStyles>;
+export type FacetBoxStyle = CSSToStrings<FacetBoxCss>;
 const Theme = themr("facetBox", facetBoxStyles);
 
 /** Props de la FacetBox. */

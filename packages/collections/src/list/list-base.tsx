@@ -4,14 +4,14 @@ import {action, computed, Lambda, observable, observe} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
 
-import {getIcon, ScrollableContext} from "@focus4/styling";
+import {CSSToStrings, getIcon, ScrollableContext} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import {LineStyle} from "./line";
 
-import listStyles from "./__style__/list.css";
+import listStyles, {ListCss} from "./__style__/list.css";
 export {listStyles};
-export type ListStyle = Partial<typeof listStyles>;
+export type ListStyle = CSSToStrings<ListCss>;
 
 /** Props de base pour un composant de liste. */
 export interface ListBaseProps<T> {
