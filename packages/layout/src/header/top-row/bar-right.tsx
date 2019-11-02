@@ -16,5 +16,5 @@ export interface HeaderBarRightProps {
 /** Barre du haut à droite, doit être affiché dans `HeaderTopRow`. */
 export function HeaderBarRight({children, theme: pTheme}: HeaderBarRightProps) {
     const theme = useTheme("header", styles, pTheme);
-    return <div className={`${theme.item} ${theme.right}`}>{children}</div>;
+    return <div className={theme.item({right: true})}>{children}</div>;
 }

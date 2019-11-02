@@ -145,10 +145,10 @@ export class Summary<T> extends React.Component<SummaryProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div className={theme.summary}>
+                    <div className={theme.summary()}>
                         {/* Nombre de résultats. */}
                         {!hideResults ? (
-                            <span className={theme.sentence}>
+                            <span className={theme.sentence()}>
                                 <strong>{totalCount}&nbsp;</strong>
                                 {i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
                             </span>
@@ -156,7 +156,7 @@ export class Summary<T> extends React.Component<SummaryProps<T>> {
 
                         {/* Texte de recherche. */}
                         {!hideQuery && query && query.trim().length > 0 ? (
-                            <span className={theme.sentence}>
+                            <span className={theme.sentence()}>
                                 {" "}
                                 {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}
                             </span>
@@ -164,8 +164,8 @@ export class Summary<T> extends React.Component<SummaryProps<T>> {
 
                         {/* Liste des filtres (scope + facettes + critères) */}
                         {this.filterList.length ? (
-                            <div className={theme.chips}>
-                                <span className={theme.sentence}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
+                            <div className={theme.chips()}>
+                                <span className={theme.sentence()}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
                                 {this.filterList.map(chip => (
                                     <SearchChip
                                         {...chip}
@@ -180,8 +180,8 @@ export class Summary<T> extends React.Component<SummaryProps<T>> {
 
                         {/* Groupe. */}
                         {groupingKey && !hideGroup ? (
-                            <div className={theme.chips}>
-                                <span className={theme.sentence}>
+                            <div className={theme.chips()}>
+                                <span className={theme.sentence()}>
                                     {i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}
                                 </span>
                                 <SearchChip
@@ -197,8 +197,8 @@ export class Summary<T> extends React.Component<SummaryProps<T>> {
 
                         {/* Tri. */}
                         {this.currentSort && !hideSort && !groupingKey && totalCount > 1 ? (
-                            <div className={theme.chips}>
-                                <span className={theme.sentence}>
+                            <div className={theme.chips()}>
+                                <span className={theme.sentence()}>
                                     {i18next.t(`${i18nPrefix}.search.summary.sortBy`)}
                                 </span>
                                 <SearchChip
@@ -214,7 +214,7 @@ export class Summary<T> extends React.Component<SummaryProps<T>> {
 
                         {/* Action d'export. */}
                         {exportAction ? (
-                            <div className={theme.print}>
+                            <div className={theme.print()}>
                                 <Button
                                     onClick={exportAction}
                                     icon={getIcon(`${i18nPrefix}.icons.summary.export`)}

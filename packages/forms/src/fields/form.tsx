@@ -47,7 +47,7 @@ export function Form({
         <FormContext.Provider value={context}>
             {noForm ? (
                 <form
-                    className={theme.form}
+                    className={theme.form()}
                     noValidate={true}
                     onSubmit={e => {
                         e.preventDefault();

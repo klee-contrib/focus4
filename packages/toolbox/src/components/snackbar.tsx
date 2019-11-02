@@ -7,7 +7,7 @@ import {
     SnackbarTheme
 } from "react-toolbox/lib/snackbar/Snackbar";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtSnackbarTheme from "react-toolbox/components/snackbar/theme.css";
 const snackbarTheme: SnackbarTheme = rtSnackbarTheme;
 export {snackbarTheme};
@@ -17,7 +17,7 @@ import {Button} from "./button";
 const RTSnackbar = snackbarFactory(Button);
 export const Snackbar = React.forwardRef<SnackbarType, SnackbarProps>((props, ref) => {
     const theme = useTheme(SNACKBAR, snackbarTheme, props.theme);
-    return <RTSnackbar ref={ref} {...props} theme={theme} />;
+    return <RTSnackbar ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export {SnackbarProps, SnackbarTheme};

@@ -1,7 +1,7 @@
 import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
-import {CSSToStrings, useTheme} from "@focus4/styling";
+import {CSSToStrings, fromBem, useTheme} from "@focus4/styling";
 import {IconButtonTheme} from "@focus4/toolbox";
 
 import {Overlay} from "../presentation/overlay";
@@ -25,8 +25,8 @@ export interface MainMenuProps {
 export function MainMenu({activeRoute, children, showOverlay, theme: pTheme}: React.PropsWithChildren<MainMenuProps>) {
     const theme = useTheme("mainMenu", mainMenuStyles, pTheme);
     return useObserver(() => (
-        <nav className={theme.menu}>
-            <MainMenuList activeRoute={activeRoute} theme={theme}>
+        <nav className={theme.menu()}>
+            <MainMenuList activeRoute={activeRoute} theme={fromBem(theme)}>
                 {children}
             </MainMenuList>
             {showOverlay ? <Overlay active isAdditional /> : null}

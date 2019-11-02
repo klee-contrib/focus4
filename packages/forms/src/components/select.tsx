@@ -62,7 +62,7 @@ export function Select<T extends "string" | "number">({
     }
 
     return (
-        <div data-focus="select" className={`${theme.select} ${error ? theme.error : ""}`}>
+        <div data-focus="select" className={theme.select({error: !!error})}>
             <select
                 disabled={disabled}
                 id={name}
@@ -85,7 +85,7 @@ export function Select<T extends "string" | "number">({
                     );
                 })}
             </select>
-            {error ? <div className={theme.errorLabel}>{error}</div> : null}
+            {error ? <div className={theme.error()}>{error}</div> : null}
         </div>
     );
 }

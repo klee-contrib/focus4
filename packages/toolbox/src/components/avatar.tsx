@@ -2,7 +2,7 @@ import * as React from "react";
 import {Avatar as AvatarType, avatarFactory, AvatarProps, AvatarTheme} from "react-toolbox/lib/avatar/Avatar";
 import {AVATAR} from "react-toolbox/lib/identifiers";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtAvatarTheme from "react-toolbox/components/avatar/theme.css";
 const avatarTheme: AvatarTheme = rtAvatarTheme;
 export {avatarTheme};
@@ -13,7 +13,7 @@ const RTAvatar = avatarFactory(FontIcon);
 export const Avatar: React.ForwardRefExoticComponent<AvatarProps & React.RefAttributes<AvatarType>> = React.forwardRef(
     (props, ref) => {
         const theme = useTheme(AVATAR, avatarTheme, props.theme);
-        return <RTAvatar ref={ref} {...props} theme={theme} />;
+        return <RTAvatar ref={ref} {...props} theme={fromBem(theme)} />;
     }
 );
 

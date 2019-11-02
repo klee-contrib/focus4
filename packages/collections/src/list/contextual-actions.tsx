@@ -124,7 +124,7 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div className={!isMosaic ? theme.text : theme.fab}>
+                    <div className={!isMosaic ? theme.text() : theme.fab()}>
                         {lists.customComponents}
                         {lists.primaryActions}
                         {lists.secondaryActions.length ? (

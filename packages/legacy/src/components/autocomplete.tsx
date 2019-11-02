@@ -7,7 +7,7 @@ import * as React from "react";
 import {findDOMNode} from "react-dom";
 
 import {AutocompleteStyle, autocompleteStyles} from "@focus4/forms";
-import {themr} from "@focus4/styling";
+import {fromBem, themr} from "@focus4/styling";
 import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps, ProgressBar} from "@focus4/toolbox";
 
 const Theme = themr("autocomplete", autocompleteStyles);
@@ -221,12 +221,12 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
                             onQueryChange={this.onQueryChange}
                             maxLength={undefined}
                             suggestionMatch="disabled"
-                            theme={theme}
+                            theme={fromBem(theme)}
                             ref={(ref: any) => (this.autocomplete = ref)}
                             onKeyDown={this.onKeyDown}
                         />
                         {this.isLoading ? (
-                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
+                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar()}} />
                         ) : null}
                     </div>
                 )}

@@ -46,7 +46,7 @@ export function HeaderActions({
 }: HeaderActionsProps) {
     const theme = useTheme("header", styles, pTheme);
     return (
-        <PosedDiv className={theme.actions}>
+        <PosedDiv className={theme.actions()}>
             {primary.map((action, i) => {
                 const FinalButton = action.tooltip ? TooltipButton : Button;
                 return (

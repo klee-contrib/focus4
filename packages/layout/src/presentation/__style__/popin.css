@@ -9,11 +9,11 @@
     box-sizing: border-box;
 }
 
-.left {
+.popin--left {
     left: 0;
 }
 
-.right {
+.popin--right {
     right: 0;
 }
 
@@ -32,19 +32,19 @@
 
 .enter,
 .exit.exitActive {
-    &.right {
+    &.popin--right {
         transform: translateX(100%);
     }
 
-    &.left {
+    &.popin--left {
         transform: translateX(-100%);
     }
 }
 
 .enter.enterActive,
 .exit {
-    &.left,
-    &.right {
+    &.popin--left,
+    &.popin--right {
         transform: translateX(0%);
     }
 }

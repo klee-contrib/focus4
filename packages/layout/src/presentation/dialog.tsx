@@ -1,8 +1,9 @@
+import classNames from "classnames";
 import * as React from "react";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSToStrings, cssTransitionProps, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSToStrings, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import {Overlay} from "./overlay";
@@ -28,24 +29,24 @@ export function Dialog({
             <Overlay active={active} onClick={onOverlayClick as () => void} />
             <TransitionGroup component={null}>
                 {active ? (
-                    <CSSTransition {...cssTransitionProps(theme as any)}>
-                        <div className={theme.wrapper}>
+                    <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
+                        <div className={theme.wrapper()}>
                             <div
                                 data-react-toolbox="dialog"
-                                className={`${theme.dialog} ${className || ""}`}
+                                className={classNames(theme.dialog, className)}
                                 onClick={e => e.stopPropagation()}
                             >
-                                <section role="body" className={theme.body}>
-                                    {title ? <h6 className={theme.title}>{title}</h6> : null}
+                                <section role="body" className={theme.body()}>
+                                    {title ? <h6 className={theme.title()}>{title}</h6> : null}
                                     {children}
                                 </section>
                                 {actions.length ? (
-                                    <nav className={theme.navigation}>
+                                    <nav className={theme.navigation()}>
                                         {actions.map((action, idx) => (
                                             <Button
                                                 key={idx}
                                                 {...action}
-                                                className={`${theme.button} ${action.className || ""}`}
+                                                className={classNames(theme.button, action.className)}
                                             />
                                         ))}
                                     </nav>

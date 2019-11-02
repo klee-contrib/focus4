@@ -68,7 +68,7 @@ export function SelectCheckbox({
 }: SelectCheckboxProps) {
     const theme = useTheme("selectCheckbox", selectCheckboxStyles, pTheme);
     return (
-        <div className={theme.select}>
+        <div className={theme.select()}>
             {label && <h5>{i18next.t(label)}</h5>}
             <ul>
                 {values.map(option => {
@@ -79,7 +79,7 @@ export function SelectCheckbox({
                     const clickHandler = clickHandlerFactory(disabled, isSelected, value, optVal, onChange);
 
                     return (
-                        <li key={optVal} onClick={clickHandler} className={theme!.option}>
+                        <li key={optVal} onClick={clickHandler} className={theme.option()}>
                             <Checkbox
                                 name={`${name}-${optVal}`}
                                 value={isSelected}

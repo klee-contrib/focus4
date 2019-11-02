@@ -5,7 +5,7 @@ import {TOOLTIP} from "react-toolbox/lib/identifiers";
 import events from "react-toolbox/lib/utils/events";
 import {getViewport} from "react-toolbox/lib/utils/utils";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import {createPortal} from "react-dom";
 import rtTooltipTheme from "react-toolbox/components/tooltip/theme.css";
 const tooltipTheme: TooltipTheme = rtTooltipTheme;
@@ -64,7 +64,7 @@ export function tooltipFactory({
                     tooltipPosition={tooltipPosition}
                     tooltipShowOnClick={tooltipShowOnClick}
                     {...p}
-                    theme={finalTheme}
+                    theme={fromBem(finalTheme)}
                     ComposedComponent={ComposedComponent}
                 />
             );
@@ -242,7 +242,7 @@ class TooltippedComponent<P> extends React.Component<
 
         return (
             <>
-                <ComposedComponent {...finalProps as any}>{children}</ComposedComponent>
+                <ComposedComponent {...(finalProps as any)}>{children}</ComposedComponent>
                 {visible
                     ? createPortal(
                           <span

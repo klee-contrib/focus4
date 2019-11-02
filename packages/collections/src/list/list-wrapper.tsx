@@ -87,8 +87,8 @@ export class ListWrapper extends React.Component<ListWrapperProps> {
             <ListWrapperContext.Provider value={this.listWrapperContext}>
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div className={theme.wrapper}>
-                            <div className={theme.bar}>
+                        <div className={theme.wrapper()}>
+                            <div className={theme.bar()}>
                                 {canChangeMode ? (
                                     <IconButton
                                         accent={mode === "list"}

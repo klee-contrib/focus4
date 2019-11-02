@@ -6,14 +6,14 @@ import {
     ProgressBarTheme
 } from "react-toolbox/lib/progress_bar/ProgressBar";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtProgressBarTheme from "react-toolbox/components/progress_bar/theme.css";
 const progressBarTheme: ProgressBarTheme = rtProgressBarTheme;
 export {progressBarTheme};
 
 export const ProgressBar = React.forwardRef<RTProgressBar, ProgressBarProps>((props, ref) => {
     const theme = useTheme(PROGRESS_BAR, progressBarTheme, props.theme);
-    return <RTProgressBar ref={ref} {...props} theme={theme} />;
+    return <RTProgressBar ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export {ProgressBarProps, ProgressBarTheme};

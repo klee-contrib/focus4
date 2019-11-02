@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {CSSToStrings, themr} from "@focus4/styling";
+import {CSSToStrings, themr, ToBem} from "@focus4/styling";
 import {Checkbox, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip} from "../chip";
@@ -49,7 +49,7 @@ export interface FacetProps {
 export class Facet extends React.Component<FacetProps> {
     @observable protected isShowAll = false;
 
-    protected renderFacetDataList(theme: FacetStyle) {
+    protected renderFacetDataList(theme: ToBem<FacetCss>) {
         const {chipKeyResolver, chipThemer, facet, nbDefaultDataList, store} = this.props;
         const selectedValues = store.selectedFacets[facet.code] || [];
 
@@ -63,7 +63,7 @@ export class Facet extends React.Component<FacetProps> {
                     deletable
                     onDeleteClick={() => removeFacetValue(store, facet.code, sfv.code)}
                     keyResolver={chipKeyResolver}
-                    theme={{chip: theme.chip}}
+                    theme={{chip: theme.chip()}}
                     themer={chipThemer}
                     type="facet"
                     value={sfv.code}
@@ -86,7 +86,7 @@ export class Facet extends React.Component<FacetProps> {
                                     <Checkbox value={isSelected} onClick={clickHandler} />
                                 ) : null}
                                 <div>{i18next.t(sfv.label)}</div>
-                                <div className={theme.count}>{sfv.count}</div>
+                                <div className={theme.count()}>{sfv.count}</div>
                             </li>
                         );
                     })}
@@ -95,11 +95,11 @@ export class Facet extends React.Component<FacetProps> {
         }
     }
 
-    protected renderShowAllDataList(theme: FacetStyle) {
+    protected renderShowAllDataList(theme: ToBem<FacetCss>) {
         const {facet, i18nPrefix = "focus", nbDefaultDataList} = this.props;
         if (facet.values.length > nbDefaultDataList) {
             return (
-                <div className={theme.show} onClick={() => (this.isShowAll = !this.isShowAll)}>
+                <div className={theme.show()} onClick={() => (this.isShowAll = !this.isShowAll)}>
                     {i18next.t(this.isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                 </div>
             );
@@ -113,10 +113,7 @@ export class Facet extends React.Component<FacetProps> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div
-                        className={`${theme.facet} ${facet.isMultiSelectable ? theme.multiSelect : ""}`}
-                        data-facet={facet.code}
-                    >
+                    <div className={theme.facet({multiSelect: facet.isMultiSelectable})} data-facet={facet.code}>
                         <h4>{i18next.t(facet.label)}</h4>
                         {this.renderFacetDataList(theme)}
                         {this.renderShowAllDataList(theme)}

@@ -7,7 +7,7 @@ import {
     NavigationTheme
 } from "react-toolbox/lib/navigation/Navigation";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtNavigationTheme from "react-toolbox/components/navigation/theme.css";
 const navigationTheme: NavigationTheme = rtNavigationTheme;
 export {navigationTheme};
@@ -18,7 +18,7 @@ import {Link} from "./link";
 const RTNavigation = navigationFactory(Button, Link);
 export const Navigation = React.forwardRef<NavigationType, NavigationProps>((props, ref) => {
     const theme = useTheme(NAVIGATION, navigationTheme, props.theme);
-    return <RTNavigation ref={ref} {...props} theme={theme} />;
+    return <RTNavigation ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export {NavigationProps, NavigationTheme};

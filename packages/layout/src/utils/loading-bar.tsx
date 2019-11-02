@@ -2,7 +2,7 @@ import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {requestStore} from "@focus4/core";
-import {CSSToStrings, getIcon, useTheme} from "@focus4/styling";
+import {CSSToStrings, fromBem, getIcon, useTheme} from "@focus4/styling";
 import {FontIcon, ProgressBar, ProgressBarTheme} from "@focus4/toolbox";
 
 import loadingBarStyles, {LoadingBarCss} from "./__style__/loading-bar.css";
@@ -27,8 +27,8 @@ export function LoadingBar({i18nPrefix = "focus", progressBarType, theme: pTheme
         const {count} = requestStore;
         const completed = +((count.total - count.pending) / count.total) * 100;
         return (
-            <div className={theme.bar}>
-                {completed < 100 ? <ProgressBar type={progressBarType} theme={theme} /> : null}
+            <div className={theme.bar()}>
+                {completed < 100 ? <ProgressBar type={progressBarType} theme={fromBem(theme)} /> : null}
                 {displayDevBar ? (
                     <ul>
                         <li>

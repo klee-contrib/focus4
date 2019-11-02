@@ -6,7 +6,7 @@ import * as React from "react";
 import posed, {Transition} from "react-pose";
 
 import {isList, isSearch, ListStoreBase} from "@focus4/stores";
-import {CSSToStrings, defaultPose, getIcon, themr} from "@focus4/styling";
+import {CSSToStrings, defaultPose, getIcon, themr, ToBem} from "@focus4/styling";
 import {Button, ButtonMenu, ChipTheme, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
@@ -72,14 +72,14 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     @observable displayFacetBox = false;
 
     /** Bouton de sélection (case à cocher). */
-    protected selectionButton(theme: ActionBarStyle) {
+    protected selectionButton(theme: ToBem<ActionBarCss>) {
         const {hasSelection, i18nPrefix = "focus", store} = this.props;
         if (hasSelection) {
             return (
                 <IconButton
                     icon={getIcon(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}`)}
                     onClick={store.toggleAll}
-                    theme={{toggle: theme.selectionToggle, icon: theme.selectionIcon}}
+                    theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
                 />
             );
         } else {
@@ -88,7 +88,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     }
 
     /** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */
-    protected filterButton(theme: ActionBarStyle) {
+    protected filterButton(theme: ToBem<ActionBarCss>) {
         const {hasFacetBox, showSingleValuedFacets, i18nPrefix = "focus", store} = this.props;
         if (
             hasFacetBox &&
@@ -102,10 +102,10 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                     <Button
                         onClick={() => (this.displayFacetBox = !this.displayFacetBox)}
                         icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}`)}
-                        theme={{icon: theme.dropdown}}
+                        theme={{icon: theme.dropdown()}}
                         label={i18next.t(`${i18nPrefix}.search.action.filter`)}
                     />
-                    {this.displayFacetBox ? <div className={theme.triangle} /> : null}
+                    {this.displayFacetBox ? <div className={theme.triangle()} /> : null}
                 </div>
             );
         } else {
@@ -114,7 +114,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     }
 
     /** Bouton de tri. */
-    protected sortButton(theme: ActionBarStyle) {
+    protected sortButton(theme: ToBem<ActionBarCss>) {
         const {i18nPrefix = "focus", orderableColumnList, store} = this.props;
 
         if (
@@ -151,7 +151,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     }
 
     /** Bouton de groupe. */
-    protected groupButton(theme: ActionBarStyle) {
+    protected groupButton(theme: ToBem<ActionBarCss>) {
         const {groupableFacets, hasGrouping, i18nPrefix = "focus", store} = this.props;
 
         if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
@@ -199,18 +199,22 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
     }
 
     /** Barre de recherche. */
-    protected searchBar(theme: ActionBarStyle) {
+    protected searchBar(theme: ToBem<ActionBarCss>) {
         const {i18nPrefix = "focus", hasSearchBar, searchBarPlaceholder, store} = this.props;
 
         if (!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store))) {
             return (
-                <div className={theme.searchBar}>
+                <div className={theme.searchBar()}>
                     <Input
                         icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
                         value={store.query}
                         onChange={(text: string) => (store.query = text)}
                         hint={searchBarPlaceholder}
-                        theme={{input: theme.searchBarField, icon: theme.searchBarIcon, hint: theme.searchBarHint}}
+                        theme={{
+                            input: theme.searchBarField(),
+                            icon: theme.searchBarIcon(),
+                            hint: theme.searchBarHint()
+                        }}
                     />
                     {store.query ? (
                         <IconButton
@@ -263,10 +267,10 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div className={theme.container}>
+                    <div className={theme.container()}>
                         {/* ActionBar en tant que telle. */}
-                        <div className={`${theme.bar} ${store.selectedItems.size ? theme.selection : ""}`}>
-                            <div className={theme.buttons}>
+                        <div className={theme.bar({selection: !!store.selectedItems.size})}>
+                            <div className={theme.buttons()}>
                                 {this.selectionButton(theme)}
                                 {group ? <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong> : null}
                                 {store.selectedItems.size ? (
@@ -290,7 +294,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                         </div>
                         {/* FacetBox */}
                         {hasFacetBox && isSearch(store) ? (
-                            <div className={theme.facetBoxContainer}>
+                            <div className={theme.facetBoxContainer()}>
                                 <Transition>
                                     {this.displayFacetBox && (
                                         <PanningDiv key="facet-box">
@@ -304,7 +308,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                                                 nbDefaultDataList={nbDefaultDataListFacet}
                                                 showSingleValuedFacets={showSingleValuedFacets}
                                                 store={store}
-                                                theme={{facetBox: theme.facetBox}}
+                                                theme={{facetBox: theme.facetBox()}}
                                             />
                                         </PanningDiv>
                                     )}

@@ -1,10 +1,11 @@
+import classNames from "classnames";
 import {uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import * as React from "react";
 
-import {themr} from "@focus4/styling";
+import {fromBem, themr} from "@focus4/styling";
 import {Calendar, CalendarProps, datePickerTheme, DatePickerTheme, IconButton, InputTheme} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
@@ -273,7 +274,7 @@ export class InputDate extends React.Component<InputDateProps> {
                             onChange={value => (this.dateText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showCalendar = true)}
-                            theme={theme}
+                            theme={fromBem(theme)}
                             value={this.dateText || ""}
                         />
                         {this.showCalendar ? (
@@ -284,18 +285,21 @@ export class InputDate extends React.Component<InputDateProps> {
                                 } ${this.calendarPosition === "up" ? inputDateStyles.up : inputDateStyles.down}`}
                             >
                                 <header
-                                    className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}
+                                    className={classNames(
+                                        theme.header(),
+                                        (theme as any)[`${this.calendarDisplay}Display`]()
+                                    )}
                                 >
                                     <span
                                         id="years"
-                                        className={theme!.year}
+                                        className={theme.year()}
                                         onClick={() => (this.calendarDisplay = "years")}
                                     >
                                         {this.displayedDate().year()}
                                     </span>
                                     <h3
                                         id="months"
-                                        className={theme!.date}
+                                        className={theme.date()}
                                         onClick={() => (this.calendarDisplay = "months")}
                                     >
                                         {this.displayedDate().format(calendarFormat)}
@@ -306,7 +310,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                         onClick={() => (this.showCalendar = false)}
                                     />
                                 </header>
-                                <div className={theme!.calendarWrapper}>
+                                <div className={theme.calendarWrapper()}>
                                     <Calendar
                                         {...calendarProps}
                                         handleSelect={() => null}
@@ -320,7 +324,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                             weekdaysShort: moment.localeData().weekdaysShort()
                                         }}
                                         onChange={this.onCalendarChange}
-                                        theme={theme}
+                                        theme={fromBem(theme)}
                                     />
                                 </div>
                             </div>

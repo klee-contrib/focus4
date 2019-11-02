@@ -1,7 +1,7 @@
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSToStrings, cssTransitionProps, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSToStrings, cssTransitionProps, fromBem, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {Scrollable} from "../scrollable";
@@ -57,18 +57,16 @@ export function Popin({
             <Overlay active={opened} onClick={(!preventOverlayClick && closePopin) || undefined} />
             <TransitionGroup component={null}>
                 {opened ? (
-                    <CSSTransition {...cssTransitionProps(theme as any)}>
+                    <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
                         <Scrollable
                             backToTopOffset={backToTopOffset}
-                            className={`${theme.popin} ${
-                                type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""
-                            }`}
+                            className={theme.popin({left: type === "from-left", right: type === "from-right"})}
                             hideBackToTop={hideBackToTop}
                             scrollBehaviour={scrollBehaviour}
                         >
                             {!hideCloseButton ? (
                                 <IconButton
-                                    className={theme.close}
+                                    className={theme.close()}
                                     icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
                                     onClick={closePopin}
                                 />

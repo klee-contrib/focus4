@@ -41,11 +41,11 @@ export function Label({
 }: LabelProps) {
     const theme = useTheme("label", labelStyles, pTheme);
     return (
-        <div className={theme.label} style={style}>
+        <div className={theme.label()} style={style}>
             <label htmlFor={id}>{(label && i18next.t(label)) || ""}</label>
             {comment && showTooltip ? (
                 <TooltipIcon
-                    className={`${theme.icon} ${!!onTooltipClick ? theme.clickable : ""}`}
+                    className={theme.icon({clickable: !!onTooltipClick})}
                     tooltipHideOnClick={!onTooltipClick}
                     onClick={onTooltipClick}
                     tooltip={typeof comment === "string" ? i18next.t(comment) : comment}

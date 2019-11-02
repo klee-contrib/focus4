@@ -28,7 +28,8 @@
     right: 5px;
 }
 
-.selected {
+.line--selected,
+.mosaic--selected {
     cursor: pointer;
 }
 
@@ -44,7 +45,8 @@
     pointer-events: none;
 }
 
-.forceDisplay,
+.actions--forceDisplay,
+.checkbox--forceDisplay,
 .line:hover .checkbox,
 .mosaic:hover .checkbox,
 .line:hover .actions,

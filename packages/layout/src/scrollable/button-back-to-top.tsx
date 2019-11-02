@@ -4,7 +4,7 @@ scroll.polyfill();
 import * as React from "react";
 import posed from "react-pose";
 
-import {CSSToStrings, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSToStrings, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button, ButtonTheme} from "@focus4/toolbox";
 
 import buttonBttStyles, {ButtonBttCss} from "./__style__/button-btt.css";
@@ -24,7 +24,7 @@ export const ButtonBackToTop = posed(
         const scrollable = React.useContext(ScrollableContext);
 
         return (
-            <div className={backToTop} ref={ref}>
+            <div className={backToTop()} ref={ref}>
                 <Button
                     accent
                     onClick={() =>
@@ -34,7 +34,7 @@ export const ButtonBackToTop = posed(
                     }
                     icon="expand_less"
                     floating
-                    theme={theme}
+                    theme={fromBem(theme)}
                 />
             </div>
         );

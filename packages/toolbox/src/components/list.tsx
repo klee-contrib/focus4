@@ -43,7 +43,7 @@ import {
     ListSubHeaderTheme
 } from "react-toolbox/lib/list/ListSubHeader";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtListTheme from "react-toolbox/components/list/theme.css";
 const listTheme: ListTheme = rtListTheme;
 export {listTheme};
@@ -54,48 +54,48 @@ import {rippleFactory} from "./ripple";
 
 export const ListItemAction = React.forwardRef<RTListItemAction, ListItemActionProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemActionTheme, props.theme);
-    return <RTListItemAction ref={ref} {...props} theme={theme} />;
+    return <RTListItemAction ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export const ListSubHeader = React.forwardRef<RTListSubHeader, ListSubHeaderProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListSubHeaderTheme, props.theme);
-    return <RTListSubHeader ref={ref} {...props} theme={theme} />;
+    return <RTListSubHeader ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export const ListItemText: React.ForwardRefExoticComponent<
     ListItemTextProps & React.RefAttributes<RTListItemText>
 > = React.forwardRef((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemTextTheme, props.theme);
-    return <RTListItemText ref={ref} {...props} theme={theme} />;
+    return <RTListItemText ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export const ListDivider = React.forwardRef<RTListDivider, ListDividerProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListDividerTheme, props.theme);
-    return <RTListDivider ref={ref} {...props} theme={theme} />;
+    return <RTListDivider ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTListItemContent = listItemContentFactory(ListItemText);
 export const ListItemContent = React.forwardRef<ListItemContentType, ListItemContentProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemContentTheme, props.theme);
-    return <RTListItemContent ref={ref} {...props} theme={theme} />;
+    return <RTListItemContent ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTListItemActions = listItemActionsFactory(ListItemAction);
 export const ListItemActions = React.forwardRef<ListItemActionsType, ListItemActionsProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemActionsTheme, props.theme);
-    return <RTListItemActions ref={ref} {...props} theme={theme} />;
+    return <RTListItemActions ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTListItemLayout = listItemLayoutFactory(Avatar, ListItemContent, ListItemActions);
 export const ListItemLayout = React.forwardRef<ListItemLayoutType, ListItemLayoutProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemLayoutTheme, props.theme);
-    return <RTListItemLayout ref={ref} {...props} theme={theme} />;
+    return <RTListItemLayout ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTListCheckbox = listCheckboxFactory(Checkbox, ListItemContent);
 export const ListCheckbox = React.forwardRef<ListCheckboxType, ListCheckboxProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListCheckboxTheme, props.theme);
-    return <RTListCheckbox ref={ref} {...props} theme={theme} />;
+    return <RTListCheckbox ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTListItem = listItemFactory(rippleFactory({rippleCentered: false}), ListItemLayout, ListItemContent);
@@ -109,13 +109,13 @@ export const ListItem = React.forwardRef<ListItemType, ListItemProps>((props, re
             ListItemTextTheme,
         props.theme
     );
-    return <RTListItem ref={ref} {...props} theme={theme} />;
+    return <RTListItem ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTList = listFactory(ListItem);
 export const List = React.forwardRef<ListType, ListProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme, props.theme);
-    return <RTList ref={ref} {...props} theme={theme} />;
+    return <RTList ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export {

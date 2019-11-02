@@ -20,7 +20,7 @@ export interface HeaderTopRowProps {
 export function HeaderTopRow(props: HeaderTopRowProps) {
     const theme = useTheme("header", styles, props.theme);
     return (
-        <div className={theme.topRow}>
+        <div className={theme.topRow()}>
             <div>{props.children}</div>
         </div>
     );

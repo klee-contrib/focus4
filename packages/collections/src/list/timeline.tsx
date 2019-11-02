@@ -56,7 +56,7 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <ul className={theme.timeline}>
+                    <ul className={theme.timeline()}>
                         {addItemHandler ? (
                             <TimelineAddItem addItemHandler={addItemHandler} i18nPrefix={i18nPrefix} />
                         ) : null}
@@ -72,9 +72,9 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
 function TimelineAddItem({addItemHandler, i18nPrefix}: {addItemHandler: () => void; i18nPrefix: string}) {
     const theme = useTheme("line", lineStyles);
     return (
-        <li className={theme.timelineAdd}>
-            <div className={theme.timelineBadge} />
-            <div className={theme.timelinePanel}>
+        <li className={theme.timelineAdd()}>
+            <div className={theme.timelineBadge()} />
+            <div className={theme.timelinePanel()}>
                 <Button
                     primary
                     icon={getIcon(`${i18nPrefix}.icons.list.add`)}

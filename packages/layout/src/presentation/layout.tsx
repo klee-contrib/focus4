@@ -39,11 +39,11 @@ export function LayoutBase({
     return (
         <>
             <MessageCenter {...messageCenterProps} />
-            <div className={theme.layout}>
+            <div className={theme.layout()}>
                 {menu}
                 <Scrollable
                     backToTopOffset={backToTopOffset}
-                    className={theme.scrollable}
+                    className={theme.scrollable()}
                     hideBackToTop={hideBackToTop}
                     resetScrollOnChildrenChange
                     scrollBehaviour={scrollBehaviour}

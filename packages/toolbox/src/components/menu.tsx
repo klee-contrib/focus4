@@ -8,7 +8,7 @@ import {Menu as MenuType, menuFactory, MenuProps, MenuTheme} from "react-toolbox
 import {MenuDivider as RTMenuDivider, MenuDividerProps, MenuDividerTheme} from "react-toolbox/lib/menu/MenuDivider";
 import {MenuItem as MenuItemType, menuItemFactory, MenuItemProps, MenuItemTheme} from "react-toolbox/lib/menu/MenuItem";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtMenuTheme from "react-toolbox/components/menu/theme.css";
 const menuTheme: MenuTheme = rtMenuTheme;
 export {menuTheme};
@@ -20,24 +20,24 @@ import {tooltipFactory, TooltipProps} from "./tooltip";
 const RTMenuItem = menuItemFactory(rippleFactory({}));
 export const MenuItem = React.forwardRef<MenuItemType, MenuItemProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as MenuItemTheme, props.theme);
-    return <RTMenuItem ref={ref} {...props} theme={theme} />;
+    return <RTMenuItem ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTMenu = menuFactory(MenuItem);
 export const Menu = React.forwardRef<MenuType, MenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme, props.theme);
-    return <RTMenu ref={ref} {...props} theme={theme} />;
+    return <RTMenu ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTIconMenu = iconMenuFactory(IconButton, Menu);
 export const IconMenu = React.forwardRef<IconMenuType, IconMenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as IconMenuTheme, props.theme);
-    return <RTIconMenu ref={ref} {...props} theme={theme} />;
+    return <RTIconMenu ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 export const MenuDivider = React.forwardRef<RTMenuDivider, MenuDividerProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as MenuDividerTheme, props.theme);
-    return <RTMenuDivider ref={ref} {...props} theme={theme} />;
+    return <RTMenuDivider ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const TooltipButton = tooltipFactory()(Button);

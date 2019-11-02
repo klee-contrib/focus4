@@ -33,12 +33,12 @@ export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScro
         canDeploy
     ]);
 
-    React.useLayoutEffect(() => context.setHeaderProps({className: `${theme.scrolling} ${theme.sticky}`, children}), [
+    React.useLayoutEffect(() => context.setHeaderProps({className: theme.scrolling({sticky: true}), children}), [
         children
     ]);
 
     return (
-        <header className={`${theme.scrolling} ${canDeploy ? theme.deployed : theme.undeployed}`} ref={ref}>
+        <header className={theme.scrolling({deployed: canDeploy, undeployed: !canDeploy})} ref={ref}>
             {children}
         </header>
     );

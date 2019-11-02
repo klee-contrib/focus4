@@ -18,6 +18,7 @@ const config = {
     },
     external: [
         ...Object.keys(pkg.dependencies || {}),
+        "classnames",
         "core-decorators",
         "i18next",
         "inputmask-core",

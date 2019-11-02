@@ -46,7 +46,7 @@ export function MainMenuList({
                 }
             }}
         >
-            <ul ref={setRef} className={theme!.list}>
+            <ul ref={setRef} className={theme.list()}>
                 {children}
             </ul>
         </MenuContext.Provider>

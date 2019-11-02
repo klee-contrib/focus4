@@ -300,7 +300,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                         {!navigator.userAgent.match(/Trident/) && hasDragAndDrop ? (
                             <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} />
                         ) : null}
-                        <div className={this.mode === "list" ? theme.list : theme.mosaic}>
+                        <div className={this.mode === "list" ? theme.list() : theme.mosaic()}>
                             {/* Gestion de l'empty state. */}
                             {!this.isLoading && !hideAdditionalItems && !this.displayedData.length ? (
                                 EmptyComponent ? (
@@ -309,7 +309,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                         store={(this.props as any).store}
                                     />
                                 ) : (
-                                    <div className={theme.loading}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
+                                    <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
                                 )
                             ) : (
                                 <ul ref={ul => (this.ulRef = ul)}>
@@ -317,11 +317,11 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                     {this.isAddItemShown ? (
                                         <li
                                             key="mosaic-add"
-                                            className={theme.mosaicAdd}
+                                            className={theme.mosaicAdd()}
                                             style={{width: this.mosaic.width, height: this.mosaic.height}}
                                             onClick={this.addItemHandler}
                                         >
-                                            <FontIcon className={theme.add}>
+                                            <FontIcon className={theme.add()}>
                                                 {getIcon(`${i18nPrefix}.icons.list.add`)}
                                             </FontIcon>
                                             {i18next.t(`${i18nPrefix}.list.add`)}
@@ -335,7 +335,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                 LoadingComponent ? (
                                     <LoadingComponent store={(this.props as any).store} />
                                 ) : (
-                                    <div className={theme.loading}>{i18next.t(`${i18nPrefix}.search.loading`)}</div>
+                                    <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.search.loading`)}</div>
                                 )
                             ) : null}
                             {this.renderBottomRow(theme)}
@@ -393,11 +393,11 @@ const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
         ) => (
             <Theme theme={pTheme}>
                 {theme => (
-                    <li ref={ref} className={theme.detailWrapper}>
+                    <li ref={ref} className={theme.detailWrapper()}>
                         {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident...
                         et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}
                         <div
-                            className={theme.triangle}
+                            className={theme.triangle()}
                             style={
                                 displayedIdx === undefined && mode === "mosaic"
                                     ? {left: -1000}
@@ -412,7 +412,7 @@ const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
                                     : {}
                             }
                         />
-                        <div className={theme.detail}>
+                        <div className={theme.detail()}>
                             <IconButton icon="clear" onClick={closeDetail} />
                             <DetailComponent data={item} closeDetail={closeDetail} />
                         </div>

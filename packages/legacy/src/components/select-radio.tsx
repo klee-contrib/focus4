@@ -62,8 +62,8 @@ export function SelectRadio({
     }
 
     return (
-        <div className={theme.select}>
-            {label && <h5 className={theme.title}>{i18next.t(label)}</h5>}
+        <div className={theme.select()}>
+            {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
             <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
                 {definitiveValues.map(option => {
                     const optVal = (option as any)[valueKey];
@@ -74,7 +74,7 @@ export function SelectRadio({
                             key={optVal || "undefined"}
                             label={i18next.t(optLabel)}
                             value={optVal}
-                            theme={{field: theme.option}}
+                            theme={{field: theme.option()}}
                         />
                     );
                 })}

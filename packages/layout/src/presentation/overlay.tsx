@@ -4,7 +4,7 @@ import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSToStrings, cssTransitionProps, useTheme} from "@focus4/styling";
+import {CSSToStrings, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
 
 import overlayStyles, {OverlayCss} from "./__style__/overlay.css";
 export {overlayStyles};
@@ -58,8 +58,8 @@ export function Overlay({
             ) : (
                 active
             )) ? (
-                <CSSTransition {...cssTransitionProps(theme as any)}>
-                    <div className={theme.overlay} onClick={onOverlayClick}>
+                <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
+                    <div className={theme.overlay()} onClick={onOverlayClick}>
                         {children}
                     </div>
                 </CSSTransition>

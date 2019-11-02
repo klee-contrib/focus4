@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {CSSToStrings, themr, useTheme} from "@focus4/styling";
+import {CSSToStrings, fromBem, themr, useTheme} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
 import {ChipType} from "../chip";
@@ -73,7 +73,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
             if (FacetCustom) {
                 FacetComponent = props => {
                     const theme = useTheme("facet", facetStyles);
-                    return <FacetCustom {...props} theme={theme} />;
+                    return <FacetCustom {...props} theme={fromBem(theme)} />;
                 };
             }
 
@@ -128,7 +128,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                                     .filter(x => x);
                                 if (facets.length) {
                                     return (
-                                        <div key={s.name} className={theme.section}>
+                                        <div key={s.name} className={theme.section()}>
                                             <h5>{s.name}</h5>
                                             {facets}
                                         </div>
@@ -144,7 +144,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                             sectionElements.splice(
                                 sections.indexOf(restSection),
                                 0,
-                                <div key={restSection.name} className={theme.section}>
+                                <div key={restSection.name} className={theme.section()}>
                                     {restSection.name ? <h4>{restSection.name}</h4> : null}
                                     {remainingFacets.map(this.renderFacet)}
                                 </div>
@@ -153,7 +153,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                     }
 
                     return (
-                        <div className={theme.facetBox}>
+                        <div className={theme.facetBox()}>
                             <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
                             {sectionElements || filteredFacets.map(this.renderFacet)}
                         </div>

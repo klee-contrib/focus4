@@ -20,7 +20,7 @@
     overflow-y: auto;
 }
 
-.multiSelect ul {
+.facet--multiSelect ul {
     margin-left: -15px;
     padding-left: 15px;
 

@@ -17,7 +17,7 @@
     transition: background-color var(--action-bar-transition);
 }
 
-.selection {
+.bar--selection {
     background: var(--action-bar-selection-background);
     color: var(--action-bar-selection-color);
 }

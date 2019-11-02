@@ -105,11 +105,11 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
             <ScrollspyContext.Provider value={{registerPanel: this.registerPanel}}>
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div ref={this.node} className={theme.scrollspy}>
+                        <div ref={this.node} className={theme.scrollspy()}>
                             {this.context.portal(
-                                <nav className={theme.menu} key="scrollspy">
+                                <nav className={theme.menu()} key="scrollspy">
                                     <MenuComponent
-                                        activeClassName={theme.active}
+                                        activeClassName={theme.active()}
                                         activeId={this.activeItem}
                                         panels={this.sortedPanels.map(([id, {title}]) => ({
                                             id,
@@ -120,7 +120,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                                 </nav>,
                                 this.node.current
                             )}
-                            <div className={theme.content} style={{marginLeft: menuWidth}}>
+                            <div className={theme.content()} style={{marginLeft: menuWidth}}>
                                 {children}
                             </div>
                         </div>

@@ -8,7 +8,7 @@ import {RippleTheme} from "react-toolbox/lib/ripple";
 import events from "react-toolbox/lib/utils/events";
 import prefixer from "react-toolbox/lib/utils/prefixer";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtRippleTheme from "react-toolbox/components/ripple/theme.css";
 const rippleTheme: RippleTheme = rtRippleTheme;
 export {rippleTheme, RippleTheme};
@@ -48,7 +48,7 @@ export function rippleFactory({
                     ripplePassthrough={ripplePassthrough}
                     rippleSpread={rippleSpread}
                     {...p}
-                    theme={finalTheme}
+                    theme={fromBem(finalTheme)}
                     ComposedComponent={ComposedComponent}
                 />
             );
@@ -317,7 +317,7 @@ class RippledComponent<P> extends React.Component<
         const finalProps = ripplePassthrough ? {...childProps, theme, disabled} : childProps;
 
         return (
-            <ComposedComponent {...finalProps as any}>
+            <ComposedComponent {...(finalProps as any)}>
                 {children}
                 {ripple ? childRipples : null}
             </ComposedComponent>

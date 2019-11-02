@@ -44,10 +44,10 @@ export function DndDragLayer({i18nPrefix = "focus", theme: pTheme}: DndDragLayer
     }
 
     return (
-        <div className={theme.container}>
-            <div className={theme.layer} style={{transform: `translate(${x - 18}px, ${y - 20}px)`}}>
+        <div className={theme.container()}>
+            <div className={theme.layer()} style={{transform: `translate(${x - 18}px, ${y - 20}px)`}}>
                 <FontIcon>drag_handle</FontIcon>
-                <div className={theme.count}>{item.dragged.length}</div>
+                <div className={theme.count()}>{item.dragged.length}</div>
                 <div>{i18next.t(`${i18nPrefix}.dragLayer.item${item.dragged.length !== 1 ? "s" : ""}`)}</div>
             </div>
         </div>

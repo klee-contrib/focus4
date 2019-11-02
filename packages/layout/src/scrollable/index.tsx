@@ -1,5 +1,6 @@
 import "intersection-observer";
 
+import classNames from "classnames";
 import {debounce, memoize, range} from "lodash";
 import {action, autorun, computed, observable} from "mobx";
 import {disposeOnUnmount, observer, Observer} from "mobx-react";
@@ -301,12 +302,12 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             >
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div ref={innerRef} className={`${className || ""} ${theme.container}`}>
-                            <div className={theme.scrollable} ref={div => div && (this.scrollableNode = div)}>
+                        <div ref={innerRef} className={classNames(theme.container(), className)}>
+                            <div className={theme.scrollable()} ref={div => div && (this.scrollableNode = div)}>
                                 {this.intersectionObserver ? children : null}
                             </div>
                             <div
-                                className={theme.sticky}
+                                className={theme.sticky()}
                                 ref={div => div && (this.stickyNode = div)}
                                 style={{width: this.width}}
                             />

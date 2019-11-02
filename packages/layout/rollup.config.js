@@ -37,6 +37,7 @@ export default (async () => {
         },
         external: [
             ...Object.keys(pkg.dependencies || {}),
+            "classnames",
             "i18next",
             "lodash",
             "mobx",

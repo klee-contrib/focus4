@@ -3,7 +3,7 @@ import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 
-import {defaultPose, useTheme} from "@focus4/styling";
+import {defaultPose, fromBem, useTheme} from "@focus4/styling";
 import {Button, ButtonProps, IconButton, IconButtonTheme} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
@@ -59,21 +59,21 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
 
     return useObserver(() => (
         <>
-            <li ref={li} className={`${theme.item} ${route === context.activeRoute ? theme.active : ""}`}>
+            <li ref={li} className={theme.item({active: route === context.activeRoute})}>
                 {label ? (
-                    <Button {...otherProps} icon={icon} label={label} onClick={onItemClick} theme={theme} />
+                    <Button {...otherProps} icon={icon} label={label} onClick={onItemClick} theme={fromBem(theme)} />
                 ) : (
-                    <IconButton {...otherProps} icon={icon} onClick={onItemClick} theme={theme} />
+                    <IconButton {...otherProps} icon={icon} onClick={onItemClick} theme={fromBem(theme)} />
                 )}
             </li>
             {context.renderSubMenu(
                 <Transition>
                     {state.hasSubMenu && (
-                        <PosedDiv key="panel" ref={panel} className={theme.panel} style={state}>
+                        <PosedDiv key="panel" ref={panel} className={theme.panel()} style={state}>
                             <MainMenuList
                                 activeRoute={context.activeRoute}
                                 closePanel={() => (state.hasSubMenu = false)}
-                                theme={theme}
+                                theme={fromBem(theme)}
                             >
                                 {children}
                             </MainMenuList>

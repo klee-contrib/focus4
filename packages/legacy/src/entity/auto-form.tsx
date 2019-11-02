@@ -291,7 +291,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
                 <Theme theme={{form: this.className}}>
                     {theme => (
                         <form
-                            className={theme.form}
+                            className={theme.form()}
                             onSubmit={e => {
                                 e.preventDefault();
                                 this.save();

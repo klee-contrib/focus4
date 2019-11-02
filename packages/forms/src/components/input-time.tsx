@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -5,7 +6,7 @@ import moment from "moment-timezone";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {themr} from "@focus4/styling";
+import {fromBem, themr} from "@focus4/styling";
 import {Clock, IconButton, InputTheme, timePickerTheme, TimePickerTheme} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
@@ -216,30 +217,32 @@ export class InputTime extends React.Component<InputTimeProps> {
                             onChange={value => (this.timeText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showClock = true)}
-                            theme={theme}
+                            theme={fromBem(theme)}
                             value={this.timeText || ""}
                         />
                         {this.showClock ? (
                             <div
                                 ref={clo => (this.clock = clo)}
-                                className={`${inputDateStyles.calendar} ${theme!.dialog} ${
-                                    this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay
-                                } ${displayFrom === "right" ? inputDateStyles.fromRight : ""} ${
+                                className={classNames(
+                                    inputDateStyles.calendar,
+                                    theme.dialog(),
+                                    this.clockDisplay === "hours" ? theme.hoursDisplay() : theme.minutesDisplay(),
+                                    displayFrom === "right" ? inputDateStyles.fromRight : "",
                                     this.clockPosition === "up" ? inputDateStyles.up : inputDateStyles.down
-                                }`}
+                                )}
                             >
-                                <header className={theme!.header}>
+                                <header className={theme.header()}>
                                     <span
                                         id="hours"
-                                        className={theme!.hours}
+                                        className={theme.hours()}
                                         onClick={() => (this.clockDisplay = "hours")}
                                     >
                                         {`0${this.time.hours()}`.slice(-2)}
                                     </span>
-                                    <span className={theme!.separator}>:</span>
+                                    <span className={theme.separator()}>:</span>
                                     <span
                                         id="minutes"
-                                        className={theme!.minutes}
+                                        className={theme.minutes()}
                                         onClick={() => (this.clockDisplay = "minutes")}
                                     >
                                         {`0${this.time.minutes()}`.slice(-2)}
@@ -250,7 +253,7 @@ export class InputTime extends React.Component<InputTimeProps> {
                                         onClick={() => (this.showClock = false)}
                                     />
                                 </header>
-                                <div className={`${theme!.clockWrapper} ${inputDateStyles.clock}`}>
+                                <div className={classNames(theme.clockWrapper(), inputDateStyles.clock)}>
                                     <Clock
                                         ref={c => (this.clockComp = c)}
                                         display={this.clockDisplay}

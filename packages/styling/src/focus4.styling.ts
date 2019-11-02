@@ -12,14 +12,4 @@ export {
     getIcon,
     springPose
 } from "./utils";
-export {
-    CSSElement,
-    CSSMod,
-    CSSToStrings,
-    ThemeConsumer,
-    ThemeConsumerProps,
-    ThemeContext,
-    toBem,
-    themr,
-    useTheme
-} from "./theme";
+export {CSSElement, CSSMod, CSSToStrings, ThemeContext, ToBem, fromBem, themr, toBem, useTheme} from "./theme";

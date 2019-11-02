@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {GroupResult, SearchStore} from "@focus4/stores";
-import {CSSToStrings, ScrollableContext, themr} from "@focus4/styling";
+import {CSSToStrings, ScrollableContext, themr, ToBem} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
 import {
@@ -174,7 +174,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         }
     }
 
-    protected renderFacetBox(theme: AdvancedSearchStyle) {
+    protected renderFacetBox(theme: ToBem<AdvancedSearchCss>) {
         const {
             chipKeyResolver,
             chipThemer,
@@ -189,7 +189,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
         } = this.props;
 
         const facetBox = (
-            <div className={theme.facetContainer} key="facet-box">
+            <div className={theme.facetContainer()} key="facet-box">
                 <FacetBox
                     chipKeyResolver={chipKeyResolver}
                     chipThemer={chipThemer}
@@ -375,11 +375,9 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                     <div ref={this.setRef}>
                         {this.renderFacetBox(theme)}
                         <div
-                            className={`${theme.resultContainer} ${
-                                facetBoxPosition === "sticky" || facetBoxPosition === "left"
-                                    ? theme.resultContainerWithFacetBox
-                                    : ""
-                            }`}
+                            className={theme.resultContainer({
+                                withFacetBox: facetBoxPosition === "sticky" || facetBoxPosition === "left"
+                            })}
                         >
                             <ListWrapper
                                 addItemHandler={addItemHandler}

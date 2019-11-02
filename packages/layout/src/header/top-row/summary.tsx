@@ -15,5 +15,5 @@ export interface HeaderSummaryProps {
 
 export function HeaderSummary({children, theme: pTheme}: HeaderSummaryProps) {
     const theme = useTheme("header", styles, pTheme);
-    return <div className={`${theme.item} ${theme.middle}`}>{children}</div>;
+    return <div className={theme.item({middle: true})}>{children}</div>;
 }

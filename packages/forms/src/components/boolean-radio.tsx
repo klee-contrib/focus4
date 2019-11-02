@@ -44,7 +44,7 @@ export function BooleanRadio({
                 name={name}
                 value={value === true ? "true" : value === false ? "false" : undefined}
                 onChange={(x: string) => onChange(x === "true")}
-                className={theme.radio}
+                className={theme.radio()}
             >
                 <RadioButton label={i18next.t(labelYes)} value="true" disabled={disabled} />
                 <RadioButton label={i18next.t(labelNo)} value="false" disabled={disabled} />

@@ -56,7 +56,7 @@ export class Display extends React.Component<DisplayProps> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
-                    <div data-focus="display" className={theme.display}>
+                    <div data-focus="display" className={theme.display()}>
                         {(formatter && formatter(displayed)) || displayed}
                     </div>
                 )}

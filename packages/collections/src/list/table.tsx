@@ -93,7 +93,7 @@ export class Table<
             <Theme theme={this.props.theme}>
                 {theme => (
                     <>
-                        <table className={theme.table}>
+                        <table className={theme.table()}>
                             {this.renderTableHeader()}
                             {this.renderTableBody()}
                         </table>

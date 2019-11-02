@@ -134,12 +134,12 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                                 store={this.store}
                             />
                         ) : (
-                            <div className={theme.header}>
+                            <div className={theme.header()}>
                                 {hasSelection ? (
                                     <IconButton
                                         icon={getIcon(`${i18nPrefix}.icons.actionBar.${this.store.selectionStatus}`)}
                                         onClick={this.store.toggleAll}
-                                        theme={{toggle: theme.selectionToggle, icon: theme.selectionIcon}}
+                                        theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
                                     />
                                 ) : null}
                                 <GroupHeader group={group} />

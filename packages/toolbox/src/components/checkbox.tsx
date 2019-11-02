@@ -8,7 +8,7 @@ import {
 } from "react-toolbox/lib/checkbox/Checkbox";
 import {CHECKBOX} from "react-toolbox/lib/identifiers";
 
-import {useTheme} from "@focus4/styling";
+import {fromBem, useTheme} from "@focus4/styling";
 import rtCheckboxTheme from "react-toolbox/components/checkbox/theme.css";
 const checkboxTheme: CheckboxTheme = rtCheckboxTheme;
 export {checkboxTheme, CheckboxTheme};
@@ -37,5 +37,5 @@ export const Checkbox: React.ForwardRefExoticComponent<
         delete (rtProps as any).error;
     }
 
-    return <RTCheckbox ref={ref} {...rtProps} theme={theme} />;
+    return <RTCheckbox ref={ref} {...rtProps} theme={fromBem(theme)} />;
 });

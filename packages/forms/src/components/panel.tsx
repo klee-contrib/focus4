@@ -80,7 +80,7 @@ export function Panel({
     }, []);
 
     const buttons = (
-        <div className={theme.actions}>
+        <div className={theme.actions()}>
             <Buttons
                 editing={editing}
                 i18nPrefix={i18nPrefix}
@@ -96,18 +96,12 @@ export function Panel({
     const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
     return (
-        <div
-            ref={ref}
-            id={name ? `panel-${name}` : undefined}
-            className={`${theme.panel} ${loading ? theme["panel--loading"] : ""} ${
-                editing ? theme["panel--editing"] : ""
-            }`}
-        >
+        <div ref={ref} id={name ? `panel-${name}` : undefined} className={theme.panel({loading, editing})}>
             {!hideProgressBar && loading ? (
-                <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} />
+                <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress()}} />
             ) : null}
             {title || areButtonsTop ? (
-                <div className={`${theme.title} ${theme["title--top"]}`}>
+                <div className={theme.title({top: true})}>
                     {title ? (
                         <h3>
                             <span>{i18next.t(title)}</span>
@@ -117,8 +111,8 @@ export function Panel({
                     {areButtonsTop ? buttons : null}
                 </div>
             ) : null}
-            <div className={theme.content}>{children}</div>
-            {areButtonsDown ? <div className={`${theme.title} ${theme["title--bottom"]}`}>{buttons}</div> : null}
+            <div className={theme.content()}>{children}</div>
+            {areButtonsDown ? <div className={theme.title({bottom: true})}>{buttons}</div> : null}
         </div>
     );
 }

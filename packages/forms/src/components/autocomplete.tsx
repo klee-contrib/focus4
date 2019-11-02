@@ -6,7 +6,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {CSSToStrings, themr} from "@focus4/styling";
+import {CSSToStrings, fromBem, themr} from "@focus4/styling";
 import {
     Autocomplete as RTAutocomplete,
     AutocompleteProps as RTAutocompleteProps,
@@ -233,12 +233,12 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
                             maxLength={undefined}
                             suggestionMatch="disabled"
                             type="text"
-                            theme={theme}
+                            theme={fromBem(theme)}
                             ref={ref => (this.autocomplete = ref)}
                             onKeyDown={this.onKeyDown}
                         />
                         {this.isLoading ? (
-                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
+                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar()}} />
                         ) : null}
                     </div>
                 )}

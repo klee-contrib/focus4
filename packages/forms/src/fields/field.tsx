@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import i18next from "i18next";
 import {uniqueId} from "lodash";
 import {useLocalStore, useObserver} from "mobx-react-lite";
@@ -158,9 +159,14 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
 
         return (
             <div
-                className={`${theme.field} ${isEdit ? theme.edit : ""} ${
-                    isEdit && error && store.showError ? theme.invalid : ""
-                } ${isRequired ? theme.required : ""} ${className}`}
+                className={classNames(
+                    theme.field({
+                        edit: isEdit,
+                        error: !!(isEdit && error && store.showError),
+                        required: isRequired
+                    }),
+                    className
+                )}
             >
                 {hasLabel ? (
                     <LabelComponent
@@ -171,12 +177,12 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                         label={label}
                         id={id}
                         style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
-                        theme={themeable({label: theme.label}, domainLCP.theme || {}, labelProps.theme || {})}
+                        theme={themeable({label: theme.label()}, domainLCP.theme || {}, labelProps.theme || {})}
                     />
                 ) : null}
                 <div
                     style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
-                    className={`${theme.value} ${className}`}
+                    className={classNames(theme.value(), className)}
                     ref={valueElement}
                 >
                     {isEdit ? (
@@ -185,7 +191,11 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                                 {...domainSCP}
                                 {...selectProps}
                                 {...iProps}
-                                theme={themeable({error: theme.error}, domainSCP.theme || {}, selectProps.theme || {})}
+                                theme={themeable(
+                                    {error: theme.error()},
+                                    domainSCP.theme || {},
+                                    selectProps.theme || {}
+                                )}
                             />
                         ) : inputType === "autocomplete" ? (
                             <AutocompleteComponent
@@ -193,7 +203,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                                 {...autocompleteProps}
                                 {...iProps}
                                 theme={themeable(
-                                    {error: theme.error},
+                                    {error: theme.error()},
                                     domainACP.theme || {},
                                     autocompleteProps.theme || {}
                                 )}
@@ -203,7 +213,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                                 {...domainICP}
                                 {...inputProps}
                                 {...iProps}
-                                theme={themeable({error: theme.error}, domainICP.theme || {}, inputProps.theme || {})}
+                                theme={themeable({error: theme.error()}, domainICP.theme || {}, inputProps.theme || {})}
                             />
                         )
                     ) : (
