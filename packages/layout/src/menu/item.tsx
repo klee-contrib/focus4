@@ -3,25 +3,24 @@ import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 
-import {defaultPose, fromBem, useTheme} from "@focus4/styling";
-import {Button, ButtonProps, IconButton, IconButtonTheme} from "@focus4/toolbox";
+import {CSSProp, defaultPose, useTheme} from "@focus4/styling";
+import {Button, ButtonProps, IconButton} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
-
-import styles from "./__style__/main-menu.css";
+import {mainMenuCss, MainMenuCss} from "./style";
 
 /** Props du MenuItem. */
-export interface MainMenuItemProps extends ButtonProps {
+export interface MainMenuItemProps extends Omit<ButtonProps, "theme"> {
     /** La route associée, pour comparaison avec la route active. */
     route?: string;
     /** CSS. */
-    theme?: IconButtonTheme & {panel?: string};
+    theme?: CSSProp<MainMenuCss>;
 }
 
 /** Elément de menu. */
 export function MainMenuItem({label, icon, onClick, route, children, theme: pTheme, ...otherProps}: MainMenuItemProps) {
-    const theme = useTheme("mainMenu", styles, pTheme as {});
+    const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
     const context = React.useContext(MenuContext);
     const [state] = React.useState(() => observable({hasSubMenu: false, top: 0, left: 0}));
 
@@ -61,9 +60,9 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
         <>
             <li ref={li} className={theme.item({active: route === context.activeRoute})}>
                 {label ? (
-                    <Button {...otherProps} icon={icon} label={label} onClick={onItemClick} theme={fromBem(theme)} />
+                    <Button {...otherProps} icon={icon} label={label} onClick={onItemClick} theme={theme} />
                 ) : (
-                    <IconButton {...otherProps} icon={icon} onClick={onItemClick} theme={fromBem(theme)} />
+                    <IconButton {...otherProps} icon={icon} onClick={onItemClick} theme={theme} />
                 )}
             </li>
             {context.renderSubMenu(
@@ -73,7 +72,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                             <MainMenuList
                                 activeRoute={context.activeRoute}
                                 closePanel={() => (state.hasSubMenu = false)}
-                                theme={fromBem(theme)}
+                                theme={theme}
                             >
                                 {children}
                             </MainMenuList>

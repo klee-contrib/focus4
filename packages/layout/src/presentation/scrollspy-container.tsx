@@ -4,12 +4,11 @@ import {action, computed, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {CSSToStrings, PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
+import {CSSProp, PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
 
-import scrollspyStyles, {ScrollspyCss} from "./__style__/scrollspy.css";
-export {scrollspyStyles};
-export type ScrollspyStyle = CSSToStrings<ScrollspyCss>;
-const Theme = themr("scrollspy", scrollspyStyles);
+import scrollspyCss, {ScrollspyCss} from "./__style__/scrollspy.css";
+export {scrollspyCss, ScrollspyCss};
+const Theme = themr("scrollspy", scrollspyCss);
 
 /** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
@@ -22,7 +21,7 @@ export interface ScrollspyContainerProps {
     /** Offset entre la position du panel et la position de scroll au clic sur le menu. Par défaut : 150. */
     scrollToOffset?: number;
     /** CSS. */
-    theme?: ScrollspyStyle;
+    theme?: CSSProp<ScrollspyCss>;
 }
 
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */

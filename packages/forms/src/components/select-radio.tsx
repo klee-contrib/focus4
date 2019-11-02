@@ -1,12 +1,11 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {CSSToStrings, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioGroup} from "@focus4/toolbox";
 
-import selectRadioStyles, {SelectRadioCss} from "./__style__/select-radio.css";
-export {selectRadioStyles};
-export type SelectRadioStyle = CSSToStrings<SelectRadioCss>;
+import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
+export {selectRadioCss, SelectRadioCss};
 
 /** Props du SelectRadio. */
 export interface SelectRadioProps<T extends "string" | "number"> {
@@ -25,7 +24,7 @@ export interface SelectRadioProps<T extends "string" | "number"> {
     /** Est appelé à chaque changement de valeur. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** CSS. */
-    theme?: SelectRadioStyle;
+    theme?: CSSProp<SelectRadioCss>;
     /** Type du champ (number ou string). */
     type: T;
     /** Libellé du cas vide. */
@@ -56,7 +55,7 @@ export function SelectRadio<T extends "string" | "number">({
     valueKey,
     values
 }: SelectRadioProps<T>) {
-    const theme = useTheme("selectRadio", selectRadioStyles, pTheme);
+    const theme = useTheme("selectRadio", selectRadioCss, pTheme);
 
     let definitiveValues = values;
     if (hasUndefined && undefinedPosition === "bottom") {

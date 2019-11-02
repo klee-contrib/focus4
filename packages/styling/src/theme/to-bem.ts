@@ -1,7 +1,7 @@
 import {CSSElement, CSSMod, CSSToStrings} from "./common";
 
-type AllMods<T> = {[P in keyof T]: T[P] extends CSSMod<infer _, infer __> ? P : never}[keyof T];
-type Mods<T, A> = {[P in keyof T]: T[P] extends CSSMod<infer N, A> ? N : never}[keyof T];
+export type AllMods<T> = {[P in keyof T]: T[P] extends CSSMod<infer _, infer __> ? P : never}[keyof T];
+export type Mods<T, A> = {[P in keyof T]: T[P] extends CSSMod<infer N, A> ? N : never}[keyof T];
 
 export type ToBem<T> = Omit<
     {
@@ -15,6 +15,8 @@ export type ToBem<T> = Omit<
     },
     AllMods<T>
 >;
+
+export type CSSProp<T> = CSSToStrings<T> | Partial<ToBem<T>>;
 
 export function toBem<T>(css: T): ToBem<T> {
     return css as any;

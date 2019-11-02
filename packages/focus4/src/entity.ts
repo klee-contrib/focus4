@@ -1,8 +1,6 @@
 export {
     Field,
-    FieldStyle,
     Form,
-    FormStyle,
     autocompleteFor,
     domain,
     fieldFor,

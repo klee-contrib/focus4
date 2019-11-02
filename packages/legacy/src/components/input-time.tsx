@@ -6,8 +6,8 @@ import moment from "moment-timezone";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {inputDateStyles} from "@focus4/forms";
-import {fromBem, themr} from "@focus4/styling";
+import {inputDateCss} from "@focus4/forms";
+import {themr} from "@focus4/styling";
 import {Clock, IconButton, InputTheme, timePickerTheme, TimePickerTheme} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
@@ -210,7 +210,7 @@ export class InputTime extends React.Component<InputTimeProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-time" data-id={this._inputTimeId} className={inputDateStyles.input}>
+                    <div data-focus="input-time" data-id={this._inputTimeId} className={inputDateCss.input}>
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
@@ -218,18 +218,18 @@ export class InputTime extends React.Component<InputTimeProps> {
                             onChange={(value: string) => (this.timeText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showClock = true)}
-                            theme={fromBem(theme)}
+                            theme={theme}
                             value={this.timeText || ""}
                         />
                         {this.showClock ? (
                             <div
                                 ref={clo => (this.clock = clo)}
                                 className={classNames(
-                                    inputDateStyles.calendar,
+                                    inputDateCss.calendar,
                                     theme.dialog(),
                                     this.clockDisplay === "hours" ? theme.hoursDisplay() : theme.minutesDisplay(),
-                                    displayFrom === "right" ? inputDateStyles.fromRight : "",
-                                    this.clockPosition === "up" ? inputDateStyles.up : inputDateStyles.down
+                                    displayFrom === "right" ? inputDateCss.fromRight : "",
+                                    this.clockPosition === "up" ? inputDateCss.up : inputDateCss.down
                                 )}
                             >
                                 <header className={theme.header()}>
@@ -250,11 +250,11 @@ export class InputTime extends React.Component<InputTimeProps> {
                                     </span>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: inputDateStyles.toggle}}
+                                        theme={{toggle: inputDateCss.toggle}}
                                         onClick={() => (this.showClock = false)}
                                     />
                                 </header>
-                                <div className={classNames(theme.clockWrapper(), inputDateStyles.clock)}>
+                                <div className={classNames(theme.clockWrapper(), inputDateCss.clock)}>
                                     <Clock
                                         ref={c => (this.clockComp = c)}
                                         display={this.clockDisplay}

@@ -4,15 +4,15 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {CSSToStrings, themr, ToBem} from "@focus4/styling";
+import {CSSProp, themr, ToBem} from "@focus4/styling";
 import {Checkbox, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip} from "../chip";
 import {addFacetValue, removeFacetValue} from "./utils";
 
-import facetStyles, {FacetCss} from "../__style__/facet.css";
-export type FacetStyle = CSSToStrings<FacetCss>;
-const Theme = themr("facet", facetStyles);
+import facetCss, {FacetCss} from "../__style__/facet.css";
+export {FacetCss, facetCss};
+const Theme = themr("facet", facetCss);
 
 /** Props de Facet. */
 export interface FacetProps {
@@ -41,7 +41,7 @@ export interface FacetProps {
     /** Store. */
     store: SearchStore;
     /** CSS. */
-    theme?: FacetStyle;
+    theme?: CSSProp<FacetCss>;
 }
 
 /** Composant affichant le détail d'une facette avec ses valeurs. */

@@ -6,16 +6,15 @@ import * as React from "react";
 import posed, {Transition} from "react-pose";
 
 import {isList, isSearch, ListStoreBase} from "@focus4/stores";
-import {CSSToStrings, defaultPose, getIcon, themr, ToBem} from "@focus4/styling";
+import {CSSProp, defaultPose, getIcon, themr, ToBem} from "@focus4/styling";
 import {Button, ButtonMenu, ChipTheme, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import actionBarStyles, {ActionBarCss} from "./__style__/action-bar.css";
-export {actionBarStyles};
-export type ActionBarStyle = CSSToStrings<ActionBarCss>;
-const Theme = themr("actionBar", actionBarStyles);
+import actionBarCss, {ActionBarCss} from "./__style__/action-bar.css";
+export {actionBarCss, ActionBarCss};
+const Theme = themr("actionBar", actionBarCss);
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
@@ -62,7 +61,7 @@ export interface ActionBarProps<T> {
     /** Store associé. */
     store: ListStoreBase<T>;
     /** CSS. */
-    theme?: ActionBarStyle;
+    theme?: CSSProp<ActionBarCss>;
 }
 
 /** Barre d'actions pour une liste ou un groupe de recherche. Permet le tri, le grouping, la recherche et la sélection + actions en masse. */

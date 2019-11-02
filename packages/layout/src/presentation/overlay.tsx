@@ -4,17 +4,16 @@ import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSToStrings, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
 
-import overlayStyles, {OverlayCss} from "./__style__/overlay.css";
-export {overlayStyles};
-export type OverlayStyle = CSSToStrings<OverlayCss>;
+import overlayCss, {OverlayCss} from "./__style__/overlay.css";
+export {overlayCss, OverlayCss};
 
 export interface OverlayProps {
     active: boolean;
     onClick?: () => void;
     isAdditional?: boolean;
-    theme?: OverlayStyle;
+    theme?: CSSProp<OverlayCss>;
 }
 
 const overlays = observable<(() => void) | {handler: string}>([], {deep: false});
@@ -35,7 +34,7 @@ export function Overlay({
     onClick,
     theme: pTheme
 }: React.PropsWithChildren<OverlayProps>) {
-    const theme = useTheme("overlay", overlayStyles, pTheme);
+    const theme = useTheme("overlay", overlayCss, pTheme);
 
     React.useEffect(() => {
         if (isAdditional || !active) {

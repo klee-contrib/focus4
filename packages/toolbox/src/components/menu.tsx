@@ -3,12 +3,26 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 import {MENU} from "react-toolbox/lib/identifiers";
-import {IconMenu as IconMenuType, iconMenuFactory, IconMenuProps, IconMenuTheme} from "react-toolbox/lib/menu/IconMenu";
-import {Menu as MenuType, menuFactory, MenuProps, MenuTheme} from "react-toolbox/lib/menu/Menu";
-import {MenuDivider as RTMenuDivider, MenuDividerProps, MenuDividerTheme} from "react-toolbox/lib/menu/MenuDivider";
-import {MenuItem as MenuItemType, menuItemFactory, MenuItemProps, MenuItemTheme} from "react-toolbox/lib/menu/MenuItem";
+import {
+    IconMenu as IconMenuType,
+    iconMenuFactory,
+    IconMenuProps as RTIconMenuProps,
+    IconMenuTheme
+} from "react-toolbox/lib/menu/IconMenu";
+import {Menu as MenuType, menuFactory, MenuProps as RTMenuProps, MenuTheme} from "react-toolbox/lib/menu/Menu";
+import {
+    MenuDivider as RTMenuDivider,
+    MenuDividerProps as RTMenuDividerProps,
+    MenuDividerTheme
+} from "react-toolbox/lib/menu/MenuDivider";
+import {
+    MenuItem as MenuItemType,
+    menuItemFactory,
+    MenuItemProps as RTMenuItemProps,
+    MenuItemTheme
+} from "react-toolbox/lib/menu/MenuItem";
 
-import {fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import rtMenuTheme from "react-toolbox/components/menu/theme.css";
 const menuTheme: MenuTheme = rtMenuTheme;
 export {menuTheme};
@@ -18,23 +32,27 @@ import {rippleFactory} from "./ripple";
 import {tooltipFactory, TooltipProps} from "./tooltip";
 
 const RTMenuItem = menuItemFactory(rippleFactory({}));
+type MenuItemProps = Omit<RTMenuItemProps, "theme"> & {theme?: CSSProp<MenuItemTheme>};
 export const MenuItem = React.forwardRef<MenuItemType, MenuItemProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as MenuItemTheme, props.theme);
     return <RTMenuItem ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTMenu = menuFactory(MenuItem);
+type MenuProps = Omit<RTMenuProps, "theme"> & {theme?: CSSProp<MenuTheme>};
 export const Menu = React.forwardRef<MenuType, MenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme, props.theme);
     return <RTMenu ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTIconMenu = iconMenuFactory(IconButton, Menu);
+type IconMenuProps = Omit<RTIconMenuProps, "theme"> & {theme?: CSSProp<IconMenuTheme>};
 export const IconMenu = React.forwardRef<IconMenuType, IconMenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as IconMenuTheme, props.theme);
     return <RTIconMenu ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
+type MenuDividerProps = Omit<RTMenuDividerProps, "theme"> & {theme?: CSSProp<MenuDividerTheme>};
 export const MenuDivider = React.forwardRef<RTMenuDivider, MenuDividerProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as MenuDividerTheme, props.theme);
     return <RTMenuDivider ref={ref} {...props} theme={fromBem(theme)} />;
@@ -43,13 +61,14 @@ export const MenuDivider = React.forwardRef<RTMenuDivider, MenuDividerProps>((pr
 const TooltipButton = tooltipFactory()(Button);
 
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
-export interface ButtonMenuProps extends MenuProps {
+export interface ButtonMenuProps extends Omit<MenuProps, "theme"> {
     /** Les props du bouton. */
     button: ButtonProps &
         TooltipProps & {
             /** L'icône à afficher quand le bouton est ouvert. */
             openedIcon?: React.ReactNode;
         };
+    theme?: CSSProp<MenuTheme>;
 }
 
 /** Menu React-Toolbox avec un bouton personnalisable (non icône). */
@@ -125,7 +144,13 @@ export class ButtonMenu extends React.Component<ButtonMenuProps> {
                 />
 
                 <div style={this.menuStyle}>
-                    <Menu {...menuProps} position={position} active={this.isOpened} onHide={this.onHide}>
+                    <Menu
+                        {...menuProps}
+                        theme={menuProps.theme}
+                        position={position}
+                        active={this.isOpened}
+                        onHide={this.onHide}
+                    >
                         {menuProps.children}
                     </Menu>
                 </div>

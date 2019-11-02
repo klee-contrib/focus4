@@ -5,18 +5,17 @@ import * as React from "react";
 import posed, {Transition} from "react-pose";
 
 import {ListStoreBase} from "@focus4/stores";
-import {defaultPose, getIcon, themr} from "@focus4/styling";
+import {CSSProp, defaultPose, getIcon, themr} from "@focus4/styling";
 import {FontIcon, IconButton} from "@focus4/toolbox";
 
 import {OperationListItem} from "./contextual-actions";
 import {addDragSource} from "./dnd-utils";
-import {DndDragLayer, DragLayerStyle} from "./drag-layer";
+import {DndDragLayer, DragLayerCss} from "./drag-layer";
 import {LineProps, LineWrapper, LineWrapperProps} from "./line";
-import {ListBase, ListBaseProps, ListStyle} from "./list-base";
+import {ListBase, ListBaseProps, listCss, ListCss} from "./list-base";
 import {ListWrapperContext, lwcInit} from "./list-wrapper";
 
-import listStyles from "./__style__/list.css";
-const Theme = themr("list", listStyles);
+const Theme = themr("list", listCss);
 
 /** Props de base d'un composant de détail. */
 export interface DetailProps<T> {
@@ -53,7 +52,7 @@ export interface ListProps<T> extends ListBaseProps<T> {
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
-    dragLayerTheme?: DragLayerStyle;
+    dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Active le drag and drop. */
@@ -371,7 +370,7 @@ interface DetailWrapperProps {
     DetailComponent: React.ComponentType<DetailProps<{}>>;
     closeDetail: () => void;
     item: {};
-    theme?: ListStyle;
+    theme?: CSSProp<ListCss>;
 }
 
 /** Wrapper pour le composant de détail. */

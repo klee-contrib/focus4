@@ -3,7 +3,7 @@ import {TIME_PICKER} from "react-toolbox/lib/identifiers";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import RTClock from "react-toolbox/lib/time_picker/Clock";
 
-import {fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import rtTimePickerTheme from "react-toolbox/components/time_picker/theme.css";
 const timePickerTheme: TimePickerTheme = rtTimePickerTheme;
 export {timePickerTheme};
@@ -13,7 +13,7 @@ export interface ClockProps {
     format?: "24hr" | "ampm";
     onChange?: Function;
     onHandMoved?: Function;
-    theme?: {};
+    theme?: CSSProp<TimePickerTheme>;
     time?: Date;
 }
 

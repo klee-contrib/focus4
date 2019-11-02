@@ -3,7 +3,7 @@ import {DatePickerLocale, DatePickerTheme} from "react-toolbox/lib/date_picker";
 import calendarFactory from "react-toolbox/lib/date_picker/Calendar";
 import {DATE_PICKER} from "react-toolbox/lib/identifiers";
 
-import {fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import rtDatePickerTheme from "react-toolbox/components/date_picker/theme.css";
 const datePickerTheme: DatePickerTheme = rtDatePickerTheme;
 export {datePickerTheme};
@@ -21,7 +21,7 @@ export interface CalendarProps {
     onChange: Function;
     selectedDate?: Date;
     sundayFirstDayOfWeek?: boolean;
-    theme?: {};
+    theme?: CSSProp<DatePickerTheme>;
 }
 
 const RTCalendar = calendarFactory(IconButton);

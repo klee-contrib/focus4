@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import {TReactCSSThemrTheme} from "@focus4/core";
-import {ThemeContext} from "@focus4/styling";
+import {CSSProp, ThemeContext} from "@focus4/styling";
 import {
     AppBarTheme,
     AutocompleteTheme,
@@ -32,68 +32,46 @@ import {
     TooltipTheme
 } from "@focus4/toolbox";
 
-import {HeaderStyle} from "./header";
-import {MainMenuStyle} from "./menu";
-import {
-    DialogStyle,
-    LayoutBase,
-    LayoutProps,
-    LayoutStyle,
-    OverlayStyle,
-    PopinStyle,
-    ScrollspyStyle
-} from "./presentation";
-import {ButtonBttStyle, ScrollableStyle} from "./scrollable";
-import {LoadingBarStyle} from "./utils";
+import {HeaderCss} from "./header";
+import {MainMenuCss} from "./menu";
+import {DialogCss, LayoutBase, LayoutCss, LayoutProps, OverlayCss, PopinCss, ScrollspyCss} from "./presentation";
+import {ButtonBttCss, ScrollableCss} from "./scrollable";
+import {LoadingBarCss} from "./utils";
 
 export {
     HeaderActions,
     HeaderBarLeft,
     HeaderBarRight,
     HeaderContent,
+    HeaderCss,
     HeaderScrolling,
-    HeaderStyle,
     HeaderSummary,
     HeaderTopRow,
     PrimaryAction,
     SecondaryAction,
-    headerStyles
+    headerCss
 } from "./header";
-export {MainMenu, MainMenuItem, MainMenuProps, MainMenuStyle, mainMenuStyles} from "./menu";
+export {MainMenu, MainMenuItem, MainMenuProps, MainMenuCss, mainMenuCss} from "./menu";
 export {
     Content,
     Dialog,
-    DialogStyle,
+    DialogCss,
     LayoutBase,
     LayoutProps,
-    LayoutStyle,
-    OverlayStyle,
+    LayoutCss,
+    OverlayCss,
     Popin,
-    PopinStyle,
+    PopinCss,
     ScrollspyContainer,
-    ScrollspyStyle,
-    dialogStyles,
-    layoutStyles,
-    overlayStyles,
-    popinStyles,
-    scrollspyStyles
+    ScrollspyCss,
+    dialogCss,
+    layoutCss,
+    overlayCss,
+    popinCss,
+    scrollspyCss
 } from "./presentation";
-export {
-    ButtonBttStyle,
-    Scrollable,
-    ScrollableProps,
-    ScrollableStyle,
-    buttonBttStyles,
-    scrollableStyles
-} from "./scrollable";
-export {
-    LoadingBar,
-    LoadingBarStyle,
-    MessageCenter,
-    MessageCenterProps,
-    loadingBarStyles,
-    snackbarStyles
-} from "./utils";
+export {ButtonBttCss, Scrollable, ScrollableProps, ScrollableCss, buttonBttCss, scrollableCss} from "./scrollable";
+export {LoadingBar, LoadingBarCss, MessageCenter, MessageCenterProps, loadingBarCss, snackBarCss} from "./utils";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
@@ -101,9 +79,9 @@ export interface LayoutStyleProviderProps {
     advancedSearch?: {};
     autocomplete?: {};
     booleanRadio?: {};
-    buttonBTT?: ButtonBttStyle;
+    buttonBTT?: CSSProp<ButtonBttCss>;
     contextualActions?: {};
-    dialog?: DialogStyle;
+    dialog?: CSSProp<DialogCss>;
     display?: {};
     dragLayer?: {};
     facet?: {};
@@ -111,48 +89,48 @@ export interface LayoutStyleProviderProps {
     field?: {};
     form?: {};
     group?: {};
-    header?: HeaderStyle;
+    header?: CSSProp<HeaderCss>;
     label?: {};
-    layout?: LayoutStyle;
-    loadingBar?: LoadingBarStyle;
+    layout?: CSSProp<LayoutCss>;
+    loadingBar?: CSSProp<LoadingBarCss>;
     line?: {};
     list?: {};
     listWrapper?: {};
-    mainMenu?: MainMenuStyle;
-    overlay?: OverlayStyle;
+    mainMenu?: CSSProp<MainMenuCss>;
+    overlay?: CSSProp<OverlayCss>;
     panel?: {};
-    popin?: PopinStyle;
-    scrollable?: ScrollableStyle;
-    scrollspy?: ScrollspyStyle;
+    popin?: CSSProp<PopinCss>;
+    scrollable?: CSSProp<ScrollableCss>;
+    scrollspy?: CSSProp<ScrollspyCss>;
     searchBar?: {};
     select?: {};
     selectCheckbox?: {};
     selectRadio?: {};
     summary?: {};
 
-    RTAppBar?: AppBarTheme;
-    RTAutocomplete?: AutocompleteTheme;
-    RTAvatar?: AvatarTheme;
-    RTButton?: ButtonTheme & BrowseButtonTheme & IconButtonTheme;
-    RTCard?: CardTheme;
-    RTCheckbox?: CheckboxTheme;
-    RTChip?: ChipTheme;
-    RTDatePicker?: DatePickerTheme;
-    RTDropdown?: DropdownTheme;
-    RTInput?: InputTheme;
-    RTLink?: LinkTheme;
-    RTList?: ListTheme;
-    RTMenu?: IconMenuTheme & MenuItemTheme & MenuTheme;
-    RTNavigation?: NavigationTheme;
-    RTProgressBar?: ProgressBarTheme;
-    RTRadio?: RadioTheme;
-    RTRipple?: RippleTheme;
-    RTSlider?: SliderTheme;
-    RTSnackbar?: SnackbarTheme;
-    RTSwitch?: SwitchTheme;
-    RTTabs?: TabsTheme;
-    RTTimePicker?: TimePickerTheme;
-    RTTooltip?: TooltipTheme;
+    RTAppBar?: CSSProp<AppBarTheme>;
+    RTAutocomplete?: CSSProp<AutocompleteTheme>;
+    RTAvatar?: CSSProp<AvatarTheme>;
+    RTButton?: CSSProp<ButtonTheme & BrowseButtonTheme & IconButtonTheme>;
+    RTCard?: CSSProp<CardTheme>;
+    RTCheckbox?: CSSProp<CheckboxTheme>;
+    RTChip?: CSSProp<ChipTheme>;
+    RTDatePicker?: CSSProp<DatePickerTheme>;
+    RTDropdown?: CSSProp<DropdownTheme>;
+    RTInput?: CSSProp<InputTheme>;
+    RTLink?: CSSProp<LinkTheme>;
+    RTList?: CSSProp<ListTheme>;
+    RTMenu?: CSSProp<IconMenuTheme & MenuItemTheme & MenuTheme>;
+    RTNavigation?: CSSProp<NavigationTheme>;
+    RTProgressBar?: CSSProp<ProgressBarTheme>;
+    RTRadio?: CSSProp<RadioTheme>;
+    RTRipple?: CSSProp<RippleTheme>;
+    RTSlider?: CSSProp<SliderTheme>;
+    RTSnackbar?: CSSProp<SnackbarTheme>;
+    RTSwitch?: CSSProp<SwitchTheme>;
+    RTTabs?: CSSProp<TabsTheme>;
+    RTTimePicker?: CSSProp<TimePickerTheme>;
+    RTTooltip?: CSSProp<TooltipTheme>;
 }
 
 /**

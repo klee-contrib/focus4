@@ -11,15 +11,14 @@ import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";
 import {Styler} from "stylefire";
 
-import {CSSToStrings, ScrollableContext, springPose, themr} from "@focus4/styling";
+import {CSSProp, ScrollableContext, springPose, themr} from "@focus4/styling";
 
 import {ButtonBackToTop} from "./button-back-to-top";
-export {ButtonBttStyle, buttonBttStyles} from "./button-back-to-top";
+export {ButtonBttCss, buttonBttCss} from "./button-back-to-top";
 
-import scrollableStyles, {ScrollableCss} from "./__style__/scrollable.css";
-export {scrollableStyles};
-const Theme = themr("scrollable", scrollableStyles);
-export type ScrollableStyle = CSSToStrings<ScrollableCss>;
+import scrollableCss, {ScrollableCss} from "./__style__/scrollable.css";
+export {scrollableCss, ScrollableCss};
+const Theme = themr("scrollable", scrollableCss);
 
 const ResizeObserver = (window as any).ResizeObserver || ResizeObserverPolyfill;
 
@@ -40,7 +39,7 @@ export interface ScrollableProps {
     /** Reset le scroll (à 0) dès que les children du scrollable changent.  */
     resetScrollOnChildrenChange?: boolean;
     /** CSS. */
-    theme?: ScrollableStyle;
+    theme?: CSSProp<ScrollableCss>;
 }
 
 @observer

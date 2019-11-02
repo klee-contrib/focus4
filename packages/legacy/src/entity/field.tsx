@@ -5,16 +5,15 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {themeable} from "@focus4/core";
-import {FieldStyle, fieldStyles} from "@focus4/forms";
-import {FieldCss} from "@focus4/forms/lib/fields/__style__/field.css";
+import {fieldCss, FieldCss, Label, LabelProps} from "@focus4/forms";
 import {validateField} from "@focus4/stores";
-import {themr, ToBem} from "@focus4/styling";
+import {CSSProp, themr, ToBem} from "@focus4/styling";
 
-import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
+import {Display, DisplayProps, Input, InputProps} from "../components";
 
 import {Domain} from "./domain";
 
-const Theme = themr("field", fieldStyles);
+const Theme = themr("field", fieldCss);
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
@@ -61,7 +60,7 @@ export interface FieldProps<
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** CSS. */
-    theme?: FieldStyle;
+    theme?: CSSProp<FieldCss>;
     /** Valeur. */
     value: any;
     /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */

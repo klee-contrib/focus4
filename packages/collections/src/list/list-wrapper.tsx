@@ -3,13 +3,12 @@ import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {CSSToStrings, getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
 
-import listWrapperStyles, {ListWrapperCss} from "./__style__/list-wrapper.css";
-export {listWrapperStyles};
-export type ListWrapperStyle = CSSToStrings<ListWrapperCss>;
-const Theme = themr("listWrapper", listWrapperStyles);
+import listWrapperCss, {ListWrapperCss} from "./__style__/list-wrapper.css";
+export {listWrapperCss, ListWrapperCss};
+const Theme = themr("listWrapper", listWrapperCss);
 
 const IconButton = tooltipFactory()(IB);
 
@@ -30,7 +29,7 @@ export interface ListWrapperProps {
     /** Hauteur des mosaïques. Par défaut : 200. */
     mosaicHeight?: number;
     /** CSS. */
-    theme?: ListWrapperStyle;
+    theme?: CSSProp<ListWrapperCss>;
 }
 
 export const lwcInit = {

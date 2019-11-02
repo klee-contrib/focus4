@@ -4,26 +4,25 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
-import {CSSToStrings, getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {
     ActionBar,
     DetailProps,
-    DragLayerStyle,
+    DragLayerCss,
     EmptyProps,
+    LineCss,
     LineProps,
-    LineStyle,
-    ListStyle,
+    ListCss,
     LoadingProps,
     OperationListItem,
     storeListFor
 } from "../../list";
 
-import groupStyles, {GroupCss} from "../__style__/group.css";
-export {groupStyles};
-export type GroupStyle = CSSToStrings<GroupCss>;
-const Theme = themr("group", groupStyles);
+import groupCss, {GroupCss} from "../__style__/group.css";
+export {groupCss, GroupCss};
+const Theme = themr("group", groupCss);
 
 /** Props du composant de groupe. */
 export interface GroupProps<T> {
@@ -36,7 +35,7 @@ export interface GroupProps<T> {
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
-    dragLayerTheme?: DragLayerStyle;
+    dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Constituion du groupe à afficher. */
@@ -58,9 +57,9 @@ export interface GroupProps<T> {
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
-    lineTheme?: LineStyle;
+    lineTheme?: CSSProp<LineCss>;
     /** CSS de la liste. */
-    listTheme?: ListStyle;
+    listTheme?: CSSProp<ListCss>;
     /** Composant à afficher pendant le chargement. */
     LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Composant de mosaïque. */
@@ -70,7 +69,7 @@ export interface GroupProps<T> {
     /** Store contenant la liste. */
     store: SearchStore<T>;
     /** CSS */
-    theme?: GroupStyle;
+    theme?: CSSProp<GroupCss>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
     useGroupActionBars?: boolean;
 }

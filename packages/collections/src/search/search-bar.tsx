@@ -6,13 +6,12 @@ import * as React from "react";
 
 import {fieldFor, makeField} from "@focus4/forms";
 import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
-import {CSSToStrings, getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
-import searchBarStyles, {SearchBarCss} from "./__style__/search-bar.css";
-export {searchBarStyles};
-export type SearchBarStyle = CSSToStrings<SearchBarCss>;
-const Theme = themr("searchBar", searchBarStyles);
+import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";
+export {searchBarCss, SearchBarCss};
+const Theme = themr("searchBar", searchBarCss);
 
 /** Props de la SearchBar. */
 export interface SearchBarProps<T, C extends Entity> {
@@ -31,7 +30,7 @@ export interface SearchBarProps<T, C extends Entity> {
     /** Store associé. */
     store: SearchStore<T, C>;
     /** CSS. */
-    theme?: SearchBarStyle;
+    theme?: CSSProp<SearchBarCss>;
 }
 
 /** Barre de recherche permettant de contrôle le texte et les critères personnalisés de recherche. */

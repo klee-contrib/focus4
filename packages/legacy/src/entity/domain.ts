@@ -1,5 +1,7 @@
+import {LabelProps} from "@focus4/forms";
 import {Domain as TrueDomain} from "@focus4/stores";
-import {DisplayProps, InputProps, LabelProps} from "../components";
+
+import {DisplayProps, InputProps} from "../components";
 
 export interface Domain<T = unknown, ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps>
     extends TrueDomain<T, ICProps, any, any, DCProps, LCProps> {

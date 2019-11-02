@@ -2,10 +2,10 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {DisplayStyle, displayStyles} from "@focus4/forms";
-import {themr} from "@focus4/styling";
+import {DisplayCss, displayCss} from "@focus4/forms";
+import {CSSProp, themr} from "@focus4/styling";
 
-const Theme = themr("display", displayStyles);
+const Theme = themr("display", displayCss);
 
 /** Props du composant d'affichage. */
 export interface DisplayProps {
@@ -16,7 +16,7 @@ export interface DisplayProps {
     /** Nom de la propriété de libellé, pour liste de référence. */
     labelKey?: string;
     /** CSS. */
-    theme?: DisplayStyle;
+    theme?: CSSProp<DisplayCss>;
     /** Valeur à afficher. */
     value?: any;
     /** Nom de la propriété de libellé, pour liste de référence. */

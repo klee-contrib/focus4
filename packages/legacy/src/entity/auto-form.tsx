@@ -4,7 +4,7 @@ import * as React from "react";
 import {v4} from "uuid";
 
 import {classAutorun, messageStore} from "@focus4/core";
-import {formStyles} from "@focus4/forms";
+import {formCss, LabelProps, PanelProps} from "@focus4/forms";
 import {
     EntityField,
     FieldEntry,
@@ -16,13 +16,13 @@ import {
 } from "@focus4/stores";
 import {themr} from "@focus4/styling";
 
-import {DisplayProps, InputProps, LabelProps, PanelProps, SelectProps} from "../components";
+import {DisplayProps, InputProps, SelectProps} from "../components";
 
 import {Field, FieldProps} from "./field";
 import {displayFor, fieldFor, isField, selectFor} from "./field-helpers";
 import {createViewModel, ViewModel} from "./view-model";
 
-const Theme = themr("form", formStyles);
+const Theme = themr("form", formCss);
 
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions<ST extends StoreNode | StoreListNode> {

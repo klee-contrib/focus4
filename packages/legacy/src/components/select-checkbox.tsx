@@ -1,8 +1,8 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {SelectCheckboxStyle, selectCheckboxStyles} from "@focus4/forms";
-import {useTheme} from "@focus4/styling";
+import {SelectCheckboxCss, selectCheckboxCss} from "@focus4/forms";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
 function clickHandlerFactory(
@@ -44,7 +44,7 @@ export interface SelectCheckboxProps {
     /** Call with each value change. */
     onChange: (value: string[] | number[] | undefined) => void;
     /** CSS. */
-    theme?: SelectCheckboxStyle;
+    theme?: CSSProp<SelectCheckboxCss>;
     /** Value. */
     value?: string[] | number[];
     /** Name of field for key. */
@@ -66,7 +66,7 @@ export function SelectCheckbox({
     valueKey,
     values
 }: SelectCheckboxProps) {
-    const theme = useTheme("selectCheckbox", selectCheckboxStyles, pTheme);
+    const theme = useTheme("selectCheckbox", selectCheckboxCss, pTheme);
     return (
         <div className={theme.select()}>
             {label && <h5>{i18next.t(label)}</h5>}

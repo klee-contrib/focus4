@@ -1,12 +1,11 @@
 import * as React from "react";
 
-import {CSSToStrings, getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
 
-import contextualActionsStyles, {ContextualActionsCss} from "./__style__/contextual-actions.css";
-export {contextualActionsStyles};
-export type ContextualActionsStyle = CSSToStrings<ContextualActionsCss>;
-const Theme = themr("contextualActions", contextualActionsStyles);
+import contextualActionsCss, {ContextualActionsCss} from "./__style__/contextual-actions.css";
+export {contextualActionsCss, ContextualActionsCss};
+const Theme = themr("contextualActions", contextualActionsCss);
 
 const TooltipButton = tooltipFactory()(Button);
 const TooltipIconButton = tooltipFactory()(IconButton);
@@ -50,7 +49,7 @@ export interface ContextualActionsProps {
     /** La liste d'actions. */
     operationList: OperationListItem<any>[];
     /** CSS. */
-    theme?: ContextualActionsStyle;
+    theme?: CSSProp<ContextualActionsCss>;
 }
 
 /** Affiche une liste d'actions contextuelles. */

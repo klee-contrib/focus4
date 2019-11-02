@@ -4,23 +4,23 @@ scroll.polyfill();
 import * as React from "react";
 import posed from "react-pose";
 
-import {CSSToStrings, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button, ButtonTheme} from "@focus4/toolbox";
 
-import buttonBttStyles, {ButtonBttCss} from "./__style__/button-btt.css";
-export {buttonBttStyles};
-export type ButtonBttStyle = CSSToStrings<ButtonBttCss> & ButtonTheme;
+import buttonBttCss, {ButtonBttCss as BTTCss} from "./__style__/button-btt.css";
+export type ButtonBttCss = BTTCss & ButtonTheme;
+export {buttonBttCss};
 
 /** Props du bouton de retour en haut de page. */
 export interface ButtonBackToTopProps {
     /** CSS. */
-    theme?: ButtonBttStyle;
+    theme?: CSSProp<ButtonBttCss>;
 }
 
 /** Bouton de retour en haut de page. */
 export const ButtonBackToTop = posed(
     React.forwardRef<HTMLDivElement, ButtonBackToTopProps>(({theme: pTheme}, ref) => {
-        const {backToTop, ...theme} = useTheme<ButtonBttStyle>("buttonBTT", buttonBttStyles, pTheme);
+        const {backToTop, ...theme} = useTheme<ButtonBttCss>("buttonBTT", buttonBttCss, pTheme);
         const scrollable = React.useContext(ScrollableContext);
 
         return (
@@ -34,7 +34,7 @@ export const ButtonBackToTop = posed(
                     }
                     icon="expand_less"
                     floating
-                    theme={fromBem(theme)}
+                    theme={theme}
                 />
             </div>
         );

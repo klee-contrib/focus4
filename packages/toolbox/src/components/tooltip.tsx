@@ -5,7 +5,7 @@ import {TOOLTIP} from "react-toolbox/lib/identifiers";
 import events from "react-toolbox/lib/utils/events";
 import {getViewport} from "react-toolbox/lib/utils/utils";
 
-import {fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 import {createPortal} from "react-dom";
 import rtTooltipTheme from "react-toolbox/components/tooltip/theme.css";
 const tooltipTheme: TooltipTheme = rtTooltipTheme;
@@ -37,9 +37,10 @@ export interface TooltipOptions {
     theme?: TooltipTheme;
 }
 
-export interface TooltipProps extends ReactToolbox.Props, TooltipOptions {
+export interface TooltipProps extends ReactToolbox.Props, Omit<TooltipOptions, "theme"> {
     children?: React.ReactNode;
     tooltip?: React.ReactNode;
+    theme?: CSSProp<TooltipTheme>;
 }
 
 export function tooltipFactory({
@@ -52,7 +53,10 @@ export function tooltipFactory({
     theme = {}
 }: TooltipOptions = {}) {
     return function Tooltip<P>(ComposedComponent: React.ComponentType<P> | string) {
-        return React.forwardRef<TooltippedComponent<P>, P & TooltipProps>((p, ref) => {
+        return React.forwardRef<
+            TooltippedComponent<P>,
+            P & Omit<TooltipProps, "theme"> & {theme?: CSSProp<TooltipTheme>}
+        >((p, ref) => {
             const finalTheme = useTheme(TOOLTIP, tooltipTheme, p.theme, theme);
             return (
                 <TooltippedComponent
@@ -64,7 +68,7 @@ export function tooltipFactory({
                     tooltipPosition={tooltipPosition}
                     tooltipShowOnClick={tooltipShowOnClick}
                     {...p}
-                    theme={fromBem(finalTheme)}
+                    theme={finalTheme}
                     ComposedComponent={ComposedComponent}
                 />
             );
@@ -73,7 +77,7 @@ export function tooltipFactory({
 }
 
 class TooltippedComponent<P> extends React.Component<
-    TooltipProps & {ComposedComponent: React.ComponentType<P> | string}
+    TooltipProps & {theme: ToBem<TooltipTheme>} & {ComposedComponent: React.ComponentType<P> | string}
 > {
     state = {
         active: false,
@@ -224,10 +228,13 @@ class TooltippedComponent<P> extends React.Component<
             ...other
         } = this.props;
 
-        const _className = classnames(theme!.tooltip, {
-            [theme!.tooltipActive!]: active,
-            [(theme as any)[positionClass]]: (theme as any)[positionClass]
-        });
+        const _className = classnames(
+            theme.tooltip(),
+            {
+                [theme.tooltipActive()]: active
+            },
+            (theme as any)[positionClass] ? (theme as any)[positionClass]() : ""
+        );
 
         const childProps = {
             ...other,
@@ -253,7 +260,7 @@ class TooltippedComponent<P> extends React.Component<
                               data-react-toolbox="tooltip"
                               style={{top, left}}
                           >
-                              <span className={theme!.tooltipInner}>{tooltip}</span>
+                              <span className={theme.tooltipInner()}>{tooltip}</span>
                           </span>,
                           document.body
                       )

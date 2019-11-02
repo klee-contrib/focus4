@@ -1,11 +1,10 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {CSSToStrings, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
-import selectStyles, {SelectCss} from "./__style__/select.css";
-export {selectStyles};
-export type SelectStyle = CSSToStrings<SelectCss>;
+import selectCss, {SelectCss} from "./__style__/select.css";
+export {selectCss, SelectCss};
 
 /** Props du Select. */
 export interface SelectProps<T extends "string" | "number"> {
@@ -24,7 +23,7 @@ export interface SelectProps<T extends "string" | "number"> {
     /** Est appelé à chaque changement de valeur. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** CSS. */
-    theme?: SelectStyle;
+    theme?: CSSProp<SelectCss>;
     /** Type du champ (number ou string). */
     type: T;
     /** Libellés des champs sans libellés. */
@@ -53,7 +52,7 @@ export function Select<T extends "string" | "number">({
     i18nPrefix = "focus",
     unSelectedLabel = `${i18nPrefix}.select.unselected`
 }: SelectProps<T>) {
-    const theme = useTheme("select", selectStyles, pTheme);
+    const theme = useTheme("select", selectCss, pTheme);
 
     // On ajoute l'élément vide si nécessaire.
     let finalValues = values;

@@ -2,15 +2,14 @@ import i18next from "i18next";
 import {snakeCase} from "lodash";
 import * as React from "react";
 
-import {CSSToStrings, ScrollspyContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollspyContext, useTheme} from "@focus4/styling";
 import {ProgressBar} from "@focus4/toolbox";
 
 import {ButtonHelp} from "./button-help";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
-import panelStyles, {PanelCss} from "./__style__/panel.css";
-export {panelStyles};
-export type PanelStyle = CSSToStrings<PanelCss>;
+import panelCss, {PanelCss} from "./__style__/panel.css";
+export {panelCss, PanelCss};
 
 /** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {
@@ -27,7 +26,7 @@ export interface PanelProps extends PanelButtonsProps {
     /** Affiche le bouton d'aide. */
     showHelp?: boolean;
     /** CSS. */
-    theme?: PanelStyle;
+    theme?: CSSProp<PanelCss>;
     /** Titre du panel. */
     title?: string;
 }
@@ -56,7 +55,7 @@ export function Panel({
 
     const [isInForm, setIsInForm] = React.useState(false);
     const ref = React.useRef<HTMLDivElement>(null);
-    const theme = useTheme("panel", panelStyles, pTheme);
+    const theme = useTheme("panel", panelCss, pTheme);
 
     /** On récupère le contexte posé par le scrollspy parent. */
     const scrollSpyContext = React.useContext(ScrollspyContext);

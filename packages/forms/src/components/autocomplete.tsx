@@ -6,7 +6,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {CSSToStrings, fromBem, themr} from "@focus4/styling";
+import {CSSProp, themr} from "@focus4/styling";
 import {
     Autocomplete as RTAutocomplete,
     AutocompleteProps as RTAutocompleteProps,
@@ -15,10 +15,10 @@ import {
     ProgressBar
 } from "@focus4/toolbox";
 
-import autocompleteStyles, {AutocompleteCss} from "./__style__/autocomplete.css";
-export {autocompleteStyles};
-export type AutocompleteStyle = CSSToStrings<AutocompleteCss> & AutocompleteTheme & InputTheme;
-const Theme = themr("autocomplete", autocompleteStyles);
+import autocompleteCss, {AutocompleteCss as ACCSS} from "./__style__/autocomplete.css";
+export {autocompleteCss};
+export type AutocompleteCss = ACCSS & AutocompleteTheme & InputTheme;
+const Theme = themr<AutocompleteCss>("autocomplete", autocompleteCss);
 
 /** Résultat du service de recherche. */
 export interface AutocompleteResult {
@@ -46,7 +46,7 @@ export interface AutocompleteProps<T extends "string" | "number"> extends RTAuto
     /** Valeur. */
     value: (T extends "string" ? string : number) | undefined;
     /** CSS. */
-    theme?: AutocompleteStyle;
+    theme?: CSSProp<AutocompleteCss>;
 }
 
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
@@ -233,7 +233,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
                             maxLength={undefined}
                             suggestionMatch="disabled"
                             type="text"
-                            theme={fromBem(theme)}
+                            theme={theme}
                             ref={ref => (this.autocomplete = ref)}
                             onKeyDown={this.onKeyDown}
                         />

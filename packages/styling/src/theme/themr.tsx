@@ -7,7 +7,7 @@ import {useTheme} from "./use-theme";
 
 export interface ThemeConsumerProps<T> {
     children: (theme: ToBem<T>) => React.ReactElement;
-    theme?: T | CSSToStrings<T>;
+    theme?: T | CSSToStrings<T> | Partial<ToBem<T>>;
 }
 
 /**

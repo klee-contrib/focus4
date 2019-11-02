@@ -6,15 +6,14 @@ import * as React from "react";
 
 import {themeable} from "@focus4/core";
 import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FieldType, FormEntityField} from "@focus4/stores";
-import {CSSToStrings, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Autocomplete, Display, Input, Label, Select} from "../components";
 import {documentHelper} from "./document-helper";
 import {FormContext} from "./form";
 
-import fieldStyles, {FieldCss} from "./__style__/field.css";
-export {fieldStyles};
-export type FieldStyle = CSSToStrings<FieldCss>;
+import fieldCss, {FieldCss} from "./__style__/field.css";
+export {fieldCss, FieldCss};
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
 export interface FieldOptions<F extends FieldEntry> {
@@ -36,7 +35,7 @@ export interface FieldOptions<F extends FieldEntry> {
     /** Handler de modification de la valeur. */
     onChange?: (value: FieldType<F["fieldType"]> | undefined) => void;
     /** CSS. */
-    theme?: FieldStyle;
+    theme?: CSSProp<FieldCss>;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
     valueRatio?: number;
 }
@@ -47,7 +46,7 @@ let nameMap: [string, string][] = [];
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & FieldOptions<F> & FieldComponents) {
     const context = React.useContext(FormContext);
-    const theme = useTheme("field", fieldStyles, props.theme);
+    const theme = useTheme("field", fieldCss, props.theme);
 
     const {
         autocompleteProps = {},

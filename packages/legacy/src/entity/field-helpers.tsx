@@ -2,9 +2,10 @@ import i18next from "i18next";
 import {action} from "mobx";
 import * as React from "react";
 
+import {LabelProps} from "@focus4/forms";
 import {EntityField, FieldEntry, FieldEntryType, ReferenceList} from "@focus4/stores";
 
-import {DisplayProps, InputProps, LabelProps, Select, SelectProps} from "../components";
+import {DisplayProps, InputProps, Select, SelectProps} from "../components";
 
 import {Domain} from "./domain";
 import {Field, FieldProps} from "./field";

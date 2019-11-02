@@ -1,32 +1,28 @@
 import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
-import {CSSToStrings, fromBem, useTheme} from "@focus4/styling";
-import {IconButtonTheme} from "@focus4/toolbox";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Overlay} from "../presentation/overlay";
 import {MainMenuItem} from "./item";
-import {MainMenuList, MainMenuListStyle} from "./list";
+import {MainMenuList} from "./list";
+import {MainMenuCss, mainMenuCss} from "./style";
 
-export {MainMenuItem};
-
-import mainMenuStyles, {MainMenuCss} from "./__style__/main-menu.css";
-export {mainMenuStyles};
-export type MainMenuStyle = CSSToStrings<MainMenuCss> & IconButtonTheme;
+export {MainMenuItem, MainMenuCss, mainMenuCss};
 
 /** Props du Menu. */
 export interface MainMenuProps {
     activeRoute?: string;
     showOverlay?: boolean;
-    theme?: MainMenuListStyle & {menu?: string};
+    theme?: CSSProp<MainMenuCss>;
 }
 
 /** Composant de menu, à instancier soi-même avec les items que l'on veut dedans. */
 export function MainMenu({activeRoute, children, showOverlay, theme: pTheme}: React.PropsWithChildren<MainMenuProps>) {
-    const theme = useTheme("mainMenu", mainMenuStyles, pTheme);
+    const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
     return useObserver(() => (
         <nav className={theme.menu()}>
-            <MainMenuList activeRoute={activeRoute} theme={fromBem(theme)}>
+            <MainMenuList activeRoute={activeRoute} theme={theme}>
                 {children}
             </MainMenuList>
             {showOverlay ? <Overlay active isAdditional /> : null}

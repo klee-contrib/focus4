@@ -6,15 +6,14 @@ import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
 
 import {EntityField, FieldEntry, ListStoreBase, stringFor} from "@focus4/stores";
-import {CSSToStrings, getIcon, springPose, themr} from "@focus4/styling";
+import {CSSProp, getIcon, springPose, themr} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import lineStyles, {LineCss} from "./__style__/line.css";
-export {lineStyles};
-export type LineStyle = CSSToStrings<LineCss>;
-const Theme = themr("line", lineStyles);
+import lineCss, {LineCss} from "./__style__/line.css";
+export {lineCss, LineCss};
+const Theme = themr("line", lineCss);
 
 /** Props de base d'un composant de lingne. */
 export interface LineProps<T> {
@@ -57,7 +56,7 @@ export interface LineWrapperProps<T> {
     /** Handler pour ouvrir et fermer le détail. */
     toggleDetail?: (callbacks?: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void}) => void;
     /** CSS. */
-    theme?: LineStyle;
+    theme?: CSSProp<LineCss>;
     /** Type spécial de ligne. */
     type?: "timeline";
 }

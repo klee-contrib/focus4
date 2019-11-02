@@ -6,11 +6,10 @@ import {EntityField, FieldEntry} from "@focus4/stores";
 import {getIcon, themr, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
-import {LineProps, lineStyles, LineWrapper} from "./line";
-import {ListBase, ListBaseProps} from "./list-base";
+import {lineCss, LineProps, LineWrapper} from "./line";
+import {ListBase, ListBaseProps, listCss} from "./list-base";
 
-import listStyles from "./__style__/list.css";
-const Theme = themr("list", listStyles);
+const Theme = themr("list", listCss);
 
 /** Props du composant de TimeLine. */
 export interface TimelineProps<T> extends ListBaseProps<T> {
@@ -70,7 +69,7 @@ export class Timeline<T> extends ListBase<T, TimelineProps<T>> {
 }
 
 function TimelineAddItem({addItemHandler, i18nPrefix}: {addItemHandler: () => void; i18nPrefix: string}) {
-    const theme = useTheme("line", lineStyles);
+    const theme = useTheme("line", lineCss);
     return (
         <li className={theme.timelineAdd()}>
             <div className={theme.timelineBadge()} />

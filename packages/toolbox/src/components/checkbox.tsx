@@ -8,7 +8,7 @@ import {
 } from "react-toolbox/lib/checkbox/Checkbox";
 import {CHECKBOX} from "react-toolbox/lib/identifiers";
 
-import {fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import rtCheckboxTheme from "react-toolbox/components/checkbox/theme.css";
 const checkboxTheme: CheckboxTheme = rtCheckboxTheme;
 export {checkboxTheme, CheckboxTheme};
@@ -16,9 +16,10 @@ export {checkboxTheme, CheckboxTheme};
 import {rippleFactory} from "./ripple";
 
 /** Props du Checkbox. */
-export interface CheckboxProps extends RTCheckboxProps {
+export interface CheckboxProps extends Omit<RTCheckboxProps, "theme"> {
     /** Est appelé quand on coche la case. */
     onChange?: (value: boolean) => void;
+    theme?: CSSProp<CheckboxTheme>;
     /** Valeur. */
     value?: boolean;
 }

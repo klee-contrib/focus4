@@ -1,19 +1,17 @@
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
-import styles from "./__style__/header.css";
+import headerCss, {HeaderCss} from "./__style__/header.css";
 
 /** Props du HeaderContent. */
 export interface HeaderContentProps {
     children?: React.ReactNode;
-    theme?: {
-        content?: string;
-    };
+    theme?: CSSProp<HeaderCss>;
 }
 
 /** Contenu du header. n'est affiché que si le header est déplié. */
 export function HeaderContent(props: HeaderContentProps) {
-    const theme = useTheme("header", styles, props.theme);
+    const theme = useTheme("header", headerCss, props.theme);
     return <div className={theme.content()}>{props.children}</div>;
 }

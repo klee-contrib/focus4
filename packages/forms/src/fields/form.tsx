@@ -1,11 +1,10 @@
 import {useAsObservableSource} from "mobx-react-lite";
 import * as React from "react";
 
-import {CSSToStrings, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
-import formStyles, {FormCss} from "./__style__/form.css";
-export {formStyles};
-export type FormStyle = CSSToStrings<FormCss>;
+import formCss, {FormCss} from "./__style__/form.css";
+export {formCss, FormCss};
 
 /** Options additionnelles du Form. */
 export interface FormProps {
@@ -20,7 +19,7 @@ export interface FormProps {
     /** Voir `FormActions` */
     save: () => void;
     /** CSS. */
-    theme?: FormStyle;
+    theme?: CSSProp<FormCss>;
     /** Modifie le valueRatio par défaut des champs posés dans le formulaire (33%); */
     valueRatio?: number;
 }
@@ -41,7 +40,7 @@ export function Form({
     theme: pTheme,
     valueRatio
 }: FormProps) {
-    const theme = useTheme("form", formStyles, pTheme);
+    const theme = useTheme("form", formCss, pTheme);
     const context = useAsObservableSource({forceErrorDisplay, labelRatio, valueRatio});
     return (
         <FormContext.Provider value={context}>

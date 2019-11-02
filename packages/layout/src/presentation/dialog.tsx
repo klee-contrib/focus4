@@ -3,14 +3,13 @@ import * as React from "react";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSToStrings, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import {Overlay} from "./overlay";
 
-import dialogStyles, {DialogCss} from "./__style__/dialog.css";
-export {dialogStyles};
-export type DialogStyle = CSSToStrings<DialogCss>;
+import dialogCss, {DialogCss} from "./__style__/dialog.css";
+export {dialogCss, DialogCss};
 
 export function Dialog({
     active = false,
@@ -20,8 +19,8 @@ export function Dialog({
     onOverlayClick,
     title,
     theme: pTheme
-}: DialogProps & {theme?: DialogStyle}) {
-    const theme = useTheme("dialog", dialogStyles, pTheme);
+}: DialogProps & {theme?: CSSProp<DialogCss>}) {
+    const theme = useTheme("dialog", dialogCss, pTheme);
     const context = React.useContext(ScrollableContext);
 
     return context.portal(

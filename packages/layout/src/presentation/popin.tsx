@@ -1,15 +1,14 @@
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSToStrings, cssTransitionProps, fromBem, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, cssTransitionProps, fromBem, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {Scrollable} from "../scrollable";
 import {Overlay} from "./overlay";
 
-import popinStyles, {PopinCss} from "./__style__/popin.css";
-export {popinStyles};
-export type PopinStyle = CSSToStrings<PopinCss>;
+import popinCss, {PopinCss} from "./__style__/popin.css";
+export {popinCss, PopinCss};
 
 /** Props de la popin. */
 export interface PopinProps {
@@ -30,7 +29,7 @@ export interface PopinProps {
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
     /** CSS. */
-    theme?: PopinStyle;
+    theme?: CSSProp<PopinCss>;
     /** Type de popin. Par défaut : "from-right" */
     type?: "from-right" | "from-left";
 }
@@ -49,7 +48,7 @@ export function Popin({
     theme: pTheme,
     type = "from-right"
 }: React.PropsWithChildren<PopinProps>) {
-    const theme = useTheme("popin", popinStyles, pTheme);
+    const theme = useTheme("popin", popinCss, pTheme);
     const context = React.useContext(ScrollableContext);
 
     return context.portal(

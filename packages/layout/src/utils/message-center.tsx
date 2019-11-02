@@ -6,8 +6,8 @@ import * as React from "react";
 import {messageStore} from "@focus4/core";
 import {Snackbar, SnackbarTheme} from "@focus4/toolbox";
 
-import * as snackbarStyles from "./__style__/snackbar.css";
-export {snackbarStyles};
+import * as snackBarCss from "./__style__/snackbar.css";
+export {snackBarCss};
 
 export interface MessageCenterProps {
     /** Temps en ms d'affichage des messages d'erreur (par défaut: 8000). */
@@ -97,7 +97,7 @@ export class MessageCenter extends React.Component<MessageCenterProps> {
                 onClick={this.closeSnackbar}
                 onTimeout={this.closeSnackbar}
                 timeout={timeout}
-                theme={snackbarStyles as SnackbarTheme}
+                theme={snackBarCss as SnackbarTheme}
                 type={
                     type === "error" ? "cancel" : type === "success" ? "accept" : type === "warning" ? type : undefined
                 }

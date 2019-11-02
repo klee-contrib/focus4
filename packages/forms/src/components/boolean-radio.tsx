@@ -1,12 +1,11 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {CSSToStrings, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioGroup} from "@focus4/toolbox";
 
-import booleanRadioStyles, {BooleanRadioCss} from "./__style__/boolean-radio.css";
-export {booleanRadioStyles};
-export type BooleanRadioStyle = CSSToStrings<BooleanRadioCss>;
+import booleanRadioCss, {BooleanRadioCss} from "./__style__/boolean-radio.css";
+export {booleanRadioCss, BooleanRadioCss};
 
 export interface BooleanRadioProps {
     /** Disabled radio-select, default to: false */
@@ -22,7 +21,7 @@ export interface BooleanRadioProps {
     /** Call with each value change. */
     onChange: (value: boolean) => void;
     /** CSS. */
-    theme?: BooleanRadioStyle;
+    theme?: CSSProp<BooleanRadioCss>;
     /** Value. */
     value?: boolean;
 }
@@ -37,7 +36,7 @@ export function BooleanRadio({
     theme: pTheme,
     value
 }: BooleanRadioProps) {
-    const theme = useTheme("booleanRadio", booleanRadioStyles, pTheme);
+    const theme = useTheme("booleanRadio", booleanRadioCss, pTheme);
     return (
         <>
             <RadioGroup

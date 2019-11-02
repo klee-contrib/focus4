@@ -4,16 +4,15 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FormEntityField, SearchStore} from "@focus4/stores";
-import {CSSToStrings, getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 import {removeFacetValue} from "./facet-box";
 
-import summaryStyles, {SummaryCss} from "./__style__/summary.css";
-export {summaryStyles};
-export type SummaryStyle = CSSToStrings<SummaryCss>;
-const Theme = themr("summary", summaryStyles);
+import summaryCss, {SummaryCss} from "./__style__/summary.css";
+export {summaryCss, SummaryCss};
+const Theme = themr("summary", summaryCss);
 
 /** Props du Summary. */
 export interface SummaryProps<T> {
@@ -56,7 +55,7 @@ export interface SummaryProps<T> {
     /** Store associé. */
     store: SearchStore<T>;
     /** CSS. */
-    theme?: SummaryStyle;
+    theme?: CSSProp<SummaryCss>;
 }
 
 /** Affiche le nombre de résultats et les filtres dans la recherche avancée. */

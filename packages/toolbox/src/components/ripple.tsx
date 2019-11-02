@@ -8,7 +8,7 @@ import {RippleTheme} from "react-toolbox/lib/ripple";
 import events from "react-toolbox/lib/utils/events";
 import prefixer from "react-toolbox/lib/utils/prefixer";
 
-import {fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 import rtRippleTheme from "react-toolbox/components/ripple/theme.css";
 const rippleTheme: RippleTheme = rtRippleTheme;
 export {rippleTheme, RippleTheme};
@@ -21,11 +21,12 @@ export interface RippleOptions {
     theme?: RippleTheme;
 }
 
-export interface RippleProps extends ReactToolbox.Props, RippleOptions {
+export interface RippleProps extends ReactToolbox.Props, Omit<RippleOptions, "theme"> {
     children?: React.ReactNode;
     disabled?: boolean;
     onRippleEnded?: Function;
     ripple?: boolean;
+    theme?: CSSProp<RippleTheme>;
 }
 
 export function rippleFactory({
@@ -48,7 +49,7 @@ export function rippleFactory({
                     ripplePassthrough={ripplePassthrough}
                     rippleSpread={rippleSpread}
                     {...p}
-                    theme={fromBem(finalTheme)}
+                    theme={finalTheme}
                     ComposedComponent={ComposedComponent}
                 />
             );
@@ -70,7 +71,7 @@ interface RippleState {
 }
 
 class RippledComponent<P> extends React.Component<
-    RippleProps & {ComposedComponent: React.ComponentType<P> | string},
+    RippleProps & {theme: ToBem<RippleTheme>} & {ComposedComponent: React.ComponentType<P> | string},
     RippleState
 > {
     state: RippleState = {
@@ -275,11 +276,11 @@ class RippledComponent<P> extends React.Component<
         const scale = restarting ? 0 : 1;
         const transform = `translate3d(${-width / 2 + left}px, ${-width / 2 + top}px, 0) scale(${scale})`;
         const _className = classnames(this.props.theme!.ripple, {
-            [this.props.theme!.rippleActive!]: active,
-            [this.props.theme!.rippleRestarting!]: restarting
+            [this.props.theme.rippleActive()]: active,
+            [this.props.theme.rippleRestarting()]: restarting
         });
         return (
-            <span key={key} data-react-toolbox="ripple" className={this.props.theme!.rippleWrapper}>
+            <span key={key} data-react-toolbox="ripple" className={this.props.theme.rippleWrapper()}>
                 <span
                     className={_className}
                     ref={node => {

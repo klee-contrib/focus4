@@ -8,7 +8,7 @@ import {
 } from "react-toolbox/lib/switch/Switch";
 import thumbFactory from "react-toolbox/lib/switch/Thumb";
 
-import {fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import rtSwitchTheme from "react-toolbox/components/switch/theme.css";
 const switchTheme: SwitchTheme = rtSwitchTheme;
 export {switchTheme, SwitchTheme};
@@ -16,9 +16,10 @@ export {switchTheme, SwitchTheme};
 import {rippleFactory} from "./ripple";
 
 /** Props du Switch. */
-export interface SwitchProps extends RTSwitchProps {
+export interface SwitchProps extends Omit<RTSwitchProps, "theme"> {
     /** Est appelé quand on coche la case. */
     onChange?: (value: boolean) => void;
+    theme?: CSSProp<SwitchTheme>;
     /** Valeur. */
     value?: boolean;
 }

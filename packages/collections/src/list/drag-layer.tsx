@@ -2,12 +2,11 @@ import i18next from "i18next";
 import * as React from "react";
 import {useDragLayer} from "react-dnd";
 
-import {CSSToStrings, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
-import dragLayerStyles, {DragLayerCss} from "./__style__/drag-layer.css";
-export {dragLayerStyles};
-export type DragLayerStyle = CSSToStrings<DragLayerCss>;
+import dragLayerCss, {DragLayerCss} from "./__style__/drag-layer.css";
+export {dragLayerCss, DragLayerCss};
 
 /** Props du layer de drag an drop. */
 export interface DndDragLayerProps {
@@ -20,12 +19,12 @@ export interface DndDragLayerProps {
     /** La liste en cours de drag. */
     item?: {dragged: {}[]};
     /** CSS. */
-    theme?: DragLayerStyle;
+    theme?: CSSProp<DragLayerCss>;
 }
 
 /** Layer de drag and drop pour afficher le nombre d'items. */
 export function DndDragLayer({i18nPrefix = "focus", theme: pTheme}: DndDragLayerProps) {
-    const theme = useTheme("dragLayer", dragLayerStyles, pTheme);
+    const theme = useTheme("dragLayer", dragLayerCss, pTheme);
 
     const {currentOffset, isDragging, item} = useDragLayer(monitor => ({
         currentOffset: monitor.getClientOffset(),

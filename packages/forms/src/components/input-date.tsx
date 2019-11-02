@@ -5,15 +5,15 @@ import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import * as React from "react";
 
-import {fromBem, themr} from "@focus4/styling";
+import {themr} from "@focus4/styling";
 import {Calendar, CalendarProps, datePickerTheme, DatePickerTheme, IconButton, InputTheme} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
 const Theme = themr("RTDatePicker", datePickerTheme);
 
-import inputDateStyles from "./__style__/input-date.css";
-export {inputDateStyles};
+import inputDateCss from "./__style__/input-date.css";
+export {inputDateCss};
 
 export interface InputDateProps extends InputProps<"string"> {
     /** Format de l'affichage de la date dans le calendrier. */
@@ -266,7 +266,7 @@ export class InputDate extends React.Component<InputDateProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-date" data-id={this._inputDateId} className={inputDateStyles.input}>
+                    <div data-focus="input-date" data-id={this._inputDateId} className={inputDateCss.input}>
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
@@ -274,15 +274,17 @@ export class InputDate extends React.Component<InputDateProps> {
                             onChange={value => (this.dateText = value)}
                             onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showCalendar = true)}
-                            theme={fromBem(theme)}
+                            theme={theme}
                             value={this.dateText || ""}
                         />
                         {this.showCalendar ? (
                             <div
                                 ref={cal => (this.calendar = cal)}
-                                className={`${inputDateStyles.calendar} ${
-                                    displayFrom === "right" ? inputDateStyles.fromRight : ""
-                                } ${this.calendarPosition === "up" ? inputDateStyles.up : inputDateStyles.down}`}
+                                className={classNames(
+                                    inputDateCss.calendar,
+                                    displayFrom === "right" ? inputDateCss.fromRight : "",
+                                    this.calendarPosition === "up" ? inputDateCss.up : inputDateCss.down
+                                )}
                             >
                                 <header
                                     className={classNames(
@@ -306,7 +308,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                     </h3>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: inputDateStyles.toggle}}
+                                        theme={{toggle: inputDateCss.toggle}}
                                         onClick={() => (this.showCalendar = false)}
                                     />
                                 </header>
@@ -324,7 +326,7 @@ export class InputDate extends React.Component<InputDateProps> {
                                             weekdaysShort: moment.localeData().weekdaysShort()
                                         }}
                                         onChange={this.onCalendarChange}
-                                        theme={fromBem(theme)}
+                                        theme={theme}
                                     />
                                 </div>
                             </div>

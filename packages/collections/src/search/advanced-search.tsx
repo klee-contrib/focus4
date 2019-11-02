@@ -3,36 +3,35 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {GroupResult, SearchStore} from "@focus4/stores";
-import {CSSToStrings, ScrollableContext, themr, ToBem} from "@focus4/styling";
+import {CSSProp, ScrollableContext, themr, ToBem} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
 import {
     ActionBar,
-    ActionBarStyle,
+    ActionBarCss,
     DetailProps,
-    DragLayerStyle,
+    DragLayerCss,
     EmptyProps,
+    LineCss,
     LineProps,
-    LineStyle,
-    ListStyle,
+    ListCss,
     ListWrapper,
     LoadingProps,
     OperationListItem
 } from "../list";
 import {ChipType} from "./chip";
-import {FacetBox, FacetBoxStyle, FacetProps} from "./facet-box";
-import {GroupStyle, Results} from "./results";
-import {Summary, SummaryStyle} from "./summary";
+import {FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
+import {GroupCss, Results} from "./results";
+import {Summary, SummaryCss} from "./summary";
 
-import advancedSearchStyles, {AdvancedSearchCss} from "./__style__/advanced-search.css";
-export {advancedSearchStyles};
-export type AdvancedSearchStyle = CSSToStrings<AdvancedSearchCss>;
-const Theme = themr("advancedSearch", advancedSearchStyles);
+import advancedSearchCss, {AdvancedSearchCss} from "./__style__/advanced-search.css";
+export {advancedSearchCss, AdvancedSearchCss};
+const Theme = themr("advancedSearch", advancedSearchCss);
 
 /** Props de l'AdvancedSearch. */
 export interface AdvancedSearchProps<T> {
     /** CSS de l'ActionBar. */
-    actionBarTheme?: ActionBarStyle;
+    actionBarTheme?: CSSProp<ActionBarCss>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
@@ -64,13 +63,13 @@ export interface AdvancedSearchProps<T> {
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
-    dragLayerTheme?: DragLayerStyle;
+    dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "sticky" | "none";
     /** CSS de la FacetBox (si position = "left") */
-    facetBoxTheme?: FacetBoxStyle;
+    facetBoxTheme?: CSSProp<FacetBoxCss>;
     /**
      * Si renseigné, affiche les facettes dans des sections nommées.
      * Il est possible d'avoir une section qui contient toutes les facettes non renseignées en ne renseignant pas la liste `facets`.
@@ -89,7 +88,7 @@ export interface AdvancedSearchProps<T> {
     /** (Scroll infini, affichage en groupe) Index du groupe, en partant du bas de la liste de groupe affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 2. */
     groupPageItemIndex?: number;
     /** CSS des groupes. */
-    groupTheme?: GroupStyle;
+    groupTheme?: CSSProp<GroupCss>;
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
     /** Affiche le bouton de groupe dans l'ActionBar. */
@@ -121,11 +120,11 @@ export interface AdvancedSearchProps<T> {
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
-    lineTheme?: LineStyle;
+    lineTheme?: CSSProp<LineCss>;
     /** Nombre d'éléments affichés par page de liste (pagination locale, indépendante de la recherche). */
     listPageSize?: number;
     /** CSS de la liste. */
-    listTheme?: ListStyle;
+    listTheme?: CSSProp<ListCss>;
     /** Composant à afficher pendant le chargement. */
     LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Mode des listes dans le wrapper. Par défaut : "list". */
@@ -153,9 +152,9 @@ export interface AdvancedSearchProps<T> {
     /** Store associé. */
     store: SearchStore<T>;
     /** CSS du Summary. */
-    summaryTheme?: SummaryStyle;
+    summaryTheme?: CSSProp<SummaryCss>;
     /** CSS. */
-    theme?: AdvancedSearchStyle;
+    theme?: CSSProp<AdvancedSearchCss>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
     useGroupActionBars?: boolean;
 }
