@@ -10,6 +10,6 @@ export function useTheme<T>(
     name: string,
     ...themes: (T | CSSToStrings<T> | Partial<ToBem<T>> | undefined)[]
 ): ToBem<T> {
-    const contextTheme: T = (useContext(ThemeContext)[name] as any) || {};
-    return toBem(themeable(contextTheme, ...themes.filter(x => x).map(x => fromBem(x!) as T)));
+    const contextTheme = fromBem(useContext(ThemeContext)[name]) || {};
+    return toBem(themeable(contextTheme, ...themes.filter(x => x).map(x => fromBem(x!))) as T);
 }

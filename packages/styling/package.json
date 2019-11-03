@@ -12,7 +12,9 @@
     "homepage": "https://github.com/KleeGroup/focus4/packages/styling",
     "scripts": {
         "prepare": "rollup -cm",
-        "start": "rollup -cw"
+        "start": "rollup -cw",
+        "test": "jest --reporters=default",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
     },
     "dependencies": {
         "@focus4/core": "^10.1.5",
@@ -27,6 +29,10 @@
         "react": "16.12.0"
     },
     "devDependencies": {
-        "react-toolbox": "2.0.0-beta.13"
+        "@types/jest": "25.1.2",
+        "jest": "25.1.0",
+        "jest-junit": "10.0.0",
+        "react-toolbox": "2.0.0-beta.13",
+        "ts-jest": "25.2.0"
     }
 }

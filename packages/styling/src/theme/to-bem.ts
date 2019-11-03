@@ -1,19 +1,9 @@
 import classNames from "classnames";
 import {pick} from "lodash";
 
-import {CSSElement, CSSMod, CSSToStrings} from "./common";
+import {BemFunction, CSSElement, CSSMod, CSSToStrings} from "./common";
 
 export type AllMods<CSS> = {[P in keyof CSS]: CSS[P] extends CSSMod<infer _, infer __> ? P : never}[keyof CSS];
-export type Mods<CSS, E> = {[P in keyof CSS]: CSS[P] extends CSSMod<infer M, E> ? M : never}[keyof CSS];
-export type ModNames<CSS, E> = {[P in keyof CSS]: CSS[P] extends CSSMod<infer _, E> ? P : never}[keyof CSS];
-
-export type BemFunction<CSS = any, P extends string | number | symbol = any, E = any> = (Mods<CSS, E> extends
-    | never
-    | undefined
-    ? () => string
-    : (mods?: {[_ in Mods<CSS, E>]?: boolean}) => string) &
-    ((object: true) => {[_ in P | ModNames<CSS, E>]: string});
-
 export type ToBem<CSS> = Omit<
     {
         [P in keyof CSS]-?: CSS[P] extends CSSElement<infer E>
@@ -41,14 +31,14 @@ export function toBem<CSS>(css: CSS): ToBem<CSS> {
     return Object.keys(data).reduce(
         (bem, key) => ({
             ...bem,
-            [key]: (mods: true | {[key: string]: boolean}) => {
+            [key]: (mods: true | {[key: string]: boolean} = {}) => {
                 if (mods !== true) {
                     return classNames(
                         (css as any)[key],
-                        ...data[key].filter(mod => mods[mod]).map(mod => (css as any)[mod])
+                        ...data[key].filter(mod => mods[mod]).map(mod => (css as any)[`${key}--${mod}`])
                     );
                 } else {
-                    return pick(css, key, ...data[key]);
+                    return pick(css, key, ...data[key].map(mod => `${key}--${mod}`));
                 }
             }
         }),
