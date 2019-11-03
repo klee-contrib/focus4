@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import {TReactCSSThemrTheme} from "@focus4/core";
-import {CSSProp, ThemeContext} from "@focus4/styling";
+import {CSSContext, CSSProp, ThemeContext} from "@focus4/styling";
 import {
     AppBarTheme,
     AutocompleteTheme,
@@ -141,7 +140,7 @@ export interface LayoutStyleProviderProps {
 export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps}) {
     const {appTheme = {}, ...layoutProps} = props;
     return (
-        <ThemeContext.Provider value={appTheme as TReactCSSThemrTheme}>
+        <ThemeContext.Provider value={appTheme as CSSContext}>
             <LayoutBase {...layoutProps}>{props.children}</LayoutBase>
         </ThemeContext.Provider>
     );

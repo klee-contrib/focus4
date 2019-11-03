@@ -16,7 +16,9 @@
     },
     "dependencies": {
         "@focus4/core": "^10.1.5",
+        "@types/classnames": "2.2.9",
         "@types/css-modules-loader-core": "1.1.0",
+        "classnames": "2.2.6",
         "css-modules-loader-core": "1.1.0",
         "glob": "7.1.5",
         "material-design-icons-iconfont": "5.0.1",

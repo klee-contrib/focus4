@@ -70,7 +70,7 @@ export class SearchChip extends React.Component<SearchChipProps> {
             <Chip
                 deletable={deletable}
                 onDeleteClick={onDeleteClick}
-                theme={themeable(theme as any, (themer && themer(type, code, value)) || ({} as any))}
+                theme={themeable(theme, (themer && themer(type, code, value)) || {})}
             >
                 {!tValueLabel ? tCodeLabel : showCode ? `${tCodeLabel} : ${tValueLabel}` : tValueLabel}
             </Chip>
