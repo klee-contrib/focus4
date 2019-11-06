@@ -92,7 +92,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
         let initialQuery: SearchProperties<C> & {debounceCriteria?: boolean};
         let criteria;
 
-        if (secondParam && (secondParam as C).name) {
+        if (secondParam && (secondParam as C)[Object.keys(secondParam)[0]].type) {
             criteria = secondParam as C;
             initialQuery = thirdParam as any;
         } else {

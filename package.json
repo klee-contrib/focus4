@@ -23,14 +23,14 @@
     "devDependencies": {
         "lerna": "3.18.3",
         "postcss-import": "12.0.1",
-        "rollup": "1.26.0",
+        "rollup": "1.26.3",
         "rollup-plugin-copy-glob": "0.3.1",
         "rollup-plugin-node-resolve": "5.2.0",
         "rollup-plugin-postcss-modules": "2.0.1",
-        "rollup-plugin-typescript2": "0.24.3",
+        "rollup-plugin-typescript2": "0.25.2",
         "stylelint": "11.1.1",
-        "tslint": "5.20.0",
-        "typescript": "3.6.4",
+        "tslint": "5.20.1",
+        "typescript": "3.7.2",
         "typescript-tslint-plugin": "0.5.4"
     }
 }

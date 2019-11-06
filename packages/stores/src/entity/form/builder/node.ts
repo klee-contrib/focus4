@@ -70,7 +70,7 @@ export class FormNodeBuilder<E extends Entity> {
             >,
             node: StoreNode<E>
         ) => FormEntityFieldBuilder<NFE>
-    ): FormNodeBuilder<E & {readonly fields: {[P in FE]: NFE}}> {
+    ): FormNodeBuilder<E & {[P in FE]: NFE}> {
         // @ts-ignore
         this.node[name] = builder(new FormEntityFieldBuilder(), this.node).collect();
         // @ts-ignore
