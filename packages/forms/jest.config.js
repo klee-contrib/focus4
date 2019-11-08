@@ -2,7 +2,7 @@ module.exports = {
     globals: {
         "ts-jest": {
             diagnostics: {
-                ignoreCodes: ["TS2305", "TS2307", "TS7016"]
+                ignoreCodes: ["TS2305", "TS2614", "TS2307", "TS7016"]
             },
             tsConfig: {
                 module: "commonjs",
