@@ -30,7 +30,7 @@ import {ActionConfig, ActionConfigMultiple, FormConfig} from "@focus4/stores/lib
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E extends Entity, NE extends Entity>(
+export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
@@ -45,7 +45,7 @@ export function makeFormNode<E extends Entity, NE extends Entity>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E extends Entity, NE extends Entity>(
+export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
