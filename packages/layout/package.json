@@ -1,6 +1,6 @@
 {
     "name": "@focus4/layout",
-    "version": "10.1.0",
+    "version": "10.1.5",
     "description": "Focus v4, layout module",
     "main": "lib/focus4.layout.js",
     "repository": {
@@ -15,9 +15,9 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@focus4/core": "^10.1.0",
-        "@focus4/styling": "^10.1.0",
-        "@focus4/toolbox": "^10.1.0",
+        "@focus4/core": "^10.1.5",
+        "@focus4/styling": "^10.1.5",
+        "@focus4/toolbox": "^10.1.5",
         "@types/react-transition-group": "4.2.3",
         "intersection-observer": "0.7.0",
         "react-transition-group": "4.3.0",

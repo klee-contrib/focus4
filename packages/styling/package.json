@@ -1,6 +1,6 @@
 {
     "name": "@focus4/styling",
-    "version": "10.1.0",
+    "version": "10.1.5",
     "description": "Focus v4, styling module",
     "main": "lib/focus4.styling.js",
     "repository": {
@@ -15,7 +15,7 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@focus4/core": "^10.1.0",
+        "@focus4/core": "^10.1.5",
         "material-design-icons-iconfont": "5.0.1",
         "mobx-react": "5.4.4",
         "mobx-react-lite": "1.5.2",
