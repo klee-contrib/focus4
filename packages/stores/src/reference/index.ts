@@ -26,11 +26,16 @@ export interface ReferenceList<T = any, VK extends keyof T = any, LK extends key
      * @param value Valeur de l'item.
      */
     getLabel(value: T[VK] | undefined): T[LK] | undefined;
+    /**
+     * Surcharge de Array.prototype.filter pour retourner une ReferenceList avec les mêmes propriétés.
+     * @param callbackfn A function that accepts up to three arguments. The filter method calls the callbackfn function one time for each element in the array.
+     */
+    filter(callbackfn: (value: T, index: number, array: T[]) => unknown): ReferenceList<T, VK, LK>;
 }
 
 /** Mapping de type pour transformer les types d'entrée en liste de ces même types. */
 export type AsList<T extends Record<string, ReferenceDefinition>> = {
-    [P in keyof T]: ReferenceList<T[P]["type"], T[P]["valueKey"], T[P]["labelKey"]>
+    [P in keyof T]: ReferenceList<T[P]["type"], T[P]["valueKey"], T[P]["labelKey"]>;
 };
 
 /**
@@ -51,11 +56,12 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
 } {
     const referenceStore: any = {};
     for (const ref in refConfig) {
-        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé et le résolveur de libellé.
+        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé, le résolveur de libellé et la surcharge de filter.
         referenceStore[`_${ref}`] = observable.array([], {deep: false});
         referenceStore[`_${ref}`].$valueKey = refConfig[ref].valueKey || "code";
         referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey || "label";
         referenceStore[`_${ref}`].getLabel = (value: any) => getLabel(value, referenceStore[`_${ref}`]);
+        referenceStore[`_${ref}`].filter = (callbackFn: any) => filter(referenceStore[`_${ref}`], callbackFn);
 
         extendObservable(referenceStore, {
             // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
@@ -127,6 +133,7 @@ export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
     newList.$valueKey = valueKey || (list as ReferenceList<T>).$valueKey || "code";
     newList.$labelKey = labelKey || (list as ReferenceList<T>).$labelKey || "label";
     newList.getLabel = value => getLabel(value, newList);
+    newList.filter = callbackFn => filter(newList, callbackFn);
     return newList;
 }
 
@@ -153,4 +160,19 @@ function getLabel<T, VK extends keyof T, LK extends keyof T>(
 
     /* Item trouvé : on extrait le libellé. */
     return item[list.$labelKey];
+}
+
+/**
+ * Filtre une liste de référence en gardant ses paramètres.
+ * @param list La liste de référence.
+ * @param callbackfn Le callback.
+ */
+function filter<T, VK extends keyof T, LK extends keyof T>(
+    list: ReferenceList<T, VK, LK>,
+    callbackfn: (value: T, index: number, array: T[]) => unknown
+) {
+    return makeReferenceList(Array.prototype.filter.call(list, callbackfn), {
+        labelKey: list.$labelKey,
+        valueKey: list.$valueKey
+    });
 }
