@@ -9,8 +9,7 @@ import {
     FieldEntry,
     FieldEntryType,
     fromFieldCore,
-    makeFieldCore,
-    patchFieldCore
+    makeFieldCore
 } from "@focus4/stores";
 
 import {AutocompleteProps, DisplayProps, InputProps, LabelProps, SelectProps} from "../components";
@@ -101,28 +100,4 @@ export function fromField<
         | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
 ): EntityField<FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return fromFieldCore(field, $field);
-}
-
-/** @deprecated Utiliser `makeFormNode(node).patch() à la place.` */
-export function patchField<
-    DT,
-    FT extends FieldEntryType<DT> = FieldEntryType<DT>,
-    ICDProps extends BaseInputProps = InputProps<FT extends "number" ? "number" : "string">,
-    SCDProps extends BaseSelectProps = SelectProps<FT extends "number" ? "number" : "string">,
-    ACDProps extends BaseAutocompleteProps = AutocompleteProps<FT extends "number" ? "number" : "string">,
-    DCDProps extends BaseDisplayProps = DisplayProps,
-    LCDProps extends BaseLabelProps = LabelProps,
-    ICProps extends BaseInputProps = ICDProps,
-    SCProps extends BaseSelectProps = SCDProps,
-    ACProps extends BaseAutocompleteProps = ACDProps,
-    DCProps extends BaseDisplayProps = DCDProps,
-    LCProps extends BaseLabelProps = LCDProps
->(
-    field: EntityField<FieldEntry<DT, FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
-    $field:
-        | $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
-    isEdit?: boolean | (() => boolean)
-) {
-    patchFieldCore(field, $field, isEdit);
 }

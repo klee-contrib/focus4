@@ -88,7 +88,12 @@ export function makeFieldCore<
  * @param isEdit L'état d'édition du champ ainsi cloné.
  */
 export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?: boolean) {
-    return makeFieldCore(() => field.value, field.$field, value => (field.value = value), isEdit) as EntityField<F> & {
+    return makeFieldCore(
+        () => field.value,
+        field.$field,
+        value => (field.value = value),
+        isEdit
+    ) as EntityField<F> & {
         isEdit?: boolean;
     };
 }
@@ -118,44 +123,6 @@ export function fromFieldCore<
         | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
 ): EntityField<FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
-}
-
-/** @deprecated Utiliser `new Form(List)NodeBuilder(node).patch() à la place.` */
-export function patchFieldCore<
-    DT,
-    FT extends FieldEntryType<DT>,
-    ICDProps extends BaseInputProps,
-    SCDProps extends BaseSelectProps,
-    ACDProps extends BaseAutocompleteProps,
-    DCDProps extends BaseDisplayProps,
-    LCDProps extends BaseLabelProps,
-    ICProps extends BaseInputProps = ICDProps,
-    SCProps extends BaseSelectProps = SCDProps,
-    ACProps extends BaseAutocompleteProps = ACDProps,
-    DCProps extends BaseDisplayProps = DCDProps,
-    LCProps extends BaseLabelProps = LCDProps
->(
-    field: EntityField<FieldEntry<DT, FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
-    $field:
-        | $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>),
-    isEdit?: boolean | (() => boolean)
-) {
-    const next$field = new$field(field.$field, $field);
-    if (isFunction($field)) {
-        delete (field as any).$field;
-        extendObservable(field, {
-            get $field() {
-                return next$field.$field;
-            }
-        });
-    } else {
-        (field.$field as any) = next$field.$field;
-    }
-
-    if (isEdit !== undefined) {
-        (field as any).isEdit = isEdit;
-    }
 }
 
 /** @internal */

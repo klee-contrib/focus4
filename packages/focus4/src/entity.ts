@@ -10,7 +10,6 @@ export {
     makeField,
     makeFormActions,
     makeFormNode,
-    patchField,
     selectFor
 } from "@focus4/forms";
 export {
@@ -29,7 +28,6 @@ export {
     buildNode,
     makeEntityStore,
     nodeToFormNode,
-    patchNodeEdit,
     stringFor,
     toFlatValues
 } from "@focus4/stores";

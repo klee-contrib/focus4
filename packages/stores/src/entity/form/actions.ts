@@ -10,8 +10,8 @@ type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
 
 /** Props passées au composant de formulaire. */
 export interface ActionsFormProps {
-    /** Contexte du formulaire, pour forcer l'affichage des erreurs aux Fields enfants. */
-    readonly formContext: {forceErrorDisplay: boolean};
+    /** Pour forcer l'affichage des erreurs aux Fields enfants. */
+    forceErrorDisplay: boolean;
     /** Appelle le service de sauvegarde. */
     save(): Promise<void>;
 }
@@ -163,7 +163,7 @@ export class FormActionsBuilder<
         // On se prépare à construire plusieurs actions de sauvegarde.
         function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {
             return async function save(this: FormActions<Extract<keyof S, string>>) {
-                this.formContext.forceErrorDisplay = true;
+                this.forceErrorDisplay = true;
 
                 // On ne fait rien si on est déjà en chargement.
                 if (this.isLoading) {
@@ -203,7 +203,7 @@ export class FormActionsBuilder<
                     }
 
                     // On ne force plus l'affichage des erreurs une fois la sauvegarde effectuée, puisqu'il n'y a plus.
-                    this.formContext.forceErrorDisplay = false;
+                    this.forceErrorDisplay = false;
 
                     (handlers.save || []).forEach(handler => handler("save", name as any));
                 } catch (e) {
@@ -217,12 +217,12 @@ export class FormActionsBuilder<
 
         const formActions = observable(
             {
-                formContext: {forceErrorDisplay: false},
+                forceErrorDisplay: false,
                 isLoading: false,
 
                 get formProps(): ActionsFormProps {
                     return {
-                        formContext: this.formContext,
+                        forceErrorDisplay: this.forceErrorDisplay,
                         save: this.save
                     };
                 },

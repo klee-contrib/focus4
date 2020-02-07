@@ -2,16 +2,13 @@ export {
     ActionsFormProps,
     ActionsPanelProps,
     FormActionsBuilder,
-    FormNodeOptions,
-    makeFormActionsCore,
-    makeFormNodeCore,
     FormActions,
     FormListNodeBuilder,
     FormNodeBuilder
 } from "./form";
-export {buildNode, makeEntityStore, nodeToFormNode, patchNodeEdit, toFlatValues} from "./store";
+export {buildNode, makeEntityStore, nodeToFormNode, toFlatValues} from "./store";
 export {stringFor} from "./string-for";
-export {$Field, cloneField, fromFieldCore, makeFieldCore, patchFieldCore} from "./transforms";
+export {$Field, cloneField, fromFieldCore, makeFieldCore} from "./transforms";
 export {
     AutocompleteComponents,
     BaseAutocompleteProps,

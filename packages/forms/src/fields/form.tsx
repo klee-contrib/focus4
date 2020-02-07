@@ -1,3 +1,4 @@
+import {useAsObservableSource} from "mobx-react-lite";
 import * as React from "react";
 
 import {useTheme} from "@focus4/styling";
@@ -10,8 +11,8 @@ export type FormStyle = Partial<typeof formStyles>;
 export interface FormProps {
     /** Children. */
     children?: React.ReactNode;
-    /** Voir `FormActions` */
-    formContext: {forceErrorDisplay: boolean};
+    /** Force l'affichage des erreurs sur les champs. */
+    forceErrorDisplay?: boolean;
     /** Retire le formulaire HTML */
     noForm?: boolean;
     /** Voir `FormActions` */
@@ -23,23 +24,24 @@ export interface FormProps {
 export const FormContext = React.createContext({forceErrorDisplay: false});
 
 /** Composant de formulaire */
-export function Form(props: FormProps) {
-    const theme = useTheme("form", formStyles, props.theme);
+export function Form({children, forceErrorDisplay = false, noForm, save, theme: pTheme}: FormProps) {
+    const theme = useTheme("form", formStyles, pTheme);
+    const context = useAsObservableSource({forceErrorDisplay});
     return (
-        <FormContext.Provider value={props.formContext}>
-            {props.noForm ? (
+        <FormContext.Provider value={context}>
+            {noForm ? (
                 <form
                     className={theme.form}
                     noValidate={true}
                     onSubmit={e => {
                         e.preventDefault();
-                        props.save();
+                        save();
                     }}
                 >
-                    <fieldset>{props.children}</fieldset>
+                    <fieldset>{children}</fieldset>
                 </form>
             ) : (
-                props.children
+                children
             )}
         </FormContext.Provider>
     );

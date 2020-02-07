@@ -42,6 +42,7 @@ const config = {
         "lodash",
         "mobx",
         "mobx-react",
+        "mobx-react-lite",
         "moment",
         "react",
         "tslib"

@@ -22,7 +22,6 @@ export {
     makeField,
     makeFormActions,
     makeFormNode,
-    patchField,
     selectFor,
     stringFor
 } from "./entity";

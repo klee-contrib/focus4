@@ -18,17 +18,17 @@ export type EntityToForm<E extends Entity> = {
 /** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
 export type NodeToErrors<E extends Entity> = Omit<
     {
-        readonly [P in keyof (FormNode<E>)]?: (FormNode<E>)[P] extends FormNode<infer OE>
+        readonly [P in keyof FormNode<E>]?: FormNode<E>[P] extends FormNode<infer OE>
             ? NodeToErrors<OE>
-            : (FormNode<E>)[P] extends FormListNode<infer LE>
+            : FormNode<E>[P] extends FormListNode<infer LE>
             ? NodeToErrors<LE>[]
-            : (FormNode<E>)[P] extends FormEntityField
+            : FormNode<E>[P] extends FormEntityField
             ? string
             : never;
     },
     {
-        [P in keyof (FormNode<E>)]: (FormNode<E>)[P] extends FormNode | FormListNode | FormEntityField ? never : P;
-    }[keyof (FormNode<E>)]
+        [P in keyof FormNode<E>]: FormNode<E>[P] extends FormNode | FormListNode | FormEntityField ? never : P;
+    }[keyof FormNode<E>]
 >;
 
 /** Champs additionnels pour un noeud de formulaire. */
@@ -79,10 +79,6 @@ export interface FormListNode<E extends Entity = any> extends IObservableArray<F
         /** Les erreurs des champs du noeud. */
         readonly errors: NodeToErrors<E>[];
     };
-
-    /** Fonction d'initialisation pour les items d'un noeud de formulaire créé à partir de ce noeud liste. */
-    /** @deprecated Utiliser makeFormNode(node).items() à la place. */
-    $initializer?: (source: StoreNode<E>) => {} | void;
 
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */

@@ -193,15 +193,6 @@ export function nodeToFormNode<E extends Entity = any>(
     }
 }
 
-/** @deprecated Utiliser `new Form(List)NodeBuilder(node).edit() à la place.` */
-export function patchNodeEdit<E extends Entity = any>(
-    node: StoreNode<E> | StoreListNode<E>,
-    isEdit: boolean | (() => boolean)
-) {
-    node.$tempEdit = isEdit;
-    return node;
-}
-
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
 function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
     const {isEdit} = field as FormEntityField;
