@@ -13,20 +13,36 @@ export interface FormProps {
     children?: React.ReactNode;
     /** Force l'affichage des erreurs sur les champs. */
     forceErrorDisplay?: boolean;
+    /** Modifie le labelRatio par défaut des champs posés dans le formulaire (33%); */
+    labelRatio?: number;
     /** Retire le formulaire HTML */
     noForm?: boolean;
     /** Voir `FormActions` */
     save: () => void;
     /** CSS. */
     theme?: FormStyle;
+    /** Modifie le valueRatio par défaut des champs posés dans le formulaire (33%); */
+    valueRatio?: number;
 }
 
-export const FormContext = React.createContext({forceErrorDisplay: false});
+export const FormContext = React.createContext({
+    forceErrorDisplay: false,
+    labelRatio: undefined as number | undefined,
+    valueRatio: undefined as number | undefined
+});
 
 /** Composant de formulaire */
-export function Form({children, forceErrorDisplay = false, noForm, save, theme: pTheme}: FormProps) {
+export function Form({
+    children,
+    forceErrorDisplay = false,
+    labelRatio,
+    noForm,
+    save,
+    theme: pTheme,
+    valueRatio
+}: FormProps) {
     const theme = useTheme("form", formStyles, pTheme);
-    const context = useAsObservableSource({forceErrorDisplay});
+    const context = useAsObservableSource({forceErrorDisplay, labelRatio, valueRatio});
     return (
         <FormContext.Provider value={context}>
             {noForm ? (

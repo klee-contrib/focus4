@@ -177,12 +177,12 @@ export class Field<F extends FieldEntry> extends React.Component<
                     const {
                         disableInlineSizing,
                         hasLabel = true,
-                        labelRatio = 33,
+                        labelRatio = this.context.labelRatio ?? 33,
                         labelProps = {},
                         field,
                         i18nPrefix = "focus"
                     } = this.props;
-                    const {valueRatio = 100 - (hasLabel ? labelRatio : 0)} = this.props;
+                    const {valueRatio = this.context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)} = this.props;
                     const {
                         error,
                         isEdit,
