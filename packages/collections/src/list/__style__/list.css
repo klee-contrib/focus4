@@ -12,34 +12,27 @@
 
 .timeline {
     list-style: none;
-    padding: 20px 0;
+    padding: 5px 0;
     position: relative;
-    margin-left: 100px;
 }
 
 .timeline::before {
+    position: absolute;
     top: 0;
     bottom: 0;
-    position: absolute;
+    left: calc(var(--timeline-date-width) + 17px);
+    width: 2px;
+    background-color: var(--timeline-line-color);
     content: " ";
-    width: 3px;
-    background-color: #eee;
 }
 
 .timeline > li {
-    margin-bottom: 10px;
-    margin-left: 38px;
     position: relative;
-}
+    margin-bottom: 6px;
 
-.timeline > li::before,
-.timeline > li::after {
-    content: " ";
-    display: table;
-}
-
-.timeline > li::after {
-    clear: both;
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .mosaicAdd {
