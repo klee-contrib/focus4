@@ -34,7 +34,7 @@ export interface BaseLabelProps {
     comment?: React.ReactNode;
     i18nPrefix?: string;
     label?: string;
-    name?: string;
+    id?: string;
     style?: React.CSSProperties;
     theme?: object;
 }

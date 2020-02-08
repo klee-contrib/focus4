@@ -1,14 +1,13 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {getIcon, themr} from "@focus4/styling";
+import {getIcon, useTheme} from "@focus4/styling";
 import {FontIcon, tooltipFactory} from "@focus4/toolbox";
 const TooltipIcon = tooltipFactory()(FontIcon);
 
 import labelStyles from "./__style__/label.css";
 export {labelStyles};
 export type LabelStyle = Partial<typeof labelStyles>;
-const Theme = themr("label", labelStyles);
 
 /** Props du Label. */
 export interface LabelProps {
@@ -18,8 +17,8 @@ export interface LabelProps {
     i18nPrefix?: string;
     /** Libellé. */
     label?: string;
-    /** Nom du champ associé */
-    name?: string;
+    /** Id du champ associé */
+    id?: string;
     /** Au click sur la tooltip. */
     onTooltipClick?: () => void;
     /** Affiche la tooltip. */
@@ -34,28 +33,25 @@ export function Label({
     comment,
     i18nPrefix = "focus",
     label,
-    name,
+    id,
     onTooltipClick,
     showTooltip,
     style,
     theme: pTheme
 }: LabelProps) {
+    const theme = useTheme("label", labelStyles, pTheme);
     return (
-        <Theme theme={pTheme}>
-            {theme => (
-                <div className={theme.label} style={style}>
-                    <label htmlFor={name}>{(label && i18next.t(label)) || ""}</label>
-                    {comment && showTooltip ? (
-                        <TooltipIcon
-                            className={`${theme.icon} ${!!onTooltipClick ? theme.clickable : ""}`}
-                            tooltipHideOnClick={!onTooltipClick}
-                            onClick={onTooltipClick}
-                            tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
-                            value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
-                        />
-                    ) : null}
-                </div>
-            )}
-        </Theme>
+        <div className={theme.label} style={style}>
+            <label htmlFor={id}>{(label && i18next.t(label)) || ""}</label>
+            {comment && showTooltip ? (
+                <TooltipIcon
+                    className={`${theme.icon} ${!!onTooltipClick ? theme.clickable : ""}`}
+                    tooltipHideOnClick={!onTooltipClick}
+                    onClick={onTooltipClick}
+                    tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
+                    value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
+                />
+            ) : null}
+        </div>
     );
 }

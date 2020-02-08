@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {uniqueId} from "lodash";
 import {useLocalStore, useObserver} from "mobx-react-lite";
 import * as React from "react";
 
@@ -39,10 +40,29 @@ export interface FieldOptions<F extends FieldEntry> {
     valueRatio?: number;
 }
 
+/* Garde en mémoire tous les champs affichés avec le nom du field associé. */
+let nameMap: [string, string][] = [];
+
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & FieldOptions<F> & FieldComponents) {
     const context = React.useContext(FormContext);
     const theme = useTheme("field", fieldStyles, props.theme);
+
+    const {
+        autocompleteProps = {},
+        disableInlineSizing,
+        displayProps = {},
+        hasLabel = true,
+        field,
+        labelRatio = context.labelRatio ?? 33,
+        labelProps = {},
+        i18nPrefix = "focus",
+        inputProps = {},
+        inputType = "input",
+        onChange,
+        selectProps = {},
+        valueRatio = context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
+    } = props;
 
     /** On récupère le <div> de valeur pour y mettre un listener pour vérifier si on a le focus dessus ou pas, pour masque le message d'erreur. */
     const valueElement = React.useRef<HTMLDivElement>(null);
@@ -51,6 +71,33 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
             valueElement.current!.addEventListener("mousedown", store.disableHideError);
         }
     }, []);
+
+    /** On définit au premier rendu un identifiant unique pour le field. */
+    const fieldId = React.useMemo(() => uniqueId("field_"), []);
+
+    /**
+     * Toujours au premier rendu, on détermine l'id que l'on va mettre sur le label et l'input.
+     * On se base sur le `name` du champ, et on va regarder si on a pas déjà posé un champ avec le même `name`.
+     * Si oui, on suffixera le `name` par un numéro pour garder un id unique.
+     */
+    const id = React.useMemo(() => {
+        const {name} = field.$field;
+        const count = nameMap.filter(([_, n]) => n === name).length;
+        nameMap.push([fieldId, name]); // On s'ajoute dans la map ici.
+        if (count > 0) {
+            return `${name}_${count + 1}`;
+        }
+
+        return name;
+    }, []);
+
+    /* On enlève le field de la map des fields de la page quand on le démonte. */
+    React.useLayoutEffect(
+        () => () => {
+            nameMap = nameMap.filter(([fid]) => fieldId !== fid);
+        },
+        []
+    );
 
     const store = useLocalStore(() => ({
         /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
@@ -71,22 +118,6 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
             valueElement.current!.removeEventListener("mousedown", this.disableHideError);
         }
     }));
-
-    const {
-        autocompleteProps = {},
-        disableInlineSizing,
-        displayProps = {},
-        hasLabel = true,
-        field,
-        labelRatio = context.labelRatio ?? 33,
-        labelProps = {},
-        i18nPrefix = "focus",
-        inputProps = {},
-        inputType = "input",
-        onChange,
-        selectProps = {},
-        valueRatio = context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
-    } = props;
 
     return useObserver(() => {
         const {
@@ -120,7 +151,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
             value,
             error: (store.showError && error) || undefined,
             name,
-            id: name,
+            id,
             type: fieldType === "number" ? "number" : "string",
             onChange
         };
@@ -138,7 +169,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                         comment={comment}
                         i18nPrefix={i18nPrefix}
                         label={label}
-                        name={name}
+                        id={id}
                         style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
                         theme={themeable({label: theme.label}, domainLCP.theme || {}, labelProps.theme || {})}
                     />
