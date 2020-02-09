@@ -4,19 +4,18 @@ import {action, computed, Lambda, observable, observe} from "mobx";
 import {disposeOnUnmount} from "mobx-react";
 import * as React from "react";
 
-import {getIcon, ScrollableContext} from "@focus4/styling";
+import {CSSProp, getIcon, ScrollableContext, ToBem} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
-import {LineStyle} from "./line";
+import {LineCss} from "./line";
 
-import listStyles from "./__style__/list.css";
-export {listStyles};
-export type ListStyle = Partial<typeof listStyles>;
+import listCss, {ListCss} from "./__style__/list.css";
+export {listCss, ListCss};
 
 /** Props de base pour un composant de liste. */
 export interface ListBaseProps<T> {
     /** CSS de la ligne. */
-    lineTheme?: LineStyle;
+    lineTheme?: CSSProp<LineCss>;
     /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Affiche le bouton "Voir plus" au lieu d'un scroll infini. */
@@ -30,7 +29,7 @@ export interface ListBaseProps<T> {
     /** Affiche un bouton "Voir tout" qui effectue cette action. */
     showAllHandler?: () => void;
     /** CSS */
-    theme?: ListStyle;
+    theme?: CSSProp<ListCss>;
 }
 
 /** Classe de base pour toutes les listes Focus. Gère la pagination et le chargement. */
@@ -119,11 +118,11 @@ export abstract class ListBase<T, P extends ListBaseProps<T>> extends React.Comp
     }
 
     /** Affiche les éventuels boutons "Voir plus" et "Voir tout" en fin de liste. */
-    protected renderBottomRow(theme: ListStyle) {
+    protected renderBottomRow(theme: ToBem<ListCss>) {
         const {i18nPrefix = "focus", isManualFetch, showAllHandler} = this.props;
         if ((isManualFetch && this.hasMoreData) || showAllHandler) {
             return (
-                <div className={theme.bottomRow}>
+                <div className={theme.bottomRow()}>
                     {isManualFetch && this.hasMoreData ? (
                         <Button
                             onClick={() => this.handleShowMore()}

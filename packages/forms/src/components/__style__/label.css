@@ -14,6 +14,6 @@
     cursor: default;
 }
 
-.icon.clickable {
+.icon--clickable {
     cursor: pointer;
 }

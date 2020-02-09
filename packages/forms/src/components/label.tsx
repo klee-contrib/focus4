@@ -1,13 +1,12 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {FontIcon, tooltipFactory} from "@focus4/toolbox";
 const TooltipIcon = tooltipFactory()(FontIcon);
 
-import labelStyles from "./__style__/label.css";
-export {labelStyles};
-export type LabelStyle = Partial<typeof labelStyles>;
+import labelCss, {LabelCss} from "./__style__/label.css";
+export {labelCss, LabelCss};
 
 /** Props du Label. */
 export interface LabelProps {
@@ -26,7 +25,7 @@ export interface LabelProps {
     /** Style inline. */
     style?: React.CSSProperties;
     /** CSS. */
-    theme?: LabelStyle;
+    theme?: CSSProp<LabelCss>;
 }
 
 export function Label({
@@ -39,13 +38,13 @@ export function Label({
     style,
     theme: pTheme
 }: LabelProps) {
-    const theme = useTheme("label", labelStyles, pTheme);
+    const theme = useTheme("label", labelCss, pTheme);
     return (
-        <div className={theme.label} style={style}>
+        <div className={theme.label()} style={style}>
             <label htmlFor={id}>{(label && i18next.t(label)) || ""}</label>
             {comment && showTooltip ? (
                 <TooltipIcon
-                    className={`${theme.icon} ${!!onTooltipClick ? theme.clickable : ""}`}
+                    className={theme.icon({clickable: !!onTooltipClick})}
                     tooltipHideOnClick={!onTooltipClick}
                     onClick={onTooltipClick}
                     tooltip={typeof comment === "string" ? i18next.t(comment) : comment}

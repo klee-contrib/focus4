@@ -6,11 +6,11 @@ import {observer} from "mobx-react";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {AutocompleteStyle, autocompleteStyles} from "@focus4/forms";
-import {themr} from "@focus4/styling";
+import {AutocompleteCss, autocompleteCss} from "@focus4/forms";
+import {CSSProp, themr} from "@focus4/styling";
 import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps, ProgressBar} from "@focus4/toolbox";
 
-const Theme = themr("autocomplete", autocompleteStyles);
+const Theme = themr("autocomplete", autocompleteCss);
 
 /** Résultat du service de recherche. */
 export interface AutocompleteResult {
@@ -36,7 +36,7 @@ export interface AutocompleteProps extends RTAutocompleteProps {
     /** Valeur. */
     value?: any;
     /** CSS. */
-    theme?: AutocompleteStyle;
+    theme?: CSSProp<AutocompleteCss>;
 }
 
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
@@ -226,7 +226,7 @@ export class Autocomplete extends React.Component<AutocompleteProps> {
                             onKeyDown={this.onKeyDown}
                         />
                         {this.isLoading ? (
-                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar}} />
+                            <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar()}} />
                         ) : null}
                     </div>
                 )}

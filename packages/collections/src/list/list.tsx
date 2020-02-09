@@ -5,18 +5,17 @@ import * as React from "react";
 import posed, {Transition} from "react-pose";
 
 import {ListStoreBase} from "@focus4/stores";
-import {defaultPose, getIcon, themr} from "@focus4/styling";
+import {CSSProp, defaultPose, getIcon, themr} from "@focus4/styling";
 import {FontIcon, IconButton} from "@focus4/toolbox";
 
 import {OperationListItem} from "./contextual-actions";
 import {addDragSource} from "./dnd-utils";
-import {DndDragLayer, DragLayerStyle} from "./drag-layer";
+import {DndDragLayer, DragLayerCss} from "./drag-layer";
 import {LineProps, LineWrapper, LineWrapperProps} from "./line";
-import {ListBase, ListBaseProps, ListStyle} from "./list-base";
+import {ListBase, ListBaseProps, listCss, ListCss} from "./list-base";
 import {ListWrapperContext, lwcInit} from "./list-wrapper";
 
-import listStyles from "./__style__/list.css";
-const Theme = themr("list", listStyles);
+const Theme = themr("list", listCss);
 
 /** Props de base d'un composant de détail. */
 export interface DetailProps<T> {
@@ -53,7 +52,7 @@ export interface ListProps<T> extends ListBaseProps<T> {
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
-    dragLayerTheme?: DragLayerStyle;
+    dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Active le drag and drop. */
@@ -300,7 +299,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                         {!navigator.userAgent.match(/Trident/) && hasDragAndDrop ? (
                             <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} />
                         ) : null}
-                        <div className={this.mode === "list" ? theme.list : theme.mosaic}>
+                        <div className={this.mode === "list" ? theme.list() : theme.mosaic()}>
                             {/* Gestion de l'empty state. */}
                             {!this.isLoading && !hideAdditionalItems && !this.displayedData.length ? (
                                 EmptyComponent ? (
@@ -309,7 +308,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                         store={(this.props as any).store}
                                     />
                                 ) : (
-                                    <div className={theme.loading}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
+                                    <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
                                 )
                             ) : (
                                 <ul ref={ul => (this.ulRef = ul)}>
@@ -317,11 +316,11 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                     {this.isAddItemShown ? (
                                         <li
                                             key="mosaic-add"
-                                            className={theme.mosaicAdd}
+                                            className={theme.mosaicAdd()}
                                             style={{width: this.mosaic.width, height: this.mosaic.height}}
                                             onClick={this.addItemHandler}
                                         >
-                                            <FontIcon className={theme.add}>
+                                            <FontIcon className={theme.add()}>
                                                 {getIcon(`${i18nPrefix}.icons.list.add`)}
                                             </FontIcon>
                                             {i18next.t(`${i18nPrefix}.list.add`)}
@@ -335,7 +334,7 @@ export class List<T, P extends ListProps<T> = ListProps<T> & {data: T[]}> extend
                                 LoadingComponent ? (
                                     <LoadingComponent store={(this.props as any).store} />
                                 ) : (
-                                    <div className={theme.loading}>{i18next.t(`${i18nPrefix}.search.loading`)}</div>
+                                    <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.search.loading`)}</div>
                                 )
                             ) : null}
                             {this.renderBottomRow(theme)}
@@ -371,7 +370,7 @@ interface DetailWrapperProps {
     DetailComponent: React.ComponentType<DetailProps<{}>>;
     closeDetail: () => void;
     item: {};
-    theme?: ListStyle;
+    theme?: CSSProp<ListCss>;
 }
 
 /** Wrapper pour le composant de détail. */
@@ -393,11 +392,11 @@ const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
         ) => (
             <Theme theme={pTheme}>
                 {theme => (
-                    <li ref={ref} className={theme.detailWrapper}>
+                    <li ref={ref} className={theme.detailWrapper()}>
                         {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident...
                         et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}
                         <div
-                            className={theme.triangle}
+                            className={theme.triangle()}
                             style={
                                 displayedIdx === undefined && mode === "mosaic"
                                     ? {left: -1000}
@@ -412,7 +411,7 @@ const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
                                     : {}
                             }
                         />
-                        <div className={theme.detail}>
+                        <div className={theme.detail()}>
                             <IconButton icon="clear" onClick={closeDetail} />
                             <DetailComponent data={item} closeDetail={closeDetail} />
                         </div>

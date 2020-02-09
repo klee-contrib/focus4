@@ -4,12 +4,11 @@ import {action, computed, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
+import {CSSProp, PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
 
-import scrollspyStyles from "./__style__/scrollspy-container.css";
-export {scrollspyStyles};
-export type ScrollspyStyle = Partial<typeof scrollspyStyles>;
-const Theme = themr("scrollspy", scrollspyStyles);
+import scrollspyCss, {ScrollspyCss} from "./__style__/scrollspy.css";
+export {scrollspyCss, ScrollspyCss};
+const Theme = themr("scrollspy", scrollspyCss);
 
 /** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
@@ -22,7 +21,7 @@ export interface ScrollspyContainerProps {
     /** Offset entre la position du panel et la position de scroll au clic sur le menu. Par défaut : 150. */
     scrollToOffset?: number;
     /** CSS. */
-    theme?: ScrollspyStyle;
+    theme?: CSSProp<ScrollspyCss>;
 }
 
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
@@ -105,11 +104,11 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
             <ScrollspyContext.Provider value={{registerPanel: this.registerPanel}}>
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div ref={this.node} className={theme.scrollspy}>
+                        <div ref={this.node} className={theme.scrollspy()}>
                             {this.context.portal(
-                                <nav className={theme.menu} key="scrollspy">
+                                <nav className={theme.menu()} key="scrollspy">
                                     <MenuComponent
-                                        activeClassName={theme.active}
+                                        activeClassName={theme.active()}
                                         activeId={this.activeItem}
                                         panels={this.sortedPanels.map(([id, {title}]) => ({
                                             id,
@@ -120,7 +119,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                                 </nav>,
                                 this.node.current
                             )}
-                            <div className={theme.content} style={{marginLeft: menuWidth}}>
+                            <div className={theme.content()} style={{marginLeft: menuWidth}}>
                                 {children}
                             </div>
                         </div>

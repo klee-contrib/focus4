@@ -11,22 +11,22 @@
     box-sizing: border-box;
 }
 
-.edit.required .label label::after {
+.field--edit.field--required .label label::after {
     content: "*";
     margin-left: 3px;
 }
 
-.edit [data-react-toolbox="input"],
-.edit [data-focus="select"] {
+.field--edit [data-react-toolbox="input"],
+.field--edit [data-focus="select"] {
     margin-top: -27px;
     margin-bottom: -15px;
 }
 
-.edit.invalid [data-react-toolbox="input"] {
+.field--edit.field--error [data-react-toolbox="input"] {
     margin-top: -28px;
 }
 
-.invalid .label label {
+.field--error .label label {
     color: var(--input-text-error-color);
 }
 

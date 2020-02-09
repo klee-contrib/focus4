@@ -1,20 +1,17 @@
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
-import styles from "../__style__/header.css";
+import headerCss, {HeaderCss} from "../__style__/header.css";
 
 /** Props du HeaderBarRight. */
 export interface HeaderBarRightProps {
     children?: React.ReactNode;
-    theme?: {
-        item?: string;
-        right?: string;
-    };
+    theme?: CSSProp<HeaderCss>;
 }
 
 /** Barre du haut à droite, doit être affiché dans `HeaderTopRow`. */
 export function HeaderBarRight({children, theme: pTheme}: HeaderBarRightProps) {
-    const theme = useTheme("header", styles, pTheme);
-    return <div className={`${theme.item} ${theme.right}`}>{children}</div>;
+    const theme = useTheme("header", headerCss, pTheme);
+    return <div className={theme.item({right: true})}>{children}</div>;
 }

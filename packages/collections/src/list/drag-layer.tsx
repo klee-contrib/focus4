@@ -2,12 +2,11 @@ import i18next from "i18next";
 import * as React from "react";
 import {useDragLayer} from "react-dnd";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
-import dragLayerStyles from "./__style__/drag-layer.css";
-export {dragLayerStyles};
-export type DragLayerStyle = Partial<typeof dragLayerStyles>;
+import dragLayerCss, {DragLayerCss} from "./__style__/drag-layer.css";
+export {dragLayerCss, DragLayerCss};
 
 /** Props du layer de drag an drop. */
 export interface DndDragLayerProps {
@@ -20,12 +19,12 @@ export interface DndDragLayerProps {
     /** La liste en cours de drag. */
     item?: {dragged: {}[]};
     /** CSS. */
-    theme?: DragLayerStyle;
+    theme?: CSSProp<DragLayerCss>;
 }
 
 /** Layer de drag and drop pour afficher le nombre d'items. */
 export function DndDragLayer({i18nPrefix = "focus", theme: pTheme}: DndDragLayerProps) {
-    const theme = useTheme("dragLayer", dragLayerStyles, pTheme);
+    const theme = useTheme("dragLayer", dragLayerCss, pTheme);
 
     const {currentOffset, isDragging, item} = useDragLayer(monitor => ({
         currentOffset: monitor.getClientOffset(),
@@ -44,10 +43,10 @@ export function DndDragLayer({i18nPrefix = "focus", theme: pTheme}: DndDragLayer
     }
 
     return (
-        <div className={theme.container}>
-            <div className={theme.layer} style={{transform: `translate(${x - 18}px, ${y - 20}px)`}}>
+        <div className={theme.container()}>
+            <div className={theme.layer()} style={{transform: `translate(${x - 18}px, ${y - 20}px)`}}>
                 <FontIcon>drag_handle</FontIcon>
-                <div className={theme.count}>{item.dragged.length}</div>
+                <div className={theme.count()}>{item.dragged.length}</div>
                 <div>{i18next.t(`${i18nPrefix}.dragLayer.item${item.dragged.length !== 1 ? "s" : ""}`)}</div>
             </div>
         </div>

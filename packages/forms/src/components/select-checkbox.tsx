@@ -1,12 +1,11 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
-import selectCheckboxStyles from "./__style__/select-checkbox.css";
-export {selectCheckboxStyles};
-export type SelectCheckboxStyle = Partial<typeof selectCheckboxStyles>;
+import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
+export {selectCheckboxCss, SelectCheckboxCss};
 
 function clickHandlerFactory(
     isDisabled: boolean,
@@ -48,7 +47,7 @@ export interface SelectCheckboxProps<T extends "string" | "number"> {
     /** Est appelé à chaque changement de valeur. */
     onChange: (value: (T extends "string" ? string : number)[] | undefined) => void;
     /** CSS. */
-    theme?: SelectCheckboxStyle;
+    theme?: CSSProp<SelectCheckboxCss>;
     /** Type du champ (number ou string). */
     type: T;
     /** Valeur. */
@@ -72,9 +71,9 @@ export function SelectCheckbox<T extends "string" | "number">({
     valueKey,
     values
 }: SelectCheckboxProps<T>) {
-    const theme = useTheme("selectCheckbox", selectCheckboxStyles, pTheme);
+    const theme = useTheme("selectCheckbox", selectCheckboxCss, pTheme);
     return (
-        <div className={theme.select}>
+        <div className={theme.select()}>
             {label && <h5>{i18next.t(label)}</h5>}
             <ul>
                 {values.map(option => {
@@ -85,7 +84,7 @@ export function SelectCheckbox<T extends "string" | "number">({
                     const clickHandler = clickHandlerFactory(disabled, isSelected, value, optVal, onChange);
 
                     return (
-                        <li key={optVal} onClick={clickHandler} className={theme!.option}>
+                        <li key={optVal} onClick={clickHandler} className={theme.option()}>
                             <Checkbox
                                 name={`${name}-${optVal}`}
                                 value={isSelected}

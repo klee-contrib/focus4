@@ -2,14 +2,11 @@ export {
     Autocomplete,
     AutocompleteProps,
     AutocompleteResult,
-    AutocompleteStyle,
     BooleanRadio,
     BooleanRadioProps,
-    BooleanRadioStyle,
     ButtonHelp,
     Display,
     DisplayProps,
-    DisplayStyle,
     Input,
     InputProps,
     InputDate,
@@ -18,20 +15,15 @@ export {
     InputTimeProps,
     Label,
     LabelProps,
-    LabelStyle,
     Panel,
     PanelButtons,
     PanelProps,
-    PanelStyle,
     Select,
     SelectProps,
-    SelectStyle,
     SelectCheckbox,
     SelectCheckboxProps,
-    SelectCheckboxStyle,
     SelectRadio,
-    SelectRadioProps,
-    SelectRadioStyle
+    SelectRadioProps
 } from "@focus4/forms";
 export {getIcon, PanelDescriptor, ScrollableContext, ScrollspyContext} from "@focus4/styling";
 export {ButtonMenu, Checkbox, CheckboxProps, IconMenu, MenuItem, Switch, SwitchProps} from "@focus4/toolbox";

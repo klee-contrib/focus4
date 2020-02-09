@@ -1,8 +1,8 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {SelectStyle, selectStyles} from "@focus4/forms";
-import {useTheme} from "@focus4/styling";
+import {SelectCss, selectCss} from "@focus4/forms";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 /** Props du Select. */
 export interface SelectProps {
@@ -21,7 +21,7 @@ export interface SelectProps {
     /** Est appelé à chaque changement de valeur. */
     onChange?: (value: any) => void;
     /** CSS. */
-    theme?: SelectStyle;
+    theme?: CSSProp<SelectCss>;
     /** Libellés des champs sans libellés. */
     unSelectedLabel?: string;
     /** Valeur. */
@@ -47,7 +47,7 @@ export function Select({
     i18nPrefix = "focus",
     unSelectedLabel = `${i18nPrefix}.select.unselected`
 }: SelectProps) {
-    const theme = useTheme("select", selectStyles, pTheme);
+    const theme = useTheme("select", selectCss, pTheme);
 
     // On ajoute l'élément vide si nécessaire.
     let finalValues = values;
@@ -56,7 +56,7 @@ export function Select({
     }
 
     return (
-        <div data-focus="select" className={`${theme.select} ${error ? theme.error : ""}`}>
+        <div data-focus="select" className={theme.select({error: !!error})}>
             <select
                 disabled={disabled}
                 id={name}
@@ -76,7 +76,7 @@ export function Select({
                     );
                 })}
             </select>
-            {error ? <div className={theme.errorLabel}>{error}</div> : null}
+            {error ? <div className={theme.error()}>{error}</div> : null}
         </div>
     );
 }

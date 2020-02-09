@@ -8,7 +8,7 @@ import {
 } from "react-toolbox/lib/switch/Switch";
 import thumbFactory from "react-toolbox/lib/switch/Thumb";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import rtSwitchTheme from "react-toolbox/components/switch/theme.css";
 const switchTheme: SwitchTheme = rtSwitchTheme;
 export {switchTheme, SwitchTheme};
@@ -16,9 +16,10 @@ export {switchTheme, SwitchTheme};
 import {rippleFactory} from "./ripple";
 
 /** Props du Switch. */
-export interface SwitchProps extends RTSwitchProps {
+export interface SwitchProps extends Omit<RTSwitchProps, "theme"> {
     /** Est appelé quand on coche la case. */
     onChange?: (value: boolean) => void;
+    theme?: CSSProp<SwitchTheme>;
     /** Valeur. */
     value?: boolean;
 }
@@ -26,7 +27,7 @@ export interface SwitchProps extends RTSwitchProps {
 const RTThumb = thumbFactory(rippleFactory({rippleCentered: true, rippleSpread: 2.6}));
 const Thumb = React.forwardRef<unknown, unknown>((props, ref) => {
     const theme = useTheme(SWITCH, switchTheme);
-    return <RTThumb ref={ref} {...props} theme={theme} />;
+    return <RTThumb ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTSwitch = switchFactory(Thumb);
@@ -41,5 +42,5 @@ export const Switch = React.forwardRef<SwitchType, SwitchProps>((props, ref) => 
         delete (rtProps as any).error;
     }
 
-    return <RTSwitch ref={ref} {...rtProps} theme={theme} />;
+    return <RTSwitch ref={ref} {...rtProps} theme={fromBem(theme)} />;
 });

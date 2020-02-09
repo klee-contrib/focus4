@@ -6,13 +6,12 @@ import * as React from "react";
 
 import {fieldFor, makeField} from "@focus4/forms";
 import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
-import {getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
-import searchBarStyles from "./__style__/search-bar.css";
-export {searchBarStyles};
-export type SearchBarStyle = Partial<typeof searchBarStyles>;
-const Theme = themr("searchBar", searchBarStyles);
+import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";
+export {searchBarCss, SearchBarCss};
+const Theme = themr("searchBar", searchBarCss);
 
 /** Props de la SearchBar. */
 export interface SearchBarProps<T, C extends Entity> {
@@ -31,7 +30,7 @@ export interface SearchBarProps<T, C extends Entity> {
     /** Store associé. */
     store: SearchStore<T, C>;
     /** CSS. */
-    theme?: SearchBarStyle;
+    theme?: CSSProp<SearchBarCss>;
 }
 
 /** Barre de recherche permettant de contrôle le texte et les critères personnalisés de recherche. */
@@ -187,9 +186,9 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                 {theme => (
                     <div style={{position: "relative"}}>
                         {this.showCriteriaComponent ? (
-                            <div className={theme.criteriaWrapper} onClick={this.toggleCriteria} />
+                            <div className={theme.criteriaWrapper()} onClick={this.toggleCriteria} />
                         ) : null}
-                        <div className={`${theme.bar} ${this.error ? theme.error : ""}`}>
+                        <div className={theme.bar({error: !!this.error})}>
                             {scopes && store.criteria && scopeKey ? (
                                 <Dropdown
                                     onChange={this.onScopeSelection}
@@ -200,11 +199,11 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                                         {value: undefined, label: ""},
                                         ...scopes.map(({code, label}) => ({value: code, label}))
                                     ]}
-                                    theme={{dropdown: theme.dropdown, values: theme.scopes}}
+                                    theme={{dropdown: theme.dropdown(), values: theme.scopes()}}
                                 />
                             ) : null}
-                            <div className={theme.input}>
-                                <FontIcon className={theme.searchIcon}>
+                            <div className={theme.input()}>
+                                <FontIcon className={theme.searchIcon()}>
                                     {getIcon(`${i18nPrefix}.icons.searchBar.search`)}
                                 </FontIcon>
                                 <input
@@ -229,10 +228,10 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                             ) : null}
                         </div>
                         {!this.showCriteriaComponent && this.error ? (
-                            <span className={theme.errors}>{this.error}</span>
+                            <span className={theme.errors()}>{this.error}</span>
                         ) : null}
                         {this.showCriteriaComponent ? (
-                            <div className={theme.criteria}>
+                            <div className={theme.criteria()}>
                                 <IconButton
                                     icon={getIcon(`${i18nPrefix}.icons.searchBar.close`)}
                                     onClick={this.toggleCriteria}
@@ -246,7 +245,7 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
                                     )
                                 )}
                                 {criteriaComponent}
-                                <div className={theme.buttons}>
+                                <div className={theme.buttons()}>
                                     <Button
                                         primary
                                         raised

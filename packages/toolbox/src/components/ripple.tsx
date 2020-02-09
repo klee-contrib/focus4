@@ -8,7 +8,7 @@ import {RippleTheme} from "react-toolbox/lib/ripple";
 import events from "react-toolbox/lib/utils/events";
 import prefixer from "react-toolbox/lib/utils/prefixer";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import rtRippleTheme from "react-toolbox/components/ripple/theme.css";
 const rippleTheme: RippleTheme = rtRippleTheme;
 export {rippleTheme, RippleTheme};
@@ -21,7 +21,7 @@ export interface RippleOptions {
     theme?: RippleTheme;
 }
 
-export interface RippleProps extends ReactToolbox.Props, RippleOptions {
+export interface RippleProps extends ReactToolbox.Props, Omit<RippleOptions, "theme"> {
     children?: React.ReactNode;
     disabled?: boolean;
     onRippleEnded?: Function;
@@ -36,8 +36,14 @@ export function rippleFactory({
     theme = {}
 }: RippleOptions = {}) {
     return function Ripple<P>(ComposedComponent: React.ComponentType<P> | string) {
-        return React.forwardRef<RippledComponent<P>, P & RippleProps>((p, ref) => {
-            const finalTheme = useTheme(RIPPLE, rippleTheme, p.theme, theme);
+        return React.forwardRef<
+            RippledComponent<P>,
+            P &
+                RippleProps & {
+                    theme?: CSSProp<RippleTheme>;
+                }
+        >((p, ref) => {
+            const finalTheme = fromBem(useTheme(RIPPLE, rippleTheme, p.theme, theme));
             return (
                 <RippledComponent
                     ref={ref}
@@ -70,7 +76,7 @@ interface RippleState {
 }
 
 class RippledComponent<P> extends React.Component<
-    RippleProps & {ComposedComponent: React.ComponentType<P> | string},
+    RippleProps & {theme: RippleTheme} & {ComposedComponent: React.ComponentType<P> | string},
     RippleState
 > {
     state: RippleState = {
@@ -275,11 +281,11 @@ class RippledComponent<P> extends React.Component<
         const scale = restarting ? 0 : 1;
         const transform = `translate3d(${-width / 2 + left}px, ${-width / 2 + top}px, 0) scale(${scale})`;
         const _className = classnames(this.props.theme!.ripple, {
-            [this.props.theme!.rippleActive!]: active,
-            [this.props.theme!.rippleRestarting!]: restarting
+            [this.props.theme.rippleActive!]: active,
+            [this.props.theme.rippleRestarting!]: restarting
         });
         return (
-            <span key={key} data-react-toolbox="ripple" className={this.props.theme!.rippleWrapper}>
+            <span key={key} data-react-toolbox="ripple" className={this.props.theme.rippleWrapper}>
                 <span
                     className={_className}
                     ref={node => {
@@ -317,7 +323,7 @@ class RippledComponent<P> extends React.Component<
         const finalProps = ripplePassthrough ? {...childProps, theme, disabled} : childProps;
 
         return (
-            <ComposedComponent {...finalProps as any}>
+            <ComposedComponent {...(finalProps as any)}>
                 {children}
                 {ripple ? childRipples : null}
             </ComposedComponent>

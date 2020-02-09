@@ -1,2 +1,2 @@
-export {LoadingBar, LoadingBarStyle, loadingBarStyles} from "./loading-bar";
-export {MessageCenter, MessageCenterProps, snackbarStyles} from "./message-center";
+export {LoadingBar, LoadingBarCss, loadingBarCss} from "./loading-bar";
+export {MessageCenter, MessageCenterProps, snackBarCss} from "./message-center";

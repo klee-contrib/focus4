@@ -32,12 +32,12 @@
     }
 }
 
-.error {
+.select--error {
     & select {
         border-bottom: 1px solid var(--input-text-error-color);
     }
 
-    & .errorLabel {
+    & .error {
         color: var(--input-text-error-color);
         position: absolute;
         font-size: var(--input-label-font-size);

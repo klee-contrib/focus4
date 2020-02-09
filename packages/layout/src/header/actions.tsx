@@ -1,11 +1,11 @@
 import * as React from "react";
 import posed from "react-pose";
 
-import {defaultPose, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, defaultPose, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, ButtonProps, MenuItem, MenuItemProps, tooltipFactory, TooltipProps} from "@focus4/toolbox";
 const TooltipButton = tooltipFactory()(Button);
 
-import styles from "./__style__/header.css";
+import headerCss from "./__style__/header.css";
 
 /** Action principale, affichée dans son propre bouton. */
 export type PrimaryAction = ButtonProps &
@@ -31,9 +31,9 @@ export interface HeaderActionsProps {
     /** Pour personnaliser le bouton du menu des actions secondaires. */
     secondaryButton?: PrimaryAction;
     /** CSS. */
-    theme?: {
+    theme?: CSSProp<{
         actions?: string;
-    };
+    }>;
 }
 
 /** Barre d'actions du header. */
@@ -44,9 +44,9 @@ export function HeaderActions({
     secondaryButton = {},
     theme: pTheme
 }: HeaderActionsProps) {
-    const theme = useTheme("header", styles, pTheme);
+    const theme = useTheme("header", headerCss, pTheme);
     return (
-        <PosedDiv className={theme.actions}>
+        <PosedDiv className={theme.actions()}>
             {primary.map((action, i) => {
                 const FinalButton = action.tooltip ? TooltipButton : Button;
                 return (

@@ -19,7 +19,8 @@ import {
     ListItemContentProps,
     ListItemLayoutProps,
     ListItemActionProps,
-    ListItemTextProps
+    ListItemTextProps,
+    ListItemActionsProps
 } from "react-toolbox/lib/list";
 import {MenuItem, MenuItemProps, Menu, MenuProps} from "react-toolbox/lib/menu";
 import {Navigation} from "react-toolbox/lib/navigation";
@@ -97,7 +98,7 @@ declare module "react-toolbox/lib/list/ListItemLayout" {
     export function listItemLayoutFactory(
         Avatar: React.ComponentType<AvatarProps>,
         ListItemContent: React.ComponentType<ListItemContentProps>,
-        ListItemActions: React.ComponentType<ListItemActionProps>
+        ListItemActions: React.ComponentType<ListItemActionsProps>
     ): typeof ListItemLayout;
 }
 declare module "react-toolbox/lib/menu/MenuItem" {

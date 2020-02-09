@@ -6,15 +6,14 @@ import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
 
 import {EntityField, FieldEntry, ListStoreBase, stringFor} from "@focus4/stores";
-import {getIcon, springPose, themr} from "@focus4/styling";
+import {CSSProp, getIcon, springPose, themr} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import lineStyles from "./__style__/line.css";
-export {lineStyles};
-export type LineStyle = Partial<typeof lineStyles>;
-const Theme = themr("line", lineStyles);
+import lineCss, {LineCss} from "./__style__/line.css";
+export {lineCss, LineCss};
+const Theme = themr("line", lineCss);
 
 /** Props de base d'un composant de lingne. */
 export interface LineProps<T> {
@@ -57,7 +56,7 @@ export interface LineWrapperProps<T> {
     /** Handler pour ouvrir et fermer le détail. */
     toggleDetail?: (callbacks?: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void}) => void;
     /** CSS. */
-    theme?: LineStyle;
+    theme?: CSSProp<LineCss>;
     /** Type spécial de ligne. */
     type?: "timeline";
 }
@@ -167,9 +166,9 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                     <Theme theme={this.props.theme}>
                         {theme => (
                             <li ref={this.setRef}>
-                                <div className={theme.timelineDate}>{stringFor(dateSelector!(data))}</div>
-                                <div className={theme.timelineBadge} />
-                                <div className={theme.timelinePanel}>
+                                <div className={theme.timelineDate()}>{stringFor(dateSelector!(data))}</div>
+                                <div className={theme.timelineBadge()} />
+                                <div className={theme.timelinePanel()}>
                                     <LineComponent data={data} />
                                 </div>
                             </li>
@@ -180,11 +179,9 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                 // Pour une liste, on ajoute la case de sélection et les actions de ligne, si demandées.
                 return (
                     <Theme theme={this.props.theme}>
-                        {(theme: LineStyle) => (
+                        {theme => (
                             <DraggableLi
-                                className={`${mosaic ? theme.mosaic : theme.line} ${
-                                    this.isSelected ? theme.selected : ""
-                                }`}
+                                className={(mosaic ? theme.mosaic : theme.line)({selected: this.isSelected})}
                                 ref={this.setRef}
                                 pose={this.isDragged && !disableDragAnimation ? "dragging" : "idle"}
                                 width={mosaic && mosaic.width}
@@ -193,22 +190,18 @@ export class LineWrapper<T> extends React.Component<LineWrapperProps<T>> {
                                 <LineComponent data={data} toggleDetail={toggleDetail} />
                                 {this.isSelectable ? (
                                     <IconButton
-                                        className={`${theme.checkbox} ${
-                                            this.isCheckboxDisplayed ? theme.forceDisplay : ""
-                                        }`}
+                                        className={theme.checkbox({forceDisplay: this.isCheckboxDisplayed})}
                                         icon={getIcon(
                                             `${i18nPrefix}.icons.line.${this.isSelected ? "" : "un"}selected`
                                         )}
                                         onClick={this.onSelection}
                                         primary={this.isSelected}
-                                        theme={{toggle: theme.toggle, icon: theme.checkboxIcon}}
+                                        theme={{toggle: theme.toggle(), icon: theme.checkboxIcon()}}
                                     />
                                 ) : null}
                                 {this.operationList ? (
                                     <div
-                                        className={`${theme.actions} ${
-                                            this.forceActionDisplay ? theme.forceDisplay : ""
-                                        }`}
+                                        className={theme.actions({forceDisplay: this.forceActionDisplay})}
                                         style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                                     >
                                         <ContextualActions

@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -5,7 +6,7 @@ import moment from "moment-timezone";
 import * as React from "react";
 import {findDOMNode} from "react-dom";
 
-import {inputDateStyles} from "@focus4/forms";
+import {inputDateCss} from "@focus4/forms";
 import {themr} from "@focus4/styling";
 import {Clock, IconButton, InputTheme, timePickerTheme, TimePickerTheme} from "@focus4/toolbox";
 
@@ -209,7 +210,7 @@ export class InputTime extends React.Component<InputTimeProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-time" data-id={this._inputTimeId} className={inputDateStyles.input}>
+                    <div data-focus="input-time" data-id={this._inputTimeId} className={inputDateCss.input}>
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
@@ -223,35 +224,37 @@ export class InputTime extends React.Component<InputTimeProps> {
                         {this.showClock ? (
                             <div
                                 ref={clo => (this.clock = clo)}
-                                className={`${inputDateStyles.calendar} ${theme!.dialog} ${
-                                    this.clockDisplay === "hours" ? theme!.hoursDisplay : theme!.minutesDisplay
-                                } ${displayFrom === "right" ? inputDateStyles.fromRight : ""} ${
-                                    this.clockPosition === "up" ? inputDateStyles.up : inputDateStyles.down
-                                }`}
+                                className={classNames(
+                                    inputDateCss.calendar,
+                                    theme.dialog(),
+                                    this.clockDisplay === "hours" ? theme.hoursDisplay() : theme.minutesDisplay(),
+                                    displayFrom === "right" ? inputDateCss.fromRight : "",
+                                    this.clockPosition === "up" ? inputDateCss.up : inputDateCss.down
+                                )}
                             >
-                                <header className={theme!.header}>
+                                <header className={theme.header()}>
                                     <span
                                         id="hours"
-                                        className={theme!.hours}
+                                        className={theme.hours()}
                                         onClick={() => (this.clockDisplay = "hours")}
                                     >
                                         {`0${this.time.hours()}`.slice(-2)}
                                     </span>
-                                    <span className={theme!.separator}>:</span>
+                                    <span className={theme.separator()}>:</span>
                                     <span
                                         id="minutes"
-                                        className={theme!.minutes}
+                                        className={theme.minutes()}
                                         onClick={() => (this.clockDisplay = "minutes")}
                                     >
                                         {`0${this.time.minutes()}`.slice(-2)}
                                     </span>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: inputDateStyles.toggle}}
+                                        theme={{toggle: inputDateCss.toggle}}
                                         onClick={() => (this.showClock = false)}
                                     />
                                 </header>
-                                <div className={`${theme!.clockWrapper} ${inputDateStyles.clock}`}>
+                                <div className={classNames(theme.clockWrapper(), inputDateCss.clock)}>
                                     <Clock
                                         ref={c => (this.clockComp = c)}
                                         display={this.clockDisplay}

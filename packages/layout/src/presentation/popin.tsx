@@ -1,15 +1,14 @@
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {cssTransitionProps, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, cssTransitionProps, fromBem, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {Scrollable} from "../scrollable";
 import {Overlay} from "./overlay";
 
-import popinStyles from "./__style__/popin.css";
-export {popinStyles};
-export type PopinStyle = Partial<typeof popinStyles>;
+import popinCss, {PopinCss} from "./__style__/popin.css";
+export {popinCss, PopinCss};
 
 /** Props de la popin. */
 export interface PopinProps {
@@ -30,7 +29,7 @@ export interface PopinProps {
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
     /** CSS. */
-    theme?: PopinStyle;
+    theme?: CSSProp<PopinCss>;
     /** Type de popin. Par défaut : "from-right" */
     type?: "from-right" | "from-left";
 }
@@ -49,7 +48,7 @@ export function Popin({
     theme: pTheme,
     type = "from-right"
 }: React.PropsWithChildren<PopinProps>) {
-    const theme = useTheme("popin", popinStyles, pTheme);
+    const theme = useTheme("popin", popinCss, pTheme);
     const context = React.useContext(ScrollableContext);
 
     return context.portal(
@@ -57,18 +56,16 @@ export function Popin({
             <Overlay active={opened} onClick={(!preventOverlayClick && closePopin) || undefined} />
             <TransitionGroup component={null}>
                 {opened ? (
-                    <CSSTransition {...cssTransitionProps(theme as any)}>
+                    <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
                         <Scrollable
                             backToTopOffset={backToTopOffset}
-                            className={`${theme.popin} ${
-                                type === "from-right" ? theme.right : type === "from-left" ? theme.left : ""
-                            }`}
+                            className={theme.popin({left: type === "from-left", right: type === "from-right"})}
                             hideBackToTop={hideBackToTop}
                             scrollBehaviour={scrollBehaviour}
                         >
                             {!hideCloseButton ? (
                                 <IconButton
-                                    className={theme.close}
+                                    className={theme.close()}
                                     icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
                                     onClick={closePopin}
                                 />

@@ -1,8 +1,8 @@
 import i18next from "i18next";
 import * as React from "react";
 
-import {SelectRadioStyle, selectRadioStyles} from "@focus4/forms";
-import {useTheme} from "@focus4/styling";
+import {selectRadioCss, SelectRadioCss} from "@focus4/forms";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioGroup} from "@focus4/toolbox";
 
 /** Props for RadioSelect */
@@ -20,7 +20,7 @@ export interface SelectRadioProps {
     /** Call with each value change. */
     onChange: (value: string | number | undefined) => void;
     /** CSS. */
-    theme?: SelectRadioStyle;
+    theme?: CSSProp<SelectRadioCss>;
     /** Value. */
     value?: string | number | undefined;
     /** Name of field for key. */
@@ -51,7 +51,7 @@ export function SelectRadio({
     undefinedLabel = "focus.select.none",
     undefinedPosition = "bottom"
 }: SelectRadioProps) {
-    const theme = useTheme("selectRadio", selectRadioStyles, pTheme);
+    const theme = useTheme("selectRadio", selectRadioCss, pTheme);
 
     let definitiveValues = values;
     if (hasUndefined && undefinedPosition === "bottom") {
@@ -62,8 +62,8 @@ export function SelectRadio({
     }
 
     return (
-        <div className={theme.select}>
-            {label && <h5 className={theme.title}>{i18next.t(label)}</h5>}
+        <div className={theme.select()}>
+            {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
             <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
                 {definitiveValues.map(option => {
                     const optVal = (option as any)[valueKey];
@@ -74,7 +74,7 @@ export function SelectRadio({
                             key={optVal || "undefined"}
                             label={i18next.t(optLabel)}
                             value={optVal}
-                            theme={{field: theme.option}}
+                            theme={{field: theme.option()}}
                         />
                     );
                 })}

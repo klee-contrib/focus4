@@ -39,6 +39,7 @@ glob("./src/variables/*.css", null, (_, files) => {
 const configs = [
     {
         input: "src/focus4.styling.ts",
+        // @ts-ignore
         plugins: [typescript({abortOnError: false}), postcss({extract: true}), abortOnError],
         treeshake: {
             moduleSideEffects: false
@@ -54,6 +55,7 @@ const configs = [
         input: "src/variables.ts",
         plugins: [
             typescript({abortOnError: false}),
+            // @ts-ignore
             postcss({extract: true, plugins: [postcssImport()]}),
             abortOnError
         ],
@@ -62,6 +64,16 @@ const configs = [
             file: "lib/variables.js"
         },
         external: [...Object.keys(pkg.dependencies || {}), "lodash", "tslib"],
+        onwarn
+    },
+    {
+        input: "src/generator.ts",
+        plugins: [typescript({abortOnError: false}), abortOnError],
+        output: {
+            format: "cjs",
+            file: "lib/generator.js"
+        },
+        external: [...Object.keys(pkg.dependencies || {}), "fs", "lodash"],
         onwarn
     }
 ];

@@ -23,7 +23,7 @@
     margin-right: 5px;
 }
 
-.error {
+.bar--error {
     border: 1px solid var(--palette-red-500);
     margin: 9px -1px;
 }

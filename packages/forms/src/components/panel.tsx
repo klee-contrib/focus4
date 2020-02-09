@@ -2,15 +2,14 @@ import i18next from "i18next";
 import {snakeCase} from "lodash";
 import * as React from "react";
 
-import {ScrollspyContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollspyContext, useTheme} from "@focus4/styling";
 import {ProgressBar} from "@focus4/toolbox";
 
 import {ButtonHelp} from "./button-help";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
-import panelStyles from "./__style__/panel.css";
-export {panelStyles};
-export type PanelStyle = Partial<typeof panelStyles>;
+import panelCss, {PanelCss} from "./__style__/panel.css";
+export {panelCss, PanelCss};
 
 /** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {
@@ -27,7 +26,7 @@ export interface PanelProps extends PanelButtonsProps {
     /** Affiche le bouton d'aide. */
     showHelp?: boolean;
     /** CSS. */
-    theme?: PanelStyle;
+    theme?: CSSProp<PanelCss>;
     /** Titre du panel. */
     title?: string;
 }
@@ -56,7 +55,7 @@ export function Panel({
 
     const [isInForm, setIsInForm] = React.useState(false);
     const ref = React.useRef<HTMLDivElement>(null);
-    const theme = useTheme("panel", panelStyles, pTheme);
+    const theme = useTheme("panel", panelCss, pTheme);
 
     /** On récupère le contexte posé par le scrollspy parent. */
     const scrollSpyContext = React.useContext(ScrollspyContext);
@@ -80,7 +79,7 @@ export function Panel({
     }, []);
 
     const buttons = (
-        <div className={theme.actions}>
+        <div className={theme.actions()}>
             <Buttons
                 editing={editing}
                 i18nPrefix={i18nPrefix}
@@ -96,16 +95,12 @@ export function Panel({
     const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
 
     return (
-        <div
-            ref={ref}
-            id={name ? `panel-${name}` : undefined}
-            className={`${theme.panel} ${loading ? theme.busy : ""} ${editing ? theme.edit : ""}`}
-        >
+        <div ref={ref} id={name ? `panel-${name}` : undefined} className={theme.panel({loading, editing})}>
             {!hideProgressBar && loading ? (
-                <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress}} />
+                <ProgressBar mode="indeterminate" theme={{indeterminate: theme.progress()}} />
             ) : null}
             {title || areButtonsTop ? (
-                <div className={`${theme.title} ${theme.top}`}>
+                <div className={theme.title({top: true})}>
                     {title ? (
                         <h3>
                             <span>{i18next.t(title)}</span>
@@ -115,8 +110,8 @@ export function Panel({
                     {areButtonsTop ? buttons : null}
                 </div>
             ) : null}
-            <div className={theme.content}>{children}</div>
-            {areButtonsDown ? <div className={`${theme.title} ${theme.bottom}`}>{buttons}</div> : null}
+            <div className={theme.content()}>{children}</div>
+            {areButtonsDown ? <div className={theme.title({bottom: true})}>{buttons}</div> : null}
         </div>
     );
 }

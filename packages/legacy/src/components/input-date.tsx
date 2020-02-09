@@ -1,10 +1,11 @@
+import classNames from "classnames";
 import {uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import * as React from "react";
 
-import {inputDateStyles} from "@focus4/forms";
+import {inputDateCss} from "@focus4/forms";
 import {themr} from "@focus4/styling";
 import {Calendar, CalendarProps, datePickerTheme, DatePickerTheme, IconButton, InputTheme} from "@focus4/toolbox";
 
@@ -265,7 +266,7 @@ export class InputDate extends React.Component<InputDateProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-date" data-id={this._inputDateId} className={inputDateStyles.input}>
+                    <div data-focus="input-date" data-id={this._inputDateId} className={inputDateCss.input}>
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
@@ -279,34 +280,39 @@ export class InputDate extends React.Component<InputDateProps> {
                         {this.showCalendar ? (
                             <div
                                 ref={cal => (this.calendar = cal)}
-                                className={`${inputDateStyles.calendar} ${
-                                    displayFrom === "right" ? inputDateStyles.fromRight : ""
-                                } ${this.calendarPosition === "up" ? inputDateStyles.up : inputDateStyles.down}`}
+                                className={classNames(
+                                    inputDateCss.calendar,
+                                    displayFrom === "right" ? inputDateCss.fromRight : "",
+                                    this.calendarPosition === "up" ? inputDateCss.up : inputDateCss.down
+                                )}
                             >
                                 <header
-                                    className={`${theme!.header} ${(theme as any)[`${this.calendarDisplay}Display`]}`}
+                                    className={classNames(
+                                        theme.header,
+                                        (theme as any)[`${this.calendarDisplay}Display`]()
+                                    )}
                                 >
                                     <span
                                         id="years"
-                                        className={theme!.year}
+                                        className={theme.year()}
                                         onClick={() => (this.calendarDisplay = "years")}
                                     >
                                         {this.displayedDate().year()}
                                     </span>
                                     <h3
                                         id="months"
-                                        className={theme!.date}
+                                        className={theme.date()}
                                         onClick={() => (this.calendarDisplay = "months")}
                                     >
                                         {this.displayedDate().format(calendarFormat)}
                                     </h3>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: inputDateStyles.toggle}}
+                                        theme={{toggle: inputDateCss.toggle}}
                                         onClick={() => (this.showCalendar = false)}
                                     />
                                 </header>
-                                <div className={theme!.calendarWrapper}>
+                                <div className={theme.calendarWrapper()}>
                                     <Calendar
                                         {...calendarProps}
                                         handleSelect={() => null}

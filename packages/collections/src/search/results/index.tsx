@@ -3,21 +3,22 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {GroupResult, SearchStore} from "@focus4/stores";
+import {CSSProp} from "@focus4/styling";
 
 import {
     DetailProps,
-    DragLayerStyle,
+    DragLayerCss,
     EmptyProps,
+    LineCss,
     LineProps,
-    LineStyle,
+    ListCss,
     listFor,
-    ListStyle,
     LoadingProps,
     OperationListItem,
     storeListFor
 } from "../../list";
-import {Group, GroupStyle, groupStyles} from "./group";
-export {Group, GroupStyle, groupStyles};
+import {Group, GroupCss, groupCss} from "./group";
+export {Group, GroupCss, groupCss};
 
 /** Props de Results. */
 export interface ResultsProps<T> {
@@ -30,7 +31,7 @@ export interface ResultsProps<T> {
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
     dragItemType?: string;
     /** CSS du DragLayer. */
-    dragLayerTheme?: DragLayerStyle;
+    dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Header de groupe personnalisé. */
@@ -44,7 +45,7 @@ export interface ResultsProps<T> {
     /** (Scroll infini, affichage en groupe) Index du groupe, en partant du bas de la liste de groupe affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 2. */
     groupPageItemIndex?: number;
     /** CSS des groupes. */
-    groupTheme?: GroupStyle;
+    groupTheme?: CSSProp<GroupCss>;
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
     /** Affiche la sélection sur l'ActionBar et les lignes. */
@@ -60,11 +61,11 @@ export interface ResultsProps<T> {
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
     /** CSS des lignes. */
-    lineTheme?: LineStyle;
+    lineTheme?: CSSProp<LineCss>;
     /** Nombre d'éléments affichés par page de liste (pagination locale, indépendante de la recherche). */
     listPageSize?: number;
     /** CSS de la liste. */
-    listTheme?: ListStyle;
+    listTheme?: CSSProp<ListCss>;
     /** Composant à afficher pendant le chargement. */
     LoadingComponent?: React.ComponentType<LoadingProps<T>>;
     /** Composant de mosaïque. */

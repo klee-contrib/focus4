@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
-import {LayoutStyle, layoutStyles} from "./layout";
+import {layoutCss, LayoutCss} from "./layout";
 
-export function Content(props: {children?: React.ReactNode; theme?: LayoutStyle}) {
-    const theme = useTheme("layout", layoutStyles, props.theme);
-    return <div className={theme.content}>{props.children}</div>;
+export function Content(props: {children?: React.ReactNode; theme?: CSSProp<LayoutCss>}) {
+    const theme = useTheme("layout", layoutCss, props.theme);
+    return <div className={theme.content()}>{props.children}</div>;
 }

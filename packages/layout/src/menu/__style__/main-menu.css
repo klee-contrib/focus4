@@ -48,7 +48,7 @@
     position: fixed;
 }
 
-.active {
+.item--active {
     background: var(--main-menu-item-active-background);
 
     & .icon,

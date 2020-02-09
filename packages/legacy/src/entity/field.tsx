@@ -1,18 +1,19 @@
+import classNames from "classnames";
 import {autobind} from "core-decorators";
 import {computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
 import {themeable} from "@focus4/core";
-import {FieldStyle, fieldStyles} from "@focus4/forms";
+import {fieldCss, FieldCss, Label, LabelProps} from "@focus4/forms";
 import {validateField} from "@focus4/stores";
-import {themr} from "@focus4/styling";
+import {CSSProp, themr, ToBem} from "@focus4/styling";
 
-import {Display, DisplayProps, Input, InputProps, Label, LabelProps} from "../components";
+import {Display, DisplayProps, Input, InputProps} from "../components";
 
 import {Domain} from "./domain";
 
-const Theme = themr("field", fieldStyles);
+const Theme = themr("field", fieldCss);
 
 /** Props pour le Field, se base sur le contenu d'un domaine. */
 export interface FieldProps<
@@ -59,7 +60,7 @@ export interface FieldProps<
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** CSS. */
-    theme?: FieldStyle & {display?: DCProps["theme"]; input?: ICProps["theme"]};
+    theme?: CSSProp<FieldCss>;
     /** Valeur. */
     value: any;
     /** Nom de la propriété de valeur. Doit être casté en lui-même (ex: `{valueKey: "code" as "code"}`). Par défaut: "code". */
@@ -114,7 +115,7 @@ export class Field<
     }
 
     /** Affiche le composant d'affichage (`DisplayComponent`). */
-    display(theme: FieldStyle & {display?: DCProps["theme"]; input?: ICProps["theme"]}) {
+    display() {
         const {
             valueKey = "code",
             labelKey = "label",
@@ -132,7 +133,7 @@ export class Field<
                 formatter={displayFormatter}
                 keyResolver={keyResolver}
                 labelKey={labelKey}
-                theme={themeable(displayProps.theme || ({} as any), theme!.display as any)}
+                theme={displayProps.theme}
                 value={value}
                 valueKey={valueKey}
                 values={values}
@@ -141,7 +142,7 @@ export class Field<
     }
 
     /** Affiche le composant d'entrée utilisateur (`InputComponent`). */
-    input(theme: FieldStyle & {display?: DCProps["theme"]; input?: ICProps["theme"]}) {
+    input(theme: ToBem<FieldCss>) {
         const {
             InputComponent,
             inputFormatter,
@@ -162,7 +163,7 @@ export class Field<
             name,
             id: name,
             onChange: this.onChange,
-            theme: themeable({error: theme.error!}, inputProps.theme || ({} as any), theme!.input as any)
+            theme: themeable({error: theme.error()}, inputProps.theme || ({} as any))
         };
 
         if (values) {
@@ -198,9 +199,14 @@ export class Field<
                     const FinalLabel = LabelComponent || (Label as any);
                     return (
                         <div
-                            className={`${theme!.field} ${isEdit ? theme!.edit : ""} ${
-                                this.error && this.showError ? theme!.invalid : ""
-                            } ${isRequired ? theme!.required : ""} ${className}`}
+                            className={classNames(
+                                theme.field({
+                                    edit: isEdit,
+                                    error: !!(isEdit && this.error && this.showError),
+                                    required: isRequired
+                                }),
+                                className
+                            )}
                         >
                             {hasLabel ? (
                                 <FinalLabel
@@ -210,14 +216,14 @@ export class Field<
                                     name={name}
                                     showTooltip={showTooltip}
                                     style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
-                                    theme={{label: theme!.label}}
+                                    theme={{label: theme.label()}}
                                 />
                             ) : null}
                             <div
                                 style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
-                                className={`${theme!.value} ${className}`}
+                                className={classNames(theme.value(), className)}
                             >
-                                {isEdit ? this.input(theme) : this.display(theme)}
+                                {isEdit ? this.input(theme) : this.display()}
                             </div>
                         </div>
                     );

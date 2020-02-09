@@ -17,7 +17,7 @@
     transition: background-color var(--action-bar-transition);
 }
 
-.selection {
+.bar--selection {
     background: var(--action-bar-selection-background);
     color: var(--action-bar-selection-color);
 }
@@ -27,8 +27,8 @@
     vertical-align: initial;
 }
 
-.selection .selectionToggle > .selectionIcon,
-.selection button {
+.bar--selection .selectionToggle > .selectionIcon,
+.bar--selection button {
     color: var(--action-bar-selection-color) !important;
 }
 

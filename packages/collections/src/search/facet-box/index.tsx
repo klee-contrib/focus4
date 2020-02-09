@@ -3,19 +3,17 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {themr, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, themr, useTheme} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
 import {ChipType} from "../chip";
-import {Facet, FacetProps, FacetStyle} from "./facet";
+import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
 import {addFacetValue, removeFacetValue, shouldDisplayFacet} from "./utils";
-export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps, FacetStyle};
+export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps};
 
-import facetBoxStyles from "../__style__/facet-box.css";
-import facetStyles from "../__style__/facet.css";
-export {facetBoxStyles, facetStyles};
-export type FacetBoxStyle = Partial<typeof facetBoxStyles>;
-const Theme = themr("facetBox", facetBoxStyles);
+import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
+export {FacetBoxCss, FacetCss, facetBoxCss, facetCss};
+const Theme = themr("facetBox", facetBoxCss);
 
 /** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
@@ -51,7 +49,7 @@ export interface FacetBoxProps<T> {
     /** Store de recherche associé. */
     store: SearchStore<T>;
     /** CSS. */
-    theme?: FacetBoxStyle;
+    theme?: CSSProp<FacetBoxCss>;
 }
 
 /** Composant contenant la liste des facettes retournées par une recherche. */
@@ -72,8 +70,8 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
             const FacetCustom = customFacetComponents[facet.code];
             if (FacetCustom) {
                 FacetComponent = props => {
-                    const theme = useTheme("facet", facetStyles);
-                    return <FacetCustom {...props} theme={theme} />;
+                    const theme = useTheme("facet", facetCss);
+                    return <FacetCustom {...props} theme={fromBem(theme)} />;
                 };
             }
 
@@ -128,7 +126,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                                     .filter(x => x);
                                 if (facets.length) {
                                     return (
-                                        <div key={s.name} className={theme.section}>
+                                        <div key={s.name} className={theme.section()}>
                                             <h5>{s.name}</h5>
                                             {facets}
                                         </div>
@@ -144,7 +142,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                             sectionElements.splice(
                                 sections.indexOf(restSection),
                                 0,
-                                <div key={restSection.name} className={theme.section}>
+                                <div key={restSection.name} className={theme.section()}>
                                     {restSection.name ? <h4>{restSection.name}</h4> : null}
                                     {remainingFacets.map(this.renderFacet)}
                                 </div>
@@ -153,7 +151,7 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
                     }
 
                     return (
-                        <div className={theme.facetBox}>
+                        <div className={theme.facetBox()}>
                             <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
                             {sectionElements || filteredFacets.map(this.renderFacet)}
                         </div>

@@ -1,13 +1,12 @@
 import * as React from "react";
 
-import {useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Scrollable} from "../scrollable";
 import {MessageCenter, MessageCenterProps} from "../utils";
 
-import layoutStyles from "./__style__/layout.css";
-export {layoutStyles};
-export type LayoutStyle = Partial<typeof layoutStyles>;
+import layoutCss, {LayoutCss} from "./__style__/layout.css";
+export {layoutCss, LayoutCss};
 
 /** Props du Layout. */
 export interface LayoutProps extends MessageCenterProps {
@@ -22,7 +21,7 @@ export interface LayoutProps extends MessageCenterProps {
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
     /** CSS. */
-    theme?: LayoutStyle;
+    theme?: CSSProp<LayoutCss>;
 }
 
 /** Composant de Layout sans le provider de style. */
@@ -35,15 +34,15 @@ export function LayoutBase({
     scrollBehaviour,
     ...messageCenterProps
 }: LayoutProps) {
-    const theme = useTheme("layout", layoutStyles, pTheme);
+    const theme = useTheme("layout", layoutCss, pTheme);
     return (
         <>
             <MessageCenter {...messageCenterProps} />
-            <div className={theme.layout}>
+            <div className={theme.layout()}>
                 {menu}
                 <Scrollable
                     backToTopOffset={backToTopOffset}
-                    className={theme.scrollable}
+                    className={theme.scrollable()}
                     hideBackToTop={hideBackToTop}
                     resetScrollOnChildrenChange
                     scrollBehaviour={scrollBehaviour}
