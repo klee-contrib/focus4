@@ -141,7 +141,7 @@ export function Layout(props: LayoutProps & {appTheme?: LayoutStyleProviderProps
     const {appTheme = {}, ...layoutProps} = props;
     return (
         <ThemeContext.Provider value={appTheme as CSSContext}>
-            <LayoutBase {...layoutProps}>{props.children}</LayoutBase>
+            <LayoutBase {...layoutProps} />
         </ThemeContext.Provider>
     );
 }

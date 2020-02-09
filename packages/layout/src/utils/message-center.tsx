@@ -6,7 +6,7 @@ import * as React from "react";
 import {messageStore} from "@focus4/core";
 import {Snackbar, SnackbarTheme} from "@focus4/toolbox";
 
-import * as snackBarCss from "./__style__/snackbar.css";
+import snackBarCss from "./__style__/snackbar.css";
 export {snackBarCss};
 
 export interface MessageCenterProps {

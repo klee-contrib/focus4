@@ -1,4 +1,5 @@
 import {upperFirst} from "lodash";
+import {useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {CSSToStrings} from "./common";
@@ -17,7 +18,8 @@ export interface ThemeConsumerProps<T> {
  */
 export function themr<T>(name: string, localTheme?: T): React.FunctionComponent<ThemeConsumerProps<T>> {
     function TC({children, theme}: ThemeConsumerProps<T>) {
-        return children(useTheme(name, localTheme, theme));
+        const finalTheme = useTheme(name, localTheme, theme);
+        return useObserver(() => children(finalTheme));
     }
 
     TC.displayName = `${upperFirst(name)}ThemeConsumer`;
