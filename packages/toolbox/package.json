@@ -9,7 +9,7 @@
     },
     "author": "damien.frikha@kleegroup.com",
     "license": "MIT",
-    "homepage": "https://github.com/KleeGroup/focus4/packages/toolboxs",
+    "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/toolboxs",
     "scripts": {
         "postinstall": "node postinstall.js",
         "prepare": "rollup -cm",

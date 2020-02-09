@@ -28,7 +28,7 @@
         "rollup-plugin-node-resolve": "5.2.0",
         "rollup-plugin-postcss": "2.0.6",
         "rollup-plugin-typescript2": "0.25.3",
-        "stylelint": "13.0.0",
+        "stylelint": "13.1.0",
         "tslint": "6.0.0",
         "typescript": "3.7.5",
         "typescript-tslint-plugin": "0.5.5"

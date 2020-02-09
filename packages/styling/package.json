@@ -9,7 +9,7 @@
     },
     "author": "damien.frikha@kleegroup.com",
     "license": "MIT",
-    "homepage": "https://github.com/KleeGroup/focus4/packages/styling",
+    "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/styling",
     "scripts": {
         "prepare": "rollup -cm",
         "start": "rollup -cw",
