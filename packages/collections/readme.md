@@ -18,37 +18,6 @@ Si les composants de tableau et de timeline sont assez simples, la liste possèd
 
 Un composant transverse **`ListWrapper`** permet de centraliser les paramètres de mode, de taille de mosaïque et d'handler d'ajout d'élément pour partager cet état entre plusieurs listes (ce qui est utilisé nativement par la recherche groupée). Il suffit de poser toutes les listes dans un `ListWrapper` et elles récupéreront l'état via le contexte.
 
-## Stores dédiés : ListStore et SearchStore
-
-Les composants présentés sont suffisants pour un grand nombre de cas simples, mais ils sont incapables d'interagir avec la donnée. Pour se faire, on utilise des **stores de collections**, qui sont au nombre de deux : le `ListStore` et le `SearchStore`.
-
-Les deux stores partagent la même base qui leur permet de gérer de la **sélection** d'élements, et qui définit certains éléments de l'API commune (compteurs, **tri**, **filtrage**).
-
-### `ListStore`
-
-Le `ListStore` est le store le plus simple : on lui affecte une liste pré-chargée dans la propriété `list` et il offre les possibilités de l'API commune précisées au-dessus (le tri et le filtrage sont réalisés à la volée donc).
-
-### `SearchStore`
-
-Le `SearchStore` est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur ElasticSearch. Il contient à la fois les différents critères de recherche ainsi que les résultats, en plus de contenir les fonctionnalités communes comme la sélection. Chaque changement de critère va relancer la recherche. Son usage standard est très simple puisqu'il sera intégralement piloté et affiché par les composants de recherche, mais il est également possible de manipuler les différents critères à la main, qui sont :
-
--   `query` : le champ texte
--   `groupingKey` : le champ sur lequel grouper.
--   `selectedFacets` : les facettes sélectionnées.
--   `sortAsc` : le sens du tri.
--   `sortBy`: le champ sur lequel trier.
--   `top` : le nombre de résultats à retourner par requête.
-
-A ces critères-là, on peut ajouter un objet de critère `criteria` personnalisé pour ajouter d'autres champs à utiliser pour la recherche. Cet objet sera stocké sous la forme d'un `StoreNode` pour pouvoir construire des champs, avec de la validation, de manière immédiate (par exemple pour des champs de date, de montant...). Ou bien, simplement pour ajouter des critères simples comme un scope ou un ID d'objet pour restreindre la recherche.
-
-Le constructeur prend jusqu'à 3 paramètres :
-
--   `searchService` (obligatoire) : le service de recherche, qui soit respecter impérativement l'API de recherche prévue : `(query: QueryInput) => Promise<QueryOutput<T>>`
--   `initialQuery` (facultatif) : les valeurs des critères par défaut à la création du store.
--   `criteria` (facultatif) : la description du critère personnalisé. Doit être de la forme `[{} as MyObjectNode, MyObjectEntity]`
-
-_(Note : les deux derniers paramètres sont interchangeables)_
-
 ## Composants de stores
 
 S'il est possible d'utiliser les composants de base avec un store, il existe toute une suite de composants destinés à un usage avec un store.
