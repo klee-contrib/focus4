@@ -12,7 +12,7 @@
 
 .timeline {
     list-style: none;
-    padding: 5px 0;
+    padding: 10px 0;
     position: relative;
 }
 
@@ -37,6 +37,7 @@
 
 .timeline .bottomRow {
     margin-left: calc(var(--timeline-date-width) + 27px);
+    padding: 0;
 }
 
 .mosaicAdd {

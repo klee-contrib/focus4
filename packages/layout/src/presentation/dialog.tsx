@@ -32,7 +32,7 @@ export function Dialog({
                         <div className={theme.wrapper()}>
                             <div
                                 data-react-toolbox="dialog"
-                                className={classNames(theme.dialog, className)}
+                                className={classNames(theme.dialog(), className)}
                                 onClick={e => e.stopPropagation()}
                             >
                                 <section role="body" className={theme.body()}>
@@ -45,7 +45,7 @@ export function Dialog({
                                             <Button
                                                 key={idx}
                                                 {...action}
-                                                className={classNames(theme.button, action.className)}
+                                                className={classNames(theme.button(), action.className)}
                                             />
                                         ))}
                                     </nav>
