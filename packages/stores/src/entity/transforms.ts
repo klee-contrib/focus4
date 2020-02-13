@@ -24,7 +24,7 @@ export type $Field<
     DCProps extends BaseDisplayProps = any,
     LCProps extends BaseLabelProps = any
 > = Partial<
-    Omit<FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>, "name"> &
+    FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps> &
         Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>
 >;
 
@@ -150,6 +150,7 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         domain = old$field.domain,
         isRequired = old$field.isRequired,
         label = old$field.label,
+        name,
         type = old$field.type,
         comment = old$field.comment,
         fieldType = old$field.fieldType,
@@ -158,7 +159,7 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
     return {
         isRequired,
         label,
-        name: old$field.name,
+        name: old$field.name || name,
         type,
         comment,
         fieldType,

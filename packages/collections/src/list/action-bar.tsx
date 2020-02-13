@@ -128,7 +128,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                         label: i18next.t(`${i18nPrefix}.search.action.sort`),
                         icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
                         openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
-                        theme: {icon: theme.dropdown} as any
+                        theme: {icon: theme.dropdown()}
                     }}
                     onClick={() => (this.displayFacetBox = false)}
                 >
@@ -184,7 +184,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                             label: i18next.t(`${i18nPrefix}.search.action.group`),
                             icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
                             openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
-                            theme: {icon: theme.dropdown} as any
+                            theme: {icon: theme.dropdown()}
                         }}
                         onClick={() => (this.displayFacetBox = false)}
                     >
