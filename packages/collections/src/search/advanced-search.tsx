@@ -2,22 +2,11 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {GroupResult, SearchStore} from "@focus4/stores";
+import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
 import {CSSProp, ScrollableContext, themr, ToBem} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
-import {
-    ActionBar,
-    ActionBarCss,
-    DetailProps,
-    DragLayerCss,
-    EmptyProps,
-    LineProps,
-    ListCss,
-    ListWrapper,
-    LoadingProps,
-    OperationListItem
-} from "../list";
+import {ActionBar, ActionBarCss, ListBaseProps, ListProps, ListWrapper, OperationListItem} from "../list";
 import {ChipType} from "./chip";
 import {FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
 import {GroupCss, Results} from "./results";
@@ -28,13 +17,11 @@ export {advancedSearchCss, AdvancedSearchCss};
 const Theme = themr("advancedSearch", advancedSearchCss);
 
 /** Props de l'AdvancedSearch. */
-export interface AdvancedSearchProps<T> {
+export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListBaseProps<T>> {
     /** CSS de l'ActionBar. */
     actionBarTheme?: CSSProp<ActionBarCss>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
-    /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data: T) => boolean;
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
     /**
@@ -55,16 +42,6 @@ export interface AdvancedSearchProps<T> {
     chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
-    /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentType<DetailProps<T>>;
-    /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
-    disableDragAnimThreshold?: number;
-    /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
-    dragItemType?: string;
-    /** CSS du DragLayer. */
-    dragLayerTheme?: CSSProp<DragLayerCss>;
-    /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentType<EmptyProps<T>>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "sticky" | "none";
     /** CSS de la FacetBox (si position = "left") */
@@ -88,8 +65,6 @@ export interface AdvancedSearchProps<T> {
     groupPageItemIndex?: number;
     /** CSS des groupes. */
     groupTheme?: CSSProp<GroupCss>;
-    /** Active le drag and drop. */
-    hasDragAndDrop?: boolean;
     /** Affiche le bouton de groupe dans l'ActionBar. */
     hasGrouping?: boolean;
     /** Affiche la barre de recherche dans l'ActionBar. */
@@ -110,24 +85,17 @@ export interface AdvancedSearchProps<T> {
     hideSummarySort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
-    itemKey: (item: T, idx: number) => string | number | undefined;
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
-    /** Composant de ligne. */
-    LineComponent?: React.ComponentType<LineProps<T>>;
-    /** La liste des actions sur chaque élément de la liste. */
-    lineOperationList?: (data: T) => OperationListItem<T>[];
-    /** Nombre d'éléments affichés par page de liste (pagination locale, indépendante de la recherche). */
-    listPageSize?: number;
-    /** CSS de la liste. */
-    listTheme?: CSSProp<ListCss>;
-    /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
+    /** Composant de liste. */
+    ListComponent?: React.ComponentType<P & {store: ListStoreBase<T>}>;
+    /** Props pour le composant de liste. */
+    listProps: Omit<
+        P,
+        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "isManualFetch" | "showAllHandler" | "store"
+    >;
     /** Mode des listes dans le wrapper. Par défaut : "list". */
     mode?: "list" | "mosaic";
-    /** Composants de mosaïque. */
-    MosaicComponent?: React.ComponentType<LineProps<T>>;
     /** Largeur des mosaïques. Par défaut : 200. */
     mosaicWidth?: number;
     /** Hauteur des mosaïques. Par défaut : 200. */
@@ -138,8 +106,6 @@ export interface AdvancedSearchProps<T> {
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string; label: string; order: boolean}[];
-    /** (Scroll infini) Index de l'item, en partant du bas de la liste affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 5. */
-    pageItemIndex?: number;
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -291,59 +257,33 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
 
     protected renderResults() {
         const {
-            groupTheme,
             GroupHeader,
-            listTheme,
             groupOperationList,
-            groupPageSize,
-            groupPageListSize,
             groupPageItemIndex,
+            groupPageListSize,
+            groupPageSize,
+            groupTheme,
             hasSelection,
-            disableDragAnimThreshold,
             i18nPrefix,
             isManualFetch,
-            itemKey,
-            LineComponent,
-            lineOperationList,
-            listPageSize,
-            MosaicComponent,
-            pageItemIndex,
+            ListComponent,
+            listProps,
             store,
-            EmptyComponent,
-            DetailComponent,
-            LoadingComponent,
-            canOpenDetail,
-            hasDragAndDrop,
-            dragItemType,
-            dragLayerTheme,
             useGroupActionBars
         } = this.props;
         return (
             <Results
-                canOpenDetail={canOpenDetail}
-                DetailComponent={DetailComponent}
-                disableDragAnimThreshold={disableDragAnimThreshold}
-                dragItemType={dragItemType}
-                dragLayerTheme={dragLayerTheme}
-                EmptyComponent={EmptyComponent}
                 GroupHeader={GroupHeader}
                 groupOperationList={groupOperationList}
-                groupPageSize={groupPageSize}
-                groupPageListSize={groupPageListSize}
                 groupPageItemIndex={groupPageItemIndex}
+                groupPageListSize={groupPageListSize}
+                groupPageSize={groupPageSize}
                 groupTheme={groupTheme}
-                hasDragAndDrop={hasDragAndDrop}
-                hasSelection={!!hasSelection}
+                hasSelection={hasSelection}
                 i18nPrefix={i18nPrefix}
                 isManualFetch={isManualFetch}
-                itemKey={itemKey}
-                LineComponent={LineComponent}
-                lineOperationList={lineOperationList}
-                listPageSize={listPageSize}
-                listTheme={listTheme}
-                LoadingComponent={LoadingComponent}
-                MosaicComponent={MosaicComponent}
-                pageItemIndex={pageItemIndex}
+                ListComponent={ListComponent}
+                listProps={listProps}
                 store={store}
                 useGroupActionBars={useGroupActionBars}
             />
@@ -357,12 +297,12 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             addItemHandler,
             facetBoxPosition = "left",
             i18nPrefix,
-            LineComponent,
-            MosaicComponent,
+            listProps,
             mode,
             mosaicHeight,
             mosaicWidth
         } = this.props;
+        const {MosaicComponent, LineComponent} = listProps as ListProps<T>;
         return (
             <Theme theme={this.props.theme}>
                 {theme => (

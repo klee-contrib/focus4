@@ -1,68 +1,35 @@
 import i18next from "i18next";
-import {action, computed} from "mobx";
-import {observer} from "mobx-react";
+import {useLocalStore, useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
-import {CSSProp, getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
-import {
-    ActionBar,
-    DetailProps,
-    DragLayerCss,
-    EmptyProps,
-    LineProps,
-    ListCss,
-    listFor,
-    LoadingProps,
-    OperationListItem
-} from "../../list";
+import {ActionBar, List, ListBaseProps, OperationListItem} from "../../list";
 
 import groupCss, {GroupCss} from "../__style__/group.css";
 export {groupCss, GroupCss};
-const Theme = themr("group", groupCss);
 
 /** Props du composant de groupe. */
-export interface GroupProps<T> {
-    /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data: T) => boolean;
-    /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentType<DetailProps<T>>;
-    /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
-    disableDragAnimThreshold?: number;
-    /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
-    dragItemType?: string;
-    /** CSS du DragLayer. */
-    dragLayerTheme?: CSSProp<DragLayerCss>;
-    /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentType<EmptyProps<T>>;
+export interface GroupProps<T, P extends ListBaseProps<T> = ListBaseProps<T>> {
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
     /** Header de groupe personnalisé. */
     GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe. */
     groupOperationList?: OperationListItem<T[]>[];
-    /** Active le drag and drop. */
-    hasDragAndDrop?: boolean;
     /** Affiche la sélection sur l'ActionBar et les lignes. */
     hasSelection?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
-    itemKey: (item: T, idx: number) => string | number | undefined;
-    /** Composant de ligne. */
-    LineComponent?: React.ComponentType<LineProps<T>>;
-    /** La liste des actions sur chaque élément de la liste. */
-    lineOperationList?: (data: T) => OperationListItem<T>[];
-    /** CSS de la liste. */
-    listTheme?: CSSProp<ListCss>;
-    /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
-    /** Composant de mosaïque. */
-    MosaicComponent?: React.ComponentType<LineProps<T>>;
-    /** Nombre d'éléments par page. Par défaut : 5. */
-    perPage?: number;
+    /** Composant de liste. */
+    ListComponent?: React.ComponentType<P & {store: ListStoreBase<T>}>;
+    /** Props pour le composant de liste. */
+    listProps: Omit<
+        P,
+        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "isManualFetch" | "showAllHandler" | "store"
+    >;
     /** Store contenant la liste. */
     store: SearchStore<T>;
     /** CSS */
@@ -72,102 +39,71 @@ export interface GroupProps<T> {
 }
 
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
-@observer
-export class Group<T> extends React.Component<GroupProps<T>> {
-    @computed
-    protected get store(): ListStoreBase<T> {
-        const {group, store} = this.props;
-        return group.code ? store.getSearchGroupStore(group.code) : store;
-    }
+export function Group<T>({
+    group,
+    GroupHeader = DefaultGroupHeader,
+    groupOperationList,
+    hasSelection,
+    i18nPrefix = "focus",
+    ListComponent = List as React.ComponentType<ListBaseProps<T> & {store: ListStoreBase<T>}>,
+    listProps,
+    store,
+    theme: pTheme,
+    useGroupActionBars
+}: GroupProps<T>) {
+    const theme = useTheme("group", groupCss, pTheme);
+    const state = useLocalStore(() => ({
+        /** Store pour le groupe. */
+        get store(): ListStoreBase<T> {
+            return group.code ? store.getSearchGroupStore(group.code) : store;
+        },
 
-    /** Action pour dégrouper et sélectionner la facette correspondant au groupe choisi. */
-    @action.bound
-    protected showAllHandler() {
-        const {groupingKey, selectedFacets, setProperties} = this.props.store;
-        setProperties({
-            groupingKey: undefined,
-            selectedFacets: {...selectedFacets, [groupingKey!]: [this.props.group.code]}
-        });
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    }
+        /** Action pour dégrouper et sélectionner la facette correspondant au groupe choisi. */
+        showAllHandler() {
+            const {groupingKey, selectedFacets, setProperties} = store;
+            setProperties({
+                groupingKey: undefined,
+                selectedFacets: {...selectedFacets, [groupingKey!]: [group.code]}
+            });
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+    }));
 
-    render() {
-        const {
-            canOpenDetail,
-            DetailComponent,
-            disableDragAnimThreshold,
-            dragItemType,
-            dragLayerTheme,
-            EmptyComponent,
-            group,
-            GroupHeader = DefaultGroupHeader,
-            groupOperationList,
-            hasDragAndDrop,
-            hasSelection,
-            i18nPrefix = "focus",
-            itemKey,
-            LineComponent,
-            lineOperationList,
-            listTheme,
-            LoadingComponent,
-            MosaicComponent,
-            perPage = 5,
-            useGroupActionBars
-        } = this.props;
-        return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <>
-                        {useGroupActionBars ? (
-                            <ActionBar
-                                group={{code: group.code, label: group.label, totalCount: group.totalCount}}
-                                hasSelection={hasSelection}
-                                operationList={groupOperationList}
-                                store={this.store}
-                            />
-                        ) : (
-                            <div className={theme.header()}>
-                                {hasSelection ? (
-                                    <IconButton
-                                        icon={getIcon(`${i18nPrefix}.icons.actionBar.${this.store.selectionStatus}`)}
-                                        onClick={this.store.toggleAll}
-                                        theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
-                                    />
-                                ) : null}
-                                <GroupHeader group={group} />
-                            </div>
-                        )}
-                        {listFor({
-                            canOpenDetail,
-                            DetailComponent,
-                            disableDragAnimThreshold,
-                            dragItemType,
-                            dragLayerTheme,
-                            EmptyComponent,
-                            groupCode: group.code,
-                            hasDragAndDrop,
-                            hasSelection,
-                            hideAdditionalItems: true,
-                            i18nPrefix,
-                            isManualFetch: true,
-                            itemKey,
-                            LineComponent,
-                            LoadingComponent,
-                            MosaicComponent,
-                            operationList: lineOperationList,
-                            perPage,
-                            showAllHandler: group.list.length < group.totalCount ? this.showAllHandler : undefined,
-                            store: this.store,
-                            theme: listTheme
-                        })}
-                    </>
-                )}
-            </Theme>
-        );
-    }
+    return useObserver(() => (
+        <>
+            {useGroupActionBars ? (
+                <ActionBar
+                    group={{code: group.code, label: group.label, totalCount: group.totalCount}}
+                    hasSelection={hasSelection}
+                    operationList={groupOperationList}
+                    store={state.store}
+                />
+            ) : (
+                <div className={theme.header()}>
+                    {hasSelection ? (
+                        <IconButton
+                            icon={getIcon(`${i18nPrefix}.icons.actionBar.${state.store.selectionStatus}`)}
+                            onClick={state.store.toggleAll}
+                            theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
+                        />
+                    ) : null}
+                    <GroupHeader group={group} />
+                </div>
+            )}
+            <ListComponent
+                {...listProps}
+                groupCode={group.code}
+                {...{hasSelection, hideAdditionalItems: true}}
+                i18nPrefix={i18nPrefix}
+                isManualFetch
+                showAllHandler={group.list.length < group.totalCount ? state.showAllHandler : undefined}
+                store={state.store}
+            />
+        </>
+    ));
 }
 
 export function DefaultGroupHeader({group}: {group: GroupResult}) {
