@@ -9,13 +9,11 @@ import {
     DetailProps,
     DragLayerCss,
     EmptyProps,
-    LineCss,
     LineProps,
     ListCss,
     listFor,
     LoadingProps,
-    OperationListItem,
-    storeListFor
+    OperationListItem
 } from "../../list";
 import {Group, GroupCss, groupCss} from "./group";
 export {Group, GroupCss, groupCss};
@@ -60,8 +58,6 @@ export interface ResultsProps<T> {
     LineComponent?: React.ComponentType<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
-    /** CSS des lignes. */
-    lineTheme?: CSSProp<LineCss>;
     /** Nombre d'éléments affichés par page de liste (pagination locale, indépendante de la recherche). */
     listPageSize?: number;
     /** CSS de la liste. */
@@ -97,7 +93,6 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
             isManualFetch,
             itemKey,
             LineComponent,
-            lineTheme,
             LoadingComponent,
             MosaicComponent,
             store
@@ -113,7 +108,6 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
             hasSelection,
             i18nPrefix,
             LineComponent,
-            lineTheme,
             LoadingComponent,
             MosaicComponent,
             isManualFetch,
@@ -169,7 +163,7 @@ export class Results<T> extends React.Component<ResultsProps<T>> {
         } else {
             return (
                 <div data-focus="results">
-                    {storeListFor({
+                    {listFor({
                         ...this.commonListProps,
                         operationList: lineOperationList,
                         pageItemIndex,

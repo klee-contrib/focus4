@@ -1,60 +1,34 @@
-.line,
-.mosaic {
+.timeline {
+    list-style: none;
+    padding: 10px 0;
     position: relative;
 }
 
-.mosaic {
-    margin: 5px;
-    box-sizing: border-box;
-}
-
-.checkbox,
-.actions {
-    opacity: 0;
+.timeline::before {
     position: absolute;
-}
-
-.checkbox {
-    top: calc(50% - 18px);
-    left: 10px;
-}
-
-.toggle .checkboxIcon {
-    font-size: 24px;
-}
-
-.mosaic .checkbox {
-    bottom: 5px;
-    right: 5px;
-}
-
-.line--selected,
-.mosaic--selected {
-    cursor: pointer;
-}
-
-.line .actions {
-    top: calc(50% - 18px);
-    right: 10px;
-}
-
-.mosaic .actions {
     top: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.15);
-    pointer-events: none;
+    bottom: 0;
+    left: calc(var(--timeline-date-width) + 17px);
+    width: 2px;
+    background-color: var(--timeline-line-color);
+    content: " ";
 }
 
-.actions--forceDisplay,
-.checkbox--forceDisplay,
-.line:hover .checkbox,
-.mosaic:hover .checkbox,
-.line:hover .actions,
-.mosaic:hover .actions {
-    opacity: 1;
+.timeline > li {
+    position: relative;
+    margin-bottom: 12px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
-.timelineDate {
+.timeline > div {
+    margin-left: calc(var(--timeline-date-width) + 27px);
+    padding: 0;
+}
+
+.date {
     width: var(--timeline-date-width);
     position: absolute;
     top: 10px;
@@ -64,7 +38,7 @@
     text-align: right;
 }
 
-.timelineBadge {
+.badge {
     width: 14px;
     height: 14px;
     position: absolute;
@@ -74,7 +48,7 @@
     border-radius: 50%;
 }
 
-.timelinePanel {
+.panel {
     margin-left: calc(var(--timeline-date-width) + 45px);
     min-height: 36px;
     border-left: 2px solid var(--timeline-line-color);
@@ -89,12 +63,12 @@
     }
 }
 
-.timelineAdd {
+.add {
     & button {
         font-weight: bold;
     }
 
-    & .timelinePanel {
+    & .panel {
         border: 2px dashed var(--timeline-line-color);
         display: inline-flex;
 

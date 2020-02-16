@@ -5,14 +5,9 @@ export {
     getDraggedItems,
     LineProps,
     List,
-    ListBase,
     listFor,
     ListWrapper,
     OperationListItem,
-    StoreList,
-    storeListFor,
-    StoreTable,
-    storeTableFor,
     Table,
     tableFor,
     Timeline,
@@ -23,6 +18,7 @@ export {
     Results,
     resultsFor,
     SearchBar,
-    Summary
+    Summary,
+    useListBase
 } from "@focus4/collections";
 export {ListStore, SearchStore, QueryInput, QueryOutput} from "@focus4/stores";

@@ -12,7 +12,6 @@ import {
     DetailProps,
     DragLayerCss,
     EmptyProps,
-    LineCss,
     LineProps,
     ListCss,
     ListWrapper,
@@ -119,8 +118,6 @@ export interface AdvancedSearchProps<T> {
     LineComponent?: React.ComponentType<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
-    /** CSS des lignes. */
-    lineTheme?: CSSProp<LineCss>;
     /** Nombre d'éléments affichés par page de liste (pagination locale, indépendante de la recherche). */
     listPageSize?: number;
     /** CSS de la liste. */
@@ -297,7 +294,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             groupTheme,
             GroupHeader,
             listTheme,
-            lineTheme,
             groupOperationList,
             groupPageSize,
             groupPageListSize,
@@ -343,7 +339,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
                 itemKey={itemKey}
                 LineComponent={LineComponent}
                 lineOperationList={lineOperationList}
-                lineTheme={lineTheme}
                 listPageSize={listPageSize}
                 listTheme={listTheme}
                 LoadingComponent={LoadingComponent}

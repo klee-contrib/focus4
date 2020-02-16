@@ -64,7 +64,7 @@ export class ListWrapper extends React.Component<ListWrapperProps> {
 
     // On met à jour l'objet passé en contexte à chaque fois qu'on change les props du composant.
     @action
-    componentWillReceiveProps({addItemHandler, mode, mosaicHeight, mosaicWidth}: ListWrapperProps) {
+    UNSAFE_componentWillReceiveProps({addItemHandler, mode, mosaicHeight, mosaicWidth}: ListWrapperProps) {
         if (this.props.addItemHandler !== addItemHandler) {
             this.listWrapperContext.addItemHandler = addItemHandler || lwcInit.addItemHandler;
         }

@@ -12,12 +12,11 @@ import {
     DetailProps,
     DragLayerCss,
     EmptyProps,
-    LineCss,
     LineProps,
     ListCss,
+    listFor,
     LoadingProps,
-    OperationListItem,
-    storeListFor
+    OperationListItem
 } from "../../list";
 
 import groupCss, {GroupCss} from "../__style__/group.css";
@@ -56,8 +55,6 @@ export interface GroupProps<T> {
     LineComponent?: React.ComponentType<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: T) => OperationListItem<T>[];
-    /** CSS des lignes. */
-    lineTheme?: CSSProp<LineCss>;
     /** CSS de la liste. */
     listTheme?: CSSProp<ListCss>;
     /** Composant à afficher pendant le chargement. */
@@ -114,7 +111,6 @@ export class Group<T> extends React.Component<GroupProps<T>> {
             itemKey,
             LineComponent,
             lineOperationList,
-            lineTheme,
             listTheme,
             LoadingComponent,
             MosaicComponent,
@@ -144,7 +140,7 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                                 <GroupHeader group={group} />
                             </div>
                         )}
-                        {storeListFor({
+                        {listFor({
                             canOpenDetail,
                             DetailComponent,
                             disableDragAnimThreshold,
@@ -159,7 +155,6 @@ export class Group<T> extends React.Component<GroupProps<T>> {
                             isManualFetch: true,
                             itemKey,
                             LineComponent,
-                            lineTheme,
                             LoadingComponent,
                             MosaicComponent,
                             operationList: lineOperationList,

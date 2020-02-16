@@ -92,8 +92,8 @@ export interface LayoutStyleProviderProps {
     label?: {};
     layout?: CSSProp<LayoutCss>;
     loadingBar?: CSSProp<LoadingBarCss>;
-    line?: {};
     list?: {};
+    listBase?: {};
     listWrapper?: {};
     mainMenu?: CSSProp<MainMenuCss>;
     overlay?: CSSProp<OverlayCss>;
@@ -106,6 +106,8 @@ export interface LayoutStyleProviderProps {
     selectCheckbox?: {};
     selectRadio?: {};
     summary?: {};
+    table?: {};
+    timeline?: {};
 
     RTAppBar?: CSSProp<AppBarTheme>;
     RTAutocomplete?: CSSProp<AutocompleteTheme>;

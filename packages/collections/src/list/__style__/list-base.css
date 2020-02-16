@@ -1,0 +1,12 @@
+.bottomRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.bottomRow button {
+    margin: 0;
+    font-weight: bold;
+    text-transform: none;
+}

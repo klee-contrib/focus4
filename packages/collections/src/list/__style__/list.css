@@ -10,36 +10,6 @@
     flex-wrap: wrap;
 }
 
-.timeline {
-    list-style: none;
-    padding: 10px 0;
-    position: relative;
-}
-
-.timeline::before {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: calc(var(--timeline-date-width) + 17px);
-    width: 2px;
-    background-color: var(--timeline-line-color);
-    content: " ";
-}
-
-.timeline > li {
-    position: relative;
-    margin-bottom: 12px;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-}
-
-.timeline .bottomRow {
-    margin-left: calc(var(--timeline-date-width) + 27px);
-    padding: 0;
-}
-
 .mosaicAdd {
     border: 1px dashed #ccc;
     padding: 65px 20px;
@@ -94,77 +64,58 @@
     padding: 5px;
 }
 
-.bottomRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
+.line,
+.mosaic {
+    position: relative;
 }
 
-.bottomRow button {
-    margin: 0;
+.mosaic {
+    margin: 5px;
+    box-sizing: border-box;
 }
 
-.bottomRow button:global(:not(.mdl-button--raised)) {
-    font-weight: bold;
-    text-transform: none;
+.checkbox,
+.actions {
+    opacity: 0;
+    position: absolute;
 }
 
-/* Ci-dessous, recopie du CSS du tableau react-toolbox */
-
-.table {
-    background-color: var(--color-white);
-    border-collapse: collapse;
-    font-size: var(--table-font-size);
-    width: 100%;
+.checkbox {
+    top: calc(50% - 18px);
+    left: 10px;
 }
 
-.table thead {
-    padding-bottom: calc(0.3 * var(--unit));
-    white-space: nowrap;
+.toggle .checkboxIcon {
+    font-size: 24px;
 }
 
-.table tbody tr {
-    transition-duration: 0.28s;
-    transition-property: background-color;
-    transition-timing-function: var(--animation-curve-default);
-
-    &:hover {
-        background-color: var(--table-hover-color);
-    }
+.mosaic .checkbox {
+    bottom: 5px;
+    right: 5px;
 }
 
-.table td,
-.table th {
-    color: var(--table-row-color);
-    padding: 0 var(--table-column-padding);
-    text-align: left;
-}
-
-.table td {
-    border-bottom: var(--table-dividers);
-    border-top: var(--table-dividers);
-    height: var(--table-row-height);
-}
-
-.table th {
-    color: var(--table-header-color);
-    font-weight: var(--font-weight-bold);
-    height: var(--table-row-height);
-    line-height: calc(2.4 * var(--unit));
-    text-overflow: ellipsis;
-}
-
-.table td:first-of-type,
-.table th:first-of-type {
-    padding-left: 24px;
-}
-
-.table td:last-of-type,
-.table th:last-of-type {
-    padding-right: 24px;
-}
-
-.clickable {
+.line--selected,
+.mosaic--selected {
     cursor: pointer;
+}
+
+.line .actions {
+    top: calc(50% - 18px);
+    right: 10px;
+}
+
+.mosaic .actions {
+    top: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    pointer-events: none;
+}
+
+.actions--forceDisplay,
+.checkbox--forceDisplay,
+.line:hover .checkbox,
+.mosaic:hover .checkbox,
+.line:hover .actions,
+.mosaic:hover .actions {
+    opacity: 1;
 }

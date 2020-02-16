@@ -1,52 +1,44 @@
-import {runInAction} from "mobx";
-import {DragSource, DropTargetMonitor} from "react-dnd";
+import {IObservableArray, runInAction} from "mobx";
+import {DropTargetMonitor, useDrag} from "react-dnd";
 
-import {LineWrapperProps} from "./line";
+import {ListStoreBase} from "@focus4/stores";
 
-/**
- * Ajoute la dragSource au LineWrapper.
- * @param type Le type d'élément.
- * @param Component Le LineWrapper.
- */
-export function addDragSource<T>(type: string, Component: React.ComponentClass<LineWrapperProps<T>>): typeof Component {
-    return DragSource<LineWrapperProps<T>>(
-        type,
-        {
-            /** Est appelé au lancement du drag. */
-            beginDrag({draggedItems, data, store}) {
-                // Si on a un store, on va regarder si on a des éléments sélectionnés.
-                if (store) {
-                    // Si l'élément en cours de drag est sélectionné, alors on embarque tous les éléments sélectionnés.
-                    if (store.selectedItems.has(data)) {
-                        runInAction("selectDraggedItems", () =>
-                            store.selectedItems.forEach((item: T) => draggedItems!.push(item))
-                        );
-                    } else {
-                        // Sinon, simplement l'élément en cours.
-                        draggedItems!.push(data);
-                    }
+export function useDragSource<T>({
+    data,
+    draggedItems,
+    store,
+    type
+}: {
+    data: T;
+    draggedItems: IObservableArray<T>;
+    store?: ListStoreBase<T>;
+    type: string;
+}) {
+    return useDrag({
+        item: {type, dragged: draggedItems},
+        /** Est appelé au lancement du drag. */
+        begin() {
+            // Si on a un store, on va regarder si on a des éléments sélectionnés.
+            if (store) {
+                // Si l'élément en cours de drag est sélectionné, alors on embarque tous les éléments sélectionnés.
+                if (store.selectedItems.has(data)) {
+                    runInAction("selectDraggedItems", () =>
+                        store.selectedItems.forEach((item: T) => draggedItems.push(item))
+                    );
                 } else {
-                    // Idem.
-                    draggedItems!.push(data);
+                    // Sinon, simplement l'élément en cours.
+                    draggedItems.push(data);
                 }
-                // On wrappe la liste dans un objet pour feinter react-dnd qui veut qu'on renvoie l'objet au lieu d'une liste.
-                return {dragged: draggedItems!.slice()};
-            },
-            /** Pour empêcher le drag and drop si on ne l'a pas activé. */
-            canDrag({draggedItems}) {
-                return !!draggedItems;
-            },
-            /** Vide la liste d'élements à la fin du drag. */
-            endDrag({draggedItems}) {
-                draggedItems!.clear();
+            } else {
+                // Idem.
+                draggedItems.push(data);
             }
         },
-        connect => ({
-            // On récupère les connecteurs pour le composant.
-            connectDragSource: connect.dragSource(),
-            connectDragPreview: connect.dragPreview()
-        })
-    )(Component);
+        /** Vide la liste d'élements à la fin du drag. */
+        end() {
+            draggedItems.clear();
+        }
+    });
 }
 
 /**
@@ -54,5 +46,5 @@ export function addDragSource<T>(type: string, Component: React.ComponentClass<L
  * @param monitor Le monitor react-dnd.
  */
 export function getDraggedItems<T>(monitor: DropTargetMonitor | undefined) {
-    return (monitor!.getItem() as any).dragged as T[];
+    return monitor!.getItem().dragged as T[];
 }
