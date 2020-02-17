@@ -38,7 +38,7 @@
     line-height: 1.6;
 }
 
-.multiSelect li > div:first-of-type {
+.facet--multiSelect li > div:first-of-type {
     width: 100%;
     padding-left: 12px;
 }
