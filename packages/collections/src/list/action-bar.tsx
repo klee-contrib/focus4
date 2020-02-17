@@ -159,6 +159,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                       if (
                           // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
                           facet.values.length > 1 &&
+                          // Ni sur une facette sélectionnée.
+                          !Object.keys(store.selectedFacets).includes(facet.code) &&
                           // Et on ne garde que les facettes demandées dans la liste.
                           (!groupableFacets || groupableFacets.find(code => code === facet.code))
                       ) {

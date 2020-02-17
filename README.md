@@ -14,5 +14,5 @@ L'usage de Focus v4 est conditionné par la capacité de pouvoir générer autom
 -   [**`@focus4/styling`**](./packages/styling): il contient les différents outils liés au CSS ainsi que toutes les variables (y compris celles de React Toolbox, on y reviendra plus tard). Il dépend de `core` et de React (comme tous les modules suivants).
 -   [**`@focus4/forms`**](./packages/forms): il contient les composants de saisie, de champs et de formulaires. Il dépend de `stores` et `styling`.
 -   [**`@focus4/collections`**](./packages/collections): il contient tous les composants de liste de et recherche. Il dépend de `forms`, puisqu'il existe un formulaire de saisie de critères de recherche.
--   [**`@focus4/layout`**](./packages/layout): il contient tous les composants de layout. Il dépend de `styling` (mais pas de `components` ou `collections`).
--   [**`@focus4/toolbox`**](./packages/toolbox): il s'agit d'un repackaging de [react-toolbox](http://www.react-toolbox.io) à partir de du module de `styling`, pour une intégration optimale avec le reste des modules.
+-   [**`@focus4/layout`**](./packages/layout): il contient tous les composants de layout. Il dépend de `styling` (mais pas de `forms` ou `collections`).
+-   [**`@focus4/toolbox`**](./packages/toolbox): il s'agit d'un repackaging de [react-toolbox](http://www.react-toolbox.io) à partir du module de `styling`, pour une intégration optimale avec le reste des modules.

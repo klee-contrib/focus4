@@ -4,12 +4,12 @@ import * as React from "react";
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
 import {CSSProp} from "@focus4/styling";
 
-import {List, ListBaseProps, listFor, OperationListItem} from "../../list";
+import {List, ListBaseProps, ListProps, OperationListItem} from "../../list";
 import {Group, GroupCss, groupCss} from "./group";
 export {Group, GroupCss, groupCss};
 
 /** Props de Results. */
-export interface ResultsProps<T, P extends ListBaseProps<T> = ListBaseProps<T>> {
+export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Header de groupe personnalisé. */
     GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe par groupe (code / valeur). */
@@ -42,30 +42,31 @@ export interface ResultsProps<T, P extends ListBaseProps<T> = ListBaseProps<T>> 
 }
 
 /** Composants affichant les résultats de recherche, avec affiche par groupe. */
-export function Results<T>({
+export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
     GroupHeader,
     groupOperationList,
     groupPageListSize = 10,
     groupPageItemIndex = 2,
-    groupPageSize,
+    groupPageSize = 5,
     groupTheme,
     hasSelection,
     i18nPrefix,
     isManualFetch,
     listProps,
-    ListComponent = List as React.ComponentType<ListBaseProps<T> & {store: ListStoreBase<T>}>,
+    ListComponent = List,
     store,
     useGroupActionBars
-}: ResultsProps<T>) {
+}: ResultsProps<T, P>) {
     return useObserver(() => {
         const filteredGroups = store.groups.filter(group => group.totalCount !== 0);
-        if (filteredGroups.length) {
-            return (
-                <div data-focus="results">
-                    {listFor({
-                        data: filteredGroups,
-                        itemKey: data => data.code,
-                        LineComponent: ({data}) => (
+        return (
+            <div data-focus="results">
+                {filteredGroups.length ? (
+                    <List
+                        key="result-group-list"
+                        data={filteredGroups}
+                        itemKey={data => data.code}
+                        LineComponent={({data}) => (
                             <Group
                                 key={data.code}
                                 group={data}
@@ -79,33 +80,22 @@ export function Results<T>({
                                 theme={groupTheme}
                                 useGroupActionBars={useGroupActionBars}
                             />
-                        ),
-                        isManualFetch,
-                        perPage: groupPageListSize,
-                        pageItemIndex: groupPageItemIndex
-                    })}
-                </div>
-            );
-        } else {
-            return (
-                <div data-focus="results">
+                        )}
+                        isManualFetch={isManualFetch}
+                        perPage={groupPageListSize}
+                        pageItemIndex={groupPageItemIndex}
+                    />
+                ) : (
                     <ListComponent
-                        {...listProps}
+                        key="result-list"
+                        {...(listProps as P)}
                         {...{hasSelection}}
                         i18nPrefix={i18nPrefix}
                         isManualFetch={isManualFetch}
                         store={store}
                     />
-                </div>
-            );
-        }
+                )}
+            </div>
+        );
     });
-}
-
-/**
- * Crée un composant de Results.
- * @param props Les props du Results.
- */
-export function resultsFor<T>(props: ResultsProps<T>) {
-    return <Results {...props} />;
 }

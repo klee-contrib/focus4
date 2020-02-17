@@ -16,7 +16,6 @@ export {
     advancedSearchFor,
     FacetBox,
     Results,
-    resultsFor,
     SearchBar,
     Summary,
     useListBase

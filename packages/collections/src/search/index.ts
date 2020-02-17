@@ -18,6 +18,6 @@ export {
     removeFacetValue,
     shouldDisplayFacet
 } from "./facet-box";
-export {Group, GroupCss, Results, ResultsProps, groupCss, resultsFor} from "./results";
+export {Group, GroupCss, Results, ResultsProps, groupCss} from "./results";
 export {SearchBar, SearchBarCss, SearchBarProps, searchBarCss} from "./search-bar";
 export {Summary, SummaryCss, SummaryProps, summaryCss} from "./summary";

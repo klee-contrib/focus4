@@ -17,7 +17,7 @@ export {advancedSearchCss, AdvancedSearchCss};
 const Theme = themr("advancedSearch", advancedSearchCss);
 
 /** Props de l'AdvancedSearch. */
-export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListBaseProps<T>> {
+export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** CSS de l'ActionBar. */
     actionBarTheme?: CSSProp<ActionBarCss>;
     /** Handler au clic sur le bouton "Ajouter". */
@@ -124,7 +124,9 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListBasePro
 
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
 @observer
-export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
+export class AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>> extends React.Component<
+    AdvancedSearchProps<T, P>
+> {
     static contextType = ScrollableContext;
     context!: React.ContextType<typeof ScrollableContext>;
     @observable.ref rootNode?: HTMLDivElement;
@@ -302,7 +304,7 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
             mosaicHeight,
             mosaicWidth
         } = this.props;
-        const {MosaicComponent, LineComponent} = listProps as ListProps<T>;
+        const {MosaicComponent, LineComponent} = (listProps as any) as ListProps<T>;
         return (
             <Theme theme={this.props.theme}>
                 {theme => (
@@ -337,6 +339,6 @@ export class AdvancedSearch<T> extends React.Component<AdvancedSearchProps<T>> {
  * Crée un composant de recherche avancée.
  * @param props Les props de l'AdvancedSearch.
  */
-export function advancedSearchFor<T>(props: AdvancedSearchProps<T>) {
+export function advancedSearchFor<T, P extends ListBaseProps<T> = ListProps<T>>(props: AdvancedSearchProps<T, P>) {
     return <AdvancedSearch {...props} />;
 }

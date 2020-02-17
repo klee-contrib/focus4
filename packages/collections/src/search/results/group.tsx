@@ -3,16 +3,16 @@ import {useLocalStore, useObserver} from "mobx-react-lite";
 import * as React from "react";
 
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
-import {ActionBar, List, ListBaseProps, OperationListItem} from "../../list";
+import {ActionBar, List, ListBaseProps, ListProps, OperationListItem} from "../../list";
 
 import groupCss, {GroupCss} from "../__style__/group.css";
 export {groupCss, GroupCss};
 
 /** Props du composant de groupe. */
-export interface GroupProps<T, P extends ListBaseProps<T> = ListBaseProps<T>> {
+export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
     /** Header de groupe personnalisé. */
@@ -39,19 +39,20 @@ export interface GroupProps<T, P extends ListBaseProps<T> = ListBaseProps<T>> {
 }
 
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
-export function Group<T>({
+export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
     group,
     GroupHeader = DefaultGroupHeader,
     groupOperationList,
     hasSelection,
     i18nPrefix = "focus",
-    ListComponent = List as React.ComponentType<ListBaseProps<T> & {store: ListStoreBase<T>}>,
+    ListComponent = List,
     listProps,
     store,
     theme: pTheme,
     useGroupActionBars
-}: GroupProps<T>) {
+}: GroupProps<T, P>) {
     const theme = useTheme("group", groupCss, pTheme);
+    const context = React.useContext(ScrollableContext);
     const state = useLocalStore(() => ({
         /** Store pour le groupe. */
         get store(): ListStoreBase<T> {
@@ -65,7 +66,7 @@ export function Group<T>({
                 groupingKey: undefined,
                 selectedFacets: {...selectedFacets, [groupingKey!]: [group.code]}
             });
-            window.scrollTo({
+            context.scrollTo({
                 top: 0,
                 behavior: "smooth"
             });
@@ -94,7 +95,7 @@ export function Group<T>({
                 </div>
             )}
             <ListComponent
-                {...listProps}
+                {...(listProps as P)}
                 groupCode={group.code}
                 {...{hasSelection, hideAdditionalItems: true}}
                 i18nPrefix={i18nPrefix}
@@ -108,12 +109,4 @@ export function Group<T>({
 
 export function DefaultGroupHeader({group}: {group: GroupResult}) {
     return <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>;
-}
-
-/**
- * Crée un composant de groupe.
- * @param props Les props du groupe.
- */
-export function groupFor<T>(props: GroupProps<T>) {
-    return <Group {...props} />;
 }

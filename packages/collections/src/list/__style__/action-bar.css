@@ -128,5 +128,5 @@
 .dropdown {
     float: right;
     margin-left: 6px;
-    margin-right: 0;
+    margin-right: -6px !important;
 }

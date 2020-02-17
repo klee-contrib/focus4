@@ -98,8 +98,10 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
         return (
             <Theme theme={this.props.theme}>
                 {theme => {
-                    const filteredFacets = store.facets.filter(facet =>
-                        shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
+                    const filteredFacets = store.facets.filter(
+                        facet =>
+                            shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount) &&
+                            facet.code !== store.groupingKey
                     );
 
                     let sectionElements: JSX.Element[] | undefined;

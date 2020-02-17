@@ -72,7 +72,6 @@ export {
     facetCss,
     groupCss,
     removeFacetValue,
-    resultsFor,
     searchBarCss,
     shouldDisplayFacet,
     summaryCss
