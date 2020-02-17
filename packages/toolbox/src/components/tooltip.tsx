@@ -232,7 +232,7 @@ class TooltippedComponent<P> extends React.Component<
             {
                 [theme.tooltipActive!]: active
             },
-            (theme as any)[positionClass] ? (theme as any)[positionClass]() : ""
+            (theme as any)[positionClass]
         );
 
         const childProps = {
