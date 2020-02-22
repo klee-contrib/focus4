@@ -1,5 +1,5 @@
 import {IObservableArray} from "mobx";
-import {useLocalStore, useObserver} from "mobx-react-lite";
+import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";

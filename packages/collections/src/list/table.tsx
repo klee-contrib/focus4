@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import i18next from "i18next";
 import {action} from "mobx";
-import {useObserver} from "mobx-react-lite";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {ListStoreBase} from "@focus4/stores";

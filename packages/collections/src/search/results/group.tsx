@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {useLocalStore, useObserver} from "mobx-react-lite";
+import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";

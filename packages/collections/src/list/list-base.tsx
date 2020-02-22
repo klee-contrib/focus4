@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {isEqual} from "lodash";
 import {extendObservable, observe} from "mobx";
-import {useAsObservableSource, useLocalStore} from "mobx-react-lite";
+import {useAsObservableSource, useLocalStore} from "mobx-react";
 import * as React from "react";
 
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";

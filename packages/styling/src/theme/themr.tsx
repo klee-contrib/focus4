@@ -1,5 +1,5 @@
 import {upperFirst} from "lodash";
-import {useObserver} from "mobx-react-lite";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {CSSToStrings} from "./common";

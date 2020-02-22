@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {autorun, comparer, observable, reaction} from "mobx";
-import {useLocalStore, useObserver} from "mobx-react-lite";
+import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 import {Transition} from "react-pose";
 

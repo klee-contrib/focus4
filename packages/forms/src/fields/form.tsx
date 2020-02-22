@@ -1,4 +1,4 @@
-import {useAsObservableSource} from "mobx-react-lite";
+import {useAsObservableSource} from "mobx-react";
 import * as React from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";

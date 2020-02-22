@@ -1,5 +1,5 @@
 import {action, observable} from "mobx";
-import {useObserver} from "mobx-react-lite";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 

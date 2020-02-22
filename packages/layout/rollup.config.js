@@ -42,7 +42,6 @@ export default (async () => {
             "lodash",
             "mobx",
             "mobx-react",
-            "mobx-react-lite",
             "moment",
             "popmotion",
             "react",

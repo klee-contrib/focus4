@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import i18next from "i18next";
 import {uniqueId} from "lodash";
-import {useLocalStore, useObserver} from "mobx-react-lite";
+import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 
 import {themeable} from "@focus4/core";

@@ -1,6 +1,6 @@
 import {isFunction} from "lodash";
 import {computed, observable} from "mobx";
-import {useObserver} from "mobx-react-lite";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 

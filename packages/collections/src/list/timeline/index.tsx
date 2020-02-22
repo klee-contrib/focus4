@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react-lite";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {EntityField, FieldEntry, ListStoreBase} from "@focus4/stores";

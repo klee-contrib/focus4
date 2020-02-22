@@ -8,6 +8,8 @@ export {
     makeField,
     makeFormActions,
     makeFormNode,
+    useFormActions,
+    useFormNode,
     selectFor
 } from "@focus4/forms";
 export {
