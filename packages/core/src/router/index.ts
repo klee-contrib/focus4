@@ -1,4 +1,3 @@
-import {isEmpty} from "lodash";
 import {action, IObservableObject, observable, reaction, runInAction} from "mobx";
 import {RouteConfig, RouteEnterEvent, Router} from "yester";
 
@@ -155,11 +154,11 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
 
         // On met en place les réactions sur le currentPath de chaque ViewStore.
         reaction(
-            () => store.currentPath,
-            currentPath => {
+            () => [store.currentPath, store.isActiveInRouter],
+            () => {
                 // Si le chemin à effectivement changé, alors on met à jour l'URL.
-                if (!isEmpty(store.currentView) && currentPath !== getUrl()) {
-                    updateUrl(currentPath);
+                if (store.isActiveInRouter && store.currentPath !== getUrl()) {
+                    updateUrl(store.currentPath);
                 }
             }
         );
