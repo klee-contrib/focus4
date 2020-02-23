@@ -173,11 +173,11 @@ export const icons = {
     table: {
         sortAsc: {
             library: "material",
-            name: "arrow_drop_up"
+            name: "arrow_upward"
         },
         sortDesc: {
             library: "material",
-            name: "arrow_drop_down"
+            name: "arrow_downward"
         }
     }
 };

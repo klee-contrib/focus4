@@ -56,3 +56,10 @@
 .clickable {
     cursor: pointer;
 }
+
+.sortable {
+    display: flex;
+    align-items: center;
+    color: var(--color-primary);
+    cursor: pointer;
+}
