@@ -1,5 +1,5 @@
-import {action, observable} from "mobx";
-import {useObserver} from "mobx-react";
+import {action, toJS} from "mobx";
+import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 
@@ -22,7 +22,7 @@ export interface MainMenuItemProps extends Omit<ButtonProps, "theme"> {
 export function MainMenuItem({label, icon, onClick, route, children, theme: pTheme, ...otherProps}: MainMenuItemProps) {
     const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
     const context = React.useContext(MenuContext);
-    const [state] = React.useState(() => observable({hasSubMenu: false, top: 0, left: 0}));
+    const state = useLocalStore(() => ({hasSubMenu: false, top: 0, left: 0}));
 
     const li = React.useRef<HTMLLIElement>(null);
     const panel = React.useRef<HTMLDivElement>(null);
@@ -68,7 +68,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
             {context.renderSubMenu(
                 <Transition>
                     {state.hasSubMenu && (
-                        <PosedDiv key="panel" ref={panel} className={theme.panel()} style={state}>
+                        <PosedDiv key="panel" ref={panel} className={theme.panel()} style={toJS(state)}>
                             <MainMenuList
                                 activeRoute={context.activeRoute}
                                 closePanel={() => (state.hasSubMenu = false)}
