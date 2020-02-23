@@ -45,12 +45,12 @@
 
 .table td:first-of-type,
 .table th:first-of-type {
-    padding-left: 24px;
+    padding-left: 34px;
 }
 
 .table td:last-of-type,
 .table th:last-of-type {
-    padding-right: 24px;
+    padding-right: 34px;
 }
 
 .clickable {
@@ -60,6 +60,39 @@
 .sortable {
     display: flex;
     align-items: center;
-    color: var(--color-primary);
     cursor: pointer;
+    transition: all ease-out 0.1s;
+
+    & span:first-child {
+        transition: all ease-out 0.1s;
+        margin-left: -26px;
+        margin-right: 2px;
+        opacity: 0;
+    }
+}
+
+.headerText {
+    display: inline-block;
+    border: 1px dashed transparent;
+    transition: all ease-out 0.1s;
+}
+
+.sortable:not(.sortable--sorted),
+.sortable:hover {
+    & .headerText {
+        border-bottom-color: var(--table-header-color);
+    }
+}
+
+.sortable:hover .headerText {
+    border-bottom-color: var(--color-primary);
+}
+
+.sortable:hover,
+.sortable--sorted {
+    color: var(--color-primary);
+
+    & span:first-child {
+        opacity: 1;
+    }
 }

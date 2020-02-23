@@ -34,7 +34,7 @@ export function TableHeader<T>({
     return (
         <th>
             <div
-                className={store && sortKey ? theme.sortable() : undefined}
+                className={store && sortKey ? theme.sortable({sorted: store.sortBy === sortKey}) : undefined}
                 onClick={
                     (store &&
                         sortKey &&
@@ -45,10 +45,16 @@ export function TableHeader<T>({
                     undefined
                 }
             >
-                {store && sortKey && store.sortBy === sortKey ? (
-                    <FontIcon icon={getIcon(`${i18nPrefix}.icons.table.sort${store.sortAsc ? "Desc" : "Asc"}`)} />
+                {store && sortKey ? (
+                    <FontIcon>
+                        {getIcon(
+                            `${i18nPrefix}.icons.table.sort${
+                                store.sortBy !== sortKey || store.sortAsc ? "Asc" : "Desc"
+                            }`
+                        )}
+                    </FontIcon>
                 ) : null}
-                {i18next.t(title)}
+                <span className={theme.headerText()}>{i18next.t(title)}</span>
             </div>
         </th>
     );

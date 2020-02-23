@@ -71,7 +71,13 @@ export function Table<T>({columns, lineClassName, onLineClick, theme: pTheme, ..
                     <thead>
                         <tr>
                             {columns.map(column => (
-                                <TableHeader column={column} i18nPrefix={i18nPrefix} store={store} theme={theme} />
+                                <TableHeader
+                                    key={column.title}
+                                    column={column}
+                                    i18nPrefix={i18nPrefix}
+                                    store={store}
+                                    theme={theme}
+                                />
                             ))}
                         </tr>
                     </thead>
