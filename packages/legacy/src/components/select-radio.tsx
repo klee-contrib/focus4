@@ -79,7 +79,7 @@ export function SelectRadio({
                     );
                 })}
             </RadioGroup>
-            {error ? <div>{error}</div> : null}
+            {error ? <div className={theme.error()}>{error}</div> : null}
         </div>
     );
 }

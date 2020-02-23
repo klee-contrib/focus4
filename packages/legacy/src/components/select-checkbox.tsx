@@ -96,7 +96,7 @@ export function SelectCheckbox({
                     );
                 })}
             </ul>
-            {error ? <div>{error}</div> : null}
+            {error ? <div className={theme.error()}>{error}</div> : null}
         </div>
     );
 }
