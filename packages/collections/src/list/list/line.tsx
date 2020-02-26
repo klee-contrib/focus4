@@ -94,12 +94,6 @@ export function LineWrapper<T>({
             return (draggedItems && draggedItems.find(i => i === data)) || false;
         },
 
-        /** Actions sur la ligne. */
-        get operationList() {
-            const opList = operationList && operationList(data);
-            return opList && opList.length ? opList : undefined;
-        },
-
         /** Handler de clic sur la case de sélection. */
         onSelection() {
             if (store) {
@@ -165,14 +159,14 @@ export function LineWrapper<T>({
                     theme={{toggle: theme.toggle(), icon: theme.checkboxIcon()}}
                 />
             ) : null}
-            {state.operationList ? (
+            {operationList?.(data)?.length ? (
                 <div
                     className={theme.actions({forceDisplay: state.forceActionDisplay})}
                     style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                 >
                     <ContextualActions
                         isMosaic={!!mosaic}
-                        operationList={state.operationList}
+                        operationList={operationList(data)}
                         data={data}
                         onClickMenu={state.setForceActionDisplay}
                         onHideMenu={state.unsetForceActionDisplay}
