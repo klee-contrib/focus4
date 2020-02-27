@@ -16,13 +16,13 @@
     },
     "dependencies": {
         "@types/lodash": "4.14.149",
-        "@types/react": "16.9.22",
-        "@types/uuid": "3.4.7",
-        "i18next": "19.3.1",
+        "@types/react": "16.9.23",
+        "@types/uuid": "7.0.0",
+        "i18next": "19.3.2",
         "lodash": "4.17.15",
-        "mobx": "5.15.4",
+        "mobx": "4.15.4",
         "tslib": "1.11.0",
-        "uuid": "3.4.0",
+        "uuid": "7.0.1",
         "whatwg-fetch": "3.0.0",
         "yester": "0.10.0"
     }

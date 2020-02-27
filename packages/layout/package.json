@@ -18,7 +18,7 @@
         "@focus4/core": "^10.3.0-rc.0",
         "@focus4/styling": "^10.3.0-rc.0",
         "@focus4/toolbox": "^10.3.0-rc.0",
-        "@types/react-transition-group": "4.2.3",
+        "@types/react-transition-group": "4.2.4",
         "intersection-observer": "0.7.0",
         "react-transition-group": "4.3.0",
         "resize-observer-polyfill": "1.5.1",
