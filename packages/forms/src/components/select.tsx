@@ -1,6 +1,7 @@
 import i18next from "i18next";
 import * as React from "react";
 
+import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import selectCss, {SelectCss} from "./__style__/select.css";
@@ -16,8 +17,6 @@ export interface SelectProps<T extends "string" | "number"> {
     hasUndefined?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Nom du champ de libellé. */
-    labelKey: string;
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
@@ -30,34 +29,31 @@ export interface SelectProps<T extends "string" | "number"> {
     unSelectedLabel?: string;
     /** Valeur. */
     value: (T extends "string" ? string : number) | undefined;
-    /** Nom du champ de valeur. */
-    valueKey: string;
     /** Liste des valeurs. */
-    values: {}[];
+    values: ReferenceList;
 }
 
 /** Surcouche de <select> pour s'interfacer avec un <Field>. */
 export function Select<T extends "string" | "number">({
     disabled,
     error,
-    labelKey,
     name,
     onChange,
     theme: pTheme,
     type,
     value,
-    valueKey,
     values,
     hasUndefined = true,
     i18nPrefix = "focus",
     unSelectedLabel = `${i18nPrefix}.select.unselected`
 }: SelectProps<T>) {
     const theme = useTheme("select", selectCss, pTheme);
+    const {$labelKey, $valueKey} = values;
 
     // On ajoute l'élément vide si nécessaire.
-    let finalValues = values;
+    let finalValues: {}[] = values;
     if (hasUndefined) {
-        finalValues = [{[valueKey]: "", [labelKey]: i18next.t(unSelectedLabel)}, ...finalValues];
+        finalValues = [{[$valueKey]: "", [$labelKey]: i18next.t(unSelectedLabel)}, ...finalValues];
     }
 
     return (
@@ -73,8 +69,8 @@ export function Select<T extends "string" | "number">({
                 value={value === undefined ? "" : value}
             >
                 {finalValues.map((val, idx) => {
-                    const optVal = `${(val as any)[valueKey]}`;
-                    const elementValue = (val as any)[labelKey];
+                    const optVal = `${(val as any)[$valueKey]}`;
+                    const elementValue = (val as any)[$labelKey];
                     const optLabel =
                         elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
                     return (

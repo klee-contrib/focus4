@@ -1,6 +1,7 @@
 import i18next from "i18next";
 import * as React from "react";
 
+import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioGroup} from "@focus4/toolbox";
 
@@ -17,8 +18,6 @@ export interface SelectRadioProps<T extends "string" | "number"> {
     label?: string;
     /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "false". */
     hasUndefined?: boolean;
-    /** Nom du champ de libellé. */
-    labelKey: string;
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
@@ -33,10 +32,8 @@ export interface SelectRadioProps<T extends "string" | "number"> {
     undefinedPosition?: "top" | "bottom";
     /** Valeur. */
     value: (T extends "string" ? string : number) | undefined;
-    /** Nom du champ de valeur. */
-    valueKey: string;
     /** Liste des valeurs. */
-    values: {}[];
+    values: ReferenceList;
 }
 
 /** RadioSelect component */
@@ -44,7 +41,6 @@ export function SelectRadio<T extends "string" | "number">({
     disabled = false,
     error,
     label,
-    labelKey,
     hasUndefined = false,
     name,
     onChange,
@@ -52,17 +48,17 @@ export function SelectRadio<T extends "string" | "number">({
     undefinedLabel = "focus.select.none",
     undefinedPosition = "bottom",
     value,
-    valueKey,
     values
 }: SelectRadioProps<T>) {
     const theme = useTheme("selectRadio", selectRadioCss, pTheme);
+    const {$labelKey, $valueKey} = values;
 
-    let definitiveValues = values;
+    let definitiveValues: {}[] = values;
     if (hasUndefined && undefinedPosition === "bottom") {
-        definitiveValues = [...values, {[valueKey]: undefined, [labelKey]: undefinedLabel}];
+        definitiveValues = [...values, {[$valueKey]: undefined, [$labelKey]: undefinedLabel}];
     }
     if (hasUndefined && undefinedPosition === "top") {
-        definitiveValues = [{[valueKey]: undefined, [labelKey]: undefinedLabel}, ...values];
+        definitiveValues = [{[$valueKey]: undefined, [$labelKey]: undefinedLabel}, ...values];
     }
 
     return (
@@ -70,8 +66,8 @@ export function SelectRadio<T extends "string" | "number">({
             {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
             <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
                 {definitiveValues.map(option => {
-                    const optVal = (option as any)[valueKey];
-                    const optLabel = (option as any)[labelKey];
+                    const optVal = (option as any)[$valueKey];
+                    const optLabel = (option as any)[$labelKey];
 
                     return (
                         <RadioButton

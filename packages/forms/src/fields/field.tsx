@@ -221,9 +221,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                             {...displayProps}
                             formatter={displayFormatter}
                             keyResolver={autocompleteProps.keyResolver}
-                            labelKey={selectProps.labelKey}
                             value={value}
-                            valueKey={selectProps.valueKey}
                             values={selectProps.values}
                             theme={themeable(domainDCP.theme || {}, displayProps.theme || {})}
                         />

@@ -1,3 +1,5 @@
+import {ReferenceList} from "../../reference";
+
 export type OmitWithTheme<T extends {theme?: object}, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
 
 export interface BaseInputProps {
@@ -11,9 +13,7 @@ export interface BaseInputProps {
 }
 
 export interface BaseSelectProps extends BaseInputProps {
-    labelKey: string;
-    valueKey: string;
-    values: {}[];
+    values: ReferenceList;
 }
 
 export interface BaseAutocompleteProps extends BaseInputProps {
@@ -23,10 +23,8 @@ export interface BaseAutocompleteProps extends BaseInputProps {
 export interface BaseDisplayProps {
     formatter?: (value: any) => string;
     keyResolver?: (key: any) => Promise<string | undefined>;
-    labelKey?: string;
     value?: any;
-    valueKey?: string;
-    values?: object[];
+    values?: ReferenceList;
     theme?: object;
 }
 

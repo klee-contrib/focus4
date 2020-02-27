@@ -1,6 +1,8 @@
 import i18next from "i18next";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
+import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
@@ -38,8 +40,6 @@ export interface SelectCheckboxProps<T extends "string" | "number"> {
     error?: React.ReactNode;
     /** Libellé. */
     label?: string;
-    /** Nom du champ de libellé. */
-    labelKey: string;
     /** Nombre maximal d'éléments sélectionnables. */
     maxSelectable?: number;
     /** Nom de l'input. */
@@ -52,33 +52,29 @@ export interface SelectCheckboxProps<T extends "string" | "number"> {
     type: T;
     /** Valeur. */
     value: (T extends "string" ? string : number)[] | undefined;
-    /** Nom du champ de valeur. */
-    valueKey: string;
     /** Liste des valeurs. */
-    values: {}[];
+    values: ReferenceList;
 }
 
 export function SelectCheckbox<T extends "string" | "number">({
     disabled = false,
     error,
     label,
-    labelKey,
     maxSelectable,
     name,
     onChange,
     theme: pTheme,
     value,
-    valueKey,
     values
 }: SelectCheckboxProps<T>) {
     const theme = useTheme("selectCheckbox", selectCheckboxCss, pTheme);
-    return (
+    return useObserver(() => (
         <div className={theme.select()}>
             {label && <h5>{i18next.t(label)}</h5>}
             <ul>
                 {values.map(option => {
-                    const optVal = (option as any)[valueKey];
-                    const optLabel = (option as any)[labelKey];
+                    const optVal = (option as any)[values.$valueKey];
+                    const optLabel = (option as any)[values.$labelKey];
 
                     const isSelected = value ? !!(value as any).find((val: any) => optVal === val) : false;
                     const clickHandler = clickHandlerFactory(disabled, isSelected, value, optVal, onChange);
@@ -103,5 +99,5 @@ export function SelectCheckbox<T extends "string" | "number">({
             </ul>
             {error ? <div className={theme.error()}>{error}</div> : null}
         </div>
-    );
+    ));
 }

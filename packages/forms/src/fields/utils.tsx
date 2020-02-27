@@ -98,10 +98,8 @@ export function selectFor<F extends FieldEntry>(
             onChange={getOnChange(field)}
             {...options}
             selectProps={{
-                values: values.slice(),
-                labelKey: values.$labelKey,
-                valueKey: values.$valueKey,
-                ...((options.selectProps as {}) || {})
+                ...((options.selectProps as {}) || {}),
+                values
             }}
             inputType="select"
         />

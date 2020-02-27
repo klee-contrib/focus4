@@ -1,12 +1,11 @@
-import {observable} from "mobx";
-import {observer} from "mobx-react";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
-import {CSSProp, themr} from "@focus4/styling";
+import {ReferenceList} from "@focus4/stores";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import displayCss, {DisplayCss} from "./__style__/display.css";
 export {displayCss, DisplayCss};
-const Theme = themr("display", displayCss);
 
 /** Props du composant d'affichage. */
 export interface DisplayProps {
@@ -14,53 +13,35 @@ export interface DisplayProps {
     formatter?: (value: any) => string;
     /** Service de résolution de code. */
     keyResolver?: (key: any) => Promise<string>;
-    /** Nom de la propriété de libellé, pour liste de référence. */
-    labelKey?: string;
     /** CSS. */
     theme?: CSSProp<DisplayCss>;
     /** Valeur à afficher. */
     value?: any;
-    /** Nom de la propriété de libellé, pour liste de référence. */
-    valueKey?: string;
     /** Liste des valeurs de référence. */
-    values?: {}[];
+    values?: ReferenceList;
 }
 
 /** Composant d'affichage par défaut, gère la résolution de la valeur par liste de référence ou par service. */
-@observer
-export class Display extends React.Component<DisplayProps> {
-    @observable value?: any;
+export function Display({formatter, keyResolver, theme: pTheme, value: pValue, values}: DisplayProps) {
+    const [value, setValue] = React.useState<any>();
+    const theme = useTheme("display", displayCss, pTheme);
 
-    componentWillMount() {
-        this.load(this.props);
-    }
-
-    componentWillReceiveProps(props: DisplayProps) {
-        if (props.value !== this.props.value) {
-            this.load(props);
+    React.useEffect(() => {
+        if (pValue && pValue !== value) {
+            if (keyResolver) {
+                keyResolver(pValue).then(res => setValue(res ?? pValue));
+            } else {
+                setValue(pValue);
+            }
         }
-    }
+    }, [pValue, keyResolver]);
 
-    async load({value, keyResolver}: DisplayProps) {
-        if (value && keyResolver) {
-            this.value = (await keyResolver(value)) || value;
-        } else {
-            this.value = value;
-        }
-    }
-
-    render() {
-        const {valueKey, labelKey, values, value, formatter} = this.props;
-        const ref = values && valueKey && values.find(v => (v as any)[valueKey] === value);
-        const displayed = (ref && labelKey && (ref as any)[labelKey]) || this.value;
+    return useObserver(() => {
+        const displayed = values?.getLabel(value) ?? value;
         return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div data-focus="display" className={theme.display()}>
-                        {(formatter && formatter(displayed)) || displayed}
-                    </div>
-                )}
-            </Theme>
+            <div data-focus="display" className={theme.display()}>
+                {formatter?.(displayed) ?? displayed}
+            </div>
         );
-    }
+    });
 }
