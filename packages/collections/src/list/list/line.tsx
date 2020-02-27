@@ -1,5 +1,5 @@
 import {IObservableArray} from "mobx";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
@@ -55,49 +55,53 @@ export interface LineWrapperProps<T> {
 
 /** Wrapper de ligne dans une liste. */
 export function LineWrapper<T>({
-    data,
     disableDragAnimation,
     domRef,
     draggedItems,
     dragItemType = "item",
-    hasSelection,
     i18nPrefix,
     LineComponent,
     mosaic,
     onPoseComplete,
     operationList,
-    store,
     toggleDetail,
-    theme
+    theme,
+    ...oProps
 }: LineWrapperProps<T>) {
+    const props = useAsObservableSource({
+        data: undefined,
+        hasSelection: undefined,
+        store: undefined,
+        ...oProps
+    });
     const state = useLocalStore(() => ({
         /** Force l'affichage des actions. */
         forceActionDisplay: false,
 
-        /** Précise si la ligne est sélectionnable. */
-        get isSelectable() {
-            return (hasSelection && store && store.isItemSelectionnable(data)) || false;
-        },
-
         /** Précise si la checkbox doit être affichée. */
         get isCheckboxDisplayed() {
-            return (store && !!store.selectedItems.size) || false;
-        },
-
-        /** Précise si la ligne est sélectionnée.. */
-        get isSelected() {
-            return (store && store.selectedItems.has(data)) || false;
+            return (props.store && !!props.store.selectedItems.size) || false;
         },
 
         /** Précise si la ligne est en train d'être "draggée". */
         get isDragged() {
-            return (draggedItems && draggedItems.find(i => i === data)) || false;
+            return (draggedItems && draggedItems.find(i => i === props.data)) || false;
+        },
+
+        /** Précise si la ligne est sélectionnable. */
+        get isSelectable() {
+            return (props.hasSelection && props.store && props.store.isItemSelectionnable(props.data)) || false;
+        },
+
+        /** Précise si la ligne est sélectionnée.. */
+        get isSelected() {
+            return (props.store && props.store.selectedItems.has(props.data)) || false;
         },
 
         /** Handler de clic sur la case de sélection. */
         onSelection() {
-            if (store) {
-                store.toggle(data);
+            if (props.store) {
+                props.store.toggle(props.data);
             }
         },
 
@@ -122,7 +126,12 @@ export function LineWrapper<T>({
 
     // Gestion du drag and drop
     if (draggedItems) {
-        const [, dragSource, dragPreview] = useDragSource({data, draggedItems, store, type: dragItemType});
+        const [, dragSource, dragPreview] = useDragSource({
+            data: props.data,
+            draggedItems,
+            store: props.store,
+            type: dragItemType
+        });
 
         // Permet de masquer la preview par défaut de drag and drop HTML5.
         React.useLayoutEffect(() => {
@@ -149,7 +158,7 @@ export function LineWrapper<T>({
             width={mosaic && mosaic.width}
             height={mosaic && mosaic.height}
         >
-            <LineComponent data={data} toggleDetail={toggleDetail} />
+            <LineComponent data={props.data} toggleDetail={toggleDetail} />
             {state.isSelectable ? (
                 <IconButton
                     className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}
@@ -159,15 +168,15 @@ export function LineWrapper<T>({
                     theme={{toggle: theme.toggle(), icon: theme.checkboxIcon()}}
                 />
             ) : null}
-            {operationList?.(data)?.length ? (
+            {operationList?.(props.data)?.length ? (
                 <div
                     className={theme.actions({forceDisplay: state.forceActionDisplay})}
                     style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                 >
                     <ContextualActions
                         isMosaic={!!mosaic}
-                        operationList={operationList(data)}
-                        data={data}
+                        operationList={operationList(props.data)}
+                        data={props.data}
                         onClickMenu={state.setForceActionDisplay}
                         onHideMenu={state.unsetForceActionDisplay}
                     />

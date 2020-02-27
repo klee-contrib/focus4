@@ -1,9 +1,9 @@
 import i18next from "i18next";
-import {observer} from "mobx-react";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {FacetOutput, SearchStore} from "@focus4/stores";
-import {CSSProp, fromBem, themr, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
 import {ChipType} from "../chip";
@@ -13,7 +13,6 @@ export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps};
 
 import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
 export {FacetBoxCss, FacetCss, facetBoxCss, facetCss};
-const Theme = themr("facetBox", facetBoxCss);
 
 /** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
@@ -53,25 +52,28 @@ export interface FacetBoxProps<T> {
 }
 
 /** Composant contenant la liste des facettes retournées par une recherche. */
-@observer
-export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
-    renderFacet = (facet: FacetOutput) => {
-        const {
-            chipKeyResolver,
-            chipThemer,
-            customFacetComponents = {},
-            i18nPrefix = "focus",
-            nbDefaultDataList = 6,
-            store
-        } = this.props;
+export function FacetBox<T>({
+    chipKeyResolver,
+    chipThemer,
+    customFacetComponents = {},
+    i18nPrefix = "focus",
+    nbDefaultDataList = 6,
+    sections,
+    showSingleValuedFacets,
+    store,
+    theme: pTheme
+}: FacetBoxProps<T>) {
+    const theme = useTheme("facetBox", facetBoxCss, pTheme);
+
+    function renderFacet(facet: FacetOutput) {
         if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
             let FacetComponent: React.ElementType<FacetProps> = Facet;
 
             const FacetCustom = customFacetComponents[facet.code];
             if (FacetCustom) {
                 FacetComponent = props => {
-                    const theme = useTheme("facet", facetCss);
-                    return <FacetCustom {...props} theme={fromBem(theme)} />;
+                    const facetTheme = useTheme("facet", facetCss);
+                    return <FacetCustom {...props} theme={fromBem(facetTheme)} />;
                 };
             }
 
@@ -89,77 +91,68 @@ export class FacetBox<T> extends React.Component<FacetBoxProps<T>> {
         } else {
             return null;
         }
-    };
+    }
 
-    render() {
-        const {i18nPrefix = "focus", store, showSingleValuedFacets} = this.props;
-        const {sections} = this.props;
+    return useObserver(() => {
+        const filteredFacets = store.facets.filter(
+            facet =>
+                shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount) &&
+                facet.code !== store.groupingKey
+        );
+
+        let sectionElements: JSX.Element[] | undefined;
+        if (sections) {
+            if (sections.filter(s => !s.facets).length > 1) {
+                throw new Error("Il ne peut y avoir qu'une seule section de facettes non renseignées.");
+            }
+
+            let remainingFacets = [...filteredFacets];
+
+            sectionElements = sections
+                .filter(s => !!s.facets && s.facets.length)
+                .map(s => {
+                    const facets = s
+                        .facets!.map(code => {
+                            const facet = filteredFacets.find(f => f.code === code);
+                            if (facet) {
+                                remainingFacets = remainingFacets.filter(f => facet !== f);
+                                return renderFacet(facet);
+                            } else {
+                                return null;
+                            }
+                        })
+                        .filter(x => x);
+                    if (facets.length) {
+                        return (
+                            <div key={s.name} className={theme.section()}>
+                                <h5>{s.name}</h5>
+                                {facets}
+                            </div>
+                        );
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(x => x) as JSX.Element[];
+
+            const restSection = sections.find(s => !s.facets && !!remainingFacets.length);
+            if (restSection) {
+                sectionElements.splice(
+                    sections.indexOf(restSection),
+                    0,
+                    <div key={restSection.name} className={theme.section()}>
+                        {restSection.name ? <h4>{restSection.name}</h4> : null}
+                        {remainingFacets.map(renderFacet)}
+                    </div>
+                );
+            }
+        }
 
         return (
-            <Theme theme={this.props.theme}>
-                {theme => {
-                    const filteredFacets = store.facets.filter(
-                        facet =>
-                            shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount) &&
-                            facet.code !== store.groupingKey
-                    );
-
-                    let sectionElements: JSX.Element[] | undefined;
-                    if (sections) {
-                        if (sections.filter(s => !s.facets).length > 1) {
-                            throw new Error("Il ne peut y avoir qu'une seule section de facettes non renseignées.");
-                        }
-
-                        let remainingFacets = [...filteredFacets];
-
-                        sectionElements = sections
-                            .filter(s => !!s.facets && s.facets.length)
-                            .map(s => {
-                                const facets = s
-                                    .facets!.map(code => {
-                                        const facet = filteredFacets.find(f => f.code === code);
-                                        if (facet) {
-                                            remainingFacets = remainingFacets.filter(f => facet !== f);
-                                            return this.renderFacet(facet);
-                                        } else {
-                                            return null;
-                                        }
-                                    })
-                                    .filter(x => x);
-                                if (facets.length) {
-                                    return (
-                                        <div key={s.name} className={theme.section()}>
-                                            <h5>{s.name}</h5>
-                                            {facets}
-                                        </div>
-                                    );
-                                } else {
-                                    return null;
-                                }
-                            })
-                            .filter(x => x) as JSX.Element[];
-
-                        const restSection = sections.find(s => !s.facets && !!remainingFacets.length);
-                        if (restSection) {
-                            sectionElements.splice(
-                                sections.indexOf(restSection),
-                                0,
-                                <div key={restSection.name} className={theme.section()}>
-                                    {restSection.name ? <h4>{restSection.name}</h4> : null}
-                                    {remainingFacets.map(this.renderFacet)}
-                                </div>
-                            );
-                        }
-                    }
-
-                    return (
-                        <div className={theme.facetBox()}>
-                            <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
-                            {sectionElements || filteredFacets.map(this.renderFacet)}
-                        </div>
-                    );
-                }}
-            </Theme>
+            <div className={theme.facetBox()}>
+                <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
+                {sectionElements || filteredFacets.map(renderFacet)}
+            </div>
         );
-    }
+    });
 }
