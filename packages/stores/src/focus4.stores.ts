@@ -43,6 +43,7 @@ export {
     SelectComponents,
     StoreListNode,
     StoreNode,
+    Validator,
     buildNode,
     cloneField,
     fromFieldCore,

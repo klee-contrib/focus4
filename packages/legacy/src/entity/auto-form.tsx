@@ -4,25 +4,38 @@ import * as React from "react";
 import {v4} from "uuid";
 
 import {classAutorun, messageStore} from "@focus4/core";
-import {formCss, LabelProps, PanelProps} from "@focus4/forms";
 import {
+    AutocompleteProps,
+    AutocompleteResult,
+    DisplayProps,
+    fieldFor,
+    FieldOptions,
+    Form,
+    fromField,
+    InputProps,
+    LabelProps,
+    PanelProps,
+    SelectProps
+} from "@focus4/forms";
+import {
+    BaseAutocompleteProps,
+    BaseDisplayProps,
+    BaseInputProps,
+    BaseLabelProps,
+    BaseSelectProps,
+    Domain,
     EntityField,
     FieldEntry,
     FieldEntryType,
     isStoreListNode,
+    ReferenceList,
     StoreListNode,
     StoreNode,
     toFlatValues
 } from "@focus4/stores";
-import {themr} from "@focus4/styling";
 
-import {DisplayProps, InputProps, SelectProps} from "../components";
-
-import {Field, FieldProps} from "./field";
-import {displayFor, fieldFor, isField, selectFor} from "./field-helpers";
+import {FieldWrapper} from "./field-wrapper";
 import {createViewModel, ViewModel} from "./view-model";
-
-const Theme = themr("form", formCss);
 
 /** Options additionnelles de l'AutoForm. */
 export interface AutoFormOptions<ST extends StoreNode | StoreListNode> {
@@ -80,11 +93,11 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     /** Noeud de store à partir du quel le formulaire a été créé. */
     storeData!: ST;
 
-    /** Erreurs sur les champs issues du serveur. */
-    @observable errors: Record<string, string> = {};
+    /** Erreurs sur les champs. */
+    readonly errors = observable.map<string, string | undefined>();
 
-    /** Reférences vers les champs placés par `this.fieldFor` (pour la validation). */
-    @observable fields: Record<string, Field<any, any, any, any, any, any, any> | null> = {};
+    /** Force l'affichage des erreurs. */
+    @observable forceErrorDisplay = false;
 
     /** Formulaire en édition. */
     @observable isEdit!: boolean;
@@ -231,9 +244,6 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
             } catch (e) {
                 runInAction(() => {
                     this.isLoading = false;
-                    if (e.$parsedErrors && e.$parsedErrors.fields) {
-                        this.errors = e.$parsedErrors.fields || {};
-                    }
                 });
             }
         }
@@ -262,14 +272,10 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     @action
     validate() {
         // On force en premier lieu l'affichage des erreurs sur tous les champs.
-        for (const field in this.fields) {
-            if (this.fields[field]) {
-                this.fields[field]!.showError = true;
-            }
-        }
+        this.forceErrorDisplay = true;
 
         // La validation est en succès si chaque champ n'est pas en erreur.
-        return !some(_values(this.fields), field => field && field.error);
+        return some(this.errors.values(), e => !!e);
     }
 
     /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */
@@ -286,25 +292,16 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     /** Fonction de rendu du formulaire à préciser. */
     abstract renderContent(): React.ReactElement | null;
     render() {
-        if (this.hasForm) {
-            return (
-                <Theme theme={{form: this.className}}>
-                    {theme => (
-                        <form
-                            className={theme.form()}
-                            onSubmit={e => {
-                                e.preventDefault();
-                                this.save();
-                            }}
-                        >
-                            <fieldset>{this.renderContent()}</fieldset>
-                        </form>
-                    )}
-                </Theme>
-            );
-        } else {
-            return this.renderContent();
-        }
+        return (
+            <Form
+                forceErrorDisplay={this.forceErrorDisplay}
+                noForm={!this.hasForm}
+                theme={{form: this.className}}
+                save={this.save}
+            >
+                {this.renderContent()}
+            </Form>
+        );
     }
 
     /**
@@ -312,31 +309,63 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    displayFor<T extends string | number | boolean, DCProps = DisplayProps, LCProps = LabelProps>(
-        field: T,
-        options?: Partial<FieldProps<T, any, DCProps, LCProps>>
-    ): JSX.Element;
     displayFor<
         T,
-        DCDomainProps = DisplayProps,
-        LCDomainProps = LabelProps,
-        DCProps = DCDomainProps,
-        LCProps = LCDomainProps
+        DCDProps extends BaseDisplayProps = DisplayProps,
+        LCDProps extends BaseLabelProps = LabelProps,
+        DCProps extends BaseDisplayProps = DCDProps,
+        LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>>,
-        options?: Partial<FieldProps<T, any, DCProps, LCProps>>
-    ): JSX.Element;
-    displayFor<
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDProps, LCDProps>>,
+        options: FieldOptions<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDProps, LCDProps>> &
+            Domain<T, any, any, any, DCProps, LCProps> & {
+                domain?: Domain<T, any, any, any, DCProps, LCProps>;
+                label?: string;
+            } = {}
+    ): JSX.Element {
+        const {
+            AutocompleteComponent,
+            DisplayComponent,
+            InputComponent,
+            LabelComponent,
+            SelectComponent,
+            displayFormatter,
+            domain,
+            label,
+            validator,
+            ...fieldOptions
+        } = options;
+        return fieldFor(fromField(field, {DisplayComponent, displayFormatter, domain, label}), fieldOptions);
+    }
+
+    /**
+     * Crée un champ autocomplete.
+     * @param field La définition de champ.
+     * @param options Les options du champ.
+     */
+    autocompleteFor<
         T,
-        DCDomainProps = DisplayProps,
-        LCDomainProps = LabelProps,
-        DCProps = DCDomainProps,
-        LCProps = LCDomainProps
+        ACDProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+        DCDProps extends BaseDisplayProps = DisplayProps,
+        LCDProps extends BaseLabelProps = LabelProps,
+        ACProps extends BaseAutocompleteProps = ACDProps,
+        DCProps extends BaseDisplayProps = DCDProps,
+        LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>> | T,
-        options: Partial<FieldProps<T, any, DCProps, LCProps>> = {}
-    ) {
-        return displayFor(field as any, options);
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, ACDProps, DCDProps, LCDProps>>,
+        options: FieldOptions<FieldEntry<T, FieldEntryType<T>, any, any, ACDProps, DCDProps, LCDProps>> &
+            Domain<T, any, any, ACProps, DCProps, LCProps> & {
+                domain?: Domain<T, any, any, ACProps, DCProps, LCProps>;
+                error?: string;
+                label?: string;
+                name?: string;
+                isEdit?: boolean;
+                isRequired?: boolean;
+                keyResolver?: (key: number | string) => Promise<string | undefined>;
+                querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+            } = {}
+    ): JSX.Element {
+        return this.wrapField("autocomplete", field, options);
     }
 
     /**
@@ -344,83 +373,107 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param field La définition de champ.
      * @param options Les options du champ.
      */
-    fieldFor<T extends string | number | boolean, ICProps = InputProps, DCProps = DisplayProps, LCProps = LabelProps>(
-        field: T,
-        options?: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
-    ): JSX.Element;
     fieldFor<
         T,
-        ICDomainProps = InputProps,
-        DCDomainProps = DisplayProps,
-        LCDomainProps = LabelProps,
-        ICProps = ICDomainProps,
-        DCProps = DCDomainProps,
-        LCProps = LCDomainProps
+        ICDProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
+        DCDProps extends BaseDisplayProps = DisplayProps,
+        LCDProps extends BaseLabelProps = LabelProps,
+        ICProps extends BaseInputProps = ICDProps,
+        DCProps extends BaseDisplayProps = DCDProps,
+        LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>>,
-        options?: Partial<FieldProps<T, ICProps, DCProps, LCProps>>
-    ): JSX.Element;
-    fieldFor<
-        T,
-        ICDomainProps = InputProps,
-        DCDomainProps = DisplayProps,
-        LCDomainProps = LabelProps,
-        ICProps = ICDomainProps,
-        DCProps = DCDomainProps,
-        LCProps = LCDomainProps
-    >(
-        field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDomainProps, any, any, DCDomainProps, LCDomainProps>> | T,
-        options: Partial<FieldProps<T, ICProps, DCProps, LCProps>> = {}
-    ) {
-        return fieldFor(field as any, this.setFieldOptions(field, options));
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, ICDProps, any, any, DCDProps, LCDProps>>,
+        options: FieldOptions<FieldEntry<T, FieldEntryType<T>, ICDProps, any, any, DCDProps, LCDProps>> &
+            Domain<T, ICProps, any, any, DCProps, LCProps> & {
+                domain?: Domain<T, ICProps, any, any, DCProps, LCProps>;
+                error?: string;
+                label?: string;
+                name?: string;
+                isEdit?: boolean;
+                isRequired?: boolean;
+            } = {}
+    ): JSX.Element {
+        return this.wrapField("input", field, options);
     }
 
     /**
-     * Crée un champ avec résolution de référence.
+     * Crée un champ select.
      * @param field La définition de champ.
-     * @param listName Le nom de la liste de référence.
+     * @param values Liste de référence.
      * @param options Les options du champ.
      */
     selectFor<
         T,
-        DCDomainProps = DisplayProps,
-        LCDomainProps = LabelProps,
-        ICProps = Partial<SelectProps>,
-        DCProps = DCDomainProps,
-        LCProps = LCDomainProps,
-        R = any,
-        ValueKey extends string = "code",
-        LabelKey extends string = "label"
+        SCDProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
+        DCDProps extends BaseDisplayProps = DisplayProps,
+        LCDProps extends BaseLabelProps = LabelProps,
+        SCProps extends BaseSelectProps = SCDProps,
+        DCProps extends BaseDisplayProps = DCDProps,
+        LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, any, any, DCDomainProps, LCDomainProps>>,
-        values: R[],
-        options: Partial<FieldProps<T, ICProps, DCProps, LCProps, R, ValueKey, LabelKey>> = {}
-    ) {
-        return selectFor(field, values as any, this.setFieldOptions(field, options));
+        field: EntityField<FieldEntry<T, FieldEntryType<T>, any, SCDProps, any, DCDProps, LCDProps>>,
+        values: ReferenceList,
+        options: FieldOptions<FieldEntry<T, FieldEntryType<T>, any, SCDProps, any, DCDProps, LCDProps>> &
+            Domain<T, any, SCProps, any, DCProps, LCProps> & {
+                domain?: Domain<T, any, SCProps, any, DCProps, LCProps>;
+                error?: string;
+                label?: string;
+                name?: string;
+                isEdit?: boolean;
+                isRequired?: boolean;
+            } = {}
+    ): JSX.Element {
+        return this.wrapField("select", field, options, values);
     }
 
-    /**
-     * Ajoute les options aux champs pour les lier au formulaire (`ref`, `error`, `isEdit`).
-     * @param field La définition du champ.
-     * @param options Les options du champ.
-     */
-    private setFieldOptions<T, IC, DC, LC>(
-        field: EntityField<FieldEntry<T>> | T,
-        options: Partial<FieldProps<T, IC, DC, LC>>
+    private wrapField(
+        type: "autocomplete" | "input" | "select",
+        field: EntityField,
+        options: FieldOptions<any> &
+            Domain<any> & {
+                domain?: Domain<any>;
+                error?: string;
+                label?: string;
+                name?: string;
+                isEdit?: boolean;
+                isRequired?: boolean;
+            },
+        values?: ReferenceList
     ) {
-        if (options.isEdit === undefined) {
-            options.isEdit = this.isEdit;
-        }
-
-        if (isField(field)) {
-            if (!options.ref) {
-                options.ref = f => (this.fields[field.$field.label] = f);
-            }
-            if (!options.error) {
-                options.error = this.errors[field.$field.label];
-            }
-        }
-
-        return options;
+        const {
+            AutocompleteComponent,
+            DisplayComponent,
+            InputComponent,
+            LabelComponent,
+            SelectComponent,
+            displayFormatter,
+            domain,
+            error,
+            label,
+            name,
+            isEdit,
+            isRequired,
+            validator,
+            ...fieldOptions
+        } = options;
+        return (
+            <FieldWrapper
+                AutocompleteComponent={AutocompleteComponent}
+                displayFormatter={displayFormatter}
+                domain={domain}
+                error={error}
+                field={field}
+                InputComponent={InputComponent}
+                isEdit={isEdit ?? this.isEdit}
+                isRequired={isRequired}
+                label={label}
+                onErrorChange={e => this.errors.set(name ?? field.$field.name, e)}
+                options={fieldOptions}
+                SelectComponent={SelectComponent}
+                type={type}
+                validator={validator}
+                values={values}
+            />
+        );
     }
 }

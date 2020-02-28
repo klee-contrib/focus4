@@ -35,6 +35,7 @@ export {
     RecursiveListEntry,
     StoreListNode,
     StoreNode,
+    Validator,
     isAnyFormNode,
     isAnyStoreNode,
     isEntityField,
