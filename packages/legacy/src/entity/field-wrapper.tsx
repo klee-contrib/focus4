@@ -86,3 +86,56 @@ export function FieldWrapper<F extends FieldEntry>({
         return fieldFor<any>(formField, options);
     }
 }
+
+export function fieldWrapperFor(
+    type: "autocomplete" | "input" | "select",
+    field: EntityField,
+    isEdit: boolean,
+    onErrorChange: (error: string | undefined) => void,
+    options: FieldOptions<any> &
+        Domain<any> & {
+            domain?: Domain<any>;
+            error?: string;
+            label?: string;
+            name?: string;
+            isEdit?: boolean;
+            isRequired?: boolean;
+        },
+    values?: ReferenceList
+) {
+    const {
+        AutocompleteComponent,
+        DisplayComponent,
+        InputComponent,
+        LabelComponent,
+        SelectComponent,
+        displayFormatter,
+        domain,
+        error,
+        label,
+        name,
+        isEdit: fieldEdit,
+        isRequired,
+        validator,
+        ...fieldOptions
+    } = options;
+    return (
+        <FieldWrapper
+            AutocompleteComponent={AutocompleteComponent}
+            displayFormatter={displayFormatter}
+            domain={domain}
+            error={error}
+            field={field}
+            InputComponent={InputComponent}
+            isEdit={fieldEdit ?? isEdit}
+            isRequired={isRequired}
+            label={label}
+            onErrorChange={onErrorChange}
+            options={fieldOptions}
+            SelectComponent={SelectComponent}
+            type={type}
+            validator={validator}
+            values={values}
+        />
+    );
+}

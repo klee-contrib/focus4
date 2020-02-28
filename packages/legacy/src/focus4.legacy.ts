@@ -1,1 +1,1 @@
-export {AutoForm, AutoFormOptions, ServiceConfig, ViewModel, createViewModel} from "./entity";
+export {AutoForm, AutoFormOptions, ServiceConfig, ViewModel, createViewModel, fieldWrapperFor} from "./entity";
