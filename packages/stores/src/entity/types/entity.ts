@@ -48,7 +48,7 @@ export interface Entity {
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
     DT extends "string" | "number" | "boolean" | "object" = any,
-    T = DomainType<DT>,
+    T extends DomainType<DT> = any,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,

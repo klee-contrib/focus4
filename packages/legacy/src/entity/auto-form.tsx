@@ -22,12 +22,12 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    Domain,
     DomainType,
     EntityField,
     FieldEntry,
     fromField,
     isStoreListNode,
+    Metadata,
     ReferenceList,
     StoreListNode,
     StoreNode,
@@ -319,10 +319,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     >(
         field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>> &
-            Partial<Domain<DT, any, any, any, DCProps, LCProps>> & {
-                domain?: Domain<DT, any, any, any, DCProps, LCProps>;
-                label?: string;
-            } = {}
+            Metadata<T, any, any, any, DCProps, LCProps> = {}
     ): JSX.Element {
         const {
             AutocompleteComponent,
@@ -331,12 +328,11 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
             LabelComponent,
             SelectComponent,
             displayFormatter,
-            domain,
             label,
             validator,
             ...fieldOptions
         } = options;
-        return fieldFor(fromField(field, {DisplayComponent, displayFormatter, domain, label}), fieldOptions);
+        return fieldFor(fromField(field, {DisplayComponent, displayFormatter, label}), fieldOptions as any);
     }
 
     /**
@@ -356,13 +352,10 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     >(
         field: EntityField<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>> &
-            Partial<Domain<DT, any, any, ACProps, DCProps, LCProps>> & {
-                domain?: Domain<DT, any, any, ACProps, DCProps, LCProps>;
+            Metadata<T, any, any, ACProps, DCProps, LCProps> & {
                 error?: string;
-                label?: string;
-                name?: string;
                 isEdit?: boolean;
-                isRequired?: boolean;
+                name?: string;
                 keyResolver?: (key: number | string) => Promise<string | undefined>;
                 querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
             } = {}
@@ -394,13 +387,10 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     >(
         field: EntityField<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>> &
-            Partial<Domain<DT, ICProps, any, any, DCProps, LCProps>> & {
-                domain?: Domain<DT, ICProps, any, any, DCProps, LCProps>;
+            Metadata<T, ICProps, any, any, DCProps, LCProps> & {
                 error?: string;
-                label?: string;
-                name?: string;
                 isEdit?: boolean;
-                isRequired?: boolean;
+                name?: string;
             } = {}
     ): JSX.Element {
         const {name, ...o} = options;
@@ -432,13 +422,10 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         field: EntityField<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>>,
         values: ReferenceList,
         options: FieldOptions<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>> &
-            Partial<Domain<DT, any, SCProps, any, DCProps, LCProps>> & {
-                domain?: Domain<DT, any, SCProps, any, DCProps, LCProps>;
+            Metadata<T, any, SCProps, any, DCProps, LCProps> & {
                 error?: string;
-                label?: string;
-                name?: string;
                 isEdit?: boolean;
-                isRequired?: boolean;
+                name?: string;
             } = {}
     ): JSX.Element {
         const {name, ...o} = options;

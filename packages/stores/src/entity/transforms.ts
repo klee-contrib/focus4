@@ -1,5 +1,6 @@
 import {isFunction} from "lodash";
 import {comparer, computed, extendObservable, observable} from "mobx";
+import {ComponentType} from "react";
 
 import {themeable} from "@focus4/core";
 
@@ -12,21 +13,38 @@ import {
     Domain,
     DomainType,
     EntityField,
-    FieldEntry
+    FieldComponents,
+    FieldEntry,
+    Validator
 } from "./types";
 
-export type $Field<
-    DT extends "string" | "number" | "boolean" | "object" = any,
-    T = any,
-    ICProps extends BaseInputProps = any,
-    SCProps extends BaseSelectProps = any,
-    ACProps extends BaseAutocompleteProps = any,
-    DCProps extends BaseDisplayProps = any,
-    LCProps extends BaseLabelProps = any
-> = Partial<
-    Omit<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>, "type" | "fieldType"> &
-        Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>
->;
+/** Métadonnées surchargeables dans un champ. */
+export interface Metadata<T = any, ICProps = any, SCProps = any, ACProps = any, DCProps = any, LCProps = any>
+    extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
+    /** Classe CSS pour le champ. */
+    className?: string;
+    /** Commentaire du champ. */
+    comment?: React.ReactNode;
+    /** Formatteur pour l'affichage du champ en consulation. */
+    displayFormatter?: (value: T | undefined) => string;
+    /** Champ obligatoire. */
+    isRequired?: boolean;
+    /** Libellé du champ. */
+    label?: string;
+    /** Validateur(s). */
+    validator?: Validator<T> | Validator<T>[];
+
+    /** Composant personnalisé pour l'autocomplete. */
+    AutocompleteComponent?: ComponentType<ACProps>;
+    /** Composant personnalisé pour l'affichage. */
+    DisplayComponent?: ComponentType<DCProps>;
+    /** Composant personnalisé pour le libellé. */
+    LabelComponent?: ComponentType<LCProps>;
+    /** Composant personnalisé pour l'entrée utilisateur. */
+    InputComponent?: ComponentType<ICProps>;
+    /** Composant personnalisé pour le select. */
+    SelectComponent?: ComponentType<SCProps>;
+}
 
 /**
  * Construit un `EntityField` à partir d'un champ calculé.
@@ -45,7 +63,14 @@ export function makeField<
     LCProps extends BaseLabelProps = BaseLabelProps
 >(
     value: () => T | undefined,
-    $field?: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>,
+    $field?: {name?: string; domain?: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>} & Metadata<
+        T,
+        ICProps,
+        SCProps,
+        ACProps,
+        DCProps,
+        LCProps
+    >,
     setter?: (value: T | undefined) => void,
     isEdit?: boolean
 ): EntityField<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
@@ -64,7 +89,14 @@ export function makeField<
     LCProps extends BaseLabelProps = BaseLabelProps
 >(
     value: T | undefined,
-    $field?: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>
+    $field?: {name?: string; domain?: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>} & Metadata<
+        T,
+        ICProps,
+        SCProps,
+        ACProps,
+        DCProps,
+        LCProps
+    >
 ): EntityField<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>>;
 export function makeField<
     DT extends "string" | "number" | "boolean" | "object" = "string",
@@ -76,20 +108,28 @@ export function makeField<
     LCProps extends BaseLabelProps = BaseLabelProps
 >(
     value: T | undefined | (() => T | undefined),
-    $field: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps> = {},
+    $field: {name?: string; domain?: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>} & Metadata<
+        T,
+        ICProps,
+        SCProps,
+        ACProps,
+        DCProps,
+        LCProps
+    > = {},
     setter: (value: T | undefined) => void = () => null,
     isEdit?: boolean
 ) {
+    const {domain, name, ...metadata} = $field;
     const field = extendObservable(
         new$field(
             {
-                domain: {type: "string"},
+                domain: domain ?? {type: "string"},
                 isRequired: false,
                 label: "",
-                name: "",
+                name: name ?? "",
                 type: "field"
             },
-            $field
+            metadata
         ),
         isFunction(value)
             ? {
@@ -146,13 +186,13 @@ export function fromField<
     LCProps extends BaseLabelProps = LCDProps
 >(
     field: EntityField<FieldEntry<DT, T, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
-    $field: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>
+    $field: Metadata<T, ICProps, SCProps, ACProps, DCProps, LCProps>
 ): EntityField<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
 }
 
 /** @internal */
-export function new$field<F extends FieldEntry>(old$field: F, $field: $Field | (() => $Field)) {
+export function new$field<F extends FieldEntry>(old$field: F, $field: Metadata | (() => Metadata)) {
     if (isFunction($field)) {
         return observable(
             {
@@ -171,21 +211,20 @@ export function new$field<F extends FieldEntry>(old$field: F, $field: $Field | (
     }
 }
 
-function new$fieldCore(old$field: FieldEntry, $field: $Field) {
+function new$fieldCore(old$field: FieldEntry, $field: Metadata) {
     const {
-        domain = old$field.domain,
         isRequired = old$field.isRequired,
         label = old$field.label,
-        name,
         comment = old$field.comment,
         ...domainOverrides
     } = $field;
+    const {domain} = old$field;
     return {
+        type: "field",
+        name: old$field.name,
+        comment,
         isRequired,
         label,
-        name: old$field.name || name,
-        type: "field",
-        comment,
         domain: {
             ...domain,
             ...domainOverrides,

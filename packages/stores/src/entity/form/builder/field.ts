@@ -1,22 +1,29 @@
 import {extendObservable} from "mobx";
-import {ComponentType} from "react";
 
 import {isFunction} from "lodash";
-import {$Field, makeField, new$field} from "../../transforms";
+import {makeField, Metadata, new$field} from "../../transforms";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
+    Domain,
     DomainType,
     EntityField,
     FieldEntry,
     FieldEntryType
 } from "../../types";
 
-type ComponentPropsType<C extends ComponentType | undefined> = C extends ComponentType<infer P> ? P : never;
-type NewType<DT extends "string" | "number" | "boolean" | "object", T> = T extends DomainType<DT> ? T : DomainType<DT>;
+type DomainInputProps<D> = D extends Domain<infer _, infer ICProps> ? ICProps : never;
+type DomainSelectProps<D> = D extends Domain<infer _, infer __, infer SCProps> ? SCProps : never;
+type DomainAutocompleteProps<D> = D extends Domain<infer _, infer __, infer ___, infer ACProps> ? ACProps : never;
+type DomainDisplayProps<D> = D extends Domain<infer _, infer __, infer ___, infer ____, infer DCProps>
+    ? DCProps
+    : never;
+type DomainLabelProps<D> = D extends Domain<infer _, infer __, infer ___, infer ____, infer _____, infer LCProps>
+    ? LCProps
+    : never;
 
 export class FormEntityFieldBuilder<F extends FieldEntry> {
     /** @internal */
@@ -41,23 +48,46 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
         this.field.isEdit = value;
         return this;
     }
+
+    /**
+     * Modifie le domaine du champ.
+     * @param domain Le domaine.
+     */
+    domain<D extends Domain>(
+        domain: D
+    ): FormEntityFieldBuilder<
+        FieldEntry<
+            D["type"],
+            DomainType<D["type"]>,
+            DomainInputProps<D>,
+            DomainSelectProps<D>,
+            DomainAutocompleteProps<D>,
+            DomainDisplayProps<D>,
+            DomainLabelProps<D>
+        >
+    > {
+        // @ts-ignore
+        this.field.$field = {...this.field.$field, domain};
+        // @ts-ignore
+        return this;
+    }
+
     /**
      * Modifie les métadonnées du champ.
      * @param $field Métadonnées du champ à remplacer;
      */
     metadata<
-        DT extends "string" | "number" | "boolean" | "object" = F["domain"]["type"],
-        ICProps extends BaseInputProps = ComponentPropsType<F["domain"]["InputComponent"]>,
-        SCProps extends BaseSelectProps = ComponentPropsType<F["domain"]["SelectComponent"]>,
-        ACProps extends BaseAutocompleteProps = ComponentPropsType<F["domain"]["AutocompleteComponent"]>,
-        DCProps extends BaseDisplayProps = ComponentPropsType<F["domain"]["DisplayComponent"]>,
-        LCProps extends BaseLabelProps = ComponentPropsType<F["domain"]["LabelComponent"]>
+        ICProps extends BaseInputProps = DomainInputProps<F["domain"]>,
+        SCProps extends BaseSelectProps = DomainSelectProps<F["domain"]>,
+        ACProps extends BaseAutocompleteProps = DomainAutocompleteProps<F["domain"]>,
+        DCProps extends BaseDisplayProps = DomainDisplayProps<F["domain"]>,
+        LCProps extends BaseLabelProps = DomainLabelProps<F["domain"]>
     >(
         $field:
-            | $Field<DT, NewType<DT, FieldEntryType<F>>, ICProps, SCProps, ACProps, DCProps, LCProps>
-            | (() => $Field<DT, NewType<DT, FieldEntryType<F>>, ICProps, SCProps, ACProps, DCProps, LCProps>)
+            | Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>
+            | (() => Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>)
     ): FormEntityFieldBuilder<
-        FieldEntry<DT, NewType<DT, FieldEntryType<F>>, ICProps, SCProps, ACProps, DCProps, LCProps>
+        FieldEntry<F["domain"]["type"], F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>
     > {
         const next$field = new$field(this.field.$field, $field);
         if (isFunction($field)) {
@@ -92,11 +122,11 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
             : FieldEntry<
                   F["domain"]["type"],
                   T,
-                  ComponentPropsType<F["domain"]["InputComponent"]>,
-                  ComponentPropsType<F["domain"]["SelectComponent"]>,
-                  ComponentPropsType<F["domain"]["AutocompleteComponent"]>,
-                  ComponentPropsType<F["domain"]["DisplayComponent"]>,
-                  ComponentPropsType<F["domain"]["LabelComponent"]>
+                  DomainInputProps<F["domain"]>,
+                  DomainSelectProps<F["domain"]>,
+                  DomainAutocompleteProps<F["domain"]>,
+                  DomainDisplayProps<F["domain"]>,
+                  DomainLabelProps<F["domain"]>
               >
     > {
         delete this.field.value;

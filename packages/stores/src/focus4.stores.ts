@@ -11,7 +11,6 @@ export {
     isSearch
 } from "./collections";
 export {
-    $Field,
     ActionsFormProps,
     ActionsPanelProps,
     AutocompleteComponents,
@@ -37,8 +36,9 @@ export {
     FormNodeBuilder,
     InputComponents,
     ListEntry,
-    ObjectEntry,
+    Metadata,
     NodeToType,
+    ObjectEntry,
     RecursiveListEntry,
     SelectComponents,
     StoreListNode,

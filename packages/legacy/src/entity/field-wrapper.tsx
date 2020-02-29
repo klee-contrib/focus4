@@ -2,15 +2,15 @@ import {flatten} from "lodash";
 import * as React from "react";
 
 import {autocompleteFor, AutocompleteResult, fieldFor, FieldOptions, selectFor} from "@focus4/forms";
-import {Domain, EntityField, FieldEntry, fromField, ReferenceList, validateField, Validator} from "@focus4/stores";
+import {EntityField, FieldEntry, fromField, Metadata, ReferenceList, validateField, Validator} from "@focus4/stores";
 
 export function FieldWrapper<F extends FieldEntry>({
     AutocompleteComponent,
+    className,
+    comment,
     displayFormatter,
-    domain,
     error: pError,
     field: pField,
-    fieldType,
     isEdit,
     isRequired,
     label,
@@ -23,11 +23,11 @@ export function FieldWrapper<F extends FieldEntry>({
     values
 }: {
     AutocompleteComponent?: React.ComponentType<any>;
+    className?: string;
+    comment?: React.ReactNode;
     displayFormatter?: (value: any) => string;
-    domain?: Domain<any>;
     error?: string;
     field: EntityField<F>;
-    fieldType: "autocomplete" | "input" | "select";
     InputComponent?: React.ComponentType<any>;
     isEdit: boolean;
     label?: string;
@@ -38,7 +38,7 @@ export function FieldWrapper<F extends FieldEntry>({
         querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     };
     SelectComponent?: React.ComponentType<any>;
-    type?: "string" | "number" | "boolean" | "object";
+    type: "autocomplete" | "input" | "select";
     validator?: Validator<any> | Validator<any>[];
     values?: ReferenceList;
 }) {
@@ -47,23 +47,23 @@ export function FieldWrapper<F extends FieldEntry>({
             fromField(pField, {
                 AutocompleteComponent,
                 InputComponent,
+                className,
+                comment,
                 displayFormatter,
-                domain,
                 label,
                 isRequired,
-                SelectComponent,
-                type
+                SelectComponent
             }),
         [
             pField,
             AutocompleteComponent,
             InputComponent,
+            className,
+            comment,
             displayFormatter,
-            domain,
             label,
             isRequired,
-            SelectComponent,
-            type
+            SelectComponent
         ]
     );
 
@@ -94,9 +94,9 @@ export function FieldWrapper<F extends FieldEntry>({
         [field, isEdit, error]
     );
 
-    if (fieldType === "autocomplete") {
+    if (type === "autocomplete") {
         return autocompleteFor<any>(formField, options as any);
-    } else if (fieldType === "select") {
+    } else if (type === "select") {
         return selectFor<any>(formField, values!, options as any);
     } else {
         return fieldFor<any>(formField, options as any);
@@ -104,17 +104,14 @@ export function FieldWrapper<F extends FieldEntry>({
 }
 
 export function fieldWrapperFor(
-    fieldType: "autocomplete" | "input" | "select",
+    type: "autocomplete" | "input" | "select",
     field: EntityField,
     isEdit: boolean,
     onErrorChange: (error: string | undefined) => void,
     options: FieldOptions<any> &
-        Partial<Domain> & {
-            domain?: Domain;
+        Metadata & {
             error?: string;
-            label?: string;
             isEdit?: boolean;
-            isRequired?: boolean;
             keyResolver?: (key: number | string) => Promise<string | undefined>;
             querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
         } = {},
@@ -126,24 +123,24 @@ export function fieldWrapperFor(
         InputComponent,
         LabelComponent,
         SelectComponent,
+        className,
+        comment,
         displayFormatter,
-        domain,
         error,
         label,
         isEdit: fieldEdit,
         isRequired,
-        type,
         validator,
         ...fieldOptions
     } = options;
     return (
         <FieldWrapper
             AutocompleteComponent={AutocompleteComponent}
+            className={className}
+            comment={comment}
             displayFormatter={displayFormatter}
-            domain={domain}
             error={error}
             field={field}
-            fieldType={fieldType}
             InputComponent={InputComponent}
             isEdit={fieldEdit ?? isEdit}
             isRequired={isRequired}
