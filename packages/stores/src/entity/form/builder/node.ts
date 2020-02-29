@@ -59,8 +59,8 @@ export class FormNodeBuilder<E extends Entity> {
         builder: (
             b: FormEntityFieldBuilder<
                 FieldEntry<
-                    unknown,
-                    unknown,
+                    "string",
+                    string,
                     BaseInputProps,
                     BaseSelectProps,
                     BaseAutocompleteProps,

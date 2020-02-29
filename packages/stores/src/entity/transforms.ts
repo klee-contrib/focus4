@@ -10,21 +10,21 @@ import {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
+    DomainType,
     EntityField,
-    FieldEntry,
-    FieldEntryType
+    FieldEntry
 } from "./types";
 
 export type $Field<
-    DT = any,
-    FT extends FieldEntryType<DT> = FieldEntryType<DT>,
+    DT extends "string" | "number" | "boolean" | "object" = any,
+    T = any,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
     LCProps extends BaseLabelProps = any
 > = Partial<
-    FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps> &
+    Omit<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>, "type" | "fieldType"> &
         Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>
 >;
 
@@ -35,31 +35,59 @@ export type $Field<
  * @param setter Le setter, si besoin.
  * @param isEdit Etat d'édition initial ou getter vers un état d'édition externe.
  */
-export function makeFieldCore<
-    T,
-    FT extends FieldEntryType<T>,
-    ICProps extends BaseInputProps,
-    SCProps extends BaseSelectProps,
-    ACProps extends BaseAutocompleteProps,
-    DCProps extends BaseDisplayProps,
-    LCProps extends BaseLabelProps
+export function makeField<
+    DT extends "string" | "number" | "boolean" | "object" = "string",
+    T extends DomainType<DT> = DomainType<DT>,
+    ICProps extends BaseInputProps = BaseInputProps,
+    SCProps extends BaseSelectProps = BaseSelectProps,
+    ACProps extends BaseAutocompleteProps = BaseAutocompleteProps,
+    DCProps extends BaseDisplayProps = BaseDisplayProps,
+    LCProps extends BaseLabelProps = BaseLabelProps
+>(
+    value: () => T | undefined,
+    $field?: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>,
+    setter?: (value: T | undefined) => void,
+    isEdit?: boolean
+): EntityField<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
+/**
+ * Construit un `EntityField` à partir d'une valeur quelconque.
+ * @param value La valeur.
+ * @param $field Les métadonnées pour le champ à créer.
+ */
+export function makeField<
+    DT extends "string" | "number" | "boolean" | "object" = "string",
+    T extends DomainType<DT> = DomainType<DT>,
+    ICProps extends BaseInputProps = BaseInputProps,
+    SCProps extends BaseSelectProps = BaseSelectProps,
+    ACProps extends BaseAutocompleteProps = BaseAutocompleteProps,
+    DCProps extends BaseDisplayProps = BaseDisplayProps,
+    LCProps extends BaseLabelProps = BaseLabelProps
+>(
+    value: T | undefined,
+    $field?: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>
+): EntityField<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>>;
+export function makeField<
+    DT extends "string" | "number" | "boolean" | "object" = "string",
+    T extends DomainType<DT> = DomainType<DT>,
+    ICProps extends BaseInputProps = BaseInputProps,
+    SCProps extends BaseSelectProps = BaseSelectProps,
+    ACProps extends BaseAutocompleteProps = BaseAutocompleteProps,
+    DCProps extends BaseDisplayProps = BaseDisplayProps,
+    LCProps extends BaseLabelProps = BaseLabelProps
 >(
     value: T | undefined | (() => T | undefined),
-    $field:
-        | $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<T, FT, ICProps, SCProps, ACProps, DCProps, LCProps>) = {},
+    $field: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps> = {},
     setter: (value: T | undefined) => void = () => null,
-    isEdit?: boolean | (() => boolean)
+    isEdit?: boolean
 ) {
     const field = extendObservable(
         new$field(
             {
-                domain: {},
+                domain: {type: "string"},
                 isRequired: false,
                 label: "",
                 name: "",
-                type: "field",
-                fieldType: typeof (isFunction(value) ? value() : value) === "number" ? "number" : {}
+                type: "field"
             },
             $field
         ),
@@ -73,10 +101,10 @@ export function makeFieldCore<
                   }
               }
             : {value}
-    ) as EntityField<FieldEntry<FT>>;
+    ) as EntityField<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>> & {isEdit?: boolean};
 
     if (isEdit !== undefined) {
-        (field as any).isEdit = isEdit;
+        field.isEdit = isEdit;
     }
 
     return field;
@@ -88,7 +116,7 @@ export function makeFieldCore<
  * @param isEdit L'état d'édition du champ ainsi cloné.
  */
 export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?: boolean) {
-    return makeFieldCore(
+    return makeField(
         () => field.value,
         field.$field,
         value => (field.value = value),
@@ -103,9 +131,9 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit?:
  * @param field Le champ.
  * @param $field Les métadonnées à remplacer.
  */
-export function fromFieldCore<
-    DT,
-    FT extends FieldEntryType<DT>,
+export function fromField<
+    DT extends "string" | "number" | "boolean" | "object",
+    T extends DomainType<DT>,
     ICDProps extends BaseInputProps,
     SCDProps extends BaseSelectProps,
     ACDProps extends BaseAutocompleteProps,
@@ -117,11 +145,9 @@ export function fromFieldCore<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 >(
-    field: EntityField<FieldEntry<DT, FT, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
-    $field:
-        | $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>
-        | (() => $Field<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>)
-): EntityField<FieldEntry<DT, FT, ICProps, SCProps, ACProps, DCProps, LCProps>> {
+    field: EntityField<FieldEntry<DT, T, ICDProps, SCDProps, ACDProps, DCDProps, LCDProps>>,
+    $field: $Field<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>
+): EntityField<FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>> {
     return extendObservable(new$field(field.$field, $field), {value: field.value}) as any;
 }
 
@@ -151,18 +177,15 @@ function new$fieldCore(old$field: FieldEntry, $field: $Field) {
         isRequired = old$field.isRequired,
         label = old$field.label,
         name,
-        type = old$field.type,
         comment = old$field.comment,
-        fieldType = old$field.fieldType,
         ...domainOverrides
     } = $field;
     return {
         isRequired,
         label,
         name: old$field.name || name,
-        type,
+        type: "field",
         comment,
-        fieldType,
         domain: {
             ...domain,
             ...domainOverrides,

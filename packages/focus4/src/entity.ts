@@ -4,8 +4,6 @@ export {
     autocompleteFor,
     domain,
     fieldFor,
-    fromField,
-    makeField,
     makeFormActions,
     makeFormNode,
     useFormActions,
@@ -26,7 +24,9 @@ export {
     StoreListNode,
     StoreNode,
     buildNode,
+    fromField,
     makeEntityStore,
+    makeField,
     nodeToFormNode,
     stringFor,
     toFlatValues

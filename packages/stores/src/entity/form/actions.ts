@@ -250,7 +250,7 @@ export class FormActionsBuilder<
                             runInAction("afterLoad", () => {
                                 if (data) {
                                     if (isStoreNode(formNode.sourceNode)) {
-                                        formNode.sourceNode.replace(data);
+                                        formNode.sourceNode.replace(data as any);
                                     } else {
                                         formNode.sourceNode.replaceNodes(data as any);
                                     }

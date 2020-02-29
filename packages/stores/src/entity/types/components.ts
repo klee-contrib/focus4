@@ -13,7 +13,7 @@ export interface BaseInputProps {
 }
 
 export interface BaseSelectProps extends BaseInputProps {
-    values: ReferenceList;
+    values?: ReferenceList;
 }
 
 export interface BaseAutocompleteProps extends BaseInputProps {

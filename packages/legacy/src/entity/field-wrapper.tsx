@@ -1,8 +1,8 @@
 import {flatten} from "lodash";
 import * as React from "react";
 
-import {autocompleteFor, fieldFor, FieldOptions, fromField, selectFor} from "@focus4/forms";
-import {Domain, EntityField, FieldEntry, ReferenceList, validateField, Validator} from "@focus4/stores";
+import {autocompleteFor, AutocompleteResult, fieldFor, FieldOptions, selectFor} from "@focus4/forms";
+import {Domain, EntityField, FieldEntry, fromField, ReferenceList, validateField, Validator} from "@focus4/stores";
 
 export function FieldWrapper<F extends FieldEntry>({
     AutocompleteComponent,
@@ -10,6 +10,7 @@ export function FieldWrapper<F extends FieldEntry>({
     domain,
     error: pError,
     field: pField,
+    fieldType,
     isEdit,
     isRequired,
     label,
@@ -26,14 +27,18 @@ export function FieldWrapper<F extends FieldEntry>({
     domain?: Domain<any>;
     error?: string;
     field: EntityField<F>;
+    fieldType: "autocomplete" | "input" | "select";
     InputComponent?: React.ComponentType<any>;
     isEdit: boolean;
     label?: string;
     isRequired?: boolean;
     onErrorChange: (error: string | undefined) => void;
-    options: FieldOptions<F>;
+    options: FieldOptions<F> & {
+        keyResolver?: (key: number | string) => Promise<string | undefined>;
+        querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+    };
     SelectComponent?: React.ComponentType<any>;
-    type: "autocomplete" | "input" | "select";
+    type?: "string" | "number" | "boolean" | "object";
     validator?: Validator<any> | Validator<any>[];
     values?: ReferenceList;
 }) {
@@ -46,9 +51,20 @@ export function FieldWrapper<F extends FieldEntry>({
                 domain,
                 label,
                 isRequired,
-                SelectComponent
+                SelectComponent,
+                type
             }),
-        [pField, AutocompleteComponent, InputComponent, displayFormatter, domain, label, isRequired, SelectComponent]
+        [
+            pField,
+            AutocompleteComponent,
+            InputComponent,
+            displayFormatter,
+            domain,
+            label,
+            isRequired,
+            SelectComponent,
+            type
+        ]
     );
 
     const validator = React.useMemo(() => {
@@ -78,29 +94,30 @@ export function FieldWrapper<F extends FieldEntry>({
         [field, isEdit, error]
     );
 
-    if (type === "autocomplete") {
-        return autocompleteFor<any>(formField, options);
-    } else if (type === "select") {
-        return selectFor<any>(formField, values!, options);
+    if (fieldType === "autocomplete") {
+        return autocompleteFor<any>(formField, options as any);
+    } else if (fieldType === "select") {
+        return selectFor<any>(formField, values!, options as any);
     } else {
-        return fieldFor<any>(formField, options);
+        return fieldFor<any>(formField, options as any);
     }
 }
 
 export function fieldWrapperFor(
-    type: "autocomplete" | "input" | "select",
+    fieldType: "autocomplete" | "input" | "select",
     field: EntityField,
     isEdit: boolean,
     onErrorChange: (error: string | undefined) => void,
     options: FieldOptions<any> &
-        Domain<any> & {
-            domain?: Domain<any>;
+        Partial<Domain> & {
+            domain?: Domain;
             error?: string;
             label?: string;
-            name?: string;
             isEdit?: boolean;
             isRequired?: boolean;
-        },
+            keyResolver?: (key: number | string) => Promise<string | undefined>;
+            querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+        } = {},
     values?: ReferenceList
 ) {
     const {
@@ -113,9 +130,9 @@ export function fieldWrapperFor(
         domain,
         error,
         label,
-        name,
         isEdit: fieldEdit,
         isRequired,
+        type,
         validator,
         ...fieldOptions
     } = options;
@@ -126,6 +143,7 @@ export function fieldWrapperFor(
             domain={domain}
             error={error}
             field={field}
+            fieldType={fieldType}
             InputComponent={InputComponent}
             isEdit={fieldEdit ?? isEdit}
             isRequired={isRequired}

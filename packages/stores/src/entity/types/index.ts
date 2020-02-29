@@ -11,12 +11,12 @@ export {
 } from "./components";
 export {
     Domain,
+    DomainType,
     Entity,
     EntityField,
     EntityToType,
     FieldEntry,
     FieldEntryType,
-    FieldType,
     ListEntry,
     ObjectEntry,
     RecursiveListEntry

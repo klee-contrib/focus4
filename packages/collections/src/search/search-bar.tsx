@@ -4,8 +4,8 @@ import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import * as React from "react";
 
-import {fieldFor, makeField} from "@focus4/forms";
-import {Entity, FormEntityField, SearchStore, toFlatValues} from "@focus4/stores";
+import {fieldFor} from "@focus4/forms";
+import {Entity, FormEntityField, makeField, SearchStore, toFlatValues} from "@focus4/stores";
 import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
@@ -71,11 +71,16 @@ export class SearchBar<T, C extends Entity> extends React.Component<SearchBarPro
             // Toute la difficulté réside dans le fait qu'on a besoin de conserver l'ordre dans lequel l'utilisateur à voulu saisir les critères.
             // Et également de ne pas changer le rendu entre ce que l'utilisateur à tapé et ce qu'il voit.
             const criteria = this.criteria
-                .concat(difference(this.flatCriteria.map(c => c[0]), this.criteria))
+                .concat(
+                    difference(
+                        this.flatCriteria.map(c => c[0]),
+                        this.criteria
+                    )
+                )
                 .map(c => [c, this.flatCriteria.find(i => i[0] === c) && this.flatCriteria.find(i => i[0] === c)![1]])
                 .filter(([_, value]) => value)
                 .map(([key, value]) => `${key}:${value}`);
-            return `${criteria.join(" ")}${criteria.length && (store.query && store.query.trim()) ? " " : ""}${
+            return `${criteria.join(" ")}${criteria.length && store.query && store.query.trim() ? " " : ""}${
                 store.query
             }`;
         }

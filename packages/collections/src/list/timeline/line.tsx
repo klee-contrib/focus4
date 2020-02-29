@@ -16,7 +16,7 @@ export function TimelineLine<T>({
     /** Données. */
     data: T;
     /** Le sélecteur pour le champ date, pour une ligne timeline. */
-    dateSelector: (data: T) => EntityField<FieldEntry<string>>;
+    dateSelector: (data: T) => EntityField<FieldEntry<"string">>;
     /** Ref vers l'élement DOM racine de la ligne. */
     domRef?: (element: HTMLElement | null) => void;
     /** Composant de ligne. */

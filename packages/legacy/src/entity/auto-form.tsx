@@ -11,7 +11,6 @@ import {
     fieldFor,
     FieldOptions,
     Form,
-    fromField,
     InputProps,
     LabelProps,
     PanelProps,
@@ -24,9 +23,10 @@ import {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
+    DomainType,
     EntityField,
     FieldEntry,
-    FieldEntryType,
+    fromField,
     isStoreListNode,
     ReferenceList,
     StoreListNode,
@@ -310,16 +310,16 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     displayFor<
-        DT,
-        FT extends FieldEntryType<DT>,
+        DT extends "string" | "number" | "boolean" | "object",
+        T extends DomainType<DT>,
         DCDProps extends BaseDisplayProps = DisplayProps,
         LCDProps extends BaseLabelProps = LabelProps,
         DCProps extends BaseDisplayProps = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<DT, FT, any, any, any, DCDProps, LCDProps>>,
-        options: FieldOptions<FieldEntry<DT, FT, any, any, any, DCDProps, LCDProps>> &
-            Domain<DT, any, any, any, DCProps, LCProps> & {
+        field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>>,
+        options: FieldOptions<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>> &
+            Partial<Domain<DT, any, any, any, DCProps, LCProps>> & {
                 domain?: Domain<DT, any, any, any, DCProps, LCProps>;
                 label?: string;
             } = {}
@@ -345,18 +345,18 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     autocompleteFor<
-        DT,
-        FT extends FieldEntryType<DT>,
-        ACDProps extends BaseAutocompleteProps = AutocompleteProps<DT extends number ? "number" : "string">,
+        DT extends "string" | "number" | "boolean" | "object",
+        T extends DomainType<DT>,
+        ACDProps extends BaseAutocompleteProps = AutocompleteProps<DT extends "number" ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
         LCDProps extends BaseLabelProps = LabelProps,
         ACProps extends BaseAutocompleteProps = ACDProps,
         DCProps extends BaseDisplayProps = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<DT, FT, any, any, ACDProps, DCDProps, LCDProps>>,
-        options: FieldOptions<FieldEntry<DT, FT, any, any, ACDProps, DCDProps, LCDProps>> &
-            Domain<DT, any, any, ACProps, DCProps, LCProps> & {
+        field: EntityField<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>>,
+        options: FieldOptions<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>> &
+            Partial<Domain<DT, any, any, ACProps, DCProps, LCProps>> & {
                 domain?: Domain<DT, any, any, ACProps, DCProps, LCProps>;
                 error?: string;
                 label?: string;
@@ -367,12 +367,13 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
                 querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
             } = {}
     ): JSX.Element {
+        const {name, ...o} = options;
         return fieldWrapperFor(
             "autocomplete",
             field,
             this.isEdit,
             e => this.errors.set(name ?? field.$field.name, e),
-            options
+            o as any
         );
     }
 
@@ -382,8 +383,8 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     fieldFor<
-        DT,
-        FT extends FieldEntryType<DT>,
+        DT extends "string" | "number" | "boolean" | "object",
+        T extends DomainType<DT>,
         ICDProps extends BaseInputProps = InputProps<DT extends number ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
         LCDProps extends BaseLabelProps = LabelProps,
@@ -391,9 +392,9 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         DCProps extends BaseDisplayProps = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<DT, FT, ICDProps, any, any, DCDProps, LCDProps>>,
-        options: FieldOptions<FieldEntry<DT, FT, ICDProps, any, any, DCDProps, LCDProps>> &
-            Domain<DT, ICProps, any, any, DCProps, LCProps> & {
+        field: EntityField<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>>,
+        options: FieldOptions<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>> &
+            Partial<Domain<DT, ICProps, any, any, DCProps, LCProps>> & {
                 domain?: Domain<DT, ICProps, any, any, DCProps, LCProps>;
                 error?: string;
                 label?: string;
@@ -402,12 +403,13 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
                 isRequired?: boolean;
             } = {}
     ): JSX.Element {
+        const {name, ...o} = options;
         return fieldWrapperFor(
             "input",
             field,
             this.isEdit,
             e => this.errors.set(name ?? field.$field.name, e),
-            options
+            o as any
         );
     }
 
@@ -418,19 +420,19 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     selectFor<
-        DT,
-        FT extends FieldEntryType<DT>,
-        SCDProps extends BaseSelectProps = SelectProps<DT extends number ? "number" : "string">,
+        DT extends "string" | "number" | "boolean" | "object",
+        T extends DomainType<DT>,
+        SCDProps extends BaseSelectProps = SelectProps<DT extends "number" ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
         LCDProps extends BaseLabelProps = LabelProps,
         SCProps extends BaseSelectProps = SCDProps,
         DCProps extends BaseDisplayProps = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
-        field: EntityField<FieldEntry<DT, FT, any, SCDProps, any, DCDProps, LCDProps>>,
+        field: EntityField<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>>,
         values: ReferenceList,
-        options: FieldOptions<FieldEntry<DT, FT, any, SCDProps, any, DCDProps, LCDProps>> &
-            Domain<DT, any, SCProps, any, DCProps, LCProps> & {
+        options: FieldOptions<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>> &
+            Partial<Domain<DT, any, SCProps, any, DCProps, LCProps>> & {
                 domain?: Domain<DT, any, SCProps, any, DCProps, LCProps>;
                 error?: string;
                 label?: string;
@@ -439,12 +441,13 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
                 isRequired?: boolean;
             } = {}
     ): JSX.Element {
+        const {name, ...o} = options;
         return fieldWrapperFor(
             "select",
             field,
             this.isEdit,
             e => this.errors.set(name ?? field.$field.name, e),
-            options,
+            o as any,
             values
         );
     }

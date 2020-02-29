@@ -10,14 +10,13 @@ import {
 import {AutocompleteProps, DisplayProps, InputProps, LabelProps, SelectProps} from "../components";
 
 /** Crée un domaine. */
-export function domain<T>(): <
-    ICProps extends BaseInputProps = InputProps<T extends number ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps<T extends number ? "number" : "string">,
-    ACProps extends BaseAutocompleteProps = AutocompleteProps<T extends number ? "number" : "string">,
+export function domain<
+    DT extends "string" | "number" | "boolean" | "object",
+    ICProps extends BaseInputProps = InputProps<DT extends "number" ? "number" : "string">,
+    SCProps extends BaseSelectProps = SelectProps<DT extends "number" ? "number" : "string">,
+    ACProps extends BaseAutocompleteProps = AutocompleteProps<DT extends "number" ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
->(
-    d: Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps>
-) => Domain<T, ICProps, SCProps, ACProps, DCProps, LCProps> {
-    return d => d;
+>(d: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>) {
+    return d;
 }

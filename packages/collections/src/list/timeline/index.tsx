@@ -16,7 +16,7 @@ export type TimelineProps<T> = ListBaseProps<T> & {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Le sélecteur du champ contenant la date. */
-    dateSelector: (data: T) => EntityField<FieldEntry<string>>;
+    dateSelector: (data: T) => EntityField<FieldEntry<"string">>;
     /** CSS. */
     theme?: CSSProp<TimelineCss>;
     /** Le composant de ligne. */

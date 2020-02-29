@@ -8,7 +8,7 @@ export {
 } from "./form";
 export {buildNode, makeEntityStore, nodeToFormNode, toFlatValues} from "./store";
 export {stringFor} from "./string-for";
-export {$Field, cloneField, fromFieldCore, makeFieldCore} from "./transforms";
+export {$Field, cloneField, fromField, makeField} from "./transforms";
 export {
     AutocompleteComponents,
     BaseAutocompleteProps,
@@ -16,9 +16,9 @@ export {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
+    DomainType,
     FieldComponents,
     FieldEntryType,
-    FieldType,
     FormListNode,
     InputComponents,
     SelectComponents,

@@ -59,4 +59,4 @@ export {
     formCss,
     selectFor
 } from "./fields";
-export {domain, fromField, makeField, makeFormActions, makeFormNode, useFormActions, useFormNode} from "./stores";
+export {domain, makeFormActions, makeFormNode, useFormActions, useFormNode} from "./stores";

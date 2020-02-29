@@ -5,7 +5,14 @@ import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 
 import {themeable} from "@focus4/core";
-import {BaseInputProps, EntityField, FieldComponents, FieldEntry, FieldType, FormEntityField} from "@focus4/stores";
+import {
+    BaseInputProps,
+    EntityField,
+    FieldComponents,
+    FieldEntry,
+    FieldEntryType,
+    FormEntityField
+} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Autocomplete, Display, Input, Label, Select} from "../components";
@@ -33,7 +40,7 @@ export interface FieldOptions<F extends FieldEntry> {
     /** N'affiche jamais le champ en erreur. */
     noError?: boolean;
     /** Handler de modification de la valeur. */
-    onChange?: (value: FieldType<F["fieldType"]> | undefined) => void;
+    onChange?: (value: FieldEntryType<F> | undefined) => void;
     /** CSS. */
     theme?: CSSProp<FieldCss>;
     /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
@@ -126,7 +133,6 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
             value,
             $field: {
                 comment,
-                fieldType,
                 label,
                 name,
                 isRequired,
@@ -142,7 +148,8 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                     InputComponent = Input,
                     inputProps: domainICP = {},
                     SelectComponent = Select,
-                    selectProps: domainSCP = {}
+                    selectProps: domainSCP = {},
+                    type
                 }
             }
         } = field as FormEntityField<F>;
@@ -152,7 +159,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
             error: (store.showError && error) || undefined,
             name,
             id,
-            type: fieldType === "number" ? "number" : "string",
+            type: type === "number" ? "number" : "string",
             onChange
         };
 
