@@ -12,12 +12,12 @@ import {Validator} from "./validation";
 
 /** Définition d'un domaine. */
 export interface Domain<
-    DT extends "string" | "number" | "boolean" | "object" = "string" | "number" | "boolean" | "object",
-    ICProps extends BaseInputProps = BaseInputProps,
-    SCProps extends BaseSelectProps = BaseSelectProps,
-    ACProps extends BaseAutocompleteProps = BaseAutocompleteProps,
-    DCProps extends BaseDisplayProps = BaseDisplayProps,
-    LCProps extends BaseLabelProps = BaseLabelProps
+    DT extends "string" | "number" | "boolean" | "object" = any,
+    ICProps extends BaseInputProps = any,
+    SCProps extends BaseSelectProps = any,
+    ACProps extends BaseAutocompleteProps = any,
+    DCProps extends BaseDisplayProps = any,
+    LCProps extends BaseLabelProps = any
 > extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
     /** Classe CSS pour le champ. */
     className?: string;
@@ -48,7 +48,7 @@ export interface Entity {
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
     DT extends "string" | "number" | "boolean" | "object" = any,
-    T extends DomainType<DT> = any,
+    T extends DomainType<DT> = DomainType<DT>,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,

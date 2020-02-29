@@ -87,7 +87,8 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
             | Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>
             | (() => Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>)
     ): FormEntityFieldBuilder<
-        FieldEntry<F["domain"]["type"], F["fieldType"], ICProps, SCProps, ACProps, DCProps, LCProps>
+        // @ts-ignore : FieldEntryType<F> n'est pas assignable à F["domain"]["type"] alors qu'en fait par construction si.
+        FieldEntry<F["domain"]["type"], FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>
     > {
         const next$field = new$field(this.field.$field, $field);
         if (isFunction($field)) {
@@ -117,17 +118,15 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
             /**/
         }
     ): FormEntityFieldBuilder<
-        DomainType<F["domain"]["type"]> extends T
-            ? F
-            : FieldEntry<
-                  F["domain"]["type"],
-                  T,
-                  DomainInputProps<F["domain"]>,
-                  DomainSelectProps<F["domain"]>,
-                  DomainAutocompleteProps<F["domain"]>,
-                  DomainDisplayProps<F["domain"]>,
-                  DomainLabelProps<F["domain"]>
-              >
+        FieldEntry<
+            F["domain"]["type"],
+            T,
+            DomainInputProps<F["domain"]>,
+            DomainSelectProps<F["domain"]>,
+            DomainAutocompleteProps<F["domain"]>,
+            DomainDisplayProps<F["domain"]>,
+            DomainLabelProps<F["domain"]>
+        >
     > {
         delete this.field.value;
         extendObservable(this.field, {
