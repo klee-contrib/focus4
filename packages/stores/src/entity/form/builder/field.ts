@@ -29,8 +29,8 @@ export class FormEntityFieldBuilder<F extends FieldEntry> {
     /** @internal */
     field: EntityField<F>;
 
-    constructor(field?: EntityField<F>) {
-        this.field = field || (makeField(undefined) as any);
+    constructor(field: EntityField<F> | string) {
+        this.field = typeof field !== "string" ? field : (makeField(undefined, {name: field}) as any);
     }
 
     /**

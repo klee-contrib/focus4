@@ -72,7 +72,7 @@ export class FormNodeBuilder<E extends Entity> {
         ) => FormEntityFieldBuilder<NFE>
     ): FormNodeBuilder<E & {[P in FE]: NFE}> {
         // @ts-ignore
-        this.node[name] = builder(new FormEntityFieldBuilder(), this.node).collect();
+        this.node[name] = builder(new FormEntityFieldBuilder(name), this.node).collect();
         // @ts-ignore
         return this;
     }
