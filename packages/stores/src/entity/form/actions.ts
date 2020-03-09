@@ -84,7 +84,7 @@ export class FormActionsBuilder<
             this.getLoadParams = () => [];
         } else if (!isFunction(params[0])) {
             // @ts-ignore
-            this.getLoadParams = () => params;
+            this.getLoadParams = () => (params.length === 1 ? params[0] : params);
         } else {
             this.getLoadParams = params[0];
         }
