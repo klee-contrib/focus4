@@ -81,7 +81,7 @@ export class FormNodeBuilder<E extends Entity> {
      * Construit le FormNode à partir de la configuration renseignée.
      */
     build(): FormNode<E> {
-        this.node.$tempEdit = this.isEdit || false;
+        this.node.$tempEdit = this.isEdit ?? false;
         nodeToFormNode(this.node, this.sourceNode);
 
         // @ts-ignore
@@ -173,7 +173,7 @@ export class FormNodeBuilder<E extends Entity> {
 
     /** @internal */
     collect() {
-        this.node.$tempEdit = this.isEdit;
+        this.node.$tempEdit = this.isEdit ?? true;
         return this.node;
     }
 }
