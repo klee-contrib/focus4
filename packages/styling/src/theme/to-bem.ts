@@ -51,10 +51,12 @@ export function fromBem<T>(css: T | CSSToStrings<T> | Partial<ToBem<T>>): CSSToS
 
     for (const key in css as any) {
         const value = (css as any)[key];
-        if (typeof value === "string") {
-            (res as any)[key] = value;
-        } else {
-            Object.assign(res, value(true));
+        if (value) {
+            if (typeof value === "string") {
+                (res as any)[key] = value;
+            } else {
+                Object.assign(res, value(true));
+            }
         }
     }
 

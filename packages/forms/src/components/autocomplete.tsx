@@ -33,6 +33,8 @@ export interface AutocompleteResult {
 
 /** Props du composant d'autocomplétion */
 export interface AutocompleteProps<T extends "string" | "number"> extends RTAutocompleteProps {
+    /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
+    autoSelect?: boolean;
     /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
     isQuickSearch?: boolean;
     /** Service de résolution de code. */
@@ -85,6 +87,12 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
                     this.data.set(`${value}`, label);
                 }
             });
+        }
+    }
+
+    async componentWillReceiveProps({autoSelect, value, isQuickSearch, keyResolver}: AutocompleteProps<T>) {
+        if (autoSelect && value !== this.props.value && value && !isQuickSearch && keyResolver) {
+            this.query = i18next.t((await keyResolver(value)) || "") || value?.toString() || "";
         }
     }
 
@@ -167,6 +175,14 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
                         {}
                 );
                 this.isLoading = false;
+
+                if (this.props.autoSelect) {
+                    if (this.data && this.data.size === 1) {
+                        this.onValueChange(query);
+                    } else {
+                        this.onValueChange("");
+                    }
+                }
             });
         }
     }
@@ -218,7 +234,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
     }
 
     render() {
-        const {keyResolver, querySearcher, theme: pTheme, isQuickSearch, ...props} = this.props;
+        const {keyResolver, querySearcher, theme: pTheme, isQuickSearch, autoSelect, ...props} = this.props;
         return (
             <Theme theme={pTheme}>
                 {theme => (
