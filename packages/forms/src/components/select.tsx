@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {ReferenceList} from "@focus4/stores";
@@ -50,37 +51,39 @@ export function Select<T extends "string" | "number">({
     const theme = useTheme("select", selectCss, pTheme);
     const {$labelKey, $valueKey} = values;
 
-    // On ajoute l'élément vide si nécessaire.
-    let finalValues: {}[] = values;
-    if (hasUndefined) {
-        finalValues = [{[$valueKey]: "", [$labelKey]: i18next.t(unSelectedLabel)}, ...finalValues];
-    }
+    return useObserver(() => {
+        // On ajoute l'élément vide si nécessaire.
+        let finalValues: {}[] = values;
+        if (hasUndefined) {
+            finalValues = [{[$valueKey]: "", [$labelKey]: i18next.t(unSelectedLabel)}, ...finalValues];
+        }
 
-    return (
-        <div data-focus="select" className={theme.select({error: !!error})}>
-            <select
-                disabled={disabled}
-                id={name}
-                name={name}
-                onChange={({currentTarget: {value: val}}) => {
-                    const v = type === "number" ? parseFloat(val) : val;
-                    onChange(v || v === 0 ? (v as any) : undefined);
-                }}
-                value={value === undefined ? "" : value}
-            >
-                {finalValues.map((val, idx) => {
-                    const optVal = `${(val as any)[$valueKey]}`;
-                    const elementValue = (val as any)[$labelKey];
-                    const optLabel =
-                        elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
-                    return (
-                        <option key={idx} value={optVal}>
-                            {i18next.t(optLabel)}
-                        </option>
-                    );
-                })}
-            </select>
-            {error ? <div className={theme.error()}>{error}</div> : null}
-        </div>
-    );
+        return (
+            <div data-focus="select" className={theme.select({error: !!error})}>
+                <select
+                    disabled={disabled}
+                    id={name}
+                    name={name}
+                    onChange={({currentTarget: {value: val}}) => {
+                        const v = type === "number" ? parseFloat(val) : val;
+                        onChange(v || v === 0 ? (v as any) : undefined);
+                    }}
+                    value={value === undefined ? "" : value}
+                >
+                    {finalValues.map((val, idx) => {
+                        const optVal = `${(val as any)[$valueKey]}`;
+                        const elementValue = (val as any)[$labelKey];
+                        const optLabel =
+                            elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
+                        return (
+                            <option key={idx} value={optVal}>
+                                {i18next.t(optLabel)}
+                            </option>
+                        );
+                    })}
+                </select>
+                {error ? <div className={theme.error()}>{error}</div> : null}
+            </div>
+        );
+    });
 }

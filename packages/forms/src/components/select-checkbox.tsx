@@ -68,6 +68,7 @@ export function SelectCheckbox<T extends "string" | "number">({
     values
 }: SelectCheckboxProps<T>) {
     const theme = useTheme("selectCheckbox", selectCheckboxCss, pTheme);
+
     return useObserver(() => (
         <div className={theme.select()}>
             {label && <h5>{i18next.t(label)}</h5>}

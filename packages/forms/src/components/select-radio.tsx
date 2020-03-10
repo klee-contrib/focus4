@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {ReferenceList} from "@focus4/stores";
@@ -53,33 +54,35 @@ export function SelectRadio<T extends "string" | "number">({
     const theme = useTheme("selectRadio", selectRadioCss, pTheme);
     const {$labelKey, $valueKey} = values;
 
-    let definitiveValues: {}[] = values;
-    if (hasUndefined && undefinedPosition === "bottom") {
-        definitiveValues = [...values, {[$valueKey]: undefined, [$labelKey]: undefinedLabel}];
-    }
-    if (hasUndefined && undefinedPosition === "top") {
-        definitiveValues = [{[$valueKey]: undefined, [$labelKey]: undefinedLabel}, ...values];
-    }
+    return useObserver(() => {
+        let definitiveValues: {}[] = values;
+        if (hasUndefined && undefinedPosition === "bottom") {
+            definitiveValues = [...values, {[$valueKey]: undefined, [$labelKey]: undefinedLabel}];
+        }
+        if (hasUndefined && undefinedPosition === "top") {
+            definitiveValues = [{[$valueKey]: undefined, [$labelKey]: undefinedLabel}, ...values];
+        }
 
-    return (
-        <div className={theme.select()}>
-            {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
-            <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
-                {definitiveValues.map(option => {
-                    const optVal = (option as any)[$valueKey];
-                    const optLabel = (option as any)[$labelKey];
+        return (
+            <div className={theme.select()}>
+                {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
+                <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
+                    {definitiveValues.map(option => {
+                        const optVal = (option as any)[$valueKey];
+                        const optLabel = (option as any)[$labelKey];
 
-                    return (
-                        <RadioButton
-                            key={optVal || "undefined"}
-                            label={i18next.t(optLabel)}
-                            value={optVal}
-                            theme={{field: theme.option()}}
-                        />
-                    );
-                })}
-            </RadioGroup>
-            {error ? <div className={theme.error()}>{error}</div> : null}
-        </div>
-    );
+                        return (
+                            <RadioButton
+                                key={optVal || "undefined"}
+                                label={i18next.t(optLabel)}
+                                value={optVal}
+                                theme={{field: theme.option()}}
+                            />
+                        );
+                    })}
+                </RadioGroup>
+                {error ? <div className={theme.error()}>{error}</div> : null}
+            </div>
+        );
+    });
 }
