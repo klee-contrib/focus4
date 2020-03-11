@@ -1,4 +1,3 @@
-import {some, values as _values} from "lodash";
 import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
 import * as React from "react";
 import {v4} from "uuid";
@@ -143,7 +142,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         this.entity = entity || createViewModel(storeData);
         this.isCustomEntity = entity !== undefined;
         this.isEdit = initiallyEditing || false;
-        this.hasForm = hasForm !== undefined ? hasForm : true;
+        this.hasForm = hasForm ?? true;
         this.className = className || "";
         this.i18nPrefix = i18nPrefix || "focus";
 
@@ -275,7 +274,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         this.forceErrorDisplay = true;
 
         // La validation est en succès si chaque champ n'est pas en erreur.
-        return some(this.errors.values(), e => !!e);
+        return !Array.from(this.errors.values()).some(e => !!e);
     }
 
     /** Récupère les props à fournir à un Panel pour relier ses boutons au formulaire. */
@@ -283,7 +282,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         return {
             editing: this.isEdit,
             loading: this.isLoading,
-            save: this.hasForm ? undefined : () => this.save(),
+            save: () => this.save(),
             onClickCancel: () => this.toggleEdit(false),
             onClickEdit: () => this.toggleEdit(true)
         };

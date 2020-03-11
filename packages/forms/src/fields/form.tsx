@@ -44,7 +44,7 @@ export function Form({
     const context = useAsObservableSource({forceErrorDisplay, labelRatio, valueRatio});
     return (
         <FormContext.Provider value={context}>
-            {noForm ? (
+            {!noForm ? (
                 <form
                     className={theme.form()}
                     noValidate={true}
