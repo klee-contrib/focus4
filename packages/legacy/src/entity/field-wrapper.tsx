@@ -26,12 +26,14 @@ export function FieldWrapper<F extends FieldEntry>({
     AutocompleteComponent?: React.ComponentType<any>;
     className?: string;
     comment?: React.ReactNode;
+    DisplayComponent?: React.ComponentType<any>;
     displayFormatter?: (value: any) => string;
     error?: string;
     field: EntityField<F>;
     InputComponent?: React.ComponentType<any>;
     isEdit: boolean;
     label?: string;
+    LabelComponent?: React.ComponentType<any>;
     isRequired?: boolean;
     onErrorChange: (error: string | undefined) => void;
     options: FieldOptions<F> & {
@@ -60,7 +62,9 @@ export function FieldWrapper<F extends FieldEntry>({
                         AutocompleteComponent: AutocompleteComponent ?? pField.$field.domain.AutocompleteComponent,
                         InputComponent: InputComponent ?? pField.$field.domain.InputComponent,
                         className: className ?? pField.$field.domain.className,
+                        DisplayComponent: AutocompleteComponent ?? pField.$field.domain.DisplayComponent,
                         displayFormatter: displayFormatter ?? pField.$field.domain.displayFormatter,
+                        LabelComponent: AutocompleteComponent ?? pField.$field.domain.LabelComponent,
                         SelectComponent: SelectComponent ?? pField.$field.domain.SelectComponent
                     },
                     value => (pField.value = value)
@@ -152,6 +156,7 @@ export function fieldWrapperFor(
             AutocompleteComponent={AutocompleteComponent}
             className={className}
             comment={comment}
+            DisplayComponent={DisplayComponent}
             displayFormatter={displayFormatter}
             error={error}
             field={field}
@@ -159,6 +164,7 @@ export function fieldWrapperFor(
             isEdit={fieldEdit ?? isEdit}
             isRequired={isRequired}
             label={label}
+            LabelComponent={LabelComponent}
             onErrorChange={onErrorChange}
             options={fieldOptions}
             SelectComponent={SelectComponent}

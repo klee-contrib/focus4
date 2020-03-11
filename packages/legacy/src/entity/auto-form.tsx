@@ -331,7 +331,14 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
             validator,
             ...fieldOptions
         } = options;
-        return fieldFor(fromField(field, {DisplayComponent, displayFormatter, label}), fieldOptions as any);
+        return fieldFor(
+            fromField(field, {
+                DisplayComponent: DisplayComponent ?? (field.$field.domain.DisplayComponent as any),
+                displayFormatter: displayFormatter ?? field.$field.domain.displayFormatter,
+                label: label ?? field.$field.label
+            }),
+            fieldOptions as any
+        );
     }
 
     /**

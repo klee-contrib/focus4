@@ -66,6 +66,7 @@ export {
     ReferenceDefinition,
     ReferenceList,
     ReferenceLoader,
+    emptyReferenceList,
     makeReferenceList,
     makeReferenceStore
 } from "./reference";
