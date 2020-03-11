@@ -296,7 +296,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
                 forceErrorDisplay={this.forceErrorDisplay}
                 noForm={!this.hasForm}
                 theme={{form: this.className}}
-                save={this.save}
+                save={() => this.save()}
             >
                 {this.renderContent()}
             </Form>

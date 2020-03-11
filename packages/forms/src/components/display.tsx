@@ -27,8 +27,8 @@ export function Display({formatter, keyResolver, theme: pTheme, value: pValue, v
     const theme = useTheme("display", displayCss, pTheme);
 
     React.useEffect(() => {
-        if (pValue && pValue !== value) {
-            if (keyResolver) {
+        if (pValue !== value) {
+            if (pValue !== undefined && keyResolver) {
                 keyResolver(pValue).then(res => setValue(res ?? pValue));
             } else {
                 setValue(pValue);
