@@ -48,7 +48,7 @@ export function useListBase<T>({
 }: ListBaseProps<T> & {data?: T[]; store?: ListStoreBase<T>}) {
     const context = React.useContext(ScrollableContext);
     const theme = useTheme("listBase", listBaseCss, baseTheme);
-    const oData = useAsObservableSource({data});
+    const oData = useAsObservableSource({data, isLoading});
     const state = useLocalStore(() => ({
         /** Nombre d'éléments affichés. */
         displayedCount: perPage,
@@ -89,7 +89,7 @@ export function useListBase<T>({
             if (store && isSearch(store)) {
                 return store.isLoading;
             } else {
-                return isLoading || false;
+                return oData.isLoading ?? false;
             }
         },
 
