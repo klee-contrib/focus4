@@ -59,7 +59,7 @@ export function getLabel<T, VK extends keyof T, LK extends keyof T>(
     value: T[VK] | undefined,
     list: ReferenceList<T, VK, LK>
 ): T[LK] | undefined {
-    if (!value) {
+    if (value === undefined) {
         return undefined;
     }
 
