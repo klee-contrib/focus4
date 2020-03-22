@@ -274,10 +274,8 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
                 const ajustedEnd =
                     Math.max(
                         0,
-                        value
-                            .slice(0, end)
-                            .replace(invalidCharRegex, "")
-                            .replace(new RegExp(thousands, "g"), "").length +
+                        value.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "")
+                            .length +
                             this.numberStringValue!.split("").filter(c => c === "0").length -
                             value.split("").filter(c => c === "0").length
                     ) + (isNegative ? 1 : 0);

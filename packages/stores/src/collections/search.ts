@@ -82,8 +82,8 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
     );
     constructor(
         service: SearchService<T>,
-        secondParam?: SearchProperties<C> & {debounceCriteria?: boolean} | C,
-        thirdParam?: SearchProperties<C> & {debounceCriteria?: boolean} | C
+        secondParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C,
+        thirdParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C
     ) {
         super();
         this.service = service;

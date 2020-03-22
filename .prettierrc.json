@@ -1,5 +1,8 @@
 {
     "bracketSpacing": false,
+    "trailingComma": "none",
+    "arrowParens": "avoid",
+    "endOfLine": "crlf",
     "tabWidth": 4,
     "printWidth": 120,
     "overrides": [

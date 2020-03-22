@@ -52,11 +52,7 @@ export function Overlay({
 
     return useObserver(() => (
         <TransitionGroup component={null}>
-            {(isAdditional ? (
-                hasOneOverlay.get()
-            ) : (
-                active
-            )) ? (
+            {(isAdditional ? hasOneOverlay.get() : active) ? (
                 <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
                     <div className={theme.overlay()} onClick={onOverlayClick}>
                         {children}

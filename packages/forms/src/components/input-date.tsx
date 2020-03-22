@@ -138,11 +138,7 @@ export class InputDate extends React.Component<InputDateProps> {
             }
             return m(value, moment.ISO_8601);
         } else {
-            return m()
-                .hour(0)
-                .minute(0)
-                .second(0)
-                .millisecond(0);
+            return m().hour(0).minute(0).second(0).millisecond(0);
         }
     }
 
@@ -151,9 +147,7 @@ export class InputDate extends React.Component<InputDateProps> {
         const {inputFormat = "MM/DD/YYYY", timezoneCode} = this.props;
         if (isISOString(value)) {
             if (timezoneCode && moment.tz.zone(timezoneCode)) {
-                return moment(value, moment.ISO_8601)
-                    .tz(timezoneCode)
-                    .format(inputFormat);
+                return moment(value, moment.ISO_8601).tz(timezoneCode).format(inputFormat);
             }
             // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
             return moment(value, moment.ISO_8601).format(inputFormat);

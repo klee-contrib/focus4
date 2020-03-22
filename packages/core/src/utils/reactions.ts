@@ -22,7 +22,7 @@ export function classAutorun(target: RCL, propertyKey: keyof RCL) {
  * @param opts Les options de la réaction.
  */
 export function classReaction<T extends RCL>(expression: ReactionExpression<T>, opts?: IReactionOptions) {
-    return function(instance: T, propertyKey: keyof RCL) {
+    return function (instance: T, propertyKey: keyof RCL) {
         patchClass("reaction", instance, propertyKey, expression, opts);
     };
 }
@@ -33,7 +33,7 @@ export function classReaction<T extends RCL>(expression: ReactionExpression<T>, 
  * @param expression L'expression à tracker pour le when. Si le contexte est nécessaire, le passer dans un lambda englobant.
  */
 export function classWhen<T extends RCL>(expression: WhenExpression<T>) {
-    return function(instance: T, propertyKey: keyof RCL) {
+    return function (instance: T, propertyKey: keyof RCL) {
         patchClass("when", instance, propertyKey, expression);
     };
 }
@@ -75,13 +75,13 @@ function patchClass<T extends RCL>(
     // tslint:disable-next-line: deprecation
     instance.componentWillMount = !baseCWM
         ? componentWillMount
-        : function(this: RCL) {
+        : function (this: RCL) {
               baseCWM.apply(this);
               componentWillMount.apply(this as T);
           };
     instance.componentWillUnmount = !baseCWUM
         ? componentWillUnmount
-        : function(this: RCL) {
+        : function (this: RCL) {
               baseCWUM.apply(this);
               componentWillUnmount.apply(this as T);
           };
@@ -91,5 +91,5 @@ function patchClass<T extends RCL>(
 function hasExpressionThis<T extends RCL>(
     expression?: ReactionExpression<T> | WhenExpression<T>
 ): expression is (inst: T) => () => {} {
-    return typeof (expression as ((inst: T) => () => any))({} as any) === "function";
+    return typeof (expression as (inst: T) => () => any)({} as any) === "function";
 }

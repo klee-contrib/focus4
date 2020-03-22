@@ -34,11 +34,13 @@ describe("Title", () => {
 
 // Top div wrapper is always present because the title is wrapped in it
 
-test.each([["none", 1, 0], ["top", 1, 0], ["bottom", 1, 1], ["both", 1, 1]])(
-    "Buttons positions %s / expectedTop : %i / expectedBottom : %i",
-    (position: any, expectedTop, expectedBottom) => {
-        const panel = mount(<Panel title="my panel" buttonsPosition={position} theme={panelTheme} />);
-        expect(panel.find(".top").length).toBe(expectedTop);
-        expect(panel.find(".bottom").length).toBe(expectedBottom);
-    }
-);
+test.each([
+    ["none", 1, 0],
+    ["top", 1, 0],
+    ["bottom", 1, 1],
+    ["both", 1, 1]
+])("Buttons positions %s / expectedTop : %i / expectedBottom : %i", (position: any, expectedTop, expectedBottom) => {
+    const panel = mount(<Panel title="my panel" buttonsPosition={position} theme={panelTheme} />);
+    expect(panel.find(".top").length).toBe(expectedTop);
+    expect(panel.find(".bottom").length).toBe(expectedBottom);
+});

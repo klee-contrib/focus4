@@ -129,9 +129,7 @@ export class InputTime extends React.Component<InputTimeProps> {
         const {inputFormat = "HH:mm", timezoneCode} = this.props;
         if (isISOString(value)) {
             if (timezoneCode && moment.tz.zone(timezoneCode)) {
-                return moment(value, moment.ISO_8601)
-                    .tz(timezoneCode)
-                    .format(inputFormat);
+                return moment(value, moment.ISO_8601).tz(timezoneCode).format(inputFormat);
             }
             return moment(value, moment.ISO_8601).format(inputFormat);
         } else {

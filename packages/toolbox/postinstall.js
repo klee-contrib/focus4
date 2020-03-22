@@ -7,7 +7,7 @@ const path = require("path");
     path.resolve(__dirname, "../../node_modules/react-toolbox/lib/autocomplete/Autocomplete.js"),
     path.resolve(__dirname, "../../react-toolbox/lib/autocomplete/Autocomplete.js")
 ].forEach(typeFile => {
-    fs.readFile(typeFile, "utf8", function(err, data) {
+    fs.readFile(typeFile, "utf8", function (err, data) {
         if (!err) {
             fs.writeFile(
                 typeFile,

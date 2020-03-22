@@ -322,14 +322,10 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                                                     ref={this.setStickyHeader}
                                                     style={{width: this.width}}
                                                 />
-                                            ) : (
-                                                undefined
-                                            )}
+                                            ) : undefined}
                                             {!hideBackToTop && this.hasBtt ? (
                                                 <ButtonBackToTop key="back-to-top" />
-                                            ) : (
-                                                undefined
-                                            )}
+                                            ) : undefined}
                                         </Transition>
                                     );
                                 }}

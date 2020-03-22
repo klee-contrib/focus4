@@ -3,10 +3,7 @@ const {animationDelay, animationDuration, animationTimingFunction} = window.getC
 export const delay = toMs(animationDelay);
 export const duration = toMs(animationDuration);
 export const ease = animationTimingFunction.startsWith("cubic-bezier")
-    ? animationTimingFunction
-          .substring(13)
-          .split(",")
-          .map(parseFloat)
+    ? animationTimingFunction.substring(13).split(",").map(parseFloat)
     : undefined;
 
 export const defaultPose = {

@@ -6,16 +6,13 @@ export function themeable<T extends {}>(...themes: T[]) {
 function merge<T extends {[key: string]: string}>(original = {} as T, mixin = {} as T) {
     // make a copy to avoid mutations of nested objects
     // also strip all functions injected by isomorphic-style-loader
-    const result = Object.keys(original).reduce(
-        (acc, key) => {
-            const value = original[key];
-            if (typeof value !== "function") {
-                acc[key] = value;
-            }
-            return acc;
-        },
-        {} as {[key: string]: string}
-    );
+    const result = Object.keys(original).reduce((acc, key) => {
+        const value = original[key];
+        if (typeof value !== "function") {
+            acc[key] = value;
+        }
+        return acc;
+    }, {} as {[key: string]: string});
 
     // traverse mixin keys and merge them to resulting theme
     Object.keys(mixin).forEach(key => {
