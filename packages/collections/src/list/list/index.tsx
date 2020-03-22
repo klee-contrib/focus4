@@ -11,10 +11,10 @@ import {FontIcon} from "@focus4/toolbox";
 import {OperationListItem} from "../contextual-actions";
 import {DndDragLayer, DragLayerCss} from "../drag-layer";
 import {ListBaseProps, useListBase} from "../list-base";
-import {ListWrapperContext, lwcInit} from "../list-wrapper";
+import {lcInit, ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
 import {LineProps, LineWrapper} from "./line";
-export {DetailProps, LineProps};
+export {DetailProps, LineProps, ListContext, lcInit};
 
 import listCss, {ListCss} from "../__style__/list.css";
 export {listCss, ListCss};
@@ -101,12 +101,12 @@ export function List<T>({
     theme: pTheme,
     ...baseProps
 }: ListProps<T>) {
-    // On récupère les infos du ListWrapper dans le contexte.
+    // On récupère les infos du ListContext.
     const {
-        addItemHandler: lwcAddItemHandler = lwcInit.addItemHandler,
-        mode: lwcMode = lwcInit.mode,
-        mosaic: lwcMosaic = lwcInit.mosaic
-    } = React.useContext(ListWrapperContext);
+        addItemHandler: lwcAddItemHandler = lcInit.addItemHandler,
+        mode: lwcMode = lcInit.mode,
+        mosaic: lwcMosaic = lcInit.mosaic
+    } = React.useContext(ListContext);
 
     addItemHandler = addItemHandler ?? lwcAddItemHandler;
     mosaic = mosaic ?? lwcMosaic;
@@ -178,7 +178,7 @@ export function List<T>({
         /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
         const isAddItemShown = !!(
             !hideAdditionalItems &&
-            addItemHandler !== lwcInit.addItemHandler &&
+            addItemHandler !== lcInit.addItemHandler &&
             mode === "mosaic"
         );
 

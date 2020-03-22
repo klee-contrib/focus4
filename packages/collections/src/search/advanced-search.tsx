@@ -1,12 +1,12 @@
-import {observable} from "mobx";
-import {observer} from "mobx-react";
 import * as React from "react";
+import {useLocalStore, useObserver} from "mobx-react";
+import i18next from "i18next";
 
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
-import {CSSProp, ScrollableContext, themr, ToBem} from "@focus4/styling";
-import {ChipTheme} from "@focus4/toolbox";
+import {CSSProp, ScrollableContext, ToBem, useTheme, getIcon} from "@focus4/styling";
+import {ChipTheme, tooltipFactory, IconButton as IB, Button} from "@focus4/toolbox";
 
-import {ActionBar, ActionBarCss, ListBaseProps, ListProps, ListWrapper, OperationListItem} from "../list";
+import {ActionBar, ActionBarCss, ListBaseProps, ListProps, ListContext, OperationListItem, lcInit} from "../list";
 import {ChipType} from "./chip";
 import {FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
 import {GroupCss, Results} from "./results";
@@ -14,7 +14,8 @@ import {Summary, SummaryCss} from "./summary";
 
 import advancedSearchCss, {AdvancedSearchCss} from "./__style__/advanced-search.css";
 export {advancedSearchCss, AdvancedSearchCss};
-const Theme = themr("advancedSearch", advancedSearchCss);
+
+const IconButton = tooltipFactory()(IB);
 
 /** Props de l'AdvancedSearch. */
 export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T>> {
@@ -96,10 +97,8 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     >;
     /** Mode des listes dans le wrapper. Par défaut : "list". */
     mode?: "list" | "mosaic";
-    /** Largeur des mosaïques. Par défaut : 200. */
-    mosaicWidth?: number;
-    /** Hauteur des mosaïques. Par défaut : 200. */
-    mosaicHeight?: number;
+    /** Taille de la mosaïque. */
+    mosaic?: {width: number; height: number};
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
     /** La liste des actions globales.  */
@@ -123,35 +122,61 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
 }
 
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
-@observer
-export class AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>> extends React.Component<
-    AdvancedSearchProps<T, P>
-> {
-    static contextType = ScrollableContext;
-    context!: React.ContextType<typeof ScrollableContext>;
-    @observable.ref rootNode?: HTMLDivElement;
+export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
+    actionBarTheme,
+    addItemHandler = lcInit.addItemHandler,
+    canRemoveSort,
+    chipKeyResolver,
+    chipThemer,
+    customFacetComponents,
+    facetBoxPosition = "left",
+    facetBoxTheme,
+    facetSections,
+    GroupHeader,
+    groupOperationList,
+    groupPageItemIndex,
+    groupPageListSize,
+    groupPageSize,
+    groupTheme,
+    groupableFacets,
+    hasGrouping,
+    hasSearchBar,
+    hasSelection,
+    hideSummaryCriteria,
+    hideSummaryFacets,
+    hideSummaryGroup,
+    hideSummaryQuery,
+    hideSummaryResults,
+    hideSummarySort,
+    i18nPrefix = "focus",
+    isManualFetch,
+    ListComponent,
+    listProps,
+    mode = lcInit.mode,
+    mosaic = lcInit.mosaic,
+    nbDefaultDataListFacet,
+    operationList,
+    orderableColumnList,
+    searchBarPlaceholder,
+    searchOnMount = true,
+    showSingleValuedFacets,
+    store,
+    summaryTheme,
+    theme: pTheme,
+    useGroupActionBars
+}: AdvancedSearchProps<T, P>) {
+    const [rootNode, setRootNode] = React.useState<HTMLDivElement | null>(null);
+    const context = React.useContext(ScrollableContext);
+    const theme = useTheme("advancedSearch", advancedSearchCss, pTheme);
+    const listContext = useLocalStore(() => ({addItemHandler, mosaic, mode}));
 
-    componentWillMount() {
-        const {searchOnMount = true, store} = this.props;
+    React.useEffect(() => {
         if (searchOnMount) {
             store.search();
         }
-    }
+    }, []);
 
-    protected renderFacetBox(theme: ToBem<AdvancedSearchCss>) {
-        const {
-            chipKeyResolver,
-            chipThemer,
-            customFacetComponents,
-            facetBoxPosition = "left",
-            facetBoxTheme,
-            facetSections,
-            i18nPrefix,
-            nbDefaultDataListFacet,
-            showSingleValuedFacets,
-            store
-        } = this.props;
-
+    function renderFacetBox(theme: ToBem<AdvancedSearchCss>) {
         const facetBox = (
             <div className={theme.facetContainer()} key="facet-box">
                 <FacetBox
@@ -171,168 +196,102 @@ export class AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>> extend
         if (facetBoxPosition === "left") {
             return facetBox;
         } else if (facetBoxPosition === "sticky") {
-            return this.context.portal(facetBox, this.rootNode);
+            return context.portal(facetBox, rootNode);
         } else {
             return null;
         }
     }
 
-    protected renderListSummary() {
-        const {
-            canRemoveSort,
-            chipKeyResolver,
-            chipThemer,
-            hideSummaryCriteria,
-            hideSummaryFacets,
-            hideSummaryGroup,
-            hideSummaryQuery,
-            hideSummaryResults,
-            hideSummarySort,
-            i18nPrefix,
-            orderableColumnList,
-            store,
-            summaryTheme
-        } = this.props;
-        return (
-            <Summary
-                canRemoveSort={canRemoveSort}
-                chipKeyResolver={chipKeyResolver}
-                chipThemer={chipThemer}
-                i18nPrefix={i18nPrefix}
-                hideCriteria={hideSummaryCriteria}
-                hideFacets={hideSummaryFacets}
-                hideGroup={hideSummaryGroup}
-                hideQuery={hideSummaryQuery}
-                hideResults={hideSummaryResults}
-                hideSort={hideSummarySort}
-                orderableColumnList={orderableColumnList}
-                store={store}
-                theme={summaryTheme}
-            />
-        );
-    }
-
-    protected renderActionBar() {
-        const {
-            actionBarTheme,
-            chipKeyResolver,
-            chipThemer,
-            facetBoxPosition = "left",
-            groupableFacets,
-            hasGrouping,
-            hasSearchBar,
-            hasSelection,
-            i18nPrefix,
-            operationList,
-            orderableColumnList,
-            nbDefaultDataListFacet,
-            showSingleValuedFacets,
-            searchBarPlaceholder,
-            store,
-            useGroupActionBars
-        } = this.props;
-
-        if (store.groups.length && useGroupActionBars) {
-            return null;
-        }
-
-        return (
-            <ActionBar
-                chipKeyResolver={chipKeyResolver}
-                chipThemer={chipThemer}
-                groupableFacets={groupableFacets}
-                hasFacetBox={facetBoxPosition === "action-bar"}
-                hasGrouping={hasGrouping}
-                hasSearchBar={hasSearchBar}
-                hasSelection={hasSelection}
-                i18nPrefix={i18nPrefix}
-                nbDefaultDataListFacet={nbDefaultDataListFacet}
-                operationList={operationList}
-                orderableColumnList={orderableColumnList}
-                searchBarPlaceholder={searchBarPlaceholder}
-                showSingleValuedFacets={showSingleValuedFacets}
-                store={store}
-                theme={actionBarTheme}
-            />
-        );
-    }
-
-    protected renderResults() {
-        const {
-            GroupHeader,
-            groupOperationList,
-            groupPageItemIndex,
-            groupPageListSize,
-            groupPageSize,
-            groupTheme,
-            hasSelection,
-            i18nPrefix,
-            isManualFetch,
-            ListComponent,
-            listProps,
-            store,
-            useGroupActionBars
-        } = this.props;
-        return (
-            <Results
-                GroupHeader={GroupHeader}
-                groupOperationList={groupOperationList}
-                groupPageItemIndex={groupPageItemIndex}
-                groupPageListSize={groupPageListSize}
-                groupPageSize={groupPageSize}
-                groupTheme={groupTheme}
-                hasSelection={hasSelection}
-                i18nPrefix={i18nPrefix}
-                isManualFetch={isManualFetch}
-                ListComponent={ListComponent}
-                listProps={listProps}
-                store={store}
-                useGroupActionBars={useGroupActionBars}
-            />
-        );
-    }
-
-    setRef = (node: HTMLDivElement) => (this.rootNode = node);
-
-    render() {
-        const {
-            addItemHandler,
-            facetBoxPosition = "left",
-            i18nPrefix,
-            listProps,
-            mode,
-            mosaicHeight,
-            mosaicWidth
-        } = this.props;
-        const {MosaicComponent, LineComponent} = (listProps as any) as ListProps<T>;
-        return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div ref={this.setRef}>
-                        {this.renderFacetBox(theme)}
-                        <div
-                            className={theme.resultContainer({
-                                withFacetBox: facetBoxPosition === "sticky" || facetBoxPosition === "left"
-                            })}
-                        >
-                            <ListWrapper
-                                addItemHandler={addItemHandler}
-                                canChangeMode={!!(LineComponent && MosaicComponent)}
-                                i18nPrefix={i18nPrefix}
-                                mode={mode || (MosaicComponent && !LineComponent) ? "mosaic" : "list"}
-                                mosaicHeight={mosaicHeight}
-                                mosaicWidth={mosaicWidth}
-                            >
-                                {this.renderListSummary()}
-                                {this.renderActionBar()}
-                                {this.renderResults()}
-                            </ListWrapper>
-                        </div>
-                    </div>
-                )}
-            </Theme>
-        );
-    }
+    const {MosaicComponent, LineComponent} = (listProps as any) as ListProps<T>;
+    return useObserver(() => (
+        <div ref={setRootNode}>
+            {renderFacetBox(theme)}
+            <div
+                className={theme.resultContainer({
+                    withFacetBox: facetBoxPosition === "sticky" || facetBoxPosition === "left"
+                })}
+            >
+                <div className={theme.actions()}>
+                    {LineComponent && MosaicComponent ? (
+                        <IconButton
+                            accent={mode === "list"}
+                            onClick={() => (listContext.mode = "list")}
+                            icon={getIcon(`${i18nPrefix}.icons.list.list`)}
+                            tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
+                        />
+                    ) : null}
+                    {LineComponent && MosaicComponent ? (
+                        <IconButton
+                            accent={mode === "mosaic"}
+                            onClick={() => (listContext.mode = "mosaic")}
+                            icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
+                            tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
+                        />
+                    ) : null}
+                    {addItemHandler !== lcInit.addItemHandler && mode === "list" ? (
+                        <Button
+                            onClick={addItemHandler}
+                            icon={getIcon(`${i18nPrefix}.icons.list.add`)}
+                            label={i18next.t(`${i18nPrefix}.list.add`)}
+                            primary
+                            raised
+                        />
+                    ) : null}
+                </div>
+                <Summary
+                    canRemoveSort={canRemoveSort}
+                    chipKeyResolver={chipKeyResolver}
+                    chipThemer={chipThemer}
+                    i18nPrefix={i18nPrefix}
+                    hideCriteria={hideSummaryCriteria}
+                    hideFacets={hideSummaryFacets}
+                    hideGroup={hideSummaryGroup}
+                    hideQuery={hideSummaryQuery}
+                    hideResults={hideSummaryResults}
+                    hideSort={hideSummarySort}
+                    orderableColumnList={orderableColumnList}
+                    store={store}
+                    theme={summaryTheme}
+                />
+                {!(store.groups.length && useGroupActionBars) ? (
+                    <ActionBar
+                        chipKeyResolver={chipKeyResolver}
+                        chipThemer={chipThemer}
+                        groupableFacets={groupableFacets}
+                        hasFacetBox={facetBoxPosition === "action-bar"}
+                        hasGrouping={hasGrouping}
+                        hasSearchBar={hasSearchBar}
+                        hasSelection={hasSelection}
+                        i18nPrefix={i18nPrefix}
+                        nbDefaultDataListFacet={nbDefaultDataListFacet}
+                        operationList={operationList}
+                        orderableColumnList={orderableColumnList}
+                        searchBarPlaceholder={searchBarPlaceholder}
+                        showSingleValuedFacets={showSingleValuedFacets}
+                        store={store}
+                        theme={actionBarTheme}
+                    />
+                ) : null}
+                <ListContext.Provider value={listContext}>
+                    <Results
+                        GroupHeader={GroupHeader}
+                        groupOperationList={groupOperationList}
+                        groupPageItemIndex={groupPageItemIndex}
+                        groupPageListSize={groupPageListSize}
+                        groupPageSize={groupPageSize}
+                        groupTheme={groupTheme}
+                        hasSelection={hasSelection}
+                        i18nPrefix={i18nPrefix}
+                        isManualFetch={isManualFetch}
+                        ListComponent={ListComponent}
+                        listProps={listProps}
+                        store={store}
+                        useGroupActionBars={useGroupActionBars}
+                    />
+                </ListContext.Provider>
+            </div>
+        </div>
+    ));
 }
 
 /**

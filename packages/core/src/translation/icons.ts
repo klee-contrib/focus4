@@ -103,16 +103,6 @@ export const icons = {
             library: "material",
             name: "add"
         },
-        showAll: {
-            library: "material",
-            name: "arrow_forward"
-        }
-    },
-    listWrapper: {
-        add: {
-            library: "material",
-            name: "add"
-        },
         list: {
             library: "material",
             name: "list"
@@ -120,6 +110,10 @@ export const icons = {
         mosaic: {
             library: "material",
             name: "apps"
+        },
+        showAll: {
+            library: "material",
+            name: "arrow_forward"
         }
     },
     loadingBar: {

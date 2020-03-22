@@ -94,7 +94,6 @@ export interface LayoutStyleProviderProps {
     loadingBar?: CSSProp<LoadingBarCss>;
     list?: {};
     listBase?: {};
-    listWrapper?: {};
     mainMenu?: CSSProp<MainMenuCss>;
     overlay?: CSSProp<OverlayCss>;
     panel?: {};

@@ -6,7 +6,6 @@ export {
     LineProps,
     List,
     listFor,
-    ListWrapper,
     OperationListItem,
     Table,
     tableFor,

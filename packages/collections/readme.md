@@ -16,8 +16,6 @@ Si les composants de tableau et de timeline sont assez simples, la liste possèd
 -   Les lignes de la liste peuvent être des sources de drag and drop.
 -   On peut ajouter un handler d'ajout d'élément (affiché uniquement en mosaïque). (`addItemHandler`)
 
-Un composant transverse **`ListWrapper`** permet de centraliser les paramètres de mode, de taille de mosaïque et d'handler d'ajout d'élément pour partager cet état entre plusieurs listes (ce qui est utilisé nativement par la recherche groupée). Il suffit de poser toutes les listes dans un `ListWrapper` et elles récupéreront l'état via le contexte.
-
 ## Composants de stores
 
 S'il est possible d'utiliser les composants de base avec un store, il existe toute une suite de composants destinés à un usage avec un store.
@@ -44,7 +42,7 @@ Lorsqu'un élément au moins a été sélectionné, toutes les autres actions di
 
 ### `AdvancedSearch`
 
-L'`AdvancedSearch` est l'assemblage des 4 composants qui constituent la recherche : `Results` (+ un `ListWrapper`), `ActionBar`, `ListSummary` et `FacetBox`. L'intégralité des props de ces composants se retrouve dans ses props, souvent avec le même nom ou parfois avec un nom un peu différent (exemple : `hideFacets` dans le `ListSummary`, `hideSummaryFacets` dans l'`AdvancedSearch`).
+L'`AdvancedSearch` est l'assemblage des 4 composants qui constituent la recherche : `Results`, `ActionBar`, `ListSummary` et `FacetBox`, ainsi que des actions transverses liés aus listes (mode, ajout). L'intégralité des props de ces composants se retrouve dans ses props, souvent avec le même nom ou parfois avec un nom un peu différent (exemple : `hideFacets` dans le `ListSummary`, `hideSummaryFacets` dans l'`AdvancedSearch`).
 
 ### `Results`
 

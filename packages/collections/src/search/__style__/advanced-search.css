@@ -15,3 +15,11 @@
     width: calc(100% - var(--advanced-search-facets-width) - var(--advanced-search-facets-margin-right));
     margin-left: calc(var(--advanced-search-facets-width) + var(--advanced-search-facets-margin-right));
 }
+
+.actions {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    height: 55px;
+    float: right;
+}
