@@ -3,6 +3,7 @@
     flex-wrap: wrap;
     line-height: 37px;
     padding: 9px 0;
+    min-height: 56px;
 }
 
 .sentence {

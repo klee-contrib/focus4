@@ -12,7 +12,6 @@ export {DragLayerCss, dragLayerCss} from "./drag-layer";
 export {
     DetailProps,
     EmptyProps,
-    lcInit,
     LineProps,
     List,
     ListCss,

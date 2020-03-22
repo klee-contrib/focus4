@@ -13,7 +13,6 @@ export {
     ListBaseCss,
     ListBaseProps,
     ListContext,
-    lcInit,
     ListCss,
     ListProps,
     LoadingProps,

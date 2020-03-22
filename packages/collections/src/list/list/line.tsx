@@ -153,6 +153,7 @@ export function LineWrapper<T>({
     return useObserver(() => (
         <DraggableLi
             className={(mosaic ? theme.mosaic : theme.line)({selected: state.isSelected})}
+            key={mosaic ? "mosaic" : "list"}
             ref={setRef}
             pose={state.isDragged && !disableDragAnimation ? "dragging" : "idle"}
             width={mosaic && mosaic.width}

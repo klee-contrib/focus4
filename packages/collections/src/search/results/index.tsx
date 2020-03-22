@@ -81,6 +81,7 @@ export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
                                 useGroupActionBars={useGroupActionBars}
                             />
                         )}
+                        mode="list"
                         isManualFetch={isManualFetch}
                         perPage={groupPageListSize}
                         pageItemIndex={groupPageItemIndex}

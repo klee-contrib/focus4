@@ -1,12 +1,12 @@
-import * as React from "react";
-import {useLocalStore, useObserver} from "mobx-react";
 import i18next from "i18next";
+import {useLocalStore, useObserver} from "mobx-react";
+import * as React from "react";
 
 import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
-import {CSSProp, ScrollableContext, ToBem, useTheme, getIcon} from "@focus4/styling";
-import {ChipTheme, tooltipFactory, IconButton as IB, Button} from "@focus4/toolbox";
+import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {Button, ChipTheme, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
 
-import {ActionBar, ActionBarCss, ListBaseProps, ListProps, ListContext, OperationListItem, lcInit} from "../list";
+import {ActionBar, ActionBarCss, ListBaseProps, ListContext, ListProps, OperationListItem} from "../list";
 import {ChipType} from "./chip";
 import {FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
 import {GroupCss, Results} from "./results";
@@ -124,7 +124,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
 export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     actionBarTheme,
-    addItemHandler = lcInit.addItemHandler,
+    addItemHandler,
     canRemoveSort,
     chipKeyResolver,
     chipThemer,
@@ -152,8 +152,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     isManualFetch,
     ListComponent,
     listProps,
-    mode = lcInit.mode,
-    mosaic = lcInit.mosaic,
+    mode = "list",
     nbDefaultDataListFacet,
     operationList,
     orderableColumnList,
@@ -168,7 +167,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     const [rootNode, setRootNode] = React.useState<HTMLDivElement | null>(null);
     const context = React.useContext(ScrollableContext);
     const theme = useTheme("advancedSearch", advancedSearchCss, pTheme);
-    const listContext = useLocalStore(() => ({addItemHandler, mosaic, mode}));
+    const listContext = useLocalStore(() => ({addItemHandler, mode}));
 
     React.useEffect(() => {
         if (searchOnMount) {
@@ -176,7 +175,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
         }
     }, []);
 
-    function renderFacetBox(theme: ToBem<AdvancedSearchCss>) {
+    function renderFacetBox() {
         const facetBox = (
             <div className={theme.facetContainer()} key="facet-box">
                 <FacetBox
@@ -205,7 +204,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     const {MosaicComponent, LineComponent} = (listProps as any) as ListProps<T>;
     return useObserver(() => (
         <div ref={setRootNode}>
-            {renderFacetBox(theme)}
+            {renderFacetBox()}
             <div
                 className={theme.resultContainer({
                     withFacetBox: facetBoxPosition === "sticky" || facetBoxPosition === "left"
@@ -213,22 +212,22 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
             >
                 <div className={theme.actions()}>
                     {LineComponent && MosaicComponent ? (
-                        <IconButton
-                            accent={mode === "list"}
-                            onClick={() => (listContext.mode = "list")}
-                            icon={getIcon(`${i18nPrefix}.icons.list.list`)}
-                            tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
-                        />
+                        <>
+                            <IconButton
+                                accent={listContext.mode === "list"}
+                                onClick={() => (listContext.mode = "list")}
+                                icon={getIcon(`${i18nPrefix}.icons.list.list`)}
+                                tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
+                            />
+                            <IconButton
+                                accent={listContext.mode === "mosaic"}
+                                onClick={() => (listContext.mode = "mosaic")}
+                                icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
+                                tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
+                            />
+                        </>
                     ) : null}
-                    {LineComponent && MosaicComponent ? (
-                        <IconButton
-                            accent={mode === "mosaic"}
-                            onClick={() => (listContext.mode = "mosaic")}
-                            icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
-                            tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
-                        />
-                    ) : null}
-                    {addItemHandler !== lcInit.addItemHandler && mode === "list" ? (
+                    {addItemHandler && listContext.mode === "list" ? (
                         <Button
                             onClick={addItemHandler}
                             icon={getIcon(`${i18nPrefix}.icons.list.add`)}

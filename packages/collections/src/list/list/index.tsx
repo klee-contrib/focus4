@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {autorun, comparer, observable, reaction} from "mobx";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 import {Transition} from "react-pose";
 
@@ -11,10 +11,10 @@ import {FontIcon} from "@focus4/toolbox";
 import {OperationListItem} from "../contextual-actions";
 import {DndDragLayer, DragLayerCss} from "../drag-layer";
 import {ListBaseProps, useListBase} from "../list-base";
-import {lcInit, ListContext} from "./context";
+import {ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
 import {LineProps, LineWrapper} from "./line";
-export {DetailProps, LineProps, ListContext, lcInit};
+export {DetailProps, LineProps, ListContext};
 
 import listCss, {ListCss} from "../__style__/list.css";
 export {listCss, ListCss};
@@ -95,25 +95,23 @@ export function List<T>({
     LineComponent,
     LoadingComponent,
     mode,
-    mosaic,
+    mosaic = {width: 200, height: 200},
     MosaicComponent,
     operationList,
     theme: pTheme,
     ...baseProps
 }: ListProps<T>) {
-    // On récupère les infos du ListContext.
-    const {
-        addItemHandler: lwcAddItemHandler = lcInit.addItemHandler,
-        mode: lwcMode = lcInit.mode,
-        mosaic: lwcMosaic = lcInit.mosaic
-    } = React.useContext(ListContext);
-
-    addItemHandler = addItemHandler ?? lwcAddItemHandler;
-    mosaic = mosaic ?? lwcMosaic;
-    mode = mode || (MosaicComponent && !LineComponent && "mosaic") || lwcMode;
-
+    const listContext = React.useContext(ListContext);
     const theme = useTheme("list", listCss, pTheme);
+    const oProps = useAsObservableSource({addItemHandler, mode});
     const state = useLocalStore(() => ({
+        get addItemHandler() {
+            return oProps.addItemHandler ?? listContext.addItemHandler;
+        },
+        get mode() {
+            return oProps.mode ?? listContext.mode ?? (MosaicComponent && !LineComponent ? "mosaic" : "list");
+        },
+
         /** Nombre de mosaïque par ligne, déterminé à la volée. */
         byLine: 0,
         /** Index de l'item sur lequel on doit afficher le détail. */
@@ -149,7 +147,7 @@ export function List<T>({
     React.useEffect(() => {
         const updateByLine = () => {
             if (state.ulRef) {
-                state.byLine = mode === "mosaic" ? Math.floor(state.ulRef.clientWidth / (mosaic!.width + 10)) : 1;
+                state.byLine = state.mode === "mosaic" ? Math.floor(state.ulRef.clientWidth / (mosaic!.width + 10)) : 1;
             }
         };
 
@@ -176,20 +174,16 @@ export function List<T>({
         );
 
         /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
-        const isAddItemShown = !!(
-            !hideAdditionalItems &&
-            addItemHandler !== lcInit.addItemHandler &&
-            mode === "mosaic"
-        );
+        const isAddItemShown = !!(!hideAdditionalItems && state.addItemHandler && state.mode === "mosaic");
 
         /** Désactive l'animation de drag and drop sur les lignes. */
         const disableDragAnimation =
             disableDragAnimThreshold === undefined ? false : disableDragAnimThreshold <= displayedData.length;
 
         let Component: React.ComponentType<LineProps<T>>;
-        if (mode === "list" && LineComponent) {
+        if (state.mode === "list" && LineComponent) {
             Component = LineComponent;
-        } else if (mode === "mosaic" && MosaicComponent) {
+        } else if (state.mode === "mosaic" && MosaicComponent) {
             Component = MosaicComponent;
         } else {
             throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
@@ -205,7 +199,7 @@ export function List<T>({
                 draggedItems={hasDragAndDrop ? state.draggedItems : undefined}
                 hasSelection={store ? hasSelection : undefined}
                 i18nPrefix={i18nPrefix}
-                mosaic={mode === "mosaic" ? mosaic : undefined}
+                mosaic={state.mode === "mosaic" ? mosaic : undefined}
                 LineComponent={Component}
                 toggleDetail={
                     canOpenDetail(item) && DetailComponent
@@ -221,7 +215,7 @@ export function List<T>({
         /* On regarde si le composant de détail doit être ajouté. */
         if (DetailComponent && state.displayedIdx !== undefined) {
             const idx =
-                mode === "list"
+                state.mode === "list"
                     ? state.displayedIdx + 1
                     : (Math.floor((state.displayedIdx + (isAddItemShown ? 1 : 0)) / state.byLine) + 1) * state.byLine -
                       (isAddItemShown ? 1 : 0);
@@ -237,7 +231,7 @@ export function List<T>({
                     closeDetail={state.closeDetail}
                     isAddItemShown={isAddItemShown}
                     item={displayedData[state.displayedIdx]}
-                    mode={mode!}
+                    mode={state.mode}
                     mosaic={mosaic!}
                     theme={theme}
                     key={`detail-${idx}`}
@@ -250,11 +244,11 @@ export function List<T>({
                 {!navigator.userAgent.match(/Trident/) && hasDragAndDrop ? (
                     <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} />
                 ) : null}
-                <div className={mode === "list" ? theme.list() : theme.mosaic()}>
+                <div className={state.mode === "list" ? theme.list() : theme.mosaic()}>
                     {/* Gestion de l'empty state. */}
                     {!isLoading && !hideAdditionalItems && !displayedData.length ? (
                         EmptyComponent ? (
-                            <EmptyComponent addItemHandler={addItemHandler} store={store} />
+                            <EmptyComponent addItemHandler={state.addItemHandler} store={store} />
                         ) : (
                             <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
                         )
@@ -266,7 +260,7 @@ export function List<T>({
                                     key="mosaic-add"
                                     className={theme.mosaicAdd()}
                                     style={{width: mosaic!.width, height: mosaic!.height}}
-                                    onClick={addItemHandler}
+                                    onClick={state.addItemHandler}
                                 >
                                     <FontIcon className={theme.add()}>
                                         {getIcon(`${i18nPrefix}.icons.list.add`)}
