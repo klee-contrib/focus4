@@ -11,7 +11,6 @@ import {
 } from "mobx";
 
 import {
-    Entity,
     EntityField,
     FormEntityField,
     FormListNode,
@@ -33,7 +32,7 @@ import {getNodeForList, replaceNode} from "./store";
  * @param sourceNode Le node origine du FormNode.
  * @param parentNode Le node parent.
  */
-export function nodeToFormNode<E extends Entity = any>(
+export function nodeToFormNode<E = any>(
     node: StoreNode<E> | StoreListNode<E>,
     sourceNode: StoreNode<E> | StoreListNode<E>,
     parentNode?: FormNode | FormListNode

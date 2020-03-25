@@ -1,9 +1,9 @@
 import {IObservableArray} from "mobx";
 
-import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
+import {EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
-export type EntityToNode<E extends Entity> = {
+export type EntityToNode<E> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? EntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
@@ -16,7 +16,7 @@ export type EntityToNode<E extends Entity> = {
 };
 
 /** Noeud de store simple. */
-export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
+export type StoreNode<E = any> = EntityToNode<E> & {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
@@ -32,7 +32,7 @@ export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<E extends Entity = any> extends IObservableArray<StoreNode<E>> {
+export interface StoreListNode<E = any> extends IObservableArray<StoreNode<E>> {
     /** @internal */
     /** isEdit temporaire, traité par `addFormProperties`. */
     $tempEdit?: boolean | (() => boolean);
@@ -42,7 +42,7 @@ export interface StoreListNode<E extends Entity = any> extends IObservableArray<
 
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */
-    $nodeBuilder?: <NE extends Entity>(source: StoreNode<E>) => StoreNode<NE>;
+    $nodeBuilder?: <NE>(source: StoreNode<E>) => StoreNode<NE>;
 
     /** Ajoute un élément à la liste. */
     pushNode(...items: EntityToType<E>[]): number;

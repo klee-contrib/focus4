@@ -2,7 +2,6 @@ import {isArray, isObject, mapValues} from "lodash";
 import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
 
 import {
-    Entity,
     EntityToType,
     FieldEntry,
     isAnyStoreNode,
@@ -19,13 +18,11 @@ import {
 import {nodeToFormNode} from "./form";
 
 export type ConfigToEntities<T> = {
-    readonly [P in keyof T]: T[P] extends Entity
-        ? ObjectEntry<T[P]>
-        : T[P] extends Entity[]
+    readonly [P in keyof T]: T[P] extends any[]
         ? ListEntry<T[P][0]>
         : T[P] extends StoreNode<infer E>
         ? ObjectEntry<E>
-        : never;
+        : ObjectEntry<T[P]>;
 };
 
 /**
@@ -33,14 +30,12 @@ export type ConfigToEntities<T> = {
  * Le store d'entité inclut les métadonnées pour tous les champs des entités utilsées.
  * @param config Un objet dont les propriétés décrivent tous les noeuds du store.
  */
-export function makeEntityStore<C extends Record<string, Entity | Entity[] | StoreNode>>(
-    config: C
-): StoreNode<ConfigToEntities<C>> {
+export function makeEntityStore<C extends Record<string, any>>(config: C): StoreNode<ConfigToEntities<C>> {
     const entityStore: StoreNode<ConfigToEntities<C>> = {} as any;
 
     // On construit chaque noeud à partir de la config.
     for (const key in config) {
-        const item = config[key] as Entity | Entity[] | StoreNode;
+        const item = config[key];
         if (isStoreNode(item)) {
             entityStore[key] = item as any;
         } else {
@@ -73,9 +68,9 @@ export function makeEntityStore<C extends Record<string, Entity | Entity[] | Sto
  * Construit un noeud à partir d'une entité, potentiellement de façon récursive.
  * @param entity L'entité de base (dans une liste pour un noeud liste).
  */
-export function buildNode<E extends Entity>(entity: E): StoreNode<E>;
-export function buildNode<E extends Entity>(entity: E[]): StoreListNode<E>;
-export function buildNode<E extends Entity>(entity: E | E[]): StoreNode<E> | StoreListNode<E> {
+export function buildNode<E>(entity: E[]): StoreListNode<E>;
+export function buildNode<E>(entity: E): StoreNode<E>;
+export function buildNode<E>(entity: E | E[]): StoreNode<E> | StoreListNode<E> {
     // Cas d'un noeud de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
         const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<E>;
@@ -102,7 +97,7 @@ export function buildNode<E extends Entity>(entity: E | E[]): StoreNode<E> | Sto
 
     // Cas d'un noeud simple : On parcourt tous les champs de l'entité.
     return {
-        ...mapValues(entity, (field: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry) => {
+        ...mapValues(entity as any, (field: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry) => {
             switch (field.type) {
                 case "list":
                     return buildNode([field.entity]);
@@ -133,9 +128,9 @@ export function buildNode<E extends Entity>(entity: E | E[]): StoreNode<E> | Sto
  * Vide un noeud de store.
  * @param node Le noeud.
  */
-function clearNode<E extends Entity>(node: StoreNode<E>): StoreNode<E>;
-function clearNode<E extends Entity>(node: StoreListNode<E>): StoreListNode<E>;
-function clearNode<E extends Entity>(node: StoreNode<E> | StoreListNode<E>) {
+function clearNode<E>(node: StoreNode<E>): StoreNode<E>;
+function clearNode<E>(node: StoreListNode<E>): StoreListNode<E>;
+function clearNode<E>(node: StoreNode<E> | StoreListNode<E>) {
     // Cas du noeud de liste : On vide simplement la liste.
     if (isStoreListNode(node)) {
         node.clear();
@@ -167,12 +162,9 @@ function clearNode<E extends Entity>(node: StoreNode<E> | StoreListNode<E>) {
  * @param node Le noeud à remplacer.
  * @param value La valeur du noeud.
  */
-export function replaceNode<E extends Entity>(node: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
-export function replaceNode<E extends Entity>(
-    node: StoreListNode<E>,
-    value: EntityToType<E>[] | StoreListNode<E>
-): StoreListNode<E>;
-export function replaceNode<E extends Entity>(
+export function replaceNode<E>(node: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
+export function replaceNode<E>(node: StoreListNode<E>, value: EntityToType<E>[] | StoreListNode<E>): StoreListNode<E>;
+export function replaceNode<E>(
     node: StoreNode<E> | StoreListNode<E>,
     value: EntityToType<E> | EntityToType<E>[] | StoreNode<E> | StoreListNode<E>
 ): StoreNode<E> | StoreListNode<E> {
@@ -211,12 +203,9 @@ export function replaceNode<E extends Entity>(
  * @param node Le noeud à remplir.
  * @param value La valeur du noeud.
  */
-export function setNode<E extends Entity>(node: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
-export function setNode<E extends Entity>(
-    node: StoreListNode<E>,
-    value: EntityToType<E>[] | StoreListNode<E>
-): StoreListNode<E>;
-export function setNode<E extends Entity>(
+export function setNode<E>(node: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
+export function setNode<E>(node: StoreListNode<E>, value: EntityToType<E>[] | StoreListNode<E>): StoreListNode<E>;
+export function setNode<E>(
     node: StoreNode<E> | StoreListNode<E>,
     value: EntityToType<E> | EntityToType<E>[] | StoreNode<E> | StoreListNode<E>
 ): StoreNode<E> | StoreListNode<E> {
@@ -254,7 +243,7 @@ export function setNode<E extends Entity>(
  * @param list Le noeud de liste.
  * @param item L'item à ajouter (classique ou noeud).
  */
-export function getNodeForList<E extends Entity>(list: StoreListNode<E>, item: EntityToType<E> | StoreNode<E>) {
+export function getNodeForList<E>(list: StoreListNode<E>, item: EntityToType<E> | StoreNode<E>) {
     let node = buildNode<E>(list.$entity);
     if (list.$nodeBuilder) {
         node = list.$nodeBuilder(node);

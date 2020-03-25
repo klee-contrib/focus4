@@ -3,7 +3,6 @@ import {disposeOnUnmount} from "mobx-react";
 import {useEffect, useState} from "react";
 
 import {
-    Entity,
     EntityToType,
     FormActions,
     FormActionsBuilder,
@@ -25,7 +24,7 @@ import {
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E extends Entity, NE extends Entity = E>(
+export function makeFormNode<E, NE = E>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
@@ -40,7 +39,7 @@ export function makeFormNode<E extends Entity, NE extends Entity = E>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E extends Entity, NE extends Entity = E>(
+export function makeFormNode<E, NE = E>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
@@ -75,7 +74,7 @@ export function makeFormNode(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function useFormNode<E extends Entity, NE extends Entity>(
+export function useFormNode<E, NE>(
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
@@ -88,7 +87,7 @@ export function useFormNode<E extends Entity, NE extends Entity>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function useFormNode<E extends Entity, NE extends Entity>(
+export function useFormNode<E, NE>(
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)

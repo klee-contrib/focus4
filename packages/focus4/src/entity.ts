@@ -12,7 +12,6 @@ export {
 } from "@focus4/forms";
 export {
     Domain,
-    Entity,
     EntityField,
     EntityToType,
     FieldEntry,

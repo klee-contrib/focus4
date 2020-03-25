@@ -8,7 +8,6 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    Entity,
     FieldEntry,
     FormNode,
     isEntityField,
@@ -23,9 +22,9 @@ import {
 import {FormEntityFieldBuilder} from "./field";
 import {FormListNodeBuilder} from "./list";
 
-type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
-type ObjectsOf<E extends Entity> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
-type ListsOf<E extends Entity> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
+type FieldsOf<E> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
+type ObjectsOf<E> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
+type ListsOf<E> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
 
 type EntryToEntity<E> = E extends ObjectEntry<infer E1>
     ? E1
@@ -35,7 +34,7 @@ type EntryToEntity<E> = E extends ObjectEntry<infer E1>
     ? E
     : never;
 
-export class FormNodeBuilder<E extends Entity> {
+export class FormNodeBuilder<E> {
     /** @internal */
     node: StoreNode<E>;
     /** @internal */
@@ -146,7 +145,7 @@ export class FormNodeBuilder<E extends Entity> {
      * @param node Nom du noeud.
      * @param builder Configurateur de noeud.
      */
-    patch<L extends ListsOf<E>, NE extends Entity>(
+    patch<L extends ListsOf<E>, NE>(
         node: L,
         builder: (b: FormListNodeBuilder<EntryToEntity<E[L]>>, node: StoreNode<E>) => FormListNodeBuilder<NE>
     ): FormNodeBuilder<E[L] extends NE ? E : Omit<E, L> & {[_ in L]: ListEntry<NE>}>;
@@ -155,7 +154,7 @@ export class FormNodeBuilder<E extends Entity> {
      * @param node Nom du noeud.
      * @param builder Configurateur de noeud.
      */
-    patch<O extends ObjectsOf<E>, NE extends Entity>(
+    patch<O extends ObjectsOf<E>, NE>(
         node: O,
         builder: (b: FormNodeBuilder<EntryToEntity<E[O]>>, node: StoreNode<E>) => FormNodeBuilder<NE>
     ): FormNodeBuilder<E[O] extends NE ? E : Omit<E, O> & {[_ in O]: ObjectEntry<NE>}>;

@@ -3,7 +3,7 @@ import {action, computed, IObservableArray, observable, reaction, runInAction} f
 
 import {config} from "@focus4/core";
 
-import {buildNode, Entity, EntityToType, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../entity";
+import {buildNode, EntityToType, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../entity";
 import {ListStoreBase} from "./base";
 import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
 
@@ -11,7 +11,7 @@ import {FacetOutput, GroupResult, QueryInput, QueryOutput} from "./types";
 export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
 
 /** Critères génériques de recherche. */
-export interface SearchProperties<C extends Entity = any> {
+export interface SearchProperties<C = any> {
     /** Critère personnalisé. */
     criteria?: EntityToType<C>;
     /** Champ texte. */
@@ -29,7 +29,7 @@ export interface SearchProperties<C extends Entity = any> {
 }
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<T> {
+export class SearchStore<T = any, C = any> extends ListStoreBase<T> {
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
 
@@ -92,7 +92,7 @@ export class SearchStore<T = any, C extends Entity = any> extends ListStoreBase<
         let initialQuery: SearchProperties<C> & {debounceCriteria?: boolean};
         let criteria;
 
-        if (secondParam && (secondParam as C)[Object.keys(secondParam)[0]].type) {
+        if (secondParam && (secondParam as any)[Object.keys(secondParam)[0]].type) {
             criteria = secondParam as C;
             initialQuery = thirdParam as any;
         } else {

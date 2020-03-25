@@ -12,10 +12,10 @@ export {
 export {
     Domain,
     DomainType,
-    Entity,
     EntityField,
     EntityToType,
     FieldEntry,
+    FieldEntry2,
     FieldEntryType,
     ListEntry,
     ObjectEntry,

@@ -1,10 +1,10 @@
 import {IObservableArray, Lambda} from "mobx";
 
-import {Entity, EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
+import {EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
 import {StoreListNode, StoreNode} from "./store";
 
 /** Génère les entrées de noeud de formulaire équivalent à une entité. */
-export type EntityToForm<E extends Entity> = {
+export type EntityToForm<E> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? FormEntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
@@ -16,7 +16,7 @@ export type EntityToForm<E extends Entity> = {
         : never;
 };
 /** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
-export type NodeToErrors<E extends Entity> = Omit<
+export type NodeToErrors<E> = Omit<
     {
         readonly [P in keyof FormNode<E>]?: FormNode<E>[P] extends FormNode<infer OE>
             ? NodeToErrors<OE>
@@ -32,7 +32,7 @@ export type NodeToErrors<E extends Entity> = Omit<
 >;
 
 /** Champs additionnels pour un noeud de formulaire. */
-export type FormNode<E extends Entity = any> = EntityToForm<E> & {
+export type FormNode<E = any> = EntityToForm<E> & {
     /** Données liée à un FormNode. */
     readonly form: {
         /** Précise si le formulaire associé est en édition ou non. */
@@ -64,7 +64,7 @@ export type FormNode<E extends Entity = any> = EntityToForm<E> & {
     readonly sourceNode: StoreNode<E>;
 };
 
-export interface FormListNode<E extends Entity = any> extends IObservableArray<FormNode<E>> {
+export interface FormListNode<E = any> extends IObservableArray<FormNode<E>> {
     /** Métadonnées. */
     readonly $entity: E;
 
@@ -82,7 +82,7 @@ export interface FormListNode<E extends Entity = any> extends IObservableArray<F
 
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */
-    $nodeBuilder?: <NE extends Entity>(source: StoreNode<E>) => StoreNode<NE>;
+    $nodeBuilder?: <NE>(source: StoreNode<E>) => StoreNode<NE>;
 
     /** @internal */
     /** Dispose l'observer qui suit l'ajout et la suppression d'élement dans la liste source. */

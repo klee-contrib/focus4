@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {fieldFor} from "@focus4/forms";
-import {Entity, FormEntityField, makeField, SearchStore, toFlatValues} from "@focus4/stores";
+import {FormEntityField, makeField, SearchStore, toFlatValues} from "@focus4/stores";
 import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
@@ -14,7 +14,7 @@ export {searchBarCss, SearchBarCss};
 const Theme = themr("searchBar", searchBarCss);
 
 /** Props de la SearchBar. */
-export interface SearchBarProps<T, C extends Entity> {
+export interface SearchBarProps<T, C> {
     /** Rendu du composant du critère. */
     criteriaComponent?: React.ReactElement;
     /** Désactive la gestion des critères dans le champ texte. */
@@ -35,7 +35,7 @@ export interface SearchBarProps<T, C extends Entity> {
 
 /** Barre de recherche permettant de contrôle le texte et les critères personnalisés de recherche. */
 @observer
-export class SearchBar<T, C extends Entity> extends React.Component<SearchBarProps<T, C>> {
+export class SearchBar<T, C> extends React.Component<SearchBarProps<T, C>> {
     /** L'input HTML. */
     protected input?: HTMLInputElement | null;
 

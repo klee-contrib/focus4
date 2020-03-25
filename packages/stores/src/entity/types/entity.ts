@@ -40,11 +40,6 @@ export interface Domain<
     SelectComponent?: ComponentType<SCProps>;
 }
 
-/** Définition générale d'une entité. */
-export interface Entity {
-    [key: string]: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry;
-}
-
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
     DT extends "string" | "number" | "boolean" | "object" = any,
@@ -76,6 +71,17 @@ export interface FieldEntry<
     readonly comment?: React.ReactNode;
 }
 
+export type FieldEntry2<D extends Domain, T extends DomainType<D["type"]> = DomainType<D["type"]>> = D extends Domain<
+    infer DT,
+    infer ICProps,
+    infer SCProps,
+    infer ACProps,
+    infer DCProps,
+    infer LCProps
+>
+    ? FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>
+    : never;
+
 /** Récupère le type primitif d'un champ associé à un type défini dans un domaine. */
 export type DomainType<DT> = DT extends "string"
     ? string
@@ -89,7 +95,7 @@ export type DomainType<DT> = DT extends "string"
 export type FieldEntryType<F extends FieldEntry> = F extends FieldEntry<infer _, infer T> ? T : never;
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
-export interface ObjectEntry<E extends Entity = any> {
+export interface ObjectEntry<E = any> {
     readonly type: "object";
 
     /** Entité de l'entrée */
@@ -97,7 +103,7 @@ export interface ObjectEntry<E extends Entity = any> {
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
-export interface ListEntry<E extends Entity = any> {
+export interface ListEntry<E = any> {
     readonly type: "list";
 
     /** Entité de l'entrée */
@@ -110,7 +116,7 @@ export interface RecursiveListEntry {
 }
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
-export type EntityToType<E extends Entity> = {
+export type EntityToType<E> = {
     -readonly [P in keyof E]?: E[P] extends FieldEntry
         ? FieldEntryType<E[P]>
         : E[P] extends ObjectEntry<infer OE>

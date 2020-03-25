@@ -1,10 +1,10 @@
 import {isFunction} from "lodash";
 
 import {nodeToFormNode} from "../../store";
-import {Entity, FormListNode, StoreListNode} from "../../types";
+import {FormListNode, StoreListNode} from "../../types";
 import {clone, FormNodeBuilder} from "./node";
 
-export class FormListNodeBuilder<E extends Entity> {
+export class FormListNodeBuilder<E> {
     /** @internal */
     node: StoreListNode<E>;
     /** @internal */
@@ -47,7 +47,7 @@ export class FormListNodeBuilder<E extends Entity> {
      * Modifie les items du FormListNode.
      * @param builder Configurateur de noeud.
      */
-    items<NE extends Entity>(
+    items<NE>(
         builder: (b: FormNodeBuilder<E>, node: StoreListNode<E>) => FormNodeBuilder<NE>
     ): FormListNodeBuilder<NE> {
         // @ts-ignore
