@@ -40,6 +40,8 @@ export interface SelectCheckboxProps<T extends "string" | "number"> {
     error?: React.ReactNode;
     /** Libellé. */
     label?: string;
+    /** Id de l'input. */
+    id?: string;
     /** Nombre maximal d'éléments sélectionnables. */
     maxSelectable?: number;
     /** Nom de l'input. */
@@ -60,6 +62,7 @@ export function SelectCheckbox<T extends "string" | "number">({
     disabled = false,
     error,
     label,
+    id,
     maxSelectable,
     name,
     onChange,
@@ -83,6 +86,7 @@ export function SelectCheckbox<T extends "string" | "number">({
                     return (
                         <li key={optVal} onClick={clickHandler} className={theme.option()}>
                             <Checkbox
+                                id={`${id}-${optVal}`}
                                 name={`${name}-${optVal}`}
                                 value={isSelected}
                                 onClick={clickHandler}

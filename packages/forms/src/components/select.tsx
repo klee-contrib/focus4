@@ -18,6 +18,8 @@ export interface SelectProps<T extends "string" | "number"> {
     hasUndefined?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Id de l'input. */
+    id?: string;
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
@@ -38,6 +40,7 @@ export interface SelectProps<T extends "string" | "number"> {
 export function Select<T extends "string" | "number">({
     disabled,
     error,
+    id,
     name,
     onChange,
     theme: pTheme,
@@ -62,7 +65,7 @@ export function Select<T extends "string" | "number">({
             <div data-focus="select" className={theme.select({error: !!error})}>
                 <select
                     disabled={disabled}
-                    id={name}
+                    id={id}
                     name={name}
                     onChange={({currentTarget: {value: val}}) => {
                         const v = type === "number" ? parseFloat(val) : val;

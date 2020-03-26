@@ -74,6 +74,7 @@ export function SelectRadio<T extends "string" | "number">({
                         return (
                             <RadioButton
                                 key={optVal || "undefined"}
+                                name={`${name}-${optVal}`}
                                 label={i18next.t(optLabel)}
                                 value={optVal}
                                 theme={{field: theme.option()}}
