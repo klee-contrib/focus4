@@ -213,6 +213,7 @@ export class SearchBar<T, C> extends React.Component<SearchBarProps<T, C>> {
                                 </FontIcon>
                                 <input
                                     name="search-bar-input"
+                                    autoComplete="off"
                                     onChange={this.onInputChange}
                                     placeholder={i18next.t(placeholder || "")}
                                     ref={input => (this.input = input)}
