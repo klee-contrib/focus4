@@ -27,6 +27,7 @@ export {
     NodeToType,
     isEntityField,
     isAnyFormNode,
+    isFormEntityField,
     isFormListNode,
     isFormNode,
     isAnyStoreNode,

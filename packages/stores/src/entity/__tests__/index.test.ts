@@ -28,8 +28,12 @@ function getFormNodes() {
     const entry = getStore().operation;
     const entry2 = getStore().projetTest;
     const formNode = new FormNodeBuilder(entry).build();
-    const formNode2 = new FormNodeBuilder(entry2).build();
-    return {entry, entry2, formNode, formNode2};
+    const setter = jest.fn();
+    const formNode2 = new FormNodeBuilder(entry2)
+        .add("test", f => f)
+        .add("test2", f => f.value(() => "2", setter))
+        .build();
+    return {entry, entry2, formNode, formNode2, setter};
 }
 
 const operation = {
@@ -254,6 +258,7 @@ describe("FormNode: Création", () => {
         expect(entry.structure).toEqual(formNode.structure.sourceNode));
     test("Le sous-sourceNode liste est bien le bon", () =>
         expect(entry2.ligneList).toEqual(formNode2.ligneList.sourceNode));
+    test("Un champ ajouté est bien présent", () => expect(formNode2.test).toBeDefined());
 
     test("Le FormNode a bien une propriété '_isEdit' initialisée à 'false'.", () =>
         expect((formNode.form as any)._isEdit).toBe(false));
@@ -293,6 +298,50 @@ describe("FormNode: Modification de StoreNode.", () => {
         expect(toFlatValues(formNode)).toEqual(toFlatValues(entry)));
 });
 
+describe("FormNode: Ajout de champs.", () => {
+    describe("replace sur storeNode", () => {
+        const {entry2, formNode2, setter} = getFormNodes();
+        formNode2.set({test: "yolo"});
+        entry2.replace(projetTest);
+
+        test("Un champ ajouté a bien sa valeur.", () => expect(formNode2.test.value).toEqual("yolo"));
+        test("Un champ ajouté calculé a bien sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
+        test("Le setter du champ custom n'a pas été appelé", () => expect(setter).toBeCalledTimes(0));
+        test("Un champ ajouté n'est pas remonté dans toFlatValues.", () =>
+            expect(toFlatValues(formNode2)).toEqual(toFlatValues(entry2)));
+    });
+
+    describe("replace sur formNode", () => {
+        const {formNode2, setter} = getFormNodes();
+        formNode2.set({test: "yolo"});
+        formNode2.replace(projetTest);
+
+        test("Un champ ajouté a bien sa valeur vidée.", () => expect(formNode2.test.value).toBeUndefined());
+        test("Un champ ajouté calculé a bien toujours sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
+        test("Le setter du champ ajouté a été appelé 1 fois", () => expect(setter).toBeCalledTimes(1));
+    });
+
+    describe("clear sur storeNode", () => {
+        const {entry2, formNode2, setter} = getFormNodes();
+        formNode2.set({test: "yolo"});
+        entry2.clear();
+
+        test("Un champ ajouté a bien sa valeur.", () => expect(formNode2.test.value).toEqual("yolo"));
+        test("Un champ ajouté calculé a bien toujours sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
+        test("Le setter du champ custom n'a pas été appelé", () => expect(setter).toBeCalledTimes(0));
+    });
+
+    describe("clear sur formNode", () => {
+        const {formNode2, setter} = getFormNodes();
+        formNode2.set({test: "yolo"});
+        formNode2.clear();
+
+        test("Un champ ajouté a bien sa valeur vidée.", () => expect(formNode2.test.value).toBeUndefined());
+        test("Un champ ajouté calculé a bien toujours sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
+        test("Le setter du champ ajouté a été appelé 1 fois", () => expect(setter).toBeCalledTimes(1));
+    });
+});
+
 describe("FormNode: Modification de StoreListNode.", () => {
     describe("replace", () => {
         const {entry2, formNode2} = getFormNodes();
@@ -307,7 +356,7 @@ describe("FormNode: Modification de StoreListNode.", () => {
         const {entry2, formNode2} = getFormNodes();
         entry2.replace(projetTest);
         entry2.ligneList.splice(2, 1);
-        test("Les suppressions d'élements de liste dans un Storeode sont bien répercutées.", () =>
+        test("Les suppressions d'élements de liste dans un StoreNode sont bien répercutées.", () =>
             expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 6}]));
     });
 
@@ -316,7 +365,7 @@ describe("FormNode: Modification de StoreListNode.", () => {
         entry2.replace(projetTest);
         entry2.ligneList.splice(2, 1);
         entry2.ligneList.pushNode({id: 8});
-        test("Les ajouts d'élements de liste dans un Storeode sont bien répercutées.", () =>
+        test("Les ajouts d'élements de liste dans un StoreNode sont bien répercutées.", () =>
             expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 6}, {id: 8}]));
     });
 });

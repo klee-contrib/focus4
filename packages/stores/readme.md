@@ -234,6 +234,10 @@ La fonction `add` permet d'ajouter un nouveau champ au `FormNode` en cours de co
 -   `name`, qui est le nom du champ à créer
 -   `fieldBuilder`, une fonction qui sera appelée avec un `FormEntityFieldBuilder` et le `FormNode` courant pour paramétrer le champ.
 
+Un champ ajouté dans un noeud de formulaire se comportera comme un champ classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un champ correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce champ.
+
+De plus, un champ ajouté sera **omis par défaut du résultat de `toFlatValues`**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `toFlatValues` à `true`.
+
 ##### `patch(name, builder)`
 
 La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un champ, une sous-liste ou un sous-objet. Elle prend comme paramètres :
@@ -275,14 +279,18 @@ Idem `FormNodeBuilder`
 
 ##### `value(get, set?)`
 
-La fonction `value` permet de remplacer la valeur d'un champ (ou bien de la définir pour un champ ajouté) par une valeur calculée, avec un setter éventuel. Elle prend comme paramètres :
+La fonction `value` permet de remplacer la valeur d'un champ par une valeur calculée, avec un setter éventuel. Elle prend comme paramètres :
 
 -   `get`, pour spécifier le nouveau getter du champ
 -   `set`, pour spécifier le nouveau setter du champ
 
-##### `metadata($field)`
+##### `domain(domain)`
 
-La fonction `metadata` permet de remplacer les métadonnées d'un champ (ou bien de les définir pour un champ ajouté). Elle prend un seul paramètre, `$field`, qui contient soit toutes les métadonnées à remplacer (champ et contenu du domaine), soit une fonction qui les renvoie qui sera utilisée pour initialiser un champ "computed".
+Cette fonction permet de remplacer le domaine d'un champ. A l'inverse des autres méthodes, le domaine est forcément fixe. Il permet surtout de fixer le type du champ, le reste des propriétés du domaine pouvant être modifiées par la suite (et rendues dynamiques) par la fonction `metadata`.
+
+##### `metadata($metadata)`
+
+La fonction `metadata` permet de remplacer les métadonnées d'un champ (ou bien de les définir pour un champ ajouté). Elle prend un seul paramètre, `$metadata`, qui contient soit toutes les métadonnées à remplacer (champ et contenu du domaine), soit une fonction qui les renvoie qui sera utilisée pour initialiser un champ "computed".
 
 #### Exemple
 

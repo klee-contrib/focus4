@@ -50,6 +50,7 @@ export {
     isAnyFormNode,
     isAnyStoreNode,
     isEntityField,
+    isFormEntityField,
     isFormListNode,
     isFormNode,
     isStoreListNode,

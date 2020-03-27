@@ -1,14 +1,5 @@
 import {isBoolean, isEqual, isFunction, toPairs} from "lodash";
-import {
-    action,
-    extendObservable,
-    IArrayChange,
-    IArraySplice,
-    intercept,
-    isComputedProp,
-    observable,
-    observe
-} from "mobx";
+import {action, extendObservable, IArrayChange, IArraySplice, intercept, observable, observe} from "mobx";
 
 import {
     EntityField,
@@ -69,8 +60,8 @@ export function nodeToFormNode<E = any>(
                     continue;
                 }
                 const child: {} = (node as any)[entry];
-                if (isEntityField(child) && (child as FormEntityField)._dispose) {
-                    (child as FormEntityField)._dispose!();
+                if (isEntityField(child)) {
+                    (child as FormEntityField)._dispose?.();
                 } else if (isAnyFormNode(child)) {
                     child.dispose();
                 }
@@ -212,16 +203,15 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
         }
     });
 
-    if (parentNode !== parentNode.sourceNode && !isComputedProp(field, "value")) {
-        (field as FormEntityField)._dispose = intercept(
-            parentNode.sourceNode[field.$field.name] as EntityField,
-            "value",
-            change => {
+    if (parentNode !== parentNode.sourceNode) {
+        const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
+        if (sourceField) {
+            (field as FormEntityField)._dispose = intercept(sourceField, "value", change => {
                 if (parentNode !== parentNode.sourceNode) {
                     field.value = change.newValue;
                 }
                 return change;
-            }
-        );
+            });
+        }
     }
 }

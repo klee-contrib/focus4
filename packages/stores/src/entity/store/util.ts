@@ -1,10 +1,10 @@
 import {isUndefined, mapValues, omitBy} from "lodash";
-import {isComputedProp} from "mobx";
 
 import {
     FormListNode,
     FormNode,
     isEntityField,
+    isFormEntityField,
     isStoreListNode,
     isStoreNode,
     NodeToType,
@@ -15,13 +15,15 @@ import {
 /**
  * Met à plat un noeud de store pour récupèrer sa valeur "brute".
  * @param entityStoreItem Le noeud de store à mettre à plat.
+ * @param includeAddedFields Inclus les champs ajoutés (pour un FormNode) dans la valeur retournée.
  */
 export function toFlatValues<SN extends FormNode | FormListNode | StoreNode | StoreListNode>(
-    storeNode: SN
+    storeNode: SN,
+    includeAddedFields?: boolean
 ): NodeToType<SN> {
     // Cas entrée liste : on appelle `toFlatValues` sur chaque élément.
     if (isStoreListNode(storeNode)) {
-        return storeNode.map(toFlatValues) as any;
+        return storeNode.map(item => toFlatValues(item, includeAddedFields)) as NodeToType<SN>;
     } else {
         // Cas entrée simple : on parcourt chaque champ et on enlève les valeurs `undefined`.
         return omitBy(
@@ -31,18 +33,24 @@ export function toFlatValues<SN extends FormNode | FormListNode | StoreNode | St
                     return undefined;
                 } else if (isStoreListNode(item)) {
                     // Cas entrée liste -> `toFlatValues` sur chaque élément.
-                    return item.map(toFlatValues);
+                    return item.map(i => toFlatValues(i, includeAddedFields));
                 } else if (isStoreNode(item)) {
                     // Cas entrée simple -> `toFlatValues`.
-                    return toFlatValues(item);
-                } else if (isEntityField(item) && !isComputedProp(item, "value")) {
-                    // Cas `EntityField` simple.
+                    return toFlatValues(item, includeAddedFields);
+                } else if (
+                    isEntityField(item) &&
+                    (includeAddedFields ||
+                        !isFormEntityField(item) ||
+                        (storeNode as FormNode).sourceNode[item.$field.name])
+                ) {
+                    // Cas du champ : on renvoie la valeur.
+                    // Les champs ajoutés (via `add`) dans un FormNode sont ignorés.
                     return item.value;
                 } else {
-                    return undefined; // Cas champ calculé : on le retire.
+                    return undefined; // Tout le reste : on en veut pas.
                 }
             }),
-            isUndefined
-        ) as any;
+            isUndefined // On enlève tous les champs vides / ignorés.
+        ) as NodeToType<SN>;
     }
 }

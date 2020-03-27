@@ -1,5 +1,5 @@
 import {isArray, isObject, mapValues} from "lodash";
-import {action, extendObservable, isComputedProp, isObservableArray, observable} from "mobx";
+import {action, extendObservable, isObservableArray, observable} from "mobx";
 
 import {
     EntityToType,
@@ -147,7 +147,7 @@ function clearNode<E>(node: StoreNode<E> | StoreListNode<E>) {
             } else if (isStoreNode(entryItem)) {
                 // Cas noeud de store -> `clearEntity`.
                 clearNode(entryItem);
-            } else if (entryItem.value !== undefined && !isComputedProp(entryItem, "value")) {
+            } else if (entryItem.value !== undefined) {
                 // Cas primitive -> on met à `undefined`.
                 entryItem.value = undefined;
             }
@@ -185,7 +185,7 @@ export function replaceNode<E>(
                 } else {
                     replaceNode(item as any, valueEntry);
                 }
-            } else if (isEntityField(item) && !isComputedProp(item, "value")) {
+            } else if (isEntityField(item)) {
                 if (isEntityField(valueEntry)) {
                     item.value = valueEntry.value;
                 } else {
