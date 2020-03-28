@@ -54,7 +54,7 @@ export class InputTime extends React.Component<InputTimeProps> {
     /** Position de l'horloge. */
     @observable protected clockPosition?: "up" | "down";
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
     }
 
@@ -65,7 +65,7 @@ export class InputTime extends React.Component<InputTimeProps> {
     }
 
     @action
-    componentWillReceiveProps({value}: InputTimeProps) {
+    UNSAFE_componentWillReceiveProps({value}: InputTimeProps) {
         this.time = this.toMoment(value);
         this.timeText = this.formatTime(value);
     }

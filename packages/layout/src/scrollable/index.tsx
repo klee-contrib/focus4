@@ -149,7 +149,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         }
     });
 
-    componentWillReceiveProps(props: ScrollableProps) {
+    UNSAFE_componentWillReceiveProps(props: ScrollableProps) {
         if (props.resetScrollOnChildrenChange && props.children !== this.props.children) {
             this.scrollTo({top: 0, behavior: "auto"});
         }

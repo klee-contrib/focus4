@@ -76,12 +76,12 @@ export class InputDate extends React.Component<InputDateProps> {
     /** Position du calendrier. */
     @observable protected calendarPosition?: "up" | "down";
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
     }
 
     @action
-    componentWillReceiveProps({value}: InputDateProps) {
+    UNSAFE_componentWillReceiveProps({value}: InputDateProps) {
         this.date = this.toMoment(value);
         this.dateText = this.formatDate(value);
     }

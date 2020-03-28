@@ -60,14 +60,14 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
                 : ""
             : undefined;
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         const {mask, type, value} = this.props;
         if (mask && type === "string") {
             this.mask = new InputMask({...mask, value: value as string});
         }
     }
 
-    componentWillReceiveProps({mask, value}: InputProps<T>) {
+    UNSAFE_componentWillReceiveProps({mask, value}: InputProps<T>) {
         // Mets à jour le pattern et la valeur du masque, si applicable.
         if (this.mask && mask && this.props.mask) {
             if (this.props.mask.pattern !== mask.pattern && this.props.value !== value) {
@@ -91,7 +91,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
         }
     }
 
-    componentWillUpdate({mask}: InputProps<T>) {
+    UNSAFE_componentWillUpdate({mask}: InputProps<T>) {
         if (this.mask && mask && this.props.mask && mask.pattern !== this.props.mask.pattern) {
             this.mask.setPattern(mask.pattern, {
                 value: this.mask.getRawValue(),

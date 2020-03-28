@@ -77,7 +77,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
     /** Reference du composant Autocomplete de RT, qui n'a pas renseigné ses types -_-' */
     private autocomplete?: any;
 
-    async componentWillMount() {
+    async UNSAFE_componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
         if ((value || value === 0) && !isQuickSearch && keyResolver) {
             const label = i18next.t((await keyResolver(value)) || "");
@@ -90,7 +90,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
         }
     }
 
-    async componentWillReceiveProps({autoSelect, value, isQuickSearch, keyResolver}: AutocompleteProps<T>) {
+    async UNSAFE_componentWillReceiveProps({autoSelect, value, isQuickSearch, keyResolver}: AutocompleteProps<T>) {
         if (autoSelect && value !== this.props.value && value && !isQuickSearch && keyResolver) {
             this.query = i18next.t((await keyResolver(value)) || "") || value?.toString() || "";
         }
