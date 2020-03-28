@@ -73,7 +73,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
     constructor(field: EntityField<F> | string) {
         if (typeof field === "string") {
             // @ts-ignore
-            this.field.$field.name = name;
+            this.field.$field.name = field;
         } else {
             this.field = field;
         }
@@ -84,7 +84,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * @param domain Le domaine.
      */
     domain<D extends Domain>(
-        domain: D
+        domain?: D
     ): EntityFieldBuilder<
         FieldEntry<
             D["type"],
@@ -96,8 +96,10 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainLabelProps<D>
         >
     > {
-        // @ts-ignore
-        this.field.$field.domain = domain;
+        if (domain) {
+            // @ts-ignore
+            this.field.$field.domain = domain;
+        }
         // @ts-ignore
         return this;
     }

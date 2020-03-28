@@ -128,13 +128,13 @@ export function makeField(param1: any, param2: any) {
     } else {
         const {
             domain,
-            DisplayComponent,
-            displayFormatter,
+            DisplayComponent = domain?.DisplayComponent,
+            displayFormatter = domain?.displayFormatter,
             displayProps,
             label,
-            LabelComponent,
+            LabelComponent = domain?.LabelComponent,
             labelProps,
-            name
+            name = ""
         } = param2;
         return new EntityFieldBuilder(name)
             .domain(domain)
@@ -143,8 +143,8 @@ export function makeField(param1: any, param2: any) {
                 label,
                 DisplayComponent,
                 LabelComponent,
-                displayProps: {...(domain.displayProps || {}), ...displayProps},
-                labelProps: {...(domain.labelProps || {}), ...labelProps}
+                displayProps: {...(domain?.displayProps ?? {}), ...displayProps},
+                labelProps: {...(domain?.labelProps ?? {}), ...labelProps}
             })
             .value(() => param1)
             .collect();

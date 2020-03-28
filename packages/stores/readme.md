@@ -124,17 +124,17 @@ Tous les composants d'affichages de champs dépendent du framework de SPA utilis
 
 Jusqu'ici, les champs que l'on manipule font partis d'un `StoreNode`, et ces champs ont été initialisés et figés par la définition initiale des entités générées depuis le modèle. Or, bien souvent, on peut avoir besoin de modifier une métadonnée en particulier, ou bien d'avoir à remplacer un composant dans un écran précis pour un champ donné. Et même, on peut vouloir créer un champ à la volée sans avoir besoin de créer un `StoreNode` tout entier.
 
-Pour répondre à ces problématiques, Focus propose trois fonctions utilitaires :
+Pour répondre à ces problématiques, Focus propose deux fonctions utilitaires :
 
-#### `fromField(field, $field)`
+#### `fromField(field, options)`
 
-Cette fonction permet de dupliquer un champ en remplaçant certaines métadonnées par celles précisées dans `$field`. Cette fonction ne sert qu'à de l'affichage (et en passant, on n'a bien parlé que de ça depuis le début).
+Cette fonction permet de dupliquer un champ en remplaçant certaines métadonnées par celles précisées dans `options`. Cette fonction ne sert qu'à de l'affichage (et en passant, on n'a bien parlé que de ça depuis le début).
 
-#### `makeField(value, $field?)`
+#### `makeField(value, options?)`
 
-Cette fonction permet de créer un field à partir d'une valeur. L'objet optionnel `$field` peut contenir toutes les métadonnées (ainsi que celles portées par le domaine) à ajouter au champ ainsi créé. Par défaut, le champ n'a pas de nom, pas de domaine et n'est pas obligatoire.
+Cette fonction permet de créer un champ en lecture seule à partir d'une valeur. L'objet optionnel `options` peut contenir un domaine, un formateur, un libellé, ainsi que les définitions de composants d'affichage.
 
-Cet usage de `makeField` (il y en aura d'autres plus bas) peut servir à récréer rapidement un champ entier à partir d'une valeur, ou simplement pour ajouter un domaine, un formatteur ou juste un libellé et profiter des fonctions et composants d'affichage.
+Cet usage de `makeField` est pratique pour afficher des valeurs fixes via `stringFor` et consorts.
 
 ### Gestion de l'édition.
 
@@ -144,18 +144,40 @@ Du moins, une propriété `isEdit` peut être ajoutée aux champs, qui pourra ê
 
 Il existe deux possibilités (_en dehors d'un formulaire, voir section suivante_) pour gérer un champ en édition :
 
-#### `makeField(getter, $field, setter, isEdit?)`
+#### `makeField(name, builder)`
 
-Cette deuxième signature de `makeField` permet de créer un champ "à la volée" à partir d'un getter et d'un setter. Les paramètres sont les suivants :
-
--   `getter` est une fonction sans paramètre représant une dérivation qui retourne la valeur.
--   `$field` pour y renseigner des métadonnées.
--   `setter` est une fonction qui prend la valeur comme paramètre et qui doit se charger de mettre à jour la valeur retournée par le getter.
--   `isEdit` peut être renseigné à `true` pour afficher le champ en édition.
+Cette deuxième signature de `makeField` permet de créer un champ éditable. Le premier paramètre est le nom du champ, tandis que le deuxième permet de décrire ce champ via un `EntityFieldBuilder`, présenté juste en dessous. Un champ créé par `makeField` sera en édition par défaut, sauf indication contraire.
 
 #### `cloneField(field, isEdit?)`
 
-Cette méthode est un raccourci pour le `makeField` du dessus pour créer un champ (à priori en édition) à partir d'un champ existant, en réutilisant son getter, son setter et ses métadonnées.
+Cette méthode est un raccourci pour le `makeField` du dessus pour créer un champ (à priori en édition) à partir d'un champ existant, en réutilisant son getter, son setter et ses métadonnées et son domaine.
+
+#### `EntityFieldBuilder`
+
+Il permet de modifier un EntityField existant ou bien d'en créer un nouveau. Il sera le paramètre de `add` et `patch` sur le `FormNodeBuilder` (voir plus bas), ainsi que celui de `makeField` pour un champ éditable.
+
+Il dispose des méthodes suivantes :
+
+##### `edit(value)`
+
+`value` peut prendre comme valeur `true` ou `false`, selon l'état souhaité.
+
+_Remarque : `value` pourra également être une fonction retournant un booléen dans un formulaire, pour paramétriser l'état d'édition du champ._
+
+##### `value(get, set?)`
+
+La fonction `value` permet de remplacer la valeur d'un champ par une valeur calculée, avec un setter éventuel. Elle prend comme paramètres :
+
+-   `get`, pour spécifier le nouveau getter du champ
+-   `set`, pour spécifier le nouveau setter du champ
+
+##### `domain(domain)`
+
+Cette fonction permet de remplacer le domaine d'un champ. A l'inverse des autres méthodes, le domaine est forcément fixe. Il permet surtout de fixer le type du champ, le reste des propriétés du domaine pouvant être modifiées par la suite (et rendues dynamiques) par la fonction `metadata`.
+
+##### `metadata($metadata)`
+
+La fonction `metadata` permet de remplacer les métadonnées d'un champ (ou bien de les définir pour un champ ajouté). Elle prend un seul paramètre, `$metadata`, qui contient soit toutes les métadonnées à remplacer (champ et contenu du domaine), soit une fonction qui les renvoie qui sera utilisée pour initialiser un champ "computed".
 
 ## Stores de formulaires
 
@@ -232,7 +254,7 @@ La façon standard de modifier l'état d'édition d'un membre d'objet est de pas
 La fonction `add` permet d'ajouter un nouveau champ au `FormNode` en cours de construction. Elle prend comme paramètres :
 
 -   `name`, qui est le nom du champ à créer
--   `fieldBuilder`, une fonction qui sera appelée avec un `FormEntityFieldBuilder` et le `FormNode` courant pour paramétrer le champ.
+-   `fieldBuilder`, une fonction qui sera appelée avec un `EntityFieldBuilder` et le `FormNode` courant pour paramétrer le champ.
 
 Un champ ajouté dans un noeud de formulaire se comportera comme un champ classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un champ correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce champ.
 
@@ -243,7 +265,7 @@ De plus, un champ ajouté sera **omis par défaut du résultat de `toFlatValues`
 La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un champ, une sous-liste ou un sous-objet. Elle prend comme paramètres :
 
 -   `name`, qui est le nom du champ/sous-objet/sous-liste. **Ce nom est typé et changera la signature en fonction de ce à quoi il correspond**.
--   `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le builder correspondant (`FormEntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
+-   `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
 
 ##### `build()`
 
@@ -266,31 +288,6 @@ La fonction `items` permet de modifier les items de la liste (qui sont, pour rap
 ##### `build()`
 
 Idem `FormNodeBuilder`.
-
-#### `FormEntityFieldBuilder`
-
-Il permet de construire un FormEntityField à partir d'un EntityField. Il sera le paramètre de `add` et `patch` sur le `FormNodeBuilder`.
-
-Il dispose des méthodes suivantes :
-
-##### `edit(value)`
-
-Idem `FormNodeBuilder`
-
-##### `value(get, set?)`
-
-La fonction `value` permet de remplacer la valeur d'un champ par une valeur calculée, avec un setter éventuel. Elle prend comme paramètres :
-
--   `get`, pour spécifier le nouveau getter du champ
--   `set`, pour spécifier le nouveau setter du champ
-
-##### `domain(domain)`
-
-Cette fonction permet de remplacer le domaine d'un champ. A l'inverse des autres méthodes, le domaine est forcément fixe. Il permet surtout de fixer le type du champ, le reste des propriétés du domaine pouvant être modifiées par la suite (et rendues dynamiques) par la fonction `metadata`.
-
-##### `metadata($metadata)`
-
-La fonction `metadata` permet de remplacer les métadonnées d'un champ (ou bien de les définir pour un champ ajouté). Elle prend un seul paramètre, `$metadata`, qui contient soit toutes les métadonnées à remplacer (champ et contenu du domaine), soit une fonction qui les renvoie qui sera utilisée pour initialiser un champ "computed".
 
 #### Exemple
 

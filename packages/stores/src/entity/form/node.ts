@@ -71,7 +71,7 @@ export class FormNodeBuilder<E> {
         ) => EntityFieldBuilder<NFE>
     ): FormNodeBuilder<E & {[P in FE]: NFE}> {
         // @ts-ignore
-        this.node[name] = builder(new FormEntityFieldBuilder(name), this.node).collect();
+        this.node[name] = builder(new EntityFieldBuilder(name), this.node).collect();
         // @ts-ignore
         return this;
     }
@@ -124,7 +124,7 @@ export class FormNodeBuilder<E> {
                     this.node[key] = new FormNodeBuilder(child).edit(isEdit).collect();
                 } else if (isEntityField(child)) {
                     // @ts-ignore
-                    this.node[key] = new FormEntityFieldBuilder(child).edit(isEdit).collect();
+                    this.node[key] = new EntityFieldBuilder(child).edit(isEdit).collect();
                 }
             });
         }
