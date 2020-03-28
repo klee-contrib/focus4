@@ -1,11 +1,10 @@
 import * as React from "react";
 
-import {CSSProp, getIcon, themr} from "@focus4/styling";
+import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
 
 import contextualActionsCss, {ContextualActionsCss} from "./__style__/contextual-actions.css";
 export {contextualActionsCss, ContextualActionsCss};
-const Theme = themr("contextualActions", contextualActionsCss);
 
 const TooltipButton = tooltipFactory()(Button);
 const TooltipIconButton = tooltipFactory()(IconButton);
@@ -53,14 +52,18 @@ export interface ContextualActionsProps {
 }
 
 /** Affiche une liste d'actions contextuelles. */
-export class ContextualActions extends React.Component<ContextualActionsProps> {
-    /**
-     * Exécute une action
-     * @param key L'index de l'action dans la liste.
-     */
-    protected handleAction(key: number, e: React.SyntheticEvent<any>) {
-        const {data, operationList} = this.props;
+export function ContextualActions({
+    data,
+    i18nPrefix = "focus",
+    isMosaic,
+    onClickMenu,
+    onHideMenu,
+    operationList,
+    theme: pTheme
+}: ContextualActionsProps) {
+    const theme = useTheme("contextualActions", contextualActionsCss, pTheme);
 
+    function handleAction(key: number, e: React.SyntheticEvent<any>) {
         // On arrête bien tous les autres évènements, pour être sûr.
         e.preventDefault();
         e.stopPropagation();
@@ -70,93 +73,84 @@ export class ContextualActions extends React.Component<ContextualActionsProps> {
         }
     }
 
-    render() {
-        const {data, operationList, i18nPrefix = "focus", isMosaic, onClickMenu, onHideMenu} = this.props;
-        const lists = operationList.reduce(
-            (actionLists, Operation, key) => {
-                const {customComponents, primaryActions, secondaryActions} = actionLists;
-                if (isComponent(Operation)) {
-                    customComponents.push(<Operation data={data} onClickMenu={onClickMenu} onHideMenu={onHideMenu} />);
-                } else if (Operation.type !== "secondary") {
-                    const FinalButton =
-                        isMosaic && Operation.label
-                            ? TooltipButton
-                            : (isMosaic && !Operation.label) || !Operation.type || Operation.type.includes("label")
-                            ? Button
-                            : Operation.type === "icon"
-                            ? IconButton
-                            : TooltipIconButton;
-                    primaryActions.push(
-                        <FinalButton
-                            onClick={(e: any) => this.handleAction(key, e)}
-                            icon={
-                                isMosaic || !Operation.type || Operation.type.includes("icon")
-                                    ? Operation.icon
-                                    : undefined
-                            }
-                            key={key}
-                            label={(!isMosaic && FinalButton === Button && Operation.label) || undefined}
-                            tooltip={
-                                FinalButton === TooltipButton || FinalButton === TooltipIconButton
-                                    ? Operation.label
-                                    : undefined
-                            }
-                            primary={isMosaic}
-                            floating={isMosaic ? true : undefined}
-                        />
-                    );
-                } else if (Operation.label) {
-                    secondaryActions.push({
-                        icon: Operation.icon,
-                        onClick: (e: any) => this.handleAction(key, e),
-                        caption: Operation.label
-                    });
-                }
-                return actionLists;
-            },
-            {
-                customComponents: [] as React.ReactElement[],
-                primaryActions: [] as React.ReactElement[],
-                secondaryActions: [] as MenuItemProps[]
+    const lists = operationList.reduce(
+        (actionLists, Operation, key) => {
+            const {customComponents, primaryActions, secondaryActions} = actionLists;
+            if (isComponent(Operation)) {
+                customComponents.push(<Operation data={data} onClickMenu={onClickMenu} onHideMenu={onHideMenu} />);
+            } else if (Operation.type !== "secondary") {
+                const FinalButton =
+                    isMosaic && Operation.label
+                        ? TooltipButton
+                        : (isMosaic && !Operation.label) || !Operation.type || Operation.type.includes("label")
+                        ? Button
+                        : Operation.type === "icon"
+                        ? IconButton
+                        : TooltipIconButton;
+                primaryActions.push(
+                    <FinalButton
+                        onClick={(e: any) => handleAction(key, e)}
+                        icon={
+                            isMosaic || !Operation.type || Operation.type.includes("icon") ? Operation.icon : undefined
+                        }
+                        key={key}
+                        label={(!isMosaic && FinalButton === Button && Operation.label) || undefined}
+                        tooltip={
+                            FinalButton === TooltipButton || FinalButton === TooltipIconButton
+                                ? Operation.label
+                                : undefined
+                        }
+                        primary={isMosaic}
+                        floating={isMosaic ? true : undefined}
+                    />
+                );
+            } else if (Operation.label) {
+                secondaryActions.push({
+                    icon: Operation.icon,
+                    onClick: (e: any) => handleAction(key, e),
+                    caption: Operation.label
+                });
             }
-        );
-        return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div className={!isMosaic ? theme.text() : theme.fab()}>
-                        {lists.customComponents}
-                        {lists.primaryActions}
-                        {lists.secondaryActions.length ? (
-                            !isMosaic ? (
-                                <IconMenu
-                                    icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
-                                    onClick={onClickMenu}
-                                    onHide={onHideMenu}
-                                >
-                                    {lists.secondaryActions.map((a, i) => (
-                                        <MenuItem key={i} {...a} />
-                                    ))}
-                                </IconMenu>
-                            ) : (
-                                <ButtonMenu
-                                    button={{
-                                        icon: getIcon(`${i18nPrefix}.icons.contextualActions.secondary`),
-                                        floating: true
-                                    }}
-                                    onClick={onClickMenu}
-                                    onHide={onHideMenu}
-                                >
-                                    {lists.secondaryActions.map((a, i) => (
-                                        <MenuItem key={i} {...a} />
-                                    ))}
-                                </ButtonMenu>
-                            )
-                        ) : null}
-                    </div>
-                )}
-            </Theme>
-        );
-    }
+            return actionLists;
+        },
+        {
+            customComponents: [] as React.ReactElement[],
+            primaryActions: [] as React.ReactElement[],
+            secondaryActions: [] as MenuItemProps[]
+        }
+    );
+    return (
+        <div className={!isMosaic ? theme.text() : theme.fab()}>
+            {lists.customComponents}
+            {lists.primaryActions}
+            {lists.secondaryActions.length ? (
+                !isMosaic ? (
+                    <IconMenu
+                        icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
+                        onClick={onClickMenu}
+                        onHide={onHideMenu}
+                    >
+                        {lists.secondaryActions.map((a, i) => (
+                            <MenuItem key={i} {...a} />
+                        ))}
+                    </IconMenu>
+                ) : (
+                    <ButtonMenu
+                        button={{
+                            icon: getIcon(`${i18nPrefix}.icons.contextualActions.secondary`),
+                            floating: true
+                        }}
+                        onClick={onClickMenu}
+                        onHide={onHideMenu}
+                    >
+                        {lists.secondaryActions.map((a, i) => (
+                            <MenuItem key={i} {...a} />
+                        ))}
+                    </ButtonMenu>
+                )
+            ) : null}
+        </div>
+    );
 }
 
 function isComponent<T>(item: OperationListItem<T>): item is React.ComponentType<OperationListItemComponentProps<T>> {

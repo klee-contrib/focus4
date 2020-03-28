@@ -1,6 +1,4 @@
 import i18next from "i18next";
-import {observable} from "mobx";
-import {observer} from "mobx-react";
 import * as React from "react";
 
 import {themeable} from "@focus4/core";
@@ -48,32 +46,29 @@ export interface SearchChipProps {
 }
 
 /** Chip avec un keyResolver. */
-@observer
-export class SearchChip extends React.Component<SearchChipProps> {
-    @observable valueLabel = this.props.valueLabel || this.props.value;
+export function SearchChip(props: SearchChipProps) {
+    const {code, codeLabel, deletable, onDeleteClick, keyResolver, showCode, theme = {}, themer, type, value} = props;
+    const [valueLabel, setValueLabel] = React.useState(props.valueLabel || value);
 
-    async componentDidMount() {
-        const {code, keyResolver, type, value} = this.props;
+    React.useEffect(() => {
         if (keyResolver && value && (type === "facet" || type === "filter")) {
-            const valueLabel = await keyResolver(type, code, value);
-            if (valueLabel) {
-                this.valueLabel = valueLabel;
-            }
+            keyResolver(type, code, value).then(newValueLabel => {
+                if (newValueLabel) {
+                    setValueLabel(newValueLabel);
+                }
+            });
         }
-    }
+    }, []);
 
-    render() {
-        const {code, codeLabel, deletable, onDeleteClick, showCode, theme = {}, themer, type, value} = this.props;
-        const tCodeLabel = i18next.t(codeLabel);
-        const tValueLabel = this.valueLabel && i18next.t(this.valueLabel);
-        return (
-            <Chip
-                deletable={deletable}
-                onDeleteClick={onDeleteClick}
-                theme={themeable(theme, (themer && themer(type, code, value)) || {})}
-            >
-                {!tValueLabel ? tCodeLabel : showCode ? `${tCodeLabel} : ${tValueLabel}` : tValueLabel}
-            </Chip>
-        );
-    }
+    const tCodeLabel = i18next.t(codeLabel);
+    const tValueLabel = valueLabel && i18next.t(valueLabel);
+    return (
+        <Chip
+            deletable={deletable}
+            onDeleteClick={onDeleteClick}
+            theme={themeable(theme, (themer && themer(type, code, value)) || {})}
+        >
+            {!tValueLabel ? tCodeLabel : showCode ? `${tCodeLabel} : ${tValueLabel}` : tValueLabel}
+        </Chip>
+    );
 }

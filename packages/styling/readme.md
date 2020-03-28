@@ -14,33 +14,26 @@ Il est également possible de générer automatiquement des types pour ces impor
 
 ### Injection de classes CSS
 
-Le scoping des classes est une fonctionnalité à double tranchant, car elle va nous empêcher de surcharger directement le CSS des composants de la librairie. Pour résoudre ce problème, on va utilise la librairie [`react-css-themr`](https://github.com/javivelasco/react-css-themr), fournie avec React Toolbox, qui permet de faire de la fusion de modules CSS. Avec l'aide de l'API de Context de React, on va construire un combo _Provider_/_Consumer_ (`ThemeProvider` et `themr()`) autour d'une propriété `theme` qui contient les classes CSS à utiliser dans un composant. La fonction `themr` va créer un composant qui va permettre de fusionner les classes issues du style par défaut (celui du framework), celui passé dans le `ThemeProvider` (le vôtre) et celui passé en Props.
+Le scoping des classes est une fonctionnalité à double tranchant, car elle va nous empêcher de surcharger directement le CSS des composants de la librairie. Pour résoudre ce problème, on s'inspire de la librairie [`react-css-themr`](https://github.com/javivelasco/react-css-themr), mise au point avec react-toolbox et réécrite pour Focus, qui permet de faire de la fusion de modules CSS. Avec l'aide de l'API de Context de React, on va construire un combo _Provider_/_Consumer_ (`ThemeProvider` et `useTheme()`) autour d'une propriété `theme` qui contient les classes CSS à utiliser dans un composant. Le hook `useTheme` va aller chercher le CSS du contexte (via `useContext()`) et le fusionner les classes issues du style par défaut (celui du framework), celui passé dans le `ThemeProvider` (le vôtre) et celui passé en Props.
 
-Par exemple, le `Display` est défini ainsi:
+Exemple :
 
 ```tsx
 // Imports
-import styles from "./__style__/display.css";
-const Theme = themr("display", styles);
+import displayCss from "./__style__/display.css";
 
-/* bla bla */
-
-    // Render
-    render() {
-        /* bla bla */
-        return (
-            <Theme theme={this.props.theme}>
-                {theme =>
-                    <div data-focus="display" className={theme.display}>
-                        {formatter && formatter(displayed) || displayed}
-                    </div>
-                }
-            </Theme>
-        );
-    }
+function Display(props) {
+    const theme = useTheme("display", displayCss, props.theme);
+    /* bla bla */
+    return (
+        <div data-focus="display" className={theme.display}>
+            {(formatter && formatter(displayed)) || displayed}
+        </div>
+    );
+}
 ```
 
-Le composant `Theme` ainsi créé prend une fonction de rendu comme `children`, comme le `Context.Consumer` qu'il pose, à laquelle le `theme` fusionné sera passé.
+_Remarque : Pour les composants classes, il existe une fonction `themr` qui permet de créer un composant qui permettra d'injecter le CSS dans vos rendus, selon la même API qu'un `Context.Consumer`._
 
 Le `Layout` inclus déjà le `ThemeProvider`, donc pour surcharger du CSS de manière globale il suffit donc d'ajouter vos propres classes dans la propriété `appTheme` :
 
@@ -59,21 +52,4 @@ ReactDOM.render(
         {/* Votre appli */}
     </Layout>
 );
-```
-
-Dans un composant fonction, on peut désormais utiliser des hooks, donc il est possible de consommer un theme via `useTheme` de la façon suivante :
-
-```tsx
-// Imports
-import styles from "./__style__/display.css";
-
-function Display(props) {
-    const theme = useTheme("display", styles, props.theme);
-    /* bla bla */
-    return (
-        <div data-focus="display" className={theme.display}>
-            {(formatter && formatter(displayed)) || displayed}
-        </div>
-    );
-}
 ```

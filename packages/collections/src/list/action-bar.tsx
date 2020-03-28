@@ -1,12 +1,12 @@
 import i18next from "i18next";
 import {reduce} from "lodash";
-import {action, IReactionDisposer, observable, reaction} from "mobx";
-import {disposeOnUnmount, observer} from "mobx-react";
+import {action, reaction} from "mobx";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 
 import {isList, isSearch, ListStoreBase} from "@focus4/stores";
-import {CSSProp, defaultPose, getIcon, themr, ToBem} from "@focus4/styling";
+import {CSSProp, defaultPose, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, ChipTheme, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
 import {ChipType, FacetBox, shouldDisplayFacet} from "../search";
@@ -14,7 +14,6 @@ import {ContextualActions, OperationListItem} from "./contextual-actions";
 
 import actionBarCss, {ActionBarCss} from "./__style__/action-bar.css";
 export {actionBarCss, ActionBarCss};
-const Theme = themr("actionBar", actionBarCss);
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
@@ -65,94 +64,30 @@ export interface ActionBarProps<T> {
 }
 
 /** Barre d'actions pour une liste ou un groupe de recherche. Permet le tri, le grouping, la recherche et la sélection + actions en masse. */
-@observer
-export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
+export function ActionBar<T>({
+    chipKeyResolver,
+    chipThemer,
+    group,
+    groupableFacets,
+    hasFacetBox,
+    hasGrouping,
+    hasSearchBar,
+    hasSelection,
+    i18nPrefix = "focus",
+    nbDefaultDataListFacet = 6,
+    operationList,
+    orderableColumnList,
+    searchBarPlaceholder,
+    showSingleValuedFacets,
+    store,
+    theme: pTheme
+}: ActionBarProps<T>) {
     /** Affiche la FacetBox. */
-    @observable displayFacetBox = false;
+    const [displayFacetBox, setDisplayFacetBox] = React.useState(false);
 
-    /** Bouton de sélection (case à cocher). */
-    protected selectionButton(theme: ToBem<ActionBarCss>) {
-        const {hasSelection, i18nPrefix = "focus", store} = this.props;
-        if (hasSelection) {
-            return (
-                <IconButton
-                    icon={getIcon(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}`)}
-                    onClick={store.toggleAll}
-                    theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
-                />
-            );
-        } else {
-            return null;
-        }
-    }
+    const theme = useTheme("actionBar", actionBarCss, pTheme);
 
-    /** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */
-    protected filterButton(theme: ToBem<ActionBarCss>) {
-        const {hasFacetBox, showSingleValuedFacets, i18nPrefix = "focus", store} = this.props;
-        if (
-            hasFacetBox &&
-            isSearch(store) &&
-            store.facets.some(facet =>
-                shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
-            )
-        ) {
-            return (
-                <div style={{position: "relative"}}>
-                    <Button
-                        onClick={() => (this.displayFacetBox = !this.displayFacetBox)}
-                        icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${this.displayFacetBox ? "up" : "down"}`)}
-                        theme={{icon: theme.dropdown()}}
-                        label={i18next.t(`${i18nPrefix}.search.action.filter`)}
-                    />
-                    {this.displayFacetBox ? <div className={theme.triangle()} /> : null}
-                </div>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    /** Bouton de tri. */
-    protected sortButton(theme: ToBem<ActionBarCss>) {
-        const {i18nPrefix = "focus", orderableColumnList, store} = this.props;
-
-        if (
-            store.totalCount > 1 &&
-            !store.selectedItems.size &&
-            ((isSearch(store) && !store.groupingKey) || isList(store)) &&
-            orderableColumnList
-        ) {
-            return (
-                <ButtonMenu
-                    button={{
-                        label: i18next.t(`${i18nPrefix}.search.action.sort`),
-                        icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
-                        openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
-                        theme: {icon: theme.dropdown()}
-                    }}
-                    onClick={() => (this.displayFacetBox = false)}
-                >
-                    {orderableColumnList.map((description, idx) => (
-                        <MenuItem
-                            key={idx}
-                            onClick={action("sort", () => {
-                                store.sortBy = description.key;
-                                store.sortAsc = description.order;
-                            })}
-                            caption={i18next.t(description.label)}
-                        />
-                    ))}
-                </ButtonMenu>
-            );
-        }
-
-        return null;
-    }
-
-    /** Bouton de groupe. */
-    protected groupButton(theme: ToBem<ActionBarCss>) {
-        const {groupableFacets, hasGrouping, i18nPrefix = "focus", store} = this.props;
-
+    function groupButton() {
         if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
             const groupableColumnList = store.facets
                 ? store.facets.reduce((result, facet) => {
@@ -172,8 +107,8 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
 
             const menuItems = reduce(
                 groupableColumnList,
-                (operationList, label, key) => [
-                    ...operationList,
+                (oL, label, key) => [
+                    ...oL,
                     <MenuItem key={key} onClick={() => (store.groupingKey = key)} caption={i18next.t(label)} />
                 ],
                 [] as JSX.Element[]
@@ -188,7 +123,7 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
                             openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
                             theme: {icon: theme.dropdown()}
                         }}
-                        onClick={() => (this.displayFacetBox = false)}
+                        onClick={() => setDisplayFacetBox(false)}
                     >
                         {menuItems}
                     </ButtonMenu>
@@ -199,128 +134,155 @@ export class ActionBar<T> extends React.Component<ActionBarProps<T>> {
         return null;
     }
 
-    /** Barre de recherche. */
-    protected searchBar(theme: ToBem<ActionBarCss>) {
-        const {i18nPrefix = "focus", hasSearchBar, searchBarPlaceholder, store} = this.props;
-
-        if (!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store))) {
-            return (
-                <div className={theme.searchBar()}>
-                    <Input
-                        icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
-                        value={store.query}
-                        onChange={(text: string) => (store.query = text)}
-                        hint={searchBarPlaceholder}
-                        theme={{
-                            input: theme.searchBarField(),
-                            icon: theme.searchBarIcon(),
-                            hint: theme.searchBarHint()
-                        }}
-                    />
-                    {store.query ? (
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
-                            onClick={() => (store.query = "")}
-                        />
-                    ) : null}
-                </div>
-            );
-        }
-
-        return null;
-    }
-
     /** Réaction permettant de fermer la FacetBox et de mettre à jour sa hauteur à chaque fois que c'est nécessaire (changement de son contenu).  */
-    @disposeOnUnmount
-    protected facetBoxCloser: IReactionDisposer = reaction(
-        () => {
-            const {hasFacetBox, store} = this.props;
-            return (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false;
-        },
-        () => {
-            const {store, showSingleValuedFacets} = this.props;
-
-            // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
-            if (
-                this.displayFacetBox &&
-                isSearch(store) &&
-                store.facets.every(
-                    facet => !shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
-                )
-            ) {
-                this.displayFacetBox = false;
-            }
-        }
+    React.useEffect(
+        () =>
+            reaction(
+                () => (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false,
+                () => {
+                    // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
+                    if (
+                        displayFacetBox &&
+                        isSearch(store) &&
+                        store.facets.every(
+                            facet =>
+                                !shouldDisplayFacet(
+                                    facet,
+                                    store.selectedFacets,
+                                    showSingleValuedFacets,
+                                    store.totalCount
+                                )
+                        )
+                    ) {
+                        setDisplayFacetBox(false);
+                    }
+                },
+                {fireImmediately: true}
+            ),
+        [displayFacetBox, hasFacetBox, showSingleValuedFacets, store]
     );
 
-    render() {
-        const {
-            chipKeyResolver,
-            chipThemer,
-            group,
-            hasFacetBox,
-            i18nPrefix = "focus",
-            nbDefaultDataListFacet = 6,
-            operationList,
-            showSingleValuedFacets,
-            store
-        } = this.props;
-        return (
-            <Theme theme={this.props.theme}>
-                {theme => (
-                    <div className={theme.container()}>
-                        {/* ActionBar en tant que telle. */}
-                        <div className={theme.bar({selection: !!store.selectedItems.size})}>
-                            <div className={theme.buttons()}>
-                                {this.selectionButton(theme)}
-                                {group ? <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong> : null}
-                                {store.selectedItems.size ? (
-                                    <strong>{`${store.selectedItems.size} ${i18next.t(
-                                        `${i18nPrefix}.search.action.selectedItem${
-                                            store.selectedItems.size > 1 ? "s" : ""
-                                        }`
-                                    )}`}</strong>
-                                ) : null}
-                                {this.filterButton(theme)}
-                                {this.sortButton(theme)}
-                                {this.groupButton(theme)}
-                                {this.searchBar(theme)}
-                            </div>
-                            {store.selectedItems.size && operationList && operationList.length ? (
-                                <ContextualActions
-                                    operationList={operationList}
-                                    data={Array.from(store.selectedItems)}
+    return useObserver(() => (
+        <div className={theme.container()}>
+            {/* ActionBar en tant que telle. */}
+            <div className={theme.bar({selection: !!store.selectedItems.size})}>
+                <div className={theme.buttons()}>
+                    {/** Bouton de sélection (case à cocher). */}
+                    {hasSelection ? (
+                        <IconButton
+                            icon={getIcon(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}`)}
+                            onClick={store.toggleAll}
+                            theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
+                        />
+                    ) : null}
+
+                    {/** Eléments sélectionnés */}
+                    {group ? <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong> : null}
+                    {store.selectedItems.size ? (
+                        <strong>{`${store.selectedItems.size} ${i18next.t(
+                            `${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`
+                        )}`}</strong>
+                    ) : null}
+
+                    {/** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */}
+                    {hasFacetBox &&
+                    isSearch(store) &&
+                    store.facets.some(facet =>
+                        shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
+                    ) ? (
+                        <div style={{position: "relative"}}>
+                            <Button
+                                onClick={() => setDisplayFacetBox(!displayFacetBox)}
+                                icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`)}
+                                theme={{icon: theme.dropdown()}}
+                                label={i18next.t(`${i18nPrefix}.search.action.filter`)}
+                            />
+                            {displayFacetBox ? <div className={theme.triangle()} /> : null}
+                        </div>
+                    ) : null}
+
+                    {/** Bouton de tri. */}
+                    {store.totalCount > 1 &&
+                    !store.selectedItems.size &&
+                    ((isSearch(store) && !store.groupingKey) || isList(store)) &&
+                    orderableColumnList ? (
+                        <ButtonMenu
+                            button={{
+                                label: i18next.t(`${i18nPrefix}.search.action.sort`),
+                                icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
+                                openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
+                                theme: {icon: theme.dropdown()}
+                            }}
+                            onClick={() => setDisplayFacetBox(false)}
+                        >
+                            {orderableColumnList.map((description, idx) => (
+                                <MenuItem
+                                    key={idx}
+                                    onClick={action("sort", () => {
+                                        store.sortBy = description.key;
+                                        store.sortAsc = description.order;
+                                    })}
+                                    caption={i18next.t(description.label)}
+                                />
+                            ))}
+                        </ButtonMenu>
+                    ) : null}
+
+                    {/** Bouton de groupe. */}
+                    {groupButton()}
+
+                    {/** Barre de recherche */}
+                    {!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store)) ? (
+                        <div className={theme.searchBar()}>
+                            <Input
+                                icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
+                                value={store.query}
+                                onChange={(text: string) => (store.query = text)}
+                                hint={searchBarPlaceholder}
+                                theme={{
+                                    input: theme.searchBarField(),
+                                    icon: theme.searchBarIcon(),
+                                    hint: theme.searchBarHint()
+                                }}
+                            />
+                            {store.query ? (
+                                <IconButton
+                                    icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
+                                    onClick={() => (store.query = "")}
                                 />
                             ) : null}
                         </div>
-                        {/* FacetBox */}
-                        {hasFacetBox && isSearch(store) ? (
-                            <div className={theme.facetBoxContainer()}>
-                                <Transition>
-                                    {this.displayFacetBox && (
-                                        <PanningDiv key="facet-box">
-                                            <IconButton
-                                                icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
-                                                onClick={() => (this.displayFacetBox = false)}
-                                            />
-                                            <FacetBox
-                                                chipKeyResolver={chipKeyResolver}
-                                                chipThemer={chipThemer}
-                                                nbDefaultDataList={nbDefaultDataListFacet}
-                                                showSingleValuedFacets={showSingleValuedFacets}
-                                                store={store}
-                                                theme={{facetBox: theme.facetBox()}}
-                                            />
-                                        </PanningDiv>
-                                    )}
-                                </Transition>
-                            </div>
-                        ) : null}
-                    </div>
-                )}
-            </Theme>
-        );
-    }
+                    ) : null}
+                </div>
+                {store.selectedItems.size && operationList && operationList.length ? (
+                    <ContextualActions operationList={operationList} data={Array.from(store.selectedItems)} />
+                ) : null}
+            </div>
+            {/* FacetBox */}
+            {hasFacetBox && isSearch(store) ? (
+                <div className={theme.facetBoxContainer()}>
+                    <Transition>
+                        {displayFacetBox && (
+                            <PanningDiv key="facet-box">
+                                <IconButton
+                                    icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
+                                    onClick={() => setDisplayFacetBox(false)}
+                                />
+                                <FacetBox
+                                    chipKeyResolver={chipKeyResolver}
+                                    chipThemer={chipThemer}
+                                    nbDefaultDataList={nbDefaultDataListFacet}
+                                    showSingleValuedFacets={showSingleValuedFacets}
+                                    store={store}
+                                    theme={{facetBox: theme.facetBox()}}
+                                />
+                            </PanningDiv>
+                        )}
+                    </Transition>
+                </div>
+            ) : null}
+        </div>
+    ));
 }
 
 /**
