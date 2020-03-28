@@ -36,6 +36,7 @@ export {
     FormNodeBuilder,
     InputComponents,
     ListEntry,
+    Metadata,
     NodeToType,
     ObjectEntry,
     RecursiveListEntry,

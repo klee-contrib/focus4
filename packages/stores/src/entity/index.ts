@@ -1,4 +1,4 @@
-export {cloneField, fromField, makeField} from "./field";
+export {Metadata, cloneField, fromField, makeField} from "./field";
 export {
     ActionsFormProps,
     ActionsPanelProps,
@@ -30,8 +30,8 @@ export {
     FormEntityField,
     FormNode,
     ListEntry,
-    ObjectEntry,
     NodeToType,
+    ObjectEntry,
     RecursiveListEntry,
     StoreListNode,
     StoreNode,

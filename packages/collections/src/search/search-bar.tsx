@@ -243,11 +243,13 @@ export class SearchBar<T, C> extends React.Component<SearchBarProps<T, C>> {
                                     onClick={this.toggleCriteria}
                                 />
                                 {fieldFor(
-                                    makeField(
-                                        () => store.query,
-                                        {label: `${i18nPrefix}.search.bar.query`},
-                                        query => (store.query = query || ""),
-                                        true
+                                    makeField("query", f =>
+                                        f
+                                            .value(
+                                                () => store.query,
+                                                query => (store.query = query || "")
+                                            )
+                                            .metadata({label: `${i18nPrefix}.search.bar.query`})
                                     )
                                 )}
                                 {criteriaComponent}

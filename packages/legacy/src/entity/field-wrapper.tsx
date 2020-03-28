@@ -53,23 +53,25 @@ export function FieldWrapper<F extends FieldEntry>({
     return useObserver(() => {
         const field = React.useMemo(
             () =>
-                makeField(
-                    () => pField.value,
-                    {
-                        name: pField.$field.name,
-                        domain: pField.$field.domain,
-                        label: label ?? pField.$field.label,
-                        isRequired: isRequired ?? pField.$field.isRequired,
-                        comment: comment ?? pField.$field.comment,
-                        AutocompleteComponent: AutocompleteComponent ?? pField.$field.domain.AutocompleteComponent,
-                        InputComponent: InputComponent ?? pField.$field.domain.InputComponent,
-                        className: className ?? pField.$field.domain.className,
-                        DisplayComponent: DisplayComponent ?? pField.$field.domain.DisplayComponent,
-                        displayFormatter: displayFormatter ?? pField.$field.domain.displayFormatter,
-                        LabelComponent: LabelComponent ?? pField.$field.domain.LabelComponent,
-                        SelectComponent: SelectComponent ?? pField.$field.domain.SelectComponent
-                    },
-                    value => (pField.value = value)
+                makeField(pField.$field.name, f =>
+                    f
+                        .domain(pField.$field.domain)
+                        .value(
+                            () => pField.value,
+                            value => (pField.value = value)
+                        )
+                        .metadata({
+                            label: label ?? pField.$field.label,
+                            isRequired: isRequired ?? pField.$field.isRequired,
+                            comment: comment ?? pField.$field.comment,
+                            AutocompleteComponent: AutocompleteComponent ?? pField.$field.domain.AutocompleteComponent,
+                            InputComponent: InputComponent ?? pField.$field.domain.InputComponent,
+                            className: className ?? pField.$field.domain.className,
+                            DisplayComponent: DisplayComponent ?? pField.$field.domain.DisplayComponent,
+                            displayFormatter: displayFormatter ?? pField.$field.domain.displayFormatter,
+                            LabelComponent: LabelComponent ?? pField.$field.domain.LabelComponent,
+                            SelectComponent: SelectComponent ?? pField.$field.domain.SelectComponent
+                        })
                 ),
             [
                 pField,
