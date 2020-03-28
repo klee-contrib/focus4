@@ -1,3 +1,4 @@
+export {cloneField, fromField, makeField} from "./field";
 export {
     ActionsFormProps,
     ActionsPanelProps,
@@ -8,7 +9,6 @@ export {
 } from "./form";
 export {buildNode, makeEntityStore, nodeToFormNode, toFlatValues} from "./store";
 export {stringFor} from "./string-for";
-export {Metadata, cloneField, fromField, makeField} from "./transforms";
 export {
     AutocompleteComponents,
     BaseAutocompleteProps,

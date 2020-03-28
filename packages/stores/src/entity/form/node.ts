@@ -1,7 +1,8 @@
 import {isFunction} from "lodash";
 import {extendObservable, observable} from "mobx";
 
-import {nodeToFormNode} from "../../store";
+import {EntityFieldBuilder} from "../field";
+import {nodeToFormNode} from "../store";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -18,9 +19,8 @@ import {
     RecursiveListEntry,
     StoreListNode,
     StoreNode
-} from "../../types";
-import {FormEntityFieldBuilder} from "./field";
-import {FormListNodeBuilder} from "./list";
+} from "../types";
+import {FormListNodeBuilder} from "./list-node";
 
 type FieldsOf<E> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
 type ObjectsOf<E> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
@@ -56,7 +56,7 @@ export class FormNodeBuilder<E> {
     add<FE extends string, NFE extends FieldEntry>(
         name: FE,
         builder: (
-            b: FormEntityFieldBuilder<
+            b: EntityFieldBuilder<
                 FieldEntry<
                     "string",
                     string,
@@ -68,7 +68,7 @@ export class FormNodeBuilder<E> {
                 >
             >,
             node: StoreNode<E>
-        ) => FormEntityFieldBuilder<NFE>
+        ) => EntityFieldBuilder<NFE>
     ): FormNodeBuilder<E & {[P in FE]: NFE}> {
         // @ts-ignore
         this.node[name] = builder(new FormEntityFieldBuilder(name), this.node).collect();
@@ -138,7 +138,7 @@ export class FormNodeBuilder<E> {
      */
     patch<F extends FieldsOf<E>, NFE extends FieldEntry>(
         field: F,
-        builder: (b: FormEntityFieldBuilder<E[F]>, node: StoreNode<E>) => FormEntityFieldBuilder<NFE>
+        builder: (b: EntityFieldBuilder<E[F]>, node: StoreNode<E>) => EntityFieldBuilder<NFE>
     ): FormNodeBuilder<E[F] extends NFE ? E : Omit<E, F> & {[_ in F]: NFE}>;
     /**
      * Modifie un noeud du FormNode.
@@ -165,7 +165,7 @@ export class FormNodeBuilder<E> {
         } else if (isStoreNode(child)) {
             this.node[node] = builder(new FormNodeBuilder(child), this.node).collect();
         } else if (isEntityField(child)) {
-            this.node[node] = builder(new FormEntityFieldBuilder(child), this.node).collect();
+            this.node[node] = builder(new EntityFieldBuilder(child), this.node).collect();
         }
         return this;
     }
