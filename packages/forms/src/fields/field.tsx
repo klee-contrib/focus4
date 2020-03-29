@@ -71,14 +71,6 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
         valueRatio = context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
     } = props;
 
-    /** On récupère le <div> de valeur pour y mettre un listener pour vérifier si on a le focus dessus ou pas, pour masque le message d'erreur. */
-    const valueElement = React.useRef<HTMLDivElement>(null);
-    React.useEffect(() => {
-        if (store.hideErrorOnInit) {
-            valueElement.current!.addEventListener("mousedown", store.disableHideError);
-        }
-    }, []);
-
     /** On définit au premier rendu un identifiant unique pour le field. */
     const fieldId = React.useMemo(() => uniqueId("field_"), []);
 
@@ -110,19 +102,34 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
         /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
         hideErrorOnInit: (props.field as FormEntityField<F>).isEdit && !props.field.value,
 
+        /** On récupère le <div> de valeur pour y mettre un listener pour vérifier si on a le focus dessus ou pas, pour masque le message d'erreur. */
+        valueElement: null as HTMLDivElement | null,
+
         /** Détermine si on affiche l'erreur ou pas. En plus des surcharges du form et du field lui-même, l'erreur est masquée si le champ est en cours de saisie. */
         get showError() {
             return (
                 !props.noError &&
-                !documentHelper.isElementActive(valueElement.current) &&
+                !documentHelper.isElementActive(this.valueElement) &&
                 (!this.hideErrorOnInit || context.forceErrorDisplay)
             );
+        },
+
+        /** Enregistre la ref vers le noeud de la valeur. */
+        setValueElement(valueElement: HTMLDivElement | null) {
+            if (valueElement) {
+                this.valueElement = valueElement;
+                if (this.hideErrorOnInit) {
+                    valueElement.addEventListener("mousedown", this.disableHideError);
+                }
+            }
         },
 
         /** Désactive le masquage de l'erreur si le champ était en création avant le premier clic. */
         disableHideError() {
             this.hideErrorOnInit = false;
-            valueElement.current!.removeEventListener("mousedown", this.disableHideError);
+            if (this.valueElement) {
+                this.valueElement.removeEventListener("mousedown", this.disableHideError);
+            }
         }
     }));
 
@@ -189,7 +196,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                 <div
                     style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
                     className={classNames(theme.value(), className)}
-                    ref={valueElement}
+                    ref={store.setValueElement}
                 >
                     {isEdit ? (
                         inputType === "select" ? (
