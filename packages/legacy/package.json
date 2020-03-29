@@ -1,6 +1,6 @@
 {
     "name": "@focus4/legacy",
-    "version": "10.4.1",
+    "version": "10.4.2",
     "description": "Focus v4, legacy module",
     "main": "lib/focus4.legacy.js",
     "repository": {
@@ -16,8 +16,8 @@
     },
     "dependencies": {
         "@focus4/core": "^10.4.0",
-        "@focus4/forms": "^10.4.1",
-        "@focus4/stores": "^10.4.0",
+        "@focus4/forms": "^10.4.2",
+        "@focus4/stores": "^10.4.2",
         "@focus4/styling": "^10.4.0",
         "@focus4/toolbox": "^10.4.0",
         "core-decorators": "0.20.0"
