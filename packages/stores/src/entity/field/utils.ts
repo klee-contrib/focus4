@@ -23,10 +23,12 @@ interface ReadonlyFieldOptions<
     DCProps extends BaseDisplayProps = DCDProps,
     LCProps extends BaseLabelProps = LCDProps
 > extends BaseComponents<DCProps, LCProps> {
-    label?: string;
+    className?: string;
+    comment?: React.ReactNode;
     domain?: Domain<DT, any, any, any, DCDProps, LCDProps>;
     displayFormatter?: (value: T | undefined) => string;
     DisplayComponent?: ComponentType<DCProps>;
+    label?: string;
     LabelComponent?: ComponentType<LCProps>;
 }
 
@@ -65,6 +67,8 @@ export function fromField<
     options: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps> = {}
 ) {
     const {
+        className = field.$field.domain.className,
+        comment = field.$field.comment,
         domain = field.$field.domain,
         DisplayComponent = (field.$field.domain.DisplayComponent as unknown) as ComponentType<DCProps>,
         displayFormatter = field.$field.domain.displayFormatter,
@@ -74,6 +78,8 @@ export function fromField<
         labelProps = {}
     } = options;
     return makeField(field.value, {
+        className,
+        comment,
         domain,
         DisplayComponent,
         displayFormatter,
@@ -127,6 +133,8 @@ export function makeField(param1: any, param2: any = {}) {
         return param2(new EntityFieldBuilder(param1).edit(true)).collect();
     } else {
         const {
+            className,
+            comment,
             domain,
             DisplayComponent = domain?.DisplayComponent,
             displayFormatter = domain?.displayFormatter,
@@ -139,6 +147,8 @@ export function makeField(param1: any, param2: any = {}) {
         return new EntityFieldBuilder(name)
             .domain(domain)
             .metadata({
+                className,
+                comment,
                 displayFormatter,
                 label,
                 DisplayComponent,
