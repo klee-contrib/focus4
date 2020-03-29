@@ -122,7 +122,7 @@ export function makeField<F extends FieldEntry>(
         >
     ) => EntityFieldBuilder<F>
 ): EntityField<F>;
-export function makeField(param1: any, param2: any) {
+export function makeField(param1: any, param2: any = {}) {
     if (isFunction(param2)) {
         return param2(new EntityFieldBuilder(param1).edit(true)).collect();
     } else {
