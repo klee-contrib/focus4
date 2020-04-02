@@ -59,16 +59,20 @@ export interface Metadata<T = any, ICProps = any, SCProps = any, ACProps = any, 
 
 export class EntityFieldBuilder<F extends FieldEntry> {
     /** @internal */
-    field: EntityField<F> = {
-        $field: {
-            type: "field",
-            name: "",
-            domain: {type: "string"},
-            isRequired: false,
-            label: ""
-        } as F,
-        value: undefined
-    };
+    field: EntityField<F> = extendObservable(
+        {
+            $field: {
+                type: "field",
+                name: "",
+                domain: {type: "string"},
+                isRequired: false,
+                label: ""
+            } as F
+        },
+        {
+            value: undefined
+        }
+    );
 
     constructor(field: EntityField<F> | string) {
         if (typeof field === "string") {
