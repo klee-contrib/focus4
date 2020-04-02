@@ -160,15 +160,11 @@ export class EntityFieldBuilder<F extends FieldEntry> {
     }
 
     /**
-     * Remplace la valeur d'un champ par un getter (et un setter).
-     * @param get Getter.
-     * @param set Setter (optionnel).
+     * Initialise la valeur du champ.
+     * @param value Valeur initiale.
      */
     value<T extends DomainType<F["domain"]["type"]>>(
-        get: () => T | undefined,
-        set: (value: T | undefined) => void = () => {
-            /**/
-        }
+        value?: T
     ): EntityFieldBuilder<
         FieldEntry<
             F["domain"]["type"],
@@ -179,16 +175,45 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainDisplayProps<F["domain"]>,
             DomainLabelProps<F["domain"]>
         >
-    > {
-        delete this.field.value;
-        extendObservable(this.field, {
-            get value() {
-                return get();
-            },
-            set value(v) {
-                set(v);
-            }
-        });
+    >;
+    /**
+     * Remplace la valeur d'un champ par un getter (et un setter).
+     * @param get Getter.
+     * @param set Setter (optionnel).
+     */
+    value<T extends DomainType<F["domain"]["type"]>>(
+        get: () => T | undefined,
+        set?: (value: T | undefined) => void
+    ): EntityFieldBuilder<
+        FieldEntry<
+            F["domain"]["type"],
+            T,
+            DomainInputProps<F["domain"]>,
+            DomainSelectProps<F["domain"]>,
+            DomainAutocompleteProps<F["domain"]>,
+            DomainDisplayProps<F["domain"]>,
+            DomainLabelProps<F["domain"]>
+        >
+    >;
+    value<T extends DomainType<F["domain"]["type"]>>(
+        getOrValue: T | (() => T),
+        set: (value: T | undefined) => void = () => {
+            /**/
+        }
+    ) {
+        if (isFunction(getOrValue)) {
+            delete this.field.value;
+            extendObservable(this.field, {
+                get value() {
+                    return (getOrValue as Function)();
+                },
+                set value(v) {
+                    set(v);
+                }
+            });
+        } else {
+            this.field.value = getOrValue;
+        }
         // @ts-ignore
         return this;
     }
