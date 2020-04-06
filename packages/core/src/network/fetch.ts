@@ -23,7 +23,9 @@ export async function coreFetch(
     url = url + (queryString ? `${url.includes("?") ? "&" : "?"}${queryString}` : "");
     options = merge(
         {method, credentials: "include"},
-        body
+        body instanceof FormData
+            ? {body}
+            : body
             ? {
                   headers: {
                       "Content-Type": isObject(body) ? "application/json" : "text/plain"
