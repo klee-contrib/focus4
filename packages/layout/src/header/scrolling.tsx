@@ -1,8 +1,6 @@
 import * as React from "react";
-import posed from "react-pose";
-import {PoseElementProps} from "react-pose/lib/components/PoseElement/types";
 
-import {CSSProp, ScrollableContext, springPose, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 
 import headerCss, {HeaderCss} from "./__style__/header.css";
 export {headerCss, HeaderCss};
@@ -23,13 +21,10 @@ export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScro
     const theme = useTheme("header", headerCss, pTheme);
     const ref = React.useRef<HTMLElement>(null);
 
-    React.useLayoutEffect(() => context.registerHeader(canDeploy ? Header : FixedHeader, ref.current!, canDeploy), [
-        canDeploy
-    ]);
-
-    React.useLayoutEffect(() => context.setHeaderProps({className: theme.scrolling({sticky: true}), children}), [
-        children
-    ]);
+    React.useLayoutEffect(
+        () => context.registerHeader({className: theme.scrolling({sticky: true}), children}, ref.current!, canDeploy),
+        [canDeploy, children]
+    );
 
     return (
         <header className={theme.scrolling({deployed: canDeploy, undeployed: !canDeploy})} ref={ref}>
@@ -37,21 +32,3 @@ export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScro
         </header>
     );
 }
-
-const Header = posed.header({
-    enter: {
-        y: "0%",
-        ...springPose
-    },
-    exit: {
-        y: "-105%",
-        ...springPose
-    }
-});
-
-const FixedHeader = React.forwardRef<HTMLHeadingElement, PoseElementProps>(
-    ({onPoseComplete, initialPose, popFromFlow, ...props}, ref) => {
-        React.useLayoutEffect(() => onPoseComplete && onPoseComplete("exit"));
-        return <header ref={ref} {...props} />;
-    }
-);
