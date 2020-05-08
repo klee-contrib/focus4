@@ -1,6 +1,6 @@
 {
     "name": "@focus4/forms",
-    "version": "10.5.0-alpha.0",
+    "version": "10.5.0-alpha.1",
     "description": "Focus v4, forms module",
     "main": "lib/focus4.forms.js",
     "repository": {
@@ -18,9 +18,9 @@
     },
     "dependencies": {
         "@focus4/core": "^10.5.0-alpha.0",
-        "@focus4/stores": "^10.5.0-alpha.0",
-        "@focus4/styling": "^10.5.0-alpha.0",
-        "@focus4/toolbox": "^10.5.0-alpha.0",
+        "@focus4/stores": "^10.5.0-alpha.1",
+        "@focus4/styling": "^10.5.0-alpha.1",
+        "@focus4/toolbox": "^10.5.0-alpha.1",
         "@types/moment-timezone": "0.5.13",
         "@types/numeral": "0.0.27",
         "@types/react-dom": "16.9.7",
