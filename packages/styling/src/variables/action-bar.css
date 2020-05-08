@@ -9,7 +9,7 @@
     --action-bar-padding: 10px;
     --action-bar-search-bar-width: 250px;
     --action-bar-selection-background: var(--color-primary);
-    --action-bar-selection-color: var(--palette-grey-200);
+    --action-bar-selection-color: var(--color-white);
     --action-bar-shadow: var(--shadow-2p);
     --action-bar-transition: 0.1s ease-out;
 }

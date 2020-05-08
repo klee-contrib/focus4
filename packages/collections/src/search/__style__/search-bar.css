@@ -37,7 +37,7 @@
 
 .searchIcon {
     margin: 0 10px;
-    color: rgba(0, 0, 0, 0.4);
+    color: color(var(--color-black) a(40%));
 }
 
 .input input {
@@ -75,7 +75,7 @@
     position: absolute;
     top: 43px;
     z-index: var(--z-index-normal);
-    background: white;
+    background: var(--color-white);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 100%;
     border: 1px solid var(--palette-grey-400);
@@ -91,7 +91,7 @@
     left: 0;
     right: 0;
     z-index: calc(var(--z-index-normal) - 1);
-    background: rgba(0, 0, 0, 0.15);
+    background: color(var(--color-black) a(15%));
 }
 
 .criteria > button:first-child {

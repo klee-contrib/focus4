@@ -23,7 +23,7 @@
     position: absolute;
     top: 5px;
     left: -45px;
-    color: white !important;
+    color: var(--color-white) !important;
 
     & > [data-react-toolbox="font-icon"] {
         font-size: 24px;

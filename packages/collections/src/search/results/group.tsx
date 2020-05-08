@@ -96,7 +96,6 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
             )}
             <ListComponent
                 {...(listProps as P)}
-                groupCode={group.code}
                 {...{hasSelection, hideAdditionalItems: true}}
                 i18nPrefix={i18nPrefix}
                 isManualFetch

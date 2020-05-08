@@ -392,18 +392,17 @@ export class CollectionStore<T = any, C = any> {
         return observable(
             {
                 get currentCount() {
-                    return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
+                    return store.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
                 },
 
                 get totalCount() {
-                    return store.groups.find(result => result.code === groupCode)!.totalCount || 0;
+                    return store.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
                 },
 
                 isItemSelectionnable: store.isItemSelectionnable,
 
                 get list() {
-                    const resultGroup = store.groups.find(result => result.code === groupCode);
-                    return (resultGroup && resultGroup.list) || [];
+                    return store.groups.find(result => result.code === groupCode)?.list ?? [];
                 },
 
                 get selectionnableList(): T[] {

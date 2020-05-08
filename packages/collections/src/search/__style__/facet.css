@@ -52,12 +52,12 @@
 .show {
     cursor: pointer;
     font-size: 14px;
-    color: #444;
+    color: var(--palette-grey-900);
 }
 
 .facet li:hover,
 .show:hover {
-    color: black;
+    color: var(--color-black);
 }
 
 .chip {

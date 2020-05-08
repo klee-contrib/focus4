@@ -15,8 +15,6 @@ export {listBaseCss, ListBaseCss};
 export interface ListBaseProps<T> {
     /** CSS */
     baseTheme?: CSSProp<ListBaseCss>;
-    /** Code du groupe à afficher, pour une recherche groupée. */
-    groupCode?: string;
     /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Affiche le bouton "Voir plus" au lieu d'un scroll infini. */
@@ -36,7 +34,6 @@ export interface ListBaseProps<T> {
 export function useListBase<T>({
     baseTheme,
     data,
-    groupCode,
     i18nPrefix = "focus",
     itemKey,
     isLoading,
@@ -54,11 +51,7 @@ export function useListBase<T>({
         displayedCount: perPage,
 
         get data() {
-            return (store
-                ? groupCode
-                    ? store.groups.find(group => group.code === groupCode)!.list
-                    : store.list
-                : oData.data)!;
+            return (store ? store.list : oData.data)!;
         },
 
         /** Les données affichées. */
