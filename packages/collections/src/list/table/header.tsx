@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {action} from "mobx";
 import * as React from "react";
 
-import {ListStoreBase} from "@focus4/stores";
+import {CollectionStore} from "@focus4/stores";
 import {getIcon, ToBem} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
@@ -28,7 +28,7 @@ export function TableHeader<T>({
 }: {
     column: TableColumn<T>;
     i18nPrefix: string;
-    store?: ListStoreBase<T>;
+    store?: CollectionStore<T>;
     theme: ToBem<TableCss>;
 }) {
     return (

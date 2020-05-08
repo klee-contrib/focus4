@@ -4,10 +4,10 @@ import {extendObservable, observe} from "mobx";
 import {useAsObservableSource, useLocalStore} from "mobx-react";
 import * as React from "react";
 
+import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
-import {isSearch, ListStoreBase} from "@focus4/stores";
 import listBaseCss, {ListBaseCss} from "./__style__/list-base.css";
 export {listBaseCss, ListBaseCss};
 
@@ -45,7 +45,7 @@ export function useListBase<T>({
     perPage,
     showAllHandler,
     store
-}: ListBaseProps<T> & {data?: T[]; store?: ListStoreBase<T>}) {
+}: ListBaseProps<T> & {data?: T[]; store?: CollectionStore<T>}) {
     const context = React.useContext(ScrollableContext);
     const theme = useTheme("listBase", listBaseCss, baseTheme);
     const oData = useAsObservableSource({data, isLoading});
@@ -55,7 +55,7 @@ export function useListBase<T>({
 
         get data() {
             return (store
-                ? groupCode && isSearch(store)
+                ? groupCode
                     ? store.groups.find(group => group.code === groupCode)!.list
                     : store.list
                 : oData.data)!;
@@ -77,7 +77,7 @@ export function useListBase<T>({
 
         /** Correpond aux données non chargées. */
         get hasMoreToLoad() {
-            return store && isSearch(store) && store.totalCount > store.currentCount;
+            return store && store.totalCount > store.currentCount;
         },
 
         /** On complète le `hasMoreData` avec l'info du nombre de données chargées, si c'est un SearchStore. */
@@ -86,16 +86,12 @@ export function useListBase<T>({
         },
 
         get isLoading() {
-            if (store && isSearch(store)) {
-                return store.isLoading;
-            } else {
-                return oData.isLoading ?? false;
-            }
+            return store?.isLoading ?? oData.isLoading ?? false;
         },
 
         /** Label du bouton "Voir plus". */
         get showMoreLabel() {
-            if (store && isSearch(store)) {
+            if (store?.type === "server") {
                 return i18next.t(`${i18nPrefix}.list.show.more`);
             } else {
                 return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
@@ -106,7 +102,7 @@ export function useListBase<T>({
 
         /** Scroll infini disponible. */
         get hasInfiniteScroll() {
-            return !isManualFetch && ((store && isSearch(store)) || !!perPage);
+            return !isManualFetch && (store?.type === "server" || !!perPage);
         },
 
         /** Charge la page suivante. */
@@ -115,7 +111,7 @@ export function useListBase<T>({
                 if (state.hasMoreData) {
                     state.displayedCount! += perPage || 5;
                 }
-            } else if (store && isSearch(store) && state.hasMoreToLoad && !store.isLoading) {
+            } else if (store?.type === "server" && state.hasMoreToLoad && !store.isLoading) {
                 store.search(true);
                 if (perPage) {
                     if (state.hasMoreData) {

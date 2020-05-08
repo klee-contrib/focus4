@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import * as React from "react";
 
 import {fieldFor} from "@focus4/forms";
-import {FormEntityField, makeField, SearchStore, toFlatValues} from "@focus4/stores";
+import {CollectionStore, FormEntityField, makeField, toFlatValues} from "@focus4/stores";
 import {CSSProp, getIcon, themr} from "@focus4/styling";
 import {Button, Dropdown, FontIcon, IconButton} from "@focus4/toolbox";
 
@@ -28,7 +28,7 @@ export interface SearchBarProps<T, C> {
     /** Valeurs possible sdu scope. */
     scopes?: {code: string; label: string}[];
     /** Store associé. */
-    store: SearchStore<T, C>;
+    store: CollectionStore<T, C>;
     /** CSS. */
     theme?: CSSProp<SearchBarCss>;
 }

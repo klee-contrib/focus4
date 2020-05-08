@@ -5,7 +5,7 @@ import {useObserver} from "mobx-react";
 import * as React from "react";
 import posed, {Transition} from "react-pose";
 
-import {isList, isSearch, ListStoreBase} from "@focus4/stores";
+import {CollectionStore} from "@focus4/stores";
 import {CSSProp, defaultPose, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, ChipTheme, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
@@ -58,7 +58,7 @@ export interface ActionBarProps<T> {
     /** Affiche les facettes qui n'ont qu'une seule valeur. */
     showSingleValuedFacets?: boolean;
     /** Store associé. */
-    store: ListStoreBase<T>;
+    store: CollectionStore<T>;
     /** CSS. */
     theme?: CSSProp<ActionBarCss>;
 }
@@ -88,7 +88,7 @@ export function ActionBar<T>({
     const theme = useTheme("actionBar", actionBarCss, pTheme);
 
     function groupButton() {
-        if (hasGrouping && isSearch(store) && !store.selectedItems.size && !store.groupingKey) {
+        if (hasGrouping && !store.selectedItems.size && !store.groupingKey) {
             const groupableColumnList = store.facets
                 ? store.facets.reduce((result, facet) => {
                       if (
@@ -138,12 +138,11 @@ export function ActionBar<T>({
     React.useEffect(
         () =>
             reaction(
-                () => (hasFacetBox && isSearch(store) && store.facets.length && store.facets[0]) || false,
+                () => (hasFacetBox && store.facets.length && store.facets[0]) || false,
                 () => {
                     // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
                     if (
                         displayFacetBox &&
-                        isSearch(store) &&
                         store.facets.every(
                             facet =>
                                 !shouldDisplayFacet(
@@ -186,7 +185,6 @@ export function ActionBar<T>({
 
                     {/** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */}
                     {hasFacetBox &&
-                    isSearch(store) &&
                     store.facets.some(facet =>
                         shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
                     ) ? (
@@ -202,10 +200,7 @@ export function ActionBar<T>({
                     ) : null}
 
                     {/** Bouton de tri. */}
-                    {store.totalCount > 1 &&
-                    !store.selectedItems.size &&
-                    ((isSearch(store) && !store.groupingKey) || isList(store)) &&
-                    orderableColumnList ? (
+                    {store.totalCount > 1 && !store.selectedItems.size && !store.groupingKey && orderableColumnList ? (
                         <ButtonMenu
                             button={{
                                 label: i18next.t(`${i18nPrefix}.search.action.sort`),
@@ -232,7 +227,7 @@ export function ActionBar<T>({
                     {groupButton()}
 
                     {/** Barre de recherche */}
-                    {!store.selectedItems.size && hasSearchBar && (isList(store) || isSearch(store)) ? (
+                    {!store.selectedItems.size && hasSearchBar ? (
                         <div className={theme.searchBar()}>
                             <Input
                                 icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
@@ -259,7 +254,7 @@ export function ActionBar<T>({
                 ) : null}
             </div>
             {/* FacetBox */}
-            {hasFacetBox && isSearch(store) ? (
+            {hasFacetBox ? (
                 <div className={theme.facetBoxContainer()}>
                     <Transition>
                         {displayFacetBox && (

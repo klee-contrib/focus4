@@ -1,7 +1,7 @@
 import {useObserver} from "mobx-react";
 import * as React from "react";
 
-import {EntityField, FieldEntry, ListStoreBase} from "@focus4/stores";
+import {CollectionStore, EntityField, FieldEntry} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {ListBaseProps, useListBase} from "../list-base";
@@ -28,7 +28,7 @@ export type TimelineProps<T> = ListBaseProps<T> & {
           }
         | {
               /** Store de liste ou de recherche. */
-              store: ListStoreBase<T>;
+              store: CollectionStore<T>;
           }
     );
 

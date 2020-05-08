@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import * as React from "react";
 
-import {FacetOutput, SearchStore} from "@focus4/stores";
+import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import {ChipTheme} from "@focus4/toolbox";
 
@@ -46,7 +46,7 @@ export interface FacetBoxProps<T> {
     /** Affiche les facettes qui n'ont qu'une seule valeur. */
     showSingleValuedFacets?: boolean;
     /** Store de recherche associé. */
-    store: SearchStore<T>;
+    store: CollectionStore<T>;
     /** CSS. */
     theme?: CSSProp<FacetBoxCss>;
 }

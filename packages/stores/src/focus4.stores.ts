@@ -1,15 +1,4 @@
-export {
-    FacetItem,
-    FacetOutput,
-    GroupResult,
-    ListStore,
-    ListStoreBase,
-    QueryInput,
-    QueryOutput,
-    SearchStore,
-    isList,
-    isSearch
-} from "./collections";
+export {CollectionStore, FacetItem, FacetOutput, GroupResult, QueryInput, QueryOutput} from "./collection";
 export {
     ActionsFormProps,
     ActionsPanelProps,

@@ -1,9 +1,9 @@
 import {omit, uniq, values} from "lodash";
 
-import {FacetOutput, SearchStore} from "@focus4/stores";
+import {CollectionStore, FacetOutput} from "@focus4/stores";
 
 /** Ajoute une valeur de facette pour la facette donnée. */
-export function addFacetValue(store: SearchStore, facetKey: string, facetValue: string) {
+export function addFacetValue(store: CollectionStore, facetKey: string, facetValue: string) {
     if (store.selectedFacets[facetKey]) {
         // Liste existante : on ajoute la valeur à la liste (en vérifiant qu'elle n'est pas déjà présente)
         store.selectedFacets = {
@@ -17,7 +17,7 @@ export function addFacetValue(store: SearchStore, facetKey: string, facetValue: 
 }
 
 /** Retire une valeur de facette pour la facette donnée. */
-export function removeFacetValue(store: SearchStore, facetKey: string, facetValue: string) {
+export function removeFacetValue(store: CollectionStore, facetKey: string, facetValue: string) {
     if (store.selectedFacets[facetKey].length === 1) {
         // Une seule valeur sélectionnée : on retire la facette entière.
         store.selectedFacets = omit(store.selectedFacets, facetKey);

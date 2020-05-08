@@ -1,7 +1,7 @@
 import {IObservableArray, runInAction} from "mobx";
 import {DropTargetMonitor, useDrag} from "react-dnd";
 
-import {ListStoreBase} from "@focus4/stores";
+import {CollectionStore} from "@focus4/stores";
 
 export function useDragSource<T>({
     data,
@@ -11,7 +11,7 @@ export function useDragSource<T>({
 }: {
     data: T;
     draggedItems: IObservableArray<T>;
-    store?: ListStoreBase<T>;
+    store?: CollectionStore<T>;
     type: string;
 }) {
     return useDrag({

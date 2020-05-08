@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import * as React from "react";
 
-import {FacetOutput, SearchStore} from "@focus4/stores";
+import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, ChipTheme} from "@focus4/toolbox";
 
@@ -37,7 +37,7 @@ export interface FacetProps {
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList: number;
     /** Store. */
-    store: SearchStore;
+    store: CollectionStore;
     /** CSS. */
     theme?: CSSProp<FacetCss>;
 }

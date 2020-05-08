@@ -1,3 +1,29 @@
+import {EntityToType} from "../entity";
+
+/** Définition d'un service de recherche. */
+export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
+
+/** Statut de la séléection */
+export type SelectionStatus = "none" | "partial" | "selected";
+
+/** Critères génériques de recherche. */
+export interface SearchProperties<C = any> {
+    /** Critère personnalisé. */
+    criteria?: EntityToType<C>;
+    /** Champ texte. */
+    query?: string;
+    /** Champ sur lequel grouper. */
+    groupingKey?: string;
+    /** Facettes sélectionnées ({facet: value}) */
+    selectedFacets?: {[facet: string]: string[]};
+    /** Tri croissant. */
+    sortAsc?: boolean;
+    /** Champ sur lequel trier. */
+    sortBy?: string;
+    /** Nombre de résultats à retourner par requête. */
+    top?: number;
+}
+
 /** Valeur de facette. */
 export interface FacetItem {
     /** Code de la valeur de facette. */

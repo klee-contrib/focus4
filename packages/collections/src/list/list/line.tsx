@@ -4,7 +4,7 @@ import * as React from "react";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
 
-import {ListStoreBase} from "@focus4/stores";
+import {CollectionStore} from "@focus4/stores";
 import {getIcon, springPose, ToBem} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
@@ -46,7 +46,7 @@ export interface LineWrapperProps<T> {
     /** Actions de ligne. */
     operationList?: (data: T) => OperationListItem<T>[];
     /** Store de liste associé à la ligne. */
-    store?: ListStoreBase<T>;
+    store?: CollectionStore<T>;
     /** Handler pour ouvrir et fermer le détail. */
     toggleDetail?: (callbacks?: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void}) => void;
     /** CSS. */

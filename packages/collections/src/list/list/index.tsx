@@ -4,7 +4,7 @@ import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 import {Transition} from "react-pose";
 
-import {ListStoreBase} from "@focus4/stores";
+import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
@@ -24,13 +24,13 @@ export interface EmptyProps<T> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Store de la liste. */
-    store?: ListStoreBase<T>;
+    store?: CollectionStore<T>;
 }
 
 /** Props de base d'un composant de chargement. */
 export interface LoadingProps<T> {
     /** Store de la liste. */
-    store?: ListStoreBase<T>;
+    store?: CollectionStore<T>;
 }
 
 /** Props du composant de liste standard. */
@@ -76,7 +76,7 @@ export type ListProps<T> = ListBaseProps<T> & {
           }
         | {
               /** Le store contenant la liste. */
-              store: ListStoreBase<T>;
+              store: CollectionStore<T>;
           }
     );
 

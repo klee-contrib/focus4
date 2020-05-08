@@ -19,8 +19,10 @@
         "@focus4/styling": "^10.4.6",
         "@focus4/toolbox": "^10.4.6",
         "@types/react-transition-group": "4.2.4",
-        "intersection-observer": "0.7.0",
-        "react-transition-group": "4.3.0",
+        "intersection-observer": "0.10.0",
+        "popmotion": "8.7.1",
+        "react-pose": "4.0.9",
+        "react-transition-group": "4.4.1",
         "resize-observer-polyfill": "1.5.1",
         "smoothscroll-polyfill": "0.4.4"
     }

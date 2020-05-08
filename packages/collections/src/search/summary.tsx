@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 
-import {FormEntityField, SearchStore} from "@focus4/stores";
+import {CollectionStore, FormEntityField} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {Button, ChipTheme} from "@focus4/toolbox";
 
@@ -51,7 +51,7 @@ export interface SummaryProps<T> {
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string; label: string; order: boolean}[];
     /** Store associé. */
-    store: SearchStore<T>;
+    store: CollectionStore<T>;
     /** CSS. */
     theme?: CSSProp<SummaryCss>;
 }

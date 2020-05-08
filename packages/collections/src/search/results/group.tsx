@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 
-import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
+import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
@@ -24,14 +24,14 @@ export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Composant de liste. */
-    ListComponent?: React.ComponentType<P & {store: ListStoreBase<T>}>;
+    ListComponent?: React.ComponentType<P & {store: CollectionStore<T>}>;
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,
         "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "isManualFetch" | "showAllHandler" | "store"
     >;
     /** Store contenant la liste. */
-    store: SearchStore<T>;
+    store: CollectionStore<T>;
     /** CSS */
     theme?: CSSProp<GroupCss>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
@@ -55,7 +55,7 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
     const context = React.useContext(ScrollableContext);
     const state = useLocalStore(() => ({
         /** Store pour le groupe. */
-        get store(): ListStoreBase<T> {
+        get store(): CollectionStore<T> {
             return group.code ? store.getSearchGroupStore(group.code) : store;
         },
 

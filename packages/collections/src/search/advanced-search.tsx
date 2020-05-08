@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 
-import {GroupResult, ListStoreBase, SearchStore} from "@focus4/stores";
+import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button, ChipTheme, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
 
@@ -89,7 +89,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de liste. */
-    ListComponent?: React.ComponentType<P & {store: ListStoreBase<T>}>;
+    ListComponent?: React.ComponentType<P & {store: CollectionStore<T>}>;
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,
@@ -112,7 +112,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Affiche les facettes qui n'ont qu'une seule valeur. */
     showSingleValuedFacets?: boolean;
     /** Store associé. */
-    store: SearchStore<T>;
+    store: CollectionStore<T>;
     /** CSS du Summary. */
     summaryTheme?: CSSProp<SummaryCss>;
     /** CSS. */

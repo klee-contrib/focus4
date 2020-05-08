@@ -19,4 +19,4 @@ export {
     Summary,
     useListBase
 } from "@focus4/collections";
-export {ListStore, SearchStore, QueryInput, QueryOutput} from "@focus4/stores";
+export {CollectionStore, QueryInput, QueryOutput} from "@focus4/stores";

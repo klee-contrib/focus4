@@ -43,10 +43,8 @@ export default (async () => {
             "mobx",
             "mobx-react",
             "moment",
-            "popmotion",
             "react",
             "react-dom",
-            "react-pose",
             "stylefire",
             "tslib"
         ],
