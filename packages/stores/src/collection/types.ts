@@ -18,7 +18,7 @@ export interface LocalStoreConfig<T> {
         /** Type de tri pour les valeurs de facettes. Par défaut : "count-desc". */
         ordering?: "key-asc" | "key-desc" | "count-asc" | "count-desc";
         /** Mise en forme de la valeur pour affichage (ex: liste de référence, date...) */
-        displayFormatter?: (value: any) => string;
+        displayFormatter?: (value: string) => string;
     }[];
 }
 
