@@ -16,7 +16,7 @@ const config = {
         format: "esm",
         file: pkg.main
     },
-    external: [...Object.keys(pkg.dependencies || {}), "i18next", "lodash", "mobx", "tslib"],
+    external: [...Object.keys(pkg.dependencies || {}), "i18next", "lodash", "mobx", "tslib", "uuid"],
     onwarn
 };
 

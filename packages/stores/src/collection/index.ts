@@ -239,8 +239,15 @@ export class CollectionStore<T = any, C = any> {
                     if (!selected) {
                         return true;
                     }
-                    // tslint:disable-next-line: triple-equals
-                    return item[f.fieldName] == (selected[0] as any);
+                    const value = item[f.fieldName];
+                    if (typeof value === "number") {
+                        return value === parseFloat(selected[0]) || undefined;
+                    } else if (typeof value === "boolean") {
+                        return value === (selected[0] === "true");
+                    } else {
+                        // tslint:disable-next-line: triple-equals
+                        return value == (selected[0] as any);
+                    }
                 })
             );
         }

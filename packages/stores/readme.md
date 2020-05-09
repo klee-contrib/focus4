@@ -483,7 +483,7 @@ _(Note : les deux derniers paramètres sont interchangeables)_
 
 -   L'objet de critère n'est pas supporté
 -   Le filtre sur la barre de recherche ne fait qu'un simple `includes` de la requête dans chacun des champs listés dans `filterFields` (en minuscule)
--   Les facettes ne peuvent pas être multi-valuées et le filtrage se fait avec un simple `==` (sachant que toutes les valeurs dans `selectedFacets` sont des strings).
+-   Les facettes ne peuvent pas être multi-valuées et le filtrage, en dehors des nombres et de booléens, se fait avec un simple `==` (sachant que toutes les valeurs dans `selectedFacets` sont des strings).
 
 ## Stores de références
 
