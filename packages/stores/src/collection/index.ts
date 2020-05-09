@@ -1,4 +1,4 @@
-import {debounce, flatten, isFunction, isString, orderBy} from "lodash";
+import {debounce, flatten, groupBy, isFunction, isString, orderBy, toPairs} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
 
 import {config} from "@focus4/core";
@@ -8,6 +8,7 @@ import {
     FacetItem,
     FacetOutput,
     GroupResult,
+    LocalStoreConfig,
     QueryInput,
     QueryOutput,
     SearchProperties,
@@ -18,7 +19,11 @@ export {FacetItem, FacetOutput, GroupResult, QueryInput, QueryOutput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
 export class CollectionStore<T = any, C = any> {
+    /** Type de store. */
     readonly type: "local" | "server";
+
+    /** Champs sur lequels on autorise le filtrage, en local. */
+    private readonly localStoreConfig?: LocalStoreConfig<T>;
 
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
@@ -62,22 +67,66 @@ export class CollectionStore<T = any, C = any> {
 
     /** StoreNode contenant les critères personnalisés de recherche. */
     readonly criteria!: FormNode<C>;
-    /** Facettes résultat de la recherche. */
-    readonly facets: IObservableArray<FacetOutput> = observable([]);
-    /** Résultats de la recherche, si elle retourne des groupes. */
-    readonly groups: IObservableArray<GroupResult<T>> = observable([]);
 
+    /** Facettes résultat de la recherche. */
+    private readonly innerFacets: IObservableArray<FacetOutput> = observable([]);
+    /** Résultats de la recherche, si elle retourne des groupes. */
+    private readonly innerGroups: IObservableArray<GroupResult<T>> = observable([]);
     /** Liste brute (non triée, non filtrée) des données, fournie en local ou récupérée du serveur si recherche non groupée. */
     private readonly innerList: IObservableArray<T> = observable([]);
-    /** Champs sur lequels on autorise le filtrage, en local. */
-    private readonly filterFields?: (keyof T)[];
+
+    @computed
+    get facets(): FacetOutput[] {
+        if (this.type === "server") {
+            return this.innerFacets;
+        }
+
+        return (this.localStoreConfig?.facetDefinitions ?? []).map(
+            ({code, fieldName, label, displayFormatter = x => x, ordering = "count-desc"}) => ({
+                code,
+                label,
+                isMultiSelectable: false,
+                values: orderBy(
+                    toPairs(groupBy(this.list, fieldName))
+                        .map(([value, list]) => ({
+                            code: value,
+                            label: displayFormatter(value),
+                            count: list.length
+                        }))
+                        .filter(f => f.count !== 0),
+                    f => (ordering.includes("count") ? f.count : f.code),
+                    ordering.includes("desc") ? "desc" : "asc"
+                )
+            })
+        );
+    }
+
+    @computed
+    get groups(): GroupResult<T>[] {
+        if (this.type === "server") {
+            return this.innerGroups;
+        }
+
+        if (!this.groupingKey || !this.localStoreConfig?.facetDefinitions) {
+            return [];
+        }
+
+        return toPairs(
+            groupBy(this.list, this.localStoreConfig.facetDefinitions.find(f => f.code === this.groupingKey)?.fieldName)
+        ).map(([code, list]) => ({
+            code,
+            label: this.facets.find(f => f.code === this.groupingKey)?.values.find(v => v.code === code)?.label ?? code,
+            list,
+            totalCount: list.length
+        }));
+    }
 
     /** La liste. */
     @computed
     get list(): T[] {
         if (this.type === "server") {
-            if (this.groups.length) {
-                return flatten(this.groups.map(g => g.list.slice()));
+            if (this.innerGroups.length) {
+                return flatten(this.innerGroups.map(g => g.list.slice()));
             } else {
                 return this.innerList;
             }
@@ -87,25 +136,35 @@ export class CollectionStore<T = any, C = any> {
 
         // Tri.
         if (this.sortBy) {
-            list = orderBy(
-                this.innerList,
-                item => `${(item as any)[this.sortBy!]}`.toLowerCase(),
-                this.sortAsc ? "asc" : "desc"
-            );
+            list = orderBy(this.innerList, item => (item as any)[this.sortBy!], this.sortAsc ? "asc" : "desc");
         } else {
             list = this.innerList;
         }
 
         // Filtrage simple, sur les champs choisis.
-        if (this.filterFields) {
+        if (this.localStoreConfig?.filterFields) {
             list = list.filter(item =>
-                this.filterFields!.some(filter => {
+                this.localStoreConfig!.filterFields!.some(filter => {
                     const field = item[filter];
                     if (isString(field)) {
-                        return field.toLowerCase().includes(this.query.toLowerCase()); // Pour faire simple, on compare tout en minuscule.
+                        return field.toLowerCase().includes(this.query.toLowerCase());
                     } else {
                         return false;
                     }
+                })
+            );
+        }
+
+        // Facettes
+        if (this.localStoreConfig?.facetDefinitions) {
+            list = list.filter(item =>
+                this.localStoreConfig!.facetDefinitions!.every(f => {
+                    const selected = this.selectedFacets[f.code];
+                    if (!selected) {
+                        return true;
+                    }
+                    // tslint:disable-next-line: triple-equals
+                    return item[f.fieldName] == (selected[0] as any);
                 })
             );
         }
@@ -128,9 +187,9 @@ export class CollectionStore<T = any, C = any> {
 
     /**
      * Crée un nouveau store de liste.
-     * @param filterFields Les champs sur lesquels on peut filtrer.
+     * @param localStoreConfig Configuration du store local.
      */
-    constructor(filterFields?: (keyof T)[]);
+    constructor(localStoreConfig?: LocalStoreConfig<T>);
     /**
      * Crée un nouveau store de recherche.
      * @param service Le service de recherche.
@@ -154,7 +213,7 @@ export class CollectionStore<T = any, C = any> {
         criteria?: C
     );
     constructor(
-        firstParam?: SearchService<T> | (keyof T)[],
+        firstParam?: SearchService<T> | LocalStoreConfig<T>,
         secondParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C,
         thirdParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C
     ) {
@@ -208,7 +267,7 @@ export class CollectionStore<T = any, C = any> {
             );
         } else {
             this.type = "local";
-            this.filterFields = firstParam;
+            this.localStoreConfig = firstParam;
         }
     }
 
@@ -228,7 +287,7 @@ export class CollectionStore<T = any, C = any> {
     @computed
     get groupingLabel() {
         const group = this.facets.find(facet => facet.code === this.groupingKey);
-        return (group && group.label) || this.groupingKey;
+        return group?.label || this.groupingKey;
     }
 
     /** Nombre total de résultats de la recherche (pas forcément récupérés). */
@@ -288,9 +347,9 @@ export class CollectionStore<T = any, C = any> {
     clear() {
         this.serverCount = 0;
         this.selectedItems.clear();
-        this.facets.clear();
+        this.innerFacets.clear();
         this.innerList.clear();
-        this.groups.clear();
+        this.innerGroups.clear();
     }
 
     /**
@@ -357,8 +416,8 @@ export class CollectionStore<T = any, C = any> {
                 this.innerList.replace(response.list || []);
             }
 
-            this.facets.replace(response.facets);
-            this.groups.replace(response.groups || []);
+            this.innerFacets.replace(response.facets);
+            this.innerGroups.replace(response.groups || []);
             this.serverCount = response.totalCount;
         });
 

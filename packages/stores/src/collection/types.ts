@@ -3,6 +3,25 @@ import {EntityToType} from "../entity";
 /** Définition d'un service de recherche. */
 export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
 
+/** Config pour un store de collection local. */
+export interface LocalStoreConfig<T> {
+    /** Champs sur lesquels la requête texte va filtrer. */
+    filterFields?: (keyof T)[];
+    /** Définitions de facettes. */
+    facetDefinitions?: {
+        /** Code de la facette. */
+        code: string;
+        /** Libellé de la facette. */
+        label: string;
+        /** Champ de l'objet sur lequel facetter. */
+        fieldName: keyof T;
+        /** Type de tri pour les valeurs de facettes. Par défaut : "count-desc". */
+        ordering?: "key-asc" | "key-desc" | "count-asc" | "count-desc";
+        /** Mise en forme de la valeur pour affichage (ex: liste de référence, date...) */
+        displayFormatter?: (value: any) => string;
+    }[];
+}
+
 /** Statut de la séléection */
 export type SelectionStatus = "none" | "partial" | "selected";
 

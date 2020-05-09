@@ -72,6 +72,8 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     hasSearchBar?: boolean;
     /** Autorise la sélection. */
     hasSelection?: boolean;
+    /** Masque l'ActionBar. */
+    hideActionBar?: boolean;
     /** Masque les critères de recherche dans le Summary. */
     hideSummaryCriteria?: boolean;
     /** Masque les facettes dans le Summary. */
@@ -142,6 +144,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     hasGrouping,
     hasSearchBar,
     hasSelection,
+    hideActionBar,
     hideSummaryCriteria,
     hideSummaryFacets,
     hideSummaryGroup,
@@ -252,7 +255,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                     store={store}
                     theme={summaryTheme}
                 />
-                {!(store.groups.length && useGroupActionBars) ? (
+                {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
                     <ActionBar
                         chipKeyResolver={chipKeyResolver}
                         chipThemer={chipThemer}
