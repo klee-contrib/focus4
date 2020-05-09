@@ -1,5 +1,6 @@
 import {debounce, flatten, groupBy, isFunction, isString, orderBy, toPairs} from "lodash";
 import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
+import {v4} from "uuid";
 
 import {config} from "@focus4/core";
 
@@ -22,8 +23,23 @@ export class CollectionStore<T = any, C = any> {
     /** Type de store. */
     readonly type: "local" | "server";
 
-    /** Champs sur lequels on autorise le filtrage, en local. */
+    /** Config du store local. */
     private readonly localStoreConfig?: LocalStoreConfig<T>;
+    /** Service de recherche serveur. */
+    private readonly service?: SearchService<T>;
+
+    /** Facettes résultat de la recherche. */
+    private readonly innerFacets: IObservableArray<FacetOutput> = observable([]);
+    /** Résultats de la recherche, si elle retourne des groupes. */
+    private readonly innerGroups: IObservableArray<GroupResult<T>> = observable([]);
+    /** Liste brute (non triée, non filtrée) des données, fournie en local ou récupérée du serveur si recherche non groupée. */
+    private readonly innerList: IObservableArray<T> = observable([]);
+
+    /** Identifiant de la requête en cours. */
+    @observable private pendingQuery?: string;
+
+    /** Nombre d'éléments dans le résultat, d'après la requête serveur. */
+    @observable private serverCount = 0;
 
     /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
     @observable blockSearch = false;
@@ -43,37 +59,97 @@ export class CollectionStore<T = any, C = any> {
     /** Permet d'omettre certains élements de la liste de la sélection. */
     @observable isItemSelectionnable: (data: T) => boolean = () => true;
 
-    /** Set contenant les éléments sélectionnés. */
-    readonly selectedItems = observable.set<T>();
-
-    /** Liste des éléments séléctionnés */
-    @computed
-    get selectedList(): ReadonlyArray<T> {
-        return Array.from(this.selectedItems);
-    }
-
-    /** Etat de la sélection (aucune, partielle, totale). */
-    @computed
-    get selectionStatus(): SelectionStatus {
-        switch (this.selectedItems.size) {
-            case 0:
-                return "none";
-            case this.selectionnableList.length:
-                return "selected";
-            default:
-                return "partial";
-        }
-    }
-
     /** StoreNode contenant les critères personnalisés de recherche. */
     readonly criteria!: FormNode<C>;
 
-    /** Facettes résultat de la recherche. */
-    private readonly innerFacets: IObservableArray<FacetOutput> = observable([]);
-    /** Résultats de la recherche, si elle retourne des groupes. */
-    private readonly innerGroups: IObservableArray<GroupResult<T>> = observable([]);
-    /** Liste brute (non triée, non filtrée) des données, fournie en local ou récupérée du serveur si recherche non groupée. */
-    private readonly innerList: IObservableArray<T> = observable([]);
+    /** Set contenant les éléments sélectionnés. */
+    readonly selectedItems = observable.set<T>();
+
+    /**
+     * Crée un nouveau store de liste.
+     * @param localStoreConfig Configuration du store local.
+     */
+    constructor(localStoreConfig?: LocalStoreConfig<T>);
+    /**
+     * Crée un nouveau store de recherche.
+     * @param service Le service de recherche.
+     * @param criteria La description du critère de recherche personnalisé.
+     * @param initialQuery Les paramètres de recherche à l'initilisation.
+     */
+    constructor(
+        service: SearchService<T>,
+        criteria?: C,
+        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean}
+    );
+    /**
+     * Crée un nouveau store de recherche.
+     * @param initialQuery Les paramètres de recherche à l'initilisation.
+     * @param service Le service de recherche.
+     * @param criteria La description du critère de recherche personnalisé.
+     */
+    constructor(
+        service: SearchService<T>,
+        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean},
+        criteria?: C
+    );
+    constructor(
+        firstParam?: SearchService<T> | LocalStoreConfig<T>,
+        secondParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C,
+        thirdParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C
+    ) {
+        if (isFunction(firstParam)) {
+            this.type = "server";
+            this.service = firstParam;
+
+            // On gère les paramètres du constructeur dans les deux ordres.
+            let initialQuery: SearchProperties<C> & {debounceCriteria?: boolean};
+            let criteria;
+
+            if (secondParam && (secondParam as any)[Object.keys(secondParam)[0]].type) {
+                criteria = secondParam as C;
+                initialQuery = thirdParam as any;
+            } else {
+                initialQuery = secondParam as any;
+                criteria = thirdParam as C;
+            }
+
+            // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
+            if (criteria) {
+                const node = buildNode(criteria);
+                nodeToFormNode<C>(node, node);
+                this.criteria = node as any;
+            }
+
+            if (initialQuery) {
+                this.setProperties(initialQuery);
+            }
+
+            // Relance la recherche à chaque modification de propriété.
+            reaction(
+                () => [
+                    this.blockSearch,
+                    this.groupingKey,
+                    this.selectedFacets,
+                    !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
+                    this.sortAsc,
+                    this.sortBy
+                ],
+                () => this.search()
+            );
+
+            // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
+            reaction(
+                () => [
+                    initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
+                    this.query
+                ],
+                debounce(() => this.search(), config.textSearchDelay)
+            );
+        } else {
+            this.type = "local";
+            this.localStoreConfig = firstParam;
+        }
+    }
 
     @computed
     get facets(): FacetOutput[] {
@@ -176,105 +252,17 @@ export class CollectionStore<T = any, C = any> {
         this.innerList.replace(list);
     }
 
-    /** Service de recherche. */
-    readonly service?: SearchService<T>;
-
-    /** Nombre de requêtes serveur en cours. */
-    @observable private pendingCount = 0;
-
-    /** Nombre d'éléments dans le résultat, d'après la requête serveur. */
-    @observable private serverCount = 0;
-
-    /**
-     * Crée un nouveau store de liste.
-     * @param localStoreConfig Configuration du store local.
-     */
-    constructor(localStoreConfig?: LocalStoreConfig<T>);
-    /**
-     * Crée un nouveau store de recherche.
-     * @param service Le service de recherche.
-     * @param criteria La description du critère de recherche personnalisé.
-     * @param initialQuery Les paramètres de recherche à l'initilisation.
-     */
-    constructor(
-        service: SearchService<T>,
-        criteria?: C,
-        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean}
-    );
-    /**
-     * Crée un nouveau store de recherche.
-     * @param initialQuery Les paramètres de recherche à l'initilisation.
-     * @param service Le service de recherche.
-     * @param criteria La description du critère de recherche personnalisé.
-     */
-    constructor(
-        service: SearchService<T>,
-        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean},
-        criteria?: C
-    );
-    constructor(
-        firstParam?: SearchService<T> | LocalStoreConfig<T>,
-        secondParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C,
-        thirdParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C
-    ) {
-        if (isFunction(firstParam)) {
-            this.type = "server";
-            this.service = firstParam;
-
-            // On gère les paramètres du constructeur dans les deux ordres.
-            let initialQuery: SearchProperties<C> & {debounceCriteria?: boolean};
-            let criteria;
-
-            if (secondParam && (secondParam as any)[Object.keys(secondParam)[0]].type) {
-                criteria = secondParam as C;
-                initialQuery = thirdParam as any;
-            } else {
-                initialQuery = secondParam as any;
-                criteria = thirdParam as C;
-            }
-
-            // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
-            if (criteria) {
-                const node = buildNode(criteria);
-                nodeToFormNode<C>(node, node);
-                this.criteria = node as any;
-            }
-
-            if (initialQuery) {
-                this.setProperties(initialQuery);
-            }
-
-            // Relance la recherche à chaque modification de propriété.
-            reaction(
-                () => [
-                    this.blockSearch,
-                    this.groupingKey,
-                    this.selectedFacets,
-                    !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
-                    this.sortAsc,
-                    this.sortBy
-                ],
-                () => this.search()
-            );
-
-            // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
-            reaction(
-                () => [
-                    initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
-                    this.query
-                ],
-                debounce(() => this.search(), config.textSearchDelay)
-            );
-        } else {
-            this.type = "local";
-            this.localStoreConfig = firstParam;
-        }
+    /** Label du groupe choisi. */
+    @computed
+    get groupingLabel() {
+        const group = this.facets.find(facet => facet.code === this.groupingKey);
+        return group?.label || this.groupingKey;
     }
 
     /** Store en chargement. */
     @computed
     get isLoading() {
-        return this.type === "local" ? undefined : this.pendingCount > 0;
+        return this.type === "local" ? undefined : !!this.pendingQuery;
     }
 
     /** Nombre d'éléments récupérés depuis le serveur. */
@@ -283,17 +271,29 @@ export class CollectionStore<T = any, C = any> {
         return this.list.length;
     }
 
-    /** Label du groupe choisi. */
-    @computed
-    get groupingLabel() {
-        const group = this.facets.find(facet => facet.code === this.groupingKey);
-        return group?.label || this.groupingKey;
-    }
-
     /** Nombre total de résultats de la recherche (pas forcément récupérés). */
     @computed
     get totalCount() {
         return this.type === "server" ? this.serverCount : this.currentCount;
+    }
+
+    /** Liste des éléments séléctionnés */
+    @computed
+    get selectedList(): ReadonlyArray<T> {
+        return Array.from(this.selectedItems);
+    }
+
+    /** Etat de la sélection (aucune, partielle, totale). */
+    @computed
+    get selectionStatus(): SelectionStatus {
+        switch (this.selectedItems.size) {
+            case 0:
+                return "none";
+            case this.selectionnableList.length:
+                return "selected";
+            default:
+                return "partial";
+        }
     }
 
     /** Liste des éléments sélectionnables. */
@@ -397,7 +397,8 @@ export class CollectionStore<T = any, C = any> {
             top
         };
 
-        this.pendingCount++;
+        const pendingQuery = v4();
+        this.pendingQuery = pendingQuery;
 
         // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
         if (!isScroll) {
@@ -407,7 +408,10 @@ export class CollectionStore<T = any, C = any> {
         const response = await this.service(data);
 
         runInAction(() => {
-            this.pendingCount--;
+            if (pendingQuery !== this.pendingQuery) {
+                return;
+            }
+            this.pendingQuery = undefined;
 
             // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
             if (isScroll) {
