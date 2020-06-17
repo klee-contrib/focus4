@@ -53,7 +53,6 @@ export function Panel({
         name = snakeCase(i18next.t(title)).split("_")[0];
     }
 
-    const [isInForm, setIsInForm] = React.useState(false);
     const ref = React.useRef<HTMLDivElement>(null);
     const theme = useTheme("panel", panelCss, pTheme);
 
@@ -67,17 +66,6 @@ export function Panel({
         }
     }, [hideOnScrollspy, title]);
 
-    /* On essaie de savoir si ce panel est inclus dans un formulaire. */
-    React.useEffect(() => {
-        let parentNode: HTMLElement | null = ref.current;
-        while (parentNode && parentNode.tagName !== "FORM") {
-            parentNode = parentNode.parentElement;
-        }
-        if (parentNode) {
-            setIsInForm(true);
-        }
-    }, []);
-
     const buttons = (
         <div className={theme.actions()}>
             <Buttons
@@ -86,7 +74,7 @@ export function Panel({
                 loading={loading}
                 onClickCancel={onClickCancel}
                 onClickEdit={onClickEdit}
-                save={!isInForm ? save : undefined}
+                save={save}
             />
         </div>
     );

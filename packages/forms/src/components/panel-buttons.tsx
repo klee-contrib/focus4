@@ -29,15 +29,27 @@ export function PanelButtons({
     onClickEdit,
     save
 }: PanelButtonsProps) {
+    const [isInForm, setIsInForm] = React.useState(false);
+    const [ref, setRef] = React.useState<HTMLSpanElement | null>(null);
+
+    /* On essaie de savoir si ces boutons sont inclus dans un formulaire. */
+    React.useEffect(() => {
+        let parentNode: HTMLElement | null = ref;
+        while (parentNode && parentNode.tagName !== "FORM") {
+            parentNode = parentNode.parentElement;
+        }
+        setIsInForm(!!parentNode);
+    }, [ref]);
+
     if (onClickCancel && onClickEdit) {
         if (editing) {
             return (
-                <span>
+                <span ref={setRef}>
                     <Button
                         icon={getIcon(`${i18nPrefix}.icons.button.save`)}
                         label={i18next.t(`${i18nPrefix}.button.save`)}
                         primary={true}
-                        onClick={save}
+                        onClick={!isInForm ? save : undefined}
                         type="submit"
                         disabled={loading}
                     />
