@@ -13,7 +13,7 @@
     "scripts": {
         "bootstrap": "lerna bootstrap --hoist",
         "clean": "lerna clean --yes && node scripts/clean.js",
-        "publish": "lerna publish --dist-tag next",
+        "publish": "lerna publish",
         "stylelint": "stylelint packages/**/*.css",
         "test": "lerna run test",
         "test-ci": "lerna run test-ci",
@@ -30,7 +30,7 @@
         "rollup-plugin-typescript2": "0.27.1",
         "stylelint": "13.6.1",
         "tslint": "6.1.2",
-        "typescript": "3.9.5",
+        "typescript": "3.8.3",
         "typescript-tslint-plugin": "0.5.5"
     }
 }

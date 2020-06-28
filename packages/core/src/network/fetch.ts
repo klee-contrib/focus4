@@ -19,7 +19,6 @@ export async function coreFetch(
     options: RequestInit = {}
 ): Promise<any> {
     const queryString = buildQueryString(query);
-
     url = url + (queryString ? `${url.includes("?") ? "&" : "?"}${queryString}` : "");
     options = merge(
         {method, credentials: "include"},
