@@ -1,5 +1,6 @@
 import * as React from "react";
 import {RADIO} from "react-toolbox/lib/identifiers";
+import {RadioTheme as RTRadioTheme} from "react-toolbox/lib/radio/base";
 import radioFactory from "react-toolbox/lib/radio/Radio";
 import {
     RadioButton as RadioButtonType,
@@ -7,7 +8,6 @@ import {
     RadioButtonProps as RTRadioButtonProps,
     RadioButtonTheme
 } from "react-toolbox/lib/radio/RadioButton";
-import {RadioTheme as RTRadioTheme} from "react-toolbox/lib/radio/base";
 import {radioGroupFactory, RadioGroupProps} from "react-toolbox/lib/radio/RadioGroup";
 
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
@@ -25,6 +25,6 @@ export const RadioButton = React.forwardRef<RadioButtonType, RadioButtonProps>((
     return <RTRadioButton ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
-export const RadioGroup = radioGroupFactory(RadioButton);
+export const RadioGroup = radioGroupFactory(RadioButton as any);
 
 export {RadioButtonProps, RadioGroupProps};

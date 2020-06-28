@@ -14,7 +14,7 @@ export {appBarTheme};
 
 import {IconButton} from "./button";
 
-const RTAppBar = appBarFactory(IconButton);
+const RTAppBar = appBarFactory(IconButton as any);
 type AppBarProps = Omit<RTAppBarProps, "theme"> & {theme?: CSSProp<AppBarTheme>};
 export const AppBar = React.forwardRef<AppBarType, AppBarProps>((props, ref) => {
     const theme = useTheme(APP_BAR, appBarTheme, props.theme);

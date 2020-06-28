@@ -163,7 +163,7 @@ export class FormNodeBuilder<E> {
         if (isStoreListNode(child)) {
             this.node[node] = builder(new FormListNodeBuilder(child), this.node).collect();
         } else if (isStoreNode(child)) {
-            this.node[node] = builder(new FormNodeBuilder(child), this.node).collect();
+            this.node[node] = builder(new FormNodeBuilder<E>(child), this.node).collect();
         } else if (isEntityField(child)) {
             this.node[node] = builder(new EntityFieldBuilder(child), this.node).collect();
         }

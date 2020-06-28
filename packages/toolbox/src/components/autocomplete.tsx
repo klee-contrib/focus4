@@ -15,7 +15,7 @@ export {autocompleteTheme};
 import {Chip} from "./chip";
 import {Input, InputTheme} from "./input";
 
-const RTAutocomplete = autocompleteFactory(Chip, Input);
+const RTAutocomplete = autocompleteFactory(Chip as any, Input as any);
 type AutocompleteProps = Omit<RTAutocompleteProps, "theme"> & {theme?: CSSProp<AutocompleteTheme & InputTheme>};
 export const Autocomplete: React.ForwardRefExoticComponent<
     AutocompleteProps & React.RefAttributes<AutocompleteType>

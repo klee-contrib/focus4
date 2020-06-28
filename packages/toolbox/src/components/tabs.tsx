@@ -31,7 +31,7 @@ export const Tab: React.ForwardRefExoticComponent<TabProps & React.RefAttributes
     }
 );
 
-const RTTabs = tabsFactory(Tab, TabContent, FontIcon);
+const RTTabs = tabsFactory(Tab as any, TabContent as any, FontIcon);
 type TabsProps = Omit<RTTabsProps, "theme"> & {theme?: CSSProp<TabsTheme>};
 export const Tabs = React.forwardRef<TabsType, TabsProps>((props, ref) => {
     const theme = useTheme(TABS, tabsTheme, props.theme);

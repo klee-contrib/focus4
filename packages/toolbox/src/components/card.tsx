@@ -58,7 +58,7 @@ export const CardText: React.ForwardRefExoticComponent<
     return <RTCardText ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
-const RTCardTitle = cardTitleFactory(Avatar);
+const RTCardTitle = cardTitleFactory(Avatar as any);
 type CardTitleProps = Omit<RTCardTitleProps, "theme"> & {theme?: CSSProp<CardTitleTheme>};
 export const CardTitle = React.forwardRef<CardTitleType, CardTitleProps>((props, ref) => {
     const theme = useTheme(CARD, cardTheme as CardTitleTheme, props.theme);

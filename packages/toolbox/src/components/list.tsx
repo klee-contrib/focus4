@@ -88,34 +88,38 @@ export const ListDivider = React.forwardRef<RTListDivider, ListDividerProps>((pr
 });
 
 type ListItemContentProps = Omit<RTListItemContentProps, "theme"> & {theme?: CSSProp<ListItemContentTheme>};
-const RTListItemContent = listItemContentFactory(ListItemText);
+const RTListItemContent = listItemContentFactory(ListItemText as any);
 export const ListItemContent = React.forwardRef<ListItemContentType, ListItemContentProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemContentTheme, props.theme);
     return <RTListItemContent ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListItemActionsProps = Omit<RTListItemActionsProps, "theme"> & {theme?: CSSProp<ListItemActionsTheme>};
-const RTListItemActions = listItemActionsFactory(ListItemAction);
+const RTListItemActions = listItemActionsFactory(ListItemAction as any);
 export const ListItemActions = React.forwardRef<ListItemActionsType, ListItemActionsProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemActionsTheme, props.theme);
     return <RTListItemActions ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListItemLayoutProps = Omit<RTListItemLayoutProps, "theme"> & {theme?: CSSProp<ListItemLayoutTheme>};
-const RTListItemLayout = listItemLayoutFactory(Avatar, ListItemContent, ListItemActions);
+const RTListItemLayout = listItemLayoutFactory(Avatar as any, ListItemContent as any, ListItemActions as any);
 export const ListItemLayout = React.forwardRef<ListItemLayoutType, ListItemLayoutProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemLayoutTheme, props.theme);
     return <RTListItemLayout ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListCheckboxProps = Omit<RTListCheckboxProps, "theme"> & {theme?: CSSProp<ListCheckboxTheme>};
-const RTListCheckbox = listCheckboxFactory(Checkbox as any, ListItemContent);
+const RTListCheckbox = listCheckboxFactory(Checkbox as any, ListItemContent as any);
 export const ListCheckbox = React.forwardRef<ListCheckboxType, ListCheckboxProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListCheckboxTheme, props.theme);
     return <RTListCheckbox ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
-const RTListItem = listItemFactory(rippleFactory({rippleCentered: false}), ListItemLayout, ListItemContent);
+const RTListItem = listItemFactory(
+    rippleFactory({rippleCentered: false}),
+    ListItemLayout as any,
+    ListItemContent as any
+);
 type ListItemProps = RTListItemProps & {
     theme?: CSSProp<
         ListItemTheme & ListItemActionsTheme & ListItemContentTheme & ListItemLayoutTheme & ListItemTextTheme

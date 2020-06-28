@@ -38,14 +38,14 @@ export const MenuItem = React.forwardRef<MenuItemType, MenuItemProps>((props, re
     return <RTMenuItem ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
-const RTMenu = menuFactory(MenuItem);
+const RTMenu = menuFactory(MenuItem as any);
 type MenuProps = Omit<RTMenuProps, "theme"> & {theme?: CSSProp<MenuTheme>};
 export const Menu = React.forwardRef<MenuType, MenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme, props.theme);
     return <RTMenu ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
-const RTIconMenu = iconMenuFactory(IconButton, Menu);
+const RTIconMenu = iconMenuFactory(IconButton as any, Menu as any);
 type IconMenuProps = Omit<RTIconMenuProps, "theme"> & {theme?: CSSProp<IconMenuTheme>};
 export const IconMenu = React.forwardRef<IconMenuType, IconMenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as IconMenuTheme, props.theme);

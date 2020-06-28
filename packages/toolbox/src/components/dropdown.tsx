@@ -14,7 +14,7 @@ export {dropdownTheme};
 
 import {Input} from "./input";
 
-const RTDropdown = dropdownFactory(Input);
+const RTDropdown = dropdownFactory(Input as any);
 type DropdownProps = Omit<RTDropdownProps, "theme"> & {theme?: CSSProp<DropdownTheme>};
 export const Dropdown = React.forwardRef<DropdownType, DropdownProps>((props, ref) => {
     const theme = useTheme(DROPDOWN, dropdownTheme, props.theme);

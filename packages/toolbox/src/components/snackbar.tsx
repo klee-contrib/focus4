@@ -14,7 +14,7 @@ export {snackbarTheme};
 
 import {Button} from "./button";
 
-const RTSnackbar = snackbarFactory(Button);
+const RTSnackbar = snackbarFactory(Button as any);
 type SnackbarProps = Omit<RTSnackbarProps, "theme"> & {theme?: CSSProp<SnackbarTheme>};
 export const Snackbar = React.forwardRef<SnackbarType, SnackbarProps>((props, ref) => {
     const theme = useTheme(SNACKBAR, snackbarTheme, props.theme);

@@ -15,7 +15,7 @@ export {navigationTheme};
 import {Button} from "./button";
 import {Link} from "./link";
 
-const RTNavigation = navigationFactory(Button, Link);
+const RTNavigation = navigationFactory(Button as any, Link as any);
 type NavigationProps = Omit<RTNavigationProps, "theme"> & {theme?: CSSProp<NavigationTheme>};
 export const Navigation = React.forwardRef<NavigationType, NavigationProps>((props, ref) => {
     const theme = useTheme(NAVIGATION, navigationTheme, props.theme);
