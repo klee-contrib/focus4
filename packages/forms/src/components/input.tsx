@@ -85,7 +85,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
 
         if (
             this.props.type === "number" &&
-            (!this.numberStringValue || value !== numeral(this.numberStringValue).value())
+            (!this.numberStringValue || (value ?? undefined) !== (numeral(this.numberStringValue).value() ?? undefined))
         ) {
             this.numberStringValue = value !== undefined ? numeral(value).format(this.numberFormat) : "";
         }
@@ -262,7 +262,7 @@ export class Input<T extends "string" | "number"> extends React.Component<InputP
                               )) +
                         (right !== undefined && !+right ? decimal : "") + // Ajoute la virgule si elle était là et a été retirée par le format().
                         (right ? takeWhile(right.split("").reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
-                    const newNumberValue = numeral(newValue).value();
+                    const newNumberValue = numeral(newValue).value() ?? undefined;
 
                     if (!newValue.includes("NaN")) {
                         this.numberStringValue = newValue;
