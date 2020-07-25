@@ -267,6 +267,16 @@ La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un 
 -   `name`, qui est le nom du champ/sous-objet/sous-liste. **Ce nom est typé et changera la signature en fonction de ce à quoi il correspond**.
 -   `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
 
+##### `remove(...fields)`
+
+La fonction `remove` permet de supprimer les champs passés en paramètres du `FormNode`. Les champs supprimés existeront toujours sur le noeud source.
+
+La suppression de champs permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", par exemple.
+
+##### `removeAllBut(...fields)`
+
+La fonction `removeAllBut` fonctionne comme `remove`, sauf qu'elle permet à la place de supprimer tous les champs du `FormNode`, à l'exception de ceux passés en paramètres.
+
 ##### `build()`
 
 La fonction `build` permet de construire le `FormNode`. Elle est appelée à la fin de `makeFormNode` et à priori il n'y aura jamais besoin de l'appeler manuellement.

@@ -176,6 +176,30 @@ export class FormNodeBuilder<E, E0 = E> {
         return this;
     }
 
+    /**
+     * Supprime les champs demandés du FormNode.
+     * @param fields Les champs à supprimer.
+     */
+    remove<F extends FieldsOf<E> | ObjectsOf<E> | ListsOf<E>>(...fields: F[]): FormNodeBuilder<Omit<E, F>, E0> {
+        fields.forEach(field => delete this.node[field]);
+        // @ts-ignore
+        return this;
+    }
+
+    /**
+     * Supprime tous les champs du FormNode, sauf ceux demandés.
+     * @param fields Les champs à garder.
+     */
+    removeAllBut<F extends FieldsOf<E> | ObjectsOf<E> | ListsOf<E>>(...fields: F[]): FormNodeBuilder<Pick<E, F>, E0> {
+        for (const key in this.node) {
+            if (!fields.includes(key as F) && !["clear", "replace", "set"].includes(key)) {
+                delete this.node[key as F];
+            }
+        }
+        // @ts-ignore
+        return this;
+    }
+
     /** @internal */
     collect() {
         this.node.$tempEdit = this.isEdit ?? true;
