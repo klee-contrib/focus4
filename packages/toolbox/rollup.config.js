@@ -3,8 +3,8 @@
 import pkg from "./package.json";
 import {onwarn, abortOnError} from "../../scripts/rollup";
 
+import resolve from "@rollup/plugin-node-resolve";
 import postcssImport from "postcss-import";
-import resolve from "rollup-plugin-node-resolve";
 import postcss from "rollup-plugin-postcss";
 import typescript from "rollup-plugin-typescript2";
 

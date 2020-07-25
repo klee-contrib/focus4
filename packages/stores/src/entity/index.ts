@@ -29,6 +29,7 @@ export {
     FieldEntry2,
     FormEntityField,
     FormNode,
+    FormNodeToSourceType,
     ListEntry,
     NodeToType,
     ObjectEntry,

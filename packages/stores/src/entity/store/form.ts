@@ -23,9 +23,9 @@ import {getNodeForList, replaceNode} from "./store";
  * @param sourceNode Le node origine du FormNode.
  * @param parentNode Le node parent.
  */
-export function nodeToFormNode<E = any>(
+export function nodeToFormNode<E = any, E0 = E>(
     node: StoreNode<E> | StoreListNode<E>,
-    sourceNode: StoreNode<E> | StoreListNode<E>,
+    sourceNode: StoreNode<E0> | StoreListNode<E0>,
     parentNode?: FormNode | FormListNode
 ) {
     const {$tempEdit} = node;
@@ -84,7 +84,7 @@ export function nodeToFormNode<E = any>(
         const onSourceSplice = observe(
             sourceNode as StoreListNode,
             action((change: IArrayChange | IArraySplice) => {
-                if (sourceNode === node) {
+                if (sourceNode === (node as any)) {
                     return;
                 }
 

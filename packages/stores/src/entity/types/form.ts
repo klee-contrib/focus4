@@ -32,7 +32,7 @@ export type NodeToErrors<E> = Omit<
 >;
 
 /** Champs additionnels pour un noeud de formulaire. */
-export type FormNode<E = any> = EntityToForm<E> & {
+export type FormNode<E = any, E0 = E> = EntityToForm<E> & {
     /** Données liée à un FormNode. */
     readonly form: {
         /** Précise si le formulaire associé est en édition ou non. */
@@ -46,25 +46,25 @@ export type FormNode<E = any> = EntityToForm<E> & {
     };
 
     /** Vide l'objet (récursivement). */
-    clear(): FormNode<E>;
+    clear(): FormNode<E, E0>;
 
     /** Désactive la synchronisation entre ce FormNode et son noeud source. */
     dispose(): void;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<E>): FormNode<E>;
+    replace(data: EntityToType<E>): FormNode<E, E0>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
-    reset(): FormNode<E>;
+    reset(): FormNode<E, E0>;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<E>): FormNode<E>;
+    set(data: EntityToType<E>): FormNode<E, E0>;
 
     /** StoreNode original. */
-    readonly sourceNode: StoreNode<E>;
+    readonly sourceNode: StoreNode<E0>;
 };
 
-export interface FormListNode<E = any> extends IObservableArray<FormNode<E>> {
+export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode<E, E0>> {
     /** Métadonnées. */
     readonly $entity: E;
 
@@ -95,16 +95,16 @@ export interface FormListNode<E = any> extends IObservableArray<FormNode<E>> {
     pushNode(...items: EntityToType<E>[]): number;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: EntityToType<E>[]): FormListNode<E>;
+    replaceNodes(data: EntityToType<E>[]): FormListNode<E, E0>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
-    reset(): FormListNode<E>;
+    reset(): FormListNode<E, E0>;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    setNodes(data: EntityToType<E>[]): FormListNode<E>;
+    setNodes(data: EntityToType<E>[]): FormListNode<E, E0>;
 
     /** StoreNode original. */
-    readonly sourceNode: StoreListNode<E>;
+    readonly sourceNode: StoreListNode<E0>;
 }
 
 /** Définition de champ dans un FormNode. */

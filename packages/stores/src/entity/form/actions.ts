@@ -4,7 +4,7 @@ import {isFunction} from "lodash";
 import {action, comparer, computed, extendObservable, Lambda, observable, reaction, runInAction} from "mobx";
 
 import {toFlatValues} from "../store";
-import {FormListNode, FormNode, isStoreNode, NodeToType} from "../types";
+import {FormListNode, FormNode, FormNodeToSourceType, isStoreNode, NodeToType} from "../types";
 
 type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
 
@@ -54,7 +54,7 @@ export class FormActionsBuilder<
     S extends string = never
 > {
     protected getLoadParams?: () => any | undefined;
-    protected loadService?: (...args: A) => Promise<NodeToType<FN> | undefined>;
+    protected loadService?: (...args: A) => Promise<FormNodeToSourceType<FN> | undefined>;
     protected readonly saveServices = {} as Record<S, (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>>;
 
     protected readonly formNode: FN;
@@ -98,7 +98,7 @@ export class FormActionsBuilder<
      * @param service Service de chargement.
      */
     load(
-        service: A extends never ? never : (...params: A) => Promise<NodeToType<FN> | undefined>
+        service: A extends never ? never : (...params: A) => Promise<FormNodeToSourceType<FN> | undefined>
     ): FormActionsBuilder<FN, A, S> {
         this.loadService = service;
         return this;
@@ -187,9 +187,9 @@ export class FormActionsBuilder<
                         if (data) {
                             // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                             if (isStoreNode(formNode.sourceNode)) {
-                                formNode.sourceNode.replace(data);
+                                formNode.sourceNode.set(data);
                             } else {
-                                formNode.sourceNode.replaceNodes(data);
+                                formNode.sourceNode.setNodes(data);
                             }
                         }
                     });

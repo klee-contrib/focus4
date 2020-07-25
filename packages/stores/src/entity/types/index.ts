@@ -24,6 +24,7 @@ export {
 export {FormEntityField, FormListNode, FormNode} from "./form";
 export {StoreListNode, StoreNode} from "./store";
 export {
+    FormNodeToSourceType,
     NodeToType,
     isEntityField,
     isAnyFormNode,

@@ -27,9 +27,9 @@ import {
 export function makeFormNode<E, NE = E>(
     componentClass: React.Component | null,
     node: StoreNode<E>,
-    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
+    builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)
-): FormNode<NE>;
+): FormNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'un StoreListNode.
  * Le FormListNode est un clone d'un StoreListNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
@@ -42,9 +42,9 @@ export function makeFormNode<E, NE = E>(
 export function makeFormNode<E, NE = E>(
     componentClass: React.Component | null,
     node: StoreListNode<E>,
-    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
+    builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
-): FormListNode<NE>;
+): FormListNode<NE, E>;
 export function makeFormNode(
     componentClass: React.Component | null,
     node: StoreNode | StoreListNode,
@@ -76,9 +76,9 @@ export function makeFormNode(
  */
 export function useFormNode<E, NE = E>(
     node: StoreListNode<E>,
-    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
+    builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
-): FormListNode<NE>;
+): FormListNode<NE, E>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
@@ -89,9 +89,9 @@ export function useFormNode<E, NE = E>(
  */
 export function useFormNode<E, NE = E>(
     node: StoreNode<E>,
-    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
+    builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)
-): FormNode<NE>;
+): FormNode<NE, E>;
 export function useFormNode(node: StoreNode | StoreListNode, builder: Function = (x: any) => x, initialData: any) {
     const [formNode] = isStoreListNode(node)
         ? useState(() => {

@@ -23,6 +23,7 @@ export {
     FormListNodeBuilder,
     FormNode,
     FormNodeBuilder,
+    FormNodeToSourceType,
     InputComponents,
     ListEntry,
     Metadata,

@@ -80,7 +80,6 @@
         "switch-final-break": [true, "always"],
         "trailing-comma": [false],
         "triple-equals": true,
-        "use-default-type-parameter": true,
         "use-isnan": true,
         "variable-name": [true, "ban-keywords"]
     }
