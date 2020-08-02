@@ -4,9 +4,18 @@ import * as React from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
-import {Button, ChipTheme, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
+import {ChipTheme, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
 
-import {ActionBar, ActionBarCss, ListBaseProps, ListContext, ListProps, OperationListItem} from "../list";
+import {
+    ActionBar,
+    ActionBarCss,
+    AddItemProps,
+    DefaultAddItemComponent,
+    ListBaseProps,
+    ListContext,
+    ListProps,
+    OperationListItem
+} from "../list";
 import {ChipType} from "./chip";
 import {FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
 import {GroupCss, Results} from "./results";
@@ -21,6 +30,8 @@ const IconButton = tooltipFactory()(IB);
 export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** CSS de l'ActionBar. */
     actionBarTheme?: CSSProp<ActionBarCss>;
+    /** Composant personnalisé pour le bouton "Ajouter". */
+    AddItemComponent?: React.ComponentType<AddItemProps<T>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Permet de supprimer le tri. Par défaut : true */
@@ -126,6 +137,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
 /** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
 export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     actionBarTheme,
+    AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
     canRemoveSort,
     chipKeyResolver,
@@ -231,12 +243,11 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                         </>
                     ) : null}
                     {addItemHandler && listContext.mode === "list" ? (
-                        <Button
-                            onClick={addItemHandler}
-                            icon={getIcon(`${i18nPrefix}.icons.list.add`)}
-                            label={i18next.t(`${i18nPrefix}.list.add`)}
-                            primary
-                            raised
+                        <AddItemComponent
+                            addItemHandler={addItemHandler}
+                            mode="list"
+                            i18nPrefix={i18nPrefix}
+                            store={store}
                         />
                     ) : null}
                 </div>

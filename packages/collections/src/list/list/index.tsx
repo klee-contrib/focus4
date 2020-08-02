@@ -1,40 +1,35 @@
-import i18next from "i18next";
 import {autorun, comparer, observable, reaction} from "mobx";
 import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 import {Transition} from "react-pose";
 
 import {CollectionStore} from "@focus4/stores";
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {FontIcon} from "@focus4/toolbox";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import {OperationListItem} from "../contextual-actions";
 import {DndDragLayer, DragLayerCss} from "../drag-layer";
 import {ListBaseProps, useListBase} from "../list-base";
+import {
+    AddItemProps,
+    DefaultAddItemComponent,
+    DefaultEmptyComponent,
+    DefaultLoadingComponent,
+    EmptyProps,
+    LoadingProps
+} from "../shared";
 import {ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
 import {LineProps, LineWrapper} from "./line";
+
 export {DetailProps, LineProps, ListContext};
 
 import listCss, {ListCss} from "../__style__/list.css";
 export {listCss, ListCss};
 
-/** Props de base d'un composant d'empty state. */
-export interface EmptyProps<T> {
-    /** Handler au clic sur le bouton "Ajouter". */
-    addItemHandler?: () => void;
-    /** Store de la liste. */
-    store?: CollectionStore<T>;
-}
-
-/** Props de base d'un composant de chargement. */
-export interface LoadingProps<T> {
-    /** Store de la liste. */
-    store?: CollectionStore<T>;
-}
-
 /** Props du composant de liste standard. */
 export type ListProps<T> = ListBaseProps<T> & {
+    /** Composant personnalisé pour le bouton "Ajouter". */
+    AddItemComponent?: React.ComponentType<AddItemProps<T>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
@@ -82,18 +77,19 @@ export type ListProps<T> = ListBaseProps<T> & {
 
 /** Composant de liste standard */
 export function List<T>({
+    AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
     canOpenDetail = () => true,
     DetailComponent,
     disableDragAnimThreshold,
     dragItemType,
     dragLayerTheme,
-    EmptyComponent,
+    EmptyComponent = DefaultEmptyComponent,
     hasDragAndDrop,
     hasSelection,
     hideAdditionalItems,
     LineComponent,
-    LoadingComponent,
+    LoadingComponent = DefaultLoadingComponent,
     mode,
     mosaic = {width: 200, height: 200},
     MosaicComponent,
@@ -247,11 +243,7 @@ export function List<T>({
                 <div className={state.mode === "list" ? theme.list() : theme.mosaic()}>
                     {/* Gestion de l'empty state. */}
                     {!isLoading && !hideAdditionalItems && !displayedData.length ? (
-                        EmptyComponent ? (
-                            <EmptyComponent addItemHandler={state.addItemHandler} store={store} />
-                        ) : (
-                            <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>
-                        )
+                        <EmptyComponent addItemHandler={state.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
                     ) : (
                         <ul ref={ul => (state.ulRef = ul)}>
                             {/* On regarde si on doit ajouter l'élément d'ajout. */}
@@ -262,23 +254,18 @@ export function List<T>({
                                     style={{width: mosaic!.width, height: mosaic!.height}}
                                     onClick={state.addItemHandler}
                                 >
-                                    <FontIcon className={theme.add()}>
-                                        {getIcon(`${i18nPrefix}.icons.list.add`)}
-                                    </FontIcon>
-                                    {i18next.t(`${i18nPrefix}.list.add`)}
+                                    <AddItemComponent
+                                        addItemHandler={state.addItemHandler}
+                                        i18nPrefix={i18nPrefix}
+                                        mode="mosaic"
+                                    />
                                 </li>
                             ) : null}
                             {DetailComponent ? <Transition>{lines}</Transition> : lines}
                         </ul>
                     )}
                     {/* Gestion de l'affichage du chargement. */}
-                    {isLoading ? (
-                        LoadingComponent ? (
-                            <LoadingComponent store={store} />
-                        ) : (
-                            <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.search.loading`)}</div>
-                        )
-                    ) : null}
+                    {isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
                     {bottomRow}
                 </div>
             </>
