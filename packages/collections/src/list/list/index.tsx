@@ -255,7 +255,7 @@ export function List<T>({
                                     onClick={state.addItemHandler}
                                 >
                                     <AddItemComponent
-                                        addItemHandler={state.addItemHandler}
+                                        addItemHandler={state.addItemHandler!}
                                         i18nPrefix={i18nPrefix}
                                         mode="mosaic"
                                     />

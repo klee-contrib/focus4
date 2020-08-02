@@ -245,7 +245,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                     {addItemHandler && listContext.mode === "list" ? (
                         <AddItemComponent
                             addItemHandler={addItemHandler}
-                            mode="list"
+                            mode="search"
                             i18nPrefix={i18nPrefix}
                             store={store}
                         />

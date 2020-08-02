@@ -14,7 +14,7 @@ export interface AddItemProps<T> {
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Mode de la liste. */
-    mode: "list" | "mosaic";
+    mode: "mosaic" | "search" | "timeline";
     /** Store de la liste. */
     store?: CollectionStore<T>;
 }
@@ -54,7 +54,7 @@ export function DefaultAddItemComponent({addItemHandler, i18nPrefix, mode}: AddI
                 icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                 label={i18next.t(`${i18nPrefix}.list.add`)}
                 primary
-                raised
+                raised={mode === "search"}
             />
         );
     }
