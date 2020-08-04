@@ -222,15 +222,14 @@ export function setNode<E>(
         for (const item in value) {
             const itemEntry = (node as any)[item];
             const itemValue = (value as any)[item];
-            if (!itemEntry) {
-                throw new Error(`node.set : propriété "${item}" introuvable.`);
-            }
-            if (isAnyStoreNode(itemEntry)) {
-                setNode(itemEntry as StoreNode, itemValue);
-            } else if (isEntityField(itemValue)) {
-                itemEntry.value = itemValue.value;
-            } else {
-                itemEntry.value = itemValue;
+            if (itemEntry) {
+                if (isAnyStoreNode(itemEntry)) {
+                    setNode(itemEntry as StoreNode, itemValue);
+                } else if (isEntityField(itemValue)) {
+                    itemEntry.value = itemValue.value;
+                } else {
+                    itemEntry.value = itemValue;
+                }
             }
         }
     }
