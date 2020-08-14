@@ -21,9 +21,9 @@
         "moment": "2.27.0"
     },
     "devDependencies": {
-        "@types/jest": "26.0.8",
-        "jest": "26.2.2",
+        "@types/jest": "26.0.9",
+        "jest": "26.4.0",
         "jest-junit": "11.1.0",
-        "ts-jest": "26.1.4"
+        "ts-jest": "26.2.0"
     }
 }

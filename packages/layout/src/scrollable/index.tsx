@@ -3,7 +3,7 @@ import "intersection-observer";
 import classNames from "classnames";
 import {debounce, memoize, range} from "lodash";
 import {action, autorun, computed, observable} from "mobx";
-import {disposeOnUnmount, observer, Observer} from "mobx-react";
+import {disposeOnUnmount, observer, useObserver} from "mobx-react";
 import {ColdSubscription, spring, styler} from "popmotion";
 import * as React from "react";
 import {createPortal, findDOMNode} from "react-dom";
@@ -45,11 +45,10 @@ export interface ScrollableProps {
 
 @observer
 class ScrollableComponent extends React.Component<ScrollableProps> {
-    @observable.ref header?: {
-        headerProps?: React.HTMLProps<HTMLElement>;
-        nonStickyElement: HTMLElement;
-        canDeploy: boolean;
-    };
+    @observable.ref canDeploy = false;
+    @observable.ref header?: HTMLElement;
+    @observable.ref headerProps?: React.HTMLProps<HTMLElement>;
+
     @observable.ref containerNode!: HTMLDivElement;
     @observable.ref scrollableNode!: HTMLDivElement;
     @observable.ref stickyNode!: HTMLDivElement;
@@ -75,21 +74,33 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
 
     /** @see ScrollableContext.registerHeader */
     @action.bound
-    registerHeader(headerProps: React.HTMLProps<HTMLElement>, nonStickyElement: HTMLElement, canDeploy = true) {
+    registerHeader(nonStickyElement: HTMLElement, canDeploy: boolean) {
         if (canDeploy) {
             this.intersectionObserver.observe(nonStickyElement);
         } else {
             styler(this.stickyNode).set({top: this.headerHeight});
         }
+
+        this.canDeploy = canDeploy;
+        this.header = nonStickyElement;
         this.isHeaderSticky = !canDeploy;
-        this.header = {headerProps, nonStickyElement, canDeploy};
+
         return action(() => {
             if (canDeploy) {
                 this.intersectionObserver.unobserve(nonStickyElement);
             }
-            this.isHeaderSticky = false;
+
+            this.canDeploy = false;
             this.header = undefined;
+            this.headerProps = undefined;
+            this.isHeaderSticky = false;
         });
+    }
+
+    /** @see ScrollableContext.registerHeaderProps */
+    @action.bound
+    registerHeaderProps(headerProps: React.HTMLProps<HTMLElement>) {
+        this.headerProps = headerProps;
     }
 
     /** @see ScrollableContext.registerIntersect */
@@ -155,7 +166,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
-                    if (this.header && e.target === this.header.nonStickyElement) {
+                    if (e.target === this.header) {
                         this.isHeaderSticky = !e.isIntersecting;
                     }
                     const onIntersect = this.onIntersects.get(e.target);
@@ -217,7 +228,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             if (this.stickySpring) {
                 this.stickySpring.stop();
             }
-            if (this.header.canDeploy && from !== to) {
+            if (this.canDeploy && from !== to) {
                 this.stickySpring = spring({...springPose.transition, from, to}).start((top: number) => {
                     sticky.set({top});
                     this.setStickyRefs(top);
@@ -267,15 +278,36 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         });
     }
 
+    setHeight = (height: number) => (this.headerHeight = height);
     setScrollableNode = (ref: HTMLDivElement | null) => ref && (this.scrollableNode = ref);
     setStickyNode = (ref: HTMLDivElement | null) => ref && (this.stickyNode = ref);
 
+    Header = () =>
+        useObserver(() => {
+            const Header = this.canDeploy ? AnimatedHeader : FixedHeader;
+            return (
+                <Transition>
+                    {this.headerProps && this.isHeaderSticky ? (
+                        <Header
+                            {...this.headerProps}
+                            ref={undefined}
+                            key="header"
+                            onHeightChange={this.setHeight}
+                            style={{width: this.width}}
+                        />
+                    ) : undefined}
+                    {!this.props.hideBackToTop && this.hasBtt ? <ButtonBackToTop key="back-to-top" /> : undefined}
+                </Transition>
+            );
+        });
+
     render() {
-        const {children, className, hideBackToTop, innerRef} = this.props;
+        const {children, className, innerRef} = this.props;
         return (
             <ScrollableContext.Provider
                 value={{
                     registerHeader: this.registerHeader,
+                    registerHeaderProps: this.registerHeaderProps,
                     registerIntersect: this.registerIntersect,
                     scrollTo: this.scrollTo,
                     portal: this.portal
@@ -288,28 +320,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                                 {this.intersectionObserver ? children : null}
                             </div>
                             <div className={theme.sticky()} ref={this.setStickyNode} style={{width: this.width}} />
-                            <Observer>
-                                {() => {
-                                    const {headerProps = null, canDeploy = false} = this.header || {};
-                                    const Header = canDeploy ? AnimatedHeader : FixedHeader;
-                                    return (
-                                        <Transition>
-                                            {headerProps && this.isHeaderSticky ? (
-                                                <Header
-                                                    {...headerProps}
-                                                    ref={undefined}
-                                                    key="header"
-                                                    onHeightChange={height => (this.headerHeight = height)}
-                                                    style={{width: this.width}}
-                                                />
-                                            ) : undefined}
-                                            {!hideBackToTop && this.hasBtt ? (
-                                                <ButtonBackToTop key="back-to-top" />
-                                            ) : undefined}
-                                        </Transition>
-                                    );
-                                }}
-                            </Observer>
+                            <this.Header />
                         </div>
                     )}
                 </Theme>

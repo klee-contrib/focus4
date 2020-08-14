@@ -16,15 +16,15 @@ export interface HeaderScrollingProps {
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
-export function HeaderScrolling({canDeploy, children, theme: pTheme}: HeaderScrollingProps) {
+export function HeaderScrolling({canDeploy = true, children, theme: pTheme}: HeaderScrollingProps) {
     const context = React.useContext(ScrollableContext);
     const theme = useTheme("header", headerCss, pTheme);
     const ref = React.useRef<HTMLElement>(null);
 
-    React.useLayoutEffect(
-        () => context.registerHeader({className: theme.scrolling({sticky: true}), children}, ref.current!, canDeploy),
-        [canDeploy, children]
-    );
+    React.useLayoutEffect(() => context.registerHeader(ref.current!, canDeploy), [canDeploy]);
+    React.useLayoutEffect(() => context.registerHeaderProps({className: theme.scrolling({sticky: true}), children}), [
+        children
+    ]);
 
     return (
         <header className={theme.scrolling({deployed: canDeploy, undeployed: !canDeploy})} ref={ref}>

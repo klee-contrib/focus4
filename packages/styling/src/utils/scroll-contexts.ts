@@ -9,16 +9,17 @@ export interface PanelDescriptor {
 export const ScrollableContext = React.createContext<{
     /**
      * Enregistre le header dans le Scrollable
-     * @param headerProps Les props du header.
      * @param nonStickyElement Le noeud DOM représentant le header non sticky.
      * @param canDeploy Précise si le header est toujours sticky ou non.
      * @returns Le disposer.
      */
-    registerHeader(
-        headerProps: React.HTMLProps<HTMLElement>,
-        nonStickyElement: HTMLElement,
-        canDeploy?: boolean
-    ): () => void;
+    registerHeader(nonStickyElement: HTMLElement, canDeploy: boolean): () => void;
+    /**
+     * Set les props du header du Scrollable.
+     * @param headerProps Les props du header.
+     * @returns Le disposer.
+     */
+    registerHeaderProps(headerProps: React.HTMLProps<HTMLElement>): void;
     /**
      * Enregistre un observateur d'intersection avec le viewport du Scrollable.
      * @param node Le noeud DOM à observer.
