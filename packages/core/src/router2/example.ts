@@ -1,152 +1,7 @@
-interface NumberParam<T extends number = number> {
-    type: "number";
-    required: boolean;
-    spec: T;
-}
+import {makeRouter, Router, RouterConstraintBuilder} from ".";
+import {param} from "./params";
 
-interface StringParam<T extends string = string> {
-    type: "string";
-    required: boolean;
-    spec: T;
-}
-
-type ParamType<T extends string | number> = T extends number
-    ? NumberParam<T>
-    : T extends string
-    ? StringParam<T>
-    : never;
-
-type Param<N extends string, T extends NumberParam | StringParam, U = unknown> = [N, T, U?];
-
-type ViewStore<T = any> = T extends Param<infer A, ParamType<infer N>, Param<infer A2, ParamType<infer N2>>>
-    ? Record<A, N> & Record<A2, N2>
-    : T extends Param<infer A3, ParamType<infer N3>, infer U>
-    ? Record<A3, N3> & {[P in keyof U]: ViewStore<U[P]>}
-    : {
-          [P in keyof T]: ViewStore<T[P]>;
-      };
-
-type YoloDab<T> = (T extends Param<infer N0, infer _0, infer U0>
-    ? (param: N0) => YoloDab<U0>
-    : <D extends keyof T>(
-          x: D
-      ) => T[D] extends Param<infer _1, infer _2, infer _3>
-          ? YoloDab<T[D]>
-          : T[D] extends Param<infer _4, infer _5>
-          ? void
-          : YoloDab<T[D]>) & {lolilol: T};
-
-type YoloDoubleDab<T> = T extends Param<infer _0, ParamType<infer P>, infer U>
-    ? (param: P) => YoloDoubleDab<U>
-    : <D extends keyof T>(
-          x: D
-      ) => T[D] extends Param<infer _1, infer _2, infer _3>
-          ? YoloDoubleDab<T[D]>
-          : T[D] extends Param<infer _4, infer _5>
-          ? void
-          : YoloDoubleDab<T[D]>;
-
-type Router<T> = ViewStore<T> & {
-    is(predicate: (x: YoloDab<T>) => void): boolean;
-    to(predicate: (x: YoloDoubleDab<T>) => void): void;
-    sub<S>(predicate: (x: YoloDab<T>) => YoloDab<S>): Router<S>;
-    switch<S, R>(predicate: (x: YoloDab<T>) => YoloDab<S>, switcher: (x: keyof S | undefined) => R): R;
-};
-
-interface RouterConstraintBuilder<T> {
-    block(is: (x: YoloDab<T>) => void, condition: () => boolean): RouterConstraintBuilder<T>;
-    redirect(
-        is: (x: YoloDab<T>) => void,
-        condition: () => boolean,
-        to: (x: YoloDoubleDab<T>) => void
-    ): RouterConstraintBuilder<T>;
-    sub<S>(predicate: (x: YoloDab<T>) => YoloDab<S>): RouterConstraintBuilder<S>;
-}
-
-const p = {
-    number<T extends number>(required = false): NumberParam<T> {
-        return {type: "number", required, spec: {} as T};
-    },
-    string<T extends string>(required = false): StringParam<T> {
-        return {type: "string", required, spec: {} as T};
-    },
-    param<N extends string, T extends NumberParam | StringParam, U>(name: N, type: T, u?: U): Param<N, T, U> {
-        return [name, type, u];
-    }
-};
-
-function isNumberParam(data: any): data is NumberParam {
-    return data.type === "number";
-}
-
-function isStringParam(data: any): data is StringParam {
-    return data.type === "string";
-}
-
-function t() {
-    /** */
-}
-
-function makeRouter<T>(config: T, _builder?: (b: RouterConstraintBuilder<T>) => void): Router<T> {
-    const store = buildView(config);
-
-    const endpoints: [string, Function][] = [];
-
-    function addEndpoints(c: any, root: string) {
-        if (Array.isArray(c)) {
-            if (!c[1].required) {
-                endpoints.push([root, t]);
-            }
-
-            root = `${root}/:${c[0]}`;
-
-            if (!Array.isArray(c[2])) {
-                endpoints.push([root, t]);
-            }
-
-            if (c[2]) {
-                addEndpoints(c[2], root);
-            }
-        } else {
-            if (Object.keys(c).length === 0 || Object.values(c).every(i => !Array.isArray(i))) {
-                endpoints.push([root, t]);
-            }
-            for (const key in c) {
-                addEndpoints(c[key], `${root}/${key}`);
-            }
-        }
-    }
-
-    endpoints.push(["/", t]);
-    addEndpoints(config, "");
-
-    console.info(endpoints);
-
-    return store as Router<T>;
-}
-
-function buildView<T>(config: T): ViewStore<T> {
-    const object = {} as ViewStore<T>;
-
-    if (Array.isArray(config)) {
-        (object as any)[config[0]] = undefined;
-        if (config[2]) {
-            Object.assign(object, buildView(config[2]));
-        }
-    } else {
-        for (const key in config) {
-            if (config[key] === undefined || isNumberParam(config[key]) || isStringParam(config[key])) {
-                (object as any)[key] = undefined;
-            } else {
-                (object as any)[key] = buildView(config[key]);
-            }
-        }
-    }
-
-    return object;
-}
-
-const echeance = p.param("echId", p.number(), {reglement: p.param("regId", p.number())});
+const echeance = param("echId", p => p.number(), {reglement: param("regId", p => p.number())});
 
 /*
     Le routeur se définit par un "arbre" qui décrit l'ensemble des routes possibles.
@@ -168,10 +23,14 @@ const router = makeRouter({
     projet: {
         detail: {}
     },
-    operation: p.param("ofaId", p.number(), {
-        garantie: p.param("gfaId", p.number(true)),
-        pret: p.param("pnfId", p.number(true)),
-        tam: p.param("ttaCode", p.string<"COURANT" | "THEORIQUE">(true), p.param("mprId", p.number())),
+    operation: param("ofaId", p => p.number(), {
+        garantie: param("gfaId", p => p.number(true)),
+        pret: param("pnfId", p => p.number(true)),
+        tam: param(
+            "ttaCode",
+            p => p.string<"COURANT" | "THEORIQUE">(true),
+            param("mprId", p => p.number())
+        ),
         echeance
     })
 });
@@ -327,10 +186,14 @@ const router2 = makeRouter(
         projet: {
             detail: {}
         },
-        operation: p.param("ofaId", p.number(), {
-            garantie: p.param("gfaId", p.number(true)),
-            pret: p.param("pnfId", p.number(true)),
-            tam: p.param("ttaCode", p.string<"COURANT" | "THEORIQUE">(true), p.param("mprId", p.number())),
+        operation: param("ofaId", p => p.number(), {
+            garantie: param("gfaId", p => p.number(true)),
+            pret: param("pnfId", p => p.number(true)),
+            tam: param(
+                "ttaCode",
+                p => p.string<"COURANT" | "THEORIQUE">(true),
+                param("mprId", p => p.number())
+            ),
             echeance
         })
     },
