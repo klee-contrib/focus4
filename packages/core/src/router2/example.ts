@@ -1,5 +1,4 @@
-import {makeRouter, Router, RouterConstraintBuilder} from ".";
-import {param} from "./params";
+import {makeRouter, param, Router, RouterConstraintBuilder} from ".";
 
 const echeance = param("echId", p => p.number(), {reglement: param("regId", p => p.number())});
 

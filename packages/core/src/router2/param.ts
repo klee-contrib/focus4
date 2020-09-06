@@ -58,18 +58,3 @@ export function param<K extends string, P extends NumberParam | StringParam, V>(
 ): ParamDef<K, P, V> {
     return [name, type(paramTypeBuilder), next];
 }
-
-/** Vérifie qu'il s'agit d'un paramètre de type number. */
-export function isNumberParam(data: any): data is NumberParam {
-    return data.type === "number";
-}
-
-/** Vérifie qu'il s'agit d'un paramètre de type string. */
-export function isStringParam(data: any): data is StringParam {
-    return data.type === "string";
-}
-
-/** Vérifie qu'il s'agit d'un paramètre. */
-export function isParam(data: any): data is NumberParam | StringParam {
-    return isNumberParam(data) || isStringParam(data);
-}
