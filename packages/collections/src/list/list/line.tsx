@@ -69,9 +69,9 @@ export function LineWrapper<T>({
     ...oProps
 }: LineWrapperProps<T>) {
     const props = useAsObservableSource({
-        hasSelection: undefined,
-        store: undefined,
-        ...oProps
+        data: oProps.data,
+        hasSelection: oProps.hasSelection,
+        store: oProps.store
     });
     const state = useLocalStore(() => ({
         /** Force l'affichage des actions. */
