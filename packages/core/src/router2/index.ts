@@ -1,3 +1,4 @@
+import {uniq} from "lodash";
 import {action, extendObservable, intercept} from "mobx";
 import {RouteConfig, Router as YesterRouter} from "yester";
 
@@ -163,7 +164,7 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
     const router = new YesterRouter(
         [
             // Spécifie tous les endpoints dans le routeur.
-            ...buildEndpoints(config).map(
+            ...uniq(buildEndpoints(config)).map(
                 $ =>
                     ({
                         $,
