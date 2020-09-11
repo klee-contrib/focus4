@@ -214,7 +214,9 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
             return builder;
         };
         predicate(builder as any);
-        router.navigate(route);
+        if (route !== window.location.hash?.replace("#/", "")) {
+            router.navigate(route);
+        }
     }
 
     /** Fonction "switch" de base */
@@ -294,9 +296,7 @@ function buildEndpoints<C>(config: C) {
                 addEndpoints(c[2], root);
             }
         } else {
-            if (Object.keys(c).length === 0 || Object.values(c).every(i => !Array.isArray(i))) {
-                endpoints.push(root);
-            }
+            endpoints.push(root);
             for (const key in c) {
                 addEndpoints(c[key], `${root}/${key}`);
             }
