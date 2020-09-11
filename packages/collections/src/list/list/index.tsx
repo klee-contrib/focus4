@@ -252,7 +252,6 @@ export function List<T>({
                                     key="mosaic-add"
                                     className={theme.mosaicAdd()}
                                     style={{width: mosaic!.width, height: mosaic!.height}}
-                                    onClick={state.addItemHandler}
                                 >
                                     <AddItemComponent
                                         addItemHandler={state.addItemHandler!}
