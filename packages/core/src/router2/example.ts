@@ -92,33 +92,31 @@ router.is(a => a("operation")("ofaId")("echeance")("echId")("reglement")("regId"
     Si je veux distinguer entre /operation et /operation/1, je utilise is(a => a("operation")("ofaId"))
     au lieu de vérifier si router.operation.ofaId est undefined.
 
-    Le routeur publie également une méthode "switch" qui permet de retourner une valeur différente par section
-    de route qui matche :
+      Le routeur publie également une méthode "get" qui permet de retourner le morceau de route actif suivant
+    une route active, ce qui peut être par exemple utilisé pour un switch :
 */
 
-// @ts-ignore
-const value = router.switch(
-    a => a("operation")("ofaId"),
-    route => {
-        switch (route) {
-            case "garantie":
-                return 1;
-            case "echeance":
-                return 3;
-            case "pret":
-                return 5;
-            case "tam":
-                return 7;
-            case undefined:
-                return 0;
-        }
-    }
-);
+switch (router.get(a => a("operation")("ofaId"))) {
+    case "garantie":
+        console.info(1);
+        break;
+    case "echeance":
+        console.info(2);
+        break;
+    case "pret":
+        console.info(3);
+        break;
+    case "tam":
+        console.info(4);
+        break;
+    case undefined:
+        console.info(0);
+        break;
+}
 
 /*
-    Le cas "undefined" est retourné si ni "/operation/:ofaId/garantie" ni "/operation/:ofaId/echeance" ne
-    matche, et également si du coup /operation/:ofaId ne matche pas du tout.
-    ("switch" ne propose pas de version avec callback).
+    Le cas "undefined" est retourné si ni "/operation/:ofaId/garantie" ni "/operation/:ofaId/echeance"
+    (ni le reste...) ne matche, et également si du coup /operation/:ofaId ne matche pas du tout.
 
     Pour naviguer, le routeur dispose d'une méthode "to", qui fonctionne un peu sur le même principe que
     "is" :

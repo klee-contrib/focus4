@@ -32,6 +32,11 @@ export interface Router<C> {
     /** Etat du routeur. */
     state: ParamObject<C>;
     /**
+     * Si la route demandée est active, retourne le morceau de route suivant.
+     * @param predicate Callback décrivant la route.
+     */
+    get<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): keyof C2 | undefined;
+    /**
      * Vérifie si la section de route demandée est active dans le routeur.
      * @param predicate Callback décrivant la route.
      */
@@ -48,15 +53,6 @@ export interface Router<C> {
      * @param predicate Callback décrivant la route de base de la vue.
      */
     sub<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): Router<C2>;
-    /**
-     * Effectue une action à partir de la valeur d'un paramètre du routeur.
-     * @param predicate Callback décrivant la route.
-     * @param switcher Callback qui sera appelé avec le paramètre suivant de la route du prédicat.
-     */
-    switch<C2, T>(
-        predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>,
-        switcher: (x: keyof C2 | undefined) => T
-    ): T;
     /** Lance le routeur. */
     start(): Promise<void>;
 }
@@ -198,6 +194,20 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         {type: "hash"}
     );
 
+    /** Fonction "get" de base */
+    function get<C2>(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
+        const builder = (path: string) => {
+            route += `/${Object.keys(paramsMap).includes(path) ? `:${path}` : path}`;
+            return builder;
+        };
+        predicate(builder as any);
+        if (!store._activeRoute.startsWith(route)) {
+            return undefined;
+        } else {
+            return store._activeRoute.replace(route, "").split("/")[1]?.replace(":", "") as keyof C2;
+        }
+    }
+
     /** Fonction "is" de base */
     function is(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
         const builder = (path: string) => {
@@ -223,20 +233,6 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         }
     }
 
-    /** Fonction "switch" de base */
-    function sw(route: string, predicate: (x: UrlRouteDescriptor<C>) => void, switcher: (x: any) => any) {
-        const builder = (path: string) => {
-            route += `/${Object.keys(paramsMap).includes(path) ? `:${path}` : path}`;
-            return builder;
-        };
-        predicate(builder as any);
-        if (!store._activeRoute.startsWith(route)) {
-            return switcher(undefined);
-        } else {
-            return switcher(store._activeRoute.replace(route, "").split("/")[1]?.replace(":", "") as any);
-        }
-    }
-
     /** Fonction "sub" de base */
     function sub(route: string, predicate: (x: UrlRouteDescriptor<C>) => void): any {
         let state = store.state;
@@ -252,15 +248,15 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
 
         return {
             state,
+            get: (p: any) => get(route, p),
             is: (p: any) => is(route, p),
-            to: (p: any, r: any) => {
+            to: (p: any, r = false) => {
                 let baseRoute = route;
                 for (const param in store._activeParams) {
                     baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
                 }
                 to(baseRoute, p, r);
             },
-            switch: (p: any, s: any) => sw(route, p, s),
             sub: (p: any) => sub(route, p),
             start: () => {
                 /** */
@@ -268,9 +264,9 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         };
     }
 
+    store.get = p => get("", p);
     store.is = p => is("", p);
     store.to = (p, r = false) => to("", p, r);
-    store.switch = (p, s) => sw("", p, s);
     store.sub = p => sub("", p);
     store.start = router.init.bind(router) as () => Promise<void>;
 

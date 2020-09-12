@@ -101,6 +101,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     @action.bound
     registerHeaderProps(headerProps: React.HTMLProps<HTMLElement>) {
         this.headerProps = headerProps;
+        this.onScroll();
     }
 
     /** @see ScrollableContext.registerIntersect */
