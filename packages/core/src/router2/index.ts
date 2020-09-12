@@ -39,8 +39,9 @@ export interface Router<C> {
     /**
      * Navigue vers l'URL demandée.
      * @param predicate Callback décrivant l'URL.
+     * @param replace Remplace la route précédente dans l'historique.
      */
-    to(predicate: (x: UrlPathDescriptor<C>) => void): void;
+    to(predicate: (x: UrlPathDescriptor<C>, replace?: boolean) => void): void;
     /**
      * Construit une vue du routeur à partir d'une route donnée, permettant de manipuler une
      * sous section du routeur.
@@ -208,14 +209,17 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
     }
 
     /** Fonction "to" de base */
-    function to(route: string, predicate: (x: UrlPathDescriptor<C>) => void) {
+    function to(route: string, predicate: (x: UrlPathDescriptor<C>) => void, replace: boolean) {
         const builder = (path: string) => {
             route += `/${path}`;
             return builder;
         };
         predicate(builder as any);
-        if (route !== window.location.hash?.replace("#/", "")) {
-            router.navigate(route);
+        if (!route) {
+            route = "/";
+        }
+        if (route !== window.location.hash?.replace("#", "")) {
+            router.navigate(route, replace);
         }
     }
 
@@ -249,12 +253,12 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         return {
             state,
             is: (p: any) => is(route, p),
-            to: (p: any) => {
+            to: (p: any, r: any) => {
                 let baseRoute = route;
                 for (const param in store._activeParams) {
                     baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
                 }
-                to(baseRoute, p);
+                to(baseRoute, p, r);
             },
             switch: (p: any, s: any) => sw(route, p, s),
             sub: (p: any) => sub(route, p),
@@ -265,7 +269,7 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
     }
 
     store.is = p => is("", p);
-    store.to = p => to("", p);
+    store.to = (p, r = false) => to("", p, r);
     store.switch = (p, s) => sw("", p, s);
     store.sub = p => sub("", p);
     store.start = router.init.bind(router) as () => Promise<void>;
