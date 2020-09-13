@@ -312,22 +312,37 @@ function buildEndpoints<C>(config: C) {
  * Construit la map de setters des paramètres du routeur.
  * @param config Config du routeur.
  * @param object Object de paramètres pré-construit.
+ * @param params Pour récursion.
  */
-function buildParamsMap<C>(config: C, object: ParamObject<C>) {
-    const params: Record<string, (value: string | undefined) => string | number | undefined> = {};
-
+function buildParamsMap<C>(
+    config: C,
+    object: ParamObject<C>,
+    params: Record<string, (value: string | undefined) => string | number | undefined> = {}
+) {
     if (Array.isArray(config)) {
-        params[config[0]] = value => {
+        const setter = (value: string | undefined) => {
             const newValue = config[1].type === "number" && value !== undefined ? parseFloat(value) : value;
             (object as any)[config[0]] = newValue;
             return newValue;
         };
+
+        if (params[config[0]]) {
+            const existing = params[config[0]];
+            params[config[0]] = value => {
+                existing(value);
+                setter(value);
+                return value;
+            };
+        } else {
+            params[config[0]] = setter;
+        }
+
         if (config[2]) {
-            Object.assign(params, buildParamsMap(config[2], object));
+            buildParamsMap(config[2], object, params);
         }
     } else {
         for (const key in config) {
-            Object.assign(params, buildParamsMap(config[key], (object as any)[key]));
+            buildParamsMap(config[key], (object as any)[key], params);
         }
     }
 
