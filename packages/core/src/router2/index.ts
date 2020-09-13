@@ -46,7 +46,7 @@ export interface Router<C> {
      * @param predicate Callback décrivant l'URL.
      * @param replace Remplace la route précédente dans l'historique.
      */
-    to(predicate: (x: UrlPathDescriptor<C>, replace?: boolean) => void): void;
+    to(predicate: (x: UrlPathDescriptor<C>) => void, replace?: boolean): void;
     /**
      * Construit une vue du routeur à partir d'une route donnée, permettant de manipuler une
      * sous section du routeur.
@@ -234,8 +234,7 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
     }
 
     /** Fonction "sub" de base */
-    function sub(route: string, predicate: (x: UrlRouteDescriptor<C>) => void): any {
-        let state = store.state;
+    function sub(route: string, state: any, predicate: (x: UrlRouteDescriptor<C>) => void): any {
         const builder = (path: string) => {
             const isParam = Object.keys(paramsMap).includes(path);
             route += `/${isParam ? `:${path}` : path}`;
@@ -257,7 +256,7 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
                 }
                 to(baseRoute, p, r);
             },
-            sub: (p: any) => sub(route, p),
+            sub: (p: any) => sub(route, state, p),
             start: () => {
                 /** */
             }
@@ -267,7 +266,7 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
     store.get = p => get("", p);
     store.is = p => is("", p);
     store.to = (p, r = false) => to("", p, r);
-    store.sub = p => sub("", p);
+    store.sub = p => sub("", store.state, p);
     store.start = router.init.bind(router) as () => Promise<void>;
 
     return store;
