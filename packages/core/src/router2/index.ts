@@ -6,8 +6,8 @@ import {Param, ParamDef} from "./param";
 export {param} from "./param";
 
 /** Callback permettant de décrire une définition de route. */
-export type UrlRouteDescriptor<C> = (C extends ParamDef<infer K0, infer _0, infer V>
-    ? (param: K0) => UrlRouteDescriptor<V>
+export type UrlRouteDescriptor<C, _K = unknown, _T = unknown> = (C extends ParamDef<infer K0, Param<infer T>, infer V>
+    ? (param: K0) => UrlRouteDescriptor<V, K0, T>
     : <K extends keyof C>(
           x: K
       ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
@@ -52,7 +52,9 @@ export interface Router<C> {
      * sous section du routeur.
      * @param predicate Callback décrivant la route de base de la vue.
      */
-    sub<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): Router<C2>;
+    sub<C2, K, T>(
+        predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2, K, T>
+    ): Router<C2> & {state: {[P in K & string]: T}};
     /** Lance le routeur. */
     start(): Promise<void>;
 }
@@ -128,7 +130,9 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
                     for (const param in store._activeParams) {
                         route = route.replace(`:${param}`, store._activeParams[param]);
                     }
-                    window.location.hash = route;
+                    if (route !== window.location.hash?.replace("#", "")) {
+                        router.navigate(route, true);
+                    }
                 }
 
                 // Seuls les paramètres dans la route active peuvent être modifiés.
