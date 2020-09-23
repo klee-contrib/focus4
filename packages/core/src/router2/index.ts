@@ -1,5 +1,6 @@
 import {uniq} from "lodash";
 import {action, extendObservable, intercept} from "mobx";
+import {computedFn} from "mobx-utils";
 import {RouteConfig, Router as YesterRouter} from "yester";
 
 import {Param, ParamDef} from "./param";
@@ -198,6 +199,15 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         {type: "hash"}
     );
 
+    /** Permet de garder le résultat de "get" en "computed" pour éviter de trigger "get" à chaque changement de route. */
+    const innerGet = computedFn((route: string) => {
+        if (!store._activeRoute.startsWith(route)) {
+            return undefined;
+        } else {
+            return store._activeRoute.replace(route, "").split("/")[1]?.replace(":", "");
+        }
+    });
+
     /** Fonction "get" de base */
     function get<C2>(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
         const builder = (path: string) => {
@@ -205,12 +215,11 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
             return builder;
         };
         predicate(builder as any);
-        if (!store._activeRoute.startsWith(route)) {
-            return undefined;
-        } else {
-            return store._activeRoute.replace(route, "").split("/")[1]?.replace(":", "") as keyof C2;
-        }
+        return innerGet(route) as keyof C2 | undefined;
     }
+
+    /** Permet de garder le résultat de "is" en "computed" pour éviter de trigger "is" à chaque changement de route. */
+    const innerIs = computedFn((route: string) => store._activeRoute.startsWith(route));
 
     /** Fonction "is" de base */
     function is(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
@@ -219,7 +228,7 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
             return builder;
         };
         predicate(builder as any);
-        return store._activeRoute.startsWith(route);
+        return innerIs(route);
     }
 
     /** Fonction "to" de base */
