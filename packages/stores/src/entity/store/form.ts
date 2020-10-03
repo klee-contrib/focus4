@@ -186,7 +186,7 @@ export function nodeToFormNode<E = any, E0 = E>(
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
 function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
     const {isEdit} = field as FormEntityField;
-    delete (field as FormEntityField).isEdit;
+    delete (field as any).isEdit;
     extendObservable(field, {
         _isEdit: isBoolean(isEdit) ? isEdit : true,
         get error() {

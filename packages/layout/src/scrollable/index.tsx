@@ -297,10 +297,16 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                             style={{width: this.width}}
                         />
                     ) : undefined}
-                    {!this.props.hideBackToTop && this.hasBtt ? <ButtonBackToTop key="back-to-top" /> : undefined}
                 </Transition>
             );
         });
+
+    BackToTop = () =>
+        useObserver(() => (
+            <Transition>
+                {!this.props.hideBackToTop && this.hasBtt ? <ButtonBackToTop key="back-to-top" /> : undefined}
+            </Transition>
+        ));
 
     render() {
         const {children, className, innerRef} = this.props;
@@ -322,6 +328,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                             </div>
                             <div className={theme.sticky()} ref={this.setStickyNode} style={{width: this.width}} />
                             <this.Header />
+                            <this.BackToTop />
                         </div>
                     )}
                 </Theme>

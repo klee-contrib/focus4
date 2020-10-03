@@ -4,7 +4,6 @@
 
 import "core-js/shim";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
-import "mobx-react-lite/batchingForReactDom";
 
 import "./focus.css";
 

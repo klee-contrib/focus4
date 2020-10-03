@@ -15,16 +15,16 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@types/lodash": "4.14.159",
-        "@types/react": "16.9.46",
+        "@types/lodash": "4.14.161",
+        "@types/react": "16.9.50",
         "@types/uuid": "8.3.0",
-        "i18next": "19.6.3",
+        "i18next": "19.8.1",
         "lodash": "4.17.20",
-        "mobx": "4.15.5",
+        "mobx": "4.15.7",
         "mobx-utils": "5.6.1",
         "tslib": "2.0.1",
         "uuid": "8.3.0",
-        "whatwg-fetch": "3.4.0",
+        "whatwg-fetch": "3.4.1",
         "yester": "0.10.0"
     }
 }
