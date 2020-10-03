@@ -181,6 +181,13 @@ echRouter.state.reglement.regId = 1;
     ou de redirection sur certaines routes si une condition n'est pas respectée :
 */
 
+function echConstraints(b: RouterConstraintBuilder<typeof echeance>) {
+    return b.block(
+        a => a("echId")("reglement"),
+        () => "yolo".length !== 4
+    );
+}
+
 makeRouter(
     {
         projet: {
@@ -207,11 +214,7 @@ makeRouter(
             a => a
         );
 
-        const subBuilder: RouterConstraintBuilder<typeof echeance> = b.sub(a => a("operation")("ofaId")("echeance"));
-        subBuilder.block(
-            a => a("echId")("reglement"),
-            () => "yolo".length !== 4
-        );
+        echConstraints(b.sub(a => a("operation")("ofaId")("echeance")));
     }
 );
 

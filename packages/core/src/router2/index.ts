@@ -99,9 +99,9 @@ export type ParamObject<C = any> = C extends ParamDef<infer K1, Param<infer T1>,
 /**
  * Construit un routeur.
  * @param config Configufration du routeur.
- * @param _builder Constraintes du routeur.
+ * @param constraintConfigurator Constraintes du routeur.
  */
-export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<C>) => void): Router<C> {
+export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterConstraintBuilder<C>) => void): Router<C> {
     /**
      * Construit l'objet de valeurs.
      * @param cIn La config du routeur.
@@ -163,6 +163,7 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         _activeParams: Record<string, string>;
     };
     const paramsMap = buildParamsMap(config, store.state);
+    const constraints = [] as {route: string; condition: () => boolean; redirect?: () => string}[];
     const router = new YesterRouter(
         [
             // Spécifie tous les endpoints dans le routeur.
@@ -171,8 +172,22 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
                     ({
                         $,
                         beforeEnter: action(({params, oldPath}) => {
+                            const prevRoute = store._activeRoute;
+                            const prevParams = store._activeParams;
+
                             store._activeRoute = $;
                             store._activeParams = params;
+
+                            // On parcourt toutes les constraintes définies sur cette route.
+                            for (const constraint of constraints.filter(c => store._activeRoute.includes(c.route))) {
+                                // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
+                                if (constraint.condition()) {
+                                    const redirect = constraint.redirect?.() ?? (oldPath || "/");
+                                    store._activeRoute = prevRoute;
+                                    store._activeParams = prevParams;
+                                    return {redirect, replace: true};
+                                }
+                            }
 
                             // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
                             for (const key in paramsMap) {
@@ -181,7 +196,9 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
 
                                     // Si valeur invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
                                     if (Number.isNaN(newValue)) {
-                                        return {redirect: oldPath || "/"};
+                                        store._activeRoute = prevRoute;
+                                        store._activeParams = prevParams;
+                                        return {redirect: oldPath || "/", replace: true};
                                     }
                                 } else {
                                     paramsMap[key](undefined);
@@ -199,40 +216,43 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         {type: "hash"}
     );
 
+    /** Récupère la route correspondant à un préfixe + un prédicat. */
+    function getRoute(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
+        const builder = (path: string) => {
+            route += `/${Object.keys(paramsMap).includes(path) ? `:${path}` : path}`;
+            return builder;
+        };
+        predicate(builder as any);
+        return route;
+    }
+
     /** Permet de garder le résultat de "get" en "computed" pour éviter de trigger "get" à chaque changement de route. */
-    const innerGet = computedFn((route: string) => {
-        if (!store._activeRoute.startsWith(route)) {
-            return undefined;
-        } else {
-            return store._activeRoute.replace(route, "").split("/")[1]?.replace(":", "");
-        }
-    });
+    const innerGet = computedFn(
+        (route: string) => {
+            if (!store._activeRoute.startsWith(route)) {
+                return undefined;
+            } else {
+                return store._activeRoute.replace(route, "").split("/")[1]?.replace(":", "");
+            }
+        },
+        {keepAlive: true}
+    );
 
     /** Fonction "get" de base */
     function get<C2>(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
-        const builder = (path: string) => {
-            route += `/${Object.keys(paramsMap).includes(path) ? `:${path}` : path}`;
-            return builder;
-        };
-        predicate(builder as any);
-        return innerGet(route) as keyof C2 | undefined;
+        return innerGet(getRoute(route, predicate)) as keyof C2 | undefined;
     }
 
     /** Permet de garder le résultat de "is" en "computed" pour éviter de trigger "is" à chaque changement de route. */
-    const innerIs = computedFn((route: string) => store._activeRoute.startsWith(route));
+    const innerIs = computedFn((route: string) => store._activeRoute.startsWith(route), {keepAlive: true});
 
     /** Fonction "is" de base */
     function is(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
-        const builder = (path: string) => {
-            route += `/${Object.keys(paramsMap).includes(path) ? `:${path}` : path}`;
-            return builder;
-        };
-        predicate(builder as any);
-        return innerIs(route);
+        return innerIs(getRoute(route, predicate));
     }
 
-    /** Fonction "to" de base */
-    function to(route: string, predicate: (x: UrlPathDescriptor<C>) => void, replace: boolean) {
+    /** Récupère le chemin correspondant à un préfixe + un prédicat. */
+    function getPath(route: string, predicate: (x: UrlPathDescriptor<C>) => void) {
         const builder = (path: string) => {
             route += `/${path}`;
             return builder;
@@ -241,6 +261,12 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
         if (!route) {
             route = "/";
         }
+        return route;
+    }
+
+    /** Fonction "to" de base */
+    function to(route: string, predicate: (x: UrlPathDescriptor<C>) => void, replace: boolean) {
+        route = getPath(route, predicate);
         if (route !== window.location.hash?.replace("#", "")) {
             router.navigate(route, replace);
         }
@@ -281,6 +307,36 @@ export function makeRouter<C>(config: C, _builder?: (b: RouterConstraintBuilder<
     store.to = (p, r = false) => to("", p, r);
     store.sub = p => sub("", store.state, p);
     store.start = router.init.bind(router) as () => Promise<void>;
+
+    function getConstraintBuilder(route: string): RouterConstraintBuilder<C> {
+        return {
+            block(predicate, condition) {
+                constraints.push({route: getRoute(route, predicate), condition});
+                return this;
+            },
+            redirect(predicate, condition, redirect) {
+                constraints.push({
+                    route: getRoute(route, predicate),
+                    condition,
+                    redirect: () => {
+                        let baseRoute = route;
+                        if (baseRoute.includes(":")) {
+                            for (const param in store._activeParams) {
+                                baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
+                            }
+                        }
+                        return getPath(baseRoute, redirect);
+                    }
+                });
+                return this;
+            },
+            sub(predicate) {
+                return getConstraintBuilder(getRoute(route, predicate)) as any;
+            }
+        };
+    }
+
+    constraintConfigurator?.(getConstraintBuilder(""));
 
     return store;
 }
