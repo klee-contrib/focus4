@@ -164,57 +164,64 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
     };
     const paramsMap = buildParamsMap(config, store.state);
     const constraints = [] as {route: string; condition: () => boolean; redirect?: () => string}[];
-    const router = new YesterRouter(
-        [
-            // Spécifie tous les endpoints dans le routeur.
-            ...uniq(buildEndpoints(config)).map(
-                $ =>
-                    ({
-                        $,
-                        beforeEnter: action(({params, oldPath}) => {
-                            const prevRoute = store._activeRoute;
-                            const prevParams = store._activeParams;
+    let router: YesterRouter;
 
-                            store._activeRoute = $;
-                            store._activeParams = params;
+    /** Crée le routeur, appelé par "start". */
+    function buildRouter() {
+        router = new YesterRouter(
+            [
+                // Spécifie tous les endpoints dans le routeur.
+                ...uniq(buildEndpoints(config)).map(
+                    $ =>
+                        ({
+                            $,
+                            beforeEnter: action(({params, oldPath}) => {
+                                const prevRoute = store._activeRoute;
+                                const prevParams = store._activeParams;
 
-                            // On parcourt toutes les constraintes définies sur cette route.
-                            for (const constraint of constraints.filter(c => store._activeRoute.includes(c.route))) {
-                                // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
-                                if (constraint.condition()) {
-                                    const redirect = constraint.redirect?.() ?? (oldPath || "/");
-                                    store._activeRoute = prevRoute;
-                                    store._activeParams = prevParams;
-                                    return {redirect, replace: true};
-                                }
-                            }
+                                store._activeRoute = $;
+                                store._activeParams = params;
 
-                            // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
-                            for (const key in paramsMap) {
-                                if (key in params) {
-                                    const newValue = paramsMap[key](params[key]);
-
-                                    // Si valeur invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
-                                    if (Number.isNaN(newValue)) {
+                                // On parcourt toutes les constraintes définies sur cette route.
+                                for (const constraint of constraints.filter(c =>
+                                    store._activeRoute.includes(c.route)
+                                )) {
+                                    // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
+                                    if (constraint.condition()) {
+                                        const redirect = constraint.redirect?.() ?? (oldPath || "/");
                                         store._activeRoute = prevRoute;
                                         store._activeParams = prevParams;
-                                        return {redirect: oldPath || "/", replace: true};
+                                        return {redirect, replace: true};
                                     }
-                                } else {
-                                    paramsMap[key](undefined);
                                 }
-                            }
-                        })
-                    } as RouteConfig)
-            ),
-            {
-                // Route non matchée => on revient là où on était avant (ou à la racine si premier appel).
-                $: "*",
-                beforeEnter: ({oldPath}) => ({redirect: oldPath || "/"})
-            }
-        ],
-        {type: "hash"}
-    );
+
+                                // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
+                                for (const key in paramsMap) {
+                                    if (key in params) {
+                                        const newValue = paramsMap[key](params[key]);
+
+                                        // Si valeur invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
+                                        if (Number.isNaN(newValue)) {
+                                            store._activeRoute = prevRoute;
+                                            store._activeParams = prevParams;
+                                            return {redirect: oldPath || "/", replace: true};
+                                        }
+                                    } else {
+                                        paramsMap[key](undefined);
+                                    }
+                                }
+                            })
+                        } as RouteConfig)
+                ),
+                {
+                    // Route non matchée => on revient là où on était avant (ou à la racine si premier appel).
+                    $: "*",
+                    beforeEnter: ({oldPath}) => ({redirect: oldPath || "/"})
+                }
+            ],
+            {type: "hash"}
+        );
+    }
 
     /** Récupère la route correspondant à un préfixe + un prédicat. */
     function getRoute(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
@@ -306,7 +313,10 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
     store.is = p => is("", p);
     store.to = (p, r = false) => to("", p, r);
     store.sub = p => sub("", store.state, p);
-    store.start = router.init.bind(router) as () => Promise<void>;
+    store.start = () => {
+        buildRouter();
+        return router.init()!;
+    };
 
     function getConstraintBuilder(route: string): RouterConstraintBuilder<C> {
         return {
