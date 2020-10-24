@@ -1,3 +1,21 @@
+.table tr td.checkbox {
+    width: 34px;
+    padding: 0 8px 0 12px;
+}
+
+.checkbox button {
+    opacity: 0;
+}
+
+.toggle .checkboxIcon {
+    font-size: 24px;
+}
+
+.checkbox--forceDisplay button,
+.table tr:hover td.checkbox button {
+    opacity: 1;
+}
+
 /* Ci-dessous, recopie du CSS du tableau react-toolbox */
 
 .table {

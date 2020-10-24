@@ -25,7 +25,7 @@ S'il est possible d'utiliser les composants de base avec un store, il existe tou
 Toutes les listes peuvent gérer une pagination serveur si liées à un `SearchStore`. Cette pagination peut être utilisée en plus de la pagination locale. De plus :
 
 -   Le composant de liste `listFor` propose en plus d'afficher des cases de sélection sur chaque ligne
--   Le composant de tableau `tableFor` propose en plus de trier au niveau des colonnes.
+-   Le composant de tableau `tableFor` propose en plus d'afficher des cases de sélection sur chaque ligne et de trier au niveau des colonnes.
 
 ### `ActionBar`
 

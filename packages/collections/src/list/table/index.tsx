@@ -1,13 +1,14 @@
 import classNames from "classnames";
-import {useObserver} from "mobx-react";
+import {useLocalStore, useObserver} from "mobx-react";
 import * as React from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {CSSProp, useTheme} from "@focus4/styling";
+import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 
 import {ListBaseProps, useListBase} from "../list-base";
 import {TableColumn, TableHeader} from "./header";
 
+import {IconButton} from "@focus4/toolbox";
 import tableCss, {TableCss} from "../__style__/table.css";
 export {TableColumn, tableCss, TableCss};
 
@@ -15,6 +16,8 @@ export {TableColumn, tableCss, TableCss};
 export type TableProps<T> = ListBaseProps<T> & {
     /** La description des colonnes du tableau. */
     columns: TableColumn<T>[];
+    /** Affiche la sélection sur les lignes (store uniquement). */
+    hasSelection?: boolean;
     /** Classe CSS pour une ligne. */
     lineClassName?: (data: T) => string;
     /** Appelé au clic sur une ligne. */
@@ -33,7 +36,14 @@ export type TableProps<T> = ListBaseProps<T> & {
     );
 
 /** Tableau standard */
-export function Table<T>({columns, lineClassName, onLineClick, theme: pTheme, ...baseProps}: TableProps<T>) {
+export function Table<T>({
+    columns,
+    hasSelection,
+    lineClassName,
+    onLineClick,
+    theme: pTheme,
+    ...baseProps
+}: TableProps<T>) {
     const theme = useTheme("table", tableCss, pTheme);
     return useObserver(() => {
         const {bottomRow, displayedData, getDomRef, i18nPrefix, itemKey, store} = useListBase(baseProps);
@@ -41,8 +51,30 @@ export function Table<T>({columns, lineClassName, onLineClick, theme: pTheme, ..
         /** Ligne de table. */
         const TableLine = React.useMemo(
             () =>
-                React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) =>
-                    useObserver(() => (
+                React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) => {
+                    const state = useLocalStore(() => ({
+                        /** Précise si la checkbox doit être affichée. */
+                        get isCheckboxDisplayed() {
+                            return !!store?.selectedItems.size || false;
+                        },
+
+                        /** Précise si la ligne est sélectionnable. */
+                        get isSelectable() {
+                            return (hasSelection && store?.isItemSelectionnable(data)) || false;
+                        },
+
+                        /** Précise si la ligne est sélectionnée.. */
+                        get isSelected() {
+                            return store?.selectedItems.has(data) || false;
+                        },
+
+                        /** Handler de clic sur la case de sélection. */
+                        onSelection() {
+                            store?.toggle(data);
+                        }
+                    }));
+
+                    return useObserver(() => (
                         <tr
                             ref={ref}
                             className={classNames(
@@ -50,6 +82,20 @@ export function Table<T>({columns, lineClassName, onLineClick, theme: pTheme, ..
                                 onLineClick ? theme.clickable() : ""
                             )}
                         >
+                            {hasSelection ? (
+                                <td className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}>
+                                    {state.isSelectable ? (
+                                        <IconButton
+                                            icon={getIcon(
+                                                `${i18nPrefix}.icons.line.${state.isSelected ? "" : "un"}selected`
+                                            )}
+                                            onClick={state.onSelection}
+                                            primary={state.isSelected}
+                                            theme={{toggle: theme.toggle(), icon: theme.checkboxIcon()}}
+                                        />
+                                    ) : null}
+                                </td>
+                            ) : null}
                             {columns.map(({className, content}, idx) => (
                                 <td
                                     className={className}
@@ -60,8 +106,8 @@ export function Table<T>({columns, lineClassName, onLineClick, theme: pTheme, ..
                                 </td>
                             ))}
                         </tr>
-                    ))
-                ),
+                    ));
+                }),
             []
         );
 
@@ -70,6 +116,7 @@ export function Table<T>({columns, lineClassName, onLineClick, theme: pTheme, ..
                 <table className={theme.table()}>
                     <thead>
                         <tr>
+                            {hasSelection ? <th /> : null}
                             {columns.map(column => (
                                 <TableHeader
                                     key={column.title}

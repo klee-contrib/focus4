@@ -79,29 +79,27 @@ export function LineWrapper<T>({
 
         /** Précise si la checkbox doit être affichée. */
         get isCheckboxDisplayed() {
-            return (props.store && !!props.store.selectedItems.size) || false;
+            return !!props.store?.selectedItems.size || false;
         },
 
         /** Précise si la ligne est en train d'être "draggée". */
         get isDragged() {
-            return (draggedItems && draggedItems.find(i => i === props.data)) || false;
+            return draggedItems?.find(i => i === props.data) || false;
         },
 
         /** Précise si la ligne est sélectionnable. */
         get isSelectable() {
-            return (props.hasSelection && props.store && props.store.isItemSelectionnable(props.data)) || false;
+            return (props.hasSelection && props.store?.isItemSelectionnable(props.data)) || false;
         },
 
         /** Précise si la ligne est sélectionnée.. */
         get isSelected() {
-            return (props.store && props.store.selectedItems.has(props.data)) || false;
+            return props.store?.selectedItems.has(props.data) || false;
         },
 
         /** Handler de clic sur la case de sélection. */
         onSelection() {
-            if (props.store) {
-                props.store.toggle(props.data);
-            }
+            props.store?.toggle(props.data);
         },
 
         setForceActionDisplay() {
