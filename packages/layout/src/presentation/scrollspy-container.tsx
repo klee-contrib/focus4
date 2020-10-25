@@ -14,10 +14,6 @@ const Theme = themr("scrollspy", scrollspyCss);
 export interface ScrollspyContainerProps {
     /** Menu personnalisé pour le scrollspy. */
     MenuComponent?: React.ComponentType<ScrollspyMenuProps>;
-    /** Offset de scroll à partir du moment ou le menu devient fixe, par rapport au header. Par défaut : toutes les marges qui vont bien. */
-    menuOffset?: number;
-    /** Largeur du menu. Par défaut : 250. */
-    menuWidth?: number;
     /** Offset entre la position du panel et la position de scroll au clic sur le menu. Par défaut : 150. */
     scrollToOffset?: number;
     /** CSS. */
@@ -99,7 +95,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
     }
 
     render() {
-        const {children, MenuComponent = ScrollspyMenu, menuWidth = 250} = this.props;
+        const {children, MenuComponent = ScrollspyMenu} = this.props;
         return (
             <ScrollspyContext.Provider value={{registerPanel: this.registerPanel}}>
                 <Theme theme={this.props.theme}>
@@ -119,9 +115,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
                                 </nav>,
                                 this.node.current
                             )}
-                            <div className={theme.content()} style={{marginLeft: menuWidth}}>
-                                {children}
-                            </div>
+                            <div className={theme.content()}>{children}</div>
                         </div>
                     )}
                 </Theme>

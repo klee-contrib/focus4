@@ -54,6 +54,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     @observable.ref stickyNode!: HTMLDivElement;
 
     @observable.ref intersectionObserver!: IntersectionObserver;
+    @observable.ref mutationObserver!: MutationObserver;
     @observable.ref resizeObserver!: ResizeObserverPolyfill;
 
     readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
@@ -145,7 +146,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             const stickyRef = styler(ref);
             this.stickyStylers.set(key, stickyRef);
             stickyRef.set({
-                top:
+                marginTop:
                     getOffsetTop(this.stickyParentNodes.get(key)!, this.scrollableNode) -
                     this.scrollableNode.scrollTop -
                     this.stickyOffsetTop
@@ -164,6 +165,10 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.scrollableNode.addEventListener("scroll", this.onScroll);
         this.resizeObserver = new ResizeObserver(() => this.onScroll());
         this.resizeObserver.observe(this.scrollableNode);
+        this.resizeObserver.observe(this.stickyNode);
+        this.mutationObserver = new MutationObserver(() => this.onScroll());
+        this.mutationObserver.observe(this.scrollableNode, {attributes: true, childList: true, subtree: true});
+        this.mutationObserver.observe(this.stickyNode, {attributes: true, childList: true, subtree: true});
         this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
@@ -181,20 +186,16 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     }
 
     componentWillUnmount() {
-        if (this.scrollableNode) {
-            this.scrollableNode.removeEventListener("scroll", this.onScroll);
-        }
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-        }
-        if (this.intersectionObserver) {
-            this.intersectionObserver.disconnect();
-        }
+        this.scrollableNode?.removeEventListener("scroll", this.onScroll);
+        this.intersectionObserver?.disconnect();
+        this.mutationObserver?.disconnect();
+        this.resizeObserver?.disconnect();
     }
 
     @action.bound
     onScroll() {
         this.width = this.scrollableNode.clientWidth;
+        this.stickyParentNodes.forEach(node => (node.style.marginLeft = `${this.stickyNode.clientWidth}px`));
         this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 300);
         if (isIEorEdge()) {
             this.onScrollCoreDebounced();
@@ -254,7 +255,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.stickyStylers.forEach((stickyRef, key) => {
             const parentNode = this.stickyParentNodes.get(key)!;
             stickyRef.set({
-                top: Math.max(
+                marginTop: Math.max(
                     0,
                     getOffsetTop(parentNode, this.scrollableNode) - this.scrollableNode.scrollTop - offsetTop
                 )
@@ -266,13 +267,13 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.stickyStylers.forEach((stickyRef, key) => {
             const parentNode = this.stickyParentNodes.get(key)!;
             const transition = {
-                from: stickyRef.get("top"),
+                from: stickyRef.get("marginTop"),
                 to: Math.max(0, to(getOffsetTop(parentNode, this.scrollableNode)))
             };
             if (transition.from !== transition.to) {
-                spring({...springPose.transition, ...transition}).start((top: number) => {
+                spring({...springPose.transition, ...transition}).start((marginTop: number) => {
                     stickyRef.set({
-                        top
+                        marginTop
                     });
                 });
             }
@@ -326,7 +327,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                             <div className={theme.scrollable()} ref={this.setScrollableNode}>
                                 {this.intersectionObserver ? children : null}
                             </div>
-                            <div className={theme.sticky()} ref={this.setStickyNode} style={{width: this.width}} />
+                            <div className={theme.sticky()} ref={this.setStickyNode} />
                             <this.Header />
                             <this.BackToTop />
                         </div>

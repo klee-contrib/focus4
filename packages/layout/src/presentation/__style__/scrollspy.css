@@ -1,11 +1,10 @@
 .scrollspy {
-    position: relative;
     padding-right: var(--content-padding-side);
 }
 
 .menu {
-    position: absolute;
     padding-left: var(--scrollspy-padding-left);
+    width: 210px;
 }
 
 .menu ul {

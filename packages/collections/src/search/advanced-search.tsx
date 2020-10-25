@@ -222,7 +222,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
             {renderFacetBox()}
             <div
                 className={theme.resultContainer({
-                    withFacetBox: facetBoxPosition === "sticky" || facetBoxPosition === "left"
+                    withFacetBox: facetBoxPosition === "left"
                 })}
             >
                 <div className={theme.actions()}>

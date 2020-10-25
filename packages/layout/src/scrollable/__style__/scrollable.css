@@ -9,7 +9,6 @@
 
     & > * {
         pointer-events: auto;
-        position: absolute;
     }
 }
 

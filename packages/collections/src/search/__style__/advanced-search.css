@@ -6,13 +6,11 @@
 }
 
 .resultContainer {
-    width: 100%;
     padding: var(--content-padding-top) var(--content-padding-side) 0;
     box-sizing: border-box;
 }
 
 .resultContainer--withFacetBox {
-    width: calc(100% - var(--advanced-search-facets-width) - var(--advanced-search-facets-margin-right));
     margin-left: calc(var(--advanced-search-facets-width) + var(--advanced-search-facets-margin-right));
 }
 
