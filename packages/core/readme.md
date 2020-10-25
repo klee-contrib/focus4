@@ -203,6 +203,10 @@ C'est tout à fait équivalent à faire une navigation vers `#/operation/1/tam/C
 
 Le deuxième paramètre `replace`, si renseigné à `true`, remplacera l'ancienne URL dans l'historique par la nouvelle, au lieu de l'ajouter à suivre. Cela implique que si on a remplacé, on ne pourra pas revenir à l'ancienne URL en faisant "précédent" : on ira directement à la valeur d'avant.
 
+#### `href(url)`
+
+La fonction `href` prend en paramètre une description d'URL avec paramètres, la même que `to`, et renvoie l'URL correspondante (au lieu de naviguer). Cela permet de construire des liens "classiques" via une balise `<a>`. Utiliser des liens "classiques" est une bonne pratique puisqu'ils permettent au navigateur de pouvoir proposer des interactions à l'utilisateur avec (par exemple : ouvrir dans un autre onglet).
+
 #### `sub(url)`
 
 Il ne peut y avoir qu'un seul routeur pour toute l'application, puisqu'il n'y a qu'on ne peut utiliser qu'une seule URL en même temps et qu'elle doit être partagée. Cependant, cela forcerait à toute l'application à dépendre du routeur central qui lui même est constitué de toutes les routes de l'application. Un tel système ne serait pas modulaire du tout et serait vite limitant pour une application de taille conséquente.

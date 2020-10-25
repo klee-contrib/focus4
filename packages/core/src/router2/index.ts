@@ -37,6 +37,12 @@ export interface Router<C> {
      * @param predicate Callback décrivant la route.
      */
     get<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): keyof C2 | undefined;
+
+    /**
+     * Récupère l'URL correspondante à la route demandée.
+     * @param predicate Callback décrivant la route.
+     */
+    href(predicate: (x: UrlPathDescriptor<C>) => void): string;
     /**
      * Vérifie si la section de route demandée est active dans le routeur.
      * @param predicate Callback décrivant la route.
@@ -223,6 +229,19 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
         );
     }
 
+    /** Récupère le chemin correspondant à un préfixe + un prédicat. */
+    function getPath(route: string, predicate: (x: UrlPathDescriptor<C>) => void) {
+        const builder = (path: string) => {
+            route += `/${path}`;
+            return builder;
+        };
+        predicate(builder as any);
+        if (!route) {
+            route = "/";
+        }
+        return route;
+    }
+
     /** Récupère la route correspondant à un préfixe + un prédicat. */
     function getRoute(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
         const builder = (path: string) => {
@@ -250,25 +269,17 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
         return innerGet(getRoute(route, predicate)) as keyof C2 | undefined;
     }
 
+    /** Fonction "href" de base */
+    function href(route: string, predicate: (x: UrlPathDescriptor<C>) => void) {
+        return `#${getPath(route, predicate)}`;
+    }
+
     /** Permet de garder le résultat de "is" en "computed" pour éviter de trigger "is" à chaque changement de route. */
     const innerIs = computedFn((route: string) => store._activeRoute.startsWith(route), {keepAlive: true});
 
     /** Fonction "is" de base */
     function is(route: string, predicate: (x: UrlRouteDescriptor<C>) => void) {
         return innerIs(getRoute(route, predicate));
-    }
-
-    /** Récupère le chemin correspondant à un préfixe + un prédicat. */
-    function getPath(route: string, predicate: (x: UrlPathDescriptor<C>) => void) {
-        const builder = (path: string) => {
-            route += `/${path}`;
-            return builder;
-        };
-        predicate(builder as any);
-        if (!route) {
-            route = "/";
-        }
-        return route;
     }
 
     /** Fonction "to" de base */
@@ -294,6 +305,13 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
         return {
             state,
             get: (p: any) => get(route, p),
+            href: (p: any) => {
+                let baseRoute = route;
+                for (const param in store._activeParams) {
+                    baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
+                }
+                return href(baseRoute, p);
+            },
             is: (p: any) => is(route, p),
             to: (p: any, r = false) => {
                 let baseRoute = route;
@@ -310,6 +328,7 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
     }
 
     store.get = p => get("", p);
+    store.href = p => href("", p);
     store.is = p => is("", p);
     store.to = (p, r = false) => to("", p, r);
     store.sub = p => sub("", store.state, p);
