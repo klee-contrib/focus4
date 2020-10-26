@@ -254,11 +254,13 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     setStickyRefs(offsetTop: number) {
         this.stickyStylers.forEach((stickyRef, key) => {
             const parentNode = this.stickyParentNodes.get(key)!;
+            const marginTop = Math.max(
+                0,
+                getOffsetTop(parentNode, this.scrollableNode) - this.scrollableNode.scrollTop - offsetTop
+            );
             stickyRef.set({
-                marginTop: Math.max(
-                    0,
-                    getOffsetTop(parentNode, this.scrollableNode) - this.scrollableNode.scrollTop - offsetTop
-                )
+                marginTop,
+                height: `calc(100% - ${marginTop}px)`
             });
         });
     }
@@ -273,7 +275,8 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             if (transition.from !== transition.to) {
                 spring({...springPose.transition, ...transition}).start((marginTop: number) => {
                     stickyRef.set({
-                        marginTop
+                        marginTop,
+                        height: `calc(100% - ${marginTop}px)`
                     });
                 });
             }

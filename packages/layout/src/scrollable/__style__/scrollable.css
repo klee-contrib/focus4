@@ -6,9 +6,12 @@
     position: absolute;
     z-index: var(--z-index-high);
     pointer-events: none;
+    bottom: 15px;
 
     & > * {
         pointer-events: auto;
+        overflow-y: auto;
+        box-sizing: border-box;
     }
 }
 
