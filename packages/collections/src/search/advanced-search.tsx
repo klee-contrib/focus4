@@ -55,7 +55,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
     /** Emplacement de la FacetBox. Par défaut : "left" */
-    facetBoxPosition?: "action-bar" | "left" | "sticky" | "none";
+    facetBoxPosition?: "action-bar" | "left" | "sticky" | "fixed-sticky" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: CSSProp<FacetBoxCss>;
     /**
@@ -209,8 +209,8 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
 
         if (facetBoxPosition === "left") {
             return facetBox;
-        } else if (facetBoxPosition === "sticky") {
-            return context.portal(facetBox, rootNode);
+        } else if (facetBoxPosition.includes("sticky")) {
+            return context.menu(facetBox, rootNode, facetBoxPosition === "sticky");
         } else {
             return null;
         }

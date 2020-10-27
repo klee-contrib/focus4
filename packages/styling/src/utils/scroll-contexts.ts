@@ -8,6 +8,20 @@ export interface PanelDescriptor {
 /** Contexte d'un Scrollable, expose les méthodes associées. */
 export const ScrollableContext = React.createContext<{
     /**
+     * Affiche un élement dans le menu sticky du Scrollable
+     * @param node Le noeud React.
+     * @param parentNode Noeud à suivre pour positionner l'élément sticky.
+     * @param retractable Menu rétractable.
+     * @returns Le Portal associé.
+     */
+    menu(node: JSX.Element, parentNode: HTMLElement | null, retractable: boolean): React.ReactPortal | null;
+    /**
+     * Affiche un élement dans le Scrollable.
+     * @param node Le noeud React.
+     * @returns Le Portal associé.
+     */
+    portal(node: JSX.Element): React.ReactPortal;
+    /**
      * Enregistre le header dans le Scrollable
      * @param nonStickyElement Le noeud DOM représentant le header non sticky.
      * @param canDeploy Précise si le header est toujours sticky ou non.
@@ -32,13 +46,6 @@ export const ScrollableContext = React.createContext<{
      * @param options Options.
      */
     scrollTo(options?: ScrollToOptions): void;
-    /**
-     * Affiche un élement dans le Scrollable.
-     * @param node Le noeud React.
-     * @param parentNode SI renseigné, le noeud sera placé en zone sticky et suivra la position de ce noeud.
-     * @returns Le Portal associé.
-     */
-    portal(node: JSX.Element, parentNode?: HTMLElement | null): React.ReactPortal;
 }>({} as any);
 
 /** Contexte d'un ScrollspyContainer, expose les méthodes associées. */

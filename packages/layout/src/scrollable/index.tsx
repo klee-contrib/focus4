@@ -12,6 +12,7 @@ import ResizeObserverPolyfill from "resize-observer-polyfill";
 import {Styler} from "stylefire";
 
 import {CSSProp, ScrollableContext, springPose, themr} from "@focus4/styling";
+import {Button} from "@focus4/toolbox";
 
 import {ButtonBackToTop} from "./button-back-to-top";
 export {ButtonBttCss, buttonBttCss} from "./button-back-to-top";
@@ -45,32 +46,34 @@ export interface ScrollableProps {
 
 @observer
 class ScrollableComponent extends React.Component<ScrollableProps> {
-    @observable.ref canDeploy = false;
     @observable.ref header?: HTMLElement;
     @observable.ref headerProps?: React.HTMLProps<HTMLElement>;
 
     @observable.ref containerNode!: HTMLDivElement;
+    @observable.ref menuNode!: HTMLDivElement;
     @observable.ref scrollableNode!: HTMLDivElement;
-    @observable.ref stickyNode!: HTMLDivElement;
 
     @observable.ref intersectionObserver!: IntersectionObserver;
     @observable.ref mutationObserver!: MutationObserver;
     @observable.ref resizeObserver!: ResizeObserverPolyfill;
 
+    readonly menuStylers = observable.map<React.Key, Styler>({}, {deep: false});
+    readonly menuParentNodes = observable.map<React.Key, HTMLElement>({}, {deep: false});
     readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
         deep: false
     });
-    readonly stickyStylers = observable.map<React.Key, Styler>({}, {deep: false});
-    readonly stickyParentNodes = observable.map<React.Key, HTMLElement>({}, {deep: false});
 
+    @observable canDeploy = false;
     @observable hasBtt = false;
     @observable headerHeight = 0;
     @observable isHeaderSticky = false;
+    @observable isMenuOpened = true;
+    @observable isMenuRetractable = true;
     @observable width = 0;
 
     @computed
-    get stickyOffsetTop() {
-        return this.isHeaderSticky ? this.stickyNode.offsetTop : 0;
+    get menuOffsetTop() {
+        return this.isHeaderSticky ? this.menuNode.offsetTop : 0;
     }
 
     /** @see ScrollableContext.registerHeader */
@@ -79,7 +82,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         if (canDeploy) {
             this.intersectionObserver.observe(nonStickyElement);
         } else {
-            styler(this.stickyNode).set({top: this.headerHeight});
+            styler(this.menuNode).set({top: this.headerHeight});
         }
 
         this.canDeploy = canDeploy;
@@ -124,32 +127,42 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.scrollableNode.scrollTo({behavior: scrollBehaviour, ...options});
     }
 
+    /** @see ScrollableContext.menu */
+    @action.bound
+    menu(node: JSX.Element, parentNode: HTMLElement | null, retractable = true) {
+        if (!parentNode) {
+            return null;
+        }
+        if (!node.key) {
+            throw new Error("Un élément du menu d'un Scrollable doit avoir une key.");
+        }
+        this.menuParentNodes.set(node.key, parentNode);
+        this.isMenuRetractable = retractable;
+        if (!this.menuStylers.has(node.key)) {
+            styler(this.menuNode).set("x", "0%");
+            this.isMenuOpened = true;
+        }
+        return createPortal(React.cloneElement(node, {ref: this.setRef(node.key)}), this.menuNode);
+    }
+
     /** @see ScrollableContext.portal */
     @action.bound
-    portal(node: JSX.Element, parentNode?: HTMLElement | null) {
-        if (parentNode) {
-            if (!node.key) {
-                throw new Error("Un élément sticky doit avoir une key.");
-            }
-            this.stickyParentNodes.set(node.key, parentNode);
-            return createPortal(React.cloneElement(node, {ref: this.setRef(node.key)}), this.stickyNode);
-        } else {
-            return createPortal(node, this.containerNode);
-        }
+    portal(node: JSX.Element) {
+        return createPortal(node, this.containerNode);
     }
 
     setRef = memoize((key: React.Key) => (ref: HTMLElement | null) => {
-        if (!ref && this.stickyStylers.has(key)) {
-            this.stickyStylers.delete(key);
-            this.stickyParentNodes.delete(key);
-        } else if (ref && !this.stickyStylers.has(key)) {
-            const stickyRef = styler(ref);
-            this.stickyStylers.set(key, stickyRef);
-            stickyRef.set({
+        if (!ref && this.menuStylers.has(key)) {
+            this.menuStylers.delete(key);
+            this.menuParentNodes.delete(key);
+        } else if (ref && !this.menuStylers.has(key)) {
+            const menuRef = styler(ref);
+            this.menuStylers.set(key, menuRef);
+            menuRef.set({
                 marginTop:
-                    getOffsetTop(this.stickyParentNodes.get(key)!, this.scrollableNode) -
+                    getOffsetTop(this.menuParentNodes.get(key)!, this.scrollableNode) -
                     this.scrollableNode.scrollTop -
-                    this.stickyOffsetTop
+                    this.menuOffsetTop
             });
         }
     });
@@ -165,10 +178,10 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         this.scrollableNode.addEventListener("scroll", this.onScroll);
         this.resizeObserver = new ResizeObserver(() => this.onScroll());
         this.resizeObserver.observe(this.scrollableNode);
-        this.resizeObserver.observe(this.stickyNode);
+        this.resizeObserver.observe(this.menuNode);
         this.mutationObserver = new MutationObserver(() => this.onScroll());
         this.mutationObserver.observe(this.scrollableNode, {attributes: true, childList: true, subtree: true});
-        this.mutationObserver.observe(this.stickyNode, {attributes: true, childList: true, subtree: true});
+        this.mutationObserver.observe(this.menuNode, {attributes: true, childList: true, subtree: true});
         this.intersectionObserver = new IntersectionObserver(
             entries =>
                 entries.forEach(e => {
@@ -182,7 +195,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                 }),
             {root: this.scrollableNode, threshold: range(0, 105, 5).map(t => t / 100)}
         );
-        styler(this.stickyNode).set({top: this.headerHeight});
+        styler(this.menuNode).set({top: this.headerHeight});
     }
 
     componentWillUnmount() {
@@ -193,9 +206,15 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     }
 
     @action.bound
+    updateMenuParentNodes(x: string) {
+        const per = (+x.replace("%", "") + 100) / 100;
+        this.menuParentNodes.forEach(node => (node.style.marginLeft = `${this.menuNode.clientWidth * per}px`));
+    }
+
+    @action.bound
     onScroll() {
         this.width = this.scrollableNode.clientWidth;
-        this.stickyParentNodes.forEach(node => (node.style.marginLeft = `${this.stickyNode.clientWidth}px`));
+        this.updateMenuParentNodes(`${styler(this.menuNode).get("x") ?? "0%"}`);
         this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 300);
         if (isIEorEdge()) {
             this.onScrollCoreDebounced();
@@ -207,85 +226,117 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     onScrollCoreDebounced = debounce(() => this.onScrollCore(), 50);
     onScrollCore() {
         if (!isIEorEdge()) {
-            this.setStickyRefs(this.stickyOffsetTop);
+            this.setMenuRefs(this.menuOffsetTop);
         } else {
-            this.animateStickyRefs(
-                parentOffsetTop => parentOffsetTop - this.scrollableNode.scrollTop - this.stickyOffsetTop
+            this.animateMenuRefs(
+                parentOffsetTop => parentOffsetTop - this.scrollableNode.scrollTop - this.menuOffsetTop
             );
         }
     }
 
-    stickySpring?: ColdSubscription;
+    menuSpring?: ColdSubscription;
 
     @disposeOnUnmount
     followHeader = autorun(() => {
-        if (!this.stickyNode) {
+        if (!this.menuNode) {
             return;
         }
 
-        const sticky = styler(this.stickyNode);
-        const from = sticky.get("top");
+        const menu = styler(this.menuNode);
+        const from = menu.get("top");
         const to = this.isHeaderSticky ? this.headerHeight : 0;
         if (this.header) {
-            if (this.stickySpring) {
-                this.stickySpring.stop();
+            if (this.menuSpring) {
+                this.menuSpring.stop();
             }
             if (this.canDeploy && from !== to) {
-                this.stickySpring = spring({...springPose.transition, from, to}).start((top: number) => {
-                    sticky.set({top});
-                    this.setStickyRefs(top);
+                this.menuSpring = spring({...springPose.transition, from, to}).start((top: number) => {
+                    menu.set({top});
+                    this.setMenuRefs(top);
                     if (isIEorEdge()) {
                         this.onScrollCoreDebounced.cancel();
                     }
                 });
             } else {
-                sticky.set({top: to});
-                this.setStickyRefs(to);
+                menu.set({top: to});
+                this.setMenuRefs(to);
             }
         }
 
         if (isIEorEdge()) {
             if (this.isHeaderSticky) {
-                this.animateStickyRefs(() => 0);
+                this.animateMenuRefs(() => 0);
             }
         }
     });
 
-    setStickyRefs(offsetTop: number) {
-        this.stickyStylers.forEach((stickyRef, key) => {
-            const parentNode = this.stickyParentNodes.get(key)!;
+    menuItemsSpring?: ColdSubscription;
+
+    @disposeOnUnmount
+    toggleMenu = autorun(() => {
+        if (!this.menuNode) {
+            return;
+        }
+        const menu = styler(this.menuNode);
+
+        if (this.menuItemsSpring) {
+            this.menuItemsSpring.stop();
+        }
+
+        const from = menu.get("x");
+        const to = this.isMenuOpened ? "0%" : "-100%";
+
+        if (from !== to) {
+            this.menuItemsSpring = spring({...springPose.transition, from, to}).start((x: string) => {
+                menu.set({x});
+                this.updateMenuParentNodes(x);
+            });
+        }
+    });
+
+    setMenuRefs(offsetTop: number) {
+        this.menuStylers.forEach((menuRef, key) => {
+            const parentNode = this.menuParentNodes.get(key)!;
             const marginTop = Math.max(
                 0,
                 getOffsetTop(parentNode, this.scrollableNode) - this.scrollableNode.scrollTop - offsetTop
             );
-            stickyRef.set({
+            menuRef.set({
                 marginTop,
                 height: `calc(100% - ${marginTop}px)`
             });
+            const buttonMenu = this.menuNode.querySelector("button");
+            if (buttonMenu) {
+                styler(buttonMenu).set({top: marginTop});
+            }
         });
     }
 
-    animateStickyRefs(to: (parentOffsetTop: number) => number) {
-        this.stickyStylers.forEach((stickyRef, key) => {
-            const parentNode = this.stickyParentNodes.get(key)!;
+    animateMenuRefs(to: (parentOffsetTop: number) => number) {
+        this.menuStylers.forEach((menuRef, key) => {
+            const parentNode = this.menuParentNodes.get(key)!;
             const transition = {
-                from: stickyRef.get("marginTop"),
+                from: menuRef.get("marginTop"),
                 to: Math.max(0, to(getOffsetTop(parentNode, this.scrollableNode)))
             };
             if (transition.from !== transition.to) {
                 spring({...springPose.transition, ...transition}).start((marginTop: number) => {
-                    stickyRef.set({
+                    menuRef.set({
                         marginTop,
                         height: `calc(100% - ${marginTop}px)`
                     });
+                    const buttonMenu = this.menuNode.querySelector("button");
+                    if (buttonMenu) {
+                        styler(buttonMenu).set({top: marginTop});
+                    }
                 });
             }
         });
     }
 
     setHeight = (height: number) => (this.headerHeight = height);
+    setMenuNode = (ref: HTMLDivElement | null) => ref && (this.menuNode = ref);
     setScrollableNode = (ref: HTMLDivElement | null) => ref && (this.scrollableNode = ref);
-    setStickyNode = (ref: HTMLDivElement | null) => ref && (this.stickyNode = ref);
 
     Header = () =>
         useObserver(() => {
@@ -317,11 +368,12 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         return (
             <ScrollableContext.Provider
                 value={{
+                    menu: this.menu,
+                    portal: this.portal,
                     registerHeader: this.registerHeader,
                     registerHeaderProps: this.registerHeaderProps,
                     registerIntersect: this.registerIntersect,
-                    scrollTo: this.scrollTo,
-                    portal: this.portal
+                    scrollTo: this.scrollTo
                 }}
             >
                 <Theme theme={this.props.theme}>
@@ -330,7 +382,17 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                             <div className={theme.scrollable()} ref={this.setScrollableNode}>
                                 {this.intersectionObserver ? children : null}
                             </div>
-                            <div className={theme.sticky()} ref={this.setStickyNode} />
+
+                            <div className={theme.menu()} ref={this.setMenuNode}>
+                                {this.isMenuRetractable && this.menuParentNodes.size ? (
+                                    <Button
+                                        icon={`keyboard_arrow_${this.isMenuOpened ? "left" : "right"}`}
+                                        className={theme.menuButton()}
+                                        onClick={() => (this.isMenuOpened = !this.isMenuOpened)}
+                                        ripple={false}
+                                    />
+                                ) : null}
+                            </div>
                             <this.Header />
                             <this.BackToTop />
                         </div>
