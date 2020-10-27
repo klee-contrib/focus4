@@ -147,7 +147,7 @@ export const icons = {
         },
         close: {
             library: "material",
-            name: "clear"
+            name: "keyboard_arrow_up"
         },
         open: {
             library: "material",

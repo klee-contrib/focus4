@@ -20,7 +20,7 @@
 }
 
 .bar > button:last-child {
-    margin-right: 5px;
+    margin-right: 2px;
 }
 
 .bar--error {
@@ -50,6 +50,7 @@
     left: 0;
     outline: none;
     font-size: 16px;
+    text-overflow: ellipsis;
 }
 
 .errors {
@@ -62,46 +63,37 @@
     left: 43px;
 }
 
-.dropdown input {
-    border-right: 1px solid rgba(0, 0, 0, 0.16);
-    padding: 10px;
-}
-
-.scopes li {
-    min-height: 44px;
-}
-
-.criteria {
+.panel {
     position: absolute;
     top: 43px;
-    z-index: var(--z-index-normal);
     background: var(--color-white);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 100%;
-    border: 1px solid var(--palette-grey-400);
-    border-top-color: var(--palette-grey-300);
     box-sizing: border-box;
-    padding: 25px;
+    padding: 10px 15px;
+    max-height: calc(100vh - 60px);
+    overflow: auto;
 }
 
-.criteriaWrapper {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: calc(var(--z-index-normal) - 1);
-    background: color(var(--color-black) a(15%));
-}
-
-.criteria > button:first-child {
-    position: absolute;
-    right: 4px;
-    top: 5px;
-}
-
-.error + .criteria {
+.error + .panel {
     top: 44px;
+}
+
+.searchFields {
+    & > h6 {
+        color: var(--color-primary);
+        margin: 0 0 6px 0;
+        font-weight: 500;
+    }
+
+    & > label {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    & > div {
+        margin-bottom: 0;
+    }
 }
 
 .buttons {
@@ -109,9 +101,4 @@
     flex-direction: row-reverse;
     margin: 15px -15px -15px 15px;
     align-items: center;
-}
-
-.buttons button:last-child {
-    font-weight: bold;
-    margin-right: 5px;
 }

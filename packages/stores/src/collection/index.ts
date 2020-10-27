@@ -28,6 +28,9 @@ export class CollectionStore<T = any, C = any> {
     /** Service de recherche serveur. */
     private readonly service?: SearchService<T>;
 
+    /** Liste des champs disponibles pour la recherche texte. */
+    @observable.ref availableSearchFields: string[] = [];
+
     /** Facettes résultat de la recherche. */
     private readonly innerFacets: IObservableArray<FacetOutput> = observable([]);
     /** Résultats de la recherche, si elle retourne des groupes. */
@@ -41,12 +44,12 @@ export class CollectionStore<T = any, C = any> {
     /** Nombre d'éléments dans le résultat, d'après la requête serveur. */
     @observable private serverCount = 0;
 
-    /** Bloque la recherche (la recherche s'effectuera lorsque elle repassera à false) */
-    @observable blockSearch = false;
     /** Champ sur lequel grouper. */
     @observable groupingKey: string | undefined;
     /** Filtre texte. */
     @observable query = "";
+    /** Liste des champs sur lesquels le champ texte filtre (si non renseigné : tous les champs disponibles). */
+    @observable.ref searchFields: string[] | undefined;
     /** Facettes sélectionnées ({facet: value}) */
     @observable.ref selectedFacets: {[facet: string]: string[]} = {};
     /** Tri par ordre croissant. */
@@ -127,9 +130,9 @@ export class CollectionStore<T = any, C = any> {
             // Relance la recherche à chaque modification de propriété.
             reaction(
                 () => [
-                    this.blockSearch,
                     this.groupingKey,
                     this.selectedFacets,
+                    this.searchFields,
                     !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
                     this.sortAsc,
                     this.sortBy
@@ -148,6 +151,7 @@ export class CollectionStore<T = any, C = any> {
         } else {
             this.type = "local";
             this.localStoreConfig = firstParam;
+            this.availableSearchFields = firstParam?.searchFields ?? [];
         }
     }
 
@@ -218,10 +222,10 @@ export class CollectionStore<T = any, C = any> {
         }
 
         // Filtrage simple, sur les champs choisis.
-        if (this.localStoreConfig?.filterFields) {
+        if (this.availableSearchFields.length > 0) {
             list = list.filter(item =>
-                this.localStoreConfig!.filterFields!.some(filter => {
-                    const field = item[filter];
+                (this.searchFields ?? this.availableSearchFields).some(filter => {
+                    const field = item[filter as keyof T];
                     if (isString(field)) {
                         return field.toLowerCase().includes(this.query.toLowerCase());
                     } else {
@@ -388,14 +392,14 @@ export class CollectionStore<T = any, C = any> {
      */
     @action.bound
     async search(isScroll = false) {
-        if (!this.service || this.blockSearch) {
+        if (!this.service) {
             return;
         }
 
         const {query, selectedFacets, groupingKey, sortBy, sortAsc, list, top} = this;
 
         const data = {
-            criteria: {...this.flatCriteria, query} as QueryInput<C>["criteria"],
+            criteria: {...this.flatCriteria, query, searchFields: this.searchFields} as QueryInput<C>["criteria"],
             facets: selectedFacets || {},
             group: groupingKey || "",
             skip: (isScroll && list.length) || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
@@ -422,13 +426,14 @@ export class CollectionStore<T = any, C = any> {
 
             // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
             if (isScroll) {
-                this.innerList.push(...(response.list || []));
+                this.innerList.push(...(response.list ?? []));
             } else {
-                this.innerList.replace(response.list || []);
+                this.innerList.replace(response.list ?? []);
             }
 
             this.innerFacets.replace(response.facets);
-            this.innerGroups.replace(response.groups || []);
+            this.innerGroups.replace(response.groups ?? []);
+            this.availableSearchFields = response.searchFields ?? [];
             this.serverCount = response.totalCount;
         });
 
@@ -442,11 +447,12 @@ export class CollectionStore<T = any, C = any> {
     @action.bound
     setProperties(props: SearchProperties<C>) {
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
-        this.selectedFacets = props.selectedFacets || this.selectedFacets;
+        this.searchFields = props.searchFields ?? this.searchFields;
+        this.selectedFacets = props.selectedFacets ?? this.selectedFacets;
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
         this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
-        this.query = props.query || this.query;
-        this.top = props.top || this.top;
+        this.query = props.query ?? this.query;
+        this.top = props.top ?? this.top;
 
         if (this.criteria && props.criteria) {
             this.criteria.set(props.criteria);

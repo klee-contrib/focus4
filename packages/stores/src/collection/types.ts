@@ -5,8 +5,8 @@ export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<Q
 
 /** Config pour un store de collection local. */
 export interface LocalStoreConfig<T> {
-    /** Champs sur lesquels la requête texte va filtrer. */
-    filterFields?: (keyof T)[];
+    /** Liste des champs disponibles pour le filtrage par champ texte. */
+    searchFields?: (keyof T & string)[];
     /** Définitions de facettes. */
     facetDefinitions?: {
         /** Code de la facette. */
@@ -29,10 +29,12 @@ export type SelectionStatus = "none" | "partial" | "selected";
 export interface SearchProperties<C = any> {
     /** Critère personnalisé. */
     criteria?: EntityToType<C>;
-    /** Champ texte. */
-    query?: string;
     /** Champ sur lequel grouper. */
     groupingKey?: string;
+    /** Champ texte. */
+    query?: string;
+    /** Liste des champs sur lesquels le champ texte filtre (si non renseigné : tous les champs disponibles). */
+    searchFields?: string[];
     /** Facettes sélectionnées ({facet: value}) */
     selectedFacets?: {[facet: string]: string[]};
     /** Tri croissant. */
@@ -82,7 +84,7 @@ export interface QueryInput<C = {}> {
     /** Facettes sélectionnées. */
     facets?: {[facet: string]: string[]};
     /** Critère de recherche. */
-    criteria?: C & {query: string};
+    criteria?: C & {query: string; searchFields?: string[]};
     /** Champ sur lequel grouper. */
     group: string;
     /** Champ sur lequel trier. */
@@ -103,6 +105,8 @@ export interface QueryOutput<T = any, C = {}> {
     groups?: GroupResult<T>[];
     /** Facettes trouvées. */
     facets: FacetOutput[];
+    /** Champs de recherche disponibles. */
+    searchFields?: string[];
     /** Nombre total de résultat. */
     totalCount: number;
     /** Entrée. */

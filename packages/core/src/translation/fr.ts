@@ -46,7 +46,10 @@ export const fr = {
             error: "Les critères suivants sont en erreur",
             query: "Contient les mots",
             reset: "Réinitialiser",
-            search: "Rechercher"
+            search: "Rechercher",
+            searchFields: "Critères de recherche",
+            selectAll: "Tout sélectionner",
+            searchBy: "Rechercher par"
         },
         facets: {
             title: "Filtrer"
