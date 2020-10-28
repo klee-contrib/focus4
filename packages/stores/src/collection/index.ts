@@ -1,14 +1,16 @@
 import {debounce, flatten, groupBy, isFunction, isString, orderBy, toPairs} from "lodash";
-import {action, computed, IObservableArray, observable, reaction, runInAction} from "mobx";
+import {action, computed, IObservableArray, observable, reaction, remove, runInAction, set, toJS} from "mobx";
 import {v4} from "uuid";
 
 import {config} from "@focus4/core";
 
 import {buildNode, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../entity";
 import {
+    FacetInput,
     FacetItem,
     FacetOutput,
     GroupResult,
+    InputFacets,
     LocalStoreConfig,
     QueryInput,
     QueryOutput,
@@ -16,7 +18,7 @@ import {
     SearchService,
     SelectionStatus
 } from "./types";
-export {FacetItem, FacetOutput, GroupResult, QueryInput, QueryOutput};
+export {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
 export class CollectionStore<T = any, C = any> {
@@ -31,6 +33,8 @@ export class CollectionStore<T = any, C = any> {
     /** Liste des champs disponibles pour la recherche texte. */
     @observable.ref availableSearchFields: string[] = [];
 
+    /** Facettes en entrée de la recherche. */
+    private readonly innerInputFacets = observable.map<string, FacetInput>();
     /** Facettes résultat de la recherche. */
     private readonly innerFacets: IObservableArray<FacetOutput> = observable([]);
     /** Résultats de la recherche, si elle retourne des groupes. */
@@ -50,8 +54,16 @@ export class CollectionStore<T = any, C = any> {
     @observable query = "";
     /** Liste des champs sur lesquels le champ texte filtre (si non renseigné : tous les champs disponibles). */
     @observable.ref searchFields: string[] | undefined;
-    /** Facettes sélectionnées ({facet: value}) */
-    @observable.ref selectedFacets: {[facet: string]: string[]} = {};
+
+    /** Facettes sélectionnées. */
+    @computed.struct
+    get inputFacets() {
+        return Array.from(this.innerInputFacets.entries()).reduce(
+            (res, [key, value]) => ({...res, [key]: toJS(value)}),
+            {} as InputFacets
+        );
+    }
+
     /** Tri par ordre croissant. */
     @observable sortAsc = true;
     /** Nom du champ sur lequel trier. */
@@ -131,7 +143,7 @@ export class CollectionStore<T = any, C = any> {
             reaction(
                 () => [
                     this.groupingKey,
-                    this.selectedFacets,
+                    this.inputFacets,
                     this.searchFields,
                     !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
                     this.sortAsc,
@@ -166,6 +178,8 @@ export class CollectionStore<T = any, C = any> {
                 code,
                 label,
                 isMultiSelectable: false,
+                isMultiValued: false,
+                canExclude: false,
                 values: orderBy(
                     toPairs(groupBy(this.list, fieldName))
                         .map(([value, list]) => ({
@@ -239,7 +253,7 @@ export class CollectionStore<T = any, C = any> {
         if (this.localStoreConfig?.facetDefinitions) {
             list = list.filter(item =>
                 this.localStoreConfig!.facetDefinitions!.every(f => {
-                    const selected = this.selectedFacets[f.code];
+                    const selected = this.innerInputFacets.get(f.code)?.selected;
                     if (!selected) {
                         return true;
                     }
@@ -396,11 +410,11 @@ export class CollectionStore<T = any, C = any> {
             return;
         }
 
-        const {query, selectedFacets, groupingKey, sortBy, sortAsc, list, top} = this;
+        const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top} = this;
 
         const data = {
             criteria: {...this.flatCriteria, query, searchFields: this.searchFields} as QueryInput<C>["criteria"],
-            facets: selectedFacets || {},
+            facets: inputFacets || {},
             group: groupingKey || "",
             skip: (isScroll && list.length) || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
             sortDesc: sortAsc === undefined ? false : !sortAsc,
@@ -448,7 +462,9 @@ export class CollectionStore<T = any, C = any> {
     setProperties(props: SearchProperties<C>) {
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.searchFields = props.searchFields ?? this.searchFields;
-        this.selectedFacets = props.selectedFacets ?? this.selectedFacets;
+        if (props.inputFacets) {
+            this.innerInputFacets.replace(props.inputFacets);
+        }
         this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
         this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         this.query = props.query ?? this.query;
@@ -456,6 +472,78 @@ export class CollectionStore<T = any, C = any> {
 
         if (this.criteria && props.criteria) {
             this.criteria.set(props.criteria);
+        }
+    }
+
+    /** Ajoute une valeur de facette pour la facette donnée. */
+    @action.bound
+    addFacetValue(facetKey: string, facetValue: string) {
+        // Ajout de la facette si elle n'existe pas.
+        if (!this.innerInputFacets.has(facetKey)) {
+            this.innerInputFacets.set(facetKey, {});
+        }
+
+        const facet = this.innerInputFacets.get(facetKey)!;
+        if (!facet.selected) {
+            set(facet, {selected: []});
+        }
+
+        // On retire la valeur si elle était déjà exclue.
+        (facet.excluded as IObservableArray<string>)?.remove(facetValue);
+
+        // Puis on l'ajoute si elle n'y était pas.
+        if (!facet.selected!.includes(facetValue)) {
+            facet.selected!.push(facetValue);
+        }
+    }
+
+    /** Exclut une valeur de facette pour la facette donnée. */
+    @action.bound
+    excludeFacetValue(facetKey: string, facetValue: string) {
+        // Ajout de la facette si elle n'existe pas.
+        if (!this.innerInputFacets.has(facetKey)) {
+            this.innerInputFacets.set(facetKey, {});
+        }
+
+        const facet = this.innerInputFacets.get(facetKey)!;
+        if (!facet.excluded) {
+            set(facet, {excluded: []});
+        }
+
+        // On retire la valeur si elle était déjà sélectionnée.
+        (facet.selected as IObservableArray<string>)?.remove(facetValue);
+
+        // Puis on l'ajoute si elle n'y était pas.
+        if (!facet.excluded!.includes(facetValue)) {
+            facet.excluded!.push(facetValue);
+        }
+    }
+
+    /** Retire une valeur de facette pour la facette donnée (sélectionnée ou exclue). */
+    @action.bound
+    removeFacetValue(facetKey: string, facetValue: string) {
+        const facet = this.innerInputFacets.get(facetKey)!;
+
+        // La facette n'existe pas : rien à faire.
+        if (!facet) {
+            return;
+        }
+
+        // On l'enlève des deux listes, si elle y existe.
+        (facet.selected as IObservableArray<string>)?.remove(facetValue);
+        (facet.excluded as IObservableArray<string>)?.remove(facetValue);
+
+        // On nettoie...
+        if (facet.selected?.length === 0) {
+            remove(facet, "selected");
+        }
+
+        if (facet.excluded?.length === 0) {
+            remove(facet, "excluded");
+        }
+
+        if (!facet.excluded && !facet.selected) {
+            this.innerInputFacets.delete(facetKey);
         }
     }
 

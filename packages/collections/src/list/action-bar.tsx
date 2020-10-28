@@ -95,7 +95,7 @@ export function ActionBar<T>({
                           // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
                           facet.values.length > 1 &&
                           // Ni sur une facette sélectionnée.
-                          !Object.keys(store.selectedFacets).includes(facet.code) &&
+                          !Object.keys(store.inputFacets).includes(facet.code) &&
                           // Et on ne garde que les facettes demandées dans la liste.
                           (!groupableFacets || groupableFacets.find(code => code === facet.code))
                       ) {
@@ -145,12 +145,7 @@ export function ActionBar<T>({
                         displayFacetBox &&
                         store.facets.every(
                             facet =>
-                                !shouldDisplayFacet(
-                                    facet,
-                                    store.selectedFacets,
-                                    showSingleValuedFacets,
-                                    store.totalCount
-                                )
+                                !shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount)
                         )
                     ) {
                         setDisplayFacetBox(false);
@@ -186,7 +181,7 @@ export function ActionBar<T>({
                     {/** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */}
                     {hasFacetBox &&
                     store.facets.some(facet =>
-                        shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount)
+                        shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount)
                     ) ? (
                         <div style={{position: "relative"}}>
                             <Button

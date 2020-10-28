@@ -7,7 +7,6 @@ import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {Button, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
-import {removeFacetValue} from "./facet-box";
 
 import summaryCss, {SummaryCss} from "./__style__/summary.css";
 export {summaryCss, SummaryCss};
@@ -102,8 +101,8 @@ export function Summary<T>({
 
             // On ajoute à la liste toutes les facettes sélectionnées.
             if (!hideFacets) {
-                for (const facetKey in props.store.selectedFacets) {
-                    const facetValues = props.store.selectedFacets[facetKey] || [];
+                for (const facetKey in props.store.inputFacets) {
+                    const facetValues = props.store.inputFacets[facetKey]?.selected ?? [];
                     const facetOutput = props.store.facets.find(facet => facetKey === facet.code);
                     if (facetOutput) {
                         facetOutput.values
@@ -116,7 +115,7 @@ export function Summary<T>({
                                     codeLabel: facetOutput.label,
                                     value: facetItem.code,
                                     valueLabel: facetItem.label,
-                                    onDeleteClick: () => removeFacetValue(props.store, facetKey, facetItem.code)
+                                    onDeleteClick: () => props.store.removeFacetValue(facetKey, facetItem.code)
                                 })
                             );
                     }

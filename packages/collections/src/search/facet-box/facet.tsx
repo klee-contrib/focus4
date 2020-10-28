@@ -7,7 +7,6 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip} from "../chip";
-import {addFacetValue, removeFacetValue} from "./utils";
 
 import facetCss, {FacetCss} from "../__style__/facet.css";
 export {FacetCss, facetCss};
@@ -55,7 +54,7 @@ export function Facet({
     const [isShowAll, setIsShowAll] = React.useState(false);
     const theme = useTheme("facet", facetCss, pTheme);
     return useObserver(() => {
-        const selectedValues = store.selectedFacets[facet.code] || [];
+        const selectedValues = store.inputFacets[facet.code]?.selected ?? [];
         const selectedFacet =
             !facet.isMultiSelectable && selectedValues.length === 1
                 ? facet.values.find(f => f.code === selectedValues[0])!
@@ -69,7 +68,7 @@ export function Facet({
                         code={facet.code}
                         codeLabel={facet.label}
                         deletable
-                        onDeleteClick={() => removeFacetValue(store, facet.code, selectedFacet.code)}
+                        onDeleteClick={() => store.removeFacetValue(facet.code, selectedFacet.code)}
                         keyResolver={chipKeyResolver}
                         theme={{chip: theme.chip()}}
                         themer={chipThemer}
@@ -84,7 +83,7 @@ export function Facet({
                             const clickHandler = (e: React.SyntheticEvent<any>) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                (isSelected ? removeFacetValue : addFacetValue)(store, facet.code, sfv.code);
+                                (isSelected ? store.removeFacetValue : store.addFacetValue)(facet.code, sfv.code);
                             };
                             return (
                                 <li key={sfv.code} onClick={clickHandler}>

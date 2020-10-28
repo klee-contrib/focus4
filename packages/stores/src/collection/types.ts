@@ -25,6 +25,16 @@ export interface LocalStoreConfig<T> {
 /** Statut de la séléection */
 export type SelectionStatus = "none" | "partial" | "selected";
 
+/** Facette entrée de recherche. */
+export interface FacetInput {
+    /** Opérateur utilisé entre les différentes valeurs. */
+    operator?: "and" | "or";
+    /** Valeurs de la facette à prendre. */
+    selected?: string[];
+    /** Valeurs de la facette à exclure. */
+    excluded?: string[];
+}
+
 /** Critères génériques de recherche. */
 export interface SearchProperties<C = any> {
     /** Critère personnalisé. */
@@ -35,8 +45,8 @@ export interface SearchProperties<C = any> {
     query?: string;
     /** Liste des champs sur lesquels le champ texte filtre (si non renseigné : tous les champs disponibles). */
     searchFields?: string[];
-    /** Facettes sélectionnées ({facet: value}) */
-    selectedFacets?: {[facet: string]: string[]};
+    /** Facettes sélectionnées. */
+    inputFacets?: {[facet: string]: FacetInput};
     /** Tri croissant. */
     sortAsc?: boolean;
     /** Champ sur lequel trier. */
@@ -63,6 +73,10 @@ export interface FacetOutput {
     label: string;
     /** Précise si la facette est multi-sélectionnable. */
     isMultiSelectable: boolean;
+    /** Précise si la facette peut avoir plusieurs valeurs. */
+    isMultiValued: boolean;
+    /** Précise s'il est possible d'exclure des valeurs. */
+    canExclude: boolean;
     /** Valeurs de la facette. */
     values: FacetItem[];
 }
@@ -79,10 +93,22 @@ export interface GroupResult<T = any> {
     totalCount: number;
 }
 
+/** Type readonly décrivant la sélection de facettes. */
+export interface InputFacets {
+    readonly [facet: string]: {
+        /** Opérateur utilisé entre les différentes valeurs. */
+        readonly operator?: "and" | "or";
+        /** Valeurs de la facette à prendre. */
+        readonly selected?: ReadonlyArray<string>;
+        /** Valeurs de la facette à exclure. */
+        readonly excluded?: ReadonlyArray<string>;
+    };
+}
+
 /** Objet d'entrée pour la recherche. */
 export interface QueryInput<C = {}> {
     /** Facettes sélectionnées. */
-    facets?: {[facet: string]: string[]};
+    facets?: InputFacets;
     /** Critère de recherche. */
     criteria?: C & {query: string; searchFields?: string[]};
     /** Champ sur lequel grouper. */

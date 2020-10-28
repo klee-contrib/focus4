@@ -12,10 +12,8 @@ export {
     FacetBoxProps,
     FacetCss,
     FacetProps,
-    addFacetValue,
     facetBoxCss,
     facetCss,
-    removeFacetValue,
     shouldDisplayFacet
 } from "./facet-box";
 export {Group, GroupCss, Results, ResultsProps, groupCss} from "./results";

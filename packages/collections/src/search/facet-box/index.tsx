@@ -8,8 +8,8 @@ import {ChipTheme} from "@focus4/toolbox";
 
 import {ChipType} from "../chip";
 import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
-import {addFacetValue, removeFacetValue, shouldDisplayFacet} from "./utils";
-export {addFacetValue, removeFacetValue, shouldDisplayFacet, FacetProps};
+import {shouldDisplayFacet} from "./utils";
+export {shouldDisplayFacet, FacetProps};
 
 import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
 export {FacetBoxCss, FacetCss, facetBoxCss, facetCss};
@@ -66,7 +66,7 @@ export function FacetBox<T>({
     const theme = useTheme("facetBox", facetBoxCss, pTheme);
 
     function renderFacet(facet: FacetOutput) {
-        if (store.selectedFacets[facet.code] || Object.keys(facet).length > 1) {
+        if (store.inputFacets[facet.code] || Object.keys(facet).length > 1) {
             let FacetComponent: React.ElementType<FacetProps> = Facet;
 
             const FacetCustom = customFacetComponents[facet.code];
@@ -96,7 +96,7 @@ export function FacetBox<T>({
     return useObserver(() => {
         const filteredFacets = store.facets.filter(
             facet =>
-                shouldDisplayFacet(facet, store.selectedFacets, showSingleValuedFacets, store.totalCount) &&
+                shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount) &&
                 facet.code !== store.groupingKey
         );
 

@@ -65,13 +65,11 @@ export {
     Summary,
     SummaryCss,
     SummaryProps,
-    addFacetValue,
     advancedSearchCss,
     advancedSearchFor,
     facetBoxCss,
     facetCss,
     groupCss,
-    removeFacetValue,
     searchBarCss,
     shouldDisplayFacet,
     summaryCss

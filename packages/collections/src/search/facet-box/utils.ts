@@ -1,39 +1,11 @@
-import {omit, uniq, values} from "lodash";
+import {values} from "lodash";
 
-import {CollectionStore, FacetOutput} from "@focus4/stores";
-
-/** Ajoute une valeur de facette pour la facette donnée. */
-export function addFacetValue(store: CollectionStore, facetKey: string, facetValue: string) {
-    if (store.selectedFacets[facetKey]) {
-        // Liste existante : on ajoute la valeur à la liste (en vérifiant qu'elle n'est pas déjà présente)
-        store.selectedFacets = {
-            ...store.selectedFacets,
-            [facetKey]: uniq(store.selectedFacets[facetKey].concat(facetValue))
-        };
-    } else {
-        // Liste manquante : on crée la liste.
-        store.selectedFacets = {...store.selectedFacets, [facetKey]: [facetValue]};
-    }
-}
-
-/** Retire une valeur de facette pour la facette donnée. */
-export function removeFacetValue(store: CollectionStore, facetKey: string, facetValue: string) {
-    if (store.selectedFacets[facetKey].length === 1) {
-        // Une seule valeur sélectionnée : on retire la facette entière.
-        store.selectedFacets = omit(store.selectedFacets, facetKey);
-    } else {
-        // Sinon, on retire simplement la valeur de la liste.
-        store.selectedFacets = {
-            ...store.selectedFacets,
-            [facetKey]: store.selectedFacets[facetKey].filter(value => value !== facetValue)
-        };
-    }
-}
+import {FacetOutput, InputFacets} from "@focus4/stores";
 
 /** Détermine si on doit affiche une facette dans la FacetBox ou non, pour prévoir combien on va avoir de facettes à afficher au final. */
 export function shouldDisplayFacet(
     facet: FacetOutput,
-    selectedFacets: {[key: string]: string[]},
+    inputFacets: InputFacets,
     showSingleValuedFacets: boolean | undefined,
     totalCount: number
 ) {
@@ -42,6 +14,8 @@ export function shouldDisplayFacet(
         (!showSingleValuedFacets &&
             facet.values.length === 1 &&
             facet.values[0].count === totalCount &&
-            !values(selectedFacets).find(vs => !!vs.find(v => facet.values[0].code === v)))
+            !values(inputFacets).find(
+                vs => !![...(vs.selected ?? []), ...(vs.excluded ?? [])].find(v => facet.values[0].code === v)
+            ))
     );
 }
