@@ -194,8 +194,6 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
         const facetBox = (
             <div className={theme.facetContainer()} key="facet-box">
                 <FacetBox
-                    chipKeyResolver={chipKeyResolver}
-                    chipThemer={chipThemer}
                     customFacetComponents={customFacetComponents}
                     i18nPrefix={i18nPrefix}
                     nbDefaultDataList={nbDefaultDataListFacet}
@@ -268,8 +266,6 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                 />
                 {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
                     <ActionBar
-                        chipKeyResolver={chipKeyResolver}
-                        chipThemer={chipThemer}
                         groupableFacets={groupableFacets}
                         hasFacetBox={facetBoxPosition === "action-bar"}
                         hasGrouping={hasGrouping}

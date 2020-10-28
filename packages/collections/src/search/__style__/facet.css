@@ -31,16 +31,11 @@
 }
 
 .facet ul {
-    margin: 0;
-    padding: 9px 0 9px 30px;
+    margin: 0 0 0 -15px;
+    padding: 9px 0 9px 15px;
     list-style-type: none;
     max-height: 300px;
     overflow-y: auto;
-}
-
-.facet--multiSelect ul {
-    margin-left: -15px;
-    padding-left: 15px;
 
     & label {
         margin: 0;
@@ -56,7 +51,7 @@
     line-height: 1.6;
 }
 
-.facet--multiSelect li > div:first-of-type {
+.facet li > div:first-of-type {
     width: 100%;
     padding-left: 12px;
 }
@@ -76,11 +71,6 @@
 .facet li:hover,
 .show:hover {
     color: var(--color-black);
-}
-
-.chip {
-    margin-top: 8px;
-    margin-left: 15px;
 }
 
 .count {

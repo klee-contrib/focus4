@@ -113,7 +113,7 @@ export function Summary<T>({
                             values: facetOutput.values.filter(
                                 value => !!inputFacet.selected?.find(v => v === value.code)
                             ),
-                            onDeleteClick: () => props.store.removeFacetValue(facetKey, ...(inputFacet.selected ?? []))
+                            onDeleteClick: () => props.store.removeFacetValue(facetKey, ["selected"])
                         });
                     }
                 }

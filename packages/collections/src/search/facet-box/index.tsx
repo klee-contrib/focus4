@@ -4,9 +4,7 @@ import * as React from "react";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
-import {ChipTheme} from "@focus4/toolbox";
 
-import {ChipType} from "../chip";
 import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
 import {shouldDisplayFacet} from "./utils";
 export {shouldDisplayFacet, FacetProps};
@@ -16,22 +14,6 @@ export {FacetBoxCss, FacetCss, facetBoxCss, facetCss};
 
 /** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
-    /**
-     * Affiche le résultat (si non vide) de cette fonction à la place de la valeur ou de son libellé existant dans les chips.
-     * @param type Le type du chip affiché (`filter` ou `facet`)
-     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`)
-     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
-     * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
-     */
-    chipKeyResolver?: (type: "filter" | "facet", code: string, value: string) => Promise<string | undefined>;
-    /**
-     * Passe le style retourné par cette fonction aux chips.
-     * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
-     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
-     * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
-     * @returns L'objet de theme, qui sera fusionné avec le theme existant.
-     */
-    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -53,8 +35,6 @@ export interface FacetBoxProps<T> {
 
 /** Composant contenant la liste des facettes retournées par une recherche. */
 export function FacetBox<T>({
-    chipKeyResolver,
-    chipThemer,
     customFacetComponents = {},
     i18nPrefix = "focus",
     nbDefaultDataList = 6,
@@ -80,8 +60,6 @@ export function FacetBox<T>({
             return (
                 <FacetComponent
                     key={facet.code}
-                    chipKeyResolver={chipKeyResolver}
-                    chipThemer={chipThemer}
                     facet={facet}
                     i18nPrefix={i18nPrefix}
                     nbDefaultDataList={nbDefaultDataList}

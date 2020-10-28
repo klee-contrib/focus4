@@ -61,11 +61,8 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
 
         /** Action pour dégrouper et sélectionner la facette correspondant au groupe choisi. */
         showAllHandler() {
-            const {groupingKey, selectedFacets, setProperties} = store;
-            setProperties({
-                groupingKey: undefined,
-                selectedFacets: {...selectedFacets, [groupingKey!]: [group.code]}
-            });
+            store.addFacetValue(store.groupingKey!, group.code, "selected");
+            store.groupingKey = undefined;
             context.scrollTo({
                 top: 0,
                 behavior: "smooth"

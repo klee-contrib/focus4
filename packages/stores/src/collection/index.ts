@@ -475,64 +475,75 @@ export class CollectionStore<T = any, C = any> {
         }
     }
 
-    /** Ajoute une valeur de facette pour la facette donnée. */
+    /**
+     * Ajoute une valeur à sélectionner pour une facette.
+     * @param facetKey Code de la facette.
+     * @param facetValue Valeur à ajouter.
+     * @param type Type de valeur.
+     */
     @action.bound
-    addFacetValue(facetKey: string, facetValue: string) {
+    addFacetValue(facetKey: string, facetValue: string, type: "selected" | "excluded") {
         // Ajout de la facette si elle n'existe pas.
         if (!this.innerInputFacets.has(facetKey)) {
             this.innerInputFacets.set(facetKey, {});
         }
 
         const facet = this.innerInputFacets.get(facetKey)!;
-        if (!facet.selected) {
-            set(facet, {selected: []});
+
+        if (!facet[type]) {
+            set(facet, {[type]: []});
         }
 
-        // On retire la valeur si elle était déjà exclue.
-        (facet.excluded as IObservableArray<string>)?.remove(facetValue);
+        // On retire la valeur si elle était déjà dans l'autre liste
+        (facet[type === "selected" ? "excluded" : "selected"] as IObservableArray<string>)?.remove(facetValue);
 
         // Puis on l'ajoute si elle n'y était pas.
-        if (!facet.selected!.includes(facetValue)) {
-            facet.selected!.push(facetValue);
+        if (!facet[type]!.includes(facetValue)) {
+            facet[type]!.push(facetValue);
         }
     }
 
-    /** Exclut une valeur de facette pour la facette donnée. */
+    /**
+     * Retire une valeur dans une facette (sélectionnée ou exclue).
+     * @param facetKey Code de la facette.
+     * @param facetValue Valeur à retirer.
+     */
+    removeFacetValue(facetKey: string, facetValue: string): void;
+    /**
+     * Retire toutes les valeurs d'un type dans une facette.
+     * @param facetKey Code de la facette.
+     * @param type Type de valeur.
+     */
+    removeFacetValue(facetKey: string, type: ["selected" | "excluded"]): void;
+    /**
+     * Retire toutes les valeurs d'une facette.
+     * @param facetKey Code de la facette
+     */
+    removeFacetValue(facetKey: string): void;
+    /**
+     * Retire toutes les valeurs de toutes les facettes.
+     */
+    removeFacetValue(): void;
     @action.bound
-    excludeFacetValue(facetKey: string, facetValue: string) {
-        // Ajout de la facette si elle n'existe pas.
-        if (!this.innerInputFacets.has(facetKey)) {
-            this.innerInputFacets.set(facetKey, {});
+    removeFacetValue(facetKey?: string, param?: string | ("selected" | "excluded")[]) {
+        // Suppression globale : on fait un forEach au lieu d'un simple "clear" car on ne veut pas perdre les opérateurs.
+        if (!facetKey) {
+            this.innerInputFacets.forEach((_, code) => this.removeFacetValue(code));
+            return;
         }
 
         const facet = this.innerInputFacets.get(facetKey)!;
-        if (!facet.excluded) {
-            set(facet, {excluded: []});
-        }
-
-        // On retire la valeur si elle était déjà sélectionnée.
-        (facet.selected as IObservableArray<string>)?.remove(facetValue);
-
-        // Puis on l'ajoute si elle n'y était pas.
-        if (!facet.excluded!.includes(facetValue)) {
-            facet.excluded!.push(facetValue);
-        }
-    }
-
-    /** Retire une (ou plusieurs) valeur(s) de facette pour la facette donnée (sélectionnée ou exclue). */
-    @action.bound
-    removeFacetValue(facetKey: string, ...facetValues: string[]) {
-        const facet = this.innerInputFacets.get(facetKey)!;
-
-        // La facette n'existe pas : rien à faire.
         if (!facet) {
             return;
         }
 
-        // On les enlèves des deux listes, si elles y existent.
-        facetValues.forEach(facetValue => {
-            (facet.selected as IObservableArray<string>)?.remove(facetValue);
-            (facet.excluded as IObservableArray<string>)?.remove(facetValue);
+        (Array.isArray(param) ? param : (["excluded", "selected"] as const)).forEach(type => {
+            const values = facet[type] as IObservableArray<string>;
+            if (typeof param === "string") {
+                values?.remove(param);
+            } else {
+                values?.clear();
+            }
         });
 
         // On nettoie...
