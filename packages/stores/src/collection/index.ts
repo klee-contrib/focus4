@@ -519,9 +519,9 @@ export class CollectionStore<T = any, C = any> {
         }
     }
 
-    /** Retire une valeur de facette pour la facette donnée (sélectionnée ou exclue). */
+    /** Retire une (ou plusieurs) valeur(s) de facette pour la facette donnée (sélectionnée ou exclue). */
     @action.bound
-    removeFacetValue(facetKey: string, facetValue: string) {
+    removeFacetValue(facetKey: string, ...facetValues: string[]) {
         const facet = this.innerInputFacets.get(facetKey)!;
 
         // La facette n'existe pas : rien à faire.
@@ -529,9 +529,11 @@ export class CollectionStore<T = any, C = any> {
             return;
         }
 
-        // On l'enlève des deux listes, si elle y existe.
-        (facet.selected as IObservableArray<string>)?.remove(facetValue);
-        (facet.excluded as IObservableArray<string>)?.remove(facetValue);
+        // On les enlèves des deux listes, si elles y existent.
+        facetValues.forEach(facetValue => {
+            (facet.selected as IObservableArray<string>)?.remove(facetValue);
+            (facet.excluded as IObservableArray<string>)?.remove(facetValue);
+        });
 
         // On nettoie...
         if (facet.selected?.length === 0) {
@@ -542,8 +544,24 @@ export class CollectionStore<T = any, C = any> {
             remove(facet, "excluded");
         }
 
-        if (!facet.excluded && !facet.selected) {
+        if (!facet.excluded && !facet.selected && !facet.operator) {
             this.innerInputFacets.delete(facetKey);
+        }
+    }
+    /** Change l'opérateur d'une facette multi-sélectionnable à plusieurs valeurs. */
+    @action.bound
+    toggleFacetOperator(facetKey: string) {
+        // Ajout de la facette si elle n'existe pas.
+        if (!this.innerInputFacets.has(facetKey)) {
+            this.innerInputFacets.set(facetKey, {});
+        }
+
+        const facet = this.innerInputFacets.get(facetKey)!;
+
+        if (!facet.operator) {
+            set(facet, {operator: "and"});
+        } else {
+            facet.operator = facet.operator === "and" ? "or" : "and";
         }
     }
 

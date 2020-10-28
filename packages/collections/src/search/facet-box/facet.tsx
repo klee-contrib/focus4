@@ -3,8 +3,8 @@ import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
-import {CSSProp, useTheme} from "@focus4/styling";
-import {Checkbox, ChipTheme} from "@focus4/toolbox";
+import {CSSProp, getIcon, useTheme} from "@focus4/styling";
+import {Button, Checkbox, ChipTheme} from "@focus4/toolbox";
 
 import {ChipType, SearchChip} from "../chip";
 
@@ -25,10 +25,10 @@ export interface FacetProps {
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
      * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
-     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
+     * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
+    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
     /** Facette à afficher. */
     facet: FacetOutput;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -54,7 +54,8 @@ export function Facet({
     const [isShowAll, setIsShowAll] = React.useState(false);
     const theme = useTheme("facet", facetCss, pTheme);
     return useObserver(() => {
-        const selectedValues = store.inputFacets[facet.code]?.selected ?? [];
+        const inputFacet = store.inputFacets[facet.code];
+        const selectedValues = inputFacet?.selected ?? [];
         const selectedFacet =
             !facet.isMultiSelectable && selectedValues.length === 1
                 ? facet.values.find(f => f.code === selectedValues[0])!
@@ -73,29 +74,38 @@ export function Facet({
                         theme={{chip: theme.chip()}}
                         themer={chipThemer}
                         type="facet"
-                        value={selectedFacet.code}
-                        valueLabel={selectedFacet.label}
+                        values={[selectedFacet]}
                     />
                 ) : (
-                    <ul>
-                        {(isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList)).map(sfv => {
-                            const isSelected = !!selectedValues.find(sv => sv === sfv.code);
-                            const clickHandler = (e: React.SyntheticEvent<any>) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                (isSelected ? store.removeFacetValue : store.addFacetValue)(facet.code, sfv.code);
-                            };
-                            return (
-                                <li key={sfv.code} onClick={clickHandler}>
-                                    {facet.isMultiSelectable ? (
-                                        <Checkbox value={isSelected} onClick={clickHandler} />
-                                    ) : null}
-                                    <div>{i18next.t(sfv.label)}</div>
-                                    <div className={theme.count()}>{sfv.count}</div>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                    <>
+                        {facet.isMultiSelectable && facet.isMultiValued ? (
+                            <Button
+                                primary
+                                icon={getIcon(`${i18nPrefix}.icons.facets.${inputFacet?.operator ?? "or"}`)}
+                                label={i18next.t(`${i18nPrefix}.search.facets.${inputFacet?.operator ?? "or"}`)}
+                                onClick={() => store.toggleFacetOperator(facet.code)}
+                            />
+                        ) : null}
+                        <ul>
+                            {(isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList)).map(sfv => {
+                                const isSelected = !!selectedValues.find(sv => sv === sfv.code);
+                                const clickHandler = (e: React.SyntheticEvent<any>) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    (isSelected ? store.removeFacetValue : store.addFacetValue)(facet.code, sfv.code);
+                                };
+                                return (
+                                    <li key={sfv.code} onClick={clickHandler}>
+                                        {facet.isMultiSelectable ? (
+                                            <Checkbox value={isSelected} onClick={clickHandler} />
+                                        ) : null}
+                                        <div>{i18next.t(sfv.label)}</div>
+                                        <div className={theme.count()}>{sfv.count}</div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </>
                 )}
                 {facet.values.length > nbDefaultDataList ? (
                     <div className={theme.show()} onClick={() => setIsShowAll(!isShowAll)}>

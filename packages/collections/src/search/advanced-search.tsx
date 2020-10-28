@@ -48,10 +48,10 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
      * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
-     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
+     * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
+    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
     /** Emplacement de la FacetBox. Par défaut : "left" */

@@ -27,10 +27,10 @@ export interface SummaryProps<T> {
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
      * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
-     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
+     * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    chipThemer?: (type: ChipType, code: string, value?: string) => ChipTheme;
+    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
     /** Handler pour le bouton d'export. */
     exportAction?: () => void;
     /** Masque les critères de recherche. */
@@ -90,8 +90,7 @@ export function Summary<T>({
                         key: `${criteriaKey}-${value}`,
                         code: label,
                         codeLabel: label,
-                        value,
-                        valueLabel: domain && domain.displayFormatter && domain.displayFormatter(value),
+                        values: [{code: value, label: domain?.displayFormatter?.(value)}],
                         onDeleteClick: () => {
                             (props.store.criteria![criteriaKey] as FormEntityField).value = undefined;
                         }
@@ -102,22 +101,20 @@ export function Summary<T>({
             // On ajoute à la liste toutes les facettes sélectionnées.
             if (!hideFacets) {
                 for (const facetKey in props.store.inputFacets) {
-                    const facetValues = props.store.inputFacets[facetKey]?.selected ?? [];
+                    const inputFacet = props.store.inputFacets[facetKey];
                     const facetOutput = props.store.facets.find(facet => facetKey === facet.code);
-                    if (facetOutput) {
-                        facetOutput.values
-                            .filter(value => !!facetValues.find(v => v === value.code))
-                            .forEach(facetItem =>
-                                topicList.push({
-                                    type: "facet",
-                                    key: `${facetKey}-${facetItem.code}`,
-                                    code: facetOutput.code,
-                                    codeLabel: facetOutput.label,
-                                    value: facetItem.code,
-                                    valueLabel: facetItem.label,
-                                    onDeleteClick: () => props.store.removeFacetValue(facetKey, facetItem.code)
-                                })
-                            );
+                    if (facetOutput && inputFacet.selected) {
+                        topicList.push({
+                            type: "facet",
+                            key: facetKey,
+                            code: facetOutput.code,
+                            codeLabel: facetOutput.label,
+                            valueOperator: inputFacet.operator,
+                            values: facetOutput.values.filter(
+                                value => !!inputFacet.selected?.find(v => v === value.code)
+                            ),
+                            onDeleteClick: () => props.store.removeFacetValue(facetKey, ...(inputFacet.selected ?? []))
+                        });
                     }
                 }
             }

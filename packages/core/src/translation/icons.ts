@@ -76,6 +76,16 @@ export const icons = {
             name: "refresh"
         }
     },
+    facets: {
+        or: {
+            library: "material",
+            name: "toggle_off"
+        },
+        and: {
+            library: "material",
+            name: "toggle_on"
+        }
+    },
     headerActions: {
         secondary: {
             library: "material",

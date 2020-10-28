@@ -52,7 +52,9 @@ export const fr = {
             searchBy: "Rechercher par"
         },
         facets: {
-            title: "Filtrer"
+            title: "Filtrer",
+            or: "Au moins un critère",
+            and: "Tous les critères"
         },
         loading: "Chargement...",
         results: {
@@ -61,11 +63,13 @@ export const fr = {
             yes: "Oui"
         },
         summary: {
+            and: "et",
             by: "par",
             export: "Exporter",
             for: "pour",
             group: "groupé par",
             groups: "groupés par",
+            or: "ou",
             result: "résultat",
             results: "résultats",
             sortBy: "triés par"

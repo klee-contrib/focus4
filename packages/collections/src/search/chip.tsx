@@ -1,4 +1,6 @@
 import i18next from "i18next";
+import {observable} from "mobx";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {themeable} from "@focus4/core";
@@ -25,6 +27,8 @@ export interface SearchChipProps {
     keyResolver?: (type: "filter" | "facet", code: string, value: string) => Promise<string | undefined>;
     /** Appelé au clic sur la suppression. */
     onDeleteClick?: () => void;
+    /** Préfixe i18n pour les libellés. Par défaut : "focus". */
+    i18nPrefix?: string;
     /** Affiche le code en plus de la valeur. */
     showCode?: boolean;
     /** CSS du Chip. */
@@ -33,42 +37,69 @@ export interface SearchChipProps {
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
      * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
-     * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
+     * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    themer?: (type: ChipType, code: string, value?: string) => ChipTheme;
+    themer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
     /** Type du chip affiché (`filter`, `facet`, `sort` ou `group`). */
     type: ChipType;
-    /** Valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group). */
-    value?: string;
-    /** Libellé associé à la valeur. */
-    valueLabel?: string;
+    /** Opérateur à utiliser entre les différentes valeurs. */
+    valueOperator?: "and" | "or";
+    /** Valeurs et libellés des champs affichés (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group). */
+    values?: {code: string; label?: string}[];
 }
 
 /** Chip avec un keyResolver. */
 export function SearchChip(props: SearchChipProps) {
-    const {code, codeLabel, deletable, onDeleteClick, keyResolver, showCode, theme = {}, themer, type, value} = props;
-    const [valueLabel, setValueLabel] = React.useState(props.valueLabel || value);
+    const {
+        code,
+        codeLabel,
+        deletable,
+        onDeleteClick,
+        keyResolver,
+        i18nPrefix = "focus",
+        showCode,
+        theme = {},
+        themer,
+        type,
+        valueOperator = "or",
+        values
+    } = props;
+    const [valueLabels] = React.useState(() => observable.map());
 
     React.useEffect(() => {
-        if (keyResolver && value && (type === "facet" || type === "filter")) {
-            keyResolver(type, code, value).then(newValueLabel => {
-                if (newValueLabel) {
-                    setValueLabel(newValueLabel);
-                }
+        valueLabels.replace(values?.map(value => [value.code, value.label ?? value.code]));
+        if (keyResolver && values && (type === "facet" || type === "filter")) {
+            values.forEach(value => {
+                keyResolver(type, code, value.code).then(newValueLabel => {
+                    if (newValueLabel) {
+                        valueLabels.set(value.code, newValueLabel);
+                    }
+                });
             });
         }
-    }, []);
+    }, [values]);
 
-    const tCodeLabel = i18next.t(codeLabel);
-    const tValueLabel = valueLabel && i18next.t(valueLabel);
-    return (
-        <Chip
-            deletable={deletable}
-            onDeleteClick={onDeleteClick}
-            theme={themeable(theme, (themer && themer(type, code, value)) || {})}
-        >
-            {!tValueLabel ? tCodeLabel : showCode ? `${tCodeLabel} : ${tValueLabel}` : tValueLabel}
-        </Chip>
-    );
+    return useObserver(() => {
+        const tCodeLabel = i18next.t(codeLabel);
+        const tValueLabel = Array.from(valueLabels.values())
+            .map(l => (showCode ? `"${i18next.t(l)}"` : i18next.t(l)))
+            .join(` ${i18next.t(`${i18nPrefix}.search.summary.${valueOperator}`)} `);
+        return (
+            <Chip
+                deletable={deletable}
+                onDeleteClick={onDeleteClick}
+                theme={themeable(
+                    theme,
+                    themer?.(
+                        type,
+                        code,
+                        values?.map(v => v.code)
+                    ) || {}
+                )}
+            >
+                {!tValueLabel ? tCodeLabel : showCode ? `${tCodeLabel} : ${tValueLabel}` : tValueLabel}
+            </Chip>
+        );
+    });
 }

@@ -12,6 +12,24 @@
     font-weight: bold;
 }
 
+.facet h4 + button {
+    padding: 4px;
+    height: 24px;
+    line-height: 24px;
+    text-transform: none;
+    margin: 3px 0 -6px -8px;
+    width: calc(100% - 2px);
+    text-align: left;
+    font-style: italic;
+    box-sizing: content-box;
+
+    & > span:not([data-react-toolbox="tooltip"]) {
+        font-size: 26px;
+        line-height: 24px;
+        padding-right: 2px;
+    }
+}
+
 .facet ul {
     margin: 0;
     padding: 9px 0 9px 30px;
