@@ -29,8 +29,6 @@ export interface SearchChipProps {
     onDeleteClick?: () => void;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Affiche le code en plus de la valeur. */
-    showCode?: boolean;
     /** CSS du Chip. */
     theme?: ChipTheme;
     /**
@@ -46,7 +44,7 @@ export interface SearchChipProps {
     /** Opérateur à utiliser entre les différentes valeurs. */
     valueOperator?: "and" | "or";
     /** Valeurs et libellés des champs affichés (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group). */
-    values?: {code: string; label?: string}[];
+    values?: {code: string; label?: string; invert?: boolean}[];
 }
 
 /** Chip avec un keyResolver. */
@@ -58,14 +56,13 @@ export function SearchChip(props: SearchChipProps) {
         onDeleteClick,
         keyResolver,
         i18nPrefix = "focus",
-        showCode,
         theme = {},
         themer,
         type,
         valueOperator = "or",
         values
     } = props;
-    const [valueLabels] = React.useState(() => observable.map());
+    const [valueLabels] = React.useState(() => observable.map<string, string>());
 
     React.useEffect(() => {
         valueLabels.replace(values?.map(value => [value.code, value.label ?? value.code]));
@@ -82,8 +79,13 @@ export function SearchChip(props: SearchChipProps) {
 
     return useObserver(() => {
         const tCodeLabel = i18next.t(codeLabel);
-        const tValueLabel = Array.from(valueLabels.values())
-            .map(l => (showCode ? `"${i18next.t(l)}"` : i18next.t(l)))
+        const tValueLabel = values
+            ?.map(
+                value =>
+                    `${value.invert ? `${i18next.t(`${i18nPrefix}.search.summary.not`)} ` : ""}"${i18next.t(
+                        valueLabels.get(value.code)!
+                    )}"`
+            )
             .join(` ${i18next.t(`${i18nPrefix}.search.summary.${valueOperator}`)} `);
         return (
             <Chip
@@ -98,7 +100,7 @@ export function SearchChip(props: SearchChipProps) {
                     ) || {}
                 )}
             >
-                {!tValueLabel ? tCodeLabel : showCode ? `${tCodeLabel} : ${tValueLabel}` : tValueLabel}
+                {!tValueLabel ? tCodeLabel : `${tCodeLabel} : ${tValueLabel}`}
             </Chip>
         );
     });

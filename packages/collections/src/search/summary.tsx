@@ -76,8 +76,8 @@ export function Summary<T>({
     const theme = useTheme("summary", summaryCss, pTheme);
     const props = useAsObservableSource({hideCriteria, orderableColumnList, store});
     const state = useLocalStore(() => ({
-        /** Liste des filtres à afficher. */
-        get filterList() {
+        /** Liste des filtres à afficher (inclusion). */
+        get includeList() {
             const topicList: (SearchChipProps & {key: string})[] = [];
 
             // On ajoute la liste des critères.
@@ -103,17 +103,29 @@ export function Summary<T>({
                 for (const facetKey in props.store.inputFacets) {
                     const inputFacet = props.store.inputFacets[facetKey];
                     const facetOutput = props.store.facets.find(facet => facetKey === facet.code);
-                    if (facetOutput && inputFacet.selected) {
+                    if (facetOutput && (inputFacet.selected || inputFacet.excluded)) {
                         topicList.push({
                             type: "facet",
                             key: facetKey,
                             code: facetOutput.code,
                             codeLabel: facetOutput.label,
-                            valueOperator: inputFacet.operator,
-                            values: facetOutput.values.filter(
-                                value => !!inputFacet.selected?.find(v => v === value.code)
-                            ),
-                            onDeleteClick: () => props.store.removeFacetValue(facetKey, ["selected"])
+                            valueOperator:
+                                (facetOutput.isMultiValued && inputFacet.operator === "and") ||
+                                (!facetOutput.isMultiValued && inputFacet.excluded?.length)
+                                    ? "and"
+                                    : "or",
+                            values: facetOutput.values
+                                .map(value => ({
+                                    code: value.code,
+                                    label: value.label,
+                                    invert: !!inputFacet.selected?.find(v => v === value.code)
+                                        ? false
+                                        : !!inputFacet.excluded?.find(v => v === value.code)
+                                        ? true
+                                        : undefined
+                                }))
+                                .filter(({invert}) => invert !== undefined),
+                            onDeleteClick: () => props.store.removeFacetValue(facetKey)
                         });
                     }
                 }
@@ -153,18 +165,12 @@ export function Summary<T>({
                     </span>
                 ) : null}
 
-                {/* Liste des filtres (scope + facettes + critères) */}
-                {state.filterList.length ? (
+                {/* Liste des filtres (facettes + critères) */}
+                {state.includeList.length ? (
                     <div className={theme.chips()}>
                         <span className={theme.sentence()}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
-                        {state.filterList.map(chip => (
-                            <SearchChip
-                                {...chip}
-                                deletable
-                                keyResolver={chipKeyResolver}
-                                showCode
-                                themer={chipThemer}
-                            />
+                        {state.includeList.map(chip => (
+                            <SearchChip {...chip} deletable keyResolver={chipKeyResolver} themer={chipThemer} />
                         ))}
                     </div>
                 ) : null}

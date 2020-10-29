@@ -70,6 +70,7 @@ export const fr = {
             group: "groupé par",
             groups: "groupés par",
             or: "ou",
+            not: "non",
             result: "résultat",
             results: "résultats",
             sortBy: "triés par"

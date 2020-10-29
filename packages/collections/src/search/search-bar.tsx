@@ -290,13 +290,13 @@ const PanningDiv = posed.div({
         y: -40,
         ...springPose,
         applyAtStart: {overflow: "hidden"},
-        applyAtEnd: {overflow: "visible"}
+        applyAtEnd: {overflow: "auto"}
     },
     enter: {
         height: "auto",
         y: 0,
         ...springPose,
         applyAtStart: {overflow: "hidden"},
-        applyAtEnd: {overflow: "visible"}
+        applyAtEnd: {overflow: "auto"}
     }
 });

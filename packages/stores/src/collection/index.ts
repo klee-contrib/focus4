@@ -483,6 +483,9 @@ export class CollectionStore<T = any, C = any> {
      */
     @action.bound
     addFacetValue(facetKey: string, facetValue: string, type: "selected" | "excluded") {
+        // On retire la valeur au cas où elle est déjà dans l'autre liste.
+        this.removeFacetValue(facetKey, facetValue);
+
         // Ajout de la facette si elle n'existe pas.
         if (!this.innerInputFacets.has(facetKey)) {
             this.innerInputFacets.set(facetKey, {});
@@ -494,13 +497,7 @@ export class CollectionStore<T = any, C = any> {
             set(facet, {[type]: []});
         }
 
-        // On retire la valeur si elle était déjà dans l'autre liste
-        (facet[type === "selected" ? "excluded" : "selected"] as IObservableArray<string>)?.remove(facetValue);
-
-        // Puis on l'ajoute si elle n'y était pas.
-        if (!facet[type]!.includes(facetValue)) {
-            facet[type]!.push(facetValue);
-        }
+        facet[type]!.push(facetValue);
     }
 
     /**
@@ -509,12 +506,6 @@ export class CollectionStore<T = any, C = any> {
      * @param facetValue Valeur à retirer.
      */
     removeFacetValue(facetKey: string, facetValue: string): void;
-    /**
-     * Retire toutes les valeurs d'un type dans une facette.
-     * @param facetKey Code de la facette.
-     * @param type Type de valeur.
-     */
-    removeFacetValue(facetKey: string, type: ["selected" | "excluded"]): void;
     /**
      * Retire toutes les valeurs d'une facette.
      * @param facetKey Code de la facette
@@ -525,7 +516,7 @@ export class CollectionStore<T = any, C = any> {
      */
     removeFacetValue(): void;
     @action.bound
-    removeFacetValue(facetKey?: string, param?: string | ("selected" | "excluded")[]) {
+    removeFacetValue(facetKey?: string, facetValue?: string) {
         // Suppression globale : on fait un forEach au lieu d'un simple "clear" car on ne veut pas perdre les opérateurs.
         if (!facetKey) {
             this.innerInputFacets.forEach((_, code) => this.removeFacetValue(code));
@@ -537,10 +528,10 @@ export class CollectionStore<T = any, C = any> {
             return;
         }
 
-        (Array.isArray(param) ? param : (["excluded", "selected"] as const)).forEach(type => {
+        (["excluded", "selected"] as const).forEach(type => {
             const values = facet[type] as IObservableArray<string>;
-            if (typeof param === "string") {
-                values?.remove(param);
+            if (facetValue) {
+                values?.remove(facetValue);
             } else {
                 values?.clear();
             }

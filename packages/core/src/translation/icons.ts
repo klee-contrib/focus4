@@ -84,6 +84,22 @@ export const icons = {
         and: {
             library: "material",
             name: "toggle_on"
+        },
+        selected: {
+            library: "material",
+            name: "check_box"
+        },
+        excluded: {
+            library: "material",
+            name: "indeterminate_check_box"
+        },
+        none: {
+            library: "material",
+            name: "check_box_outline_blank"
+        },
+        exclude: {
+            library: "material",
+            name: "remove_circle_outline"
         }
     },
     headerActions: {
