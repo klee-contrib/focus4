@@ -1,14 +1,13 @@
-import classNames from "classnames";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import {ListBaseProps, useListBase} from "../list-base";
 import {TableColumn, TableHeader} from "./header";
+import {TableLine} from "./line";
 
-import {IconButton} from "@focus4/toolbox";
 import tableCss, {TableCss} from "../__style__/table.css";
 export {TableColumn, tableCss, TableCss};
 
@@ -47,70 +46,6 @@ export function Table<T>({
     const theme = useTheme("table", tableCss, pTheme);
     return useObserver(() => {
         const {bottomRow, displayedData, getDomRef, i18nPrefix, itemKey, store} = useListBase(baseProps);
-
-        /** Ligne de table. */
-        const TableLine = React.useMemo(
-            () =>
-                React.forwardRef<HTMLTableRowElement, {data: T}>(({data}, ref) => {
-                    const state = useLocalStore(() => ({
-                        /** Précise si la checkbox doit être affichée. */
-                        get isCheckboxDisplayed() {
-                            return !!store?.selectedItems.size || false;
-                        },
-
-                        /** Précise si la ligne est sélectionnable. */
-                        get isSelectable() {
-                            return (hasSelection && store?.isItemSelectionnable(data)) || false;
-                        },
-
-                        /** Précise si la ligne est sélectionnée.. */
-                        get isSelected() {
-                            return store?.selectedItems.has(data) || false;
-                        },
-
-                        /** Handler de clic sur la case de sélection. */
-                        onSelection() {
-                            store?.toggle(data);
-                        }
-                    }));
-
-                    return useObserver(() => (
-                        <tr
-                            ref={ref}
-                            className={classNames(
-                                lineClassName ? lineClassName(data) : "",
-                                onLineClick ? theme.clickable() : ""
-                            )}
-                        >
-                            {hasSelection ? (
-                                <td className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}>
-                                    {state.isSelectable ? (
-                                        <IconButton
-                                            icon={getIcon(
-                                                `${i18nPrefix}.icons.line.${state.isSelected ? "" : "un"}selected`
-                                            )}
-                                            onClick={state.onSelection}
-                                            primary={state.isSelected}
-                                            theme={{toggle: theme.toggle(), icon: theme.checkboxIcon()}}
-                                        />
-                                    ) : null}
-                                </td>
-                            ) : null}
-                            {columns.map(({className, content}, idx) => (
-                                <td
-                                    className={className}
-                                    key={idx}
-                                    onClick={() => (onLineClick ? onLineClick(data) : undefined)}
-                                >
-                                    {content(data)}
-                                </td>
-                            ))}
-                        </tr>
-                    ));
-                }),
-            []
-        );
-
         return (
             <>
                 <table className={theme.table()}>
@@ -130,7 +65,18 @@ export function Table<T>({
                     </thead>
                     <tbody>
                         {displayedData.map((item, idx) => (
-                            <TableLine ref={getDomRef(idx)} key={itemKey(item, idx)} data={item} />
+                            <TableLine
+                                key={itemKey(item, idx)}
+                                className={lineClassName}
+                                columns={columns}
+                                data={item}
+                                domRef={getDomRef(idx)}
+                                hasSelection={hasSelection}
+                                i18nPrefix={i18nPrefix}
+                                onClick={onLineClick}
+                                store={store}
+                                theme={theme}
+                            />
                         ))}
                     </tbody>
                 </table>
