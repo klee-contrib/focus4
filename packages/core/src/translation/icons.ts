@@ -100,6 +100,14 @@ export const icons = {
         exclude: {
             library: "material",
             name: "remove_circle_outline"
+        },
+        open: {
+            library: "material",
+            name: "keyboard_arrow_down"
+        },
+        close: {
+            library: "material",
+            name: "keyboard_arrow_up"
         }
     },
     headerActions: {

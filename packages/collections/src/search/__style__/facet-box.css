@@ -3,9 +3,17 @@
 }
 
 .facetBox > h3 {
-    font-size: 24px;
-    margin: 0 0 15px;
+    font-size: 22px;
+    margin: 0 0 12px -9px;
     text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: calc(100% + 15px);
+
+    & > span {
+        flex: 1;
+    }
 }
 
 .section {

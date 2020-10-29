@@ -155,9 +155,9 @@ export function ActionBar<T>({
                     {/** Eléments sélectionnés */}
                     {group ? <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong> : null}
                     {store.selectedItems.size ? (
-                        <strong>{`${store.selectedItems.size} ${i18next.t(
-                            `${i18nPrefix}.search.action.selectedItem${store.selectedItems.size > 1 ? "s" : ""}`
-                        )}`}</strong>
+                        <strong>{`${store.selectedItems.size} ${i18next.t(`${i18nPrefix}.search.action.selectedItem`, {
+                            count: store.selectedItems.size
+                        })}`}</strong>
                     ) : null}
 
                     {/** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */}

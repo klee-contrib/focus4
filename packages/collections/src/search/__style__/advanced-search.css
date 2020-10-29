@@ -1,7 +1,7 @@
 .facetContainer {
     float: left;
     width: var(--advanced-search-facets-width);
-    padding: var(--content-padding-top) var(--advanced-search-facets-margin-right) 0 var(--content-padding-side);
+    padding: 8px 8px 8px 12px;
     box-sizing: content-box;
 }
 
@@ -11,7 +11,7 @@
 }
 
 .resultContainer--withFacetBox {
-    margin-left: calc(var(--advanced-search-facets-width) + var(--advanced-search-facets-margin-right));
+    margin-left: calc(var(--advanced-search-facets-width) + 8px);
 }
 
 .actions {

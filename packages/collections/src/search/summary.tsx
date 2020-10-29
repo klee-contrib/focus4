@@ -146,14 +146,13 @@ export function Summary<T>({
 
     return useObserver(() => {
         const {groupingKey, totalCount, query} = store;
-        const plural = totalCount !== 1 ? "s" : "";
         return (
             <div className={theme.summary()}>
                 {/* Nombre de résultats. */}
                 {!hideResults ? (
                     <span className={theme.sentence()}>
                         <strong>{totalCount}&nbsp;</strong>
-                        {i18next.t(`${i18nPrefix}.search.summary.result${plural}`)}
+                        {i18next.t(`${i18nPrefix}.search.summary.result`, {count: totalCount})}
                     </span>
                 ) : null}
 
@@ -179,7 +178,7 @@ export function Summary<T>({
                 {groupingKey && !hideGroup ? (
                     <div className={theme.chips()}>
                         <span className={theme.sentence()}>
-                            {i18next.t(`${i18nPrefix}.search.summary.group${plural}`)}
+                            {i18next.t(`${i18nPrefix}.search.summary.group`, {count: totalCount})}
                         </span>
                         <SearchChip
                             code={groupingKey}

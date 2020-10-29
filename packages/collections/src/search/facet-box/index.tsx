@@ -1,9 +1,11 @@
 import i18next from "i18next";
+import {observable, when} from "mobx";
 import {useObserver} from "mobx-react";
 import * as React from "react";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
-import {CSSProp, fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, getIcon, useTheme} from "@focus4/styling";
+import {IconButton} from "@focus4/toolbox";
 
 import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
 import {shouldDisplayFacet} from "./utils";
@@ -45,6 +47,17 @@ export function FacetBox<T>({
 }: FacetBoxProps<T>) {
     const theme = useTheme("facetBox", facetBoxCss, pTheme);
 
+    // Map pour contrôler les facettes qui sont ouvertes, initialisée une seule fois après le premier chargement du store (le service renvoie toujours toutes les facettes).
+    const [openedMap] = React.useState(() => observable.map<string, boolean>());
+    React.useEffect(
+        () =>
+            when(
+                () => store.facets.length > 0,
+                () => openedMap.replace(store.facets.map(facet => [facet.code, true]))
+            ),
+        []
+    );
+
     function renderFacet(facet: FacetOutput) {
         if (store.inputFacets[facet.code] || Object.keys(facet).length > 1) {
             let FacetComponent: React.ElementType<FacetProps> = Facet;
@@ -63,6 +76,7 @@ export function FacetBox<T>({
                     facet={facet}
                     i18nPrefix={i18nPrefix}
                     nbDefaultDataList={nbDefaultDataList}
+                    openedMap={openedMap}
                     store={store}
                 />
             );
@@ -126,9 +140,22 @@ export function FacetBox<T>({
             }
         }
 
+        const opened = Array.from(openedMap.values()).some(v => v);
         return (
             <div className={theme.facetBox()}>
-                <h3>{i18next.t(`${i18nPrefix}.search.facets.title`)}</h3>
+                <h3 onClick={() => openedMap.replace(store.facets.map(facet => [facet.code, !opened]))}>
+                    <IconButton icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)} />
+                    <span>{i18next.t(`${i18nPrefix}.search.facets.title`)}</span>
+                    {Object.values(store.inputFacets).some(l => l.selected || l.excluded) ? (
+                        <IconButton
+                            onClick={(e: any) => {
+                                e.stopPropagation();
+                                store.removeFacetValue();
+                            }}
+                            icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)}
+                        />
+                    ) : null}
+                </h3>
                 {sectionElements || filteredFacets.map(renderFacet)}
             </div>
         );

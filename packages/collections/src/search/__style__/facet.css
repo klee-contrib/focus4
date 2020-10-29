@@ -1,5 +1,5 @@
 .facet {
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
 .facet:last-child {
@@ -7,9 +7,10 @@
 }
 
 .facet h4 {
-    margin: 0 5px -6px 0;
+    margin: 0 5px -6px -9px;
     font-size: 17px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .facet h4 + button {
@@ -18,7 +19,7 @@
     line-height: 24px;
     text-transform: none;
     margin: 3px 0 -6px -8px;
-    width: calc(100% - 2px);
+    width: calc(100% + 5px);
     text-align: left;
     font-style: italic;
     box-sizing: content-box;
@@ -28,6 +29,10 @@
         line-height: 24px;
         padding-right: 4px;
     }
+}
+
+.facet h4 + span {
+    margin-left: 27px;
 }
 
 .facet ul {
