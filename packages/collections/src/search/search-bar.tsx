@@ -110,7 +110,7 @@ export function SearchBar<T, C>({
                 placeholder ??
                 (searchFields.length
                     ? `${i18next.t(`${i18nPrefix}.search.bar.searchBy`)} ${searchFields
-                          .map(x => searchFieldNames[x].toLowerCase())
+                          .map(x => (searchFieldNames[x] ?? x).toLowerCase())
                           .join(", ")}`
                     : "")
             );

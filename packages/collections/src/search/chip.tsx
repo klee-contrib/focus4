@@ -65,7 +65,7 @@ export function SearchChip(props: SearchChipProps) {
     const [valueLabels] = React.useState(() => observable.map<string, string>());
 
     React.useEffect(() => {
-        valueLabels.replace(values?.map(value => [value.code, value.label ?? value.code]));
+        valueLabels.replace(values?.map(value => [value.code, value.label ?? value.code]) ?? {});
         if (keyResolver && values && (type === "facet" || type === "filter")) {
             values.forEach(value => {
                 keyResolver(type, code, value.code).then(newValueLabel => {

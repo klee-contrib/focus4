@@ -39,6 +39,7 @@
     position: relative;
     color: var(--header-color);
     box-shadow: var(--header-shadow);
+    z-index: var(--z-index-high) + 1;
 }
 
 .scrolling--deployed,
@@ -62,7 +63,6 @@
 
 .scrolling--sticky {
     position: absolute;
-    z-index: var(--z-index-high);
     top: 0;
 }
 

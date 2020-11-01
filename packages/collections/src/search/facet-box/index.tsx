@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {observable, when} from "mobx";
+import {comparer, observable, reaction} from "mobx";
 import {useObserver} from "mobx-react";
 import * as React from "react";
 
@@ -51,9 +51,10 @@ export function FacetBox<T>({
     const [openedMap] = React.useState(() => observable.map<string, boolean>());
     React.useEffect(
         () =>
-            when(
-                () => store.facets.length > 0,
-                () => openedMap.replace(store.facets.map(facet => [facet.code, true]))
+            reaction(
+                () => store.facets.map(f => f.code),
+                () => openedMap.replace(store.facets.map(facet => [facet.code, true])),
+                {equals: comparer.structural}
             ),
         []
     );
