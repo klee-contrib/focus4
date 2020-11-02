@@ -1,12 +1,16 @@
+.search {
+    padding-top: var(--content-padding-top);
+}
+
 .facetContainer {
     float: left;
     width: var(--advanced-search-facets-width);
-    padding: 8px 8px 8px 12px;
+    padding: var(--content-padding-top) 8px 8px 12px;
     box-sizing: content-box;
 }
 
 .resultContainer {
-    padding: var(--content-padding-top) var(--content-padding-side) 0;
+    padding: 0 var(--content-padding-side);
     box-sizing: border-box;
 }
 

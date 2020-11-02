@@ -42,11 +42,6 @@
     z-index: calc(var(--z-index-high) + 1);
 }
 
-.scrolling--deployed,
-.scrolling--undeployed {
-    margin-bottom: var(--header-margin-bottom);
-}
-
 .scrolling--deployed .item--middle {
     opacity: 0;
 }

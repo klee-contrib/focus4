@@ -16,8 +16,6 @@ export interface ScrollspyContainerProps {
     MenuComponent?: React.ComponentType<ScrollspyMenuProps>;
     /** Menu rétractable. */
     retractable?: boolean;
-    /** Offset entre la position du panel et la position de scroll au clic sur le menu. Par défaut : 150. */
-    scrollToOffset?: number;
     /** CSS. */
     theme?: CSSProp<ScrollspyCss>;
 }
@@ -80,8 +78,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
      * @param node Le noeud HTML.
      */
     protected getOffsetTop(node: HTMLElement) {
-        const distance = node.offsetTop + (this.node.current!.offsetTop || 0);
-        return (distance < 0 ? 0 : distance) - (this.props.scrollToOffset || 150);
+        return node.offsetTop - (this.node.current!.offsetTop || 0);
     }
 
     /**
@@ -102,7 +99,7 @@ export class ScrollspyContainer extends React.Component<ScrollspyContainerProps>
             <ScrollspyContext.Provider value={{registerPanel: this.registerPanel}}>
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div ref={this.node}>
+                        <div ref={this.node} className={theme.scrollspy()}>
                             {this.context.menu(
                                 <nav className={theme.menu()} key="scrollspy">
                                     <MenuComponent

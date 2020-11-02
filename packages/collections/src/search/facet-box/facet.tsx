@@ -41,6 +41,19 @@ export function Facet({
         const inputFacet = store.inputFacets[facet.code];
         const count = (inputFacet?.selected?.length ?? 0) + (inputFacet?.excluded?.length ?? 0);
         const opened = openedMap.get(facet.code) ?? false;
+
+        // Si la facette n'est pas multi-sélectionnable et a une valeur sélectionnée, alors on n'affiche que celle-ci.
+        let values = facet.values.filter(
+            f =>
+                facet.isMultiSelectable ||
+                count === 0 ||
+                (count > 0 && (inputFacet?.selected?.includes(f.code) || inputFacet?.excluded?.includes(f.code)))
+        );
+
+        if (!isShowAll) {
+            values = values.slice(0, nbDefaultDataList);
+        }
+
         return (
             <div className={theme.facet()} data-facet={facet.code}>
                 <h4 onClick={() => openedMap.set(facet.code, !opened)}>
@@ -58,7 +71,7 @@ export function Facet({
                             />
                         ) : null}
                         <ul>
-                            {(isShowAll ? facet.values : facet.values.slice(0, nbDefaultDataList)).map(item => {
+                            {values.map(item => {
                                 const selected = !!inputFacet?.selected?.find(sv => sv === item.code);
                                 const excluded = !!inputFacet?.excluded?.find(sv => sv === item.code);
                                 const clickHandler = action(() => {
@@ -88,9 +101,7 @@ export function Facet({
                                         <div className={theme.label({excluded})} onClick={clickHandler}>
                                             {i18next.t(item.label)}
                                         </div>
-                                        {facet.values.length !== 1 ||
-                                        !inputFacet?.selected ||
-                                        inputFacet.selected[0] !== item.code ? (
+                                        {!(count === 1 && (!facet.isMultiSelectable || facet.values.length === 1)) ? (
                                             <div className={theme.count()}>{item.count}</div>
                                         ) : null}
                                         {facet.canExclude &&
@@ -114,7 +125,7 @@ export function Facet({
                                 );
                             })}
                         </ul>
-                        {facet.values.length > nbDefaultDataList ? (
+                        {(facet.isMultiSelectable || count === 0) && facet.values.length > nbDefaultDataList ? (
                             <div className={theme.show()} onClick={() => setIsShowAll(!isShowAll)}>
                                 {i18next.t(isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                             </div>

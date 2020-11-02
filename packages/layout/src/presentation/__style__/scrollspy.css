@@ -1,5 +1,9 @@
+.scrollspy {
+    padding-top: var(--content-padding-top);
+}
+
 .content {
-    padding: var(--content-padding-top) var(--content-padding-side) 0;
+    padding: 0 var(--content-padding-side);
 }
 
 .menu {

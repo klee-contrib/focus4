@@ -216,7 +216,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
 
     const {MosaicComponent, LineComponent} = (listProps as any) as ListProps<T>;
     return useObserver(() => (
-        <div ref={setRootNode}>
+        <div ref={setRootNode} className={theme.search()}>
             {renderFacetBox()}
             <div
                 className={theme.resultContainer({

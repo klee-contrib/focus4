@@ -54,7 +54,7 @@ export function FacetBox<T>({
             reaction(
                 () => store.facets.map(f => f.code),
                 () => openedMap.replace(store.facets.map(facet => [facet.code, true])),
-                {equals: comparer.structural}
+                {equals: comparer.structural, fireImmediately: true}
             ),
         []
     );
