@@ -306,7 +306,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
                 height: `calc(100% - ${marginTop}px)`
             });
             const buttonMenu = this.menuNode.children.item(this.menuNode.children.length - 1);
-            if (buttonMenu) {
+            if (buttonMenu?.nodeName === "BUTTON") {
                 styler(buttonMenu).set({top: marginTop});
             }
         });
