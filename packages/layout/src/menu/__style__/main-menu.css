@@ -1,6 +1,6 @@
 .menu {
     height: 100vh;
-    z-index: calc(var(--z-index-high) + 1);
+    z-index: calc(var(--z-index-high) + 2);
     position: relative;
 }
 

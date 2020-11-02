@@ -1,8 +1,7 @@
 import * as React from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSProp, cssTransitionProps, fromBem, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
-import {IconButton} from "@focus4/toolbox";
+import {CSSProp, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
 
 import {Scrollable} from "../scrollable";
 import {Overlay} from "./overlay";
@@ -18,10 +17,6 @@ export interface PopinProps {
     closePopin: () => void;
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
-    /** Cache le bouton pour fermer la popin. */
-    hideCloseButton?: boolean;
-    /** Préfixe i18n pour l'icône de fermeture. Par défaut : "focus". */
-    i18nPrefix?: string;
     /** Popin ouverte (ou fermée). */
     opened: boolean;
     /** Supprime le clic sur l'overlay pour fermer la popin. */
@@ -40,8 +35,6 @@ export function Popin({
     children,
     closePopin,
     hideBackToTop,
-    hideCloseButton,
-    i18nPrefix = "focus",
     opened,
     preventOverlayClick,
     scrollBehaviour,
@@ -63,13 +56,6 @@ export function Popin({
                             hideBackToTop={hideBackToTop}
                             scrollBehaviour={scrollBehaviour}
                         >
-                            {!hideCloseButton ? (
-                                <IconButton
-                                    className={theme.close()}
-                                    icon={getIcon(`${i18nPrefix}.icons.popin.close`)}
-                                    onClick={closePopin}
-                                />
-                            ) : null}
                             {children}
                         </Scrollable>
                     </CSSTransition>

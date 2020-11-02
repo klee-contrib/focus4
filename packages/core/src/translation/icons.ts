@@ -168,12 +168,6 @@ export const icons = {
             name: "functions"
         }
     },
-    popin: {
-        close: {
-            library: "material",
-            name: "clear"
-        }
-    },
     searchBar: {
         clear: {
             library: "material",
