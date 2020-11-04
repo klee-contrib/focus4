@@ -60,6 +60,7 @@ export const fr = {
         },
         loading: "Chargement...",
         results: {
+            exists: "Renseigné",
             missing: "Non renseigné",
             no: "Non",
             yes: "Oui"
