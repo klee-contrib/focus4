@@ -34,7 +34,7 @@ export interface SummaryProps<T> {
     /** Handler pour le bouton d'export. */
     exportAction?: () => void;
     /** Masque les critères de recherche. */
-    hideCriteria?: boolean;
+    hideCriteria?: boolean | string[];
     /** Masque les facettes. */
     hideFacets?: boolean;
     /** Masque le groupe. */
@@ -81,20 +81,22 @@ export function Summary<T>({
             const topicList: (SearchChipProps & {key: string})[] = [];
 
             // On ajoute la liste des critères.
-            if (!props.hideCriteria && props.store.criteria) {
+            if (props.hideCriteria !== true && props.store.criteria) {
                 for (const criteriaKey in props.store.flatCriteria) {
                     const {label, domain} = (props.store.criteria[criteriaKey] as FormEntityField).$field;
                     const value = (props.store.flatCriteria as any)[criteriaKey];
-                    topicList.push({
-                        type: "filter",
-                        key: `${criteriaKey}-${value}`,
-                        code: label,
-                        codeLabel: label,
-                        values: [{code: value, label: domain?.displayFormatter?.(value)}],
-                        onDeleteClick: () => {
-                            (props.store.criteria![criteriaKey] as FormEntityField).value = undefined;
-                        }
-                    });
+                    if (!props.hideCriteria || !props.hideCriteria.includes(criteriaKey)) {
+                        topicList.push({
+                            type: "filter",
+                            key: `${criteriaKey}-${value}`,
+                            code: label,
+                            codeLabel: label,
+                            values: [{code: value, label: domain?.displayFormatter?.(value)}],
+                            onDeleteClick: () => {
+                                (props.store.criteria![criteriaKey] as FormEntityField).value = undefined;
+                            }
+                        });
+                    }
                 }
             }
 

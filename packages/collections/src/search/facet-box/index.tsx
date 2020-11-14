@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {comparer, observable, reaction} from "mobx";
+import {action, comparer, observable, reaction} from "mobx";
 import {useObserver} from "mobx-react";
 import * as React from "react";
 
@@ -22,6 +22,8 @@ export interface FacetBoxProps<T> {
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList?: number;
+    /** Appelé au clear des facettes. */
+    onClear?: () => void;
     /**
      * Si renseigné, affiche les facettes dans des sections nommées.
      * Il est possible d'avoir une section qui contient toutes les facettes non renseignées en ne renseignant pas la liste `facets`.
@@ -40,6 +42,7 @@ export function FacetBox<T>({
     customFacetComponents = {},
     i18nPrefix = "focus",
     nbDefaultDataList = 6,
+    onClear,
     sections,
     showSingleValuedFacets,
     store,
@@ -85,6 +88,12 @@ export function FacetBox<T>({
             return null;
         }
     }
+
+    const clearFacets = action((e: React.SyntheticEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        store.removeFacetValue();
+        onClear?.();
+    });
 
     return useObserver(() => {
         const filteredFacets = store.facets.filter(
@@ -148,13 +157,7 @@ export function FacetBox<T>({
                     <IconButton icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)} />
                     <span>{i18next.t(`${i18nPrefix}.search.facets.title`)}</span>
                     {Object.values(store.inputFacets).some(l => l.selected || l.excluded) ? (
-                        <IconButton
-                            onClick={(e: any) => {
-                                e.stopPropagation();
-                                store.removeFacetValue();
-                            }}
-                            icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)}
-                        />
+                        <IconButton onClick={clearFacets} icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} />
                     ) : null}
                 </h3>
                 {sectionElements || filteredFacets.map(renderFacet)}

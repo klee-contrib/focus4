@@ -33,6 +33,8 @@ export interface ActionBarProps<T> {
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
+    /** Appelé au clear des facettes. */
+    onFacetClear?: () => void;
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string; label: string; order: boolean}[];
     /** Actions sur les éléments sélectionnés. */
@@ -57,6 +59,7 @@ export function ActionBar<T>({
     hasSelection,
     i18nPrefix = "focus",
     nbDefaultDataListFacet = 6,
+    onFacetClear,
     operationList,
     orderableColumnList,
     searchBarPlaceholder,
@@ -242,6 +245,7 @@ export function ActionBar<T>({
                                 />
                                 <FacetBox
                                     nbDefaultDataList={nbDefaultDataListFacet}
+                                    onClear={onFacetClear}
                                     showSingleValuedFacets={showSingleValuedFacets}
                                     store={store}
                                     theme={{facetBox: theme.facetBox()}}
