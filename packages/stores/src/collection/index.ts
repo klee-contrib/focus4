@@ -461,7 +461,7 @@ export class CollectionStore<T = any, C = any> {
     @action.bound
     setProperties(props: SearchProperties<C>) {
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
-        this.searchFields = props.searchFields ?? this.searchFields;
+        this.searchFields = props.hasOwnProperty("searchFields") ? props.searchFields : this.searchFields;
         if (props.inputFacets) {
             this.innerInputFacets.replace(props.inputFacets);
         }
