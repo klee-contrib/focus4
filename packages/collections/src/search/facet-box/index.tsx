@@ -49,6 +49,7 @@ export function FacetBox<T>({
     theme: pTheme
 }: FacetBoxProps<T>) {
     const theme = useTheme("facetBox", facetBoxCss, pTheme);
+    const facetTheme = useTheme("facet", facetCss);
 
     // Map pour contrôler les facettes qui sont ouvertes, initialisée une seule fois après le premier chargement du store (le service renvoie toujours toutes les facettes).
     const [openedMap] = React.useState(() => observable.map<string, boolean>());
@@ -64,16 +65,7 @@ export function FacetBox<T>({
 
     function renderFacet(facet: FacetOutput) {
         if (store.inputFacets[facet.code] || Object.keys(facet).length > 1) {
-            let FacetComponent: React.ElementType<FacetProps> = Facet;
-
-            const FacetCustom = customFacetComponents[facet.code];
-            if (FacetCustom) {
-                FacetComponent = props => {
-                    const facetTheme = useTheme("facet", facetCss);
-                    return <FacetCustom {...props} theme={fromBem(facetTheme)} />;
-                };
-            }
-
+            const FacetComponent = customFacetComponents[facet.code] ?? Facet;
             return (
                 <FacetComponent
                     key={facet.code}
@@ -82,6 +74,7 @@ export function FacetBox<T>({
                     nbDefaultDataList={nbDefaultDataList}
                     openedMap={openedMap}
                     store={store}
+                    theme={customFacetComponents[facet.code] ? fromBem(facetTheme) : undefined}
                 />
             );
         } else {

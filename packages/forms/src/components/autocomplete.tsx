@@ -43,6 +43,8 @@ export interface AutocompleteProps<T extends "string" | "number"> extends RTAuto
     querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     /** Au changement. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    /** Désactive l'appel à la recherche si le champ est vide. */
+    noSearchOnEmptyQuery?: boolean;
     /** Type du champ ("string" ou "number"). */
     type: T;
     /** Valeur. */
@@ -111,7 +113,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
      */
     @action.bound
     onQueryChange(query: string) {
-        const {onQueryChange, onChange, isQuickSearch} = this.props;
+        const {onQueryChange, onChange, isQuickSearch, noSearchOnEmptyQuery} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
         const label = this.value && this.data.get(this.value);
@@ -130,8 +132,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
         if (isQuickSearch) {
             this.value = "";
         }
-
-        if (!this.query) {
+        if (noSearchOnEmptyQuery && !this.query) {
             this.data.clear();
         }
     }
@@ -164,7 +165,7 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
      */
     @action.bound
     async search(query: string) {
-        if (this.props.querySearcher && query && query.trim().length) {
+        if (this.props.querySearcher && (!this.props.noSearchOnEmptyQuery || query.trim().length)) {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
             runInAction("replaceResults", () => {
@@ -233,6 +234,13 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
         }
     }
 
+    @action.bound
+    onFocus() {
+        if (!this.data.size && !this.props.noSearchOnEmptyQuery) {
+            this.search(this.query);
+        }
+    }
+
     render() {
         const {keyResolver, querySearcher, theme: pTheme, isQuickSearch, autoSelect, ...props} = this.props;
         return (
@@ -245,10 +253,11 @@ export class Autocomplete<T extends "string" | "number"> extends React.Component
                             multiple={false}
                             source={this.source}
                             query={this.query}
-                            onQueryChange={this.onQueryChange}
+                            onQueryChange={(query?: string) => this.onQueryChange(query ?? "")}
+                            onFocus={this.onFocus}
                             maxLength={undefined}
                             suggestionMatch="disabled"
-                            type="text"
+                            type="search"
                             theme={theme}
                             ref={ref => (this.autocomplete = ref)}
                             onKeyDown={this.onKeyDown}
