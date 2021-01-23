@@ -174,14 +174,22 @@ export class CollectionStore<T = any, C = any> {
         }
 
         return (this.localStoreConfig?.facetDefinitions ?? []).map(
-            ({code, fieldName, label, displayFormatter = x => x, ordering = "count-desc"}) => ({
+            ({
+                code,
+                fieldName,
+                label,
+                isMultiSelectable = false,
+                canExclude = false,
+                displayFormatter = x => x,
+                ordering = "count-desc"
+            }) => ({
                 code,
                 label,
-                isMultiSelectable: false,
+                isMultiSelectable,
                 isMultiValued: false,
-                canExclude: false,
+                canExclude,
                 values: orderBy(
-                    toPairs(groupBy(this.list, fieldName))
+                    toPairs(groupBy(isMultiSelectable || canExclude ? this.innerList : this.list, fieldName))
                         .map(([value, list]) => ({
                             code: value,
                             label: displayFormatter(value),
@@ -253,18 +261,38 @@ export class CollectionStore<T = any, C = any> {
         if (this.localStoreConfig?.facetDefinitions) {
             list = list.filter(item =>
                 this.localStoreConfig!.facetDefinitions!.every(f => {
-                    const selected = this.innerInputFacets.get(f.code)?.selected;
-                    if (!selected) {
+                    const inputFacet = this.innerInputFacets.get(f.code);
+                    if (!inputFacet) {
                         return true;
                     }
+
+                    const {selected = [], excluded = []} = inputFacet;
                     const value = item[f.fieldName];
-                    if (typeof value === "number") {
-                        return value === parseFloat(selected[0]) || undefined;
-                    } else if (typeof value === "boolean") {
-                        return value === (selected[0] === "true");
+
+                    if (selected.length) {
+                        return selected.some(s => {
+                            if (typeof value === "number") {
+                                return value === parseFloat(s) || undefined;
+                            } else if (typeof value === "boolean") {
+                                return value === (s === "true");
+                            } else {
+                                // tslint:disable-next-line: triple-equals
+                                return value == (s as any);
+                            }
+                        });
+                    } else if (excluded.length) {
+                        return excluded.every(s => {
+                            if (typeof value === "number") {
+                                return value !== parseFloat(s) || undefined;
+                            } else if (typeof value === "boolean") {
+                                return value !== (s === "true");
+                            } else {
+                                // tslint:disable-next-line: triple-equals
+                                return value !== (s as any);
+                            }
+                        });
                     } else {
-                        // tslint:disable-next-line: triple-equals
-                        return value == (selected[0] as any);
+                        return true;
                     }
                 })
             );

@@ -17,6 +17,10 @@ export interface LocalStoreConfig<T> {
         fieldName: keyof T;
         /** Type de tri pour les valeurs de facettes. Par défaut : "count-desc". */
         ordering?: "key-asc" | "key-desc" | "count-asc" | "count-desc";
+        /** Facette multisélectionnable. */
+        isMultiSelectable?: boolean;
+        /** Possibilité d'exclure des valeurs. */
+        canExclude?: boolean;
         /** Mise en forme de la valeur pour affichage (ex: liste de référence, date...) */
         displayFormatter?: (value: string) => string;
     }[];
