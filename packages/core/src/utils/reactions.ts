@@ -1,7 +1,8 @@
 import {autorun, IReactionOptions, reaction, when} from "mobx";
+import {ComponentLifecycle} from "react";
 
 /** Classe React. */
-export type RCL = React.ComponentLifecycle<any, any> & {[key: string]: any};
+export type RCL = ComponentLifecycle<any, any> & {[key: string]: any};
 
 /** Type d'expressions possibles pour le décorateur de réaction. */
 export type ReactionExpression<T> = ((inst: T) => () => any) | (() => any);

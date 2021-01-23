@@ -1,6 +1,5 @@
 // Libs
 import {mount} from "enzyme";
-import * as React from "react";
 import {InputDate} from "../input-date";
 
 // Components

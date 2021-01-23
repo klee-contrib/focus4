@@ -1,6 +1,6 @@
 import {flatten} from "lodash";
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {ComponentType, ReactNode, useEffect, useMemo} from "react";
 
 import {autocompleteFor, AutocompleteResult, fieldFor, FieldOptions, selectFor} from "@focus4/forms";
 import {EntityField, FieldEntry, makeField, Metadata, ReferenceList, validateField, Validator} from "@focus4/stores";
@@ -25,33 +25,33 @@ export function FieldWrapper<F extends FieldEntry>({
     validator: pValidator,
     values
 }: {
-    AutocompleteComponent?: React.ComponentType<any>;
+    AutocompleteComponent?: ComponentType<any>;
     className?: string;
-    comment?: React.ReactNode;
-    DisplayComponent?: React.ComponentType<any>;
+    comment?: ReactNode;
+    DisplayComponent?: ComponentType<any>;
     displayFormatter?: (value: any) => string;
     error?: string;
     field: EntityField<F>;
-    InputComponent?: React.ComponentType<any>;
+    InputComponent?: ComponentType<any>;
     isEdit: boolean;
     label?: string;
-    LabelComponent?: React.ComponentType<any>;
+    LabelComponent?: ComponentType<any>;
     isRequired?: boolean;
     onErrorChange: (error: string | undefined) => void;
     options: FieldOptions<F> & {
         keyResolver?: (key: number | string) => Promise<string | undefined>;
         querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     };
-    SelectComponent?: React.ComponentType<any>;
+    SelectComponent?: ComponentType<any>;
     type: "autocomplete" | "input" | "select";
     validator?: Validator<any> | Validator<any>[];
     values?: ReferenceList;
 }) {
     // On vide l'erreur si on enlève le champ.
-    React.useEffect(() => () => onErrorChange(undefined), [pField.$field.name]);
+    useEffect(() => () => onErrorChange(undefined), [pField.$field.name]);
 
     return useObserver(() => {
-        const field = React.useMemo(
+        const field = useMemo(
             () =>
                 makeField(pField.$field.name, f =>
                     f
@@ -86,7 +86,7 @@ export function FieldWrapper<F extends FieldEntry>({
             ]
         );
 
-        const error = React.useMemo(() => {
+        const error = useMemo(() => {
             const {validator: dValidator} = field.$field.domain;
             const e =
                 pError ??
@@ -99,7 +99,7 @@ export function FieldWrapper<F extends FieldEntry>({
             return e;
         }, [pError, field.value, isEdit, field.$field.isRequired, pValidator]);
 
-        const formField = React.useMemo(
+        const formField = useMemo(
             () => ({
                 $field: field.$field,
                 get value() {

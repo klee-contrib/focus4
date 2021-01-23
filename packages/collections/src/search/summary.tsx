@@ -1,6 +1,5 @@
 import i18next from "i18next";
 import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
 
 import {CollectionStore, FormEntityField} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";

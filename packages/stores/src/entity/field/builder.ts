@@ -1,6 +1,6 @@
 import {isFunction} from "lodash";
 import {extendObservable} from "mobx";
-import {ComponentType} from "react";
+import {ComponentType, ReactNode} from "react";
 
 import {themeable} from "@focus4/core";
 
@@ -35,7 +35,7 @@ export interface Metadata<T = any, ICProps = any, SCProps = any, ACProps = any, 
     /** Classe CSS pour le champ. */
     className?: string;
     /** Commentaire du champ. */
-    comment?: React.ReactNode;
+    comment?: ReactNode;
     /** Formatteur pour l'affichage du champ en consulation. */
     displayFormatter?: (value: T | undefined) => string;
     /** Champ obligatoire. */

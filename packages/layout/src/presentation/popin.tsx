@@ -1,4 +1,4 @@
-import * as React from "react";
+import {PropsWithChildren, useContext} from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
@@ -40,9 +40,9 @@ export function Popin({
     scrollBehaviour,
     theme: pTheme,
     type = "from-right"
-}: React.PropsWithChildren<PopinProps>) {
+}: PropsWithChildren<PopinProps>) {
     const theme = useTheme("popin", popinCss, pTheme);
-    const context = React.useContext(ScrollableContext);
+    const context = useContext(ScrollableContext);
 
     return context.portal(
         <>

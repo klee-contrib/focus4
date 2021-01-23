@@ -2,7 +2,7 @@ import classNames from "classnames";
 import i18next from "i18next";
 import {uniqueId} from "lodash";
 import {useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
+import {useContext, useLayoutEffect, useMemo} from "react";
 
 import {themeable} from "@focus4/core";
 import {
@@ -52,7 +52,7 @@ let nameMap: [string, string][] = [];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & FieldOptions<F> & FieldComponents) {
-    const context = React.useContext(FormContext);
+    const context = useContext(FormContext);
     const theme = useTheme("field", fieldCss, props.theme);
 
     const {
@@ -72,14 +72,14 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
     } = props;
 
     /** On définit au premier rendu un identifiant unique pour le field. */
-    const fieldId = React.useMemo(() => uniqueId("field_"), []);
+    const fieldId = useMemo(() => uniqueId("field_"), []);
 
     /**
      * Toujours au premier rendu, on détermine l'id que l'on va mettre sur le label et l'input.
      * On se base sur le `name` du champ, et on va regarder si on a pas déjà posé un champ avec le même `name`.
      * Si oui, on suffixera le `name` par un numéro pour garder un id unique.
      */
-    const id = React.useMemo(() => {
+    const id = useMemo(() => {
         const {name} = field.$field;
         const count = nameMap.filter(([_, n]) => n === name).length;
         nameMap.push([fieldId, name]); // On s'ajoute dans la map ici.
@@ -91,7 +91,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
     }, []);
 
     /* On enlève le field de la map des fields de la page quand on le démonte. */
-    React.useLayoutEffect(
+    useLayoutEffect(
         () => () => {
             nameMap = nameMap.filter(([fid]) => fieldId !== fid);
         },

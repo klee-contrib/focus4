@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {difference, toPairs} from "lodash";
 import {useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
+import {ReactElement, useEffect, useRef, useState} from "react";
 
 import {fieldFor, SelectCheckbox} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
@@ -15,7 +15,7 @@ export {searchBarCss, SearchBarCss};
 /** Props de la SearchBar. */
 export interface SearchBarProps<T, C> {
     /** Rendu du composant du critère. */
-    criteriaComponent?: React.ReactElement;
+    criteriaComponent?: ReactElement;
     /** Active la gestion des critères dans le champ texte. */
     enableInputCriteria?: boolean;
     /** Préfixe i18n pour les libellés et les icônes. Par défaut : "focus" */
@@ -41,10 +41,10 @@ export function SearchBar<T, C>({
     theme: pTheme
 }: SearchBarProps<T, C>) {
     /** L'input HTML. */
-    const input = React.useRef<HTMLInputElement>(null);
+    const input = useRef<HTMLInputElement>(null);
 
     /** Affiche le panneau pour les critères et la sélection des champs textes. */
-    const [showPanel, setShowPanel] = React.useState(false);
+    const [showPanel, setShowPanel] = useState(false);
 
     const state = useLocalStore(() => ({
         /** La liste des critères saisis dans le champ texte. */
@@ -165,7 +165,7 @@ export function SearchBar<T, C>({
         setShowPanel(v => !v);
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         /** Met le focus sur la barre de recherche. */
         input.current?.focus();
         input.current?.setSelectionRange(state.text.length, state.text.length);

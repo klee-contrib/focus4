@@ -1,4 +1,3 @@
-import * as React from "react";
 import posed from "react-pose";
 
 import {CSSProp, defaultPose, getIcon, useTheme} from "@focus4/styling";

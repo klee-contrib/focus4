@@ -3,7 +3,7 @@ import {range, takeWhile} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import numeral from "numeral";
-import * as React from "react";
+import {Component} from "react";
 
 import {Input as RTInput, InputProps as RTInputProps} from "@focus4/toolbox";
 
@@ -37,7 +37,7 @@ export interface InputProps<T extends "string" | "number"> extends RTInputProps 
 }
 
 @observer
-export class Input<T extends "string" | "number"> extends React.Component<InputProps<T>> {
+export class Input<T extends "string" | "number"> extends Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement;
     protected mask?: InputMask;
 

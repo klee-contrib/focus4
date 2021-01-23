@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {TIME_PICKER} from "react-toolbox/lib/identifiers";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import RTClock from "react-toolbox/lib/time_picker/Clock";
@@ -17,7 +17,7 @@ export interface ClockProps {
     time?: Date;
 }
 
-export const Clock = React.forwardRef<unknown, ClockProps>((props, ref) => {
+export const Clock = forwardRef<unknown, ClockProps>((props, ref) => {
     const theme = useTheme(TIME_PICKER, timePickerTheme, props.theme);
     return <RTClock ref={ref} {...props} theme={fromBem(theme)} />;
 });

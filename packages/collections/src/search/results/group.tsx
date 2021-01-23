@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
+import {ComponentType, useContext} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
@@ -16,7 +16,7 @@ export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
     /** Header de groupe personnalisé. */
-    GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
+    GroupHeader?: ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe. */
     groupOperationList?: OperationListItem<T[]>[];
     /** Affiche la sélection sur l'ActionBar et les lignes. */
@@ -24,7 +24,7 @@ export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Composant de liste. */
-    ListComponent?: React.ComponentType<P & {store: CollectionStore<T>}>;
+    ListComponent?: ComponentType<P & {store: CollectionStore<T>}>;
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,
@@ -52,7 +52,7 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
     useGroupActionBars
 }: GroupProps<T, P>) {
     const theme = useTheme("group", groupCss, pTheme);
-    const context = React.useContext(ScrollableContext);
+    const context = useContext(ScrollableContext);
     const state = useLocalStore(() => ({
         /** Store pour le groupe. */
         get store(): CollectionStore<T> {

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import * as React from "react";
+import {useContext} from "react";
 import {DialogProps} from "react-toolbox/lib/dialog";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
@@ -21,7 +21,7 @@ export function Dialog({
     theme: pTheme
 }: DialogProps & {theme?: CSSProp<DialogCss>}) {
     const theme = useTheme("dialog", dialogCss, pTheme);
-    const context = React.useContext(ScrollableContext);
+    const context = useContext(ScrollableContext);
 
     return context.portal(
         <>

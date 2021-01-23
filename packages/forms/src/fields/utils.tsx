@@ -1,6 +1,5 @@
 import {upperFirst} from "lodash";
 import {action} from "mobx";
-import * as React from "react";
 
 import {
     AutocompleteComponents,

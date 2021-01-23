@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef, ForwardRefExoticComponent, RefAttributes} from "react";
 import {LINK} from "react-toolbox/lib/identifiers";
 import {Link as RTLink, LinkProps as RTLinkProps, LinkTheme} from "react-toolbox/lib/link/Link";
 
@@ -8,11 +8,9 @@ const linkTheme: LinkTheme = rtLinkTheme;
 export {linkTheme};
 
 type LinkProps = Omit<RTLinkProps, "theme"> & {theme?: CSSProp<LinkTheme>};
-export const Link: React.ForwardRefExoticComponent<LinkProps & React.RefAttributes<RTLink>> = React.forwardRef(
-    (props, ref) => {
-        const theme = useTheme(LINK, linkTheme, props.theme);
-        return <RTLink ref={ref} {...props} theme={fromBem(theme)} />;
-    }
-);
+export const Link: ForwardRefExoticComponent<LinkProps & RefAttributes<RTLink>> = forwardRef((props, ref) => {
+    const theme = useTheme(LINK, linkTheme, props.theme);
+    return <RTLink ref={ref} {...props} theme={fromBem(theme)} />;
+});
 
 export {LinkProps, LinkTheme};

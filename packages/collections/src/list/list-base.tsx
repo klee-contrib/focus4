@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {isEqual} from "lodash";
 import {extendObservable, observe} from "mobx";
 import {useAsObservableSource, useLocalStore} from "mobx-react";
-import * as React from "react";
+import {useContext, useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
@@ -43,7 +43,7 @@ export function useListBase<T>({
     showAllHandler,
     store
 }: ListBaseProps<T> & {data?: T[]; store?: CollectionStore<T>}) {
-    const context = React.useContext(ScrollableContext);
+    const context = useContext(ScrollableContext);
     const theme = useTheme("listBase", listBaseCss, baseTheme);
     const oData = useAsObservableSource({data, isLoading});
     const state = useLocalStore(() => ({
@@ -130,7 +130,7 @@ export function useListBase<T>({
     }));
 
     /** (Ré)initialise la pagination dès que les données affichées changent. */
-    React.useEffect(
+    useEffect(
         () =>
             observe(state, "displayedData", ({oldValue, newValue}) => {
                 if (
@@ -143,7 +143,7 @@ export function useListBase<T>({
         []
     );
 
-    const [res] = React.useState(() =>
+    const [res] = useState(() =>
         extendObservable(
             {
                 i18nPrefix,

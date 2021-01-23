@@ -1,4 +1,4 @@
-import * as React from "react";
+import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -6,7 +6,7 @@ import headerCss, {HeaderCss} from "../__style__/header.css";
 
 /** Props du HeaderBarLeft. */
 export interface HeaderBarLeftProps {
-    children?: React.ReactNode;
+    children?: ReactNode;
     theme?: CSSProp<HeaderCss>;
 }
 

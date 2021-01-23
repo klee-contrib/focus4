@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {
     Dropdown as DropdownType,
     dropdownFactory,
@@ -16,7 +16,7 @@ import {Input} from "./input";
 
 const RTDropdown = dropdownFactory(Input as any);
 type DropdownProps = Omit<RTDropdownProps, "theme"> & {theme?: CSSProp<DropdownTheme>};
-export const Dropdown = React.forwardRef<DropdownType, DropdownProps>((props, ref) => {
+export const Dropdown = forwardRef<DropdownType, DropdownProps>((props, ref) => {
     const theme = useTheme(DROPDOWN, dropdownTheme, props.theme);
     return <RTDropdown ref={ref} {...props} theme={fromBem(theme)} />;
 });

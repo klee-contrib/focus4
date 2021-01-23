@@ -1,5 +1,4 @@
 import i18next from "i18next";
-import * as React from "react";
 import {useDragLayer} from "react-dnd";
 
 import {CSSProp, useTheme} from "@focus4/styling";

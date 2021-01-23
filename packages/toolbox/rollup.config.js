@@ -31,6 +31,7 @@ const config = {
         "mobx-react",
         "ramda/src/dissoc",
         "react",
+        "react/jsx-runtime",
         "react-dom",
         "react-toolbox/lib/app_bar/AppBar",
         "react-toolbox/lib/autocomplete/Autocomplete",

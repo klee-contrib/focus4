@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {ComponentType} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp} from "@focus4/styling";
@@ -11,7 +11,7 @@ export {Group, GroupCss, groupCss};
 /** Props de Results. */
 export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Header de groupe personnalisé. */
-    GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
+    GroupHeader?: ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe par groupe (code / valeur). */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
@@ -29,7 +29,7 @@ export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de liste. */
-    ListComponent?: React.ComponentType<P & {store: CollectionStore<T>}>;
+    ListComponent?: ComponentType<P & {store: CollectionStore<T>}>;
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,

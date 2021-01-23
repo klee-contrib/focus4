@@ -29,6 +29,7 @@ const config = {
         "moment",
         "moment-timezone",
         "react",
+        "react/jsx-runtime",
         "react-dom",
         "tslib",
         "uuid"

@@ -1,9 +1,11 @@
+import {CSSProperties, ReactNode} from "react";
+
 import {ReferenceList} from "../../reference";
 
 export type OmitWithTheme<T extends {theme?: object}, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
 
 export interface BaseInputProps {
-    error?: React.ReactNode;
+    error?: ReactNode;
     id?: string;
     name?: string;
     onChange?: (value: any) => void;
@@ -29,11 +31,11 @@ export interface BaseDisplayProps {
 }
 
 export interface BaseLabelProps {
-    comment?: React.ReactNode;
+    comment?: ReactNode;
     i18nPrefix?: string;
     label?: string;
     id?: string;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
     theme?: object;
 }
 
@@ -77,7 +79,6 @@ export interface FieldComponents<
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
     LCProps extends BaseLabelProps = any
->
-    extends InputComponents<ICProps, DCProps, LCProps>,
+> extends InputComponents<ICProps, DCProps, LCProps>,
         SelectComponents<SCProps, DCProps, LCProps>,
         AutocompleteComponents<ACProps, DCProps, LCProps> {}

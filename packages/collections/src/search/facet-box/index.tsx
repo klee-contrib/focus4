@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {action, comparer, observable, reaction} from "mobx";
+import {ElementType, SyntheticEvent, useEffect, useState} from "react";
 import {useObserver} from "mobx-react";
-import * as React from "react";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, fromBem, getIcon, useTheme} from "@focus4/styling";
@@ -17,7 +17,7 @@ export {FacetBoxCss, FacetCss, facetBoxCss, facetCss};
 /** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
     /** Composant personnalisés pour affichage d'une facette en particulier. */
-    customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
+    customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
@@ -52,8 +52,8 @@ export function FacetBox<T>({
     const facetTheme = useTheme("facet", facetCss);
 
     // Map pour contrôler les facettes qui sont ouvertes, initialisée une seule fois après le premier chargement du store (le service renvoie toujours toutes les facettes).
-    const [openedMap] = React.useState(() => observable.map<string, boolean>());
-    React.useEffect(
+    const [openedMap] = useState(() => observable.map<string, boolean>());
+    useEffect(
         () =>
             reaction(
                 () => store.facets.map(f => f.code),
@@ -82,7 +82,7 @@ export function FacetBox<T>({
         }
     }
 
-    const clearFacets = action((e: React.SyntheticEvent<HTMLButtonElement>) => {
+    const clearFacets = action((e: SyntheticEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         store.removeFacetValue();
         onClear?.();

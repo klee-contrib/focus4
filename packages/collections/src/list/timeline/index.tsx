@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {ComponentType} from "react";
 
 import {CollectionStore, EntityField, FieldEntry} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -22,19 +22,19 @@ export {timelineCss, TimelineCss};
 /** Props du composant de TimeLine. */
 export type TimelineProps<T> = ListBaseProps<T> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
-    AddItemComponent?: React.ComponentType<AddItemProps<T>>;
+    AddItemComponent?: ComponentType<AddItemProps<T>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Le sélecteur du champ contenant la date. */
     dateSelector: (data: T) => EntityField<FieldEntry<"string">>;
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentType<EmptyProps<T>>;
+    EmptyComponent?: ComponentType<EmptyProps<T>>;
     /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
+    LoadingComponent?: ComponentType<LoadingProps<T>>;
     /** CSS. */
     theme?: CSSProp<TimelineCss>;
     /** Le composant de ligne. */
-    TimelineComponent: React.ComponentType<{data: T}>;
+    TimelineComponent: ComponentType<{data: T}>;
 } & (
         | {
               /** Les données. */

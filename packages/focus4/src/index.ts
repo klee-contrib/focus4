@@ -11,8 +11,7 @@ import i18next from "i18next";
 export {i18next as i18n};
 export {action, autorun, computed, observable} from "mobx";
 export {disposeOnUnmount, observer, useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
-export {React};
+export {Component, useEffect, useState, useRef} from "react";
 
 export {advancedSearchFor, listFor, tableFor, timelineFor} from "./collections";
 export {Panel} from "./components";

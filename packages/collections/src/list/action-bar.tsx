@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {reduce} from "lodash";
 import {action, reaction} from "mobx";
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {useEffect, useState} from "react";
 import posed, {Transition} from "react-pose";
 
 import {CollectionStore} from "@focus4/stores";
@@ -68,7 +68,7 @@ export function ActionBar<T>({
     theme: pTheme
 }: ActionBarProps<T>) {
     /** Affiche la FacetBox. */
-    const [displayFacetBox, setDisplayFacetBox] = React.useState(false);
+    const [displayFacetBox, setDisplayFacetBox] = useState(false);
 
     const theme = useTheme("actionBar", actionBarCss, pTheme);
 
@@ -120,7 +120,7 @@ export function ActionBar<T>({
     }
 
     /** Réaction permettant de fermer la FacetBox et de mettre à jour sa hauteur à chaque fois que c'est nécessaire (changement de son contenu).  */
-    React.useEffect(
+    useEffect(
         () =>
             reaction(
                 () => (hasFacetBox && store.facets.length && store.facets[0]) || false,

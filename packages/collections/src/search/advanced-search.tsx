@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
+import {ComponentType, ElementType, useContext, useEffect, useState} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
@@ -31,7 +31,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** CSS de l'ActionBar. */
     actionBarTheme?: CSSProp<ActionBarCss>;
     /** Composant personnalisé pour le bouton "Ajouter". */
-    AddItemComponent?: React.ComponentType<AddItemProps<T>>;
+    AddItemComponent?: ComponentType<AddItemProps<T>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Permet de supprimer le tri. Par défaut : true */
@@ -53,7 +53,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
      */
     chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
-    customFacetComponents?: {[facet: string]: React.ElementType<FacetProps>};
+    customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
     /** Emplacement de la FacetBox. Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "sticky" | "fixed-sticky" | "none";
     /** CSS de la FacetBox (si position = "left") */
@@ -66,7 +66,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
     groupableFacets?: string[];
     /** Header de groupe personnalisé. */
-    GroupHeader?: React.ComponentType<{group: GroupResult<T>}>;
+    GroupHeader?: ComponentType<{group: GroupResult<T>}>;
     /** Actions de groupe par scope. */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
@@ -102,7 +102,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Chargement manuel (à la place du scroll infini). */
     isManualFetch?: boolean;
     /** Composant de liste. */
-    ListComponent?: React.ComponentType<P & {store: CollectionStore<T>}>;
+    ListComponent?: ComponentType<P & {store: CollectionStore<T>}>;
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,
@@ -182,12 +182,12 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     theme: pTheme,
     useGroupActionBars
 }: AdvancedSearchProps<T, P>) {
-    const [rootNode, setRootNode] = React.useState<HTMLDivElement | null>(null);
-    const context = React.useContext(ScrollableContext);
+    const [rootNode, setRootNode] = useState<HTMLDivElement | null>(null);
+    const context = useContext(ScrollableContext);
     const theme = useTheme("advancedSearch", advancedSearchCss, pTheme);
     const listContext = useLocalStore(() => ({addItemHandler, mode}));
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (searchOnMount) {
             store.search();
         }

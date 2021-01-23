@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import * as React from "react";
+import {Component, ComponentType, forwardRef, ReactNode} from "react";
 import ReactToolbox from "react-toolbox/lib";
 import {TOOLTIP} from "react-toolbox/lib/identifiers";
 import events from "react-toolbox/lib/utils/events";
@@ -38,8 +38,8 @@ export interface TooltipOptions {
 }
 
 export interface TooltipProps extends ReactToolbox.Props, Omit<TooltipOptions, "theme"> {
-    children?: React.ReactNode;
-    tooltip?: React.ReactNode;
+    children?: ReactNode;
+    tooltip?: ReactNode;
 }
 
 export function tooltipFactory({
@@ -51,32 +51,31 @@ export function tooltipFactory({
     tooltipShowOnClick = false,
     theme = {}
 }: TooltipOptions = {}) {
-    return function Tooltip<P>(ComposedComponent: React.ComponentType<P> | string) {
-        return React.forwardRef<
-            TooltippedComponent<P>,
-            P & Omit<TooltipProps, "theme"> & {theme?: CSSProp<TooltipTheme>}
-        >((p, ref) => {
-            const finalTheme = fromBem(useTheme(TOOLTIP, tooltipTheme, p.theme, theme));
-            return (
-                <TooltippedComponent
-                    ref={ref}
-                    className={className}
-                    tooltipDelay={tooltipDelay}
-                    tooltipHideOnClick={tooltipHideOnClick}
-                    tooltipPassthrough={tooltipPassthrough}
-                    tooltipPosition={tooltipPosition}
-                    tooltipShowOnClick={tooltipShowOnClick}
-                    {...p}
-                    theme={finalTheme}
-                    ComposedComponent={ComposedComponent}
-                />
-            );
-        });
+    return function Tooltip<P>(ComposedComponent: ComponentType<P> | string) {
+        return forwardRef<TooltippedComponent<P>, P & Omit<TooltipProps, "theme"> & {theme?: CSSProp<TooltipTheme>}>(
+            (p, ref) => {
+                const finalTheme = fromBem(useTheme(TOOLTIP, tooltipTheme, p.theme, theme));
+                return (
+                    <TooltippedComponent
+                        ref={ref}
+                        className={className}
+                        tooltipDelay={tooltipDelay}
+                        tooltipHideOnClick={tooltipHideOnClick}
+                        tooltipPassthrough={tooltipPassthrough}
+                        tooltipPosition={tooltipPosition}
+                        tooltipShowOnClick={tooltipShowOnClick}
+                        {...p}
+                        theme={finalTheme}
+                        ComposedComponent={ComposedComponent}
+                    />
+                );
+            }
+        );
     };
 }
 
-class TooltippedComponent<P> extends React.Component<
-    TooltipProps & {theme: TooltipTheme} & {ComposedComponent: React.ComponentType<P> | string}
+class TooltippedComponent<P> extends Component<
+    TooltipProps & {theme: TooltipTheme} & {ComposedComponent: ComponentType<P> | string}
 > {
     state = {
         active: false,

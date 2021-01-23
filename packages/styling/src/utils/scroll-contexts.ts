@@ -1,4 +1,4 @@
-import * as React from "react";
+import {createContext, HTMLProps, ReactPortal} from "react";
 
 export interface PanelDescriptor {
     node: HTMLDivElement;
@@ -6,7 +6,7 @@ export interface PanelDescriptor {
 }
 
 /** Contexte d'un Scrollable, expose les méthodes associées. */
-export const ScrollableContext = React.createContext<{
+export const ScrollableContext = createContext<{
     /**
      * Affiche un élement dans le menu sticky du Scrollable
      * @param node Le noeud React.
@@ -14,13 +14,13 @@ export const ScrollableContext = React.createContext<{
      * @param retractable Menu rétractable.
      * @returns Le Portal associé.
      */
-    menu(node: JSX.Element, parentNode: HTMLElement | null, retractable: boolean): React.ReactPortal | null;
+    menu(node: JSX.Element, parentNode: HTMLElement | null, retractable: boolean): ReactPortal | null;
     /**
      * Affiche un élement dans le Scrollable.
      * @param node Le noeud React.
      * @returns Le Portal associé.
      */
-    portal(node: JSX.Element): React.ReactPortal;
+    portal(node: JSX.Element): ReactPortal;
     /**
      * Enregistre le header dans le Scrollable
      * @param nonStickyElement Le noeud DOM représentant le header non sticky.
@@ -33,7 +33,7 @@ export const ScrollableContext = React.createContext<{
      * @param headerProps Les props du header.
      * @returns Le disposer.
      */
-    registerHeaderProps(headerProps: React.HTMLProps<HTMLElement>): void;
+    registerHeaderProps(headerProps: HTMLProps<HTMLElement>): void;
     /**
      * Enregistre un observateur d'intersection avec le viewport du Scrollable.
      * @param node Le noeud DOM à observer.
@@ -49,7 +49,7 @@ export const ScrollableContext = React.createContext<{
 }>({} as any);
 
 /** Contexte d'un ScrollspyContainer, expose les méthodes associées. */
-export const ScrollspyContext = React.createContext({
+export const ScrollspyContext = createContext({
     /**
      * Enregistre un panel dans le Scrollspu
      * @param name L'id du panel souhaité.

@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {SWITCH} from "react-toolbox/lib/identifiers";
 import {
     Switch as SwitchType,
@@ -25,13 +25,13 @@ export interface SwitchProps extends Omit<RTSwitchProps, "theme"> {
 }
 
 const RTThumb = thumbFactory(rippleFactory({rippleCentered: true, rippleSpread: 2.6}));
-const Thumb = React.forwardRef<unknown, unknown>((props, ref) => {
+const Thumb = forwardRef<unknown, unknown>((props, ref) => {
     const theme = useTheme(SWITCH, switchTheme);
     return <RTThumb ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTSwitch = switchFactory(Thumb);
-export const Switch = React.forwardRef<SwitchType, SwitchProps>((props, ref) => {
+export const Switch = forwardRef<SwitchType, SwitchProps>((props, ref) => {
     const theme = useTheme(SWITCH, switchTheme);
 
     // On remplace `value` par `checked`.

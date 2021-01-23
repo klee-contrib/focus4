@@ -284,8 +284,8 @@ Le composant racine d'une application pourrait ressembler à ça :
 ```tsx
 export function Main() {
     // Cet effet permet de réinitialiser le scroll de la page à chaque changement de module.
-    const scrollable = React.useContext(ScrollableContext);
-    React.useLayoutEffect(() => {
+    const scrollable = useContext(ScrollableContext);
+    useLayoutEffect(() => {
         scrollable.scrollTo({left: 0, top: 0, behavior: "auto"});
     });
 

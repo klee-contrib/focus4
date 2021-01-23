@@ -1,5 +1,5 @@
 import {useAsObservableSource} from "mobx-react";
-import * as React from "react";
+import {createContext, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -9,7 +9,7 @@ export {formCss, FormCss};
 /** Options additionnelles du Form. */
 export interface FormProps {
     /** Children. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** Force l'affichage des erreurs sur les champs. */
     forceErrorDisplay?: boolean;
     /** Modifie le labelRatio par défaut des champs posés dans le formulaire (33%); */
@@ -24,7 +24,7 @@ export interface FormProps {
     valueRatio?: number;
 }
 
-export const FormContext = React.createContext({
+export const FormContext = createContext({
     forceErrorDisplay: false,
     labelRatio: undefined as number | undefined,
     valueRatio: undefined as number | undefined

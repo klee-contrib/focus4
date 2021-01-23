@@ -1,4 +1,4 @@
-import * as React from "react";
+import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -10,7 +10,7 @@ export {HeaderSummary} from "./summary";
 
 /** Props du HeaderTopRow. */
 export interface HeaderTopRowProps {
-    children?: React.ReactNode;
+    children?: ReactNode;
     theme?: CSSProp<HeaderCss>;
 }
 

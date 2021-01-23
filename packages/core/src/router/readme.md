@@ -152,7 +152,7 @@ Puisque l'on vient d'établir un `ViewStore` comme étant l'unique source de vé
 Par exemple, si je veux charger des données qui dépendent de l'ID courant dans un composant, alors il serait idéal de faire comme ceci :
 
 ```tsx
-class Component extends React.Component {
+class Component extends Component {
     @disposeOnUnmount
     load = autorun(() => {
         viewStore.withView(async ({id}) => id && (this.data = await loadData(+id)));

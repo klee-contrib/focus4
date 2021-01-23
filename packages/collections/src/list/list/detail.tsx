@@ -1,4 +1,4 @@
-import * as React from "react";
+import {ComponentType, forwardRef, Ref} from "react";
 import posed from "react-pose";
 
 import {defaultPose, ToBem} from "@focus4/styling";
@@ -21,15 +21,15 @@ export interface DetailWrapperProps {
     mosaic: {width: number; height: number};
     isAddItemShown: boolean;
     byLine: number;
-    DetailComponent: React.ComponentType<DetailProps<{}>>;
+    DetailComponent: ComponentType<DetailProps<{}>>;
     closeDetail: () => void;
     item: {};
     theme: ToBem<ListCss>;
 }
 
 /** Wrapper pour le composant de détail. */
-export const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
-    React.forwardRef(
+export const DetailWrapper: ComponentType<DetailWrapperProps> = posed(
+    forwardRef(
         (
             {
                 displayedIdx,
@@ -42,7 +42,7 @@ export const DetailWrapper: React.ComponentType<DetailWrapperProps> = posed(
                 item,
                 theme
             }: DetailWrapperProps,
-            ref: React.Ref<HTMLLIElement>
+            ref: Ref<HTMLLIElement>
         ) => (
             <li ref={ref} className={theme.detailWrapper()}>
                 {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident...

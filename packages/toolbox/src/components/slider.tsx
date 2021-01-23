@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {SLIDER} from "react-toolbox/lib/identifiers";
 import {
     Slider as SliderType,
@@ -17,7 +17,7 @@ import {ProgressBar} from "./progress-bar";
 
 const RTSlider = sliderFactory(ProgressBar as any, Input as any);
 type SliderProps = Omit<RTSliderProps, "theme"> & {theme?: CSSProp<SliderTheme>};
-export const Slider = React.forwardRef<SliderType, SliderProps>((props, ref) => {
+export const Slider = forwardRef<SliderType, SliderProps>((props, ref) => {
     const theme = useTheme(SLIDER, sliderTheme, props.theme);
     return <RTSlider ref={ref} {...props} theme={fromBem(theme)} />;
 });

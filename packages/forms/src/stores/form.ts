@@ -1,6 +1,6 @@
 import {isFunction} from "lodash";
 import {disposeOnUnmount} from "mobx-react";
-import {useEffect, useState} from "react";
+import {Component, useEffect, useState} from "react";
 
 import {
     EntityToType,
@@ -25,7 +25,7 @@ import {
  * @param initialData Les données initiales du formulaire
  */
 export function makeFormNode<E, NE = E>(
-    componentClass: React.Component | null,
+    componentClass: Component | null,
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)
@@ -40,13 +40,13 @@ export function makeFormNode<E, NE = E>(
  * @param initialData Les données initiales du formulaire
  */
 export function makeFormNode<E, NE = E>(
-    componentClass: React.Component | null,
+    componentClass: Component | null,
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
 ): FormListNode<NE, E>;
 export function makeFormNode(
-    componentClass: React.Component | null,
+    componentClass: Component | null,
     node: StoreNode | StoreListNode,
     builder: Function = (x: any) => x,
     initialData?: any
@@ -123,7 +123,7 @@ export function makeFormActions<
     A extends ReadonlyArray<any> = never,
     S extends string = never
 >(
-    componentClass: React.Component | null,
+    componentClass: Component | null,
     formNode: FN,
     builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, S>
 ): FormActions<S> {
@@ -146,7 +146,7 @@ export function useFormActions<
     return formActions;
 }
 
-function withDisposer(formNode: any, componentClass: React.Component | null) {
+function withDisposer(formNode: any, componentClass: Component | null) {
     if (componentClass && formNode.dispose) {
         disposeOnUnmount(componentClass, formNode.dispose);
     }

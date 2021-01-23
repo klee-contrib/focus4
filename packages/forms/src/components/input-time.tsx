@@ -3,7 +3,7 @@ import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
-import * as React from "react";
+import {Component} from "react";
 import {findDOMNode} from "react-dom";
 
 import {themr} from "@focus4/styling";
@@ -31,7 +31,7 @@ export interface InputTimeProps extends InputProps<"string"> {
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
-export class InputTime extends React.Component<InputTimeProps> {
+export class InputTime extends Component<InputTimeProps> {
     protected clock?: HTMLDivElement | null;
     protected clockComp?: any;
     protected scrollParent!: Element;

@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import dissoc from "ramda/src/dissoc";
-import * as React from "react";
+import {Component, ComponentType, forwardRef, ReactNode} from "react";
 import {findDOMNode} from "react-dom";
 import ReactToolbox from "react-toolbox/lib";
 import {RIPPLE} from "react-toolbox/lib/identifiers";
@@ -22,7 +22,7 @@ export interface RippleOptions {
 }
 
 export interface RippleProps extends ReactToolbox.Props, Omit<RippleOptions, "theme"> {
-    children?: React.ReactNode;
+    children?: ReactNode;
     disabled?: boolean;
     onRippleEnded?: Function;
     ripple?: boolean;
@@ -35,8 +35,8 @@ export function rippleFactory({
     rippleSpread = 2,
     theme = {}
 }: RippleOptions = {}) {
-    return function Ripple<P>(ComposedComponent: React.ComponentType<P> | string) {
-        return React.forwardRef<
+    return function Ripple<P>(ComposedComponent: ComponentType<P> | string) {
+        return forwardRef<
             RippledComponent<P>,
             P &
                 RippleProps & {
@@ -75,8 +75,8 @@ interface RippleState {
     ripples: {[key: string]: RippleEntry};
 }
 
-class RippledComponent<P> extends React.Component<
-    RippleProps & {theme: RippleTheme} & {ComposedComponent: React.ComponentType<P> | string},
+class RippledComponent<P> extends Component<
+    RippleProps & {theme: RippleTheme} & {ComposedComponent: ComponentType<P> | string},
     RippleState
 > {
     state: RippleState = {

@@ -41,6 +41,7 @@ export default (async () => {
             "mobx-react",
             "moment",
             "react",
+            "react/jsx-runtime",
             "tslib"
         ],
         onwarn

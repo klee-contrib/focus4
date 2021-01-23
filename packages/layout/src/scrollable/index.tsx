@@ -5,7 +5,7 @@ import {debounce, memoize, range} from "lodash";
 import {action, autorun, computed, observable} from "mobx";
 import {disposeOnUnmount, observer, useObserver} from "mobx-react";
 import {ColdSubscription, spring, styler} from "popmotion";
-import * as React from "react";
+import {cloneElement, Component, forwardRef, HTMLProps, Key, PropsWithChildren, ReactNode, Ref} from "react";
 import {createPortal, findDOMNode} from "react-dom";
 import {Transition} from "react-pose";
 import ResizeObserverPolyfill from "resize-observer-polyfill";
@@ -28,12 +28,12 @@ export interface ScrollableProps {
     /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 300. */
     backToTopOffset?: number;
     /** Children. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** Classe CSS. */
     className?: string;
     /** @internal */
     /** Ref vers le div container. */
-    innerRef?: React.Ref<HTMLDivElement>;
+    innerRef?: Ref<HTMLDivElement>;
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
     /** Comportement du scroll. Par défaut : "smooth" */
@@ -45,9 +45,9 @@ export interface ScrollableProps {
 }
 
 @observer
-class ScrollableComponent extends React.Component<ScrollableProps> {
+class ScrollableComponent extends Component<ScrollableProps> {
     @observable.ref header?: HTMLElement;
-    @observable.ref headerProps?: React.HTMLProps<HTMLElement>;
+    @observable.ref headerProps?: HTMLProps<HTMLElement>;
 
     @observable.ref containerNode!: HTMLDivElement;
     @observable.ref menuNode!: HTMLDivElement;
@@ -57,8 +57,8 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     @observable.ref mutationObserver!: MutationObserver;
     @observable.ref resizeObserver!: ResizeObserverPolyfill;
 
-    readonly menuStylers = observable.map<React.Key, Styler>({}, {deep: false});
-    readonly menuParentNodes = observable.map<React.Key, HTMLElement>({}, {deep: false});
+    readonly menuStylers = observable.map<Key, Styler>({}, {deep: false});
+    readonly menuParentNodes = observable.map<Key, HTMLElement>({}, {deep: false});
     readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
         deep: false
     });
@@ -103,7 +103,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
 
     /** @see ScrollableContext.registerHeaderProps */
     @action.bound
-    registerHeaderProps(headerProps: React.HTMLProps<HTMLElement>) {
+    registerHeaderProps(headerProps: HTMLProps<HTMLElement>) {
         this.headerProps = headerProps;
         this.onScroll();
     }
@@ -142,7 +142,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
             styler(this.menuNode).set("x", "0%");
             this.isMenuOpened = true;
         }
-        return createPortal(React.cloneElement(node, {ref: this.setRef(node.key)}), this.menuNode);
+        return createPortal(cloneElement(node, {ref: this.setRef(node.key)}), this.menuNode);
     }
 
     /** @see ScrollableContext.portal */
@@ -151,7 +151,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
         return createPortal(node, this.containerNode);
     }
 
-    setRef = memoize((key: React.Key) => (ref: HTMLElement | null) => {
+    setRef = memoize((key: Key) => (ref: HTMLElement | null) => {
         if (!ref && this.menuStylers.has(key)) {
             this.menuStylers.delete(key);
             this.menuParentNodes.delete(key);
@@ -403,7 +403,7 @@ class ScrollableComponent extends React.Component<ScrollableProps> {
     }
 }
 
-export const Scrollable = React.forwardRef<HTMLDivElement, React.PropsWithChildren<ScrollableProps>>((props, ref) => (
+export const Scrollable = forwardRef<HTMLDivElement, PropsWithChildren<ScrollableProps>>((props, ref) => (
     <ScrollableComponent {...props} innerRef={ref} />
 ));
 

@@ -68,7 +68,7 @@ export interface FieldEntry<
     readonly label: string;
 
     /** Commentaire de l'entrée */
-    readonly comment?: React.ReactNode;
+    readonly comment?: ReactNode;
 }
 
 export type FieldEntry2<D extends Domain, T extends DomainType<D["type"]> = DomainType<D["type"]>> = D extends Domain<

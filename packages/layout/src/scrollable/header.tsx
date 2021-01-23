@@ -1,17 +1,17 @@
 import {isFunction} from "lodash";
-import * as React from "react";
+import {forwardRef, HTMLProps, useCallback, useLayoutEffect, useState} from "react";
 import posed from "react-pose";
 import {PoseElementProps} from "react-pose/lib/components/PoseElement/types";
 
 import {springPose} from "@focus4/styling";
 
-interface BaseHeaderProps extends React.HTMLProps<HTMLElement> {
+interface BaseHeaderProps extends HTMLProps<HTMLElement> {
     onHeightChange: (height: number) => void;
 }
 
-const BaseHeader = React.forwardRef<HTMLElement, BaseHeaderProps>(({onHeightChange, ...props}, forwardRef) => {
-    const [domRef, setDomRef] = React.useState<HTMLElement | null>(null);
-    const setRef = React.useCallback((ref: HTMLElement | null) => {
+const BaseHeader = forwardRef<HTMLElement, BaseHeaderProps>(({onHeightChange, ...props}, forwardRef) => {
+    const [domRef, setDomRef] = useState<HTMLElement | null>(null);
+    const setRef = useCallback((ref: HTMLElement | null) => {
         setDomRef(ref);
         if (isFunction(forwardRef)) {
             forwardRef(ref);
@@ -19,7 +19,7 @@ const BaseHeader = React.forwardRef<HTMLElement, BaseHeaderProps>(({onHeightChan
             forwardRef.current = ref;
         }
     }, []);
-    React.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         if (domRef) {
             const marginBottom = window.getComputedStyle(domRef).marginBottom || "0px";
             onHeightChange(domRef.clientHeight + +marginBottom.substring(0, marginBottom.length - 2));
@@ -42,6 +42,6 @@ export const AnimatedHeader = posed(BaseHeader)({
 });
 
 export function FixedHeader({onPoseComplete, initialPose, popFromFlow, ...props}: BaseHeaderProps & PoseElementProps) {
-    React.useLayoutEffect(() => onPoseComplete && onPoseComplete("exit"));
+    useLayoutEffect(() => onPoseComplete && onPoseComplete("exit"));
     return <BaseHeader {...props} ref={undefined} />;
 }

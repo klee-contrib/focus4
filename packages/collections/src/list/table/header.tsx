@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {action} from "mobx";
-import * as React from "react";
+import {ReactNode} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {getIcon, ToBem} from "@focus4/styling";
@@ -13,7 +13,7 @@ export interface TableColumn<T> {
     /** Classe CSS pour la colonne. */
     className?: string;
     /** Contenu de la colonne. */
-    content: (data: T) => React.ReactNode;
+    content: (data: T) => ReactNode;
     /** Libellé du titre de la colonne. */
     title: string;
     /** Si la colonne est triable, le nom du champ sur lequel on doit trier. */

@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {action, ObservableMap} from "mobx";
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {useState} from "react";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
@@ -35,7 +35,7 @@ export function Facet({
     store,
     theme: pTheme
 }: FacetProps) {
-    const [isShowAll, setIsShowAll] = React.useState(false);
+    const [isShowAll, setIsShowAll] = useState(false);
     const theme = useTheme("facet", facetCss, pTheme);
     return useObserver(() => {
         const inputFacet = store.inputFacets[facet.code];

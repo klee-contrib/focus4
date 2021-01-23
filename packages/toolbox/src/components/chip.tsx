@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {Chip as ChipType, chipFactory, ChipProps as RTChipProps, ChipTheme} from "react-toolbox/lib/chip/Chip";
 import {CHIP} from "react-toolbox/lib/identifiers";
 
@@ -11,7 +11,7 @@ import {Avatar} from "./avatar";
 
 const RTChip = chipFactory(Avatar as any);
 type ChipProps = Omit<RTChipProps, "theme"> & {theme?: CSSProp<ChipTheme>};
-export const Chip = React.forwardRef<ChipType, ChipProps>((props, ref) => {
+export const Chip = forwardRef<ChipType, ChipProps>((props, ref) => {
     const theme = useTheme(CHIP, chipTheme, props.theme);
     return <RTChip ref={ref} {...props} theme={fromBem(theme)} />;
 });

@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {PROGRESS_BAR} from "react-toolbox/lib/identifiers";
 import {
     ProgressBar as RTProgressBar,
@@ -12,7 +12,7 @@ const progressBarTheme: ProgressBarTheme = rtProgressBarTheme;
 export {progressBarTheme};
 
 type ProgressBarProps = Omit<RTProgressBarProps, "theme"> & {theme?: CSSProp<ProgressBarTheme>};
-export const ProgressBar = React.forwardRef<RTProgressBar, ProgressBarProps>((props, ref) => {
+export const ProgressBar = forwardRef<RTProgressBar, ProgressBarProps>((props, ref) => {
     const theme = useTheme(PROGRESS_BAR, progressBarTheme, props.theme);
     return <RTProgressBar ref={ref} {...props} theme={fromBem(theme)} />;
 });

@@ -1,3 +1,4 @@
+import {ComponentType} from "react";
 import {AppBar} from "react-toolbox/lib/app_bar";
 import {AvatarProps} from "react-toolbox/lib/avatar";
 import {Button, BrowseButton, IconButton, IconButtonProps, ButtonProps} from "react-toolbox/lib/button";
@@ -33,117 +34,113 @@ import {Tab, Tabs, TabProps} from "react-toolbox/lib/tabs";
 import {TabContentProps} from "react-toolbox/lib/tabs/TabContent";
 
 declare module "react-toolbox/lib/app_bar/AppBar" {
-    export function appBarFactory(IconButton: React.ComponentType<IconButtonProps>): typeof AppBar;
+    export function appBarFactory(IconButton: ComponentType<IconButtonProps>): typeof AppBar;
 }
 declare module "react-toolbox/lib/autocomplete/Autocomplete" {
     export function autocompleteFactory(
-        Chip: React.ComponentType<ChipProps>,
-        Input: React.ComponentType<InputProps>
+        Chip: ComponentType<ChipProps>,
+        Input: ComponentType<InputProps>
     ): typeof Autocomplete;
 }
 declare module "react-toolbox/lib/avatar/Avatar" {
-    export function avatarFactory(FontIcon: React.ComponentType<FontIconProps>): typeof Avatar;
+    export function avatarFactory(FontIcon: ComponentType<FontIconProps>): typeof Avatar;
 }
 declare module "react-toolbox/lib/button/Button" {
-    export function buttonFactory(Ripple: any, FontIcon: React.ComponentType<FontIconProps>): typeof Button;
+    export function buttonFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof Button;
 }
 declare module "react-toolbox/lib/button/BrowseButton" {
-    export function browseButtonFactory(Ripple: any, FontIcon: React.ComponentType<FontIconProps>): typeof BrowseButton;
+    export function browseButtonFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof BrowseButton;
 }
 declare module "react-toolbox/lib/button/IconButton" {
-    export function iconButtonFactory(Ripple: any, FontIcon: React.ComponentType<FontIconProps>): typeof IconButton;
+    export function iconButtonFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof IconButton;
 }
 declare module "react-toolbox/lib/card/CardTitle" {
-    export function cardTitleFactory(Avatar: React.ComponentType<AvatarProps>): typeof CardTitle;
+    export function cardTitleFactory(Avatar: ComponentType<AvatarProps>): typeof CardTitle;
 }
 declare module "react-toolbox/lib/checkbox/Checkbox" {
     export function checkboxFactory(Check: any): typeof Checkbox;
 }
 declare module "react-toolbox/lib/chip/Chip" {
-    export function chipFactory(Avatar: React.ComponentType<AvatarProps>): typeof Chip;
+    export function chipFactory(Avatar: ComponentType<AvatarProps>): typeof Chip;
 }
 declare module "react-toolbox/lib/dropdown/Dropdown" {
-    export function dropdownFactory(Input: React.ComponentType<InputProps>): typeof Dropdown;
+    export function dropdownFactory(Input: ComponentType<InputProps>): typeof Dropdown;
 }
 declare module "react-toolbox/lib/input/Input" {
-    export function inputFactory(FontIcon: React.ComponentType<FontIconProps>): typeof Input;
+    export function inputFactory(FontIcon: ComponentType<FontIconProps>): typeof Input;
 }
 declare module "react-toolbox/lib/list/List" {
-    export function listFactory(ListItem: React.ComponentType<ListItemProps>): typeof List;
+    export function listFactory(ListItem: ComponentType<ListItemProps>): typeof List;
 }
 declare module "react-toolbox/lib/list/ListCheckbox" {
     export function listCheckboxFactory(
-        Checkbox: React.ComponentType<CheckboxProps>,
-        ListItemContent: React.ComponentType<ListItemContentProps>
+        Checkbox: ComponentType<CheckboxProps>,
+        ListItemContent: ComponentType<ListItemContentProps>
     ): typeof ListCheckbox;
 }
 declare module "react-toolbox/lib/list/ListItem" {
     export function listItemFactory(
         Ripple: any,
-        ListItemLayout: React.ComponentType<ListItemLayoutProps>,
-        ListItemContent: React.ComponentType<ListItemContentProps>
+        ListItemLayout: ComponentType<ListItemLayoutProps>,
+        ListItemContent: ComponentType<ListItemContentProps>
     ): typeof ListItem;
 }
 declare module "react-toolbox/lib/list/ListItemActions" {
-    export function listItemActionsFactory(
-        ListItemAction: React.ComponentType<ListItemActionProps>
-    ): typeof ListItemActions;
+    export function listItemActionsFactory(ListItemAction: ComponentType<ListItemActionProps>): typeof ListItemActions;
 }
 declare module "react-toolbox/lib/list/ListItemContent" {
-    export function listItemContentFactory(
-        ListItemText: React.ComponentType<ListItemTextProps>
-    ): typeof ListItemContent;
+    export function listItemContentFactory(ListItemText: ComponentType<ListItemTextProps>): typeof ListItemContent;
 }
 declare module "react-toolbox/lib/list/ListItemLayout" {
     export function listItemLayoutFactory(
-        Avatar: React.ComponentType<AvatarProps>,
-        ListItemContent: React.ComponentType<ListItemContentProps>,
-        ListItemActions: React.ComponentType<ListItemActionsProps>
+        Avatar: ComponentType<AvatarProps>,
+        ListItemContent: ComponentType<ListItemContentProps>,
+        ListItemActions: ComponentType<ListItemActionsProps>
     ): typeof ListItemLayout;
 }
 declare module "react-toolbox/lib/menu/MenuItem" {
     export function menuItemFactory(Ripple: any): typeof MenuItem;
 }
 declare module "react-toolbox/lib/menu/Menu" {
-    export function menuFactory(MenuItem: React.ComponentType<MenuItemProps>): typeof Menu;
+    export function menuFactory(MenuItem: ComponentType<MenuItemProps>): typeof Menu;
 }
 declare module "react-toolbox/lib/menu/IconMenu" {
     export function iconMenuFactory(
-        IconButton: React.ComponentType<IconButtonProps>,
-        Menu: React.ComponentType<MenuProps>
+        IconButton: ComponentType<IconButtonProps>,
+        Menu: ComponentType<MenuProps>
     ): typeof IconMenu;
 }
 declare module "react-toolbox/lib/navigation/Navigation" {
     export function navigationFactory(
-        Button: React.ComponentType<ButtonProps>,
-        Link: React.ComponentType<LinkProps>
+        Button: ComponentType<ButtonProps>,
+        Link: ComponentType<LinkProps>
     ): typeof Navigation;
 }
 declare module "react-toolbox/lib/radio/RadioButton" {
     export function radioButtonFactory(Radio: any): typeof RadioButton;
 }
 declare module "react-toolbox/lib/radio/RadioGroup" {
-    export function radioGroupFactory(RadioButton: React.ComponentType<RadioButtonProps>): typeof RadioGroup;
+    export function radioGroupFactory(RadioButton: ComponentType<RadioButtonProps>): typeof RadioGroup;
 }
 declare module "react-toolbox/lib/slider/Slider" {
     export function sliderFactory(
-        ProgressBar: React.ComponentType<ProgressBarProps>,
-        Input: React.ComponentType<InputProps>
+        ProgressBar: ComponentType<ProgressBarProps>,
+        Input: ComponentType<InputProps>
     ): typeof Slider;
 }
 declare module "react-toolbox/lib/snackbar/Snackbar" {
-    export function snackbarFactory(Button: React.ComponentType<ButtonProps>): typeof Snackbar;
+    export function snackbarFactory(Button: ComponentType<ButtonProps>): typeof Snackbar;
 }
 declare module "react-toolbox/lib/switch/Switch" {
     export function switchFactory(Thumb: any): typeof Switch;
 }
 declare module "react-toolbox/lib/tabs/Tab" {
-    export function tabFactory(Ripple: any, FontIcon: React.ComponentType<FontIconProps>): typeof Tab;
+    export function tabFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof Tab;
 }
 declare module "react-toolbox/lib/tabs/Tabs" {
     export function tabsFactory(
-        Tab: React.ComponentType<TabProps>,
-        TabContent: React.ComponentType<TabContentProps>,
-        FontIcon: React.ComponentType<FontIconProps>
+        Tab: ComponentType<TabProps>,
+        TabContent: ComponentType<TabContentProps>,
+        FontIcon: ComponentType<FontIconProps>
     ): typeof Tabs;
 }

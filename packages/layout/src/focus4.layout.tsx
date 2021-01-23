@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import {CSSContext, CSSProp, ThemeContext} from "@focus4/styling";
 import {
     AppBarTheme,

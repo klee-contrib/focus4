@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {SNACKBAR} from "react-toolbox/lib/identifiers";
 import {
     Snackbar as SnackbarType,
@@ -16,7 +16,7 @@ import {Button} from "./button";
 
 const RTSnackbar = snackbarFactory(Button as any);
 type SnackbarProps = Omit<RTSnackbarProps, "theme"> & {theme?: CSSProp<SnackbarTheme>};
-export const Snackbar = React.forwardRef<SnackbarType, SnackbarProps>((props, ref) => {
+export const Snackbar = forwardRef<SnackbarType, SnackbarProps>((props, ref) => {
     const theme = useTheme(SNACKBAR, snackbarTheme, props.theme);
     return <RTSnackbar ref={ref} {...props} theme={fromBem(theme)} />;
 });

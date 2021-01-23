@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import * as React from "react";
+import {CSSProperties, ReactNode} from "react";
 
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {FontIcon, tooltipFactory} from "@focus4/toolbox";
@@ -11,7 +11,7 @@ export {labelCss, LabelCss};
 /** Props du Label. */
 export interface LabelProps {
     /** Commentaire, affiché sur la tooltip */
-    comment?: React.ReactNode;
+    comment?: ReactNode;
     /** Pour l'icône de la tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Libellé. */
@@ -23,7 +23,7 @@ export interface LabelProps {
     /** Affiche la tooltip. */
     showTooltip?: boolean;
     /** Style inline. */
-    style?: React.CSSProperties;
+    style?: CSSProperties;
     /** CSS. */
     theme?: CSSProp<LabelCss>;
 }

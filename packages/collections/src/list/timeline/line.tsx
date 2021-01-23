@@ -1,4 +1,4 @@
-import * as React from "react";
+import {ComponentType} from "react";
 
 import {EntityField, FieldEntry, stringFor} from "@focus4/stores";
 import {ToBem} from "@focus4/styling";
@@ -20,7 +20,7 @@ export function TimelineLine<T>({
     /** Ref vers l'élement DOM racine de la ligne. */
     domRef?: (element: HTMLElement | null) => void;
     /** Composant de ligne. */
-    LineComponent: React.ComponentType<{data: T}>;
+    LineComponent: ComponentType<{data: T}>;
     /** CSS. */
     theme: ToBem<TimelineCss>;
 }) {

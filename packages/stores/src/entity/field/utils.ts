@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {ComponentType} from "react";
+import {ComponentType, ReactNode} from "react";
 
 import {
     BaseAutocompleteProps,
@@ -24,7 +24,7 @@ interface ReadonlyFieldOptions<
     LCProps extends BaseLabelProps = LCDProps
 > extends BaseComponents<DCProps, LCProps> {
     className?: string;
-    comment?: React.ReactNode;
+    comment?: ReactNode;
     domain?: Domain<DT, any, any, any, DCDProps, LCDProps>;
     displayFormatter?: (value: T | undefined) => string;
     DisplayComponent?: ComponentType<DCProps>;

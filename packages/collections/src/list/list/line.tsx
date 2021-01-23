@@ -1,8 +1,8 @@
 import {IObservableArray} from "mobx";
 import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
+import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {getIcon, springPose, ToBem} from "@focus4/styling";
@@ -38,7 +38,7 @@ export interface LineWrapperProps<T> {
     /** Préfixe i18n. Par défaut: "focus". */
     i18nPrefix?: string;
     /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
-    LineComponent: React.ComponentType<LineProps<T> & {ref?: React.Ref<any>}>;
+    LineComponent: ComponentType<LineProps<T> & {ref?: Ref<any>}>;
     /** Configuration de la mosaïque (si applicable). */
     mosaic?: {width: number; height: number};
     /** Fonction passée par react-pose qu'il faudra appeler au willUnmount pour qu'il retire l'élément du DOM. */
@@ -113,7 +113,7 @@ export function LineWrapper<T>({
 
     // Si on n'appelle pas ça, vu que la ligne est posée dans un contexte de transition react-pose à cause du détail,
     // la ligne ne sera jamais retirée du DOM.
-    React.useEffect(() => {
+    useEffect(() => {
         if (onPoseComplete) {
             onPoseComplete("exit");
         }
@@ -131,13 +131,13 @@ export function LineWrapper<T>({
         });
 
         // Permet de masquer la preview par défaut de drag and drop HTML5.
-        React.useLayoutEffect(() => {
+        useLayoutEffect(() => {
             if (dragPreview) {
                 dragPreview(getEmptyImage());
             }
         }, []);
 
-        setRef = React.useCallback((li: HTMLLIElement | null) => {
+        setRef = useCallback((li: HTMLLIElement | null) => {
             if (domRef) {
                 domRef(li);
             }

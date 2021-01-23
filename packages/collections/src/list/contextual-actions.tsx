@@ -1,4 +1,4 @@
-import * as React from "react";
+import {ComponentType, ReactElement, ReactNode, SyntheticEvent} from "react";
 
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
@@ -27,11 +27,11 @@ export type OperationListItem<T> =
           /** Le libellé (ou la tooltip) du bouton. */
           label?: string;
           /** L'icône du bouton */
-          icon?: React.ReactNode;
+          icon?: ReactNode;
           /** Type d'affichage pour l'action. Seul "secondary" sera pris en compte pour un mosaïque. Par défaut : "icon-label". */
           type?: "icon" | "label" | "icon-label" | "icon-tooltip" | "secondary";
       }
-    | React.ComponentType<OperationListItemComponentProps<T>>;
+    | ComponentType<OperationListItemComponentProps<T>>;
 
 /** Props du composant d'actions contextuelles. */
 export interface ContextualActionsProps {
@@ -63,7 +63,7 @@ export function ContextualActions({
 }: ContextualActionsProps) {
     const theme = useTheme("contextualActions", contextualActionsCss, pTheme);
 
-    function handleAction(key: number, e: React.SyntheticEvent<any>) {
+    function handleAction(key: number, e: SyntheticEvent<any>) {
         // On arrête bien tous les autres évènements, pour être sûr.
         e.preventDefault();
         e.stopPropagation();
@@ -114,8 +114,8 @@ export function ContextualActions({
             return actionLists;
         },
         {
-            customComponents: [] as React.ReactElement[],
-            primaryActions: [] as React.ReactElement[],
+            customComponents: [] as ReactElement[],
+            primaryActions: [] as ReactElement[],
             secondaryActions: [] as MenuItemProps[]
         }
     );
@@ -153,6 +153,6 @@ export function ContextualActions({
     );
 }
 
-function isComponent<T>(item: OperationListItem<T>): item is React.ComponentType<OperationListItemComponentProps<T>> {
+function isComponent<T>(item: OperationListItem<T>): item is ComponentType<OperationListItemComponentProps<T>> {
     return !(item as any).action;
 }

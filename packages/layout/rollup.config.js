@@ -44,6 +44,7 @@ export default (async () => {
             "mobx-react",
             "moment",
             "react",
+            "react/jsx-runtime",
             "react-dom",
             "stylefire",
             "tslib"

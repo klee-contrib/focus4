@@ -1,4 +1,4 @@
-import * as React from "react";
+import {ReactNode, useContext, useLayoutEffect, useRef} from "react";
 
 import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 
@@ -10,19 +10,19 @@ export interface HeaderScrollingProps {
     /** Précise si le header peut se déployer ou non. */
     canDeploy?: boolean;
     /** Children. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** Classes CSS. */
     theme?: CSSProp<HeaderCss>;
 }
 
 /** Conteneur du header, gérant en particulier le dépliement et le repliement. */
 export function HeaderScrolling({canDeploy = true, children, theme: pTheme}: HeaderScrollingProps) {
-    const context = React.useContext(ScrollableContext);
+    const context = useContext(ScrollableContext);
     const theme = useTheme("header", headerCss, pTheme);
-    const ref = React.useRef<HTMLElement>(null);
+    const ref = useRef<HTMLElement>(null);
 
-    React.useLayoutEffect(() => context.registerHeader(ref.current!, canDeploy), [canDeploy]);
-    React.useLayoutEffect(() => context.registerHeaderProps({className: theme.scrolling({sticky: true}), children}), [
+    useLayoutEffect(() => context.registerHeader(ref.current!, canDeploy), [canDeploy]);
+    useLayoutEffect(() => context.registerHeaderProps({className: theme.scrolling({sticky: true}), children}), [
         children
     ]);
 

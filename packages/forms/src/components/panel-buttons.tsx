@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import * as React from "react";
+import {useEffect, useState} from "react";
 
 import {getIcon} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
@@ -29,11 +29,11 @@ export function PanelButtons({
     onClickEdit,
     save
 }: PanelButtonsProps) {
-    const [isInForm, setIsInForm] = React.useState(false);
-    const [ref, setRef] = React.useState<HTMLSpanElement | null>(null);
+    const [isInForm, setIsInForm] = useState(false);
+    const [ref, setRef] = useState<HTMLSpanElement | null>(null);
 
     /* On essaie de savoir si ces boutons sont inclus dans un formulaire. */
-    React.useEffect(() => {
+    useEffect(() => {
         let parentNode: HTMLElement | null = ref;
         while (parentNode && parentNode.tagName !== "FORM") {
             parentNode = parentNode.parentElement;

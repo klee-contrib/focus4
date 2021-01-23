@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef, ForwardRefExoticComponent, RefAttributes} from "react";
 import {
     Autocomplete as AutocompleteType,
     autocompleteFactory,
@@ -17,11 +17,11 @@ import {Input, InputTheme} from "./input";
 
 const RTAutocomplete = autocompleteFactory(Chip as any, Input as any);
 type AutocompleteProps = Omit<RTAutocompleteProps, "theme"> & {theme?: CSSProp<AutocompleteTheme & InputTheme>};
-export const Autocomplete: React.ForwardRefExoticComponent<
-    AutocompleteProps & React.RefAttributes<AutocompleteType>
-> = React.forwardRef((props, ref) => {
-    const theme = useTheme(AUTOCOMPLETE, autocompleteTheme, props.theme);
-    return <RTAutocomplete ref={ref} {...props} theme={fromBem(theme)} />;
-});
+export const Autocomplete: ForwardRefExoticComponent<AutocompleteProps & RefAttributes<AutocompleteType>> = forwardRef(
+    (props, ref) => {
+        const theme = useTheme(AUTOCOMPLETE, autocompleteTheme, props.theme);
+        return <RTAutocomplete ref={ref} {...props} theme={fromBem(theme)} />;
+    }
+);
 
 export {AutocompleteProps, AutocompleteTheme};

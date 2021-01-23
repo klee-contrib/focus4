@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {snakeCase} from "lodash";
-import * as React from "react";
+import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "react";
 
 import {CSSProp, ScrollspyContext, useTheme} from "@focus4/styling";
 import {ProgressBar} from "@focus4/toolbox";
@@ -14,7 +14,7 @@ export {panelCss, PanelCss};
 /** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {
     /** Boutons à afficher dans le Panel. Par défaut : les boutons de formulaire (edit / save / cancel). */
-    Buttons?: React.ComponentType<PanelButtonsProps>;
+    Buttons?: ComponentType<PanelButtonsProps>;
     /** Position des boutons. Par défaut : "top". */
     buttonsPosition?: "both" | "bottom" | "top" | "none";
     /** Masque le panel dans le ScrollspyContainer. */
@@ -48,19 +48,19 @@ export function Panel({
     showHelp,
     title,
     theme: pTheme
-}: React.PropsWithChildren<PanelProps>) {
+}: PropsWithChildren<PanelProps>) {
     if (!name && title) {
         name = snakeCase(i18next.t(title)).split("_")[0];
     }
 
-    const ref = React.useRef<HTMLDivElement>(null);
+    const ref = useRef<HTMLDivElement>(null);
     const theme = useTheme("panel", panelCss, pTheme);
 
     /** On récupère le contexte posé par le scrollspy parent. */
-    const scrollSpyContext = React.useContext(ScrollspyContext);
+    const scrollSpyContext = useContext(ScrollspyContext);
 
     /** On s'enregistre dans le scrollspy. */
-    React.useEffect(() => {
+    useEffect(() => {
         if (!hideOnScrollspy && name) {
             return scrollSpyContext.registerPanel(name, {title, node: ref.current!});
         }

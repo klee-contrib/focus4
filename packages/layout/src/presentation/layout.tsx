@@ -1,4 +1,4 @@
-import * as React from "react";
+import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -13,11 +13,11 @@ export interface LayoutProps extends MessageCenterProps {
     /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 300. */
     backToTopOffset?: number;
     /** Children. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
     /** Menu de gauche. */
-    menu?: React.ReactNode;
+    menu?: ReactNode;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
     /** CSS. */

@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {ReactNode, SyntheticEvent} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -16,7 +16,7 @@ function clickHandlerFactory(
     optVal: string | number,
     onChange: (value: any[] | undefined) => void
 ) {
-    return (e: React.SyntheticEvent<any>) => {
+    return (e: SyntheticEvent<any>) => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -37,7 +37,7 @@ export interface SelectCheckboxProps<T extends "string" | "number"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
-    error?: React.ReactNode;
+    error?: ReactNode;
     /** Libellé. */
     label?: string;
     /** Id de l'input. */

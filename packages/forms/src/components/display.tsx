@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {useEffect, useState} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -23,10 +23,10 @@ export interface DisplayProps {
 
 /** Composant d'affichage par défaut, gère la résolution de la valeur par liste de référence ou par service. */
 export function Display({formatter, keyResolver, theme: pTheme, value: pValue, values}: DisplayProps) {
-    const [value, setValue] = React.useState<any>();
+    const [value, setValue] = useState<any>();
     const theme = useTheme("display", displayCss, pTheme);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (pValue !== value) {
             if (pValue !== undefined && keyResolver) {
                 keyResolver(pValue).then(res => setValue(res ?? pValue));

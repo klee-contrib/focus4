@@ -1,5 +1,4 @@
 import i18next from "i18next";
-import * as React from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {getIcon, useTheme} from "@focus4/styling";

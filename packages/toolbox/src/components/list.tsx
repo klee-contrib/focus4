@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef, ForwardRefExoticComponent, RefAttributes} from "react";
 import {LIST} from "react-toolbox/lib/identifiers";
 import {List as ListType, listFactory, ListProps as RTListProps, ListTheme} from "react-toolbox/lib/list/List";
 import {
@@ -62,55 +62,55 @@ import {Checkbox} from "./checkbox";
 import {rippleFactory} from "./ripple";
 
 type ListItemActionProps = Omit<RTListItemActionProps, "theme"> & {theme?: CSSProp<ListItemActionTheme>};
-export const ListItemAction = React.forwardRef<RTListItemAction, ListItemActionProps>((props, ref) => {
+export const ListItemAction = forwardRef<RTListItemAction, ListItemActionProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemActionTheme, props.theme);
     return <RTListItemAction ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListSubHeaderProps = Omit<RTListSubHeaderProps, "theme"> & {theme?: CSSProp<ListSubHeaderTheme>};
-export const ListSubHeader = React.forwardRef<RTListSubHeader, ListSubHeaderProps>((props, ref) => {
+export const ListSubHeader = forwardRef<RTListSubHeader, ListSubHeaderProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListSubHeaderTheme, props.theme);
     return <RTListSubHeader ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListItemTextProps = Omit<RTListItemTextProps, "theme"> & {theme?: CSSProp<ListItemTextTheme>};
-export const ListItemText: React.ForwardRefExoticComponent<
-    ListItemTextProps & React.RefAttributes<RTListItemText>
-> = React.forwardRef((props, ref) => {
-    const theme = useTheme(LIST, listTheme as ListItemTextTheme, props.theme);
-    return <RTListItemText ref={ref} {...props} theme={fromBem(theme)} />;
-});
+export const ListItemText: ForwardRefExoticComponent<ListItemTextProps & RefAttributes<RTListItemText>> = forwardRef(
+    (props, ref) => {
+        const theme = useTheme(LIST, listTheme as ListItemTextTheme, props.theme);
+        return <RTListItemText ref={ref} {...props} theme={fromBem(theme)} />;
+    }
+);
 
 type ListDividerProps = Omit<RTListDividerProps, "theme"> & {theme?: CSSProp<ListDividerTheme>};
-export const ListDivider = React.forwardRef<RTListDivider, ListDividerProps>((props, ref) => {
+export const ListDivider = forwardRef<RTListDivider, ListDividerProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListDividerTheme, props.theme);
     return <RTListDivider ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListItemContentProps = Omit<RTListItemContentProps, "theme"> & {theme?: CSSProp<ListItemContentTheme>};
 const RTListItemContent = listItemContentFactory(ListItemText as any);
-export const ListItemContent = React.forwardRef<ListItemContentType, ListItemContentProps>((props, ref) => {
+export const ListItemContent = forwardRef<ListItemContentType, ListItemContentProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemContentTheme, props.theme);
     return <RTListItemContent ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListItemActionsProps = Omit<RTListItemActionsProps, "theme"> & {theme?: CSSProp<ListItemActionsTheme>};
 const RTListItemActions = listItemActionsFactory(ListItemAction as any);
-export const ListItemActions = React.forwardRef<ListItemActionsType, ListItemActionsProps>((props, ref) => {
+export const ListItemActions = forwardRef<ListItemActionsType, ListItemActionsProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemActionsTheme, props.theme);
     return <RTListItemActions ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListItemLayoutProps = Omit<RTListItemLayoutProps, "theme"> & {theme?: CSSProp<ListItemLayoutTheme>};
 const RTListItemLayout = listItemLayoutFactory(Avatar as any, ListItemContent as any, ListItemActions as any);
-export const ListItemLayout = React.forwardRef<ListItemLayoutType, ListItemLayoutProps>((props, ref) => {
+export const ListItemLayout = forwardRef<ListItemLayoutType, ListItemLayoutProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListItemLayoutTheme, props.theme);
     return <RTListItemLayout ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type ListCheckboxProps = Omit<RTListCheckboxProps, "theme"> & {theme?: CSSProp<ListCheckboxTheme>};
 const RTListCheckbox = listCheckboxFactory(Checkbox as any, ListItemContent as any);
-export const ListCheckbox = React.forwardRef<ListCheckboxType, ListCheckboxProps>((props, ref) => {
+export const ListCheckbox = forwardRef<ListCheckboxType, ListCheckboxProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme as ListCheckboxTheme, props.theme);
     return <RTListCheckbox ref={ref} {...props} theme={fromBem(theme)} />;
 });
@@ -125,7 +125,7 @@ type ListItemProps = RTListItemProps & {
         ListItemTheme & ListItemActionsTheme & ListItemContentTheme & ListItemLayoutTheme & ListItemTextTheme
     >;
 };
-export const ListItem = React.forwardRef<ListItemType, ListItemProps>((props, ref) => {
+export const ListItem = forwardRef<ListItemType, ListItemProps>((props, ref) => {
     const theme = useTheme(
         LIST,
         listTheme as ListItemTheme &
@@ -140,7 +140,7 @@ export const ListItem = React.forwardRef<ListItemType, ListItemProps>((props, re
 
 const RTList = listFactory(ListItem);
 type ListProps = Omit<RTListProps, "theme"> & {theme?: CSSProp<ListTheme>};
-export const List = React.forwardRef<ListType, ListProps>((props, ref) => {
+export const List = forwardRef<ListType, ListProps>((props, ref) => {
     const theme = useTheme(LIST, listTheme, props.theme);
     return <RTList ref={ref} {...props} theme={fromBem(theme)} />;
 });

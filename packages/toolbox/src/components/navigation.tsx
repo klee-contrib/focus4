@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {NAVIGATION} from "react-toolbox/lib/identifiers";
 import {
     Navigation as NavigationType,
@@ -17,7 +17,7 @@ import {Link} from "./link";
 
 const RTNavigation = navigationFactory(Button as any, Link as any);
 type NavigationProps = Omit<RTNavigationProps, "theme"> & {theme?: CSSProp<NavigationTheme>};
-export const Navigation = React.forwardRef<NavigationType, NavigationProps>((props, ref) => {
+export const Navigation = forwardRef<NavigationType, NavigationProps>((props, ref) => {
     const theme = useTheme(NAVIGATION, navigationTheme, props.theme);
     return <RTNavigation ref={ref} {...props} theme={fromBem(theme)} />;
 });

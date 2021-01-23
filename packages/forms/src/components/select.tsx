@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {ReactNode} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -13,7 +13,7 @@ export interface SelectProps<T extends "string" | "number"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
-    error?: React.ReactNode;
+    error?: ReactNode;
     /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
     hasUndefined?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */

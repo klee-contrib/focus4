@@ -1,7 +1,7 @@
 import {isFunction} from "lodash";
 import {computed, observable} from "mobx";
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {PropsWithChildren, useEffect} from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
@@ -27,16 +27,10 @@ function onOverlayClick() {
     }
 }
 
-export function Overlay({
-    active,
-    children,
-    isAdditional,
-    onClick,
-    theme: pTheme
-}: React.PropsWithChildren<OverlayProps>) {
+export function Overlay({active, children, isAdditional, onClick, theme: pTheme}: PropsWithChildren<OverlayProps>) {
     const theme = useTheme("overlay", overlayCss, pTheme);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isAdditional || !active) {
             return;
         }

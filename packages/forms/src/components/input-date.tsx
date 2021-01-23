@@ -3,7 +3,7 @@ import {uniqueId} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
-import * as React from "react";
+import {Component} from "react";
 
 import {themr} from "@focus4/styling";
 import {Calendar, CalendarProps, datePickerTheme, DatePickerTheme, IconButton, InputTheme} from "@focus4/toolbox";
@@ -55,7 +55,7 @@ export interface InputDateProps extends InputProps<"string"> {
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
-export class InputDate extends React.Component<InputDateProps> {
+export class InputDate extends Component<InputDateProps> {
     protected calendar?: HTMLDivElement | null;
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */

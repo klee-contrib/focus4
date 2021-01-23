@@ -1,6 +1,6 @@
 import {action, toJS} from "mobx";
 import {useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
+import {useCallback, useContext, useEffect, useRef} from "react";
 import posed, {Transition} from "react-pose";
 
 import {CSSProp, defaultPose, useTheme} from "@focus4/styling";
@@ -21,13 +21,13 @@ export interface MainMenuItemProps extends Omit<ButtonProps, "theme"> {
 /** Elément de menu. */
 export function MainMenuItem({label, icon, onClick, route, children, theme: pTheme, ...otherProps}: MainMenuItemProps) {
     const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
-    const context = React.useContext(MenuContext);
+    const context = useContext(MenuContext);
     const state = useLocalStore(() => ({hasSubMenu: false, top: 0, left: 0}));
 
-    const li = React.useRef<HTMLLIElement>(null);
-    const panel = React.useRef<HTMLDivElement>(null);
+    const li = useRef<HTMLLIElement>(null);
+    const panel = useRef<HTMLDivElement>(null);
 
-    const onItemClick = React.useCallback(
+    const onItemClick = useCallback(
         action(() => {
             if (children) {
                 const liRect = li.current!.getBoundingClientRect();
@@ -43,7 +43,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
         []
     );
 
-    const onDocumentClick = React.useCallback((e: MouseEvent) => {
+    const onDocumentClick = useCallback((e: MouseEvent) => {
         if (panel.current && li.current) {
             if (!panel.current.contains(e.target as Node) && !li.current.contains(e.target as Node)) {
                 state.hasSubMenu = false;
@@ -51,7 +51,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
         }
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         document.addEventListener("mouseup", onDocumentClick);
         return () => document.removeEventListener("mouseup", onDocumentClick);
     }, []);

@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef} from "react";
 import {RADIO} from "react-toolbox/lib/identifiers";
 import {RadioTheme as RTRadioTheme} from "react-toolbox/lib/radio/base";
 import radioFactory from "react-toolbox/lib/radio/Radio";
@@ -20,7 +20,7 @@ import {rippleFactory} from "./ripple";
 
 const RTRadioButton = radioButtonFactory(radioFactory(rippleFactory({rippleCentered: true, rippleSpread: 2.6})));
 type RadioButtonProps = Omit<RTRadioButtonProps, "theme"> & {theme?: CSSProp<RadioButtonTheme & RadioTheme>};
-export const RadioButton = React.forwardRef<RadioButtonType, RadioButtonProps>((props, ref) => {
+export const RadioButton = forwardRef<RadioButtonType, RadioButtonProps>((props, ref) => {
     const theme = useTheme(RADIO, radioTheme, props.theme);
     return <RTRadioButton ref={ref} {...props} theme={fromBem(theme)} />;
 });

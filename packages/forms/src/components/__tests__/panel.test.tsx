@@ -1,7 +1,6 @@
 // Libs
 import {mount} from "enzyme";
 import i18next from "i18next";
-import * as React from "react";
 import {Panel} from "../panel";
 
 i18next.init();

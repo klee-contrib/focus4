@@ -517,7 +517,7 @@ Exemple d'usage :
 
 ```tsx
 @observer
-class View extends React.Component {
+class View extends Component {
     render() {
         return (
             <ul>

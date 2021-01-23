@@ -1,6 +1,6 @@
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
-import * as React from "react";
+import {Component, forwardRef, ReactNode} from "react";
 import {findDOMNode} from "react-dom";
 import {MENU} from "react-toolbox/lib/identifiers";
 import {
@@ -33,27 +33,27 @@ import {tooltipFactory, TooltipProps} from "./tooltip";
 
 const RTMenuItem = menuItemFactory(rippleFactory({}));
 type MenuItemProps = Omit<RTMenuItemProps, "theme"> & {theme?: CSSProp<MenuItemTheme>};
-export const MenuItem = React.forwardRef<MenuItemType, MenuItemProps>((props, ref) => {
+export const MenuItem = forwardRef<MenuItemType, MenuItemProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as MenuItemTheme, props.theme);
     return <RTMenuItem ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTMenu = menuFactory(MenuItem as any);
 type MenuProps = Omit<RTMenuProps, "theme"> & {theme?: CSSProp<MenuTheme>};
-export const Menu = React.forwardRef<MenuType, MenuProps>((props, ref) => {
+export const Menu = forwardRef<MenuType, MenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme, props.theme);
     return <RTMenu ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 const RTIconMenu = iconMenuFactory(IconButton as any, Menu as any);
 type IconMenuProps = Omit<RTIconMenuProps, "theme"> & {theme?: CSSProp<IconMenuTheme>};
-export const IconMenu = React.forwardRef<IconMenuType, IconMenuProps>((props, ref) => {
+export const IconMenu = forwardRef<IconMenuType, IconMenuProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as IconMenuTheme, props.theme);
     return <RTIconMenu ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
 type MenuDividerProps = Omit<RTMenuDividerProps, "theme"> & {theme?: CSSProp<MenuDividerTheme>};
-export const MenuDivider = React.forwardRef<RTMenuDivider, MenuDividerProps>((props, ref) => {
+export const MenuDivider = forwardRef<RTMenuDivider, MenuDividerProps>((props, ref) => {
     const theme = useTheme(MENU, menuTheme as MenuDividerTheme, props.theme);
     return <RTMenuDivider ref={ref} {...props} theme={fromBem(theme)} />;
 });
@@ -66,20 +66,20 @@ export interface ButtonMenuProps extends Omit<MenuProps, "theme"> {
     button: ButtonProps &
         TooltipProps & {
             /** L'icône à afficher quand le bouton est ouvert. */
-            openedIcon?: React.ReactNode;
+            openedIcon?: ReactNode;
         };
     theme?: CSSProp<MenuTheme>;
 }
 
 /** Menu React-Toolbox avec un bouton personnalisable (non icône). */
 @observer
-export class ButtonMenu extends React.Component<ButtonMenuProps> {
+export class ButtonMenu extends Component<ButtonMenuProps> {
     /** Menu ouvert. */
     @observable isOpened = false;
     /** Hauteur du bouton, pour placer le menu. */
     @observable buttonHeight = 0;
 
-    private button?: React.Component<any> | null;
+    private button?: Component<any> | null;
 
     // On récupère à tout instant la hauteur du bouton.
     componentDidMount() {

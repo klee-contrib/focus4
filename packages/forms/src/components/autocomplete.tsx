@@ -3,7 +3,7 @@ import {isEmpty} from "lodash";
 import {debounce} from "lodash-decorators";
 import {action, computed, observable, runInAction} from "mobx";
 import {observer} from "mobx-react";
-import * as React from "react";
+import {Component} from "react";
 import {findDOMNode} from "react-dom";
 
 import {CSSProp, themr} from "@focus4/styling";
@@ -55,7 +55,7 @@ export interface AutocompleteProps<T extends "string" | "number"> extends RTAuto
 
 /** Surtouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
-export class Autocomplete<T extends "string" | "number"> extends React.Component<AutocompleteProps<T>> {
+export class Autocomplete<T extends "string" | "number"> extends Component<AutocompleteProps<T>> {
     protected inputElement!: HTMLInputElement | null;
 
     /** Requête d'autocomplete en cours. */

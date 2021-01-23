@@ -1,6 +1,6 @@
 import {autorun, comparer, observable, reaction} from "mobx";
 import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
+import {ComponentType, useContext, useEffect} from "react";
 import {Transition} from "react-pose";
 
 import {CollectionStore} from "@focus4/stores";
@@ -29,13 +29,13 @@ export {listCss, ListCss};
 /** Props du composant de liste standard. */
 export type ListProps<T> = ListBaseProps<T> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
-    AddItemComponent?: React.ComponentType<AddItemProps<T>>;
+    AddItemComponent?: ComponentType<AddItemProps<T>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
     canOpenDetail?: (data: T) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: React.ComponentType<DetailProps<T>>;
+    DetailComponent?: ComponentType<DetailProps<T>>;
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
     disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
@@ -43,7 +43,7 @@ export type ListProps<T> = ListBaseProps<T> & {
     /** CSS du DragLayer. */
     dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: React.ComponentType<EmptyProps<T>>;
+    EmptyComponent?: ComponentType<EmptyProps<T>>;
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
     /** Affiche la sélection sur les lignes (store uniquement). */
@@ -51,15 +51,15 @@ export type ListProps<T> = ListBaseProps<T> & {
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
-    LineComponent?: React.ComponentType<LineProps<T>>;
+    LineComponent?: ComponentType<LineProps<T>>;
     /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: React.ComponentType<LoadingProps<T>>;
+    LoadingComponent?: ComponentType<LoadingProps<T>>;
     /** Mode des listes dans le wrapper. Par défaut : celui du composant fourni, ou "list". */
     mode?: "list" | "mosaic";
     /** Taille de la mosaïque. */
     mosaic?: {width: number; height: number};
     /** Composant de mosaïque. */
-    MosaicComponent?: React.ComponentType<LineProps<T>>;
+    MosaicComponent?: ComponentType<LineProps<T>>;
     /** La liste des actions sur chaque élément de la liste. */
     operationList?: (data: T) => OperationListItem<T>[];
     /** CSS. */
@@ -97,7 +97,7 @@ export function List<T>({
     theme: pTheme,
     ...baseProps
 }: ListProps<T>) {
-    const listContext = React.useContext(ListContext);
+    const listContext = useContext(ListContext);
     const theme = useTheme("list", listCss, pTheme);
     const oProps = useAsObservableSource({addItemHandler, mode});
     const state = useLocalStore(() => ({
@@ -140,7 +140,7 @@ export function List<T>({
     }));
 
     /** Met à jour `byLine`. */
-    React.useEffect(() => {
+    useEffect(() => {
         const updateByLine = () => {
             if (state.ulRef) {
                 state.byLine = state.mode === "mosaic" ? Math.floor(state.ulRef.clientWidth / (mosaic!.width + 10)) : 1;
@@ -160,7 +160,7 @@ export function List<T>({
         const {bottomRow, displayedData, getDomRef, i18nPrefix, isLoading, itemKey, store} = useListBase(baseProps);
 
         /** Réaction pour fermer le détail si la liste change. */
-        React.useEffect(
+        useEffect(
             () =>
                 reaction(() => displayedData.map(itemKey), state.closeDetail, {
                     fireImmediately: true,
@@ -176,7 +176,7 @@ export function List<T>({
         const disableDragAnimation =
             disableDragAnimThreshold === undefined ? false : disableDragAnimThreshold <= displayedData.length;
 
-        let Component: React.ComponentType<LineProps<T>>;
+        let Component: ComponentType<LineProps<T>>;
         if (state.mode === "list" && LineComponent) {
             Component = LineComponent;
         } else if (state.mode === "mosaic" && MosaicComponent) {

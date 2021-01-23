@@ -1,4 +1,4 @@
-import * as React from "react";
+import {forwardRef, ForwardRefExoticComponent, RefAttributes} from "react";
 import checkFactory from "react-toolbox/lib/checkbox/Check";
 import {
     Checkbox as CheckboxType,
@@ -25,18 +25,18 @@ export interface CheckboxProps extends Omit<RTCheckboxProps, "theme"> {
 }
 
 const RTCheckbox = checkboxFactory(checkFactory(rippleFactory({rippleCentered: true, rippleSpread: 2.6})));
-export const Checkbox: React.ForwardRefExoticComponent<
-    CheckboxProps & React.RefAttributes<CheckboxType>
-> = React.forwardRef((props, ref) => {
-    const theme = useTheme(CHECKBOX, checkboxTheme, props.theme);
+export const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<CheckboxType>> = forwardRef(
+    (props, ref) => {
+        const theme = useTheme(CHECKBOX, checkboxTheme, props.theme);
 
-    // On remplace `value` par `checked`.
-    const rtProps = {...props, checked: props.value !== undefined ? props.value : props.checked};
+        // On remplace `value` par `checked`.
+        const rtProps = {...props, checked: props.value !== undefined ? props.value : props.checked};
 
-    // On supprime `error` qui n'est pas géré par la Checkbox.
-    if (rtProps.hasOwnProperty("error")) {
-        delete (rtProps as any).error;
+        // On supprime `error` qui n'est pas géré par la Checkbox.
+        if (rtProps.hasOwnProperty("error")) {
+            delete (rtProps as any).error;
+        }
+
+        return <RTCheckbox ref={ref} {...rtProps} theme={fromBem(theme)} />;
     }
-
-    return <RTCheckbox ref={ref} {...rtProps} theme={fromBem(theme)} />;
-});
+);

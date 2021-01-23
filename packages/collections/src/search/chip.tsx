@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {observable} from "mobx";
 import {useObserver} from "mobx-react";
-import * as React from "react";
+import {useEffect, useState} from "react";
 
 import {themeable} from "@focus4/core";
 import {Chip, ChipTheme} from "@focus4/toolbox";
@@ -62,9 +62,9 @@ export function SearchChip(props: SearchChipProps) {
         valueOperator = "or",
         values
     } = props;
-    const [valueLabels] = React.useState(() => observable.map<string, string>());
+    const [valueLabels] = useState(() => observable.map<string, string>());
 
-    React.useEffect(() => {
+    useEffect(() => {
         valueLabels.replace(values?.map(value => [value.code, value.label ?? value.code]) ?? {});
         if (keyResolver && values && (type === "facet" || type === "filter")) {
             values.forEach(value => {

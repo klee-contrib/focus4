@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import {useLocalStore, useObserver} from "mobx-react";
-import * as React from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {getIcon, ToBem} from "@focus4/styling";

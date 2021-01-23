@@ -1,5 +1,4 @@
 import {useObserver} from "mobx-react";
-import * as React from "react";
 
 import {requestStore} from "@focus4/core";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";

@@ -1,5 +1,5 @@
 import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
-import * as React from "react";
+import {Component, ReactElement} from "react";
 import {v4} from "uuid";
 
 import {classAutorun, messageStore} from "@focus4/core";
@@ -70,7 +70,7 @@ export interface ServiceConfig<T, LP> {
 }
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends React.Component<P> {
+export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap = observable.map<string, boolean>();
 
@@ -289,7 +289,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     }
 
     /** Fonction de rendu du formulaire à préciser. */
-    abstract renderContent(): React.ReactElement | null;
+    abstract renderContent(): ReactElement | null;
     render() {
         return (
             <Form

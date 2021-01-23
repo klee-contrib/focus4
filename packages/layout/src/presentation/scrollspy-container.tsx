@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {max, sortBy} from "lodash";
 import {action, computed, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
-import * as React from "react";
+import {Component, ComponentType, ContextType, createRef} from "react";
 
 import {CSSProp, PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
 
@@ -13,7 +13,7 @@ const Theme = themr("scrollspy", scrollspyCss);
 /** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
     /** Menu personnalisé pour le scrollspy. */
-    MenuComponent?: React.ComponentType<ScrollspyMenuProps>;
+    MenuComponent?: ComponentType<ScrollspyMenuProps>;
     /** Menu rétractable. */
     retractable?: boolean;
     /** CSS. */
@@ -22,12 +22,12 @@ export interface ScrollspyContainerProps {
 
 /** Container pour une page de détail avec plusieurs Panels. Affiche un menu de navigation sur la gauche. */
 @observer
-export class ScrollspyContainer extends React.Component<ScrollspyContainerProps> {
+export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
     static contextType: any = ScrollableContext;
-    context!: React.ContextType<typeof ScrollableContext>;
+    context!: ContextType<typeof ScrollableContext>;
 
     /** Noeud DOM du scrollspy */
-    node = React.createRef<HTMLDivElement>();
+    node = createRef<HTMLDivElement>();
 
     /** Map des panels qui se sont enregistrés dans le container. */
     protected readonly panels: ObservableMap<
