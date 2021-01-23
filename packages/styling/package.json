@@ -1,6 +1,6 @@
 {
     "name": "@focus4/styling",
-    "version": "10.7.0-rc.0",
+    "version": "10.7.1-rc.0",
     "description": "Focus v4, styling module",
     "main": "lib/focus4.styling.js",
     "repository": {
@@ -17,7 +17,7 @@
         "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
     },
     "dependencies": {
-        "@focus4/core": "^10.7.0-rc.0",
+        "@focus4/core": "^10.7.1-rc.0",
         "@types/classnames": "2.2.11",
         "@types/css-modules-loader-core": "1.1.0",
         "classnames": "2.2.6",
