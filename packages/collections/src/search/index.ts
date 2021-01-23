@@ -7,6 +7,7 @@ export {
 } from "./advanced-search";
 export {ChipType, SearchChip, SearchChipProps} from "./chip";
 export {
+    AdditionalFacet,
     FacetBox,
     FacetBoxCss,
     FacetBoxProps,

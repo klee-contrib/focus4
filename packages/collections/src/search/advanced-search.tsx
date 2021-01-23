@@ -17,7 +17,7 @@ import {
     OperationListItem
 } from "../list";
 import {ChipType} from "./chip";
-import {FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
+import {AdditionalFacet, FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
 import {GroupCss, Results} from "./results";
 import {Summary, SummaryCss} from "./summary";
 
@@ -34,6 +34,10 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     AddItemComponent?: ComponentType<AddItemProps<T>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
+    /** Composants additionnels à afficher dans la FacetBox, pour y intégrer des filtres par exemple.  */
+    additionalFacets?: {
+        [facet: string]: AdditionalFacet;
+    };
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
     /**
@@ -114,8 +118,6 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     mosaic?: {width: number; height: number};
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
-    /** Appelé au clear des facettes. */
-    onFacetClear?: () => void;
     /** La liste des actions globales.  */
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
@@ -141,6 +143,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     actionBarTheme,
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
+    additionalFacets,
     canRemoveSort,
     chipKeyResolver,
     chipThemer,
@@ -171,7 +174,6 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     listProps,
     mode = "list",
     nbDefaultDataListFacet,
-    onFacetClear,
     operationList,
     orderableColumnList,
     searchBarPlaceholder,
@@ -197,10 +199,10 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
         const facetBox = (
             <div className={theme.facetContainer()} key="facet-box">
                 <FacetBox
+                    additionalFacets={additionalFacets}
                     customFacetComponents={customFacetComponents}
                     i18nPrefix={i18nPrefix}
                     nbDefaultDataList={nbDefaultDataListFacet}
-                    onClear={onFacetClear}
                     sections={facetSections}
                     showSingleValuedFacets={showSingleValuedFacets}
                     store={store}
@@ -277,7 +279,6 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                         hasSelection={hasSelection}
                         i18nPrefix={i18nPrefix}
                         nbDefaultDataListFacet={nbDefaultDataListFacet}
-                        onFacetClear={onFacetClear}
                         operationList={operationList}
                         orderableColumnList={orderableColumnList}
                         searchBarPlaceholder={searchBarPlaceholder}

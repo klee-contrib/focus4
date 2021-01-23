@@ -1,9 +1,9 @@
 import i18next from "i18next";
 import {action, comparer, observable, reaction} from "mobx";
-import {ElementType, SyntheticEvent, useEffect, useState} from "react";
 import {useObserver} from "mobx-react";
+import {ElementType, SyntheticEvent, useEffect, useState} from "react";
 
-import {CollectionStore, FacetOutput} from "@focus4/stores";
+import {CollectionStore, FacetOutput, FormEntityField} from "@focus4/stores";
 import {CSSProp, fromBem, getIcon, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
@@ -14,16 +14,30 @@ export {shouldDisplayFacet, FacetProps};
 import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
 export {FacetBoxCss, FacetCss, facetBoxCss, facetCss};
 
+/** "Facette" additionnelle. */
+export interface AdditionalFacet {
+    /** Le composant de rendu de la "facette". */
+    Component: ElementType<FacetProps>;
+    /** Les champs utilisés dans le filtre. Ils seront associés au bouton "clear" de la FacetBox si renseignés. */
+    fields?: FormEntityField[];
+    /** Valeurs initiales des champs, pour que le "clear" remette les champs à ses valeurs là. */
+    initialValues?: any[];
+    /** La position à laquelle le composant sera inséré dans la liste des facettes. Si non renseigné, elle sera en premier (0). */
+    position?: number;
+}
+
 /** Props de la FacetBox. */
 export interface FacetBoxProps<T> {
+    /** Composants additionnels à afficher dans la FacetBox, pour y intégrer des filtres par exemple.  */
+    additionalFacets?: {
+        [facet: string]: AdditionalFacet;
+    };
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList?: number;
-    /** Appelé au clear des facettes. */
-    onClear?: () => void;
     /**
      * Si renseigné, affiche les facettes dans des sections nommées.
      * Il est possible d'avoir une section qui contient toutes les facettes non renseignées en ne renseignant pas la liste `facets`.
@@ -39,10 +53,10 @@ export interface FacetBoxProps<T> {
 
 /** Composant contenant la liste des facettes retournées par une recherche. */
 export function FacetBox<T>({
+    additionalFacets = {},
     customFacetComponents = {},
     i18nPrefix = "focus",
     nbDefaultDataList = 6,
-    onClear,
     sections,
     showSingleValuedFacets,
     store,
@@ -53,46 +67,72 @@ export function FacetBox<T>({
 
     // Map pour contrôler les facettes qui sont ouvertes, initialisée une seule fois après le premier chargement du store (le service renvoie toujours toutes les facettes).
     const [openedMap] = useState(() => observable.map<string, boolean>());
+
+    function toggleAll(opened: boolean) {
+        openedMap.replace(
+            store.facets
+                .map(facet => [facet.code, opened])
+                .concat(Object.keys(additionalFacets).map(code => [code, opened]))
+        );
+    }
+
     useEffect(
         () =>
             reaction(
                 () => store.facets.map(f => f.code),
-                () => openedMap.replace(store.facets.map(facet => [facet.code, true])),
-                {equals: comparer.structural, fireImmediately: true}
+                () => toggleAll(true),
+                {
+                    equals: comparer.structural,
+                    fireImmediately: true
+                }
             ),
-        []
+        [additionalFacets]
     );
 
     function renderFacet(facet: FacetOutput) {
-        if (store.inputFacets[facet.code] || Object.keys(facet).length > 1) {
-            const FacetComponent = customFacetComponents[facet.code] ?? Facet;
-            return (
-                <FacetComponent
-                    key={facet.code}
-                    facet={facet}
-                    i18nPrefix={i18nPrefix}
-                    nbDefaultDataList={nbDefaultDataList}
-                    openedMap={openedMap}
-                    store={store}
-                    theme={customFacetComponents[facet.code] ? fromBem(facetTheme) : undefined}
-                />
-            );
-        } else {
-            return null;
-        }
+        const FacetComponent = customFacetComponents[facet.code] ?? additionalFacets[facet.code]?.Component ?? Facet;
+        return (
+            <FacetComponent
+                key={facet.code}
+                facet={facet}
+                i18nPrefix={i18nPrefix}
+                nbDefaultDataList={nbDefaultDataList}
+                openedMap={openedMap}
+                store={store}
+                theme={
+                    customFacetComponents[facet.code] ?? additionalFacets[facet.code] ? fromBem(facetTheme) : undefined
+                }
+            />
+        );
     }
 
     const clearFacets = action((e: SyntheticEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         store.removeFacetValue();
-        onClear?.();
+        Object.values(additionalFacets).forEach(facet =>
+            facet.fields?.forEach((field, idx) => (field.value = facet.initialValues?.[idx]))
+        );
     });
 
     return useObserver(() => {
-        const filteredFacets = store.facets.filter(
+        const facets = store.facets.slice();
+
+        Object.entries(additionalFacets).forEach(([code, def]) => {
+            facets.splice(def.position ?? 0, 0, {
+                code,
+                label: code,
+                canExclude: false,
+                isMultiSelectable: false,
+                isMultiValued: false,
+                values: []
+            });
+        });
+
+        const filteredFacets = facets.filter(
             facet =>
-                shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount) &&
-                facet.code !== store.groupingKey
+                facet.code in additionalFacets ||
+                (shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount) &&
+                    facet.code !== store.groupingKey)
         );
 
         let sectionElements: JSX.Element[] | undefined;
@@ -144,12 +184,19 @@ export function FacetBox<T>({
         }
 
         const opened = Array.from(openedMap.values()).some(v => v);
+
+        const shouldDisplayClear =
+            Object.values(store.inputFacets).some(l => l.selected || l.excluded) ||
+            Object.values(additionalFacets).some(({fields = [], initialValues = []}) =>
+                fields.some((field, idx) => field.value !== initialValues[idx])
+            );
+
         return (
             <div className={theme.facetBox()}>
-                <h3 onClick={() => openedMap.replace(store.facets.map(facet => [facet.code, !opened]))}>
+                <h3 onClick={() => toggleAll(!opened)}>
                     <IconButton icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)} />
                     <span>{i18next.t(`${i18nPrefix}.search.facets.title`)}</span>
-                    {Object.values(store.inputFacets).some(l => l.selected || l.excluded) ? (
+                    {shouldDisplayClear ? (
                         <IconButton onClick={clearFacets} icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} />
                     ) : null}
                 </h3>

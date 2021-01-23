@@ -9,7 +9,7 @@ import {CollectionStore} from "@focus4/stores";
 import {CSSProp, defaultPose, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
-import {FacetBox, shouldDisplayFacet} from "../search";
+import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
 import actionBarCss, {ActionBarCss} from "./__style__/action-bar.css";
@@ -17,6 +17,10 @@ export {actionBarCss, ActionBarCss};
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {
+    /** Composants additionnels à afficher dans la FacetBox, pour y intégrer des filtres par exemple.  */
+    additionalFacets?: {
+        [facet: string]: AdditionalFacet;
+    };
     /** Constitution de l'éventuel groupe auquel est lié l'ActionBar */
     group?: {code: string; label: string; totalCount: number};
     /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
@@ -33,8 +37,6 @@ export interface ActionBarProps<T> {
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
-    /** Appelé au clear des facettes. */
-    onFacetClear?: () => void;
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {key: string; label: string; order: boolean}[];
     /** Actions sur les éléments sélectionnés. */
@@ -51,6 +53,7 @@ export interface ActionBarProps<T> {
 
 /** Barre d'actions pour une liste ou un groupe de recherche. Permet le tri, le grouping, la recherche et la sélection + actions en masse. */
 export function ActionBar<T>({
+    additionalFacets,
     group,
     groupableFacets,
     hasFacetBox,
@@ -59,7 +62,6 @@ export function ActionBar<T>({
     hasSelection,
     i18nPrefix = "focus",
     nbDefaultDataListFacet = 6,
-    onFacetClear,
     operationList,
     orderableColumnList,
     searchBarPlaceholder,
@@ -244,8 +246,8 @@ export function ActionBar<T>({
                                     onClick={() => setDisplayFacetBox(false)}
                                 />
                                 <FacetBox
+                                    additionalFacets={additionalFacets}
                                     nbDefaultDataList={nbDefaultDataListFacet}
-                                    onClear={onFacetClear}
                                     showSingleValuedFacets={showSingleValuedFacets}
                                     store={store}
                                     theme={{facetBox: theme.facetBox()}}
