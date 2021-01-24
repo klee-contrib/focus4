@@ -1,6 +1,6 @@
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
-import {Component, forwardRef, ReactNode} from "react";
+import {Component, forwardRef, ReactNode, SyntheticEvent} from "react";
 import {findDOMNode} from "react-dom";
 import {MENU} from "react-toolbox/lib/identifiers";
 import {
@@ -110,7 +110,8 @@ export class ButtonMenu extends Component<ButtonMenuProps> {
     }
 
     @action.bound
-    private onClick() {
+    private onClick(e: SyntheticEvent) {
+        e.stopPropagation();
         this.isOpened = true;
         const {onClick} = this.props;
         if (onClick) {
