@@ -11,6 +11,7 @@ import {
     FacetOutput,
     GroupResult,
     InputFacets,
+    LocalFacetDefinition,
     LocalStoreConfig,
     QueryInput,
     QueryOutput,
@@ -182,24 +183,40 @@ export class CollectionStore<T = any, C = any> {
                 canExclude = false,
                 displayFormatter = x => x,
                 ordering = "count-desc"
-            }) => ({
-                code,
-                label,
-                isMultiSelectable,
-                isMultiValued: false,
-                canExclude,
-                values: orderBy(
-                    toPairs(groupBy(isMultiSelectable || canExclude ? this.innerList : this.list, fieldName))
-                        .map(([value, list]) => ({
-                            code: value,
-                            label: displayFormatter(value),
-                            count: list.length
-                        }))
-                        .filter(f => f.count !== 0),
-                    f => (ordering.includes("count") ? f.count : f.code),
-                    ordering.includes("desc") ? "desc" : "asc"
-                )
-            })
+            }) => {
+                let list: T[] = this.innerList;
+
+                // Filtrage simple, sur les champs choisis.
+                if (this.availableSearchFields.length > 0) {
+                    list = list.filter(item => this.filterItemByFilters(item));
+                }
+
+                // Facettes
+                list = list.filter(item =>
+                    this.localStoreConfig!.facetDefinitions!.filter(
+                        facet => !facet.isMultiSelectable || facet.code !== code
+                    ).every(facet => this.filterItemByFacet(item, facet))
+                );
+
+                return {
+                    code,
+                    label,
+                    isMultiSelectable,
+                    isMultiValued: false,
+                    canExclude,
+                    values: orderBy(
+                        toPairs(groupBy(list, fieldName))
+                            .map(([value, items]) => ({
+                                code: value,
+                                label: displayFormatter(value),
+                                count: items.length
+                            }))
+                            .filter(f => f.count !== 0),
+                        f => (ordering.includes("count") ? f.count : f.code),
+                        ordering.includes("desc") ? "desc" : "asc"
+                    )
+                };
+            }
         );
     }
 
@@ -234,67 +251,22 @@ export class CollectionStore<T = any, C = any> {
             }
         }
 
-        let list;
+        let list: T[] = this.innerList;
 
         // Tri.
         if (this.sortBy) {
             list = orderBy(this.innerList, item => (item as any)[this.sortBy!], this.sortAsc ? "asc" : "desc");
-        } else {
-            list = this.innerList;
         }
 
         // Filtrage simple, sur les champs choisis.
         if (this.availableSearchFields.length > 0) {
-            list = list.filter(item =>
-                (this.searchFields ?? this.availableSearchFields).some(filter => {
-                    const field = item[filter as keyof T];
-                    if (isString(field)) {
-                        return field.toLowerCase().includes(this.query.toLowerCase());
-                    } else {
-                        return false;
-                    }
-                })
-            );
+            list = list.filter(item => this.filterItemByFilters(item));
         }
 
         // Facettes
         if (this.localStoreConfig?.facetDefinitions) {
             list = list.filter(item =>
-                this.localStoreConfig!.facetDefinitions!.every(f => {
-                    const inputFacet = this.innerInputFacets.get(f.code);
-                    if (!inputFacet) {
-                        return true;
-                    }
-
-                    const {selected = [], excluded = []} = inputFacet;
-                    const value = item[f.fieldName];
-
-                    if (selected.length) {
-                        return selected.some(s => {
-                            if (typeof value === "number") {
-                                return value === parseFloat(s) || undefined;
-                            } else if (typeof value === "boolean") {
-                                return value === (s === "true");
-                            } else {
-                                // tslint:disable-next-line: triple-equals
-                                return value == (s as any);
-                            }
-                        });
-                    } else if (excluded.length) {
-                        return excluded.every(s => {
-                            if (typeof value === "number") {
-                                return value !== parseFloat(s) || undefined;
-                            } else if (typeof value === "boolean") {
-                                return value !== (s === "true");
-                            } else {
-                                // tslint:disable-next-line: triple-equals
-                                return value !== (s as any);
-                            }
-                        });
-                    } else {
-                        return true;
-                    }
-                })
+                this.localStoreConfig!.facetDefinitions!.every(facet => this.filterItemByFacet(item, facet))
             );
         }
 
@@ -659,5 +631,52 @@ export class CollectionStore<T = any, C = any> {
                 toggleAll: action.bound
             }
         ) as any;
+    }
+
+    private filterItemByFacet(item: T, facet: LocalFacetDefinition<T>) {
+        const inputFacet = this.innerInputFacets.get(facet.code);
+        if (!inputFacet) {
+            return true;
+        }
+
+        const {selected = [], excluded = []} = inputFacet;
+        const value = item[facet.fieldName];
+
+        if (selected.length) {
+            return selected.some(s => {
+                if (typeof value === "number") {
+                    return value === parseFloat(s) || undefined;
+                } else if (typeof value === "boolean") {
+                    return value === (s === "true");
+                } else {
+                    // tslint:disable-next-line: triple-equals
+                    return value == (s as any);
+                }
+            });
+        } else if (excluded.length) {
+            return excluded.every(s => {
+                if (typeof value === "number") {
+                    return value !== parseFloat(s) || undefined;
+                } else if (typeof value === "boolean") {
+                    return value !== (s === "true");
+                } else {
+                    // tslint:disable-next-line: triple-equals
+                    return value !== (s as any);
+                }
+            });
+        } else {
+            return true;
+        }
+    }
+
+    private filterItemByFilters(item: T) {
+        (this.searchFields ?? this.availableSearchFields).some(filter => {
+            const field = item[filter as keyof T];
+            if (isString(field)) {
+                return field.toLowerCase().includes(this.query.toLowerCase());
+            } else {
+                return false;
+            }
+        });
     }
 }

@@ -3,27 +3,30 @@ import {EntityToType} from "../entity";
 /** Définition d'un service de recherche. */
 export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
 
+/** Définition d'une facette côté client. */
+export interface LocalFacetDefinition<T> {
+    /** Code de la facette. */
+    code: string;
+    /** Libellé de la facette. */
+    label: string;
+    /** Champ de l'objet sur lequel facetter. */
+    fieldName: keyof T;
+    /** Type de tri pour les valeurs de facettes. Par défaut : "count-desc". */
+    ordering?: "key-asc" | "key-desc" | "count-asc" | "count-desc";
+    /** Facette multisélectionnable. */
+    isMultiSelectable?: boolean;
+    /** Possibilité d'exclure des valeurs. */
+    canExclude?: boolean;
+    /** Mise en forme de la valeur pour affichage (ex: liste de référence, date...) */
+    displayFormatter?: (value: string) => string;
+}
+
 /** Config pour un store de collection local. */
 export interface LocalStoreConfig<T> {
     /** Liste des champs disponibles pour le filtrage par champ texte. */
     searchFields?: (keyof T & string)[];
     /** Définitions de facettes. */
-    facetDefinitions?: {
-        /** Code de la facette. */
-        code: string;
-        /** Libellé de la facette. */
-        label: string;
-        /** Champ de l'objet sur lequel facetter. */
-        fieldName: keyof T;
-        /** Type de tri pour les valeurs de facettes. Par défaut : "count-desc". */
-        ordering?: "key-asc" | "key-desc" | "count-asc" | "count-desc";
-        /** Facette multisélectionnable. */
-        isMultiSelectable?: boolean;
-        /** Possibilité d'exclure des valeurs. */
-        canExclude?: boolean;
-        /** Mise en forme de la valeur pour affichage (ex: liste de référence, date...) */
-        displayFormatter?: (value: string) => string;
-    }[];
+    facetDefinitions?: LocalFacetDefinition<T>[];
 }
 
 /** Statut de la séléection */
