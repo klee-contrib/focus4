@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
 
 import {CollectionStore} from "@focus4/stores";
 import {getIcon, ToBem} from "@focus4/styling";
@@ -13,13 +13,11 @@ import {TableCss} from "../__style__/table.css";
 export function TableLine<T>({
     className,
     columns,
-    data,
     domRef,
     i18nPrefix = "focus",
-    hasSelection,
     onClick,
-    store,
-    theme
+    theme,
+    ...oProps
 }: {
     /** Classe CSS pour une ligne. */
     className?: (data: T) => string;
@@ -40,31 +38,36 @@ export function TableLine<T>({
     /** CSS. */
     theme: ToBem<TableCss>;
 }) {
+    const props = useAsObservableSource({
+        data: oProps.data,
+        hasSelection: oProps.hasSelection,
+        store: oProps.store
+    });
     const state = useLocalStore(() => ({
         /** Précise si la checkbox doit être affichée. */
         get isCheckboxDisplayed() {
-            return !!store?.selectedItems.size || false;
+            return !!props.store?.selectedItems.size || false;
         },
 
         /** Précise si la ligne est sélectionnable. */
         get isSelectable() {
-            return (hasSelection && store?.isItemSelectionnable(data)) || false;
+            return (props.hasSelection && props.store?.isItemSelectionnable(props.data)) || false;
         },
 
         /** Précise si la ligne est sélectionnée.. */
         get isSelected() {
-            return store?.selectedItems.has(data) || false;
+            return props.store?.selectedItems.has(props.data) || false;
         },
 
         /** Handler de clic sur la case de sélection. */
         onSelection() {
-            store?.toggle(data);
+            props.store?.toggle(props.data);
         }
     }));
 
     return useObserver(() => (
-        <tr ref={domRef} className={classNames(className?.(data) ?? "", onClick ? theme.clickable() : "")}>
-            {hasSelection ? (
+        <tr ref={domRef} className={classNames(className?.(props.data) ?? "", onClick ? theme.clickable() : "")}>
+            {props.hasSelection ? (
                 <td className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}>
                     {state.isSelectable ? (
                         <IconButton
@@ -77,8 +80,8 @@ export function TableLine<T>({
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (
-                <td className={cellClassName} key={idx} onClick={() => onClick?.(data)}>
-                    {content(data)}
+                <td className={cellClassName} key={idx} onClick={() => onClick?.(props.data)}>
+                    {content(props.data)}
                 </td>
             ))}
         </tr>
