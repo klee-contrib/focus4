@@ -51,9 +51,11 @@ export interface FacetBoxProps<T> {
     theme?: CSSProp<FacetBoxCss>;
 }
 
+const noAdditionalFacets = {};
+
 /** Composant contenant la liste des facettes retournées par une recherche. */
 export function FacetBox<T>({
-    additionalFacets = {},
+    additionalFacets = noAdditionalFacets,
     customFacetComponents = {},
     i18nPrefix = "focus",
     nbDefaultDataList = 6,

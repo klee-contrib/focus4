@@ -1,4 +1,4 @@
-import {ComponentType} from "react";
+import {ComponentType, ReactNode} from "react";
 
 import {
     BaseAutocompleteProps,
