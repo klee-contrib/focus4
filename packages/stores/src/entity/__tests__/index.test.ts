@@ -392,19 +392,19 @@ describe("FormNode: Modification de FormNode", () => {
 
 describe("FormListNode: Modification", () => {
     let step1Done: () => void;
-    const step1 = new Promise(resolve => (step1Done = resolve));
+    const step1 = new Promise<void>(resolve => (step1Done = resolve));
     let step2Done: () => void;
-    const step2 = new Promise(resolve => (step2Done = resolve));
+    const step2 = new Promise<void>(resolve => (step2Done = resolve));
     let step3Done: () => void;
-    const step3 = new Promise(resolve => (step3Done = resolve));
+    const step3 = new Promise<void>(resolve => (step3Done = resolve));
     let step4Done: () => void;
-    const step4 = new Promise(resolve => (step4Done = resolve));
+    const step4 = new Promise<void>(resolve => (step4Done = resolve));
     let step5Done: () => void;
-    const step5 = new Promise(resolve => (step5Done = resolve));
+    const step5 = new Promise<void>(resolve => (step5Done = resolve));
     let step6Done: () => void;
-    const step6 = new Promise(resolve => (step6Done = resolve));
+    const step6 = new Promise<void>(resolve => (step6Done = resolve));
     let step7Done: () => void;
-    const step7 = new Promise(resolve => (step7Done = resolve));
+    const step7 = new Promise<void>(resolve => (step7Done = resolve));
 
     const {entry2, formNode2} = getFormNodes();
 
@@ -486,9 +486,9 @@ describe("FormListNode: Modification", () => {
 
 describe("FormNode: Modification de source forcée", () => {
     let step1Done: () => void;
-    const step1 = new Promise(resolve => (step1Done = resolve));
+    const step1 = new Promise<void>(resolve => (step1Done = resolve));
     let step2Done: () => void;
-    const step2 = new Promise(resolve => (step2Done = resolve));
+    const step2 = new Promise<void>(resolve => (step2Done = resolve));
 
     const {entry, entry2, formNode, formNode2} = getFormNodes();
 
@@ -544,9 +544,9 @@ describe("FormNode: Modification de source forcée", () => {
 
 describe("FormNode: propagation isEdit et isValid", () => {
     let step1Done: () => void;
-    const step1 = new Promise(resolve => (step1Done = resolve));
+    const step1 = new Promise<void>(resolve => (step1Done = resolve));
     let step2Done: () => void;
-    const step2 = new Promise(resolve => (step2Done = resolve));
+    const step2 = new Promise<void>(resolve => (step2Done = resolve));
 
     const {formNode, formNode2} = getFormNodes();
     formNode.replace(operation);
@@ -672,9 +672,9 @@ describe("FormNode: dispose", () => {
 
 describe("FormListNode: dispose", () => {
     let step1Done: () => void;
-    const step1 = new Promise(resolve => (step1Done = resolve));
+    const step1 = new Promise<void>(resolve => (step1Done = resolve));
     let step2Done: () => void;
-    const step2 = new Promise(resolve => (step2Done = resolve));
+    const step2 = new Promise<void>(resolve => (step2Done = resolve));
 
     const {entry2, formNode2} = getFormNodes();
     entry2.replace(projetTest);
