@@ -97,7 +97,7 @@ function buildQueryString(obj: any, prefix = ""): string {
             (acc, [key, value]) =>
                 acc +
                 (acc && acc !== "" && !acc.endsWith("&") && value !== undefined ? "&" : "") +
-                buildQueryString(value, prefix !== "" ? `${prefix}.${key}` : key),
+                buildQueryString(value, prefix !== "" ? (Array.isArray(obj) ? prefix : `${prefix}.${key}`) : key),
             ""
         );
     } else if (prefix && prefix !== "" && obj !== undefined) {
