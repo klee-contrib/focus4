@@ -230,7 +230,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         }
 
         if (this.props.onKeyDown) {
-            this.props.onKeyDown();
+            this.props.onKeyDown(event);
         }
     }
 
