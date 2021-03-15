@@ -1,4 +1,4 @@
-# Module `theme`
+# Module `styling`
 
 ## Gestion du CSS
 

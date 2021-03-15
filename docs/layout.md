@@ -1,4 +1,4 @@
-# Module `Layout`
+# Module `layout`
 
 Ce module contient le composant racine d'une application Focus : le `Layout`. Il contient l'ensemble des composants de base qui doivent se retrouver dans toutes les pages. Par défaut, il ne pose que l'`ErrorCenter` et le `MessageCenter`, laissant à l'utilisateur le soin de composer son layout comme il le souhaite. Néanmoins, 3 composants sont quasiment toujours présents : le `LayoutContent`, le `Menu` et le `Header`.
 
