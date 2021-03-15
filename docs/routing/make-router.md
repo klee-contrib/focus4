@@ -1,0 +1,54 @@
+# Création d'un routeur
+
+On va définir notre routeur via un **arbre** qui va décrire **tous les routes possibles**. Tout est défini de manière statique, de façon à ce qu'une route inexistante soit tout simplement inatteignable.
+
+Dans notre arbre de route, on va y trouver à la fois des **sections "fixes"**, qui peuvent par exemple correspondre à des noms de pages (`"operation"`, `"projet"`, `"detail"`...), ainsi que des **paramètres**, à priori liés à une section fixe (`"operation/`**`2`**`"`, `"detail/`**`2020-10-04`**`"`), qui eux sont variables.
+
+Le routeur se définit via les méthodes **`makeRouter2`** et **`param`**, de la façon suivante :
+
+```ts
+const echeance = param("echId", p => p.number(), {reglement: param("regId", p => p.number())});
+
+const router = makeRouter2({
+    projet: {
+        detail: {}
+    },
+    operation: param("ofaId", p => p.number(), {
+        garantie: param("gfaId", p => p.number(true)),
+        pret: param("pnfId", p => p.number(true)),
+        tam: param(
+            "ttaCode",
+            p => p.string<"COURANT" | "THEORIQUE">(true),
+            param("mprId", p => p.number())
+        ),
+        echeance
+    })
+});
+```
+
+Les sections fixes sont définis par des propriétés dans un objet JS classique, tandis que les paramètres sont définis par la fonction **`param`**, qui prend les paramètres suivants :
+
+-   **`paramName`**, le nom du paramètre. **Ce nom de paramètre doit être unique** dans tout le routeur, ou du moins il est capital qu'il correspond bien **toujours à la même chose s'il apparaît plusieurs fois**.
+-   **`paramType`**, le type du paramètre. Il peut être du type `number` ou `string`. Une URL étant un string, il n'y a aucun problème à définir un paramètre comme étant un string. Pour un nombre en revanche, il sera converti. **Si la conversion en nombre est impossible** (elle donne `NaN`), alors le routeur considèrera que **la route demandée n'existe pas**, puisqu'on attendait un nombre.
+
+    De plus, un paramètre peut être spécifié comme étant **obligatoire** (si on passe `true` à la fonction). Si le paramètre est obligatoire, alors la route définie jusqu'au paramètre mais sans le paramètre n'existe pas. Dans l'exemple ci-dessus, `/operation` et `/operation/1` existent, mais `/operation/1/garantie` n'existe pas, seul `/operation/1/garantie/1` existe pour le paramètre `gfaId` défini comme obligatoire.
+
+-   **`next`**, facultatif, qui permet de définir les éventuelles routes supplémentaires qui seront définies "après" le paramètre. Dans l'exemple, toutes les routes qui commencent par `/operation/:ofaId` sont définies dans ce paramètre.
+
+Il est tout a fait possible (et encouragé !) de subdiviser la définition du routeur en sous-sections, comme on peut le voir dans l'exemple avec `echeance`, ce qui permet par exemple à chaque "module" (si votre application est divisée de cette façon) de définir sa propre section de routeur qui lui correspond. De plus, cela permet aussi de positionner la même section de routeur plusieurs fois à des endroits différents.
+
+Concrètement, cette définition de routeur définit donc toutes les routes suivantes comme étant disponibles :
+
+-   `/`
+-   `/projet`
+-   `/projet/detail`
+-   `/operation`
+-   `/operation/:ofaId`
+-   `/operation/:ofaId/garantie/:gfaId`
+-   `/operation/:ofaId/pret/:pnfId`
+-   `/operation/:ofaId/tam/:ttaCode`
+-   `/operation/:ofaId/tam/:ttaCode/:mprId`
+-   `/operation/:ofaId/echeance`
+-   `/operation/:ofaId/echeance/:echId`
+-   `/operation/:ofaId/echeance/:echId/reglement`
+-   `/operation/:ofaId/echeance/:echId/reglement/:regId`

@@ -1,4 +1,4 @@
-# Présentation
+# Présentation <!-- {docsify-ignore-all} -->
 
 **`Focus v4`** est en ensemble de modules conçu pour essayer de simplifier et généraliser les réponses aux besoins récurrents de réalisation de SPA avec **[React](http://www.reactjs.org)** (bien que certains d'entres-eux pourraient être utilisés avec d'autres frameworks comme Angular ou Vue). Ces modules s'appuient fortement sur **[Typescript](http://www.typescriptlang.org)** et **[MobX](http://mobx.js.org)**. Il est vivement encouragé d'être au moins familier avec ces technologies avant de continuer.
 

@@ -1,4 +1,4 @@
-# Module `toolbox`
+# `@focus4/toolbox` <!-- {docsify-ignore-all} -->
 
 Réexporte `react-toolbox` dans le but de :
 
