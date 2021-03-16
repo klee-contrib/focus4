@@ -5,6 +5,7 @@
     -   [Gestion des messages](basics/messages.md)
     -   [Gestion des requêtes](basics/fetch.md)
     -   [Gestion des libellés](basics/translation.md)
+    -   [Store de référence](basics/reference.md)
     -   [Store d'utilisateur](basics/user-store.md)
 
 -   **Modules de formulaires**
@@ -22,10 +23,19 @@
     -   [Exemples](routing/examples.md)
     -   [Ancien routeur](routing/legacy.md)
 
--   **Modules de présentation**
+-   **[Mise en page](presentation.md)**
 
-    -   [`@focus4/layout`](layout.md "Module layout")
-    -   [`@focus4/collections`](collections.md "Module collections")
+    -   [`Scrollable`](presentation/scrollable.md)
+    -   [`Layout`](presentation/layout.md)
+    -   [Header](presentation/header.md)
+    -   [Menu principal](presentation/menu.md)
+    -   [Popins](presentation/popins.md)
+
+-   **[Listes et recherche](collections.md)**
+
+    -   [Composants de listes](collections/lists)
+    -   [Store de collection](collections/store)
+    -   [Recherche avancée](collections/search)
 
 -   **[CSS](css.md)**
 

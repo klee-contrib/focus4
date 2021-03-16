@@ -1,3 +1,5 @@
+# `focus4`
+
 Ce méta-module contient l'ensemble des modules de `Focus v4`, à l'exception du module `legacy`.
 
 Il permet également de simplifier l'initialisation d'une application via l'import `import "focus4"` qui peut être mis en entête du fichier racine de la SPA.

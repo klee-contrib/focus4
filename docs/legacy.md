@@ -2,13 +2,13 @@
 
 Permet d'utiliser les anciens formulaires (pré-v9) à partir du module `stores`.
 
-### API
+## API
 
-#### `displayFor(field, options?)`
+### `displayFor(field, options?)`
 
 Même chose que `fieldFor` mais avec `isEdit = false`.
 
-#### `fieldFor(field, options?)`
+### `fieldFor(field, options?)`
 
 La fonction `fieldFor`, permettent de créer un champ d'entrée ou d'affichage avec un libellé, en utilisant les composants du domaine ou par défaut. Elle prend comme paramètres :
 
@@ -17,7 +17,7 @@ La fonction `fieldFor`, permettent de créer un champ d'entrée ou d'affichage a
 
 Par défaut, `fieldFor` utilise les composants `InputComponent`, `DisplayComponent` et `LabelComponent` définis dans le domaine. Si ces composants ne sont pas renseignés, alors il utilisera les composants par défaut (en particulier, un `InputText` pour l'input). Il est possible de surcharger localement ces composants en les respécifiant dans les options. Si le typage des domaines et des entités est bien fait, alors `inputProps` et consorts seront bien typés avec les props du composant qui sera utilisé.
 
-#### `selectFor(field, values, options?)`
+### `selectFor(field, values, options?)`
 
 La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une liste de référence. Elle utilise un composant `Select` par défaut comme composant d'input et renseigne `options.values` avec le paramètre `values`.
 
