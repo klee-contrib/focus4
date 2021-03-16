@@ -1,37 +1,12 @@
-# Module `forms`
+# Utilisation dans un composant
 
-Il contient :
-
--   Les composants de champs et de formulaires module `stores`
--   Les spécialisations "React" des "builders" de formulaires de `stores`
+Une fois qu'on a présenté tous les différents composants nécessaires à la création d'un formulaire, voyons comment cela s'utilise en pratique.
 
 ## Composants
 
-### `fieldFor(field, options?)`
+Deux composants React sont en général incontournable dans la réalisation d'un composant qui affiche un formulaire :
 
-C'est la fonction principale, elle permet d'afficher un champ avec son libellé, à partir de ses métadonnées (en particulier le domaine). Elle prend comme paramètres :
-
--   `field`, un `EntityField`
--   `options`, les différentes options à passer au champ. Il ne s'agit uniquement de props pour le composant de Field, et _il n'y est pas possible de surcharger les métadonnées du champ_.
-
-Le composant de Field utilisera ses composants par défaut si le domaine ne les renseignent pas (`Input`, `Display` et `Label` de `forms`).
-
-### `selectFor(field, values, options?)`
-
-La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une liste de référence. Elle prend comme paramètres :
-
--   `field`, le champ contenant le code
--   `values`, la liste de référence à utiliser pour résoudre le code.
--   `options`, comme `fieldFor`, avec une option en plus pour personnaliser le composant de `Select`.
-
-### `autocompleteFor(field, options)`
-
-La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec un champ d'autocomplétion. Elle prend comme paramètres :
-
--   `field`, le champ contenant le code
--   `options`, comme `fieldFor`, où il faut également préciser `keyResolver` et/ou `querySearcher` pour gérer la consultation et/ou la saisie. De plus, il y est possible de personnaliser le composant d'`Autocomplete`.
-
-#### `<Form>`
+### `<Form>`
 
 `Form` est un composant qui sert à poser le formulaire dans un composant React. Il utilise l'objet d'actions dans son cycle de vie (en particulier, il appelle `load` pendant son `componentWillMount`) et peut poser un formulaire HTML dont l'action est le `save`.
 
@@ -49,13 +24,13 @@ render() {
 
 On peut y passer également la prop `noForm` pour désactiver le form HTML, et contrôler les `labelRatio` de tous champs qu'il contient.
 
-#### `<Panel>`
+### `<Panel>`
 
 C'est un composant qui permet de poser un panel avec un titre et des boutons d'actions. Il n'est pas spécialement lié aux formulaires (il se trouve dans le module `components`), mais en pratique il est quasiment toujours utilisé avec.
 
 Comme pour `<Form>`, `FormActions` expose `actions.panelProps`, qui contient les méthodes et les états nécessaires à son fonctionnements.
 
-### Création de formulaire
+## Création de formulaire
 
 ### `makeFormNode`
 
@@ -81,3 +56,39 @@ Comme pour `<Form>`, `FormActions` expose `actions.panelProps`, qui contient les
 ### `useFormActions`
 
 `useFormActions` est la fonction a utiliser pour créer les actions d'un formulaire dans un **composant fonction**. Ses paramètres sont les mêmes que `makeFormActions`, sauf qu'il n'y a pas besoin de lui passer `this`.
+
+## Exemple complet
+
+```tsx
+import {fieldFor, Form, Panel, selectFor, useFormActions, useFormNode} from "@focus4/forms";
+import i18next from "i18next";
+import {useObserver} from "mobx-react";
+
+import {router} from "../../../router";
+import {loadStructure, saveStructure} from "../../../services/main";
+import {mainStore, referenceStore} from "../../../stores";
+
+export function BasicForm() {
+    const entity = useFormNode(mainStore.structure);
+    const actions = useFormActions(entity, a =>
+        a
+            .params(() => router.state.home.id)
+            .load(loadStructure)
+            .save(saveStructure)
+    );
+
+    const {denominationSociale, capitalSocial, statutJuridiqueCode, adresse} = entity;
+    return useObserver(() => (
+        <Form {...actions.formProps} labelRatio={40}>
+            <Panel title="form.title" {...actions.panelProps}>
+                {i18next.t("form.content")}
+                {fieldFor(denominationSociale)}
+                {fieldFor(capitalSocial)}
+                {selectFor(statutJuridiqueCode, referenceStore.statutJuridique)}
+                {fieldFor(adresse.codePostal)}
+                {fieldFor(adresse.ville)}
+            </Panel>
+        </Form>
+    ));
+}
+```
