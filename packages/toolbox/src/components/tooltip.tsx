@@ -84,7 +84,7 @@ class TooltippedComponent<P> extends Component<
         left: 0,
         top: 0
     };
-    timeout?: number;
+    timeout?: NodeJS.Timeout;
     tooltipNode?: HTMLSpanElement | null;
 
     componentWillUnmount() {
