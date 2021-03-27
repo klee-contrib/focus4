@@ -15,9 +15,9 @@ export function useDragSource<T>({
     type: string;
 }) {
     return useDrag({
-        item: {type, dragged: draggedItems},
+        type,
         /** Est appelé au lancement du drag. */
-        begin() {
+        item() {
             // Si on a un store, on va regarder si on a des éléments sélectionnés.
             if (store) {
                 // Si l'élément en cours de drag est sélectionné, alors on embarque tous les éléments sélectionnés.
@@ -33,6 +33,8 @@ export function useDragSource<T>({
                 // Idem.
                 draggedItems.push(data);
             }
+
+            return draggedItems;
         },
         /** Vide la liste d'élements à la fin du drag. */
         end() {
@@ -45,6 +47,6 @@ export function useDragSource<T>({
  * Récupère les élements en cours de drag and drop.
  * @param monitor Le monitor react-dnd.
  */
-export function getDraggedItems<T>(monitor: DropTargetMonitor | undefined) {
-    return monitor!.getItem().dragged as T[];
+export function getDraggedItems<T>(monitor: DropTargetMonitor<IObservableArray<T>> | undefined) {
+    return monitor!.getItem();
 }

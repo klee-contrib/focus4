@@ -1,6 +1,6 @@
 {
     "name": "@focus4/core",
-    "version": "10.7.4",
+    "version": "10.8.0-alpha.0",
     "description": "Focus v4, core module",
     "main": "lib/focus4.core.js",
     "repository": {
@@ -16,15 +16,15 @@
     },
     "dependencies": {
         "@types/lodash": "4.14.168",
-        "@types/react": "17.0.0",
+        "@types/react": "17.0.3",
         "@types/uuid": "8.3.0",
-        "i18next": "19.8.4",
-        "lodash": "4.17.20",
+        "i18next": "20.1.0",
+        "lodash": "4.17.21",
         "mobx": "4.15.7",
         "mobx-utils": "5.6.2",
         "tslib": "2.1.0",
         "uuid": "8.3.2",
-        "whatwg-fetch": "3.5.0",
+        "whatwg-fetch": "3.6.2",
         "yester": "0.10.0"
     }
 }

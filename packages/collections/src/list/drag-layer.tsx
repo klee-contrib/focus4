@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {isObservableArray} from "mobx";
 import {useDragLayer} from "react-dnd";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -28,10 +29,10 @@ export function DndDragLayer({i18nPrefix = "focus", theme: pTheme}: DndDragLayer
     const {currentOffset, isDragging, item} = useDragLayer(monitor => ({
         currentOffset: monitor.getClientOffset(),
         isDragging: monitor.isDragging(),
-        item: monitor.getItem()
+        item: monitor.getItem() as {}[]
     }));
 
-    if (!isDragging || !item || !item.dragged || !currentOffset) {
+    if (!isDragging || !item || !isObservableArray(item) || !currentOffset) {
         return <div />;
     }
 
@@ -45,8 +46,8 @@ export function DndDragLayer({i18nPrefix = "focus", theme: pTheme}: DndDragLayer
         <div className={theme.container()}>
             <div className={theme.layer()} style={{transform: `translate(${x - 18}px, ${y - 20}px)`}}>
                 <FontIcon>drag_handle</FontIcon>
-                <div className={theme.count()}>{item.dragged.length}</div>
-                <div>{i18next.t(`${i18nPrefix}.dragLayer.item`, {count: item.dragged.length})}</div>
+                <div className={theme.count()}>{item.length}</div>
+                <div>{i18next.t(`${i18nPrefix}.dragLayer.item`, {count: item.length})}</div>
             </div>
         </div>
     );

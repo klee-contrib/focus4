@@ -1,8 +1,8 @@
 import {IObservableArray} from "mobx";
 import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
+import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import posed from "react-pose";
-import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {getIcon, springPose, ToBem} from "@focus4/styling";
