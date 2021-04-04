@@ -1,21 +1,12 @@
 import {ComponentType} from "react";
-import {AppBar} from "react-toolbox/lib/app_bar";
 import {AvatarProps} from "react-toolbox/lib/avatar";
-import {Button, BrowseButton, IconButton, IconButtonProps, ButtonProps} from "react-toolbox/lib/button";
-import {CardTitle} from "react-toolbox/lib/card";
-import {Checkbox, CheckboxProps} from "react-toolbox/lib/checkbox";
+import {IconButtonProps, ButtonProps} from "react-toolbox/lib/button";
+import {CheckboxProps} from "react-toolbox/lib/checkbox";
 import {ChipProps} from "react-toolbox/lib/chip";
-import {Dropdown} from "react-toolbox/lib/dropdown";
 import {FontIconProps} from "react-toolbox/lib/font_icon";
 import {InputProps} from "react-toolbox/lib/input";
 import {LinkProps} from "react-toolbox/lib/link";
 import {
-    List,
-    ListCheckbox,
-    ListItem,
-    ListItemActions,
-    ListItemContent,
-    ListItemLayout,
     ListItemProps,
     ListItemContentProps,
     ListItemLayoutProps,
@@ -23,14 +14,10 @@ import {
     ListItemTextProps,
     ListItemActionsProps
 } from "react-toolbox/lib/list";
-import {MenuItem, MenuItemProps, Menu, MenuProps} from "react-toolbox/lib/menu";
-import {Navigation} from "react-toolbox/lib/navigation";
+import {MenuItemProps, MenuProps} from "react-toolbox/lib/menu";
 import {ProgressBarProps} from "react-toolbox/lib/progress_bar";
-import {RadioButton, RadioButtonProps, RadioGroup} from "react-toolbox/lib/radio";
-import {Slider} from "react-toolbox/lib/slider";
-import {Snackbar} from "react-toolbox/lib/snackbar";
-import {Switch} from "react-toolbox/lib/switch";
-import {Tab, Tabs, TabProps} from "react-toolbox/lib/tabs";
+import {RadioButtonProps} from "react-toolbox/lib/radio";
+import {TabProps} from "react-toolbox/lib/tabs";
 import {TabContentProps} from "react-toolbox/lib/tabs/TabContent";
 
 declare module "react-toolbox/lib/app_bar/AppBar" {
@@ -65,9 +52,6 @@ declare module "react-toolbox/lib/chip/Chip" {
 }
 declare module "react-toolbox/lib/dropdown/Dropdown" {
     export function dropdownFactory(Input: ComponentType<InputProps>): typeof Dropdown;
-}
-declare module "react-toolbox/lib/input/Input" {
-    export function inputFactory(FontIcon: ComponentType<FontIconProps>): typeof Input;
 }
 declare module "react-toolbox/lib/list/List" {
     export function listFactory(ListItem: ComponentType<ListItemProps>): typeof List;

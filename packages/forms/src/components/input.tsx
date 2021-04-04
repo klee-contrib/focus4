@@ -38,7 +38,7 @@ export interface InputProps<T extends "string" | "number"> extends RTInputProps 
 
 @observer
 export class Input<T extends "string" | "number"> extends Component<InputProps<T>> {
-    protected inputElement!: HTMLInputElement;
+    protected inputElement!: HTMLInputElement | HTMLTextAreaElement;
     protected mask?: InputMask;
 
     @computed
@@ -322,7 +322,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
                 {...{
                     onPaste: this.onPaste
                 }}
-                ref={i => (this.inputElement = i && (i as any).inputNode)}
+                ref={i => (this.inputElement = i?.inputNode!)}
                 onChange={this.onChange}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
@@ -346,7 +346,7 @@ function isRedo(e: KeyboardEvent) {
     return (e.ctrlKey || e.metaKey) && e.keyCode === (e.shiftKey ? KEYCODE_Z : KEYCODE_Y);
 }
 
-function getSelection(el: HTMLInputElement) {
+function getSelection(el: HTMLInputElement | HTMLTextAreaElement) {
     let start;
     let end;
     if (el.selectionStart !== undefined) {
@@ -371,7 +371,7 @@ function getSelection(el: HTMLInputElement) {
     return {start, end};
 }
 
-function setSelection(el: HTMLInputElement, selection: InputMaskSelection) {
+function setSelection(el: HTMLInputElement | HTMLTextAreaElement, selection: InputMaskSelection) {
     try {
         if (el.selectionStart !== undefined) {
             el.setSelectionRange(selection.start!, selection.end!);

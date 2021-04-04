@@ -37,7 +37,7 @@ export {Chip, ChipProps, ChipTheme, chipTheme} from "./components/chip";
 export {Clock, ClockProps, TimePickerTheme, timePickerTheme} from "./components/clock";
 export {Dropdown, DropdownProps, DropdownTheme, dropdownTheme} from "./components/dropdown";
 export {FontIcon} from "./components/font-icon";
-export {Input, InputProps, InputTheme, inputTheme} from "./components/input";
+export {Input, InputProps, InputRef, InputTheme, inputTheme} from "./components/input";
 export {Link, LinkProps, LinkTheme, linkTheme} from "./components/link";
 export {
     List,
