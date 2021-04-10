@@ -1,6 +1,23 @@
 // Libs
-import {mount} from "enzyme";
+import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
+import {mount, configure} from "enzyme";
 import {InputDate} from "../input-date";
+
+configure({adapter: new Adapter()});
+
+const inputTheme = {
+    bar: "bar",
+    disabled: "disabled",
+    errored: "errored",
+    filled: "filled",
+    fixed: "fixed",
+    hidden: "hidden",
+    icon: "icon",
+    input: "input",
+    inputElement: "inputElement",
+    label: "label",
+    withIcon: "withIcon"
+};
 
 // Components
 describe("InputDate component", () => {
@@ -12,6 +29,7 @@ describe("InputDate component", () => {
                     /* */
                 }}
                 value={undefined}
+                theme={inputTheme}
                 type="string"
             />
         );
@@ -32,6 +50,7 @@ describe("Some date formation", () => {
                 }}
                 value={"10/11/2016"}
                 inputFormat={"dd/MM/yy"}
+                theme={inputTheme}
                 type="string"
             />
         );
@@ -49,6 +68,7 @@ describe("Some date formation", () => {
                 }}
                 value={"df/11/2016"}
                 inputFormat={"dd/MM/yyyy"}
+                theme={inputTheme}
                 type="string"
             />
         );
@@ -66,6 +86,7 @@ describe("Some date formation", () => {
     //             }}
     //             value={"11/15/2016"}
     //             inputFormat={"dd/MM/yyyy"}
+    //             theme={inputTheme}
     //         />
     //     );
     //     // Assert
@@ -82,6 +103,7 @@ describe("Some date formation", () => {
                 }}
                 value={"sddqsdqsdq"}
                 inputFormat={"dd/MM/yyyy"}
+                theme={inputTheme}
                 type="string"
             />
         );

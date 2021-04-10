@@ -1,8 +1,10 @@
 // Libs
-import {mount} from "enzyme";
+import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
+import {mount, configure} from "enzyme";
 import i18next from "i18next";
 import {Panel} from "../panel";
 
+configure({adapter: new Adapter()});
 i18next.init();
 
 const panelTheme = {

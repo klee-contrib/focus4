@@ -18,7 +18,7 @@
     "dependencies": {
         "@focus4/core": "^10.7.5",
         "@focus4/styling": "^10.7.5",
-        "@types/ramda": "0.27.39",
+        "@types/ramda": "0.27.40",
         "react-toolbox": "2.0.0-beta.13"
     }
 }

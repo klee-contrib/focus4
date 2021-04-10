@@ -84,7 +84,7 @@ class TooltippedComponent<P> extends Component<
         left: 0,
         top: 0
     };
-    timeout?: NodeJS.Timeout;
+    timeout?: NodeJS.Timeout | number;
     tooltipNode?: HTMLSpanElement | null;
 
     componentWillUnmount() {
@@ -92,7 +92,7 @@ class TooltippedComponent<P> extends Component<
             events.removeEventListenerOnTransitionEnded(this.tooltipNode, this.onTransformEnd);
         }
         if (this.timeout) {
-            clearTimeout(this.timeout);
+            clearTimeout(this.timeout as number);
         }
     }
 
@@ -150,7 +150,7 @@ class TooltippedComponent<P> extends Component<
 
     activate({top, left, position}: {top?: number; left?: number; position?: string} = {}) {
         if (this.timeout) {
-            clearTimeout(this.timeout);
+            clearTimeout(this.timeout as number);
         }
         this.setState({visible: true, position});
         this.timeout = setTimeout(() => {
@@ -160,7 +160,7 @@ class TooltippedComponent<P> extends Component<
 
     deactivate() {
         if (this.timeout) {
-            clearTimeout(this.timeout);
+            clearTimeout(this.timeout as number);
         }
         if (this.state.active) {
             events.addEventListenerOnTransitionEnded(this.tooltipNode, this.onTransformEnd);

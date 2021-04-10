@@ -4,7 +4,7 @@ module.exports = {
             diagnostics: {
                 ignoreCodes: ["TS2305", "TS2614", "TS2307", "TS7016"]
             },
-            tsConfig: {
+            tsconfig: {
                 module: "commonjs",
                 esModuleInterop: true
             }
