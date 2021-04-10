@@ -51,6 +51,9 @@ export type FormNode<E = any, E0 = E> = EntityToForm<E> & {
     /** Désactive la synchronisation entre ce FormNode et son noeud source. */
     dispose(): void;
 
+    /** Appelle le service de chargement enregistré du noeud source. */
+    load(): Promise<void>;
+
     /** Remplace le contenu du noeud par le contenu donné. */
     replace(data: EntityToType<E>): FormNode<E, E0>;
 
@@ -90,6 +93,9 @@ export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode
 
     /** Désactive la synchronisation entre ce FormNode et son noeud source. */
     dispose(): void;
+
+    /** Appelle le service de chargement enregistré du noeud source. */
+    load(): Promise<void>;
 
     /** Ajoute un élément à la liste. */
     pushNode(...items: EntityToType<E>[]): number;

@@ -48,6 +48,7 @@ export {
     makeEntityStore,
     makeField,
     nodeToFormNode,
+    registerLoad,
     stringFor,
     toFlatValues,
     validateField

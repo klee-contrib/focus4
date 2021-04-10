@@ -24,6 +24,9 @@ export type StoreNode<E = any> = EntityToNode<E> & {
     /** Vide l'objet (récursivement). */
     clear(): StoreNode<E>;
 
+    /** Appelle le service de chargement enregistré. */
+    load(): Promise<void>;
+
     /** Remplace le contenu du noeud par le contenu donné. */
     replace(data: EntityToType<E>): StoreNode<E>;
 
@@ -43,6 +46,9 @@ export interface StoreListNode<E = any> extends IObservableArray<StoreNode<E>> {
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */
     $nodeBuilder?: <NE>(source: StoreNode<E>) => StoreNode<NE>;
+
+    /** Appelle le service de chargement enregistré. */
+    load(): Promise<void>;
 
     /** Ajoute un élément à la liste. */
     pushNode(...items: EntityToType<E>[]): number;

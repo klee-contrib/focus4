@@ -1,0 +1,119 @@
+import {isFunction} from "lodash";
+import {autorun, extendObservable, runInAction} from "mobx";
+
+import {isAnyFormNode, isStoreListNode, isStoreNode, NodeToType, StoreListNode, StoreNode} from "../types";
+import {defaultLoad} from "./store";
+
+/**
+ * Enregistre un service de chargement sur un noeud.
+ * @param node Le noeud.
+ * @param loadBuilder Builder pour le service de chargement.
+ * @returns disposer.
+ */
+export function registerLoad<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any>>(
+    node: SN,
+    loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>
+): {isLoading: boolean; dispose: () => void};
+export function registerLoad<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any>>(
+    node: SN,
+    loadBuilder: NodeLoadBuilder<SN, A>
+): {isLoading: boolean; dispose: () => void};
+export function registerLoad<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any>>(
+    node: SN,
+    loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>)
+) {
+    if (isAnyFormNode(node)) {
+        throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
+    }
+
+    if (node.load !== defaultLoad) {
+        throw new Error("Impossible d'enregistrer un deuxième 'load' sur le même noeud.");
+    }
+
+    const {getLoadParams, loadService} = isFunction(loadBuilder) ? loadBuilder(new NodeLoadBuilder()) : loadBuilder;
+    const state = extendObservable(
+        {
+            dispose: () => {
+                /** */
+            }
+        },
+        {isLoading: false}
+    );
+
+    if (getLoadParams && loadService) {
+        node.load = async function () {
+            let params = getLoadParams();
+            if (params) {
+                state.isLoading = true;
+                if (!Array.isArray(params)) {
+                    params = [params];
+                }
+                const data = await loadService(...params);
+                runInAction("afterLoad", () => {
+                    if (data) {
+                        if (isStoreNode(node)) {
+                            node.replace(data as any);
+                        } else if (isStoreListNode(node)) {
+                            node.replaceNodes(data as any);
+                        }
+                    }
+
+                    state.isLoading = false;
+                });
+            }
+        };
+
+        const disposer = autorun(() => node.load());
+        state.dispose = () => {
+            disposer();
+            node.load = defaultLoad;
+        };
+    }
+
+    return state;
+}
+
+export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any> = never> {
+    /** @internal */
+    getLoadParams?: () => any | undefined;
+    /** @internal */
+    loadService?: (...args: A) => Promise<NodeToType<SN> | undefined>;
+
+    /**
+     * Précise la getter permettant de récupérer la liste des paramètres pour l'action de chargement.
+     * Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification.
+     * @param get Getter.
+     */
+    params<NA extends ReadonlyArray<any>>(get: () => NA | undefined): NodeLoadBuilder<SN, NonNullable<NA>>;
+    params<NA>(get: () => NA): NodeLoadBuilder<SN, [NonNullable<NA>]>;
+    /**
+     * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
+     * @param params Paramètres.
+     */
+    params<NA extends Array<any>>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>>;
+    params<NA extends Array<any>>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>> {
+        if (!params.length) {
+            // @ts-ignore
+            this.getLoadParams = () => [];
+        } else if (!isFunction(params[0])) {
+            // @ts-ignore
+            this.getLoadParams = () => (params.length === 1 ? params[0] : params);
+        } else {
+            this.getLoadParams = params[0];
+        }
+
+        // @ts-ignore
+        return this;
+    }
+
+    /**
+     * Enregistre le service de chargement.
+     * @param service Service de chargement.
+     */
+    load(
+        service: A extends never ? never : (...params: A) => Promise<NodeToType<SN> | undefined>
+    ): NodeLoadBuilder<SN, A> {
+        this.loadService = service;
+        return this;
+    }
+}

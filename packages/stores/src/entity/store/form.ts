@@ -33,10 +33,8 @@ export function nodeToFormNode<E = any, E0 = E>(
         delete node.$tempEdit;
     }
 
-    (node as any).reset = action("formNode.reset", () => {
-        node.clear();
-        return replaceNode(node as any, sourceNode as any);
-    });
+    node.load = () => sourceNode.load();
+    (node as any).reset = action("formNode.reset", () => replaceNode.call(node as any, sourceNode as any));
 
     (node as any).sourceNode = sourceNode;
 

@@ -3,6 +3,7 @@ import {isObservableArray} from "mobx";
 
 import {FormNodeBuilder} from "../form";
 import {makeEntityStore, toFlatValues} from "../store";
+import {clearNode, defaultLoad, replaceNode, setNode} from "../store/store";
 import {LigneEntity} from "./ligne";
 import {OperationEntity} from "./operation";
 import {ProjetEntity} from "./projet";
@@ -62,13 +63,15 @@ describe("EntityStore: Création", () => {
                 id: {$field: StructureEntity.id, value: undefined},
                 nom: {$field: StructureEntity.nom, value: undefined},
                 siret: {$field: StructureEntity.siret, value: undefined},
-                set: store.operation.structure.set,
-                clear: store.operation.structure.clear,
-                replace: store.operation.structure.replace
+                set: setNode,
+                clear: clearNode,
+                replace: replaceNode,
+                load: defaultLoad
             },
-            set: store.operation.set,
-            clear: store.operation.clear,
-            replace: store.operation.replace
+            set: setNode,
+            clear: clearNode,
+            replace: replaceNode,
+            load: defaultLoad
         }));
 
     test("L'entrée 'structureList' est bien un array", () => expect(isObservableArray(store.structureList)).toBe(true));

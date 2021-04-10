@@ -213,6 +213,7 @@ export function clone(source: any): any {
 
         // @ts-ignore
         res.$entity = source.$entity;
+        res.load = source.load;
         res.pushNode = source.pushNode;
         res.replaceNodes = source.replaceNodes;
         res.setNodes = source.setNodes;

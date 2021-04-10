@@ -1,10 +1,9 @@
 import {messageStore} from "@focus4/core";
 import i18next from "i18next";
-import {isFunction} from "lodash";
-import {action, comparer, computed, extendObservable, Lambda, observable, reaction, runInAction} from "mobx";
+import {action, computed, extendObservable, Lambda, observable, runInAction} from "mobx";
 
-import {toFlatValues} from "../store";
-import {FormListNode, FormNode, FormNodeToSourceType, isStoreNode, NodeToType} from "../types";
+import {NodeLoadBuilder, registerLoad, toFlatValues} from "../store";
+import {FormListNode, FormNode, isStoreNode, NodeToType} from "../types";
 
 type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
 
@@ -52,9 +51,7 @@ export class FormActionsBuilder<
     FN extends FormNode | FormListNode,
     A extends ReadonlyArray<any> = never,
     S extends string = never
-> {
-    protected getLoadParams?: () => any | undefined;
-    protected loadService?: (...args: A) => Promise<FormNodeToSourceType<FN> | undefined>;
+> extends NodeLoadBuilder<FN["sourceNode"], A> {
     protected readonly saveServices = {} as Record<S, (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>>;
 
     protected readonly formNode: FN;
@@ -63,6 +60,7 @@ export class FormActionsBuilder<
     protected saveNamesForMessages = false;
 
     constructor(formNode: FN) {
+        super();
         this.formNode = formNode;
     }
 
@@ -79,18 +77,7 @@ export class FormActionsBuilder<
      */
     params<NA extends Array<any>>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S>;
     params<NA extends Array<any>>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S> {
-        if (!params.length) {
-            // @ts-ignore
-            this.getLoadParams = () => [];
-        } else if (!isFunction(params[0])) {
-            // @ts-ignore
-            this.getLoadParams = () => (params.length === 1 ? params[0] : params);
-        } else {
-            this.getLoadParams = params[0];
-        }
-
-        // @ts-ignore
-        return this;
+        return super.params(...params) as any;
     }
 
     /**
@@ -98,10 +85,9 @@ export class FormActionsBuilder<
      * @param service Service de chargement.
      */
     load(
-        service: A extends never ? never : (...params: A) => Promise<FormNodeToSourceType<FN> | undefined>
+        service: A extends never ? never : (...params: A) => Promise<NodeToType<FN> | undefined>
     ): FormActionsBuilder<FN, A, S> {
-        this.loadService = service;
-        return this;
+        return super.load(service) as any;
     }
 
     /**
@@ -159,7 +145,7 @@ export class FormActionsBuilder<
 
     /** Construit le FormActions. */
     build(): FormActions<S> {
-        const {getLoadParams, loadService, saveServices, formNode, prefix, saveNamesForMessages, handlers} = this;
+        const {saveServices, formNode, prefix, saveNamesForMessages, handlers} = this;
         // On se prépare à construire plusieurs actions de sauvegarde.
         function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {
             return async function save(this: FormActions<Extract<keyof S, string>>) {
@@ -215,10 +201,19 @@ export class FormActionsBuilder<
             };
         }
 
+        const loadObject = registerLoad(this.formNode.sourceNode, this);
+
         const formActions = observable(
             {
                 forceErrorDisplay: false,
-                isLoading: false,
+                dispose: loadObject?.dispose,
+
+                get isLoading() {
+                    return loadObject.isLoading;
+                },
+                set isLoading(isLoading) {
+                    loadObject.isLoading = isLoading;
+                },
 
                 get formProps(): ActionsFormProps {
                     return {
@@ -238,30 +233,8 @@ export class FormActionsBuilder<
                 },
 
                 async load() {
-                    // On n'effectue le chargement que si on a un service de chargement et des paramètres pour le service.
-                    if (getLoadParams && loadService) {
-                        let params = getLoadParams();
-                        if (params) {
-                            this.isLoading = true;
-                            if (!Array.isArray(params)) {
-                                params = [params];
-                            }
-                            const data = await loadService(...params);
-                            runInAction("afterLoad", () => {
-                                if (data) {
-                                    if (isStoreNode(formNode.sourceNode)) {
-                                        formNode.sourceNode.replace(data as any);
-                                    } else {
-                                        formNode.sourceNode.replaceNodes(data as any);
-                                    }
-                                }
-
-                                this.isLoading = false;
-                            });
-
-                            (handlers.load || []).forEach(handler => handler("load"));
-                        }
-                    }
+                    await formNode.load();
+                    (handlers.load || []).forEach(handler => handler("load"));
                 },
 
                 onClickCancel() {
@@ -294,14 +267,6 @@ export class FormActionsBuilder<
                 );
             }
         );
-
-        // On met en place la réaction de chargement.
-        if (getLoadParams) {
-            formActions.dispose = reaction(getLoadParams, formActions.load, {equals: comparer.structural});
-        }
-
-        // On appelle le chargement.
-        formActions.load();
 
         return formActions;
     }
