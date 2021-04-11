@@ -1,7 +1,18 @@
 import classnames from "classnames";
-import {ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useRef} from "react";
+import {
+    FocusEventHandler,
+    FormEvent,
+    ForwardedRef,
+    forwardRef,
+    KeyboardEventHandler,
+    MouseEventHandler,
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useRef
+} from "react";
 import {INPUT} from "react-toolbox/lib/identifiers";
-import {InputProps as RTInputProps, InputTheme} from "react-toolbox/lib/input/Input";
+import {InputTheme} from "react-toolbox/lib/input/Input";
 import {isValuePresent} from "react-toolbox/lib/utils/utils";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -11,22 +22,76 @@ export {inputTheme};
 
 import {FontIcon} from "./font-icon";
 
-type InputProps = Omit<RTInputProps, "theme"> & {theme?: CSSProp<InputTheme>};
-interface InputRef {
-    blur: () => void;
-    focus: () => void;
-    inputNode: HTMLInputElement | HTMLTextAreaElement;
+interface InputProps {
+    autoComplete?: string;
+    className?: string;
+    /** Children to pass through the component. */
+    children?: React.ReactNode;
+    /** If true, component will be disabled. */
+    disabled?: boolean;
+    /** Give an error node to display under the field. */
+    error?: React.ReactNode;
+    /** Indicates if the label is floating in the input field or not. */
+    floating?: boolean;
+    /** The text string to use for hint text element. */
+    hint?: React.ReactNode;
+    /** Name of an icon to use as a label for the input. */
+    icon?: React.ReactNode;
+    /** Id for the input field. */
+    id?: string;
+    /** The text string to use for the floating label element. */
+    label?: React.ReactNode;
+    /** Specifies the maximum number of characters allowed in the component. */
+    maxLength?: number;
+    /** If true, a textarea element will be rendered. The textarea also grows and shrinks according to the number of lines. */
+    multiline?: boolean;
+    /** Name for the input field. */
+    name?: string;
+    onBlur?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onClick?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onChange?: (value: string, event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onContextMenu?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onDoubleClick?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onFocus?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onKeyPress?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onKeyUp?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onMouseDown?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onMouseEnter?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onMouseLeave?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onMouseMove?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onMouseOut?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onMouseOver?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onMouseUp?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    /** If true, input is readonly. */
+    readOnly?: boolean;
+    /** If true, the html input has a required attribute. */
+    required?: boolean;
+    /** The number of rows the multiline input field has. */
+    rows?: number;
+    /** TabIndex. */
+    tabIndex?: number;
+    /** Classnames object defining the component style. */
+    theme?: CSSProp<InputTheme>;
+    /** Type of the input element. It can be a valid HTML5 input type. */
+    type?: string;
+    /** Current value of the input element. */
+    value?: string;
+    style?: React.CSSProperties;
 }
-export {InputProps, InputRef, InputTheme};
+
+export {InputProps, InputTheme};
 
 export const Input = forwardRef(function InputBase(
     {
+        autoComplete,
         children,
         disabled = false,
         error,
         floating = true,
         hint = "",
         icon,
+        id,
         label: labelText,
         maxLength,
         multiline = false,
@@ -36,14 +101,6 @@ export const Input = forwardRef(function InputBase(
         onClick,
         onContextMenu,
         onDoubleClick,
-        onDrag,
-        onDragEnd,
-        onDragEnter,
-        onDragExit,
-        onDragLeave,
-        onDragOver,
-        onDragStart,
-        onDrop,
         onFocus,
         onKeyDown,
         onKeyPress,
@@ -55,18 +112,16 @@ export const Input = forwardRef(function InputBase(
         onMouseOut,
         onMouseOver,
         onMouseUp,
-        onTouchCancel,
-        onTouchEnd,
-        onTouchMove,
-        onTouchStart,
+        readOnly,
         required = false,
         rows = 1,
         style,
+        tabIndex,
         theme: pTheme,
         type = "text",
         value
     }: InputProps,
-    ref: ForwardedRef<InputRef>
+    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) {
     const theme = useTheme(INPUT, inputTheme, pTheme);
     const inputNode = useRef<any>(null);
@@ -107,39 +162,24 @@ export const Input = forwardRef(function InputBase(
         }
     });
 
-    useImperativeHandle(
-        ref,
-        () => ({
-            focus() {
-                inputNode.current.focus();
-            },
-
-            blur() {
-                inputNode.current.blur();
-            },
-            inputNode: inputNode.current
-        }),
-        []
-    );
+    useImperativeHandle(ref, () => inputNode.current, []);
 
     const handleChange = useCallback(
-        event => {
-            const valueFromEvent = event.target.value;
+        (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            const valueFromEvent = event.currentTarget.value;
             // Trim value to maxLength if that exists (only on multiline inputs).
             // Note that this is still required even tho we have the onKeyPress filter
             // because the user could paste smt in the textarea.
-            const haveToTrim = multiline && maxLength && event.target.value.length > maxLength;
+            const haveToTrim = multiline && maxLength && event.currentTarget.value.length > maxLength;
             const newValue = haveToTrim ? valueFromEvent.substr(0, maxLength) : valueFromEvent;
 
             // propagate to to store and therefore to the input
-            if (onChange) {
-                onChange(newValue, event);
-            }
+            onChange?.(newValue, event);
         },
         [onChange, multiline, maxLength]
     );
 
-    const handleKeyPress = useCallback(
+    const handleKeyPress: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
             // prevent insertion of more characters if we're a multiline input
             // and maxLength exists
@@ -147,8 +187,8 @@ export const Input = forwardRef(function InputBase(
                 // check if smt is selected, in which case the newly added charcter would
                 // replace the selected characters, so the length of value doesn't actually
                 // increase.
-                const isReplacing = event.target.selectionEnd - event.target.selectionStart;
-                const {value: newValue} = event.target;
+                const isReplacing = event.currentTarget.selectionEnd! - event.currentTarget.selectionStart!;
+                const {value: newValue} = event.currentTarget;
 
                 if (!isReplacing && newValue.length === maxLength) {
                     event.preventDefault();
@@ -157,10 +197,7 @@ export const Input = forwardRef(function InputBase(
                 }
             }
 
-            if (onKeyPress) {
-                onKeyPress(event);
-            }
-            return undefined;
+            onKeyPress?.(event);
         },
         [multiline, maxLength, onKeyPress]
     );
@@ -176,10 +213,12 @@ export const Input = forwardRef(function InputBase(
     });
     const labelClassName = classnames(theme.label(), {[(theme as any).fixed()]: !floating});
     const inputElementProps = {
+        autoComplete,
         className: classnames(theme.inputElement(), {[(theme as any).filled()]: valuePresent}),
         onChange: handleChange,
         ref: inputNode,
         disabled,
+        id,
         name,
         onBlur,
         onClick,
@@ -187,14 +226,7 @@ export const Input = forwardRef(function InputBase(
         onFocus,
         onKeyDown,
         onDoubleClick,
-        onDrag,
-        onDragEnd,
-        onDragEnter,
-        onDragExit,
-        onDragLeave,
-        onDragOver,
-        onDragStart,
-        onDrop,
+        onKeyPress: handleKeyPress,
         onKeyUp,
         onMouseDown,
         onMouseEnter,
@@ -203,12 +235,10 @@ export const Input = forwardRef(function InputBase(
         onMouseOut,
         onMouseOver,
         onMouseUp,
-        onTouchCancel,
-        onTouchEnd,
-        onTouchMove,
-        onTouchStart,
+        readOnly,
         required,
         style,
+        tabIndex,
         type,
         value
     };
@@ -216,9 +246,9 @@ export const Input = forwardRef(function InputBase(
     return (
         <div data-react-toolbox="input" className={className}>
             {multiline ? (
-                <textarea {...(inputElementProps as any)} rows={rows} onKeyPress={handleKeyPress} />
+                <textarea {...inputElementProps} rows={rows} />
             ) : (
-                <input {...(inputElementProps as any)} maxLength={maxLength} onKeyPress={onKeyPress as any} />
+                <input {...inputElementProps} maxLength={maxLength} />
             )}
             {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
             <span className={theme.bar()} />

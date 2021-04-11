@@ -1,5 +1,4 @@
 import i18next from "i18next";
-import {isEmpty} from "lodash";
 import {debounce} from "lodash-decorators";
 import {action, computed, observable, runInAction} from "mobx";
 import {observer} from "mobx-react";
@@ -32,7 +31,8 @@ export interface AutocompleteResult {
 }
 
 /** Props du composant d'autocomplétion */
-export interface AutocompleteProps<T extends "string" | "number"> extends RTAutocompleteProps {
+export interface AutocompleteProps<T extends "string" | "number">
+    extends Omit<RTAutocompleteProps, "onChange" | "value"> {
     /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
     autoSelect?: boolean;
     /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
@@ -75,9 +75,6 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
 
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
     protected value?: string;
-
-    /** Reference du composant Autocomplete de RT, qui n'a pas renseigné ses types -_-' */
-    private autocomplete?: any;
 
     async UNSAFE_componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
@@ -193,47 +190,6 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         this.search(query);
     }
 
-    /**
-     * Pour sélectionner le premier élément de la liste de suggestion avec Tab.
-     * Recopie une bonne partie du mécanisme de l'autocomplete de RT puisqu'on ne peut pas faire autrement...
-     */
-    @action.bound
-    onKeyDown(event: KeyboardEvent) {
-        if (event.key === "Tab" && this.autocomplete) {
-            const {active} = this.autocomplete.state;
-
-            let targetValue = active;
-            if (!active && this.source && !isEmpty(this.source)) {
-                targetValue = Object.keys(this.source)[0];
-            }
-
-            const values = this.autocomplete.values(this.autocomplete.props.value);
-            const source = this.autocomplete.source();
-            const newValue = targetValue === void 0 ? (event!.target! as any).id : targetValue;
-
-            if (this.autocomplete.isValueAnObject()) {
-                const newItem = Array.from(source).reduce<{[key: string]: any}>((obj: any, [k, value]: any) => {
-                    if (k === newValue) {
-                        (obj as any)[k] = value;
-                    }
-                    return obj;
-                }, {}) as any;
-
-                if (Object.keys(newItem).length === 0 && newValue) {
-                    newItem[newValue] = newValue;
-                }
-
-                return this.autocomplete.handleChange({...this.autocomplete.mapToObject(values), ...newItem}, event);
-            }
-
-            this.autocomplete.handleChange([newValue, ...values.keys()], event);
-        }
-
-        if (this.props.onKeyDown) {
-            this.props.onKeyDown(event);
-        }
-    }
-
     @action.bound
     onFocus() {
         if (!this.data.size && this.props.searchOnEmptyQuery) {
@@ -249,7 +205,8 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
                     <div data-focus="autocomplete">
                         <RTAutocomplete
                             {...props}
-                            onChange={this.onValueChange}
+                            value={`${props.value ?? ""}`}
+                            onChange={value => this.onValueChange(value as string)}
                             multiple={false}
                             source={this.source}
                             query={this.query}
@@ -259,8 +216,6 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
                             suggestionMatch="disabled"
                             type="search"
                             theme={theme}
-                            ref={ref => (this.autocomplete = ref)}
-                            onKeyDown={this.onKeyDown}
                         />
                         {this.isLoading ? (
                             <ProgressBar type="linear" mode="indeterminate" theme={{linear: theme.progressBar()}} />

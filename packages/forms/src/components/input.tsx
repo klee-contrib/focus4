@@ -3,7 +3,7 @@ import {range, takeWhile} from "lodash";
 import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import numeral from "numeral";
-import {Component} from "react";
+import {Component, KeyboardEvent} from "react";
 
 import {Input as RTInput, InputProps as RTInputProps} from "@focus4/toolbox";
 
@@ -19,7 +19,7 @@ export interface MaskDefinition {
     placeholderChar?: string;
 }
 
-export interface InputProps<T extends "string" | "number"> extends RTInputProps {
+export interface InputProps<T extends "string" | "number"> extends Omit<RTInputProps, "onChange" | "value"> {
     /** Pour un input de type "number", affiche les séparateurs de milliers. */
     hasThousandsSeparator?: boolean;
     /** Pour un input de type "text", paramètre un masque de saisie. */
@@ -121,7 +121,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
     }
 
     @action.bound
-    onKeyDown(e: KeyboardEvent) {
+    onKeyDown(e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
         if (this.mask) {
             if (isUndo(e)) {
                 e.preventDefault();
@@ -178,7 +178,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
     }
 
     @action.bound
-    onKeyPress(e: KeyboardEvent) {
+    onKeyPress(e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
         if (this.mask) {
             if (e.metaKey || e.altKey || e.ctrlKey || e.key === "Enter") {
                 return;
@@ -322,7 +322,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
                 {...{
                     onPaste: this.onPaste
                 }}
-                ref={i => (this.inputElement = i?.inputNode!)}
+                ref={i => (this.inputElement = i!)}
                 onChange={this.onChange}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}

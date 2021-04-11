@@ -3,7 +3,7 @@ import {uniqueId} from "lodash";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
-import {Component} from "react";
+import {Component, KeyboardEvent} from "react";
 import {findDOMNode} from "react-dom";
 
 import {themr} from "@focus4/styling";

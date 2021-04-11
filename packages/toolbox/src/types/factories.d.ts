@@ -2,7 +2,6 @@ import {ComponentType} from "react";
 import {AvatarProps} from "react-toolbox/lib/avatar";
 import {IconButtonProps, ButtonProps} from "react-toolbox/lib/button";
 import {CheckboxProps} from "react-toolbox/lib/checkbox";
-import {ChipProps} from "react-toolbox/lib/chip";
 import {FontIconProps} from "react-toolbox/lib/font_icon";
 import {InputProps} from "react-toolbox/lib/input";
 import {LinkProps} from "react-toolbox/lib/link";
@@ -22,12 +21,6 @@ import {TabContentProps} from "react-toolbox/lib/tabs/TabContent";
 
 declare module "react-toolbox/lib/app_bar/AppBar" {
     export function appBarFactory(IconButton: ComponentType<IconButtonProps>): typeof AppBar;
-}
-declare module "react-toolbox/lib/autocomplete/Autocomplete" {
-    export function autocompleteFactory(
-        Chip: ComponentType<ChipProps>,
-        Input: ComponentType<InputProps>
-    ): typeof Autocomplete;
 }
 declare module "react-toolbox/lib/avatar/Avatar" {
     export function avatarFactory(FontIcon: ComponentType<FontIconProps>): typeof Avatar;

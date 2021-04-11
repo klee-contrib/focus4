@@ -30,6 +30,7 @@ const config = {
         "mobx",
         "mobx-react",
         "ramda/src/dissoc",
+        "ramda/src/toPairs",
         "react",
         "react/jsx-runtime",
         "react-dom",
