@@ -27,6 +27,7 @@ export {
     InputComponents,
     ListEntry,
     Metadata,
+    NodeLoadBuilder,
     NodeToType,
     ObjectEntry,
     RecursiveListEntry,
