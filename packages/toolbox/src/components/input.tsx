@@ -16,13 +16,14 @@ import {InputTheme} from "react-toolbox/lib/input/Input";
 import {isValuePresent} from "react-toolbox/lib/utils/utils";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtInputTheme from "react-toolbox/components/input/theme.css";
-const inputTheme: InputTheme = rtInputTheme;
-export {inputTheme};
 
 import {FontIcon} from "./font-icon";
 
-interface InputProps {
+import rtInputTheme from "react-toolbox/components/input/theme.css";
+const inputTheme: InputTheme = rtInputTheme;
+export {inputTheme, InputTheme};
+
+export interface InputProps {
     autoComplete?: string;
     className?: string;
     /** Children to pass through the component. */
@@ -80,9 +81,7 @@ interface InputProps {
     style?: React.CSSProperties;
 }
 
-export {InputProps, InputTheme};
-
-export const Input = forwardRef(function InputBase(
+export const Input = forwardRef(function RTInput(
     {
         autoComplete,
         children,

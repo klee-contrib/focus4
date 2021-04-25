@@ -43,9 +43,6 @@ declare module "react-toolbox/lib/checkbox/Checkbox" {
 declare module "react-toolbox/lib/chip/Chip" {
     export function chipFactory(Avatar: ComponentType<AvatarProps>): typeof Chip;
 }
-declare module "react-toolbox/lib/dropdown/Dropdown" {
-    export function dropdownFactory(Input: ComponentType<InputProps>): typeof Dropdown;
-}
 declare module "react-toolbox/lib/list/List" {
     export function listFactory(ListItem: ComponentType<ListItemProps>): typeof List;
 }

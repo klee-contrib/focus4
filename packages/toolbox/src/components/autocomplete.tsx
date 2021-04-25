@@ -1,3 +1,5 @@
+import classnames from "classnames";
+import toPairs from "ramda/src/toPairs";
 import {
     FocusEventHandler,
     FormEvent,
@@ -16,20 +18,19 @@ import {
 } from "react";
 import {AutocompleteTheme} from "react-toolbox/lib/autocomplete/Autocomplete";
 import {AUTOCOMPLETE} from "react-toolbox/lib/identifiers";
-import classnames from "classnames";
-import toPairs from "ramda/src/toPairs";
 import {isValuePresent} from "react-toolbox/lib/utils/utils";
 import events from "react-toolbox/lib/utils/events";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtAutocompleteTheme from "react-toolbox/components/autocomplete/theme.css";
-const autocompleteTheme: AutocompleteTheme & InputTheme = rtAutocompleteTheme;
-export {autocompleteTheme};
 
 import {Chip} from "./chip";
 import {Input, InputProps, InputTheme} from "./input";
 
-interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "value"> {
+import rtAutocompleteTheme from "react-toolbox/components/autocomplete/theme.css";
+const autocompleteTheme: AutocompleteTheme & InputTheme = rtAutocompleteTheme;
+export {autocompleteTheme, AutocompleteTheme};
+
+export interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "value"> {
     /** Determines if user can create a new option with the current typed value. */
     allowCreate?: boolean;
     /** Determines the opening direction. It can be auto, up or down. */
@@ -58,9 +59,7 @@ interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "value"> {
     value?: string | string[];
 }
 
-export {AutocompleteProps, AutocompleteTheme};
-
-export const Autocomplete = forwardRef(function AutocompleteBase(
+export const Autocomplete = forwardRef(function RTAutocomplete(
     {
         allowCreate = false,
         className,
