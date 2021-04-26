@@ -78,12 +78,6 @@ declare module "react-toolbox/lib/menu/MenuItem" {
 declare module "react-toolbox/lib/menu/Menu" {
     export function menuFactory(MenuItem: ComponentType<MenuItemProps>): typeof Menu;
 }
-declare module "react-toolbox/lib/menu/IconMenu" {
-    export function iconMenuFactory(
-        IconButton: ComponentType<IconButtonProps>,
-        Menu: ComponentType<MenuProps>
-    ): typeof IconMenu;
-}
 declare module "react-toolbox/lib/navigation/Navigation" {
     export function navigationFactory(
         Button: ComponentType<ButtonProps>,
