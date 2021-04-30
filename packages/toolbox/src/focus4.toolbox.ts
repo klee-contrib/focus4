@@ -14,7 +14,7 @@ export {Checkbox, CheckboxProps, CheckboxTheme, checkboxTheme} from "./component
 export {Chip, ChipProps, ChipTheme, chipTheme} from "./components/chip";
 export {Clock, ClockProps, TimePickerTheme, timePickerTheme} from "./components/clock";
 export {Dropdown, DropdownProps, DropdownTheme, dropdownTheme} from "./components/dropdown";
-export {FontIcon} from "./components/font-icon";
+export {FontIcon, FontIconProps} from "./components/font-icon";
 export {Input, InputProps, InputTheme, inputTheme} from "./components/input";
 export {
     ButtonMenu,

@@ -1,11 +1,8 @@
 import {CSSContext, CSSProp, ThemeContext} from "@focus4/styling";
 import {
-    AppBarTheme,
     AutocompleteTheme,
     AvatarTheme,
-    BrowseButtonTheme,
     ButtonTheme,
-    CardTheme,
     CheckboxTheme,
     ChipTheme,
     DatePickerTheme,
@@ -13,11 +10,8 @@ import {
     IconButtonTheme,
     IconMenuTheme,
     InputTheme,
-    LinkTheme,
-    ListTheme,
     MenuItemTheme,
     MenuTheme,
-    NavigationTheme,
     ProgressBarTheme,
     RadioTheme,
     RippleTheme,
@@ -106,20 +100,15 @@ export interface LayoutStyleProviderProps {
     table?: {};
     timeline?: {};
 
-    RTAppBar?: CSSProp<AppBarTheme>;
     RTAutocomplete?: CSSProp<AutocompleteTheme>;
     RTAvatar?: CSSProp<AvatarTheme>;
-    RTButton?: CSSProp<ButtonTheme & BrowseButtonTheme & IconButtonTheme>;
-    RTCard?: CSSProp<CardTheme>;
+    RTButton?: CSSProp<ButtonTheme & IconButtonTheme>;
     RTCheckbox?: CSSProp<CheckboxTheme>;
     RTChip?: CSSProp<ChipTheme>;
     RTDatePicker?: CSSProp<DatePickerTheme>;
     RTDropdown?: CSSProp<DropdownTheme>;
     RTInput?: CSSProp<InputTheme>;
-    RTLink?: CSSProp<LinkTheme>;
-    RTList?: CSSProp<ListTheme>;
     RTMenu?: CSSProp<IconMenuTheme & MenuItemTheme & MenuTheme>;
-    RTNavigation?: CSSProp<NavigationTheme>;
     RTProgressBar?: CSSProp<ProgressBarTheme>;
     RTRadio?: CSSProp<RadioTheme>;
     RTRipple?: CSSProp<RippleTheme>;

@@ -1,5 +1,4 @@
 import {ComponentType} from "react";
-import {AvatarProps} from "react-toolbox/lib/avatar";
 import {ButtonProps} from "react-toolbox/lib/button";
 import {FontIconProps} from "react-toolbox/lib/font_icon";
 import {InputProps} from "react-toolbox/lib/input";
@@ -9,9 +8,6 @@ import {RadioButtonProps} from "react-toolbox/lib/radio";
 import {TabProps} from "react-toolbox/lib/tabs";
 import {TabContentProps} from "react-toolbox/lib/tabs/TabContent";
 
-declare module "react-toolbox/lib/avatar/Avatar" {
-    export function avatarFactory(FontIcon: ComponentType<FontIconProps>): typeof Avatar;
-}
 declare module "react-toolbox/lib/button/Button" {
     export function buttonFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof Button;
 }
@@ -20,9 +16,6 @@ declare module "react-toolbox/lib/button/IconButton" {
 }
 declare module "react-toolbox/lib/checkbox/Checkbox" {
     export function checkboxFactory(Check: any): typeof Checkbox;
-}
-declare module "react-toolbox/lib/chip/Chip" {
-    export function chipFactory(Avatar: ComponentType<AvatarProps>): typeof Chip;
 }
 declare module "react-toolbox/lib/menu/MenuItem" {
     export function menuItemFactory(Ripple: any): typeof MenuItem;
