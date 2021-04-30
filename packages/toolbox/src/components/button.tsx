@@ -1,12 +1,6 @@
 import {forwardRef, ForwardRefExoticComponent, RefAttributes} from "react";
 import {ButtonTheme} from "react-toolbox/lib/button";
 import {ButtonBaseProps} from "react-toolbox/lib/button/base";
-import {
-    BrowseButton as BrowseButtonType,
-    browseButtonFactory,
-    BrowseButtonProps as RTBrowseButtonProps,
-    BrowseButtonTheme
-} from "react-toolbox/lib/button/BrowseButton";
 import {Button as ButtonType, buttonFactory} from "react-toolbox/lib/button/Button";
 import {
     IconButton as IconButtonType,
@@ -56,11 +50,4 @@ export const IconButton = forwardRef<IconButtonType, IconButtonProps>((props, re
     return <RTIconButton ref={ref} {...props} theme={fromBem(theme)} />;
 });
 
-const RTBrowseButton = browseButtonFactory(rippleFactory({rippleCentered: false}), FontIcon);
-type BrowseButtonProps = Omit<RTBrowseButtonProps, "theme"> & {theme?: CSSProp<BrowseButtonTheme>};
-export const BrowseButton = forwardRef<BrowseButtonType, BrowseButtonProps>((props, ref) => {
-    const theme = useTheme(BUTTON, buttonTheme, props.theme);
-    return <RTBrowseButton ref={ref} {...props} theme={fromBem(theme)} />;
-});
-
-export {ButtonProps, ButtonTheme, IconButtonProps, IconButtonTheme, BrowseButtonProps, BrowseButtonTheme};
+export {ButtonProps, ButtonTheme, IconButtonProps, IconButtonTheme};
