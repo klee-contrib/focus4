@@ -20,12 +20,12 @@ export interface IconMenuProps {
     icon?: React.ReactNode;
     /** If true, the icon will show a ripple when is clicked. */
     iconRipple?: boolean;
-    /** If true, the neutral colors are inverted. Useful if the icon is over a dark background.*/
+    /** If true, the neutral colors are inverted. Useful if the icon is over a dark background. */
     inverse?: boolean;
     /** Transferred to the Menu component. */
     menuRipple?: boolean;
     /** Callback that will be called when the menu is being clicked. */
-    onClick?: () => void;
+    onClick?: (event: SyntheticEvent) => void;
     /** Callback that will be called when the menu is being hidden. */
     onHide?: () => void;
     /** Callback that will be invoked when a menu item is selected. */
@@ -68,7 +68,7 @@ export function IconMenu({
         (e: SyntheticEvent) => {
             e.stopPropagation();
             setActive(o => !o);
-            onClick?.();
+            onClick?.(e);
         },
         [onClick]
     );

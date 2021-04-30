@@ -6,11 +6,15 @@ export interface FontIconProps {
     className?: string;
     /** Children to pass through the component. */
     children?: React.ReactNode;
-    /**The key string for the icon you want be displayed. */
+    /** Click handler. */
+    onClick?: () => void;
+    /** Inline styles. */
+    style?: React.CSSProperties;
+    /** The key string for the icon you want be displayed. */
     value?: React.ReactNode;
 }
 
-export function FontIcon({alt = "", className = "", children, value}: FontIconProps) {
+export function FontIcon({alt = "", className = "", children, onClick, style, value}: FontIconProps) {
     return (
         <span
             data-react-toolbox="font-icon"
@@ -19,6 +23,8 @@ export function FontIcon({alt = "", className = "", children, value}: FontIconPr
                 {"material-icons": typeof value === "string" || typeof children === "string"},
                 className
             )}
+            onClick={onClick}
+            style={style}
         >
             {value}
             {children}
