@@ -2,47 +2,13 @@
 
 Une fois le `FormNode` créé, on aura besoin d'un deuxième objet pour gérer le cycle de vie du formulaire : un `FormActions`.
 
-Il se crée à partir d'un `FormNode` via un `FormActionsBuilder`. En pratique, un `FormActions` sera créé via [**`makeFormActions`**](../forms#makeFormActions).
+Il se crée à partir d'un `FormNode` via un `FormActionsBuilder`. En pratique, un `FormActions` sera créé via **`useFormActions`** (ou `makeFormActions`).
 
-Il contiendra et gérera les actions de chargement et de sauvegarde.
-
-## Chargement des données
-
-Pour pouvoir charger des données dans un formulaire, il faudra renseigner un service de chargement. En plus du service de chargement, il faudra aussi lui donner des **paramètres**. Ces paramètres pourront être soit statiques, soit obtenus par une fonction, qui sera utilisée comme une **dérivation MobX** pour créer une réaction qui rechargera le formulaire à chaque fois qu'ils changent.
-
-Définir les paramètres comme une dérivation permettra de synchroniser le contenu du formulaire (en particulier en consultation) sur la valeur d'une observable externe, qui peut être un état global de l'application (dans un `ViewStore` par exemple), ou tout simplement des props du composant React.
+Il s'agit d'un **superset de [`useLoad`](model/load.md?id=useload-et-nodeload),** : on définira donc, en plus du service de chargement, un **service de sauvegarde**, ainsi que d'autres options facultatives. Pour un formulaire, **le service de chargement est toujours défini sur le noeud source**. Appeler `useLoad` sur un `FormNode` (même s'il n'y aucune raison ne ne pas utiliser `useFormActions` à la place) est une erreur, mais `formNode.load()` existe quand même : il appellera simplement le service de chargement du noeud source.
 
 ## `FormActionsBuilder`
 
-Il dispose des méthodes suivantes :
-
-### `params(() => params)`/`params(params)`
-
-Cette méthode permet de définir les paramètres de la fonction de chargement. Ils peuvent prendre la forme :
-
--   D'une valeur simple, par exemple `params(data.id)`.
--   D'un array, par exemple `params([data.id, data.type])`, pour gérer le cas ou la fonction de chargement prend plusieurs paramètres
--   D'une fonction qui renvoie une valeur simple, par exemple `params(() => data.id)`, pour créer la réaction de rechargement
--   D'une fonction qui renvoie un array, par exemple `params(() => [data.id, data.type])`.
-
-Pour information, cela veut dire que tout ça est identique :
-
-```ts
-params(() => [1]);
-params(() => 1);
-params([1]);
-params(1);
-```
-
-Il est possible d'appeler `params()` tel quel, sans arguments, pour indiquer que le service de chargement ne prend pas de paramètres.
-
-Si vous devez renvoyer plusieurs paramètres non fixes, alors il faudra marquer l'array renvoyé comme `as const` (cf. `load` juste en dessous). Exemple : `params(() => [this.props.id, "test"] as const)`
-
-_Remarque : Si `params` est appelé avec `undefined` ou si la fonction passée renvoie `undefined`, la service de chargement **ne sera pas appelé**. Cela permet par exemple de gérer des formulaires en mode création et modification en désactivant simplement le service de chargement s'il n'y a pas d'id, par exemple. Attention tout de même à `params([])` qui correspond à `params()` et qui appelle sans paramètres le service, et à `params([undefined])` qui appellera quand même le service avec `undefined` comme paramètre._
-
-### `load(service)`
-
-Permet de préciser le service de chargement. **params() doit être appelé avant car il type les paramètres de load**.
+Il hérite directement de [`NodeLoadBuilder`](model/load.md?id=api-de-nodeloadbuilder), et dispose des méthodes supplémentaires suivantes (en plus donc de `params` et `load`) :
 
 ### `save(service, name?)`
 
@@ -68,7 +34,7 @@ Cette méthode permet de demander à ce que le nom du service de sauvegarde (ce 
 
 ### `load()`
 
-Appelle le service de chargement, avec les paramètres, et met à jour le noeud de formulaire. Cette méthode sera appelée à la création des actions.
+Appelle le service de chargement du `StoreNode` source. Cette méthode sera appelée à la création des actions.
 
 ### `save()`
 

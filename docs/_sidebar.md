@@ -11,6 +11,7 @@
 -   **[Modèle métier](model.md)**
 
     -   [⭐ Stores d'entité](model/store.md)
+    -   [⭐ Chargement des données](model/load.md)
     -   [⭐ Afficher des champs](model/display-fields.md)
     -   [Création de champs](model/make-field.md)
     -   [⭐ Stores de formulaires](model/form-store.md)

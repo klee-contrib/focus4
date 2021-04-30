@@ -22,6 +22,7 @@ Le **domaine** d'un champ représente le type de donnée métier qui lui est ass
 ## Sommaire
 
 -   [Stores d'entité](model/store.md)
+-   [Chargement des données](model/load.md)
 -   [Afficher des champs](model/display-fields.md)
 -   [Création et modification de champs](model/make-field.md)
 -   [Stores de formulaires](model/form-store.md)
