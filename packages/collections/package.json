@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "10.8.3",
+    "version": "10.8.4",
     "description": "Focus v4, collections module",
     "main": "lib/focus4.collections.js",
     "repository": {
@@ -17,8 +17,8 @@
     },
     "dependencies": {
         "@focus4/core": "^10.8.1",
-        "@focus4/forms": "^10.8.3",
-        "@focus4/stores": "^10.8.3",
+        "@focus4/forms": "^10.8.4",
+        "@focus4/stores": "^10.8.4",
         "@focus4/styling": "^10.8.1",
         "@focus4/toolbox": "^10.8.2",
         "popmotion": "8.7.3",
