@@ -26,7 +26,9 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
         throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
     }
 
-    const {getLoadParams, loadService} = isFunction(loadBuilder) ? loadBuilder(new NodeLoadBuilder()) : loadBuilder;
+    const {getLoadParams, handlers, loadService} = isFunction(loadBuilder)
+        ? loadBuilder(new NodeLoadBuilder())
+        : loadBuilder;
     const state = extendObservable(
         {
             dispose: () => {
@@ -55,6 +57,7 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
                     }
 
                     state.isLoading = false;
+                    (handlers.load || []).forEach(handler => handler("load"));
                 });
             }
         };
@@ -73,6 +76,9 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
 }
 
 export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any> = never> {
+    /** @internal */
+    readonly handlers = {} as Record<"load", ((event: "load") => void)[]>;
+
     /** @internal */
     getLoadParams?: () => any | undefined;
     /** @internal */
@@ -113,6 +119,27 @@ export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends Rea
         service: A extends never ? never : (...params: A) => Promise<NodeToType<SN> | undefined>
     ): NodeLoadBuilder<SN, A> {
         this.loadService = service;
+        return this;
+    }
+
+    /**
+     * Enregistre un handler.
+     * @param event Nom de l'évènement.
+     * @param handler Handler de l'évènement.
+     */
+    on(event: "load" | "load"[], handler: (event: "load") => void): NodeLoadBuilder<SN, A> {
+        if (!Array.isArray(event)) {
+            event = [event];
+        }
+
+        event.forEach(e => {
+            if (!this.handlers[e]) {
+                this.handlers[e] = [handler];
+            } else {
+                this.handlers[e].push(handler);
+            }
+        });
+
         return this;
     }
 }

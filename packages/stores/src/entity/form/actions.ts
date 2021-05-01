@@ -52,10 +52,12 @@ export class FormActionsBuilder<
     A extends ReadonlyArray<any> = never,
     S extends string = never
 > extends NodeLoadBuilder<FN["sourceNode"], A> {
-    protected readonly saveServices = {} as Record<S, (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>>;
+    /** @internal */
+    readonly handlers = {} as Record<FormActionsEvent, ((event: FormActionsEvent, saveName?: S) => void)[]>;
 
+    protected readonly saveServices = {} as Record<S, (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>>;
     protected readonly formNode: FN;
-    protected readonly handlers = {} as Record<FormActionsEvent, ((event: any, saveName?: S) => void)[]>;
+
     protected prefix = "focus";
     protected saveNamesForMessages = false;
 
@@ -114,19 +116,7 @@ export class FormActionsBuilder<
         event: E | E[],
         handler: (event: E, saveName?: S) => void
     ): FormActionsBuilder<FN, A, S> {
-        if (!Array.isArray(event)) {
-            event = [event];
-        }
-
-        event.forEach(e => {
-            if (!this.handlers[e]) {
-                this.handlers[e] = [handler];
-            } else {
-                this.handlers[e].push(handler);
-            }
-        });
-
-        return this;
+        return super.on(event as any, handler as any) as any;
     }
 
     /**
@@ -232,10 +222,7 @@ export class FormActionsBuilder<
                     };
                 },
 
-                async load() {
-                    await formNode.load();
-                    (handlers.load || []).forEach(handler => handler("load"));
-                },
+                load: formNode.load,
 
                 onClickCancel() {
                     formNode.form.isEdit = false;
