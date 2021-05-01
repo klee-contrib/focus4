@@ -26,10 +26,6 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
         throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
     }
 
-    if (node.load !== defaultLoad) {
-        throw new Error("Impossible d'enregistrer un deuxième 'load' sur le même noeud.");
-    }
-
     const {getLoadParams, loadService} = isFunction(loadBuilder) ? loadBuilder(new NodeLoadBuilder()) : loadBuilder;
     const state = extendObservable(
         {
@@ -41,7 +37,7 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
     );
 
     if (getLoadParams && loadService) {
-        node.load = async function () {
+        const load = async function () {
             let params = getLoadParams();
             if (params) {
                 state.isLoading = true;
@@ -63,10 +59,13 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
             }
         };
 
+        node.load = load;
         const disposer = autorun(() => node.load());
         state.dispose = () => {
             disposer();
-            node.load = defaultLoad;
+            if (node.load === load) {
+                node.load = defaultLoad;
+            }
         };
     }
 

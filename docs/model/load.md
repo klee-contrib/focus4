@@ -30,7 +30,7 @@ _Remarque : En dehors d'un composant fonction React, il est possible d'utiliser 
 -   Il définit la fonction `load()` sur le `StoreNode` en premier paramètre, qui pourra être appelée n'importe ou, et qui va appeler le service de chargement avec les paramètres qui ont été définis.
 -   Une réaction est posée, qui va appeler `node.load()` à chaque fois que les paramètres changent (ainsi qu'au premier rendu).
 
-`node.load()` est donc défini dès lors qu'un composant avec `useLoad` est affiché à l'écran. Dans le cas inverse, `node.load()` videra simplement le store. Il n'est pas possible (c'est une erreur) de définir plusieurs `useLoad` en même temps.
+`node.load()` est donc défini dès lors qu'un composant avec `useLoad` est affiché à l'écran. Dans le cas inverse, `node.load()` videra simplement le store. Si jamais plusieurs `useLoad` sont actifs en même temps (ce qui n'a pas spécialement de sens mais qui pourrait arriver dans un état transitoire, par exemple d'une popin de création vers une page de détail), c'est le dernier `useLoad` appelé qui sera effectif.
 
 ## API de `NodeLoadBuilder`
 
