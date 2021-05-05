@@ -1,5 +1,16 @@
-import {debounce, flatten, groupBy, isFunction, isString, orderBy, toPairs} from "lodash";
-import {action, computed, IObservableArray, observable, reaction, remove, runInAction, set, toJS} from "mobx";
+import {debounce, flatten, isFunction, isString, orderBy, toPairs} from "lodash";
+import {
+    action,
+    computed,
+    IObservableArray,
+    isObservableArray,
+    observable,
+    reaction,
+    remove,
+    runInAction,
+    set,
+    toJS
+} from "mobx";
 import {v4} from "uuid";
 
 import {config} from "@focus4/core";
@@ -205,10 +216,10 @@ export class CollectionStore<T = any, C = any> {
                     isMultiValued: false,
                     canExclude,
                     values: orderBy(
-                        toPairs(groupBy(list, fieldName))
+                        toPairs(groupByFacet(list, fieldName))
                             .map(([value, items]) => ({
                                 code: value,
-                                label: displayFormatter(value),
+                                label: value === "<null>" ? "focus.search.results.missing" : displayFormatter(value),
                                 count: items.length
                             }))
                             .filter(f => f.count !== 0),
@@ -231,7 +242,10 @@ export class CollectionStore<T = any, C = any> {
         }
 
         return toPairs(
-            groupBy(this.list, this.localStoreConfig.facetDefinitions.find(f => f.code === this.groupingKey)?.fieldName)
+            groupByFacet(
+                this.list,
+                this.localStoreConfig.facetDefinitions.find(f => f.code === this.groupingKey)?.fieldName!
+            )
         ).map(([code, list]) => ({
             code,
             label: this.facets.find(f => f.code === this.groupingKey)?.values.find(v => v.code === code)?.label ?? code,
@@ -640,30 +654,12 @@ export class CollectionStore<T = any, C = any> {
         }
 
         const {selected = [], excluded = []} = inputFacet;
-        const value = item[facet.fieldName];
+        const itemValue = item[facet.fieldName];
 
         if (selected.length) {
-            return selected.some(s => {
-                if (typeof value === "number") {
-                    return value === parseFloat(s) || undefined;
-                } else if (typeof value === "boolean") {
-                    return value === (s === "true");
-                } else {
-                    // tslint:disable-next-line: triple-equals
-                    return value == (s as any);
-                }
-            });
+            return selected.some(facetValue => isFacetMatch(facetValue, itemValue));
         } else if (excluded.length) {
-            return excluded.every(s => {
-                if (typeof value === "number") {
-                    return value !== parseFloat(s) || undefined;
-                } else if (typeof value === "boolean") {
-                    return value !== (s === "true");
-                } else {
-                    // tslint:disable-next-line: triple-equals
-                    return value !== (s as any);
-                }
-            });
+            return excluded.every(facetValue => !isFacetMatch(facetValue, itemValue));
         } else {
             return true;
         }
@@ -679,4 +675,58 @@ export class CollectionStore<T = any, C = any> {
             }
         });
     }
+}
+
+function groupByFacet<T>(list: T[], fieldName: keyof T) {
+    return list.reduce((buckets, item) => {
+        const value = item[fieldName];
+
+        function add(key?: any) {
+            buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`] ?? []), item];
+        }
+
+        if (Array.isArray(value) || isObservableArray(value)) {
+            if (value.length === 0) {
+                add();
+            } else {
+                value.forEach(add);
+            }
+        } else {
+            add(value);
+        }
+        return buckets;
+    }, {} as Record<string, T[]>);
+}
+
+function isFacetMatch(facetValue: string, itemValue: any): boolean {
+    if (Array.isArray(itemValue) || isObservableArray(itemValue)) {
+        if (facetValue === "<null>") {
+            return itemValue.length === 0;
+        }
+
+        if (itemValue.length === 0) {
+            return !facetValue;
+        }
+
+        return itemValue.some(v => isFacetMatch(facetValue, v));
+    }
+
+    if (facetValue === "<null>") {
+        return !itemValue && itemValue !== 0;
+    }
+
+    if (typeof itemValue === "number") {
+        return itemValue === (parseFloat(facetValue) || undefined);
+    }
+
+    if (typeof itemValue === "boolean") {
+        return itemValue === (facetValue === "true");
+    }
+
+    if (!itemValue) {
+        return !facetValue;
+    }
+
+    // tslint:disable-next-line: triple-equals
+    return itemValue == facetValue;
 }
