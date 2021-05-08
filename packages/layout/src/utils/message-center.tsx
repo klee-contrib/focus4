@@ -4,7 +4,7 @@ import {disposeOnUnmount, observer} from "mobx-react";
 import {Component} from "react";
 
 import {messageStore} from "@focus4/core";
-import {Snackbar, SnackbarTheme} from "@focus4/toolbox";
+import {Snackbar} from "@focus4/toolbox";
 
 import snackBarCss from "./__style__/snackbar.css";
 export {snackBarCss};
@@ -97,7 +97,7 @@ export class MessageCenter extends Component<MessageCenterProps> {
                 onClick={this.closeSnackbar}
                 onTimeout={this.closeSnackbar}
                 timeout={timeout}
-                theme={snackBarCss as SnackbarTheme}
+                theme={snackBarCss}
                 type={
                     type === "error" ? "cancel" : type === "success" ? "accept" : type === "warning" ? type : undefined
                 }

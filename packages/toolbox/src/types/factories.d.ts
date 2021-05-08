@@ -1,9 +1,6 @@
 import {ComponentType} from "react";
-import {ButtonProps} from "react-toolbox/lib/button";
 import {FontIconProps} from "react-toolbox/lib/font_icon";
-import {InputProps} from "react-toolbox/lib/input";
 import {MenuItemProps} from "react-toolbox/lib/menu";
-import {ProgressBarProps} from "react-toolbox/lib/progress_bar";
 import {RadioButtonProps} from "react-toolbox/lib/radio";
 import {TabProps} from "react-toolbox/lib/tabs";
 import {TabContentProps} from "react-toolbox/lib/tabs/TabContent";
@@ -28,15 +25,6 @@ declare module "react-toolbox/lib/radio/RadioButton" {
 }
 declare module "react-toolbox/lib/radio/RadioGroup" {
     export function radioGroupFactory(RadioButton: ComponentType<RadioButtonProps>): typeof RadioGroup;
-}
-declare module "react-toolbox/lib/slider/Slider" {
-    export function sliderFactory(
-        ProgressBar: ComponentType<ProgressBarProps>,
-        Input: ComponentType<InputProps>
-    ): typeof Slider;
-}
-declare module "react-toolbox/lib/snackbar/Snackbar" {
-    export function snackbarFactory(Button: ComponentType<ButtonProps>): typeof Snackbar;
 }
 declare module "react-toolbox/lib/switch/Switch" {
     export function switchFactory(Thumb: any): typeof Switch;
