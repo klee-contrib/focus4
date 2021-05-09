@@ -9,7 +9,6 @@ import {
     useRef,
     useState
 } from "react";
-import {findDOMNode} from "react-dom";
 import {SLIDER} from "react-toolbox/lib/identifiers";
 import {SliderTheme} from "react-toolbox/lib/slider/Slider";
 import events from "react-toolbox/lib/utils/events";
@@ -72,11 +71,11 @@ export function Slider({
     const [sliderStart, setSliderStart] = useState(0);
     const [pressed, setPressed] = useState(false);
 
-    const progressbarNode = useRef<any>(null);
+    const progressBar = useRef<HTMLDivElement>(null);
     const inputNode = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
     const handleResize = useCallback(() => {
-        const {left, right} = (findDOMNode(progressbarNode.current) as Element).getBoundingClientRect();
+        const {left = 0, right = 0} = progressBar.current?.getBoundingClientRect() ?? {};
         setSliderStart(left);
         setSliderLength(right - left);
     }, []);
@@ -282,8 +281,7 @@ export function Slider({
 
                 <div className={theme.progress()}>
                     <ProgressBar
-                        disabled={disabled}
-                        ref={progressbarNode}
+                        ref={progressBar}
                         className={theme.innerprogress()}
                         max={max}
                         min={min}
