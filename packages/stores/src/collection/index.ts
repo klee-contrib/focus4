@@ -666,7 +666,7 @@ export class CollectionStore<T = any, C = any> {
     }
 
     private filterItemByFilters(item: T) {
-        (this.searchFields ?? this.availableSearchFields).some(filter => {
+        return (this.searchFields ?? this.availableSearchFields).some(filter => {
             const field = item[filter as keyof T];
             if (isString(field)) {
                 return field.toLowerCase().includes(this.query.toLowerCase());
