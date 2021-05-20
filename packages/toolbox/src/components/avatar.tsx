@@ -1,4 +1,5 @@
 import classnames from "classnames";
+import {ReactNode} from "react";
 import {AvatarTheme} from "react-toolbox/lib/avatar/Avatar";
 import {AVATAR} from "react-toolbox/lib/identifiers";
 
@@ -14,13 +15,13 @@ export interface AvatarProps {
     alt?: string;
     className?: string;
     /** Children to pass through the component. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** Set to true if your image is not squared so it will be used as a cover for the element. */
     cover?: boolean;
     /** A key to identify an Icon from Material Design Icons or a custom Icon Element. */
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     /**  An image source or an image element. */
-    image?: React.ReactNode;
+    image?: ReactNode;
     /** Classnames object defining the component style. */
     theme?: CSSProp<AvatarTheme>;
     /** A title for the image. If no image is provided, the first letter will be displayed as the avatar. */

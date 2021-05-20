@@ -4,6 +4,7 @@ import {
     FocusEventHandler,
     MouseEvent,
     MouseEventHandler,
+    ReactNode,
     SyntheticEvent,
     useCallback,
     useEffect,
@@ -11,8 +12,8 @@ import {
     useRef,
     useState
 } from "react";
-import {DROPDOWN} from "react-toolbox/lib/identifiers";
 import {DropdownTheme} from "react-toolbox/lib/dropdown/Dropdown";
+import {DROPDOWN} from "react-toolbox/lib/identifiers";
 import events from "react-toolbox/lib/utils/events";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -38,13 +39,13 @@ export interface DropdownProps<
     /** If true, component will be disabled. */
     disabled?: boolean;
     /** Give an error node to display under the field. */
-    error?: React.ReactNode;
+    error?: ReactNode;
     /** Used for setting the label from source */
     labelKey?: LK;
     /** Id for the input field. */
     id?: string;
     /** The text string to use for the floating label element. */
-    label?: React.ReactNode;
+    label?: ReactNode;
     /** Name for the input field. */
     name?: string;
     onBlur?: (
@@ -170,16 +171,16 @@ export function Dropdown<
     );
 
     const renderTemplateValue = useCallback(
-        (selected: S) => {
-            const className = classnames(theme.field(), {
+        (sel: S) => {
+            const _className = classnames(theme.field(), {
                 [theme.errored()]: error,
                 [theme.disabled()]: disabled,
                 [theme.required()]: required
             });
 
             return (
-                <div className={className} onClick={handleClick}>
-                    <div className={`${theme.templateValue()} ${theme.value()}`}>{template!(selected)}</div>
+                <div className={_className} onClick={handleClick}>
+                    <div className={`${theme.templateValue()} ${theme.value()}`}>{template!(sel)}</div>
                     {label ? (
                         <label className={theme.label()}>
                             {label}
@@ -195,14 +196,14 @@ export function Dropdown<
 
     const renderValue = useCallback(
         (item: S, idx: number) => {
-            const className = classnames({
+            const _className = classnames({
                 [theme.selected()]: item[valueKey] === value,
                 [theme.disabled()]: (item as any).disabled
             });
             return (
                 <li
                     key={idx}
-                    className={className}
+                    className={_className}
                     onMouseDown={!(item as any).disabled ? event => handleSelect(item[valueKey]!, event) : undefined}
                 >
                     {template ? template(item) : item[labelKey]}

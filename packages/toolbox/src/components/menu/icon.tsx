@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import {SyntheticEvent, useCallback, useEffect, useState} from "react";
+import {ReactNode, SyntheticEvent, useCallback, useEffect, useState} from "react";
 import {MENU} from "react-toolbox/lib/identifiers";
 import {IconMenuTheme} from "react-toolbox/lib/menu/IconMenu";
 
@@ -15,9 +15,9 @@ export interface IconMenuProps {
     /** Class for the root node. */
     className?: string;
     /** Children to pass through the component. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** Icon font key string or Element to display the opener icon. */
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     /** If true, the icon will show a ripple when is clicked. */
     iconRipple?: boolean;
     /** If true, the neutral colors are inverted. Useful if the icon is over a dark background. */
@@ -26,12 +26,16 @@ export interface IconMenuProps {
     menuRipple?: boolean;
     /** Callback that will be called when the menu is being clicked. */
     onClick?: (event: SyntheticEvent) => void;
+    onMouseDown?: Function;
+    onMouseEnter?: Function;
+    onMouseLeave?: Function;
     /** Callback that will be called when the menu is being hidden. */
     onHide?: () => void;
     /** Callback that will be invoked when a menu item is selected. */
     onSelect?: Function;
     /** Callback that will be invoked when the menu is being shown. */
     onShow?: Function;
+    onTouchStart?: Function;
     /** Determines the position of the menu. This property is transferred to the inner Menu component. */
     position?: "auto" | "static" | "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
     /** If true, the menu will keep a value to highlight the active child item. */
@@ -51,9 +55,13 @@ export function IconMenu({
     iconRipple = true,
     menuRipple = true,
     onClick,
+    onMouseDown,
+    onMouseEnter,
+    onMouseLeave,
     onHide,
     onSelect,
     onShow,
+    onTouchStart,
     position = "auto",
     selected,
     selectable = false,
@@ -85,6 +93,10 @@ export function IconMenu({
                 icon={icon}
                 inverse={inverse}
                 onClick={clickHandler}
+                onMouseDown={onMouseDown}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                onTouchStart={onTouchStart}
                 ripple={iconRipple}
             />
             <Menu

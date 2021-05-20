@@ -1,9 +1,9 @@
 import {ComponentType} from "react";
-import {FontIconProps} from "react-toolbox/lib/font_icon";
 import {MenuItemProps} from "react-toolbox/lib/menu";
 import {RadioButtonProps} from "react-toolbox/lib/radio";
 import {TabProps} from "react-toolbox/lib/tabs";
 import {TabContentProps} from "react-toolbox/lib/tabs/TabContent";
+import {FontIconProps} from "../components/font-icon";
 
 declare module "react-toolbox/lib/button/Button" {
     export function buttonFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof Button;

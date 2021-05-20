@@ -2,7 +2,9 @@ import classnames from "classnames";
 import range from "ramda/src/range";
 import {
     MouseEvent as RMouseEvent,
+    MouseEventHandler,
     TouchEvent as RTouchEvent,
+    TouchEventHandler,
     useCallback,
     useEffect,
     useMemo,
@@ -37,6 +39,11 @@ export interface SliderProps {
     min?: number;
     /** Callback function that will be invoked when the slider value changes. */
     onChange?: (value: number) => void;
+    onClick?: MouseEventHandler<HTMLDivElement>;
+    onMouseDown?: MouseEventHandler<HTMLDivElement>;
+    onMouseEnter?: MouseEventHandler<HTMLDivElement>;
+    onMouseLeave?: MouseEventHandler<HTMLDivElement>;
+    onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** If true, a pin with numeric value label is shown when the slider thumb is pressed. Use for settings for which users need to know the exact value of the setting. */
     pinned?: boolean;
     /** If true, the slider thumb snaps to tick marks evenly spaced based on the step property value. */
@@ -57,6 +64,11 @@ export function Slider({
     max = 100,
     min = 0,
     onChange,
+    onClick,
+    onMouseDown,
+    onMouseEnter,
+    onMouseLeave,
+    onTouchStart,
     pinned = false,
     snaps = false,
     step = 0.01,
@@ -80,27 +92,25 @@ export function Slider({
         setSliderLength(right - left);
     }, []);
 
-    const stepDecimals = useMemo(() => {
-        return (step.toString().split(".")[1] || []).length;
-    }, [step]);
+    const stepDecimals = useMemo(() => (step.toString().split(".")[1] || []).length, [step]);
 
     const valueForInput = useCallback(
-        (value: number) => {
+        (v: number) => {
             const decimals = stepDecimals;
-            return decimals > 0 ? value.toFixed(decimals) : value.toString();
+            return decimals > 0 ? v.toFixed(decimals) : v.toString();
         },
         [stepDecimals]
     );
 
     const trimValue = useCallback(
-        (value: number) => {
-            if (value < min) {
+        (v: number) => {
+            if (v < min) {
                 return min;
             }
-            if (value > max) {
+            if (v > max) {
                 return max;
             }
-            return round(value, stepDecimals) as number;
+            return round(v, stepDecimals) as number;
         },
         [max, min, stepDecimals]
     );
@@ -245,9 +255,7 @@ export function Slider({
         }
     }, [handleKeyDown, sliderFocused]);
 
-    const knobOffset = useMemo(() => {
-        return 100 * ((value - min) / (max - min));
-    }, [max, min, value]);
+    const knobOffset = useMemo(() => ((value - min) / (max - min)) * 100, [max, min, value]);
 
     const knobStyles = {left: `${knobOffset}%`};
     const className = classnames(
@@ -266,7 +274,12 @@ export function Slider({
             className={className}
             data-react-toolbox="slider"
             onBlur={() => setSliderFocused(false)}
+            onClick={onClick}
             onFocus={() => setSliderFocused(true)}
+            onMouseDown={onMouseDown}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onTouchStart={onTouchStart}
             tabIndex={0}
         >
             <div className={theme.container()} onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}>

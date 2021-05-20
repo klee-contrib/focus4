@@ -1,11 +1,14 @@
 import classnames from "classnames";
 import {
+    CSSProperties,
     FocusEventHandler,
     FormEvent,
     ForwardedRef,
     forwardRef,
     KeyboardEventHandler,
     MouseEventHandler,
+    ReactNode,
+    TouchEventHandler,
     useCallback,
     useEffect,
     useImperativeHandle,
@@ -27,21 +30,21 @@ export interface InputProps {
     autoComplete?: string;
     className?: string;
     /** Children to pass through the component. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** If true, component will be disabled. */
     disabled?: boolean;
     /** Give an error node to display under the field. */
-    error?: React.ReactNode;
+    error?: ReactNode;
     /** Indicates if the label is floating in the input field or not. */
     floating?: boolean;
     /** The text string to use for hint text element. */
-    hint?: React.ReactNode;
+    hint?: ReactNode;
     /** Name of an icon to use as a label for the input. */
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     /** Id for the input field. */
     id?: string;
     /** The text string to use for the floating label element. */
-    label?: React.ReactNode;
+    label?: ReactNode;
     /** Specifies the maximum number of characters allowed in the component. */
     maxLength?: number;
     /** If true, a textarea element will be rendered. The textarea also grows and shrinks according to the number of lines. */
@@ -64,6 +67,7 @@ export interface InputProps {
     onMouseOut?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onMouseOver?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onMouseUp?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onTouchStart?: TouchEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** If true, input is readonly. */
     readOnly?: boolean;
     /** If true, the html input has a required attribute. */
@@ -78,7 +82,7 @@ export interface InputProps {
     type?: string;
     /** Current value of the input element. */
     value?: string;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
 }
 
 export const Input = forwardRef(function RTInput(
@@ -111,6 +115,7 @@ export const Input = forwardRef(function RTInput(
         onMouseOut,
         onMouseOver,
         onMouseUp,
+        onTouchStart,
         readOnly,
         required = false,
         rows = 1,
@@ -234,6 +239,7 @@ export const Input = forwardRef(function RTInput(
         onMouseOut,
         onMouseOver,
         onMouseUp,
+        onTouchStart,
         readOnly,
         required,
         style,

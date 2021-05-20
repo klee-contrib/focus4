@@ -3,8 +3,8 @@ import toPairs from "ramda/src/toPairs";
 import {
     FocusEventHandler,
     FormEvent,
-    forwardRef,
     ForwardedRef,
+    forwardRef,
     KeyboardEvent,
     KeyboardEventHandler,
     ReactEventHandler,
@@ -18,8 +18,8 @@ import {
 } from "react";
 import {AutocompleteTheme} from "react-toolbox/lib/autocomplete/Autocomplete";
 import {AUTOCOMPLETE} from "react-toolbox/lib/identifiers";
-import {isValuePresent} from "react-toolbox/lib/utils/utils";
 import events from "react-toolbox/lib/utils/events";
+import {isValuePresent} from "react-toolbox/lib/utils/utils";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -93,6 +93,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         onMouseOut,
         onMouseOver,
         onMouseUp,
+        onTouchStart,
         onQueryChange,
         query: pQuery,
         required,
@@ -130,14 +131,14 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
             vals = [];
         }
 
-        const values: Record<string, string> = {};
+        const res: Record<string, string> = {};
         Object.keys(source).forEach(key => {
             if (vals.includes(key)) {
-                values[key] = source[key];
+                res[key] = source[key];
             }
         });
 
-        return values;
+        return res;
     }, [multiple, source, value]);
 
     const suggestions = useMemo(() => {
@@ -197,8 +198,8 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
     // Met à jour `query` quand les props changent.
     useEffect(() => {
         if (!multiple) {
-            const query = pQuery ? pQuery : getQuery(value);
-            updateQuery(query, false);
+            const q = pQuery ? pQuery : getQuery(value);
+            updateQuery(q, false);
         }
     }, [getQuery, multiple, pQuery, updateQuery, value]);
 
@@ -214,8 +215,8 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
 
     // Appelé à la sélection d'une valeur.
     const handleChange = useCallback(
-        (values: string[], event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>) => {
-            const newValue = multiple ? values : values[0];
+        (vals: string[], event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>) => {
+            const newValue = multiple ? vals : vals[0];
             const newQuery = getQuery(newValue);
             onChange?.(newValue, event);
             setShowAllSuggestions(showSuggestionsWhenValueIsSet);
@@ -236,19 +237,18 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         [handleChange, values]
     );
 
-    const selectOrCreateActiveItem: ReactEventHandler<
-        HTMLInputElement | HTMLTextAreaElement | HTMLLIElement
-    > = useCallback(
-        event => {
-            let target = active;
-            if (!target) {
-                target = allowCreate ? query : Object.keys(suggestions)[0];
-                setActive(target);
-            }
-            select(event, target);
-        },
-        [active, allowCreate, query, select, suggestions]
-    );
+    const selectOrCreateActiveItem: ReactEventHandler<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement> =
+        useCallback(
+            event => {
+                let target = active;
+                if (!target) {
+                    target = allowCreate ? query : Object.keys(suggestions)[0];
+                    setActive(target);
+                }
+                select(event, target);
+            },
+            [active, allowCreate, query, select, suggestions]
+        );
 
     const unselect = useCallback(
         (key: string, event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -318,8 +318,12 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
             if (event.key === "ArrowUp" || event.key === "ArrowDown") {
                 const suggestionsKeys = Object.keys(suggestions);
                 let index = suggestionsKeys.indexOf(active!) + (event.key === "ArrowDown" ? +1 : -1);
-                if (index < 0) index = suggestionsKeys.length - 1;
-                if (index >= suggestionsKeys.length) index = 0;
+                if (index < 0) {
+                    index = suggestionsKeys.length - 1;
+                }
+                if (index >= suggestionsKeys.length) {
+                    index = 0;
+                }
                 setActive(suggestionsKeys[index]);
             }
 
@@ -330,9 +334,9 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
 
     const renderSelected = useCallback(() => {
         if (multiple) {
-            const selectedItems = toPairs(suggestions).map(([key, value]) => (
+            const selectedItems = toPairs(suggestions).map(([key, val]) => (
                 <Chip key={key} className={theme.value()} deletable onDeleteClick={(e: any) => unselect(key, e)}>
-                    {value}
+                    {val}
                 </Chip>
             ));
 
@@ -383,6 +387,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
                 onMouseUp={onMouseUp}
+                onTouchStart={onTouchStart}
                 required={required}
                 rows={rows}
                 style={style}
@@ -391,17 +396,17 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 value={query}
             />
             <ul className={classnames(theme.suggestions(), {[theme.up()]: direction === "up"})}>
-                {toPairs(suggestions).map(([key, value]) => {
-                    const className = classnames(theme.suggestion(), {[theme.active()]: active === key});
+                {toPairs(suggestions).map(([key, val]) => {
+                    const _className = classnames(theme.suggestion(), {[theme.active()]: active === key});
                     return (
                         <li
                             id={key}
                             key={key}
-                            className={className}
+                            className={_className}
                             onMouseDown={selectOrCreateActiveItem}
                             onMouseOver={event => setActive(event.currentTarget.id)}
                         >
-                            {value}
+                            {val}
                         </li>
                     );
                 })}

@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react";
-import {createPortal} from "react-dom";
 import classnames from "classnames";
+import {ReactNode, useEffect, useState} from "react";
+import {createPortal} from "react-dom";
 import {SNACKBAR} from "react-toolbox/lib/identifiers";
 import {SnackbarTheme} from "react-toolbox/lib/snackbar/Snackbar";
 
@@ -17,7 +17,7 @@ export interface SnackbarProps {
     /** If true, the snackbar will be active. */
     active: boolean;
     /** Children to pass through the component. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     className?: string;
     /** Text to display in the content. */
     label?: string | JSX.Element;
@@ -53,6 +53,7 @@ export function Snackbar({
         if (pActive) {
             setRendered(true);
             const t1 = setTimeout(() => setActive(true), 20);
+            // tslint:disable-next-line: no-unnecessary-callback-wrapper
             const t2 = setTimeout(() => onTimeout?.(), timeout);
             return () => {
                 clearTimeout(t1);

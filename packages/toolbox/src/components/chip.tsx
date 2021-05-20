@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import {Children, MouseEventHandler} from "react";
+import {Children, MouseEventHandler, TouchEventHandler} from "react";
 import {ChipTheme} from "react-toolbox/lib/chip/Chip";
 import {CHIP} from "react-toolbox/lib/identifiers";
 
@@ -16,13 +16,29 @@ export interface ChipProps {
     children?: React.ReactNode;
     /** If true, the chip will be rendered with a delete icon. */
     deletable?: boolean;
+    onClick?: MouseEventHandler<HTMLDivElement>;
     /** Callback to be invoked when the delete icon is clicked. */
     onDeleteClick?: MouseEventHandler<HTMLSpanElement>;
+    onMouseDown?: MouseEventHandler<HTMLDivElement>;
+    onMouseEnter?: MouseEventHandler<HTMLDivElement>;
+    onMouseLeave?: MouseEventHandler<HTMLDivElement>;
+    onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
     theme?: CSSProp<ChipTheme>;
 }
 
-export function Chip({className = "", children, deletable, onDeleteClick, theme: pTheme}: ChipProps) {
+export function Chip({
+    className = "",
+    children,
+    deletable,
+    onClick,
+    onDeleteClick,
+    onMouseDown,
+    onMouseEnter,
+    onMouseLeave,
+    onTouchStart,
+    theme: pTheme
+}: ChipProps) {
     const theme = useTheme(CHIP, chipTheme, pTheme);
 
     let hasAvatar = false;
@@ -42,7 +58,15 @@ export function Chip({className = "", children, deletable, onDeleteClick, theme:
     );
 
     return (
-        <div data-react-toolbox="chip" className={classes}>
+        <div
+            data-react-toolbox="chip"
+            className={classes}
+            onClick={onClick}
+            onMouseDown={onMouseDown}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onTouchStart={onTouchStart}
+        >
             {typeof children === "string" ? <span>{children}</span> : children}
             {deletable ? (
                 <span className={theme.delete()} onClick={onDeleteClick}>

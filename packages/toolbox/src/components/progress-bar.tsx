@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import {forwardRef, Ref, useCallback, useMemo} from "react";
+import {forwardRef, MouseEventHandler, Ref, TouchEventHandler, useCallback, useMemo} from "react";
 import {PROGRESS_BAR} from "react-toolbox/lib/identifiers";
 import {ProgressBarTheme} from "react-toolbox/lib/progress_bar/ProgressBar";
 import prefixer from "react-toolbox/lib/utils/prefixer";
@@ -21,6 +21,11 @@ export interface ProgressBarProps {
     mode?: "determinate" | "indeterminate";
     /** If true, the circular progress bar will be changing its color. */
     multicolor?: boolean;
+    onClick?: MouseEventHandler<HTMLDivElement>;
+    onMouseDown?: MouseEventHandler<HTMLDivElement>;
+    onMouseEnter?: MouseEventHandler<HTMLDivElement>;
+    onMouseLeave?: MouseEventHandler<HTMLDivElement>;
+    onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
     theme?: CSSProp<ProgressBarTheme>;
     /** Type of the progress bar, it can be circular or linear. */
@@ -37,6 +42,11 @@ export const ProgressBar = forwardRef(function RTProgressBar(
         min = 0,
         mode = "indeterminate",
         multicolor = false,
+        onClick,
+        onMouseDown,
+        onMouseEnter,
+        onMouseLeave,
+        onTouchStart,
         type = "linear",
         value = 0,
         theme: pTheme
@@ -58,11 +68,13 @@ export const ProgressBar = forwardRef(function RTProgressBar(
         [max, min]
     );
 
-    const circularStyle = useMemo(() => {
-        return mode !== "indeterminate"
-            ? {strokeDasharray: `${2 * Math.PI * 25 * calculateRatio(value)}, 400`}
-            : undefined;
-    }, [calculateRatio, mode, value]);
+    const circularStyle = useMemo(
+        () =>
+            mode !== "indeterminate"
+                ? {strokeDasharray: `${Math.PI * 2 * 25 * calculateRatio(value)}, 400`}
+                : undefined,
+        [calculateRatio, mode, value]
+    );
 
     const linearStyle = useMemo(() => {
         if (mode !== "indeterminate") {
@@ -90,6 +102,11 @@ export const ProgressBar = forwardRef(function RTProgressBar(
             aria-valuemin={min}
             aria-valuemax={max}
             className={_className}
+            onClick={onClick}
+            onMouseDown={onMouseDown}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onTouchStart={onTouchStart}
         >
             {type === "circular" ? (
                 <svg ref={ref as Ref<SVGSVGElement>} className={theme.circle()} viewBox="0 0 60 60">
