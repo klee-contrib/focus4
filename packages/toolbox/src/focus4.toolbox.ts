@@ -24,6 +24,8 @@ export {
     IconMenuTheme,
     Menu,
     MenuDivider,
+    MenuDividerProps,
+    MenuDividerTheme,
     MenuItem,
     MenuItemProps,
     MenuItemTheme,

@@ -6,7 +6,7 @@ import {IconMenuTheme} from "react-toolbox/lib/menu/IconMenu";
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 
 import {IconButton} from "../button";
-import {Menu, MenuTheme, menuTheme} from "./other";
+import {Menu, MenuTheme, menuTheme} from "./menu";
 export {IconMenuTheme};
 
 export interface IconMenuProps {
@@ -26,16 +26,12 @@ export interface IconMenuProps {
     menuRipple?: boolean;
     /** Callback that will be called when the menu is being clicked. */
     onClick?: (event: SyntheticEvent) => void;
-    onMouseDown?: Function;
-    onMouseEnter?: Function;
-    onMouseLeave?: Function;
     /** Callback that will be called when the menu is being hidden. */
     onHide?: () => void;
     /** Callback that will be invoked when a menu item is selected. */
-    onSelect?: Function;
+    onSelect?: (value: any) => void;
     /** Callback that will be invoked when the menu is being shown. */
-    onShow?: Function;
-    onTouchStart?: Function;
+    onShow?: () => void;
     /** Determines the position of the menu. This property is transferred to the inner Menu component. */
     position?: "auto" | "static" | "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
     /** If true, the menu will keep a value to highlight the active child item. */
@@ -55,13 +51,9 @@ export function IconMenu({
     iconRipple = true,
     menuRipple = true,
     onClick,
-    onMouseDown,
-    onMouseEnter,
-    onMouseLeave,
     onHide,
     onSelect,
     onShow,
-    onTouchStart,
     position = "auto",
     selected,
     selectable = false,
@@ -93,10 +85,6 @@ export function IconMenu({
                 icon={icon}
                 inverse={inverse}
                 onClick={clickHandler}
-                onMouseDown={onMouseDown}
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
-                onTouchStart={onTouchStart}
                 ripple={iconRipple}
             />
             <Menu

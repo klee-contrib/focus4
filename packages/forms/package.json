@@ -1,6 +1,6 @@
 {
     "name": "@focus4/forms",
-    "version": "10.8.6",
+    "version": "10.8.7",
     "description": "Focus v4, forms module",
     "main": "lib/focus4.forms.js",
     "repository": {
@@ -20,10 +20,10 @@
         "@focus4/core": "^10.8.1",
         "@focus4/stores": "^10.8.6",
         "@focus4/styling": "^10.8.1",
-        "@focus4/toolbox": "^10.8.6",
+        "@focus4/toolbox": "^10.8.7",
         "@types/moment-timezone": "0.5.30",
         "@types/numeral": "2.0.1",
-        "@types/react-dom": "17.0.3",
+        "@types/react-dom": "17.0.5",
         "inputmask-core": "2.2.0",
         "lodash-decorators": "6.0.1",
         "moment-timezone": "0.5.33",
@@ -41,8 +41,8 @@
         "jest": "26.6.3",
         "jest-enzyme": "7.1.2",
         "jest-junit": "12.0.0",
-        "postcss-import": "14.0.1",
+        "postcss-import": "14.0.2",
         "react-test-renderer": "17.0.2",
-        "ts-jest": "26.5.5"
+        "ts-jest": "26.5.6"
     }
 }

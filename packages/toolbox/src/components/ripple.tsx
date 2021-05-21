@@ -75,7 +75,7 @@ interface RippleState {
     ripples: {[key: string]: RippleEntry};
 }
 
-class RippledComponent<P> extends Component<
+export class RippledComponent<P> extends Component<
     RippleProps & {theme: RippleTheme} & {ComposedComponent: ComponentType<P> | string},
     RippleState
 > {

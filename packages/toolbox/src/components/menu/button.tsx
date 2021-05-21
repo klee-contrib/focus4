@@ -1,11 +1,11 @@
-import {ReactNode, SyntheticEvent, useCallback, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {findDOMNode} from "react-dom";
 
 import {CSSProp} from "@focus4/styling";
 
 import {Button, ButtonProps} from "../button";
 import {tooltipFactory, TooltipProps} from "../tooltip";
-import {Menu, MenuProps, MenuTheme} from "./other";
+import {Menu, MenuProps, MenuTheme} from "./menu";
 
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
 export interface ButtonMenuProps extends Omit<MenuProps, "theme"> {
@@ -15,6 +15,7 @@ export interface ButtonMenuProps extends Omit<MenuProps, "theme"> {
             /** L'icône à afficher quand le bouton est ouvert. */
             openedIcon?: ReactNode;
         };
+    onClick?: MouseEventHandler<HTMLButtonElement>;
     theme?: CSSProp<MenuTheme>;
 }
 
@@ -43,10 +44,10 @@ export function ButtonMenu({
     });
 
     const clickHandler = useCallback(
-        (e: SyntheticEvent) => {
+        (e: MouseEvent<HTMLButtonElement>) => {
             e.stopPropagation();
             setOpened(o => !o);
-            onClick?.();
+            onClick?.(e);
         },
         [onClick]
     );
