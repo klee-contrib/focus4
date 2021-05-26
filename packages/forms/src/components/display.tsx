@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -22,7 +22,7 @@ export interface DisplayProps {
 }
 
 /** Composant d'affichage par défaut, gère la résolution de la valeur par liste de référence ou par service. */
-export function Display({formatter, keyResolver, theme: pTheme, value: pValue, values}: DisplayProps) {
+export function Display({formatter = x => x, keyResolver, theme: pTheme, value: pValue, values}: DisplayProps) {
     const [value, setValue] = useState<any>();
     const theme = useTheme("display", displayCss, pTheme);
 
@@ -36,12 +36,10 @@ export function Display({formatter, keyResolver, theme: pTheme, value: pValue, v
         }
     }, [pValue, keyResolver]);
 
-    return useObserver(() => {
-        const displayed = values?.getLabel(value) ?? value;
-        return (
-            <div data-focus="display" className={theme.display()}>
-                {formatter?.(displayed) ?? displayed}
-            </div>
-        );
-    });
+    const vals = useMemo(() => (Array.isArray(value) ? value : [value]), [value]);
+    return useObserver(() => (
+        <div data-focus="display" className={theme.display()}>
+            {vals.map(v => formatter(values?.getLabel(v) ?? v)).join(", ")}
+        </div>
+    ));
 }

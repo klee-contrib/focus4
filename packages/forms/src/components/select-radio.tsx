@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import {ReactNode} from "react";
+import {ReactNode, useCallback} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -46,6 +46,7 @@ export function SelectRadio<T extends "string" | "number">({
     name,
     onChange,
     theme: pTheme,
+    type,
     undefinedLabel = "focus.select.none",
     undefinedPosition = "bottom",
     value,
@@ -53,6 +54,14 @@ export function SelectRadio<T extends "string" | "number">({
 }: SelectRadioProps<T>) {
     const theme = useTheme("selectRadio", selectRadioCss, pTheme);
     const {$labelKey, $valueKey} = values;
+
+    const handleChange = useCallback(
+        (newValue: string) => {
+            const v = (type === "number" ? parseFloat(newValue) : newValue) as T extends "string" ? string : number;
+            onChange(v || v === 0 ? v : undefined);
+        },
+        [onChange]
+    );
 
     return useObserver(() => {
         let definitiveValues: {}[] = values;
@@ -66,7 +75,7 @@ export function SelectRadio<T extends "string" | "number">({
         return (
             <div className={theme.select()}>
                 {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
-                <RadioGroup name={name} value={value} onChange={onChange} disabled={disabled}>
+                <RadioGroup name={name} value={`${value}`} onChange={handleChange} disabled={disabled}>
                     {definitiveValues.map(option => {
                         const optVal = (option as any)[$valueKey];
                         const optLabel = (option as any)[$labelKey];
@@ -76,7 +85,7 @@ export function SelectRadio<T extends "string" | "number">({
                                 key={optVal || "undefined"}
                                 name={`${name}-${optVal}`}
                                 label={i18next.t(optLabel)}
-                                value={optVal}
+                                value={`${optVal}`}
                                 theme={{field: theme.option()}}
                             />
                         );
