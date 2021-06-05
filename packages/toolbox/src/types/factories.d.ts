@@ -10,17 +10,11 @@ declare module "react-toolbox/lib/button/Button" {
 declare module "react-toolbox/lib/button/IconButton" {
     export function iconButtonFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof IconButton;
 }
-declare module "react-toolbox/lib/checkbox/Checkbox" {
-    export function checkboxFactory(Check: any): typeof Checkbox;
-}
 declare module "react-toolbox/lib/radio/RadioButton" {
     export function radioButtonFactory(Radio: any): typeof RadioButton;
 }
 declare module "react-toolbox/lib/radio/RadioGroup" {
     export function radioGroupFactory(RadioButton: ComponentType<RadioButtonProps>): typeof RadioGroup;
-}
-declare module "react-toolbox/lib/switch/Switch" {
-    export function switchFactory(Thumb: any): typeof Switch;
 }
 declare module "react-toolbox/lib/tabs/Tab" {
     export function tabFactory(Ripple: any, FontIcon: ComponentType<FontIconProps>): typeof Tab;

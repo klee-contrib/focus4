@@ -89,7 +89,6 @@ export function SelectCheckbox<T extends "string" | "number">({
                                 id={`${id}-${optVal}`}
                                 name={`${name}-${optVal}`}
                                 value={isSelected}
-                                onClick={clickHandler}
                                 disabled={
                                     disabled ||
                                     (maxSelectable !== undefined &&

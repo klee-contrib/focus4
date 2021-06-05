@@ -21,11 +21,10 @@ import {AUTOCOMPLETE} from "react-toolbox/lib/identifiers";
 import events from "react-toolbox/lib/utils/events";
 import {isValuePresent} from "react-toolbox/lib/utils/utils";
 
-import {CSSProp, useTheme} from "@focus4/styling";
-
 import {Chip} from "./chip";
 import {Input, InputProps, InputTheme} from "./input";
 
+import {CSSProp, useTheme} from "@focus4/styling";
 import rtAutocompleteTheme from "react-toolbox/components/autocomplete/theme.css";
 const autocompleteTheme: AutocompleteTheme & InputTheme = rtAutocompleteTheme;
 export {autocompleteTheme, AutocompleteTheme};

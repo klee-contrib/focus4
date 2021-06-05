@@ -16,10 +16,9 @@ import {DropdownTheme} from "react-toolbox/lib/dropdown/Dropdown";
 import {DROPDOWN} from "react-toolbox/lib/identifiers";
 import events from "react-toolbox/lib/utils/events";
 
-import {CSSProp, useTheme} from "@focus4/styling";
-
 import {Input} from "./input";
 
+import {CSSProp, useTheme} from "@focus4/styling";
 import rtDropdownTheme from "react-toolbox/components/dropdown/theme.css";
 const dropdownTheme: DropdownTheme = rtDropdownTheme;
 export {dropdownTheme, DropdownTheme};

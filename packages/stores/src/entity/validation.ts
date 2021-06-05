@@ -2,9 +2,18 @@ import i18next from "i18next";
 import {isFunction} from "lodash";
 import moment from "moment";
 
-import {DateValidator, EmailValidator, NumberValidator, RegexValidator, StringValidator, Validator} from "./types";
+import {
+    DateValidator,
+    EmailValidator,
+    FunctionValidator,
+    NumberValidator,
+    RegexValidator,
+    StringValidator,
+    Validator
+} from "./types";
 
-const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const EMAIL_REGEX =
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
 export function validateField<T>(
@@ -39,7 +48,7 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
     if (validators) {
         for (const validator of validators) {
             let error: string | false | undefined = false;
-            if (isFunction(validator)) {
+            if (isFunctionValidator(validator)) {
                 error = validator(value);
             } else if (isRegexValidator(validator) && typeof value === "string") {
                 error =
@@ -76,6 +85,10 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
     }
 
     return errors;
+}
+
+export function isFunctionValidator<T>(validator: Validator<T>): validator is FunctionValidator<T> {
+    return isFunction(validator);
 }
 
 export function isRegexValidator(validator: Validator<any>): validator is RegexValidator {

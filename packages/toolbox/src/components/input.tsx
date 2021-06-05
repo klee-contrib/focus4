@@ -18,10 +18,9 @@ import {INPUT} from "react-toolbox/lib/identifiers";
 import {InputTheme} from "react-toolbox/lib/input/Input";
 import {isValuePresent} from "react-toolbox/lib/utils/utils";
 
-import {CSSProp, useTheme} from "@focus4/styling";
-
 import {FontIcon} from "./font-icon";
 
+import {CSSProp, useTheme} from "@focus4/styling";
 import rtInputTheme from "react-toolbox/components/input/theme.css";
 const inputTheme: InputTheme = rtInputTheme;
 export {inputTheme, InputTheme};

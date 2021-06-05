@@ -30,8 +30,10 @@ export interface DateValidator extends BaseValidator {
 
 export type FunctionValidator<T> = (value: T) => string | false | undefined;
 
-export type Validator<T> = T extends string
-    ? DateValidator | EmailValidator | RegexValidator | StringValidator | FunctionValidator<string>
-    : T extends number
-    ? NumberValidator | FunctionValidator<number>
-    : FunctionValidator<T>;
+export type Validator<T> =
+    | FunctionValidator<T>
+    | (T extends string
+          ? DateValidator | EmailValidator | RegexValidator | StringValidator
+          : T extends number
+          ? NumberValidator
+          : never);
