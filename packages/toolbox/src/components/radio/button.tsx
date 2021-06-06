@@ -1,39 +1,42 @@
 import classnames from "classnames";
 import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
-import {CheckboxTheme} from "react-toolbox/lib/checkbox/Checkbox";
-import {CHECKBOX} from "react-toolbox/lib/identifiers";
+import {RADIO} from "react-toolbox/lib/identifiers";
+import {RadioButtonTheme} from "react-toolbox/lib/radio/RadioButton";
 
-import {Check} from "./check";
+import {Radio, RadioTheme} from "./radio";
 
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
-import rtCheckboxTheme from "react-toolbox/components/checkbox/theme.css";
-const checkboxTheme: CheckboxTheme = rtCheckboxTheme;
-export {checkboxTheme, CheckboxTheme};
+import rtRadioTheme from "react-toolbox/components/radio/theme.css";
+const radioTheme: RadioButtonTheme & RadioTheme = rtRadioTheme;
+export {radioTheme, RadioTheme};
 
-/** Props du Checkbox. */
-export interface CheckboxProps {
+/** Props du Radio. */
+export interface RadioButtonProps {
+    /** @internal */
+    checked?: boolean;
     className?: string;
     /** Children to pass through the component. */
     children?: ReactNode;
-    /** If true, the checkbox shown as disabled and cannot be modified. */
+    /** If true, the radio shown as disabled and cannot be modified. */
     disabled?: boolean;
-    /** Text label to attach next to the checkbox element. */
+    /** Text label to attach next to the radio element. */
     label?: ReactNode;
-    /** The id of the field to set in the input checkbox. */
+    /** The id of the field to set in the input radio. */
     id?: string;
-    /** The name of the field to set in the input checkbox. */
+    /** The name of the field to set in the input radio. */
     name?: string;
-    /** Est appelé quand on coche la case. */
+    /** @internal */
     onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
     onMouseEnter?: MouseEventHandler<HTMLLabelElement>;
     onMouseLeave?: MouseEventHandler<HTMLLabelElement>;
     style?: CSSProperties;
-    theme?: CSSProp<CheckboxTheme>;
+    theme?: CSSProp<RadioButtonTheme & RadioTheme>;
     /** Valeur. */
-    value?: boolean;
+    value: string;
 }
 
-export function Checkbox({
+export function RadioButton({
+    checked = false,
     children,
     className = "",
     disabled = false,
@@ -44,10 +47,9 @@ export function Checkbox({
     onMouseLeave,
     name,
     theme: pTheme,
-    style,
-    value = false
-}: CheckboxProps) {
-    const theme = useTheme(CHECKBOX, checkboxTheme, pTheme);
+    style
+}: RadioButtonProps) {
+    const theme = useTheme(RADIO, radioTheme, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
 
     const handleToggle = useCallback(
@@ -56,21 +58,21 @@ export function Checkbox({
                 inputNode.current?.blur();
             }
             if (!disabled && onChange) {
-                onChange(!value, event);
+                onChange(!checked, event);
             }
         },
-        [disabled, onChange, value]
+        [disabled, onChange, checked]
     );
 
     return (
         <label
-            data-react-toolbox="checkbox"
-            className={classnames(theme.field(), {[theme.disabled()]: disabled}, className)}
+            data-react-toolbox="radio"
+            className={classnames(theme[disabled ? "disabled" : "field"](), className)}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
             <input
-                checked={value}
+                checked={checked}
                 className={theme.input()}
                 disabled={disabled}
                 id={id}
@@ -78,9 +80,9 @@ export function Checkbox({
                 onClick={handleToggle}
                 readOnly
                 ref={inputNode}
-                type="checkbox"
+                type="radio"
             />
-            <Check disabled={disabled} style={style} theme={fromBem(theme)} value={value} />
+            <Radio checked={checked} disabled={disabled} style={style} theme={fromBem(theme)} />
             {label ? (
                 <span data-react-toolbox="label" className={theme.text()}>
                     {label}

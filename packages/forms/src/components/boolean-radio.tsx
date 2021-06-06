@@ -39,13 +39,12 @@ export function BooleanRadio({
     return (
         <>
             <RadioGroup
-                name={name}
                 value={value === true ? "true" : value === false ? "false" : undefined}
                 onChange={(x: string) => onChange(x === "true")}
                 className={theme.radio()}
             >
-                <RadioButton label={i18next.t(labelYes)} value="true" disabled={disabled} />
-                <RadioButton label={i18next.t(labelNo)} value="false" disabled={disabled} />
+                <RadioButton name={`${name}-yes`} label={i18next.t(labelYes)} value="true" disabled={disabled} />
+                <RadioButton name={`${name}-no`} label={i18next.t(labelNo)} value="false" disabled={disabled} />
             </RadioGroup>
             {error ? <div>{error}</div> : null}
         </>

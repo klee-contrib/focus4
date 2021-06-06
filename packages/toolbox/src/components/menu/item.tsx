@@ -23,14 +23,14 @@ export interface MenuItemProps {
     onClick?: MouseEventHandler<HTMLLIElement>;
     onMouseDown?: MouseEventHandler<HTMLLIElement>;
     onTouchStart?: TouchEventHandler<HTMLLIElement>;
-    /** Transferred from the Menu component for selectable menus. Indicates if it's the current active option. */
+    /** @internal */
     selected?: boolean;
     /** Displays shortcut text on the right side of the caption attribute. */
     shortcut?: string;
     /** Classnames object defining the component style. */
     theme?: CSSProp<MenuItemTheme>;
     /** Passed down to the root element. */
-    value?: any;
+    value?: string;
 }
 
 export const MenuItem = rippleFactory({})(function RTMenuItem({

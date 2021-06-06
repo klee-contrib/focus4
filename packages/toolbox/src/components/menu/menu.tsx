@@ -44,7 +44,7 @@ export interface MenuProps {
     /** If true, the menu will keep a value to highlight the active child item. */
     selectable?: boolean;
     /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
-    selected?: any;
+    selected?: string;
     /** Classnames object defining the component style. */
     theme?: CSSProp<MenuTheme>;
 }
