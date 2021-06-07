@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {extendObservable} from "mobx";
+import {extendObservable, observable} from "mobx";
 import {ComponentType, ReactNode} from "react";
 
 import {themeable} from "@focus4/core";
@@ -71,7 +71,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         },
         {
             value: undefined
-        }
+        },
+        {value: observable.ref}
     );
 
     constructor(field: EntityField<F> | string) {
