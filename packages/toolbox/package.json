@@ -18,6 +18,7 @@
         "@focus4/core": "^10.8.8",
         "@focus4/styling": "^10.8.8",
         "@types/ramda": "0.27.41",
-        "react-toolbox": "2.0.0-beta.13"
+        "react-toolbox": "2.0.0-beta.13",
+        "react-transition-group": "4.4.2"
     }
 }

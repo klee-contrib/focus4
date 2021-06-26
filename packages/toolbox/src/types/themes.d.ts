@@ -17,8 +17,8 @@ declare module "react-toolbox/components/tabs/theme.css";
 declare module "react-toolbox/components/time_picker/theme.css";
 declare module "react-toolbox/components/tooltip/theme.css";
 
-declare module "react-toolbox/lib/date_picker/Calendar";
 declare module "react-toolbox/lib/time_picker/Clock";
 declare module "react-toolbox/lib/utils/events";
 declare module "react-toolbox/lib/utils/prefixer";
+declare module "react-toolbox/lib/utils/time";
 declare module "react-toolbox/lib/utils/utils";
