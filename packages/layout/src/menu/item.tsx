@@ -1,17 +1,17 @@
 import {action, toJS} from "mobx";
 import {useLocalStore, useObserver} from "mobx-react";
-import {useCallback, useContext, useEffect, useRef} from "react";
+import {MouseEvent as RMouseEvent, useCallback, useContext, useEffect, useRef} from "react";
 import posed, {Transition} from "react-pose";
 
 import {CSSProp, defaultPose, useTheme} from "@focus4/styling";
-import {Button, ButtonProps, IconButton} from "@focus4/toolbox";
+import {Button, ButtonProps, IconButton, RippleProps} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
 import {mainMenuCss, MainMenuCss} from "./style";
 
 /** Props du MenuItem. */
-export interface MainMenuItemProps extends Omit<ButtonProps, "theme"> {
+export interface MainMenuItemProps extends Omit<ButtonProps & RippleProps, "theme"> {
     /** La route associée, pour comparaison avec la route active. */
     route?: string;
     /** CSS. */
@@ -28,7 +28,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
     const panel = useRef<HTMLDivElement>(null);
 
     const onItemClick = useCallback(
-        action(() => {
+        action((event: RMouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
             if (children) {
                 const liRect = li.current!.getBoundingClientRect();
                 state.hasSubMenu = !state.hasSubMenu;
@@ -36,7 +36,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                 state.left = liRect.left + liRect.width;
             }
             if (onClick) {
-                onClick();
+                onClick(event);
                 context.closePanel();
             }
         }),
@@ -62,7 +62,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                 {label ? (
                     <Button {...otherProps} icon={icon} label={label} onClick={onItemClick} theme={theme} />
                 ) : (
-                    <IconButton {...otherProps} icon={icon} onClick={onItemClick} theme={theme} />
+                    <IconButton {...otherProps} icon={icon} onClick={onItemClick} rippleTheme={theme} theme={theme} />
                 )}
             </li>
             {context.renderSubMenu(

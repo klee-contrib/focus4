@@ -10,14 +10,14 @@ import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
 const datePickerTheme: DatePickerTheme = rtDatePickerTheme;
 export {datePickerTheme, DatePickerTheme};
 
-import {IconButton} from "../button";
+import {IconButton} from "../icon-button";
 import {Month} from "./month";
 
 export interface CalendarProps {
     disabledDates?: Date[];
     display?: "months" | "years";
     enabledDates?: Date[];
-    handleSelect?: Function;
+    handleSelect?: () => void;
     locale?: string | DatePickerLocale;
     maxDate?: Date;
     minDate?: Date;

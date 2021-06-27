@@ -1,4 +1,4 @@
-import {Children, cloneElement, ReactElement} from "react";
+import {Children, cloneElement, ReactElement, ReactNode} from "react";
 
 import {RadioButton, RadioButtonProps, RadioTheme, radioTheme} from "./button";
 export {RadioButton, RadioButtonProps, RadioTheme, radioTheme};
@@ -6,7 +6,7 @@ export {RadioButton, RadioButtonProps, RadioTheme, radioTheme};
 export interface RadioGroupProps {
     className?: string;
     /** Children to pass through the component. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** If true, the group will be displayed as disabled. */
     disabled?: boolean;
     /** Callback function that will be invoked when the value changes. */

@@ -1,11 +1,11 @@
 import classnames from "classnames";
-import {ReactNode, SyntheticEvent, useCallback, useEffect, useState} from "react";
+import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useEffect, useState} from "react";
 import {MENU} from "react-toolbox/lib/identifiers";
 import {IconMenuTheme} from "react-toolbox/lib/menu/IconMenu";
 
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 
-import {IconButton} from "../button";
+import {IconButton} from "../icon-button";
 import {Menu, MenuTheme, menuTheme} from "./menu";
 export {IconMenuTheme};
 
@@ -25,7 +25,7 @@ export interface IconMenuProps {
     /** Transferred to the Menu component. */
     menuRipple?: boolean;
     /** Callback that will be called when the menu is being clicked. */
-    onClick?: (event: SyntheticEvent) => void;
+    onClick?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
     /** Callback that will be called when the menu is being hidden. */
     onHide?: () => void;
     /** Callback that will be invoked when a menu item is selected. */
@@ -65,7 +65,7 @@ export function IconMenu({
     useEffect(() => setActive(pActive), [pActive]);
 
     const clickHandler = useCallback(
-        (e: SyntheticEvent) => {
+        (e: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
             e.stopPropagation();
             setActive(o => !o);
             onClick?.(e);

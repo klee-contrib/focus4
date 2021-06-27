@@ -1,20 +1,13 @@
 export {Autocomplete, AutocompleteProps, AutocompleteTheme, autocompleteTheme} from "./components/autocomplete";
 export {Avatar, AvatarProps, AvatarTheme, avatarTheme} from "./components/avatar";
-export {
-    Button,
-    ButtonProps,
-    ButtonTheme,
-    IconButton,
-    IconButtonProps,
-    IconButtonTheme,
-    buttonTheme
-} from "./components/button";
+export {Button, ButtonProps, ButtonTheme, buttonTheme} from "./components/button";
 export {Calendar, CalendarProps, DatePickerTheme, datePickerTheme} from "./components/calendar";
 export {Checkbox, CheckboxProps, CheckboxTheme, checkboxTheme} from "./components/checkbox";
 export {Chip, ChipProps, ChipTheme, chipTheme} from "./components/chip";
 export {Clock, ClockProps, TimePickerTheme, timePickerTheme} from "./components/clock";
 export {Dropdown, DropdownProps, DropdownTheme, dropdownTheme} from "./components/dropdown";
 export {FontIcon, FontIconProps} from "./components/font-icon";
+export {IconButton, IconButtonProps, IconButtonTheme} from "./components/icon-button";
 export {Input, InputProps, InputTheme, inputTheme} from "./components/input";
 export {
     ButtonMenu,

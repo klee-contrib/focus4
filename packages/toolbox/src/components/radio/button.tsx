@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
+import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
 import {RADIO} from "react-toolbox/lib/identifiers";
 import {RadioButtonTheme} from "react-toolbox/lib/radio/RadioButton";
 
@@ -29,7 +29,6 @@ export interface RadioButtonProps {
     onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
     onMouseEnter?: MouseEventHandler<HTMLLabelElement>;
     onMouseLeave?: MouseEventHandler<HTMLLabelElement>;
-    style?: CSSProperties;
     theme?: CSSProp<RadioButtonTheme & RadioTheme>;
     /** Valeur. */
     value: string;
@@ -46,8 +45,7 @@ export function RadioButton({
     onMouseEnter,
     onMouseLeave,
     name,
-    theme: pTheme,
-    style
+    theme: pTheme
 }: RadioButtonProps) {
     const theme = useTheme(RADIO, radioTheme, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
@@ -82,7 +80,7 @@ export function RadioButton({
                 ref={inputNode}
                 type="radio"
             />
-            <Radio checked={checked} disabled={disabled} style={style} theme={fromBem(theme)} />
+            <Radio checked={checked} disabled={disabled} theme={fromBem(theme)} />
             {label ? (
                 <span data-react-toolbox="label" className={theme.text()}>
                     {label}

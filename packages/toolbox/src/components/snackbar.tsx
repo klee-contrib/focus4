@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import {ReactNode, useEffect, useState} from "react";
+import {MouseEventHandler, ReactNode, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
 import {SNACKBAR} from "react-toolbox/lib/identifiers";
 import {SnackbarTheme} from "react-toolbox/lib/snackbar/Snackbar";
@@ -22,7 +22,7 @@ export interface SnackbarProps {
     /** Text to display in the content. */
     label?: string | JSX.Element;
     /** Callback function that will be called when the action button is clicked. */
-    onClick?: Function;
+    onClick?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
     /** Callback function that will be called once the set timeout is finished. */
     onTimeout: () => void;
     /** Classnames object defining the component style. */

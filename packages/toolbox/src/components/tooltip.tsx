@@ -1,12 +1,11 @@
 import classnames from "classnames";
-import {Component, ComponentType, forwardRef, ReactNode} from "react";
-import ReactToolbox from "react-toolbox/lib";
+import {Component, ComponentType, forwardRef, MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler} from "react";
+import {createPortal} from "react-dom";
 import {TOOLTIP} from "react-toolbox/lib/identifiers";
 import events from "react-toolbox/lib/utils/events";
 import {getViewport} from "react-toolbox/lib/utils/utils";
 
-import {CSSProp, fromBem, useTheme} from "@focus4/styling";
-import {createPortal} from "react-dom";
+import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 import rtTooltipTheme from "react-toolbox/components/tooltip/theme.css";
 const tooltipTheme: TooltipTheme = rtTooltipTheme;
 export {tooltipTheme};
@@ -37,9 +36,15 @@ export interface TooltipOptions {
     theme?: TooltipTheme;
 }
 
-export interface TooltipProps extends ReactToolbox.Props, Omit<TooltipOptions, "theme"> {
+export interface TooltipProps extends Omit<TooltipOptions, "theme"> {
     children?: ReactNode;
+    onClick?: MouseEventHandler;
+    onMouseDown?: MouseEventHandler;
+    onMouseEnter?: MouseEventHandler;
+    onMouseLeave?: MouseEventHandler;
+    onTouchStart?: TouchEventHandler;
     tooltip?: ReactNode;
+    tooltipTheme?: CSSProp<TooltipTheme>;
 }
 
 export function tooltipFactory({
@@ -49,33 +54,31 @@ export function tooltipFactory({
     tooltipPassthrough = true,
     tooltipPosition = POSITION.VERTICAL,
     tooltipShowOnClick = false,
-    theme = {}
+    theme: oTheme = {}
 }: TooltipOptions = {}) {
     return function Tooltip<P>(ComposedComponent: ComponentType<P> | string) {
-        return forwardRef<TooltippedComponent<P>, P & Omit<TooltipProps, "theme"> & {theme?: CSSProp<TooltipTheme>}>(
-            (p, ref) => {
-                const finalTheme = fromBem(useTheme(TOOLTIP, tooltipTheme, p.theme, theme));
-                return (
-                    <TooltippedComponent
-                        ref={ref}
-                        className={className}
-                        tooltipDelay={tooltipDelay}
-                        tooltipHideOnClick={tooltipHideOnClick}
-                        tooltipPassthrough={tooltipPassthrough}
-                        tooltipPosition={tooltipPosition}
-                        tooltipShowOnClick={tooltipShowOnClick}
-                        {...p}
-                        theme={finalTheme}
-                        ComposedComponent={ComposedComponent}
-                    />
-                );
-            }
-        );
+        return forwardRef<TooltippedComponent<P>, P & TooltipProps>((p, ref) => {
+            const theme = useTheme(TOOLTIP, tooltipTheme, p.tooltipTheme, oTheme);
+            return (
+                <TooltippedComponent
+                    ref={ref}
+                    className={className}
+                    tooltipDelay={tooltipDelay}
+                    tooltipHideOnClick={tooltipHideOnClick}
+                    tooltipPassthrough={tooltipPassthrough}
+                    tooltipPosition={tooltipPosition}
+                    tooltipShowOnClick={tooltipShowOnClick}
+                    {...p}
+                    tooltipTheme={theme}
+                    ComposedComponent={ComposedComponent}
+                />
+            );
+        });
     };
 }
 
 class TooltippedComponent<P> extends Component<
-    TooltipProps & {theme: TooltipTheme} & {ComposedComponent: ComponentType<P> | string}
+    TooltipProps & {tooltipTheme: ToBem<TooltipTheme>} & {ComposedComponent: ComponentType<P> | string}
 > {
     state = {
         active: false,
@@ -212,7 +215,7 @@ class TooltippedComponent<P> extends Component<
         const {
             children,
             className,
-            theme,
+            tooltipTheme: tTheme,
             onClick,
             onMouseEnter,
             onMouseLeave,
@@ -227,11 +230,11 @@ class TooltippedComponent<P> extends Component<
         } = this.props;
 
         const _className = classnames(
-            theme.tooltip,
+            tTheme.tooltip(),
             {
-                [theme.tooltipActive!]: active
+                [tTheme.tooltipActive()]: active
             },
-            (theme as any)[positionClass]
+            (tTheme as any)[positionClass]?.()
         );
 
         const childProps = {
@@ -243,7 +246,7 @@ class TooltippedComponent<P> extends Component<
         };
 
         const shouldPass = typeof ComposedComponent !== "string" && tooltipPassthrough;
-        const finalProps = shouldPass ? {...childProps, theme} : childProps;
+        const finalProps = shouldPass ? {...childProps} : childProps;
 
         return (
             <>
@@ -258,7 +261,7 @@ class TooltippedComponent<P> extends Component<
                               data-react-toolbox="tooltip"
                               style={{top, left}}
                           >
-                              <span className={theme.tooltipInner}>{tooltip}</span>
+                              <span className={tTheme.tooltipInner()}>{tooltip}</span>
                           </span>,
                           document.body
                       )

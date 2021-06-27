@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {action, comparer, observable, reaction} from "mobx";
 import {useObserver} from "mobx-react";
-import {ElementType, SyntheticEvent, useEffect, useState} from "react";
+import {ElementType, MouseEvent, useEffect, useState} from "react";
 
 import {CollectionStore, FacetOutput, FormEntityField} from "@focus4/stores";
 import {CSSProp, fromBem, getIcon, useTheme} from "@focus4/styling";
@@ -108,7 +108,7 @@ export function FacetBox<T>({
         );
     }
 
-    const clearFacets = action((e: SyntheticEvent<HTMLButtonElement>) => {
+    const clearFacets = action((e: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
         e.stopPropagation();
         store.removeFacetValue();
         Object.values(additionalFacets).forEach(facet =>
@@ -148,7 +148,7 @@ export function FacetBox<T>({
             sectionElements = sections
                 .filter(s => !!s.facets && s.facets.length)
                 .map(s => {
-                    const facets = s
+                    const fs = s
                         .facets!.map(code => {
                             const facet = filteredFacets.find(f => f.code === code);
                             if (facet) {
@@ -159,11 +159,11 @@ export function FacetBox<T>({
                             }
                         })
                         .filter(x => x);
-                    if (facets.length) {
+                    if (fs.length) {
                         return (
                             <div key={s.name} className={theme.section()}>
                                 <h5>{s.name}</h5>
-                                {facets}
+                                {fs}
                             </div>
                         );
                     } else {

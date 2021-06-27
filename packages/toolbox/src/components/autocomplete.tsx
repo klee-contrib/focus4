@@ -43,7 +43,7 @@ export interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "va
         event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>
     ) => void;
     /** Callback function that is fired when the components's query value changes. */
-    onQueryChange?: Function;
+    onQueryChange?: (text: string) => void;
     /** Overrides the inner query. */
     query?: string;
     /** Determines if the selected list is shown above or below input. It can be above or below. */

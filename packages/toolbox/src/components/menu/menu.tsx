@@ -4,6 +4,7 @@ import {
     cloneElement,
     MouseEvent,
     ReactElement,
+    ReactNode,
     useCallback,
     useEffect,
     useLayoutEffect,
@@ -28,11 +29,11 @@ export interface MenuProps {
     active?: boolean;
     className?: string;
     /** Children to pass through the component. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** Callback that will be called when the menu is being hidden. */
     onHide?: () => void;
     /** Callback that will be invoked when a menu item is selected. */
-    onSelect?: (value: any) => void;
+    onSelect?: (value?: string) => void;
     /** Callback that will be invoked when the menu is being shown. */
     onShow?: () => void;
     /** If true the menu wrapper will show an outline with a soft shadow. */

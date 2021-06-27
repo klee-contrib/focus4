@@ -28,7 +28,7 @@ export interface TabProps {
     /** Label text for navigation header. */
     label?: string;
     /** Callback function that is fired when the tab is activated. */
-    onActive?: Function;
+    onActive?: () => void;
     onClick?: (event: MouseEvent<HTMLDivElement>, index: number) => void;
     onMouseDown?: MouseEventHandler<HTMLDivElement>;
     onTouchStart?: TouchEventHandler<HTMLDivElement>;
@@ -36,7 +36,7 @@ export interface TabProps {
     theme?: CSSProp<TabTheme>;
 }
 
-export const Tab = rippleFactory()(function RTTab({
+export const Tab = rippleFactory({theme: {rippleWrapper: (tabTheme as any).rippleWrapper}})(function RTTab({
     active = false,
     activeClassName = "",
     className = "",

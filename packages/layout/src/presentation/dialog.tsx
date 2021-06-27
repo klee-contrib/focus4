@@ -1,31 +1,46 @@
 import classNames from "classnames";
-import {useContext} from "react";
-import {DialogProps} from "react-toolbox/lib/dialog";
+import {ReactNode, useContext} from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
-import {Button} from "@focus4/toolbox";
+import {Button, ButtonProps} from "@focus4/toolbox";
 
 import {Overlay} from "./overlay";
 
 import dialogCss, {DialogCss} from "./__style__/dialog.css";
 export {dialogCss, DialogCss};
 
+export interface DialogProps {
+    /** A array of objects representing the buttons for the dialog navigation area. The properties will be transferred to the buttons. */
+    actions?: ButtonProps[];
+    /** If true, the dialog will be active. */
+    active?: boolean;
+    /** Children to pass through the component. */
+    children?: ReactNode;
+    className?: string;
+    /** Callback to be invoked when the dialog overlay is clicked. */
+    onOverlayClick?: () => void;
+    /** The text string to use as standar title of the dialog. */
+    title?: string;
+    /**  Classnames object defining the component style. */
+    theme?: CSSProp<DialogCss>;
+}
+
 export function Dialog({
-    active = false,
     actions = [],
+    active = false,
     className,
     children,
     onOverlayClick,
     title,
     theme: pTheme
-}: DialogProps & {theme?: CSSProp<DialogCss>}) {
+}: DialogProps) {
     const theme = useTheme("dialog", dialogCss, pTheme);
     const context = useContext(ScrollableContext);
 
     return context.portal(
         <>
-            <Overlay active={active} onClick={onOverlayClick as () => void} />
+            <Overlay active={active} onClick={onOverlayClick} />
             <TransitionGroup component={null}>
                 {active ? (
                     <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>

@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import {MouseEvent, MouseEventHandler, TouchEventHandler, useCallback} from "react";
+import {MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback} from "react";
 import {MENU} from "react-toolbox/lib/identifiers";
 import {MenuItemTheme} from "react-toolbox/lib/menu/MenuItem";
 
@@ -15,11 +15,11 @@ export interface MenuItemProps {
     caption: string;
     className?: string;
     /** Children to pass through the component. */
-    children?: React.ReactNode;
+    children?: ReactNode;
     /** If true, the item will be displayed as disabled and is not selectable. */
     disabled?: boolean;
     /** Icon font key string or Element to display in the right side of the option. */
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     onClick?: MouseEventHandler<HTMLLIElement>;
     onMouseDown?: MouseEventHandler<HTMLLIElement>;
     onTouchStart?: TouchEventHandler<HTMLLIElement>;
