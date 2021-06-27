@@ -4,7 +4,6 @@ import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import {Component, KeyboardEvent} from "react";
-import {findDOMNode} from "react-dom";
 
 import {themr} from "@focus4/styling";
 import {Clock, IconButton, InputTheme, timePickerTheme, TimePickerTheme} from "@focus4/toolbox";
@@ -33,8 +32,6 @@ export interface InputTimeProps extends InputProps<"string"> {
 @observer
 export class InputTime extends Component<InputTimeProps> {
     protected clock?: HTMLDivElement | null;
-    protected clockComp?: any;
-    protected scrollParent!: Element;
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
     protected readonly _inputTimeId = uniqueId("input-time-");
@@ -54,14 +51,8 @@ export class InputTime extends Component<InputTimeProps> {
     /** Position de l'horloge. */
     @observable protected clockPosition?: "up" | "down";
 
-    UNSAFE_componentWillMount() {
-        document.addEventListener("mousedown", this.onDocumentClick);
-    }
-
     componentDidMount() {
-        this.scrollParent = getScrollParent(findDOMNode(this) as Element);
-        this.scrollParent.addEventListener("scroll", this.resetClockCenter);
-        window.addEventListener("scroll", this.resetClockCenter);
+        document.addEventListener("mousedown", this.onDocumentClick);
     }
 
     @action
@@ -89,16 +80,6 @@ export class InputTime extends Component<InputTimeProps> {
 
     componentWillUnmount() {
         document.removeEventListener("mousedown", this.onDocumentClick);
-        this.scrollParent.removeEventListener("scroll", this.resetClockCenter);
-        window.removeEventListener("scroll", this.resetClockCenter);
-    }
-
-    /** Reset le centre de l'horloge au scroll, parce que c'est pas prévu par le composant... */
-    @action.bound
-    resetClockCenter() {
-        if (this.clockComp) {
-            this.clockComp.handleCalculateShape();
-        }
     }
 
     /** Convertit le texte en objet momentJS. */
@@ -253,7 +234,6 @@ export class InputTime extends Component<InputTimeProps> {
                                 </header>
                                 <div className={classNames(theme.clockWrapper(), inputDateCss.clock)}>
                                     <Clock
-                                        ref={c => (this.clockComp = c)}
                                         display={this.clockDisplay}
                                         format="24hr"
                                         onChange={this.onClockChange}
@@ -289,7 +269,7 @@ function getPickerTime(tzDate: Date, timezoneCode: string) {
     return pickerDate;
 }
 
-/** Détermine la date pour retourné en prenant en compte la timezone */
+/** Détermine la date à retourner en prenant en compte la timezone */
 function getTimezoneTime(pickerDate: Date, timezoneCode: string) {
     const pickerOffset = pickerDate.getTimezoneOffset();
     const utcDate = new Date();
@@ -299,26 +279,4 @@ function getTimezoneTime(pickerDate: Date, timezoneCode: string) {
     const tzDate = new Date();
     tzDate.setTime(utcDate.getTime() - tzOffset * 60000);
     return tzDate;
-}
-
-/** Retourne le parent le plus proche qui est scrollable. */
-function getScrollParent(element: Element, includeHidden = false) {
-    let style = getComputedStyle(element);
-    const excludeStaticParent = style.position === "absolute";
-    const overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-
-    if (style.position === "fixed") {
-        return document.body;
-    }
-    for (let parent: Element | null = element; (parent = parent.parentElement); ) {
-        style = getComputedStyle(parent);
-        if (excludeStaticParent && style.position === "static") {
-            continue;
-        }
-        if (overflowRegex.test(style.overflow! + style.overflowY + style.overflowX)) {
-            return parent;
-        }
-    }
-
-    return document.body;
 }

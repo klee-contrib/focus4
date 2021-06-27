@@ -4,10 +4,9 @@ import rtDatePickerTheme from "react-toolbox/components/date_picker/theme.css";
 import {DatePickerLocale, DatePickerTheme} from "react-toolbox/lib/date_picker";
 import {DATE_PICKER} from "react-toolbox/lib/identifiers";
 import time from "react-toolbox/lib/utils/time";
-import {getAnimationModule} from "react-toolbox/lib/utils/utils";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSProp, useTheme} from "@focus4/styling";
+import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
 const datePickerTheme: DatePickerTheme = rtDatePickerTheme;
 export {datePickerTheme, DatePickerTheme};
 
@@ -45,14 +44,35 @@ export function Calendar({
     const yearsNode = useRef<HTMLUListElement | null>(null);
     const activeYearNode = useRef<HTMLLIElement | null>(null);
 
-    const [direction, setDirection] = useState<"left" | "right">("right");
+    const [pending, setPending] = useState<{days?: number; months?: number}>({});
+    const [animation, setAnimation] = useState({enter: "", enterActive: "", exit: "", exitActive: ""});
     const [viewDate, setViewDate] = useState(selectedDate);
+
+    const setAnimationLeft = useCallback(() => {
+        const css = fromBem(theme) as any;
+        setAnimation({
+            enter: css.slideLeftEnter,
+            enterActive: css.slideLeftEnterActive,
+            exit: css.slideLeftLeave,
+            exitActive: css.slideLeftLeaveActive
+        });
+    }, [theme]);
+
+    const setAnimationRight = useCallback(() => {
+        const css = fromBem(theme) as any;
+        setAnimation({
+            enter: css.slideRightEnter,
+            enterActive: css.slideRightEnterActive,
+            exit: css.slideRightLeave,
+            exitActive: css.slideRightLeaveActive
+        });
+    }, [theme]);
 
     useEffect(() => {
         const handleKeys = (e: KeyboardEvent) => {
-            const handleDayArrowKey = (date: Date) => {
-                setViewDate(date);
-                onChange(date, false);
+            const handleDayArrowKey = (days: number) => {
+                setPending({days});
+                onChange(time.addDays(selectedDate, days), false);
             };
 
             switch (e.key) {
@@ -62,19 +82,23 @@ export function Calendar({
                     break;
                 case "ArrowLeft":
                     e.preventDefault();
-                    handleDayArrowKey(time.addDays(selectedDate, -1));
+                    handleDayArrowKey(-1);
+                    setAnimationLeft();
                     break;
                 case "ArrowUp":
                     e.preventDefault();
-                    handleDayArrowKey(time.addDays(selectedDate, -7));
+                    handleDayArrowKey(-7);
+                    setAnimationLeft();
                     break;
                 case "ArrowRight":
                     e.preventDefault();
-                    handleDayArrowKey(time.addDays(selectedDate, 1));
+                    handleDayArrowKey(+1);
+                    setAnimationRight();
                     break;
                 case "ArrowDown":
                     e.preventDefault();
-                    handleDayArrowKey(time.addDays(selectedDate, 7));
+                    handleDayArrowKey(+7);
+                    setAnimationRight();
                     break;
                 default:
                     break;
@@ -83,7 +107,7 @@ export function Calendar({
 
         document.addEventListener("keydown", handleKeys);
         return () => document.removeEventListener("keydown", handleKeys);
-    }, [handleSelect, onChange, selectedDate]);
+    }, [handleSelect, onChange, selectedDate, setAnimationLeft, setAnimationRight]);
 
     useEffect(() => {
         if (activeYearNode.current && yearsNode.current) {
@@ -109,14 +133,6 @@ export function Calendar({
         [onChange, selectedDate]
     );
 
-    const changeViewMonth = useCallback(
-        (dir: "left" | "right") => {
-            setDirection(dir);
-            setViewDate(time.addMonths(viewDate, dir === "left" ? -1 : 1));
-        },
-        [viewDate]
-    );
-
     const years = useMemo(
         () => (
             <ul data-react-toolbox="years" className={theme.years()} ref={yearsNode}>
@@ -140,19 +156,40 @@ export function Calendar({
         [handleYearClick, theme, viewDate]
     );
 
-    const months = useMemo(() => {
-        const animation = direction === "left" ? "slideLeft" : "slideRight";
-        const animationModule = getAnimationModule(animation, theme);
-        return (
+    useEffect(() => {
+        if (pending.days) {
+            setViewDate(time.addDays(selectedDate, pending.days));
+            setPending({});
+        } else if (pending.months) {
+            setViewDate(time.addMonths(viewDate, pending.months));
+            setPending({});
+        }
+    }, [pending]);
+
+    const months = useMemo(
+        () => (
             <div data-react-toolbox="calendar">
-                <IconButton className={theme.prev()} icon="chevron_left" onClick={() => changeViewMonth("left")} />
-                <IconButton className={theme.next()} icon="chevron_right" onClick={() => changeViewMonth("right")} />
+                <IconButton
+                    className={theme.prev()}
+                    icon="chevron_left"
+                    onClick={() => {
+                        setAnimationLeft();
+                        setPending({months: -1});
+                    }}
+                />
+                <IconButton
+                    className={theme.next()}
+                    icon="chevron_right"
+                    onClick={() => {
+                        setAnimationRight();
+                        setPending({months: +1});
+                    }}
+                />
                 <TransitionGroup component={null}>
-                    <CSSTransition classNames={animationModule} timeout={350}>
+                    <CSSTransition key={viewDate.getMonth()} {...cssTransitionProps(animation)}>
                         <Month
                             disabledDates={disabledDates}
                             enabledDates={enabledDates}
-                            key={viewDate.getMonth()}
                             locale={locale}
                             maxDate={maxDate}
                             minDate={minDate}
@@ -165,21 +202,22 @@ export function Calendar({
                     </CSSTransition>
                 </TransitionGroup>
             </div>
-        );
-    }, [
-        changeViewMonth,
-        direction,
-        disabledDates,
-        enabledDates,
-        locale,
-        handleDayClick,
-        maxDate,
-        minDate,
-        selectedDate,
-        sundayFirstDayOfWeek,
-        theme,
-        viewDate
-    ]);
+        ),
+        [
+            disabledDates,
+            enabledDates,
+            locale,
+            handleDayClick,
+            maxDate,
+            minDate,
+            selectedDate,
+            setAnimationLeft,
+            setAnimationRight,
+            sundayFirstDayOfWeek,
+            theme,
+            viewDate
+        ]
+    );
 
     return <div className={theme.calendar()}>{display === "months" ? months : years}</div>;
 }

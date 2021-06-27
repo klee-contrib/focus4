@@ -36,7 +36,6 @@ const config = {
         "react-toolbox/lib/button/Button",
         "react-toolbox/lib/button/IconButton",
         "react-toolbox/lib/identifiers",
-        "react-toolbox/lib/time_picker/Clock",
         "react-toolbox/lib/utils/events",
         "react-toolbox/lib/utils/prefixer",
         "react-toolbox/lib/utils/time",
