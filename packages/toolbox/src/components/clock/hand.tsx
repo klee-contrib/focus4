@@ -1,8 +1,5 @@
 import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
-import events from "react-toolbox/lib/utils/events";
-import prefixer from "react-toolbox/lib/utils/prefixer";
-import {angle360FromPositions} from "react-toolbox/lib/utils/utils";
 
 import {ToBem} from "@focus4/styling";
 
@@ -53,12 +50,19 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
         () => ({
             mouseStart(event) {
                 setMoused(true);
-                move(events.getMousePosition(event));
+                move({
+                    x: event.pageX - (window.scrollX || window.pageXOffset),
+                    y: event.pageY - (window.scrollY || window.pageYOffset)
+                });
             },
             touchStart(event) {
                 setTouched(true);
-                move(events.getTouchPosition(event));
-                events.pauseEvent(event);
+                move({
+                    x: event.touches[0].pageX - (window.scrollX || window.pageXOffset),
+                    y: event.touches[0].pageY - (window.scrollY || window.pageYOffset)
+                });
+                event.stopPropagation();
+                event.preventDefault();
             }
         }),
         [move]
@@ -67,7 +71,10 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
     useEffect(() => {
         if (moused) {
             const onMouseMove = (event: MouseEvent) => {
-                move(events.getMousePosition(event));
+                move({
+                    x: event.pageX - (window.scrollX || window.pageXOffset),
+                    y: event.pageY - (window.scrollY || window.pageYOffset)
+                });
             };
             const onMouseUp = () => {
                 setMoused(false);
@@ -85,7 +92,10 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
     useEffect(() => {
         if (touched) {
             const onTouchMove = (event: TouchEvent) => {
-                move(events.getTouchPosition(event));
+                move({
+                    x: event.touches[0].pageX - (window.scrollX || window.pageXOffset),
+                    y: event.touches[0].pageY - (window.scrollY || window.pageYOffset)
+                });
             };
             const onTouchEnd = () => {
                 setTouched(false);
@@ -101,10 +111,10 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
     }, [move, onMoved, touched]);
 
     const _className = `${theme.hand()} ${className}`;
-    const handStyle = prefixer({
+    const handStyle = {
         height: length - knobWidth / 2,
         transform: `rotate(${angle}deg)`
-    });
+    };
 
     return (
         <div className={_className} style={handStyle}>
@@ -112,3 +122,13 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
         </div>
     );
 });
+
+function angle360FromPositions(cx: number, cy: number, ex: number, ey: number) {
+    const angle = angleFromPositions(cx, cy, ex, ey);
+    return angle < 0 ? 360 + angle : angle;
+}
+
+function angleFromPositions(cx: number, cy: number, ex: number, ey: number) {
+    const theta = Math.atan2(ey - cy, ex - cx) + Math.PI / 2;
+    return (theta * 180) / Math.PI;
+}

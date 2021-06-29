@@ -1,4 +1,3 @@
-import {MENU} from "react-toolbox/lib/identifiers";
 import {MenuDividerTheme} from "react-toolbox/lib/menu/MenuDivider";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -11,6 +10,6 @@ export interface MenuDividerProps {
 }
 
 export function MenuDivider({theme: pTheme}: MenuDividerProps) {
-    const theme = useTheme(MENU, menuTheme as MenuDividerTheme, pTheme);
+    const theme = useTheme("RTMenu", menuTheme as MenuDividerTheme, pTheme);
     return <hr data-react-toolbox="menu-divider" className={theme.menuDivider()} />;
 }

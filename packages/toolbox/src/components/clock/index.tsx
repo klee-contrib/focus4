@@ -1,7 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from "react";
-import {TIME_PICKER} from "react-toolbox/lib/identifiers";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
-import timeUtils from "react-toolbox/lib/utils/time";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
@@ -29,7 +27,7 @@ export function Clock({
     theme: pTheme,
     time = new Date()
 }: ClockProps) {
-    const theme = useTheme(TIME_PICKER, timePickerTheme, pTheme);
+    const theme = useTheme("RTTimePicker", timePickerTheme, pTheme);
 
     const placeholderNode = useRef<HTMLDivElement | null>(null);
     const [center, setCenter] = useState({x: 0, y: 0});
@@ -60,7 +58,7 @@ export function Clock({
     const adaptHourToFormat = useCallback(
         (hour: number) => {
             if (format === "ampm") {
-                if (timeUtils.getTimeMode(time) === "pm") {
+                if (time.getHours() >= 12) {
                     return hour < 12 ? hour + 12 : hour;
                 }
                 return hour === 12 ? 0 : hour;
@@ -73,7 +71,9 @@ export function Clock({
     const handleHourChange = useCallback(
         (hours: number) => {
             if (time.getHours() !== hours) {
-                onChange?.(timeUtils.setHours(time, adaptHourToFormat(hours)));
+                const newTime = new Date(time.getTime());
+                newTime.setHours(adaptHourToFormat(hours));
+                onChange?.(newTime);
             }
         },
         [adaptHourToFormat, onChange, time]
@@ -82,7 +82,9 @@ export function Clock({
     const handleMinuteChange = useCallback(
         (minutes: number) => {
             if (time.getMinutes() !== minutes) {
-                onChange?.(timeUtils.setMinutes(time, minutes));
+                const newTime = new Date(time.getTime());
+                newTime.setMinutes(minutes);
+                onChange?.(newTime);
             }
         },
         [onChange, time]

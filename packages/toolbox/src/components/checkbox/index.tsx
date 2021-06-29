@@ -1,7 +1,6 @@
 import classnames from "classnames";
 import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
 import {CheckboxTheme} from "react-toolbox/lib/checkbox/Checkbox";
-import {CHECKBOX} from "react-toolbox/lib/identifiers";
 
 import {Check} from "./check";
 
@@ -47,7 +46,7 @@ export function Checkbox({
     style,
     value = false
 }: CheckboxProps) {
-    const theme = useTheme(CHECKBOX, checkboxTheme, pTheme);
+    const theme = useTheme("RTCheckbox", checkboxTheme, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
 
     const handleToggle = useCallback(

@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import dissoc from "ramda/src/dissoc";
+import {omit} from "lodash";
 import {
     Component,
     ComponentType,
@@ -11,10 +11,7 @@ import {
     TouchEventHandler
 } from "react";
 import {findDOMNode} from "react-dom";
-import {RIPPLE} from "react-toolbox/lib/identifiers";
 import {RippleTheme} from "react-toolbox/lib/ripple";
-import events from "react-toolbox/lib/utils/events";
-import prefixer from "react-toolbox/lib/utils/prefixer";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 import rtRippleTheme from "react-toolbox/components/ripple/theme.css";
@@ -48,7 +45,7 @@ export function rippleFactory({
 }: RippleOptions = {}) {
     return function Ripple<P>(ComposedComponent: ComponentType<P> | string) {
         return forwardRef<RippledComponent<P>, P & RippleProps>((p, ref) => {
-            const theme = useTheme(RIPPLE, rippleTheme, p.rippleTheme, oTheme);
+            const theme = useTheme("RTRipple", rippleTheme, p.rippleTheme, oTheme);
             return (
                 <RippledComponent
                     ref={ref}
@@ -147,7 +144,10 @@ export class RippledComponent<P> extends Component<
             this.props.onMouseDown(event);
         }
         if (this.doRipple()) {
-            const {x, y} = events.getMousePosition(event);
+            const {x, y} = {
+                x: event.pageX - (window.scrollX || window.pageXOffset),
+                y: event.pageY - (window.scrollY || window.pageYOffset)
+            };
             this.animateRipple(x, y, false);
         }
     };
@@ -157,7 +157,10 @@ export class RippledComponent<P> extends Component<
             this.props.onTouchStart(event);
         }
         if (this.doRipple()) {
-            const {x, y} = events.getTouchPosition(event);
+            const {x, y} = {
+                x: event.touches[0].pageX - (window.scrollX || window.pageXOffset),
+                y: event.touches[0].pageY - (window.scrollY || window.pageYOffset)
+            };
             this.animateRipple(x, y, true);
         }
     };
@@ -233,15 +236,14 @@ export class RippledComponent<P> extends Component<
     addRippleRemoveEventListener(rippleKey: string) {
         const self = this;
         const rippleNode = this.rippleNodes[rippleKey];
-        events.addEventListenerOnTransitionEnded(rippleNode, function onOpacityEnd(e: TransitionEvent) {
+        rippleNode.addEventListener("transitionend", function onOpacityEnd(e: TransitionEvent) {
             if (e.propertyName === "opacity") {
                 if (self.props.onRippleEnded) {
                     self.props.onRippleEnded(e);
                 }
-                events.removeEventListenerOnTransitionEnded(self.rippleNodes[rippleKey], onOpacityEnd);
-                // self.rippleNodes = dissoc(rippleKey, self.rippleNodes);
+                self.rippleNodes[rippleKey].removeEventListener("transitionend", onOpacityEnd);
                 delete self.rippleNodes[rippleKey];
-                self.setState({ripples: dissoc(rippleKey, self.state.ripples)});
+                self.setState({ripples: omit(self.state.ripples, rippleKey)});
             }
         });
     }
@@ -299,7 +301,7 @@ export class RippledComponent<P> extends Component<
                             this.rippleNodes[key] = node;
                         }
                     }}
-                    style={prefixer({transform}, {width, height: width})}
+                    style={{transform, width, height: width}}
                 />
             </span>
         );

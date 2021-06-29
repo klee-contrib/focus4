@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useEffect, useState} from "react";
-import {MENU} from "react-toolbox/lib/identifiers";
 import {IconMenuTheme} from "react-toolbox/lib/menu/IconMenu";
 
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
@@ -59,7 +58,7 @@ export function IconMenu({
     selectable = false,
     theme: pTheme
 }: IconMenuProps) {
-    const theme = useTheme(MENU, menuTheme as IconMenuTheme, pTheme);
+    const theme = useTheme("RTMenu", menuTheme as IconMenuTheme, pTheme);
 
     const [active, setActive] = useState(pActive);
     useEffect(() => setActive(pActive), [pActive]);

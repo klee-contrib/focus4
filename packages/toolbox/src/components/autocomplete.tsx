@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import toPairs from "ramda/src/toPairs";
+import {toPairs} from "lodash";
 import {
     FocusEventHandler,
     FormEvent,
@@ -17,9 +17,6 @@ import {
     useState
 } from "react";
 import {AutocompleteTheme} from "react-toolbox/lib/autocomplete/Autocomplete";
-import {AUTOCOMPLETE} from "react-toolbox/lib/identifiers";
-import events from "react-toolbox/lib/utils/events";
-import {isValuePresent} from "react-toolbox/lib/utils/utils";
 
 import {Chip} from "./chip";
 import {Input, InputProps, InputTheme} from "./input";
@@ -110,11 +107,11 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
 ) {
     /** Détermine la query à partir de la valeur. */
     const getQuery = useCallback(
-        (v?: string | string[]) => (!multiple && isValuePresent(v) ? source[v as string] || (v as string) : ""),
+        (v?: string | string[]) => (!multiple && v ? source[v as string] || (v as string) : ""),
         [multiple, source]
     );
 
-    const theme = useTheme(AUTOCOMPLETE, autocompleteTheme, pTheme);
+    const theme = useTheme("RTAutocomplete", autocompleteTheme, pTheme);
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     useImperativeHandle(ref, () => inputRef.current!, []);
 
@@ -230,7 +227,8 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
 
     const select = useCallback(
         (event: SyntheticEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>, target: string) => {
-            events.pauseEvent(event);
+            event.stopPropagation();
+            event.preventDefault();
             handleChange([target, ...Object.keys(values)], event);
         },
         [handleChange, values]

@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import {ReactNode} from "react";
-import {TABS} from "react-toolbox/lib/identifiers";
 import {TabContentTheme} from "react-toolbox/lib/tabs/TabContent";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -18,7 +17,7 @@ export interface TabContentProps {
 }
 
 export function TabContent({active = false, children, className = "", hidden = true, theme: pTheme}: TabContentProps) {
-    const theme = useTheme(TABS, tabsTheme, pTheme);
+    const theme = useTheme("RTTabs", tabsTheme, pTheme);
     const _className = classnames(theme.tab(), {[theme.active()]: active}, className);
     return (
         <section className={_className} role="tabpanel" aria-expanded={hidden}>

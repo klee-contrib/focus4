@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import range from "ramda/src/range";
+import {range} from "lodash";
 import {
     MouseEvent as RMouseEvent,
     MouseEventHandler,
@@ -11,10 +11,7 @@ import {
     useRef,
     useState
 } from "react";
-import {SLIDER} from "react-toolbox/lib/identifiers";
 import {SliderTheme} from "react-toolbox/lib/slider/Slider";
-import events from "react-toolbox/lib/utils/events";
-import {round} from "react-toolbox/lib/utils/utils";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import rtSliderTheme from "react-toolbox/components/slider/theme.css";
@@ -75,7 +72,7 @@ export function Slider({
     theme: pTheme,
     value = 0
 }: SliderProps) {
-    const theme = useTheme(SLIDER, sliderTheme, pTheme);
+    const theme = useTheme("RTSlider", sliderTheme, pTheme);
     const [inputFocused, setInputFocused] = useState(false);
     const [sliderFocused, setSliderFocused] = useState(false);
     const [inputValue, setInputValue] = useState<string>("");
@@ -110,7 +107,8 @@ export function Slider({
             if (v > max) {
                 return max;
             }
-            return round(v, stepDecimals) as number;
+            var decimalPower = Math.pow(10, stepDecimals);
+            return Math.round(v * decimalPower) / decimalPower;
         },
         [max, min, stepDecimals]
     );
@@ -162,8 +160,9 @@ export function Slider({
             if (inputFocused) {
                 inputNode.current?.blur();
             }
-            start(events.getMousePosition(event));
-            events.pauseEvent(event);
+            start({x: event.pageX - (window.scrollX || window.pageXOffset)});
+            event.stopPropagation();
+            event.preventDefault();
         },
         [inputFocused, start]
     );
@@ -173,8 +172,9 @@ export function Slider({
             if (inputFocused) {
                 inputNode.current?.blur();
             }
-            start(events.getTouchPosition(event));
-            events.pauseEvent(event);
+            start({x: event.touches[0].pageX - (window.scrollX || window.pageXOffset)});
+            event.stopPropagation();
+            event.preventDefault();
         },
         [inputFocused, start]
     );
@@ -186,12 +186,13 @@ export function Slider({
             };
 
             const handleMouseMove = (event: MouseEvent) => {
-                events.pauseEvent(event);
-                move(events.getMousePosition(event));
+                event.stopPropagation();
+                event.preventDefault();
+                move({x: event.pageX - (window.scrollX || window.pageXOffset)});
             };
 
             const handleTouchMove = (event: TouchEvent) => {
-                move(events.getTouchPosition(event));
+                move({x: event.touches[0].pageX - (window.scrollX || window.pageXOffset)});
             };
 
             const end = () => {

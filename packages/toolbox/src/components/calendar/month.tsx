@@ -1,7 +1,7 @@
-import range from "ramda/src/range";
+import {range} from "lodash";
+import moment from "moment";
 import {useCallback, useMemo} from "react";
-import {DatePickerLocale, DatePickerTheme} from "react-toolbox/lib/date_picker";
-import time from "react-toolbox/lib/utils/time";
+import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 
 import {ToBem} from "@focus4/styling";
 
@@ -10,7 +10,6 @@ import {Day} from "./day";
 export interface MonthProps {
     disabledDates?: Date[];
     enabledDates?: Date[];
-    locale?: string | DatePickerLocale;
     maxDate?: Date;
     minDate?: Date;
     onDayClick: (day: number) => void;
@@ -23,7 +22,6 @@ export interface MonthProps {
 export function Month({
     disabledDates = [],
     enabledDates = [],
-    locale,
     maxDate,
     minDate,
     onDayClick,
@@ -38,7 +36,8 @@ export function Month({
             const dateInDisabled = disabledDates.filter(compareDate).length > 0;
             const dateInEnabled = enabledDates.filter(compareDate).length > 0;
             return (
-                time.dateOutOfRange(date, minDate, maxDate) ||
+                (minDate && !(date >= minDate)) ||
+                (maxDate && !(date <= maxDate)) ||
                 (enabledDates.length > 0 && !dateInEnabled) ||
                 dateInDisabled
             );
@@ -48,7 +47,7 @@ export function Month({
 
     const days = useMemo(
         () =>
-            range(1, time.getDaysInMonth(viewDate) + 1).map(i => {
+            range(1, getDaysInMonth(viewDate) + 1).map(i => {
                 const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), i);
                 return (
                     <Day
@@ -67,12 +66,12 @@ export function Month({
     );
 
     const weeks = useMemo(() => {
-        const dayLabels = range(0, 7).map(d => time.getDayOfWeekLetter(d, locale));
+        const dayLabels = range(0, 7).map(d => moment(d, "d").format("dd"));
         const source = sundayFirstDayOfWeek ? dayLabels : [...dayLabels.slice(1), dayLabels[0]];
         return source.map((day, i) => <span key={i}>{day}</span>);
-    }, [locale, sundayFirstDayOfWeek]);
+    }, [sundayFirstDayOfWeek]);
 
-    const fullMonth = time.getFullMonth(viewDate, locale);
+    const fullMonth = moment(viewDate).format("MMMM");
     const fullYear = viewDate.getFullYear();
 
     return (
@@ -84,4 +83,11 @@ export function Month({
             <div className={theme.days()}>{days}</div>
         </div>
     );
+}
+
+function getDaysInMonth(d: Date) {
+    const resultDate = new Date(d.getFullYear(), d.getMonth(), 1);
+    resultDate.setMonth(resultDate.getMonth() + 1);
+    resultDate.setDate(resultDate.getDate() - 1);
+    return resultDate.getDate();
 }

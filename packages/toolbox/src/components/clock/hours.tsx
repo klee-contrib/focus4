@@ -1,4 +1,4 @@
-import range from "ramda/src/range";
+import {range} from "lodash";
 import {useCallback, useRef, useState} from "react";
 import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 

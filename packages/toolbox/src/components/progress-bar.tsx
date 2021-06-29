@@ -1,8 +1,6 @@
 import classnames from "classnames";
 import {forwardRef, MouseEventHandler, Ref, TouchEventHandler, useCallback, useMemo} from "react";
-import {PROGRESS_BAR} from "react-toolbox/lib/identifiers";
 import {ProgressBarTheme} from "react-toolbox/lib/progress_bar/ProgressBar";
-import prefixer from "react-toolbox/lib/utils/prefixer";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import rtProgressBarTheme from "react-toolbox/components/progress_bar/theme.css";
@@ -53,7 +51,7 @@ export const ProgressBar = forwardRef(function RTProgressBar(
     }: ProgressBarProps,
     ref: Ref<HTMLDivElement | SVGSVGElement>
 ) {
-    const theme = useTheme(PROGRESS_BAR, progressBarTheme, pTheme);
+    const theme = useTheme("RTProgressBar", progressBarTheme, pTheme);
 
     const calculateRatio = useCallback(
         (v: number) => {
@@ -79,8 +77,8 @@ export const ProgressBar = forwardRef(function RTProgressBar(
     const linearStyle = useMemo(() => {
         if (mode !== "indeterminate") {
             return {
-                buffer: prefixer({transform: `scaleX(${calculateRatio(buffer)})`}),
-                value: prefixer({transform: `scaleX(${calculateRatio(value)})`})
+                buffer: {transform: `scaleX(${calculateRatio(buffer)})`},
+                value: {transform: `scaleX(${calculateRatio(value)})`}
             };
         }
         return {};

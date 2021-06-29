@@ -1,7 +1,6 @@
 import classnames from "classnames";
 import {useCallback, useMemo} from "react";
 import {DatePickerTheme} from "react-toolbox/lib/date_picker";
-import time from "react-toolbox/lib/utils/time";
 
 import {ToBem} from "@focus4/styling";
 
@@ -25,7 +24,7 @@ export function Day({day, disabled, onClick, selectedDate, sundayFirstDayOfWeek,
     const dayStyle = useMemo(() => {
         if (day === 1) {
             const e = sundayFirstDayOfWeek ? 0 : 1;
-            const firstDay = time.getFirstWeekDay(viewDate) - e;
+            const firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay() - e;
             return {
                 marginLeft: `${(firstDay >= 0 ? firstDay : 6) * (100 / 7)}%`
             };

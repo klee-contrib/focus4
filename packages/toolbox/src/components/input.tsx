@@ -14,9 +14,7 @@ import {
     useImperativeHandle,
     useRef
 } from "react";
-import {INPUT} from "react-toolbox/lib/identifiers";
 import {InputTheme} from "react-toolbox/lib/input/Input";
-import {isValuePresent} from "react-toolbox/lib/utils/utils";
 
 import {FontIcon} from "./font-icon";
 
@@ -126,7 +124,7 @@ export const Input = forwardRef(function RTInput(
     }: InputProps,
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) {
-    const theme = useTheme(INPUT, inputTheme, pTheme);
+    const theme = useTheme("RTInput", inputTheme, pTheme);
     const inputNode = useRef<any>(null);
 
     const handleAutoresize = useCallback(() => {
@@ -206,7 +204,6 @@ export const Input = forwardRef(function RTInput(
     );
 
     const length = maxLength && value ? value.length : 0;
-    const valuePresent = isValuePresent(value);
 
     const className = classnames(theme.input(), {
         [theme.disabled()]: disabled,
@@ -217,7 +214,7 @@ export const Input = forwardRef(function RTInput(
     const labelClassName = classnames(theme.label(), {[(theme as any).fixed()]: !floating});
     const inputElementProps = {
         autoComplete,
-        className: classnames(theme.inputElement(), {[(theme as any).filled()]: valuePresent}),
+        className: classnames(theme.inputElement(), {[(theme as any).filled()]: value!!}),
         onChange: handleChange,
         ref: inputNode,
         disabled,

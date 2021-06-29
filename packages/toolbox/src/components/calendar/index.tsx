@@ -1,9 +1,7 @@
-import range from "ramda/src/range";
+import {range} from "lodash";
 import {MouseEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import rtDatePickerTheme from "react-toolbox/components/date_picker/theme.css";
-import {DatePickerLocale, DatePickerTheme} from "react-toolbox/lib/date_picker";
-import {DATE_PICKER} from "react-toolbox/lib/identifiers";
-import time from "react-toolbox/lib/utils/time";
+import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
@@ -18,7 +16,6 @@ export interface CalendarProps {
     display?: "months" | "years";
     enabledDates?: Date[];
     handleSelect?: () => void;
-    locale?: string | DatePickerLocale;
     maxDate?: Date;
     minDate?: Date;
     onChange: (date: Date, dayClick: boolean) => void;
@@ -32,7 +29,6 @@ export function Calendar({
     display = "months",
     enabledDates,
     handleSelect,
-    locale,
     onChange,
     maxDate,
     minDate,
@@ -40,7 +36,7 @@ export function Calendar({
     sundayFirstDayOfWeek = false,
     theme: pTheme
 }: CalendarProps) {
-    const theme = useTheme(DATE_PICKER, datePickerTheme, pTheme);
+    const theme = useTheme("RTDatePicker", datePickerTheme, pTheme);
     const yearsNode = useRef<HTMLUListElement | null>(null);
     const activeYearNode = useRef<HTMLLIElement | null>(null);
 
@@ -72,7 +68,9 @@ export function Calendar({
         const handleKeys = (e: KeyboardEvent) => {
             const handleDayArrowKey = (days: number) => {
                 setPending({days});
-                onChange(time.addDays(selectedDate, days), false);
+                const newDate = new Date(selectedDate.getTime());
+                newDate.setDate(selectedDate.getDate() + days);
+                onChange(newDate, false);
             };
 
             switch (e.key) {
@@ -118,7 +116,9 @@ export function Calendar({
 
     const handleDayClick = useCallback(
         (day: number) => {
-            onChange(time.setDay(viewDate, day), true);
+            const newDate = new Date(viewDate.getTime());
+            newDate.setDate(day);
+            onChange(newDate, true);
         },
         [onChange, viewDate]
     );
@@ -126,9 +126,10 @@ export function Calendar({
     const handleYearClick = useCallback(
         (event: MouseEvent<HTMLLIElement>) => {
             const year = parseInt(event.currentTarget.id, 10);
-            const vDate = time.setYear(selectedDate, year);
-            setViewDate(vDate);
-            onChange(vDate, false);
+            const newDate = new Date(selectedDate.getTime());
+            newDate.setFullYear(year);
+            setViewDate(newDate);
+            onChange(newDate, false);
         },
         [onChange, selectedDate]
     );
@@ -158,13 +159,17 @@ export function Calendar({
 
     useEffect(() => {
         if (pending.days) {
-            setViewDate(time.addDays(selectedDate, pending.days));
+            const newDate = new Date(selectedDate.getTime());
+            newDate.setDate(selectedDate.getDate() + pending.days);
+            setViewDate(newDate);
             setPending({});
         } else if (pending.months) {
-            setViewDate(time.addMonths(viewDate, pending.months));
+            const newDate = new Date(viewDate.getTime());
+            newDate.setMonth(viewDate.getMonth() + pending.months);
+            setViewDate(newDate);
             setPending({});
         }
-    }, [pending]);
+    }, [pending, selectedDate, viewDate]);
 
     const months = useMemo(
         () => (
@@ -190,7 +195,6 @@ export function Calendar({
                         <Month
                             disabledDates={disabledDates}
                             enabledDates={enabledDates}
-                            locale={locale}
                             maxDate={maxDate}
                             minDate={minDate}
                             onDayClick={handleDayClick}
@@ -206,7 +210,6 @@ export function Calendar({
         [
             disabledDates,
             enabledDates,
-            locale,
             handleDayClick,
             maxDate,
             minDate,

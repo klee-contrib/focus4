@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import {MouseEvent, ReactNode, useCallback, useRef} from "react";
-import {SWITCH} from "react-toolbox/lib/identifiers";
 import {SwitchTheme} from "react-toolbox/lib/switch/Switch";
 
 import {Thumb} from "./thumb";
@@ -38,7 +37,7 @@ export function Switch({
     theme: pTheme,
     value = false
 }: SwitchProps) {
-    const theme = useTheme(SWITCH, switchTheme, pTheme);
+    const theme = useTheme("RTSwitch", switchTheme, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
 
     const handleToggle = useCallback(

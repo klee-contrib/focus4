@@ -12,10 +12,7 @@ import {
     useRef,
     useState
 } from "react";
-import {MENU} from "react-toolbox/lib/identifiers";
 import {MenuTheme} from "react-toolbox/lib/menu/Menu";
-import events from "react-toolbox/lib/utils/events";
-import {getViewport} from "react-toolbox/lib/utils/utils";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import rtMenuTheme from "react-toolbox/components/menu/theme.css";
@@ -64,7 +61,7 @@ export function Menu({
     selectable = true,
     theme: pTheme
 }: MenuProps) {
-    const theme = useTheme(MENU, menuTheme, pTheme);
+    const theme = useTheme("RTMenu", menuTheme, pTheme);
 
     const rootNode = useRef<HTMLDivElement | null>(null);
     const menuNode = useRef<HTMLUListElement | null>(null);
@@ -81,7 +78,8 @@ export function Menu({
                 const parentNode = rootNode.current?.parentNode;
                 if (parentNode) {
                     const {top, left, height: ph, width: pw} = (parentNode as HTMLElement).getBoundingClientRect();
-                    const {height: wh, width: ww} = getViewport();
+                    const ww = window.innerWidth || document.documentElement.offsetWidth;
+                    const wh = window.innerHeight || document.documentElement.offsetHeight;
                     const toTop = top < wh / 2 - ph / 2;
                     const toLeft = left < ww / 2 - pw / 2;
                     setPosition(`${toTop ? "top" : "bottom"}${toLeft ? "Left" : "Right"}` as const);
@@ -104,19 +102,21 @@ export function Menu({
     }, [pActive, pPosition, onHide, onShow]);
 
     useEffect(() => {
-        function handleDocumentClick(event: MouseEvent) {
-            if (!events.targetIsDescendant(event, rootNode.current)) {
+        function handleDocumentClick(event: Event) {
+            if (!targetIsDescendant(event, rootNode.current)) {
                 setActive(false);
                 setRippled(false);
                 onHide?.();
             }
         }
         if (active) {
-            events.addEventsToDocument({click: handleDocumentClick, touchend: handleDocumentClick});
+            document.addEventListener("click", handleDocumentClick);
+            document.addEventListener("touchend", handleDocumentClick);
         }
         return () => {
             if (active) {
-                events.removeEventsFromDocument({click: handleDocumentClick, touchend: handleDocumentClick});
+                document.removeEventListener("click", handleDocumentClick);
+                document.removeEventListener("touchend", handleDocumentClick);
             }
         };
     }, [active, onHide]);
@@ -199,4 +199,13 @@ export function Menu({
             </ul>
         </div>
     );
+}
+
+function targetIsDescendant(event: Event, parent: Element | null) {
+    var node = event.target;
+    while (node !== null) {
+        if (node === parent) return true;
+        node = (node as Element).parentNode;
+    }
+    return false;
 }

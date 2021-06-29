@@ -1,7 +1,6 @@
 import classnames from "classnames";
 import {MouseEventHandler, ReactNode, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
-import {SNACKBAR} from "react-toolbox/lib/identifiers";
 import {SnackbarTheme} from "react-toolbox/lib/snackbar/Snackbar";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -45,7 +44,7 @@ export function Snackbar({
     onTimeout,
     type
 }: SnackbarProps) {
-    const theme = useTheme(SNACKBAR, snackbarTheme, pTheme);
+    const theme = useTheme("RTSnackbar", snackbarTheme, pTheme);
     const [active, setActive] = useState(pActive);
     const [rendered, setRendered] = useState(pActive);
 

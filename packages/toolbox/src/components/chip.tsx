@@ -1,7 +1,6 @@
 import classnames from "classnames";
 import {Children, MouseEventHandler, TouchEventHandler} from "react";
 import {ChipTheme} from "react-toolbox/lib/chip/Chip";
-import {CHIP} from "react-toolbox/lib/identifiers";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import rtChipTheme from "react-toolbox/components/chip/theme.css";
@@ -39,7 +38,7 @@ export function Chip({
     onTouchStart,
     theme: pTheme
 }: ChipProps) {
-    const theme = useTheme(CHIP, chipTheme, pTheme);
+    const theme = useTheme("RTChip", chipTheme, pTheme);
 
     let hasAvatar = false;
     if (Children.count(children)) {

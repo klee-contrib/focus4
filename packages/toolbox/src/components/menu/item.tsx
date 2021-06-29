@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback} from "react";
-import {MENU} from "react-toolbox/lib/identifiers";
 import {MenuItemTheme} from "react-toolbox/lib/menu/MenuItem";
 
 import {FontIcon} from "../font-icon";
@@ -46,7 +45,7 @@ export const MenuItem = rippleFactory({})(function RTMenuItem({
     shortcut,
     theme: pTheme
 }: MenuItemProps) {
-    const theme = useTheme(MENU, menuTheme as MenuItemTheme, pTheme);
+    const theme = useTheme("RTMenu", menuTheme as MenuItemTheme, pTheme);
 
     const handleClick = useCallback(
         (event: MouseEvent<HTMLLIElement>) => {

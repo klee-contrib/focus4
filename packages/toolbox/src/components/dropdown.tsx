@@ -13,8 +13,6 @@ import {
     useState
 } from "react";
 import {DropdownTheme} from "react-toolbox/lib/dropdown/Dropdown";
-import {DROPDOWN} from "react-toolbox/lib/identifiers";
-import events from "react-toolbox/lib/utils/events";
 
 import {Input} from "./input";
 
@@ -93,24 +91,26 @@ export function Dropdown<
     valueKey = "value" as VK,
     theme: pTheme
 }: DropdownProps<T, VK, LK, S>) {
-    const theme = useTheme(DROPDOWN, dropdownTheme, pTheme);
+    const theme = useTheme("RTDropdown", dropdownTheme, pTheme);
 
     const domNode = useRef<HTMLDivElement | null>(null);
     const [active, setActive] = useState(false);
     const [up, setUp] = useState(false);
 
     useEffect(() => {
-        function handleDocumentClick(event: MouseEvent) {
-            if (!events.targetIsDescendant(event, domNode.current)) {
+        function handleDocumentClick(event: Event) {
+            if (!targetIsDescendant(event, domNode.current)) {
                 setActive(false);
             }
         }
         if (active) {
-            events.addEventsToDocument({click: handleDocumentClick, touchend: handleDocumentClick});
+            document.addEventListener("click", handleDocumentClick);
+            document.addEventListener("touchend", handleDocumentClick);
         }
         return () => {
             if (active) {
-                events.removeEventsFromDocument({click: handleDocumentClick, touchend: handleDocumentClick});
+                document.removeEventListener("click", handleDocumentClick);
+                document.removeEventListener("touchend", handleDocumentClick);
             }
         };
     }, [active]);
@@ -140,7 +140,8 @@ export function Dropdown<
     const handleClick = useCallback(
         (event: MouseEvent<HTMLDivElement | HTMLInputElement | HTMLTextAreaElement>) => {
             open(event);
-            events.pauseEvent(event);
+            event.stopPropagation();
+            event.preventDefault();
             onClick?.(event);
         },
         [onClick, open]
@@ -159,7 +160,8 @@ export function Dropdown<
 
     const handleSelect = useCallback(
         (item: T, event: MouseEvent<HTMLLIElement>) => {
-            events.pauseEvent(event);
+            event.stopPropagation();
+            event.preventDefault();
             onBlur?.(event);
             if (!disabled && onChange) {
                 onChange(item, event);
@@ -257,4 +259,13 @@ export function Dropdown<
             <ul className={theme.values()}>{source.map(renderValue)}</ul>
         </div>
     );
+}
+
+function targetIsDescendant(event: Event, parent: Element | null) {
+    var node = event.target;
+    while (node !== null) {
+        if (node === parent) return true;
+        node = (node as Element).parentNode;
+    }
+    return false;
 }

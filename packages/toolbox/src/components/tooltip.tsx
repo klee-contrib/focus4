@@ -1,9 +1,6 @@
 import classnames from "classnames";
 import {Component, ComponentType, forwardRef, MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler} from "react";
 import {createPortal} from "react-dom";
-import {TOOLTIP} from "react-toolbox/lib/identifiers";
-import events from "react-toolbox/lib/utils/events";
-import {getViewport} from "react-toolbox/lib/utils/utils";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 import rtTooltipTheme from "react-toolbox/components/tooltip/theme.css";
@@ -58,7 +55,7 @@ export function tooltipFactory({
 }: TooltipOptions = {}) {
     return function Tooltip<P>(ComposedComponent: ComponentType<P> | string) {
         return forwardRef<TooltippedComponent<P>, P & TooltipProps>((p, ref) => {
-            const theme = useTheme(TOOLTIP, tooltipTheme, p.tooltipTheme, oTheme);
+            const theme = useTheme("RTTooltip", tooltipTheme, p.tooltipTheme, oTheme);
             return (
                 <TooltippedComponent
                     ref={ref}
@@ -92,7 +89,7 @@ class TooltippedComponent<P> extends Component<
 
     componentWillUnmount() {
         if (this.tooltipNode) {
-            events.removeEventListenerOnTransitionEnded(this.tooltipNode, this.onTransformEnd);
+            this.tooltipNode?.removeEventListener("transitionend", this.onTransformEnd);
         }
         if (this.timeout) {
             clearTimeout(this.timeout as number);
@@ -101,7 +98,7 @@ class TooltippedComponent<P> extends Component<
 
     onTransformEnd = (e: any) => {
         if (e.propertyName === "transform") {
-            events.removeEventListenerOnTransitionEnded(this.tooltipNode, this.onTransformEnd);
+            this.tooltipNode?.removeEventListener("transitionend", this.onTransformEnd);
             this.setState({visible: false});
         }
     };
@@ -110,13 +107,13 @@ class TooltippedComponent<P> extends Component<
         const {tooltipPosition} = this.props;
         if (tooltipPosition === POSITION.HORIZONTAL) {
             const origin = element.getBoundingClientRect();
-            const {width: ww} = getViewport();
+            const ww = window.innerWidth || document.documentElement.offsetWidth;
             const toRight = origin.left < ww / 2 - origin.width / 2;
             return toRight ? POSITION.RIGHT : POSITION.LEFT;
         }
         if (tooltipPosition === POSITION.VERTICAL) {
             const origin = element.getBoundingClientRect();
-            const {height: wh} = getViewport();
+            const wh = window.innerHeight || document.documentElement.offsetHeight;
             const toBottom = origin.top < wh / 2 - origin.height / 2;
             return toBottom ? POSITION.BOTTOM : POSITION.TOP;
         }
@@ -166,7 +163,7 @@ class TooltippedComponent<P> extends Component<
             clearTimeout(this.timeout as number);
         }
         if (this.state.active) {
-            events.addEventListenerOnTransitionEnded(this.tooltipNode, this.onTransformEnd);
+            this.tooltipNode?.addEventListener("transitionend", this.onTransformEnd);
             this.setState({active: false});
         } else if (this.state.visible) {
             this.setState({visible: false});

@@ -1,7 +1,6 @@
 import classnames from "classnames";
 import {ReactNode} from "react";
 import {AvatarTheme} from "react-toolbox/lib/avatar/Avatar";
-import {AVATAR} from "react-toolbox/lib/identifiers";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import rtAvatarTheme from "react-toolbox/components/avatar/theme.css";
@@ -29,7 +28,7 @@ export interface AvatarProps {
 }
 
 export function Avatar({alt = "", className, children, cover = false, icon, image, title, theme: pTheme}: AvatarProps) {
-    const theme = useTheme(AVATAR, avatarTheme, pTheme);
+    const theme = useTheme("RTAvatar", avatarTheme, pTheme);
     return (
         <div data-react-toolbox="avatar" className={classnames(theme.avatar(), className)}>
             {children}

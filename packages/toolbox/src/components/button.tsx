@@ -10,7 +10,6 @@ import {
     useRef
 } from "react";
 import {ButtonTheme} from "react-toolbox/lib/button";
-import {BUTTON} from "react-toolbox/lib/identifiers";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import rtButtonTheme from "react-toolbox/components/button/theme.css";
@@ -86,7 +85,7 @@ export const Button = rippleFactory({theme: {rippleWrapper: buttonTheme.rippleWr
     theme: pTheme,
     type = "button"
 }: ButtonProps) {
-    const theme = useTheme(BUTTON, buttonTheme, pTheme);
+    const theme = useTheme("RTButton", buttonTheme, pTheme);
     const buttonNode = useRef<HTMLLinkElement | HTMLButtonElement | null>(null);
 
     const handleMouseUp = useCallback(

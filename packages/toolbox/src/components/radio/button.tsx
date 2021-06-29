@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
-import {RADIO} from "react-toolbox/lib/identifiers";
 import {RadioButtonTheme} from "react-toolbox/lib/radio/RadioButton";
 
 import {Radio, RadioTheme} from "./radio";
@@ -47,7 +46,7 @@ export function RadioButton({
     name,
     theme: pTheme
 }: RadioButtonProps) {
-    const theme = useTheme(RADIO, radioTheme, pTheme);
+    const theme = useTheme("RTRadio", radioTheme, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
 
     const handleToggle = useCallback(

@@ -12,7 +12,6 @@ import {
     useRef,
     useState
 } from "react";
-import {TABS} from "react-toolbox/lib/identifiers";
 import {TabsTheme} from "react-toolbox/lib/tabs/Tabs";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -60,7 +59,7 @@ export function Tabs({
     onChange,
     theme: pTheme
 }: TabsProps) {
-    const theme = useTheme(TABS, tabsTheme, pTheme);
+    const theme = useTheme("RTTabs", tabsTheme, pTheme);
     const navigationNode = useRef<HTMLDivElement | null>(null);
 
     const [arrows, setArrows] = useState<{left: boolean; right: boolean}>({left: false, right: false});

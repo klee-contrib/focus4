@@ -27,19 +27,10 @@ const config = {
     external: [
         ...Object.keys(pkg.dependencies || {}),
         "classnames",
-        "ramda/src/dissoc",
-        "ramda/src/range",
-        "ramda/src/toPairs",
+        "lodash",
         "react",
         "react/jsx-runtime",
         "react-dom",
-        "react-toolbox/lib/button/Button",
-        "react-toolbox/lib/button/IconButton",
-        "react-toolbox/lib/identifiers",
-        "react-toolbox/lib/utils/events",
-        "react-toolbox/lib/utils/prefixer",
-        "react-toolbox/lib/utils/time",
-        "react-toolbox/lib/utils/utils",
         "tslib"
     ],
     onwarn
