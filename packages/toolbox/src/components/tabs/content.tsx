@@ -1,10 +1,8 @@
 import classnames from "classnames";
 import {ReactNode} from "react";
-import {TabContentTheme} from "react-toolbox/lib/tabs/TabContent";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtTabsTheme from "react-toolbox/components/tabs/theme.css";
-const tabsTheme: TabContentTheme = rtTabsTheme;
+import tabsCss, {TabsCss} from "../__style__/tabs.css";
 
 export interface TabContentProps {
     active?: boolean;
@@ -13,11 +11,11 @@ export interface TabContentProps {
     hidden?: boolean;
     /** @internal */
     tabIndex?: number;
-    theme?: CSSProp<TabContentTheme>;
+    theme?: CSSProp<TabsCss>;
 }
 
 export function TabContent({active = false, children, className = "", hidden = true, theme: pTheme}: TabContentProps) {
-    const theme = useTheme("RTTabs", tabsTheme, pTheme);
+    const theme = useTheme("RTTabs", tabsCss, pTheme);
     const _className = classnames(theme.tab(), {[theme.active()]: active}, className);
     return (
         <section className={_className} role="tabpanel" aria-expanded={hidden}>

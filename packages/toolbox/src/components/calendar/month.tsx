@@ -1,9 +1,9 @@
 import {range} from "lodash";
 import moment from "moment";
 import {useCallback, useMemo} from "react";
-import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 
 import {ToBem} from "@focus4/styling";
+import {DatePickerCss} from "../__style__/date-picker.css";
 
 import {Day} from "./day";
 
@@ -15,7 +15,7 @@ export interface MonthProps {
     onDayClick: (day: number) => void;
     selectedDate: Date;
     sundayFirstDayOfWeek: boolean;
-    theme: ToBem<DatePickerTheme>;
+    theme: ToBem<DatePickerCss>;
     viewDate: Date;
 }
 

@@ -16,15 +16,13 @@ import {
     useRef,
     useState
 } from "react";
-import {AutocompleteTheme} from "react-toolbox/lib/autocomplete/Autocomplete";
-
-import {Chip} from "./chip";
-import {Input, InputProps, InputTheme} from "./input";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtAutocompleteTheme from "react-toolbox/components/autocomplete/theme.css";
-const autocompleteTheme: AutocompleteTheme & InputTheme = rtAutocompleteTheme;
-export {autocompleteTheme, AutocompleteTheme};
+import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
+export {autocompleteCss, AutocompleteCss};
+
+import {Chip} from "./chip";
+import {Input, InputProps, InputCss} from "./input";
 
 export interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "value"> {
     /** Determines if user can create a new option with the current typed value. */
@@ -51,7 +49,7 @@ export interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "va
     source?: Record<string, string>;
     /** Determines how suggestions are supplied. */
     suggestionMatch?: "disabled" | "start" | "anywhere" | "word";
-    theme?: CSSProp<AutocompleteTheme & InputTheme>;
+    theme?: CSSProp<AutocompleteCss & InputCss>;
     value?: string | string[];
 }
 
@@ -111,7 +109,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         [multiple, source]
     );
 
-    const theme = useTheme("RTAutocomplete", autocompleteTheme, pTheme);
+    const theme = useTheme("RTAutocomplete", autocompleteCss, pTheme);
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     useImperativeHandle(ref, () => inputRef.current!, []);
 

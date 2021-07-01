@@ -1,13 +1,11 @@
 import classnames from "classnames";
 import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
-import {CheckboxTheme} from "react-toolbox/lib/checkbox/Checkbox";
+
+import {CSSProp, useTheme} from "@focus4/styling";
+import checkboxCss, {CheckboxCss} from "../__style__/checkbox.css";
+export {checkboxCss, CheckboxCss};
 
 import {Check} from "./check";
-
-import {CSSProp, fromBem, useTheme} from "@focus4/styling";
-import rtCheckboxTheme from "react-toolbox/components/checkbox/theme.css";
-const checkboxTheme: CheckboxTheme = rtCheckboxTheme;
-export {checkboxTheme, CheckboxTheme};
 
 /** Props du Checkbox. */
 export interface CheckboxProps {
@@ -27,7 +25,7 @@ export interface CheckboxProps {
     onMouseEnter?: MouseEventHandler<HTMLLabelElement>;
     onMouseLeave?: MouseEventHandler<HTMLLabelElement>;
     style?: CSSProperties;
-    theme?: CSSProp<CheckboxTheme>;
+    theme?: CSSProp<CheckboxCss>;
     /** Valeur. */
     value?: boolean;
 }
@@ -46,7 +44,7 @@ export function Checkbox({
     style,
     value = false
 }: CheckboxProps) {
-    const theme = useTheme("RTCheckbox", checkboxTheme, pTheme);
+    const theme = useTheme("RTCheckbox", checkboxCss, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
 
     const handleToggle = useCallback(
@@ -79,7 +77,7 @@ export function Checkbox({
                 ref={inputNode}
                 type="checkbox"
             />
-            <Check disabled={disabled} style={style} theme={fromBem(theme)} value={value} />
+            <Check disabled={disabled} style={style} theme={theme} value={value} />
             {label ? (
                 <span data-react-toolbox="label" className={theme.text()}>
                     {label}

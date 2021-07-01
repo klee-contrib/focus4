@@ -11,12 +11,10 @@ import {
     useRef,
     useState
 } from "react";
-import {SliderTheme} from "react-toolbox/lib/slider/Slider";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtSliderTheme from "react-toolbox/components/slider/theme.css";
-const sliderTheme: SliderTheme = rtSliderTheme;
-export {sliderTheme, SliderTheme};
+import sliderCss, {SliderCss} from "./__style__/slider.css";
+export {sliderCss, SliderCss};
 
 import {Input} from "./input";
 import {ProgressBar} from "./progress-bar";
@@ -48,7 +46,7 @@ export interface SliderProps {
     /** Amount to vary the value when the knob is moved or increase/decrease is called. */
     step?: number;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<SliderTheme>;
+    theme?: CSSProp<SliderCss>;
     /** Current value of the slider. */
     value?: number;
 }
@@ -72,7 +70,7 @@ export function Slider({
     theme: pTheme,
     value = 0
 }: SliderProps) {
-    const theme = useTheme("RTSlider", sliderTheme, pTheme);
+    const theme = useTheme("RTSlider", sliderCss, pTheme);
     const [inputFocused, setInputFocused] = useState(false);
     const [sliderFocused, setSliderFocused] = useState(false);
     const [inputValue, setInputValue] = useState<string>("");

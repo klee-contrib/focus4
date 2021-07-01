@@ -5,12 +5,12 @@ import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import {Component, KeyboardEvent} from "react";
 
-import {themr} from "@focus4/styling";
-import {Clock, IconButton, InputTheme, timePickerTheme, TimePickerTheme} from "@focus4/toolbox";
+import {CSSProp, themr} from "@focus4/styling";
+import {Clock, IconButton, InputCss, timePickerCss, TimePickerCss} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
-const Theme = themr("RTTimePicker", timePickerTheme);
+const Theme = themr("RTTimePicker", timePickerCss);
 
 import inputDateCss from "./__style__/input-date.css";
 
@@ -21,7 +21,7 @@ export interface InputTimeProps extends InputProps<"string"> {
     /** Format de l'heure dans l'input. */
     inputFormat?: string;
     /** CSS. */
-    theme?: TimePickerTheme & InputTheme;
+    theme?: CSSProp<TimePickerCss & InputCss>;
     /** Valeur. */
     value: string | undefined;
     /** Code Timezone que l'on souhaite appliquer au TimePicker dans le cas d'une Timezone différente de celle du navigateur (https://momentjs.com/timezone/) */

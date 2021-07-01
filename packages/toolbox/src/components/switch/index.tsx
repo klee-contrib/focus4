@@ -1,13 +1,11 @@
 import classnames from "classnames";
 import {MouseEvent, ReactNode, useCallback, useRef} from "react";
-import {SwitchTheme} from "react-toolbox/lib/switch/Switch";
+
+import {CSSProp, useTheme} from "@focus4/styling";
+import switchCss, {SwitchCss} from "../__style__/switch.css";
+export {switchCss, SwitchCss};
 
 import {Thumb} from "./thumb";
-
-import {CSSProp, fromBem, useTheme} from "@focus4/styling";
-import rtSwitchTheme from "react-toolbox/components/switch/theme.css";
-const switchTheme: SwitchTheme = rtSwitchTheme;
-export {switchTheme, SwitchTheme};
 
 /** Props du Switch. */
 export interface SwitchProps {
@@ -22,7 +20,7 @@ export interface SwitchProps {
     name?: string;
     /** Est appelé quand on coche la case. */
     onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
-    theme?: CSSProp<SwitchTheme>;
+    theme?: CSSProp<SwitchCss>;
     /** Valeur. */
     value?: boolean;
 }
@@ -37,7 +35,7 @@ export function Switch({
     theme: pTheme,
     value = false
 }: SwitchProps) {
-    const theme = useTheme("RTSwitch", switchTheme, pTheme);
+    const theme = useTheme("RTSwitch", switchCss, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
 
     const handleToggle = useCallback(
@@ -53,7 +51,10 @@ export function Switch({
     );
 
     return (
-        <label data-react-toolbox="switch" className={classnames(theme[disabled ? "disabled" : "field"](), className)}>
+        <label
+            data-react-toolbox="switch"
+            className={classnames(theme.field(), {[theme.disabled()]: disabled}, className)}
+        >
             <input
                 checked={value}
                 className={theme.input()}
@@ -65,7 +66,7 @@ export function Switch({
                 type="checkbox"
             />
             <span className={theme[value ? "on" : "off"]()}>
-                <Thumb disabled={disabled} theme={fromBem(theme)} />
+                <Thumb disabled={disabled} theme={theme} />
             </span>
             {label ? <span className={theme.text()}>{label}</span> : null}
         </label>

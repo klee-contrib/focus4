@@ -1,0 +1,44 @@
+.avatar {
+    background-color: var(--avatar-background);
+    border-radius: 50%;
+    color: var(--avatar-color);
+    display: inline-block;
+    font-size: var(--avatar-font-size);
+    height: var(--avatar-size);
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    width: var(--avatar-size);
+    box-sizing: border-box;
+    font-family: var(--preferred-font);
+}
+.avatar *,
+.avatar *::after,
+.avatar *::before {
+    box-sizing: border-box;
+}
+.avatar > svg {
+    fill: currentColor;
+    height: var(--avatar-size);
+    width: 1em;
+}
+.avatar > img {
+    height: auto;
+    max-width: 100%;
+}
+.image {
+    background-color: transparent;
+    background-position: center;
+    background-size: cover;
+    border-radius: 50%;
+    display: block;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+.letter {
+    display: block;
+    line-height: var(--avatar-size);
+    width: 100%;
+}

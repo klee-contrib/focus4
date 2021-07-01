@@ -5,10 +5,10 @@ import {useContext, forwardRef} from "react";
 import posed from "react-pose";
 
 import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
-import {Button, ButtonTheme} from "@focus4/toolbox";
+import {Button, ButtonCss} from "@focus4/toolbox";
 
 import buttonBttCss, {ButtonBttCss as BTTCss} from "./__style__/button-btt.css";
-export type ButtonBttCss = BTTCss & ButtonTheme;
+export type ButtonBttCss = BTTCss & ButtonCss;
 export {buttonBttCss};
 
 /** Props du bouton de retour en haut de page. */

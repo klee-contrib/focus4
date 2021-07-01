@@ -1,26 +1,23 @@
 import {CSSContext, CSSProp, ThemeContext} from "@focus4/styling";
 import {
-    AutocompleteTheme,
-    AvatarTheme,
-    ButtonTheme,
-    CheckboxTheme,
-    ChipTheme,
-    DatePickerTheme,
-    DropdownTheme,
-    IconButtonTheme,
-    IconMenuTheme,
-    InputTheme,
-    MenuItemTheme,
-    MenuTheme,
-    ProgressBarTheme,
-    RadioTheme,
-    RippleTheme,
-    SliderTheme,
-    SnackbarTheme,
-    SwitchTheme,
-    TabsTheme,
-    TimePickerTheme,
-    TooltipTheme
+    AutocompleteCss,
+    AvatarCss,
+    ButtonCss,
+    CheckboxCss,
+    ChipCss,
+    DatePickerCss,
+    DropdownCss,
+    InputCss,
+    MenuCss,
+    ProgressBarCss,
+    RadioCss,
+    RippleCss,
+    SliderCss,
+    SnackbarCss,
+    SwitchCss,
+    TabsCss,
+    TimePickerCss,
+    TooltipCss
 } from "@focus4/toolbox";
 
 import {HeaderCss} from "./header";
@@ -100,24 +97,24 @@ export interface LayoutStyleProviderProps {
     table?: {};
     timeline?: {};
 
-    RTAutocomplete?: CSSProp<AutocompleteTheme>;
-    RTAvatar?: CSSProp<AvatarTheme>;
-    RTButton?: CSSProp<ButtonTheme & IconButtonTheme>;
-    RTCheckbox?: CSSProp<CheckboxTheme>;
-    RTChip?: CSSProp<ChipTheme>;
-    RTDatePicker?: CSSProp<DatePickerTheme>;
-    RTDropdown?: CSSProp<DropdownTheme>;
-    RTInput?: CSSProp<InputTheme>;
-    RTMenu?: CSSProp<IconMenuTheme & MenuItemTheme & MenuTheme>;
-    RTProgressBar?: CSSProp<ProgressBarTheme>;
-    RTRadio?: CSSProp<RadioTheme>;
-    RTRipple?: CSSProp<RippleTheme>;
-    RTSlider?: CSSProp<SliderTheme>;
-    RTSnackbar?: CSSProp<SnackbarTheme>;
-    RTSwitch?: CSSProp<SwitchTheme>;
-    RTTabs?: CSSProp<TabsTheme>;
-    RTTimePicker?: CSSProp<TimePickerTheme>;
-    RTTooltip?: CSSProp<TooltipTheme>;
+    RTAutocomplete?: CSSProp<AutocompleteCss>;
+    RTAvatar?: CSSProp<AvatarCss>;
+    RTButton?: CSSProp<ButtonCss>;
+    RTCheckbox?: CSSProp<CheckboxCss>;
+    RTChip?: CSSProp<ChipCss>;
+    RTDatePicker?: CSSProp<DatePickerCss>;
+    RTDropdown?: CSSProp<DropdownCss>;
+    RTInput?: CSSProp<InputCss>;
+    RTMenu?: CSSProp<MenuCss>;
+    RTProgressBar?: CSSProp<ProgressBarCss>;
+    RTRadio?: CSSProp<RadioCss>;
+    RTRipple?: CSSProp<RippleCss>;
+    RTSlider?: CSSProp<SliderCss>;
+    RTSnackbar?: CSSProp<SnackbarCss>;
+    RTSwitch?: CSSProp<SwitchCss>;
+    RTTabs?: CSSProp<TabsCss>;
+    RTTimePicker?: CSSProp<TimePickerCss>;
+    RTTooltip?: CSSProp<TooltipCss>;
 }
 
 /**

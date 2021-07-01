@@ -1,7 +1,7 @@
 import {Children, cloneElement, ReactElement, ReactNode} from "react";
 
-import {RadioButton, RadioButtonProps, RadioTheme, radioTheme} from "./button";
-export {RadioButton, RadioButtonProps, RadioTheme, radioTheme};
+import {RadioButton, RadioButtonProps, RadioCss, radioCss} from "./button";
+export {RadioButton, RadioButtonProps, RadioCss, radioCss};
 
 export interface RadioGroupProps {
     className?: string;

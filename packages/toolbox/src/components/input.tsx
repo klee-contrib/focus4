@@ -14,14 +14,12 @@ import {
     useImperativeHandle,
     useRef
 } from "react";
-import {InputTheme} from "react-toolbox/lib/input/Input";
-
-import {FontIcon} from "./font-icon";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtInputTheme from "react-toolbox/components/input/theme.css";
-const inputTheme: InputTheme = rtInputTheme;
-export {inputTheme, InputTheme};
+import inputCss, {InputCss} from "./__style__/input.css";
+export {inputCss, InputCss};
+
+import {FontIcon} from "./font-icon";
 
 export interface InputProps {
     autoComplete?: string;
@@ -74,7 +72,7 @@ export interface InputProps {
     /** TabIndex. */
     tabIndex?: number;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<InputTheme>;
+    theme?: CSSProp<InputCss>;
     /** Type of the input element. It can be a valid HTML5 input type. */
     type?: string;
     /** Current value of the input element. */
@@ -124,7 +122,7 @@ export const Input = forwardRef(function RTInput(
     }: InputProps,
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) {
-    const theme = useTheme("RTInput", inputTheme, pTheme);
+    const theme = useTheme("RTInput", inputCss, pTheme);
     const inputNode = useRef<any>(null);
 
     const handleAutoresize = useCallback(() => {

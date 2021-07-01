@@ -1,11 +1,9 @@
 import classnames from "classnames";
 import {forwardRef, MouseEventHandler, Ref, TouchEventHandler, useCallback, useMemo} from "react";
-import {ProgressBarTheme} from "react-toolbox/lib/progress_bar/ProgressBar";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtProgressBarTheme from "react-toolbox/components/progress_bar/theme.css";
-const progressBarTheme: ProgressBarTheme = rtProgressBarTheme;
-export {progressBarTheme, ProgressBarTheme};
+import progressBarCss, {ProgressBarCss} from "./__style__/progress-bar.css";
+export {progressBarCss, ProgressBarCss};
 
 export interface ProgressBarProps {
     /** Value of a secondary progress bar useful for buffering. */
@@ -25,7 +23,7 @@ export interface ProgressBarProps {
     onMouseLeave?: MouseEventHandler<HTMLDivElement>;
     onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<ProgressBarTheme>;
+    theme?: CSSProp<ProgressBarCss>;
     /** Type of the progress bar, it can be circular or linear. */
     type?: "linear" | "circular";
     /** Value of the current progress. */
@@ -51,7 +49,7 @@ export const ProgressBar = forwardRef(function RTProgressBar(
     }: ProgressBarProps,
     ref: Ref<HTMLDivElement | SVGSVGElement>
 ) {
-    const theme = useTheme("RTProgressBar", progressBarTheme, pTheme);
+    const theme = useTheme("RTProgressBar", progressBarCss, pTheme);
 
     const calculateRatio = useCallback(
         (v: number) => {

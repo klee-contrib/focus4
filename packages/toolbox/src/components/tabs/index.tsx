@@ -12,24 +12,20 @@ import {
     useRef,
     useState
 } from "react";
-import {TabsTheme} from "react-toolbox/lib/tabs/Tabs";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtTabsTheme from "react-toolbox/components/tabs/theme.css";
-const tabsTheme: TabsTheme = rtTabsTheme;
-export {tabsTheme};
+import tabsCss, {TabsCss} from "../__style__/tabs.css";
+export {tabsCss, TabsCss};
 
 import {FontIcon} from "../font-icon";
 import {TabContent, TabContentProps} from "./content";
-import {Tab, TabProps, TabTheme} from "./tab";
-export {Tab, TabProps, TabTheme, TabsTheme};
+import {Tab, TabProps} from "./tab";
+export {Tab, TabProps};
 
 export interface TabsProps {
     /** Children to pass through the component. */
     children?: ReactNode;
     className?: string;
-    /** Disable the animation below the active tab. */
-    disableAnimatedBottomBorder?: boolean;
     /** Current  */
     index?: number;
     /**
@@ -45,13 +41,12 @@ export interface TabsProps {
     /** Callback function that is fired when the tab changes. */
     onChange?: (idx: number) => void;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<TabsTheme>;
+    theme?: CSSProp<TabsCss>;
 }
 
 export function Tabs({
     children,
     className = "",
-    disableAnimatedBottomBorder,
     fixed = false,
     hideMode = "unmounted",
     index = 0,
@@ -59,7 +54,7 @@ export function Tabs({
     onChange,
     theme: pTheme
 }: TabsProps) {
-    const theme = useTheme("RTTabs", tabsTheme, pTheme);
+    const theme = useTheme("RTTabs", tabsCss, pTheme);
     const navigationNode = useRef<HTMLDivElement | null>(null);
 
     const [arrows, setArrows] = useState<{left: boolean; right: boolean}>({left: false, right: false});
@@ -151,9 +146,6 @@ export function Tabs({
         return {headers, contents};
     }, [children]);
 
-    const classNamePointer = classnames(theme.pointer(), {
-        [theme.disableAnimation?.() ?? ""]: disableAnimatedBottomBorder
-    });
     const classNames = classnames(theme.tabs(), {[theme.fixed()]: fixed, [theme.inverse()]: inverse}, className);
 
     return (
@@ -184,7 +176,7 @@ export function Tabs({
                             ),
                         [c.headers, index, onChange, theme]
                     )}
-                    <span className={classNamePointer} style={pointer} />
+                    <span className={theme.pointer()} style={pointer} />
                 </div>
                 {arrows.right && (
                     <div className={theme.arrowContainer()} onClick={scrollLeft}>

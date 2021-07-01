@@ -3,9 +3,8 @@ import {Component, ComponentType, forwardRef, MouseEvent, MouseEventHandler, Rea
 import {createPortal} from "react-dom";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
-import rtTooltipTheme from "react-toolbox/components/tooltip/theme.css";
-const tooltipTheme: TooltipTheme = rtTooltipTheme;
-export {tooltipTheme};
+import tooltipCss, {TooltipCss} from "./__style__/tooltip.css";
+export {tooltipCss, TooltipCss};
 
 const POSITION = {
     BOTTOM: "bottom",
@@ -16,13 +15,6 @@ const POSITION = {
     VERTICAL: "vertical"
 } as const;
 
-export interface TooltipTheme {
-    tooltip?: string;
-    tooltipActive?: string;
-    tooltipInner?: string;
-    tooltipWrapper?: string;
-}
-
 export interface TooltipOptions {
     className?: string;
     tooltipDelay?: number;
@@ -30,7 +22,7 @@ export interface TooltipOptions {
     tooltipPassthrough?: boolean;
     tooltipPosition?: "bottom" | "top" | "left" | "right" | "horizontal" | "vertical";
     tooltipShowOnClick?: boolean;
-    theme?: TooltipTheme;
+    theme?: CSSProp<TooltipCss>;
 }
 
 export interface TooltipProps extends Omit<TooltipOptions, "theme"> {
@@ -41,7 +33,7 @@ export interface TooltipProps extends Omit<TooltipOptions, "theme"> {
     onMouseLeave?: MouseEventHandler;
     onTouchStart?: TouchEventHandler;
     tooltip?: ReactNode;
-    tooltipTheme?: CSSProp<TooltipTheme>;
+    tooltipTheme?: CSSProp<TooltipCss>;
 }
 
 export function tooltipFactory({
@@ -51,11 +43,11 @@ export function tooltipFactory({
     tooltipPassthrough = true,
     tooltipPosition = POSITION.VERTICAL,
     tooltipShowOnClick = false,
-    theme: oTheme = {}
+    theme: oTheme
 }: TooltipOptions = {}) {
     return function Tooltip<P>(ComposedComponent: ComponentType<P> | string) {
         return forwardRef<TooltippedComponent<P>, P & TooltipProps>((p, ref) => {
-            const theme = useTheme("RTTooltip", tooltipTheme, p.tooltipTheme, oTheme);
+            const theme = useTheme("RTTooltip", tooltipCss, p.tooltipTheme, oTheme);
             return (
                 <TooltippedComponent
                     ref={ref}
@@ -75,7 +67,7 @@ export function tooltipFactory({
 }
 
 class TooltippedComponent<P> extends Component<
-    TooltipProps & {tooltipTheme: ToBem<TooltipTheme>} & {ComposedComponent: ComponentType<P> | string}
+    TooltipProps & {tooltipTheme: ToBem<TooltipCss>} & {ComposedComponent: ComponentType<P> | string}
 > {
     state = {
         active: false,

@@ -1,8 +1,8 @@
 import classnames from "classnames";
 import {useCallback, useMemo} from "react";
-import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 
 import {ToBem} from "@focus4/styling";
+import {DatePickerCss} from "../__style__/date-picker.css";
 
 export interface DayProps {
     day: number;
@@ -10,7 +10,7 @@ export interface DayProps {
     onClick: (day: number) => void;
     selectedDate: Date;
     sundayFirstDayOfWeek: boolean;
-    theme: ToBem<DatePickerTheme>;
+    theme: ToBem<DatePickerCss>;
     viewDate: Date;
 }
 

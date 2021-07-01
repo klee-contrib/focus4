@@ -9,13 +9,10 @@ import {
     useCallback,
     useRef
 } from "react";
-import {IconButtonTheme} from "react-toolbox/lib/button";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtButtonTheme from "react-toolbox/components/button/theme.css";
-const buttonTheme: IconButtonTheme = rtButtonTheme;
-export {buttonTheme, IconButtonTheme};
 
+import {buttonCss, ButtonCss} from "./button";
 import {FontIcon} from "./font-icon";
 import {rippleFactory} from "./ripple";
 
@@ -44,12 +41,12 @@ export interface IconButtonProps {
     primary?: boolean;
     style?: CSSProperties;
     target?: string;
-    theme?: CSSProp<IconButtonTheme>;
+    theme?: CSSProp<ButtonCss>;
     /** Component root container type. */
     type?: string;
 }
 
-export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWrapper: buttonTheme.rippleWrapper}})(
+export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWrapper: buttonCss.rippleWrapper}})(
     function RTIconButton({
         accent = false,
         children,
@@ -71,7 +68,7 @@ export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWra
         theme: pTheme,
         type = "button"
     }: IconButtonProps) {
-        const theme = useTheme("RTButton", buttonTheme, pTheme);
+        const theme = useTheme("RTButton", buttonCss, pTheme);
         const buttonNode = useRef<HTMLLinkElement | HTMLButtonElement | null>(null);
 
         const handleMouseUp = useCallback(
@@ -93,7 +90,7 @@ export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWra
         const element = href ? "a" : "button";
         const level = primary ? "primary" : accent ? "accent" : "neutral";
         const classes = classnames(
-            [theme.toggle()],
+            [theme.button(), theme.toggle()],
             {
                 [theme[level]()]: neutral,
                 [theme.inverse()]: inverse

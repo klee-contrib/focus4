@@ -3,7 +3,7 @@ import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
 
 import {CollectionStore, FormEntityField} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {Button, ChipTheme} from "@focus4/toolbox";
+import {Button, ChipCss} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 
@@ -29,7 +29,7 @@ export interface SummaryProps<T> {
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
+    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipCss;
     /** Handler pour le bouton d'export. */
     exportAction?: () => void;
     /** Masque les critères de recherche. */

@@ -4,7 +4,7 @@ import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";
 
 import {themeable} from "@focus4/core";
-import {Chip, ChipTheme} from "@focus4/toolbox";
+import {Chip, ChipCss} from "@focus4/toolbox";
 
 /** Type de Chip pour la recherche. */
 export type ChipType = "filter" | "facet" | "sort" | "group";
@@ -30,7 +30,7 @@ export interface SearchChipProps {
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** CSS du Chip. */
-    theme?: ChipTheme;
+    theme?: ChipCss;
     /**
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
@@ -38,7 +38,7 @@ export interface SearchChipProps {
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    themer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
+    themer?: (type: ChipType, code: string, values?: string[]) => ChipCss;
     /** Type du chip affiché (`filter`, `facet`, `sort` ou `group`). */
     type: ChipType;
     /** Opérateur à utiliser entre les différentes valeurs. */

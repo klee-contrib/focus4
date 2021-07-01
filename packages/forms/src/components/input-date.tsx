@@ -5,12 +5,12 @@ import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import {Component, KeyboardEvent} from "react";
 
-import {themr} from "@focus4/styling";
-import {Calendar, CalendarProps, datePickerTheme, DatePickerTheme, IconButton, InputTheme} from "@focus4/toolbox";
+import {CSSProp, themr} from "@focus4/styling";
+import {Calendar, CalendarProps, datePickerCss, DatePickerCss, IconButton, InputCss} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
-const Theme = themr("RTDatePicker", datePickerTheme);
+const Theme = themr("RTDatePicker", datePickerCss);
 
 import inputDateCss from "./__style__/input-date.css";
 export {inputDateCss};
@@ -41,7 +41,7 @@ export interface InputDateProps extends InputProps<"string"> {
      */
     ISOStringFormat?: "utc-midnight" | "local-midnight" | "local-utc-midnight";
     /** CSS. */
-    theme?: DatePickerTheme & InputTheme;
+    theme?: CSSProp<DatePickerCss & InputCss>;
     /** Valeur. */
     value: string | undefined;
     /* Autres props du Calendar React */

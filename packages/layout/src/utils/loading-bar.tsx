@@ -2,10 +2,10 @@ import {useObserver} from "mobx-react";
 
 import {requestStore} from "@focus4/core";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {FontIcon, ProgressBar, ProgressBarTheme} from "@focus4/toolbox";
+import {FontIcon, ProgressBar, ProgressBarCss} from "@focus4/toolbox";
 
 import loadingBarCss, {LoadingBarCss as LBCSS} from "./__style__/loading-bar.css";
-export type LoadingBarCss = LBCSS & ProgressBarTheme;
+export type LoadingBarCss = LBCSS & ProgressBarCss;
 export {loadingBarCss};
 
 export interface LoadingBarProps {

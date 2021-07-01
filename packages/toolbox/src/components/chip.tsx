@@ -1,11 +1,9 @@
 import classnames from "classnames";
 import {Children, MouseEventHandler, TouchEventHandler} from "react";
-import {ChipTheme} from "react-toolbox/lib/chip/Chip";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtChipTheme from "react-toolbox/components/chip/theme.css";
-const chipTheme: ChipTheme = rtChipTheme;
-export {chipTheme, ChipTheme};
+import chipCss, {ChipCss} from "./__style__/chip.css";
+export {chipCss, ChipCss};
 
 import {Avatar} from "./avatar";
 
@@ -23,7 +21,7 @@ export interface ChipProps {
     onMouseLeave?: MouseEventHandler<HTMLDivElement>;
     onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<ChipTheme>;
+    theme?: CSSProp<ChipCss>;
 }
 
 export function Chip({
@@ -38,7 +36,7 @@ export function Chip({
     onTouchStart,
     theme: pTheme
 }: ChipProps) {
-    const theme = useTheme("RTChip", chipTheme, pTheme);
+    const theme = useTheme("RTChip", chipCss, pTheme);
 
     let hasAvatar = false;
     if (Children.count(children)) {

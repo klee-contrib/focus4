@@ -1,14 +1,12 @@
 import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {findDOMNode} from "react-dom";
 
-import {CSSProp} from "@focus4/styling";
-
 import {Button, ButtonProps} from "../button";
 import {tooltipFactory, TooltipProps} from "../tooltip";
-import {Menu, MenuProps, MenuTheme} from "./menu";
+import {Menu, MenuProps} from "./menu";
 
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
-export interface ButtonMenuProps extends Omit<MenuProps, "theme"> {
+export interface ButtonMenuProps extends MenuProps {
     /** Les props du bouton. */
     button: ButtonProps &
         TooltipProps & {
@@ -16,7 +14,6 @@ export interface ButtonMenuProps extends Omit<MenuProps, "theme"> {
             openedIcon?: ReactNode;
         };
     onClick?: MouseEventHandler<HTMLButtonElement>;
-    theme?: CSSProp<MenuTheme>;
 }
 
 const TooltipButton = tooltipFactory()(Button);

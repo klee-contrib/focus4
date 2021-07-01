@@ -1,12 +1,10 @@
 import {range} from "lodash";
 import {MouseEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import rtDatePickerTheme from "react-toolbox/components/date_picker/theme.css";
-import {DatePickerTheme} from "react-toolbox/lib/date_picker";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
-const datePickerTheme: DatePickerTheme = rtDatePickerTheme;
-export {datePickerTheme, DatePickerTheme};
+import datePickerCss, {DatePickerCss} from "../__style__/date-picker.css";
+export {datePickerCss, DatePickerCss};
 
 import {IconButton} from "../icon-button";
 import {Month} from "./month";
@@ -21,7 +19,7 @@ export interface CalendarProps {
     onChange: (date: Date, dayClick: boolean) => void;
     selectedDate?: Date;
     sundayFirstDayOfWeek?: boolean;
-    theme?: CSSProp<DatePickerTheme>;
+    theme?: CSSProp<DatePickerCss>;
 }
 
 export function Calendar({
@@ -36,7 +34,7 @@ export function Calendar({
     sundayFirstDayOfWeek = false,
     theme: pTheme
 }: CalendarProps) {
-    const theme = useTheme("RTDatePicker", datePickerTheme, pTheme);
+    const theme = useTheme("RTDatePicker", datePickerCss, pTheme);
     const yearsNode = useRef<HTMLUListElement | null>(null);
     const activeYearNode = useRef<HTMLLIElement | null>(null);
 
@@ -45,22 +43,22 @@ export function Calendar({
     const [viewDate, setViewDate] = useState(selectedDate);
 
     const setAnimationLeft = useCallback(() => {
-        const css = fromBem(theme) as any;
+        const css = fromBem(theme);
         setAnimation({
-            enter: css.slideLeftEnter,
-            enterActive: css.slideLeftEnterActive,
-            exit: css.slideLeftLeave,
-            exitActive: css.slideLeftLeaveActive
+            enter: css.slideLeftEnter!,
+            enterActive: css.slideLeftEnterActive!,
+            exit: css.slideLeftLeave!,
+            exitActive: css.slideLeftLeaveActive!
         });
     }, [theme]);
 
     const setAnimationRight = useCallback(() => {
-        const css = fromBem(theme) as any;
+        const css = fromBem(theme);
         setAnimation({
-            enter: css.slideRightEnter,
-            enterActive: css.slideRightEnterActive,
-            exit: css.slideRightLeave,
-            exitActive: css.slideRightLeaveActive
+            enter: css.slideRightEnter!,
+            enterActive: css.slideRightEnterActive!,
+            exit: css.slideRightLeave!,
+            exitActive: css.slideRightLeaveActive!
         });
     }, [theme]);
 

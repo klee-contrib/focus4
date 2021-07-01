@@ -1,5 +1,5 @@
 export {ButtonMenu, ButtonMenuProps} from "./button";
-export {MenuDivider, MenuDividerProps, MenuDividerTheme} from "./divider";
-export {IconMenu, IconMenuProps, IconMenuTheme} from "./icon";
-export {MenuItem, MenuItemProps, MenuItemTheme} from "./item";
-export {Menu, MenuProps, MenuTheme, menuTheme} from "./menu";
+export {MenuDivider, MenuDividerProps} from "./divider";
+export {IconMenu, IconMenuProps} from "./icon";
+export {MenuItem, MenuItemProps} from "./item";
+export {Menu, MenuProps, MenuCss, menuCss} from "./menu";

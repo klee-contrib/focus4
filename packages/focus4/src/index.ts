@@ -2,7 +2,7 @@
 // Le but est d'essayer de limiter le nombre d'imports à 1 pour un écran simple.
 // Il n'a pas du tout vocation a être exhaustif.
 
-import "core-js/shim";
+import "core-js/stable";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 
 import "./focus.css";

@@ -1,12 +1,11 @@
 import classnames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useEffect, useState} from "react";
-import {IconMenuTheme} from "react-toolbox/lib/menu/IconMenu";
 
-import {CSSProp, fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
+import menuCss, {MenuCss} from "../__style__/menu.css";
 
 import {IconButton} from "../icon-button";
-import {Menu, MenuTheme, menuTheme} from "./menu";
-export {IconMenuTheme};
+import {Menu} from "./menu";
 
 export interface IconMenuProps {
     /** If true, the inner Menu component will be active. */
@@ -38,7 +37,7 @@ export interface IconMenuProps {
     /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
     selected?: any;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<IconMenuTheme>;
+    theme?: CSSProp<MenuCss>;
 }
 
 export function IconMenu({
@@ -58,7 +57,7 @@ export function IconMenu({
     selectable = false,
     theme: pTheme
 }: IconMenuProps) {
-    const theme = useTheme("RTMenu", menuTheme as IconMenuTheme, pTheme);
+    const theme = useTheme("RTMenu", menuCss, pTheme);
 
     const [active, setActive] = useState(pActive);
     useEffect(() => setActive(pActive), [pActive]);
@@ -95,7 +94,7 @@ export function IconMenu({
                 ripple={menuRipple}
                 selectable={selectable}
                 selected={selected}
-                theme={fromBem(theme) as MenuTheme}
+                theme={theme}
             >
                 {children}
             </Menu>

@@ -1,7 +1,7 @@
 import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState} from "react";
-import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 
 import {ToBem} from "@focus4/styling";
+import {TimePickerCss} from "../__style__/time-picker.css";
 
 export interface HandProps {
     angle: number;
@@ -14,7 +14,7 @@ export interface HandProps {
         y: number;
     };
     step: number;
-    theme: ToBem<TimePickerTheme>;
+    theme: ToBem<TimePickerCss>;
 }
 
 export interface HandRef {

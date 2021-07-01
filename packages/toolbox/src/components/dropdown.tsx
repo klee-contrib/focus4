@@ -12,14 +12,12 @@ import {
     useRef,
     useState
 } from "react";
-import {DropdownTheme} from "react-toolbox/lib/dropdown/Dropdown";
-
-import {Input} from "./input";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtDropdownTheme from "react-toolbox/components/dropdown/theme.css";
-const dropdownTheme: DropdownTheme = rtDropdownTheme;
-export {dropdownTheme, DropdownTheme};
+import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
+export {dropdownCss, DropdownCss};
+
+import {Input} from "./input";
 
 export interface DropdownProps<
     T,
@@ -58,7 +56,7 @@ export interface DropdownProps<
     /** Callback function that returns a JSX template to represent the element. */
     template?: (item: S) => JSX.Element;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<DropdownTheme>;
+    theme?: CSSProp<DropdownCss>;
     /** Current value of the dropdown element. */
     value?: T;
     /** Used for setting the value from source */
@@ -91,7 +89,7 @@ export function Dropdown<
     valueKey = "value" as VK,
     theme: pTheme
 }: DropdownProps<T, VK, LK, S>) {
-    const theme = useTheme("RTDropdown", dropdownTheme, pTheme);
+    const theme = useTheme("RTDropdown", dropdownCss, pTheme);
 
     const domNode = useRef<HTMLDivElement | null>(null);
     const [active, setActive] = useState(false);

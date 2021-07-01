@@ -9,12 +9,10 @@ import {
     useCallback,
     useRef
 } from "react";
-import {ButtonTheme} from "react-toolbox/lib/button";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtButtonTheme from "react-toolbox/components/button/theme.css";
-const buttonTheme: ButtonTheme = rtButtonTheme;
-export {buttonTheme, ButtonTheme};
+import buttonCss, {ButtonCss} from "./__style__/button.css";
+export {buttonCss, ButtonCss};
 
 import {FontIcon} from "./font-icon";
 import {rippleFactory} from "./ripple";
@@ -55,12 +53,12 @@ export interface ButtonProps {
     /** Passed down to the root element */
     target?: string;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<ButtonTheme>;
+    theme?: CSSProp<ButtonCss>;
     /** Component root container type. */
     type?: string;
 }
 
-export const Button = rippleFactory({theme: {rippleWrapper: buttonTheme.rippleWrapper}})(function RTButton({
+export const Button = rippleFactory({theme: {rippleWrapper: buttonCss.rippleWrapper}})(function RTButton({
     accent = false,
     children,
     className = "",
@@ -85,7 +83,7 @@ export const Button = rippleFactory({theme: {rippleWrapper: buttonTheme.rippleWr
     theme: pTheme,
     type = "button"
 }: ButtonProps) {
-    const theme = useTheme("RTButton", buttonTheme, pTheme);
+    const theme = useTheme("RTButton", buttonCss, pTheme);
     const buttonNode = useRef<HTMLLinkElement | HTMLButtonElement | null>(null);
 
     const handleMouseUp = useCallback(
@@ -112,6 +110,8 @@ export const Button = rippleFactory({theme: {rippleWrapper: buttonTheme.rippleWr
         theme.button(),
         [theme[shape]()],
         {
+            [theme.squared()]: shape != "floating",
+            [theme.solid()]: shape != "flat",
             [theme[level]()]: neutral,
             [theme.mini()]: mini,
             [theme.inverse()]: inverse

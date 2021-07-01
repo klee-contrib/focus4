@@ -1,8 +1,8 @@
 import {range} from "lodash";
 import {useCallback, useRef} from "react";
-import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 
 import {ToBem} from "@focus4/styling";
+import {TimePickerCss} from "../__style__/time-picker.css";
 
 import {Face} from "./face";
 import {Hand, HandRef} from "./hand";
@@ -20,7 +20,7 @@ export interface MinutesProps {
     radius: number;
     selected: number;
     spacing: number;
-    theme: ToBem<TimePickerTheme>;
+    theme: ToBem<TimePickerCss>;
 }
 
 export function Minutes({center, onChange, onHandMoved, radius, selected, spacing, theme}: MinutesProps) {

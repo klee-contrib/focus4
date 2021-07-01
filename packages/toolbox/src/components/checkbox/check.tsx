@@ -1,6 +1,9 @@
 import classnames from "classnames";
 import {CSSProperties, MouseEventHandler, ReactNode, TouchEventHandler} from "react";
 
+import {ToBem} from "@focus4/styling";
+import {CheckboxCss} from "../__style__/checkbox.css";
+
 import {rippleFactory} from "../ripple";
 
 export interface CheckProps {
@@ -8,7 +11,7 @@ export interface CheckProps {
     onMouseDown?: MouseEventHandler<HTMLDivElement>;
     onTouchStart?: TouchEventHandler<HTMLDivElement>;
     style?: CSSProperties;
-    theme: {check?: string; checked?: string};
+    theme: ToBem<CheckboxCss>;
     value: boolean;
 }
 
@@ -23,7 +26,7 @@ export const Check = rippleFactory({rippleCentered: true, rippleSpread: 2.6})(fu
     return (
         <div
             data-react-toolbox="check"
-            className={classnames(theme.check, {[theme.checked!]: value})}
+            className={classnames(theme.check(), {[theme.checked()]: value})}
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
             style={style}

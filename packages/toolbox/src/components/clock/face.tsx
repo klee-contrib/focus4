@@ -1,8 +1,8 @@
 import classnames from "classnames";
 import {MouseEventHandler, TouchEventHandler, useCallback, useMemo} from "react";
-import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 
 import {ToBem} from "@focus4/styling";
+import {TimePickerCss} from "../__style__/time-picker.css";
 
 export interface FaceProps {
     active: number;
@@ -11,7 +11,7 @@ export interface FaceProps {
     onTouchStart?: TouchEventHandler<HTMLDivElement>;
     radius: number;
     spacing: number;
-    theme: ToBem<TimePickerTheme>;
+    theme: ToBem<TimePickerCss>;
     twoDigits?: boolean;
 }
 

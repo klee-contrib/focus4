@@ -1,11 +1,8 @@
 import classnames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback, useEffect} from "react";
-import {TabTheme} from "react-toolbox/lib/tabs/Tab";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtTabsTheme from "react-toolbox/components/tabs/theme.css";
-const tabTheme: TabTheme = rtTabsTheme;
-export {TabTheme};
+import tabsCss, {TabsCss} from "../__style__/tabs.css";
 
 import {FontIcon} from "../font-icon";
 import {rippleFactory} from "../ripple";
@@ -32,10 +29,10 @@ export interface TabProps {
     onMouseDown?: MouseEventHandler<HTMLDivElement>;
     onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<TabTheme>;
+    theme?: CSSProp<TabsCss>;
 }
 
-export const Tab = rippleFactory({theme: {rippleWrapper: (tabTheme as any).rippleWrapper}})(function RTTab({
+export const Tab = rippleFactory({theme: {rippleWrapper: tabsCss.rippleWrapper}})(function RTTab({
     active = false,
     activeClassName = "",
     className = "",
@@ -51,7 +48,7 @@ export const Tab = rippleFactory({theme: {rippleWrapper: (tabTheme as any).rippl
     onTouchStart,
     theme: pTheme
 }: TabProps) {
-    const theme = useTheme("RTTabs", tabTheme, pTheme);
+    const theme = useTheme("RTTabs", tabsCss, pTheme);
     const _className = classnames(
         theme.label(),
         {

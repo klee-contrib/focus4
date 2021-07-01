@@ -12,14 +12,13 @@ import {
     useRef,
     useState
 } from "react";
-import {MenuTheme} from "react-toolbox/lib/menu/Menu";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtMenuTheme from "react-toolbox/components/menu/theme.css";
+import menuCss, {MenuCss} from "../__style__/menu.css";
+export {menuCss, MenuCss};
+
 import {RippleProps} from "../ripple";
 import {MenuItem, MenuItemProps} from "./item";
-const menuTheme: MenuTheme = rtMenuTheme;
-export {menuTheme, MenuTheme};
 
 export interface MenuProps {
     /** If true, the menu will be displayed as opened by default. */
@@ -44,7 +43,7 @@ export interface MenuProps {
     /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
     selected?: string;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<MenuTheme>;
+    theme?: CSSProp<MenuCss>;
 }
 
 export function Menu({
@@ -61,7 +60,7 @@ export function Menu({
     selectable = true,
     theme: pTheme
 }: MenuProps) {
-    const theme = useTheme("RTMenu", menuTheme, pTheme);
+    const theme = useTheme("RTMenu", menuCss, pTheme);
 
     const rootNode = useRef<HTMLDivElement | null>(null);
     const menuNode = useRef<HTMLUListElement | null>(null);

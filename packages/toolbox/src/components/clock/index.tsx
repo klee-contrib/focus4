@@ -1,11 +1,9 @@
 import {useCallback, useEffect, useRef, useState} from "react";
-import {TimePickerTheme} from "react-toolbox/lib/time_picker";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
-import rtTimePickerTheme from "react-toolbox/components/time_picker/theme.css";
-const timePickerTheme: TimePickerTheme = rtTimePickerTheme;
-export {timePickerTheme, TimePickerTheme};
+import timePickerCss, {TimePickerCss} from "../__style__/time-picker.css";
+export {timePickerCss, TimePickerCss};
 
 import {Hours} from "./hours";
 import {Minutes} from "./minutes";
@@ -15,7 +13,7 @@ export interface ClockProps {
     format?: "24hr" | "ampm";
     onChange?: (date: Date) => void;
     onHandMoved?: () => void;
-    theme?: CSSProp<TimePickerTheme>;
+    theme?: CSSProp<TimePickerCss>;
     time?: Date;
 }
 
@@ -27,7 +25,7 @@ export function Clock({
     theme: pTheme,
     time = new Date()
 }: ClockProps) {
-    const theme = useTheme("RTTimePicker", timePickerTheme, pTheme);
+    const theme = useTheme("RTTimePicker", timePickerCss, pTheme);
 
     const placeholderNode = useRef<HTMLDivElement | null>(null);
     const [center, setCenter] = useState({x: 0, y: 0});
@@ -90,7 +88,7 @@ export function Clock({
         [onChange, time]
     );
 
-    const css = fromBem(theme) as any;
+    const css = fromBem(theme);
     return (
         <div data-react-toolbox="clock" className={theme.clock()}>
             <div className={theme.placeholder()} style={{height: radius * 2}} ref={placeholderNode}>
@@ -100,16 +98,16 @@ export function Clock({
                         {...cssTransitionProps(
                             display === "hours"
                                 ? {
-                                      enter: css.zoomOutEnter,
-                                      enterActive: css.zoomOutEnterActive,
-                                      exit: css.zoomOutLeave,
-                                      exitActive: css.zoomOutLeaveActive
+                                      enter: css.zoomOutEnter!,
+                                      enterActive: css.zoomOutEnterActive!,
+                                      exit: css.zoomOutLeave!,
+                                      exitActive: css.zoomOutLeaveActive!
                                   }
                                 : {
-                                      enter: css.zoomInEnter,
-                                      enterActive: css.zoomInEnterActive,
-                                      exit: css.zoomInLeave,
-                                      exitActive: css.zoomInLeaveActive
+                                      enter: css.zoomInEnter!,
+                                      enterActive: css.zoomInEnterActive!,
+                                      exit: css.zoomInLeave!,
+                                      exitActive: css.zoomInLeaveActive!
                                   }
                         )}
                     >

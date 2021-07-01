@@ -4,7 +4,7 @@ import {ComponentType, ElementType, useContext, useEffect, useState} from "react
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
-import {ChipTheme, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
+import {ChipCss, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
 
 import {
     ActionBar,
@@ -55,7 +55,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipTheme;
+    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipCss;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
     /** Emplacement de la FacetBox. Par défaut : "left" */
@@ -220,7 +220,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
         }
     }
 
-    const {MosaicComponent, LineComponent} = (listProps as any) as ListProps<T>;
+    const {MosaicComponent, LineComponent} = listProps as any as ListProps<T>;
     return useObserver(() => (
         <div ref={setRootNode} className={theme.search()}>
             {renderFacetBox()}

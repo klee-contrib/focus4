@@ -1,13 +1,11 @@
 import classnames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
-import {RadioButtonTheme} from "react-toolbox/lib/radio/RadioButton";
 
-import {Radio, RadioTheme} from "./radio";
+import {Radio} from "./radio";
 
-import {CSSProp, fromBem, useTheme} from "@focus4/styling";
-import rtRadioTheme from "react-toolbox/components/radio/theme.css";
-const radioTheme: RadioButtonTheme & RadioTheme = rtRadioTheme;
-export {radioTheme, RadioTheme};
+import {CSSProp, useTheme} from "@focus4/styling";
+import radioCss, {RadioCss} from "../__style__/radio.css";
+export {radioCss, RadioCss};
 
 /** Props du Radio. */
 export interface RadioButtonProps {
@@ -28,7 +26,7 @@ export interface RadioButtonProps {
     onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
     onMouseEnter?: MouseEventHandler<HTMLLabelElement>;
     onMouseLeave?: MouseEventHandler<HTMLLabelElement>;
-    theme?: CSSProp<RadioButtonTheme & RadioTheme>;
+    theme?: CSSProp<RadioCss>;
     /** Valeur. */
     value: string;
 }
@@ -46,7 +44,7 @@ export function RadioButton({
     name,
     theme: pTheme
 }: RadioButtonProps) {
-    const theme = useTheme("RTRadio", radioTheme, pTheme);
+    const theme = useTheme("RTRadio", radioCss, pTheme);
     const inputNode = useRef<HTMLInputElement | null>(null);
 
     const handleToggle = useCallback(
@@ -64,7 +62,7 @@ export function RadioButton({
     return (
         <label
             data-react-toolbox="radio"
-            className={classnames(theme[disabled ? "disabled" : "field"](), className)}
+            className={classnames(theme.field(), {[theme.disabled()]: disabled}, className)}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
@@ -79,7 +77,7 @@ export function RadioButton({
                 ref={inputNode}
                 type="radio"
             />
-            <Radio checked={checked} disabled={disabled} theme={fromBem(theme)} />
+            <Radio checked={checked} disabled={disabled} theme={theme} />
             {label ? (
                 <span data-react-toolbox="label" className={theme.text()}>
                     {label}

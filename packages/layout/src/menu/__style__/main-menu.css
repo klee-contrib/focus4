@@ -34,7 +34,7 @@
     min-width: var(--main-menu-item-height);
 }
 
-.button {
+.button:not(.toggle) {
     text-align: left;
 }
 

@@ -1,6 +1,6 @@
 {
     "name": "@focus4/core",
-    "version": "10.8.8",
+    "version": "10.9.0-beta.0",
     "description": "Focus v4, core module",
     "main": "lib/focus4.core.js",
     "repository": {
@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@types/lodash": "4.14.170",
-        "@types/react": "17.0.11",
+        "@types/react": "17.0.12",
         "@types/uuid": "8.3.0",
         "i18next": "20.3.2",
         "lodash": "4.17.21",

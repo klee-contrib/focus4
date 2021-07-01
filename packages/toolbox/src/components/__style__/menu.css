@@ -1,0 +1,150 @@
+.iconMenu {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    box-sizing: border-box;
+    font-family: var(--preferred-font);
+}
+.iconMenu *,
+.iconMenu *::after,
+.iconMenu *::before {
+    box-sizing: border-box;
+}
+.iconMenu .icon {
+    cursor: pointer;
+}
+.menu {
+    display: inline-block;
+    position: relative;
+}
+.menu.topLeft {
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+.menu.topLeft > .outline {
+    transform-origin: 0 0;
+}
+.menu.topRight {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.menu.topRight > .outline {
+    transform-origin: 100% 0;
+}
+.menu.bottomLeft {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+.menu.bottomLeft > .outline {
+    transform-origin: 0 100%;
+}
+.menu.bottomRight {
+    bottom: 0;
+    position: absolute;
+    right: 0;
+}
+.menu.bottomRight > .outline {
+    transform-origin: 100% 100%;
+}
+.menu:not(.static) {
+    pointer-events: none;
+    z-index: var(--z-index-higher);
+}
+.menu:not(.static) > .outline {
+    opacity: 0;
+    transform: scale(0);
+    transition: transform var(--menu-expand-duration) var(--animation-curve-default),
+        opacity var(--menu-fade-duration) var(--animation-curve-default);
+    will-change: transform;
+}
+.menu:not(.static) > .menuInner {
+    left: 0;
+    margin: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+}
+.menu:not(.static).rippled:not(.active) > .outline {
+    transition-delay: var(--menu-ripple-delay);
+}
+.menu:not(.static).rippled:not(.active) > .menuInner {
+    transition-delay: var(--menu-ripple-delay);
+}
+.menu:not(.static).active {
+    pointer-events: all;
+}
+.menu:not(.static).active > .outline {
+    opacity: 1;
+    transform: scale(1);
+}
+.menu:not(.static).active > .menuInner {
+    opacity: 1;
+    transition: opacity var(--menu-fade-duration) var(--animation-curve-default),
+        clip var(--menu-expand-duration) var(--animation-curve-default);
+}
+.outline {
+    background-color: var(--menu-background-color);
+    border-radius: var(--menu-outline-border-radius);
+    box-shadow: var(--shadow-2p);
+    display: block;
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+.menuInner {
+    display: block;
+    list-style: none;
+    padding: var(--menu-padding);
+    position: relative;
+    text-align: left;
+    white-space: nowrap;
+}
+.menuItem {
+    align-items: center;
+    color: var(--color-text);
+    display: flex;
+    font-size: var(--menu-item-font-size);
+    height: var(--menu-item-height);
+    overflow: hidden;
+    padding: 0 var(--menu-item-padding);
+    position: relative;
+}
+.menuItem:not(.disabled):hover {
+    background-color: var(--menu-item-hover-background);
+    cursor: pointer;
+}
+.menuItem.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.menuItem.selected {
+    background-color: var(--menu-item-selected-background);
+    font-weight: 500;
+}
+.menuItem .ripple {
+    color: var(--color-text-secondary);
+}
+.menuItem .icon {
+    font-size: var(--menu-item-icon-font-size);
+    width: var(--menu-item-icon-size);
+}
+.caption {
+    flex-grow: 1;
+    font-size: var(--font-size-normal);
+}
+.shortcut {
+    margin-left: var(--menu-item-padding);
+}
+.menuDivider {
+    background-color: var(--color-divider);
+    border: 0;
+    display: block;
+    height: 1px;
+    margin: var(--menu-divider-height) 0;
+    outline: 0;
+    padding: 0;
+    width: 100%;
+}

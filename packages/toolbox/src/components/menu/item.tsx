@@ -1,13 +1,11 @@
 import classnames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback} from "react";
-import {MenuItemTheme} from "react-toolbox/lib/menu/MenuItem";
 
 import {FontIcon} from "../font-icon";
 import {rippleFactory} from "../ripple";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import menuTheme from "react-toolbox/components/menu/theme.css";
-export {MenuItemTheme};
+import menuCss, {MenuCss} from "../__style__/menu.css";
 
 export interface MenuItemProps {
     /** The text to include in the menu item. Required. */
@@ -27,7 +25,7 @@ export interface MenuItemProps {
     /** Displays shortcut text on the right side of the caption attribute. */
     shortcut?: string;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<MenuItemTheme>;
+    theme?: CSSProp<MenuCss>;
     /** Passed down to the root element. */
     value?: string;
 }
@@ -45,7 +43,7 @@ export const MenuItem = rippleFactory({})(function RTMenuItem({
     shortcut,
     theme: pTheme
 }: MenuItemProps) {
-    const theme = useTheme("RTMenu", menuTheme as MenuItemTheme, pTheme);
+    const theme = useTheme("RTMenu", menuCss, pTheme);
 
     const handleClick = useCallback(
         (event: MouseEvent<HTMLLIElement>) => {

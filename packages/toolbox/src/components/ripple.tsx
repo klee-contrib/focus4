@@ -11,19 +11,17 @@ import {
     TouchEventHandler
 } from "react";
 import {findDOMNode} from "react-dom";
-import {RippleTheme} from "react-toolbox/lib/ripple";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
-import rtRippleTheme from "react-toolbox/components/ripple/theme.css";
-const rippleTheme: RippleTheme = rtRippleTheme;
-export {rippleTheme, RippleTheme};
+import rippleCss, {RippleCss} from "./__style__/ripple.css";
+export {rippleCss, RippleCss};
 
 export interface RippleOptions {
     rippleCentered?: boolean;
     rippleMultiple?: boolean;
     ripplePassthrough?: boolean;
     rippleSpread?: number;
-    theme?: RippleTheme;
+    theme?: CSSProp<RippleCss>;
 }
 
 export interface RippleProps extends Omit<RippleOptions, "theme"> {
@@ -33,7 +31,7 @@ export interface RippleProps extends Omit<RippleOptions, "theme"> {
     onRippleEnded?: (event: TransitionEvent) => void;
     onTouchStart?: TouchEventHandler;
     ripple?: boolean;
-    rippleTheme?: CSSProp<RippleTheme>;
+    rippleTheme?: CSSProp<RippleCss>;
 }
 
 export function rippleFactory({
@@ -41,11 +39,11 @@ export function rippleFactory({
     rippleMultiple = true,
     ripplePassthrough = true,
     rippleSpread = 2,
-    theme: oTheme = {}
+    theme: oTheme
 }: RippleOptions = {}) {
     return function Ripple<P>(ComposedComponent: ComponentType<P> | string) {
         return forwardRef<RippledComponent<P>, P & RippleProps>((p, ref) => {
-            const theme = useTheme("RTRipple", rippleTheme, p.rippleTheme, oTheme);
+            const theme = useTheme("RTRipple", rippleCss, p.rippleTheme, oTheme);
             return (
                 <RippledComponent
                     ref={ref}
@@ -78,7 +76,7 @@ interface RippleState {
 }
 
 export class RippledComponent<P> extends Component<
-    RippleProps & {rippleTheme: ToBem<RippleTheme>} & {ComposedComponent: ComponentType<P> | string},
+    RippleProps & {rippleTheme: ToBem<RippleCss>} & {ComposedComponent: ComponentType<P> | string},
     RippleState
 > {
     state: RippleState = {

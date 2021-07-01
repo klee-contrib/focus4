@@ -9,15 +9,15 @@ import {CSSProp, themr} from "@focus4/styling";
 import {
     Autocomplete as RTAutocomplete,
     AutocompleteProps as RTAutocompleteProps,
-    AutocompleteTheme,
-    InputTheme,
+    AutocompleteCss as RTAutocompleteCss,
+    InputCss,
     ProgressBar
 } from "@focus4/toolbox";
 
 import autocompleteCss, {AutocompleteCss as ACCSS} from "./__style__/autocomplete.css";
 export {autocompleteCss};
-export type AutocompleteCss = ACCSS & AutocompleteTheme & InputTheme;
-const Theme = themr<AutocompleteCss>("autocomplete", autocompleteCss);
+export type AutocompleteCss = ACCSS & RTAutocompleteCss & InputCss;
+const Theme = themr<AutocompleteCss>("autocomplete", autocompleteCss as AutocompleteCss);
 
 /** Résultat du service de recherche. */
 export interface AutocompleteResult {

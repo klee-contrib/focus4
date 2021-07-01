@@ -1,12 +1,10 @@
 import classnames from "classnames";
 import {MouseEventHandler, ReactNode, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
-import {SnackbarTheme} from "react-toolbox/lib/snackbar/Snackbar";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import rtSnackbarTheme from "react-toolbox/components/snackbar/theme.css";
-const snackbarTheme: SnackbarTheme = rtSnackbarTheme;
-export {snackbarTheme, SnackbarTheme};
+import snackbarCss, {SnackbarCss} from "./__style__/snackbar.css";
+export {snackbarCss, SnackbarCss};
 
 import {Button} from "./button";
 
@@ -25,7 +23,7 @@ export interface SnackbarProps {
     /** Callback function that will be called once the set timeout is finished. */
     onTimeout: () => void;
     /** Classnames object defining the component style. */
-    theme?: CSSProp<SnackbarTheme>;
+    theme?: CSSProp<SnackbarCss>;
     /** Amount of time in milliseconds after which the `onTimeout` callback will be called after `active` becomes true. */
     timeout?: number;
     /** Indicates the action type. Can be accept, warning or cancel */
@@ -44,7 +42,7 @@ export function Snackbar({
     onTimeout,
     type
 }: SnackbarProps) {
-    const theme = useTheme("RTSnackbar", snackbarTheme, pTheme);
+    const theme = useTheme("RTSnackbar", snackbarCss, pTheme);
     const [active, setActive] = useState(pActive);
     const [rendered, setRendered] = useState(pActive);
 

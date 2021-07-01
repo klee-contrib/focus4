@@ -1,16 +1,17 @@
+import classnames from "classnames";
 import {MouseEventHandler, ReactNode, TouchEventHandler} from "react";
-import {RadioTheme} from "react-toolbox/lib/radio/base";
+
+import {ToBem} from "@focus4/styling";
+import {RadioCss} from "../__style__/radio.css";
 
 import {rippleFactory} from "../ripple";
-
-export {RadioTheme};
 
 export interface RadioProps {
     checked: boolean;
     children?: ReactNode;
     onMouseDown?: MouseEventHandler<HTMLSpanElement>;
     onTouchStart?: TouchEventHandler<HTMLSpanElement>;
-    theme: RadioTheme;
+    theme: ToBem<RadioCss>;
 }
 
 export const Radio = rippleFactory({rippleCentered: true, rippleSpread: 2.6})(function RTRadio({
@@ -23,7 +24,7 @@ export const Radio = rippleFactory({rippleCentered: true, rippleSpread: 2.6})(fu
     return (
         <div
             data-react-toolbox="radio"
-            className={theme[checked ? "radioChecked" : "radio"]}
+            className={classnames(theme.radio(), {[theme.radioChecked()]: checked})}
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
         >
