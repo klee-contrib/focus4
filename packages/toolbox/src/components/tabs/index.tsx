@@ -94,7 +94,7 @@ export function Tabs({
     }, [index, children]);
 
     useEffect(() => {
-        let resizeTimeout: NodeJS.Timeout;
+        let resizeTimeout: number;
         const handleResize = () => {
             if (resizeTimeout) {
                 clearTimeout(resizeTimeout);
@@ -102,7 +102,7 @@ export function Tabs({
             resizeTimeout = setTimeout(() => {
                 updatePointer(index);
                 updateArrows();
-            }, 100);
+            }, 100) as any;
         };
 
         window.addEventListener("resize", handleResize);
