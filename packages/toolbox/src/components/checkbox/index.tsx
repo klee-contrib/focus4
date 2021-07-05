@@ -77,7 +77,13 @@ export function Checkbox({
                 ref={inputNode}
                 type="checkbox"
             />
-            <Check disabled={disabled} style={style} theme={theme} value={value} />
+            <Check
+                disabled={disabled}
+                rippleTheme={{ripple: theme.ripple()}}
+                style={style}
+                theme={theme}
+                value={value}
+            />
             {label ? (
                 <span data-react-toolbox="label" className={theme.text()}>
                     {label}

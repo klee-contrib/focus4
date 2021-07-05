@@ -66,7 +66,7 @@ export function Switch({
                 type="checkbox"
             />
             <span className={theme[value ? "on" : "off"]()}>
-                <Thumb disabled={disabled} theme={theme} />
+                <Thumb disabled={disabled} rippleTheme={{ripple: theme.ripple()}} theme={theme} />
             </span>
             {label ? <span className={theme.text()}>{label}</span> : null}
         </label>

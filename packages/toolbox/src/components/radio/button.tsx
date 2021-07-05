@@ -77,7 +77,7 @@ export function RadioButton({
                 ref={inputNode}
                 type="radio"
             />
-            <Radio checked={checked} disabled={disabled} theme={theme} />
+            <Radio checked={checked} disabled={disabled} rippleTheme={{ripple: theme.ripple()}} theme={theme} />
             {label ? (
                 <span data-react-toolbox="label" className={theme.text()}>
                     {label}
