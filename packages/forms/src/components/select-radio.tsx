@@ -66,10 +66,10 @@ export function SelectRadio<T extends "string" | "number">({
     return useObserver(() => {
         let definitiveValues: {}[] = values;
         if (hasUndefined && undefinedPosition === "bottom") {
-            definitiveValues = [...values, {[$valueKey]: undefined, [$labelKey]: undefinedLabel}];
+            definitiveValues = [...values.slice(), {[$valueKey]: undefined, [$labelKey]: undefinedLabel}];
         }
         if (hasUndefined && undefinedPosition === "top") {
-            definitiveValues = [{[$valueKey]: undefined, [$labelKey]: undefinedLabel}, ...values];
+            definitiveValues = [{[$valueKey]: undefined, [$labelKey]: undefinedLabel}, ...values.slice()];
         }
 
         return (

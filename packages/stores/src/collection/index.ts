@@ -682,7 +682,7 @@ function groupByFacet<T>(list: T[], fieldName: keyof T) {
         const value = item[fieldName];
 
         function add(key?: any) {
-            buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`] ?? []), item];
+            buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
         }
 
         if (Array.isArray(value) || isObservableArray(value)) {

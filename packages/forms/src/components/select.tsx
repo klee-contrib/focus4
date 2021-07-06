@@ -56,7 +56,7 @@ export function Select<T extends "string" | "number">({
 
     return useObserver(() => {
         // On ajoute l'élément vide si nécessaire.
-        let finalValues: {}[] = values;
+        let finalValues: {}[] = values.slice();
         if (hasUndefined) {
             finalValues = [{[$valueKey]: "", [$labelKey]: i18next.t(unSelectedLabel)}, ...finalValues];
         }

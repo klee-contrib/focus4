@@ -26,7 +26,7 @@ function clickHandlerFactory(
                 onChange(value ? value.filter(val => val !== optVal) : undefined);
             } else {
                 // is not selected -> add it
-                onChange(value ? [...value, optVal] : [optVal]);
+                onChange(value ? [...value.slice(), optVal] : [optVal]);
             }
         }
     };
