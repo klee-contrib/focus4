@@ -22,16 +22,16 @@
     }
 }
 
-.snackbar--accept .button {
-    color: var(--snackbar-color-accept);
+.snackbar--accept {
+    background-color: var(--snackbar-color-accept);
 }
 
-.snackbar--warning .button {
-    color: var(--snackbar-color-warning);
+.snackbar--warning {
+    background-color: var(--snackbar-color-warning);
 }
 
-.snackbar--cancel .button {
-    color: var(--snackbar-color-cancel);
+.snackbar--cancel {
+    background-color: var(--snackbar-color-cancel);
 }
 
 .snackbar:not(.snackbar--active) {

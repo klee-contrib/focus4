@@ -135,7 +135,7 @@
     }
 }
 
-.button--primary:not([disabled]) {
+.button--primary {
     &.button--raised,
     &.button--floating {
         background: var(--button-primary-color);
@@ -155,7 +155,7 @@
     }
 }
 
-.button--accent:not([disabled]) {
+.button--accent {
     &.button--raised,
     &.button--floating {
         background: var(--button-accent-color);
@@ -175,7 +175,7 @@
     }
 }
 
-.button--neutral:not([disabled]) {
+.button--neutral {
     &.button--raised,
     &.button--floating {
         background-color: var(--button-neutral-color);

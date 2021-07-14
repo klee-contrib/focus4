@@ -1,4 +1,4 @@
 :root {
-    --overlay-color: rgb(var(--color-black));
+    --overlay-color: rgb(0, 0, 0);
     --overlay-opacity: 0.6;
 }

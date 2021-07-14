@@ -91,6 +91,8 @@
     }
 
     &.menu--active {
+        pointer-events: all;
+
         & > .outline {
             opacity: 1;
             transform: scale(1);

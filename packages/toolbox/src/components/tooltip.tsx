@@ -1,4 +1,13 @@
-import {Component, ComponentType, forwardRef, MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler} from "react";
+import {
+    Component,
+    ComponentType,
+    forwardRef,
+    HTMLAttributes,
+    MouseEvent,
+    MouseEventHandler,
+    ReactNode,
+    TouchEventHandler
+} from "react";
 import {createPortal} from "react-dom";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
@@ -42,7 +51,7 @@ export function tooltipFactory({
     tooltipShowOnClick = false,
     theme: oTheme
 }: TooltipOptions = {}) {
-    return function Tooltip<P>(ComposedComponent: ComponentType<P> | string) {
+    return function Tooltip<P = HTMLAttributes<HTMLElement>>(ComposedComponent: ComponentType<P> | string) {
         return forwardRef<TooltippedComponent<P>, P & TooltipProps>((p, ref) => {
             const theme = useTheme("RTTooltip", tooltipCss, p.tooltipTheme, oTheme);
             return (

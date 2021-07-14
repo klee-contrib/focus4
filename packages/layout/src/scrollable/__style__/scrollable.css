@@ -7,7 +7,7 @@
     z-index: var(--z-index-high);
     pointer-events: none;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(var(--color-black), 0.05);
 
     & > *:not(button) {
         pointer-events: auto;
@@ -27,7 +27,7 @@
     height: 50px;
     z-index: var(--z-index-higher);
     right: -12px;
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(var(--color-black), 0.05);
     width: 0;
     min-width: 0;
     padding: 6px;

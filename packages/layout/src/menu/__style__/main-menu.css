@@ -26,9 +26,9 @@
 }
 
 .button,
-.button.button--neutral:not([disabled]),
+.button.button--neutral,
 .toggle,
-.toggle.toggle--neutral:not([disabled]) {
+.toggle.toggle--neutral {
     height: var(--main-menu-item-height);
     color: var(--main-menu-item-color);
     min-width: var(--main-menu-item-height);
@@ -53,9 +53,9 @@
 
     & .icon,
     & .button,
-    & .button.button--neutral:not([disabled]),
+    & .button.button--neutral,
     & .toggle,
-    & .toggle.toggle--neutral:not([disabled]) {
+    & .toggle.toggle--neutral {
         color: var(--main-menu-item-active-color);
     }
 }

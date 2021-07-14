@@ -1,5 +1,5 @@
 :root {
-    --tooltip-background: rgba(97, 97, 97, 0.9);
+    --tooltip-background: rgba(var(--palette-grey-700), 0.9);
     --tooltip-margin: calc(0.5 * var(--unit));
     --tooltip-border-radius: calc(0.2 * var(--unit));
     --tooltip-color: rgb(var(--color-white));

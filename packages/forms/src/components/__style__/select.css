@@ -14,10 +14,15 @@
         font-size: var(--input-field-font-size);
         appearance: none;
         padding-right: 20px;
+        background: transparent;
 
         &::-ms-expand {
             display: none;
         }
+    }
+
+    & option {
+        background: rgb(var(--color-white));
     }
 
     &::before {
