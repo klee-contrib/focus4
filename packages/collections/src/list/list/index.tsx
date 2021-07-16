@@ -1,7 +1,7 @@
 import {AnimatePresence} from "framer-motion";
 import {autorun, comparer, observable, reaction} from "mobx";
 import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
-import {ComponentType, useContext, useEffect} from "react";
+import {ComponentType, Fragment, useContext, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -185,55 +185,60 @@ export function List<T>({
             throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
         }
 
+        const detailIdx =
+            state.displayedIdx !== undefined
+                ? state.mode === "list"
+                    ? state.displayedIdx
+                    : Math.min(
+                          (Math.floor((state.displayedIdx + (isAddItemShown ? 1 : 0)) / state.byLine) + 1) *
+                              state.byLine -
+                              (isAddItemShown ? 1 : 0) -
+                              1,
+                          displayedData.length - 1
+                      )
+                : undefined;
+
         const lines = displayedData.map((item, idx) => (
-            <LineWrapper
-                key={itemKey(item, idx)}
-                data={item}
-                domRef={getDomRef(idx)}
-                disableDragAnimation={disableDragAnimation}
-                dragItemType={dragItemType}
-                draggedItems={hasDragAndDrop ? state.draggedItems : undefined}
-                hasSelection={store ? hasSelection : undefined}
-                i18nPrefix={i18nPrefix}
-                mosaic={state.mode === "mosaic" ? mosaic : undefined}
-                LineComponent={Component}
-                toggleDetail={
-                    canOpenDetail(item) && DetailComponent
-                        ? (callbacks?: {}) => state.toggleDetail(idx, callbacks)
-                        : undefined
-                }
-                operationList={operationList}
-                store={store}
-                theme={theme}
-            />
-        ));
-
-        /* On regarde si le composant de détail doit être ajouté. */
-        if (DetailComponent && state.displayedIdx !== undefined) {
-            const idx =
-                state.mode === "list"
-                    ? state.displayedIdx + 1
-                    : (Math.floor((state.displayedIdx + (isAddItemShown ? 1 : 0)) / state.byLine) + 1) * state.byLine -
-                      (isAddItemShown ? 1 : 0);
-
-            // Puis on ajoute l'élément à sa place dans la liste.
-            lines.splice(
-                idx,
-                0,
-                <DetailWrapper
-                    displayedIdx={state.displayedIdx}
-                    DetailComponent={DetailComponent as any}
-                    byLine={state.byLine}
-                    closeDetail={state.closeDetail}
-                    isAddItemShown={isAddItemShown}
-                    item={displayedData[state.displayedIdx]}
-                    mode={state.mode}
-                    mosaic={mosaic!}
+            <Fragment key={itemKey(item, idx)}>
+                <LineWrapper
+                    data={item}
+                    domRef={getDomRef(idx)}
+                    disableDragAnimation={disableDragAnimation}
+                    dragItemType={dragItemType}
+                    draggedItems={hasDragAndDrop ? state.draggedItems : undefined}
+                    hasSelection={store ? hasSelection : undefined}
+                    i18nPrefix={i18nPrefix}
+                    mosaic={state.mode === "mosaic" ? mosaic : undefined}
+                    LineComponent={Component}
+                    toggleDetail={
+                        canOpenDetail(item) && DetailComponent
+                            ? (callbacks?: {}) => state.toggleDetail(idx, callbacks)
+                            : undefined
+                    }
+                    operationList={operationList}
+                    store={store}
                     theme={theme}
-                    key={`detail-${idx}`}
                 />
-            );
-        }
+                {DetailComponent ? (
+                    <AnimatePresence exitBeforeEnter>
+                        {state.displayedIdx !== undefined && idx === detailIdx ? (
+                            <DetailWrapper
+                                displayedIdx={state.displayedIdx}
+                                DetailComponent={DetailComponent as any}
+                                byLine={state.byLine}
+                                closeDetail={state.closeDetail}
+                                isAddItemShown={isAddItemShown}
+                                item={displayedData[state.displayedIdx]}
+                                mode={state.mode}
+                                mosaic={mosaic!}
+                                theme={theme}
+                                key={`detail-${state.displayedIdx}`}
+                            />
+                        ) : null}
+                    </AnimatePresence>
+                ) : null}
+            </Fragment>
+        ));
 
         return (
             <>
@@ -258,7 +263,7 @@ export function List<T>({
                                     />
                                 </li>
                             ) : null}
-                            {DetailComponent ? <AnimatePresence>{lines}</AnimatePresence> : lines}
+                            {lines}
                         </ul>
                     )}
                     {/* Gestion de l'affichage du chargement. */}

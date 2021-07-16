@@ -62,12 +62,6 @@
     & > .rippleWrapper {
         overflow: hidden;
     }
-
-    &[disabled] {
-        color: var(--button-disabled-text-color);
-        cursor: auto;
-        pointer-events: none;
-    }
 }
 
 .button--squared {
@@ -87,11 +81,6 @@
 }
 
 .button--solid {
-    &[disabled] {
-        background-color: var(--button-disabled-background-color);
-        box-shadow: var(--shadow-2p);
-    }
-
     &:active {
         box-shadow: var(--shadow-2p);
     }
@@ -136,8 +125,7 @@
 }
 
 .button--primary {
-    &.button--raised,
-    &.button--floating {
+    &.button--solid {
         background: var(--button-primary-color);
         color: var(--button-primary-color-contrast);
     }
@@ -156,8 +144,7 @@
 }
 
 .button--accent {
-    &.button--raised,
-    &.button--floating {
+    &.button--solid {
         background: var(--button-accent-color);
         color: var(--button-accent-color-contrast);
     }
@@ -176,8 +163,7 @@
 }
 
 .button--neutral {
-    &.button--raised,
-    &.button--floating {
+    &.button--solid {
         background-color: var(--button-neutral-color);
         color: var(--button-neutral-color-contrast);
     }
@@ -195,8 +181,7 @@
     }
 
     &.button--inverse {
-        &.button--raised,
-        &.button--floating {
+        &.button--solid {
             background-color: var(--button-neutral-color-contrast);
             color: var(--button-neutral-color);
         }
@@ -211,10 +196,24 @@
                 background: var(--button-neutral-color-hover);
             }
         }
+    }
+}
 
-        &[disabled] {
-            background-color: var(--button-disabled-background-inverse);
-            color: var(--button-disabled-text-color-inverse);
-        }
+.button[disabled] {
+    cursor: auto;
+    pointer-events: none;
+
+    &.button--solid,
+    &.button--flat {
+        color: var(--button-disabled-text-color);
+    }
+
+    &.button--solid {
+        background-color: var(--button-disabled-background-color);
+    }
+
+    &.button--inverse {
+        background-color: var(--button-disabled-background-inverse);
+        color: var(--button-disabled-text-color-inverse);
     }
 }

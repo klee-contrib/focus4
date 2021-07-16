@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "11.0.0-preview.4",
+    "version": "11.0.0-preview.5",
     "description": "Focus v4, all modules",
     "main": "index.js",
     "repository": {
@@ -15,10 +15,10 @@
         "start": "tsc --watch"
     },
     "dependencies": {
-        "@focus4/collections": "^11.0.0-preview.4",
+        "@focus4/collections": "^11.0.0-preview.5",
         "@focus4/core": "^11.0.0-preview.4",
         "@focus4/forms": "^11.0.0-preview.4",
-        "@focus4/layout": "^11.0.0-preview.4",
+        "@focus4/layout": "^11.0.0-preview.5",
         "@focus4/stores": "^11.0.0-preview.4",
         "@focus4/styling": "^11.0.0-preview.4",
         "@focus4/toolbox": "^11.0.0-preview.4",

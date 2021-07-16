@@ -1,6 +1,3 @@
-import scroll from "smoothscroll-polyfill";
-scroll.polyfill();
-
 import {motion} from "framer-motion";
 import {useContext} from "react";
 
