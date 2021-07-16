@@ -237,9 +237,7 @@ export function List<T>({
 
         return (
             <>
-                {!navigator.userAgent.match(/Trident/) && hasDragAndDrop ? (
-                    <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} />
-                ) : null}
+                {hasDragAndDrop ? <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} /> : null}
                 <div className={state.mode === "list" ? theme.list() : theme.mosaic()}>
                     {/* Gestion de l'empty state. */}
                     {!isLoading && !hideAdditionalItems && !displayedData.length ? (

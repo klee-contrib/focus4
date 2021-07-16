@@ -2,7 +2,7 @@ import "intersection-observer";
 
 import classNames from "classnames";
 import {AnimatePresence} from "framer-motion";
-import {debounce, memoize, range} from "lodash";
+import {memoize, range} from "lodash";
 import {action, autorun, observable} from "mobx";
 import {disposeOnUnmount, observer, useObserver} from "mobx-react";
 import {animate} from "popmotion";
@@ -211,22 +211,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
         this.width = this.scrollableNode.clientWidth;
         this.updateMenuParentNodes(`${styler(this.menuNode).get("x") ?? "0%"}`);
         this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 300);
-        if (isIEorEdge()) {
-            this.onScrollCoreDebounced();
-        } else {
-            this.onScrollCore();
-        }
-    }
-
-    onScrollCoreDebounced = debounce(() => this.onScrollCore(), 50);
-    onScrollCore() {
-        if (!isIEorEdge()) {
-            this.setMenuRefs(this.menuNode.offsetTop);
-        } else {
-            this.animateMenuRefs(
-                parentOffsetTop => parentOffsetTop - this.scrollableNode.scrollTop - this.menuNode.offsetTop
-            );
-        }
+        this.setMenuRefs(this.menuNode.offsetTop);
     }
 
     menuSpring?: {stop: () => void};
@@ -251,19 +236,10 @@ class ScrollableComponent extends Component<ScrollableProps> {
                     to,
                     onUpdate: (top: number) => {
                         menu.set({top});
-                        if (isIEorEdge()) {
-                            this.onScrollCoreDebounced.cancel();
-                        }
                     }
                 });
             } else {
                 menu.set({top: to});
-            }
-        }
-
-        if (isIEorEdge()) {
-            if (this.isHeaderSticky) {
-                this.animateMenuRefs(() => 0);
             }
         }
     });
@@ -314,32 +290,6 @@ class ScrollableComponent extends Component<ScrollableProps> {
             const buttonMenu = this.menuNode.children.item(this.menuNode.children.length - 1);
             if (buttonMenu?.nodeName === "BUTTON") {
                 styler(buttonMenu).set({top: marginTop});
-            }
-        });
-    }
-
-    animateMenuRefs(to: (parentOffsetTop: number) => number) {
-        this.menuStylers.forEach((menuRef, key) => {
-            const parentNode = this.menuParentNodes.get(key)!;
-            const transition = {
-                from: menuRef.get("marginTop"),
-                to: Math.max(0, to(getOffsetTop(parentNode, this.scrollableNode)))
-            };
-            if (transition.from !== transition.to) {
-                animate({
-                    ...springTransition,
-                    ...transition,
-                    onUpdate: (marginTop: number) => {
-                        menuRef.set({
-                            marginTop,
-                            height: `calc(100% - ${marginTop}px)`
-                        });
-                        const buttonMenu = this.menuNode.querySelector("button");
-                        if (buttonMenu) {
-                            styler(buttonMenu).set({top: marginTop});
-                        }
-                    }
-                });
             }
         });
     }
@@ -413,10 +363,6 @@ class ScrollableComponent extends Component<ScrollableProps> {
 export const Scrollable = forwardRef<HTMLDivElement, PropsWithChildren<ScrollableProps>>((props, ref) => (
     <ScrollableComponent {...props} innerRef={ref} />
 ));
-
-function isIEorEdge() {
-    return navigator.userAgent.match(/(Trident|Edge)/);
-}
 
 function getOffsetTop(node: HTMLElement, container: HTMLElement) {
     let distance = node.offsetTop;
