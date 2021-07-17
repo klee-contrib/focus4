@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {extendObservable, observable} from "mobx";
+import {extendObservable, observable, remove} from "mobx";
 import {ComponentType, ReactNode} from "react";
 
 import {themeable} from "@focus4/core";
@@ -203,7 +203,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         }
     ) {
         if (isFunction(getOrValue)) {
-            delete this.field.value;
+            remove(this.field, "value");
             extendObservable(this.field, {
                 get value() {
                     return (getOrValue as Function)();

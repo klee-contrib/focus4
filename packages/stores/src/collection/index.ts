@@ -4,6 +4,7 @@ import {
     computed,
     IObservableArray,
     isObservableArray,
+    makeObservable,
     observable,
     reaction,
     remove,
@@ -124,6 +125,7 @@ export class CollectionStore<T = any, C = any> {
         secondParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C,
         thirdParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C
     ) {
+        makeObservable(this);
         if (isFunction(firstParam)) {
             this.type = "server";
             this.service = firstParam;

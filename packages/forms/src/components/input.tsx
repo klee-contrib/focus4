@@ -1,6 +1,6 @@
 import InputMask, {InputMaskFormatOptions, InputMaskSelection} from "inputmask-core";
 import {range, takeWhile} from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import numeral from "numeral";
 import {Component, KeyboardEvent} from "react";
@@ -40,6 +40,11 @@ export interface InputProps<T extends "string" | "number"> extends Omit<RTInputP
 export class Input<T extends "string" | "number"> extends Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement | HTMLTextAreaElement;
     protected mask?: InputMask;
+
+    constructor(props: InputProps<T>) {
+        super(props);
+        makeObservable(this);
+    }
 
     @computed
     get numberFormat() {

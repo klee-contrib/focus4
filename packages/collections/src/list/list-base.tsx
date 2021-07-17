@@ -134,8 +134,11 @@ export function useListBase<T>({
         () =>
             observe(state, "displayedData", ({oldValue, newValue}) => {
                 if (
-                    oldValue!.length > newValue.length ||
-                    !isEqual(oldValue!.map(itemKey), newValue!.map(itemKey).slice(0, oldValue!.length))
+                    (oldValue as T[]).length > (newValue as T[]).length ||
+                    !isEqual(
+                        (oldValue as T[]).map(itemKey),
+                        (newValue as T[]).map(itemKey).slice(0, (oldValue as T[]).length)
+                    )
                 ) {
                     state.displayedCount = perPage;
                 }

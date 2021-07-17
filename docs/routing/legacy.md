@@ -138,6 +138,7 @@ class MyViewStore extends ViewStore<{id: string}, "objet"> {
     @observable resume: ObjetResume = {};
     constructor() {
         super({prefix: "objet", view: {id: ""}});
+        makeObservable(this);
         autorun(() => this.withView(async ({id}) => id && (this.resume = await loadObjetResume(+id))));
     }
 }

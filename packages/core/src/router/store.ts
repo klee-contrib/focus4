@@ -1,5 +1,5 @@
 import {isEqual, mapValues} from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 
 /** Crée le type de vue associé à un objet. */
 export type View<T> = {readonly [P in keyof T]: T[P] | undefined};
@@ -51,6 +51,7 @@ export class ViewStore<V, N extends string> {
      * @param config La configuration du store.
      */
     constructor({beforeEnter, view, prefix}: ViewStoreConfig<V, N>) {
+        makeObservable(this);
         this.beforeEnter = beforeEnter;
         this.paramNames = Object.keys(view) as (keyof V)[];
         this.prefix = prefix;

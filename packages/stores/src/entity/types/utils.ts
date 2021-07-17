@@ -27,15 +27,15 @@ export function isEntityField(data: any): data is EntityField {
 }
 
 export function isAnyStoreNode<E = any>(data: any): data is StoreNode<E> | StoreListNode<E> {
-    return data && !!(data as StoreNode).set && !!(data as StoreNode).clear;
+    return isStoreNode(data) || isStoreListNode(data);
 }
 
 export function isStoreListNode<E = any>(data: any): data is StoreListNode<E> {
-    return isAnyStoreNode(data) && isObservableArray(data);
+    return data && !!(data as StoreListNode).replaceNodes && isObservableArray(data);
 }
 
 export function isStoreNode<E = any>(data: any): data is StoreNode<E> {
-    return isAnyStoreNode(data) && !isObservableArray(data);
+    return data && !!(data as StoreNode).set && !!(data as StoreNode).clear;
 }
 
 export function isAnyFormNode<E = any>(data: any): data is FormNode<E> | FormListNode<E> {

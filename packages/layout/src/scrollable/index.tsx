@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import {AnimatePresence, HTMLMotionProps, motion} from "framer-motion";
 import {memoize, range} from "lodash";
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import {observer, useObserver} from "mobx-react";
 import {cloneElement, Component, forwardRef, HTMLProps, Key, PropsWithChildren, ReactNode, Ref} from "react";
 import {createPortal, findDOMNode} from "react-dom";
@@ -64,6 +64,11 @@ class ScrollableComponent extends Component<ScrollableProps> {
     @observable isMenuRetractable = true;
     @observable visibleHeader = 1;
     @observable width = 0;
+
+    constructor(props: ScrollableProps) {
+        super(props);
+        makeObservable(this);
+    }
 
     /** @see ScrollableContext.registerHeader */
     @action.bound

@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {debounce} from "lodash-decorators";
-import {action, computed, observable, runInAction} from "mobx";
+import {action, computed, makeObservable, observable, runInAction} from "mobx";
 import {observer} from "mobx-react";
 import {Component} from "react";
 import {findDOMNode} from "react-dom";
@@ -8,8 +8,8 @@ import {findDOMNode} from "react-dom";
 import {CSSProp, themr} from "@focus4/styling";
 import {
     Autocomplete as RTAutocomplete,
-    AutocompleteProps as RTAutocompleteProps,
     AutocompleteCss as RTAutocompleteCss,
+    AutocompleteProps as RTAutocompleteProps,
     InputCss,
     ProgressBar
 } from "@focus4/toolbox";
@@ -67,10 +67,15 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
     /** Résultat de la recherche d'autocomplétion. */
     protected readonly data = observable.map<string, string>();
 
+    constructor(props: AutocompleteProps<T>) {
+        super(props);
+        makeObservable(this);
+    }
+
     /** Résultats sous format JSON, pour l'autocomplete. */
     @computed.struct
     get source() {
-        return this.data.toJSON();
+        return Object.fromEntries(this.data);
     }
 
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
@@ -165,7 +170,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         if (this.props.querySearcher && (this.props.searchOnEmptyQuery || query.trim().length)) {
             this.isLoading = true;
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
-            runInAction("replaceResults", () => {
+            runInAction(() => {
                 this.data.replace(
                     (result &&
                         result.data &&

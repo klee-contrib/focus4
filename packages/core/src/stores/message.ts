@@ -1,5 +1,5 @@
 import {isString} from "lodash";
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import {v4} from "uuid";
 
 /** Description d'un message. */
@@ -15,6 +15,10 @@ export class MessageStore {
     @observable data: {[id: string]: Message} = {};
     /** Dernier message reçu. */
     @observable latestMessage?: Message;
+
+    constructor() {
+        makeObservable(this);
+    }
 
     /**
      * Ajoute un message sans type.

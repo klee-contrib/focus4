@@ -22,9 +22,7 @@ export function useDragSource<T>({
             if (store) {
                 // Si l'élément en cours de drag est sélectionné, alors on embarque tous les éléments sélectionnés.
                 if (store.selectedItems.has(data)) {
-                    runInAction("selectDraggedItems", () =>
-                        store.selectedItems.forEach((item: T) => draggedItems.push(item))
-                    );
+                    runInAction(() => store.selectedItems.forEach((item: T) => draggedItems.push(item)));
                 } else {
                     // Sinon, simplement l'élément en cours.
                     draggedItems.push(data);

@@ -1,4 +1,4 @@
-import {action, computed, ObservableMap} from "mobx";
+import {action, computed, makeObservable, ObservableMap} from "mobx";
 import {v4} from "uuid";
 
 /** Description d'une requête. */
@@ -16,6 +16,10 @@ export class RequestStore {
     readonly pending = new ObservableMap<string, Request>({});
     /** Requête en succès. */
     readonly success = new ObservableMap<string, Request>({});
+
+    constructor() {
+        makeObservable(this);
+    }
 
     /** Nombres de requêtes. */
     @computed.struct

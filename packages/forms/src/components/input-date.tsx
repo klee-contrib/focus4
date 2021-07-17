@@ -1,5 +1,5 @@
 import {uniqueId} from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import {Component, KeyboardEvent} from "react";
@@ -78,6 +78,11 @@ export class InputDate extends Component<InputDateProps> {
 
     /** Position du calendrier. */
     @observable protected calendarPosition?: "up" | "down";
+
+    constructor(props: InputDateProps) {
+        super(props);
+        makeObservable(this);
+    }
 
     UNSAFE_componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);

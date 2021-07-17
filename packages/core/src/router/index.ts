@@ -1,8 +1,8 @@
-import {action, IObservableObject, observable, reaction, runInAction} from "mobx";
+import {action, observable, reaction, runInAction} from "mobx";
 import {RouteConfig, RouteEnterEvent, Router} from "yester";
 
 import {ViewStore} from "./store";
-export {IObservableObject, ViewStore};
+export {ViewStore};
 
 export interface RouterConfig<E = "error"> {
     /** Mode du routeur. Par défaut: "hash" */
@@ -61,7 +61,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
      * @param i L'index du store.
      */
     function updateActivity(i: number) {
-        runInAction("updateViewStoreActivity", () => stores.forEach((s, j) => (s.isActiveInRouter = i === j)));
+        runInAction(() => stores.forEach((s, j) => (s.isActiveInRouter = i === j)));
     }
 
     if (stores.length > 1 && stores.some(store => !store.prefix)) {
@@ -99,7 +99,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
                                 }
                             }
 
-                            runInAction("setView", () => {
+                            runInAction(() => {
                                 store.setView(params, true); // On met à jour la vue avec les paramètres d'URL.
                                 updateActivity(i); // On met à jour l'activité.
                             });

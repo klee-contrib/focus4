@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {max, sortBy} from "lodash";
-import {action, computed, observable, ObservableMap} from "mobx";
+import {action, computed, makeObservable, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
 import {Component, ComponentType, ContextType, createRef} from "react";
 
@@ -30,10 +30,13 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
     node = createRef<HTMLDivElement>();
 
     /** Map des panels qui se sont enregistrés dans le container. */
-    protected readonly panels: ObservableMap<
-        string,
-        PanelDescriptor & {ratio: number; disposer: () => void}
-    > = observable.map();
+    protected readonly panels: ObservableMap<string, PanelDescriptor & {ratio: number; disposer: () => void}> =
+        observable.map();
+
+    constructor(props: ScrollspyContainerProps) {
+        super(props);
+        makeObservable(this);
+    }
 
     /** @see ScrollspyContext.registerPanel */
     @action.bound

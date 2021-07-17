@@ -47,7 +47,7 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
                     params = [params];
                 }
                 const data = await loadService(...params);
-                runInAction("afterLoad", () => {
+                runInAction(() => {
                     if (data) {
                         if (isStoreNode(node)) {
                             node.replace(data as any);

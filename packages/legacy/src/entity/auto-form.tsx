@@ -1,4 +1,4 @@
-import {action, comparer, computed, Lambda, observable, reaction, runInAction} from "mobx";
+import {action, comparer, computed, Lambda, makeObservable, observable, reaction, runInAction} from "mobx";
 import {Component, ReactElement} from "react";
 import {v4} from "uuid";
 
@@ -73,6 +73,11 @@ export interface ServiceConfig<T, LP> {
 export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap = observable.map<string, boolean>();
+
+    constructor(props: P) {
+        super(props);
+        makeObservable(this);
+    }
 
     /** Précise si au moins un formulaire de l'application est en édition. */
     @computed

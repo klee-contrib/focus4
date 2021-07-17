@@ -157,7 +157,7 @@ export class FormActionsBuilder<
 
                     this.isLoading = true;
                     const data = await saveService(toFlatValues(formNode));
-                    runInAction("afterSave", () => {
+                    runInAction(() => {
                         this.isLoading = false;
                         formNode.form.isEdit = false;
                         if (data) {

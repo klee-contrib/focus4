@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {action, IReactionDisposer, observable, reaction} from "mobx";
+import {action, IReactionDisposer, makeObservable, observable, reaction} from "mobx";
 import {disposeOnUnmount, observer} from "mobx-react";
 import {Component} from "react";
 
@@ -63,6 +63,11 @@ export class MessageCenter extends Component<MessageCenterProps> {
             this.showSnackbar({type, content, timeout});
         }
     );
+
+    constructor(props: MessageCenterProps) {
+        super(props);
+        makeObservable(this);
+    }
 
     /** Affiche la snackbar avec la notification demandée. */
     @action.bound

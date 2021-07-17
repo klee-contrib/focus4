@@ -1,5 +1,5 @@
 import {uniqueId} from "lodash";
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
 import {Component, KeyboardEvent} from "react";
@@ -56,6 +56,11 @@ export class InputTime extends Component<InputTimeProps> {
 
     /** Position de l'horloge. */
     @observable protected clockPosition?: "up" | "down";
+
+    constructor(props: InputTimeProps) {
+        super(props);
+        makeObservable(this);
+    }
 
     componentDidMount() {
         document.addEventListener("mousedown", this.onDocumentClick);

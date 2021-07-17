@@ -1,5 +1,5 @@
 import {isBoolean, isEqual, isFunction, toPairs} from "lodash";
-import {action, extendObservable, IArrayChange, IArraySplice, intercept, observable, observe} from "mobx";
+import {action, extendObservable, IArrayDidChange, intercept, observable, observe} from "mobx";
 
 import {
     EntityField,
@@ -81,7 +81,7 @@ export function nodeToFormNode<E = any, E0 = E>(
         // On va chercher à mettre à jour le FormListNode suite aux ajouts et suppressions depuis la souce.
         const onSourceSplice = observe(
             sourceNode as StoreListNode,
-            action((change: IArrayChange | IArraySplice) => {
+            action((change: IArrayDidChange) => {
                 if (sourceNode === (node as any)) {
                     return;
                 }
