@@ -1,6 +1,6 @@
 // Libs
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
-import {mount, configure} from "enzyme";
+import {configure, mount} from "enzyme";
 import i18next from "i18next";
 import {Panel} from "../panel";
 

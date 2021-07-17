@@ -21,7 +21,6 @@
         "@focus4/layout": "^11.0.0-preview.5",
         "@focus4/stores": "^11.0.0-preview.4",
         "@focus4/styling": "^11.0.0-preview.4",
-        "@focus4/toolbox": "^11.0.0-preview.4",
-        "core-js": "3.15.2"
+        "@focus4/toolbox": "^11.0.0-preview.4"
     }
 }
