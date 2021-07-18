@@ -1,5 +1,6 @@
 import classNames from "classnames";
-import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
+import {useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {getIcon, ToBem} from "@focus4/styling";
@@ -38,12 +39,18 @@ export function TableLine<T>({
     /** CSS. */
     theme: ToBem<TableCss>;
 }) {
-    const props = useAsObservableSource({
+    const props = useLocalObservable(() => ({
         data: oProps.data,
         hasSelection: oProps.hasSelection,
         store: oProps.store
-    });
-    const state = useLocalStore(() => ({
+    }));
+    useEffect(() => {
+        props.data = oProps.data;
+        props.hasSelection = oProps.hasSelection;
+        props.store = oProps.store;
+    }, [oProps.data, oProps.hasSelection, oProps.store]);
+
+    const state = useLocalObservable(() => ({
         /** Précise si la checkbox doit être affichée. */
         get isCheckboxDisplayed() {
             return !!props.store?.selectedItems.size || false;

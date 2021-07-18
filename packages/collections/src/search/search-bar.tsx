@@ -1,7 +1,7 @@
 import {AnimatePresence, motion} from "framer-motion";
 import i18next from "i18next";
 import {difference, toPairs} from "lodash";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 
 import {fieldFor, SelectCheckbox} from "@focus4/forms";
@@ -46,7 +46,7 @@ export function SearchBar<T, C>({
     /** Affiche le panneau pour les critères et la sélection des champs textes. */
     const [showPanel, setShowPanel] = useState(false);
 
-    const state = useLocalStore(() => ({
+    const state = useLocalObservable(() => ({
         /** La liste des critères saisis dans le champ texte. */
         criteriaList: [] as string[],
 

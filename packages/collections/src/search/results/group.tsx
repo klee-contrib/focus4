@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, useContext} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
@@ -53,7 +53,7 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
 }: GroupProps<T, P>) {
     const theme = useTheme("group", groupCss, pTheme);
     const context = useContext(ScrollableContext);
-    const state = useLocalStore(() => ({
+    const state = useLocalObservable(() => ({
         /** Store pour le groupe. */
         get store(): CollectionStore<T> {
             return group.code ? store.getSearchGroupStore(group.code) : store;

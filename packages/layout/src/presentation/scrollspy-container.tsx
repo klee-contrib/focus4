@@ -24,7 +24,7 @@ export interface ScrollspyContainerProps {
 @observer
 export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
     static contextType: any = ScrollableContext;
-    context!: ContextType<typeof ScrollableContext>;
+    declare context: ContextType<typeof ScrollableContext>;
 
     /** Noeud DOM du scrollspy */
     node = createRef<HTMLDivElement>();

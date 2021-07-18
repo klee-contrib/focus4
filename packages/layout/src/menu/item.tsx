@@ -1,6 +1,6 @@
 import {AnimatePresence, motion} from "framer-motion";
 import {action, toJS} from "mobx";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
 import {MouseEvent as RMouseEvent, useCallback, useContext, useEffect, useRef} from "react";
 
 import {CSSProp, defaultTransition, useTheme} from "@focus4/styling";
@@ -22,7 +22,7 @@ export interface MainMenuItemProps extends Omit<ButtonProps & IconButtonProps & 
 export function MainMenuItem({label, icon, onClick, route, children, theme: pTheme, ...otherProps}: MainMenuItemProps) {
     const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
     const context = useContext(MenuContext);
-    const state = useLocalStore(() => ({hasSubMenu: false, top: 0, left: 0}));
+    const state = useLocalObservable(() => ({hasSubMenu: false, top: 0, left: 0}));
 
     const li = useRef<HTMLLIElement>(null);
     const panel = useRef<HTMLDivElement>(null);

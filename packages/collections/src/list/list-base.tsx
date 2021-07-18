@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {isEqual} from "lodash";
 import {extendObservable, observe} from "mobx";
-import {useAsObservableSource, useLocalStore} from "mobx-react";
+import {useLocalObservable} from "mobx-react";
 import {useContext, useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
@@ -45,13 +45,13 @@ export function useListBase<T>({
 }: ListBaseProps<T> & {data?: T[]; store?: CollectionStore<T>}) {
     const context = useContext(ScrollableContext);
     const theme = useTheme("listBase", listBaseCss, baseTheme);
-    const oData = useAsObservableSource({data, isLoading});
-    const state = useLocalStore(() => ({
+    const state = useLocalObservable(() => ({
         /** Nombre d'éléments affichés. */
         displayedCount: perPage,
 
+        _data: data,
         get data() {
-            return (store ? store.list : oData.data)!;
+            return (store ? store.list : state._data)!;
         },
 
         /** Les données affichées. */
@@ -78,8 +78,9 @@ export function useListBase<T>({
             return this.hasMoreHidden || this.hasMoreToLoad;
         },
 
+        _isLoading: isLoading,
         get isLoading() {
-            return store?.isLoading ?? oData.isLoading ?? false;
+            return store?.isLoading ?? state._isLoading ?? false;
         },
 
         /** Label du bouton "Voir plus". */
@@ -128,6 +129,11 @@ export function useListBase<T>({
             }
         }
     }));
+
+    useEffect(() => {
+        state._data = data;
+        state._isLoading = isLoading;
+    }, [data, isLoading]);
 
     /** (Ré)initialise la pagination dès que les données affichées changent. */
     useEffect(

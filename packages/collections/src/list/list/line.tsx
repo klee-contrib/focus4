@@ -1,7 +1,7 @@
 import {motion} from "framer-motion";
 import {IObservableArray} from "mobx";
-import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
-import {ComponentType, Ref, useCallback, useLayoutEffect} from "react";
+import {useLocalObservable, useObserver} from "mobx-react";
+import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react";
 import {getEmptyImage} from "react-dnd-html5-backend";
 
 import {CollectionStore} from "@focus4/stores";
@@ -65,12 +65,18 @@ export function LineWrapper<T>({
     theme,
     ...oProps
 }: LineWrapperProps<T>) {
-    const props = useAsObservableSource({
+    const props = useLocalObservable(() => ({
         data: oProps.data,
         hasSelection: oProps.hasSelection,
         store: oProps.store
-    });
-    const state = useLocalStore(() => ({
+    }));
+    useEffect(() => {
+        props.data = oProps.data;
+        props.hasSelection = oProps.hasSelection;
+        props.store = oProps.store;
+    }, [oProps.data, oProps.hasSelection, oProps.store]);
+
+    const state = useLocalObservable(() => ({
         /** Force l'affichage des actions. */
         forceActionDisplay: false,
 

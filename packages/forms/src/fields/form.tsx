@@ -1,5 +1,5 @@
-import {useAsObservableSource} from "mobx-react";
-import {createContext, ReactNode} from "react";
+import {useLocalObservable} from "mobx-react";
+import {createContext, ReactNode, useEffect} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -41,7 +41,13 @@ export function Form({
     valueRatio
 }: FormProps) {
     const theme = useTheme("form", formCss, pTheme);
-    const context = useAsObservableSource({forceErrorDisplay, labelRatio, valueRatio});
+    const context = useLocalObservable(() => ({forceErrorDisplay, labelRatio, valueRatio}));
+    useEffect(() => {
+        context.forceErrorDisplay = forceErrorDisplay;
+        context.labelRatio = labelRatio;
+        context.valueRatio = valueRatio;
+    }, [forceErrorDisplay, labelRatio, valueRatio]);
+
     return (
         <FormContext.Provider value={context}>
             {!noForm ? (

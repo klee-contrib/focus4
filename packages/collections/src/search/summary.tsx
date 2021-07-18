@@ -1,5 +1,6 @@
 import i18next from "i18next";
-import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
+import {useEffect} from "react";
 
 import {CollectionStore, FormEntityField} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
@@ -73,8 +74,15 @@ export function Summary<T>({
     theme: pTheme
 }: SummaryProps<T>) {
     const theme = useTheme("summary", summaryCss, pTheme);
-    const props = useAsObservableSource({hideCriteria, orderableColumnList, store});
-    const state = useLocalStore(() => ({
+
+    const props = useLocalObservable(() => ({hideCriteria, orderableColumnList, store}));
+    useEffect(() => {
+        props.hideCriteria = hideCriteria;
+        props.orderableColumnList = orderableColumnList;
+        props.store = store;
+    }, [hideCriteria, orderableColumnList, store]);
+
+    const state = useLocalObservable(() => ({
         /** Liste des filtres à afficher (inclusion). */
         get includeList() {
             const topicList: (SearchChipProps & {key: string})[] = [];

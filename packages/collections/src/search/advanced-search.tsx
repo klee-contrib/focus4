@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, ElementType, useContext, useEffect, useState} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
@@ -187,7 +187,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     const [rootNode, setRootNode] = useState<HTMLDivElement | null>(null);
     const context = useContext(ScrollableContext);
     const theme = useTheme("advancedSearch", advancedSearchCss, pTheme);
-    const listContext = useLocalStore(() => ({addItemHandler, mode}));
+    const listContext = useLocalObservable(() => ({addItemHandler, mode}));
 
     useEffect(() => {
         if (searchOnMount) {

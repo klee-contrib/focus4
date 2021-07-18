@@ -9,7 +9,7 @@ import "./focus.css";
 import i18next from "i18next";
 export {i18next as i18n};
 export {action, autorun, computed, observable} from "mobx";
-export {disposeOnUnmount, observer, useLocalStore, useObserver} from "mobx-react";
+export {disposeOnUnmount, observer, useLocalObservable, useObserver} from "mobx-react";
 export {Component, useEffect, useState, useRef} from "react";
 
 export {advancedSearchFor, listFor, tableFor, timelineFor} from "./collections";

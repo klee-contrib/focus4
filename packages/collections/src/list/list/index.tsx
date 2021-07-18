@@ -1,6 +1,6 @@
 import {AnimatePresence} from "framer-motion";
 import {autorun, comparer, observable, reaction} from "mobx";
-import {useAsObservableSource, useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, Fragment, useContext, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
@@ -99,13 +99,15 @@ export function List<T>({
 }: ListProps<T>) {
     const listContext = useContext(ListContext);
     const theme = useTheme("list", listCss, pTheme);
-    const oProps = useAsObservableSource({addItemHandler, mode});
-    const state = useLocalStore(() => ({
+    const state = useLocalObservable(() => ({
+        _addItemHandler: addItemHandler,
         get addItemHandler() {
-            return oProps.addItemHandler ?? listContext.addItemHandler;
+            return state._addItemHandler ?? listContext.addItemHandler;
         },
+
+        _mode: mode,
         get mode() {
-            return oProps.mode ?? listContext.mode ?? (MosaicComponent && !LineComponent ? "mosaic" : "list");
+            return state._mode ?? listContext.mode ?? (MosaicComponent && !LineComponent ? "mosaic" : "list");
         },
 
         /** Nombre de mosaïque par ligne, déterminé à la volée. */
@@ -138,6 +140,11 @@ export function List<T>({
             state.displayedIdx = undefined;
         }
     }));
+
+    useEffect(() => {
+        state._addItemHandler = addItemHandler;
+        state._mode = mode;
+    }, [addItemHandler, mode]);
 
     /** Met à jour `byLine`. */
     useEffect(() => {

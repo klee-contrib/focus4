@@ -12,6 +12,7 @@
         "experimentalDecorators": true,
         "strict": true,
         "plugins": [{"name": "typescript-tslint-plugin"}],
+        "useDefineForClassFields": true,
 
         // Options additionnelles
         "importHelpers": true,

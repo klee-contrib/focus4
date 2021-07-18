@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import i18next from "i18next";
 import {uniqueId} from "lodash";
-import {useLocalStore, useObserver} from "mobx-react";
+import {useLocalObservable, useObserver} from "mobx-react";
 import {useContext, useLayoutEffect, useMemo} from "react";
 
 import {themeable} from "@focus4/core";
@@ -98,7 +98,7 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
         []
     );
 
-    const store = useLocalStore(() => ({
+    const store = useLocalObservable(() => ({
         /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
         hideErrorOnInit: (props.field as FormEntityField<F>).isEdit && !props.field.value,
 
