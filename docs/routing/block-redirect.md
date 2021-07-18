@@ -2,7 +2,7 @@
 
 L'ensemble du périmètre d'une application est rarement accessible à tous les utilisateurs. Pour répondre à cette problématique, il est possible de définir des règles de **blocage** et de **redirection** dans le routeur.
 
-`makeRouter2` accepte un second paramètre, qui est lambda avec un configurateur qui expose 3 méthodes :
+`makeRouter` accepte un second paramètre, qui est lambda avec un configurateur qui expose 3 méthodes :
 
 ## `block(url, condition)`
 

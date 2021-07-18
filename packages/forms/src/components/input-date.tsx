@@ -2,7 +2,7 @@ import {uniqueId} from "lodash";
 import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
-import {Component, KeyboardEvent} from "react";
+import {Component, KeyboardEvent, ReactNode} from "react";
 
 import {CSSProp, themr} from "@focus4/styling";
 import {Calendar, CalendarProps, IconButton} from "@focus4/toolbox";
@@ -21,10 +21,12 @@ export interface InputDateProps {
     calendarProps?: Omit<CalendarProps, "display" | "handleSelect" | "onChange" | "selectedDate">;
     /** Composant affiché depuis la gauche ou la droite. */
     displayFrom?: "left" | "right";
+    /** Give an error node to display under the field. */
+    error?: ReactNode;
     /** Format de la date dans l'input. */
     inputFormat?: string;
     /** Props de l'input. */
-    inputProps?: Omit<InputProps<"string">, "mask" | "onChange" | "onKeyDown" | "onFocus" | "type" | "value">;
+    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onKeyDown" | "onFocus" | "type" | "value">;
     /**
      * Définit la correspondance entre une date et l'ISOString (date/heure) associé.
      *
@@ -257,12 +259,13 @@ export class InputDate extends Component<InputDateProps> {
 
     render() {
         const {
-            theme: pTheme,
-            inputFormat = "MM/DD/YYYY",
             calendarFormat = "ddd, MMM D",
-            displayFrom = "left",
             calendarProps = {},
-            inputProps = {}
+            displayFrom = "left",
+            error,
+            inputFormat = "MM/DD/YYYY",
+            inputProps = {},
+            theme: pTheme
         } = this.props;
         return (
             <Theme theme={pTheme}>
@@ -271,6 +274,7 @@ export class InputDate extends Component<InputDateProps> {
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
+                            error={error}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                             onChange={value => (this.dateText = value)}
                             onKeyDown={this.handleKeyDown}
@@ -283,7 +287,7 @@ export class InputDate extends Component<InputDateProps> {
                                 ref={cal => (this.calendar = cal)}
                                 className={theme.calendar({
                                     [this.calendarPosition ?? "down"]: true,
-                                    fromRight: displayFrom == "right"
+                                    fromRight: displayFrom === "right"
                                 })}
                             >
                                 <header className={theme.header({[this.calendarDisplay]: true})}>

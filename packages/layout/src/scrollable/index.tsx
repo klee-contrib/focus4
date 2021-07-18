@@ -50,11 +50,9 @@ class ScrollableComponent extends Component<ScrollableProps> {
     @observable.ref mutationObserver!: MutationObserver;
     @observable.ref resizeObserver!: ResizeObserver;
 
-    readonly menuStylers = observable.map<Key, HTMLElement>({}, {deep: false});
-    readonly menuParentNodes = observable.map<Key, HTMLElement>({}, {deep: false});
-    readonly onIntersects = observable.map<Element, (ratio: number, isIntersecting: boolean) => void>([], {
-        deep: false
-    });
+    readonly menuRefs = observable.map<Key, HTMLElement>({}, {deep: false});
+    readonly menuParentNodes = new Map<Key, HTMLElement>();
+    readonly onIntersects = new Map<Element, (ratio: number, isIntersecting: boolean) => void>();
 
     @observable canDeploy = false;
     @observable hasBtt = false;
@@ -129,10 +127,8 @@ class ScrollableComponent extends Component<ScrollableProps> {
             throw new Error("Un élément du menu d'un Scrollable doit avoir une key.");
         }
         this.menuParentNodes.set(node.key, parentNode);
-        this.isMenuRetractable = retractable;
-        if (!this.menuStylers.has(node.key)) {
-            this.isMenuOpened = true;
-        }
+        setTimeout(() => (this.isMenuRetractable = retractable));
+
         return createPortal(cloneElement(node, {ref: this.setRef(node.key)}), this.menuNode);
     }
 
@@ -142,16 +138,22 @@ class ScrollableComponent extends Component<ScrollableProps> {
         return createPortal(node, this.containerNode);
     }
 
-    setRef = memoize((key: Key) => (ref: HTMLElement | null) => {
-        if (!ref && this.menuStylers.has(key)) {
-            this.menuStylers.delete(key);
-            this.menuParentNodes.delete(key);
-        } else if (ref && !this.menuStylers.has(key)) {
-            this.menuStylers.set(key, ref);
-            this.setMenuRefs();
-            this.updateMenuParentNodes("0%");
-        }
-    });
+    setRef = memoize((key: Key) =>
+        action((ref: HTMLElement | null) => {
+            if (!ref && this.menuRefs.has(key)) {
+                this.menuRefs.delete(key);
+                this.menuParentNodes.delete(key);
+                if (!this.menuRefs.size) {
+                    this.isMenuOpened = true;
+                }
+            } else if (ref && !this.menuRefs.has(key)) {
+                this.isMenuOpened = true;
+                this.menuRefs.set(key, ref);
+                this.setMenuRefs();
+                this.updateMenuParentNodes("0%");
+            }
+        })
+    );
 
     UNSAFE_componentWillReceiveProps(props: ScrollableProps) {
         if (props.resetScrollOnChildrenChange && props.children !== this.props.children) {
@@ -202,7 +204,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
     }
 
     setMenuRefs() {
-        this.menuStylers.forEach((menuRef, key) => {
+        this.menuRefs.forEach((menuRef, key) => {
             const parentNode = this.menuParentNodes.get(key)!;
             const headerHeight = (this.canDeploy ? this.visibleHeader : 1) * this.headerHeight;
             const marginTop = Math.max(
@@ -279,9 +281,9 @@ class ScrollableComponent extends Component<ScrollableProps> {
                                 onUpdate={({x}) => {
                                     this.updateMenuParentNodes(x as string);
                                 }}
-                                transition={springTransition}
+                                transition={this.menuRefs.size ? springTransition : {duration: 0}}
                             >
-                                {this.isMenuRetractable && this.menuParentNodes.size ? (
+                                {this.menuRefs.size && this.isMenuRetractable ? (
                                     <Button
                                         icon={`keyboard_arrow_${this.isMenuOpened ? "left" : "right"}`}
                                         className={theme.menuButton()}

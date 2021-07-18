@@ -2,7 +2,7 @@ import {uniqueId} from "lodash";
 import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
-import {Component, KeyboardEvent} from "react";
+import {Component, KeyboardEvent, ReactNode} from "react";
 
 import {CSSProp, themr} from "@focus4/styling";
 import {Clock, ClockCss, IconButton} from "@focus4/toolbox";
@@ -20,10 +20,12 @@ export interface InputTimeProps {
     clockTheme?: CSSProp<ClockCss>;
     /** Composant affiché depuis la gauche ou la droite. */
     displayFrom?: "left" | "right";
+    /** Give an error node to display under the field. */
+    error?: ReactNode;
     /** Format de la date dans l'input. */
     inputFormat?: string;
     /** Props de l'input. */
-    inputProps?: Omit<InputProps<"string">, "mask" | "onChange" | "onKeyDown" | "onFocus" | "type" | "value">;
+    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onKeyDown" | "onFocus" | "type" | "value">;
     /** Appelé lorsque l'heure change. */
     onChange: (time: string | undefined) => void;
     /** CSS. */
@@ -195,7 +197,14 @@ export class InputTime extends Component<InputTimeProps> {
     }
 
     render() {
-        const {theme: pTheme, inputFormat = "HH:mm", displayFrom = "left", inputProps = {}, clockTheme} = this.props;
+        const {
+            clockTheme,
+            displayFrom = "left",
+            error,
+            inputFormat = "HH:mm",
+            inputProps = {},
+            theme: pTheme
+        } = this.props;
         return (
             <Theme theme={pTheme}>
                 {theme => (
@@ -203,6 +212,7 @@ export class InputTime extends Component<InputTimeProps> {
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
+                            error={error}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                             onChange={value => (this.timeText = value)}
                             onKeyDown={this.handleKeyDown}
@@ -215,7 +225,7 @@ export class InputTime extends Component<InputTimeProps> {
                                 ref={clo => (this.clock = clo)}
                                 className={theme.clock({
                                     [this.clockPosition ?? "down"]: true,
-                                    fromRight: displayFrom == "right"
+                                    fromRight: displayFrom === "right"
                                 })}
                             >
                                 <header className={theme.header()}>

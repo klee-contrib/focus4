@@ -1,6 +1,6 @@
 # API de `Router`
 
-L'objet construit par `makeRouter2` contient les propriétés et méthodes suivantes :
+L'objet construit par `makeRouter` contient les propriétés et méthodes suivantes :
 
 ## `start()`
 

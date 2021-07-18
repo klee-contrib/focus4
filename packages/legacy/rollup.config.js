@@ -32,7 +32,8 @@ const config = {
         "react/jsx-runtime",
         "react-dom",
         "tslib",
-        "uuid"
+        "uuid",
+        "yester"
     ],
     onwarn
 };

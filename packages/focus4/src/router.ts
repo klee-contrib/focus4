@@ -1,1 +1,1 @@
-export {RouterConfig, ViewStore, makeRouter} from "@focus4/core";
+export {Router, RouterConstraintBuilder, makeRouter, param} from "@focus4/core";

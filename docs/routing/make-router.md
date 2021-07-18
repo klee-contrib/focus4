@@ -4,12 +4,12 @@ On va définir notre routeur via un **arbre** qui va décrire **tous les routes 
 
 Dans notre arbre de route, on va y trouver à la fois des **sections "fixes"**, qui peuvent par exemple correspondre à des noms de pages (`"operation"`, `"projet"`, `"detail"`...), ainsi que des **paramètres**, à priori liés à une section fixe (`"operation/`**`2`**`"`, `"detail/`**`2020-10-04`**`"`), qui eux sont variables.
 
-Le routeur se définit via les méthodes **`makeRouter2`** et **`param`**, de la façon suivante :
+Le routeur se définit via les méthodes **`makeRouter`** et **`param`**, de la façon suivante :
 
 ```ts
 const echeance = param("echId", p => p.number(), {reglement: param("regId", p => p.number())});
 
-const router = makeRouter2({
+const router = makeRouter({
     projet: {
         detail: {}
     },
