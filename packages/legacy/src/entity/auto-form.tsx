@@ -2,7 +2,7 @@ import {action, comparer, computed, Lambda, makeObservable, observable, reaction
 import {Component, ReactElement} from "react";
 import {v4} from "uuid";
 
-import {classAutorun, messageStore} from "@focus4/core";
+import {messageStore} from "@focus4/core";
 import {
     AutocompleteProps,
     AutocompleteResult,
@@ -33,6 +33,7 @@ import {
     toFlatValues
 } from "@focus4/stores";
 
+import {classAutorun} from "../reactions";
 import {fieldWrapperFor} from "./field-wrapper";
 import {createViewModel, ViewModel} from "./view-model";
 
