@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {isEqual} from "lodash";
-import {extendObservable, observe} from "mobx";
+import {extendObservable, observable, observe} from "mobx";
 import {useLocalObservable} from "mobx-react";
 import {useContext, useEffect, useState} from "react";
 
@@ -45,90 +45,93 @@ export function useListBase<T>({
 }: ListBaseProps<T> & {data?: T[]; store?: CollectionStore<T>}) {
     const context = useContext(ScrollableContext);
     const theme = useTheme("listBase", listBaseCss, baseTheme);
-    const state = useLocalObservable(() => ({
-        /** Nombre d'éléments affichés. */
-        displayedCount: perPage,
+    const state = useLocalObservable(
+        () => ({
+            /** Nombre d'éléments affichés. */
+            displayedCount: perPage,
 
-        _data: data,
-        get data() {
-            return (store ? store.list : state._data)!;
-        },
+            _data: data,
+            get data() {
+                return (store ? store.list : state._data)!;
+            },
 
-        /** Les données affichées. */
-        get displayedData() {
-            if (state.displayedCount) {
-                return state.data.slice(0, state.displayedCount);
-            } else {
-                return state.data;
-            }
-        },
-
-        /** Correspond aux données chargées mais non affichées. */
-        get hasMoreHidden() {
-            return (this.displayedCount && this.data.length > this.displayedCount) || false;
-        },
-
-        /** Correpond aux données non chargées. */
-        get hasMoreToLoad() {
-            return store && store.totalCount > store.currentCount;
-        },
-
-        /** On complète le `hasMoreData` avec l'info du nombre de données chargées, si c'est un SearchStore. */
-        get hasMoreData() {
-            return this.hasMoreHidden || this.hasMoreToLoad;
-        },
-
-        _isLoading: isLoading,
-        get isLoading() {
-            return store?.isLoading ?? state._isLoading ?? false;
-        },
-
-        /** Label du bouton "Voir plus". */
-        get showMoreLabel() {
-            if (store?.type === "server") {
-                return i18next.t(`${i18nPrefix}.list.show.more`);
-            } else {
-                return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
-                    this.data.length
-                } ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
-            }
-        },
-
-        /** Scroll infini disponible. */
-        get hasInfiniteScroll() {
-            return !isManualFetch && (store?.type === "server" || !!perPage);
-        },
-
-        /** Charge la page suivante. */
-        handleShowMore() {
-            if (state.hasMoreHidden) {
-                if (state.hasMoreData) {
-                    state.displayedCount! += perPage || 5;
+            /** Les données affichées. */
+            get displayedData() {
+                if (state.displayedCount) {
+                    return state.data.slice(0, state.displayedCount);
+                } else {
+                    return state.data;
                 }
-            } else if (store?.type === "server" && state.hasMoreToLoad && !store.isLoading) {
-                store.search(true);
-                if (perPage) {
+            },
+
+            /** Correspond aux données chargées mais non affichées. */
+            get hasMoreHidden() {
+                return (this.displayedCount && this.data.length > this.displayedCount) || false;
+            },
+
+            /** Correpond aux données non chargées. */
+            get hasMoreToLoad() {
+                return store && store.totalCount > store.currentCount;
+            },
+
+            /** On complète le `hasMoreData` avec l'info du nombre de données chargées, si c'est un SearchStore. */
+            get hasMoreData() {
+                return this.hasMoreHidden || this.hasMoreToLoad;
+            },
+
+            _isLoading: isLoading,
+            get isLoading() {
+                return store?.isLoading ?? state._isLoading ?? false;
+            },
+
+            /** Label du bouton "Voir plus". */
+            get showMoreLabel() {
+                if (store?.type === "server") {
+                    return i18next.t(`${i18nPrefix}.list.show.more`);
+                } else {
+                    return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
+                        this.data.length
+                    } ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+                }
+            },
+
+            /** Scroll infini disponible. */
+            get hasInfiniteScroll() {
+                return !isManualFetch && (store?.type === "server" || !!perPage);
+            },
+
+            /** Charge la page suivante. */
+            handleShowMore() {
+                if (state.hasMoreHidden) {
                     if (state.hasMoreData) {
                         state.displayedCount! += perPage || 5;
                     }
-                }
-            }
-        },
-
-        /** Enregistre un élément de la liste comme marqueur pour le scroll infini. */
-        registerSentinel(listNode: HTMLElement | null) {
-            if (state.hasInfiniteScroll) {
-                if (listNode) {
-                    const sentinel = context.registerIntersect(listNode, (_, isIntersecting) => {
-                        if (isIntersecting) {
-                            state.handleShowMore();
-                            sentinel();
+                } else if (store?.type === "server" && state.hasMoreToLoad && !store.isLoading) {
+                    store.search(true);
+                    if (perPage) {
+                        if (state.hasMoreData) {
+                            state.displayedCount! += perPage || 5;
                         }
-                    });
+                    }
+                }
+            },
+
+            /** Enregistre un élément de la liste comme marqueur pour le scroll infini. */
+            registerSentinel(listNode: HTMLElement | null) {
+                if (state.hasInfiniteScroll) {
+                    if (listNode) {
+                        const sentinel = context.registerIntersect(listNode, (_, isIntersecting) => {
+                            if (isIntersecting) {
+                                state.handleShowMore();
+                                sentinel();
+                            }
+                        });
+                    }
                 }
             }
-        }
-    }));
+        }),
+        {_data: observable.ref}
+    );
 
     useEffect(() => {
         state._data = data;

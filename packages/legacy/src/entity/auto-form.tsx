@@ -177,19 +177,18 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
 
     /** Change le mode du formulaire. */
     @action
-    toggleEdit(isEdit: boolean) {
+    toggleEdit = (isEdit: boolean) => {
         this.isEdit = isEdit;
         if (!isEdit) {
             this.entity.reset();
         }
-    }
+    };
 
     @classAutorun protected updateApplicationStore() {
         AutoForm.editingMap.set(this.formId, this.isEdit);
     }
 
     /** Appelle le service de suppression. */
-    @action
     async delete() {
         if (this.services.delete) {
             this.isLoading = true;
@@ -203,7 +202,6 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     }
 
     /** Appelle le service de chargement (appelé par la réaction de chargement). */
-    @action
     async load() {
         const {getLoadParams, load} = this.services;
 
@@ -228,7 +226,6 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     }
 
     /** Appelle le service de sauvegarde. */
-    @action
     async save() {
         // On ne sauvegarde que si la validation est en succès.
         if (this.validate()) {
@@ -274,7 +271,6 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      *
      * Surcharger la méthode pour ajouter une validation personnalisée.
      */
-    @action
     validate() {
         // On force en premier lieu l'affichage des erreurs sur tous les champs.
         this.forceErrorDisplay = true;

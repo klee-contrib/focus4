@@ -99,47 +99,50 @@ export function List<T>({
 }: ListProps<T>) {
     const listContext = useContext(ListContext);
     const theme = useTheme("list", listCss, pTheme);
-    const state = useLocalObservable(() => ({
-        _addItemHandler: addItemHandler,
-        get addItemHandler() {
-            return state._addItemHandler ?? listContext.addItemHandler;
-        },
+    const state = useLocalObservable(
+        () => ({
+            _addItemHandler: addItemHandler,
+            get addItemHandler() {
+                return state._addItemHandler ?? listContext.addItemHandler;
+            },
 
-        _mode: mode,
-        get mode() {
-            return state._mode ?? listContext.mode ?? (MosaicComponent && !LineComponent ? "mosaic" : "list");
-        },
+            _mode: mode,
+            get mode() {
+                return state._mode ?? listContext.mode ?? (MosaicComponent && !LineComponent ? "mosaic" : "list");
+            },
 
-        /** Nombre de mosaïque par ligne, déterminé à la volée. */
-        byLine: 0,
-        /** Index de l'item sur lequel on doit afficher le détail. */
-        displayedIdx: undefined as number | undefined,
-        /** Ref vers la liste pour déterminer sa largeur. */
-        ulRef: null as HTMLUListElement | null,
-        /** Liste des éléments sélectionnés par le drag and drop. */
-        draggedItems: observable<T>([]),
+            /** Nombre de mosaïque par ligne, déterminé à la volée. */
+            byLine: 0,
+            /** Index de l'item sur lequel on doit afficher le détail. */
+            displayedIdx: undefined as number | undefined,
+            /** Ref vers la liste pour déterminer sa largeur. */
+            ulRef: null as HTMLUListElement | null,
+            /** Liste des éléments sélectionnés par le drag and drop. */
+            draggedItems: observable<T>([]),
 
-        /** Toggle le détail depuis la ligne. */
-        async toggleDetail(
-            idx: number,
-            {onOpen, onClose}: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void} = {}
-        ) {
-            const displayedIdx = state.displayedIdx !== idx ? idx : undefined;
-            if (displayedIdx !== undefined && onOpen) {
-                await onOpen();
+            /** Toggle le détail depuis la ligne. */
+            async toggleDetail(
+                idx: number,
+                {onOpen, onClose}: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void} = {}
+            ) {
+                const displayedIdx = state.displayedIdx !== idx ? idx : undefined;
+                if (displayedIdx !== undefined && onOpen) {
+                    await onOpen();
+                }
+                if (displayedIdx === undefined && onClose) {
+                    await onClose();
+                }
+
+                state.displayedIdx = displayedIdx;
+            },
+
+            /** Ferme le détail. */
+            closeDetail() {
+                state.displayedIdx = undefined;
             }
-            if (displayedIdx === undefined && onClose) {
-                await onClose();
-            }
-
-            state.displayedIdx = displayedIdx;
-        },
-
-        /** Ferme le détail. */
-        closeDetail() {
-            state.displayedIdx = undefined;
-        }
-    }));
+        }),
+        {_addItemHandler: observable.ref}
+    );
 
     useEffect(() => {
         state._addItemHandler = addItemHandler;

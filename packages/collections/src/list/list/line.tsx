@@ -1,5 +1,5 @@
 import {motion} from "framer-motion";
-import {IObservableArray} from "mobx";
+import {IObservableArray, observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react";
 import {getEmptyImage} from "react-dnd-html5-backend";
@@ -65,11 +65,14 @@ export function LineWrapper<T>({
     theme,
     ...oProps
 }: LineWrapperProps<T>) {
-    const props = useLocalObservable(() => ({
-        data: oProps.data,
-        hasSelection: oProps.hasSelection,
-        store: oProps.store
-    }));
+    const props = useLocalObservable(
+        () => ({
+            data: oProps.data,
+            hasSelection: oProps.hasSelection,
+            store: oProps.store
+        }),
+        {data: observable.ref, store: observable.ref}
+    );
     useEffect(() => {
         props.data = oProps.data;
         props.hasSelection = oProps.hasSelection;

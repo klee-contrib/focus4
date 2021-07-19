@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "11.0.0-preview.7",
+    "version": "11.0.0-preview.8",
     "description": "Focus v4, all modules",
     "main": "index.js",
     "repository": {
@@ -11,7 +11,7 @@
     "license": "MIT",
     "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/focus4",
     "dependencies": {
-        "@focus4/collections": "^11.0.0-preview.7",
+        "@focus4/collections": "^11.0.0-preview.8",
         "@focus4/core": "^11.0.0-preview.7",
         "@focus4/forms": "^11.0.0-preview.7",
         "@focus4/layout": "^11.0.0-preview.7",

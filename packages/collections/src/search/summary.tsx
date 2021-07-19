@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
 
@@ -75,7 +76,11 @@ export function Summary<T>({
 }: SummaryProps<T>) {
     const theme = useTheme("summary", summaryCss, pTheme);
 
-    const props = useLocalObservable(() => ({hideCriteria, orderableColumnList, store}));
+    const props = useLocalObservable(() => ({hideCriteria, orderableColumnList, store}), {
+        hideCriteria: observable.ref,
+        orderableColumnList: observable.ref,
+        store: observable.ref
+    });
     useEffect(() => {
         props.hideCriteria = hideCriteria;
         props.orderableColumnList = orderableColumnList;

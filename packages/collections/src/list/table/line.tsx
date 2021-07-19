@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
 
@@ -39,11 +40,14 @@ export function TableLine<T>({
     /** CSS. */
     theme: ToBem<TableCss>;
 }) {
-    const props = useLocalObservable(() => ({
-        data: oProps.data,
-        hasSelection: oProps.hasSelection,
-        store: oProps.store
-    }));
+    const props = useLocalObservable(
+        () => ({
+            data: oProps.data,
+            hasSelection: oProps.hasSelection,
+            store: oProps.store
+        }),
+        {data: observable.ref, store: observable.ref}
+    );
     useEffect(() => {
         props.data = oProps.data;
         props.hasSelection = oProps.hasSelection;
