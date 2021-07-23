@@ -45,9 +45,9 @@ export function Label({
             {comment && showTooltip ? (
                 <TooltipIcon
                     className={theme.icon({clickable: !!onTooltipClick})}
-                    tooltipHideOnClick={!onTooltipClick}
                     onClick={onTooltipClick}
                     tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
+                    tooltipHideOnClick={!onTooltipClick}
                     value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
                 />
             ) : null}

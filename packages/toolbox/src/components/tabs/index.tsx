@@ -14,13 +14,15 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import tabsCss, {TabsCss} from "../__style__/tabs.css";
-export {tabsCss, TabsCss};
 
 import {FontIcon} from "../font-icon";
+
 import {TabContent, TabContentProps} from "./content";
 import {Tab, TabProps} from "./tab";
 export {Tab, TabProps};
+
+import tabsCss, {TabsCss} from "../__style__/tabs.css";
+export {tabsCss, TabsCss};
 
 export interface TabsProps {
     /** Children to pass through the component. */
@@ -147,14 +149,14 @@ export function Tabs({
     }, [children]);
 
     return (
-        <div data-react-toolbox="tabs" className={classNames(theme.tabs({fixed, inverse}), className)}>
+        <div className={classNames(theme.tabs({fixed, inverse}), className)} data-react-toolbox="tabs">
             <div className={theme.navigationContainer()}>
                 {arrows.left && (
                     <div className={theme.arrowContainer()} onClick={scrollRight}>
                         <FontIcon className={theme.arrow()} value="keyboard_arrow_left" />
                     </div>
                 )}
-                <div className={theme.navigation()} role="tablist" ref={navigationNode}>
+                <div ref={navigationNode} className={theme.navigation()} role="tablist">
                     {useMemo(
                         () =>
                             c.headers.map((item, i) =>

@@ -46,11 +46,11 @@ export function Dialog({
                     <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
                         <div className={theme.wrapper()}>
                             <div
-                                data-react-toolbox="dialog"
                                 className={classNames(theme.dialog(), className)}
+                                data-react-toolbox="dialog"
                                 onClick={e => e.stopPropagation()}
                             >
-                                <section role="body" className={theme.body()}>
+                                <section className={theme.body()} role="body">
                                     {title ? <h6 className={theme.title()}>{title}</h6> : null}
                                     {children}
                                 </section>

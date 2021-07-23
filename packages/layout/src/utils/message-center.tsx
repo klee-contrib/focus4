@@ -93,7 +93,7 @@ export class MessageCenter extends Component<MessageCenterProps> {
 
     render() {
         const {i18nPrefix = "focus"} = this.props;
-        const {content, timeout, type} = this.currentNotification || {content: "", type: undefined, timeout: 0};
+        const {content, timeout, type} = this.currentNotification ?? {content: "", type: undefined, timeout: 0};
         return (
             <Snackbar
                 action={i18next.t(`${i18nPrefix}.messageCenter.dismiss`)}
@@ -101,8 +101,8 @@ export class MessageCenter extends Component<MessageCenterProps> {
                 label={i18next.t(content)}
                 onClick={this.closeSnackbar}
                 onTimeout={this.closeSnackbar}
-                timeout={timeout}
                 theme={snackBarCss}
+                timeout={timeout}
                 type={
                     type === "error" ? "cancel" : type === "success" ? "accept" : type === "warning" ? type : undefined
                 }

@@ -19,7 +19,7 @@ export async function coreFetch(
     options: RequestInit = {}
 ): Promise<any> {
     const queryString = buildQueryString(query);
-    url = url + (queryString ? `${url.includes("?") ? "&" : "?"}${queryString}` : "");
+    url += queryString ? `${url.includes("?") ? "&" : "?"}${queryString}` : "";
     options = merge(
         {method, credentials: "include"},
         body instanceof FormData
@@ -35,10 +35,14 @@ export async function coreFetch(
         options
     );
 
-    // On crée une première Promise autorésolue ici pour éviter de trigger une mise à jour d'état synchrone avec l'appel du fetch.
-    // Ni React, ni MobX n'apprécient ça.
+    /*
+     * On crée une première Promise autorésolue ici pour éviter de trigger une mise à jour d'état synchrone avec l'appel du fetch.
+     * Ni React, ni MobX n'apprécient ça.
+     */
     const id = v4();
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise(resolve => {
+        setTimeout(resolve, 0);
+    });
     requestStore.updateRequest({id, url, status: "pending"}); // On crée la requête dans le store (= la mise à jour d'état en question).
 
     // On lance la requête.
@@ -53,9 +57,9 @@ export async function coreFetch(
 
             // On détermine le type de retour en fonction du Content-Type dans le header.
             const contentType = response.headers.get("Content-Type");
-            if (contentType && contentType.includes("application/json")) {
+            if (contentType?.includes("application/json")) {
                 return await response.json();
-            } else if (contentType && contentType.includes("text/plain")) {
+            } else if (contentType?.includes("text/plain")) {
                 return await response.text();
             } else if (response.status === 204) {
                 return null; // Cas réponse vide.
@@ -70,7 +74,7 @@ export async function coreFetch(
 
             // On détermine le type de retour en fonction du Content-Type dans le header.
             const contentType = response.headers.get("Content-Type");
-            if (contentType && contentType.includes("application/json")) {
+            if (contentType?.includes("application/json")) {
                 // Pour une erreur JSON, on la parse pour trouver et enregistrer les erreurs "attendues".
                 return Promise.reject<ManagedErrorResponse>(
                     manageResponseErrors(response.status, await response.json())
@@ -81,10 +85,10 @@ export async function coreFetch(
                 return Promise.reject<string>(await response.text());
             }
         }
-    } catch (error) {
+    } catch (error: unknown) {
         // Requête en erreur (= pas de retour serveur).
         requestStore.updateRequest({id, url, status: "error"});
-        console.error(`"${error.message}" error when calling ${url}`);
+        console.error(`"${(error as any).message as string}" error when calling ${url}`);
         return Promise.reject(error);
     }
 }

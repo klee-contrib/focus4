@@ -2,10 +2,12 @@ import classNames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback, useEffect} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import tabsCss, {TabsCss} from "../__style__/tabs.css";
+
 
 import {FontIcon} from "../font-icon";
 import {rippleFactory} from "../ripple";
+
+import tabsCss, {TabsCss} from "../__style__/tabs.css";
 
 export interface TabProps {
     /** If true, the current component is visible. */
@@ -64,13 +66,13 @@ export const Tab = rippleFactory({theme: {rippleWrapper: tabsCss.rippleWrapper}}
 
     return (
         <div
-            data-react-toolbox="tab"
-            role="tab"
-            tabIndex={0}
             className={classNames(theme.label({active, disabled, hidden, withIcon: !!icon}), className)}
+            data-react-toolbox="tab"
             onClick={handleClick}
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
+            role="tab"
+            tabIndex={0}
         >
             {icon && <FontIcon className={(theme as any).icon?.()} value={icon} />}
             {label}

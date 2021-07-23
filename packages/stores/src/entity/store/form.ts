@@ -15,6 +15,7 @@ import {
     StoreNode
 } from "../types";
 import {validateField} from "../validation";
+
 import {getNodeForList, replaceNode} from "./store";
 
 /**
@@ -96,8 +97,10 @@ export function nodeToFormNode<E = any, E0 = E>(
                         return;
                     }
 
-                    // On cherche les noeuds correspondants aux noeuds supprimés de la source.
-                    // Ils ne sont potentiellement ni à la même place, ni même présents.
+                    /*
+                     * On cherche les noeuds correspondants aux noeuds supprimés de la source.
+                     * Ils ne sont potentiellement ni à la même place, ni même présents.
+                     */
                     const nodesToRemove = node.filter(item =>
                         change.removed.find(changed => changed === item.sourceNode)
                     );
@@ -107,20 +110,25 @@ export function nodeToFormNode<E = any, E0 = E>(
                         // Ici c'est le cas facile : les éléments ajoutés sont au début de la source : ils sont donc au début de la cible.
                         node.splice(0, 0, ...(newNodes as any));
                     } else {
-                        // On doit chercher l'index auquel il faut ajouter les éléments, qui au mieux est le même.
-                        // La pire chose qu'il puisse arriver est d'avoir supprimé des éléments de la source dans la cible.
+                        /*
+                         * On doit chercher l'index auquel il faut ajouter les éléments, qui au mieux est le même.
+                         * La pire chose qu'il puisse arriver est d'avoir supprimé des éléments de la source dans la cible.
+                         */
                         let previousIndex;
                         let changeIndex = change.index;
                         do {
                             // On va donc chercher le premier item de la cible précédent l'index de la source qui est inclus dans la source.
                             changeIndex--;
+                            // eslint-disable-next-line @typescript-eslint/no-loop-func
                             previousIndex = node.findIndex(item =>
                                 isEqual(change.object[changeIndex], item.sourceNode)
                             );
                         } while (previousIndex === -1 && changeIndex > 0);
-                        // Si aucune suppression, on a fait (-1 +1) donc on retombe au bon endroit.
-                        // S'il y a eu n suppressions, on a fait (-1 -n +1), et on est aussi au bon endroit.
-                        // L'index minimal final est bien toujours 0, donc au pire on ajoutera au début, c'est qui est aussi le bon endroit.
+                        /*
+                         * Si aucune suppression, on a fait (-1 +1) donc on retombe au bon endroit.
+                         * S'il y a eu n suppressions, on a fait (-1 -n +1), et on est aussi au bon endroit.
+                         * L'index minimal final est bien toujours 0, donc au pire on ajoutera au début, c'est qui est aussi le bon endroit.
+                         */
                         node.splice(previousIndex + 1, 0, ...(newNodes as any));
                     }
 

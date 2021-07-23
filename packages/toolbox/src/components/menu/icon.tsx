@@ -2,10 +2,13 @@ import classNames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useEffect, useState} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import menuCss, {MenuCss} from "../__style__/menu.css";
+
 
 import {IconButton} from "../icon-button";
+
 import {Menu} from "./menu";
+
+import menuCss, {MenuCss} from "../__style__/menu.css";
 
 export interface IconMenuProps {
     /** If true, the inner Menu component will be active. */

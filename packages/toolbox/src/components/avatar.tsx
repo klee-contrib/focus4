@@ -2,10 +2,11 @@ import classNames from "classnames";
 import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import avatarCss, {AvatarCss} from "./__style__/avatar.css";
-export {avatarCss, AvatarCss};
 
 import {FontIcon} from "./font-icon";
+
+import avatarCss, {AvatarCss} from "./__style__/avatar.css";
+export {avatarCss, AvatarCss};
 
 export interface AvatarProps {
     /** Alt text for the image. */
@@ -28,7 +29,7 @@ export interface AvatarProps {
 export function Avatar({alt = "", className, children, cover = false, icon, image, title, theme: pTheme}: AvatarProps) {
     const theme = useTheme("RTAvatar", avatarCss, pTheme);
     return (
-        <div data-react-toolbox="avatar" className={classNames(theme.avatar(), className)}>
+        <div className={classNames(theme.avatar(), className)} data-react-toolbox="avatar">
             {children}
             {cover && typeof image === "string" && (
                 <span aria-label={alt} className={theme.image()} style={{backgroundImage: `url(${image})`}} />
@@ -39,7 +40,7 @@ export function Avatar({alt = "", className, children, cover = false, icon, imag
                 ) : (
                     image
                 ))}
-            {typeof icon === "string" ? <FontIcon className={theme.letter()} value={icon} alt={alt} /> : icon}
+            {typeof icon === "string" ? <FontIcon alt={alt} className={theme.letter()} value={icon} /> : icon}
             {title ? <span className={theme.letter()}>{title[0]}</span> : null}
         </div>
     );

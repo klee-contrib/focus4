@@ -2,6 +2,7 @@ import classNames from "classnames";
 import {forwardRef, MouseEventHandler, Ref, TouchEventHandler, useCallback, useMemo} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
 import progressBarCss, {ProgressBarCss} from "./__style__/progress-bar.css";
 export {progressBarCss, ProgressBarCss};
 
@@ -84,14 +85,14 @@ export const ProgressBar = forwardRef(function RTProgressBar(
 
     return (
         <div
-            data-react-toolbox="progress-bar"
-            aria-valuenow={value}
-            aria-valuemin={min}
             aria-valuemax={max}
+            aria-valuemin={min}
+            aria-valuenow={value}
             className={classNames(
                 theme.progressBar({[type]: true, indeterminate: mode === "indeterminate", multicolor}),
                 className
             )}
+            data-react-toolbox="progress-bar"
             onClick={onClick}
             onMouseDown={onMouseDown}
             onMouseEnter={onMouseEnter}
@@ -100,12 +101,12 @@ export const ProgressBar = forwardRef(function RTProgressBar(
         >
             {type === "circular" ? (
                 <svg ref={ref as Ref<SVGSVGElement>} className={theme.circle()} viewBox="0 0 60 60">
-                    <circle className={theme.path()} style={circularStyle} cx="30" cy="30" r="25" />
+                    <circle className={theme.path()} cx="30" cy="30" r="25" style={circularStyle} />
                 </svg>
             ) : (
                 <div ref={ref as Ref<HTMLDivElement>}>
-                    <span data-ref="buffer" className={theme.buffer()} style={linearStyle.buffer} />
-                    <span data-ref="value" className={theme.value()} style={linearStyle.value} />
+                    <span className={theme.buffer()} data-ref="buffer" style={linearStyle.buffer} />
+                    <span className={theme.value()} data-ref="value" style={linearStyle.value} />
                 </div>
             )}
         </div>

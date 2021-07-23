@@ -27,7 +27,7 @@ export function HeaderScrolling({canDeploy = true, children, theme: pTheme}: Hea
     ]);
 
     return (
-        <header className={theme.scrolling({deployed: canDeploy, undeployed: !canDeploy})} ref={ref}>
+        <header ref={ref} className={theme.scrolling({deployed: canDeploy, undeployed: !canDeploy})}>
             {children}
         </header>
     );

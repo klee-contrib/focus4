@@ -3,6 +3,7 @@ import {findDOMNode} from "react-dom";
 
 import {Button, ButtonProps} from "../button";
 import {tooltipFactory, TooltipProps} from "../tooltip";
+
 import {Menu, MenuProps} from "./menu";
 
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
@@ -37,6 +38,7 @@ export function ButtonMenu({
 
     // On récupère à tout instant la hauteur du bouton.
     useLayoutEffect(() => {
+        // eslint-disable-next-line react/no-find-dom-node
         setButtonHeight((findDOMNode(button.current) as Element).clientHeight);
     });
 
@@ -69,15 +71,15 @@ export function ButtonMenu({
 
     const FinalButton = buttonProps.tooltip ? TooltipButton : Button;
     return (
-        <div data-focus="button-menu" ref={ref} style={{position: "relative", display: "inline-block"}}>
+        <div ref={ref} data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
             <FinalButton
                 ref={button}
                 {...buttonProps}
-                onClick={clickHandler}
                 icon={opened && openedIcon ? openedIcon : icon}
+                onClick={clickHandler}
             />
             <div style={menuStyle}>
-                <Menu {...menuProps} theme={menuProps.theme} position={position} active={opened} onHide={hideHandler}>
+                <Menu {...menuProps} active={opened} onHide={hideHandler} position={position} theme={menuProps.theme}>
                     {menuProps.children}
                 </Menu>
             </div>

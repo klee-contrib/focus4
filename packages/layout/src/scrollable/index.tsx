@@ -37,6 +37,7 @@ export interface ScrollableProps {
     theme?: CSSProp<ScrollableCss>;
 }
 
+// eslint-disable-next-line react/no-unsafe
 @observer
 class ScrollableComponent extends Component<ScrollableProps> {
     @observable.ref header?: HTMLElement;
@@ -63,9 +64,63 @@ class ScrollableComponent extends Component<ScrollableProps> {
     @observable visibleHeader = 1;
     @observable width = 0;
 
+    setRef = memoize((key: Key) =>
+        action((ref: HTMLElement | null) => {
+            if (!ref && this.menuRefs.has(key)) {
+                this.menuRefs.delete(key);
+                this.menuParentNodes.delete(key);
+                if (!this.menuRefs.size) {
+                    this.isMenuOpened = true;
+                }
+            } else if (ref && !this.menuRefs.has(key)) {
+                this.isMenuOpened = true;
+                this.menuRefs.set(key, ref);
+                this.setMenuRefs();
+                this.updateMenuParentNodes("0%");
+            }
+        })
+    );
+
     constructor(props: ScrollableProps) {
         super(props);
         makeObservable(this);
+    }
+
+    componentDidMount() {
+        // eslint-disable-next-line react/no-find-dom-node
+        this.containerNode = findDOMNode(this) as HTMLDivElement;
+        this.scrollableNode.addEventListener("scroll", this.onScroll);
+        this.resizeObserver = new ResizeObserver(() => this.onScroll());
+        this.resizeObserver.observe(this.scrollableNode);
+        this.mutationObserver = new MutationObserver(() => this.onScroll());
+        this.mutationObserver.observe(this.scrollableNode, {attributes: true, childList: true, subtree: true});
+        this.intersectionObserver = new IntersectionObserver(
+            entries =>
+                entries.forEach(e => {
+                    if (e.target === this.header) {
+                        this.isHeaderSticky = !e.isIntersecting;
+                    }
+                    const onIntersect = this.onIntersects.get(e.target);
+                    if (onIntersect) {
+                        onIntersect(e.intersectionRatio, e.isIntersecting);
+                    }
+                }),
+            {root: this.scrollableNode, threshold: range(0, 105, 5).map(t => t / 100)}
+        );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
+    UNSAFE_componentWillReceiveProps(props: ScrollableProps) {
+        if (props.resetScrollOnChildrenChange && props.children !== this.props.children) {
+            this.scrollTo({top: 0, behavior: "auto"});
+        }
+    }
+
+    componentWillUnmount() {
+        this.scrollableNode?.removeEventListener("scroll", this.onScroll);
+        this.intersectionObserver?.disconnect();
+        this.mutationObserver?.disconnect();
+        this.resizeObserver?.disconnect();
     }
 
     /** @see ScrollableContext.registerHeader */
@@ -138,58 +193,6 @@ class ScrollableComponent extends Component<ScrollableProps> {
         return createPortal(node, this.containerNode);
     }
 
-    setRef = memoize((key: Key) =>
-        action((ref: HTMLElement | null) => {
-            if (!ref && this.menuRefs.has(key)) {
-                this.menuRefs.delete(key);
-                this.menuParentNodes.delete(key);
-                if (!this.menuRefs.size) {
-                    this.isMenuOpened = true;
-                }
-            } else if (ref && !this.menuRefs.has(key)) {
-                this.isMenuOpened = true;
-                this.menuRefs.set(key, ref);
-                this.setMenuRefs();
-                this.updateMenuParentNodes("0%");
-            }
-        })
-    );
-
-    UNSAFE_componentWillReceiveProps(props: ScrollableProps) {
-        if (props.resetScrollOnChildrenChange && props.children !== this.props.children) {
-            this.scrollTo({top: 0, behavior: "auto"});
-        }
-    }
-
-    componentDidMount() {
-        this.containerNode = findDOMNode(this) as HTMLDivElement;
-        this.scrollableNode.addEventListener("scroll", this.onScroll);
-        this.resizeObserver = new ResizeObserver(() => this.onScroll());
-        this.resizeObserver.observe(this.scrollableNode);
-        this.mutationObserver = new MutationObserver(() => this.onScroll());
-        this.mutationObserver.observe(this.scrollableNode, {attributes: true, childList: true, subtree: true});
-        this.intersectionObserver = new IntersectionObserver(
-            entries =>
-                entries.forEach(e => {
-                    if (e.target === this.header) {
-                        this.isHeaderSticky = !e.isIntersecting;
-                    }
-                    const onIntersect = this.onIntersects.get(e.target);
-                    if (onIntersect) {
-                        onIntersect(e.intersectionRatio, e.isIntersecting);
-                    }
-                }),
-            {root: this.scrollableNode, threshold: range(0, 105, 5).map(t => t / 100)}
-        );
-    }
-
-    componentWillUnmount() {
-        this.scrollableNode?.removeEventListener("scroll", this.onScroll);
-        this.intersectionObserver?.disconnect();
-        this.mutationObserver?.disconnect();
-        this.resizeObserver?.disconnect();
-    }
-
     @action.bound
     updateMenuParentNodes(x: string) {
         const per = (+x.replace("%", "") + 100) / 100;
@@ -199,7 +202,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
     @action.bound
     onScroll() {
         this.width = this.scrollableNode.clientWidth;
-        this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset || 300);
+        this.hasBtt = this.scrollableNode.scrollTop + this.headerHeight > (this.props.backToTopOffset ?? 300);
         this.setMenuRefs();
     }
 
@@ -233,11 +236,11 @@ class ScrollableComponent extends Component<ScrollableProps> {
                         {...this.headerProps}
                         animated={this.canDeploy}
                         onHeightChange={this.setHeight}
-                        style={{width: this.width}}
                         onUpdate={({y}) => {
                             this.visibleHeader = Math.max(0, (+(y as string).replace("%", "") + 100) / 100);
                             this.setMenuRefs();
                         }}
+                        style={{width: this.width}}
                     />
                 ) : undefined}
             </AnimatePresence>
@@ -254,6 +257,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
         const {children, className, innerRef} = this.props;
         return (
             <ScrollableContext.Provider
+                // eslint-disable-next-line react/jsx-no-constructed-context-values
                 value={{
                     menu: this.menu,
                     portal: this.portal,
@@ -266,27 +270,27 @@ class ScrollableComponent extends Component<ScrollableProps> {
                 <Theme theme={this.props.theme}>
                     {theme => (
                         <div ref={innerRef} className={classNames(theme.container(), className)}>
-                            <div className={theme.scrollable()} ref={this.setScrollableNode}>
+                            <div ref={this.setScrollableNode} className={theme.scrollable()}>
                                 {this.intersectionObserver ? children : null}
                             </div>
                             <motion.div
-                                className={theme.menu()}
                                 ref={this.setMenuNode}
-                                initial={false}
                                 animate={this.isMenuOpened ? "opened" : "closed"}
-                                variants={{
-                                    opened: {x: "0%"},
-                                    closed: {x: "-100%"}
-                                }}
+                                className={theme.menu()}
+                                initial={false}
                                 onUpdate={({x}) => {
                                     this.updateMenuParentNodes(x as string);
                                 }}
                                 transition={this.menuRefs.size ? springTransition : {duration: 0}}
+                                variants={{
+                                    opened: {x: "0%"},
+                                    closed: {x: "-100%"}
+                                }}
                             >
                                 {this.menuRefs.size && this.isMenuRetractable ? (
                                     <Button
-                                        icon={`keyboard_arrow_${this.isMenuOpened ? "left" : "right"}`}
                                         className={theme.menuButton()}
+                                        icon={`keyboard_arrow_${this.isMenuOpened ? "left" : "right"}`}
                                         onClick={() => (this.isMenuOpened = !this.isMenuOpened)}
                                         ripple={false}
                                     />

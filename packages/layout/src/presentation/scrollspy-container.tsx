@@ -38,30 +38,6 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
         makeObservable(this);
     }
 
-    /** @see ScrollspyContext.registerPanel */
-    @action.bound
-    protected registerPanel(name: string, panel: PanelDescriptor) {
-        // Le panel ne sera pas enregistré s'il n'est pas contenu dans le scrollspy (ex: dans une popin).
-        if (!this.node.current!.contains(panel.node)) {
-            return;
-        }
-
-        if (this.panels.has(name)) {
-            panel.node = panel.node;
-            panel.title = panel.title;
-        } else {
-            this.panels.set(name, {
-                ...panel,
-                ratio: 0,
-                disposer: this.context.registerIntersect(panel.node, ratio => (this.panels.get(name)!.ratio = ratio))
-            });
-        }
-        return () => {
-            this.panels.get(name)!.disposer();
-            this.panels.delete(name);
-        };
-    }
-
     /** Récupère les panels triés par position dans la page. */
     @computed.struct
     protected get sortedPanels() {
@@ -73,7 +49,7 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
     protected get activeItem() {
         const maxRatio = max(this.sortedPanels.map(([_, {ratio}]) => ratio));
         const panel = this.sortedPanels.find(([_, {ratio}]) => ratio === maxRatio);
-        return (panel && panel[0]) || (this.sortedPanels[0] && this.sortedPanels[0][0]);
+        return panel?.[0] ?? this.sortedPanels[0]?.[0];
     }
 
     /**
@@ -82,6 +58,27 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
      */
     protected getOffsetTop(node: HTMLElement) {
         return node.offsetTop - (this.node.current!.offsetTop || 0);
+    }
+
+    /** @see ScrollspyContext.registerPanel */
+    @action.bound
+    protected registerPanel(name: string, panel: PanelDescriptor) {
+        // Le panel ne sera pas enregistré s'il n'est pas contenu dans le scrollspy (ex: dans une popin).
+        if (!this.node.current!.contains(panel.node)) {
+            return;
+        }
+
+        if (!this.panels.has(name)) {
+            this.panels.set(name, {
+                ...panel,
+                ratio: 0,
+                disposer: this.context.registerIntersect(panel.node, ratio => (this.panels.get(name)!.ratio = ratio))
+            });
+        }
+        return () => {
+            this.panels.get(name)!.disposer();
+            this.panels.delete(name);
+        };
     }
 
     /**
@@ -99,12 +96,13 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
     render() {
         const {children, retractable = true, MenuComponent = ScrollspyMenu} = this.props;
         return (
+            // eslint-disable-next-line react/jsx-no-constructed-context-values
             <ScrollspyContext.Provider value={{registerPanel: this.registerPanel}}>
                 <Theme theme={this.props.theme}>
                     {theme => (
                         <div ref={this.node} className={theme.scrollspy()}>
                             {this.context.menu(
-                                <nav className={theme.menu()} key="scrollspy">
+                                <nav key="scrollspy" className={theme.menu()}>
                                     <MenuComponent
                                         activeClassName={theme.active()}
                                         activeId={this.activeItem}
@@ -145,8 +143,8 @@ export function ScrollspyMenu({activeId, activeClassName, panels, scrollToPanel}
         <ul>
             {panels.map(({title, id}) => (
                 <li
-                    className={activeId === id ? activeClassName : undefined}
                     key={id}
+                    className={activeId === id ? activeClassName : undefined}
                     id={`menu-${id}`}
                     onClick={() => scrollToPanel(id)}
                 >

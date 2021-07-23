@@ -64,10 +64,10 @@ export function Facet({
                     <>
                         {facet.isMultiSelectable && facet.isMultiValued ? (
                             <Button
-                                primary
                                 icon={getIcon(`${i18nPrefix}.icons.facets.${inputFacet?.operator ?? "or"}`)}
                                 label={i18next.t(`${i18nPrefix}.search.facets.${inputFacet?.operator ?? "or"}`)}
                                 onClick={() => store.toggleFacetOperator(facet.code)}
+                                primary
                             />
                         ) : null}
                         <ul>
@@ -117,8 +117,8 @@ export function Facet({
                                         ) : facet.canExclude ? (
                                             <IconButton
                                                 className={theme.icon()}
-                                                icon={getIcon(`${i18nPrefix}.icons.facets.exclude`)}
                                                 disabled
+                                                icon={getIcon(`${i18nPrefix}.icons.facets.exclude`)}
                                             />
                                         ) : null}
                                     </li>

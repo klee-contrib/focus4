@@ -2,10 +2,12 @@ import {range} from "lodash";
 import {useCallback, useRef, useState} from "react";
 
 import {ToBem} from "@focus4/styling";
-import {ClockCss} from "../__style__/clock.css";
+
 
 import {Face} from "./face";
 import {Hand, HandRef} from "./hand";
+
+import {ClockCss} from "../__style__/clock.css";
 
 const outerNumbers = [0, ...range(13, 24)];
 const innerNumbers = [12, ...range(1, 12)];
@@ -65,21 +67,21 @@ export function Hours({center, format, onChange, onHandMoved, radius, selected, 
     return (
         <div>
             <Face
-                onTouchStart={handleTouchStart}
-                onMouseDown={handleMouseDown}
-                numbers={is24hr ? outerNumbers : innerNumbers}
-                spacing={spacing}
-                radius={radius}
-                twoDigits={is24hr}
                 active={is24hr ? selected : selected % 12 || 12}
+                numbers={is24hr ? outerNumbers : innerNumbers}
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
+                radius={radius}
+                spacing={spacing}
                 theme={theme}
+                twoDigits={is24hr}
             />
             {format !== "24hr" ? null : (
                 <Face
                     active={selected}
-                    onTouchStart={handleTouchStart}
-                    onMouseDown={handleMouseDown}
                     numbers={innerNumbers}
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleTouchStart}
                     radius={radius - spacing * innerSpacing}
                     spacing={spacing}
                     theme={theme}

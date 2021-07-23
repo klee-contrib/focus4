@@ -1,9 +1,10 @@
 import classNames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
 
+import {CSSProp, useTheme} from "@focus4/styling";
+
 import {Radio} from "./radio";
 
-import {CSSProp, useTheme} from "@focus4/styling";
 import radioCss, {RadioCss} from "../__style__/radio.css";
 export {radioCss, RadioCss};
 
@@ -61,12 +62,13 @@ export function RadioButton({
 
     return (
         <label
-            data-react-toolbox="radio"
             className={classNames(theme.field({disabled}), className)}
+            data-react-toolbox="radio"
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
             <input
+                ref={inputNode}
                 checked={checked}
                 className={theme.input()}
                 disabled={disabled}
@@ -74,12 +76,11 @@ export function RadioButton({
                 name={name}
                 onClick={handleToggle}
                 readOnly
-                ref={inputNode}
                 type="radio"
             />
             <Radio checked={checked} disabled={disabled} rippleTheme={{ripple: theme.ripple()}} theme={theme} />
             {label ? (
-                <span data-react-toolbox="label" className={theme.text()}>
+                <span className={theme.text()} data-react-toolbox="label">
                     {label}
                 </span>
             ) : null}

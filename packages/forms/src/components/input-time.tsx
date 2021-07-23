@@ -38,6 +38,7 @@ export interface InputTimeProps {
 
 /** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
+// eslint-disable-next-line react/no-unsafe
 export class InputTime extends Component<InputTimeProps> {
     protected clock?: HTMLDivElement | null;
 
@@ -69,6 +70,7 @@ export class InputTime extends Component<InputTimeProps> {
     }
 
     @action
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillReceiveProps({value}: InputTimeProps) {
         this.time = this.toMoment(value);
         this.timeText = this.formatTime(value);
@@ -78,7 +80,7 @@ export class InputTime extends Component<InputTimeProps> {
     componentDidUpdate() {
         if (this.clock && this.showClock) {
             const client = this.clock.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement!.offsetHeight;
+            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
             if (!this.clockPosition) {
                 if (client.top + client.height > screenHeight) {
                     this.clockPosition = "up";
@@ -150,7 +152,7 @@ export class InputTime extends Component<InputTimeProps> {
     @action.bound
     onInputBlur() {
         const {inputFormat = "HH:mm", onChange} = this.props;
-        const text = (this.timeText || "").trim() || undefined;
+        const text = (this.timeText ?? "").trim() || undefined;
 
         const time = moment(text, inputFormat, true);
 
@@ -208,17 +210,17 @@ export class InputTime extends Component<InputTimeProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-time" data-id={this._inputTimeId} className={theme.input()}>
+                    <div className={theme.input()} data-focus="input-time" data-id={this._inputTimeId}>
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
                             error={error}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                             onChange={value => (this.timeText = value)}
-                            onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showClock = true)}
+                            onKeyDown={this.handleKeyDown}
                             type="string"
-                            value={this.timeText || ""}
+                            value={this.timeText ?? ""}
                         />
                         {this.showClock ? (
                             <div
@@ -230,24 +232,24 @@ export class InputTime extends Component<InputTimeProps> {
                             >
                                 <header className={theme.header()}>
                                     <span
-                                        id="hours"
                                         className={theme.hours({selected: this.clockDisplay === "hours"})}
+                                        id="hours"
                                         onClick={() => (this.clockDisplay = "hours")}
                                     >
                                         {`0${this.time.hours()}`.slice(-2)}
                                     </span>
                                     <span className={theme.separator()}>:</span>
                                     <span
-                                        id="minutes"
                                         className={theme.minutes({selected: this.clockDisplay === "minutes"})}
+                                        id="minutes"
                                         onClick={() => (this.clockDisplay = "minutes")}
                                     >
                                         {`0${this.time.minutes()}`.slice(-2)}
                                     </span>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: theme.toggle()}}
                                         onClick={() => (this.showClock = false)}
+                                        theme={{toggle: theme.toggle()}}
                                     />
                                 </header>
                                 <Clock

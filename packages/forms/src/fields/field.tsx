@@ -16,6 +16,7 @@ import {
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Autocomplete, Display, Input, Label, Select} from "../components";
+
 import {documentHelper} from "./document-helper";
 import {FormContext} from "./form";
 
@@ -187,16 +188,16 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                         {...labelProps}
                         comment={comment}
                         i18nPrefix={i18nPrefix}
-                        label={label}
                         id={id}
+                        label={label}
                         style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
                         theme={themeable({label: theme.label()}, domainLCP.theme || {}, labelProps.theme || {})}
                     />
                 ) : null}
                 <div
-                    style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
-                    className={classNames(theme.value(), className)}
                     ref={store.setValueElement}
+                    className={classNames(theme.value(), className)}
+                    style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
                 >
                     {isEdit ? (
                         inputType === "select" ? (
@@ -235,9 +236,9 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
                             {...displayProps}
                             formatter={displayFormatter}
                             keyResolver={autocompleteProps.keyResolver}
+                            theme={themeable(domainDCP.theme || {}, displayProps.theme || {})}
                             value={value}
                             values={selectProps.values}
-                            theme={themeable(domainDCP.theme || {}, displayProps.theme || {})}
                         />
                     )}
                 </div>

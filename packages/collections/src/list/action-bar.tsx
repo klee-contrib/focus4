@@ -10,6 +10,7 @@ import {CSSProp, defaultTransition, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
 import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
+
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
 import actionBarCss, {ActionBarCss} from "./__style__/action-bar.css";
@@ -96,7 +97,7 @@ export function ActionBar<T>({
                 groupableColumnList,
                 (oL, label, key) => [
                     ...oL,
-                    <MenuItem key={key} onClick={() => (store.groupingKey = key)} caption={i18next.t(label)} />
+                    <MenuItem key={key} caption={i18next.t(label)} onClick={() => (store.groupingKey = key)} />
                 ],
                 [] as JSX.Element[]
             );
@@ -172,10 +173,10 @@ export function ActionBar<T>({
                     ) ? (
                         <div style={{position: "relative"}}>
                             <Button
-                                onClick={() => setDisplayFacetBox(!displayFacetBox)}
                                 icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`)}
-                                theme={{icon: theme.dropdown()}}
                                 label={i18next.t(`${i18nPrefix}.search.action.filter`)}
+                                onClick={() => setDisplayFacetBox(!displayFacetBox)}
+                                theme={{icon: theme.dropdown()}}
                             />
                             {displayFacetBox ? <div className={theme.triangle()} /> : null}
                         </div>
@@ -195,11 +196,11 @@ export function ActionBar<T>({
                             {orderableColumnList.map((description, idx) => (
                                 <MenuItem
                                     key={idx}
+                                    caption={i18next.t(description.label)}
                                     onClick={action("sort", () => {
                                         store.sortBy = description.key;
                                         store.sortAsc = description.order;
                                     })}
-                                    caption={i18next.t(description.label)}
                                 />
                             ))}
                         </ButtonMenu>
@@ -212,15 +213,15 @@ export function ActionBar<T>({
                     {!store.selectedItems.size && hasSearchBar ? (
                         <div className={theme.searchBar()}>
                             <Input
-                                icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
-                                value={store.query}
-                                onChange={(text: string) => (store.query = text)}
                                 hint={searchBarPlaceholder}
+                                icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
+                                onChange={(text: string) => (store.query = text)}
                                 theme={{
                                     input: theme.searchBarField(),
                                     icon: theme.searchBarIcon(),
                                     hint: theme.searchBarHint()
                                 }}
+                                value={store.query}
                             />
                             {store.query ? (
                                 <IconButton
@@ -232,7 +233,7 @@ export function ActionBar<T>({
                     ) : null}
                 </div>
                 {store.selectedItems.size && operationList && operationList.length ? (
-                    <ContextualActions operationList={operationList} data={Array.from(store.selectedItems)} />
+                    <ContextualActions data={Array.from(store.selectedItems)} operationList={operationList} />
                 ) : null}
             </div>
             {/* FacetBox */}
@@ -242,9 +243,9 @@ export function ActionBar<T>({
                         {displayFacetBox && (
                             <motion.div
                                 key="facet-box"
-                                initial={{height: 0}}
                                 animate={{height: "auto"}}
                                 exit={{height: 0}}
+                                initial={{height: 0}}
                                 transition={defaultTransition}
                             >
                                 <IconButton

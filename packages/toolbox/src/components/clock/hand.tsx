@@ -1,6 +1,7 @@
 import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState} from "react";
 
 import {ToBem} from "@focus4/styling";
+
 import {ClockCss} from "../__style__/clock.css";
 
 export interface HandProps {

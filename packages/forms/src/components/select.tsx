@@ -56,13 +56,13 @@ export function Select<T extends "string" | "number">({
 
     return useObserver(() => {
         // On ajoute l'élément vide si nécessaire.
-        let finalValues: {}[] = values.slice();
+        let finalValues: any[] = values.slice();
         if (hasUndefined) {
             finalValues = [{[$valueKey]: "", [$labelKey]: i18next.t(unSelectedLabel)}, ...finalValues];
         }
 
         return (
-            <div data-focus="select" className={theme.select({error: !!error})}>
+            <div className={theme.select({error: !!error})} data-focus="select">
                 <select
                     disabled={disabled}
                     id={id}
@@ -74,8 +74,8 @@ export function Select<T extends "string" | "number">({
                     value={value === undefined ? "" : value}
                 >
                     {finalValues.map((val, idx) => {
-                        const optVal = `${(val as any)[$valueKey]}`;
-                        const elementValue = (val as any)[$labelKey];
+                        const optVal = `${val[$valueKey] as string | number}`;
+                        const elementValue = val[$labelKey];
                         const optLabel =
                             elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;
                         return (

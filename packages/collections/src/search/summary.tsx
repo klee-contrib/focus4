@@ -100,12 +100,12 @@ export function Summary<T>({
                     if (!props.hideCriteria || !props.hideCriteria.includes(criteriaKey)) {
                         topicList.push({
                             type: "filter",
-                            key: `${criteriaKey}-${value}`,
+                            key: `${criteriaKey}-${value as string}`,
                             code: label,
                             codeLabel: label,
                             values: [{code: value, label: domain?.displayFormatter?.(value)}],
                             onDeleteClick: () => {
-                                (props.store.criteria![criteriaKey] as FormEntityField).value = undefined;
+                                (props.store.criteria[criteriaKey] as FormEntityField).value = undefined;
                             }
                         });
                     }
@@ -132,9 +132,9 @@ export function Summary<T>({
                                 .map(value => ({
                                     code: value.code,
                                     label: value.label,
-                                    invert: !!inputFacet.selected?.find(v => v === value.code)
+                                    invert: inputFacet.selected?.find(v => v === value.code)
                                         ? false
-                                        : !!inputFacet.excluded?.find(v => v === value.code)
+                                        : inputFacet.excluded?.find(v => v === value.code)
                                         ? true
                                         : undefined
                                 }))
@@ -151,7 +151,7 @@ export function Summary<T>({
         /** Récupère le tri courant pour afficher le chip correspondant. */
         get currentSort() {
             if (props.orderableColumnList && props.store.sortBy) {
-                return props.orderableColumnList.find(o => o.key === store.sortBy && o.order === store.sortAsc) || null;
+                return props.orderableColumnList.find(o => o.key === store.sortBy && o.order === store.sortAsc) ?? null;
             } else {
                 return null;
             }
@@ -183,6 +183,7 @@ export function Summary<T>({
                     <div className={theme.chips()}>
                         <span className={theme.sentence()}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
                         {state.includeList.map(chip => (
+                            // eslint-disable-next-line react/jsx-key
                             <SearchChip {...chip} deletable keyResolver={chipKeyResolver} themer={chipThemer} />
                         ))}
                     </div>
@@ -224,9 +225,9 @@ export function Summary<T>({
                 {exportAction ? (
                     <div className={theme.print()}>
                         <Button
-                            onClick={exportAction}
                             icon={getIcon(`${i18nPrefix}.icons.summary.export`)}
                             label={`${i18nPrefix}.search.summary.export`}
+                            onClick={exportAction}
                             type="button"
                         />
                     </div>

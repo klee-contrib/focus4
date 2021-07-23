@@ -1,6 +1,7 @@
-import {messageStore} from "@focus4/core";
 import i18next from "i18next";
 import {action, computed, extendObservable, Lambda, observable, runInAction} from "mobx";
+
+import {messageStore} from "@focus4/core";
 
 import {NodeLoadBuilder, registerLoad, toFlatValues} from "../store";
 import {FormListNode, FormNode, isStoreNode, NodeToType} from "../types";
@@ -49,7 +50,7 @@ export type FormActions<S extends string = "default"> = ActionsFormProps & {
 
 export class FormActionsBuilder<
     FN extends FormNode | FormListNode,
-    A extends ReadonlyArray<any> = never,
+    A extends readonly any[] = never,
     S extends string = never
 > extends NodeLoadBuilder<FN["sourceNode"], A> {
     /** @internal */
@@ -71,14 +72,14 @@ export class FormActionsBuilder<
      * Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification.
      * @param get Getter.
      */
-    params<NA extends ReadonlyArray<any>>(get: () => NA | undefined): FormActionsBuilder<FN, NonNullable<NA>, S>;
+    params<NA extends readonly any[]>(get: () => NA | undefined): FormActionsBuilder<FN, NonNullable<NA>, S>;
     params<NA>(get: () => NA): FormActionsBuilder<FN, [NonNullable<NA>], S>;
     /**
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    params<NA extends Array<any>>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S>;
-    params<NA extends Array<any>>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S> {
+    params<NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S>;
+    params<NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S> {
         return super.params(...params) as any;
     }
 
@@ -102,7 +103,7 @@ export class FormActionsBuilder<
         name?: NS
     ): FormActionsBuilder<FN, A, S | NS> {
         // @ts-ignore
-        this.saveServices[name || "default"] = service;
+        this.saveServices[name ?? "default"] = service;
         // @ts-ignore
         return this;
     }
@@ -127,6 +128,7 @@ export class FormActionsBuilder<
         this.prefix = prefix;
         return this;
     }
+
     /** Utilise le nom du save dans le message de succès de la sauvegarde (prefix.detail.saved => prefix.detail.name.saved). */
     useSaveNameForMessages(): FormActionsBuilder<FN, A, S> {
         this.saveNamesForMessages = true;
@@ -149,6 +151,7 @@ export class FormActionsBuilder<
                 try {
                     // On ne sauvegarde que si la validation est en succès.
                     if (formNode.form && !formNode.form.isValid) {
+                        // eslint-disable-next-line @typescript-eslint/no-throw-literal
                         throw {
                             $validationError: true,
                             detail: formNode.form.errors
@@ -182,7 +185,7 @@ export class FormActionsBuilder<
                     this.forceErrorDisplay = false;
 
                     (handlers.save || []).forEach(handler => handler("save", name as any));
-                } catch (e) {
+                } catch (e: unknown) {
                     (handlers.error || []).forEach(handler => handler("error", name as any));
                     throw e;
                 } finally {

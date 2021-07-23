@@ -1,9 +1,11 @@
 import {MouseEventHandler, ReactNode, TouchEventHandler} from "react";
 
 import {ToBem} from "@focus4/styling";
-import {RadioCss} from "../__style__/radio.css";
 
 import {rippleFactory} from "../ripple";
+
+import {RadioCss} from "../__style__/radio.css";
+
 
 export interface RadioProps {
     checked: boolean;
@@ -22,8 +24,8 @@ export const Radio = rippleFactory({rippleCentered: true, rippleSpread: 2.6})(fu
 }: RadioProps) {
     return (
         <div
-            data-react-toolbox="radio"
             className={theme.radio({checked})}
+            data-react-toolbox="radio"
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
         >

@@ -17,6 +17,7 @@ import {
     ListProps,
     OperationListItem
 } from "../list";
+
 import {ChipType} from "./chip";
 import {AdditionalFacet, FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
 import {GroupCss, Results} from "./results";
@@ -198,7 +199,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
 
     function renderFacetBox() {
         const facetBox = (
-            <div className={theme.facetContainer()} key="facet-box">
+            <div key="facet-box" className={theme.facetContainer()}>
                 <FacetBox
                     additionalFacets={additionalFacets}
                     customFacetComponents={customFacetComponents}
@@ -235,14 +236,14 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                         <>
                             <IconButton
                                 accent={listContext.mode === "list"}
-                                onClick={() => (listContext.mode = "list")}
                                 icon={getIcon(`${i18nPrefix}.icons.list.list`)}
+                                onClick={() => (listContext.mode = "list")}
                                 tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
                             />
                             <IconButton
                                 accent={listContext.mode === "mosaic"}
-                                onClick={() => (listContext.mode = "mosaic")}
                                 icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
+                                onClick={() => (listContext.mode = "mosaic")}
                                 tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
                             />
                         </>
@@ -250,8 +251,8 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                     {addItemHandler && listContext.mode === "list" ? (
                         <AddItemComponent
                             addItemHandler={addItemHandler}
-                            mode="search"
                             i18nPrefix={i18nPrefix}
+                            mode="search"
                             store={store}
                         />
                     ) : null}
@@ -260,13 +261,13 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                     canRemoveSort={canRemoveSort}
                     chipKeyResolver={chipKeyResolver}
                     chipThemer={chipThemer}
-                    i18nPrefix={i18nPrefix}
                     hideCriteria={hideSummaryCriteria}
                     hideFacets={hideSummaryFacets}
                     hideGroup={hideSummaryGroup}
                     hideQuery={hideSummaryQuery}
                     hideResults={hideSummaryResults}
                     hideSort={hideSummarySort}
+                    i18nPrefix={i18nPrefix}
                     orderableColumnList={orderableColumnList}
                     store={store}
                     theme={summaryTheme}

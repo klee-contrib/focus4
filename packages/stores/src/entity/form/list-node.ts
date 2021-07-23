@@ -2,6 +2,7 @@ import {isFunction} from "lodash";
 
 import {nodeToFormNode} from "../store";
 import {FormListNode, StoreListNode} from "../types";
+
 import {clone, FormNodeBuilder} from "./node";
 
 export class FormListNodeBuilder<E, E0 = E> {

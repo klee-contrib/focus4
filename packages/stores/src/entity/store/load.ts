@@ -2,6 +2,7 @@ import {isFunction} from "lodash";
 import {autorun, extendObservable, runInAction} from "mobx";
 
 import {isAnyFormNode, isStoreListNode, isStoreNode, NodeToType, StoreListNode, StoreNode} from "../types";
+
 import {defaultLoad} from "./store";
 
 /**
@@ -10,15 +11,15 @@ import {defaultLoad} from "./store";
  * @param loadBuilder Builder pour le service de chargement.
  * @returns disposer.
  */
-export function registerLoad<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any>>(
+export function registerLoad<SN extends StoreNode | StoreListNode, A extends readonly any[]>(
     node: SN,
     loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>
 ): {isLoading: boolean; dispose: () => void};
-export function registerLoad<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any>>(
+export function registerLoad<SN extends StoreNode | StoreListNode, A extends readonly any[]>(
     node: SN,
     loadBuilder: NodeLoadBuilder<SN, A>
 ): {isLoading: boolean; dispose: () => void};
-export function registerLoad<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any>>(
+export function registerLoad<SN extends StoreNode | StoreListNode, A extends readonly any[]>(
     node: SN,
     loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>)
 ) {
@@ -39,7 +40,8 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
     );
 
     if (getLoadParams && loadService) {
-        const load = async function () {
+        // eslint-disable-next-line func-style
+        const load = async function load() {
             let params = getLoadParams();
             if (params) {
                 state.isLoading = true;
@@ -75,7 +77,7 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends Rea
     return state;
 }
 
-export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends ReadonlyArray<any> = never> {
+export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends readonly any[] = never> {
     /** @internal */
     readonly handlers = {} as Record<"load", ((event: "load") => void)[]>;
 
@@ -89,14 +91,14 @@ export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends Rea
      * Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification.
      * @param get Getter.
      */
-    params<NA extends ReadonlyArray<any>>(get: () => NA | undefined): NodeLoadBuilder<SN, NonNullable<NA>>;
+    params<NA extends readonly any[]>(get: () => NA | undefined): NodeLoadBuilder<SN, NonNullable<NA>>;
     params<NA>(get: () => NA): NodeLoadBuilder<SN, [NonNullable<NA>]>;
     /**
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    params<NA extends Array<any>>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>>;
-    params<NA extends Array<any>>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>> {
+    params<NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>>;
+    params<NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>> {
         if (!params.length) {
             // @ts-ignore
             this.getLoadParams = () => [];

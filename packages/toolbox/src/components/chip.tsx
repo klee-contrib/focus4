@@ -2,10 +2,11 @@ import classNames from "classnames";
 import {Children, MouseEventHandler, TouchEventHandler} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import chipCss, {ChipCss} from "./__style__/chip.css";
-export {chipCss, ChipCss};
 
 import {Avatar} from "./avatar";
+
+import chipCss, {ChipCss} from "./__style__/chip.css";
+export {chipCss, ChipCss};
 
 export interface ChipProps {
     className?: string;
@@ -41,14 +42,14 @@ export function Chip({
     let avatar = false;
     if (Children.count(children)) {
         const flatChildren = Children.toArray(children);
-        const firstChild = flatChildren[0];
+        const [firstChild] = flatChildren;
         avatar = (firstChild as any)?.type === Avatar;
     }
 
     return (
         <div
-            data-react-toolbox="chip"
             className={classNames(theme.chip({avatar, deletable}), className)}
+            data-react-toolbox="chip"
             onClick={onClick}
             onMouseDown={onMouseDown}
             onMouseEnter={onMouseEnter}
@@ -58,7 +59,7 @@ export function Chip({
             {typeof children === "string" ? <span>{children}</span> : children}
             {deletable ? (
                 <span className={theme.delete()} onClick={onDeleteClick}>
-                    <svg viewBox="0 0 40 40" className={theme.deleteIcon()}>
+                    <svg className={theme.deleteIcon()} viewBox="0 0 40 40">
                         <path className={theme.deleteX()} d="M 12,12 L 28,28 M 28,12 L 12,28" />
                     </svg>
                 </span>

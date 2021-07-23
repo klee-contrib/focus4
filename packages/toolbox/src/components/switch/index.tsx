@@ -2,10 +2,11 @@ import classNames from "classnames";
 import {MouseEvent, ReactNode, useCallback, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import switchCss, {SwitchCss} from "../__style__/switch.css";
-export {switchCss, SwitchCss};
 
 import {Thumb} from "./thumb";
+
+import switchCss, {SwitchCss} from "../__style__/switch.css";
+export {switchCss, SwitchCss};
 
 /** Props du Switch. */
 export interface SwitchProps {
@@ -51,15 +52,15 @@ export function Switch({
     );
 
     return (
-        <label data-react-toolbox="switch" className={classNames(theme.field({disabled}), className)}>
+        <label className={classNames(theme.field({disabled}), className)} data-react-toolbox="switch">
             <input
+                ref={inputNode}
                 checked={value}
                 className={theme.input()}
                 id={id}
-                onClick={handleToggle}
                 name={name}
+                onClick={handleToggle}
                 readOnly
-                ref={inputNode}
                 type="checkbox"
             />
             <span className={theme.container({on: value, off: !value})}>

@@ -17,6 +17,7 @@ import {v4} from "uuid";
 import {config} from "@focus4/core";
 
 import {buildNode, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../entity";
+
 import {
     FacetInput,
     FacetItem,
@@ -169,7 +170,7 @@ export class CollectionStore<T = any, C = any> {
             // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
             reaction(
                 () => [
-                    initialQuery && initialQuery.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
+                    initialQuery?.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
                     this.query
                 ],
                 debounce(() => this.search(), config.textSearchDelay)
@@ -246,6 +247,7 @@ export class CollectionStore<T = any, C = any> {
         return toPairs(
             groupByFacet(
                 this.list,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
                 this.localStoreConfig.facetDefinitions.find(f => f.code === this.groupingKey)?.fieldName!
             )
         ).map(([code, list]) => ({
@@ -297,7 +299,7 @@ export class CollectionStore<T = any, C = any> {
     @computed
     get groupingLabel() {
         const group = this.facets.find(facet => facet.code === this.groupingKey);
-        return group?.label || this.groupingKey;
+        return group?.label ?? this.groupingKey;
     }
 
     /** Store en chargement. */
@@ -320,7 +322,7 @@ export class CollectionStore<T = any, C = any> {
 
     /** Liste des éléments séléctionnés */
     @computed
-    get selectedList(): ReadonlyArray<T> {
+    get selectedList(): readonly T[] {
         return Array.from(this.selectedItems);
     }
 
@@ -431,7 +433,7 @@ export class CollectionStore<T = any, C = any> {
         const data = {
             criteria: {...this.flatCriteria, query, searchFields: this.searchFields} as QueryInput<C>["criteria"],
             facets: inputFacets || {},
-            group: groupingKey || "",
+            group: groupingKey ?? "",
             skip: (isScroll && list.length) || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
             sortDesc: sortAsc === undefined ? false : !sortAsc,
             sortFieldName: sortBy,
@@ -566,6 +568,7 @@ export class CollectionStore<T = any, C = any> {
             this.innerInputFacets.delete(facetKey);
         }
     }
+
     /** Change l'opérateur d'une facette multi-sélectionnable à plusieurs valeurs. */
     @action.bound
     toggleFacetOperator(facetKey: string) {
@@ -588,29 +591,29 @@ export class CollectionStore<T = any, C = any> {
      * @param groupCode Le code de la valeur de groupe en cours.
      */
     getSearchGroupStore(groupCode: string): CollectionStore<T> {
-        const store = this;
+        const self = this;
         return observable(
             {
                 get currentCount() {
-                    return store.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
+                    return self.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
                 },
 
                 get totalCount() {
-                    return store.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
+                    return self.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
                 },
 
-                isItemSelectionnable: store.isItemSelectionnable,
+                isItemSelectionnable: self.isItemSelectionnable,
 
                 get list() {
-                    return store.groups.find(result => result.code === groupCode)?.list ?? [];
+                    return self.groups.find(result => result.code === groupCode)?.list ?? [];
                 },
 
                 get selectionnableList(): T[] {
-                    return this.list.filter(store.isItemSelectionnable);
+                    return this.list.filter(self.isItemSelectionnable);
                 },
 
                 get selectedItems() {
-                    return new Set(store.selectedList.filter(item => this.list.find((i: T) => i === item)));
+                    return new Set(self.selectedList.filter(item => this.list.find((i: T) => i === item)));
                 },
 
                 get selectionStatus() {
@@ -624,21 +627,21 @@ export class CollectionStore<T = any, C = any> {
                 },
 
                 toggle(item: T) {
-                    store.toggle(item);
+                    self.toggle(item);
                 },
 
                 // Non immédiat car le set de sélection contient tous les résultats alors que le toggleAll ne doit agir que sur le groupe.
                 toggleAll() {
-                    const areAllItemsIn = this.selectionnableList.every(item => store.selectedItems.has(item));
+                    const areAllItemsIn = this.selectionnableList.every(item => self.selectedItems.has(item));
 
                     this.list.forEach(item => {
-                        if (store.selectedItems.has(item)) {
-                            store.selectedItems.delete(item);
+                        if (self.selectedItems.has(item)) {
+                            self.selectedItems.delete(item);
                         }
                     });
 
                     if (!areAllItemsIn) {
-                        this.selectionnableList.forEach(item => store.selectedItems.add(item));
+                        this.selectionnableList.forEach(item => self.selectedItems.add(item));
                     }
                 }
             },
@@ -684,6 +687,7 @@ function groupByFacet<T>(list: T[], fieldName: keyof T) {
         const value = item[fieldName];
 
         function add(key?: any) {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
         }
 
@@ -729,6 +733,6 @@ function isFacetMatch(facetValue: string, itemValue: any): boolean {
         return !facetValue;
     }
 
-    // tslint:disable-next-line: triple-equals
+    // eslint-disable-next-line eqeqeq
     return itemValue == facetValue;
 }

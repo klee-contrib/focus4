@@ -64,7 +64,7 @@ export function SelectRadio<T extends "string" | "number">({
     );
 
     return useObserver(() => {
-        let definitiveValues: {}[] = values;
+        let definitiveValues: any[] = values;
         if (hasUndefined && undefinedPosition === "bottom") {
             definitiveValues = [...values.slice(), {[$valueKey]: undefined, [$labelKey]: undefinedLabel}];
         }
@@ -75,18 +75,18 @@ export function SelectRadio<T extends "string" | "number">({
         return (
             <div className={theme.select()}>
                 {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
-                <RadioGroup value={`${value}`} onChange={handleChange} disabled={disabled}>
+                <RadioGroup disabled={disabled} onChange={handleChange} value={`${value!}`}>
                     {definitiveValues.map(option => {
-                        const optVal = (option as any)[$valueKey];
-                        const optLabel = (option as any)[$labelKey];
+                        const optVal = option[$valueKey];
+                        const optLabel = option[$labelKey];
 
                         return (
                             <RadioButton
                                 key={optVal || "undefined"}
-                                name={`${name}-${optVal}`}
                                 label={i18next.t(optLabel)}
-                                value={`${optVal}`}
+                                name={`${name!}-${optVal as string}`}
                                 theme={{field: theme.option()}}
+                                value={`${optVal as string}`}
                             />
                         );
                     })}

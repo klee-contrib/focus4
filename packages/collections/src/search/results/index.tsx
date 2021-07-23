@@ -5,6 +5,7 @@ import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp} from "@focus4/styling";
 
 import {List, ListBaseProps, ListProps, OperationListItem} from "../../list";
+
 import {Group, GroupCss, groupCss} from "./group";
 export {Group, GroupCss, groupCss};
 
@@ -65,13 +66,14 @@ export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
                     <List
                         key="result-group-list"
                         data={filteredGroups}
+                        isManualFetch={isManualFetch}
                         itemKey={data => data.code}
                         LineComponent={({data}) => (
                             <Group
                                 key={data.code}
                                 group={data}
                                 GroupHeader={GroupHeader}
-                                groupOperationList={groupOperationList && groupOperationList(data)}
+                                groupOperationList={groupOperationList?.(data)}
                                 hasSelection={hasSelection}
                                 i18nPrefix={i18nPrefix}
                                 ListComponent={ListComponent}
@@ -82,9 +84,8 @@ export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
                             />
                         )}
                         mode="list"
-                        isManualFetch={isManualFetch}
-                        perPage={groupPageListSize}
                         pageItemIndex={groupPageItemIndex}
+                        perPage={groupPageListSize}
                     />
                 ) : (
                     <ListComponent

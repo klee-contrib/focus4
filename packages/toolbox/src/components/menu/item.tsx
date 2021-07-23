@@ -1,10 +1,11 @@
 import classNames from "classnames";
 import {MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback} from "react";
 
+import {CSSProp, useTheme} from "@focus4/styling";
+
 import {FontIcon} from "../font-icon";
 import {rippleFactory} from "../ripple";
 
-import {CSSProp, useTheme} from "@focus4/styling";
 import menuCss, {MenuCss} from "../__style__/menu.css";
 
 export interface MenuItemProps {
@@ -56,13 +57,13 @@ export const MenuItem = rippleFactory({})(function RTMenuItem({
 
     return (
         <li
-            data-react-toolbox="menu-item"
             className={classNames(theme.menuItem({disabled, selected}), className)}
+            data-react-toolbox="menu-item"
             onClick={handleClick}
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
         >
-            {icon ? <FontIcon value={icon} className={theme.icon()} /> : null}
+            {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
             <span className={theme.caption()}>{caption}</span>
             {shortcut ? <small className={theme.shortcut()}>{shortcut}</small> : null}
             {children}

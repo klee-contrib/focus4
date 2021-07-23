@@ -32,12 +32,12 @@ export function FontIcon({
 }: FontIconProps) {
     return (
         <span
-            data-react-toolbox="font-icon"
             aria-label={alt}
             className={classnames(
                 {"material-icons": typeof value === "string" || typeof children === "string"},
                 className
             )}
+            data-react-toolbox="font-icon"
             onClick={onClick}
             onMouseDown={onMouseDown}
             onMouseEnter={onMouseEnter}

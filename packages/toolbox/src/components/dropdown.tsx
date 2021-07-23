@@ -14,10 +14,11 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
-export {dropdownCss, DropdownCss};
 
 import {Input} from "./input";
+
+import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
+export {dropdownCss, DropdownCss};
 
 export interface DropdownProps<
     T,
@@ -170,35 +171,31 @@ export function Dropdown<
     );
 
     const renderTemplateValue = useCallback(
-        (sel: S) => {
-            return (
-                <div className={theme.field({disabled, errored: !!error})} onClick={handleClick}>
-                    <div className={`${theme.templateValue()} ${theme.value()}`}>{template!(sel)}</div>
-                    {label ? (
-                        <label className={theme.label()}>
-                            {label}
-                            {required ? <span className={theme.required()}> * </span> : null}
-                        </label>
-                    ) : null}
-                    {error ? <span className={theme.error()}>{error}</span> : null}
-                </div>
-            );
-        },
+        (sel: S) => (
+            <div className={theme.field({disabled, errored: !!error})} onClick={handleClick}>
+                <div className={`${theme.templateValue()} ${theme.value()}`}>{template!(sel)}</div>
+                {label ? (
+                    <label className={theme.label()}>
+                        {label}
+                        {required ? <span className={theme.required()}> * </span> : null}
+                    </label>
+                ) : null}
+                {error ? <span className={theme.error()}>{error}</span> : null}
+            </div>
+        ),
         [disabled, error, handleClick, label, required, template, theme]
     );
 
     const renderValue = useCallback(
-        (item: S, idx: number) => {
-            return (
-                <li
-                    key={idx}
-                    className={theme.value({disabled: (item as any).disabled, selected: item[valueKey] === value})}
-                    onMouseDown={!(item as any).disabled ? event => handleSelect(item[valueKey]!, event) : undefined}
-                >
-                    {template ? template(item) : item[labelKey]}
-                </li>
-            );
-        },
+        (item: S, idx: number) => (
+            <li
+                key={idx}
+                className={theme.value({disabled: (item as any).disabled, selected: item[valueKey] === value})}
+                onMouseDown={!(item as any).disabled ? event => handleSelect(item[valueKey]!, event) : undefined}
+            >
+                {template ? template(item) : item[labelKey]}
+            </li>
+        ),
         [labelKey, template, theme, value, valueKey]
     );
 
@@ -229,7 +226,7 @@ export function Dropdown<
                 required={required}
                 tabIndex={0}
                 type={template && selected ? "hidden" : undefined}
-                value={selected && selected[labelKey] ? selected[labelKey] : ""}
+                value={selected?.[labelKey] ? selected[labelKey] : ""}
             />
             {template && selected ? renderTemplateValue(selected) : null}
             <ul className={theme.values()}>{source.map(renderValue)}</ul>
@@ -238,7 +235,7 @@ export function Dropdown<
 }
 
 function targetIsDescendant(event: Event, parent: Element | null) {
-    var node = event.target;
+    let node = event.target;
     while (node !== null) {
         if (node === parent) return true;
         node = (node as Element).parentNode;

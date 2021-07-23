@@ -104,13 +104,13 @@ export function useListBase<T>({
             handleShowMore() {
                 if (state.hasMoreHidden) {
                     if (state.hasMoreData) {
-                        state.displayedCount! += perPage || 5;
+                        state.displayedCount! += perPage ?? 5;
                     }
                 } else if (store?.type === "server" && state.hasMoreToLoad && !store.isLoading) {
                     store.search(true);
                     if (perPage) {
                         if (state.hasMoreData) {
-                            state.displayedCount! += perPage || 5;
+                            state.displayedCount! += perPage ?? 5;
                         }
                     }
                 }
@@ -176,18 +176,18 @@ export function useListBase<T>({
                             <div className={theme.bottomRow()}>
                                 {isManualFetch && state.hasMoreData ? (
                                     <Button
-                                        onClick={() => state.handleShowMore()}
                                         icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                                         label={state.showMoreLabel}
+                                        onClick={() => state.handleShowMore()}
                                     />
                                 ) : (
                                     <div />
                                 )}
                                 {showAllHandler ? (
                                     <Button
-                                        onClick={showAllHandler}
                                         icon={getIcon(`${i18nPrefix}.icons.list.showAll`)}
                                         label={i18next.t(`${i18nPrefix}.list.show.all`)}
+                                        onClick={showAllHandler}
                                     />
                                 ) : null}
                             </div>

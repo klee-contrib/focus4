@@ -1,4 +1,5 @@
 import {CSSProp, useTheme} from "@focus4/styling";
+
 import menuCss, {MenuCss} from "../__style__/menu.css";
 
 export interface MenuDividerProps {
@@ -8,5 +9,5 @@ export interface MenuDividerProps {
 
 export function MenuDivider({theme: pTheme}: MenuDividerProps) {
     const theme = useTheme("RTMenu", menuCss, pTheme);
-    return <hr data-react-toolbox="menu-divider" className={theme.menuDivider()} />;
+    return <hr className={theme.menuDivider()} data-react-toolbox="menu-divider" />;
 }

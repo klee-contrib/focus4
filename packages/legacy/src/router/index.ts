@@ -20,7 +20,7 @@ export interface RouterConfig<E = "error"> {
  * @param stores Des ViewStore précédemment créé. S'il y a plus d'un ViewStore, tous doivent avoir un préfixe.
  * @param config La config du routeur ([yester](https://github.com/basarat/yester)).
  */
-export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
+export function makeRouter<Store extends ViewStore<any, any>, E extends string = "error">(
     stores: Store[],
     config: RouterConfig<E> = {}
 ) {
@@ -76,14 +76,14 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
                 (store, i) =>
                     ({
                         // Route sur laquelle matcher, construite à partir du préfixe et des paramètres.
-                        $: `/${store.prefix ? store.prefix : ""}${store.paramNames
+                        $: `/${store.prefix ? (store.prefix as string) : ""}${store.paramNames
                             .map((param, idx) => `(${idx !== 0 || store.prefix ? "/" : ""}:${param as string})`)
                             .join("")}`,
                         // Appelé à chaque navigation vers la route.
                         beforeEnter: ({params}) => {
                             // On applique le `beforeEnter` du store s'il y en a un.
                             if (store.beforeEnter) {
-                                const {errorCode: err, redirect} = store.beforeEnter(params) || {
+                                const {errorCode: err, redirect} = store.beforeEnter(params) ?? {
                                     errorCode: undefined,
                                     redirect: undefined
                                 };
@@ -124,7 +124,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
                 beforeEnter: ({newPath, oldPath}) => {
                     if (newPath === "/") {
                         // Si on a pas de route initiale, on redirige vers le store principal.
-                        return {redirect: `/${stores[0].prefix}`, replace: true};
+                        return {redirect: `/${stores[0].prefix as string}`, replace: true};
                     } else {
                         // On traite le handler personnalisé.
                         if (config.notfoundHandler) {
@@ -189,7 +189,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E = "error">(
              */
             to(prefix: Store["prefix"]) {
                 if (prefix) {
-                    updateUrl(`/${prefix}`);
+                    updateUrl(`/${prefix as string}`);
                 }
             }
         },

@@ -20,16 +20,16 @@ export function ButtonBackToTop({theme: pTheme}: ButtonBackToTopProps) {
     const scrollable = useContext(ScrollableContext);
 
     return (
-        <motion.div className={backToTop()} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}}>
+        <motion.div animate={{scale: 1}} className={backToTop()} exit={{scale: 0}} initial={{scale: 0}}>
             <Button
                 accent
+                floating
+                icon="expand_less"
                 onClick={() =>
                     scrollable.scrollTo({
                         top: 0
                     })
                 }
-                icon="expand_less"
-                floating
                 theme={theme}
             />
         </motion.div>

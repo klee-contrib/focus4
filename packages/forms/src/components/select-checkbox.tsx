@@ -22,10 +22,10 @@ function clickHandlerFactory(
 
         if (!isDisabled) {
             if (isSelected) {
-                // is selected -> remove it
+                // Is selected -> remove it
                 onChange(value ? value.filter(val => val !== optVal) : undefined);
             } else {
-                // is not selected -> add it
+                // Is not selected -> add it
                 onChange(value ? [...value.slice(), optVal] : [optVal]);
             }
         }
@@ -77,25 +77,23 @@ export function SelectCheckbox<T extends "string" | "number">({
             {label && <h5>{i18next.t(label)}</h5>}
             <ul>
                 {values.map(option => {
-                    const optVal = (option as any)[values.$valueKey];
-                    const optLabel = (option as any)[values.$labelKey];
+                    const optVal = option[values.$valueKey];
+                    const optLabel = option[values.$labelKey];
 
                     const isSelected = value ? !!(value as any).find((val: any) => optVal === val) : false;
                     const clickHandler = clickHandlerFactory(disabled, isSelected, value, optVal, onChange);
 
                     return (
-                        <li key={optVal} onClick={clickHandler} className={theme.option()}>
+                        <li key={optVal} className={theme.option()} onClick={clickHandler}>
                             <Checkbox
-                                id={`${id}-${optVal}`}
-                                name={`${name}-${optVal}`}
-                                value={isSelected}
                                 disabled={
                                     disabled ||
-                                    (maxSelectable !== undefined &&
-                                        maxSelectable === (value && value.length) &&
-                                        !isSelected)
+                                    (maxSelectable !== undefined && maxSelectable === value?.length && !isSelected)
                                 }
+                                id={`${id!}-${optVal as string}`}
                                 label={i18next.t(optLabel)}
+                                name={`${name!}-${optVal as string}`}
+                                value={isSelected}
                             />
                         </li>
                     );

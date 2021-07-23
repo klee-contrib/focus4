@@ -3,9 +3,11 @@ import moment from "moment";
 import {useCallback, useMemo} from "react";
 
 import {ToBem} from "@focus4/styling";
-import {CalendarCss} from "../__style__/calendar.css";
 
 import {Day} from "./day";
+
+import {CalendarCss} from "../__style__/calendar.css";
+
 
 export interface MonthProps {
     disabledDates?: Date[];
@@ -75,7 +77,7 @@ export function Month({
     const fullYear = viewDate.getFullYear();
 
     return (
-        <div data-react-toolbox="month" className={theme.month()}>
+        <div className={theme.month()} data-react-toolbox="month">
             <span className={theme.title()}>
                 {fullMonth} {fullYear}
             </span>

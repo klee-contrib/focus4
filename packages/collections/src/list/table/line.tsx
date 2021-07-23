@@ -67,7 +67,7 @@ export function TableLine<T>({
 
         /** Précise si la ligne est sélectionnée.. */
         get isSelected() {
-            return props.store?.selectedItems.has(props.data) || false;
+            return props.store?.selectedItems.has(props.data) ?? false;
         },
 
         /** Handler de clic sur la case de sélection. */
@@ -91,7 +91,7 @@ export function TableLine<T>({
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (
-                <td className={cellClassName} key={idx} onClick={() => onClick?.(props.data)}>
+                <td key={idx} className={cellClassName} onClick={() => onClick?.(props.data)}>
                     {content(props.data)}
                 </td>
             ))}

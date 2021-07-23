@@ -7,11 +7,11 @@ import {findDOMNode} from "react-dom";
 
 import {CSSProp, themr} from "@focus4/styling";
 import {
+    InputCss,
+    ProgressBar,
     Autocomplete as RTAutocomplete,
     AutocompleteCss as RTAutocompleteCss,
-    AutocompleteProps as RTAutocompleteProps,
-    InputCss,
-    ProgressBar
+    AutocompleteProps as RTAutocompleteProps
 } from "@focus4/toolbox";
 
 import autocompleteCss, {AutocompleteCss as ACCSS} from "./__style__/autocomplete.css";
@@ -55,7 +55,11 @@ export interface AutocompleteProps<T extends "string" | "number">
 
 /** Surcouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
+// eslint-disable-next-line react/no-unsafe
 export class Autocomplete<T extends "string" | "number"> extends Component<AutocompleteProps<T>> {
+    /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
+    protected value?: string;
+
     protected inputElement!: HTMLInputElement | null;
 
     /** Requête d'autocomplete en cours. */
@@ -72,19 +76,11 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         makeObservable(this);
     }
 
-    /** Résultats sous format JSON, pour l'autocomplete. */
-    @computed.struct
-    get source() {
-        return Object.fromEntries(this.data);
-    }
-
-    /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
-    protected value?: string;
-
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     async UNSAFE_componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
         if ((value || value === 0) && !isQuickSearch && keyResolver) {
-            const label = i18next.t((await keyResolver(value)) || "");
+            const label = i18next.t((await keyResolver(value)) ?? "");
             runInAction(() => {
                 this.query = label || `${value}`;
                 if (label) {
@@ -94,19 +90,27 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         }
     }
 
+    componentDidMount() {
+        // eslint-disable-next-line react/no-find-dom-node
+        this.inputElement = (findDOMNode(this) as Element).querySelector("input");
+    }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     async UNSAFE_componentWillReceiveProps({autoSelect, value, isQuickSearch, keyResolver}: AutocompleteProps<T>) {
         if (autoSelect && value !== this.props.value && value && !isQuickSearch && keyResolver) {
-            this.query = i18next.t((await keyResolver(value)) || "") || value?.toString() || "";
+            this.query = i18next.t((await keyResolver(value)) ?? "") || value?.toString() || "";
         }
     }
 
-    componentDidMount() {
-        this.inputElement = (findDOMNode(this) as Element).querySelector("input");
+    /** Résultats sous format JSON, pour l'autocomplete. */
+    @computed.struct
+    get source() {
+        return Object.fromEntries(this.data);
     }
 
     focus() {
         // C'est moche mais sinon ça marche pas...
-        setTimeout(() => this.inputElement && this.inputElement.focus(), 0);
+        setTimeout(() => this.inputElement?.focus(), 0);
     }
 
     /**
@@ -172,10 +176,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
             const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
             runInAction(() => {
                 this.data.replace(
-                    (result &&
-                        result.data &&
-                        result.data.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {})) ||
-                        {}
+                    result?.data?.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {}) ?? {}
                 );
                 this.isLoading = false;
 
@@ -210,23 +211,23 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
                     <div data-focus="autocomplete">
                         <RTAutocomplete
                             {...props}
-                            value={`${props.value ?? ""}`}
-                            onChange={value => this.onValueChange(value as string)}
-                            multiple={false}
-                            source={this.source}
-                            query={this.query}
-                            onQueryChange={(query?: string) => this.onQueryChange(query ?? "")}
-                            onFocus={this.onFocus}
                             maxLength={undefined}
+                            multiple={false}
+                            onChange={value => this.onValueChange(value as string)}
+                            onFocus={this.onFocus}
+                            onQueryChange={(query?: string) => this.onQueryChange(query ?? "")}
+                            query={this.query}
+                            source={this.source}
                             suggestionMatch="disabled"
-                            type="search"
                             theme={theme}
+                            type="search"
+                            value={`${props.value ?? ""}`}
                         />
                         {this.isLoading ? (
                             <ProgressBar
-                                type="linear"
                                 mode="indeterminate"
                                 theme={{progressBar: theme.progressBar()}}
+                                type="linear"
                             />
                         ) : null}
                     </div>

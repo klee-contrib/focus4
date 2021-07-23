@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import {range} from "lodash";
 import {
-    MouseEvent as RMouseEvent,
     MouseEventHandler,
+    MouseEvent as RMouseEvent,
     TouchEvent as RTouchEvent,
     TouchEventHandler,
     useCallback,
@@ -13,12 +13,12 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import sliderCss, {SliderCss} from "./__style__/slider.css";
-export {sliderCss, SliderCss};
 
 import {Input} from "./input";
 import {ProgressBar} from "./progress-bar";
 
+import sliderCss, {SliderCss} from "./__style__/slider.css";
+export {sliderCss, SliderCss};
 export interface SliderProps {
     /** Used to style the ProgressBar element */
     buffer?: number;
@@ -105,7 +105,7 @@ export function Slider({
             if (v > max) {
                 return max;
             }
-            var decimalPower = Math.pow(10, stepDecimals);
+            const decimalPower = 10 ** stepDecimals;
             return Math.round(v * decimalPower) / decimalPower;
         },
         [max, min, stepDecimals]
@@ -283,12 +283,12 @@ export function Slider({
                 <div className={theme.progress()}>
                     <ProgressBar
                         ref={progressBar}
+                        buffer={buffer}
                         className={theme.innerprogress()}
                         max={max}
                         min={min}
                         mode="determinate"
                         value={value}
-                        buffer={buffer}
                     />
                     {snaps ? (
                         <div className={theme.snaps()}>
@@ -304,9 +304,9 @@ export function Slider({
                     ref={inputNode}
                     className={theme.input()}
                     disabled={disabled}
-                    onFocus={handleInputFocus}
-                    onChange={handleInputChange}
                     onBlur={handleInputBlur}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
                     value={inputFocused ? inputValue : valueForInput(value)}
                 />
             ) : null}

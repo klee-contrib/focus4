@@ -14,11 +14,13 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import menuCss, {MenuCss} from "../__style__/menu.css";
-export {menuCss, MenuCss};
 
 import {RippleProps} from "../ripple";
+
 import {MenuItem, MenuItemProps} from "./item";
+
+import menuCss, {MenuCss} from "../__style__/menu.css";
+export {menuCss, MenuCss};
 
 export interface MenuProps {
     /** If true, the menu will be displayed as opened by default. */
@@ -170,7 +172,7 @@ export function Menu({
                 const item2 = item as ReactElement<MenuItemProps & RippleProps>;
                 if (item2.type === MenuItem) {
                     return cloneElement(item2, {
-                        ripple: item2.props.ripple || ripple,
+                        ripple: item2.props.ripple ?? ripple,
                         selected:
                             typeof item2.props.value !== "undefined" && selectable && item2.props.value === selected,
                         onClick: (e: MouseEvent<HTMLLIElement>) => handleSelect(item2, e)
@@ -185,8 +187,8 @@ export function Menu({
     return (
         <div
             ref={rootNode}
-            data-react-toolbox="menu"
             className={classNames(theme.menu({[position]: true, active, rippled}), className)}
+            data-react-toolbox="menu"
             style={rootStyle}
         >
             {outline ? <div className={theme.outline()} style={outlineStyle} /> : null}
@@ -198,7 +200,7 @@ export function Menu({
 }
 
 function targetIsDescendant(event: Event, parent: Element | null) {
-    var node = event.target;
+    let node = event.target;
     while (node !== null) {
         if (node === parent) return true;
         node = (node as Element).parentNode;

@@ -16,10 +16,11 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import inputCss, {InputCss} from "./__style__/input.css";
-export {inputCss, InputCss};
 
 import {FontIcon} from "./font-icon";
+
+import inputCss, {InputCss} from "./__style__/input.css";
+export {inputCss, InputCss};
 
 export interface InputProps {
     autoComplete?: string;
@@ -124,21 +125,21 @@ export const Input = forwardRef(function RTInput(
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) {
     const theme = useTheme("RTInput", inputCss, pTheme);
-    const inputNode = useRef<any>(null);
+    const inputNode = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
     const handleAutoresize = useCallback(() => {
         if (inputNode.current) {
             if (typeof rows === "number" && !Number.isNaN(rows)) {
                 inputNode.current.style.height = "";
             } else {
-                // compute the height difference between inner height and outer height
+                // Compute the height difference between inner height and outer height
                 const inputStyle = getComputedStyle(inputNode.current, null);
                 const heightOffset =
                     inputStyle.boxSizing === "content-box"
                         ? -(parseFloat(inputStyle.paddingTop) + parseFloat(inputStyle.paddingBottom))
                         : parseFloat(inputStyle.borderTopWidth) + parseFloat(inputStyle.borderBottomWidth);
 
-                // resize the input to its content size
+                // Resize the input to its content size
                 inputNode.current.style.height = "auto";
                 inputNode.current.style.height = `${inputNode.current.scrollHeight + heightOffset}px`;
             }
@@ -162,18 +163,20 @@ export const Input = forwardRef(function RTInput(
         }
     });
 
-    useImperativeHandle(ref, () => inputNode.current, []);
+    useImperativeHandle(ref, () => inputNode.current!, []);
 
     const handleChange = useCallback(
         (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             const valueFromEvent = event.currentTarget.value;
-            // Trim value to maxLength if that exists (only on multiline inputs).
-            // Note that this is still required even tho we have the onKeyPress filter
-            // because the user could paste smt in the textarea.
+            /*
+             * Trim value to maxLength if that exists (only on multiline inputs).
+             * Note that this is still required even tho we have the onKeyPress filter
+             * because the user could paste smt in the textarea.
+             */
             const haveToTrim = multiline && maxLength && event.currentTarget.value.length > maxLength;
             const newValue = haveToTrim ? valueFromEvent.substr(0, maxLength) : valueFromEvent;
 
-            // propagate to to store and therefore to the input
+            // Propagate to to store and therefore to the input
             onChange?.(newValue, event);
         },
         [onChange, multiline, maxLength]
@@ -181,12 +184,16 @@ export const Input = forwardRef(function RTInput(
 
     const handleKeyPress: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
-            // prevent insertion of more characters if we're a multiline input
-            // and maxLength exists
+            /*
+             * Prevent insertion of more characters if we're a multiline input
+             * and maxLength exists
+             */
             if (multiline && maxLength) {
-                // check if smt is selected, in which case the newly added charcter would
-                // replace the selected characters, so the length of value doesn't actually
-                // increase.
+                /*
+                 * Check if smt is selected, in which case the newly added charcter would
+                 * replace the selected characters, so the length of value doesn't actually
+                 * increase.
+                 */
                 const isReplacing = event.currentTarget.selectionEnd! - event.currentTarget.selectionStart!;
                 const {value: newValue} = event.currentTarget;
 
@@ -208,7 +215,6 @@ export const Input = forwardRef(function RTInput(
         autoComplete,
         className: theme.inputElement({filled: !!value}),
         onChange: handleChange,
-        ref: inputNode,
         disabled,
         id,
         name,
@@ -238,16 +244,16 @@ export const Input = forwardRef(function RTInput(
 
     return (
         <div
-            data-react-toolbox="input"
             className={classNames(
                 theme.input({disabled, errored: !!error, hidden: type === "hidden", withIcon: !!icon}),
                 className
             )}
+            data-react-toolbox="input"
         >
             {multiline ? (
-                <textarea {...inputElementProps} rows={rows} />
+                <textarea ref={inputNode as any} {...inputElementProps} rows={rows} />
             ) : (
-                <input {...inputElementProps} maxLength={maxLength} />
+                <input ref={inputNode as any} {...inputElementProps} maxLength={maxLength} />
             )}
             {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
             <span className={theme.bar()} />
@@ -258,7 +264,7 @@ export const Input = forwardRef(function RTInput(
                 </label>
             ) : null}
             {hint ? (
-                <span hidden={!!labelText} className={theme.hint()}>
+                <span className={theme.hint()} hidden={!!labelText}>
                     {hint}
                 </span>
             ) : null}

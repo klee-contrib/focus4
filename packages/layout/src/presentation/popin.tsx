@@ -4,6 +4,7 @@ import {CSSTransition, TransitionGroup} from "react-transition-group";
 import {CSSProp, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
 
 import {Scrollable} from "../scrollable";
+
 import {Overlay} from "./overlay";
 
 import popinCss, {PopinCss} from "./__style__/popin.css";

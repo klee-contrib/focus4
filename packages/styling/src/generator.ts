@@ -1,5 +1,6 @@
-import Core from "css-modules-loader-core";
 import {promises as fs} from "fs";
+
+import Core from "css-modules-loader-core";
 import glob from "glob";
 import {camelCase, sortBy, upperFirst} from "lodash";
 
@@ -15,7 +16,7 @@ export async function generateTypings(rootDir: string) {
         files.map(async ({file, interfaceName}) => {
             const content = await fs.readFile(file);
             const {exportTokens} = await cssLoader.load(content.toString());
-            const elements = new Set();
+            const elements = new Set<string>();
             let hasModifier = false;
             const tokens = sortBy(
                 Object.keys(exportTokens).map(token => {

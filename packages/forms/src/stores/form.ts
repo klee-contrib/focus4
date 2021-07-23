@@ -27,9 +27,9 @@ import {
 export function makeFormNode<E, NE = E>(
     componentClass: Component | null,
     node: StoreNode<E>,
-    builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
+    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)
-): FormNode<NE, E>;
+): FormNode<NE>;
 /**
  * Construit un FormListNode à partir d'un StoreListNode.
  * Le FormListNode est un clone d'un StoreListNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
@@ -42,13 +42,13 @@ export function makeFormNode<E, NE = E>(
 export function makeFormNode<E, NE = E>(
     componentClass: Component | null,
     node: StoreListNode<E>,
-    builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
+    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
-): FormListNode<NE, E>;
+): FormListNode<NE>;
 export function makeFormNode(
     componentClass: Component | null,
     node: StoreNode | StoreListNode,
-    builder: Function = (x: any) => x,
+    builder: (x: any) => any = (x: any) => x,
     initialData?: any
 ): any {
     let formNode;
@@ -76,9 +76,9 @@ export function makeFormNode(
  */
 export function useFormNode<E, NE = E>(
     node: StoreListNode<E>,
-    builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
+    builder?: (s: FormListNodeBuilder<E>) => FormListNodeBuilder<NE>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
-): FormListNode<NE, E>;
+): FormListNode<NE>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
@@ -89,10 +89,14 @@ export function useFormNode<E, NE = E>(
  */
 export function useFormNode<E, NE = E>(
     node: StoreNode<E>,
-    builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
+    builder?: (s: FormNodeBuilder<E>) => FormNodeBuilder<NE>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)
-): FormNode<NE, E>;
-export function useFormNode(node: StoreNode | StoreListNode, builder: Function = (x: any) => x, initialData: any) {
+): FormNode<NE>;
+export function useFormNode(
+    node: StoreNode | StoreListNode,
+    builder: (x: any) => any = (x: any) => x,
+    initialData: any = undefined
+) {
     const [formNode] = isStoreListNode(node)
         ? useState(() => {
               const fn = builder(new FormListNodeBuilder(node)).build();
@@ -120,7 +124,7 @@ export function useFormNode(node: StoreNode | StoreListNode, builder: Function =
  */
 export function makeFormActions<
     FN extends FormNode | FormListNode,
-    A extends ReadonlyArray<any> = never,
+    A extends readonly any[] = never,
     S extends string = never
 >(
     componentClass: Component | null,
@@ -138,7 +142,7 @@ export function makeFormActions<
  */
 export function useFormActions<
     FN extends FormNode | FormListNode,
-    A extends ReadonlyArray<any> = never,
+    A extends readonly any[] = never,
     S extends string = never
 >(node: FN, builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, S>) {
     const [formActions] = useState(() => builder(new FormActionsBuilder(node)).build());

@@ -17,7 +17,7 @@ export interface RadioGroupProps {
 
 export function RadioGroup({className = "", children, disabled = false, onChange, value}: RadioGroupProps) {
     return (
-        <div data-react-toolbox="radio-group" className={className}>
+        <div className={className} data-react-toolbox="radio-group">
             {Children.map(children, child => {
                 if (!child) {
                     return child;

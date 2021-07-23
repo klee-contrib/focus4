@@ -20,6 +20,7 @@ import {
     StoreListNode,
     StoreNode
 } from "../types";
+
 import {FormListNodeBuilder} from "./list-node";
 
 type FieldsOf<E> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
@@ -164,7 +165,7 @@ export class FormNodeBuilder<E, E0 = E> {
             node: StoreNode<E>
         ) => FormNodeBuilder<NE, EntryToEntity<E[O]>>
     ): FormNodeBuilder<E[O] extends NE ? E : Omit<E, O> & {[_ in O]: ObjectEntry<NE>}, E0>;
-    patch(node: keyof E, builder: Function): any {
+    patch(node: keyof E, builder: (builder: any, node: any) => any): any {
         const child = this.node[node];
         if (isStoreListNode(child)) {
             this.node[node] = builder(new FormListNodeBuilder(child), this.node).collect();

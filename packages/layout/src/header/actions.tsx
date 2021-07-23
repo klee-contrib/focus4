@@ -1,7 +1,6 @@
 import {motion} from "framer-motion";
 
 import {CSSProp, defaultTransition, getIcon, useTheme} from "@focus4/styling";
-
 import {Button, ButtonMenu, ButtonProps, MenuItem, MenuItemProps, tooltipFactory, TooltipProps} from "@focus4/toolbox";
 const TooltipButton = tooltipFactory()(Button);
 
@@ -65,9 +64,9 @@ export function HeaderActions({
                 return (
                     <FinalButton
                         key={`${i}`}
-                        floating={true}
+                        floating
                         {...action}
-                        icon={getIcon(action.icon, action.iconCustom || false)}
+                        icon={getIcon(action.icon, action.iconCustom ?? false)}
                     />
                 );
             })}
@@ -77,13 +76,13 @@ export function HeaderActions({
                         floating: true,
                         ...secondaryButton,
                         icon: secondaryButton.icon
-                            ? getIcon(secondaryButton.icon, secondaryButton.iconCustom || false)
+                            ? getIcon(secondaryButton.icon, secondaryButton.iconCustom ?? false)
                             : getIcon(`${i18nPrefix}.icons.headerActions.secondary`)
                     }}
                     position="topRight"
                 >
                     {secondary.map((action, i) => (
-                        <MenuItem key={`${i}`} {...action} icon={getIcon(action.icon, action.iconCustom || false)} />
+                        <MenuItem key={`${i}`} {...action} icon={getIcon(action.icon, action.iconCustom ?? false)} />
                     ))}
                 </ButtonMenu>
             ) : null}

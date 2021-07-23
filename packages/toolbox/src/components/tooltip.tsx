@@ -11,6 +11,7 @@ import {
 import {createPortal} from "react-dom";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+
 import tooltipCss, {TooltipCss} from "./__style__/tooltip.css";
 export {tooltipCss, TooltipCss};
 
@@ -63,8 +64,8 @@ export function tooltipFactory({
                     tooltipPosition={tooltipPosition}
                     tooltipShowOnClick={tooltipShowOnClick}
                     {...p}
-                    tooltipTheme={theme}
                     ComposedComponent={ComposedComponent}
+                    tooltipTheme={theme}
                 />
             );
         });
@@ -74,6 +75,7 @@ export function tooltipFactory({
 class TooltippedComponent<P> extends Component<
     TooltipProps & {tooltipTheme: ToBem<TooltipCss>} & {ComposedComponent: ComponentType<P> | string}
 > {
+    // eslint-disable-next-line react/state-in-constructor
     state = {
         active: false,
         position: this.props.tooltipPosition!,
@@ -81,6 +83,7 @@ class TooltippedComponent<P> extends Component<
         left: 0,
         top: 0
     };
+
     timeout?: NodeJS.Timeout | number;
     tooltipNode?: HTMLSpanElement | null;
 

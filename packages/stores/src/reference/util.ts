@@ -23,8 +23,8 @@ export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
     {labelKey, valueKey}: {labelKey?: LK; valueKey?: VK} = {}
 ) {
     const newList = list.slice() as ReferenceList<T, VK, LK>;
-    newList.$valueKey = valueKey || (list as ReferenceList<T>).$valueKey || "code";
-    newList.$labelKey = labelKey || (list as ReferenceList<T>).$labelKey || "label";
+    newList.$valueKey = valueKey ?? (list as ReferenceList<T>).$valueKey ?? "code";
+    newList.$labelKey = labelKey ?? (list as ReferenceList<T>).$labelKey ?? "label";
     newList.getLabel = value => getLabel(value, newList);
     newList.filter = callbackFn => filter(newList, callbackFn);
     return newList;

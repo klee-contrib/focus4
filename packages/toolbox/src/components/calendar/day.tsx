@@ -1,6 +1,7 @@
 import {useCallback, useMemo} from "react";
 
 import {ToBem} from "@focus4/styling";
+
 import {CalendarCss} from "../__style__/calendar.css";
 
 export interface DayProps {
@@ -39,7 +40,7 @@ export function Day({day, disabled, onClick, selectedDate, sundayFirstDayOfWeek,
     }, [day, selectedDate, viewDate]);
 
     return (
-        <div data-react-toolbox="day" className={theme.day({active, disabled})} style={dayStyle}>
+        <div className={theme.day({active, disabled})} data-react-toolbox="day" style={dayStyle}>
             <span onClick={handleClick}>{day}</span>
         </div>
     );

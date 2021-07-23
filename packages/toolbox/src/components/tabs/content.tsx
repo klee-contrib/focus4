@@ -2,6 +2,7 @@ import classNames from "classnames";
 import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
 import tabsCss, {TabsCss} from "../__style__/tabs.css";
 
 export interface TabContentProps {
@@ -17,7 +18,7 @@ export interface TabContentProps {
 export function TabContent({active = false, children, className = "", hidden = true, theme: pTheme}: TabContentProps) {
     const theme = useTheme("RTTabs", tabsCss, pTheme);
     return (
-        <section className={classNames(theme.tab({active}), className)} role="tabpanel" aria-expanded={hidden}>
+        <section aria-expanded={hidden} className={classNames(theme.tab({active}), className)} role="tabpanel">
             {children}
         </section>
     );

@@ -68,10 +68,12 @@ export function SearchBar<T, C>({
         /** Texte de la SearchBar. */
         get text() {
             if (!enableInputCriteria) {
-                return store.query; // évidemment, si on affiche pas les critères, c'est facile.
+                return store.query; // Évidemment, si on affiche pas les critères, c'est facile.
             } else {
-                // Toute la difficulté réside dans le fait qu'on a besoin de conserver l'ordre dans lequel l'utilisateur à voulu saisir les critères.
-                // Et également de ne pas changer le rendu entre ce que l'utilisateur à tapé et ce qu'il voit.
+                /*
+                 * Toute la difficulté réside dans le fait qu'on a besoin de conserver l'ordre dans lequel l'utilisateur à voulu saisir les critères.
+                 * Et également de ne pas changer le rendu entre ce que l'utilisateur à tapé et ce qu'il voit.
+                 */
                 const criteria = this.criteria
                     .concat(
                         difference(
@@ -84,7 +86,7 @@ export function SearchBar<T, C>({
                         this.flatCriteria.find(i => i[0] === c) && this.flatCriteria.find(i => i[0] === c)![1]
                     ])
                     .filter(([_, value]) => value)
-                    .map(([key, value]) => `${key}:${value}`);
+                    .map(([key, value]) => `${key as string}:${value as string}`);
                 return `${criteria.join(" ")}${criteria.length && store.query && store.query.trim() ? " " : ""}${
                     store.query
                 }`;
@@ -129,7 +131,7 @@ export function SearchBar<T, C>({
 
                 // On parcourt les tokens et on cherche pour un token de la forme critere:valeur.
                 while (1) {
-                    const [crit = "", value = ""] = (token && token.split(/:(.+)/)) || [];
+                    const [crit = "", value = ""] = token?.split(/:(.+)/) || [];
                     // Si le token est de la bonne forme et que le critère existe, alors on l'enregistre.
                     if (crit && value && (store.criteria as any)[crit] && !this.criteriaList.find(u => u === crit)) {
                         ((store.criteria as any)[crit] as FormEntityField).value = value;
@@ -147,7 +149,7 @@ export function SearchBar<T, C>({
                 );
 
                 // Et on reconstruit le reste de la query avec ce qu'il reste.
-                store.query = `${tokens.slice(skip).join(" ")}${currentTarget.value.match(/\s*$/)![0]}`; // La regex sert à garder les espaces en plus à la fin.
+                store.query = `${tokens.slice(skip).join(" ")}${/\s*$/.exec(currentTarget.value)![0]}`; // La regex sert à garder les espaces en plus à la fin.
             }
         },
 
@@ -197,11 +199,11 @@ export function SearchBar<T, C>({
                         {getIcon(`${i18nPrefix}.icons.searchBar.search`)}
                     </FontIcon>
                     <input
-                        name="search-bar-input"
+                        ref={input}
                         autoComplete="off"
+                        name="search-bar-input"
                         onChange={state.onInputChange}
                         placeholder={i18next.t(state.placeholder || "")}
-                        ref={input}
                         value={state.text}
                     />
                 </div>
@@ -211,7 +213,6 @@ export function SearchBar<T, C>({
                 {criteriaComponent || store.availableSearchFields.length > 0 ? (
                     <Button
                         icon={getIcon(`${i18nPrefix}.icons.searchBar.${showPanel ? "close" : "open"}`)}
-                        onClick={togglePanel}
                         label={
                             store.availableSearchFields.length > 0
                                 ? `(${store.searchFields?.length ?? store.availableSearchFields.length}/${
@@ -219,6 +220,7 @@ export function SearchBar<T, C>({
                                   })`
                                 : ""
                         }
+                        onClick={togglePanel}
                     />
                 ) : null}
             </div>
@@ -226,10 +228,10 @@ export function SearchBar<T, C>({
             <AnimatePresence>
                 {showPanel && (
                     <motion.div
-                        className={theme.panel()}
-                        initial={{height: 0, y: -40}}
                         animate={{height: "auto", y: 0, overflow: "hidden", transitionEnd: {overflow: "auto"}}}
+                        className={theme.panel()}
                         exit={{height: 0, y: -40, overflow: "hidden", transitionEnd: {overflow: "auto"}}}
+                        initial={{height: 0, y: -40}}
                         transition={springTransition}
                     >
                         {criteriaComponent
@@ -238,7 +240,7 @@ export function SearchBar<T, C>({
                                       f
                                           .value(
                                               () => store.query,
-                                              query => (store.query = query || "")
+                                              query => (store.query = query ?? "")
                                           )
                                           .metadata({label: `${i18nPrefix}.search.bar.query`})
                                   )
@@ -248,10 +250,6 @@ export function SearchBar<T, C>({
                             <div className={theme.searchFields()}>
                                 <h6>{i18next.t(`${i18nPrefix}.search.bar.searchFields`)}</h6>
                                 <Checkbox
-                                    value={
-                                        !store.searchFields ||
-                                        store.searchFields.length === store.availableSearchFields.length
-                                    }
                                     label={i18next.t(`${i18nPrefix}.search.bar.selectAll`)}
                                     onChange={() => {
                                         if (
@@ -263,11 +261,15 @@ export function SearchBar<T, C>({
                                             store.searchFields = store.availableSearchFields.map(x => x);
                                         }
                                     }}
+                                    value={
+                                        !store.searchFields ||
+                                        store.searchFields.length === store.availableSearchFields.length
+                                    }
                                 />
                                 <SelectCheckbox<"string">
-                                    value={store.searchFields ?? store.availableSearchFields}
                                     onChange={fields => (store.searchFields = fields)}
                                     type="string"
+                                    value={store.searchFields ?? store.availableSearchFields}
                                     values={makeReferenceList(
                                         store.availableSearchFields.map(f => ({
                                             code: f,
@@ -280,7 +282,7 @@ export function SearchBar<T, C>({
                         {criteriaComponent}
                         {criteriaComponent ? (
                             <div className={theme.buttons()}>
-                                <Button onClick={state.clear} label={i18next.t(`${i18nPrefix}.search.bar.reset`)} />
+                                <Button label={i18next.t(`${i18nPrefix}.search.bar.reset`)} onClick={state.clear} />
                             </div>
                         ) : null}
                     </motion.div>

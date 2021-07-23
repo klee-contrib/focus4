@@ -37,7 +37,7 @@ export interface LoadingProps<T> {
 }
 
 /** Composant par défaut pour afficher le bouton d'ajout d'élément. */
-export function DefaultAddItemComponent({addItemHandler, i18nPrefix, mode}: AddItemProps<any>) {
+export function DefaultAddItemComponent({addItemHandler, i18nPrefix = "focus", mode}: AddItemProps<any>) {
     const theme = useTheme("listBase", listBaseCss);
     if (mode === "mosaic") {
         return (
@@ -49,9 +49,9 @@ export function DefaultAddItemComponent({addItemHandler, i18nPrefix, mode}: AddI
     } else {
         return (
             <Button
-                onClick={addItemHandler}
                 icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                 label={i18next.t(`${i18nPrefix}.list.add`)}
+                onClick={addItemHandler}
                 primary
                 raised={mode === "search"}
             />
@@ -60,13 +60,13 @@ export function DefaultAddItemComponent({addItemHandler, i18nPrefix, mode}: AddI
 }
 
 /** Composant d'empty state par défaut. */
-export function DefaultEmptyComponent({i18nPrefix}: EmptyProps<any>) {
+export function DefaultEmptyComponent({i18nPrefix = "focus"}: EmptyProps<any>) {
     const theme = useTheme("listBase", listBaseCss);
     return <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.list.empty`)}</div>;
 }
 
 /** Composant de chargement par défaut. */
-export function DefaultLoadingComponent({i18nPrefix}: LoadingProps<any>) {
+export function DefaultLoadingComponent({i18nPrefix = "focus"}: LoadingProps<any>) {
     const theme = useTheme("listBase", listBaseCss);
     return <div className={theme.loading()}>{i18next.t(`${i18nPrefix}.search.loading`)}</div>;
 }

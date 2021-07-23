@@ -13,7 +13,7 @@ import {
 } from "./types";
 
 const EMAIL_REGEX =
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
 export function validateField<T>(
@@ -52,18 +52,18 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                 error = validator(value);
             } else if (isRegexValidator(validator) && typeof value === "string") {
                 error =
-                    value && !validator.regex.test(value) ? validator.errorMessage || "focus.validation.regex" : false;
+                    value && !validator.regex.test(value) ? validator.errorMessage ?? "focus.validation.regex" : false;
             } else if (isEmailValidator(validator) && typeof value === "string") {
-                error = value && !EMAIL_REGEX.test(value) ? validator.errorMessage || "focus.validation.email" : false;
+                error = value && !EMAIL_REGEX.test(value) ? validator.errorMessage ?? "focus.validation.email" : false;
             } else if (isStringValidator(validator)) {
                 const {maxLength, minLength, errorMessage} = validator;
-                const text = `${value || ""}`;
-                const isMinLength = text.length < (minLength || 0);
+                const text = `${(value as unknown as string) || ""}`;
+                const isMinLength = text.length < (minLength ?? 0);
                 const isMaxLength = maxLength !== undefined && text.length > maxLength;
-                error = isMinLength || isMaxLength ? errorMessage || "focus.validation.string" : undefined;
+                error = isMinLength || isMaxLength ? errorMessage ?? "focus.validation.string" : undefined;
             } else if (isDateValidator(validator)) {
                 error = !moment(value, moment.ISO_8601).isValid()
-                    ? validator.errorMessage || "focus.validation.date"
+                    ? validator.errorMessage ?? "focus.validation.date"
                     : false;
             } else if (isNumberValidator(validator)) {
                 const val = +value;
@@ -74,7 +74,7 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                 const isDecimals = maxDecimals !== undefined && (`${val}`.split(".")[1] || "").length > maxDecimals;
                 error =
                     Number.isNaN(val) || isMin || isMax || isDecimals
-                        ? errorMessage || "focus.validation.number"
+                        ? errorMessage ?? "focus.validation.number"
                         : false;
             }
 

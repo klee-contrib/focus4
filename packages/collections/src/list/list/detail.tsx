@@ -41,10 +41,10 @@ export function DetailWrapper({
 }: DetailWrapperProps) {
     return (
         <motion.li
-            className={theme.detailWrapper()}
-            initial={{overflow: "hidden", height: 0}}
             animate={{overflow: "hidden", height: "auto", transitionEnd: {overflow: "visible"}}}
+            className={theme.detailWrapper()}
             exit={{overflow: "hidden", height: 0}}
+            initial={{overflow: "hidden", height: 0}}
             transition={defaultTransition}
         >
             {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident...
@@ -59,14 +59,14 @@ export function DetailWrapper({
                               left:
                                   mosaic.width / 2 -
                                   8.25 +
-                                  ((displayedIdx! + (isAddItemShown ? 1 : 0)) % byLine) * (mosaic.width + 10)
+                                  ((displayedIdx + (isAddItemShown ? 1 : 0)) % byLine) * (mosaic.width + 10)
                           }
                         : {}
                 }
             />
             <div className={theme.detail()}>
                 <IconButton icon="clear" onClick={closeDetail} />
-                <DetailComponent data={item} closeDetail={closeDetail} />
+                <DetailComponent closeDetail={closeDetail} data={item} />
             </div>
         </motion.li>
     );

@@ -96,11 +96,11 @@ export function selectFor<F extends FieldEntry>(
             field={field}
             onChange={getOnChange(field)}
             {...options}
+            inputType="select"
             selectProps={{
                 ...((options.selectProps as {}) || {}),
                 values
             }}
-            inputType="select"
         />
     );
 }

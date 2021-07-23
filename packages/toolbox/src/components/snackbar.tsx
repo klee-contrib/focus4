@@ -3,10 +3,11 @@ import {MouseEventHandler, ReactNode, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import snackbarCss, {SnackbarCss} from "./__style__/snackbar.css";
-export {snackbarCss, SnackbarCss};
 
 import {Button} from "./button";
+
+import snackbarCss, {SnackbarCss} from "./__style__/snackbar.css";
+export {snackbarCss, SnackbarCss};
 
 export interface SnackbarProps {
     /** Label for the action component inside the Snackbar. */
@@ -50,7 +51,7 @@ export function Snackbar({
         if (pActive) {
             setRendered(true);
             const t1 = setTimeout(() => setActive(true), 20);
-            // tslint:disable-next-line: no-unnecessary-callback-wrapper
+
             const t2 = setTimeout(() => onTimeout?.(), timeout);
             return () => {
                 clearTimeout(t1);
@@ -68,8 +69,8 @@ export function Snackbar({
     return rendered
         ? createPortal(
               <div
-                  data-react-toolbox="snackbar"
                   className={classNames(theme.snackbar({[type]: true, active}), className)}
+                  data-react-toolbox="snackbar"
               >
                   <span className={theme.label()}>
                       {label}

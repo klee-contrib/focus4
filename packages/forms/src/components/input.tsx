@@ -37,26 +37,11 @@ export interface InputProps<T extends "string" | "number"> extends Omit<RTInputP
 }
 
 @observer
+// eslint-disable-next-line react/no-unsafe
 export class Input<T extends "string" | "number"> extends Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement | HTMLTextAreaElement;
     protected mask?: InputMask;
-
-    constructor(props: InputProps<T>) {
-        super(props);
-        makeObservable(this);
-    }
-
-    @computed
-    get numberFormat() {
-        const {hasThousandsSeparator, maxDecimals = 10} = this.props;
-        return `${hasThousandsSeparator ? "0," : ""}0${
-            maxDecimals > 0
-                ? `[.][${range(0, maxDecimals)
-                      .map(_ => "0")
-                      .join("")}]`
-                : ""
-        }`;
-    }
+    private pendingAnimationFrame = false;
 
     @observable numberStringValue =
         this.props.type === "number"
@@ -65,6 +50,12 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
                 : ""
             : undefined;
 
+    constructor(props: InputProps<T>) {
+        super(props);
+        makeObservable(this);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillMount() {
         const {mask, type, value} = this.props;
         if (mask && type === "string") {
@@ -72,6 +63,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillReceiveProps({mask, value}: InputProps<T>) {
         // Mets à jour le pattern et la valeur du masque, si applicable.
         if (this.mask && mask && this.props.mask) {
@@ -96,6 +88,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillUpdate({mask}: InputProps<T>) {
         if (this.mask && mask && this.props.mask && mask.pattern !== this.props.mask.pattern) {
             this.mask.setPattern(mask.pattern, {
@@ -106,8 +99,31 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
     }
 
     componentDidUpdate() {
-        if (this.mask && this.mask.selection.start) {
+        if (this.mask?.selection.start) {
             this.updateInputSelection();
+        }
+    }
+
+    @computed
+    get numberFormat() {
+        const {hasThousandsSeparator, maxDecimals = 10} = this.props;
+        return `${hasThousandsSeparator ? "0," : ""}0${
+            maxDecimals > 0
+                ? `[.][${range(0, maxDecimals)
+                      .map(_ => "0")
+                      .join("")}]`
+                : ""
+        }`;
+    }
+
+    get value() {
+        if (this.mask) {
+            const value = this.mask.getValue();
+            return value === this.mask.emptyValue || value === undefined ? "" : value;
+        } else if (this.props.type === "string") {
+            return (this.props.value ?? "") as string;
+        } else {
+            return this.numberStringValue!;
         }
     }
 
@@ -163,7 +179,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
             } else if (e.key === "Delete") {
                 e.preventDefault();
                 const {start, end} = getSelection(this.inputElement);
-                setSelection(this.inputElement, {start: start + 1, end: end + 1});
+                setSelection(this.inputElement, {start: start! + 1, end: end! + 1});
                 this.updateMaskSelection();
                 if (this.mask.backspace()) {
                     if (this.value) {
@@ -220,8 +236,6 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         }
     }
 
-    private pendingAnimationFrame = false;
-
     @action.bound
     onChange(value: string) {
         if (this.pendingAnimationFrame) {
@@ -231,91 +245,77 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         const {noNegativeNumbers, onChange, maxDecimals = 10, type} = this.props;
         if (type === "string") {
             onChange(value === "" ? undefined : (value as any));
+        } else if (value === "") {
+            onChange(undefined);
         } else {
-            if (value === "") {
-                onChange(undefined);
-            } else {
-                if (numeral.locale() === "fr") {
-                    value = value.replace(".", ",");
-                }
-
-                let isNegative = false;
-                if (value.startsWith("-") && !noNegativeNumbers) {
-                    value = value.substring(1);
-                    isNegative = true;
-                }
-
-                const {decimal, thousands} = numeral.localeData().delimiters;
-                const invalidCharRegex = new RegExp(`[^\\d\\${thousands}\\${decimal}]`, "g");
-                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
-                const [left, right, nope] = value.split(decimal);
-
-                if (
-                    ((maxDecimals && (right || "").length <= maxDecimals) || right === undefined) &&
-                    nope === undefined &&
-                    !value.match(invalidCharRegex)
-                ) {
-                    const newValue =
-                        (isNegative ? "-" : "") + // Ajoute le "-" s'il faut.
-                        (!left && !right
-                            ? ""
-                            : // On formatte le nombre avec numeral en gardant tous les "0" de tête.
-                              numeral(value).format(
-                                  range(0, left.replace(new RegExp(thousands, "g"), "").length - 1)
-                                      .map(_ => "0")
-                                      .join("") + this.numberFormat
-                              )) +
-                        (right !== undefined && !+right ? decimal : "") + // Ajoute la virgule si elle était là et a été retirée par le format().
-                        (right ? takeWhile(right.split("").reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
-                    const newNumberValue = numeral(newValue).value() ?? undefined;
-
-                    if (!newValue.includes("NaN")) {
-                        this.numberStringValue = newValue;
-                        onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
-                    }
-                }
-
-                const end = getSelection(this.inputElement).end - (isNegative ? 1 : 0);
-                const ajustedEnd =
-                    Math.max(
-                        0,
-                        value.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "")
-                            .length +
-                            this.numberStringValue!.split("").filter(c => c === "0").length -
-                            value.split("").filter(c => c === "0").length
-                    ) + (isNegative ? 1 : 0);
-
-                let charCount = 0;
-                const newEnd = this.numberStringValue!.split("").reduce((count, char) => {
-                    if (charCount === ajustedEnd) {
-                        return count;
-                    }
-                    if (char.match(digitDecimalRegex)) {
-                        charCount++;
-                    }
-                    return count + 1;
-                }, 0);
-
-                this.pendingAnimationFrame = true;
-                window.requestAnimationFrame(() => {
-                    setSelection(this.inputElement, {
-                        start: newEnd,
-                        end: newEnd
-                    });
-                    this.pendingAnimationFrame = false;
-                });
+            if (numeral.locale() === "fr") {
+                value = value.replace(".", ",");
             }
-        }
-    }
 
-    get value() {
-        if (this.mask) {
-            const value = this.mask.getValue();
-            return value === this.mask.emptyValue || value === undefined ? "" : value;
-        } else if (this.props.type === "string") {
-            return (this.props.value || "") as string;
-        } else {
-            return this.numberStringValue!;
+            let isNegative = false;
+            if (value.startsWith("-") && !noNegativeNumbers) {
+                value = value.substring(1);
+                isNegative = true;
+            }
+
+            const {decimal, thousands} = numeral.localeData().delimiters;
+            const invalidCharRegex = new RegExp(`[^\\d\\${thousands}\\${decimal}]`, "g");
+            const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
+            const [left, right, nope] = value.split(decimal);
+
+            if (
+                ((maxDecimals && (right || "").length <= maxDecimals) || right === undefined) &&
+                nope === undefined &&
+                !invalidCharRegex.exec(value)
+            ) {
+                const newValue =
+                    (isNegative ? "-" : "") + // Ajoute le "-" s'il faut.
+                    (!left && !right
+                        ? ""
+                        : // On formatte le nombre avec numeral en gardant tous les "0" de tête.
+                          numeral(value).format(
+                              range(0, left.replace(new RegExp(thousands, "g"), "").length - 1)
+                                  .map(_ => "0")
+                                  .join("") + this.numberFormat
+                          )) +
+                    (right !== undefined && !+right ? decimal : "") + // Ajoute la virgule si elle était là et a été retirée par le format().
+                    (right ? takeWhile(right.split("").reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
+                const newNumberValue = numeral(newValue).value() ?? undefined;
+
+                if (!newValue.includes("NaN")) {
+                    this.numberStringValue = newValue;
+                    onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
+                }
+            }
+
+            const end = getSelection(this.inputElement).end! - (isNegative ? 1 : 0);
+            const ajustedEnd =
+                Math.max(
+                    0,
+                    value.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "").length +
+                        this.numberStringValue!.split("").filter(c => c === "0").length -
+                        value.split("").filter(c => c === "0").length
+                ) + (isNegative ? 1 : 0);
+
+            let charCount = 0;
+            const newEnd = this.numberStringValue!.split("").reduce((count, char) => {
+                if (charCount === ajustedEnd) {
+                    return count;
+                }
+                if (digitDecimalRegex.exec(char)) {
+                    charCount++;
+                }
+                return count + 1;
+            }, 0);
+
+            this.pendingAnimationFrame = true;
+            window.requestAnimationFrame(() => {
+                setSelection(this.inputElement, {
+                    start: newEnd,
+                    end: newEnd
+                });
+                this.pendingAnimationFrame = false;
+            });
         }
     }
 
@@ -342,12 +342,10 @@ const KEYCODE_Z = 90;
 const KEYCODE_Y = 89;
 
 function isUndo(e: KeyboardEvent) {
-    // tslint:disable-next-line: deprecation
     return (e.ctrlKey || e.metaKey) && e.keyCode === (e.shiftKey ? KEYCODE_Y : KEYCODE_Z);
 }
 
 function isRedo(e: KeyboardEvent) {
-    // tslint:disable-next-line: deprecation
     return (e.ctrlKey || e.metaKey) && e.keyCode === (e.shiftKey ? KEYCODE_Z : KEYCODE_Y);
 }
 
@@ -355,8 +353,8 @@ function getSelection(el: HTMLInputElement | HTMLTextAreaElement) {
     let start;
     let end;
     if (el.selectionStart !== undefined) {
-        start = el.selectionStart;
-        end = el.selectionEnd;
+        start = el.selectionStart!;
+        end = el.selectionEnd!;
     } else {
         try {
             el.focus();
@@ -366,10 +364,10 @@ function getSelection(el: HTMLInputElement | HTMLTextAreaElement) {
             rangeEl.moveToBookmark((document as any).selection.createRange().getBookmark());
             clone.setEndPoint("EndToStart", rangeEl);
 
-            start = clone.text.length;
-            end = start + rangeEl.text.length;
-        } catch (e) {
-            /* not focused or not visible */
+            start = clone.text.length as number;
+            end = start + (rangeEl.text.length as number);
+        } catch (e: unknown) {
+            /* Not focused or not visible */
         }
     }
 
@@ -387,7 +385,7 @@ function setSelection(el: HTMLInputElement | HTMLTextAreaElement, selection: Inp
             rangeEl.moveEnd("character", selection.end! - selection.start!);
             rangeEl.select();
         }
-    } catch (e) {
-        /* not focused or not visible */
+    } catch (e: unknown) {
+        /* Not focused or not visible */
     }
 }

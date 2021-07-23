@@ -23,9 +23,9 @@ export function Header({onHeightChange, animated, ...props}: HeaderProps) {
     return (
         <motion.header
             ref={setRef}
-            initial={animated ? "hidden" : false}
             animate="visible"
             exit={animated ? "hidden" : {display: "none"}}
+            initial={animated ? "hidden" : false}
             transition={springTransition}
             variants={{visible: {y: "0%"}, hidden: {y: "-105%"}}}
             {...props}

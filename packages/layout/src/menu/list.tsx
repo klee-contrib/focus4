@@ -1,4 +1,4 @@
-import {PropsWithChildren, useState} from "react";
+import {PropsWithChildren, useMemo, useState} from "react";
 import {createPortal} from "react-dom";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -20,19 +20,23 @@ export interface MainMenuListProps {
 export function MainMenuList({activeRoute, children, closePanel, theme: pTheme}: PropsWithChildren<MainMenuListProps>) {
     const theme = useTheme("mainMenu", mainMenuCss, pTheme);
     const [ref, setRef] = useState<HTMLUListElement | null>(null);
+
     return (
         <MenuContext.Provider
-            value={{
-                activeRoute,
-                closePanel:
-                    closePanel ||
-                    (() => {
-                        /* */
-                    }),
-                renderSubMenu(subMenu) {
-                    return (ref && createPortal(subMenu, ref)) || null;
-                }
-            }}
+            value={useMemo(
+                () => ({
+                    activeRoute,
+                    closePanel:
+                        closePanel ??
+                        (() => {
+                            /* */
+                        }),
+                    renderSubMenu(subMenu) {
+                        return (ref && createPortal(subMenu, ref)) || null;
+                    }
+                }),
+                [activeRoute, closePanel, ref]
+            )}
         >
             <ul ref={setRef} className={theme.list()}>
                 {children}

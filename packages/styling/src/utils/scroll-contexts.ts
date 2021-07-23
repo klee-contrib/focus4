@@ -57,9 +57,9 @@ export const ScrollspyContext = createContext({
      */
     registerPanel(name: string, panel: PanelDescriptor): (() => void) | undefined {
         return () => {
-            // tslint:disable-next-line: no-unused-expression
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             name;
-            // tslint:disable-next-line: no-unused-expression
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             panel;
         };
     }

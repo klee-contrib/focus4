@@ -89,19 +89,19 @@ export function ContextualActions({
                         : TooltipIconButton;
                 primaryActions.push(
                     <FinalButton
-                        onClick={(e: any) => handleAction(key, e)}
+                        key={key}
+                        floating={isMosaic ? true : undefined}
                         icon={
                             isMosaic || !Operation.type || Operation.type.includes("icon") ? Operation.icon : undefined
                         }
-                        key={key}
                         label={(!isMosaic && FinalButton === Button && Operation.label) || undefined}
+                        onClick={(e: any) => handleAction(key, e)}
+                        primary={isMosaic}
                         tooltip={
                             FinalButton === TooltipButton || FinalButton === TooltipIconButton
                                 ? Operation.label
                                 : undefined
                         }
-                        primary={isMosaic}
-                        floating={isMosaic ? true : undefined}
                     />
                 );
             } else if (Operation.label) {

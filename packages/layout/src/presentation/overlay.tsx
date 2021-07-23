@@ -35,9 +35,9 @@ export function Overlay({active, children, isAdditional, onClick, theme: pTheme}
             return;
         }
         const noop = {handler: "none"};
-        overlays.push(onClick || noop);
+        overlays.push(onClick ?? noop);
         return () => {
-            const oIdx = overlays.findIndex(o => o === (onClick || noop));
+            const oIdx = overlays.findIndex(o => o === (onClick ?? noop));
             if (oIdx >= 0) {
                 overlays.splice(oIdx);
             }

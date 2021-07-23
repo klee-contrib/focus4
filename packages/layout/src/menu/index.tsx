@@ -4,6 +4,7 @@ import {PropsWithChildren} from "react";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Overlay} from "../presentation/overlay";
+
 import {MainMenuItem} from "./item";
 import {MainMenuList} from "./list";
 import {MainMenuCss, mainMenuCss} from "./style";

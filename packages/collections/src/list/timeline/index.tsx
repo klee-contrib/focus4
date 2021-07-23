@@ -13,6 +13,7 @@ import {
     EmptyProps,
     LoadingProps
 } from "../shared";
+
 import {TimelineAddItem} from "./add";
 import {TimelineLine} from "./line";
 
@@ -68,8 +69,8 @@ export function Timeline<T>({
                     <TimelineAddItem theme={theme}>
                         <AddItemComponent
                             addItemHandler={addItemHandler}
-                            mode="timeline"
                             i18nPrefix={i18nPrefix}
+                            mode="timeline"
                             store={store}
                         />
                     </TimelineAddItem>

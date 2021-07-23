@@ -126,13 +126,13 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
                 const isUndefined = change.newValue === undefined;
 
                 /*
-                    On s'assure que l'URL et les paramètres enregistrés sont corrects.
-                    Ceci n'aura aucun effet si on met à jour la valeur après une navigation.
-                    En revanche, si on modifie un paramètre à la main, la mise à jour sera effectuée.
-                    Il se s'agit pas d'une navigation, donc ce ne sera pas enregistré dans l'historique.
-                */
+                 * On s'assure que l'URL et les paramètres enregistrés sont corrects.
+                 * Ceci n'aura aucun effet si on met à jour la valeur après une navigation.
+                 * En revanche, si on modifie un paramètre à la main, la mise à jour sera effectuée.
+                 * Il se s'agit pas d'une navigation, donc ce ne sera pas enregistré dans l'historique.
+                 */
                 if (isActive && !isUndefined) {
-                    store._activeParams[cIn[0]] = `${change.newValue}`;
+                    store._activeParams[cIn[0]] = `${change.newValue as string}`;
                     let route = store._activeRoute;
                     for (const param in store._activeParams) {
                         route = route.replace(`:${param}`, store._activeParams[param]);
@@ -161,10 +161,10 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
         return object;
     }
 
-    const store = (extendObservable(
+    const store = extendObservable(
         {state: buildObject(config)},
         {_activeRoute: "/", _activeParams: []}
-    ) as any) as Router<C> & {
+    ) as any as Router<C> & {
         _activeRoute: string;
         _activeParams: Record<string, string>;
     };
@@ -296,7 +296,7 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
             const isParam = Object.keys(paramsMap).includes(path);
             route += `/${isParam ? `:${path}` : path}`;
             if (!isParam) {
-                state = (state as any)[path];
+                state = state[path];
             }
             return builder;
         };
@@ -383,7 +383,7 @@ function buildEndpoints<C>(config: C) {
                 endpoints.push(root);
             }
 
-            root = `${root}/:${c[0]}`;
+            root = `${root}/:${c[0] as string}`;
 
             if (!Array.isArray(c[2])) {
                 endpoints.push(root);

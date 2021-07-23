@@ -14,12 +14,12 @@ export function getIcon(name: ReactNode, isCustom: boolean): JSX.Element | strin
 export function getIcon(i18nKey: string): JSX.Element | string;
 export function getIcon(name?: ReactNode, isCustom?: boolean) {
     if (isCustom === undefined) {
-        isCustom = i18next.t(`${name}.library`) !== "material";
-        name = i18next.t(`${name}.name`);
+        isCustom = i18next.t(`${name as string}.library`) !== "material";
+        name = i18next.t(`${name as string}.name`);
     }
 
     if (isCustom) {
-        return <span className={`icon-${name}`} />;
+        return <span className={`icon-${name as string}`} />;
     } else {
         return name;
     }

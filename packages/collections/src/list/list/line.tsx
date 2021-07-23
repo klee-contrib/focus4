@@ -57,7 +57,7 @@ export function LineWrapper<T>({
     domRef,
     draggedItems,
     dragItemType = "item",
-    i18nPrefix,
+    i18nPrefix = "focus",
     LineComponent,
     mosaic,
     operationList,
@@ -90,7 +90,7 @@ export function LineWrapper<T>({
 
         /** Précise si la ligne est en train d'être "draggée". */
         get isDragged() {
-            return draggedItems?.find(i => i === props.data) || false;
+            return draggedItems?.find(i => i === props.data) ?? false;
         },
 
         /** Précise si la ligne est sélectionnable. */
@@ -100,7 +100,7 @@ export function LineWrapper<T>({
 
         /** Précise si la ligne est sélectionnée.. */
         get isSelected() {
-            return props.store?.selectedItems.has(props.data) || false;
+            return props.store?.selectedItems.has(props.data) ?? false;
         },
 
         /** Handler de clic sur la case de sélection. */
@@ -147,23 +147,23 @@ export function LineWrapper<T>({
 
     return useObserver(() => (
         <motion.li
-            className={(mosaic ? theme.mosaic : theme.line)({selected: state.isSelected})}
             ref={setRef}
-            initial={false}
             animate={state.isDragged && !disableDragAnimation ? "dragging" : "idle"}
+            className={(mosaic ? theme.mosaic : theme.line)({selected: state.isSelected})}
             exit={{}}
+            initial={false}
+            style={{opacity: state.isDragged && !disableDragAnimation ? 0 : 1}}
+            transition={springTransition}
             variants={{
                 dragging: {
-                    width: mosaic && mosaic.width ? 0 : undefined,
+                    width: mosaic?.width ? 0 : undefined,
                     height: 0
                 },
                 idle: {
-                    width: (mosaic && mosaic.width) || "100%",
-                    height: (mosaic && mosaic.height) || "auto"
+                    width: mosaic?.width ?? "100%",
+                    height: mosaic?.height ?? "auto"
                 }
             }}
-            transition={springTransition}
-            style={{opacity: state.isDragged && !disableDragAnimation ? 0 : 1}}
         >
             <LineComponent data={props.data} toggleDetail={toggleDetail} />
             {state.isSelectable ? (
@@ -181,11 +181,11 @@ export function LineWrapper<T>({
                     style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
                 >
                     <ContextualActions
-                        isMosaic={!!mosaic}
-                        operationList={operationList(props.data)}
                         data={props.data}
+                        isMosaic={!!mosaic}
                         onClickMenu={state.setForceActionDisplay}
                         onHideMenu={state.unsetForceActionDisplay}
+                        operationList={operationList(props.data)}
                     />
                 </div>
             ) : null}

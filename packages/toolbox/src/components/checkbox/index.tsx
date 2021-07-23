@@ -2,10 +2,11 @@ import classNames from "classnames";
 import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, useCallback, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import checkboxCss, {CheckboxCss} from "../__style__/checkbox.css";
-export {checkboxCss, CheckboxCss};
 
 import {Check} from "./check";
+
+import checkboxCss, {CheckboxCss} from "../__style__/checkbox.css";
+export {checkboxCss, CheckboxCss};
 
 /** Props du Checkbox. */
 export interface CheckboxProps {
@@ -61,12 +62,13 @@ export function Checkbox({
 
     return (
         <label
-            data-react-toolbox="checkbox"
             className={classNames(theme.field({disabled}), className)}
+            data-react-toolbox="checkbox"
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
             <input
+                ref={inputNode}
                 checked={value}
                 className={theme.input()}
                 disabled={disabled}
@@ -74,7 +76,6 @@ export function Checkbox({
                 name={name}
                 onClick={handleToggle}
                 readOnly
-                ref={inputNode}
                 type="checkbox"
             />
             <Check
@@ -85,7 +86,7 @@ export function Checkbox({
                 value={value}
             />
             {label ? (
-                <span data-react-toolbox="label" className={theme.text()}>
+                <span className={theme.text()} data-react-toolbox="label">
                     {label}
                 </span>
             ) : null}

@@ -12,6 +12,7 @@ import {
 import {findDOMNode} from "react-dom";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+
 import rippleCss, {RippleCss} from "./__style__/ripple.css";
 export {rippleCss, RippleCss};
 
@@ -47,14 +48,14 @@ export function rippleFactory({
                 <RippledComponent
                     ref={ref}
                     disabled={false}
-                    ripple={true}
+                    ripple
                     rippleCentered={rippleCentered}
                     rippleMultiple={rippleMultiple}
                     ripplePassthrough={ripplePassthrough}
                     rippleSpread={rippleSpread}
                     {...p}
-                    rippleTheme={theme}
                     ComposedComponent={ComposedComponent}
+                    rippleTheme={theme}
                 />
             );
         });
@@ -78,6 +79,7 @@ export class RippledComponent<P> extends Component<
     RippleProps & {rippleTheme: ToBem<RippleCss>} & {ComposedComponent: ComponentType<P> | string},
     RippleState
 > {
+    // eslint-disable-next-line react/state-in-constructor
     state: RippleState = {
         ripples: {}
     };
@@ -108,6 +110,7 @@ export class RippledComponent<P> extends Component<
      * @param y Coordinate y in the viewport where ripple was triggered
      */
     getDescriptor(x: number, y: number) {
+        // eslint-disable-next-line react/no-find-dom-node
         const {left, top, height, width} = (findDOMNode(this) as Element).getBoundingClientRect();
         const {rippleCentered, rippleSpread} = this.props;
         return {
@@ -208,7 +211,7 @@ export class RippledComponent<P> extends Component<
                 }),
                 () => {
                     if (this.rippleNodes[key]) {
-                        // tslint:disable-next-line: no-unused-expression
+                        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                         this.rippleNodes[key].offsetWidth;
                     }
 
@@ -286,14 +289,14 @@ export class RippledComponent<P> extends Component<
         const scale = restarting ? 0 : 1;
         const transform = `translate3d(${-width / 2 + left}px, ${-width / 2 + top}px, 0) scale(${scale})`;
         return (
-            <span key={key} data-react-toolbox="ripple" className={theme.rippleWrapper()}>
+            <span key={key} className={theme.rippleWrapper()} data-react-toolbox="ripple">
                 <span
-                    className={theme.ripple({active, restarting})}
                     ref={node => {
                         if (node) {
                             this.rippleNodes[key] = node;
                         }
                     }}
+                    className={theme.ripple({active, restarting})}
                     style={{transform, width, height: width}}
                 />
             </span>

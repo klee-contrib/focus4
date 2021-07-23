@@ -36,22 +36,13 @@ const globalErrorTypes = {
     globalWarnings: "warning"
 };
 
-const errorTypes = {
-    collection: "collection",
-    composite: "composite",
-    entity: "entity"
-};
-
 /**
  * Parse les erreurs de champ dans une erreur serveur.
  * @param response Erreur serveur.
  */
 function treatFieldErrors(response: ErrorResponse) {
-    if (
-        ([400, 401, 422].find(x => x === response.status) && response.type) ||
-        errorTypes.entity === errorTypes.entity
-    ) {
-        return response.fieldErrors || {};
+    if ([400, 401, 422].find(x => x === response.status) && response.type) {
+        return response.fieldErrors ?? {};
     } else {
         return undefined;
     }

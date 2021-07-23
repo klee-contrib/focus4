@@ -34,6 +34,7 @@ import {
 } from "@focus4/stores";
 
 import {classAutorun} from "../reactions";
+
 import {fieldWrapperFor} from "./field-wrapper";
 import {createViewModel, ViewModel} from "./view-model";
 
@@ -75,17 +76,6 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap = observable.map<string, boolean>();
 
-    constructor(props: P) {
-        super(props);
-        makeObservable(this);
-    }
-
-    /** Précise si au moins un formulaire de l'application est en édition. */
-    @computed
-    static get isOneEdit() {
-        return Array.from(AutoForm.editingMap.values()).some(x => x);
-    }
-
     /** Identifiant unique du formulaire. */
     formId = v4();
 
@@ -125,6 +115,34 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     /** Disposer de la réaction de chargement. */
     private loadDisposer?: Lambda;
 
+    constructor(props: P) {
+        super(props);
+        makeObservable(this);
+    }
+
+    componentWillMount() {
+        this.init();
+        AutoForm.editingMap.set(this.formId, this.isEdit);
+        this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.
+        this.load();
+    }
+
+    componentWillUnmount() {
+        AutoForm.editingMap.delete(this.formId);
+        if (!this.isCustomEntity) {
+            this.entity.unsubscribe();
+        }
+        if (this.loadDisposer) {
+            this.loadDisposer();
+        }
+    }
+
+    /** Précise si au moins un formulaire de l'application est en édition. */
+    @computed
+    static get isOneEdit() {
+        return Array.from(AutoForm.editingMap.values()).some(x => x);
+    }
+
     /**
      * A implémenter pour initialiser le formulaire. Il faut appeler `this.formInit` à l'intérieur.
      *
@@ -145,33 +163,16 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     ) {
         this.storeData = storeData;
         this.services = services;
-        this.entity = entity || createViewModel(storeData);
+        this.entity = entity ?? createViewModel(storeData);
         this.isCustomEntity = entity !== undefined;
-        this.isEdit = initiallyEditing || false;
+        this.isEdit = initiallyEditing ?? false;
         this.hasForm = hasForm ?? true;
-        this.className = className || "";
-        this.i18nPrefix = i18nPrefix || "focus";
+        this.className = className ?? "";
+        this.i18nPrefix = i18nPrefix ?? "focus";
 
         // On met en place la réaction de chargement.
         if (services.getLoadParams) {
             this.loadDisposer = reaction(services.getLoadParams, () => this.load(), {equals: comparer.structural});
-        }
-    }
-
-    componentWillMount() {
-        this.init();
-        AutoForm.editingMap.set(this.formId, this.isEdit);
-        this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.
-        this.load();
-    }
-
-    componentWillUnmount() {
-        AutoForm.editingMap.delete(this.formId);
-        if (!this.isCustomEntity) {
-            this.entity.unsubscribe();
-        }
-        if (this.loadDisposer) {
-            this.loadDisposer();
         }
     }
 
@@ -243,7 +244,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
                     }
                 });
                 this.onFormSaved();
-            } catch (e) {
+            } catch (e: unknown) {
                 runInAction(() => {
                     this.isLoading = false;
                 });
@@ -288,21 +289,6 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
             onClickCancel: () => this.toggleEdit(false),
             onClickEdit: () => this.toggleEdit(true)
         };
-    }
-
-    /** Fonction de rendu du formulaire à préciser. */
-    abstract renderContent(): ReactElement | null;
-    render() {
-        return (
-            <Form
-                forceErrorDisplay={this.forceErrorDisplay}
-                noForm={!this.hasForm}
-                theme={{form: this.className}}
-                save={() => this.save()}
-            >
-                {this.renderContent()}
-            </Form>
-        );
     }
 
     /**
@@ -444,6 +430,21 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
             e => this.errors.set(name ?? field.$field.name, e),
             o as any,
             values
+        );
+    }
+
+    /** Fonction de rendu du formulaire à préciser. */
+    abstract renderContent(): ReactElement | null;
+    render() {
+        return (
+            <Form
+                forceErrorDisplay={this.forceErrorDisplay}
+                noForm={!this.hasForm}
+                save={() => this.save()}
+                theme={{form: this.className}}
+            >
+                {this.renderContent()}
+            </Form>
         );
     }
 }

@@ -4,6 +4,7 @@ import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {ListBaseProps, useListBase} from "../list-base";
+
 import {TableColumn, TableHeader} from "./header";
 import {TableLine} from "./line";
 

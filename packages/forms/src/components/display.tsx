@@ -38,7 +38,7 @@ export function Display({formatter = x => x, keyResolver, theme: pTheme, value: 
 
     const vals = useMemo(() => (Array.isArray(value) ? value : [value]), [value]);
     return useObserver(() => (
-        <div data-focus="display" className={theme.display()}>
+        <div className={theme.display()} data-focus="display">
             {vals.map(v => formatter(values?.getLabel(v) ?? v)).join(", ")}
         </div>
     ));

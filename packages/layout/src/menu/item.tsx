@@ -82,11 +82,11 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                     {state.hasSubMenu && (
                         <motion.div
                             ref={panel}
-                            className={theme.panel()}
-                            style={toJS(state)}
-                            initial="hidden"
                             animate="visible"
+                            className={theme.panel()}
                             exit="hidden"
+                            initial="hidden"
+                            style={toJS(state)}
                             transition={defaultTransition}
                             variants={{
                                 visible: {

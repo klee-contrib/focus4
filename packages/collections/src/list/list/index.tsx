@@ -17,6 +17,7 @@ import {
     EmptyProps,
     LoadingProps
 } from "../shared";
+
 import {ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
 import {LineProps, LineWrapper} from "./line";
@@ -153,7 +154,7 @@ export function List<T>({
     useEffect(() => {
         const updateByLine = () => {
             if (state.ulRef) {
-                state.byLine = state.mode === "mosaic" ? Math.floor(state.ulRef.clientWidth / (mosaic!.width + 10)) : 1;
+                state.byLine = state.mode === "mosaic" ? Math.floor(state.ulRef.clientWidth / (mosaic.width + 10)) : 1;
             }
         };
 
@@ -212,37 +213,37 @@ export function List<T>({
             <Fragment key={itemKey(item, idx)}>
                 <LineWrapper
                     data={item}
-                    domRef={getDomRef(idx)}
                     disableDragAnimation={disableDragAnimation}
-                    dragItemType={dragItemType}
+                    domRef={getDomRef(idx)}
                     draggedItems={hasDragAndDrop ? state.draggedItems : undefined}
+                    dragItemType={dragItemType}
                     hasSelection={store ? hasSelection : undefined}
                     i18nPrefix={i18nPrefix}
-                    mosaic={state.mode === "mosaic" ? mosaic : undefined}
                     LineComponent={Component}
+                    mosaic={state.mode === "mosaic" ? mosaic : undefined}
+                    operationList={operationList}
+                    store={store}
+                    theme={theme}
                     toggleDetail={
                         canOpenDetail(item) && DetailComponent
                             ? (callbacks?: {}) => state.toggleDetail(idx, callbacks)
                             : undefined
                     }
-                    operationList={operationList}
-                    store={store}
-                    theme={theme}
                 />
                 {DetailComponent ? (
                     <AnimatePresence exitBeforeEnter>
                         {state.displayedIdx !== undefined && idx === detailIdx ? (
                             <DetailWrapper
-                                displayedIdx={state.displayedIdx}
-                                DetailComponent={DetailComponent as any}
+                                key={`detail-${state.displayedIdx}`}
                                 byLine={state.byLine}
                                 closeDetail={state.closeDetail}
+                                DetailComponent={DetailComponent as any}
+                                displayedIdx={state.displayedIdx}
                                 isAddItemShown={isAddItemShown}
                                 item={displayedData[state.displayedIdx]}
                                 mode={state.mode}
-                                mosaic={mosaic!}
+                                mosaic={mosaic}
                                 theme={theme}
-                                key={`detail-${state.displayedIdx}`}
                             />
                         ) : null}
                     </AnimatePresence>
@@ -264,7 +265,7 @@ export function List<T>({
                                 <li
                                     key="mosaic-add"
                                     className={theme.mosaicAdd()}
-                                    style={{width: mosaic!.width, height: mosaic!.height}}
+                                    style={{width: mosaic.width, height: mosaic.height}}
                                 >
                                     <AddItemComponent
                                         addItemHandler={state.addItemHandler!}

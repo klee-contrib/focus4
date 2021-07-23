@@ -53,7 +53,7 @@ export function Form({
             {!noForm ? (
                 <form
                     className={theme.form()}
-                    noValidate={true}
+                    noValidate
                     onSubmit={e => {
                         e.preventDefault();
                         save();

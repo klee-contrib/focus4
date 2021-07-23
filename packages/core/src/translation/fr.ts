@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 /** Objet contenant les traductions i18n en français par défaut, à intégrer si besoin dans un projet. */
 export const fr = {
     boolean: {

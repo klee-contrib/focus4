@@ -107,7 +107,7 @@ export class ViewStore<V, N extends string> {
 
         // Si on a un `beforeEnter`, on l'appelle.
         if (this.beforeEnter) {
-            const {errorCode, redirect} = this.beforeEnter(newView) || {errorCode: undefined, redirect: undefined};
+            const {errorCode, redirect} = this.beforeEnter(newView) ?? {errorCode: undefined, redirect: undefined};
             if (errorCode) {
                 // Cas erreur : on appelle le handler du routeur.
                 this.handleError(errorCode);

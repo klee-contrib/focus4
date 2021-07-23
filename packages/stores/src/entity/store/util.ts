@@ -43,8 +43,10 @@ export function toFlatValues<SN extends FormNode | FormListNode | StoreNode | St
                         !isFormEntityField(item) ||
                         (storeNode as FormNode).sourceNode[item.$field.name])
                 ) {
-                    // Cas du champ : on renvoie la valeur.
-                    // Les champs ajoutés (via `add`) dans un FormNode sont ignorés.
+                    /*
+                     * Cas du champ : on renvoie la valeur.
+                     * Les champs ajoutés (via `add`) dans un FormNode sont ignorés.
+                     */
                     return item.value;
                 } else {
                     return undefined; // Tout le reste : on en veut pas.

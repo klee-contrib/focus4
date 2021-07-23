@@ -106,9 +106,9 @@ export interface InputFacets {
         /** Opérateur utilisé entre les différentes valeurs. */
         readonly operator?: "and" | "or";
         /** Valeurs de la facette à prendre. */
-        readonly selected?: ReadonlyArray<string>;
+        readonly selected?: readonly string[];
         /** Valeurs de la facette à exclure. */
-        readonly excluded?: ReadonlyArray<string>;
+        readonly excluded?: readonly string[];
     };
 }
 

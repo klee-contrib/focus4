@@ -2,10 +2,12 @@ import {range} from "lodash";
 import {useCallback, useRef} from "react";
 
 import {ToBem} from "@focus4/styling";
-import {ClockCss} from "../__style__/clock.css";
+
 
 import {Face} from "./face";
 import {Hand, HandRef} from "./hand";
+
+import {ClockCss} from "../__style__/clock.css";
 
 const minutes = range(0, 12).map(i => i * 5);
 const step = 360 / 60;
@@ -44,12 +46,12 @@ export function Minutes({center, onChange, onHandMoved, radius, selected, spacin
     return (
         <div>
             <Face
-                onTouchStart={handleTouchStart}
-                onMouseDown={handleMouseDown}
-                numbers={minutes}
-                spacing={spacing}
-                radius={radius}
                 active={selected}
+                numbers={minutes}
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
+                radius={radius}
+                spacing={spacing}
                 theme={theme}
                 twoDigits
             />
@@ -60,9 +62,9 @@ export function Minutes({center, onChange, onHandMoved, radius, selected, spacin
                 onMove={handleHandMove}
                 onMoved={onHandMoved}
                 origin={center}
-                theme={theme}
-                small={minutes.indexOf(selected) === -1}
+                small={!minutes.includes(selected)}
                 step={step}
+                theme={theme}
             />
         </div>
     );

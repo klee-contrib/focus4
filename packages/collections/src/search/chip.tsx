@@ -98,7 +98,7 @@ export function SearchChip(props: SearchChipProps) {
                         type,
                         code,
                         values?.map(v => v.code)
-                    ) || {}
+                    ) ?? {}
                 )}
             >
                 {!tValueLabel ? tCodeLabel : `${tCodeLabel} : ${tValueLabel}`}

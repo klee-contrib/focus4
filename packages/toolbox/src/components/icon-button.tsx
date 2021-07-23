@@ -11,11 +11,12 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
-export {iconButtonCss, IconButtonCss};
 
 import {FontIcon} from "./font-icon";
 import {rippleFactory} from "./ripple";
+
+import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
+export {iconButtonCss, IconButtonCss};
 
 export interface IconButtonProps {
     /** Indicates if the button should have accent color. */

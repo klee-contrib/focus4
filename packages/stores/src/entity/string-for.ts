@@ -1,6 +1,7 @@
 import i18next from "i18next";
 
 import {ReferenceList} from "../reference";
+
 import {EntityField, FieldEntry} from "./types";
 
 /**
@@ -15,7 +16,7 @@ export function stringFor<F extends FieldEntry>(field: EntityField<F>, values: R
             domain: {displayFormatter = (t: string) => i18next.t(t)}
         }
     } = field;
-    const found = values.find(val => (val as any)[values.$valueKey] === value);
-    const processedValue = (found && (found as any)[values.$labelKey]) || value;
+    const found = values.find(val => val[values.$valueKey] === value);
+    const processedValue = found?.[values.$labelKey] || value;
     return displayFormatter(processedValue);
 }

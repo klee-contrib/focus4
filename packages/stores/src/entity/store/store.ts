@@ -15,6 +15,7 @@ import {
     StoreListNode,
     StoreNode
 } from "../types";
+
 import {nodeToFormNode} from "./form";
 
 export type ConfigToEntities<T> = {
@@ -44,10 +45,10 @@ export function makeEntityStore<C extends Record<string, any>>(config: C): Store
     }
 
     /*
-        Les fonctions `replace`, `set` et `clear` ne sont pas bindées, ce qui permettra de les copier lorsqu'on voudra faire un FormNode.
-        Tant qu'on appelle bien les fonctions depuis les objets (sans déstructurer par exemple), tout marchera comme prévu.
-        Typescript empêchera d'appeler la fonction dans le mauvais contexte de toute façon.
-    */
+     *Les fonctions `replace`, `set` et `clear` ne sont pas bindées, ce qui permettra de les copier lorsqu'on voudra faire un FormNode.
+     *Tant qu'on appelle bien les fonctions depuis les objets (sans déstructurer par exemple), tout marchera comme prévu.
+     *Typescript empêchera d'appeler la fonction dans le mauvais contexte de toute façon.
+     */
 
     entityStore.clear = clearNode;
     entityStore.load = defaultLoad;
@@ -169,8 +170,8 @@ export function replaceNode<E>(
     runInAction(() => {
         if (isStoreListNode<E>(this) && (isArray(value) || isObservableArray(value))) {
             // On remplace la liste existante par une nouvelle liste de noeuds construit à partir de `value`.
-            const node = this;
-            this.replace((value as (EntityToType<E> | StoreNode<E>)[]).map(item => getNodeForList(node, item)));
+            const self = this;
+            this.replace((value as (EntityToType<E> | StoreNode<E>)[]).map(item => getNodeForList(self, item)));
         } else if (isStoreNode(this) && isObject(value)) {
             // On affecte chaque valeur du noeud avec la valeur demandée, et on réappelle `replaceNode` si la valeur n'est pas primitive.
             for (const entry in this) {
@@ -213,12 +214,12 @@ export function setNode<E>(
     runInAction(() => {
         if (isStoreListNode<E>(this) && (isArray(value) || isObservableArray(value))) {
             // On va appeler récursivement `setNode` sur tous les éléments de la liste.
-            const node = this;
+            const self = this;
             (value as {}[]).forEach((item, i) => {
-                if (i >= node.length) {
-                    node.pushNode(item);
+                if (i >= self.length) {
+                    self.pushNode(item);
                 }
-                node[i].set(item);
+                self[i].set(item);
             });
         } else if (isStoreNode(this) && isObject(value)) {
             // On affecte chaque valeur du noeud avec la valeur demandée (si elle existe), et on réappelle `setNode` si la valeur n'est pas primitive.

@@ -2,11 +2,12 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
-import clockCss, {ClockCss} from "../__style__/clock.css";
-export {clockCss, ClockCss};
 
 import {Hours} from "./hours";
 import {Minutes} from "./minutes";
+
+import clockCss, {ClockCss} from "../__style__/clock.css";
+export {clockCss, ClockCss};
 
 export interface ClockProps {
     display?: "hours" | "minutes";
@@ -90,8 +91,8 @@ export function Clock({
 
     const css = fromBem(theme);
     return (
-        <div data-react-toolbox="clock" className={theme.clock()}>
-            <div className={theme.placeholder()} style={{height: radius * 2}} ref={placeholderNode}>
+        <div className={theme.clock()} data-react-toolbox="clock">
+            <div ref={placeholderNode} className={theme.placeholder()} style={{height: radius * 2}}>
                 <TransitionGroup component={null}>
                     <CSSTransition
                         key={display}
@@ -156,7 +157,7 @@ function getScrollParent(element: Element, includeHidden = false) {
         if (excludeStaticParent && style.position === "static") {
             continue;
         }
-        if (overflowRegex.test(style.overflow! + style.overflowY + style.overflowX)) {
+        if (overflowRegex.test(style.overflow + style.overflowY + style.overflowX)) {
             return parent;
         }
     }

@@ -3,11 +3,13 @@ import {MouseEvent, useCallback, useEffect, useMemo, useRef, useState} from "rea
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
-import calendarCss, {CalendarCss} from "../__style__/calendar.css";
-export {calendarCss, CalendarCss};
 
 import {IconButton} from "../icon-button";
+
 import {Month} from "./month";
+
+import calendarCss, {CalendarCss} from "../__style__/calendar.css";
+export {calendarCss, CalendarCss};
 
 export interface CalendarProps {
     disabledDates?: Date[];
@@ -134,18 +136,18 @@ export function Calendar({
 
     const years = useMemo(
         () => (
-            <ul data-react-toolbox="years" className={theme.years()} ref={yearsNode}>
+            <ul ref={yearsNode} className={theme.years()} data-react-toolbox="years">
                 {range(1900, 2100).map(year => (
                     <li
-                        className={year === viewDate.getFullYear() ? theme.active() : ""}
-                        id={`${year}`}
                         key={year}
-                        onClick={handleYearClick}
                         ref={node => {
                             if (year === viewDate.getFullYear()) {
                                 activeYearNode.current = node;
                             }
                         }}
+                        className={year === viewDate.getFullYear() ? theme.active() : ""}
+                        id={`${year}`}
+                        onClick={handleYearClick}
                     >
                         {year}
                     </li>

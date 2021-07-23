@@ -188,7 +188,7 @@ export function FacetBox<T>({
         const opened = Array.from(openedMap.values()).some(v => v);
 
         const shouldDisplayClear =
-            Object.values(store.inputFacets).some(l => l.selected || l.excluded) ||
+            Object.values(store.inputFacets).some(l => l.selected ?? l.excluded) ||
             Object.values(additionalFacets).some(({fields = [], initialValues = []}) =>
                 fields.some((field, idx) => field.value !== initialValues[idx])
             );
@@ -199,10 +199,10 @@ export function FacetBox<T>({
                     <IconButton icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)} />
                     <span>{i18next.t(`${i18nPrefix}.search.facets.title`)}</span>
                     {shouldDisplayClear ? (
-                        <IconButton onClick={clearFacets} icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} />
+                        <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} onClick={clearFacets} />
                     ) : null}
                 </h3>
-                {sectionElements || filteredFacets.map(renderFacet)}
+                {sectionElements ?? filteredFacets.map(renderFacet)}
             </div>
         );
     });

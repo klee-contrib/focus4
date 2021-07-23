@@ -8,7 +8,7 @@ export class DocumentHelper {
     constructor() {
         makeObservable(this);
         window.addEventListener("focusin", () => (this._activeElement = document.activeElement));
-        // tslint:disable-next-line: deprecation
+       
         window.addEventListener("mousedown", e => (this._activeElement = e.srcElement));
     }
 

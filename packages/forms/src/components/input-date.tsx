@@ -60,6 +60,7 @@ export interface InputDateProps {
 
 /** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
 @observer
+// eslint-disable-next-line react/no-unsafe
 export class InputDate extends Component<InputDateProps> {
     protected calendar?: HTMLDivElement | null;
 
@@ -86,11 +87,13 @@ export class InputDate extends Component<InputDateProps> {
         makeObservable(this);
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillMount() {
         document.addEventListener("mousedown", this.onDocumentClick);
     }
 
     @action
+    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillReceiveProps({value}: InputDateProps) {
         this.date = this.toMoment(value);
         this.dateText = this.formatDate(value);
@@ -100,7 +103,7 @@ export class InputDate extends Component<InputDateProps> {
     componentDidUpdate() {
         if (this.calendar && this.showCalendar) {
             const client = this.calendar.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement!.offsetHeight;
+            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
             if (!this.calendarPosition) {
                 if (client.top + client.height > screenHeight) {
                     this.calendarPosition = "up";
@@ -185,7 +188,7 @@ export class InputDate extends Component<InputDateProps> {
     @action.bound
     onInputBlur() {
         const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
-        const text = (this.dateText || "").trim() || undefined;
+        const text = (this.dateText ?? "").trim() || undefined;
 
         const date = this.transformDate(text, inputFormat, true);
 
@@ -204,12 +207,12 @@ export class InputDate extends Component<InputDateProps> {
         // Vérifie que la timezone existe
         if (timezoneCode && moment.tz.zone(timezoneCode)) {
             date = getTimezoneTime(date, timezoneCode);
-        } else {
-            // La date reçue est toujours à minuit en "local-midnight".
-            if (ISOStringFormat === "utc-midnight") {
-                // Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
-                date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
-            }
+        } else if (ISOStringFormat === "utc-midnight") {
+            /*
+             * La date reçue est toujours à minuit en "local-midnight".
+             * Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
+             */
+            date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
         }
         const correctedDate = this.transformDate(date).format();
         this.props.onChange(correctedDate);
@@ -270,17 +273,17 @@ export class InputDate extends Component<InputDateProps> {
         return (
             <Theme theme={pTheme}>
                 {theme => (
-                    <div data-focus="input-date" data-id={this._inputDateId} className={theme.input()}>
+                    <div className={theme.input()} data-focus="input-date" data-id={this._inputDateId}>
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
                             error={error}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                             onChange={value => (this.dateText = value)}
-                            onKeyDown={this.handleKeyDown}
                             onFocus={() => (this.showCalendar = true)}
+                            onKeyDown={this.handleKeyDown}
                             type="string"
-                            value={this.dateText || ""}
+                            value={this.dateText ?? ""}
                         />
                         {this.showCalendar ? (
                             <div
@@ -292,23 +295,23 @@ export class InputDate extends Component<InputDateProps> {
                             >
                                 <header className={theme.header({[this.calendarDisplay]: true})}>
                                     <span
-                                        id="years"
                                         className={theme.year()}
+                                        id="years"
                                         onClick={() => (this.calendarDisplay = "years")}
                                     >
                                         {this.displayedDate().year()}
                                     </span>
                                     <h3
-                                        id="months"
                                         className={theme.date()}
+                                        id="months"
                                         onClick={() => (this.calendarDisplay = "months")}
                                     >
                                         {this.displayedDate().format(calendarFormat)}
                                     </h3>
                                     <IconButton
                                         icon="clear"
-                                        theme={{toggle: theme.toggle()}}
                                         onClick={() => (this.showCalendar = false)}
+                                        theme={{toggle: theme.toggle()}}
                                     />
                                 </header>
                                 <div className={theme.calendarWrapper()}>

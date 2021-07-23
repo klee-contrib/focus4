@@ -18,11 +18,12 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
-export {autocompleteCss, AutocompleteCss};
 
 import {Chip} from "./chip";
 import {Input, InputCss, InputProps} from "./input";
+
+import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
+export {autocompleteCss, AutocompleteCss};
 
 export interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "theme" | "value"> {
     /** Determines if user can create a new option with the current typed value. */
@@ -137,7 +138,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
 
     const suggestions = useMemo(() => {
         let suggest: Record<string, string> = {};
-        const rawQuery = query || (multiple ? "" : value);
+        const rawQuery = (query || (multiple ? "" : value)) as string;
         const newQuery = normalise(`${rawQuery}`);
 
         /** Détermine si la valeur est une match pour la requête.  */
@@ -201,8 +202,8 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
     useEffect(() => {
         if (focus && direction === "auto") {
             const client = inputRef.current?.getBoundingClientRect() ?? {top: 0, height: 0};
-            const screen_height = window.innerHeight || document.documentElement.offsetHeight;
-            const up = client.top > screen_height / 2 + client.height;
+            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            const up = client.top > screenHeight / 2 + client.height;
             setDirection(up ? "up" : "down");
         }
     }, [direction, focus]);
@@ -340,20 +341,19 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
     }, [multiple, unselect, theme, values]);
 
     return (
-        <div data-react-toolbox="autocomplete" className={classNames(theme.autocomplete({focus}), className)}>
+        <div className={classNames(theme.autocomplete({focus}), className)} data-react-toolbox="autocomplete">
             {selectedPosition === "above" ? renderSelected() : null}
             <Input
                 ref={inputRef}
                 autoComplete="off"
-                children={children}
                 className={theme.input()}
                 disabled={disabled}
                 error={error}
                 floating={floating}
-                label={label}
                 hint={hint}
                 icon={icon}
                 id={id}
+                label={label}
                 maxLength={maxLength}
                 multiline={multiline}
                 name={name}
@@ -377,16 +377,18 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 required={required}
                 rows={rows}
                 style={style}
-                type={type}
                 theme={theme as CSSProp<InputCss>}
+                type={type}
                 value={query}
-            />
+            >
+                {children}
+            </Input>
             <ul className={theme.suggestions({up: direction === "up"})}>
                 {toPairs(suggestions).map(([key, val]) => (
                     <li
-                        id={key}
                         key={key}
                         className={theme.suggestion({active: active === key})}
+                        id={key}
                         onMouseDown={selectOrCreateActiveItem}
                         onMouseOver={event => setActive(event.currentTarget.id)}
                     >
@@ -407,7 +409,7 @@ function normalise(value: string) {
 
     let normalised = "";
     for (let p = 0; p < value.length; p++) {
-        if (sdiak.indexOf(value.charAt(p)) !== -1) {
+        if (sdiak.includes(value.charAt(p))) {
             normalised += bdiak.charAt(sdiak.indexOf(value.charAt(p)));
         } else {
             normalised += value.charAt(p);
