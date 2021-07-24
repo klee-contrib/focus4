@@ -1,20 +1,6 @@
 /* eslint-disable camelcase */
 
-/** Objet contenant les traductions i18n en français par défaut, à intégrer si besoin dans un projet. */
 export const fr = {
-    boolean: {
-        no: "Non",
-        yes: "Oui"
-    },
-    button: {
-        cancel: "Annuler",
-        edit: "Modifier",
-        save: "Enregistrer"
-    },
-    detail: {
-        deleted: "Élément supprimé avec succès",
-        saved: "Élément enregistré avec succès"
-    },
     dragLayer: {
         item: "élément",
         item_plural: "éléments"
@@ -32,9 +18,6 @@ export const fr = {
             less: "Voir moins",
             more: "Voir plus"
         }
-    },
-    messageCenter: {
-        dismiss: "Fermer"
     },
     search: {
         action: {
@@ -80,20 +63,5 @@ export const fr = {
             result_plural: "résultats",
             sortBy: "triés par"
         }
-    },
-    select: {
-        noLabel: "",
-        unselected: ""
-    },
-    validation: {
-        date: "La date saisie est invalide",
-        email: "L'email saisi est invalide.",
-        function: "La valeur saisie est invalide",
-        montant: "Le montant saisi est invalide",
-        number: "Le nombre saisi est invalide",
-        pourcentage: "Le pourcentage saisi est invalide",
-        regex: "La valeur saisie est invalide",
-        required: "Le champ est obligatoire",
-        string: "Le texte saisi est invalide"
     }
 };

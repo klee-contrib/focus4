@@ -1,4 +1,3 @@
-/** Description des icônes par défaut. */
 export const icons = {
     actionBar: {
         close: {
@@ -30,50 +29,10 @@ export const icons = {
             name: "check_box"
         }
     },
-    button: {
-        cancel: {
-            library: "material",
-            name: "clear"
-        },
-        edit: {
-            library: "material",
-            name: "edit"
-        },
-        help: {
-            library: "material",
-            name: "help_outline"
-        },
-        save: {
-            library: "material",
-            name: "save"
-        }
-    },
     contextualActions: {
         secondary: {
             library: "material",
             name: "more_vert"
-        }
-    },
-    errorCenter: {
-        clear: {
-            library: "material",
-            name: "delete"
-        },
-        close: {
-            library: "material",
-            name: "keyboard_arrow_up"
-        },
-        error: {
-            library: "material",
-            name: "error"
-        },
-        open: {
-            library: "material",
-            name: "keyboard_arrow_down"
-        },
-        refresh: {
-            library: "material",
-            name: "refresh"
         }
     },
     facets: {
@@ -110,18 +69,6 @@ export const icons = {
             name: "keyboard_arrow_up"
         }
     },
-    headerActions: {
-        secondary: {
-            library: "material",
-            name: "more_vert"
-        }
-    },
-    label: {
-        tooltip: {
-            library: "material",
-            name: "info"
-        }
-    },
     line: {
         selected: {
             library: "material",
@@ -148,24 +95,6 @@ export const icons = {
         showAll: {
             library: "material",
             name: "arrow_forward"
-        }
-    },
-    loadingBar: {
-        error: {
-            library: "material",
-            name: "error"
-        },
-        pending: {
-            library: "material",
-            name: "swap_vert"
-        },
-        success: {
-            library: "material",
-            name: "check_circle"
-        },
-        total: {
-            library: "material",
-            name: "functions"
         }
     },
     searchBar: {

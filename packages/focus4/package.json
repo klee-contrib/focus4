@@ -17,7 +17,6 @@
         "@focus4/layout": "^11.0.0-preview.10",
         "@focus4/stores": "^11.0.0-preview.10",
         "@focus4/styling": "^11.0.0-preview.10",
-        "@focus4/toolbox": "^11.0.0-preview.10",
-        "material-design-icons-iconfont": "6.1.0"
+        "@focus4/toolbox": "^11.0.0-preview.10"
     }
 }

@@ -74,3 +74,4 @@ export {
     shouldDisplayFacet,
     summaryCss
 } from "./search";
+export {translation} from "./translation";
