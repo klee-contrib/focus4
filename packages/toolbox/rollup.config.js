@@ -1,17 +1,18 @@
 // @ts-check
-// @ts-ignore
-import pkg from "./package.json";
-import {onwarn, abortOnError} from "../../scripts/rollup";
 
 import resolve from "@rollup/plugin-node-resolve";
+import copy from "rollup-plugin-copy-glob";
 import postcss from "rollup-plugin-postcss";
 import typescript from "rollup-plugin-typescript2";
-import copy from "rollup-plugin-copy-glob";
 
-import {generateTypings} from "@focus4/styling/lib/generator";
+import {generateCSSTypings} from "@focus4/tooling";
+
+import {abortOnError, onwarn} from "../../scripts/rollup";
+
+import pkg from "./package.json";
 
 export default (async () => {
-    await generateTypings("src");
+    await generateCSSTypings("src");
 
     /** @type {import("rollup").RollupOptions} */
     const config = {

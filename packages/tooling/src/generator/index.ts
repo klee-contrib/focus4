@@ -4,7 +4,7 @@ import Core from "css-modules-loader-core";
 import glob from "glob";
 import {camelCase, sortBy, upperFirst} from "lodash";
 
-export async function generateTypings(rootDir: string) {
+export async function generateCSSTypings(rootDir: string) {
     const cssLoader = new Core();
     const files = glob.sync(`${rootDir}/**/*.css`).map(file => {
         const parts = file.split("/");

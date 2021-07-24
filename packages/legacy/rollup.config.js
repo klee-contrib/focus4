@@ -1,9 +1,9 @@
 // @ts-check
-// @ts-ignore
-import pkg from "./package.json";
-import {onwarn, abortOnError} from "../../scripts/rollup";
-
 import typescript from "rollup-plugin-typescript2";
+
+import {abortOnError, onwarn} from "../../scripts/rollup";
+
+import pkg from "./package.json";
 
 /** @type {import("rollup").RollupOptions} */
 const config = {
