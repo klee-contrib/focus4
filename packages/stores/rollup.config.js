@@ -1,23 +1,27 @@
 // @ts-check
-// @ts-ignore
-import pkg from "./package.json";
-import {onwarn, abortOnError} from "../../scripts/rollup";
+import typescript from "@rollup/plugin-typescript";
+import chalk from "chalk";
 
-import typescript from "rollup-plugin-typescript2";
+import pkg from "./package.json";
 
 /** @type {import("rollup").RollupOptions} */
 const config = {
     input: "src/focus4.stores.ts",
-    plugins: [typescript({abortOnError: false}), abortOnError],
+    plugins: [typescript()],
     treeshake: {
         moduleSideEffects: false
     },
     output: {
         format: "esm",
-        file: pkg.main
+        dir: "lib"
     },
     external: [...Object.keys(pkg.dependencies || {}), "i18next", "lodash", "mobx", "tslib", "uuid"],
-    onwarn
+    onwarn: ({code, message}) => {
+        if (code === "CIRCULAR_DEPENDENCY") {
+            return;
+        }
+        console.warn(chalk.yellow(`(!) ${message}`));
+    }
 };
 
 export default config;

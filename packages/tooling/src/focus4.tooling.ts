@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import {generateCSSTypings} from "./generator";
-
 export {generateCSSTypings};
 
 if (process.argv?.[1]?.includes("focus4.tooling")) {

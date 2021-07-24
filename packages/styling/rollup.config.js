@@ -1,10 +1,8 @@
 // @ts-check
 
+import typescript from "@rollup/plugin-typescript";
 import postcssImport from "postcss-import";
 import postcss from "rollup-plugin-postcss";
-import typescript from "rollup-plugin-typescript2";
-
-import {abortOnError, onwarn} from "../../scripts/rollup";
 
 import pkg from "./package.json";
 
@@ -12,14 +10,13 @@ import pkg from "./package.json";
 export default {
     input: "src/focus4.styling.ts",
     // @ts-ignore
-    plugins: [typescript({abortOnError: false}), postcss({extract: true, plugins: [postcssImport()]}), abortOnError],
+    plugins: [typescript(), postcss({extract: true, plugins: [postcssImport()]})],
     treeshake: {
         moduleSideEffects: false
     },
     output: {
         format: "esm",
-        file: pkg.main
+        dir: "lib"
     },
-    external: [...Object.keys(pkg.dependencies || {}), "i18next", "lodash", "react", "react/jsx-runtime", "tslib"],
-    onwarn
+    external: [...Object.keys(pkg.dependencies || {}), "i18next", "lodash", "react", "react/jsx-runtime", "tslib"]
 };

@@ -1,6 +1,6 @@
 {
     "name": "@focus4/legacy",
-    "version": "11.0.0-preview.9",
+    "version": "11.0.0-preview.10",
     "description": "Focus v4, legacy module",
     "main": "lib/focus4.legacy.js",
     "repository": {
@@ -15,11 +15,11 @@
         "start": "rollup -cw"
     },
     "dependencies": {
-        "@focus4/core": "^11.0.0-preview.9",
-        "@focus4/forms": "^11.0.0-preview.9",
-        "@focus4/stores": "^11.0.0-preview.9",
-        "@focus4/styling": "^11.0.0-preview.9",
-        "@focus4/toolbox": "^11.0.0-preview.9",
+        "@focus4/core": "^11.0.0-preview.10",
+        "@focus4/forms": "^11.0.0-preview.10",
+        "@focus4/stores": "^11.0.0-preview.10",
+        "@focus4/styling": "^11.0.0-preview.10",
+        "@focus4/toolbox": "^11.0.0-preview.10",
         "core-decorators": "0.20.0"
     }
 }

@@ -13,29 +13,22 @@
     "scripts": {
         "bootstrap": "lerna bootstrap --hoist",
         "clean": "lerna clean --yes && node scripts/clean.js",
-        "eslint": "eslint -c .eslintrc.js --ext .ts,.tsx packages",
+        "eslint": "eslint --ext .ts,.tsx packages",
         "publish": "lerna publish --dist-tag preview",
         "stylelint": "stylelint packages/**/*.css",
         "test": "lerna run test",
         "test-ci": "lerna run test-ci"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "4.28.4",
-        "@typescript-eslint/parser": "4.28.4",
         "@rollup/plugin-node-resolve": "13.0.2",
-        "eslint": "7.31.0",
-        "eslint-config-prettier": "8.3.0",
-        "eslint-plugin-import": "2.23.4",
-        "eslint-plugin-only-warn": "1.0.2",
-        "eslint-plugin-react": "7.24.0",
+        "@rollup/plugin-typescript": "8.2.3",
         "lerna": "4.0.0",
         "postcss": "8.3.6",
-        "postcss-import": "14.0.2",
         "rollup": "2.53.3",
         "rollup-plugin-copy-glob": "0.3.1",
         "rollup-plugin-postcss": "4.0.0",
         "rollup-plugin-preserve-shebang": "1.0.1",
-        "rollup-plugin-typescript2": "0.30.0",
+        "tslib": "2.3.0",
         "typescript": "4.3.5"
     }
 }

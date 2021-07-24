@@ -1,20 +1,18 @@
 // @ts-check
-import typescript from "rollup-plugin-typescript2";
-
-import {abortOnError, onwarn} from "../../scripts/rollup";
+import typescript from "@rollup/plugin-typescript";
 
 import pkg from "./package.json";
 
 /** @type {import("rollup").RollupOptions} */
 const config = {
     input: "src/focus4.legacy.ts",
-    plugins: [typescript({abortOnError: false}), abortOnError],
+    plugins: [typescript()],
     treeshake: {
         moduleSideEffects: false
     },
     output: {
         format: "esm",
-        file: "lib/focus4.legacy.js"
+        dir: "lib"
     },
     external: [
         ...Object.keys(pkg.dependencies || {}),
@@ -34,8 +32,7 @@ const config = {
         "tslib",
         "uuid",
         "yester"
-    ],
-    onwarn
+    ]
 };
 
 export default config;

@@ -1,12 +1,11 @@
 // @ts-check
 
+import typescript from "@rollup/plugin-typescript";
+import chalk from "chalk";
 import copy from "rollup-plugin-copy-glob";
 import postcss from "rollup-plugin-postcss";
-import typescript from "rollup-plugin-typescript2";
 
 import {generateCSSTypings} from "@focus4/tooling";
-
-import {abortOnError, onwarn} from "../../scripts/rollup";
 
 import pkg from "./package.json";
 
@@ -19,19 +18,18 @@ export default (async () => {
         plugins: [
             // @ts-ignore
             postcss({extract: true, modules: true}),
-            typescript({abortOnError: false}),
+            typescript(),
             copy([
                 {files: "src/list/**/*.css.d.ts", dest: "lib/list"},
                 {files: "src/search/**/*.css.d.ts", dest: "lib/search"}
-            ]),
-            abortOnError
+            ])
         ],
         treeshake: {
             moduleSideEffects: false
         },
         output: {
             format: "esm",
-            file: "lib/focus4.collections.js"
+            dir: "lib"
         },
         external: [
             ...Object.keys(pkg.dependencies || {}),
@@ -44,7 +42,12 @@ export default (async () => {
             "react/jsx-runtime",
             "tslib"
         ],
-        onwarn
+        onwarn: ({code, message}) => {
+            if (code === "CIRCULAR_DEPENDENCY") {
+                return;
+            }
+            console.warn(chalk.yellow(`(!) ${message}`));
+        }
     };
     return config;
 })();
