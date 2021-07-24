@@ -1,3 +1,8 @@
+:root {
+    --overlay-color: rgb(0, 0, 0);
+    --overlay-opacity: 0.6;
+}
+
 .overlay {
     z-index: var(--z-index-higher);
     position: absolute;

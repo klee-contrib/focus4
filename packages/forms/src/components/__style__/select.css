@@ -1,3 +1,9 @@
+:root {
+    --select-height: 36px;
+    --select-arrow-color: rgb(var(--color-black));
+    --select-line-color: var(--input-text-bottom-border-color);
+}
+
 .select {
     position: relative;
     display: inline-block;

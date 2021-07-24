@@ -1,3 +1,7 @@
+:root {
+    --popin-background: rgb(var(--palette-grey-50));
+}
+
 .popin {
     z-index: var(--z-index-higher);
     position: absolute;

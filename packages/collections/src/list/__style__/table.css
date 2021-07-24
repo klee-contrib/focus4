@@ -1,3 +1,21 @@
+:root {
+    --table-font-size: calc(1.3 * var(--unit));
+    --table-header-font-size: calc(1.2 * var(--unit));
+    --table-header-sort-icon-size: calc(1.6 * var(--unit));
+    --table-header-color: rgba(var(--color-black), 0.54);
+    --table-header-sorted-color: rgba(var(--color-black), 0.87);
+    --table-header-sorted-icon-hover-color: rgba(var(--color-black), 0.26);
+    --table-dividers: 1px solid rgb(var(--palette-grey-300));
+    --table-row-color: rgba(var(--color-black), 0.87);
+    --table-hover-color: rgb(var(--palette-grey-200));
+    --table-selection-color: rgb(var(--palette-grey-100));
+    --table-row-height: calc(4.8 * var(--unit));
+    --table-column-spacing: calc(3.6 * var(--unit));
+    --table-column-padding: calc(var(--table-column-spacing) / 2);
+    --table-cell-padding: calc(2.4 * var(--unit));
+    --table-cell-top: calc(var(--table-cell-padding) / 2);
+}
+
 .table tr td.checkbox {
     width: 34px;
     padding: 0 8px 0 12px;
@@ -15,8 +33,6 @@
 .table tr:hover td.checkbox button {
     opacity: 1;
 }
-
-/* Ci-dessous, recopie du CSS du tableau react-toolbox */
 
 .table {
     background-color: rgb(var(--color-white));

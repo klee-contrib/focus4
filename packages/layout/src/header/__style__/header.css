@@ -1,3 +1,15 @@
+:root {
+    --header-actions-margin-right: 200px;
+    --header-actions-margin-right-mobile: 80px;
+    --header-color: rgb(var(--color-black));
+    --header-content-background: rgb(var(--color-white));
+    --header-content-padding: 20px 10px;
+    --header-toprow-background: rgb(var(--color-white));
+    --header-toprow-height: 60px;
+    --header-toprow-padding: 10px;
+    --header-shadow: var(--shadow-2p);
+}
+
 .actions button {
     margin: 0 5px;
 }

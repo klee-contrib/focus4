@@ -1,3 +1,10 @@
+:root {
+    --scrollspy-active-border-color: rgb(var(--color-primary));
+    --scrollspy-active-color: rgb(var(--color-accent));
+    --scrollspy-padding-left: 25px;
+    --scrollspy-menu-size: 220px;
+}
+
 .scrollspy {
     padding-top: var(--content-padding-top);
 }

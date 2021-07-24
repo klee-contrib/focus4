@@ -1,3 +1,9 @@
+:root {
+    --timeline-date-width: 100px;
+    --timeline-date-color: rgb(var(--color-accent));
+    --timeline-line-color: rgb(var(--color-primary));
+}
+
 .timeline {
     list-style: none;
     padding: 10px 0;

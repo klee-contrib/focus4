@@ -1,3 +1,11 @@
+:root {
+    --content-padding-side: 20px;
+    --content-padding-top: 20px;
+    --layout-background: rgb(var(--palette-grey-50));
+    --layout-footer-margin: 30px 0 0 0;
+    --layout-footer-padding: 10px;
+}
+
 .layout {
     background-color: var(--layout-background);
     display: flex;

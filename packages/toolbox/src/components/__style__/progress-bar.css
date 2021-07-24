@@ -1,3 +1,13 @@
+:root {
+    --progress-height: calc(0.4 * var(--unit));
+    --progress-main-color: rgb(var(--color-primary));
+    --progress-secondary-color: rgba(var(--color-primary-contrast), 0.7);
+    --progress-disabled-color: rgba(var(--color-black), 0.26);
+    --circle-wrapper-width: 60;
+    --circle-radius: 25;
+    --scale-ratio: calc(var(--circle-radius) / 20);
+}
+
 .progressBar--linear {
     background: rgb(var(--color-divider));
     display: inline-block;

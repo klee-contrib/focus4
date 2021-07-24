@@ -1,3 +1,7 @@
+:root {
+    --advanced-search-facets-width: 275px;
+}
+
 .search {
     padding-top: var(--content-padding-top);
 }
