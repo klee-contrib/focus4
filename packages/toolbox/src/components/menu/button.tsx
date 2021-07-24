@@ -2,6 +2,7 @@ import {MouseEvent, MouseEventHandler, ReactNode, useCallback, useLayoutEffect, 
 import {findDOMNode} from "react-dom";
 
 import {Button, ButtonProps} from "../button";
+import {RippleProps} from "../ripple";
 import {tooltipFactory, TooltipProps} from "../tooltip";
 
 import {Menu, MenuProps} from "./menu";
@@ -10,6 +11,7 @@ import {Menu, MenuProps} from "./menu";
 export interface ButtonMenuProps extends MenuProps {
     /** Les props du bouton. */
     button: ButtonProps &
+        RippleProps &
         TooltipProps & {
             /** L'icône à afficher quand le bouton est ouvert. */
             openedIcon?: ReactNode;

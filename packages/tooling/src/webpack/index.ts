@@ -79,7 +79,7 @@ export function webpackConfigWithDefaults(
                     },
                     {
                         test: /\.css$/,
-                        include: cssModulesPath ? [path.resolve(rootDir, cssModulesPath)] : undefined,
+                        include: cssModulesPath ? [path.resolve(rootDir, cssModulesPath)] : [],
                         use: [
                             styleLoader,
                             {
