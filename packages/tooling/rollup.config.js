@@ -15,5 +15,5 @@ export default {
         format: "cjs",
         dir: "lib"
     },
-    external: [...Object.keys(pkg.dependencies || {}), "fs"]
+    external: [...Object.keys(pkg.dependencies || {}), "fs", "path"]
 };
