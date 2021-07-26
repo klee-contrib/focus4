@@ -87,10 +87,7 @@ export function Menu({
                 }
             }
 
-            const {height: ch, width: cw} = menuNode.current!.getBoundingClientRect();
             setActive(false);
-            setWidth(cw);
-            setHeight(ch);
             const timeout = setTimeout(() => setActive(true), 20);
             onShow?.();
             return () => {
@@ -183,6 +180,12 @@ export function Menu({
             }),
         [children, handleSelect, ripple, selectable, selected]
     );
+
+    useLayoutEffect(() => {
+        const {height: ch, width: cw} = menuNode.current!.getBoundingClientRect();
+        setWidth(cw);
+        setHeight(ch);
+    }, [items]);
 
     return (
         <div
