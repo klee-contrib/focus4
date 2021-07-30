@@ -18,8 +18,8 @@ steps:
       env:
           CI: true
 
-    - script: npm run tslint-ci
-      displayName: "TSLint"
+    - script: npm run eslint
+      displayName: "ESLint"
 
     - script: npm run test-ci
       displayName: "Test"
