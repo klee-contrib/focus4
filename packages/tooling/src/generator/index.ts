@@ -32,6 +32,11 @@ export async function generateCSSTypings(rootDir: string) {
                 }),
                 ([name]) => name
             );
+
+            if (!tokens.length) {
+                return;
+            }
+
             const output = `import {CSSElement${hasModifier ? ", CSSMod" : ""}} from "@focus4/styling";
 
 ${Array.from(elements)
