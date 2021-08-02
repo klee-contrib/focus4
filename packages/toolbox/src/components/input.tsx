@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import {
+    ClipboardEventHandler,
     CSSProperties,
     FocusEventHandler,
     FormEvent,
@@ -63,6 +64,7 @@ export interface InputProps {
     onMouseOut?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onMouseOver?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onMouseUp?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onPaste?: ClipboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onTouchStart?: TouchEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** If true, input is readonly. */
     readOnly?: boolean;
@@ -112,6 +114,7 @@ export const Input = forwardRef(function RTInput(
         onMouseOut,
         onMouseOver,
         onMouseUp,
+        onPaste,
         onTouchStart,
         readOnly,
         required = false,
@@ -233,6 +236,7 @@ export const Input = forwardRef(function RTInput(
         onMouseOut,
         onMouseOver,
         onMouseUp,
+        onPaste,
         onTouchStart,
         readOnly,
         required,

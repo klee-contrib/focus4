@@ -3,7 +3,7 @@ import {range, takeWhile} from "lodash";
 import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import numeral from "numeral";
-import {Component, KeyboardEvent} from "react";
+import {ClipboardEvent, Component, KeyboardEvent} from "react";
 
 import {Input as RTInput, InputProps as RTInputProps} from "@focus4/toolbox";
 
@@ -222,7 +222,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
     }
 
     @action.bound
-    onPaste(e: ClipboardEvent) {
+    onPaste(e: ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
         if (this.mask) {
             e.preventDefault();
             this.updateMaskSelection();
@@ -324,13 +324,11 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         return (
             <RTInput
                 {...props}
-                {...{
-                    onPaste: this.onPaste
-                }}
                 ref={i => (this.inputElement = i!)}
                 onChange={this.onChange}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
+                onPaste={this.onPaste}
                 type="text"
                 value={this.value}
             />
