@@ -49,7 +49,6 @@ export function webpackConfigWithDefaults(
             entry,
             output: {
                 path: path.resolve(rootDir, outputDir),
-                publicPath: "./",
                 filename: "app.js",
                 assetModuleFilename: "[name][ext]"
             },
