@@ -1,3 +1,4 @@
+import "./variables";
 import "./global.css";
 
 export {

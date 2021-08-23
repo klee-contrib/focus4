@@ -1,5 +1,3 @@
-@import "./variables/index.css";
-
 html {
     color: rgb(var(--color-black));
     font-size: var(--font-size-small);

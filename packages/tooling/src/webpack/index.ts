@@ -6,7 +6,7 @@ import {Compiler, optimize, RuleSetRule, WebpackOptionsNormalized, WebpackPlugin
 
 const postcss = {
     loader: "postcss-loader",
-    options: {postcssOptions: {plugins: ["postcss-import", "postcss-nesting"]}}
+    options: {postcssOptions: {plugins: ["postcss-nesting"]}}
 };
 
 /**

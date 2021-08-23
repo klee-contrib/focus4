@@ -1,7 +1,6 @@
 // @ts-check
 
 import typescript from "@rollup/plugin-typescript";
-import postcssImport from "postcss-import";
 import postcss from "rollup-plugin-postcss";
 
 import pkg from "./package.json";
@@ -10,7 +9,7 @@ import pkg from "./package.json";
 export default {
     input: "src/focus4.styling.ts",
     // @ts-ignore
-    plugins: [typescript(), postcss({extract: true, plugins: [postcssImport()]})],
+    plugins: [typescript(), postcss({extract: true})],
     treeshake: {
         moduleSideEffects: false
     },
