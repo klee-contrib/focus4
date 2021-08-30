@@ -15,21 +15,6 @@ export type EntityToForm<E> = {
         ? FormListNode<E>
         : never;
 };
-/** Récupère le type décrivant les erreurs possible d'un noeud de formulaire quelconque. */
-export type NodeToErrors<E> = Omit<
-    {
-        readonly [P in keyof FormNode<E>]?: FormNode<E>[P] extends FormNode<infer OE>
-            ? NodeToErrors<OE>
-            : FormNode<E>[P] extends FormListNode<infer LE>
-            ? NodeToErrors<LE>[]
-            : FormNode<E>[P] extends FormEntityField
-            ? string
-            : never;
-    },
-    {
-        [P in keyof FormNode<E>]: FormNode<E>[P] extends FormNode | FormListNode | FormEntityField ? never : P;
-    }[keyof FormNode<E>]
->;
 
 /** Champs additionnels pour un noeud de formulaire. */
 export type FormNode<E = any, E0 = E> = EntityToForm<E> & {
@@ -42,7 +27,7 @@ export type FormNode<E = any, E0 = E> = EntityToForm<E> & {
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: NodeToErrors<E>;
+        readonly errors: {};
     };
 
     /** Vide l'objet (récursivement). */
@@ -80,7 +65,7 @@ export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: NodeToErrors<E>[];
+        readonly errors: {}[];
     };
 
     /** Fonction de modification d'un objet, appelé à la création. */
