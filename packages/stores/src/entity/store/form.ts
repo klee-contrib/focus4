@@ -16,7 +16,7 @@ import {
 } from "../types";
 import {validateField} from "../validation";
 
-import {getNodeForList, replaceNode} from "./store";
+import {getNodeForList, setNode} from "./store";
 
 /**
  * Transforme un Store(List)Node en Form(List)Node.
@@ -35,7 +35,7 @@ export function nodeToFormNode<E = any, E0 = E>(
     }
 
     node.load = () => sourceNode.load();
-    (node as any).reset = action("formNode.reset", () => replaceNode.call(node as any, sourceNode as any));
+    (node as any).reset = action("formNode.reset", () => setNode.call(node as any, sourceNode as any));
 
     (node as any).sourceNode = sourceNode;
 

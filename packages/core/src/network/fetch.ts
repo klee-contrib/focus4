@@ -76,13 +76,13 @@ export async function coreFetch(
             const contentType = response.headers.get("Content-Type");
             if (contentType?.includes("application/json")) {
                 // Pour une erreur JSON, on la parse pour trouver et enregistrer les erreurs "attendues".
-                return Promise.reject<ManagedErrorResponse>(
+                return await Promise.reject<ManagedErrorResponse>(
                     manageResponseErrors(response.status, await response.json())
                 );
             } else {
                 // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).
                 console.error(`${response.status} error when calling ${url}`);
-                return Promise.reject<string>(await response.text());
+                return await Promise.reject<string>(await response.text());
             }
         }
     } catch (error: unknown) {

@@ -166,9 +166,9 @@ export class FormActionsBuilder<
                         if (data) {
                             // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                             if (isStoreNode(formNode.sourceNode)) {
-                                formNode.sourceNode.set(data);
+                                formNode.sourceNode.replace(data);
                             } else {
-                                formNode.sourceNode.setNodes(data);
+                                formNode.sourceNode.replaceNodes(data);
                             }
                         }
                     });

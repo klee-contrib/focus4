@@ -226,7 +226,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         if (this.mask) {
             e.preventDefault();
             this.updateMaskSelection();
-            if (this.mask.paste(e.clipboardData!.getData("Text"))) {
+            if (this.mask.paste(e.clipboardData.getData("Text"))) {
                 setTimeout(this.updateInputSelection, 0);
 
                 if (this.value !== this.props.value) {
