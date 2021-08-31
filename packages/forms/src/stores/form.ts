@@ -14,7 +14,8 @@ import {
     FormNodeBuilder,
     isStoreListNode,
     StoreListNode,
-    StoreNode
+    StoreNode,
+    toFlatValues
 } from "@focus4/stores";
 
 /**
@@ -53,19 +54,20 @@ export function makeFormNode(
     builder: (x: any) => any = (x: any) => x,
     initialData?: any
 ): any {
-    let formNode;
+    let fn;
     if (isStoreListNode(node)) {
-        formNode = builder(new FormListNodeBuilder(node)).build();
+        fn = builder(new FormListNodeBuilder(node)).build();
         if (initialData) {
-            formNode.setNodes(isFunction(initialData) ? initialData() : initialData);
+            fn.setNodes(isFunction(initialData) ? initialData() : initialData);
         }
     } else {
-        formNode = builder(new FormNodeBuilder(node)).build();
+        fn = builder(new FormNodeBuilder(node)).build();
         if (initialData) {
-            formNode.set(isFunction(initialData) ? initialData() : initialData);
+            fn.set(isFunction(initialData) ? initialData() : initialData);
         }
     }
-    return withDisposer(formNode, componentClass);
+    fn.form._initialData = toFlatValues(fn, true);
+    return withDisposer(fn, componentClass);
 }
 
 /**
@@ -99,21 +101,22 @@ export function useFormNode(
     builder: (x: any) => any = (x: any) => x,
     initialData: any = undefined
 ) {
-    const [formNode] = isStoreListNode(node)
-        ? useState(() => {
-              const fn = builder(new FormListNodeBuilder(node)).build();
-              if (initialData) {
-                  fn.setNodes(isFunction(initialData) ? initialData() : initialData);
-              }
-              return fn;
-          })
-        : useState(() => {
-              const fn = builder(new FormNodeBuilder(node)).build();
-              if (initialData) {
-                  fn.set(isFunction(initialData) ? initialData() : initialData);
-              }
-              return fn;
-          });
+    const [formNode] = useState(() => {
+        let fn;
+        if (isStoreListNode(node)) {
+            fn = builder(new FormListNodeBuilder(node)).build();
+            if (initialData) {
+                fn.setNodes(isFunction(initialData) ? initialData() : initialData);
+            }
+        } else {
+            fn = builder(new FormNodeBuilder(node)).build();
+            if (initialData) {
+                fn.set(isFunction(initialData) ? initialData() : initialData);
+            }
+        }
+        fn.form._initialData = toFlatValues(fn, true);
+        return fn;
+    });
     useEffect(() => formNode.dispose, []);
     return formNode;
 }

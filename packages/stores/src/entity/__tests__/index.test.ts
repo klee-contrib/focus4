@@ -584,7 +584,7 @@ describe("FormNode: propagation isEdit et isValid", () => {
         });
         test("Les erreurs de formulaires sont les mêmes à tous les niveaux.", async () => {
             await step1;
-            expect(formNode.structure.form.errors).toEqual(formNode.form.errors.structure);
+            expect(formNode.structure.form.errors).toEqual((formNode.form.errors as any).structure);
         });
 
         afterAll(() => {

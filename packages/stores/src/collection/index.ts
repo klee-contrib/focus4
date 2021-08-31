@@ -648,7 +648,8 @@ export class CollectionStore<T = any, C = any> {
             {
                 toggle: action.bound,
                 toggleAll: action.bound
-            }
+            },
+            {proxy: false}
         ) as any;
     }
 

@@ -195,6 +195,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
         },
         {
             stores: observable.ref
-        }
+        },
+        {proxy: false}
     );
 }

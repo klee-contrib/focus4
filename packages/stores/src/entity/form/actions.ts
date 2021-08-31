@@ -244,7 +244,8 @@ export class FormActionsBuilder<
                 load: action.bound,
                 onClickCancel: action.bound,
                 onClickEdit: action.bound
-            }
+            },
+            {proxy: false}
         );
 
         // On ajoute le ou les actions de sauvegarde.
