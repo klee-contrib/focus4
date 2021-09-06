@@ -16,7 +16,7 @@ import {v4} from "uuid";
 
 import {config} from "@focus4/core";
 
-import {buildNode, FormEntityField, FormNode, nodeToFormNode, toFlatValues} from "../entity";
+import {buildNode, FormEntityField, FormNode, isEntityField, nodeToFormNode, toFlatValues} from "../entity";
 
 import {
     FacetInput,
@@ -673,7 +673,11 @@ export class CollectionStore<T = any, C = any> {
 
     private filterItemByFilters(item: T) {
         return (this.searchFields ?? this.availableSearchFields).some(filter => {
-            const field = item[filter as keyof T];
+            let field = item[filter as keyof T];
+            if (isEntityField(field)) {
+                field = field.value;
+            }
+
             if (isString(field)) {
                 return field.toLowerCase().includes(this.query.toLowerCase());
             } else {
@@ -685,7 +689,11 @@ export class CollectionStore<T = any, C = any> {
 
 function groupByFacet<T>(list: T[], fieldName: keyof T) {
     return list.reduce((buckets, item) => {
-        const value = item[fieldName];
+        let value = item[fieldName];
+        if (isEntityField(value)) {
+            // eslint-disable-next-line prefer-destructuring
+            value = value.value;
+        }
 
         function add(key?: any) {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -728,6 +736,10 @@ function isFacetMatch(facetValue: string, itemValue: any): boolean {
 
     if (typeof itemValue === "boolean") {
         return itemValue === (facetValue === "true");
+    }
+
+    if (isEntityField(itemValue)) {
+        return isFacetMatch(facetValue, itemValue.value);
     }
 
     if (!itemValue) {
