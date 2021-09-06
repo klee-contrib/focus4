@@ -1,18 +1,21 @@
+import {comparer, observable, reaction} from "mobx";
 import {useObserver} from "mobx-react";
-import {ComponentType} from "react";
+import {ComponentType, useEffect, useState} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp} from "@focus4/styling";
 
 import {List, ListBaseProps, ListProps, OperationListItem} from "../../list";
 
-import {Group, GroupCss, groupCss} from "./group";
-export {Group, GroupCss, groupCss};
+import {Group, GroupCss, groupCss, GroupHeaderProps} from "./group";
+export {Group, GroupCss, groupCss, GroupHeaderProps};
 
 /** Props de Results. */
 export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
+    /** Groupes pliés par défauts (par groupingKey) */
+    defaultFoldedGroups?: Record<string, string[]>;
     /** Header de groupe personnalisé. */
-    GroupHeader?: ComponentType<{group: GroupResult<T>}>;
+    GroupHeader?: ComponentType<GroupHeaderProps<T>>;
     /** Actions de groupe par groupe (code / valeur). */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
@@ -44,6 +47,7 @@ export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
 
 /** Composants affichant les résultats de recherche, avec affiche par groupe. */
 export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
+    defaultFoldedGroups,
     GroupHeader,
     groupOperationList,
     groupPageListSize = 10,
@@ -58,6 +62,33 @@ export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
     store,
     useGroupActionBars
 }: ResultsProps<T, P>) {
+    // Map pour contrôler les groupes qui sont ouverts, initialisés une seule fois après le premier chargement du store.
+    const [openedMap] = useState(() => observable.map<string, boolean>());
+
+    function toggleAll(opened: boolean, forceDefaults: boolean) {
+        if (store.groupingKey) {
+            openedMap.replace(
+                store.groups.map(group => [
+                    group.code,
+                    forceDefaults && defaultFoldedGroups?.[store.groupingKey!]?.includes(group.code) ? false : opened
+                ])
+            );
+        }
+    }
+
+    useEffect(
+        () =>
+            reaction(
+                () => [store.groupingKey, store.groups.map(f => f.code)],
+                () => toggleAll(true, true),
+                {
+                    equals: comparer.structural,
+                    fireImmediately: true
+                }
+            ),
+        [store]
+    );
+
     return useObserver(() => {
         const filteredGroups = store.groups.filter(group => group.totalCount !== 0);
         return (
@@ -78,6 +109,7 @@ export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
                                 i18nPrefix={i18nPrefix}
                                 ListComponent={ListComponent}
                                 listProps={{...listProps, perPage: groupPageSize}}
+                                openedMap={openedMap}
                                 store={store}
                                 theme={groupTheme}
                                 useGroupActionBars={useGroupActionBars}

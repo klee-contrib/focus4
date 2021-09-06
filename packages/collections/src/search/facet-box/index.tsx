@@ -34,6 +34,8 @@ export interface FacetBoxProps<T> {
     };
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
+    /** Facettes pliées par défaut. */
+    defaultFoldedFacets?: string[];
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
@@ -57,6 +59,7 @@ const noAdditionalFacets = {};
 export function FacetBox<T>({
     additionalFacets = noAdditionalFacets,
     customFacetComponents = {},
+    defaultFoldedFacets,
     i18nPrefix = "focus",
     nbDefaultDataList = 6,
     sections,
@@ -70,11 +73,16 @@ export function FacetBox<T>({
     // Map pour contrôler les facettes qui sont ouvertes, initialisée une seule fois après le premier chargement du store (le service renvoie toujours toutes les facettes).
     const [openedMap] = useState(() => observable.map<string, boolean>());
 
-    function toggleAll(opened: boolean) {
+    function toggleAll(opened: boolean, forceDefaults: boolean) {
         openedMap.replace(
             store.facets
-                .map(facet => [facet.code, opened])
-                .concat(Object.keys(additionalFacets).map(code => [code, opened]))
+                .map(facet => [facet.code, forceDefaults && defaultFoldedFacets?.includes(facet.code) ? false : opened])
+                .concat(
+                    Object.keys(additionalFacets).map(code => [
+                        code,
+                        forceDefaults && defaultFoldedFacets?.includes(code) ? false : opened
+                    ])
+                )
         );
     }
 
@@ -82,13 +90,13 @@ export function FacetBox<T>({
         () =>
             reaction(
                 () => store.facets.map(f => f.code),
-                () => toggleAll(true),
+                () => toggleAll(true, true),
                 {
                     equals: comparer.structural,
                     fireImmediately: true
                 }
             ),
-        [additionalFacets]
+        [additionalFacets, store]
     );
 
     function renderFacet(facet: FacetOutput) {
@@ -195,7 +203,7 @@ export function FacetBox<T>({
 
         return (
             <div className={theme.facetBox()}>
-                <h3 onClick={() => toggleAll(!opened)}>
+                <h3 onClick={() => toggleAll(!opened, false)}>
                     <IconButton icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)} />
                     <span>{i18next.t(`${i18nPrefix}.search.facets.title`)}</span>
                     {shouldDisplayClear ? (

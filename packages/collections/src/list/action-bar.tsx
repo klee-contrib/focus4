@@ -22,6 +22,8 @@ export interface ActionBarProps<T> {
     additionalFacets?: {
         [facet: string]: AdditionalFacet;
     };
+    /** Facettes pliées par défaut. */
+    defaultFoldedFacets?: string[];
     /** Constitution de l'éventuel groupe auquel est lié l'ActionBar */
     group?: {code: string; label: string; totalCount: number};
     /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
@@ -55,6 +57,7 @@ export interface ActionBarProps<T> {
 /** Barre d'actions pour une liste ou un groupe de recherche. Permet le tri, le grouping, la recherche et la sélection + actions en masse. */
 export function ActionBar<T>({
     additionalFacets,
+    defaultFoldedFacets,
     group,
     groupableFacets,
     hasFacetBox,
@@ -254,6 +257,7 @@ export function ActionBar<T>({
                                 />
                                 <FacetBox
                                     additionalFacets={additionalFacets}
+                                    defaultFoldedFacets={defaultFoldedFacets}
                                     nbDefaultDataList={nbDefaultDataListFacet}
                                     showSingleValuedFacets={showSingleValuedFacets}
                                     store={store}

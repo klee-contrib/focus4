@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {ObservableMap} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, useContext} from "react";
 
@@ -11,12 +12,18 @@ import {ActionBar, List, ListBaseProps, ListProps, OperationListItem} from "../.
 import groupCss, {GroupCss} from "../__style__/group.css";
 export {groupCss, GroupCss};
 
+export interface GroupHeaderProps<T> {
+    group: GroupResult<T>;
+    i18nPrefix?: string;
+    openedMap: ObservableMap<string, boolean>;
+}
+
 /** Props du composant de groupe. */
 export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
     /** Header de groupe personnalisé. */
-    GroupHeader?: ComponentType<{group: GroupResult<T>}>;
+    GroupHeader?: ComponentType<GroupHeaderProps<T>>;
     /** Actions de groupe. */
     groupOperationList?: OperationListItem<T[]>[];
     /** Affiche la sélection sur l'ActionBar et les lignes. */
@@ -30,6 +37,8 @@ export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
         P,
         "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "isManualFetch" | "showAllHandler" | "store"
     >;
+    /** Map des états d'ouverture des groupes.  */
+    openedMap: ObservableMap<string, boolean>;
     /** Store contenant la liste. */
     store: CollectionStore<T>;
     /** CSS */
@@ -47,6 +56,7 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
     i18nPrefix = "focus",
     ListComponent = List,
     listProps,
+    openedMap,
     store,
     theme: pTheme,
     useGroupActionBars
@@ -88,21 +98,34 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
                             theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
                         />
                     ) : null}
-                    <GroupHeader group={group} />
+                    <GroupHeader group={group} openedMap={openedMap} />
                 </div>
             )}
-            <ListComponent
-                {...(listProps as P)}
-                {...{hasSelection, hideAdditionalItems: true}}
-                i18nPrefix={i18nPrefix}
-                isManualFetch
-                showAllHandler={group.list.length < group.totalCount ? state.showAllHandler : undefined}
-                store={state.store}
-            />
+            {openedMap.get(group.code) ? (
+                <ListComponent
+                    {...(listProps as P)}
+                    {...{hasSelection, hideAdditionalItems: true}}
+                    i18nPrefix={i18nPrefix}
+                    isManualFetch
+                    showAllHandler={group.list.length < group.totalCount ? state.showAllHandler : undefined}
+                    store={state.store}
+                />
+            ) : null}
         </>
     ));
 }
 
-export function DefaultGroupHeader({group}: {group: GroupResult}) {
-    return <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>;
+export function DefaultGroupHeader<T>({group, i18nPrefix = "focus", openedMap}: GroupHeaderProps<T>) {
+    return useObserver(() => {
+        const opened = openedMap.get(group.code);
+        return (
+            <>
+                <IconButton
+                    icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)}
+                    onClick={() => openedMap.set(group.code, !opened)}
+                />
+                <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>
+            </>
+        );
+    });
 }

@@ -55,6 +55,7 @@ export {
     FacetProps,
     Group,
     GroupCss,
+    GroupHeaderProps,
     Results,
     ResultsProps,
     SearchBar,

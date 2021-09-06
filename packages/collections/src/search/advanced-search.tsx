@@ -20,7 +20,7 @@ import {
 
 import {ChipType} from "./chip";
 import {AdditionalFacet, FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
-import {GroupCss, Results} from "./results";
+import {GroupCss, GroupHeaderProps, Results} from "./results";
 import {Summary, SummaryCss} from "./summary";
 
 import advancedSearchCss, {AdvancedSearchCss} from "./__style__/advanced-search.css";
@@ -60,6 +60,10 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipCss;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
+    /** Facettes pliées par défaut. */
+    defaultFoldedFacets?: string[];
+    /** Groupes pliés par défauts (par groupingKey) */
+    defaultFoldedGroups?: Record<string, string[]>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "sticky" | "fixed-sticky" | "none";
     /** CSS de la FacetBox (si position = "left") */
@@ -72,7 +76,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
     groupableFacets?: string[];
     /** Header de groupe personnalisé. */
-    GroupHeader?: ComponentType<{group: GroupResult<T>}>;
+    GroupHeader?: ComponentType<GroupHeaderProps<T>>;
     /** Actions de groupe par scope. */
     groupOperationList?: (group: GroupResult<T>) => OperationListItem<T[]>[];
     /** Nombre d'éléments affichés par page de groupe. Par défaut : 5. */
@@ -150,6 +154,8 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     chipKeyResolver,
     chipThemer,
     customFacetComponents,
+    defaultFoldedFacets,
+    defaultFoldedGroups,
     facetBoxPosition = "left",
     facetBoxTheme,
     facetSections,
@@ -203,6 +209,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                 <FacetBox
                     additionalFacets={additionalFacets}
                     customFacetComponents={customFacetComponents}
+                    defaultFoldedFacets={defaultFoldedFacets}
                     i18nPrefix={i18nPrefix}
                     nbDefaultDataList={nbDefaultDataListFacet}
                     sections={facetSections}
@@ -274,6 +281,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                 />
                 {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
                     <ActionBar
+                        defaultFoldedFacets={defaultFoldedFacets}
                         groupableFacets={groupableFacets}
                         hasFacetBox={facetBoxPosition === "action-bar"}
                         hasGrouping={hasGrouping}
@@ -291,6 +299,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                 ) : null}
                 <ListContext.Provider value={listContext}>
                     <Results
+                        defaultFoldedGroups={defaultFoldedGroups}
                         GroupHeader={GroupHeader}
                         groupOperationList={groupOperationList}
                         groupPageItemIndex={groupPageItemIndex}

@@ -17,6 +17,6 @@ export {
     facetCss,
     shouldDisplayFacet
 } from "./facet-box";
-export {Group, GroupCss, Results, ResultsProps, groupCss} from "./results";
+export {Group, GroupCss, Results, ResultsProps, groupCss, GroupHeaderProps} from "./results";
 export {SearchBar, SearchBarCss, SearchBarProps, searchBarCss} from "./search-bar";
 export {Summary, SummaryCss, SummaryProps, summaryCss} from "./summary";
