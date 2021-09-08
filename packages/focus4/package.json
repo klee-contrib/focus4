@@ -10,10 +10,6 @@
     "author": "damien.frikha@kleegroup.com",
     "license": "MIT",
     "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/focus4",
-    "scripts": {
-        "prepare": "tsc",
-        "start": "tsc --watch"
-    },
     "dependencies": {
         "@focus4/collections": "^10.9.1",
         "@focus4/core": "^10.9.0",

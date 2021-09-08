@@ -7,27 +7,23 @@ import "material-design-icons-iconfont/dist/material-design-icons.css";
 
 import "./focus.css";
 
-import i18next from "i18next";
-export {i18next as i18n};
+export {default as i18n} from "i18next";
 export {action, autorun, computed, observable} from "mobx";
 export {disposeOnUnmount, observer, useLocalStore, useObserver} from "mobx-react";
-export {Component, useEffect, useState, useRef} from "react";
+export {Component, useEffect, useRef, useState} from "react";
 
-export {advancedSearchFor, listFor, tableFor, timelineFor} from "./collections";
-export {Panel} from "./components";
+export {advancedSearchFor, listFor, tableFor, timelineFor} from "@focus4/collections";
+export {classAutorun, messageStore} from "@focus4/core";
 export {
     autocompleteFor,
     Form,
     fieldFor,
-    makeField,
     makeFormActions,
     makeFormNode,
+    Panel,
     selectFor,
-    stringFor,
     useFormActions,
     useFormNode
-} from "./entity";
-export {Content, Popin} from "./layout";
-export {messageStore} from "./message";
-export {makeReferenceStore} from "./reference";
-export {classAutorun} from "./util";
+} from "@focus4/forms";
+export {Content, Popin} from "@focus4/layout";
+export {makeField, makeReferenceStore, stringFor} from "@focus4/stores";
