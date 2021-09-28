@@ -39,6 +39,7 @@ export function nodeToFormNode<E = any, E0 = E>(
             replaceNode.call(node as any, (node as any).form._initialData);
         }
         setNode.call(node as any, sourceNode as any);
+        return node;
     });
 
     (node as any).sourceNode = sourceNode;
