@@ -268,7 +268,7 @@ export function List<T>({
                                     style={{width: mosaic.width, height: mosaic.height}}
                                 >
                                     <AddItemComponent
-                                        addItemHandler={state.addItemHandler!}
+                                        addItemHandler={state.addItemHandler}
                                         i18nPrefix={i18nPrefix}
                                         mode="mosaic"
                                     />

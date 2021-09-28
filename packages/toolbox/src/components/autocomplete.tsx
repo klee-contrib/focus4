@@ -377,7 +377,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 required={required}
                 rows={rows}
                 style={style}
-                theme={theme as CSSProp<InputCss>}
+                theme={theme as unknown as CSSProp<InputCss>}
                 type={type}
                 value={query}
             >

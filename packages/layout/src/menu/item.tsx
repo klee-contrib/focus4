@@ -65,7 +65,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                         icon={icon}
                         label={label}
                         onClick={onItemClick}
-                        theme={theme as CSSProp<ButtonCss>}
+                        theme={theme as unknown as CSSProp<ButtonCss>}
                     />
                 ) : (
                     <IconButton
@@ -73,7 +73,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                         icon={icon}
                         onClick={onItemClick}
                         rippleTheme={theme}
-                        theme={theme as CSSProp<IconButtonCss>}
+                        theme={theme as unknown as CSSProp<IconButtonCss>}
                     />
                 )}
             </li>

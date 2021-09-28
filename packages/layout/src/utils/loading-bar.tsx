@@ -28,7 +28,7 @@ export function LoadingBar({i18nPrefix = "focus", progressBarType, theme: pTheme
         return (
             <div className={theme.bar()}>
                 {completed < 100 ? (
-                    <ProgressBar theme={theme as CSSProp<ProgressBarCss>} type={progressBarType} />
+                    <ProgressBar theme={theme as unknown as CSSProp<ProgressBarCss>} type={progressBarType} />
                 ) : null}
                 {displayDevBar ? (
                     <ul>
