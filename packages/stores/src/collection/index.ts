@@ -672,6 +672,10 @@ export class CollectionStore<T = any, C = any> {
     }
 
     private filterItemByFilters(item: T) {
+        if (!this.query) {
+            return true;
+        }
+
         return (this.searchFields ?? this.availableSearchFields).some(filter => {
             let field = item[filter as keyof T];
             if (isEntityField(field)) {

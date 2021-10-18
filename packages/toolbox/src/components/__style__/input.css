@@ -81,13 +81,9 @@
         & ~ .label:not(.label--fixed) {
             color: var(--input-text-highlight-color);
         }
+
         & ~ .label > .required {
             color: var(--input-text-required-color);
-        }
-
-        & ~ .hint {
-            display: block;
-            opacity: var(--input-hint-opacity);
         }
 
         & ~ .icon {
