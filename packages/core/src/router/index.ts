@@ -190,7 +190,7 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
 
                                 // On parcourt toutes les constraintes définies sur cette route.
                                 for (const constraint of constraints.filter(c =>
-                                    store._activeRoute.includes(c.route)
+                                    store._activeRoute.startsWith(c.route)
                                 )) {
                                     // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
                                     if (constraint.condition()) {
