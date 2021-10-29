@@ -167,7 +167,7 @@
         width: var(--slider-pin-size);
     }
 
-    .innerknob::after {
+    &.innerknob::after {
         color: rgb(var(--color-background));
         content: attr(data-value);
         font-size: 10px;

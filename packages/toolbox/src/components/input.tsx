@@ -48,6 +48,8 @@ export interface InputProps {
     multiline?: boolean;
     /** Name for the input field. */
     name?: string;
+    /** If true, does not add the "maxLength" attribute to the HTML input element. */
+    noMaxLengthOnElement?: boolean;
     onBlur?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onClick?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onChange?: (value: string, event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -98,6 +100,7 @@ export const Input = forwardRef(function RTInput(
         maxLength,
         multiline = false,
         name,
+        noMaxLengthOnElement,
         onBlur,
         onChange,
         onClick,
@@ -257,7 +260,11 @@ export const Input = forwardRef(function RTInput(
             {multiline ? (
                 <textarea ref={inputNode as any} {...inputElementProps} rows={rows} />
             ) : (
-                <input ref={inputNode as any} {...inputElementProps} maxLength={maxLength} />
+                <input
+                    ref={inputNode as any}
+                    {...inputElementProps}
+                    maxLength={noMaxLengthOnElement ? undefined : maxLength}
+                />
             )}
             {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
             <span className={theme.bar()} />
