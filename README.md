@@ -7,7 +7,7 @@
 
 `Focus v4` peut être utilisé avec toute sorte de stack technique côté API. Il s'attend néanmoins à un format spécifique pour interpréter les erreurs et nécessite une API spécifique pour utiliser le module de recherche avancée. De plus, il est conseillé de pouvoir générer les différents fichiers de modèle utilisés par les formulaires. [Vertigo](http://www.github.com/KleeGroup/vertigo) et [Kinetix](http://www.github.com/KleeGroup/kinetix-tools) répondent à tous ces besoins (en Java et C#, respectivement), mais il est tout à fait abordable de s'en passer.
 
-[La documentation est disponible ici](https://kleegroup.github.io/focus4)
+[La documentation est disponible ici](https://klee-contrib.github.io/focus4)
 
 # Starter Kit
 
