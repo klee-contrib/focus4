@@ -22,7 +22,7 @@ export function classAutorun(target: RCL, propertyKey: keyof RCL & string) {
  * @param expression L'expression à tracker pour la réaction. Si le contexte est nécessaire, le passer dans un lambda englobant.
  * @param opts Les options de la réaction.
  */
-export function classReaction<T extends RCL>(expression: ReactionExpression<T>, opts?: IReactionOptions<T>) {
+export function classReaction<T extends RCL>(expression: ReactionExpression<T>, opts?: IReactionOptions<T, boolean>) {
     return function cReaction(instance: T, propertyKey: keyof RCL & string) {
         patchClass("reaction", instance, propertyKey, expression, opts);
     };
@@ -44,7 +44,7 @@ function patchClass<T extends RCL>(
     instance: T,
     propertyKey: keyof T & string,
     expression?: WhenExpression<T> | ReactionExpression<T>,
-    opts?: IReactionOptions<T>
+    opts?: IReactionOptions<T, boolean>
 ) {
     function componentWillMount(this: T) {
         const r = this[propertyKey].bind(this);

@@ -139,6 +139,7 @@ export class FormNodeBuilder<E, E0 = E> {
      */
     patch<F extends FieldsOf<E>, NFE extends FieldEntry>(
         field: F,
+        // @ts-ignore
         builder: (b: EntityFieldBuilder<E[F]>, node: StoreNode<E>) => EntityFieldBuilder<NFE>
     ): FormNodeBuilder<E[F] extends NFE ? E : Omit<E, F> & {[_ in F]: NFE}, E0>;
     /**
