@@ -83,6 +83,7 @@
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/class-literal-property-style": "off",
         "@typescript-eslint/consistent-indexed-object-style": "off",
+        "@typescript-eslint/consistent-type-exports": "off",
         "@typescript-eslint/consistent-type-imports": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
@@ -171,6 +172,7 @@
         "react/no-set-state": "off",
         "react/no-unescaped-entities": "off",
         "react/no-unstable-nested-components": "off",
+        "react/no-unused-class-component-methods": "off",
         "react/sort-comp": [
             "warn",
             {

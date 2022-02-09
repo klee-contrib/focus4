@@ -3,7 +3,7 @@
 export const fr = {
     dragLayer: {
         item: "élément",
-        item_plural: "éléments"
+        item_other: "éléments"
     },
     list: {
         add: "Ajouter",
@@ -24,7 +24,7 @@ export const fr = {
             filter: "Filtrer",
             group: "Grouper",
             selectedItem: "élément sélectionné",
-            selectedItem_plural: "éléments sélectionnés",
+            selectedItem_other: "éléments sélectionnés",
             sort: "Trier"
         },
         bar: {
@@ -41,7 +41,7 @@ export const fr = {
             or: "Au moins un critère",
             and: "Tous les critères",
             filter: "{{count}} filtre",
-            filter_plural: "{{count}} filtres"
+            filter_other: "{{count}} filtres"
         },
         loading: "Chargement...",
         results: {
@@ -56,11 +56,11 @@ export const fr = {
             export: "Exporter",
             for: "pour",
             group: "groupé par",
-            group_plural: "groupés par",
+            group_other: "groupés par",
             or: "ou",
             not: "non",
             result: "résultat",
-            result_plural: "résultats",
+            result_other: "résultats",
             sortBy: "triés par"
         }
     }

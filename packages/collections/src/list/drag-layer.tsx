@@ -29,7 +29,7 @@ export function DndDragLayer({i18nPrefix = "focus", theme: pTheme}: DndDragLayer
     const {currentOffset, isDragging, item} = useDragLayer(monitor => ({
         currentOffset: monitor.getClientOffset(),
         isDragging: monitor.isDragging(),
-        item: monitor.getItem() as {}[]
+        item: monitor.getItem<{}[]>()
     }));
 
     if (!isDragging || !item || !isObservableArray(item) || !currentOffset) {
