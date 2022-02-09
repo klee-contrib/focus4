@@ -14,7 +14,7 @@
         "bootstrap": "lerna bootstrap --hoist",
         "clean": "lerna clean --yes && node scripts/clean.js",
         "eslint": "eslint --ext .ts,.tsx packages",
-        "publish": "lerna publish --exact --dist-tag test",
+        "publish": "lerna publish --exact",
         "stylelint": "stylelint packages/**/*.css",
         "test": "lerna run test",
         "test-ci": "lerna run test-ci"

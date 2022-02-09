@@ -22,23 +22,21 @@
     right: 0;
 }
 
-.enter,
-.exit.exitActive {
-    &.popin--right {
-        transform: translateX(100%);
-    }
-
-    &.popin--left {
-        transform: translateX(-100%);
-    }
+.enter.popin--right,
+.exit.exitActive.popin--right {
+    transform: translateX(100%);
 }
 
-.enter.enterActive,
-.exit {
-    &.popin--left,
-    &.popin--right {
-        transform: translateX(0%);
-    }
+.enter.popin--left,
+.exit.exitActive.popin--left {
+    transform: translateX(-100%);
+}
+
+.enter.enterActive.popin--left,
+.enter.enterActive.popin--right,
+.exit.popin--left,
+.exit.popin--right {
+    transform: translateX(0%);
 }
 
 .enterActive,
