@@ -213,13 +213,13 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         (vals: string[], event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>) => {
             const newValue = multiple ? vals : vals[0];
             const newQuery = getQuery(newValue);
+            updateQuery(newQuery, !!pQuery);
             onChange?.(newValue, event);
             setShowAllSuggestions(showSuggestionsWhenValueIsSet);
             if (!keepFocusOnChange) {
                 setFocus(false);
                 inputRef.current?.blur();
             }
-            updateQuery(newQuery, !!pQuery);
         },
         [getQuery, keepFocusOnChange, multiple, onChange, pQuery, showSuggestionsWhenValueIsSet, updateQuery]
     );
@@ -345,7 +345,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
             {selectedPosition === "above" ? renderSelected() : null}
             <Input
                 ref={inputRef}
-                autoComplete="off"
+                autoComplete="new-password"
                 className={theme.input()}
                 disabled={disabled}
                 error={error}

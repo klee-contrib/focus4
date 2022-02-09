@@ -66,7 +66,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
     @observable protected isLoading = false;
 
     /** Contenu du champ texte. */
-    @observable protected query = "";
+    @observable protected _query = this.props.query ?? "";
 
     /** Résultat de la recherche d'autocomplétion. */
     protected readonly data = observable.map<string, string>();
@@ -82,7 +82,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         if ((value || value === 0) && !isQuickSearch && keyResolver) {
             const label = i18next.t((await keyResolver(value)) ?? "");
             runInAction(() => {
-                this.query = label || `${value}`;
+                this._query = label || `${value}`;
                 if (label) {
                     this.data.set(`${value}`, label);
                 }
@@ -98,7 +98,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
     // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     async UNSAFE_componentWillReceiveProps({autoSelect, value, isQuickSearch, keyResolver}: AutocompleteProps<T>) {
         if (autoSelect && value !== this.props.value && value && !isQuickSearch && keyResolver) {
-            this.query = i18next.t((await keyResolver(value)) ?? "") || value?.toString() || "";
+            this._query = i18next.t((await keyResolver(value)) ?? "") || value?.toString() || "";
         }
     }
 
@@ -108,17 +108,12 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         return Object.fromEntries(this.data);
     }
 
-    focus() {
-        // C'est moche mais sinon ça marche pas...
-        setTimeout(() => this.inputElement?.focus(), 0);
+    @computed
+    get query() {
+        return this.props.query ?? this._query;
     }
 
-    /**
-     * Est appelé à chaque saisie dans le champ texte.
-     * @param query Le champ texte.
-     */
-    @action.bound
-    onQueryChange(query: string) {
+    set query(query) {
         const {onQueryChange, onChange, isQuickSearch, searchOnEmptyQuery} = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
@@ -128,7 +123,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         }
 
         if (query !== this.query && (!this.value || !isQuickSearch)) {
-            this.query = query;
+            this._query = query;
             if (onQueryChange) {
                 onQueryChange(query);
             }
@@ -138,9 +133,14 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
         if (isQuickSearch) {
             this.value = "";
         }
-        if (!searchOnEmptyQuery && !this.query) {
+        if (!searchOnEmptyQuery && !query) {
             this.data.clear();
         }
+    }
+
+    focus() {
+        // C'est moche mais sinon ça marche pas...
+        setTimeout(() => this.inputElement?.focus(), 0);
     }
 
     /**
@@ -215,7 +215,7 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
                             multiple={false}
                             onChange={value => this.onValueChange(value as string)}
                             onFocus={this.onFocus}
-                            onQueryChange={(query?: string) => this.onQueryChange(query ?? "")}
+                            onQueryChange={query => (this.query = query ?? "")}
                             query={this.query}
                             source={this.source}
                             suggestionMatch="disabled"
