@@ -10,14 +10,8 @@ export {dragLayerCss, DragLayerCss};
 
 /** Props du layer de drag an drop. */
 export interface DndDragLayerProps {
-    /** L'offset courant. */
-    currentOffset?: {x: number; y: number};
     /** Préfixe i18n. */
     i18nPrefix?: string;
-    /** Drag en cours. */
-    isDragging?: boolean;
-    /** La liste en cours de drag. */
-    item?: {dragged: {}[]};
     /** CSS. */
     theme?: CSSProp<DragLayerCss>;
 }

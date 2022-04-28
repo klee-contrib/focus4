@@ -255,36 +255,27 @@ function merge$fields(old$field: FieldEntry, $field: Metadata) {
             inputProps: {
                 ...domain.inputProps,
                 ...domainOverrides.inputProps,
-                theme: themeable((domain.inputProps ?? {}).theme ?? {}, (domainOverrides.inputProps ?? {}).theme ?? {})
+                theme: themeable(domain.inputProps?.theme ?? {}, domainOverrides.inputProps?.theme ?? {})
             },
             selectProps: {
                 ...domain.selectProps,
                 ...domainOverrides.selectProps,
-                theme: themeable(
-                    (domain.selectProps ?? {}).theme ?? {},
-                    (domainOverrides.selectProps ?? {}).theme ?? {}
-                )
+                theme: themeable(domain.selectProps?.theme ?? {}, domainOverrides.selectProps?.theme ?? {})
             },
             autocompleteProps: {
                 ...domain.autocompleteProps,
                 ...domainOverrides.autocompleteProps,
-                theme: themeable(
-                    (domain.autocompleteProps ?? {}).theme ?? {},
-                    (domainOverrides.autocompleteProps ?? {}).theme ?? {}
-                )
+                theme: themeable(domain.autocompleteProps?.theme ?? {}, domainOverrides.autocompleteProps?.theme ?? {})
             },
             displayProps: {
                 ...domain.displayProps,
                 ...domainOverrides.displayProps,
-                theme: themeable(
-                    (domain.displayProps ?? {}).theme ?? {},
-                    (domainOverrides.displayProps ?? {}).theme ?? {}
-                )
+                theme: themeable(domain.displayProps?.theme ?? {}, domainOverrides.displayProps?.theme ?? {})
             },
             labelProps: {
                 ...domain.labelProps,
                 ...domainOverrides.labelProps,
-                theme: themeable((domain.labelProps ?? {}).theme ?? {}, (domainOverrides.labelProps ?? {}).theme ?? {})
+                theme: themeable(domain.labelProps?.theme ?? {}, domainOverrides.labelProps?.theme ?? {})
             }
         }
     };

@@ -82,7 +82,7 @@ export function FacetBox<T>({
                         code,
                         forceDefaults && defaultFoldedFacets?.includes(code) ? false : opened
                     ])
-                )
+                ) as [string, boolean][]
         );
     }
 

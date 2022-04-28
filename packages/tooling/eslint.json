@@ -109,6 +109,7 @@
         "@typescript-eslint/no-magic-numbers": "off",
         "@typescript-eslint/no-misused-promises": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-redundant-type-constituents": "off",
         "@typescript-eslint/no-this-alias": ["warn", {"allowDestructuring": true, "allowedNames": ["self", "that"]}],
         "@typescript-eslint/no-type-alias": "off",
         "@typescript-eslint/no-unnecessary-condition": "off",
@@ -158,6 +159,7 @@
         "react/destructuring-assignment": "off",
         "react/display-name": "off",
         "react/forbid-component-props": "off",
+        "react/hook-use-state": "off",
         "react/jsx-filename-extension": ["warn", {"extensions": [".tsx"]}],
         "react/jsx-handler-names": "off",
         "react/jsx-max-depth": "off",
@@ -173,6 +175,7 @@
         "react/no-unescaped-entities": "off",
         "react/no-unstable-nested-components": "off",
         "react/no-unused-class-component-methods": "off",
+        "react/no-unused-prop-types": "off",
         "react/sort-comp": [
             "warn",
             {
