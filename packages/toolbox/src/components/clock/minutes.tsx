@@ -3,7 +3,6 @@ import {useCallback, useRef} from "react";
 
 import {ToBem} from "@focus4/styling";
 
-
 import {Face} from "./face";
 import {Hand, HandRef} from "./hand";
 

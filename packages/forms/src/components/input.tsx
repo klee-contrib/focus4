@@ -104,6 +104,10 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         }
     }
 
+    get htmlInput() {
+        return this.inputElement;
+    }
+
     @computed
     get numberFormat() {
         const {hasThousandsSeparator, maxDecimals = 10} = this.props;
@@ -246,6 +250,7 @@ export class Input<T extends "string" | "number"> extends Component<InputProps<T
         if (type === "string") {
             onChange(value === "" ? undefined : (value as any));
         } else if (value === "") {
+            this.numberStringValue = "";
             onChange(undefined);
         } else {
             if (numeral.locale() === "fr") {

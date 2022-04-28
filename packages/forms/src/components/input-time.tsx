@@ -2,7 +2,7 @@ import {uniqueId} from "lodash";
 import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import moment from "moment-timezone";
-import {Component, KeyboardEvent, ReactNode} from "react";
+import {Component, createRef, KeyboardEvent, ReactNode} from "react";
 
 import {CSSProp, themr} from "@focus4/styling";
 import {Clock, ClockCss, IconButton} from "@focus4/toolbox";
@@ -41,6 +41,7 @@ export interface InputTimeProps {
 // eslint-disable-next-line react/no-unsafe
 export class InputTime extends Component<InputTimeProps> {
     protected clock?: HTMLDivElement | null;
+    protected inputRef = createRef<Input<"string">>();
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
     protected readonly _inputTimeId = uniqueId("input-time-");
@@ -133,6 +134,13 @@ export class InputTime extends Component<InputTimeProps> {
         }
     }
 
+    @action.bound
+    closeClock() {
+        this.showClock = false;
+        this.clockDisplay = "hours";
+        this.inputRef.current?.htmlInput?.blur();
+    }
+
     /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
     @action.bound
     onDocumentClick({target}: Event) {
@@ -143,7 +151,7 @@ export class InputTime extends Component<InputTimeProps> {
         }
 
         if (this.showClock && !parent) {
-            this.showClock = false;
+            this.closeClock();
             this.onInputBlur();
         }
     }
@@ -184,8 +192,7 @@ export class InputTime extends Component<InputTimeProps> {
         if (this.clockDisplay === "hours") {
             this.clockDisplay = "minutes";
         } else {
-            this.clockDisplay = "hours";
-            this.showClock = false;
+            this.closeClock();
         }
     }
 
@@ -193,7 +200,7 @@ export class InputTime extends Component<InputTimeProps> {
     @action.bound
     handleKeyDown({key}: KeyboardEvent) {
         if (key === "Tab" || key === "Enter") {
-            this.showClock = false;
+            this.closeClock();
             this.onInputBlur();
         }
     }
@@ -214,6 +221,7 @@ export class InputTime extends Component<InputTimeProps> {
                         <Input
                             {...inputProps}
                             {...{autoComplete: "off"}}
+                            ref={this.inputRef}
                             error={error}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                             onChange={value => (this.timeText = value)}
@@ -248,7 +256,7 @@ export class InputTime extends Component<InputTimeProps> {
                                     </span>
                                     <IconButton
                                         icon="clear"
-                                        onClick={() => (this.showClock = false)}
+                                        onClick={this.closeClock}
                                         theme={{toggle: theme.toggle()}}
                                     />
                                 </header>

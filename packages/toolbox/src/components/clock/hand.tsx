@@ -30,7 +30,7 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
     const [knobWidth, setKnobWidth] = useState(0);
     const knobNode = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
-        setTimeout(() => setKnobWidth(knobNode.current!.offsetWidth));
+        setTimeout(() => knobNode.current && setKnobWidth(knobNode.current.offsetWidth));
     }, []);
 
     const move = useCallback(
@@ -62,8 +62,6 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
                     x: event.touches[0].pageX - (window.scrollX || window.pageXOffset),
                     y: event.touches[0].pageY - (window.scrollY || window.pageYOffset)
                 });
-                event.stopPropagation();
-                event.preventDefault();
             }
         }),
         [move]
@@ -98,7 +96,8 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
                     y: event.touches[0].pageY - (window.scrollY || window.pageYOffset)
                 });
             };
-            const onTouchEnd = () => {
+            const onTouchEnd = (event: TouchEvent) => {
+                event.preventDefault();
                 setTouched(false);
                 onMoved?.();
             };

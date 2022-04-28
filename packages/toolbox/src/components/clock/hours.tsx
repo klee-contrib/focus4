@@ -3,7 +3,6 @@ import {useCallback, useRef, useState} from "react";
 
 import {ToBem} from "@focus4/styling";
 
-
 import {Face} from "./face";
 import {Hand, HandRef} from "./hand";
 
@@ -33,8 +32,8 @@ export function Hours({center, format, onChange, onHandMoved, radius, selected, 
     const handNode = useRef<HandRef | null>(null);
 
     const valueFromDegrees = useCallback(
-        (degrees: number) => {
-            if (format === "ampm" || (format === "24hr" && inner)) {
+        (degrees: number, newInner?: boolean) => {
+            if (format === "ampm" || (format === "24hr" && (newInner ?? inner))) {
                 return innerNumbers[degrees / step];
             }
             return outerNumbers[degrees / step];
@@ -47,7 +46,7 @@ export function Hours({center, format, onChange, onHandMoved, radius, selected, 
             const currentInner = r < radius - spacing * innerSpacing;
             if (format === "24hr" && inner !== currentInner) {
                 setInner(currentInner);
-                onChange(valueFromDegrees(degrees));
+                onChange(valueFromDegrees(degrees, currentInner));
             } else {
                 onChange(valueFromDegrees(degrees));
             }
