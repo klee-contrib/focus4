@@ -1,9 +1,6 @@
 // Libs
-import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
-import {configure, mount} from "enzyme";
+import {render} from "@testing-library/react";
 import {InputDate} from "../input-date";
-
-configure({adapter: new Adapter()});
 
 const props = {
     inputProps: {
@@ -30,7 +27,7 @@ const props = {
 describe("InputDate component", () => {
     it("with input", () => {
         // Arrange/Act
-        const inputDateComponent = mount(
+        const {container} = render(
             <InputDate
                 onChange={() => {
                     /* */
@@ -40,8 +37,7 @@ describe("InputDate component", () => {
             />
         );
         // Assert
-        const input = inputDateComponent.getDOMNode().querySelectorAll("input");
-        expect(input).toHaveLength(1);
+        expect(container.querySelectorAll("input")).toHaveLength(1);
     });
 });
 
@@ -49,7 +45,7 @@ describe("Some date formation", () => {
     it("Formatter", () => {
         // Arrange/Act
 
-        const inputDateComponent = mount(
+        const {container} = render(
             <InputDate
                 onChange={() => {
                     /* */
@@ -60,13 +56,13 @@ describe("Some date formation", () => {
             />
         );
         // Assert
-        expect(inputDateComponent.find("input").props().value).toBe("10/11/20");
+        expect(container.querySelector("input")?.value).toBe("10/11/20");
     });
 
     it("Invalid input day", () => {
         // Arrange/Act
 
-        const inputDateComponent = mount(
+        const {container} = render(
             <InputDate
                 onChange={() => {
                     /* */
@@ -77,7 +73,7 @@ describe("Some date formation", () => {
             />
         );
         // Assert
-        expect(inputDateComponent.find("input").props().value).toBe("__/11/2016");
+        expect(container.querySelector("input")?.value).toBe("__/11/2016");
     });
 
     // it("Invalid input month", () => {
@@ -100,7 +96,7 @@ describe("Some date formation", () => {
     it("Invalid input all", () => {
         // Arrange/Act
 
-        const inputDateComponent = mount(
+        const {container} = render(
             <InputDate
                 onChange={() => {
                     /* */
@@ -111,6 +107,6 @@ describe("Some date formation", () => {
             />
         );
         // Assert
-        expect(inputDateComponent.find("input").props().value).toBe("");
+        expect(container.querySelector("input")?.value).toBe("");
     });
 });

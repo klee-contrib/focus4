@@ -1,10 +1,8 @@
 // Libs
-import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
-import {configure, mount} from "enzyme";
+import {render} from "@testing-library/react";
 import i18next from "i18next";
 import {Panel} from "../panel";
 
-configure({adapter: new Adapter()});
 i18next.init();
 
 const panelTheme = {
@@ -24,10 +22,10 @@ describe("Title", () => {
     test("with title", () => {
         // Arrange/Act
         const panelTitle = "A title for a test";
-        const panel = mount(<Panel title={panelTitle} theme={panelTheme} />);
+        const {container} = render(<Panel title={panelTitle} theme={panelTheme} />);
 
         // Assert that the title is present
-        const h3List = panel.getDOMNode().querySelectorAll("h3");
+        const h3List = container.querySelectorAll("h3");
         expect(h3List).toHaveLength(1);
         expect(h3List[0].textContent).toContain(panelTitle);
     });
@@ -41,7 +39,7 @@ test.each([
     ["bottom", 1, 1],
     ["both", 1, 1]
 ])("Buttons positions %s / expectedTop : %i / expectedBottom : %i", (position: any, expectedTop, expectedBottom) => {
-    const panel = mount(<Panel title="my panel" buttonsPosition={position} theme={panelTheme} />);
-    expect(panel.find(".top").length).toBe(expectedTop);
-    expect(panel.find(".bottom").length).toBe(expectedBottom);
+    const {container} = render(<Panel title="my panel" buttonsPosition={position} theme={panelTheme} />);
+    expect(container.querySelectorAll(".top").length).toBe(expectedTop);
+    expect(container.querySelectorAll(".bottom").length).toBe(expectedBottom);
 });

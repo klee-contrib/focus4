@@ -394,220 +394,216 @@ describe("FormNode: Modification de FormNode", () => {
 });
 
 describe("FormListNode: Modification", () => {
-    let step1Done: () => void;
-    const step1 = new Promise<void>(resolve => (step1Done = resolve));
-    let step2Done: () => void;
-    const step2 = new Promise<void>(resolve => (step2Done = resolve));
-    let step3Done: () => void;
-    const step3 = new Promise<void>(resolve => (step3Done = resolve));
-    let step4Done: () => void;
-    const step4 = new Promise<void>(resolve => (step4Done = resolve));
-    let step5Done: () => void;
-    const step5 = new Promise<void>(resolve => (step5Done = resolve));
-    let step6Done: () => void;
-    const step6 = new Promise<void>(resolve => (step6Done = resolve));
-    let step7Done: () => void;
-    const step7 = new Promise<void>(resolve => (step7Done = resolve));
-
-    const {entry2, formNode2} = getFormNodes();
-
-    test("Une suppression d'élement dans un StoreListNode est bien répercutée dans le FormListNode en conservant un élément dans ce dernier ajouté à la fin.", () => {
+    function step1() {
+        const {entry2, formNode2} = getFormNodes();
         entry2.replace(projetTest);
         formNode2.ligneList.pushNode({id: 8});
         entry2.ligneList.splice(1, 1);
+        return {entry2, formNode2};
+    }
+
+    test("Une suppression d'élement dans un StoreListNode est bien répercutée dans le FormListNode en conservant un élément dans ce dernier ajouté à la fin.", () => {
+        const {formNode2} = step1();
         expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 7}, {id: 8}]);
-
-        step1Done();
     });
 
-    test("Un élément ajouté dans un StoreListNode se retoruve dans le FormListNode avant tout élément ajouté dans ce dernier.", async () => {
-        await step1;
-
+    function step2() {
+        const {entry2, formNode2} = step1();
         entry2.ligneList.pushNode({id: 9});
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 7}, {id: 9}, {id: 8}]);
+        return {entry2, formNode2};
+    }
 
-        step2Done();
+    test("Un élément ajouté dans un StoreListNode se retoruve dans le FormListNode avant tout élément ajouté dans ce dernier.", () => {
+        const {formNode2} = step2();
+        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 7}, {id: 9}, {id: 8}]);
     });
 
-    test("Y compris si le FormListNode a retiré un élément au milieu avant.", async () => {
-        await step2;
-
+    function step3() {
+        const {entry2, formNode2} = step2();
         formNode2.ligneList.splice(1, 1);
         entry2.ligneList.pushNode({id: 10});
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 9}, {id: 10}, {id: 8}]);
+        return {entry2, formNode2};
+    }
 
-        step3Done();
+    test("Y compris si le FormListNode a retiré un élément au milieu avant.", () => {
+        const {formNode2} = step3();
+        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 9}, {id: 10}, {id: 8}]);
     });
 
-    test("Plus dur : l'élément à partir du quel j'ai ajouté dans le StoreListNode manque dans le FormListNode.", async () => {
-        await step3;
-
+    function step4() {
+        const {entry2, formNode2} = step3();
         formNode2.ligneList.splice(2, 1);
         entry2.ligneList.pushNode({id: 11});
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 9}, {id: 11}, {id: 8}]);
+        return {entry2, formNode2};
+    }
 
-        step4Done();
+    test("Plus dur : l'élément à partir du quel j'ai ajouté dans le StoreListNode manque dans le FormListNode.", () => {
+        const {formNode2} = step4();
+        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 9}, {id: 11}, {id: 8}]);
     });
 
-    test("Et si je reset ma liste initiale : je la retrouve dans le FormNode suivie des éléments qui y on été ajoutés.", async () => {
-        await step4;
-
+    function step5() {
+        const {entry2, formNode2} = step4();
         formNode2.ligneList.splice(0, 1);
         entry2.replace(projetTest);
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 6}, {id: 7}, {id: 8}]);
+        return {entry2, formNode2};
+    }
 
-        step5Done();
+    test("Et si je reset ma liste initiale : je la retrouve dans le FormNode suivie des éléments qui y on été ajoutés.", () => {
+        const {formNode2} = step5();
+        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 6}, {id: 7}, {id: 8}]);
     });
 
-    test("Un replace du StoreListNode écrase totalement les modifications du FormListNode.", async () => {
-        await step5;
-
+    function step6() {
+        const {entry2, formNode2} = step5();
         formNode2.replace({ligneList: [{id: 1}, {id: 2}, {id: 5}, {id: 7}]});
         entry2.replace(projetTest);
-        expect(toFlatValues(formNode2.ligneList)).toEqual(toFlatValues(entry2.ligneList));
+        return {entry2, formNode2};
+    }
 
-        step6Done();
+    test("Un replace du StoreListNode écrase totalement les modifications du FormListNode.", () => {
+        const {formNode2, entry2} = step6();
+        expect(toFlatValues(formNode2.ligneList)).toEqual(toFlatValues(entry2.ligneList));
     });
 
-    test("SetNodes marche comme attendu.", async () => {
-        await step6;
-
+    function step7() {
+        const {entry2, formNode2} = step6();
         entry2.ligneList.setNodes([{id: 10}, {id: 11}, {}, {id: 13}]);
-        expect(toFlatValues(formNode2.ligneList)).toEqual(toFlatValues(entry2.ligneList));
+        return {entry2, formNode2};
+    }
 
-        step7Done();
+    test("SetNodes marche comme attendu.", () => {
+        const {formNode2, entry2} = step7();
+        expect(toFlatValues(formNode2.ligneList)).toEqual(toFlatValues(entry2.ligneList));
     });
 
-    test("SetNodes marche comme attendu bis.", async () => {
-        await step7;
-
+    function step8() {
+        const {entry2, formNode2} = step7();
         formNode2.ligneList.splice(1, 1);
         entry2.ligneList.setNodes([{id: 14}, {id: 15}, {}, {id: 17}]);
+        return {entry2, formNode2};
+    }
+
+    test("SetNodes marche comme attendu bis.", () => {
+        const {formNode2} = step8();
         expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 14}, {id: 7}, {id: 17}]);
     });
 });
 
 describe("FormNode: Modification de source forcée", () => {
-    let step1Done: () => void;
-    const step1 = new Promise<void>(resolve => (step1Done = resolve));
-    let step2Done: () => void;
-    const step2 = new Promise<void>(resolve => (step2Done = resolve));
-
-    const {entry, entry2, formNode, formNode2} = getFormNodes();
-
-    describe("init", () => {
+    function step1() {
+        const {entry, entry2, formNode, formNode2} = getFormNodes();
         entry.replace(operation);
         entry2.replace(projetTest);
         formNode.numero.value = "10";
         formNode2.ligneList[0].id.value = 65;
         entry.replace(operation);
         entry2.replace(projetTest);
+        return {entry, entry2, formNode, formNode2};
+    }
 
+    describe("init", () => {
+        const {entry, entry2, formNode, formNode2} = step1();
         test("La mise à jour de la source (noeud simple) reset toujours la cible, même si la mise à jour de la source ne fait rien.", () =>
             expect(toFlatValues(formNode)).toEqual(toFlatValues(entry)));
         test("La mise à jour de la source (noeud liste) reset toujours la cible, même si la mise à jour de la source ne fait rien.", () =>
             expect(toFlatValues(formNode2)).toEqual(toFlatValues(entry2)));
-
-        afterAll(() => {
-            formNode.numero.value = "yolo";
-            entry.structure.id.value = 9000;
-            entry.structure.replace(operation.structure);
-            step1Done();
-        });
     });
+
+    function step2() {
+        const {entry, entry2, formNode, formNode2} = step1();
+        formNode.numero.value = "yolo";
+        entry.structure.id.value = 9000;
+        entry.structure.replace(operation.structure);
+        return {entry, entry2, formNode, formNode2};
+    }
 
     describe("resetPartiel 1", () => {
-        test("Un reset partiel n'affecte pas les champs non affectés.", async () => {
-            await step1;
+        const {formNode} = step2();
+        test("Un reset partiel n'affecte pas les champs non affectés.", () => {
             expect(formNode.numero.value).toBe("yolo");
         });
-        test("Un reset partiel affecte les champs concernés.", async () => {
-            await step1;
+        test("Un reset partiel affecte les champs concernés.", () => {
             expect(toFlatValues(formNode.structure)).toEqual(operation.structure);
-        });
-
-        afterAll(() => {
-            formNode.montant.value = 9000;
-            entry.numero.value = "déso";
-            step2Done();
         });
     });
 
+    function step3() {
+        const {entry, entry2, formNode, formNode2} = step2();
+        formNode.montant.value = 9000;
+        entry.numero.value = "déso";
+        return {entry, entry2, formNode, formNode2};
+    }
+
     describe("resetPartiel 2", () => {
-        test("Un reset partiel n'affecte pas les champs non affectés.", async () => {
-            await step2;
+        const {formNode} = step3();
+        test("Un reset partiel n'affecte pas les champs non affectés.", () => {
             expect(formNode.montant.value).toBe(9000);
         });
-        test("Un reset partiel n'affecte pas les champs non affectés.", async () => {
-            await step2;
+        test("Un reset partiel n'affecte pas les champs non affectés.", () => {
             expect(formNode.numero.value).toBe("déso");
         });
     });
 });
 
 describe("FormNode: propagation isEdit et isValid", () => {
-    let step1Done: () => void;
-    const step1 = new Promise<void>(resolve => (step1Done = resolve));
-    let step2Done: () => void;
-    const step2 = new Promise<void>(resolve => (step2Done = resolve));
-
-    const {formNode, formNode2} = getFormNodes();
-    formNode.replace(operation);
-    formNode2.replace(projetTest);
-
-    describe("isEdit", () => {
+    function step1() {
+        const {formNode, formNode2} = getFormNodes();
+        formNode.replace(operation);
+        formNode2.replace(projetTest);
         formNode.form.isEdit = true;
         formNode2.form.isEdit = true;
+        return {formNode, formNode2};
+    }
+
+    describe("isEdit", () => {
+        const {formNode, formNode2} = step1();
         test("Tous les champs du noeud simple sont maintenant en édition", () =>
             expect(formNode.structure.nom.isEdit).toBe(true));
         test("Tous les champs du noeud liste sont maintenant en édition", () =>
             expect(formNode2.ligneList[0].id.isEdit).toBe(true));
-
-        afterAll(() => {
-            formNode.structure.nom.value = undefined;
-            step1Done();
-        });
     });
+
+    function step2() {
+        const {formNode, formNode2} = step1();
+        formNode.structure.nom.value = undefined;
+        return {formNode, formNode2};
+    }
 
     describe("validation object", () => {
-        test("Un champ required non renseigné est bien en erreur.", async () => {
-            await step1;
+        const {formNode} = step2();
+        test("Un champ required non renseigné est bien en erreur.", () => {
             expect(!!formNode.structure.nom.error).toBeTruthy();
         });
-        test("Par conséquent le FormNode n'est plus valide.", async () => {
-            await step1;
+        test("Par conséquent le FormNode n'est plus valide.", () => {
             expect(formNode.form.isValid).toBe(false);
         });
-        test("La liste d'erreurs du FormNode est bien remplie.", async () => {
-            await step1;
+        test("La liste d'erreurs du FormNode est bien remplie.", () => {
             expect(formNode.form.errors).toEqual({structure: {nom: "focus.validation.required"}});
         });
-        test("Les erreurs de formulaires sont les mêmes à tous les niveaux.", async () => {
-            await step1;
+        test("Les erreurs de formulaires sont les mêmes à tous les niveaux.", () => {
             expect(formNode.structure.form.errors).toEqual((formNode.form.errors as any).structure);
-        });
-
-        afterAll(() => {
-            formNode2.ligneList[1].id.value = undefined;
-            step2Done();
         });
     });
 
+    function step3() {
+        const {formNode, formNode2} = step2();
+        formNode2.ligneList[1].id.value = undefined;
+        return {formNode, formNode2};
+    }
+
     describe("validation liste", () => {
-        test("Dans un FormListNode le noeud avec une champ en erreur est invalide.", async () => {
-            await step2;
+        const {formNode2} = step3();
+        test("Dans un FormListNode le noeud avec une champ en erreur est invalide.", () => {
             expect(formNode2.ligneList[1].form.isValid).toBe(false);
         });
-        test("Mais le noeud d'à côté reste valide.", async () => {
-            await step2;
+        test("Mais le noeud d'à côté reste valide.", () => {
             expect(formNode2.ligneList[0].form.isValid).toBe(true);
         });
-        test("La liste elle-même est invalide.", async () => {
-            await step2;
+        test("La liste elle-même est invalide.", () => {
             expect(formNode2.ligneList.form.isValid).toBe(false);
         });
-        test("La liste des erreurs sur le noeud liste est correcte.", async () => {
-            await step2;
+        test("La liste des erreurs sur le noeud liste est correcte.", () => {
             expect(formNode2.ligneList.form.errors).toEqual([{}, {id: "focus.validation.required"}, {}]);
         });
     });
@@ -674,39 +670,42 @@ describe("FormNode: dispose", () => {
 });
 
 describe("FormListNode: dispose", () => {
-    let step1Done: () => void;
-    const step1 = new Promise<void>(resolve => (step1Done = resolve));
-    let step2Done: () => void;
-    const step2 = new Promise<void>(resolve => (step2Done = resolve));
-
-    const {entry2, formNode2} = getFormNodes();
-    entry2.replace(projetTest);
-
-    describe("modif", () => {
+    function step1() {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
         const [item2] = formNode2.ligneList.splice(2, 1);
         entry2.ligneList[2].id.value = 55;
         entry2.ligneList[1].id.value = 54;
+        return {item2, entry2, formNode2};
+    }
+
+    describe("modif", () => {
+        const {item2, formNode2} = step1();
         test("Un objet supprimé d'un FormListNode n'est bien plus mis à jour.", () =>
             expect(item2.id.value).toBe(projetTest.ligneList[2].id));
         test("Mais les autres le sont toujours.", () => expect(formNode2.ligneList[1].id.value).toBe(54));
-
-        afterAll(step1Done);
     });
 
-    test("Après le dispose de la liste, les ajouts et les suppressions ne font plus rien.", async () => {
-        await step1;
-
+    function step2() {
+        const {entry2, formNode2} = step1();
         formNode2.dispose();
         entry2.replace({ligneList: [{id: 41}]});
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 54}]);
+        return {entry2, formNode2};
+    }
 
-        step2Done();
+    test("Après le dispose de la liste, les ajouts et les suppressions ne font plus rien.", () => {
+        const {formNode2} = step2();
+        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 54}]);
     });
 
-    test("Et les noeuds invididuels sont inchangés.", async () => {
-        await step2;
-
+    function step3() {
+        const {entry2, formNode2} = step2();
         entry2.ligneList[0].id.value = 235;
+        return {entry2, formNode2};
+    }
+
+    test("Et les noeuds invididuels sont inchangés.", () => {
+        const {formNode2} = step3();
         expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 54}]);
     });
 });

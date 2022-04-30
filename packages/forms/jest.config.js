@@ -12,9 +12,7 @@ module.exports = {
     },
     preset: "ts-jest",
     reporters: ["default", "jest-junit"],
-    setupFilesAfterEnv: ["jest-enzyme"],
-    snapshotSerializers: ["enzyme-to-json/serializer"],
-    testEnvironment: "enzyme",
+    testEnvironment: "jsdom",
     testMatch: ["**/?(*.)+(spec|test).ts?(x)"],
     verbose: true,
     moduleNameMapper: {
