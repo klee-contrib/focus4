@@ -8,7 +8,7 @@ Deux composants React sont en général incontournable dans la réalisation d'un
 
 ### `<Form>`
 
-`Form` est un composant qui sert à poser le formulaire dans un composant React. Il utilise l'objet d'actions dans son cycle de vie (en particulier, il appelle `load` pendant son `componentWillMount`) et peut poser un formulaire HTML dont l'action est le `save`.
+`Form` est un composant qui sert à poser le formulaire dans un composant React.
 
 La propriété `formProps` de `FormActions` contient toutes les props nécessaires au `Form`, donc en pratique son utilisation est très simple :
 

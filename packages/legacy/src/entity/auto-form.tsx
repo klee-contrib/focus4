@@ -120,7 +120,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         makeObservable(this);
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         this.init();
         AutoForm.editingMap.set(this.formId, this.isEdit);
         this.entity.subscribe(); // On force l'abonnement à `this.storeData` au cas-où.

@@ -46,7 +46,7 @@ function patchClass<T extends RCL>(
     expression?: WhenExpression<T> | ReactionExpression<T>,
     opts?: IReactionOptions<T, boolean>
 ) {
-    function componentWillMount(this: T) {
+    function UNSAFE_componentWillMount(this: T) {
         const r = this[propertyKey].bind(this);
 
         (this as any)[`${type}_${propertyKey}`] =
@@ -63,14 +63,14 @@ function patchClass<T extends RCL>(
         this[`${type}_${propertyKey}`]();
     }
 
-    const baseCWM = instance.componentWillMount;
+    const baseCWM = instance.UNSAFE_componentWillMount;
     const baseCWUM = instance.componentWillUnmount;
 
-    instance.componentWillMount = !baseCWM
-        ? componentWillMount
+    instance.UNSAFE_componentWillMount = !baseCWM
+        ? UNSAFE_componentWillMount
         : function CWM(this: RCL) {
               baseCWM.apply(this);
-              componentWillMount.apply(this as T);
+              UNSAFE_componentWillMount.apply(this as T);
           };
     instance.componentWillUnmount = !baseCWUM
         ? componentWillUnmount
