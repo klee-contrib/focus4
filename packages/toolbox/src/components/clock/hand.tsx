@@ -1,4 +1,4 @@
-import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState} from "react";
+import {forwardRef, MouseEvent, TouchEvent, useCallback, useEffect, useImperativeHandle, useRef, useState} from "react";
 
 import {ToBem} from "@focus4/styling";
 
@@ -34,7 +34,7 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
     }, []);
 
     const move = useCallback(
-        position => {
+        (position: {x: number; y: number}) => {
             const degrees = step * Math.round(angle360FromPositions(origin.x, origin.y, position.x, position.y) / step);
             const x = origin.x - position.x;
             const y = origin.y - position.y;
@@ -69,7 +69,7 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
 
     useEffect(() => {
         if (moused) {
-            const onMouseMove = (event: MouseEvent) => {
+            const onMouseMove = (event: globalThis.MouseEvent) => {
                 move({
                     x: event.pageX - (window.scrollX || window.pageXOffset),
                     y: event.pageY - (window.scrollY || window.pageYOffset)
@@ -90,13 +90,13 @@ export const Hand = forwardRef<HandRef, HandProps>(function RTHand(
 
     useEffect(() => {
         if (touched) {
-            const onTouchMove = (event: TouchEvent) => {
+            const onTouchMove = (event: globalThis.TouchEvent) => {
                 move({
                     x: event.touches[0].pageX - (window.scrollX || window.pageXOffset),
                     y: event.touches[0].pageY - (window.scrollY || window.pageYOffset)
                 });
             };
-            const onTouchEnd = (event: TouchEvent) => {
+            const onTouchEnd = (event: globalThis.TouchEvent) => {
                 event.preventDefault();
                 setTouched(false);
                 onMoved?.();

@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {max, sortBy} from "lodash";
 import {action, computed, makeObservable, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
-import {Component, ComponentType, ContextType, createRef} from "react";
+import {Component, ComponentType, ContextType, createRef, ReactNode} from "react";
 
 import {CSSProp, PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
 
@@ -12,6 +12,8 @@ const Theme = themr("scrollspy", scrollspyCss);
 
 /** Props du ScrollspyContainer. */
 export interface ScrollspyContainerProps {
+    /** Children */
+    children?: ReactNode;
     /** Menu personnalisé pour le scrollspy. */
     MenuComponent?: ComponentType<ScrollspyMenuProps>;
     /** Menu rétractable. */

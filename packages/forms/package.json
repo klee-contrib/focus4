@@ -32,10 +32,11 @@
     "devDependencies": {
         "@testing-library/react": "12.1.5",
         "@focus4/tooling": "11.3.0",
-        "@types/jest": "27.4.1",
+        "@types/jest": "27.5.0",
         "identity-obj-proxy": "3.0.0",
-        "jest": "27.5.1",
+        "jest-environment-jsdom": "28.1.0",
+        "jest": "28.1.0",
         "jest-junit": "13.2.0",
-        "ts-jest": "27.1.4"
+        "ts-jest": "28.0.2"
     }
 }

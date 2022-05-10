@@ -1,5 +1,5 @@
 import {range} from "lodash";
-import {useCallback, useRef, useState} from "react";
+import {MouseEvent, TouchEvent, useCallback, useRef, useState} from "react";
 
 import {ToBem} from "@focus4/styling";
 
@@ -54,11 +54,11 @@ export function Hours({center, format, onChange, onHandMoved, radius, selected, 
         [format, inner, onChange, radius, spacing, valueFromDegrees]
     );
 
-    const handleMouseDown = useCallback(event => {
+    const handleMouseDown = useCallback((event: MouseEvent) => {
         handNode.current?.mouseStart(event);
     }, []);
 
-    const handleTouchStart = useCallback(event => {
+    const handleTouchStart = useCallback((event: TouchEvent) => {
         handNode.current?.touchStart(event);
     }, []);
 
