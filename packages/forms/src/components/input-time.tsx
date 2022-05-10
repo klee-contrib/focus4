@@ -16,6 +16,8 @@ const Theme = themr("inputTime", inputTimeCss);
 
 /** Props de l'InputTime. */
 export interface InputTimeProps {
+    /** Format du compoasnt Clock. */
+    clockFormat?: "24hr" | "ampm";
     /** CSS pour le composant Clock. */
     clockTheme?: CSSProp<ClockCss>;
     /** Composant affiché depuis la gauche ou la droite. */
@@ -207,6 +209,7 @@ export class InputTime extends Component<InputTimeProps> {
 
     render() {
         const {
+            clockFormat = "24hr",
             clockTheme,
             displayFrom = "left",
             error,
@@ -262,7 +265,7 @@ export class InputTime extends Component<InputTimeProps> {
                                 </header>
                                 <Clock
                                     display={this.clockDisplay}
-                                    format="24hr"
+                                    format={clockFormat}
                                     onChange={this.onClockChange}
                                     onHandMoved={this.onHandMoved}
                                     theme={clockTheme}
