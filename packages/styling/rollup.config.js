@@ -5,10 +5,9 @@ import postcss from "rollup-plugin-postcss";
 
 import pkg from "./package.json";
 
-/** @type {import("rollup").RollupOptions[]} */
+/** @type {import("rollup").RollupOptions} */
 export default {
     input: "src/focus4.styling.ts",
-    // @ts-ignore
     plugins: [typescript(), postcss({extract: true})],
     treeshake: {
         moduleSideEffects: false

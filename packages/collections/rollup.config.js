@@ -16,7 +16,6 @@ export default (async () => {
     const config = {
         input: "src/focus4.collections.ts",
         plugins: [
-            // @ts-ignore
             postcss({extract: true, modules: true}),
             typescript(),
             copy([
