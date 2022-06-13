@@ -43,7 +43,7 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends rea
         // eslint-disable-next-line func-style
         const load = async function load() {
             let params = getLoadParams();
-            if (params) {
+            if (params || params === 0) {
                 state.isLoading = true;
                 if (!Array.isArray(params)) {
                     params = [params];
