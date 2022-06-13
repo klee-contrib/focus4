@@ -74,7 +74,7 @@ export function SelectCheckbox<T extends "string" | "number">({
 
     return useObserver(() => (
         <div className={theme.select()}>
-            {label && <h5>{i18next.t(label)}</h5>}
+            {label ? <h5>{i18next.t(label)}</h5> : null}
             <ul>
                 {values.map(option => {
                     const optVal = option[values.$valueKey];

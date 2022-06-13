@@ -3,7 +3,6 @@ import {MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-
 import {FontIcon} from "../font-icon";
 import {rippleFactory} from "../ripple";
 
@@ -74,7 +73,7 @@ export const Tab = rippleFactory({theme: {rippleWrapper: tabsCss.rippleWrapper}}
             role="tab"
             tabIndex={0}
         >
-            {icon && <FontIcon className={(theme as any).icon?.()} value={icon} />}
+            {icon ? <FontIcon className={(theme as any).icon?.()} value={icon} /> : null}
             {label}
             {children}
         </div>

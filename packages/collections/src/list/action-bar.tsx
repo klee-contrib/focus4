@@ -243,7 +243,7 @@ export function ActionBar<T>({
             {hasFacetBox ? (
                 <div className={theme.facetBoxContainer()}>
                     <AnimatePresence>
-                        {displayFacetBox && (
+                        {displayFacetBox ? (
                             <motion.div
                                 key="facet-box"
                                 animate={{height: "auto"}}
@@ -264,7 +264,7 @@ export function ActionBar<T>({
                                     theme={{facetBox: theme.facetBox()}}
                                 />
                             </motion.div>
-                        )}
+                        ) : null}
                     </AnimatePresence>
                 </div>
             ) : null}

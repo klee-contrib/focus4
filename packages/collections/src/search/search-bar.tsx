@@ -226,7 +226,7 @@ export function SearchBar<T, C>({
             </div>
             {!showPanel && state.error ? <span className={theme.errors()}>{state.error}</span> : null}
             <AnimatePresence>
-                {showPanel && (
+                {showPanel ? (
                     <motion.div
                         animate={{height: "auto", y: 0, overflow: "hidden", transitionEnd: {overflow: "auto"}}}
                         className={theme.panel()}
@@ -286,7 +286,7 @@ export function SearchBar<T, C>({
                             </div>
                         ) : null}
                     </motion.div>
-                )}
+                ) : null}
             </AnimatePresence>
         </div>
     ));

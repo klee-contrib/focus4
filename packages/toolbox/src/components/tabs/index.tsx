@@ -151,11 +151,11 @@ export function Tabs({
     return (
         <div className={classNames(theme.tabs({fixed, inverse}), className)} data-react-toolbox="tabs">
             <div className={theme.navigationContainer()}>
-                {arrows.left && (
+                {arrows.left ? (
                     <div className={theme.arrowContainer()} onClick={scrollRight}>
                         <FontIcon className={theme.arrow()} value="keyboard_arrow_left" />
                     </div>
-                )}
+                ) : null}
                 <div ref={navigationNode} className={theme.navigation()} role="tablist">
                     {useMemo(
                         () =>
@@ -178,11 +178,11 @@ export function Tabs({
                     )}
                     <span className={theme.pointer()} style={pointer} />
                 </div>
-                {arrows.right && (
+                {arrows.right ? (
                     <div className={theme.arrowContainer()} onClick={scrollLeft}>
                         <FontIcon className={theme.arrow()} value="keyboard_arrow_right" />
                     </div>
-                )}
+                ) : null}
             </div>
             {useMemo(() => {
                 const contentElements = c.contents.map((item, idx) =>

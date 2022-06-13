@@ -11,6 +11,7 @@
     },
     "plugins": ["only-warn", "import", "@typescript-eslint", "react"],
     "rules": {
+        "camelcase": ["warn", {"allow": ["UNSAFE_componentWillMount"]}],
         "class-methods-use-this": "off",
         "complexity": "off",
         "consistent-return": "off",
@@ -94,7 +95,12 @@
         "@typescript-eslint/method-signature-style": "off",
         "@typescript-eslint/naming-convention": [
             "warn",
-            {"selector": "default", "format": ["camelCase", "PascalCase"], "leadingUnderscore": "allow"},
+            {
+                "selector": "default",
+                "filter": {"regex": "^UNSAFE_", "match": false},
+                "format": ["camelCase", "PascalCase"],
+                "leadingUnderscore": "allow"
+            },
             {"selector": "enumMember", "format": ["PascalCase"]},
             {"selector": "objectLiteralMethod", "format": null},
             {"selector": "objectLiteralProperty", "format": null},
@@ -173,6 +179,7 @@
         "react/no-multi-comp": "off",
         "react/no-set-state": "off",
         "react/no-unescaped-entities": "off",
+        "react/no-unsafe": "off",
         "react/no-unstable-nested-components": "off",
         "react/no-unused-class-component-methods": "off",
         "react/no-unused-prop-types": "off",

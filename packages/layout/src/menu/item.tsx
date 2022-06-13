@@ -79,7 +79,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
             </li>
             {context.renderSubMenu(
                 <AnimatePresence>
-                    {state.hasSubMenu && (
+                    {state.hasSubMenu ? (
                         <motion.div
                             ref={panel}
                             animate="visible"
@@ -107,7 +107,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                                 {children}
                             </MainMenuList>
                         </motion.div>
-                    )}
+                    ) : null}
                 </AnimatePresence>
             )}
         </>

@@ -31,9 +31,9 @@ export function Avatar({alt = "", className, children, cover = false, icon, imag
     return (
         <div className={classNames(theme.avatar(), className)} data-react-toolbox="avatar">
             {children}
-            {cover && typeof image === "string" && (
+            {cover && typeof image === "string" ? (
                 <span aria-label={alt} className={theme.image()} style={{backgroundImage: `url(${image})`}} />
-            )}
+            ) : null}
             {!cover &&
                 (typeof image === "string" ? (
                     <img alt={alt} className={theme.image()} src={image} title={title} />

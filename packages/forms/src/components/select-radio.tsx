@@ -74,7 +74,7 @@ export function SelectRadio<T extends "string" | "number">({
 
         return (
             <div className={theme.select()}>
-                {label && <h5 className={theme.title()}>{i18next.t(label)}</h5>}
+                {label ? <h5 className={theme.title()}>{i18next.t(label)}</h5> : null}
                 <RadioGroup disabled={disabled} onChange={handleChange} value={`${value!}`}>
                     {definitiveValues.map(option => {
                         const optVal = option[$valueKey];
