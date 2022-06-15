@@ -1,9 +1,9 @@
 import {uniq} from "lodash";
-import {action, extendObservable, intercept} from "mobx";
+import {action, extendObservable, intercept, observable} from "mobx";
 import {computedFn} from "mobx-utils";
 import {RouteConfig, Router as YesterRouter} from "yester";
 
-import {Param, ParamDef} from "./param";
+import {Param, ParamDef, QueryParamConfig, QueryParams} from "./param";
 export {param} from "./param";
 
 /** Callback permettant de décrire une définition de route. */
@@ -29,9 +29,13 @@ export type UrlPathDescriptor<C> = C extends ParamDef<infer _0, Param<infer T>, 
           : UrlPathDescriptor<C[K]>;
 
 /** Router correspondant à la config donnée. */
-export interface Router<C> {
+export interface Router<C, Q extends QueryParamConfig = {}> {
+    /** Valeurs des paramètres de query. */
+    readonly query: QueryParams<Q>;
+
     /** Etat du routeur. */
-    state: ParamObject<C>;
+    readonly state: ParamObject<C>;
+
     /**
      * Si la route demandée est active, retourne le morceau de route suivant.
      * @param predicate Callback décrivant la route.
@@ -41,8 +45,9 @@ export interface Router<C> {
     /**
      * Récupère l'URL correspondante à la route demandée.
      * @param predicate Callback décrivant la route.
+     * @param query Query params à ajouter.
      */
-    href(predicate: (x: UrlPathDescriptor<C>) => void): string;
+    href(predicate: (x: UrlPathDescriptor<C>) => void, query?: QueryParams<Q>): string;
     /**
      * Vérifie si la section de route demandée est active dans le routeur.
      * @param predicate Callback décrivant la route.
@@ -52,8 +57,9 @@ export interface Router<C> {
      * Navigue vers l'URL demandée.
      * @param predicate Callback décrivant l'URL.
      * @param replace Remplace la route précédente dans l'historique.
+     * @param query Remplace les query params courants avec ceux donnés.
      */
-    to(predicate: (x: UrlPathDescriptor<C>) => void, replace?: boolean): void;
+    to(predicate: (x: UrlPathDescriptor<C>) => void, replace?: boolean, query?: QueryParams<Q>): void;
     /**
      * Construit une vue du routeur à partir d'une route donnée, permettant de manipuler une
      * sous section du routeur.
@@ -61,7 +67,7 @@ export interface Router<C> {
      */
     sub<C2, K, T>(
         predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2, K, T>
-    ): Router<C2> & {state: {[P in K & string]: T}};
+    ): Router<C2, Q> & {state: {[P in K & string]: T}};
     /** Lance le routeur. */
     start(): Promise<void>;
 }
@@ -107,13 +113,17 @@ export type ParamObject<C = any> = C extends ParamDef<infer K1, Param<infer T1>,
  * @param config Configufration du routeur.
  * @param constraintConfigurator Constraintes du routeur.
  */
-export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterConstraintBuilder<C>) => void): Router<C> {
+export function makeRouter<C, Q extends QueryParamConfig>(
+    config: C,
+    constraintConfigurator?: (b: RouterConstraintBuilder<C>) => void,
+    queryConfig = {} as Q
+): Router<C, Q> {
     /**
      * Construit l'objet de valeurs.
      * @param cIn La config du routeur.
      * @param object L'objet en cours de construction (pour appel récursif).
      */
-    function buildObject<Cin>(cIn: Cin, object: ParamObject<C> = {} as any): ParamObject<C> {
+    function buildParamsObject<Cin>(cIn: Cin, object: ParamObject<C> = {} as any): ParamObject<C> {
         if (Array.isArray(cIn)) {
             extendObservable(object, {[cIn[0]]: undefined});
             intercept(object, cIn[0], change => {
@@ -133,7 +143,8 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
                  */
                 if (isActive && !isUndefined) {
                     store._activeParams[cIn[0]] = `${change.newValue as string}`;
-                    let route = store._activeRoute;
+                    let route = store._activeRoute + buildQueryString(store._activeQuery);
+
                     for (const param in store._activeParams) {
                         route = route.replace(`:${param}`, store._activeParams[param]);
                     }
@@ -150,25 +161,68 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
                 return null;
             });
             if (cIn[2]) {
-                buildObject(cIn[2], object);
+                buildParamsObject(cIn[2], object);
             }
         } else {
             for (const key in cIn) {
-                (object as any)[key] = buildObject(cIn[key]);
+                (object as any)[key] = buildParamsObject(cIn[key]);
             }
         }
 
         return object;
     }
 
+    // Objet de query.
+    const queryObject = observable(
+        Object.keys(queryConfig).reduce((s, q) => ({...s, [q]: undefined}), {})
+    ) as QueryParams<Q>;
+    for (const key in queryObject) {
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        intercept(queryObject, key, change => {
+            // Impossible de sauvegarder NaN en toute circonstance.
+            if (Number.isNaN(change.newValue)) {
+                return null;
+            }
+
+            if (change.newValue === undefined || change.newValue === "") {
+                delete store._activeQuery[key];
+            } else {
+                store._activeQuery[key] = `${change.newValue as string}`;
+            }
+
+            let route = store._activeRoute + buildQueryString(store._activeQuery);
+
+            for (const param in store._activeParams) {
+                route = route.replace(`:${param}`, store._activeParams[param]);
+            }
+
+            if (route !== window.location.hash?.replace("#", "")) {
+                router.navigate(route, true);
+            }
+
+            return change;
+        });
+    }
+
     const store = extendObservable(
-        {state: buildObject(config)},
-        {_activeRoute: "/", _activeParams: []}
-    ) as any as Router<C> & {
+        {
+            state: buildParamsObject(config),
+            query: queryObject
+        },
+        {
+            _activeRoute: "/",
+            _activeParams: {},
+            _activeQuery: {}
+        }
+    ) as any as Router<C, Q> & {
         _activeRoute: string;
         _activeParams: Record<string, string>;
+        _activeQuery: Record<string, string>;
     };
+
     const paramsMap = buildParamsMap(config, store.state);
+    const queryMap = buildQueryMap(queryConfig, store.query);
+
     const constraints = [] as {route: string; condition: () => boolean; redirect?: () => string}[];
     let router: YesterRouter;
 
@@ -181,12 +235,27 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
                     $ =>
                         ({
                             $,
-                            beforeEnter: action(({params, oldPath}) => {
+                            beforeEnter: action(({params, oldPath, search}) => {
+                                const oldPathWithQuery = (oldPath || "/") + buildQueryString(store._activeQuery);
+
+                                // On refuse la navigation si on tombe sur un query param inconnu.
+                                if (
+                                    Object.keys(search)
+                                        .filter(x => x)
+                                        .some(qp => !Object.keys(queryConfig).includes(qp))
+                                ) {
+                                    return {redirect: oldPathWithQuery, replace: true};
+                                }
+
                                 const prevRoute = store._activeRoute;
                                 const prevParams = store._activeParams;
+                                const prevQuery = store._activeQuery;
 
                                 store._activeRoute = $;
                                 store._activeParams = params;
+                                store._activeQuery = Object.keys(search)
+                                    .filter(x => x)
+                                    .reduce((acc, k) => ({...acc, [k]: decodeURIComponent(search[k])}), {});
 
                                 // On parcourt toutes les constraintes définies sur cette route.
                                 for (const constraint of constraints.filter(c =>
@@ -194,28 +263,44 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
                                 )) {
                                     // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
                                     if (constraint.condition()) {
-                                        const redirect = constraint.redirect?.() ?? (oldPath || "/");
+                                        const redirect =
+                                            (constraint.redirect?.() ?? (oldPath || "/")) +
+                                            buildQueryString(store._activeQuery);
                                         store._activeRoute = prevRoute;
                                         store._activeParams = prevParams;
                                         return {redirect, replace: true};
                                     }
                                 }
 
+                                const newValues: (string | number | boolean | undefined)[] = [];
+
                                 // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
                                 for (const key in paramsMap) {
-                                    if (key in params) {
-                                        const newValue = paramsMap[key](params[key]);
-
-                                        // Si valeur invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
-                                        if (Number.isNaN(newValue)) {
-                                            store._activeRoute = prevRoute;
-                                            store._activeParams = prevParams;
-                                            return {redirect: oldPath || "/", replace: true};
-                                        }
+                                    if (key in store._activeParams) {
+                                        newValues.push(paramsMap[key](store._activeParams[key]));
                                     } else {
                                         paramsMap[key](undefined);
                                     }
                                 }
+
+                                // Chaque paramètre de l'objet de query est réinitialisé à partir de sa valeur dans la query courante.
+                                for (const key in queryMap) {
+                                    if (key in store._activeQuery) {
+                                        newValues.push(queryMap[key](store._activeQuery[key]));
+                                    } else {
+                                        queryMap[key](undefined);
+                                    }
+                                }
+
+                                // Si une valeur est invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
+                                if (newValues.some(Number.isNaN)) {
+                                    store._activeRoute = prevRoute;
+                                    store._activeParams = prevParams;
+                                    store._activeQuery = prevQuery;
+                                    return {redirect: oldPathWithQuery, replace: true};
+                                }
+
+                                return undefined;
                             })
                         } as RouteConfig)
                 ),
@@ -270,8 +355,8 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
     }
 
     /** Fonction "href" de base */
-    function href(route: string, predicate: (x: UrlPathDescriptor<C>) => void) {
-        return `#${getPath(route, predicate)}`;
+    function href(route: string, predicate: (x: UrlPathDescriptor<C>) => void, query: QueryParams<Q> = {}) {
+        return `#${getPath(route, predicate) + buildQueryString(query)}`;
     }
 
     /** Permet de garder le résultat de "is" en "computed" pour éviter de trigger "is" à chaque changement de route. */
@@ -283,8 +368,8 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
     }
 
     /** Fonction "to" de base */
-    function to(route: string, predicate: (x: UrlPathDescriptor<C>) => void, replace: boolean) {
-        route = getPath(route, predicate);
+    function to(route: string, predicate: (x: UrlPathDescriptor<C>) => void, replace: boolean, query?: QueryParams<Q>) {
+        route = getPath(route, predicate) + buildQueryString(query ?? store._activeQuery);
         if (route !== window.location.hash?.replace("#", "")) {
             router.navigate(route, replace);
         }
@@ -304,21 +389,22 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
 
         return {
             state,
+            query: store.query,
             get: (p: any) => get(route, p),
-            href: (p: any) => {
+            href: (p: any, q: any) => {
                 let baseRoute = route;
                 for (const param in store._activeParams) {
                     baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
                 }
-                return href(baseRoute, p);
+                return href(baseRoute, p, q);
             },
             is: (p: any) => is(route, p),
-            to: (p: any, r = false) => {
+            to: (p: any, r = false, q: any = undefined) => {
                 let baseRoute = route;
                 for (const param in store._activeParams) {
                     baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
                 }
-                to(baseRoute, p, r);
+                to(baseRoute, p, r, q);
             },
             sub: (p: any) => sub(route, state, p),
             start: () => {
@@ -328,9 +414,9 @@ export function makeRouter<C>(config: C, constraintConfigurator?: (b: RouterCons
     }
 
     store.get = p => get("", p);
-    store.href = p => href("", p);
+    store.href = (p, q) => href("", p, q);
     store.is = p => is("", p);
-    store.to = (p, r = false) => to("", p, r);
+    store.to = (p, r = false, q = undefined) => to("", p, r, q);
     store.sub = p => sub("", store.state, p);
     store.start = () => {
         buildRouter();
@@ -445,4 +531,39 @@ function buildParamsMap<C>(
     }
 
     return params;
+}
+
+function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams<Q>) {
+    const map = {} as Record<keyof Q, (value: string | undefined) => string | number | boolean | undefined>;
+
+    for (const key in query) {
+        const setter = (value: string | undefined) => {
+            const newValue =
+                value === undefined
+                    ? undefined
+                    : query[key] === "number"
+                    ? parseFloat(value)
+                    : query[key] === "boolean"
+                    ? value === "true"
+                        ? true
+                        : value === "false"
+                        ? false
+                        : Number.NaN
+                    : value;
+            (object as any)[key] = newValue;
+            return newValue;
+        };
+
+        map[key] = setter;
+    }
+
+    return map;
+}
+
+function buildQueryString(query: Record<string, string | number | boolean | undefined>) {
+    return Object.keys(query).reduce(
+        (acc, qp) =>
+            query[qp] === undefined ? acc : `${acc + (acc === "" ? "?" : "&")}${qp}=${encodeURIComponent(query[qp]!)}`,
+        ""
+    );
 }

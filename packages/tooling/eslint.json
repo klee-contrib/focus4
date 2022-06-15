@@ -11,7 +11,7 @@
     },
     "plugins": ["only-warn", "import", "@typescript-eslint", "react"],
     "rules": {
-        "camelcase": ["warn", {"allow": ["UNSAFE_componentWillMount"]}],
+        "camelcase": ["warn", {"allow": ["UNSAFE_componentWillMount", "UNSAFE_componentWillReceiveProps"]}],
         "class-methods-use-this": "off",
         "complexity": "off",
         "consistent-return": "off",

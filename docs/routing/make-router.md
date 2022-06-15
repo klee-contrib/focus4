@@ -52,3 +52,19 @@ Concrètement, cette définition de routeur définit donc toutes les routes suiv
 -   `/operation/:ofaId/echeance/:echId`
 -   `/operation/:ofaId/echeance/:echId/reglement`
 -   `/operation/:ofaId/echeance/:echId/reglement/:regId`
+
+## Query params
+
+Le routeur peut également gérer des **query params** en plus des routes. Ils se spécifient en troisième paramètre de `makeRouter` de la façon suivante :
+
+```ts
+makeRouter(/***/, /***/, {
+    param1: "string",
+    param2: "number",
+    param3: "boolean"
+})
+```
+
+Les query params peuvent être de type `string`, `number` et `boolean`. Comme pour les paramètres de route, leur type est validé (si nombre ou booléen) lors de la navigation, et il n'est pas possible de saisir des query params qui n'ont pas été définis initialement.
+
+Les query params sont toujours **optionnels** et sont **indépendants des routes**. Ils seront donc disponibles de manière globale pour toutes les routes.

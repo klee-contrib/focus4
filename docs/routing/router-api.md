@@ -48,6 +48,12 @@ Il est possible de modifier une valeur de paramètre manuellement, par exemple `
 
 Naturellement, les valeurs des paramètres sont observables.
 
+## `query`
+
+La propriété `query` est l'**objet qui contient les valeurs courantes de tous les query params du routeur**. Les query params étant transverses au routeur, ils sont recopiés tels quels dans les sous-routeurs.
+
+Naturellement, les valeurs des query params sont observables.
+
 ## `is(url)`
 
 La méthode `is` permet de vérifier si **la section d'URL demandée est active** (= l'URL courante contient cette section). Pour décrire une section d'URL, au lieu d'écrire simplement l'URL, on utilise un construction de lambdas qui permet de décrire l'URL morceau par morceau de façon **typée** (et avec de la complétion), en fonction de la définition du routeur.
@@ -79,7 +85,7 @@ Par exemple, `router.get(x => x("operation")("ofaId"))` peut renvoyer :
 
 Comme `is`, `get` est une fonction "computed".
 
-## `to(url, replace?)`
+## `to(url, replace?, query?)`
 
 La fonction `to` permet de **changer la route active** par une navigation vers l'URL demandée. L'URL se définit également d'une façon similaire à `is` et `get`, sauf que cette fois-ci on doit renseigner les valeurs des paramètres.
 
@@ -95,9 +101,13 @@ C'est tout à fait équivalent à faire une navigation vers `#/operation/1/tam/C
 
 Le deuxième paramètre `replace`, si renseigné à `true`, remplacera l'ancienne URL dans l'historique par la nouvelle, au lieu de l'ajouter à suivre. Cela implique que si on a remplacé, on ne pourra pas revenir à l'ancienne URL en faisant "précédent" : on ira directement à la valeur d'avant.
 
-## `href(url)`
+Le troisième paramètre `query`, si renseigné, modifiera également les query params du routeur par les valeurs dans l'objet donné. Sinon, les query params sont **inchangés** lors d'une navigation avec `to`.
+
+## `href(url, query?)`
 
 La fonction `href` prend en paramètre une description d'URL avec paramètres, la même que `to`, et renvoie l'URL correspondante (au lieu de naviguer). Cela permet de construire des liens "classiques" via une balise `<a>`. Utiliser des liens "classiques" est une bonne pratique puisqu'ils permettent au navigateur de pouvoir proposer des interactions à l'utilisateur avec (par exemple : ouvrir dans un autre onglet).
+
+L'URL générée peut être complétée de query params avec le deuxième paramètre (puisqu'il s'agit d'une URL complète, ne pas spécifier de query params ici va les vider, à l'inverse de `to`).
 
 ## `sub(url)`
 
