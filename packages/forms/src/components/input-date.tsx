@@ -38,13 +38,15 @@ export interface InputDateProps {
      *
      * "local-utc-midnight" : Minuit à l'heure locale, en UTC. (-> 2017-10-23T22:00:00Z)
      *
+     * "date-only" : ISOString sans heure (-> 2017-10-23)
+     *
      * En "utc-midnight", le composant ignore totalement la composante heure de la date qu'il reçoit,
      * alors qu'en "local-*" la date sera convertie dans le fuseau horaire local. Quelque soit le format choisi,
      * la composante heure sera toujours normalisée (comme choisi) en sortie de `onChange`.
      *
      * Par défaut "utc-midnight".
      */
-    ISOStringFormat?: "utc-midnight" | "local-midnight" | "local-utc-midnight";
+    ISOStringFormat?: "utc-midnight" | "local-midnight" | "local-utc-midnight" | "date-only";
     /** Appelé lorsque la date change. */
     onChange: (date: string | undefined) => void;
     /**
@@ -128,7 +130,7 @@ export class InputDate extends Component<InputDateProps> {
             return getPickerDate(this.date.toDate(), timezoneCode);
         }
         const {ISOStringFormat = "utc-midnight"} = this.props;
-        if (ISOStringFormat === "utc-midnight") {
+        if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
             return new Date(this.date.year(), this.date.month(), this.date.date());
         } else {
             const jsDate = this.date.toDate();
@@ -143,7 +145,7 @@ export class InputDate extends Component<InputDateProps> {
     /** Convertit le texte en objet MomentJS. */
     toMoment(value?: string) {
         const {ISOStringFormat = "utc-midnight", timezoneCode} = this.props;
-        const m = ISOStringFormat === "utc-midnight" ? moment.utc : moment;
+        const m = ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only" ? moment.utc : moment;
 
         if (isISOString(value)) {
             if (timezoneCode && moment.tz.zone(timezoneCode)) {
@@ -187,14 +189,14 @@ export class InputDate extends Component<InputDateProps> {
     /** Appelé lorsqu'on quitte le champ texte. */
     @action.bound
     onInputBlur() {
-        const {inputFormat = "MM/DD/YYYY", onChange} = this.props;
+        const {inputFormat = "MM/DD/YYYY", ISOStringFormat = "utc-midnight", onChange} = this.props;
         const text = (this.dateText ?? "").trim() || undefined;
 
         const date = this.transformDate(text, inputFormat, true);
 
         if (date.isValid()) {
             this.date = date;
-            onChange(date.format());
+            onChange(date.format(ISOStringFormat === "date-only" ? "YYYY-MM-DD" : undefined));
         } else {
             onChange(text);
         }
@@ -207,14 +209,16 @@ export class InputDate extends Component<InputDateProps> {
         // Vérifie que la timezone existe
         if (timezoneCode && moment.tz.zone(timezoneCode)) {
             date = getTimezoneTime(date, timezoneCode);
-        } else if (ISOStringFormat === "utc-midnight") {
+        } else if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
             /*
              * La date reçue est toujours à minuit en "local-midnight".
              * Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
              */
             date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
         }
-        const correctedDate = this.transformDate(date).format();
+        const correctedDate = this.transformDate(date).format(
+            ISOStringFormat === "date-only" ? "YYYY-MM-DD" : undefined
+        );
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
@@ -241,7 +245,7 @@ export class InputDate extends Component<InputDateProps> {
         // Dans les deux cas, la date d'entrée est bien en "local-midnight".
         if (ISOStringFormat === "local-midnight") {
             return moment(...params);
-        } else if (ISOStringFormat === "utc-midnight") {
+        } else if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
             return moment.utc(...params);
         } else {
             return moment(...params).utcOffset(0);
