@@ -151,7 +151,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 case "anywhere":
                     return v.includes(q);
                 case "word":
-                    const re = new RegExp(`\\b${q}`, "g");
+                    const re = new RegExp(`(?:^|\\s)${q}`, "g");
                     return re.test(v);
                 default:
                     return false;
