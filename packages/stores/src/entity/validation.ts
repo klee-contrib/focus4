@@ -62,7 +62,7 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                 const isMaxLength = maxLength !== undefined && text.length > maxLength;
                 error = isMinLength || isMaxLength ? errorMessage ?? "focus.validation.string" : undefined;
             } else if (isDateValidator(validator)) {
-                error = !moment(value, moment.ISO_8601).isValid()
+                error = !moment(value as string, moment.ISO_8601).isValid()
                     ? validator.errorMessage ?? "focus.validation.date"
                     : false;
             } else if (isNumberValidator(validator)) {

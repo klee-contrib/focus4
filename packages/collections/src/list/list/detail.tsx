@@ -15,20 +15,20 @@ export interface DetailProps<T> {
 }
 
 /** Props du composant wrapper du détail. */
-export interface DetailWrapperProps {
+export interface DetailWrapperProps<T> {
     displayedIdx: number;
     mode: "list" | "mosaic";
     mosaic: {width: number; height: number};
     isAddItemShown: boolean;
     byLine: number;
-    DetailComponent: ComponentType<DetailProps<{}>>;
+    DetailComponent: ComponentType<DetailProps<T>>;
     closeDetail: () => void;
-    item: {};
+    item: T;
     theme: ToBem<ListCss>;
 }
 
 /** Wrapper pour le composant de détail. */
-export function DetailWrapper({
+export function DetailWrapper<T>({
     displayedIdx,
     mode,
     mosaic,
@@ -38,7 +38,7 @@ export function DetailWrapper({
     closeDetail,
     item,
     theme
-}: DetailWrapperProps) {
+}: DetailWrapperProps<T>) {
     return (
         <motion.li
             animate={{overflow: "hidden", height: "auto", transitionEnd: {overflow: "visible"}}}

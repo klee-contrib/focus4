@@ -17,9 +17,9 @@
     "dependencies": {
         "@focus4/core": "11.4.0",
         "@focus4/styling": "11.4.0",
-        "@types/react-transition-group": "4.4.4",
-        "moment": "2.29.3",
-        "react-transition-group": "4.4.2"
+        "@types/react-transition-group": "4.4.5",
+        "moment": "2.29.4",
+        "react-transition-group": "4.4.5"
     },
     "devDependencies": {
         "@focus4/tooling": "11.4.0"

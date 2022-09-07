@@ -146,7 +146,7 @@ export class CollectionStore<T = any, C = any> {
             // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
             if (criteria) {
                 const node = buildNode(criteria);
-                nodeToFormNode<C>(node, node);
+                nodeToFormNode(node, node);
                 this.criteria = node as any;
             }
 

@@ -237,7 +237,7 @@ export function List<T>({
                                 key={`detail-${state.displayedIdx}`}
                                 byLine={state.byLine}
                                 closeDetail={state.closeDetail}
-                                DetailComponent={DetailComponent as any}
+                                DetailComponent={DetailComponent}
                                 displayedIdx={state.displayedIdx}
                                 isAddItemShown={isAddItemShown}
                                 item={displayedData[state.displayedIdx]}

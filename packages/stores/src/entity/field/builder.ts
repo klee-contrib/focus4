@@ -30,8 +30,14 @@ type DomainLabelProps<D> = D extends Domain<infer _, infer __, infer ___, infer 
     : never;
 
 /** Métadonnées surchargeables dans un champ. */
-export interface Metadata<T = any, ICProps = any, SCProps = any, ACProps = any, DCProps = any, LCProps = any>
-    extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
+export interface Metadata<
+    T = any,
+    ICProps extends BaseInputProps = any,
+    SCProps extends BaseSelectProps = any,
+    ACProps extends BaseAutocompleteProps = any,
+    DCProps extends BaseDisplayProps = any,
+    LCProps extends BaseLabelProps = any
+> extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Commentaire du champ. */
