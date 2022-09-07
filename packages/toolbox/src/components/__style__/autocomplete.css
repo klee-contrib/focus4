@@ -73,10 +73,20 @@
     cursor: pointer;
     font-size: var(--input-field-font-size);
     padding: var(--autocomplete-suggestion-padding);
+    overflow: hidden;
+    position: relative;
+}
+
+.suggestion--final {
+    cursor: inherit;
 }
 
 .suggestion--active {
     background-color: var(--autocomplete-suggestion-active-background);
+}
+
+.rippleWrapper {
+    overflow: hidden;
 }
 
 .input {

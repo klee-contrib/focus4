@@ -31,7 +31,7 @@ export type AutocompleteForOptions<F extends FieldEntry> = Partial<FieldOptions<
         NonNullable<F["domain"]["labelProps"]>
     > & {
         /** Service de résolution de code. */
-        keyResolver?: (key: number | string) => Promise<string | undefined>;
+        keyResolver?: (key: F["fieldType"]) => Promise<string | undefined>;
         /** Service de recherche. */
         querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
     };

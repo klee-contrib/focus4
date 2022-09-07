@@ -20,27 +20,28 @@ export type AutocompleteCss = ACCSS & RTAutocompleteCss & InputCss;
 const Theme = themr<AutocompleteCss>("autocomplete", autocompleteCss as AutocompleteCss);
 
 /** Résultat du service de recherche. */
-export interface AutocompleteResult {
+export interface AutocompleteResult<T = {key: string; label: string}> {
     /** Données. */
-    data?: {
-        key: string;
-        label: string;
-    }[];
+    data?: T[];
     /** Nombre total de résultat. */
     totalCount: number;
 }
 
 /** Props du composant d'autocomplétion */
-export interface AutocompleteProps<T extends "string" | "number">
-    extends Omit<RTAutocompleteProps, "onChange" | "value"> {
+export interface AutocompleteProps<T extends "string" | "number", TSource = {key: string; label: string}>
+    extends Omit<RTAutocompleteProps<string, TSource>, "getLabel" | "onChange" | "value"> {
     /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
     autoSelect?: boolean;
+    /** Détermine la propriété de l'objet a utiliser comme clé. Par défaut : `item => item.key` */
+    getKey?: (item: TSource) => string;
+    /** Détermine la propriété de l'objet a utiliser comme libellé. Par défaut : `item => i18next.t(item.label)` */
+    getLabel?: (item: TSource) => string;
     /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
     isQuickSearch?: boolean;
-    /** Service de résolution de code. */
-    keyResolver?: (key: any) => Promise<string | undefined>;
+    /** Service de résolution de clé. Doit retourner le libellé. */
+    keyResolver?: (key: T extends "string" ? string : number) => Promise<string | undefined>;
     /** Service de recherche. */
-    querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+    querySearcher?: (text: string) => Promise<AutocompleteResult<TSource> | undefined>;
     /** Au changement. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** Active l'appel à la recherche si le champ est vide. */
@@ -56,7 +57,9 @@ export interface AutocompleteProps<T extends "string" | "number">
 /** Surcouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
 // eslint-disable-next-line react/no-unsafe
-export class Autocomplete<T extends "string" | "number"> extends Component<AutocompleteProps<T>> {
+export class Autocomplete<T extends "string" | "number", TSource = {key: string; label: string}> extends Component<
+    AutocompleteProps<T, TSource>
+> {
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
     protected value?: string;
 
@@ -69,9 +72,9 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
     @observable protected _query = this.props.query ?? "";
 
     /** Résultat de la recherche d'autocomplétion. */
-    protected readonly data = observable.map<string, string>();
+    protected readonly data = observable.map<string, TSource>();
 
-    constructor(props: AutocompleteProps<T>) {
+    constructor(props: AutocompleteProps<T, TSource>) {
         super(props);
         makeObservable(this);
     }
@@ -83,9 +86,6 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
             const label = i18next.t((await keyResolver(value)) ?? "");
             runInAction(() => {
                 this._query = label || `${value}`;
-                if (label) {
-                    this.data.set(`${value}`, label);
-                }
             });
         }
     }
@@ -96,7 +96,12 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
-    async UNSAFE_componentWillReceiveProps({autoSelect, value, isQuickSearch, keyResolver}: AutocompleteProps<T>) {
+    async UNSAFE_componentWillReceiveProps({
+        autoSelect,
+        value,
+        isQuickSearch,
+        keyResolver
+    }: AutocompleteProps<T, TSource>) {
         if (autoSelect && value !== this.props.value && value && !isQuickSearch && keyResolver) {
             this._query = i18next.t((await keyResolver(value)) ?? "") || value?.toString() || "";
         }
@@ -114,11 +119,17 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
     }
 
     set query(query) {
-        const {onQueryChange, onChange, isQuickSearch, searchOnEmptyQuery} = this.props;
+        const {
+            getLabel = item => i18next.t((item as any).label),
+            onQueryChange,
+            onChange,
+            isQuickSearch,
+            searchOnEmptyQuery
+        } = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
-        const label = this.value && this.data.get(this.value);
-        if (label !== query && onChange) {
+        const item = this.value && this.data.get(this.value);
+        if ((!item || (item && getLabel(item) !== query)) && onChange) {
             onChange(undefined);
         }
 
@@ -171,16 +182,16 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
      */
     @action.bound
     async search(query: string) {
-        if (this.props.querySearcher && (this.props.searchOnEmptyQuery || query.trim().length)) {
+        const {autoSelect, getKey = item => (item as any).key, querySearcher, searchOnEmptyQuery} = this.props;
+
+        if (querySearcher && (searchOnEmptyQuery || query.trim().length)) {
             this.isLoading = true;
-            const result = await this.props.querySearcher(encodeURIComponent(query.trim()));
+            const result = await querySearcher(encodeURIComponent(query.trim()));
             runInAction(() => {
-                this.data.replace(
-                    result?.data?.reduce((acc, next) => ({...acc, [next.key]: i18next.t(next.label)}), {}) ?? {}
-                );
+                this.data.replace(result?.data?.reduce((acc, next) => ({...acc, [getKey(next)]: next}), {}) ?? {});
                 this.isLoading = false;
 
-                if (this.props.autoSelect) {
+                if (autoSelect) {
                     if (this.data && this.data.size === 1) {
                         this.onValueChange(query);
                     } else {
@@ -204,13 +215,22 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
     }
 
     render() {
-        const {keyResolver, querySearcher, theme: pTheme, isQuickSearch, autoSelect, ...props} = this.props;
+        const {
+            getLabel = item => i18next.t((item as any).label),
+            keyResolver,
+            querySearcher,
+            theme: pTheme,
+            isQuickSearch,
+            autoSelect,
+            ...props
+        } = this.props;
         return (
             <Theme theme={pTheme}>
                 {theme => (
                     <div data-focus="autocomplete">
                         <RTAutocomplete
                             {...props}
+                            getLabel={getLabel}
                             maxLength={undefined}
                             multiple={false}
                             onChange={value => this.onValueChange(value as string)}
@@ -220,7 +240,6 @@ export class Autocomplete<T extends "string" | "number"> extends Component<Autoc
                             source={this.source}
                             suggestionMatch="disabled"
                             theme={theme}
-                            type="search"
                             value={`${props.value ?? ""}`}
                         />
                         {this.isLoading ? (

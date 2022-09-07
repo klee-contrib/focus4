@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {orderBy, toPairs} from "lodash";
+import {orderBy, toPairs, uniqueId} from "lodash";
 import {
     FocusEventHandler,
     FormEvent,
@@ -7,7 +7,9 @@ import {
     forwardRef,
     KeyboardEvent,
     KeyboardEventHandler,
+    ReactElement,
     ReactEventHandler,
+    ReactNode,
     SyntheticEvent,
     useCallback,
     useEffect,
@@ -21,42 +23,54 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Chip} from "./chip";
 import {Input, InputCss, InputProps} from "./input";
+import {rippleFactory, RippleProps} from "./ripple";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss, AutocompleteCss};
 
-export interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "theme" | "value"> {
+export interface AutocompleteProps<TValue extends string | string[] = string, TSource = string>
+    extends Omit<InputProps, "autoComplete" | "onChange" | "theme" | "type" | "value"> {
     /** Determines if user can create a new option with the current typed value. */
     allowCreate?: boolean;
     /** Determines the opening direction. It can be auto, up or down. */
     direction?: "auto" | "up" | "down";
     /** Whether component should keep focus after value change. */
     keepFocusOnChange?: boolean;
+    /** React Node to display as the last suggestion. */
+    finalSuggestion?: ReactNode;
+    /** Gets the label from a source item. Defaults to returning the item (works if the item is a regular string). */
+    getLabel?: (x: TSource) => string;
+    /** Custom component for rendering suggestions. */
+    LineComponent?: (props: {item: TSource}) => ReactElement;
     /** If true, component can hold multiple values. */
-    multiple?: boolean;
-    onChange?: (
-        value: string | string[],
-        event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>
-    ) => void;
+    multiple?: TValue extends string[] ? true : false;
+    onChange?: (value: TValue, event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>) => void;
     /** Callback function that is fired when the components's query value changes. */
     onQueryChange?: (text: string) => void;
     /** Overrides the inner query. */
     query?: string;
+    /** If set to false, disable the rippling effect on suggestions. */
+    ripple?: boolean;
     /** Determines if the selected list is shown above or below input. It can be above or below. */
     selectedPosition?: "above" | "below" | "none";
     /** If true, the list of suggestions will not be filtered when a value is selected. */
     showSuggestionsWhenValueIsSet?: boolean;
-    /** Object of key/values or array representing all items suggested. */
-    source?: Record<string, string>;
+    /** Object of key/values representing all items suggested. */
+    source?: Record<string, TSource>;
     /** Determines how suggestions are supplied. */
     suggestionMatch?: "disabled" | "start" | "anywhere" | "word";
     /** If set, sorts the suggestions by key or label ascending. */
     suggestionSort?: "key" | "label";
     theme?: CSSProp<AutocompleteCss & InputCss>;
-    value?: string | string[];
+    value?: TValue;
 }
 
-export const Autocomplete = forwardRef(function RTAutocomplete(
+const defaultGetLabel = (x: any) => x;
+
+export const Autocomplete = forwardRef(function RTAutocomplete<
+    TValue extends string | string[] = string,
+    TSource = string
+>(
     {
         allowCreate = false,
         className,
@@ -64,15 +78,18 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         direction: pDirection = "auto",
         disabled,
         error,
+        finalSuggestion,
         floating,
+        getLabel = defaultGetLabel,
         hint,
         icon,
         id,
         keepFocusOnChange = false,
         label,
+        LineComponent,
         maxLength,
         multiline,
-        multiple = true,
+        multiple = true as any,
         name,
         onBlur,
         onChange,
@@ -94,6 +111,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         onQueryChange,
         query: pQuery,
         required,
+        ripple = true,
         rows,
         selectedPosition = "above",
         showSuggestionsWhenValueIsSet = false,
@@ -102,15 +120,15 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         suggestionMatch = "start",
         style,
         theme: pTheme,
-        type,
         value
-    }: AutocompleteProps,
+    }: AutocompleteProps<TValue, TSource>,
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) {
     /** Détermine la query à partir de la valeur. */
     const getQuery = useCallback(
-        (v?: string | string[]) => (!multiple && v ? source[v as string] || (v as string) : ""),
-        [multiple, source]
+        (v?: string | string[]) =>
+            !multiple && v ? (source[v as string] && getLabel(source[v as string])) || (v as string) : "",
+        [getLabel, multiple, source]
     );
 
     const theme = useTheme("RTAutocomplete", autocompleteCss, pTheme);
@@ -129,7 +147,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
             vals = [];
         }
 
-        const res: Record<string, string> = {};
+        const res: Record<string, TSource> = {};
         Object.keys(source).forEach(key => {
             if (vals.includes(key)) {
                 res[key] = source[key];
@@ -140,7 +158,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
     }, [multiple, source, value]);
 
     const suggestions = useMemo(() => {
-        let suggest: Record<string, string> = {};
+        let suggest: Record<string, TSource> = {};
         const rawQuery = (query || (multiple ? "" : value)) as string;
         const newQuery = normalise(`${rawQuery}`);
 
@@ -164,14 +182,14 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         if (multiple) {
             // Suggest any non-set value which matches the query
             Object.keys(source).forEach(key => {
-                if (!values[key] && isMatch(normalise(source[key]), newQuery)) {
+                if (!values[key] && isMatch(normalise(getLabel(source[key])), newQuery)) {
                     suggest[key] = source[key];
                 }
             });
         } else if (newQuery && !showAllSuggestions) {
             // When multiple is false, suggest any value which matches the query if showAllSuggestions is false
             Object.keys(source).forEach(key => {
-                if (isMatch(normalise(source[key]), newQuery)) {
+                if (isMatch(normalise(getLabel(source[key])), newQuery)) {
                     suggest[key] = source[key];
                 }
             });
@@ -181,7 +199,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         }
 
         return suggest;
-    }, [multiple, query, source, showAllSuggestions, suggestionMatch, value, values]);
+    }, [getLabel, multiple, query, source, showAllSuggestions, suggestionMatch, value, values]);
 
     const updateQuery = useCallback(
         (newQuery: string, notify: boolean) => {
@@ -214,7 +232,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
     // Appelé à la sélection d'une valeur.
     const handleChange = useCallback(
         (vals: string[], event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>) => {
-            const newValue = multiple ? vals : vals[0];
+            const newValue = (multiple ? vals : vals[0]) as TValue;
             const newQuery = getQuery(newValue);
             updateQuery(newQuery, !!pQuery);
             onChange?.(newValue, event);
@@ -261,16 +279,6 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         [disabled, handleChange, values]
     );
 
-    const handleQueryBlur: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
-        event => {
-            if (focus) {
-                setFocus(false);
-            }
-            onBlur?.(event);
-        },
-        [active, focus, onBlur]
-    );
-
     const clearQuery = useRef<boolean>(false);
 
     const handleQueryChange = useCallback(
@@ -312,6 +320,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         event => {
             if (event.key === "Escape") {
                 inputRef.current?.blur();
+                setFocus(false);
             }
 
             if (event.key === "ArrowUp" || event.key === "ArrowDown") {
@@ -330,6 +339,39 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         },
         [active, onKeyUp, suggestions]
     );
+
+    const [suggestionsUlId] = useState(() => uniqueId("autocomplete_suggestions"));
+    const [finalSuggestionId] = useState(() => uniqueId("autocomplete_final_suggestion"));
+
+    const onDocumentClick = useCallback(({target}: Event) => {
+        let parent = target as HTMLElement | null;
+
+        while (
+            parent &&
+            parent.getAttribute("data-id") !== suggestionsUlId &&
+            parent.getAttribute("data-id") !== finalSuggestionId &&
+            parent !== inputRef.current
+        ) {
+            parent = parent.parentElement;
+        }
+
+        if (!parent) {
+            setFocus(false);
+        } else if (parent.getAttribute("data-id") === finalSuggestionId) {
+            const closeOnClick = () => {
+                setFocus(false);
+                window.removeEventListener("mouseup", closeOnClick);
+            };
+            window.addEventListener("mouseup", closeOnClick);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (focus) {
+            window.addEventListener("mousedown", onDocumentClick);
+            return () => window.removeEventListener("mousedown", onDocumentClick);
+        }
+    }, [focus]);
 
     const renderSelected = useCallback(() => {
         if (multiple) {
@@ -352,6 +394,16 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         }
     }, [suggestions, suggestionSort]);
 
+    const RipplingLi = useMemo(
+        () =>
+            (ripple
+                ? rippleFactory({theme: {rippleWrapper: theme.rippleWrapper()}})("li")
+                : props => <li {...props} />) as (
+                props: RippleProps & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>
+            ) => ReactElement,
+        [ripple, theme]
+    );
+
     return (
         <div className={classNames(theme.autocomplete({focus}), className)} data-react-toolbox="autocomplete">
             {selectedPosition === "above" ? renderSelected() : null}
@@ -369,7 +421,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 maxLength={maxLength}
                 multiline={multiline}
                 name={name}
-                onBlur={handleQueryBlur}
+                onBlur={onBlur}
                 onChange={handleQueryChange}
                 onClick={onClick}
                 onContextMenu={onContextMenu}
@@ -390,28 +442,35 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 rows={rows}
                 style={style}
                 theme={theme as unknown as CSSProp<InputCss>}
-                type={type}
+                type="search"
                 value={query}
             >
                 {children}
             </Input>
-            <ul className={theme.suggestions({up: direction === "up"})}>
+            <ul className={theme.suggestions({up: direction === "up"})} data-id={suggestionsUlId}>
                 {suggestionList.map(({key, val}) => (
-                    <li
+                    <RipplingLi
                         key={key}
                         className={theme.suggestion({active: active === key})}
                         id={key}
-                        onMouseDown={selectOrCreateActiveItem}
+                        onClick={selectOrCreateActiveItem}
                         onMouseOver={event => setActive(event.currentTarget.id)}
                     >
-                        {val}
-                    </li>
+                        {LineComponent ? <LineComponent item={val} /> : getLabel(val)}
+                    </RipplingLi>
                 ))}
+                {finalSuggestion ? (
+                    <li className={theme.suggestion({final: true})} data-id={finalSuggestionId}>
+                        {finalSuggestion}
+                    </li>
+                ) : null}
             </ul>
             {selectedPosition === "below" ? renderSelected() : null}
         </div>
     );
-});
+}) as <TValue extends string | string[] = string, TSource = string>(
+    props: AutocompleteProps<TValue, TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
+) => ReactElement;
 
 function normalise(value: string) {
     const sdiak =

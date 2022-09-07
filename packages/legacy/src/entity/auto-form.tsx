@@ -350,7 +350,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
                 error?: string;
                 isEdit?: boolean;
                 name?: string;
-                keyResolver?: (key: number | string) => Promise<string | undefined>;
+                keyResolver?: (key: T) => Promise<string | undefined>;
                 querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
             } = {}
     ): JSX.Element {
