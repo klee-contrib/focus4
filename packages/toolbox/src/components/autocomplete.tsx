@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {toPairs} from "lodash";
+import {orderBy, toPairs} from "lodash";
 import {
     FocusEventHandler,
     FormEvent,
@@ -50,6 +50,8 @@ export interface AutocompleteProps extends Omit<InputProps, "autoComplete" | "th
     source?: Record<string, string>;
     /** Determines how suggestions are supplied. */
     suggestionMatch?: "disabled" | "start" | "anywhere" | "word";
+    /** If set, sorts the suggestions by key or label ascending. */
+    suggestionSort?: "key" | "label";
     theme?: CSSProp<AutocompleteCss & InputCss>;
     value?: string | string[];
 }
@@ -95,6 +97,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         rows,
         selectedPosition = "above",
         showSuggestionsWhenValueIsSet = false,
+        suggestionSort,
         source = {},
         suggestionMatch = "start",
         style,
@@ -340,6 +343,15 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
         }
     }, [multiple, unselect, theme, values]);
 
+    const suggestionList = useMemo(() => {
+        const list = toPairs(suggestions).map(([key, val]) => ({key, val}));
+        if (suggestionSort) {
+            return orderBy(list, suggestionSort === "label" ? "val" : suggestionSort);
+        } else {
+            return list;
+        }
+    }, [suggestions, suggestionSort]);
+
     return (
         <div className={classNames(theme.autocomplete({focus}), className)} data-react-toolbox="autocomplete">
             {selectedPosition === "above" ? renderSelected() : null}
@@ -384,7 +396,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete(
                 {children}
             </Input>
             <ul className={theme.suggestions({up: direction === "up"})}>
-                {toPairs(suggestions).map(([key, val]) => (
+                {suggestionList.map(({key, val}) => (
                     <li
                         key={key}
                         className={theme.suggestion({active: active === key})}
