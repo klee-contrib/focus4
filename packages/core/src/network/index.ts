@@ -1,3 +1,3 @@
 export {manageResponseErrors} from "./error-parsing";
-export {coreFetch} from "./fetch";
+export {coreFetch, downloadFile, getFileObjectUrl} from "./fetch";
 export {RequestStore, requestStore} from "./store";

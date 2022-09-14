@@ -93,6 +93,37 @@ export async function coreFetch(
     }
 }
 
+/** Télécharge un fichier depuis une réponse d'appel d'API. */
+export async function downloadFile(response: Response) {
+    const disposition = response.headers.get("content-disposition") ?? "";
+    let filename = "file";
+    if (disposition.includes("attachment")) {
+        const filenameRegex = /filename\*=UTF-8''(.+)/;
+        const matches = filenameRegex.exec(disposition);
+        if (matches?.[1]) {
+            filename = decodeURIComponent(matches[1]);
+        }
+    }
+
+    const objectUrl = await getFileObjectUrl(response);
+
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(objectUrl);
+    }, 100);
+}
+
+/** Récupère un ObjectUrl pour un fichier récupéré depuis un appel d'API. */
+export async function getFileObjectUrl(response: Response) {
+    const blob = await response.blob();
+    return window.URL.createObjectURL(blob);
+}
+
 /** Construit le query string associé à l'objet donné. */
 function buildQueryString(obj: any, prefix = ""): string {
     let queryString = "";
