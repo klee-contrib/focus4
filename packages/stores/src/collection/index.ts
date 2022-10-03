@@ -433,11 +433,14 @@ export class CollectionStore<T = any, C = any> {
         const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top, skipToken} = this;
 
         const data = {
-            criteria: {...this.flatCriteria, query, searchFields: this.searchFields} as QueryInput<C>["criteria"],
+            criteria: {...this.flatCriteria, query, searchFields: this.searchFields},
             facets: inputFacets || {},
             group: groupingKey ?? "",
+
+            // On utilise le skipToken si on en a un, sinon on calcule un skip à partir des résultats.
             skip: !skipToken ? (isScroll && list.length) || 0 : undefined,
             skipToken,
+
             sortDesc: sortAsc === undefined ? false : !sortAsc,
             sortFieldName: sortBy,
             top
@@ -469,7 +472,11 @@ export class CollectionStore<T = any, C = any> {
             this.innerFacets.replace(response.facets);
             this.innerGroups.replace(response.groups ?? []);
             this.availableSearchFields = response.searchFields ?? [];
-            this.serverCount = response.totalCount;
+
+            if (!this.skipToken) {
+                this.serverCount = response.totalCount; // Si on a utilisé un skipToken, le total serveur ne doit pas être mis à jour.
+            }
+
             this.skipToken = response.skipToken;
         });
 
