@@ -84,6 +84,8 @@ export class CollectionStore<T = any, C = any> {
     @observable sortBy: string | undefined;
     /** Nombre maximum de résultat par requête serveur. */
     @observable top = 50;
+    /** Token à utiliser pour la pagination. */
+    @observable skipToken?: string;
 
     /** Permet d'omettre certains élements de la liste de la sélection. */
     @observable isItemSelectionnable: (data: T) => boolean = () => true;
@@ -428,13 +430,14 @@ export class CollectionStore<T = any, C = any> {
             return;
         }
 
-        const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top} = this;
+        const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top, skipToken} = this;
 
         const data = {
             criteria: {...this.flatCriteria, query, searchFields: this.searchFields} as QueryInput<C>["criteria"],
             facets: inputFacets || {},
             group: groupingKey ?? "",
-            skip: (isScroll && list.length) || 0, // On skip les résultats qu'on a déjà si `isScroll = true`
+            skip: !skipToken ? (isScroll && list.length) || 0 : undefined,
+            skipToken,
             sortDesc: sortAsc === undefined ? false : !sortAsc,
             sortFieldName: sortBy,
             top
@@ -467,6 +470,7 @@ export class CollectionStore<T = any, C = any> {
             this.innerGroups.replace(response.groups ?? []);
             this.availableSearchFields = response.searchFields ?? [];
             this.serverCount = response.totalCount;
+            this.skipToken = response.skipToken;
         });
 
         return response;

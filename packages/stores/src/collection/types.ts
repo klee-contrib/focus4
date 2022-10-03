@@ -1,7 +1,7 @@
 import {EntityToType} from "../entity";
 
 /** Définition d'un service de recherche. */
-export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T, C>>;
+export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T>>;
 
 /** Définition d'une facette côté client. */
 export interface LocalFacetDefinition<T> {
@@ -125,13 +125,15 @@ export interface QueryInput<C = {}> {
     /** Sens du tri. */
     sortDesc: boolean;
     /** Nombre de résultats à sauter. */
-    skip: number;
+    skip?: number;
+    /** Token pour la pagination, à utiliser à la place de `skip` */
+    skipToken?: string;
     /** Nombre de résulats à retourner. */
     top: number;
 }
 
 /** Objet retour d'une recherche. */
-export interface QueryOutput<T = any, C = {}> {
+export interface QueryOutput<T = any> {
     /** Liste de résultats, si pas de groupes. */
     list?: T[];
     /** Groupes de résultats. */
@@ -142,6 +144,6 @@ export interface QueryOutput<T = any, C = {}> {
     searchFields?: string[];
     /** Nombre total de résultat. */
     totalCount: number;
-    /** Entrée. */
-    query: QueryInput<C>;
+    /** Token à utiliser pour la pagination. */
+    skipToken?: string;
 }
