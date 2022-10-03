@@ -85,7 +85,7 @@ export class CollectionStore<T = any, C = any> {
     /** Nombre maximum de résultat par requête serveur. */
     @observable top = 50;
     /** Token à utiliser pour la pagination. */
-    @observable skipToken?: string;
+    skipToken?: string;
 
     /** Permet d'omettre certains élements de la liste de la sélection. */
     @observable isItemSelectionnable: (data: T) => boolean = () => true;
@@ -430,6 +430,12 @@ export class CollectionStore<T = any, C = any> {
             return;
         }
 
+        // On vide les éléments sélectionnés et le skiptoken avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
+        if (!isScroll) {
+            this.selectedItems.clear();
+            this.skipToken = undefined;
+        }
+
         const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top, skipToken} = this;
 
         const data = {
@@ -448,11 +454,6 @@ export class CollectionStore<T = any, C = any> {
 
         const pendingQuery = v4();
         this.pendingQuery = pendingQuery;
-
-        // On vide les éléments sélectionnés avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
-        if (!isScroll) {
-            this.selectedItems.clear();
-        }
 
         const response = await this.service(data);
 
