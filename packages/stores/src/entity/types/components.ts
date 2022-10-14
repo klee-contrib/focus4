@@ -2,15 +2,18 @@ import {CSSProperties, ReactNode} from "react";
 
 import {ReferenceList} from "../../reference";
 
-export type OmitWithTheme<T extends {theme?: object}, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
+export interface WithThemeProps {
+    theme?: object;
+}
 
-export interface BaseInputProps {
+export type OmitButKeepTheme<T extends WithThemeProps, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
+
+export interface BaseInputProps extends WithThemeProps {
     error?: ReactNode;
     id?: string;
     name?: string;
     onChange?: (value: any) => void;
     type?: string;
-    theme?: object;
     value?: any;
 }
 
@@ -22,28 +25,26 @@ export interface BaseAutocompleteProps extends BaseInputProps {
     keyResolver?: (key: any) => Promise<string | undefined>;
 }
 
-export interface BaseDisplayProps {
+export interface BaseDisplayProps extends WithThemeProps {
     formatter?: (value: any) => string;
     keyResolver?: (key: any) => Promise<string | undefined>;
     value?: any;
     values?: ReferenceList;
-    theme?: object;
 }
 
-export interface BaseLabelProps {
+export interface BaseLabelProps extends WithThemeProps {
     comment?: ReactNode;
     i18nPrefix?: string;
     label?: string;
     id?: string;
     style?: CSSProperties;
-    theme?: object;
 }
 
 export interface BaseComponents<DCProps extends BaseDisplayProps, LCProps extends BaseLabelProps> {
     /** Props pour le composant d'affichage */
-    displayProps?: Partial<OmitWithTheme<DCProps, BaseDisplayProps>>;
+    displayProps?: Partial<OmitButKeepTheme<DCProps, BaseDisplayProps>>;
     /** Props pour le composant de libellé. */
-    labelProps?: Partial<OmitWithTheme<LCProps, BaseLabelProps>>;
+    labelProps?: Partial<OmitButKeepTheme<LCProps, BaseLabelProps>>;
 }
 
 export interface InputComponents<
@@ -52,7 +53,7 @@ export interface InputComponents<
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
     /** Props pour le composant d'input. */
-    inputProps?: Partial<OmitWithTheme<ICProps, BaseInputProps>>;
+    inputProps?: Partial<OmitButKeepTheme<ICProps, BaseInputProps>>;
 }
 
 export interface SelectComponents<
@@ -61,7 +62,7 @@ export interface SelectComponents<
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
     /** Props pour le composant de select. */
-    selectProps?: Partial<OmitWithTheme<SCProps, BaseSelectProps>>;
+    selectProps?: Partial<OmitButKeepTheme<SCProps, BaseSelectProps>>;
 }
 
 export interface AutocompleteComponents<
@@ -70,7 +71,7 @@ export interface AutocompleteComponents<
     LCProps extends BaseLabelProps
 > extends BaseComponents<DCProps, LCProps> {
     /** Props pour le composant d'autocomplete. */
-    autocompleteProps?: Partial<OmitWithTheme<ACProps, BaseAutocompleteProps>>;
+    autocompleteProps?: Partial<OmitButKeepTheme<ACProps, BaseAutocompleteProps>>;
 }
 
 export interface FieldComponents<
@@ -78,7 +79,11 @@ export interface FieldComponents<
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
-    LCProps extends BaseLabelProps = any
+    LCProps extends BaseLabelProps = any,
+    FProps extends WithThemeProps = any
 > extends InputComponents<ICProps, DCProps, LCProps>,
         SelectComponents<SCProps, DCProps, LCProps>,
-        AutocompleteComponents<ACProps, DCProps, LCProps> {}
+        AutocompleteComponents<ACProps, DCProps, LCProps> {
+    /** Props pour le composant de champ. */
+    fieldProps?: FProps;
+}

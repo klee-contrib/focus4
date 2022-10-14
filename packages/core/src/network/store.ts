@@ -46,7 +46,7 @@ export class RequestStore {
      */
     @action.bound
     updateRequest(request: Request) {
-        request.id = request.id ?? v4();
+        request.id ??= v4();
         switch (request.status) {
             case "success":
                 this.success.set(request.id, request);

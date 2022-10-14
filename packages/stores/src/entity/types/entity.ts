@@ -6,7 +6,8 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    FieldComponents
+    FieldComponents,
+    WithThemeProps
 } from "./components";
 import {Validator} from "./validation";
 
@@ -17,8 +18,9 @@ export interface Domain<
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
-    LCProps extends BaseLabelProps = any
-> extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
+    LCProps extends BaseLabelProps = any,
+    FProps extends WithThemeProps = any
+> extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Formatteur pour l'affichage du champ en consulation. */
@@ -48,7 +50,8 @@ export interface FieldEntry<
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
-    LCProps extends BaseLabelProps = any
+    LCProps extends BaseLabelProps = any,
+    FProps extends WithThemeProps = any
 > {
     readonly type: "field";
 
@@ -56,7 +59,7 @@ export interface FieldEntry<
     readonly fieldType?: T;
 
     /** Domaine du champ. */
-    readonly domain: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>;
+    readonly domain: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -77,9 +80,10 @@ export type FieldEntry2<D extends Domain, T extends DomainType<D["type"]> = Doma
     infer SCProps,
     infer ACProps,
     infer DCProps,
-    infer LCProps
+    infer LCProps,
+    infer FProps
 >
-    ? FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps>
+    ? FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
     : never;
 
 /** Récupère le type primitif d'un champ associé à un type défini dans un domaine. */

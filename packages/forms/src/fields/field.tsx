@@ -34,8 +34,6 @@ export interface FieldOptions<F extends FieldEntry> {
     /** @internal */
     /** L'input à utiliser. */
     inputType?: "input" | "select" | "autocomplete";
-    /** Par défaut : "top". */
-    labelCellPosition?: string;
     /** Largeur en % du label. Par défaut : 33. */
     labelRatio?: number;
     /** N'affiche jamais le champ en erreur. */
@@ -53,23 +51,25 @@ let nameMap: [string, string][] = [];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & FieldOptions<F> & FieldComponents) {
+    const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
+
     const context = useContext(FormContext);
-    const theme = useTheme("field", fieldCss, props.theme);
+    const theme = useTheme("field", fieldCss, fieldProps?.theme, props.theme);
 
     const {
         autocompleteProps = {},
-        disableInlineSizing,
+        disableInlineSizing = fieldProps?.disableInlineSizing,
         displayProps = {},
-        hasLabel = true,
+        hasLabel = fieldProps?.hasLabel ?? true,
         field,
-        labelRatio = context.labelRatio ?? 33,
+        labelRatio = fieldProps?.labelRatio ?? context.labelRatio ?? 33,
         labelProps = {},
-        i18nPrefix = "focus",
+        i18nPrefix = fieldProps?.i18nPrefix ?? "focus",
         inputProps = {},
         inputType = "input",
         onChange,
         selectProps = {},
-        valueRatio = context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
+        valueRatio = fieldProps?.valueRatio ?? context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
     } = props;
 
     /** On définit au premier rendu un identifiant unique pour le field. */
@@ -108,8 +108,9 @@ export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & Fie
 
         /** Détermine si on affiche l'erreur ou pas. En plus des surcharges du form et du field lui-même, l'erreur est masquée si le champ est en cours de saisie. */
         get showError() {
+            const fp = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
             return (
-                !props.noError &&
+                !(props.noError ?? fp?.noError) &&
                 !documentHelper.isElementActive(this.valueElement) &&
                 (!this.hideErrorOnInit || context.forceErrorDisplay)
             );

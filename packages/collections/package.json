@@ -11,8 +11,8 @@
     "license": "MIT",
     "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/collections",
     "scripts": {
-        "prepare": "rollup -cm",
-        "start": "rollup -cw"
+        "prepare": "rollup -cm --bundleConfigAsCjs",
+        "start": "rollup -cw --bundleConfigAsCjs"
     },
     "dependencies": {
         "@focus4/core": "11.4.6",

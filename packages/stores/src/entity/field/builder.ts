@@ -16,17 +16,19 @@ import {
     FieldComponents,
     FieldEntry,
     FieldEntryType,
-    Validator
+    Validator,
+    WithThemeProps
 } from "../types";
 
-type DomainInputProps<D> = D extends Domain<infer _, infer ICProps> ? ICProps : never;
-type DomainSelectProps<D> = D extends Domain<infer _, infer __, infer SCProps> ? SCProps : never;
-type DomainAutocompleteProps<D> = D extends Domain<infer _, infer __, infer ___, infer ACProps> ? ACProps : never;
-type DomainDisplayProps<D> = D extends Domain<infer _, infer __, infer ___, infer ____, infer DCProps>
-    ? DCProps
-    : never;
-type DomainLabelProps<D> = D extends Domain<infer _, infer __, infer ___, infer ____, infer _____, infer LCProps>
+type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps : never;
+type DomainSelectProps<D> = D extends Domain<infer _0, infer _1, infer SCProps> ? SCProps : never;
+type DomainAutocompleteProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer ACProps> ? ACProps : never;
+type DomainDisplayProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer DCProps> ? DCProps : never;
+type DomainLabelProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer LCProps>
     ? LCProps
+    : never;
+type DomainFieldProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer _5, infer FProps>
+    ? FProps
     : never;
 
 /** Métadonnées surchargeables dans un champ. */
@@ -36,8 +38,9 @@ export interface Metadata<
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
     DCProps extends BaseDisplayProps = any,
-    LCProps extends BaseLabelProps = any
-> extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps> {
+    LCProps extends BaseLabelProps = any,
+    FProps extends WithThemeProps = any
+> extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Commentaire du champ. */
@@ -104,7 +107,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainSelectProps<D>,
             DomainAutocompleteProps<D>,
             DomainDisplayProps<D>,
-            DomainLabelProps<D>
+            DomainLabelProps<D>,
+            DomainFieldProps<D>
         >
     > {
         if (domain) {
@@ -143,11 +147,27 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         LCProps extends BaseLabelProps = DomainLabelProps<F["domain"]>
     >(
         $field:
-            | Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>
-            | (() => Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>)
+            | Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps, DomainFieldProps<F["domain"]>>
+            | (() => Metadata<
+                  FieldEntryType<F>,
+                  ICProps,
+                  SCProps,
+                  ACProps,
+                  DCProps,
+                  LCProps,
+                  DomainFieldProps<F["domain"]>
+              >)
     ): EntityFieldBuilder<
-        // @ts-ignore : FieldEntryType<F> n'est pas assignable à F["domain"]["type"] alors qu'en fait par construction si.
-        FieldEntry<F["domain"]["type"], FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps>
+        FieldEntry<
+            F["domain"]["type"],
+            FieldEntryType<F>,
+            ICProps,
+            SCProps,
+            ACProps,
+            DCProps,
+            LCProps,
+            DomainFieldProps<F["domain"]>
+        >
     > {
         const old$field = this.field.$field;
         if (isFunction($field)) {
@@ -180,7 +200,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainSelectProps<F["domain"]>,
             DomainAutocompleteProps<F["domain"]>,
             DomainDisplayProps<F["domain"]>,
-            DomainLabelProps<F["domain"]>
+            DomainLabelProps<F["domain"]>,
+            DomainFieldProps<F["domain"]>
         >
     >;
     /**
@@ -199,7 +220,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainSelectProps<F["domain"]>,
             DomainAutocompleteProps<F["domain"]>,
             DomainDisplayProps<F["domain"]>,
-            DomainLabelProps<F["domain"]>
+            DomainLabelProps<F["domain"]>,
+            DomainFieldProps<F["domain"]>
         >
     >;
     value<T extends DomainType<F["domain"]["type"]>>(
@@ -282,6 +304,11 @@ function merge$fields(old$field: FieldEntry, $field: Metadata) {
                 ...domain.labelProps,
                 ...domainOverrides.labelProps,
                 theme: themeable(domain.labelProps?.theme ?? {}, domainOverrides.labelProps?.theme ?? {})
+            },
+            fieldProps: {
+                ...domain.fieldProps,
+                ...domainOverrides.fieldProps,
+                theme: themeable(domain.fieldProps?.theme ?? {}, domainOverrides.fieldProps?.theme ?? {})
             }
         }
     };

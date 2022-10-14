@@ -306,7 +306,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     >(
         field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>> &
-            Metadata<T, any, any, any, DCProps, LCProps> = {}
+            Omit<Metadata<T, any, any, any, DCProps, LCProps>, "fieldProps"> = {}
     ): JSX.Element {
         const {
             AutocompleteComponent,
@@ -346,7 +346,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     >(
         field: EntityField<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>> &
-            Metadata<T, any, any, ACProps, DCProps, LCProps> & {
+            Omit<Metadata<T, any, any, ACProps, DCProps, LCProps>, "fieldProps"> & {
                 error?: string;
                 isEdit?: boolean;
                 name?: string;
@@ -381,7 +381,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
     >(
         field: EntityField<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>> &
-            Metadata<T, ICProps, any, any, DCProps, LCProps> & {
+            Omit<Metadata<T, ICProps, any, any, DCProps, LCProps>, "fieldProps"> & {
                 error?: string;
                 isEdit?: boolean;
                 name?: string;
@@ -416,7 +416,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
         field: EntityField<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>>,
         values: ReferenceList,
         options: FieldOptions<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>> &
-            Metadata<T, any, SCProps, any, DCProps, LCProps> & {
+            Omit<Metadata<T, any, SCProps, any, DCProps, LCProps>, "fieldProps"> & {
                 error?: string;
                 isEdit?: boolean;
                 name?: string;

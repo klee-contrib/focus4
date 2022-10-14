@@ -7,7 +7,8 @@ export {
     BaseDisplayProps,
     BaseLabelProps,
     BaseSelectProps,
-    FieldComponents
+    FieldComponents,
+    WithThemeProps
 } from "./components";
 export {
     Domain,

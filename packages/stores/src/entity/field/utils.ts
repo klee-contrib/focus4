@@ -12,7 +12,7 @@ import {
     EntityField,
     FieldEntry
 } from "../types";
-import {BaseComponents} from "../types/components";
+import {BaseComponents, WithThemeProps} from "../types/components";
 
 import {EntityFieldBuilder} from "./builder";
 
@@ -22,15 +22,17 @@ interface ReadonlyFieldOptions<
     DCDProps extends BaseDisplayProps = BaseDisplayProps,
     LCDProps extends BaseLabelProps = BaseLabelProps,
     DCProps extends BaseDisplayProps = DCDProps,
-    LCProps extends BaseLabelProps = LCDProps
+    LCProps extends BaseLabelProps = LCDProps,
+    FProps extends WithThemeProps = WithThemeProps
 > extends BaseComponents<DCProps, LCProps> {
     className?: string;
     comment?: ReactNode;
-    domain?: Domain<DT, any, any, any, DCDProps, LCDProps>;
+    domain?: Domain<DT, any, any, any, DCDProps, LCDProps, FProps>;
     displayFormatter?: (value: T | undefined) => string;
     DisplayComponent?: ComponentType<DCProps>;
     label?: string;
     LabelComponent?: ComponentType<LCProps>;
+    fieldProps?: FProps;
 }
 
 /**
@@ -62,21 +64,23 @@ export function fromField<
     DCDProps extends BaseDisplayProps = BaseDisplayProps,
     LCDProps extends BaseLabelProps = BaseLabelProps,
     DCProps extends BaseDisplayProps = DCDProps,
-    LCProps extends BaseLabelProps = LCDProps
+    LCProps extends BaseLabelProps = LCDProps,
+    FProps extends WithThemeProps = WithThemeProps
 >(
-    field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>>,
-    options: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps> = {}
+    field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps, FProps>>,
+    options: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps, FProps> = {}
 ) {
     const {
         className = field.$field.domain.className,
         comment = field.$field.comment,
         domain = field.$field.domain,
-        DisplayComponent = (field.$field.domain.DisplayComponent as unknown) as ComponentType<DCProps>,
+        DisplayComponent = field.$field.domain.DisplayComponent as unknown as ComponentType<DCProps>,
         displayFormatter = field.$field.domain.displayFormatter,
         displayProps = {},
         label = field.$field.label,
-        LabelComponent = (field.$field.domain.LabelComponent as unknown) as ComponentType<LCProps>,
-        labelProps = {}
+        LabelComponent = field.$field.domain.LabelComponent as unknown as ComponentType<LCProps>,
+        labelProps = {},
+        fieldProps = {}
     } = options;
     return makeField(field.value, {
         className,
@@ -85,6 +89,7 @@ export function fromField<
         DisplayComponent,
         displayFormatter,
         displayProps,
+        fieldProps,
         label,
         LabelComponent,
         labelProps,
@@ -103,11 +108,12 @@ export function makeField<
     DCDProps extends BaseDisplayProps = BaseDisplayProps,
     LCDProps extends BaseLabelProps = BaseLabelProps,
     DCProps extends BaseDisplayProps = DCDProps,
-    LCProps extends BaseLabelProps = LCDProps
+    LCProps extends BaseLabelProps = LCDProps,
+    FProps extends WithThemeProps = WithThemeProps
 >(
     value: T | undefined,
-    options?: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps> & {name?: string}
-): EntityField<FieldEntry<DT, T, any, any, any, DCProps, LCProps>>;
+    options?: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps, FProps> & {name?: string}
+): EntityField<FieldEntry<DT, T, any, any, any, DCProps, LCProps, FProps>>;
 /**
  * Crée un champ éditable.
  * @param name Nom du champ
@@ -124,7 +130,8 @@ export function makeField<F extends FieldEntry>(
                 BaseSelectProps,
                 BaseAutocompleteProps,
                 BaseDisplayProps,
-                BaseLabelProps
+                BaseLabelProps,
+                WithThemeProps
             >
         >
     ) => EntityFieldBuilder<F>
@@ -140,6 +147,7 @@ export function makeField(param1: any, param2: any = {}) {
             DisplayComponent = domain?.DisplayComponent,
             displayFormatter = domain?.displayFormatter,
             displayProps,
+            fieldProps,
             label,
             LabelComponent = domain?.LabelComponent,
             labelProps,
@@ -155,7 +163,8 @@ export function makeField(param1: any, param2: any = {}) {
                 DisplayComponent,
                 LabelComponent,
                 displayProps: {...(domain?.displayProps ?? {}), ...displayProps},
-                labelProps: {...(domain?.labelProps ?? {}), ...labelProps}
+                labelProps: {...(domain?.labelProps ?? {}), ...labelProps},
+                fieldProps: {...(domain?.fieldProps ?? {}), ...fieldProps}
             })
             .value(() => param1)
             .collect();

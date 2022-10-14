@@ -8,6 +8,7 @@ import {
 } from "@focus4/stores";
 
 import {AutocompleteProps, DisplayProps, InputProps, LabelProps, SelectProps} from "../components";
+import {FieldOptions} from "../fields";
 
 /** Crée un domaine. */
 export function domain<
@@ -17,6 +18,16 @@ export function domain<
     ACProps extends BaseAutocompleteProps = AutocompleteProps<DT extends "number" ? "number" : "string">,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
->(d: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps>) {
+>(
+    d: Domain<
+        DT,
+        ICProps,
+        SCProps,
+        ACProps,
+        DCProps,
+        LCProps,
+        Omit<FieldOptions<any>, "inputType" | "onChange" | "type">
+    >
+) {
     return d;
 }

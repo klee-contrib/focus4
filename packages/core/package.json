@@ -11,14 +11,14 @@
     "license": "MIT",
     "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/core",
     "scripts": {
-        "prepare": "rollup -cm",
-        "start": "rollup -cw"
+        "prepare": "rollup -cm --bundleConfigAsCjs",
+        "start": "rollup -cw --bundleConfigAsCjs --bundleConfigAsCjs"
     },
     "dependencies": {
         "@types/lodash": "4.14.186",
         "@types/react": "17.0.44",
         "@types/uuid": "8.3.4",
-        "i18next": "21.9.2",
+        "i18next": "21.10.0",
         "lodash": "4.17.21",
         "mobx": "6.6.2",
         "mobx-utils": "6.0.5",
