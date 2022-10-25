@@ -20,11 +20,11 @@
         "test-ci": "lerna run test-ci"
     },
     "devDependencies": {
-        "@rollup/plugin-node-resolve": "15.0.0",
-        "@rollup/plugin-typescript": "9.0.1",
-        "lerna": "6.0.0",
+        "@rollup/plugin-node-resolve": "15.0.1",
+        "@rollup/plugin-typescript": "9.0.2",
+        "lerna": "6.0.1",
         "postcss": "8.4.18",
-        "rollup": "3.1.0",
+        "rollup": "3.2.3",
         "rollup-plugin-copy-glob": "0.3.2",
         "rollup-plugin-postcss": "4.0.2",
         "rollup-plugin-preserve-shebang": "1.0.1",
