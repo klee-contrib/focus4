@@ -8,6 +8,11 @@ export interface PanelDescriptor {
 /** Contexte d'un Scrollable, expose les méthodes associées. */
 export const ScrollableContext = createContext<{
     /**
+     * Retourne la hauteur du header sticky.
+     * @returns La taille du header.
+     */
+    getHeaderHeight(): number;
+    /**
      * Affiche un élement dans le menu sticky du Scrollable
      * @param node Le noeud React.
      * @param parentNode Noeud à suivre pour positionner l'élément sticky.

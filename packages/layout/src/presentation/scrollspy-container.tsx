@@ -59,7 +59,11 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
      * @param node Le noeud HTML.
      */
     protected getOffsetTop(node: HTMLElement) {
-        return node.offsetTop - (this.node.current!.offsetTop || 0);
+        const headerHeight = this.context.getHeaderHeight();
+
+        const cpt = getComputedStyle(document.documentElement).getPropertyValue("--content-padding-top");
+        const padding = +cpt.substring(0, cpt.length - 2);
+        return node.offsetTop - headerHeight - (Number.isNaN(padding) ? 0 : padding);
     }
 
     /** @see ScrollspyContext.registerPanel */

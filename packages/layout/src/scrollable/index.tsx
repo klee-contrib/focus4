@@ -1,13 +1,15 @@
 import classNames from "classnames";
 import {AnimatePresence, HTMLMotionProps, motion} from "framer-motion";
 import {memoize, range} from "lodash";
-import {action, makeObservable, observable} from "mobx";
+import {action, IReactionDisposer, makeObservable, observable, when} from "mobx";
 import {observer, useObserver} from "mobx-react";
 import {cloneElement, Component, forwardRef, HTMLProps, Key, PropsWithChildren, ReactNode, Ref} from "react";
 import {createPortal, findDOMNode} from "react-dom";
 
 import {CSSProp, ScrollableContext, springTransition, themr} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
+
+import {headerCss} from "../header";
 
 import {ButtonBackToTop} from "./button-back-to-top";
 export {ButtonBttCss, buttonBttCss} from "./button-back-to-top";
@@ -59,6 +61,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
     @observable hasBtt = false;
     @observable headerHeight = 0;
     @observable isHeaderSticky = false;
+    @observable isInitialized = false;
     @observable isMenuOpened = true;
     @observable isMenuRetractable = true;
     @observable visibleHeader = 1;
@@ -81,9 +84,25 @@ class ScrollableComponent extends Component<ScrollableProps> {
         })
     );
 
+    heightInit?: IReactionDisposer;
+
     constructor(props: ScrollableProps) {
         super(props);
         makeObservable(this);
+
+        this.heightInit = when(
+            () => this.isInitialized,
+            () => {
+                const topRow = document.querySelector(`.${headerCss.topRow}`);
+                if (topRow) {
+                    const {height} = getComputedStyle(topRow);
+                    const headerHeight = +height.substring(0, height.length - 2);
+                    if (!Number.isNaN(headerHeight)) {
+                        this.headerHeight = headerHeight;
+                    }
+                }
+            }
+        );
     }
 
     componentDidMount() {
@@ -121,6 +140,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
         this.intersectionObserver?.disconnect();
         this.mutationObserver?.disconnect();
         this.resizeObserver?.disconnect();
+        this.heightInit?.();
     }
 
     /** @see ScrollableContext.registerHeader */
@@ -224,7 +244,14 @@ class ScrollableComponent extends Component<ScrollableProps> {
         });
     }
 
-    setHeight = (height: number) => (this.headerHeight = height);
+    setHeight = (height: number) => {
+        this.headerHeight = height;
+    };
+
+    setInitialized = (_: any) => {
+        this.isInitialized = true;
+    };
+
     setMenuNode = (ref: HTMLDivElement | null) => ref && (this.menuNode = ref);
     setScrollableNode = (ref: HTMLDivElement | null) => ref && (this.scrollableNode = ref);
 
@@ -253,12 +280,15 @@ class ScrollableComponent extends Component<ScrollableProps> {
             </AnimatePresence>
         ));
 
+    getHeaderHeight = () => this.headerHeight;
+
     render() {
         const {children, className, innerRef} = this.props;
         return (
             <ScrollableContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
                 value={{
+                    getHeaderHeight: this.getHeaderHeight,
                     menu: this.menu,
                     portal: this.portal,
                     registerHeader: this.registerHeader,
@@ -271,7 +301,12 @@ class ScrollableComponent extends Component<ScrollableProps> {
                     {theme => (
                         <div ref={innerRef} className={classNames(theme.container(), className)}>
                             <div ref={this.setScrollableNode} className={theme.scrollable()}>
-                                {this.intersectionObserver ? children : null}
+                                {this.intersectionObserver ? (
+                                    <>
+                                        {children}
+                                        <div ref={this.setInitialized} />
+                                    </>
+                                ) : null}
                             </div>
                             <motion.div
                                 ref={this.setMenuNode}
