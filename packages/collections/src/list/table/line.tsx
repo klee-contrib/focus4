@@ -77,7 +77,13 @@ export function TableLine<T>({
     }));
 
     return useObserver(() => (
-        <tr ref={domRef} className={classNames(className?.(props.data) ?? "", onClick ? theme.clickable() : "")}>
+        <tr
+            ref={domRef}
+            className={classNames(
+                theme.row({clickable: !!onClick, selected: state.isSelected}),
+                className?.(props.data) ?? ""
+            )}
+        >
             {props.hasSelection ? (
                 <td className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}>
                     {state.isSelectable ? (
