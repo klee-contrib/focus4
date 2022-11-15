@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "11.5.1",
+    "version": "11.5.2",
     "description": "Focus v4, collections module",
     "main": "lib/focus4.collections.js",
     "repository": {
@@ -15,16 +15,16 @@
         "start": "rollup -cw --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "11.5.1",
-        "@focus4/forms": "11.5.1",
-        "@focus4/stores": "11.5.1",
-        "@focus4/styling": "11.5.1",
-        "@focus4/toolbox": "11.5.1",
+        "@focus4/core": "11.5.2",
+        "@focus4/forms": "11.5.2",
+        "@focus4/stores": "11.5.2",
+        "@focus4/styling": "11.5.2",
+        "@focus4/toolbox": "11.5.2",
         "framer-motion": "6.5.1",
         "react-dnd": "16.0.1",
         "react-dnd-html5-backend": "16.0.1"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.5.1"
+        "@focus4/tooling": "11.5.2"
     }
 }
