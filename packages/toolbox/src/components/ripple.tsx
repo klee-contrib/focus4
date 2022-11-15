@@ -76,7 +76,7 @@ interface RippleState {
 }
 
 export class RippledComponent<P> extends Component<
-    RippleProps & {rippleTheme: ToBem<RippleCss>} & {ComposedComponent: ComponentType<P> | string},
+    RippleProps & {ComposedComponent: ComponentType<P> | string} & {rippleTheme: ToBem<RippleCss>},
     RippleState
 > {
     // eslint-disable-next-line react/state-in-constructor

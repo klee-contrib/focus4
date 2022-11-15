@@ -24,12 +24,11 @@ function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
 }
 
 /** Options pour `autocompleteFor` */
-export type AutocompleteForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
-    AutocompleteComponents<
+export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponents<
         NonNullable<F["domain"]["autocompleteProps"]>,
         NonNullable<F["domain"]["displayProps"]>,
         NonNullable<F["domain"]["labelProps"]>
-    > & {
+    > & Partial<FieldOptions<F>> & {
         /** Service de résolution de code. */
         keyResolver?: (key: NonNullable<F["fieldType"]>) => Promise<string | undefined>;
         /** Service de recherche. */
@@ -37,17 +36,16 @@ export type AutocompleteForOptions<F extends FieldEntry> = Partial<FieldOptions<
     };
 
 /** Options pour `fieldFor` */
-export type FieldForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
-    InputComponents<
+export type FieldForOptions<F extends FieldEntry> = InputComponents<
         NonNullable<F["domain"]["inputProps"]>,
         NonNullable<F["domain"]["displayProps"]>,
         NonNullable<F["domain"]["labelProps"]>
-    >;
+    > & Partial<FieldOptions<F>>;
 
 /** Options pour `selectFor`. */
 export type SelectForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     SelectComponents<
-        NonNullable<F["domain"]["selectProps"]> & BaseSelectProps,
+        BaseSelectProps & NonNullable<F["domain"]["selectProps"]>,
         NonNullable<F["domain"]["displayProps"]>,
         NonNullable<F["domain"]["labelProps"]>
     >;

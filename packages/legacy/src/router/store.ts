@@ -134,7 +134,7 @@ export class ViewStore<V, N extends string> {
      * Effectue l'action fournie à partir de la vue courante et filtre les résultats "faux".
      * @param block L'action à effectuer.
      */
-    withView<T>(block: (view: View<V>) => T | undefined | "" | false) {
+    withView<T>(block: (view: View<V>) => T | "" | false | undefined) {
         const p = block(this.currentView);
         if (p !== undefined && p !== "" && p !== false) {
             return p;

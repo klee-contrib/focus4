@@ -9,7 +9,7 @@ import selectCss, {SelectCss} from "./__style__/select.css";
 export {selectCss, SelectCss};
 
 /** Props du Select. */
-export interface SelectProps<T extends "string" | "number"> {
+export interface SelectProps<T extends "number" | "string"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -37,7 +37,7 @@ export interface SelectProps<T extends "string" | "number"> {
 }
 
 /** Surcouche de <select> pour s'interfacer avec un <Field>. */
-export function Select<T extends "string" | "number">({
+export function Select<T extends "number" | "string">({
     disabled,
     error,
     id,
@@ -74,7 +74,7 @@ export function Select<T extends "string" | "number">({
                     value={value === undefined ? "" : value}
                 >
                     {finalValues.map((val, idx) => {
-                        const optVal = `${val[$valueKey] as string | number}`;
+                        const optVal = `${val[$valueKey] as number | string}`;
                         const elementValue = val[$labelKey];
                         const optLabel =
                             elementValue === undefined ? i18next.t(`${i18nPrefix}.select.noLabel`) : elementValue;

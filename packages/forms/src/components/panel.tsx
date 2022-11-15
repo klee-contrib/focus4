@@ -16,7 +16,7 @@ export interface PanelProps extends PanelButtonsProps {
     /** Boutons à afficher dans le Panel. Par défaut : les boutons de formulaire (edit / save / cancel). */
     Buttons?: ComponentType<PanelButtonsProps>;
     /** Position des boutons. Par défaut : "top". */
-    buttonsPosition?: "both" | "bottom" | "top" | "none";
+    buttonsPosition?: "both" | "bottom" | "none" | "top";
     /** Masque le panel dans le ScrollspyContainer. */
     hideOnScrollspy?: boolean;
     /** Masque la progress bar lors du chargement/sauvegarde. */

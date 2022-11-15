@@ -18,9 +18,9 @@ export interface SnackbarProps {
     children?: ReactNode;
     className?: string;
     /** Text to display in the content. */
-    label?: string | JSX.Element;
+    label?: JSX.Element | string;
     /** Callback function that will be called when the action button is clicked. */
-    onClick?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
+    onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Callback function that will be called once the set timeout is finished. */
     onTimeout: () => void;
     /** Classnames object defining the component style. */

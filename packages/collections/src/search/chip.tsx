@@ -8,7 +8,7 @@ import {CSSProp} from "@focus4/styling";
 import {Chip, ChipCss} from "@focus4/toolbox";
 
 /** Type de Chip pour la recherche. */
-export type ChipType = "filter" | "facet" | "sort" | "group";
+export type ChipType = "facet" | "filter" | "group" | "sort";
 
 /** Props du SearchChip. */
 export interface SearchChipProps {
@@ -25,7 +25,7 @@ export interface SearchChipProps {
      * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
      * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
      */
-    keyResolver?: (type: "filter" | "facet", code: string, value: string) => Promise<string | undefined>;
+    keyResolver?: (type: "facet" | "filter", code: string, value: string) => Promise<string | undefined>;
     /** Appelé au clic sur la suppression. */
     onDeleteClick?: () => void;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */

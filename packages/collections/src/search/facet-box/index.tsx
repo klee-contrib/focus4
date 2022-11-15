@@ -116,7 +116,7 @@ export function FacetBox<T>({
         );
     }
 
-    const clearFacets = action((e: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
+    const clearFacets = action((e: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
         e.stopPropagation();
         store.removeFacetValue();
         Object.values(additionalFacets).forEach(facet =>

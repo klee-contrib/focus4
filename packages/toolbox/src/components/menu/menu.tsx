@@ -37,7 +37,7 @@ export interface MenuProps {
     /** If true the menu wrapper will show an outline with a soft shadow. */
     outline?: boolean;
     /** Determine the position of the menu. With static value the menu will be always shown, auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. */
-    position?: "auto" | "static" | "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
+    position?: "auto" | "bottomLeft" | "bottomRight" | "static" | "topLeft" | "topRight";
     /** If true, the menu items will show a ripple effect on click. */
     ripple?: boolean;
     /** If true, the menu will keep a value to highlight the active child item. */

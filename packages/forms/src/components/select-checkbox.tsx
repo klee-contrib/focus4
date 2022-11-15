@@ -13,7 +13,7 @@ function clickHandlerFactory(
     isDisabled: boolean,
     isSelected: boolean,
     value: any[] | undefined,
-    optVal: string | number,
+    optVal: number | string,
     onChange: (value: any[] | undefined) => void
 ) {
     return (e: SyntheticEvent<any>) => {
@@ -33,7 +33,7 @@ function clickHandlerFactory(
 }
 
 /** Props du SelectCheckbox */
-export interface SelectCheckboxProps<T extends "string" | "number"> {
+export interface SelectCheckboxProps<T extends "number" | "string"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -58,7 +58,7 @@ export interface SelectCheckboxProps<T extends "string" | "number"> {
     values: ReferenceList;
 }
 
-export function SelectCheckbox<T extends "string" | "number">({
+export function SelectCheckbox<T extends "number" | "string">({
     disabled = false,
     error,
     label,

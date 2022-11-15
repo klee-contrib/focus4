@@ -23,7 +23,7 @@ export interface SummaryProps<T> {
      * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
      * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
      */
-    chipKeyResolver?: (type: "filter" | "facet", code: string, value: string) => Promise<string | undefined>;
+    chipKeyResolver?: (type: "facet" | "filter", code: string, value: string) => Promise<string | undefined>;
     /**
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
@@ -35,7 +35,7 @@ export interface SummaryProps<T> {
     /** Handler pour le bouton d'export. */
     exportAction?: () => void;
     /** Masque les critères de recherche. */
-    hideCriteria?: boolean | string[];
+    hideCriteria?: string[] | boolean;
     /** Masque les facettes. */
     hideFacets?: boolean;
     /** Masque le groupe. */
@@ -97,6 +97,7 @@ export function Summary<T>({
                 for (const criteriaKey in props.store.flatCriteria) {
                     const {label, domain} = (props.store.criteria[criteriaKey] as FormEntityField).$field;
                     const value = (props.store.flatCriteria as any)[criteriaKey];
+                    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
                     if (!props.hideCriteria || !props.hideCriteria.includes(criteriaKey)) {
                         topicList.push({
                             type: "filter",

@@ -11,15 +11,15 @@ import {defaultLoad} from "./store";
  * @param loadBuilder Builder pour le service de chargement.
  * @returns disposer.
  */
-export function registerLoad<SN extends StoreNode | StoreListNode, A extends readonly any[]>(
+export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
     node: SN,
     loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>
 ): {isLoading: boolean; dispose: () => void};
-export function registerLoad<SN extends StoreNode | StoreListNode, A extends readonly any[]>(
+export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
     node: SN,
     loadBuilder: NodeLoadBuilder<SN, A>
 ): {isLoading: boolean; dispose: () => void};
-export function registerLoad<SN extends StoreNode | StoreListNode, A extends readonly any[]>(
+export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
     node: SN,
     loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>)
 ) {
@@ -77,7 +77,7 @@ export function registerLoad<SN extends StoreNode | StoreListNode, A extends rea
     return state;
 }
 
-export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends readonly any[] = never> {
+export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends readonly any[] = never> {
     /** @internal */
     readonly handlers = {} as Record<"load", ((event: "load") => void)[]>;
 
@@ -129,7 +129,7 @@ export class NodeLoadBuilder<SN extends StoreNode | StoreListNode, A extends rea
      * @param event Nom de l'évènement.
      * @param handler Handler de l'évènement.
      */
-    on(event: "load" | "load"[], handler: (event: "load") => void): NodeLoadBuilder<SN, A> {
+    on(event: "load"[] | "load", handler: (event: "load") => void): NodeLoadBuilder<SN, A> {
         if (!Array.isArray(event)) {
             event = [event];
         }

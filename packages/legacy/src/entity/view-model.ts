@@ -22,7 +22,7 @@ export interface ViewModel {
  * Le ViewModel est un clone d'un model qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du model réinitialise le viewModel.
  */
-export function createViewModel<ST extends StoreNode | StoreListNode>(model: ST): ST & ViewModel {
+export function createViewModel<ST extends StoreListNode | StoreNode>(model: ST): ST & ViewModel {
     const viewModel = clone(model) as ST & ViewModel;
 
     // La fonction `reset` va simplement vider et reremplir le viewModel avec les valeurs du model.

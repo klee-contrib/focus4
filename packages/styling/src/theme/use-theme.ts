@@ -8,7 +8,7 @@ import {fromBem, toBem, ToBem} from "./to-bem";
 /** Hook pour récupérer le theme du contexte et le fusionner avec d'autres. */
 export function useTheme<T>(
     name: string,
-    ...themes: (T | CSSToStrings<T> | Partial<ToBem<T>> | undefined)[]
+    ...themes: (CSSToStrings<T> | Partial<ToBem<T>> | T | undefined)[]
 ): ToBem<T> {
     const contextTheme = fromBem(useContext(ThemeContext)[name]) || {};
     return toBem(themeable(contextTheme, ...themes.filter(x => x).map(x => fromBem(x!))) as T);

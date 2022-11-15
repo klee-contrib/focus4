@@ -38,12 +38,12 @@ export interface ButtonProps {
     label?: string;
     /** To be used with floating button. If true, the button will be smaller. */
     mini?: boolean;
-    onClick?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseDown?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseEnter?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseLeave?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseUp?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onTouchStart?: TouchEventHandler<HTMLLinkElement | HTMLButtonElement>;
+    onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseDown?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseEnter?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseLeave?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseUp?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onTouchStart?: TouchEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Indicates if the button should have primary color. */
     primary?: boolean;
     /** If true, the button will have a raised look. */
@@ -82,10 +82,10 @@ export const Button = rippleFactory({theme: {rippleWrapper: buttonCss.rippleWrap
     type = "button"
 }: ButtonProps) {
     const theme = useTheme("RTButton", buttonCss, pTheme);
-    const buttonNode = useRef<HTMLLinkElement | HTMLButtonElement | null>(null);
+    const buttonNode = useRef<HTMLButtonElement | HTMLLinkElement | null>(null);
 
     const handleMouseUp = useCallback(
-        (event: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
+        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
             buttonNode.current?.blur();
             onMouseUp?.(event);
         },
@@ -93,7 +93,7 @@ export const Button = rippleFactory({theme: {rippleWrapper: buttonCss.rippleWrap
     );
 
     const handleMouseLeave = useCallback(
-        (event: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
+        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
             buttonNode.current?.blur();
             onMouseLeave?.(event);
         },

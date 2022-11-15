@@ -20,7 +20,7 @@ export interface ListBaseProps<T> {
     /** Affiche le bouton "Voir plus" au lieu d'un scroll infini. */
     isManualFetch?: boolean;
     /** Fonction pour déterminer la key à utiliser pour chaque élément de la liste. */
-    itemKey: (item: T, idx: number) => string | number | undefined;
+    itemKey: (item: T, idx: number) => number | string | undefined;
     /** Précise si la liste est en cours de chargement (surchargé par le store si disponible). */
     isLoading?: boolean;
     /** (Scroll infini) Index de l'item, en partant du bas de la liste affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 5. */

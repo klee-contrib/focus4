@@ -14,7 +14,7 @@ export interface LoadingBarProps {
     /** Pour les icônes. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Type de la ProgressBar. Par défaut : "linear". */
-    progressBarType?: "linear" | "circular";
+    progressBarType?: "circular" | "linear";
     /** CSS. */
     theme?: CSSProp<LoadingBarCss>;
 }

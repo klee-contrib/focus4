@@ -13,7 +13,7 @@ import {Validator} from "./validation";
 
 /** Définition d'un domaine. */
 export interface Domain<
-    DT extends "string" | "number" | "boolean" | "object" = any,
+    DT extends "boolean" | "number" | "object" | "string" = any,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
@@ -44,7 +44,7 @@ export interface Domain<
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
-    DT extends "string" | "number" | "boolean" | "object" = any,
+    DT extends "boolean" | "number" | "object" | "string" = any,
     T extends DomainType<DT> = DomainType<DT>,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,

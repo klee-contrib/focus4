@@ -272,7 +272,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                                     }
                                 }
 
-                                const newValues: (string | number | boolean | undefined)[] = [];
+                                const newValues: (boolean | number | string | undefined)[] = [];
 
                                 // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
                                 for (const key in paramsMap) {
@@ -501,7 +501,7 @@ function buildEndpoints<C>(config: C) {
 function buildParamsMap<C>(
     config: C,
     object: ParamObject<C>,
-    params: Record<string, (value: string | undefined) => string | number | undefined> = {}
+    params: Record<string, (value: string | undefined) => number | string | undefined> = {}
 ) {
     if (Array.isArray(config)) {
         const setter = (value: string | undefined) => {
@@ -534,7 +534,7 @@ function buildParamsMap<C>(
 }
 
 function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams<Q>) {
-    const map = {} as Record<keyof Q, (value: string | undefined) => string | number | boolean | undefined>;
+    const map = {} as Record<keyof Q, (value: string | undefined) => boolean | number | string | undefined>;
 
     for (const key in query) {
         const setter = (value: string | undefined) => {
@@ -560,7 +560,7 @@ function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams
     return map;
 }
 
-function buildQueryString(query: Record<string, string | number | boolean | undefined>) {
+function buildQueryString(query: Record<string, boolean | number | string | undefined>) {
     return Object.keys(query).reduce(
         (acc, qp) =>
             query[qp] === undefined ? acc : `${acc + (acc === "" ? "?" : "&")}${qp}=${encodeURIComponent(query[qp]!)}`,

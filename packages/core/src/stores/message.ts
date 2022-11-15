@@ -6,7 +6,7 @@ import {v4} from "uuid";
 export interface Message {
     id?: string;
     content: string;
-    type?: "success" | "error" | "warning" | "info";
+    type?: "error" | "info" | "success" | "warning";
 }
 
 /** Store de messages */
@@ -25,7 +25,7 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addMessage(message: string | Message) {
+    addMessage(message: Message | string) {
         const id = v4();
         this.data[id] = parseString(message);
         this.latestMessage = this.data[id];
@@ -36,7 +36,7 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addWarningMessage(message: string | Message) {
+    addWarningMessage(message: Message | string) {
         message = parseString(message);
         message.type = "warning";
         this.addMessage(message);
@@ -47,7 +47,7 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addInformationMessage(message: string | Message) {
+    addInformationMessage(message: Message | string) {
         message = parseString(message);
         message.type = "info";
         this.addMessage(message);
@@ -58,7 +58,7 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addErrorMessage(message: string | Message) {
+    addErrorMessage(message: Message | string) {
         message = parseString(message);
         message.type = "error";
         this.addMessage(message);
@@ -69,7 +69,7 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addSuccessMessage(message: string | Message) {
+    addSuccessMessage(message: Message | string) {
         message = parseString(message);
         message.type = "success";
         this.addMessage(message);
@@ -80,7 +80,7 @@ export class MessageStore {
  * Formatte un message entrant.
  * @param message Le message.
  */
-function parseString(message: string | Message) {
+function parseString(message: Message | string) {
     if (isString(message)) {
         message = {content: message};
     }

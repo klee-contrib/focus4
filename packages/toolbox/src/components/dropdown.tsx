@@ -24,7 +24,7 @@ export interface DropdownProps<
     T,
     VK extends string = "value",
     LK extends string = "label",
-    S extends {[P in VK]?: T} & {[P in LK]?: string} = any
+    S extends {[P in LK]?: string} & {[P in VK]?: T} = any
 > {
     /** If true the dropdown will preselect the first item if the supplied value matches none of the options' values. */
     allowBlank?: boolean;
@@ -68,7 +68,7 @@ export function Dropdown<
     T,
     VK extends string = "value",
     LK extends string = "label",
-    S extends {[P in VK]?: T} & {[P in LK]?: string} = any
+    S extends {[P in LK]?: string} & {[P in VK]?: T} = any
 >({
     allowBlank = true,
     auto = true,

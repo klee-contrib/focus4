@@ -4,7 +4,7 @@ import {v4} from "uuid";
 /** Description d'une requête. */
 export interface Request {
     id?: string;
-    status: "error" | "success" | "pending";
+    status: "error" | "pending" | "success";
     url: string;
 }
 

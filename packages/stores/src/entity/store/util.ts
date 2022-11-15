@@ -17,7 +17,7 @@ import {
  * @param entityStoreItem Le noeud de store à mettre à plat.
  * @param includeAddedFields Inclus les champs ajoutés (pour un FormNode) dans la valeur retournée.
  */
-export function toFlatValues<SN extends FormNode | FormListNode | StoreNode | StoreListNode>(
+export function toFlatValues<SN extends FormListNode | FormNode | StoreListNode | StoreNode>(
     storeNode: SN,
     includeAddedFields?: boolean
 ): NodeToType<SN> {

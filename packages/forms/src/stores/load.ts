@@ -10,7 +10,7 @@ import {NodeLoadBuilder, registerLoad, StoreListNode, StoreNode} from "@focus4/s
  * @param deps Array de dépendances.
  * @returns Etat de chargement.
  */
-export function useLoad<SN extends StoreNode | StoreListNode>(
+export function useLoad<SN extends StoreListNode | StoreNode>(
     node: SN,
     loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN>,
     deps: any[] = []

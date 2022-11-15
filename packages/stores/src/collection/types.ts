@@ -12,7 +12,7 @@ export interface LocalFacetDefinition<T> {
     /** Champ de l'objet sur lequel facetter. */
     fieldName: keyof T;
     /** Type de tri pour les valeurs de facettes. Par défaut : "count-desc". */
-    ordering?: "key-asc" | "key-desc" | "count-asc" | "count-desc";
+    ordering?: "count-asc" | "count-desc" | "key-asc" | "key-desc";
     /** Facette multisélectionnable. */
     isMultiSelectable?: boolean;
     /** Possibilité d'exclure des valeurs. */
@@ -24,7 +24,7 @@ export interface LocalFacetDefinition<T> {
 /** Config pour un store de collection local. */
 export interface LocalStoreConfig<T> {
     /** Liste des champs disponibles pour le filtrage par champ texte. */
-    searchFields?: (keyof T & string)[];
+    searchFields?: (string & keyof T)[];
     /** Définitions de facettes. */
     facetDefinitions?: LocalFacetDefinition<T>[];
 }

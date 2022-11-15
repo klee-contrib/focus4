@@ -16,7 +16,7 @@ import {
 
 import autocompleteCss, {AutocompleteCss as ACCSS} from "./__style__/autocomplete.css";
 export {autocompleteCss};
-export type AutocompleteCss = ACCSS & RTAutocompleteCss & InputCss;
+export type AutocompleteCss = ACCSS & InputCss & RTAutocompleteCss;
 const Theme = themr<AutocompleteCss>("autocomplete", autocompleteCss as AutocompleteCss);
 
 /** Résultat du service de recherche. */
@@ -28,7 +28,7 @@ export interface AutocompleteResult<T = {key: string; label: string}> {
 }
 
 /** Props du composant d'autocomplétion */
-export interface AutocompleteProps<T extends "string" | "number", TSource = {key: string; label: string}>
+export interface AutocompleteProps<T extends "number" | "string", TSource = {key: string; label: string}>
     extends Omit<RTAutocompleteProps<string, TSource>, "getLabel" | "onChange" | "value"> {
     /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
     autoSelect?: boolean;
@@ -57,7 +57,7 @@ export interface AutocompleteProps<T extends "string" | "number", TSource = {key
 /** Surcouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
 // eslint-disable-next-line react/no-unsafe
-export class Autocomplete<T extends "string" | "number", TSource = {key: string; label: string}> extends Component<
+export class Autocomplete<T extends "number" | "string", TSource = {key: string; label: string}> extends Component<
     AutocompleteProps<T, TSource>
 > {
     /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */

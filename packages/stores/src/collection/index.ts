@@ -124,9 +124,9 @@ export class CollectionStore<T = any, C = any> {
         criteria?: C
     );
     constructor(
-        firstParam?: SearchService<T> | LocalStoreConfig<T>,
-        secondParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C,
-        thirdParam?: (SearchProperties<C> & {debounceCriteria?: boolean}) | C
+        firstParam?: LocalStoreConfig<T> | SearchService<T>,
+        secondParam?: C | (SearchProperties<C> & {debounceCriteria?: boolean}),
+        thirdParam?: C | (SearchProperties<C> & {debounceCriteria?: boolean})
     ) {
         makeObservable(this);
         if (isFunction(firstParam)) {
@@ -162,7 +162,7 @@ export class CollectionStore<T = any, C = any> {
                     this.groupingKey,
                     this.inputFacets,
                     this.searchFields,
-                    !initialQuery || !initialQuery.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
+                    !initialQuery?.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
                     this.sortAsc,
                     this.sortBy
                 ],
@@ -512,7 +512,7 @@ export class CollectionStore<T = any, C = any> {
      * @param type Type de valeur.
      */
     @action.bound
-    addFacetValue(facetKey: string, facetValue: string, type: "selected" | "excluded") {
+    addFacetValue(facetKey: string, facetValue: string, type: "excluded" | "selected") {
         // On retire la valeur au cas où elle est déjà dans l'autre liste.
         this.removeFacetValue(facetKey, facetValue);
 

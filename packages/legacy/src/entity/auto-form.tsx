@@ -39,7 +39,7 @@ import {fieldWrapperFor} from "./field-wrapper";
 import {createViewModel, ViewModel} from "./view-model";
 
 /** Options additionnelles de l'AutoForm. */
-export interface AutoFormOptions<ST extends StoreNode | StoreListNode> {
+export interface AutoFormOptions<ST extends StoreListNode | StoreNode> {
     /** Pour ajouter une classe particulière sur le formulaire. */
     className?: string;
 
@@ -59,7 +59,7 @@ export interface AutoFormOptions<ST extends StoreNode | StoreListNode> {
 /** Config de services à fournir à AutoForm. */
 export interface ServiceConfig<T, LP> {
     /** Service de suppression. */
-    delete?: (entity: T) => Promise<void | number | boolean>;
+    delete?: (entity: T) => Promise<boolean | number | void>;
 
     /** Fonction pour récupérer la liste des paramètres pour le service de chargement. Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification. */
     getLoadParams?: () => LP[] | undefined;
@@ -72,7 +72,7 @@ export interface ServiceConfig<T, LP> {
 }
 
 /** Classe de base pour un créer un composant avec un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends Component<P> {
+export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends Component<P> {
     /** Map de tous les formulaires actuellement affichés avec leur état en édition */
     static readonly editingMap = observable.map<string, boolean>();
 
@@ -297,7 +297,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     displayFor<
-        DT extends "string" | "number" | "boolean" | "object",
+        DT extends "boolean" | "number" | "object" | "string",
         T extends DomainType<DT>,
         DCDProps extends BaseDisplayProps = DisplayProps,
         LCDProps extends BaseLabelProps = LabelProps,
@@ -335,7 +335,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     autocompleteFor<
-        DT extends "string" | "number" | "boolean" | "object",
+        DT extends "boolean" | "number" | "object" | "string",
         T extends DomainType<DT>,
         ACDProps extends BaseAutocompleteProps = AutocompleteProps<DT extends "number" ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
@@ -370,7 +370,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     fieldFor<
-        DT extends "string" | "number" | "boolean" | "object",
+        DT extends "boolean" | "number" | "object" | "string",
         T extends DomainType<DT>,
         ICDProps extends BaseInputProps = InputProps<DT extends number ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
@@ -404,7 +404,7 @@ export abstract class AutoForm<P, ST extends StoreNode | StoreListNode> extends 
      * @param options Les options du champ.
      */
     selectFor<
-        DT extends "string" | "number" | "boolean" | "object",
+        DT extends "boolean" | "number" | "object" | "string",
         T extends DomainType<DT>,
         SCDProps extends BaseSelectProps = SelectProps<DT extends "number" ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,

@@ -27,7 +27,7 @@ export interface InputTimeProps {
     /** Format de la date dans l'input. */
     inputFormat?: string;
     /** Props de l'input. */
-    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onKeyDown" | "onFocus" | "type" | "value">;
+    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onFocus" | "onKeyDown" | "type" | "value">;
     /** Appelé lorsque l'heure change. */
     onChange: (time: string | undefined) => void;
     /** CSS. */
@@ -61,7 +61,7 @@ export class InputTime extends Component<InputTimeProps> {
     @observable protected clockDisplay = "hours" as "hours" | "minutes";
 
     /** Position de l'horloge. */
-    @observable protected clockPosition?: "up" | "down";
+    @observable protected clockPosition?: "down" | "up";
 
     constructor(props: InputTimeProps) {
         super(props);

@@ -49,7 +49,7 @@ export type FormActions<S extends string = "default"> = ActionsFormProps & {
 } & {[P in Exclude<S, "default">]: () => Promise<void>};
 
 export class FormActionsBuilder<
-    FN extends FormNode | FormListNode,
+    FN extends FormListNode | FormNode,
     A extends readonly any[] = never,
     S extends string = never
 > extends NodeLoadBuilder<FN["sourceNode"], A> {
@@ -101,7 +101,7 @@ export class FormActionsBuilder<
     save<NS extends string = "default">(
         service: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>,
         name?: NS
-    ): FormActionsBuilder<FN, A, S | NS> {
+    ): FormActionsBuilder<FN, A, NS | S> {
         // @ts-ignore
         this.saveServices[name ?? "default"] = service;
         // @ts-ignore

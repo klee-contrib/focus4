@@ -28,7 +28,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
     const panel = useRef<HTMLDivElement>(null);
 
     const onItemClick = useCallback(
-        action((event: RMouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
+        action((event: RMouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
             if (children) {
                 const liRect = li.current!.getBoundingClientRect();
                 state.hasSubMenu = !state.hasSubMenu;

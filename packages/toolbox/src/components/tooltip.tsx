@@ -28,7 +28,7 @@ export interface TooltipOptions {
     tooltipDelay?: number;
     tooltipHideOnClick?: boolean;
     tooltipPassthrough?: boolean;
-    tooltipPosition?: "bottom" | "top" | "left" | "right" | "horizontal" | "vertical";
+    tooltipPosition?: "bottom" | "horizontal" | "left" | "right" | "top" | "vertical";
     tooltipShowOnClick?: boolean;
     theme?: CSSProp<TooltipCss>;
 }
@@ -73,7 +73,7 @@ export function tooltipFactory({
 }
 
 class TooltippedComponent<P> extends Component<
-    TooltipProps & {tooltipTheme: ToBem<TooltipCss>} & {ComposedComponent: ComponentType<P> | string}
+    TooltipProps & {ComposedComponent: ComponentType<P> | string} & {tooltipTheme: ToBem<TooltipCss>}
 > {
     // eslint-disable-next-line react/state-in-constructor
     state = {

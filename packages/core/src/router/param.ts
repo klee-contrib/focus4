@@ -13,7 +13,7 @@ export interface StringParam<S extends string = string> {
 }
 
 /** Paramètre (number ou string). */
-export type Param<T extends string | number> = T extends number
+export type Param<T extends number | string> = T extends number
     ? NumberParam<T>
     : T extends string
     ? StringParam<T>
@@ -37,7 +37,7 @@ export interface ParamTypeBuilder {
 }
 
 export interface QueryParamConfig {
-    [key: string]: "string" | "number" | "boolean";
+    [key: string]: "boolean" | "number" | "string";
 }
 
 export type QueryParams<T extends QueryParamConfig> = {

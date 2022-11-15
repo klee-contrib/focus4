@@ -31,12 +31,12 @@ export interface IconButtonProps {
     icon?: ReactNode;
     /** If true, the neutral colors are inverted. Useful to put a button over a dark background. */
     inverse?: boolean;
-    onClick?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseDown?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseEnter?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseLeave?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onMouseUp?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
-    onTouchStart?: TouchEventHandler<HTMLLinkElement | HTMLButtonElement>;
+    onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseDown?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseEnter?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseLeave?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onMouseUp?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    onTouchStart?: TouchEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Indicates if the button should have primary color. */
     primary?: boolean;
     style?: CSSProperties;
@@ -68,10 +68,10 @@ export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWra
         type = "button"
     }: IconButtonProps) {
         const theme = useTheme("RTIconButton", iconButtonCss, pTheme);
-        const buttonNode = useRef<HTMLLinkElement | HTMLButtonElement | null>(null);
+        const buttonNode = useRef<HTMLButtonElement | HTMLLinkElement | null>(null);
 
         const handleMouseUp = useCallback(
-            (event: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
+            (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
                 buttonNode.current?.blur();
                 onMouseUp?.(event);
             },
@@ -79,7 +79,7 @@ export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWra
         );
 
         const handleMouseLeave = useCallback(
-            (event: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
+            (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
                 buttonNode.current?.blur();
                 onMouseLeave?.(event);
             },

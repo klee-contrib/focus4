@@ -24,7 +24,7 @@ export interface MessageCenterProps {
 
 /** Description d'une notification. */
 interface Notification {
-    type?: "success" | "error" | "warning" | "info";
+    type?: "error" | "info" | "success" | "warning";
     content: string;
     timeout: number;
 }

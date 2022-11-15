@@ -21,7 +21,7 @@ export interface OperationListItemComponentProps<T> {
 
 /** Description d'une action sur un ou plusieurs éléments de liste. */
 export type OperationListItem<T> =
-    | {
+    ComponentType<OperationListItemComponentProps<T>> | {
           /** L'action à effectuer. */
           action: (data: T) => void;
           /** Le libellé (ou la tooltip) du bouton. */
@@ -29,9 +29,8 @@ export type OperationListItem<T> =
           /** L'icône du bouton */
           icon?: ReactNode;
           /** Type d'affichage pour l'action. Seul "secondary" sera pris en compte pour un mosaïque. Par défaut : "icon-label". */
-          type?: "icon" | "label" | "icon-label" | "icon-tooltip" | "secondary";
-      }
-    | ComponentType<OperationListItemComponentProps<T>>;
+          type?: "icon-label" | "icon-tooltip" | "icon" | "label" | "secondary";
+      };
 
 /** Props du composant d'actions contextuelles. */
 export interface ContextualActionsProps {

@@ -28,12 +28,12 @@ import {rippleFactory, RippleProps} from "./ripple";
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss, AutocompleteCss};
 
-export interface AutocompleteProps<TValue extends string | string[] = string, TSource = string>
+export interface AutocompleteProps<TValue extends string[] | string = string, TSource = string>
     extends Omit<InputProps, "autoComplete" | "onChange" | "theme" | "type" | "value"> {
     /** Determines if user can create a new option with the current typed value. */
     allowCreate?: boolean;
     /** Determines the opening direction. It can be auto, up or down. */
-    direction?: "auto" | "up" | "down";
+    direction?: "auto" | "down" | "up";
     /** Whether component should keep focus after value change. */
     keepFocusOnChange?: boolean;
     /** React Node to display as the last suggestion. */
@@ -44,7 +44,7 @@ export interface AutocompleteProps<TValue extends string | string[] = string, TS
     LineComponent?: (props: {item: TSource}) => ReactElement;
     /** If true, component can hold multiple values. */
     multiple?: TValue extends string[] ? true : false;
-    onChange?: (value: TValue, event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>) => void;
+    onChange?: (value: TValue, event: FormEvent<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement>) => void;
     /** Callback function that is fired when the components's query value changes. */
     onQueryChange?: (text: string) => void;
     /** Overrides the inner query. */
@@ -58,7 +58,7 @@ export interface AutocompleteProps<TValue extends string | string[] = string, TS
     /** Object of key/values representing all items suggested. */
     source?: Record<string, TSource>;
     /** Determines how suggestions are supplied. */
-    suggestionMatch?: "disabled" | "start" | "anywhere" | "word";
+    suggestionMatch?: "anywhere" | "disabled" | "start" | "word";
     /** If set, sorts the suggestions by key or label ascending. */
     suggestionSort?: "key" | "label";
     theme?: CSSProp<AutocompleteCss & InputCss>;
@@ -68,7 +68,7 @@ export interface AutocompleteProps<TValue extends string | string[] = string, TS
 const defaultGetLabel = (x: any) => x;
 
 export const Autocomplete = forwardRef(function RTAutocomplete<
-    TValue extends string | string[] = string,
+    TValue extends string[] | string = string,
     TSource = string
 >(
     {
@@ -126,7 +126,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
 ) {
     /** Détermine la query à partir de la valeur. */
     const getQuery = useCallback(
-        (v?: string | string[]) =>
+        (v?: string[] | string) =>
             !multiple && v ? (source[v as string] && getLabel(source[v as string])) || (v as string) : "",
         [getLabel, multiple, source]
     );
@@ -231,7 +231,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
 
     // Appelé à la sélection d'une valeur.
     const handleChange = useCallback(
-        (vals: string[], event: FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>) => {
+        (vals: string[], event: FormEvent<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement>) => {
             const newValue = (multiple ? vals : vals[0]) as TValue;
             const newQuery = getQuery(newValue);
             updateQuery(newQuery, !!pQuery);
@@ -246,7 +246,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
     );
 
     const select = useCallback(
-        (event: SyntheticEvent<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement>, target: string) => {
+        (event: SyntheticEvent<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement>, target: string) => {
             event.stopPropagation();
             event.preventDefault();
             handleChange([target, ...Object.keys(values)], event);
@@ -254,7 +254,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
         [handleChange, values]
     );
 
-    const selectOrCreateActiveItem: ReactEventHandler<HTMLInputElement | HTMLTextAreaElement | HTMLLIElement> =
+    const selectOrCreateActiveItem: ReactEventHandler<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement> =
         useCallback(
             event => {
                 let target = active;
@@ -399,7 +399,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
             (ripple
                 ? rippleFactory({theme: {rippleWrapper: theme.rippleWrapper()}})("li")
                 : props => <li {...props} />) as (
-                props: RippleProps & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>
+                props: React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> & RippleProps
             ) => ReactElement,
         [ripple, theme]
     );
@@ -468,7 +468,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
             {selectedPosition === "below" ? renderSelected() : null}
         </div>
     );
-}) as <TValue extends string | string[] = string, TSource = string>(
+}) as <TValue extends string[] | string = string, TSource = string>(
     props: AutocompleteProps<TValue, TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
 ) => ReactElement;
 

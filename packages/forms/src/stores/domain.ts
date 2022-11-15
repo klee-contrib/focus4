@@ -12,7 +12,7 @@ import {FieldOptions} from "../fields";
 
 /** Crée un domaine. */
 export function domain<
-    DT extends "string" | "number" | "boolean" | "object",
+    DT extends "boolean" | "number" | "object" | "string",
     ICProps extends BaseInputProps = InputProps<DT extends "number" ? "number" : "string">,
     SCProps extends BaseSelectProps = SelectProps<DT extends "number" ? "number" : "string">,
     ACProps extends BaseAutocompleteProps = AutocompleteProps<DT extends "number" ? "number" : "string">,

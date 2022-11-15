@@ -24,13 +24,12 @@ export type TableProps<T> = ListBaseProps<T> & {
     /** CSS. */
     theme?: CSSProp<TableCss>;
 } & (
-        | {
-              /** Les données du tableau. */
-              data: T[];
-          }
-        | {
+        {
               /** Le store contenant la liste. */
               store: CollectionStore<T>;
+          } | {
+              /** Les données du tableau. */
+              data: T[];
           }
     );
 

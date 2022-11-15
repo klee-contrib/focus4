@@ -19,7 +19,7 @@ export interface MaskDefinition {
     placeholderChar?: string;
 }
 
-export interface InputProps<T extends "string" | "number"> extends Omit<RTInputProps, "onChange" | "value"> {
+export interface InputProps<T extends "number" | "string"> extends Omit<RTInputProps, "onChange" | "value"> {
     /** Pour un input de type "number", affiche les séparateurs de milliers. */
     hasThousandsSeparator?: boolean;
     /** Pour un input de type "text", paramètre un masque de saisie. */
@@ -38,7 +38,7 @@ export interface InputProps<T extends "string" | "number"> extends Omit<RTInputP
 
 @observer
 // eslint-disable-next-line react/no-unsafe
-export class Input<T extends "string" | "number"> extends Component<InputProps<T>> {
+export class Input<T extends "number" | "string"> extends Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement | HTMLTextAreaElement;
     protected mask?: InputMask;
     private pendingAnimationFrame = false;

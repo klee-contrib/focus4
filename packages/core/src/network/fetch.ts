@@ -13,7 +13,7 @@ import {requestStore} from "./store";
  * @param options Les options de la requête, qui surchargeront les valeurs par défaut.
  */
 export async function coreFetch(
-    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS" | "HEAD" | "TRACE" | "CONNECT",
+    method: "CONNECT" | "DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT" | "TRACE",
     url: string,
     {body, query}: {body?: {}; query?: {}} = {},
     options: RequestInit = {}

@@ -25,9 +25,9 @@ import {getNodeForList, replaceNode, setNode} from "./store";
  * @param parentNode Le node parent.
  */
 export function nodeToFormNode<E = any, E0 = E>(
-    node: StoreNode<E> | StoreListNode<E>,
-    sourceNode: StoreNode<E0> | StoreListNode<E0>,
-    parentNode?: FormNode | FormListNode
+    node: StoreListNode<E> | StoreNode<E>,
+    sourceNode: StoreListNode<E0> | StoreNode<E0>,
+    parentNode?: FormListNode | FormNode
 ) {
     const {$tempEdit} = node;
     if ($tempEdit !== undefined) {

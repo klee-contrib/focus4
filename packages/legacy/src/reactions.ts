@@ -5,14 +5,14 @@ import {ComponentLifecycle} from "react";
 export type RCL = ComponentLifecycle<any, any> & {[key: string]: any};
 
 /** Type d'expressions possibles pour le décorateur de réaction. */
-export type ReactionExpression<T> = ((inst: T) => () => any) | (() => any);
+export type ReactionExpression<T> = (() => any) | ((inst: T) => () => any);
 
 /** Type d'expressions possibles pour le décorateur de `when` */
-export type WhenExpression<T> = ((inst: T) => () => boolean) | (() => boolean);
+export type WhenExpression<T> = (() => boolean) | ((inst: T) => () => boolean);
 
 /** Utiliser `@disposeOnUnmount` sur la réaction à la place, si possible. */
 /** Décorateur permettant, dans une classe React, de poser un autorun sur la fonction décorée. */
-export function classAutorun(target: RCL, propertyKey: keyof RCL & string) {
+export function classAutorun(target: RCL, propertyKey: string & keyof RCL) {
     patchClass("autorun", target, propertyKey);
 }
 
@@ -23,7 +23,7 @@ export function classAutorun(target: RCL, propertyKey: keyof RCL & string) {
  * @param opts Les options de la réaction.
  */
 export function classReaction<T extends RCL>(expression: ReactionExpression<T>, opts?: IReactionOptions<T, boolean>) {
-    return function cReaction(instance: T, propertyKey: keyof RCL & string) {
+    return function cReaction(instance: T, propertyKey: string & keyof RCL) {
         patchClass("reaction", instance, propertyKey, expression, opts);
     };
 }
@@ -34,7 +34,7 @@ export function classReaction<T extends RCL>(expression: ReactionExpression<T>, 
  * @param expression L'expression à tracker pour le when. Si le contexte est nécessaire, le passer dans un lambda englobant.
  */
 export function classWhen<T extends RCL>(expression: WhenExpression<T>) {
-    return function cWhen(instance: T, propertyKey: keyof RCL & string) {
+    return function cWhen(instance: T, propertyKey: string & keyof RCL) {
         patchClass("when", instance, propertyKey, expression);
     };
 }
@@ -42,8 +42,8 @@ export function classWhen<T extends RCL>(expression: WhenExpression<T>) {
 function patchClass<T extends RCL>(
     type: "autorun" | "reaction" | "when",
     instance: T,
-    propertyKey: keyof T & string,
-    expression?: WhenExpression<T> | ReactionExpression<T>,
+    propertyKey: string & keyof T,
+    expression?: ReactionExpression<T> | WhenExpression<T>,
     opts?: IReactionOptions<T, boolean>
 ) {
     function UNSAFE_componentWillMount(this: T) {

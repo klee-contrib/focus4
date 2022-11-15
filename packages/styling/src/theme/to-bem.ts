@@ -46,7 +46,7 @@ export function toBem<CSS>(css: CSS): ToBem<CSS> {
     ) as ToBem<CSS>;
 }
 
-export function fromBem<T>(css: T | CSSToStrings<T> | Partial<ToBem<T>>): CSSToStrings<T> {
+export function fromBem<T>(css: CSSToStrings<T> | Partial<ToBem<T>> | T): CSSToStrings<T> {
     const res: CSSToStrings<T> = {};
 
     for (const key in css as any) {

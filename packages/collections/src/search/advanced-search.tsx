@@ -49,7 +49,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
      * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
      * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
      */
-    chipKeyResolver?: (type: "filter" | "facet", code: string, value: string) => Promise<string | undefined>;
+    chipKeyResolver?: (type: "facet" | "filter", code: string, value: string) => Promise<string | undefined>;
     /**
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
@@ -65,7 +65,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Groupes pliés par défauts (par groupingKey) */
     defaultFoldedGroups?: Record<string, string[]>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
-    facetBoxPosition?: "action-bar" | "left" | "sticky" | "fixed-sticky" | "none";
+    facetBoxPosition?: "action-bar" | "fixed-sticky" | "left" | "none" | "sticky";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: CSSProp<FacetBoxCss>;
     /**
@@ -96,7 +96,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Masque l'ActionBar. */
     hideActionBar?: boolean;
     /** Masque les critères de recherche dans le Summary. */
-    hideSummaryCriteria?: boolean | string[];
+    hideSummaryCriteria?: string[] | boolean;
     /** Masque les facettes dans le Summary. */
     hideSummaryFacets?: boolean;
     /** Masque le groupe dans le Summary. */

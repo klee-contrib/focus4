@@ -62,7 +62,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
         });
     }
 
-    referenceStore.reload = (refName?: keyof T & string) => {
+    referenceStore.reload = (refName?: string & keyof T) => {
         if (refName) {
             referenceStore[`_${refName}_cache`] = undefined;
         } else {

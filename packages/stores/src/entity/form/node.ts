@@ -182,7 +182,7 @@ export class FormNodeBuilder<E, E0 = E> {
      * Supprime les champs demandés du FormNode.
      * @param fields Les champs à supprimer.
      */
-    remove<F extends FieldsOf<E> | ObjectsOf<E> | ListsOf<E>>(...fields: F[]): FormNodeBuilder<Omit<E, F>, E0> {
+    remove<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Omit<E, F>, E0> {
         fields.forEach(field => delete this.node[field]);
         // @ts-ignore
         return this;
@@ -192,7 +192,7 @@ export class FormNodeBuilder<E, E0 = E> {
      * Supprime tous les champs du FormNode, sauf ceux demandés.
      * @param fields Les champs à garder.
      */
-    removeAllBut<F extends FieldsOf<E> | ObjectsOf<E> | ListsOf<E>>(...fields: F[]): FormNodeBuilder<Pick<E, F>, E0> {
+    removeAllBut<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Pick<E, F>, E0> {
         for (const key in this.node) {
             if (!fields.includes(key as F) && !["clear", "replace", "set"].includes(key)) {
                 delete this.node[key as F];

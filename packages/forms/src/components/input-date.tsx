@@ -26,7 +26,7 @@ export interface InputDateProps {
     /** Format de la date dans l'input. */
     inputFormat?: string;
     /** Props de l'input. */
-    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onKeyDown" | "onFocus" | "type" | "value">;
+    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onFocus" | "onKeyDown" | "type" | "value">;
     /**
      * Définit la correspondance entre une date et l'ISOString (date/heure) associé.
      *
@@ -46,7 +46,7 @@ export interface InputDateProps {
      *
      * Par défaut "utc-midnight".
      */
-    ISOStringFormat?: "utc-midnight" | "local-midnight" | "local-utc-midnight" | "date-only";
+    ISOStringFormat?: "date-only" | "local-midnight" | "local-utc-midnight" | "utc-midnight";
     /** Appelé lorsque la date change. */
     onChange: (date: string | undefined) => void;
     /**
@@ -82,7 +82,7 @@ export class InputDate extends Component<InputDateProps> {
     @observable protected calendarDisplay = "months" as "months" | "years";
 
     /** Position du calendrier. */
-    @observable protected calendarPosition?: "up" | "down";
+    @observable protected calendarPosition?: "down" | "up";
 
     constructor(props: InputDateProps) {
         super(props);

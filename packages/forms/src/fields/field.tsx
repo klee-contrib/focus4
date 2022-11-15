@@ -33,7 +33,7 @@ export interface FieldOptions<F extends FieldEntry> {
     i18nPrefix?: string;
     /** @internal */
     /** L'input à utiliser. */
-    inputType?: "input" | "select" | "autocomplete";
+    inputType?: "autocomplete" | "input" | "select";
     /** Largeur en % du label. Par défaut : 33. */
     labelRatio?: number;
     /** N'affiche jamais le champ en erreur. */
@@ -50,7 +50,7 @@ export interface FieldOptions<F extends FieldEntry> {
 let nameMap: [string, string][] = [];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-export function Field<F extends FieldEntry>(props: {field: EntityField<F>} & FieldOptions<F> & FieldComponents) {
+export function Field<F extends FieldEntry>(props: FieldComponents & FieldOptions<F> & {field: EntityField<F>}) {
     const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
 
     const context = useContext(FormContext);

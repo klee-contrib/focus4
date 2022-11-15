@@ -6,7 +6,7 @@ export {ViewStore};
 
 export interface RouterConfig<E = "error"> {
     /** Mode du routeur. Par défaut: "hash" */
-    routerMode?: "hash" | "browser";
+    routerMode?: "browser" | "hash";
     /** Nom du préfixe pour la page d'erreur. Par défaut : "error" */
     errorPageName?: E;
     /** Nom du code pour une page non trouvée. Par défaut : "notfound" */

@@ -10,7 +10,7 @@ import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
 export {selectRadioCss, SelectRadioCss};
 
 /** Props du SelectRadio. */
-export interface SelectRadioProps<T extends "string" | "number"> {
+export interface SelectRadioProps<T extends "number" | "string"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -30,7 +30,7 @@ export interface SelectRadioProps<T extends "string" | "number"> {
     /** Libellé du cas vide. */
     undefinedLabel?: string;
     /** Position du cas vide. Par défaut : "bottom". */
-    undefinedPosition?: "top" | "bottom";
+    undefinedPosition?: "bottom" | "top";
     /** Valeur. */
     value: (T extends "string" ? string : number) | undefined;
     /** Liste des valeurs. */
@@ -38,7 +38,7 @@ export interface SelectRadioProps<T extends "string" | "number"> {
 }
 
 /** RadioSelect component */
-export function SelectRadio<T extends "string" | "number">({
+export function SelectRadio<T extends "number" | "string">({
     disabled = false,
     error,
     label,

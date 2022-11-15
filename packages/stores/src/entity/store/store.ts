@@ -64,7 +64,7 @@ export function makeEntityStore<C extends Record<string, any>>(config: C): Store
  */
 export function buildNode<E>(entity: E[]): StoreListNode<E>;
 export function buildNode<E>(entity: E): StoreNode<E>;
-export function buildNode<E>(entity: E | E[]): StoreNode<E> | StoreListNode<E> {
+export function buildNode<E>(entity: E | E[]): StoreListNode<E> | StoreNode<E> {
     // Cas d'un noeud de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
     if (isArray(entity)) {
         const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<E>;
@@ -83,7 +83,7 @@ export function buildNode<E>(entity: E | E[]): StoreNode<E> | StoreListNode<E> {
 
     // Cas d'un noeud simple : On parcourt tous les champs de l'entité.
     return {
-        ...mapValues(entity as any, (field: FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry) => {
+        ...mapValues(entity as any, (field: FieldEntry | ListEntry | ObjectEntry | RecursiveListEntry) => {
             switch (field.type) {
                 case "list":
                     return buildNode([field.entity]);
@@ -121,7 +121,7 @@ export function getNodeForList<E>(list: StoreListNode<E>, item: EntityToType<E> 
 }
 
 /** `load` par défaut d'un StoreNode : appelle `clear` */
-export async function defaultLoad(this: StoreNode | StoreListNode) {
+export async function defaultLoad(this: StoreListNode | StoreNode) {
     this.clear();
 }
 
@@ -130,7 +130,7 @@ export async function defaultLoad(this: StoreNode | StoreListNode) {
  */
 export function clearNode<E>(this: StoreNode<E>): StoreNode<E>;
 export function clearNode<E>(this: StoreListNode<E>): StoreListNode<E>;
-export function clearNode<E>(this: StoreNode<E> | StoreListNode<E>) {
+export function clearNode<E>(this: StoreListNode<E> | StoreNode<E>) {
     runInAction(() => {
         // Cas du noeud de liste : On vide simplement la liste.
         if (isStoreListNode(this)) {
@@ -164,9 +164,9 @@ export function clearNode<E>(this: StoreNode<E> | StoreListNode<E>) {
 export function replaceNode<E>(this: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
 export function replaceNode<E>(this: StoreListNode<E>, value: EntityToType<E>[] | StoreListNode<E>): StoreListNode<E>;
 export function replaceNode<E>(
-    this: StoreNode<E> | StoreListNode<E>,
-    value: EntityToType<E> | EntityToType<E>[] | StoreNode<E> | StoreListNode<E>
-): StoreNode<E> | StoreListNode<E> {
+    this: StoreListNode<E> | StoreNode<E>,
+    value: EntityToType<E> | EntityToType<E>[] | StoreListNode<E> | StoreNode<E>
+): StoreListNode<E> | StoreNode<E> {
     runInAction(() => {
         if (isStoreListNode<E>(this) && (isArray(value) || isObservableArray(value))) {
             // On remplace la liste existante par une nouvelle liste de noeuds construit à partir de `value`.
@@ -208,9 +208,9 @@ export function replaceNode<E>(
 export function setNode<E>(this: StoreNode<E>, value: EntityToType<E> | StoreNode<E>): StoreNode<E>;
 export function setNode<E>(this: StoreListNode<E>, value: EntityToType<E>[] | StoreListNode<E>): StoreListNode<E>;
 export function setNode<E>(
-    this: StoreNode<E> | StoreListNode<E>,
-    value: EntityToType<E> | EntityToType<E>[] | StoreNode<E> | StoreListNode<E>
-): StoreNode<E> | StoreListNode<E> {
+    this: StoreListNode<E> | StoreNode<E>,
+    value: EntityToType<E> | EntityToType<E>[] | StoreListNode<E> | StoreNode<E>
+): StoreListNode<E> | StoreNode<E> {
     runInAction(() => {
         if (isStoreListNode<E>(this) && (isArray(value) || isObservableArray(value))) {
             // On va appeler récursivement `setNode` sur tous les éléments de la liste.

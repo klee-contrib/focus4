@@ -26,7 +26,7 @@ export function isEntityField(data: any): data is EntityField {
     return data && !!(data as EntityField).$field;
 }
 
-export function isAnyStoreNode<E = any>(data: any): data is StoreNode<E> | StoreListNode<E> {
+export function isAnyStoreNode<E = any>(data: any): data is StoreListNode<E> | StoreNode<E> {
     return isStoreNode(data) || isStoreListNode(data);
 }
 
@@ -38,7 +38,7 @@ export function isStoreNode<E = any>(data: any): data is StoreNode<E> {
     return data && !!(data as StoreNode).set && !!(data as StoreNode).clear;
 }
 
-export function isAnyFormNode<E = any>(data: any): data is FormNode<E> | FormListNode<E> {
+export function isAnyFormNode<E = any>(data: any): data is FormListNode<E> | FormNode<E> {
     return data && !!(data as FormNode).form;
 }
 

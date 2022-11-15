@@ -26,7 +26,7 @@ export interface ProgressBarProps {
     /** Classnames object defining the component style. */
     theme?: CSSProp<ProgressBarCss>;
     /** Type of the progress bar, it can be circular or linear. */
-    type?: "linear" | "circular";
+    type?: "circular" | "linear";
     /** Value of the current progress. */
     value?: number;
 }

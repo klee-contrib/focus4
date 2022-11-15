@@ -17,7 +17,7 @@ import {BaseComponents, WithThemeProps} from "../types/components";
 import {EntityFieldBuilder} from "./builder";
 
 interface ReadonlyFieldOptions<
-    DT extends "string" | "number" | "boolean" | "object" = "string",
+    DT extends "boolean" | "number" | "object" | "string" = "string",
     T extends DomainType<DT> = DomainType<DT>,
     DCDProps extends BaseDisplayProps = BaseDisplayProps,
     LCDProps extends BaseLabelProps = BaseLabelProps,
@@ -59,7 +59,7 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: 
  * @param builder Builder pour spécifier le domaine et les métadonnées.
  */
 export function fromField<
-    DT extends "string" | "number" | "boolean" | "object" = "string",
+    DT extends "boolean" | "number" | "object" | "string" = "string",
     T extends DomainType<DT> = DomainType<DT>,
     DCDProps extends BaseDisplayProps = BaseDisplayProps,
     LCDProps extends BaseLabelProps = BaseLabelProps,
@@ -103,7 +103,7 @@ export function fromField<
  * @param options Options (domain, formatter, libellé)
  */
 export function makeField<
-    DT extends "string" | "number" | "boolean" | "object" = "string",
+    DT extends "boolean" | "number" | "object" | "string" = "string",
     T extends DomainType<DT> = DomainType<DT>,
     DCDProps extends BaseDisplayProps = BaseDisplayProps,
     LCDProps extends BaseLabelProps = BaseLabelProps,

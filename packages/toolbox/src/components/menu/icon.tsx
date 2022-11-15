@@ -26,7 +26,7 @@ export interface IconMenuProps {
     /** Transferred to the Menu component. */
     menuRipple?: boolean;
     /** Callback that will be called when the menu is being clicked. */
-    onClick?: MouseEventHandler<HTMLLinkElement | HTMLButtonElement>;
+    onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Callback that will be called when the menu is being hidden. */
     onHide?: () => void;
     /** Callback that will be invoked when a menu item is selected. */
@@ -34,7 +34,7 @@ export interface IconMenuProps {
     /** Callback that will be invoked when the menu is being shown. */
     onShow?: () => void;
     /** Determines the position of the menu. This property is transferred to the inner Menu component. */
-    position?: "auto" | "static" | "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
+    position?: "auto" | "bottomLeft" | "bottomRight" | "static" | "topLeft" | "topRight";
     /** If true, the menu will keep a value to highlight the active child item. */
     selectable?: boolean;
     /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
@@ -66,7 +66,7 @@ export function IconMenu({
     useEffect(() => setActive(pActive), [pActive]);
 
     const clickHandler = useCallback(
-        (e: MouseEvent<HTMLLinkElement | HTMLButtonElement>) => {
+        (e: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
             e.stopPropagation();
             setActive(o => !o);
             onClick?.(e);

@@ -32,7 +32,7 @@ export function webpackConfigWithDefaults(
         /** Dossier cible. */
         outputDir: string;
         /** Plugins additionnels. Inclus par défaut : "ForkTsCheckerWebpackPlugin" et "LimitChunkCountPlugin". */
-        plugins?: (((this: Compiler, compiler: Compiler) => void) | WebpackPluginInstance)[];
+        plugins?: (WebpackPluginInstance | ((this: Compiler, compiler: Compiler) => void))[];
         /** __dirname */
         rootDir: string;
         /** Règles additionnelle. Inclus par défaut : tsx?, css et (png|jpg|gif|svg|woff2?|ttf|eot). */

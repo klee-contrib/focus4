@@ -27,7 +27,7 @@ export interface PopinProps {
     /** CSS. */
     theme?: CSSProp<PopinCss>;
     /** Type de popin. Par défaut : "from-right" */
-    type?: "from-right" | "from-left";
+    type?: "from-left" | "from-right";
 }
 
 /** Affiche son contenu dans une popin, dont l'ouverture est contrôlée par ses props. */

@@ -50,7 +50,7 @@ export function makeFormNode<E, NE = E>(
 ): FormListNode<NE, E>;
 export function makeFormNode(
     componentClass: Component | null,
-    node: StoreNode | StoreListNode,
+    node: StoreListNode | StoreNode,
     builder: (x: any) => any = (x: any) => x,
     initialData?: any
 ): any {
@@ -97,7 +97,7 @@ export function useFormNode<E, NE = E>(
     initialData?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE, E>;
 export function useFormNode(
-    node: StoreNode | StoreListNode,
+    node: StoreListNode | StoreNode,
     builder: (x: any) => any = (x: any) => x,
     initialData: any = undefined
 ) {
@@ -128,7 +128,7 @@ export function useFormNode(
  * @param builder Le configurateur.
  */
 export function makeFormActions<
-    FN extends FormNode | FormListNode,
+    FN extends FormListNode | FormNode,
     A extends readonly any[] = never,
     S extends string = never
 >(
@@ -146,7 +146,7 @@ export function makeFormActions<
  * @param builder Le configurateur.
  */
 export function useFormActions<
-    FN extends FormNode | FormListNode,
+    FN extends FormListNode | FormNode,
     A extends readonly any[] = never,
     S extends string = never
 >(node: FN, builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, S>) {
