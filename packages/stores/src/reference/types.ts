@@ -1,6 +1,3 @@
-/** Description du service de chargement de listes de référence. */
-export type ReferenceLoader = (refName: string) => Promise<{}[]>;
-
 /** Définition d'un type de référence. */
 export interface ReferenceDefinition<T = any, VK extends keyof T = any, LK extends keyof T = any> {
     /** Propriété représentant le libellé. */

@@ -58,7 +58,6 @@ export {
     AsList,
     ReferenceDefinition,
     ReferenceList,
-    ReferenceLoader,
     emptyReferenceList,
     makeReferenceList,
     makeReferenceStore

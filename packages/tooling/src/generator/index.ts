@@ -8,12 +8,15 @@ import {camelCase, sortBy, upperFirst} from "lodash";
 export async function generateCSSTypings(rootDir: string) {
     const cssLoader = new Core();
     const root = path.join(process.cwd(), rootDir).replace(/\\/g, "/");
-    const files = glob.sync(`${root}/**/*.css`).map(file => {
+    const pattern = `${root}/**/*.css`;
+    console.info(`Recherche des fichiers dans ${pattern}...`);
+    const files = glob.sync(pattern).map(file => {
         const parts = file.split("/");
         const fileName = parts[parts.length - 1];
         const interfaceName = camelCase(fileName.substring(0, fileName.length - 4));
         return {file, interfaceName};
     });
+    console.info(`${files.length} fichiers trouvés.`);
     await Promise.all(
         files.map(async ({file, interfaceName}) => {
             const content = await fs.readFile(file);

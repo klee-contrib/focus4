@@ -3,7 +3,7 @@ import {action, extendObservable, observable} from "mobx";
 
 import {config} from "@focus4/core";
 
-import {AsList, ReferenceDefinition, ReferenceLoader} from "./types";
+import {AsList, ReferenceDefinition} from "./types";
 import {filter, getLabel} from "./util";
 
 /**
@@ -13,8 +13,9 @@ import {filter, getLabel} from "./util";
  * @param refConfig Un objet dont les propriétés représentent les noms des listes de référence. Le type de chaque objet ne doit pas contenir la liste.
  */
 export function makeReferenceStore<T extends Record<string, ReferenceDefinition>>(
-    referenceLoader: ReferenceLoader,
-    refConfig: T
+    referenceLoader: (refName: string) => Promise<{}[]>,
+    refConfig: T,
+    referenceClearer?: (refName?: string) => Promise<void>
 ): AsList<T> & {
     /**
      * Recharge une liste ou le store.
@@ -64,8 +65,10 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
 
     referenceStore.reload = (refName?: string & keyof T) => {
         if (refName) {
+            referenceClearer?.(refName);
             referenceStore[`_${refName}_cache`] = undefined;
         } else {
+            referenceClearer?.();
             for (const ref in refConfig) {
                 referenceStore[`_${ref}_cache`] = undefined;
             }
