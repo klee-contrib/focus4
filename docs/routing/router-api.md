@@ -126,4 +126,35 @@ echRouter.state.reglement.regId = 1;
 
 Si on remonte à la description initiale du routeur, on peut voir que la section `"echeance"` a initialement été décrite via un objet séparé `echeance`. Cela nous permet donc de typer simplement notre sous-routeur via le type **`Router<typeof echeance>`**, qui est un type simple à manipuler, et qui peut être utilisé comme une `prop` du composant racine du "module" échéance. Par conséquent, il est facile de retrouver l'indépendance des différents "modules" malgré le routeur commun : chaque module décrit sa section de routeur, son composant racine attend un routeur du type de la section dans ses `props`, et le tout est assemblé à la racine de l'application.
 
-_Remarque : l'objet `state` d'un sous-routeur qui se termine sur un paramètre (par exemple `router.sub(x => x("operation")("ofaId"))`) contient bien le paramètre (`ofaId`) dans son `state`, mais il n'y est pas dans le type du routeur (`Router<typeof operation>`, en supposant que `operation` est la définition des sous-routes). Il sera donc nécessaire de compléter le type à la main avec quelque chose du genre `& {state: {ofaId: number}}` pour pouvoir l'utiliser._
+### Cas particulier du sous-routeur sur un paramètre
+
+Prenons une définition simplifiée du routeur précédent et créons deux sous-routeurs :
+
+```ts
+const operation = {echeance: param("echId", p => p.number())};
+
+const operations = param("ofaId", p => p.number(), operation);
+
+const router = makeRouter({operations});
+
+const operationsRouter = router.sub(x => x("operations"));
+const operationRouter = router.sub(x => x("operations")("ofaId"));
+```
+
+Le deuxième sous-routeur (celui sur `/operations/:ofaId`) est clairement le plus utile des deux, car il pourra être utilisé comme routeur sur une page de détail, là où le premier devra respécifier l'ID de l'opération à chaque navigation.
+
+Dans le premier routeur, on a bien accès "naturellement" à la valeur de `ofaId` puisque le paramètre est bien présent dans ses routes. Pour le deuxième, le paramètre `ofaId` n'est pas dans les routes, **mais la méthode `sub` l'ajoute quand même dans son `state`**.
+
+Cela veut dire qu'on a bien accès à `ofaId` dans les deux routeurs de la même façon :
+
+```ts
+operationsRouter.state.ofaId;
+operationRouter.state.ofaId;
+```
+
+Puisqu'il n'est pas présent dans la définition de `operation`, il faut l'ajouter manuellement dans le type du sous-routeur si on veut l'utiliser par la suite :
+
+```ts
+type OperationsRouter = Router<typeof operations>;
+type OperationRouter = Router<typeof operation> & {state: {ofaId: number}};
+```
