@@ -21,7 +21,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
      * Recharge une liste ou le store.
      * @param refName L'éventuelle liste demandée.
      */
-    reload(refName?: keyof T): void;
+    reload(refName?: keyof T): Promise<void>;
 } {
     const referenceStore: any = {};
     for (const ref in refConfig) {
@@ -63,12 +63,16 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
         });
     }
 
-    referenceStore.reload = (refName?: string & keyof T) => {
+    referenceStore.reload = async (refName?: string & keyof T) => {
         if (refName) {
-            referenceClearer?.(refName);
+            if (referenceClearer) {
+                await referenceClearer(refName);
+            }
             referenceStore[`_${refName}_cache`] = undefined;
         } else {
-            referenceClearer?.();
+            if (referenceClearer) {
+                await referenceClearer();
+            }
             for (const ref in refConfig) {
                 referenceStore[`_${ref}_cache`] = undefined;
             }
