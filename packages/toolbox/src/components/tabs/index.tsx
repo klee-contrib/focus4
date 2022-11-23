@@ -133,6 +133,10 @@ export function Tabs({
         const contents: ReactElement<TabContentProps>[] = [];
 
         Children.forEach(children, item => {
+            if (!item) {
+                return;
+            }
+
             const tab = item as ReactElement<TabProps>;
             const tabContent = item as ReactElement<TabContentProps>;
             if (tab.type === Tab) {

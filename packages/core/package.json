@@ -18,7 +18,7 @@
         "@types/lodash": "4.14.189",
         "@types/react": "17.0.44",
         "@types/uuid": "8.3.4",
-        "i18next": "22.0.5",
+        "i18next": "22.0.6",
         "lodash": "4.17.21",
         "mobx": "6.7.0",
         "mobx-utils": "6.0.5",
