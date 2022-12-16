@@ -66,10 +66,11 @@ export type ListProps<T> = ListBaseProps<T> & {
     /** CSS. */
     theme?: CSSProp<ListCss>;
 } & (
-        {
+        | {
               /** Le store contenant la liste. */
               store: CollectionStore<T>;
-          } | {
+          }
+        | {
               /** Les données du tableau. */
               data: T[];
           }
@@ -230,7 +231,7 @@ export function List<T>({
                     }
                 />
                 {DetailComponent ? (
-                    <AnimatePresence exitBeforeEnter>
+                    <AnimatePresence mode="wait">
                         {state.displayedIdx !== undefined && idx === detailIdx ? (
                             <DetailWrapper
                                 key={`detail-${state.displayedIdx}`}

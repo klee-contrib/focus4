@@ -234,7 +234,7 @@ export function clone(source: any): any {
                 $field: source.$field
             },
             {
-                value: undefined
+                value: source.$field.defaultValue
             },
             {
                 value: observable.ref

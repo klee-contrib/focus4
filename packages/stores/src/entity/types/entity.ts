@@ -72,6 +72,9 @@ export interface FieldEntry<
 
     /** Commentaire de l'entrée */
     readonly comment?: ReactNode;
+
+    /** Valeur par défaut du champ dans un formulaire. */
+    readonly defaultValue?: T;
 }
 
 export type FieldEntry2<D extends Domain, T extends DomainType<D["type"]> = DomainType<D["type"]>> = D extends Domain<

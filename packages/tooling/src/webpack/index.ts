@@ -53,11 +53,7 @@ export function webpackConfigWithDefaults(
                 assetModuleFilename: "[name][ext]"
             },
             resolve: {
-                extensions: [".js", ".ts", ".tsx"],
-                alias: {
-                    "react/jsx-runtime": "react/jsx-runtime.js",
-                    "react/jsx-dev-runtime": "react/jsx-dev-runtime.js"
-                }
+                extensions: [".js", ".ts", ".tsx"]
             },
             plugins: [new ForkTsCheckerWebpackPlugin(), new optimize.LimitChunkCountPlugin({maxChunks: 1}), ...plugins],
             target: "web",
