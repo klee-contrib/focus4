@@ -377,13 +377,13 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
         if (multiple) {
             const selectedItems = toPairs(suggestions).map(([key, val]) => (
                 <Chip key={key} className={theme.value()} deletable onDeleteClick={(e: any) => unselect(key, e)}>
-                    {val}
+                    {getLabel(val)}
                 </Chip>
             ));
 
             return <ul className={theme.values()}>{selectedItems}</ul>;
         }
-    }, [multiple, unselect, theme, values]);
+    }, [getLabel, multiple, unselect, theme, values]);
 
     const suggestionList = useMemo(() => {
         const list = toPairs(suggestions).map(([key, val]) => ({key, val}));

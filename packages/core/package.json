@@ -15,10 +15,10 @@
         "start": "rollup -cw --bundleConfigAsCjs --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@types/lodash": "4.14.189",
+        "@types/lodash": "4.14.191",
         "@types/react": "17.0.44",
-        "@types/uuid": "8.3.4",
-        "i18next": "22.0.6",
+        "@types/uuid": "9.0.0",
+        "i18next": "22.4.5",
         "lodash": "4.17.21",
         "mobx": "6.7.0",
         "mobx-utils": "6.0.5",
