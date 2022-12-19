@@ -82,7 +82,7 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
             });
         }
         return () => {
-            this.panels.get(name)!.disposer();
+            this.panels.get(name)?.disposer();
             this.panels.delete(name);
         };
     }
