@@ -24,7 +24,7 @@
         "@rollup/plugin-typescript": "10.0.1",
         "lerna": "6.1.0",
         "postcss": "8.4.20",
-        "rollup": "3.7.4",
+        "rollup": "3.7.5",
         "rollup-plugin-copy-glob": "0.3.2",
         "rollup-plugin-postcss": "4.0.2",
         "rollup-plugin-preserve-shebang": "1.0.1",
