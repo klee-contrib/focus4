@@ -1,7 +1,9 @@
 :root {
     --main-menu-background: rgb(var(--color-white));
     --main-menu-item-active-background: rgba(var(--color-black), 0.15);
+    --main-menu-item-opened-background: rgba(var(--color-black), 0.1);
     --main-menu-item-active-color: rgb(var(--color-primary));
+    --main-menu-item-opened-color: rgb(var(--color-accent));
     --main-menu-item-color: rgb(var(--color-black));
     --main-menu-item-height: 60px;
 }
@@ -65,5 +67,17 @@
     & .toggle,
     & .toggle.toggle--neutral {
         color: var(--main-menu-item-active-color);
+    }
+}
+
+.item--opened {
+    background: var(--main-menu-item-opened-background);
+
+    & > .icon,
+    & > .button,
+    & > .button.button--neutral,
+    & > .toggle,
+    & > .toggle.toggle--neutral {
+        color: var(--main-menu-item-opened-color);
     }
 }

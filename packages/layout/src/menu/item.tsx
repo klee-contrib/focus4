@@ -58,7 +58,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
 
     return useObserver(() => (
         <>
-            <li ref={li} className={theme.item({active: route === context.activeRoute})}>
+            <li ref={li} className={theme.item({active: route === context.activeRoute, opened: state.hasSubMenu})}>
                 {label ? (
                     <Button
                         {...otherProps}
