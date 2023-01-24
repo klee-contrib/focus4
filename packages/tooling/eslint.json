@@ -319,6 +319,7 @@
         "react/no-array-index-key": "off",
         "react/no-deprecated": "off",
         "react/no-multi-comp": "off",
+        "react/no-object-type-as-default-prop": "off",
         "react/no-set-state": "off",
         "react/no-unescaped-entities": "off",
         "react/no-unsafe": "off",

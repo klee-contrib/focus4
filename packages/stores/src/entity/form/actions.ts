@@ -168,6 +168,7 @@ export class FormActionsBuilder<
                             if (isStoreNode(formNode.sourceNode)) {
                                 formNode.sourceNode.replace(data);
                             } else {
+                                formNode.clear();
                                 formNode.sourceNode.replaceNodes(data);
                             }
                         }
