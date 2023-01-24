@@ -436,6 +436,8 @@ describe("FormListNode: Modification", () => {
 
     function step3() {
         const {entry2, formNode2} = step2();
+        entry2.ligneList[1].id.value = 77;
+        entry2.ligneList[2].id.value = 99;
         formNode2.ligneList.pushNode({id: 10, label: "salut"});
         entry2.ligneList.pushNode({id: 11}, {id: 12});
         return {entry2, formNode2};
@@ -445,8 +447,8 @@ describe("FormListNode: Modification", () => {
         const {formNode2} = step3();
         expect(toFlatValues(formNode2.ligneList, true)).toEqual([
             {id: 5, label: "label"},
-            {id: 7, label: "label"},
-            {id: 9, label: "yolo"},
+            {id: 77, label: "label"},
+            {id: 99, label: "yolo"},
             {id: 11, label: "salut"},
             {id: 12, label: "label"}
         ]);
@@ -454,6 +456,8 @@ describe("FormListNode: Modification", () => {
 
     function step4() {
         const {entry2, formNode2} = step3();
+        entry2.ligneList[1].id.value = 7;
+        entry2.ligneList[2].id.value = 9;
         formNode2.ligneList.splice(1, 1);
         entry2.ligneList.pushNode({id: 13});
         return {entry2, formNode2};

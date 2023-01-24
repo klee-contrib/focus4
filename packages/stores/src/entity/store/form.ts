@@ -9,6 +9,7 @@ import {
     isAnyFormNode,
     isAnyStoreNode,
     isEntityField,
+    isFormEntityField,
     isFormListNode,
     isFormNode,
     StoreListNode,
@@ -109,7 +110,7 @@ export function nodeToFormNode<E = any, E0 = E>(
                     if (!isReplace && unmatchedItems.length >= unlinkedItems.length) {
                         for (let i = 0; i < unlinkedItems.length; i++) {
                             setNode.call(unlinkedItems[i] as any, unmatchedItems[i] as any);
-                            (unlinkedItems[i] as any).sourceNode = unmatchedItems[i];
+                            setSourceNode(unlinkedItems[i], unmatchedItems[i]);
                             change.added = change.added.filter(a => a !== unmatchedItems[i]);
                             change.index++;
                         }
@@ -245,6 +246,24 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
                 }
                 return change;
             });
+        }
+    }
+}
+
+function setSourceNode(node: FormListNode | FormNode, sourceNode: StoreListNode | StoreNode) {
+    if (sourceNode && node !== sourceNode) {
+        (node as any).sourceNode = sourceNode;
+        for (const key in node) {
+            const item = (node as any)[key];
+            const sourceItem = (sourceNode as any)[key];
+            if (isAnyFormNode(item) && isAnyStoreNode(item)) {
+                setSourceNode(item, sourceItem);
+            } else if (isFormEntityField(item) && isEntityField(sourceItem)) {
+                item._dispose = intercept(sourceItem, "value", change => {
+                    item.value = change.newValue;
+                    return change;
+                });
+            }
         }
     }
 }
