@@ -100,11 +100,26 @@ export function nodeToFormNode<E = any, E0 = E>(
                 }
 
                 if (change.type === "splice") {
+                    const isReplace = change.addedCount === change.removedCount;
+
+                    // Si on a exactement autant d'élément sources non existants dans la source et d'éléments cibles non liés à un élément de la source, alors on les lies (dans le même ordre).
+                    const unmatchedItems = node.sourceNode.filter(item => !node.find(ni => ni.sourceNode === item));
+                    const unlinkedItems = node.filter(item => !node.sourceNode.find(ni => ni === item.sourceNode));
+
+                    if (!isReplace && unmatchedItems.length >= unlinkedItems.length) {
+                        for (let i = 0; i < unlinkedItems.length; i++) {
+                            setNode.call(unlinkedItems[i] as any, unmatchedItems[i] as any);
+                            (unlinkedItems[i] as any).sourceNode = unmatchedItems[i];
+                            change.added = change.added.filter(a => a !== unmatchedItems[i]);
+                            change.index++;
+                        }
+                    }
+
                     // On construit les nouveaux noeuds à ajouter au FormListNode.
                     const newNodes = change.added.map(item => getNodeForList(node, item));
 
                     // Cas particulier du replace : on remplace tout comme attendu.
-                    if (change.addedCount === change.removedCount) {
+                    if (isReplace) {
                         node.replace(newNodes as any);
                         return;
                     }

@@ -20,6 +20,10 @@ export type EntityToForm<E, E0 = E> = {
 export type FormNode<E = any, E0 = E> = EntityToForm<E, E0> & {
     /** Données liée à un FormNode. */
     readonly form: {
+        /** @internal */
+        /** Données initiales du formulaire. */
+        _initialData?: EntityToType<E>;
+
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
@@ -58,6 +62,10 @@ export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode
 
     /** Données liée à un FormNode. */
     readonly form: {
+        /** @internal */
+        /** Données initiales du formulaire. */
+        _initialData?: EntityToType<E>[];
+
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
@@ -103,6 +111,10 @@ export interface FormEntityField<F extends FieldEntry = FieldEntry> extends Enti
     /** @internal */
     /** Dispose l'interceptor qui met à jour le champ de formulaire si le champ source est modifié. */
     _dispose?: Lambda;
+
+    /** @internal */
+    /** Détermine si le champ a été ajouté dans le formulaire. */
+    _added?: boolean;
 
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error: string | undefined;

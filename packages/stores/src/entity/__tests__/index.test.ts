@@ -28,11 +28,12 @@ function getStore() {
 function getFormNodes() {
     const entry = getStore().operation;
     const entry2 = getStore().projetTest;
-    const formNode = new FormNodeBuilder(entry).build();
+    const formNode = new FormNodeBuilder(entry).patch("montant", f => f.metadata({label: "montant"})).build();
     const setter = jest.fn();
     const formNode2 = new FormNodeBuilder(entry2)
         .add("test", f => f)
         .add("test2", f => f.value(() => "2", setter))
+        .patch("ligneList", l => l.items(i => i.add("label", f => f.value<string>("label"))))
         .build();
     return {entry, entry2, formNode, formNode2, setter};
 }
@@ -312,6 +313,16 @@ describe("FormNode: Ajout de champs.", () => {
         test("Le setter du champ custom n'a pas été appelé", () => expect(setter).toBeCalledTimes(0));
         test("Un champ ajouté n'est pas remonté dans toFlatValues.", () =>
             expect(toFlatValues(formNode2)).toEqual(toFlatValues(entry2)));
+        test("Un champ ajouté est remonté dans toFlatValues avec includeAddedFields.", () =>
+            expect(toFlatValues(formNode2, true)).toEqual({
+                ligneList: [
+                    {id: 5, label: "label"},
+                    {id: 6, label: "label"},
+                    {id: 7, label: "label"}
+                ],
+                test: "yolo",
+                test2: "2"
+            }));
     });
 
     describe("replace sur formNode", () => {
@@ -409,49 +420,60 @@ describe("FormListNode: Modification", () => {
 
     function step2() {
         const {entry2, formNode2} = step1();
+        formNode2.ligneList[2].label.value = "yolo";
         entry2.ligneList.pushNode({id: 9});
         return {entry2, formNode2};
     }
 
-    test("Un élément ajouté dans un StoreListNode se retoruve dans le FormListNode avant tout élément ajouté dans ce dernier.", () => {
+    test("Un élément ajouté dans un StoreListNode est fusionné avec l'élément en plus du FormListNode.", () => {
         const {formNode2} = step2();
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 7}, {id: 9}, {id: 8}]);
+        expect(toFlatValues(formNode2.ligneList, true)).toEqual([
+            {id: 5, label: "label"},
+            {id: 7, label: "label"},
+            {id: 9, label: "yolo"}
+        ]);
     });
 
     function step3() {
         const {entry2, formNode2} = step2();
-        formNode2.ligneList.splice(1, 1);
-        entry2.ligneList.pushNode({id: 10});
+        formNode2.ligneList.pushNode({id: 10, label: "salut"});
+        entry2.ligneList.pushNode({id: 11}, {id: 12});
         return {entry2, formNode2};
     }
 
-    test("Y compris si le FormListNode a retiré un élément au milieu avant.", () => {
+    test("Et si on en ajoute 2, le premier est fusionné et le deuxième ajouté.", () => {
         const {formNode2} = step3();
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 9}, {id: 10}, {id: 8}]);
+        expect(toFlatValues(formNode2.ligneList, true)).toEqual([
+            {id: 5, label: "label"},
+            {id: 7, label: "label"},
+            {id: 9, label: "yolo"},
+            {id: 11, label: "salut"},
+            {id: 12, label: "label"}
+        ]);
     });
 
     function step4() {
         const {entry2, formNode2} = step3();
-        formNode2.ligneList.splice(2, 1);
-        entry2.ligneList.pushNode({id: 11});
+        formNode2.ligneList.splice(1, 1);
+        entry2.ligneList.pushNode({id: 13});
         return {entry2, formNode2};
     }
 
-    test("Plus dur : l'élément à partir du quel j'ai ajouté dans le StoreListNode manque dans le FormListNode.", () => {
+    test("Si le FormListNode retire un élément, un élément ajouté dans le StoreListNode se retrouve bien à la fin.", () => {
         const {formNode2} = step4();
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 9}, {id: 11}, {id: 8}]);
+        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 9}, {id: 11}, {id: 12}, {id: 13}]);
     });
 
     function step5() {
         const {entry2, formNode2} = step4();
-        formNode2.ligneList.splice(0, 1);
+        formNode2.ligneList.pushNode({id: 14});
         entry2.replace(projetTest);
         return {entry2, formNode2};
     }
 
     test("Et si je reset ma liste initiale : je la retrouve dans le FormNode suivie des éléments qui y on été ajoutés.", () => {
         const {formNode2} = step5();
-        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 6}, {id: 7}, {id: 8}]);
+        expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 6}, {id: 7}, {id: 14}]);
     });
 
     function step6() {

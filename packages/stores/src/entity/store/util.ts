@@ -37,12 +37,7 @@ export function toFlatValues<SN extends FormListNode | FormNode | StoreListNode 
                 } else if (isStoreNode(item)) {
                     // Cas entrée simple -> `toFlatValues`.
                     return toFlatValues(item, includeAddedFields);
-                } else if (
-                    isEntityField(item) &&
-                    (includeAddedFields ||
-                        !isFormEntityField(item) ||
-                        (storeNode as FormNode).sourceNode[item.$field.name])
-                ) {
+                } else if (isEntityField(item) && (includeAddedFields || !isFormEntityField(item) || !item._added)) {
                     /*
                      * Cas du champ : on renvoie la valeur.
                      * Les champs ajoutés (via `add`) dans un FormNode sont ignorés.

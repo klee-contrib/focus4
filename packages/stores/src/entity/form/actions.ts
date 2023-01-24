@@ -4,7 +4,7 @@ import {action, computed, extendObservable, Lambda, observable, runInAction} fro
 import {messageStore} from "@focus4/core";
 
 import {NodeLoadBuilder, registerLoad, toFlatValues} from "../store";
-import {FormListNode, FormNode, isStoreNode, NodeToType} from "../types";
+import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, NodeToType} from "../types";
 
 type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
 
@@ -163,12 +163,29 @@ export class FormActionsBuilder<
                     runInAction(() => {
                         this.isLoading = false;
                         formNode.form.isEdit = false;
+
+                        // On met à jour le _initialData avec les valeurs qu'on avait à la sauvegarde.
+                        function updateInitialData(source: unknown, target: unknown) {
+                            if (isFormNode(source) && target && typeof target === "object") {
+                                for (const key in source) {
+                                    const item = source[key];
+                                    if (key in target) {
+                                        if (isFormEntityField(item)) {
+                                            (target as any)[key] = item.value;
+                                        } else if (isFormNode(item)) {
+                                            updateInitialData(item, (target as any)[key]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        updateInitialData(formNode, formNode.form._initialData);
+
                         if (data) {
                             // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                             if (isStoreNode(formNode.sourceNode)) {
                                 formNode.sourceNode.replace(data);
                             } else {
-                                formNode.clear();
                                 formNode.sourceNode.replaceNodes(data);
                             }
                         }

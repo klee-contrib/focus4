@@ -76,7 +76,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                 domain: {type: "string"},
                 isRequired: false,
                 label: ""
-            } as F
+            } as F,
+            _added: true
         },
         {
             value: undefined
