@@ -1,7 +1,32 @@
+import dns from "dns";
 import {existsSync, promises as fs} from "fs";
 import path from "path";
 
-import {PluginOption, ResolvedConfig} from "vite";
+import nesting from "postcss-nesting";
+import {PluginOption, ResolvedConfig, UserConfigExport} from "vite";
+
+dns.setDefaultResultOrder("verbatim");
+
+export const baseConfig = {
+    build: {
+        chunkSizeWarningLimit: 5000
+    },
+    css: {
+        modules: {
+            generateScopedName(name, filename, css) {
+                return `${path.basename(filename).replace(".module.css", "")}_${name}__${Buffer.from(css)
+                    .toString("base64")
+                    .substring(0, 5)}`;
+            }
+        },
+        postcss: {plugins: [nesting()]}
+    },
+    resolve: {
+        alias: {
+            moment: path.resolve(process.cwd(), "./node_modules/moment/min/moment-with-locales.js")
+        }
+    }
+} satisfies UserConfigExport;
 
 /**
  * Plugin pour que Vite considère tous les fichiers CSS du projet qui matchent la regex en tant que modules CSS (au lieu de ne gérer que les fichiers en `.module.css`).

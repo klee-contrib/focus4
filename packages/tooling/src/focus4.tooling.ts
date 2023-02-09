@@ -3,7 +3,7 @@
 import {generateCSSTypings} from "./generator";
 export {generateCSSTypings};
 
-export {cssAutoModules, ssiVariables} from "./vite";
+export {baseConfig, cssAutoModules, ssiVariables} from "./vite";
 export {webpackConfigWithDefaults} from "./webpack";
 
 if (process.argv?.[1]?.includes("focus4.tooling")) {
