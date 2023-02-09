@@ -1,16 +1,23 @@
-const {animationDelay, animationDuration, animationTimingFunction} = window.getComputedStyle(document.body);
+function get() {
+    const {animationDelay, animationDuration, animationTimingFunction} = window.getComputedStyle(document.body);
 
-export const delay = toMs(animationDelay);
-export const duration = toMs(animationDuration);
-export const ease = animationTimingFunction.startsWith("cubic-bezier")
-    ? animationTimingFunction.substring(13).split(",").map(parseFloat)
-    : undefined;
+    const delay = toMs(animationDelay);
+    const duration = toMs(animationDuration);
+    const ease = animationTimingFunction.startsWith("cubic-bezier")
+        ? animationTimingFunction.substring(13).split(",").map(parseFloat)
+        : undefined;
 
-export const defaultTransition = {
-    delay: delay / 1000,
-    duration: duration / 1000,
-    ease
-} as const;
+    return {delay, duration, ease};
+}
+
+export function getDefaultTransition() {
+    const {delay, duration, ease} = get();
+    return {
+        delay: delay / 1000,
+        duration: duration / 1000,
+        ease
+    } as const;
+}
 
 export const springTransition = {
     type: "spring",
@@ -31,6 +38,7 @@ export function cssTransitionProps({
     exit: string;
     exitActive: string;
 }) {
+    const {delay, duration} = get();
     return {
         timeout: delay + duration,
         classNames: {

@@ -6,10 +6,7 @@ export {
     ScrollableContext,
     ScrollspyContext,
     cssTransitionProps,
-    defaultTransition,
-    delay,
-    duration,
-    ease,
+    getDefaultTransition,
     getIcon,
     springTransition
 } from "./utils";

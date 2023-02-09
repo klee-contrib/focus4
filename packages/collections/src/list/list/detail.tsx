@@ -1,7 +1,7 @@
 import {motion} from "framer-motion";
 import {ComponentType} from "react";
 
-import {defaultTransition, ToBem} from "@focus4/styling";
+import {getDefaultTransition, ToBem} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {ListCss} from "../__style__/list.css";
@@ -45,7 +45,7 @@ export function DetailWrapper<T>({
             className={theme.detailWrapper()}
             exit={{overflow: "hidden", height: 0}}
             initial={{overflow: "hidden", height: 0}}
-            transition={defaultTransition}
+            transition={getDefaultTransition()}
         >
             {/* Le calcul de la position du triangle en mosaïque n'est pas forcément évident...
                         et il suppose qu'on ne touche pas au marges par défaut entre les mosaïques. */}

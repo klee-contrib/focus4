@@ -214,6 +214,7 @@
         "@typescript-eslint/no-dynamic-delete": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/no-import-type-side-effects": "off",
         "@typescript-eslint/no-invalid-void-type": "off",
         "@typescript-eslint/no-magic-numbers": "off",
         "@typescript-eslint/no-misused-promises": "off",

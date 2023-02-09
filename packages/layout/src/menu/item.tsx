@@ -3,7 +3,7 @@ import {action, toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {MouseEvent as RMouseEvent, useCallback, useContext, useEffect, useRef} from "react";
 
-import {CSSProp, defaultTransition, useTheme} from "@focus4/styling";
+import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 import {Button, ButtonCss, ButtonProps, IconButton, IconButtonCss, IconButtonProps, RippleProps} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
@@ -87,7 +87,7 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                             exit="hidden"
                             initial="hidden"
                             style={toJS(state)}
-                            transition={defaultTransition}
+                            transition={getDefaultTransition()}
                             variants={{
                                 visible: {
                                     width: "auto",

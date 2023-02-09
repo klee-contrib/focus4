@@ -6,7 +6,7 @@ import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {CSSProp, defaultTransition, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, getDefaultTransition, getIcon, useTheme} from "@focus4/styling";
 import {Button, ButtonMenu, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
 import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
@@ -249,7 +249,7 @@ export function ActionBar<T>({
                                 animate={{height: "auto"}}
                                 exit={{height: 0}}
                                 initial={{height: 0}}
-                                transition={defaultTransition}
+                                transition={getDefaultTransition()}
                             >
                                 <IconButton
                                     icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
