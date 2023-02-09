@@ -23,10 +23,6 @@ export function registerLoad<SN extends StoreListNode | StoreNode, A extends rea
     node: SN,
     loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>)
 ) {
-    if (isAnyFormNode(node)) {
-        throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
-    }
-
     const {getLoadParams, handlers, loadService} = isFunction(loadBuilder)
         ? loadBuilder(new NodeLoadBuilder())
         : loadBuilder;
@@ -40,6 +36,10 @@ export function registerLoad<SN extends StoreListNode | StoreNode, A extends rea
     );
 
     if (getLoadParams && loadService) {
+        if (isAnyFormNode(node)) {
+            throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
+        }
+
         // eslint-disable-next-line func-style
         const load = async function load() {
             let params = getLoadParams();
