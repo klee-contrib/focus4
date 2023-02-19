@@ -67,18 +67,17 @@ export function Month({
     );
 
     const weeks = useMemo(() => {
-        const dayLabels = range(0, 7).map(d => DateTime.fromFormat(`${d}`, "d").toFormat("dd"));
-        const source = sundayFirstDayOfWeek ? dayLabels : [...dayLabels.slice(1), dayLabels[0]];
+        const dayLabels = range(1, 8).map(d =>
+            DateTime.fromFormat(`${d}`, "c").toLocaleString({weekday: "short"}).toLowerCase()
+        );
+        const source = sundayFirstDayOfWeek ? [dayLabels[6], ...dayLabels.slice(0, 6)] : dayLabels;
         return source.map((day, i) => <span key={i}>{day}</span>);
     }, [sundayFirstDayOfWeek]);
-
-    const fullMonth = DateTime.fromJSDate(viewDate).toFormat("MMMM");
-    const fullYear = viewDate.getFullYear();
 
     return (
         <div className={theme.month()} data-react-toolbox="month">
             <span className={theme.title()}>
-                {fullMonth} {fullYear}
+                {DateTime.fromJSDate(viewDate).toLocaleString({month: "long", year: "numeric"})}
             </span>
             <div className={theme.week()}>{weeks}</div>
             <div className={theme.days()}>{days}</div>

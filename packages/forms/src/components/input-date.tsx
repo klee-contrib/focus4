@@ -16,7 +16,7 @@ const Theme = themr("inputDate", inputDateCss);
 
 export interface InputDateProps {
     /** Format de l'affichage de la date dans le calendrier. */
-    calendarFormat?: string;
+    calendarFormat?: Intl.DateTimeFormatOptions;
     /* Autres props du Calendar RT */
     calendarProps?: Omit<CalendarProps, "display" | "handleSelect" | "onChange" | "selectedDate">;
     /** Composant affiché depuis la gauche ou la droite. */
@@ -131,7 +131,7 @@ export class InputDate extends Component<InputDateProps> {
         }
         const {ISOStringFormat = "utc-midnight"} = this.props;
         if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
-            return new Date(this.date.year, this.date.month, this.date.day);
+            return new Date(this.date.year, this.date.month - 1, this.date.day);
         } else {
             const jsDate = this.date.toJSDate();
             jsDate.setHours(0);
@@ -144,7 +144,7 @@ export class InputDate extends Component<InputDateProps> {
 
     @computed
     get zone() {
-        const {timezoneCode, ISOStringFormat} = this.props;
+        const {timezoneCode, ISOStringFormat = "utc-midnight"} = this.props;
         return timezoneCode
             ? timezoneCode
             : ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only"
@@ -168,7 +168,7 @@ export class InputDate extends Component<InputDateProps> {
 
     /** Formatte la date (ISO String) en entrée selon le format demandé. */
     formatDate(value?: string) {
-        const {inputFormat = "MM/DD/YYYY", timezoneCode} = this.props;
+        const {inputFormat = "MM/dd/yyyy", timezoneCode} = this.props;
         if (isISOString(value)) {
             return DateTime.fromISO(value, timezoneCode ? {zone: timezoneCode} : {}).toFormat(inputFormat);
         } else {
@@ -194,14 +194,14 @@ export class InputDate extends Component<InputDateProps> {
     /** Appelé lorsqu'on quitte le champ texte. */
     @action.bound
     onInputBlur() {
-        const {inputFormat = "MM/DD/YYYY", ISOStringFormat = "utc-midnight", onChange} = this.props;
+        const {inputFormat = "MM/dd/yyyy", ISOStringFormat = "utc-midnight", onChange} = this.props;
         const text = (this.dateText ?? "").trim() || undefined;
 
         const date = this.transformDate(text, inputFormat);
 
         if (date.isValid) {
             this.date = date;
-            onChange(ISOStringFormat === "date-only" ? date.toFormat("YYYY-MM-DD") : date.toISO());
+            onChange(ISOStringFormat === "date-only" ? date.toFormat("yyyy-MM-dd") : date.toISO());
         } else {
             onChange(text);
         }
@@ -223,7 +223,7 @@ export class InputDate extends Component<InputDateProps> {
         }
         const correctedDate =
             ISOStringFormat === "date-only"
-                ? this.transformDate(date).toFormat("YYYY-MM-DD")
+                ? this.transformDate(date).toFormat("yyyy-MM-dd")
                 : this.transformDate(date).toISO();
         this.props.onChange(correctedDate);
         if (!dayClick) {
@@ -275,11 +275,11 @@ export class InputDate extends Component<InputDateProps> {
 
     render() {
         const {
-            calendarFormat = "ddd, MMM D",
+            calendarFormat = {weekday: "short", month: "short", day: "2-digit"},
             calendarProps = {},
             displayFrom = "left",
             error,
-            inputFormat = "MM/DD/YYYY",
+            inputFormat = "MM/dd/yyyy",
             inputProps = {},
             theme: pTheme
         } = this.props;
@@ -319,7 +319,7 @@ export class InputDate extends Component<InputDateProps> {
                                         id="months"
                                         onClick={() => (this.calendarDisplay = "months")}
                                     >
-                                        {this.displayedDate().toFormat(calendarFormat)}
+                                        {this.displayedDate().toLocaleString(calendarFormat)}
                                     </h3>
                                     <IconButton
                                         icon="clear"
