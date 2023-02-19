@@ -1,7 +1,7 @@
 import {uniqueId} from "lodash";
+import {DateTime} from "luxon";
 import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
-import moment from "moment-timezone";
 import {Component, KeyboardEvent, ReactNode} from "react";
 
 import {CSSProp, themr} from "@focus4/styling";
@@ -50,7 +50,7 @@ export interface InputDateProps {
     /** Appelé lorsque la date change. */
     onChange: (date: string | undefined) => void;
     /**
-     * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://momentjs.com/timezone/)
+     * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://moment.github.io/luxon/#/zones)
      * Incompatible avec l'usage de ISOStringFormat
      */
     timezoneCode?: string;
@@ -70,7 +70,7 @@ export class InputDate extends Component<InputDateProps> {
     protected readonly _inputDateId = uniqueId("input-date-");
 
     /** Date actuelle. */
-    @observable protected date = this.toMoment(this.props.value);
+    @observable protected date = this.toLuxon(this.props.value);
 
     /** Contenu du champ texte. */
     @observable protected dateText = this.formatDate(this.props.value);
@@ -97,7 +97,7 @@ export class InputDate extends Component<InputDateProps> {
     @action
     // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillReceiveProps({value}: InputDateProps) {
-        this.date = this.toMoment(value);
+        this.date = this.toLuxon(value);
         this.dateText = this.formatDate(value);
     }
 
@@ -126,14 +126,14 @@ export class InputDate extends Component<InputDateProps> {
     get jsDate() {
         const {timezoneCode} = this.props;
         // Vérifie que la timezone existe
-        if (timezoneCode && moment.tz.zone(timezoneCode)) {
-            return getPickerDate(this.date.toDate(), timezoneCode);
+        if (timezoneCode) {
+            return getPickerDate(this.date.toJSDate(), timezoneCode);
         }
         const {ISOStringFormat = "utc-midnight"} = this.props;
         if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
-            return new Date(this.date.year(), this.date.month(), this.date.date());
+            return new Date(this.date.year, this.date.month, this.date.day);
         } else {
-            const jsDate = this.date.toDate();
+            const jsDate = this.date.toJSDate();
             jsDate.setHours(0);
             jsDate.setMinutes(0);
             jsDate.setSeconds(0);
@@ -142,18 +142,27 @@ export class InputDate extends Component<InputDateProps> {
         }
     }
 
-    /** Convertit le texte en objet MomentJS. */
-    toMoment(value?: string) {
-        const {ISOStringFormat = "utc-midnight", timezoneCode} = this.props;
-        const m = ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only" ? moment.utc : moment;
+    @computed
+    get zone() {
+        const {timezoneCode, ISOStringFormat} = this.props;
+        return timezoneCode
+            ? timezoneCode
+            : ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only"
+            ? "utc"
+            : undefined;
+    }
 
+    /** Convertit le texte en objet Luxon. */
+    toLuxon(value?: string) {
         if (isISOString(value)) {
-            if (timezoneCode && moment.tz.zone(timezoneCode)) {
-                return moment(value, moment.ISO_8601).tz(timezoneCode);
-            }
-            return m(value, moment.ISO_8601);
+            return DateTime.fromISO(value, this.zone ? {zone: this.zone} : {});
         } else {
-            return m().hour(0).minute(0).second(0).millisecond(0);
+            return (this.zone === "utc" ? DateTime.utc() : DateTime.now()).set({
+                hour: 0,
+                minute: 0,
+                second: 0,
+                millisecond: 0
+            });
         }
     }
 
@@ -161,11 +170,7 @@ export class InputDate extends Component<InputDateProps> {
     formatDate(value?: string) {
         const {inputFormat = "MM/DD/YYYY", timezoneCode} = this.props;
         if (isISOString(value)) {
-            if (timezoneCode && moment.tz.zone(timezoneCode)) {
-                return moment(value, moment.ISO_8601).tz(timezoneCode).format(inputFormat);
-            }
-            // Le format d'ISO String n'importe peu, ça revient au même une fois formatté.
-            return moment(value, moment.ISO_8601).format(inputFormat);
+            return DateTime.fromISO(value, timezoneCode ? {zone: timezoneCode} : {}).toFormat(inputFormat);
         } else {
             return value;
         }
@@ -192,11 +197,11 @@ export class InputDate extends Component<InputDateProps> {
         const {inputFormat = "MM/DD/YYYY", ISOStringFormat = "utc-midnight", onChange} = this.props;
         const text = (this.dateText ?? "").trim() || undefined;
 
-        const date = this.transformDate(text, inputFormat, true);
+        const date = this.transformDate(text, inputFormat);
 
-        if (date.isValid()) {
+        if (date.isValid) {
             this.date = date;
-            onChange(date.format(ISOStringFormat === "date-only" ? "YYYY-MM-DD" : undefined));
+            onChange(ISOStringFormat === "date-only" ? date.toFormat("YYYY-MM-DD") : date.toISO());
         } else {
             onChange(text);
         }
@@ -207,7 +212,7 @@ export class InputDate extends Component<InputDateProps> {
     onCalendarChange(date: Date, dayClick: boolean) {
         const {ISOStringFormat = "utc-midnight", timezoneCode} = this.props;
         // Vérifie que la timezone existe
-        if (timezoneCode && moment.tz.zone(timezoneCode)) {
+        if (timezoneCode) {
             date = getTimezoneTime(date, timezoneCode);
         } else if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
             /*
@@ -216,9 +221,10 @@ export class InputDate extends Component<InputDateProps> {
              */
             date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
         }
-        const correctedDate = this.transformDate(date).format(
-            ISOStringFormat === "date-only" ? "YYYY-MM-DD" : undefined
-        );
+        const correctedDate =
+            ISOStringFormat === "date-only"
+                ? this.transformDate(date).toFormat("YYYY-MM-DD")
+                : this.transformDate(date).toISO();
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
@@ -237,29 +243,32 @@ export class InputDate extends Component<InputDateProps> {
     }
 
     /** Transforme la date selon le format de date/timezone souhaité. */
-    transformDate(date: Date): moment.Moment; // Depuis le calendrier.
-    transformDate(date: string | undefined, inputFormat: string, strict: true): moment.Moment; // Depuis la saisie manuelle.
-    transformDate(...params: any[]) {
+    transformDate(date: Date): DateTime; // Depuis le calendrier.
+    transformDate(date: string | undefined, inputFormat: string): DateTime; // Depuis la saisie manuelle.
+    transformDate(date: Date | string | undefined, inputFormat?: string) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 
-        // Dans les deux cas, la date d'entrée est bien en "local-midnight".
-        if (ISOStringFormat === "local-midnight") {
-            return moment(...params);
-        } else if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
-            return moment.utc(...params);
-        } else {
-            return moment(...params).utcOffset(0);
+        let dateTime =
+            typeof date === "string" && inputFormat
+                ? DateTime.fromFormat(date, inputFormat, this.zone ? {zone: this.zone} : {})
+                : date instanceof Date
+                ? DateTime.fromJSDate(date, this.zone ? {zone: this.zone} : {})
+                : this.zone === "utc"
+                ? DateTime.utc()
+                : DateTime.now();
+
+        if (ISOStringFormat === "local-utc-midnight") {
+            dateTime = dateTime.toUTC();
         }
+
+        return dateTime;
     }
 
     displayedDate() {
-        const {timezoneCode, ISOStringFormat} = this.props;
-        if (timezoneCode && moment.tz.zone(timezoneCode)) {
-            return this.date.tz(timezoneCode);
+        const {ISOStringFormat} = this.props;
+        if (ISOStringFormat === "local-utc-midnight") {
+            return this.date.toLocal();
         } else {
-            if (ISOStringFormat === "local-utc-midnight") {
-                return this.date.clone().local();
-            }
             return this.date;
         }
     }
@@ -303,14 +312,14 @@ export class InputDate extends Component<InputDateProps> {
                                         id="years"
                                         onClick={() => (this.calendarDisplay = "years")}
                                     >
-                                        {this.displayedDate().year()}
+                                        {this.displayedDate().year}
                                     </span>
                                     <h3
                                         className={theme.date()}
                                         id="months"
                                         onClick={() => (this.calendarDisplay = "months")}
                                     >
-                                        {this.displayedDate().format(calendarFormat)}
+                                        {this.displayedDate().toFormat(calendarFormat)}
                                     </h3>
                                     <IconButton
                                         icon="clear"
@@ -337,13 +346,13 @@ export class InputDate extends Component<InputDateProps> {
 }
 
 /** Détermine si une valeur est un ISO String. */
-function isISOString(value?: string) {
-    return moment(value, moment.ISO_8601, true).isValid();
+function isISOString(value?: string): value is string {
+    return value ? DateTime.fromISO(value).isValid : false;
 }
 
 /** Détermine la date pour le picker en prenant en compte la timezone */
 function getPickerDate(tzDate: Date, timezoneCode: string) {
-    const tzUTCOffset = moment.tz(tzDate, timezoneCode).utcOffset();
+    const tzUTCOffset = DateTime.fromJSDate(tzDate, {zone: timezoneCode}).offset;
     const utcDate = new Date();
     utcDate.setTime(tzDate.getTime() + tzUTCOffset * 60000);
 
@@ -360,7 +369,7 @@ function getTimezoneTime(pickerDate: Date, timezoneCode: string) {
     const utcDate = new Date();
     utcDate.setTime(pickerDate.getTime() - pickerOffset * 60000);
 
-    const tzOffset = moment.tz(pickerDate, timezoneCode).utcOffset();
+    const tzOffset = DateTime.fromJSDate(pickerDate, {zone: timezoneCode}).offset;
     const tzDate = new Date();
     tzDate.setTime(utcDate.getTime() - tzOffset * 60000);
     return tzDate;

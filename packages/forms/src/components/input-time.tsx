@@ -1,7 +1,7 @@
 import {uniqueId} from "lodash";
+import {DateTime} from "luxon";
 import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
-import moment from "moment-timezone";
 import {Component, createRef, KeyboardEvent, ReactNode} from "react";
 
 import {CSSProp, themr} from "@focus4/styling";
@@ -49,7 +49,7 @@ export class InputTime extends Component<InputTimeProps> {
     protected readonly _inputTimeId = uniqueId("input-time-");
 
     /** Heure actuelle. */
-    @observable protected time = this.toMoment(this.props.value);
+    @observable protected time = this.toLuxon(this.props.value);
 
     /** Contenu du champ texte. */
     @observable protected timeText = this.formatTime(this.props.value);
@@ -75,7 +75,7 @@ export class InputTime extends Component<InputTimeProps> {
     @action
     // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     UNSAFE_componentWillReceiveProps({value}: InputTimeProps) {
-        this.time = this.toMoment(value);
+        this.time = this.toLuxon(value);
         this.timeText = this.formatTime(value);
     }
 
@@ -101,15 +101,12 @@ export class InputTime extends Component<InputTimeProps> {
     }
 
     /** Convertit le texte en objet momentJS. */
-    toMoment(value?: string) {
+    toLuxon(value?: string) {
         const {timezoneCode} = this.props;
         if (isISOString(value)) {
-            if (timezoneCode && moment.tz.zone(timezoneCode)) {
-                return moment(value, moment.ISO_8601).tz(timezoneCode);
-            }
-            return moment(value, moment.ISO_8601);
+            return DateTime.fromISO(value, timezoneCode ? {zone: timezoneCode} : {});
         } else {
-            return moment();
+            return DateTime.now();
         }
     }
 
@@ -117,20 +114,17 @@ export class InputTime extends Component<InputTimeProps> {
     getTime() {
         const {timezoneCode} = this.props;
         // Vérifie que la timezone existe
-        if (timezoneCode && moment.tz.zone(timezoneCode)) {
-            return getPickerTime(this.time.toDate(), timezoneCode);
+        if (timezoneCode) {
+            return getPickerTime(this.time.toJSDate(), timezoneCode);
         }
-        return this.time.toDate();
+        return this.time.toJSDate();
     }
 
     /** Formatte l'heure (ISO String) en entrée. */
     formatTime(value?: string) {
         const {inputFormat = "HH:mm", timezoneCode} = this.props;
         if (isISOString(value)) {
-            if (timezoneCode && moment.tz.zone(timezoneCode)) {
-                return moment(value, moment.ISO_8601).tz(timezoneCode).format(inputFormat);
-            }
-            return moment(value, moment.ISO_8601).format(inputFormat);
+            return DateTime.fromISO(value, timezoneCode ? {zone: timezoneCode} : {}).toFormat(inputFormat);
         } else {
             return value;
         }
@@ -164,15 +158,13 @@ export class InputTime extends Component<InputTimeProps> {
         const {inputFormat = "HH:mm", onChange} = this.props;
         const text = (this.timeText ?? "").trim() || undefined;
 
-        const time = moment(text, inputFormat, true);
+        const time = text ? DateTime.fromFormat(text, inputFormat) : DateTime.now();
 
-        const dateTime = this.time.clone();
-        dateTime.hours(time.hours());
-        dateTime.minutes(time.minutes());
+        const dateTime = this.time.set({hour: time.hour, minute: time.minute});
 
-        if (dateTime.isValid()) {
+        if (dateTime.isValid) {
             this.time = dateTime;
-            onChange(dateTime.format());
+            onChange(dateTime.toISO());
         } else {
             onChange(text);
         }
@@ -183,10 +175,10 @@ export class InputTime extends Component<InputTimeProps> {
     onClockChange(time: Date) {
         const {timezoneCode} = this.props;
         // Vérifie que la timezone existe
-        if (timezoneCode && moment.tz.zone(timezoneCode)) {
+        if (timezoneCode) {
             time = getTimezoneTime(time, timezoneCode);
         }
-        return this.props.onChange(moment(time).format());
+        return this.props.onChange(DateTime.fromJSDate(time).toISO());
     }
 
     @action.bound
@@ -247,7 +239,7 @@ export class InputTime extends Component<InputTimeProps> {
                                         id="hours"
                                         onClick={() => (this.clockDisplay = "hours")}
                                     >
-                                        {`0${this.time.hours()}`.slice(-2)}
+                                        {`0${this.time.hour}`.slice(-2)}
                                     </span>
                                     <span className={theme.separator()}>:</span>
                                     <span
@@ -255,7 +247,7 @@ export class InputTime extends Component<InputTimeProps> {
                                         id="minutes"
                                         onClick={() => (this.clockDisplay = "minutes")}
                                     >
-                                        {`0${this.time.minutes()}`.slice(-2)}
+                                        {`0${this.time.minute}`.slice(-2)}
                                     </span>
                                     <IconButton
                                         icon="clear"
@@ -281,13 +273,13 @@ export class InputTime extends Component<InputTimeProps> {
 }
 
 /** Détermine si une valeur est un ISO String. */
-function isISOString(value?: string) {
-    return moment(value, moment.ISO_8601, true).isValid();
+function isISOString(value?: string): value is string {
+    return value ? DateTime.fromISO(value).isValid : false;
 }
 
 /** Détermine la date pour le picker en prenant en compte la timezone */
 function getPickerTime(tzDate: Date, timezoneCode: string) {
-    const tzUTCOffset = moment.tz(tzDate, timezoneCode).utcOffset();
+    const tzUTCOffset = DateTime.fromJSDate(tzDate, {zone: timezoneCode}).offset;
     const utcDate = new Date();
     utcDate.setTime(tzDate.getTime() + tzUTCOffset * 60000);
 
@@ -304,7 +296,7 @@ function getTimezoneTime(pickerDate: Date, timezoneCode: string) {
     const utcDate = new Date();
     utcDate.setTime(pickerDate.getTime() - pickerOffset * 60000);
 
-    const tzOffset = moment.tz(pickerDate, timezoneCode).utcOffset();
+    const tzOffset = DateTime.fromJSDate(pickerDate, {zone: timezoneCode}).offset;
     const tzDate = new Date();
     tzDate.setTime(utcDate.getTime() - tzOffset * 60000);
     return tzDate;

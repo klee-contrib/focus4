@@ -24,7 +24,6 @@
         "@types/numeral": "2.0.2",
         "inputmask-core": "2.2.0",
         "lodash-decorators": "6.0.1",
-        "moment-timezone": "0.5.40",
         "numeral": "2.0.6"
     },
     "devDependencies": {
