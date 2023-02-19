@@ -20,11 +20,6 @@ export const baseConfig = {
             }
         },
         postcss: {plugins: [nesting()]}
-    },
-    resolve: {
-        alias: {
-            moment: path.resolve(process.cwd(), "./node_modules/moment/min/moment-with-locales.js")
-        }
     }
 } satisfies UserConfigExport;
 

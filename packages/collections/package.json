@@ -20,7 +20,7 @@
         "@focus4/stores": "11.6.6",
         "@focus4/styling": "11.6.6",
         "@focus4/toolbox": "11.6.6",
-        "framer-motion": "9.0.2",
+        "framer-motion": "9.0.4",
         "react-dnd": "16.0.1",
         "react-dnd-html5-backend": "16.0.1"
     },

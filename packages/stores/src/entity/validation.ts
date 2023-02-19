@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {isFunction} from "lodash";
-import moment from "moment";
+import {DateTime} from "luxon";
 
 import {
     DateValidator,
@@ -62,7 +62,7 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                 const isMaxLength = maxLength !== undefined && text.length > maxLength;
                 error = isMinLength || isMaxLength ? errorMessage ?? "focus.validation.string" : undefined;
             } else if (isDateValidator(validator)) {
-                error = !moment(value as string, moment.ISO_8601).isValid()
+                error = !DateTime.fromISO(value as string).isValid
                     ? validator.errorMessage ?? "focus.validation.date"
                     : false;
             } else if (isNumberValidator(validator)) {

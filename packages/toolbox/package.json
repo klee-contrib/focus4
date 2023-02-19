@@ -17,8 +17,9 @@
     "dependencies": {
         "@focus4/core": "11.6.6",
         "@focus4/styling": "11.6.6",
+        "@types/luxon": "3.2.0",
         "@types/react-transition-group": "4.4.5",
-        "moment": "2.29.4",
+        "luxon": "3.2.1",
         "react-transition-group": "4.4.5"
     },
     "devDependencies": {

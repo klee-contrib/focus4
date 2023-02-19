@@ -1,5 +1,5 @@
 import {range} from "lodash";
-import moment from "moment";
+import {DateTime} from "luxon";
 import {useCallback, useMemo} from "react";
 
 import {ToBem} from "@focus4/styling";
@@ -7,7 +7,6 @@ import {ToBem} from "@focus4/styling";
 import {Day} from "./day";
 
 import {CalendarCss} from "../__style__/calendar.css";
-
 
 export interface MonthProps {
     disabledDates?: Date[];
@@ -68,12 +67,12 @@ export function Month({
     );
 
     const weeks = useMemo(() => {
-        const dayLabels = range(0, 7).map(d => moment(d, "d").format("dd"));
+        const dayLabels = range(0, 7).map(d => DateTime.fromFormat(`${d}`, "d").toFormat("dd"));
         const source = sundayFirstDayOfWeek ? dayLabels : [...dayLabels.slice(1), dayLabels[0]];
         return source.map((day, i) => <span key={i}>{day}</span>);
     }, [sundayFirstDayOfWeek]);
 
-    const fullMonth = moment(viewDate).format("MMMM");
+    const fullMonth = DateTime.fromJSDate(viewDate).toFormat("MMMM");
     const fullYear = viewDate.getFullYear();
 
     return (

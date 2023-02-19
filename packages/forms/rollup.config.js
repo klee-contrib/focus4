@@ -34,9 +34,9 @@ export default (async () => {
             "classnames",
             "i18next",
             "lodash",
+            "luxon",
             "mobx",
             "mobx-react",
-            "moment",
             "react",
             "react/jsx-runtime",
             "tslib"
