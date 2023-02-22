@@ -197,9 +197,9 @@ export class InputDate extends Component<InputDateProps> {
         const {inputFormat = "MM/dd/yyyy", ISOStringFormat = "utc-midnight", onChange} = this.props;
         const text = (this.dateText ?? "").trim() || undefined;
 
-        const date = this.transformDate(text, inputFormat);
+        const date = text ? this.transformDate(text, inputFormat) : undefined;
 
-        if (date.isValid) {
+        if (date?.isValid) {
             this.date = date;
             onChange(ISOStringFormat === "date-only" ? date.toFormat("yyyy-MM-dd") : date.toISO());
         } else {
@@ -244,8 +244,8 @@ export class InputDate extends Component<InputDateProps> {
 
     /** Transforme la date selon le format de date/timezone souhaité. */
     transformDate(date: Date): DateTime; // Depuis le calendrier.
-    transformDate(date: string | undefined, inputFormat: string): DateTime; // Depuis la saisie manuelle.
-    transformDate(date: Date | string | undefined, inputFormat?: string) {
+    transformDate(date: string, inputFormat: string): DateTime; // Depuis la saisie manuelle.
+    transformDate(date: Date | string, inputFormat?: string) {
         const {ISOStringFormat = "utc-midnight"} = this.props;
 
         let dateTime =
