@@ -21,6 +21,7 @@
         "react"
     ],
     "rules": {
+        "block-spacing": "off",
         "camelcase": [
             "warn",
             {
@@ -149,6 +150,7 @@
             }
         ],
         "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/block-spacing": "off",
         "@typescript-eslint/class-literal-property-style": "off",
         "@typescript-eslint/consistent-indexed-object-style": "off",
         "@typescript-eslint/consistent-type-exports": "off",

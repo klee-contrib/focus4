@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {max, sortBy} from "lodash";
+import {sortBy} from "lodash";
 import {action, computed, makeObservable, observable, ObservableMap} from "mobx";
 import {observer} from "mobx-react";
 import {Component, ComponentType, ContextType, createRef, ReactNode} from "react";
@@ -49,9 +49,18 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
     /** Détermine le panel actif dans le menu */
     @computed.struct
     protected get activeItem() {
-        const maxRatio = max(this.sortedPanels.map(([_, {ratio}]) => ratio));
-        const panel = this.sortedPanels.find(([_, {ratio}]) => ratio === maxRatio);
-        return panel?.[0] ?? this.sortedPanels[0]?.[0];
+        const {height, sticky} = this.context.getHeaderStatus();
+        const panels = sortBy(this.sortedPanels, ([_, {ratio, node}]) => {
+            const rect = node.getBoundingClientRect();
+            const headerRatio =
+                rect.height === 0
+                    ? 1
+                    : !height || !sticky
+                    ? 0
+                    : Math.min(1, Math.max(0, (height - rect.y) / rect.height));
+            return headerRatio - (ratio >= 0.95 ? 1 : ratio);
+        });
+        return panels[0]?.[0];
     }
 
     /**
@@ -59,11 +68,10 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
      * @param node Le noeud HTML.
      */
     protected getOffsetTop(node: HTMLElement) {
-        const headerHeight = this.context.getHeaderHeight();
-
+        const {height} = this.context.getHeaderStatus();
         const cpt = getComputedStyle(document.documentElement).getPropertyValue("--content-padding-top");
         const padding = +cpt.substring(0, cpt.length - 2);
-        return node.offsetTop - headerHeight - (Number.isNaN(padding) ? 0 : padding);
+        return node.offsetTop - height - (Number.isNaN(padding) ? 0 : padding);
     }
 
     /** @see ScrollspyContext.registerPanel */

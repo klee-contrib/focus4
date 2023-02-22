@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import {AnimatePresence, HTMLMotionProps, motion} from "framer-motion";
 import {memoize, range} from "lodash";
-import {action, IReactionDisposer, makeObservable, observable, when} from "mobx";
+import {action, computed, IReactionDisposer, makeObservable, observable, when} from "mobx";
 import {observer, useObserver} from "mobx-react";
 import {cloneElement, Component, forwardRef, HTMLProps, Key, PropsWithChildren, ReactNode, Ref} from "react";
 import {createPortal, findDOMNode} from "react-dom";
@@ -121,10 +121,10 @@ class ScrollableComponent extends Component<ScrollableProps> {
                     }
                     const onIntersect = this.onIntersects.get(e.target);
                     if (onIntersect) {
-                        onIntersect(e.intersectionRatio, e.isIntersecting);
+                        onIntersect(Math.round(e.intersectionRatio * 100) / 100, e.isIntersecting);
                     }
                 }),
-            {root: this.scrollableNode, threshold: range(0, 105, 5).map(t => t / 100)}
+            {root: this.scrollableNode, threshold: range(0, 102.5, 2.5).map(t => t / 100)}
         );
     }
 
@@ -141,6 +141,11 @@ class ScrollableComponent extends Component<ScrollableProps> {
         this.mutationObserver?.disconnect();
         this.resizeObserver?.disconnect();
         this.heightInit?.();
+    }
+
+    @computed.struct
+    get headerStatus() {
+        return {sticky: this.isHeaderSticky, height: this.headerHeight};
     }
 
     /** @see ScrollableContext.registerHeader */
@@ -280,7 +285,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
             </AnimatePresence>
         ));
 
-    getHeaderHeight = () => this.headerHeight;
+    getHeaderStatus = () => this.headerStatus;
 
     render() {
         const {children, className, innerRef} = this.props;
@@ -288,7 +293,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
             <ScrollableContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
                 value={{
-                    getHeaderHeight: this.getHeaderHeight,
+                    getHeaderStatus: this.getHeaderStatus,
                     menu: this.menu,
                     portal: this.portal,
                     registerHeader: this.registerHeader,
