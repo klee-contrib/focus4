@@ -39,6 +39,7 @@ export default (async () => {
             "mobx-react",
             "react",
             "react/jsx-runtime",
+            "react-dom",
             "tslib"
         ]
     };
