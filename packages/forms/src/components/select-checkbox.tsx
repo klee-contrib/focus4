@@ -81,15 +81,14 @@ export function SelectCheckbox<T extends "number" | "string">({
                     const optLabel = option[values.$labelKey];
 
                     const isSelected = value ? !!(value as any).find((val: any) => optVal === val) : false;
-                    const clickHandler = clickHandlerFactory(disabled, isSelected, value, optVal, onChange);
+                    const isDisabled =
+                        disabled || (maxSelectable !== undefined && maxSelectable === value?.length && !isSelected);
+                    const clickHandler = clickHandlerFactory(isDisabled, isSelected, value, optVal, onChange);
 
                     return (
                         <li key={optVal} className={theme.option()} onClick={clickHandler}>
                             <Checkbox
-                                disabled={
-                                    disabled ||
-                                    (maxSelectable !== undefined && maxSelectable === value?.length && !isSelected)
-                                }
+                                disabled={isDisabled}
                                 id={`${id!}-${optVal as string}`}
                                 label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
