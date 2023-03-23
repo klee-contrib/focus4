@@ -19,7 +19,7 @@
         "@focus4/styling": "11.7.0",
         "@types/luxon": "3.2.0",
         "@types/react-transition-group": "4.4.5",
-        "luxon": "3.2.1",
+        "luxon": "3.3.0",
         "react-transition-group": "4.4.5"
     },
     "devDependencies": {

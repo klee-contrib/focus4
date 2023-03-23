@@ -28,6 +28,7 @@ export interface AutocompleteResult<T = {key: string; label: string}> {
 }
 
 /** Props du composant d'autocomplétion */
+// @ts-ignore
 export interface AutocompleteProps<T extends "number" | "string", TSource = {key: string; label: string}>
     extends Omit<RTAutocompleteProps<string, TSource>, "getLabel" | "onChange" | "value"> {
     /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
@@ -56,7 +57,6 @@ export interface AutocompleteProps<T extends "number" | "string", TSource = {key
 
 /** Surcouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
 @observer
-// eslint-disable-next-line react/no-unsafe
 export class Autocomplete<T extends "number" | "string", TSource = {key: string; label: string}> extends Component<
     AutocompleteProps<T, TSource>
 > {
@@ -239,6 +239,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
                             query={this.query}
                             source={this.source}
                             suggestionMatch="disabled"
+                            // @ts-ignore
                             theme={theme}
                             value={`${props.value ?? ""}`}
                         />

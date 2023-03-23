@@ -13,7 +13,7 @@ export interface BaseInputProps extends WithThemeProps {
     id?: string;
     name?: string;
     onChange?: (value: any) => void;
-    type?: string;
+    type?: "number" | "string";
     value?: any;
 }
 

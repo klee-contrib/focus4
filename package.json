@@ -24,11 +24,11 @@
         "@rollup/plugin-typescript": "11.0.0",
         "lerna": "6.5.1",
         "postcss": "8.4.21",
-        "rollup": "3.17.2",
+        "rollup": "3.20.1",
         "rollup-plugin-copy-glob": "0.3.2",
         "rollup-plugin-postcss": "4.0.2",
         "rollup-plugin-preserve-shebang": "1.0.1",
         "tslib": "2.5.0",
-        "typescript": "4.9.5"
+        "typescript": "5.0.2"
     }
 }

@@ -45,6 +45,8 @@ export async function coreFetch(
     });
     requestStore.updateRequest({id, url, status: "pending"}); // On crée la requête dans le store (= la mise à jour d'état en question).
 
+    let errorHandled = false;
+
     // On lance la requête.
     try {
         const response = await window.fetch(url, options);
@@ -68,6 +70,7 @@ export async function coreFetch(
             }
         } else {
             // Retour en erreur
+            errorHandled = true;
 
             // On met à jour en erreur la requête dans le store.
             requestStore.updateRequest({id, url, status: "error"});
@@ -87,8 +90,10 @@ export async function coreFetch(
         }
     } catch (error: unknown) {
         // Requête en erreur (= pas de retour serveur).
-        requestStore.updateRequest({id, url, status: "error"});
-        console.error(`"${(error as any).message as string}" error when calling ${url}`);
+        if (!errorHandled) {
+            requestStore.updateRequest({id, url, status: "error"});
+            console.error(`"${(error as any).message as string}" error when calling ${url}`);
+        }
         return Promise.reject(error);
     }
 }

@@ -11,7 +11,7 @@ export async function generateCSSTypings(rootDir: string) {
     const pattern = `${root}/**/*.css`;
     console.info(`Recherche des fichiers dans ${pattern}...`);
     const files = glob.sync(pattern).map(file => {
-        const parts = file.split("/");
+        const parts = file.replace(/\\/g, "/").split("/");
         const fileName = parts[parts.length - 1];
         const interfaceName = camelCase(fileName.substring(0, fileName.length - 4));
         return {file, interfaceName};
