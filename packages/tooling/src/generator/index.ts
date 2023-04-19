@@ -47,7 +47,10 @@ export async function generateCSSTypings(rootDir: string) {
 
 ${Array.from(elements)
     .sort()
-    .map(element => `interface ${element} { _${hashCode(filePath + element)}: void }`)
+    .map(
+        element =>
+            `interface ${element} { _${hashCode(filePath.replace(/\\/g, "/").replace(root, "") + element)}: void }`
+    )
     .join("\r\n")}
 
 export interface ${upperFirst(interfaceName)}Css {
