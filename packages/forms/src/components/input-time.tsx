@@ -164,7 +164,7 @@ export class InputTime extends Component<InputTimeProps> {
 
         if (dateTime.isValid) {
             this.time = dateTime;
-            onChange(dateTime.toISO());
+            onChange(dateTime.toISO() ?? "");
         } else {
             onChange(text);
         }
@@ -178,7 +178,7 @@ export class InputTime extends Component<InputTimeProps> {
         if (timezoneCode) {
             time = getTimezoneTime(time, timezoneCode);
         }
-        return this.props.onChange(DateTime.fromJSDate(time).toISO());
+        return this.props.onChange(DateTime.fromJSDate(time).toISO() ?? "");
     }
 
     @action.bound

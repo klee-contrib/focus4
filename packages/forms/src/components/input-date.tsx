@@ -201,7 +201,7 @@ export class InputDate extends Component<InputDateProps> {
 
         if (date?.isValid) {
             this.date = date;
-            onChange(ISOStringFormat === "date-only" ? date.toFormat("yyyy-MM-dd") : date.toISO());
+            onChange(ISOStringFormat === "date-only" ? date.toFormat("yyyy-MM-dd") : date.toISO() ?? "");
         } else {
             onChange(text);
         }
@@ -224,7 +224,7 @@ export class InputDate extends Component<InputDateProps> {
         const correctedDate =
             ISOStringFormat === "date-only"
                 ? this.transformDate(date).toFormat("yyyy-MM-dd")
-                : this.transformDate(date).toISO();
+                : this.transformDate(date).toISO() ?? "";
         this.props.onChange(correctedDate);
         if (!dayClick) {
             this.calendarDisplay = "months";
