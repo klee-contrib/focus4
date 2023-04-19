@@ -23,10 +23,15 @@ export interface InputDateProps {
     displayFrom?: "left" | "right";
     /** Give an error node to display under the field. */
     error?: ReactNode;
+    /** Id pour l'input. */
+    id?: string;
     /** Format de la date dans l'input. */
     inputFormat?: string;
     /** Props de l'input. */
-    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onFocus" | "onKeyDown" | "type" | "value">;
+    inputProps?: Omit<
+        InputProps<"string">,
+        "error" | "id" | "mask" | "name" | "onChange" | "onFocus" | "onKeyDown" | "type" | "value"
+    >;
     /**
      * Définit la correspondance entre une date et l'ISOString (date/heure) associé.
      *
@@ -47,6 +52,8 @@ export interface InputDateProps {
      * Par défaut "utc-midnight".
      */
     ISOStringFormat?: "date-only" | "local-midnight" | "local-utc-midnight" | "utc-midnight";
+    /** Name pour l'input. */
+    name?: string;
     /** Appelé lorsque la date change. */
     onChange: (date: string | undefined) => void;
     /**
@@ -279,8 +286,10 @@ export class InputDate extends Component<InputDateProps> {
             calendarProps = {},
             displayFrom = "left",
             error,
+            id,
             inputFormat = "MM/dd/yyyy",
             inputProps = {},
+            name,
             theme: pTheme
         } = this.props;
         return (
@@ -291,7 +300,9 @@ export class InputDate extends Component<InputDateProps> {
                             {...inputProps}
                             {...{autoComplete: "off"}}
                             error={error}
+                            id={id}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                            name={name}
                             onChange={value => (this.dateText = value)}
                             onFocus={() => (this.showCalendar = true)}
                             onKeyDown={this.handleKeyDown}

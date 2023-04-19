@@ -24,10 +24,17 @@ export interface InputTimeProps {
     displayFrom?: "left" | "right";
     /** Give an error node to display under the field. */
     error?: ReactNode;
+    /** Id pour l'input. */
+    id?: string;
     /** Format de la date dans l'input. */
     inputFormat?: string;
     /** Props de l'input. */
-    inputProps?: Omit<InputProps<"string">, "error" | "mask" | "onChange" | "onFocus" | "onKeyDown" | "type" | "value">;
+    inputProps?: Omit<
+        InputProps<"string">,
+        "error" | "id" | "mask" | "name" | "onChange" | "onFocus" | "onKeyDown" | "type" | "value"
+    >;
+    /** Name pour l'input. */
+    name?: string;
     /** Appelé lorsque l'heure change. */
     onChange: (time: string | undefined) => void;
     /** CSS. */
@@ -205,8 +212,10 @@ export class InputTime extends Component<InputTimeProps> {
             clockTheme,
             displayFrom = "left",
             error,
+            id,
             inputFormat = "HH:mm",
             inputProps = {},
+            name,
             theme: pTheme
         } = this.props;
         return (
@@ -218,7 +227,9 @@ export class InputTime extends Component<InputTimeProps> {
                             {...{autoComplete: "off"}}
                             ref={this.inputRef}
                             error={error}
+                            id={id}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                            name={name}
                             onChange={value => (this.timeText = value)}
                             onFocus={() => (this.showClock = true)}
                             onKeyDown={this.handleKeyDown}
