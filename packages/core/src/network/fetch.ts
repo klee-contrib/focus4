@@ -84,7 +84,7 @@ export async function coreFetch(
                 );
             } else {
                 // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).
-                console.error(`${response.status} error when calling ${url}`);
+                console.error(`Une erreur ${response.status} est survenue lors de l'appel à "${url}".`);
                 return await Promise.reject<string>(await response.text());
             }
         }
@@ -92,7 +92,8 @@ export async function coreFetch(
         // Requête en erreur (= pas de retour serveur).
         if (!errorHandled) {
             requestStore.updateRequest({id, url, status: "error"});
-            console.error(`"${(error as any).message as string}" error when calling ${url}`);
+            console.error(`Une erreur technique non gérée est survenue lors de l'appel à "${url}".`);
+            console.error(error);
         }
         return Promise.reject(error);
     }
