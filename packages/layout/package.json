@@ -1,6 +1,6 @@
 {
     "name": "@focus4/layout",
-    "version": "11.7.4",
+    "version": "11.7.5",
     "description": "Focus v4, layout module",
     "main": "lib/focus4.layout.js",
     "repository": {
@@ -15,12 +15,12 @@
         "start": "rollup -cw --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "11.7.4",
-        "@focus4/styling": "11.7.4",
-        "@focus4/toolbox": "11.7.4",
+        "@focus4/core": "11.7.5",
+        "@focus4/styling": "11.7.5",
+        "@focus4/toolbox": "11.7.5",
         "framer-motion": "10.12.4"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.7.4"
+        "@focus4/tooling": "11.7.5"
     }
 }
