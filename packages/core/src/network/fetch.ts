@@ -2,6 +2,8 @@ import {isObject, merge, toPairs} from "lodash";
 import {v4} from "uuid";
 import "whatwg-fetch";
 
+import {config} from "../utils";
+
 import {ManagedErrorResponse, manageResponseErrors} from "./error-parsing";
 import {requestStore} from "./store";
 
@@ -47,55 +49,73 @@ export async function coreFetch(
 
     let errorHandled = false;
 
+    let tryCount = 0;
+
     // On lance la requête.
-    try {
-        const response = await window.fetch(url, options);
+    while (tryCount <= config.retryCountOnFailedFetch) {
+        tryCount++;
+        try {
+            const response = await window.fetch(url, options);
 
-        if (response.status >= 200 && response.status < 300) {
-            // Retour en succès.
+            if (response.status >= 200 && response.status < 300) {
+                // Retour en succès.
 
-            // On met à jour en succès la requête dans le store.
-            requestStore.updateRequest({id, url, status: "success"});
+                // On met à jour en succès la requête dans le store.
+                requestStore.updateRequest({id, url, status: "success"});
 
-            // On détermine le type de retour en fonction du Content-Type dans le header.
-            const contentType = response.headers.get("Content-Type");
-            if (contentType?.includes("application/json")) {
-                return await response.json();
-            } else if (contentType?.includes("text/plain")) {
-                return await response.text();
-            } else if (response.status === 204) {
-                return null; // Cas réponse vide.
+                // On détermine le type de retour en fonction du Content-Type dans le header.
+                const contentType = response.headers.get("Content-Type");
+                if (contentType?.includes("application/json")) {
+                    return await response.json();
+                } else if (contentType?.includes("text/plain")) {
+                    return await response.text();
+                } else if (response.status === 204) {
+                    return null; // Cas réponse vide.
+                } else {
+                    return response;
+                }
             } else {
-                return response;
+                // Retour en erreur
+                errorHandled = true;
+
+                // On met à jour en erreur la requête dans le store.
+                requestStore.updateRequest({id, url, status: "error"});
+
+                // On détermine le type de retour en fonction du Content-Type dans le header.
+                const contentType = response.headers.get("Content-Type");
+                if (contentType?.includes("application/json")) {
+                    // Pour une erreur JSON, on la parse pour trouver et enregistrer les erreurs "attendues".
+                    return await Promise.reject<ManagedErrorResponse>(
+                        manageResponseErrors(response.status, await response.json())
+                    );
+                } else {
+                    // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).
+                    console.error(`Une erreur ${response.status} est survenue lors de l'appel à "${url}".`);
+                    return await Promise.reject<string>(await response.text());
+                }
             }
-        } else {
-            // Retour en erreur
-            errorHandled = true;
-
-            // On met à jour en erreur la requête dans le store.
-            requestStore.updateRequest({id, url, status: "error"});
-
-            // On détermine le type de retour en fonction du Content-Type dans le header.
-            const contentType = response.headers.get("Content-Type");
-            if (contentType?.includes("application/json")) {
-                // Pour une erreur JSON, on la parse pour trouver et enregistrer les erreurs "attendues".
-                return await Promise.reject<ManagedErrorResponse>(
-                    manageResponseErrors(response.status, await response.json())
-                );
+        } catch (error: unknown) {
+            // Requête en erreur (= pas de retour serveur).
+            if (!errorHandled) {
+                // On réessaie si on est en dessous du seuil de réessai.
+                if (tryCount <= config.retryCountOnFailedFetch) {
+                    await new Promise(r => {
+                        setTimeout(r, config.retryDelayOnFailedFetch);
+                    });
+                } else {
+                    // Sinon, on retourne une erreur technique.
+                    requestStore.updateRequest({id, url, status: "error"});
+                    console.error(
+                        `Une erreur technique non gérée est survenue lors de l'appel à "${url}" après ${tryCount} tentatives. Dernière erreur : ${
+                            error as string
+                        }.`
+                    );
+                    return Promise.reject(error);
+                }
             } else {
-                // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).
-                console.error(`Une erreur ${response.status} est survenue lors de l'appel à "${url}".`);
-                return await Promise.reject<string>(await response.text());
+                return Promise.reject(error);
             }
         }
-    } catch (error: unknown) {
-        // Requête en erreur (= pas de retour serveur).
-        if (!errorHandled) {
-            requestStore.updateRequest({id, url, status: "error"});
-            console.error(`Une erreur technique non gérée est survenue lors de l'appel à "${url}".`);
-            console.error(error);
-        }
-        return Promise.reject(error);
     }
 }
 
