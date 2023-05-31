@@ -15,14 +15,14 @@
         "start": "rollup -cw --bundleConfigAsCjs --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@types/lodash": "4.14.194",
-        "@types/react": "18.2.0",
+        "@types/lodash": "4.14.195",
+        "@types/react": "18.2.7",
         "@types/uuid": "9.0.1",
-        "i18next": "22.4.15",
+        "i18next": "22.5.0",
         "lodash": "4.17.21",
         "mobx": "6.9.0",
         "mobx-utils": "6.0.6",
-        "tslib": "2.5.0",
+        "tslib": "2.5.2",
         "uuid": "9.0.0",
         "whatwg-fetch": "3.6.2",
         "yester": "0.10.0"

@@ -18,7 +18,7 @@
         "@focus4/core": "11.7.6",
         "@focus4/styling": "11.7.6",
         "@focus4/toolbox": "11.7.6",
-        "framer-motion": "10.12.4"
+        "framer-motion": "10.12.16"
     },
     "devDependencies": {
         "@focus4/tooling": "11.7.6"

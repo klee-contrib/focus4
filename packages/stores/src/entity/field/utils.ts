@@ -138,7 +138,13 @@ export function makeField<F extends FieldEntry>(
 ): EntityField<F>;
 export function makeField(param1: any, param2: any = {}) {
     if (isFunction(param2)) {
-        return param2(new EntityFieldBuilder(param1).edit(true)).collect();
+        const field = param2(new EntityFieldBuilder(param1).edit(true)).collect();
+
+        if (isFunction(field.isEdit)) {
+            field.isEdit = field.isEdit();
+        }
+
+        return field;
     } else {
         const {
             className,
