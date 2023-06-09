@@ -1,34 +1,29 @@
-import {isString} from "lodash";
-import {action, makeObservable, observable} from "mobx";
-import {v4} from "uuid";
+import {lowerFirst} from "lodash";
+import {action, observable} from "mobx";
 
-/** Description d'un message. */
-export interface Message {
-    id?: string;
-    content: string;
-    type?: "error" | "info" | "success" | "warning";
-}
+export type MessageListener = (type: string, message: string) => void;
 
 /** Store de messages */
 export class MessageStore {
-    /** Objet contenant tous les messages reçus. */
-    @observable data: {[id: string]: Message} = {};
-    /** Dernier message reçu. */
-    @observable latestMessage?: Message;
+    private readonly messages = observable.map<string, string[]>();
+    private readonly listeners = new Map<string, MessageListener[]>();
 
-    constructor() {
-        makeObservable(this);
-    }
+    /** Types de messages à traiter dans un appel à `addMessages`.  */
+    messageTypes = ["success", "error", "info", "warning"];
 
     /**
-     * Ajoute un message sans type.
+     * Ajoute un message.
+     * @param type Le type
      * @param message Le message.
      */
     @action.bound
-    addMessage(message: Message | string) {
-        const id = v4();
-        this.data[id] = parseString(message);
-        this.latestMessage = this.data[id];
+    addMessage(type: string, message: string) {
+        if (!this.messages.get(type)) {
+            this.messages.set(type, []);
+        }
+
+        this.messages.get(type)!.push(message);
+        (this.listeners.get(type) ?? []).forEach(listener => listener(type, message));
     }
 
     /**
@@ -36,10 +31,8 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addWarningMessage(message: Message | string) {
-        message = parseString(message);
-        message.type = "warning";
-        this.addMessage(message);
+    addWarningMessage(message: string) {
+        this.addMessage("warning", message);
     }
 
     /**
@@ -47,10 +40,8 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addInformationMessage(message: Message | string) {
-        message = parseString(message);
-        message.type = "info";
-        this.addMessage(message);
+    addInformationMessage(message: string) {
+        this.addMessage("info", message);
     }
 
     /**
@@ -58,10 +49,8 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addErrorMessage(message: Message | string) {
-        message = parseString(message);
-        message.type = "error";
-        this.addMessage(message);
+    addErrorMessage(message: string) {
+        this.addMessage("error", message);
     }
 
     /**
@@ -69,22 +58,71 @@ export class MessageStore {
      * @param message Le message.
      */
     @action.bound
-    addSuccessMessage(message: Message | string) {
-        message = parseString(message);
-        message.type = "success";
-        this.addMessage(message);
+    addSuccessMessage(message: string) {
+        this.addMessage("success", message);
     }
-}
 
-/**
- * Formatte un message entrant.
- * @param message Le message.
- */
-function parseString(message: Message | string) {
-    if (isString(message)) {
-        message = {content: message};
+    /**
+     * Ajoute en masse des messages dans le store. Seuls les types listés dans `messageTypes` seront pris en compte.
+     * Les noms de types peuvent égalements être au pluriel et/ou être préfixés par "global".
+     *
+     * Exemple : `error`/`errors`/`globalError`/`globalErrors` seront tous les 4 pris en compte pour ajouter des messages de type `error`.
+     *
+     * `addMessages` est automatiquement appelé par `coreFetch` en cas d'erreur.
+     * @param messages Objet faisant correspondre à chaque type le ou les messages à ajouter.
+     */
+    @action.bound
+    addMessages(messages: Record<string, string[] | string>) {
+        const allMessages: string[] = [];
+
+        Object.keys(messages).forEach(type => {
+            const possibleTypes = [
+                type,
+                type.endsWith("s") ? type.substring(0, type.length - 1) : "",
+                type.startsWith("global") ? lowerFirst(type.substring(6, type.length)) : "",
+                type.startsWith("global") && type.endsWith("s") ? lowerFirst(type.substring(6, type.length - 1)) : ""
+            ].filter(Boolean);
+
+            possibleTypes.forEach(possibleType => {
+                if (this.messageTypes.includes(possibleType)) {
+                    (Array.isArray(messages[type]) ? (messages[type] as string[]) : [messages[type] as string]).forEach(
+                        message => {
+                            this.addMessage(possibleType, message);
+                            allMessages.push(message);
+                        }
+                    );
+                }
+            });
+        });
+
+        return allMessages;
     }
-    return message;
+
+    /**
+     * Enregistre un listener pour être notifié de l'ajout de messages dans le store
+     * @param types Les types de message
+     * @param listener Le callback.
+     */
+    addMessageListener(types: string[], listener: MessageListener) {
+        types.forEach(type => {
+            if (!this.listeners.get(type)) {
+                this.listeners.set(type, []);
+            }
+
+            this.listeners.get(type)!.push(listener);
+        });
+
+        return () => {
+            types.forEach(type => {
+                this.listeners.set(type, this.listeners.get(type)?.filter(l => l !== listener) ?? []);
+            });
+        };
+    }
+
+    /** Récupère le dernier message du type demandé. */
+    getLatestMessage(type: string) {
+        return (this.messages.get(type) ?? []).slice(-1).pop();
+    }
 }
 
 /** Instance principale du MessageStore. */
