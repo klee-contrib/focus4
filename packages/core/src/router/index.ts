@@ -266,9 +266,11 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                                         const redirect =
                                             (constraint.redirect?.() ?? (oldPath || "/")) +
                                             buildQueryString(store._activeQuery);
-                                        store._activeRoute = prevRoute;
-                                        store._activeParams = prevParams;
-                                        return {redirect, replace: true};
+                                        if (redirect !== window.location.hash?.replace("#", "")) {
+                                            store._activeRoute = prevRoute;
+                                            store._activeParams = prevParams;
+                                            return {redirect, replace: true};
+                                        }
                                     }
                                 }
 
