@@ -1,6 +1,5 @@
 import {isObject, merge, toPairs} from "lodash";
 import {v4} from "uuid";
-import "whatwg-fetch";
 
 import {config} from "../utils";
 

@@ -36,13 +36,12 @@ export function TableHeader<T>({
             <div
                 className={store && sortKey ? theme.sortable({sorted: store.sortBy === sortKey}) : undefined}
                 onClick={
-                    (store &&
-                        sortKey &&
-                        action(() => {
-                            store.sortAsc = store.sortBy !== sortKey ? true : !store.sortAsc;
-                            store.sortBy = sortKey;
-                        })) ||
-                    undefined
+                    store && sortKey
+                        ? action(() => {
+                              store.sortAsc = store.sortBy !== sortKey ? true : !store.sortAsc;
+                              store.sortBy = sortKey;
+                          })
+                        : undefined
                 }
             >
                 {store && sortKey ? (

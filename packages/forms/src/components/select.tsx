@@ -71,7 +71,7 @@ export function Select<T extends "number" | "string">({
                         const v = type === "number" ? parseFloat(val) : val;
                         onChange(v || v === 0 ? (v as any) : undefined);
                     }}
-                    value={value === undefined ? "" : value}
+                    value={value ?? ""}
                 >
                     {finalValues.map((val, idx) => {
                         const optVal = `${val[$valueKey] as number | string}`;

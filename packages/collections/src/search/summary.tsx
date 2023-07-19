@@ -118,7 +118,7 @@ export function Summary<T>({
                 for (const facetKey in props.store.inputFacets) {
                     const inputFacet = props.store.inputFacets[facetKey];
                     const facetOutput = props.store.facets.find(facet => facetKey === facet.code);
-                    if (facetOutput && (inputFacet.selected || inputFacet.excluded)) {
+                    if (facetOutput && (!!inputFacet.selected || !!inputFacet.excluded)) {
                         topicList.push({
                             type: "facet",
                             key: facetKey,

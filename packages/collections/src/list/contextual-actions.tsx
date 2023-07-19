@@ -21,7 +21,8 @@ export interface OperationListItemComponentProps<T> {
 
 /** Description d'une action sur un ou plusieurs éléments de liste. */
 export type OperationListItem<T> =
-    ComponentType<OperationListItemComponentProps<T>> | {
+    | ComponentType<OperationListItemComponentProps<T>>
+    | {
           /** L'action à effectuer. */
           action: (data: T) => void;
           /** Le libellé (ou la tooltip) du bouton. */
@@ -54,7 +55,7 @@ export interface ContextualActionsProps {
 export function ContextualActions({
     data,
     i18nPrefix = "focus",
-    isMosaic,
+    isMosaic = false,
     onClickMenu,
     onHideMenu,
     operationList,
@@ -93,7 +94,7 @@ export function ContextualActions({
                         icon={
                             isMosaic || !Operation.type || Operation.type.includes("icon") ? Operation.icon : undefined
                         }
-                        label={(!isMosaic && FinalButton === Button && Operation.label) || undefined}
+                        label={!isMosaic && FinalButton === Button ? Operation.label : undefined}
                         onClick={(e: any) => handleAction(key, e)}
                         primary={isMosaic}
                         tooltip={

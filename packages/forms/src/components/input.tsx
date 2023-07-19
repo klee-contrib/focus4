@@ -289,7 +289,7 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
 
                 if (!newValue.includes("NaN")) {
                     this.numberStringValue = newValue;
-                    onChange(newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
+                    onChange(!!newNumberValue || newNumberValue === 0 ? (newNumberValue as any) : undefined);
                 }
             }
 

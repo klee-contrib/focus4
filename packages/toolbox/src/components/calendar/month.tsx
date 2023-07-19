@@ -37,8 +37,8 @@ export function Month({
             const dateInDisabled = disabledDates.filter(compareDate).length > 0;
             const dateInEnabled = enabledDates.filter(compareDate).length > 0;
             return (
-                (minDate && !(date >= minDate)) ||
-                (maxDate && !(date <= maxDate)) ||
+                (!!minDate && !(date >= minDate)) ||
+                (!!maxDate && !(date <= maxDate)) ||
                 (enabledDates.length > 0 && !dateInEnabled) ||
                 dateInDisabled
             );

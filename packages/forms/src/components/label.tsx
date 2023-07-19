@@ -44,7 +44,7 @@ export function Label({
     const theme = useTheme("label", labelCss, pTheme);
     return (
         <div className={theme.label()} style={style}>
-            <label htmlFor={id}>{(label && i18next.t(label)) || ""}</label>
+            <label htmlFor={id}>{(label && i18next.t(label)) ?? ""}</label>
             {comment && showTooltip ? (
                 <TooltipIcon
                     className={theme.icon({clickable: !!onTooltipClick})}

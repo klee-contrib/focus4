@@ -129,7 +129,7 @@ export function ActionBar<T>({
     useEffect(
         () =>
             reaction(
-                () => (hasFacetBox && store.facets.length && store.facets[0]) || false,
+                () => hasFacetBox && store.facets.length && store.facets[0],
                 () => {
                     // On ferme la FacetBox si on se rend compte qu'on va afficher une FacetBox vide.
                     if (
@@ -235,7 +235,7 @@ export function ActionBar<T>({
                         </div>
                     ) : null}
                 </div>
-                {store.selectedItems.size && operationList && operationList.length ? (
+                {store.selectedItems.size && operationList?.length ? (
                     <ContextualActions data={Array.from(store.selectedItems)} operationList={operationList} />
                 ) : null}
             </div>

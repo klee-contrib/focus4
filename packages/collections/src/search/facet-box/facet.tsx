@@ -47,7 +47,9 @@ export function Facet({
             f =>
                 facet.isMultiSelectable ||
                 count === 0 ||
-                (count > 0 && (inputFacet?.selected?.includes(f.code) || inputFacet?.excluded?.includes(f.code)))
+                (count > 0 &&
+                    ((inputFacet?.selected?.includes(f.code) ?? false) ||
+                        (inputFacet?.excluded?.includes(f.code) ?? false)))
         );
 
         if (!isShowAll) {
@@ -132,9 +134,10 @@ export function Facet({
                         ) : null}
                     </>
                 ) : count > 0 ? (
-                    <span
-                        onClick={() => openedMap.set(facet.code, !opened)}
-                    >{`(${i18next.t(`${i18nPrefix}.search.facets.filter`, {count})})`}</span>
+                    <span onClick={() => openedMap.set(facet.code, !opened)}>{`(${i18next.t(
+                        `${i18nPrefix}.search.facets.filter`,
+                        {count}
+                    )})`}</span>
                 ) : null}
             </div>
         );

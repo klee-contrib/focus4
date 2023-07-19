@@ -62,7 +62,7 @@ export function TableLine<T>({
 
         /** Précise si la ligne est sélectionnable. */
         get isSelectable() {
-            return (props.hasSelection && props.store?.isItemSelectionnable(props.data)) || false;
+            return (props.hasSelection && props.store?.isItemSelectionnable(props.data)) ?? false;
         },
 
         /** Précise si la ligne est sélectionnée.. */

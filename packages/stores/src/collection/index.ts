@@ -495,7 +495,7 @@ export class CollectionStore<T = any, C = any> {
         if (props.inputFacets) {
             this.innerInputFacets.replace(props.inputFacets);
         }
-        this.sortAsc = props.sortAsc !== undefined ? props.sortAsc : this.sortAsc;
+        this.sortAsc = props.sortAsc ?? this.sortAsc;
         this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
         this.query = props.query ?? this.query;
         this.top = props.top ?? this.top;

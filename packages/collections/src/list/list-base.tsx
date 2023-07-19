@@ -37,7 +37,7 @@ export function useListBase<T>({
     i18nPrefix = "focus",
     itemKey,
     isLoading,
-    isManualFetch,
+    isManualFetch = false,
     pageItemIndex = 5,
     perPage,
     showAllHandler,
@@ -66,12 +66,12 @@ export function useListBase<T>({
 
             /** Correspond aux données chargées mais non affichées. */
             get hasMoreHidden() {
-                return (this.displayedCount && this.data.length > this.displayedCount) || false;
+                return this.displayedCount !== undefined && this.data.length > this.displayedCount;
             },
 
             /** Correpond aux données non chargées. */
             get hasMoreToLoad() {
-                return store && store.totalCount > store.currentCount;
+                return store ? store.totalCount > store.currentCount : false;
             },
 
             /** On complète le `hasMoreData` avec l'info du nombre de données chargées, si c'est un SearchStore. */

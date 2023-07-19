@@ -32,7 +32,7 @@ export function MainMenuList({activeRoute, children, closePanel, theme: pTheme}:
                             /* */
                         }),
                     renderSubMenu(subMenu) {
-                        return (ref && createPortal(subMenu, ref)) || null;
+                        return (ref && createPortal(subMenu, ref)) ?? null;
                     }
                 }),
                 [activeRoute, closePanel, ref]

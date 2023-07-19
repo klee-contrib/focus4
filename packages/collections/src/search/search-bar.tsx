@@ -87,9 +87,7 @@ export function SearchBar<T, C>({
                     ])
                     .filter(([_, value]) => value)
                     .map(([key, value]) => `${key as string}:${value as string}`);
-                return `${criteria.join(" ")}${criteria.length && store.query && store.query.trim() ? " " : ""}${
-                    store.query
-                }`;
+                return `${criteria.join(" ")}${criteria.length && store.query?.trim() ? " " : ""}${store.query}`;
             }
         },
 
@@ -210,7 +208,7 @@ export function SearchBar<T, C>({
                 {state.text ? (
                     <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} onClick={state.clear} />
                 ) : null}
-                {criteriaComponent || store.availableSearchFields.length > 0 ? (
+                {!!criteriaComponent || store.availableSearchFields.length > 0 ? (
                     <Button
                         icon={getIcon(`${i18nPrefix}.icons.searchBar.${showPanel ? "close" : "open"}`)}
                         label={

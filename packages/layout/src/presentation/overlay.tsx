@@ -27,7 +27,13 @@ function onOverlayClick() {
     }
 }
 
-export function Overlay({active, children, isAdditional, onClick, theme: pTheme}: PropsWithChildren<OverlayProps>) {
+export function Overlay({
+    active,
+    children,
+    isAdditional = false,
+    onClick,
+    theme: pTheme
+}: PropsWithChildren<OverlayProps>) {
     const theme = useTheme("overlay", overlayCss, pTheme);
 
     useEffect(() => {

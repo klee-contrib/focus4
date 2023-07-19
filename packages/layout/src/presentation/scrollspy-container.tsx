@@ -122,7 +122,7 @@ export class ScrollspyContainer extends Component<ScrollspyContainerProps> {
                                         activeId={this.activeItem}
                                         panels={this.sortedPanels.map(([id, {title}]) => ({
                                             id,
-                                            title: (title && i18next.t(title)) || ""
+                                            title: (title && i18next.t(title)) ?? ""
                                         }))}
                                         scrollToPanel={this.scrollToPanel}
                                     />

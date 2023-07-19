@@ -19,7 +19,7 @@ import {
  */
 export function toFlatValues<SN extends FormListNode | FormNode | StoreListNode | StoreNode>(
     storeNode: SN,
-    includeAddedFields?: boolean
+    includeAddedFields = false
 ): NodeToType<SN> {
     // Cas entrée liste : on appelle `toFlatValues` sur chaque élément.
     if (isStoreListNode(storeNode)) {

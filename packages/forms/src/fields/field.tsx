@@ -165,7 +165,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
 
         const iProps: BaseInputProps = {
             value,
-            error: (store.showError && error) || undefined,
+            error: store.showError ? error : undefined,
             name,
             id,
             type: type === "number" ? "number" : "string",

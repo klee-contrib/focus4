@@ -87,7 +87,7 @@ export function Panel({
             {!hideProgressBar && loading ? (
                 <ProgressBar mode="indeterminate" theme={{progressBar: theme.progress()}} />
             ) : null}
-            {title || areButtonsTop ? (
+            {!!title || areButtonsTop ? (
                 <div className={theme.title({top: true})}>
                     {title ? (
                         <h3>

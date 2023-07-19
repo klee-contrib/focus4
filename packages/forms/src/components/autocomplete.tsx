@@ -82,7 +82,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
     // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
     async UNSAFE_componentWillMount() {
         const {value, keyResolver, isQuickSearch} = this.props;
-        if ((value || value === 0) && !isQuickSearch && keyResolver) {
+        if ((!!value || value === 0) && !isQuickSearch && keyResolver) {
             const label = i18next.t((await keyResolver(value)) ?? "");
             runInAction(() => {
                 this._query = label || `${value}`;
@@ -182,7 +182,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
      */
     @action.bound
     async search(query: string) {
-        const {autoSelect, getKey = item => (item as any).key, querySearcher, searchOnEmptyQuery} = this.props;
+        const {autoSelect, getKey = item => (item as any).key, querySearcher, searchOnEmptyQuery = false} = this.props;
 
         if (querySearcher && (searchOnEmptyQuery || query.trim().length)) {
             this.isLoading = true;

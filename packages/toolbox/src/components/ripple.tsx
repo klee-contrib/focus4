@@ -193,7 +193,7 @@ export class RippledComponent<P> extends Component<
         if (this.rippleShouldTrigger(isTouch)) {
             const {top, left, width} = this.getDescriptor(x, y);
             const noRipplesActive = Object.keys(this.state.ripples).length === 0;
-            const key = this.props.rippleMultiple || noRipplesActive ? this.getNextKey() : this.getLastKey();
+            const key = this.props.rippleMultiple! || noRipplesActive ? this.getNextKey() : this.getLastKey();
             const endRipple = this.addRippleDeactivateEventListener(isTouch, key);
             const initialState = {
                 active: false,

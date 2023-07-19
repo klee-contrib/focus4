@@ -7,9 +7,6 @@ import pkg from "./package.json";
 const config = {
     input: "src/focus4.core.ts",
     plugins: [typescript()],
-    treeshake: {
-        moduleSideEffects: ["whatwg-fetch"]
-    },
     output: {
         format: "esm",
         dir: "lib"
