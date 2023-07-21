@@ -19,6 +19,7 @@ import {
     useState
 } from "react";
 
+import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Chip} from "./chip";
@@ -409,7 +410,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
             {selectedPosition === "above" ? renderSelected() : null}
             <Input
                 ref={inputRef}
-                autoComplete="new-password"
+                autoComplete={config.autocompleteOffValue}
                 className={theme.input()}
                 disabled={disabled}
                 error={error}

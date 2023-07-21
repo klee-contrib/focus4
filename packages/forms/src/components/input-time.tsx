@@ -4,6 +4,7 @@ import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import {Component, createRef, KeyboardEvent, ReactNode} from "react";
 
+import {config} from "@focus4/core";
 import {CSSProp, themr} from "@focus4/styling";
 import {Clock, ClockCss, IconButton} from "@focus4/toolbox";
 
@@ -224,8 +225,8 @@ export class InputTime extends Component<InputTimeProps> {
                     <div className={theme.input()} data-focus="input-time" data-id={this._inputTimeId}>
                         <Input
                             {...inputProps}
-                            {...{autoComplete: "off"}}
                             ref={this.inputRef}
+                            autoComplete={config.autocompleteOffValue}
                             error={error}
                             id={id}
                             mask={{pattern: inputFormat.replace(/\w/g, "1")}}

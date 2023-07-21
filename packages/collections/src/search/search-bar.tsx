@@ -4,6 +4,7 @@ import {difference, toPairs} from "lodash";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 
+import {config} from "@focus4/core";
 import {fieldFor, SelectCheckbox} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
 import {CSSProp, getIcon, springTransition, useTheme} from "@focus4/styling";
@@ -198,7 +199,7 @@ export function SearchBar<T, C>({
                     </FontIcon>
                     <input
                         ref={input}
-                        autoComplete="off"
+                        autoComplete={config.autocompleteOffValue}
                         name="search-bar-input"
                         onChange={state.onInputChange}
                         placeholder={i18next.t(state.placeholder || "")}
