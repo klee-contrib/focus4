@@ -7,6 +7,7 @@ Si l'on veut interagir avec les données d'une liste, on peut utiliser un **stor
 Il permet de gérer :
 
 -   Des compteurs d'éléments
+-   De la pagination côté serveur
 -   De la **sélection** d'élements
 -   Du **tri**
 -   Du **filtrage** par critère
@@ -44,3 +45,36 @@ _(Note : les deux derniers paramètres sont interchangeables)_
 -   L'objet de critère n'est pas supporté
 -   Le filtre sur la barre de recherche ne fait qu'un simple `includes` de la requête dans chacun des champs listés dans `filterFields` (en minuscule)
 -   Le filtrage des facettes, en dehors des nombres et de booléens, se fait avec un simple `==` (sachant que toutes les valeurs dans `inputFacets` sont des strings).
+
+## Intégration avec les composants de listes
+
+### Pagination serveur
+
+Gérée automatiquement par toutes les listes par dessus la pagination locale.
+
+### Sélection
+
+La sélection peut être activée sur `listFor` et `tableFor` via la prop `hasSelection`
+
+### Tri
+
+Les définitions de colonnes dans `tableFor` peuvent inclure `sortKey`, qui ajoutera une flèche dans le titre de la colonne pour trier par cette colonne là.
+
+## Lien avec les stores d'entité
+
+En mode local, puisque la propriété `list` est directement renseignée, il est possible d'y passer une liste de `StoreNode` ou de `FormNode`. **En revanche, il n'est pas possible de combiner un `CollectionStore` serveur avec un store d'entité**. Si vous avez par exemple une recherche avancée, votre composant de liste devra nécessairement prendre en entrée un objet "JS natif" en entrée.
+
+Vous pouvez néanmoins reconstruire un `StoreNode` dans votre composant de ligne si cela simplifie l'affichage de vos champs, par exemple :
+
+```tsx
+export function ItemLine({data, onClick}: {data: Item; onClick?: () => void}) {
+    const node = buildNode(ItemEntity).replace(data);
+    return useObserver(() => (
+        <div onClick={onClick}>
+            {stringFor(node.nom)}
+            {stringFor(node.codes, referenceStore.code)}
+            {stringFor(node.date)}
+        </div>
+    ));
+}
+```

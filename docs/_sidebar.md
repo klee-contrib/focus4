@@ -19,7 +19,7 @@
     -   [⭐ Actions de formulaires](model/form-actions.md)
     -   [⭐ Composants de formulaire](model/form-usage.md)
 
--   **[`@focus4/toolbox`](toolbox.md)**
+-   **[Composants](components.md)**
 
 -   **[Routage](routing.md)**
 
