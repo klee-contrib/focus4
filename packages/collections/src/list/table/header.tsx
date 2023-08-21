@@ -10,7 +10,7 @@ import {TableCss} from "../__style__/table.css";
 
 /** Colonne de tableau. */
 export interface TableColumn<T> {
-    /** Classe CSS pour la colonne. */
+    /** Classe CSS pour la colonne (posée sur le <th> et les <td>). */
     className?: string;
     /** Contenu de la colonne. */
     content: (data: T) => ReactNode;
@@ -21,7 +21,7 @@ export interface TableColumn<T> {
 }
 
 export function TableHeader<T>({
-    column: {title, sortKey},
+    column: {title, className: cellClassName, sortKey},
     i18nPrefix,
     store,
     theme
@@ -32,7 +32,7 @@ export function TableHeader<T>({
     theme: ToBem<TableCss>;
 }) {
     return (
-        <th>
+        <th className={cellClassName}>
             <div
                 className={store && sortKey ? theme.sortable({sorted: store.sortBy === sortKey}) : undefined}
                 onClick={
