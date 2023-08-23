@@ -1,7 +1,11 @@
+:root {
+    --label-font-size: 14px;
+}
+
 .label {
     text-align: right;
     font-weight: bold;
-    font-size: var(--input-field-font-size);
+    font-size: var(--label-font-size);
     line-height: 20px;
     display: flex;
     align-items: flex-start;
