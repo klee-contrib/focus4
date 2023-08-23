@@ -1,6 +1,5 @@
 export {
     Autocomplete,
-    AutocompleteCss,
     AutocompleteProps,
     AutocompleteResult,
     BooleanRadio,
@@ -32,7 +31,6 @@ export {
     SelectRadio,
     SelectRadioCss,
     SelectRadioProps,
-    autocompleteCss,
     booleanRadioCss,
     displayCss,
     inputDateCss,

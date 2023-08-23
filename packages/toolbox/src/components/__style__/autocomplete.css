@@ -4,13 +4,12 @@
     --autocomplete-color-primary: rgb(var(--color-primary));
     --autocomplete-overflow-max-height: 45vh;
     --autocomplete-suggestion-active-background: rgb(var(--palette-grey-200));
-    --autocomplete-suggestion-padding: var(--unit);
+    --autocomplete-suggestion-padding: calc(0.8 * var(--unit));
     --autocomplete-suggestions-background: rgb(var(--color-white));
     --autocomplete-value-margin: calc(var(--unit) * 0.25) calc(var(--unit) * 0.5) calc(var(--unit) * 0.25) 0;
 }
 
 .autocomplete {
-    padding: var(--unit) 0;
     position: relative;
     box-sizing: border-box;
     font-family: var(--preferred-font);
@@ -41,17 +40,14 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding: 0;
+    margin: 0;
     position: absolute;
     transition-duration: var(--animation-duration);
     transition-property: max-height, box-shadow;
     transition-timing-function: var(--animation-curve-default);
     visibility: hidden;
     width: 100%;
-    z-index: var(--z-index-high);
-
-    &:not(.suggestions--up) {
-        margin-top: calc(-1 * var(--input-padding));
-    }
+    z-index: var(--z-index-highest);
 
     &::-webkit-scrollbar {
         height: 0;
@@ -59,8 +55,12 @@
     }
 }
 
+.suggestions--down {
+    top: calc(100% - var(--input-padding));
+}
+
 .suggestions--up {
-    bottom: 0;
+    bottom: calc(100% - var(--input-padding));
 }
 
 .autocomplete--focus .suggestions {
@@ -105,4 +105,18 @@
         transition: transform var(--animation-duration) var(--animation-curve-default);
         width: 0;
     }
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+}
+
+.progressBar {
+    position: absolute;
+    bottom: var(--input-padding);
+    height: 2px;
+    width: 100%;
 }

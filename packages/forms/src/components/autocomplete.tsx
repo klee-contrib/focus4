@@ -5,19 +5,7 @@ import {observer} from "mobx-react";
 import {Component} from "react";
 import {findDOMNode} from "react-dom";
 
-import {CSSProp, themr} from "@focus4/styling";
-import {
-    InputCss,
-    ProgressBar,
-    Autocomplete as RTAutocomplete,
-    AutocompleteCss as RTAutocompleteCss,
-    AutocompleteProps as RTAutocompleteProps
-} from "@focus4/toolbox";
-
-import autocompleteCss, {AutocompleteCss as ACCSS} from "./__style__/autocomplete.css";
-export {autocompleteCss};
-export type AutocompleteCss = ACCSS & InputCss & RTAutocompleteCss;
-const Theme = themr<AutocompleteCss>("autocomplete", autocompleteCss as AutocompleteCss);
+import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps} from "@focus4/toolbox";
 
 /** Résultat du service de recherche. */
 export interface AutocompleteResult<T = {key: string; label: string}> {
@@ -30,7 +18,7 @@ export interface AutocompleteResult<T = {key: string; label: string}> {
 /** Props du composant d'autocomplétion */
 // @ts-ignore
 export interface AutocompleteProps<T extends "number" | "string", TSource = {key: string; label: string}>
-    extends Omit<RTAutocompleteProps<string, TSource>, "getLabel" | "onChange" | "value"> {
+    extends Omit<RTAutocompleteProps<string, TSource>, "getLabel" | "loading" | "onChange" | "value"> {
     /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
     autoSelect?: boolean;
     /** Détermine la propriété de l'objet a utiliser comme clé. Par défaut : `item => item.key` */
@@ -47,8 +35,6 @@ export interface AutocompleteProps<T extends "number" | "string", TSource = {key
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
-    /** CSS. */
-    theme?: CSSProp<AutocompleteCss>;
     /** Type du champ ("string" ou "number"). */
     type: T;
     /** Valeur. */
@@ -225,34 +211,20 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
             ...props
         } = this.props;
         return (
-            <Theme theme={pTheme}>
-                {theme => (
-                    <div data-focus="autocomplete">
-                        <RTAutocomplete
-                            {...props}
-                            getLabel={getLabel}
-                            maxLength={undefined}
-                            multiple={false}
-                            onChange={value => this.onValueChange(value as string)}
-                            onFocus={this.onFocus}
-                            onQueryChange={query => (this.query = query ?? "")}
-                            query={this.query}
-                            source={this.source}
-                            suggestionMatch="disabled"
-                            // @ts-ignore
-                            theme={theme}
-                            value={`${props.value ?? ""}`}
-                        />
-                        {this.isLoading ? (
-                            <ProgressBar
-                                mode="indeterminate"
-                                theme={{progressBar: theme.progressBar()}}
-                                type="linear"
-                            />
-                        ) : null}
-                    </div>
-                )}
-            </Theme>
+            <RTAutocomplete
+                {...props}
+                getLabel={getLabel}
+                loading={this.isLoading}
+                maxLength={undefined}
+                multiple={false}
+                onChange={value => this.onValueChange(value as string)}
+                onFocus={this.onFocus}
+                onQueryChange={query => (this.query = query ?? "")}
+                query={this.query}
+                source={this.source}
+                suggestionMatch="disabled"
+                value={`${props.value ?? ""}`}
+            />
         );
     }
 }

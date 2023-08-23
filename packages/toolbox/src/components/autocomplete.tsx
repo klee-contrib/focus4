@@ -24,6 +24,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Chip} from "./chip";
 import {Input, InputCss, InputProps} from "./input";
+import {ProgressBar} from "./progress-bar";
 import {rippleFactory, RippleProps} from "./ripple";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
@@ -41,6 +42,8 @@ export interface AutocompleteProps<TValue extends string[] | string = string, TS
     finalSuggestion?: ReactNode;
     /** Gets the label from a source item. Defaults to returning the item (works if the item is a regular string). */
     getLabel?: (x: TSource) => string;
+    /** Displays an indeteminate progress bar below the input field. */
+    loading?: boolean;
     /** Custom component for rendering suggestions. */
     LineComponent?: (props: {item: TSource}) => ReactElement;
     /** If true, component can hold multiple values. */
@@ -88,6 +91,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
         keepFocusOnChange = false,
         label,
         LineComponent,
+        loading = false,
         maxLength,
         multiline,
         multiple = true as any,
@@ -222,13 +226,13 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
 
     // Recalcule la position de la sélection quand elle est automatique.
     useEffect(() => {
-        if (focus && direction === "auto") {
+        if (focus && pDirection === "auto") {
             const client = inputRef.current?.getBoundingClientRect() ?? {top: 0, height: 0};
             const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
             const up = client.top > screenHeight / 2 + client.height;
             setDirection(up ? "up" : "down");
         }
-    }, [direction, focus]);
+    }, [pDirection, focus]);
 
     // Appelé à la sélection d'une valeur.
     const handleChange = useCallback(
@@ -448,7 +452,13 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
             >
                 {children}
             </Input>
-            <ul className={theme.suggestions({up: direction === "up"})} data-id={suggestionsUlId}>
+            {loading ? (
+                <ProgressBar mode="indeterminate" theme={{progressBar: theme.progressBar()}} type="linear" />
+            ) : null}
+            <ul
+                className={theme.suggestions({up: direction === "up", down: direction === "down"})}
+                data-id={suggestionsUlId}
+            >
                 {suggestionList.map(({key, val}) => (
                     <RipplingLi
                         key={key}

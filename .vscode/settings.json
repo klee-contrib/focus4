@@ -2,9 +2,6 @@
     "typescript.tsdk": "./node_modules/typescript/lib",
     "editor.snippetSuggestions": "bottom",
     "files.trimTrailingWhitespace": true,
-    "files.associations": {
-        "*.css": "postcss"
-    },
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true

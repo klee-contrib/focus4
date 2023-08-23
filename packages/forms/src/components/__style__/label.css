@@ -1,7 +1,7 @@
 .label {
     text-align: right;
     font-weight: bold;
-    font-size: 14px;
+    font-size: var(--input-field-font-size);
     line-height: 20px;
     display: flex;
     align-items: flex-start;
