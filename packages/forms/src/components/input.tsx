@@ -197,9 +197,7 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
             }
         }
 
-        if (this.props.onKeyDown) {
-            this.props.onKeyDown(e);
-        }
+        this.props.onKeyDown?.(e);
     }
 
     @action.bound
@@ -220,9 +218,7 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
             }
         }
 
-        if (this.props.onKeyPress) {
-            this.props.onKeyPress(e);
-        }
+        this.props.onKeyPress?.(e);
     }
 
     @action.bound
@@ -238,6 +234,8 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
                 }
             }
         }
+
+        this.props.onPaste?.(e);
     }
 
     @action.bound
