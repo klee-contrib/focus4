@@ -221,8 +221,7 @@ export function ActionBar<T>({
                                 onChange={(text: string) => (store.query = text)}
                                 theme={{
                                     input: theme.searchBarField(),
-                                    icon: theme.searchBarIcon(),
-                                    hint: theme.searchBarHint()
+                                    icon: theme.searchBarIcon()
                                 }}
                                 value={store.query}
                             />

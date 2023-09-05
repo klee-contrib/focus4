@@ -63,6 +63,7 @@
     border-top: 0;
     color: var(--input-text-input-element-color);
     display: block;
+    font-family: var(--preferred-font);
     font-size: var(--input-field-font-size);
     outline: none;
     padding: var(--input-field-padding) 0;
@@ -92,10 +93,6 @@
     }
 }
 
-.inputElement--filled ~ .hint {
-    opacity: 0;
-}
-
 .inputElement:focus:not([disabled]):not([readonly]) ~ .label:not(.label--fixed),
 .inputElement--filled ~ .label:not(.label--fixed),
 .inputElement[type="date"] ~ .label:not(.label--fixed),
@@ -104,8 +101,7 @@
     top: var(--input-focus-label-top);
 }
 
-.inputElement--filled ~ .label--fixed,
-.inputElement--filled ~ .hint {
+.inputElement--filled ~ .label--fixed {
     display: none;
 }
 
@@ -122,22 +118,15 @@
     transition-timing-function: var(--animation-curve-default);
 }
 
-.label--fixed ~ .hint {
-    display: none;
-}
-
-.hint {
+.inputElement::placeholder {
     color: var(--input-text-label-color);
     font-size: var(--input-field-font-size);
-    left: 0;
-    line-height: var(--input-field-font-size);
+    font-family: var(--preferred-font);
     opacity: var(--input-hint-opacity);
-    pointer-events: none;
-    position: absolute;
-    top: calc(var(--input-padding) + 1.5 * var(--input-field-padding));
-    transition-duration: var(--animation-duration);
-    transition-property: opacity;
-    transition-timing-function: var(--animation-curve-default);
+}
+
+.inputElement:placeholder-shown {
+    text-overflow: ellipsis;
 }
 
 .bar {

@@ -64,14 +64,6 @@
     left: -30px;
 }
 
-.searchBarHint {
-    top: 10px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: var(--action-bar-search-bar-width);
-    overflow: hidden;
-}
-
 .buttons {
     display: flex;
     align-items: center;

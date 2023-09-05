@@ -35,7 +35,7 @@ export interface InputProps {
     /** Indicates if the label is floating in the input field or not. */
     floating?: boolean;
     /** The text string to use for hint text element. */
-    hint?: ReactNode;
+    hint?: string;
     /** Name of an icon to use as a label for the input. */
     icon?: ReactNode;
     /** Id for the input field. */
@@ -258,12 +258,18 @@ export const Input = forwardRef(function RTInput(
             data-react-toolbox="input"
         >
             {multiline ? (
-                <textarea ref={inputNode as any} {...inputElementProps} rows={rows} />
+                <textarea
+                    ref={inputNode as any}
+                    {...inputElementProps}
+                    placeholder={hint && !labelText ? hint : undefined}
+                    rows={rows}
+                />
             ) : (
                 <input
                     ref={inputNode as any}
                     {...inputElementProps}
                     maxLength={noMaxLengthOnElement ? undefined : maxLength}
+                    placeholder={hint && !labelText ? hint : undefined}
                 />
             )}
             {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
@@ -273,11 +279,6 @@ export const Input = forwardRef(function RTInput(
                     {labelText}
                     {required ? <span className={theme.required()}> * </span> : null}
                 </label>
-            ) : null}
-            {hint ? (
-                <span className={theme.hint()} hidden={!!labelText}>
-                    {hint}
-                </span>
             ) : null}
             {error ? <span className={theme.error()}>{error}</span> : null}
             {maxLength ? <span className={theme.counter()}>{`${length}/${maxLength}`}</span> : null}
