@@ -58,6 +58,38 @@ Champ de saisie texte standard. A priori à ne jamais utiliser directement et ut
 
 Ensemble de composants pour réaliser des menus contextuels à partir d'un [`Button`](#button) ou [`IconButton`](#iconbutton) avec une liste d'actions.
 
+Exemple `ButtonMenu` :
+
+```tsx
+<ButtonMenu
+    button={{
+        label: userStore.userName,
+        icon: "more_vert"
+    }}
+    position="topRight"
+>
+    <MenuItem
+        caption={mode.dark ? "Mode clair" : "Mode sombre"}
+        icon={mode.dark ? "light_mode" : "dark_mode"}
+        onClick={() => (mode.dark = !mode.dark)}
+    />
+    <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
+</ButtonMenu>
+```
+
+Exemple `IconMenu` :
+
+```tsx
+<IconMenu icon="more_vert" position="topRight">
+    <MenuItem
+        caption={mode.dark ? "Mode clair" : "Mode sombre"}
+        icon={mode.dark ? "light_mode" : "dark_mode"}
+        onClick={() => (mode.dark = !mode.dark)}
+    />
+    <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
+</IconMenu>
+```
+
 ### `ProgressBar`
 
 Une barre de chargement ou un spinner (`linear` ou `circular`). Peut être utilisé de façon déterminée ou indéterminée.
