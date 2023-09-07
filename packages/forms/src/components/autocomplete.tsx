@@ -205,7 +205,6 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
             getLabel = item => i18next.t((item as any).label),
             keyResolver,
             querySearcher,
-            theme: pTheme,
             isQuickSearch,
             autoSelect,
             ...props
