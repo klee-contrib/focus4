@@ -41,7 +41,13 @@ export interface AutocompleteProps<T extends "number" | "string", TSource = {key
     value: (T extends "string" ? string : number) | undefined;
 }
 
-/** Surcouche de l'Autocomplete React-Toolbox pour utilisation des services de recherche serveur. */
+/**
+ * **_A ne pas confondre avec le composant du même nom `Autocomplete` dans le module `@focus4/toolbox` !_**
+ *
+ * Champ de saisie en autocomplétion à partir d'un **service de recherche**. Il s'agit d'un wrapper autour de l'autre `Autocomplete` pour construire la liste des valeurs disponibles via un appel à une API.
+ *
+ * Il s'agit du composant par défaut pour [`autocompleteFor`](model/display-fields.md#autocompleteforfield-options).
+ */
 @observer
 export class Autocomplete<T extends "number" | "string", TSource = {key: string; label: string}> extends Component<
     AutocompleteProps<T, TSource>

@@ -85,6 +85,11 @@ export interface InputProps {
     style?: CSSProperties;
 }
 
+/**
+ * **_A ne pas confondre avec le composant du même nom `Input` dans le module `@focus4/forms` !_**
+ *
+ * Champ de saisie texte standard. A priori à ne jamais utiliser directement et utiliser celui de `@focus4/forms` qui contient plus de fonctionnalités.
+ */
 export const Input = forwardRef(function RTInput(
     {
         autoComplete,

@@ -37,7 +37,9 @@ export interface SelectRadioProps<T extends "number" | "string"> {
     values: ReferenceList;
 }
 
-/** RadioSelect component */
+/**
+ * Un composant de saisie pour choisir un élément dans une liste de référence en utilisant un [`Radio`](components/toolbox.md#radiogroup)
+ */
 export function SelectRadio<T extends "number" | "string">({
     disabled = false,
     error,

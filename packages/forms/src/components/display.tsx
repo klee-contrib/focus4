@@ -21,7 +21,9 @@ export interface DisplayProps {
     values?: ReferenceList;
 }
 
-/** Composant d'affichage par défaut, gère la résolution de la valeur par liste de référence ou par service. */
+/**
+ * Le composant d'affichage par défaut pour [toutes les fonctions d'affichage de champs](model/display-fields.md). Résout les listes de références, les autocompletes via `keyResolver`, les traductions i18n et peut afficher des listes de valeurs.
+ */
 export function Display({formatter = x => x, keyResolver, theme: pTheme, value: pValue, values}: DisplayProps) {
     const [value, setValue] = useState<any>();
     const theme = useTheme("display", displayCss, pTheme);

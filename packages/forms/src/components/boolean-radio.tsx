@@ -25,6 +25,9 @@ export interface BooleanRadioProps {
     value?: boolean;
 }
 
+/**
+ * Un radio oui/non pour un booléen.
+ */
 export function BooleanRadio({
     disabled,
     error,

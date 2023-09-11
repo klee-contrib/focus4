@@ -52,6 +52,9 @@ export interface SliderProps {
     value?: number;
 }
 
+/**
+ * Un composant de saisie pour saisir un nombre avec un slider.
+ */
 export function Slider({
     buffer = 0,
     className = "",

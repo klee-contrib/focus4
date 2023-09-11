@@ -21,6 +21,9 @@
 
 -   **[Composants](components.md)**
 
+    -   [@focus4/forms](components/forms.md)
+    -   [@focus4/toolbox](components/toolbox.md)
+
 -   **[Routage](routing.md)**
 
     -   [⭐ Création d'un routeur](routing/make-router.md)

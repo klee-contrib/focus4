@@ -36,7 +36,11 @@ export interface SelectProps<T extends "number" | "string"> {
     values: ReferenceList;
 }
 
-/** Surcouche de <select> pour s'interfacer avec un <Field>. */
+/**
+ * Un composant de saisie pour choisir un élément dans une liste de référence, via un `<select>` HTML natif.
+ *
+ * Il s'agit du composant par défaut pour [`selectFor`](model/display-fields.md#selectforfield-values-options).
+ */
 export function Select<T extends "number" | "string">({
     disabled,
     error,

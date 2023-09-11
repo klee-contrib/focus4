@@ -13,6 +13,7 @@
     "scripts": {
         "bootstrap": "lerna bootstrap --hoist",
         "clean": "lerna clean --yes && node scripts/clean.js",
+        "docgen": "node scripts/docgen.mjs",
         "eslint": "eslint --ext .ts,.tsx packages",
         "publish": "lerna publish --exact",
         "stylelint": "stylelint packages/**/*.css",
@@ -23,7 +24,9 @@
         "@rollup/plugin-node-resolve": "15.2.1",
         "@rollup/plugin-typescript": "11.1.3",
         "lerna": "6.6.2",
+        "markdown-table": "3.0.3",
         "postcss": "8.4.29",
+        "react-docgen-typescript": "2.2.2",
         "rollup": "3.28.1",
         "rollup-plugin-copy-glob": "0.3.2",
         "rollup-plugin-postcss": "4.0.2",

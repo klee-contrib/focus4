@@ -34,6 +34,9 @@ export interface RippleProps extends Omit<RippleOptions, "theme"> {
     rippleTheme?: CSSProp<RippleCss>;
 }
 
+/**
+ * Une factory pour ajouter des "ripples" à un composant. Est utilisé largement par les autres composants pour les divers boutons. S'utilise de la même manière que la [`tooltipFactory`](#tooltipfactory)
+ */
 export function rippleFactory({
     rippleCentered = false,
     rippleMultiple = true,

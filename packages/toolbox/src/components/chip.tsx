@@ -23,6 +23,9 @@ export interface ChipProps {
     theme?: CSSProp<ChipCss>;
 }
 
+/**
+ * Affiche un chip pour représenter un élément sélectionné, qui peut avoir une action de suppression.
+ */
 export function Chip({
     className = "",
     children,

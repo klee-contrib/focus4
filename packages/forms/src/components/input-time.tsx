@@ -46,7 +46,9 @@ export interface InputTimeProps {
     timezoneCode?: string;
 }
 
-/** Composant d'input avec une horloge (React-Toolbox). Diffère du TimePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
+/**
+ * Un champ de saisie d'heure avec double saisie en texte (avec un `Input`) et une horloge (`Clock`), qui s'affiche en dessous.
+ */
 @observer
 // eslint-disable-next-line react/no-unsafe
 export class InputTime extends Component<InputTimeProps> {

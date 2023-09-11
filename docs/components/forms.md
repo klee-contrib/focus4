@@ -1,0 +1,341 @@
+# Composants de `@focus4/forms` <!-- {docsify-ignore-all} -->
+
+`@focus4/forms` contient, en plus des [composants de formulaires](./model/form-usage.md), quelques composants supplémentaires qui s'ajoutent à ceux `@focus4/toolbox` et peuvent parfois les surcharger. Historiquement, ces composants n'étaient pas dans `react-toolbox`, ce qui est la principale raison pour laquelle ils sont dans un module différent...
+
+## `Autocomplete`
+
+**_A ne pas confondre avec le composant du même nom `Autocomplete` dans le module `@focus4/toolbox` !_**
+
+Champ de saisie en autocomplétion à partir d'un **service de recherche**. Il s'agit d'un wrapper autour de l'autre `Autocomplete` pour construire la liste des valeurs disponibles via un appel à une API.
+
+Il s'agit du composant par défaut pour [`autocompleteFor`](model/display-fields.md#autocompleteforfield-options).
+
+### Props
+
+| Nom                             | Obligatoire | Type                                                                                                                   | Description                                                                                                         |
+| ------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `allowCreate`                   | Non         | <code>boolean</code>                                                                                                   | Determines if user can create a new option with the current typed value.                                            |
+| `autoSelect`                    | Non         | <code>boolean</code>                                                                                                   | Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément.                                 |
+| `children`                      | Non         | <code>ReactNode</code>                                                                                                 | Children to pass through the component.                                                                             |
+| `className`                     | Non         | <code>string</code>                                                                                                    |                                                                                                                     |
+| `direction`                     | Non         | <code>"down" &#124; "up" &#124; "auto"</code>                                                                          | Determines the opening direction. It can be auto, up or down.                                                       |
+| `disabled`                      | Non         | <code>boolean</code>                                                                                                   | If true, component will be disabled.                                                                                |
+| `error`                         | Non         | <code>ReactNode</code>                                                                                                 | Give an error node to display under the field.                                                                      |
+| `finalSuggestion`               | Non         | <code>ReactNode</code>                                                                                                 | React Node to display as the last suggestion.                                                                       |
+| `floating`                      | Non         | <code>boolean</code>                                                                                                   | Indicates if the label is floating in the input field or not.                                                       |
+| `getKey`                        | Non         | <code>(item: TSource) =&gt; string</code>                                                                              | Détermine la propriété de l'objet a utiliser comme clé. Par défaut : `item => item.key`                             |
+| `getLabel`                      | Non         | <code>(item: TSource) =&gt; string</code>                                                                              | Détermine la propriété de l'objet a utiliser comme libellé. Par défaut : `item => i18next.t(item.label)`            |
+| `hint`                          | Non         | <code>string</code>                                                                                                    | The text string to use for hint text element.                                                                       |
+| `icon`                          | Non         | <code>ReactNode</code>                                                                                                 | Name of an icon to use as a label for the input.                                                                    |
+| `id`                            | Non         | <code>string</code>                                                                                                    | Id for the input field.                                                                                             |
+| `isQuickSearch`                 | Non         | <code>boolean</code>                                                                                                   | Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection).                           |
+| `keepFocusOnChange`             | Non         | <code>boolean</code>                                                                                                   | Whether component should keep focus after value change.                                                             |
+| `keyResolver`                   | Non         | <code>(key: T extends "string" ? string : number) =&gt; Promise&lt;string&gt;</code>                                   | Service de résolution de clé. Doit retourner le libellé.                                                            |
+| `label`                         | Non         | <code>ReactNode</code>                                                                                                 | The text string to use for the floating label element.                                                              |
+| `LineComponent`                 | Non         | <code>(props: { item: TSource; }) =&gt; ReactElement&lt;any, string &#124; JSXElementConstructor&lt;any&gt;&gt;</code> | Custom component for rendering suggestions.                                                                         |
+| `maxLength`                     | Non         | <code>number</code>                                                                                                    | Specifies the maximum number of characters allowed in the component.                                                |
+| `multiline`                     | Non         | <code>boolean</code>                                                                                                   | If true, a textarea element will be rendered. The textarea also grows and shrinks according to the number of lines. |
+| `multiple`                      | Non         | <code>false</code>                                                                                                     | If true, component can hold multiple values.                                                                        |
+| `name`                          | Non         | <code>string</code>                                                                                                    | Name for the input field.                                                                                           |
+| `noMaxLengthOnElement`          | Non         | <code>boolean</code>                                                                                                   | If true, does not add the "maxLength" attribute to the HTML input element.                                          |
+| `onBlur`                        | Non         | <code>FocusEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onChange`                      | **Oui**     | <code>(value: T extends "string" ? string : number) =&gt; void</code>                                                  | Au changement.                                                                                                      |
+| `onClick`                       | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onContextMenu`                 | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onDoubleClick`                 | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onFocus`                       | Non         | <code>FocusEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onKeyDown`                     | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                   |                                                                                                                     |
+| `onKeyPress`                    | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                   |                                                                                                                     |
+| `onKeyUp`                       | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                   |                                                                                                                     |
+| `onMouseDown`                   | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onMouseEnter`                  | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onMouseLeave`                  | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onMouseMove`                   | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onMouseOut`                    | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onMouseOver`                   | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onMouseUp`                     | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `onPaste`                       | Non         | <code>ClipboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                  |                                                                                                                     |
+| `onQueryChange`                 | Non         | <code>(text: string) =&gt; void</code>                                                                                 | Callback function that is fired when the components's query value changes.                                          |
+| `onTouchStart`                  | Non         | <code>TouchEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      |                                                                                                                     |
+| `query`                         | Non         | <code>string</code>                                                                                                    | Overrides the inner query.                                                                                          |
+| `querySearcher`                 | Non         | <code>(text: string) =&gt; Promise&lt;AutocompleteResult&lt;TSource&gt;&gt;</code>                                     | Service de recherche.                                                                                               |
+| `readOnly`                      | Non         | <code>boolean</code>                                                                                                   | If true, input is readonly.                                                                                         |
+| `required`                      | Non         | <code>boolean</code>                                                                                                   | If true, the html input has a required attribute.                                                                   |
+| `ripple`                        | Non         | <code>boolean</code>                                                                                                   | If set to false, disable the rippling effect on suggestions.                                                        |
+| `rows`                          | Non         | <code>number</code>                                                                                                    | The number of rows the multiline input field has.                                                                   |
+| `searchOnEmptyQuery`            | Non         | <code>boolean</code>                                                                                                   | Active l'appel à la recherche si le champ est vide.                                                                 |
+| `selectedPosition`              | Non         | <code>"none" &#124; "above" &#124; "below"</code>                                                                      | Determines if the selected list is shown above or below input. It can be above or below.                            |
+| `showSuggestionsWhenValueIsSet` | Non         | <code>boolean</code>                                                                                                   | If true, the list of suggestions will not be filtered when a value is selected.                                     |
+| `source`                        | Non         | <code>Record&lt;string, TSource&gt;</code>                                                                             | Object of key/values representing all items suggested.                                                              |
+| `style`                         | Non         | <code>CSSProperties</code>                                                                                             |                                                                                                                     |
+| `suggestionMatch`               | Non         | <code>"disabled" &#124; "anywhere" &#124; "start" &#124; "word"</code>                                                 | Determines how suggestions are supplied.                                                                            |
+| `suggestionSort`                | Non         | <code>"label" &#124; "key"</code>                                                                                      | If set, sorts the suggestions by key or label ascending.                                                            |
+| `tabIndex`                      | Non         | <code>number</code>                                                                                                    | TabIndex.                                                                                                           |
+| `theme`                         | Non         | <code>CSSProp&lt;AutocompleteCss & InputCss&gt;</code>                                                                 |                                                                                                                     |
+| `type`                          | **Oui**     | <code>"string" &#124; "number"</code>                                                                                  | Type du champ ("string" ou "number").                                                                               |
+| `value`                         | **Oui**     | <code>string &#124; number</code>                                                                                      | Valeur.                                                                                                             |
+
+## `BooleanRadio`
+
+Un radio oui/non pour un booléen.
+
+### Props
+
+| Nom        | Obligatoire | Type                                        | Description                                            |
+| ---------- | ----------- | ------------------------------------------- | ------------------------------------------------------ |
+| `disabled` | Non         | <code>boolean</code>                        | Disabled radio-select, default to: false               |
+| `error`    | Non         | <code>string</code>                         | Error message to display.                              |
+| `labelNo`  | Non         | <code>string</code>                         | Libellé pour le "non". Par défaut: "focus.boolean.no"  |
+| `labelYes` | Non         | <code>string</code>                         | Libellé pour le "oui". Par défaut: "focus.boolean.yes" |
+| `name`     | **Oui**     | <code>string</code>                         | Name for input field.                                  |
+| `onChange` | **Oui**     | <code>(value: boolean) =&gt; void</code>    | Call with each value change.                           |
+| `theme`    | Non         | <code>CSSProp&lt;BooleanRadioCss&gt;</code> | CSS.                                                   |
+| `value`    | Non         | <code>boolean</code>                        | Value.                                                 |
+
+## `ButtonHelp`
+
+Affiche un bouton pour ouvrir le centre d'aide (...).
+
+### Props
+
+| Nom          | Obligatoire | Type                | Description |
+| ------------ | ----------- | ------------------- | ----------- |
+| `blockName`  | **Oui**     | <code>string</code> |             |
+| `i18nPrefix` | Non         | <code>string</code> |             |
+
+## `Display`
+
+Le composant d'affichage par défaut pour [toutes les fonctions d'affichage de champs](model/display-fields.md). Résout les listes de références, les autocompletes via `keyResolver`, les traductions i18n et peut afficher des listes de valeurs.
+
+### Props
+
+| Nom           | Obligatoire | Type                                                | Description                     |
+| ------------- | ----------- | --------------------------------------------------- | ------------------------------- |
+| `formatter`   | Non         | <code>(value: any) =&gt; string</code>              | Formatteur.                     |
+| `keyResolver` | Non         | <code>(key: any) =&gt; Promise&lt;string&gt;</code> | Service de résolution de code.  |
+| `theme`       | Non         | <code>CSSProp&lt;DisplayCss&gt;</code>              | CSS.                            |
+| `value`       | Non         | <code>any</code>                                    | Valeur à afficher.              |
+| `values`      | Non         | <code>ReferenceList&lt;any, any, any&gt;</code>     | Liste des valeurs de référence. |
+
+## `InputDate`
+
+Un champ de saisie de date avec double saisie en texte (avec un `Input`) et un calendrier (`Calendar`), qui s'affiche en dessous.
+
+### Props
+
+| Nom               | Obligatoire | Type                                                                                                                                                                                    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `calendarFormat`  | Non         | <code>DateTimeFormatOptions</code>                                                                                                                                                      | Format de l'affichage de la date dans le calendrier.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `calendarProps`   | Non         | <code>Omit&lt;CalendarProps, "onChange" &#124; "display" &#124; "handleSelect" &#124; "selectedDate"&gt;</code>                                                                         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `displayFrom`     | Non         | <code>"left" &#124; "right"</code>                                                                                                                                                      | Composant affiché depuis la gauche ou la droite.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `error`           | Non         | <code>ReactNode</code>                                                                                                                                                                  | Give an error node to display under the field.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `id`              | Non         | <code>string</code>                                                                                                                                                                     | Id pour l'input.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `inputFormat`     | Non         | <code>string</code>                                                                                                                                                                     | Format de la date dans l'input.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `inputProps`      | Non         | <code>Omit&lt;InputProps&lt;"string"&gt;, "error" &#124; "name" &#124; "onChange" &#124; "value" &#124; "id" &#124; "onFocus" &#124; "onKeyDown" &#124; "type" &#124; "mask"&gt;</code> | Props de l'input.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `ISOStringFormat` | Non         | <code>"date-only" &#124; "local-midnight" &#124; "local-utc-midnight" &#124; "utc-midnight"</code>                                                                                      | Définit la correspondance entre une date et l'ISOString (date/heure) associé.<br /><br />Par exemple, pour 24/10/2017 en UTC + 2 :<br />- "utc-midnight" : Minuit, en UTC. (-> 2017-10-24T00:00:00Z)<br />- "local-midnight" : Minuit, au fuseau horaire local. (-> 2017-10-24T00:00:00+02:00)<br />- "local-utc-midnight" : Minuit à l'heure locale, en UTC. (-> 2017-10-23T22:00:00Z)<br />- "date-only" : ISOString sans heure (-> 2017-10-23)<br /><br />En "utc-midnight", le composant ignore totalement la composante heure de la date qu'il reçoit,<br />alors qu'en "local-*" la date sera convertie dans le fuseau horaire local. Quelque soit le format choisi,<br />la composante heure sera toujours normalisée (comme choisi) en sortie de `onChange`.<br /><br />Par défaut "utc-midnight". |
+| `name`            | Non         | <code>string</code>                                                                                                                                                                     | Name pour l'input.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `onChange`        | **Oui**     | <code>(date: string) =&gt; void</code>                                                                                                                                                  | Appelé lorsque la date change.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `theme`           | Non         | <code>CSSProp&lt;InputDateCss&gt;</code>                                                                                                                                                | CSS.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `timezoneCode`    | Non         | <code>string</code>                                                                                                                                                                     | Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://moment.github.io/luxon/#/zones)<br />Incompatible avec l'usage de ISOStringFormat                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `value`           | **Oui**     | <code>string</code>                                                                                                                                                                     | Valeur.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+
+## `InputTime`
+
+Un champ de saisie d'heure avec double saisie en texte (avec un `Input`) et une horloge (`Clock`), qui s'affiche en dessous.
+
+### Props
+
+| Nom            | Obligatoire | Type                                                                                                                                                                                    | Description                                                                                                                                          |
+| -------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `clockFormat`  | Non         | <code>"24hr" &#124; "ampm"</code>                                                                                                                                                       | Format du compoasnt Clock.                                                                                                                           |
+| `clockTheme`   | Non         | <code>CSSProp&lt;ClockCss&gt;</code>                                                                                                                                                    | CSS pour le composant Clock.                                                                                                                         |
+| `displayFrom`  | Non         | <code>"left" &#124; "right"</code>                                                                                                                                                      | Composant affiché depuis la gauche ou la droite.                                                                                                     |
+| `error`        | Non         | <code>ReactNode</code>                                                                                                                                                                  | Give an error node to display under the field.                                                                                                       |
+| `id`           | Non         | <code>string</code>                                                                                                                                                                     | Id pour l'input.                                                                                                                                     |
+| `inputFormat`  | Non         | <code>string</code>                                                                                                                                                                     | Format de la date dans l'input.                                                                                                                      |
+| `inputProps`   | Non         | <code>Omit&lt;InputProps&lt;"string"&gt;, "error" &#124; "name" &#124; "onChange" &#124; "value" &#124; "id" &#124; "onFocus" &#124; "onKeyDown" &#124; "type" &#124; "mask"&gt;</code> | Props de l'input.                                                                                                                                    |
+| `name`         | Non         | <code>string</code>                                                                                                                                                                     | Name pour l'input.                                                                                                                                   |
+| `onChange`     | **Oui**     | <code>(time: string) =&gt; void</code>                                                                                                                                                  | Appelé lorsque l'heure change.                                                                                                                       |
+| `theme`        | Non         | <code>CSSProp&lt;InputTimeCss&gt;</code>                                                                                                                                                | CSS.                                                                                                                                                 |
+| `timezoneCode` | Non         | <code>string</code>                                                                                                                                                                     | Code Timezone que l'on souhaite appliquer au InputTime dans le cas d'une Timezone différente de celle du navigateur (https://momentjs.com/timezone/) |
+| `value`        | **Oui**     | <code>string</code>                                                                                                                                                                     | Valeur.                                                                                                                                              |
+
+## `Input`
+
+**_A ne pas confondre avec le composant du même nom `Input` dans le module `@focus4/toolbox` !_**
+
+Surcharge du `Input` de `@focus4/toolbox` pour ajouter :
+
+-   La gestion de masques de saisie
+-   Une gestion propre de saisie de nombre (avec formattage, restrictions de décimales, et un `onChange` qui renvoie bien un nombre)
+
+Il s'agit du composant par défaut pour [`fieldFor`](model/display-fields.md#fieldforfield-options).
+
+### Props
+
+| Nom                     | Obligatoire | Type                                                                                  | Description                                                                                                         |
+| ----------------------- | ----------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `autoComplete`          | Non         | <code>string</code>                                                                   |                                                                                                                     |
+| `children`              | Non         | <code>ReactNode</code>                                                                | Children to pass through the component.                                                                             |
+| `className`             | Non         | <code>string</code>                                                                   |                                                                                                                     |
+| `disabled`              | Non         | <code>boolean</code>                                                                  | If true, component will be disabled.                                                                                |
+| `error`                 | Non         | <code>ReactNode</code>                                                                | Give an error node to display under the field.                                                                      |
+| `floating`              | Non         | <code>boolean</code>                                                                  | Indicates if the label is floating in the input field or not.                                                       |
+| `hasThousandsSeparator` | Non         | <code>boolean</code>                                                                  | Pour un input de type "number", affiche les séparateurs de milliers.                                                |
+| `hint`                  | Non         | <code>string</code>                                                                   | The text string to use for hint text element.                                                                       |
+| `icon`                  | Non         | <code>ReactNode</code>                                                                | Name of an icon to use as a label for the input.                                                                    |
+| `id`                    | Non         | <code>string</code>                                                                   | Id for the input field.                                                                                             |
+| `label`                 | Non         | <code>ReactNode</code>                                                                | The text string to use for the floating label element.                                                              |
+| `mask`                  | Non         | <code>MaskDefinition</code>                                                           | Pour un input de type "text", paramètre un masque de saisie.                                                        |
+| `maxDecimals`           | Non         | <code>number</code>                                                                   | Pour un input de type "number", le nombre maximal de décimales qu'il est possible de saisir. Par défaut : 10.       |
+| `maxLength`             | Non         | <code>number</code>                                                                   | Specifies the maximum number of characters allowed in the component.                                                |
+| `multiline`             | Non         | <code>boolean</code>                                                                  | If true, a textarea element will be rendered. The textarea also grows and shrinks according to the number of lines. |
+| `name`                  | Non         | <code>string</code>                                                                   | Name for the input field.                                                                                           |
+| `noMaxLengthOnElement`  | Non         | <code>boolean</code>                                                                  | If true, does not add the "maxLength" attribute to the HTML input element.                                          |
+| `noNegativeNumbers`     | Non         | <code>boolean</code>                                                                  | Pour un input de type "number", interdit la saisie de nombres négatifs.                                             |
+| `onBlur`                | Non         | <code>FocusEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onChange`              | **Oui**     | <code>(value: T extends "string" ? string : number) =&gt; void</code>                 | Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input.                                         |
+| `onClick`               | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onContextMenu`         | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onDoubleClick`         | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onFocus`               | Non         | <code>FocusEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onKeyDown`             | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>  |                                                                                                                     |
+| `onKeyPress`            | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>  |                                                                                                                     |
+| `onKeyUp`               | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>  |                                                                                                                     |
+| `onMouseDown`           | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onMouseEnter`          | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onMouseLeave`          | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onMouseMove`           | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onMouseOut`            | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onMouseOver`           | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onMouseUp`             | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `onPaste`               | Non         | <code>ClipboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code> |                                                                                                                     |
+| `onTouchStart`          | Non         | <code>TouchEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>     |                                                                                                                     |
+| `readOnly`              | Non         | <code>boolean</code>                                                                  | If true, input is readonly.                                                                                         |
+| `required`              | Non         | <code>boolean</code>                                                                  | If true, the html input has a required attribute.                                                                   |
+| `rows`                  | Non         | <code>number</code>                                                                   | The number of rows the multiline input field has.                                                                   |
+| `style`                 | Non         | <code>CSSProperties</code>                                                            |                                                                                                                     |
+| `tabIndex`              | Non         | <code>number</code>                                                                   | TabIndex.                                                                                                           |
+| `theme`                 | Non         | <code>CSSProp&lt;InputCss&gt;</code>                                                  | Classnames object defining the component style.                                                                     |
+| `type`                  | **Oui**     | <code>"string" &#124; "number"</code>                                                 | Type de l'input.                                                                                                    |
+| `value`                 | **Oui**     | <code>string &#124; number</code>                                                     | Valeur.                                                                                                             |
+
+## `Label`
+
+Le composant d'affichage du libellé par défaut pour [toutes les fonctions d'affichage de champs](model/display-fields.md). Peut inclure une tooltip à côté du libellé.
+
+### Props
+
+| Nom              | Obligatoire | Type                                   | Description                                       |
+| ---------------- | ----------- | -------------------------------------- | ------------------------------------------------- |
+| `comment`        | Non         | <code>ReactNode</code>                 | Commentaire, affiché sur la tooltip               |
+| `i18nPrefix`     | Non         | <code>string</code>                    | Pour l'icône de la tooltip. Par défaut : "focus". |
+| `id`             | Non         | <code>string</code>                    | Id du champ associé                               |
+| `label`          | Non         | <code>string</code>                    | Libellé.                                          |
+| `onTooltipClick` | Non         | <code>() =&gt; void</code>             | Au click sur la tooltip.                          |
+| `showTooltip`    | Non         | <code>boolean</code>                   | Affiche la tooltip.                               |
+| `style`          | Non         | <code>CSSProperties</code>             | Style inline.                                     |
+| `theme`          | Non         | <code>CSSProp&lt;LabelCss&gt;</code>   | CSS.                                              |
+| `tooltipTheme`   | Non         | <code>CSSProp&lt;TooltipCss&gt;</code> | CSS de la tooltip.                                |
+
+## `PanelButtons`
+
+Buttons par défaut du panel : edit / save / cancel.
+
+### Props
+
+| Nom             | Obligatoire | Type                       | Description                              |
+| --------------- | ----------- | -------------------------- | ---------------------------------------- |
+| `editing`       | Non         | <code>boolean</code>       | Etat d'édition.                          |
+| `i18nPrefix`    | Non         | <code>string</code>        | Préfixe i18n. Par défaut : "focus"       |
+| `loading`       | Non         | <code>boolean</code>       | En cours de chargement                   |
+| `onClickCancel` | Non         | <code>() =&gt; void</code> | Appelé au clic sur le bouton "Annuler".  |
+| `onClickEdit`   | Non         | <code>() =&gt; void</code> | Appelé au clic sur le bouton "Modifier". |
+| `save`          | Non         | <code>() =&gt; void</code> | Handler du bouton save.                  |
+
+## `Panel`
+
+Le composant standard pour afficher un bloc avec un titre, des actions et un contenu. Utilisé largement par les formulaires.
+
+### Props
+
+| Nom               | Obligatoire | Type                                                           | Description                                                                                      |
+| ----------------- | ----------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `Buttons`         | Non         | <code>ComponentType&lt;PanelButtonsProps&gt;</code>            | Boutons à afficher dans le Panel. Par défaut : les boutons de formulaire (edit / save / cancel). |
+| `buttonsPosition` | Non         | <code>"bottom" &#124; "top" &#124; "both" &#124; "none"</code> | Position des boutons. Par défaut : "top".                                                        |
+| `editing`         | Non         | <code>boolean</code>                                           | Etat d'édition.                                                                                  |
+| `hideOnScrollspy` | Non         | <code>boolean</code>                                           | Masque le panel dans le ScrollspyContainer.                                                      |
+| `hideProgressBar` | Non         | <code>boolean</code>                                           | Masque la progress bar lors du chargement/sauvegarde.                                            |
+| `i18nPrefix`      | Non         | <code>string</code>                                            | Préfixe i18n. Par défaut : "focus"                                                               |
+| `loading`         | Non         | <code>boolean</code>                                           | En cours de chargement                                                                           |
+| `name`            | Non         | <code>string</code>                                            | Identifiant du panel. Par défaut : premier mot du titre, si renseigné.                           |
+| `onClickCancel`   | Non         | <code>() =&gt; void</code>                                     | Appelé au clic sur le bouton "Annuler".                                                          |
+| `onClickEdit`     | Non         | <code>() =&gt; void</code>                                     | Appelé au clic sur le bouton "Modifier".                                                         |
+| `save`            | Non         | <code>() =&gt; void</code>                                     | Handler du bouton save.                                                                          |
+| `showHelp`        | Non         | <code>boolean</code>                                           | Affiche le bouton d'aide.                                                                        |
+| `theme`           | Non         | <code>CSSProp&lt;PanelCss&gt;</code>                           | CSS.                                                                                             |
+| `title`           | Non         | <code>string</code>                                            | Titre du panel.                                                                                  |
+
+## `SelectCheckbox`
+
+Un composant de sélection multiple pour un champ de type liste de valeurs avec plusieurs choix possibles, dans une liste de référence.
+
+### Props
+
+| Nom             | Obligatoire | Type                                                                      | Description                                |
+| --------------- | ----------- | ------------------------------------------------------------------------- | ------------------------------------------ |
+| `disabled`      | Non         | <code>boolean</code>                                                      | Désactive le select.                       |
+| `error`         | Non         | <code>ReactNode</code>                                                    | Message d'erreur à afficher.               |
+| `id`            | Non         | <code>string</code>                                                       | Id de l'input.                             |
+| `label`         | Non         | <code>string</code>                                                       | Libellé.                                   |
+| `maxSelectable` | Non         | <code>number</code>                                                       | Nombre maximal d'éléments sélectionnables. |
+| `name`          | Non         | <code>string</code>                                                       | Nom de l'input.                            |
+| `onChange`      | **Oui**     | <code>(value: (T extends "string" ? string : number)[]) =&gt; void</code> | Est appelé à chaque changement de valeur.  |
+| `theme`         | Non         | <code>CSSProp&lt;SelectCheckboxCss&gt;</code>                             | CSS.                                       |
+| `type`          | **Oui**     | <code>"string" &#124; "number"</code>                                     | Type du champ (number ou string).          |
+| `value`         | **Oui**     | <code>(T extends "string" ? string : number)[]</code>                     | Valeur.                                    |
+| `values`        | **Oui**     | <code>ReferenceList&lt;any, any, any&gt;</code>                           | Liste des valeurs.                         |
+
+## `SelectRadio`
+
+Un composant de saisie pour choisir un élément dans une liste de référence en utilisant un [`Radio`](components/toolbox.md#radiogroup)
+
+### Props
+
+| Nom                 | Obligatoire | Type                                                                  | Description                                                                  |
+| ------------------- | ----------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `disabled`          | Non         | <code>boolean</code>                                                  | Désactive le select.                                                         |
+| `error`             | Non         | <code>ReactNode</code>                                                | Message d'erreur à afficher.                                                 |
+| `hasUndefined`      | Non         | <code>boolean</code>                                                  | Autorise la non-sélection en ajoutant une option vide. Par défaut : "false". |
+| `label`             | Non         | <code>string</code>                                                   | Libellé.                                                                     |
+| `name`              | Non         | <code>string</code>                                                   | Nom de l'input.                                                              |
+| `onChange`          | **Oui**     | <code>(value: T extends "string" ? string : number) =&gt; void</code> | Est appelé à chaque changement de valeur.                                    |
+| `theme`             | Non         | <code>CSSProp&lt;SelectRadioCss&gt;</code>                            | CSS.                                                                         |
+| `type`              | **Oui**     | <code>"string" &#124; "number"</code>                                 | Type du champ (number ou string).                                            |
+| `undefinedLabel`    | Non         | <code>string</code>                                                   | Libellé du cas vide.                                                         |
+| `undefinedPosition` | Non         | <code>"bottom" &#124; "top"</code>                                    | Position du cas vide. Par défaut : "bottom".                                 |
+| `value`             | **Oui**     | <code>string &#124; number</code>                                     | Valeur.                                                                      |
+| `values`            | **Oui**     | <code>ReferenceList&lt;any, any, any&gt;</code>                       | Liste des valeurs.                                                           |
+
+## `Select`
+
+Un composant de saisie pour choisir un élément dans une liste de référence, via un `<select>` HTML natif.
+
+Il s'agit du composant par défaut pour [`selectFor`](model/display-fields.md#selectforfield-values-options).
+
+### Props
+
+| Nom               | Obligatoire | Type                                                                  | Description                                                                 |
+| ----------------- | ----------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `disabled`        | Non         | <code>boolean</code>                                                  | Désactive le select.                                                        |
+| `error`           | Non         | <code>ReactNode</code>                                                | Message d'erreur à afficher.                                                |
+| `hasUndefined`    | Non         | <code>boolean</code>                                                  | Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". |
+| `i18nPrefix`      | Non         | <code>string</code>                                                   | Préfixe i18n. Par défaut : "focus".                                         |
+| `id`              | Non         | <code>string</code>                                                   | Id de l'input.                                                              |
+| `name`            | Non         | <code>string</code>                                                   | Nom de l'input.                                                             |
+| `onChange`        | **Oui**     | <code>(value: T extends "string" ? string : number) =&gt; void</code> | Est appelé à chaque changement de valeur.                                   |
+| `theme`           | Non         | <code>CSSProp&lt;SelectCss&gt;</code>                                 | CSS.                                                                        |
+| `type`            | **Oui**     | <code>"string" &#124; "number"</code>                                 | Type du champ (number ou string).                                           |
+| `unSelectedLabel` | Non         | <code>string</code>                                                   | Libellés des champs sans libellés.                                          |
+| `value`           | **Oui**     | <code>string &#124; number</code>                                     | Valeur.                                                                     |
+| `values`          | **Oui**     | <code>ReferenceList&lt;any, any, any&gt;</code>                       | Liste des valeurs.                                                          |

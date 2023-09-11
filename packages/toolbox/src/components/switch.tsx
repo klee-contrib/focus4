@@ -29,6 +29,9 @@ export interface SwitchProps {
     value?: boolean;
 }
 
+/**
+ * Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
+ */
 export function Switch({className, disabled, id, name, onChange, iconOn, iconOff, theme: pTheme, value}: SwitchProps) {
     const theme = useTheme("RTSwitch", switchCss, pTheme);
 

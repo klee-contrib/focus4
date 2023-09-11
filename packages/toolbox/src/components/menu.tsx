@@ -1,0 +1,511 @@
+import classNames from "classnames";
+import {
+    Children,
+    cloneElement,
+    MouseEvent,
+    MouseEventHandler,
+    ReactElement,
+    ReactNode,
+    TouchEventHandler,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
+import {findDOMNode} from "react-dom";
+
+import {CSSProp, useTheme} from "@focus4/styling";
+
+import {Button, ButtonProps} from "./button";
+import {FontIcon} from "./font-icon";
+import {IconButton} from "./icon-button";
+import {rippleFactory, RippleProps} from "./ripple";
+import {tooltipFactory, TooltipProps} from "./tooltip";
+
+import menuCss, {MenuCss} from "./__style__/menu.css";
+export {menuCss, MenuCss};
+
+/** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
+export interface ButtonMenuProps extends MenuProps {
+    /** Les props du bouton. */
+    button: ButtonProps &
+        RippleProps &
+        TooltipProps & {
+            /** L'icône à afficher quand le bouton est ouvert. */
+            openedIcon?: ReactNode;
+        };
+    onClick?: MouseEventHandler<HTMLButtonElement>;
+}
+
+export interface IconMenuProps {
+    /** If true, the inner Menu component will be active. */
+    active?: boolean;
+    /** Class for the root node. */
+    className?: string;
+    /** Children to pass through the component. */
+    children?: ReactNode;
+    /** Icon font key string or Element to display the opener icon. */
+    icon?: ReactNode;
+    /** If true, the icon will show a ripple when is clicked. */
+    iconRipple?: boolean;
+    /** If true, the neutral colors are inverted. Useful if the icon is over a dark background. */
+    inverse?: boolean;
+    /** Transferred to the Menu component. */
+    menuRipple?: boolean;
+    /** Callback that will be called when the menu is being clicked. */
+    onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    /** Callback that will be called when the menu is being hidden. */
+    onHide?: () => void;
+    /** Callback that will be invoked when a menu item is selected. */
+    onSelect?: (value: any) => void;
+    /** Callback that will be invoked when the menu is being shown. */
+    onShow?: () => void;
+    /** Determines the position of the menu. This property is transferred to the inner Menu component. */
+    position?: "auto" | "bottomLeft" | "bottomRight" | "static" | "topLeft" | "topRight";
+    /** If true, the menu will keep a value to highlight the active child item. */
+    selectable?: boolean;
+    /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
+    selected?: any;
+    /** Classnames object defining the component style. */
+    theme?: CSSProp<MenuCss>;
+}
+
+export interface MenuItemProps {
+    /** The text to include in the menu item. Required. */
+    caption: string;
+    className?: string;
+    /** Children to pass through the component. */
+    children?: ReactNode;
+    /** If true, the item will be displayed as disabled and is not selectable. */
+    disabled?: boolean;
+    /** Icon font key string or Element to display in the right side of the option. */
+    icon?: ReactNode;
+    onClick?: MouseEventHandler<HTMLLIElement>;
+    onMouseDown?: MouseEventHandler<HTMLLIElement>;
+    onTouchStart?: TouchEventHandler<HTMLLIElement>;
+    /** @internal */
+    selected?: boolean;
+    /** Displays shortcut text on the right side of the caption attribute. */
+    shortcut?: string;
+    /** Classnames object defining the component style. */
+    theme?: CSSProp<MenuCss>;
+    /** Passed down to the root element. */
+    value?: string;
+}
+
+export interface MenuProps {
+    /** If true, the menu will be displayed as opened by default. */
+    active?: boolean;
+    className?: string;
+    /** Children to pass through the component. */
+    children?: ReactNode;
+    /** Callback that will be called when the menu is being hidden. */
+    onHide?: () => void;
+    /** Callback that will be invoked when a menu item is selected. */
+    onSelect?: (value?: string) => void;
+    /** Callback that will be invoked when the menu is being shown. */
+    onShow?: () => void;
+    /** If true the menu wrapper will show an outline with a soft shadow. */
+    outline?: boolean;
+    /** Determine the position of the menu. With static value the menu will be always shown, auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. */
+    position?: "auto" | "bottomLeft" | "bottomRight" | "static" | "topLeft" | "topRight";
+    /** If true, the menu items will show a ripple effect on click. */
+    ripple?: boolean;
+    /** If true, the menu will keep a value to highlight the active child item. */
+    selectable?: boolean;
+    /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
+    selected?: string;
+    /** Classnames object defining the component style. */
+    theme?: CSSProp<MenuCss>;
+}
+
+export interface MenuDividerProps {
+    /** Classnames object defining the component style. */
+    theme: CSSProp<MenuCss>;
+}
+
+const TooltipButton = tooltipFactory()(Button);
+
+/**
+ * Séparateur dans un Menu, entre des MenuItems.
+ */
+export function MenuDivider({theme: pTheme}: MenuDividerProps) {
+    const theme = useTheme("RTMenu", menuCss, pTheme);
+    return <hr className={theme.menuDivider()} data-react-toolbox="menu-divider" />;
+}
+
+/**
+ * Affiche un menu, utilisé par ButtonMenu et IconMenu.
+ */
+export function Menu({
+    active: pActive = false,
+    children,
+    className = "",
+    onHide,
+    onSelect,
+    onShow,
+    outline = true,
+    position: pPosition = "static",
+    ripple = true,
+    selected,
+    selectable = true,
+    theme: pTheme
+}: MenuProps) {
+    const theme = useTheme("RTMenu", menuCss, pTheme);
+
+    const rootNode = useRef<HTMLDivElement | null>(null);
+    const menuNode = useRef<HTMLUListElement | null>(null);
+
+    const [active, setActive] = useState(pActive);
+    const [rippled, setRippled] = useState(false);
+    const [position, setPosition] = useState(pPosition === "auto" ? "topLeft" : pPosition);
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+
+    useLayoutEffect(() => {
+        if (pActive) {
+            if (pPosition === "auto") {
+                const parentNode = rootNode.current?.parentNode;
+                if (parentNode) {
+                    const {top, left, height: ph, width: pw} = (parentNode as HTMLElement).getBoundingClientRect();
+                    const ww = window.innerWidth || document.documentElement.offsetWidth;
+                    const wh = window.innerHeight || document.documentElement.offsetHeight;
+                    const toTop = top < wh / 2 - ph / 2;
+                    const toLeft = left < ww / 2 - pw / 2;
+                    setPosition(`${toTop ? "top" : "bottom"}${toLeft ? "Left" : "Right"}` as const);
+                }
+            }
+
+            setActive(false);
+            const timeout = setTimeout(() => setActive(true), 20);
+            onShow?.();
+            return () => {
+                clearTimeout(timeout);
+            };
+        } else {
+            setActive(false);
+            onHide?.();
+        }
+    }, [pActive, pPosition, onHide, onShow]);
+
+    useEffect(() => {
+        function handleDocumentClick(event: Event) {
+            if (!targetIsDescendant(event, rootNode.current)) {
+                setActive(false);
+                setRippled(false);
+                onHide?.();
+            }
+        }
+        if (active) {
+            document.addEventListener("click", handleDocumentClick);
+            document.addEventListener("touchend", handleDocumentClick);
+        }
+        return () => {
+            if (active) {
+                document.removeEventListener("click", handleDocumentClick);
+                document.removeEventListener("touchend", handleDocumentClick);
+            }
+        };
+    }, [active, onHide]);
+
+    const handleSelect = useCallback(
+        (item: ReactElement, event: MouseEvent<HTMLLIElement>) => {
+            const {value, onClick} = item.props;
+            if (onClick) {
+                event.persist();
+            }
+            setActive(false);
+            setRippled(ripple);
+            onClick?.(event);
+            onSelect?.(value);
+            onHide?.();
+        },
+        [onSelect, ripple]
+    );
+
+    const menuStyle = useMemo(() => {
+        if (position !== "static") {
+            if (active) {
+                return {clip: `rect(0 ${width}px ${height}px 0)`};
+            } else {
+                switch (position) {
+                    case "bottomLeft":
+                        return {clip: `rect(${height}px 0 ${height}px 0)`};
+                    case "bottomRight":
+                        return {clip: `rect(${height}px ${width}px ${height}px ${width}px)`};
+                    case "topLeft":
+                        return {clip: "rect(0 0 0 0)"};
+                    case "topRight":
+                        return {clip: `rect(0 ${width}px 0 ${width}px)`};
+                }
+            }
+        }
+
+        return undefined;
+    }, [active, height, position, width]);
+
+    const rootStyle = useMemo(() => (position !== "static" ? {width, height} : undefined), [height, position, width]);
+
+    const outlineStyle = {width, height};
+
+    const items = useMemo(
+        () =>
+            Children.map(children, item => {
+                if (!item) {
+                    return item;
+                }
+
+                const item2 = item as ReactElement;
+                if (item2.type === MenuItem) {
+                    return cloneElement(item2, {
+                        ripple: item2.props.ripple ?? ripple,
+                        selected:
+                            typeof item2.props.value !== "undefined" && selectable && item2.props.value === selected,
+                        onClick: (e: MouseEvent<HTMLLIElement>) => handleSelect(item2, e)
+                    });
+                }
+
+                return cloneElement(item2);
+            }),
+        [children, handleSelect, ripple, selectable, selected]
+    );
+
+    useLayoutEffect(() => {
+        const {height: ch, width: cw} = menuNode.current!.getBoundingClientRect();
+        setWidth(cw);
+        setHeight(ch);
+    }, [items]);
+
+    return (
+        <div
+            ref={rootNode}
+            className={classNames(theme.menu({[position]: true, active, rippled}), className)}
+            data-react-toolbox="menu"
+            style={rootStyle}
+        >
+            {outline ? <div className={theme.outline()} style={outlineStyle} /> : null}
+            <ul ref={menuNode} className={theme.menuInner()} style={menuStyle}>
+                {items}
+            </ul>
+        </div>
+    );
+}
+
+function targetIsDescendant(event: Event, parent: Element | null) {
+    let node = event.target;
+    while (node !== null) {
+        if (node === parent) return true;
+        node = (node as Element).parentNode;
+    }
+    return false;
+}
+
+/**
+ * Item de Menu a utiliser dans un `ButtonMenu`, `IconMenu` ou `Menu`.
+ */
+export const MenuItem = rippleFactory({})(function RTMenuItem({
+    caption,
+    children,
+    className = "",
+    disabled = false,
+    icon,
+    onClick,
+    onMouseDown,
+    onTouchStart,
+    selected = false,
+    shortcut,
+    theme: pTheme
+}: MenuItemProps) {
+    const theme = useTheme("RTMenu", menuCss, pTheme);
+
+    const handleClick = useCallback(
+        (event: MouseEvent<HTMLLIElement>) => {
+            if (onClick && !disabled) {
+                onClick(event);
+            }
+        },
+        [disabled, onClick]
+    );
+
+    return (
+        <li
+            className={classNames(theme.menuItem({disabled, selected}), className)}
+            data-react-toolbox="menu-item"
+            onClick={handleClick}
+            onMouseDown={onMouseDown}
+            onTouchStart={onTouchStart}
+        >
+            {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
+            <span className={theme.caption()}>{caption}</span>
+            {shortcut ? <small className={theme.shortcut()}>{shortcut}</small> : null}
+            {children}
+        </li>
+    );
+});
+/**
+ * Crée un menu à partir d'un `IconButton`.
+ *
+ * Exemple :
+ *  ```tsx
+ *  <IconMenu icon="more_vert" position="topRight">
+ *      <MenuItem
+ *          caption={mode.dark ? "Mode clair" : "Mode sombre"}
+ *          icon={mode.dark ? "light_mode" : "dark_mode"}
+ *          onClick={() => (mode.dark = !mode.dark)}
+ *      />
+ *      <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
+ *  </IconMenu>
+ *  ```
+ */
+export function IconMenu({
+    active: pActive = false,
+    className = "",
+    children,
+    inverse,
+    icon = "more_vert",
+    iconRipple = true,
+    menuRipple = true,
+    onClick,
+    onHide,
+    onSelect,
+    onShow,
+    position = "auto",
+    selected,
+    selectable = false,
+    theme: pTheme
+}: IconMenuProps) {
+    const theme = useTheme("RTMenu", menuCss, pTheme);
+
+    const [active, setActive] = useState(pActive);
+    useEffect(() => setActive(pActive), [pActive]);
+
+    const clickHandler = useCallback(
+        (e: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
+            e.stopPropagation();
+            setActive(o => !o);
+            onClick?.(e);
+        },
+        [onClick]
+    );
+
+    const hideHandler = useCallback(() => {
+        setActive(false);
+        onHide?.();
+    }, [onHide]);
+
+    return (
+        <div className={classNames(theme.iconMenu(), className)}>
+            <IconButton
+                className={theme.icon()}
+                icon={icon}
+                inverse={inverse}
+                onClick={clickHandler}
+                ripple={iconRipple}
+            />
+            <Menu
+                active={active}
+                onHide={hideHandler}
+                onSelect={onSelect}
+                onShow={onShow}
+                position={position}
+                ripple={menuRipple}
+                selectable={selectable}
+                selected={selected}
+                theme={theme}
+            >
+                {children}
+            </Menu>
+        </div>
+    );
+}
+
+/**
+ * Crée un menu à partir d'un `Button`.
+ *
+ * Exemple :
+ *
+ *  ```tsx
+ *  <ButtonMenu
+ *      button={{
+ *          label: userStore.userName,
+ *          icon: "more_vert"
+ *      }}
+ *      position="topRight"
+ *  >
+ *      <MenuItem
+ *          caption={mode.dark ? "Mode clair" : "Mode sombre"}
+ *          icon={mode.dark ? "light_mode" : "dark_mode"}
+ *          onClick={() => (mode.dark = !mode.dark)}
+ *      />
+ *      <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
+ *  </ButtonMenu>
+ *  ```
+ */
+export function ButtonMenu({
+    button: {icon, openedIcon, ...buttonProps},
+    onClick,
+    onHide,
+    position = "topLeft",
+    ...menuProps
+}: ButtonMenuProps) {
+    const ref = useRef<HTMLDivElement | null>(null);
+    const button = useRef<any>(null);
+
+    /** Menu ouvert. */
+    const [opened, setOpened] = useState(false);
+
+    /** Hauteur du bouton, pour placer le menu. */
+    const [buttonHeight, setButtonHeight] = useState(0);
+
+    // On récupère à tout instant la hauteur du bouton.
+    useLayoutEffect(() => {
+        // eslint-disable-next-line react/no-find-dom-node
+        setButtonHeight((findDOMNode(button.current) as Element).clientHeight);
+    });
+
+    const clickHandler = useCallback(
+        (e: MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            setOpened(o => !o);
+            onClick?.(e);
+        },
+        [onClick]
+    );
+
+    const hideHandler = useCallback(() => {
+        setOpened(false);
+        onHide?.();
+    }, [onHide]);
+
+    /** Génère le style à passer au menu pour le positionner, en fonction de la position souhaitée et de la taille du bouton. */
+    const menuStyle = useMemo(() => {
+        if (position === "auto") {
+            return undefined;
+        }
+        return {
+            position: "absolute" as const,
+            top: position.startsWith("top") ? buttonHeight : undefined,
+            bottom: position.startsWith("bottom") ? buttonHeight : undefined,
+            right: position.endsWith("Right") ? 0 : undefined
+        };
+    }, [position, buttonHeight]);
+
+    const FinalButton = buttonProps.tooltip ? TooltipButton : Button;
+    return (
+        <div ref={ref} data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
+            <FinalButton
+                ref={button}
+                {...buttonProps}
+                icon={opened && openedIcon ? openedIcon : icon}
+                onClick={clickHandler}
+            />
+            <div style={menuStyle}>
+                <Menu {...menuProps} active={opened} onHide={hideHandler} position={position} theme={menuProps.theme}>
+                    {menuProps.children}
+                </Menu>
+            </div>
+        </div>
+    );
+}

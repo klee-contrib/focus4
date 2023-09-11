@@ -31,7 +31,7 @@ export interface PanelProps extends PanelButtonsProps {
     title?: string;
 }
 
-/** Construit un Panel avec un titre et des actions. */
+/** Le composant standard pour afficher un bloc avec un titre, des actions et un contenu. Utilisé largement par les formulaires. */
 export function Panel({
     Buttons = PanelButtons,
     buttonsPosition = "top",

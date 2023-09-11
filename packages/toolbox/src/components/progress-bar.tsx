@@ -31,7 +31,10 @@ export interface ProgressBarProps {
     value?: number;
 }
 
-export const ProgressBar = forwardRef(function RTProgressBar(
+/**
+ * Une barre de chargement ou un spinner (`linear` ou `circular`). Peut être utilisé de façon déterminée ou indéterminée.
+ */
+export const ProgressBar = forwardRef<HTMLDivElement | SVGSVGElement, ProgressBarProps>(function RTProgressBar(
     {
         buffer = 0,
         className = "",
@@ -47,8 +50,8 @@ export const ProgressBar = forwardRef(function RTProgressBar(
         type = "linear",
         value = 0,
         theme: pTheme
-    }: ProgressBarProps,
-    ref: Ref<HTMLDivElement | SVGSVGElement>
+    },
+    ref
 ) {
     const theme = useTheme("RTProgressBar", progressBarCss, pTheme);
 

@@ -71,6 +71,11 @@ export interface AutocompleteProps<TValue extends string[] | string = string, TS
 
 const defaultGetLabel = (x: any) => x;
 
+/**
+ * **_A ne pas confondre avec le composant du même nom `Autocomplete` dans le module `@focus4/forms` !_**
+ *
+ * Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles en entrée**.
+ */
 export const Autocomplete = forwardRef(function RTAutocomplete<
     TValue extends string[] | string = string,
     TSource = string

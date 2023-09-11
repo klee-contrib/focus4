@@ -57,6 +57,9 @@ export interface ButtonProps {
     type?: string;
 }
 
+/**
+ * Le bouton standard, qui peut être sous plusieurs formats (`raised`, `floating`) et de plusieurs couleurs (`primary`, `accent`), avoir une icône... Un bouton avec juste une icône est un [`IconButton`](#iconbutton)
+ */
 export const Button = rippleFactory({theme: {rippleWrapper: buttonCss.rippleWrapper}})(function RTButton({
     accent = false,
     children,

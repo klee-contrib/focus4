@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css" />
         <style>
             :root {
-                --content-max-width: 80em;
+                --content-max-width: 100rem;
                 --sidebar-nav-indent: 0;
                 --sidebar-nav-link-before-content-l3: "";
             }
@@ -17,6 +17,14 @@
             aside p strong a {
                 font-weight: 600 !important;
                 color: white !important;
+            }
+
+            td {
+                overflow: auto;
+            }
+
+            td:nth-child(3) {
+                max-width: 300px;
             }
         </style>
     </head>

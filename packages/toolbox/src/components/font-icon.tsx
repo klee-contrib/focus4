@@ -18,6 +18,9 @@ export interface FontIconProps {
     value?: ReactNode;
 }
 
+/**
+ * Affiche une icône. Prend directement un nom d'icône Material en enfant, ou bien une icône personnalisée avec `getIcon`.
+ */
 export function FontIcon({
     alt = "",
     className = "",

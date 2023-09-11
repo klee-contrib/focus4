@@ -46,6 +46,9 @@ export interface IconButtonProps {
     type?: string;
 }
 
+/**
+ * Un bouton avec juste une icône. Les autres types de boutons sont réalisés avec le [`Button`](#button).
+ */
 export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWrapper: iconButtonCss.rippleWrapper}})(
     function RTIconButton({
         accent = false,

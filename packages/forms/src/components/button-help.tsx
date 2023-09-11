@@ -5,7 +5,7 @@ import {IconButton, tooltipFactory} from "@focus4/toolbox";
 
 const Button = tooltipFactory()(IconButton);
 
-/** Affiche un bouton pour ouvrir le centre d'aide. */
+/** Affiche un bouton pour ouvrir le centre d'aide (...). */
 export function ButtonHelp({blockName, i18nPrefix = "focus"}: {blockName: string; i18nPrefix?: string}) {
     const {hash, pathname} = window.location;
     const url = hash?.replace("#", "") || pathname;

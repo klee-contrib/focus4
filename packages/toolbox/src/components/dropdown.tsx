@@ -64,6 +64,9 @@ export interface DropdownProps<
     valueKey?: VK;
 }
 
+/**
+ * Composant de sélection avec personnalisation de l'affichage des éléments (à l'inverse du [`Select`](components/forms.md#select) qui est un simple `<select>`).
+ */
 export function Dropdown<
     T,
     VK extends string = "value",

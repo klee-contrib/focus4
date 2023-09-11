@@ -30,6 +30,9 @@ export interface LabelProps {
     theme?: CSSProp<LabelCss>;
 }
 
+/**
+ * Le composant d'affichage du libellé par défaut pour [toutes les fonctions d'affichage de champs](model/display-fields.md). Peut inclure une tooltip à côté du libellé.
+ */
 export function Label({
     comment,
     i18nPrefix = "focus",

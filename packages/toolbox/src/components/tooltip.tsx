@@ -44,6 +44,15 @@ export interface TooltipProps extends Omit<TooltipOptions, "theme"> {
     tooltipTheme?: CSSProp<TooltipCss>;
 }
 
+/**
+ * Une factory pour ajouter une tooltip à un composant ou un élément HTML. Cela permet de créer une version du même composant/élément avec une tooltip de la façon suivante :
+ *
+ *  ```tsx
+ *  const TooltippedButton = tooltipFactory()(Button);
+ *
+ *  <TooltippedButton label="Click" tooltip="Click me" />; // Les props de la tooltip sont ajoutées aux props existantes du composant.
+ *  ```
+ */
 export function tooltipFactory({
     tooltipDelay = 0,
     tooltipHideOnClick = true,

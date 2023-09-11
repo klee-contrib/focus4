@@ -31,6 +31,9 @@ export interface SnackbarProps {
     type?: "accept" | "cancel" | "warning";
 }
 
+/**
+ * Le composant pour afficher des toasts utilisé par le [`MessageCenter`](basics/messages.md).
+ */
 export function Snackbar({
     action,
     active: pActive = false,

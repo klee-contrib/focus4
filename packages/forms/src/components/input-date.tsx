@@ -36,15 +36,11 @@ export interface InputDateProps {
     /**
      * Définit la correspondance entre une date et l'ISOString (date/heure) associé.
      *
-     * Par exemple, pour 24/10/2017 en UTC + 2
-     *
-     * "utc-midnight" : Minuit, en UTC. (-> 2017-10-24T00:00:00Z)
-     *
-     * "local-midnight" : Minuit, au fuseau horaire local. (-> 2017-10-24T00:00:00+02:00)
-     *
-     * "local-utc-midnight" : Minuit à l'heure locale, en UTC. (-> 2017-10-23T22:00:00Z)
-     *
-     * "date-only" : ISOString sans heure (-> 2017-10-23)
+     * Par exemple, pour 24/10/2017 en UTC + 2 :
+     * - "utc-midnight" : Minuit, en UTC. (-> 2017-10-24T00:00:00Z)
+     * - "local-midnight" : Minuit, au fuseau horaire local. (-> 2017-10-24T00:00:00+02:00)
+     * - "local-utc-midnight" : Minuit à l'heure locale, en UTC. (-> 2017-10-23T22:00:00Z)
+     * - "date-only" : ISOString sans heure (-> 2017-10-23)
      *
      * En "utc-midnight", le composant ignore totalement la composante heure de la date qu'il reçoit,
      * alors qu'en "local-*" la date sera convertie dans le fuseau horaire local. Quelque soit le format choisi,
@@ -68,7 +64,9 @@ export interface InputDateProps {
     value: string | undefined;
 }
 
-/** Composant d'input avec un calendrier (React-Toolbox). Diffère du DatePicker classique car il n'est pas affiché en plein écran et autorise la saisie manuelle. */
+/**
+ * Un champ de saisie de date avec double saisie en texte (avec un `Input`) et un calendrier (`Calendar`), qui s'affiche en dessous.
+ */
 @observer
 // eslint-disable-next-line react/no-unsafe
 export class InputDate extends Component<InputDateProps> {

@@ -58,6 +58,9 @@ export interface SelectCheckboxProps<T extends "number" | "string"> {
     values: ReferenceList;
 }
 
+/**
+ * Un composant de sélection multiple pour un champ de type liste de valeurs avec plusieurs choix possibles, dans une liste de référence.
+ */
 export function SelectCheckbox<T extends "number" | "string">({
     disabled = false,
     error,
