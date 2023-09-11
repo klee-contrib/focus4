@@ -39,21 +39,6 @@
     }
 }
 
-.chip--avatar {
-    padding-left: 0;
-
-    & > [data-react-toolbox="avatar"] {
-        height: var(--chip-height);
-        margin-right: var(--chip-icon-margin-right);
-        vertical-align: middle;
-        width: var(--chip-height);
-    }
-    & > [data-react-toolbox="avatar"] > span {
-        font-size: var(--chip-icon-font-size);
-        line-height: var(--chip-height);
-    }
-}
-
 .chip--deletable {
     padding-right: calc(var(--chip-remove-size) + 2 * var(--chip-remove-margin));
 }

@@ -12,10 +12,6 @@ En plus des composants de [listes](./collections.md) et de [présentation](./pre
 
 Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles en entrée**.
 
-### `Avatar`
-
-Affiche une icône dans un cercle.
-
 ### `Button`
 
 Le bouton standard, qui peut être sous plusieurs formats (`raised`, `floating`) et de plusieurs couleurs (`primary`, `accent`), avoir une icône... Un bouton avec juste une icône est un [`IconButton`](#iconbutton)

@@ -1,7 +1,6 @@
 import {CSSContext, CSSProp, ThemeContext} from "@focus4/styling";
 import {
     AutocompleteCss,
-    AvatarCss,
     ButtonCss,
     CalendarCss,
     CheckboxCss,
@@ -102,7 +101,6 @@ export interface LayoutStyleProviderProps {
     timeline?: {};
 
     RTAutocomplete?: CSSProp<AutocompleteCss>;
-    RTAvatar?: CSSProp<AvatarCss>;
     RTButton?: CSSProp<ButtonCss>;
     RTCalendar?: CSSProp<CalendarCss>;
     RTCheckbox?: CSSProp<CheckboxCss>;

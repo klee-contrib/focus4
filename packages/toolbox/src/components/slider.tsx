@@ -19,6 +19,7 @@ import {ProgressBar} from "./progress-bar";
 
 import sliderCss, {SliderCss} from "./__style__/slider.css";
 export {sliderCss, SliderCss};
+
 export interface SliderProps {
     /** Used to style the ProgressBar element */
     buffer?: number;

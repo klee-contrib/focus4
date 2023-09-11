@@ -1,9 +1,7 @@
 import classNames from "classnames";
-import {Children, MouseEventHandler, TouchEventHandler} from "react";
+import {MouseEventHandler, TouchEventHandler} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-
-import {Avatar} from "./avatar";
 
 import chipCss, {ChipCss} from "./__style__/chip.css";
 export {chipCss, ChipCss};
@@ -39,16 +37,9 @@ export function Chip({
 }: ChipProps) {
     const theme = useTheme("RTChip", chipCss, pTheme);
 
-    let avatar = false;
-    if (Children.count(children)) {
-        const flatChildren = Children.toArray(children);
-        const [firstChild] = flatChildren;
-        avatar = (firstChild as any)?.type === Avatar;
-    }
-
     return (
         <div
-            className={classNames(theme.chip({avatar, deletable}), className)}
+            className={classNames(theme.chip({deletable}), className)}
             data-react-toolbox="chip"
             onClick={onClick}
             onMouseDown={onMouseDown}

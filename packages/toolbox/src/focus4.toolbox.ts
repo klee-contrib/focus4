@@ -1,5 +1,4 @@
 export {Autocomplete, AutocompleteCss, AutocompleteProps, autocompleteCss} from "./components/autocomplete";
-export {Avatar, AvatarCss, AvatarProps, avatarCss} from "./components/avatar";
 export {Button, ButtonCss, ButtonProps, buttonCss} from "./components/button";
 export {Calendar, CalendarCss, CalendarProps, calendarCss} from "./components/calendar";
 export {Checkbox, CheckboxCss, CheckboxProps, checkboxCss} from "./components/checkbox";
