@@ -14,7 +14,6 @@
     --menu-item-font-size: calc(1.6 * var(--unit));
     --menu-divider-height: calc((4.8 / 4) * var(--unit));
     --menu-icon-size: calc(2.3 * var(--unit));
-    --menu-icon-ripple-duration: 650ms;
 }
 
 .iconMenu {
@@ -168,10 +167,6 @@
 .menuItem--selected {
     background-color: var(--menu-item-selected-background);
     font-weight: 500;
-}
-
-.menuItem .ripple {
-    color: rgb(var(--color-text-secondary));
 }
 
 .menuItem .icon {

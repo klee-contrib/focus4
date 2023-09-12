@@ -21,7 +21,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, ButtonProps} from "./button";
 import {FontIcon} from "./font-icon";
 import {IconButton} from "./icon-button";
-import {rippleFactory, RippleProps} from "./ripple";
+import {Ripple} from "./ripple";
 import {tooltipFactory, TooltipProps} from "./tooltip";
 
 import menuCss, {MenuCss} from "./__style__/menu.css";
@@ -31,7 +31,6 @@ export {menuCss, MenuCss};
 export interface ButtonMenuProps extends MenuProps {
     /** Les props du bouton. */
     button: ButtonProps &
-        RippleProps &
         TooltipProps & {
             /** L'icône à afficher quand le bouton est ouvert. */
             openedIcon?: ReactNode;
@@ -48,12 +47,8 @@ export interface IconMenuProps {
     children?: ReactNode;
     /** Icon font key string or Element to display the opener icon. */
     icon?: ReactNode;
-    /** If true, the icon will show a ripple when is clicked. */
-    iconRipple?: boolean;
     /** If true, the neutral colors are inverted. Useful if the icon is over a dark background. */
     inverse?: boolean;
-    /** Transferred to the Menu component. */
-    menuRipple?: boolean;
     /** Callback that will be called when the menu is being clicked. */
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Callback that will be called when the menu is being hidden. */
@@ -111,8 +106,6 @@ export interface MenuProps {
     outline?: boolean;
     /** Determine the position of the menu. With static value the menu will be always shown, auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. */
     position?: "auto" | "bottomLeft" | "bottomRight" | "static" | "topLeft" | "topRight";
-    /** If true, the menu items will show a ripple effect on click. */
-    ripple?: boolean;
     /** If true, the menu will keep a value to highlight the active child item. */
     selectable?: boolean;
     /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
@@ -148,7 +141,6 @@ export function Menu({
     onShow,
     outline = true,
     position: pPosition = "static",
-    ripple = true,
     selected,
     selectable = true,
     theme: pTheme
@@ -217,12 +209,12 @@ export function Menu({
                 event.persist();
             }
             setActive(false);
-            setRippled(ripple);
+            setRippled(true);
             onClick?.(event);
             onSelect?.(value);
             onHide?.();
         },
-        [onSelect, ripple]
+        [onSelect]
     );
 
     const menuStyle = useMemo(() => {
@@ -260,7 +252,6 @@ export function Menu({
                 const item2 = item as ReactElement;
                 if (item2.type === MenuItem) {
                     return cloneElement(item2, {
-                        ripple: item2.props.ripple ?? ripple,
                         selected:
                             typeof item2.props.value !== "undefined" && selectable && item2.props.value === selected,
                         onClick: (e: MouseEvent<HTMLLIElement>) => handleSelect(item2, e)
@@ -269,7 +260,7 @@ export function Menu({
 
                 return cloneElement(item2);
             }),
-        [children, handleSelect, ripple, selectable, selected]
+        [children, handleSelect, selectable, selected]
     );
 
     useLayoutEffect(() => {
@@ -305,7 +296,7 @@ function targetIsDescendant(event: Event, parent: Element | null) {
 /**
  * Item de Menu a utiliser dans un `ButtonMenu`, `IconMenu` ou `Menu`.
  */
-export const MenuItem = rippleFactory({})(function RTMenuItem({
+export function MenuItem({
     caption,
     children,
     className = "",
@@ -330,20 +321,22 @@ export const MenuItem = rippleFactory({})(function RTMenuItem({
     );
 
     return (
-        <li
-            className={classNames(theme.menuItem({disabled, selected}), className)}
-            data-react-toolbox="menu-item"
-            onClick={handleClick}
-            onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
-        >
-            {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
-            <span className={theme.caption()}>{caption}</span>
-            {shortcut ? <small className={theme.shortcut()}>{shortcut}</small> : null}
-            {children}
-        </li>
+        <Ripple>
+            <li
+                className={classNames(theme.menuItem({disabled, selected}), className)}
+                data-react-toolbox="menu-item"
+                onClick={handleClick}
+                onMouseDown={onMouseDown}
+                onTouchStart={onTouchStart}
+            >
+                {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
+                <span className={theme.caption()}>{caption}</span>
+                {shortcut ? <small className={theme.shortcut()}>{shortcut}</small> : null}
+                {children}
+            </li>
+        </Ripple>
     );
-});
+}
 /**
  * Crée un menu à partir d'un `IconButton`.
  *
@@ -365,8 +358,6 @@ export function IconMenu({
     children,
     inverse,
     icon = "more_vert",
-    iconRipple = true,
-    menuRipple = true,
     onClick,
     onHide,
     onSelect,
@@ -397,20 +388,13 @@ export function IconMenu({
 
     return (
         <div className={classNames(theme.iconMenu(), className)}>
-            <IconButton
-                className={theme.icon()}
-                icon={icon}
-                inverse={inverse}
-                onClick={clickHandler}
-                ripple={iconRipple}
-            />
+            <IconButton className={theme.icon()} icon={icon} inverse={inverse} onClick={clickHandler} />
             <Menu
                 active={active}
                 onHide={hideHandler}
                 onSelect={onSelect}
                 onShow={onShow}
                 position={position}
-                ripple={menuRipple}
                 selectable={selectable}
                 selected={selected}
                 theme={theme}

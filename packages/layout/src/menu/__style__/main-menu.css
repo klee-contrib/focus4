@@ -30,8 +30,7 @@
     width: 100%;
 }
 
-.toggle,
-.toggle > .rippleWrapper {
+.toggle {
     border-radius: 0;
 }
 

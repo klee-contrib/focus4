@@ -13,7 +13,7 @@ import {
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {FontIcon} from "./font-icon";
-import {rippleFactory} from "./ripple";
+import {Ripple} from "./ripple";
 
 import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
 export {iconButtonCss, IconButtonCss};
@@ -49,66 +49,66 @@ export interface IconButtonProps {
 /**
  * Un bouton avec juste une icône. Les autres types de boutons sont réalisés avec le [`Button`](#button).
  */
-export const IconButton = rippleFactory({rippleCentered: true, theme: {rippleWrapper: iconButtonCss.rippleWrapper}})(
-    function RTIconButton({
-        accent = false,
-        children,
-        className = "",
+export function IconButton({
+    accent = false,
+    children,
+    className = "",
+    disabled,
+    href,
+    icon,
+    inverse,
+    onClick,
+    onMouseDown,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseUp,
+    onTouchStart,
+    primary = false,
+    style,
+    target,
+    theme: pTheme,
+    type = "button"
+}: IconButtonProps) {
+    const theme = useTheme("RTIconButton", iconButtonCss, pTheme);
+    const buttonNode = useRef<HTMLButtonElement | HTMLLinkElement | null>(null);
+
+    const handleMouseUp = useCallback(
+        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
+            buttonNode.current?.blur();
+            onMouseUp?.(event);
+        },
+        [onMouseUp]
+    );
+
+    const handleMouseLeave = useCallback(
+        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
+            buttonNode.current?.blur();
+            onMouseLeave?.(event);
+        },
+        [onMouseLeave]
+    );
+
+    const element = href ? "a" : "button";
+
+    const props = {
+        ref: buttonNode,
+        className: classNames(theme.toggle({accent, inverse, neutral: !primary && !accent, primary}), className),
         disabled,
         href,
-        icon,
-        inverse,
         onClick,
         onMouseDown,
         onMouseEnter,
-        onMouseLeave,
-        onMouseUp,
+        onMouseLeave: handleMouseLeave,
+        onMouseUp: handleMouseUp,
         onTouchStart,
-        primary = false,
         style,
         target,
-        theme: pTheme,
-        type = "button"
-    }: IconButtonProps) {
-        const theme = useTheme("RTIconButton", iconButtonCss, pTheme);
-        const buttonNode = useRef<HTMLButtonElement | HTMLLinkElement | null>(null);
+        type: !href ? type : null,
+        "data-react-toolbox": "button"
+    };
 
-        const handleMouseUp = useCallback(
-            (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
-                buttonNode.current?.blur();
-                onMouseUp?.(event);
-            },
-            [onMouseUp]
-        );
-
-        const handleMouseLeave = useCallback(
-            (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
-                buttonNode.current?.blur();
-                onMouseLeave?.(event);
-            },
-            [onMouseLeave]
-        );
-
-        const element = href ? "a" : "button";
-
-        const props = {
-            ref: buttonNode,
-            className: classNames(theme.toggle({accent, inverse, neutral: !primary && !accent, primary}), className),
-            disabled,
-            href,
-            onClick,
-            onMouseDown,
-            onMouseEnter,
-            onMouseLeave: handleMouseLeave,
-            onMouseUp: handleMouseUp,
-            onTouchStart,
-            style,
-            target,
-            type: !href ? type : null,
-            "data-react-toolbox": "button"
-        };
-
-        const iconElement = typeof icon === "string" ? <FontIcon className={theme.icon()} value={icon} /> : icon;
-        return createElement(element, props, icon && iconElement, children);
-    }
-);
+    const iconElement = (
+        <Ripple centered>{typeof icon === "string" ? <FontIcon className={theme.icon()} value={icon} /> : icon}</Ripple>
+    );
+    return createElement(element, props, icon && iconElement, children);
+}

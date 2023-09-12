@@ -73,38 +73,30 @@ Le bouton standard, qui peut être sous plusieurs formats (`raised`, `floating`)
 
 ### Props
 
-| Nom                 | Obligatoire | Type                                                                                               | Description                                                                              |
-| ------------------- | ----------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `accent`            | Non         | <code>boolean</code>                                                                               | Indicates if the button should have accent color.                                        |
-| `children`          | Non         | <code>ReactNode</code>                                                                             | Children to pass through the component.                                                  |
-| `className`         | Non         | <code>string</code>                                                                                |                                                                                          |
-| `disabled`          | Non         | <code>boolean</code>                                                                               | If true, component will be disabled.                                                     |
-| `floating`          | Non         | <code>boolean</code>                                                                               | If true, the button will have a floating look.                                           |
-| `href`              | Non         | <code>string</code>                                                                                | Creates a link for the button.                                                           |
-| `icon`              | Non         | <code>ReactNode</code>                                                                             | Value of the icon (See Font Icon Component).                                             |
-| `inverse`           | Non         | <code>boolean</code>                                                                               | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
-| `key`               | Non         | <code>Key</code>                                                                                   |                                                                                          |
-| `label`             | Non         | <code>string</code>                                                                                | The text string to use for the name of the button.                                       |
-| `mini`              | Non         | <code>boolean</code>                                                                               | To be used with floating button. If true, the button will be smaller.                    |
-| `onClick`           | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onMouseDown`       | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt; & MouseEventHandler</code> |                                                                                          |
-| `onMouseEnter`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onMouseLeave`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onMouseUp`         | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onRippleEnded`     | Non         | <code>(event: TransitionEvent) =&gt; void</code>                                                   |                                                                                          |
-| `onTouchStart`      | Non         | <code>TouchEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt; & TouchEventHandler</code> |                                                                                          |
-| `primary`           | Non         | <code>boolean</code>                                                                               | Indicates if the button should have primary color.                                       |
-| `raised`            | Non         | <code>boolean</code>                                                                               | If true, the button will have a raised look.                                             |
-| `ripple`            | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `rippleCentered`    | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `rippleMultiple`    | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `ripplePassthrough` | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `rippleSpread`      | Non         | <code>number</code>                                                                                |                                                                                          |
-| `rippleTheme`       | Non         | <code>CSSProp&lt;RippleCss&gt;</code>                                                              |                                                                                          |
-| `style`             | Non         | <code>CSSProperties</code>                                                                         |                                                                                          |
-| `target`            | Non         | <code>string</code>                                                                                | Passed down to the root element                                                          |
-| `theme`             | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                                              | Classnames object defining the component style.                                          |
-| `type`              | Non         | <code>string</code>                                                                                | Component root container type.                                                           |
+| Nom            | Obligatoire | Type                                                                           | Description                                                                              |
+| -------------- | ----------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `accent`       | Non         | <code>boolean</code>                                                           | Indicates if the button should have accent color.                                        |
+| `children`     | Non         | <code>ReactNode</code>                                                         | Children to pass through the component.                                                  |
+| `className`    | Non         | <code>string</code>                                                            |                                                                                          |
+| `disabled`     | Non         | <code>boolean</code>                                                           | If true, component will be disabled.                                                     |
+| `floating`     | Non         | <code>boolean</code>                                                           | If true, the button will have a floating look.                                           |
+| `href`         | Non         | <code>string</code>                                                            | Creates a link for the button.                                                           |
+| `icon`         | Non         | <code>ReactNode</code>                                                         | Value of the icon (See Font Icon Component).                                             |
+| `inverse`      | Non         | <code>boolean</code>                                                           | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
+| `label`        | Non         | <code>string</code>                                                            | The text string to use for the name of the button.                                       |
+| `mini`         | Non         | <code>boolean</code>                                                           | To be used with floating button. If true, the button will be smaller.                    |
+| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseUp`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `primary`      | Non         | <code>boolean</code>                                                           | Indicates if the button should have primary color.                                       |
+| `raised`       | Non         | <code>boolean</code>                                                           | If true, the button will have a raised look.                                             |
+| `style`        | Non         | <code>CSSProperties</code>                                                     |                                                                                          |
+| `target`       | Non         | <code>string</code>                                                            | Passed down to the root element                                                          |
+| `theme`        | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                          | Classnames object defining the component style.                                          |
+| `type`         | Non         | <code>string</code>                                                            | Component root container type.                                                           |
 
 ## `Calendar`
 
@@ -233,34 +225,26 @@ Un bouton avec juste une icône. Les autres types de boutons sont réalisés ave
 
 ### Props
 
-| Nom                 | Obligatoire | Type                                                                                               | Description                                                                              |
-| ------------------- | ----------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `accent`            | Non         | <code>boolean</code>                                                                               | Indicates if the button should have accent color.                                        |
-| `children`          | Non         | <code>ReactNode</code>                                                                             | Children to pass through the component.                                                  |
-| `className`         | Non         | <code>string</code>                                                                                |                                                                                          |
-| `disabled`          | Non         | <code>boolean</code>                                                                               | If true, component will be disabled.                                                     |
-| `href`              | Non         | <code>string</code>                                                                                |                                                                                          |
-| `icon`              | Non         | <code>ReactNode</code>                                                                             | Value of the icon (See Font Icon Component).                                             |
-| `inverse`           | Non         | <code>boolean</code>                                                                               | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
-| `key`               | Non         | <code>Key</code>                                                                                   |                                                                                          |
-| `onClick`           | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onMouseDown`       | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt; & MouseEventHandler</code> |                                                                                          |
-| `onMouseEnter`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onMouseLeave`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onMouseUp`         | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                     |                                                                                          |
-| `onRippleEnded`     | Non         | <code>(event: TransitionEvent) =&gt; void</code>                                                   |                                                                                          |
-| `onTouchStart`      | Non         | <code>TouchEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt; & TouchEventHandler</code> |                                                                                          |
-| `primary`           | Non         | <code>boolean</code>                                                                               | Indicates if the button should have primary color.                                       |
-| `ripple`            | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `rippleCentered`    | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `rippleMultiple`    | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `ripplePassthrough` | Non         | <code>boolean</code>                                                                               |                                                                                          |
-| `rippleSpread`      | Non         | <code>number</code>                                                                                |                                                                                          |
-| `rippleTheme`       | Non         | <code>CSSProp&lt;RippleCss&gt;</code>                                                              |                                                                                          |
-| `style`             | Non         | <code>CSSProperties</code>                                                                         |                                                                                          |
-| `target`            | Non         | <code>string</code>                                                                                |                                                                                          |
-| `theme`             | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                                          |                                                                                          |
-| `type`              | Non         | <code>string</code>                                                                                | Component root container type.                                                           |
+| Nom            | Obligatoire | Type                                                                           | Description                                                                              |
+| -------------- | ----------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `accent`       | Non         | <code>boolean</code>                                                           | Indicates if the button should have accent color.                                        |
+| `children`     | Non         | <code>ReactNode</code>                                                         | Children to pass through the component.                                                  |
+| `className`    | Non         | <code>string</code>                                                            |                                                                                          |
+| `disabled`     | Non         | <code>boolean</code>                                                           | If true, component will be disabled.                                                     |
+| `href`         | Non         | <code>string</code>                                                            |                                                                                          |
+| `icon`         | Non         | <code>ReactNode</code>                                                         | Value of the icon (See Font Icon Component).                                             |
+| `inverse`      | Non         | <code>boolean</code>                                                           | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
+| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onMouseUp`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
+| `primary`      | Non         | <code>boolean</code>                                                           | Indicates if the button should have primary color.                                       |
+| `style`        | Non         | <code>CSSProperties</code>                                                     |                                                                                          |
+| `target`       | Non         | <code>string</code>                                                            |                                                                                          |
+| `theme`        | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                      |                                                                                          |
+| `type`         | Non         | <code>string</code>                                                            | Component root container type.                                                           |
 
 ## `Input`
 
@@ -314,35 +298,6 @@ Champ de saisie texte standard. A priori à ne jamais utiliser directement et ut
 | `type`                 | Non         | <code>string</code>                                                                                          | Type of the input element. It can be a valid HTML5 input type.                                                      |
 | `value`                | Non         | <code>string</code>                                                                                          | Current value of the input element.                                                                                 |
 
-## `MenuItem`
-
-Item de Menu a utiliser dans un `ButtonMenu`, `IconMenu` ou `Menu`.
-
-### Props
-
-| Nom                 | Obligatoire | Type                                                                    | Description                                                                 |
-| ------------------- | ----------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `caption`           | **Oui**     | <code>string</code>                                                     | The text to include in the menu item. Required.                             |
-| `children`          | Non         | <code>ReactNode</code>                                                  | Children to pass through the component.                                     |
-| `className`         | Non         | <code>string</code>                                                     |                                                                             |
-| `disabled`          | Non         | <code>boolean</code>                                                    | If true, the item will be displayed as disabled and is not selectable.      |
-| `icon`              | Non         | <code>ReactNode</code>                                                  | Icon font key string or Element to display in the right side of the option. |
-| `key`               | Non         | <code>Key</code>                                                        |                                                                             |
-| `onClick`           | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code>                     |                                                                             |
-| `onMouseDown`       | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt; & MouseEventHandler</code> |                                                                             |
-| `onRippleEnded`     | Non         | <code>(event: TransitionEvent) =&gt; void</code>                        |                                                                             |
-| `onTouchStart`      | Non         | <code>TouchEventHandler&lt;HTMLLIElement&gt; & TouchEventHandler</code> |                                                                             |
-| `ripple`            | Non         | <code>boolean</code>                                                    |                                                                             |
-| `rippleCentered`    | Non         | <code>boolean</code>                                                    |                                                                             |
-| `rippleMultiple`    | Non         | <code>boolean</code>                                                    |                                                                             |
-| `ripplePassthrough` | Non         | <code>boolean</code>                                                    |                                                                             |
-| `rippleSpread`      | Non         | <code>number</code>                                                     |                                                                             |
-| `rippleTheme`       | Non         | <code>CSSProp&lt;RippleCss&gt;</code>                                   |                                                                             |
-| `selected`          | Non         | <code>boolean</code>                                                    | @internal                                                                   |
-| `shortcut`          | Non         | <code>string</code>                                                     | Displays shortcut text on the right side of the caption attribute.          |
-| `theme`             | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                     | Classnames object defining the component style.                             |
-| `value`             | Non         | <code>string</code>                                                     | Passed down to the root element.                                            |
-
 ## `ButtonMenu`
 
 Crée un menu à partir d'un `Button`.
@@ -371,7 +326,7 @@ Exemple :
 | Nom          | Obligatoire | Type                                                                                                            | Description                                                                                                                                                                                                                                      |
 | ------------ | ----------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `active`     | Non         | <code>boolean</code>                                                                                            | If true, the menu will be displayed as opened by default.                                                                                                                                                                                        |
-| `button`     | **Oui**     | <code>ButtonProps & RippleProps & TooltipProps & { openedIcon?: ReactNode; }</code>                             | Les props du bouton.                                                                                                                                                                                                                             |
+| `button`     | **Oui**     | <code>ButtonProps & TooltipProps & { openedIcon?: ReactNode; }</code>                                           | Les props du bouton.                                                                                                                                                                                                                             |
 | `children`   | Non         | <code>ReactNode</code>                                                                                          | Children to pass through the component.                                                                                                                                                                                                          |
 | `className`  | Non         | <code>string</code>                                                                                             |                                                                                                                                                                                                                                                  |
 | `onClick`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement&gt;</code>                                                         |                                                                                                                                                                                                                                                  |
@@ -380,7 +335,6 @@ Exemple :
 | `onShow`     | Non         | <code>() =&gt; void</code>                                                                                      | Callback that will be invoked when the menu is being shown.                                                                                                                                                                                      |
 | `outline`    | Non         | <code>boolean</code>                                                                                            | If true the menu wrapper will show an outline with a soft shadow.                                                                                                                                                                                |
 | `position`   | Non         | <code>"bottomLeft" &#124; "bottomRight" &#124; "static" &#124; "topLeft" &#124; "topRight" &#124; "auto"</code> | Determine the position of the menu. With static value the menu will be always shown, auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. |
-| `ripple`     | Non         | <code>boolean</code>                                                                                            | If true, the menu items will show a ripple effect on click.                                                                                                                                                                                      |
 | `selectable` | Non         | <code>boolean</code>                                                                                            | If true, the menu will keep a value to highlight the active child item.                                                                                                                                                                          |
 | `selected`   | Non         | <code>string</code>                                                                                             | Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted.                                                                                                                            |
 | `theme`      | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                                                             | Classnames object defining the component style.                                                                                                                                                                                                  |
@@ -409,9 +363,7 @@ Exemple :
 | `children`   | Non         | <code>ReactNode</code>                                                                                          | Children to pass through the component.                                                                               |
 | `className`  | Non         | <code>string</code>                                                                                             | Class for the root node.                                                                                              |
 | `icon`       | Non         | <code>ReactNode</code>                                                                                          | Icon font key string or Element to display the opener icon.                                                           |
-| `iconRipple` | Non         | <code>boolean</code>                                                                                            | If true, the icon will show a ripple when is clicked.                                                                 |
 | `inverse`    | Non         | <code>boolean</code>                                                                                            | If true, the neutral colors are inverted. Useful if the icon is over a dark background.                               |
-| `menuRipple` | Non         | <code>boolean</code>                                                                                            | Transferred to the Menu component.                                                                                    |
 | `onClick`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                                  | Callback that will be called when the menu is being clicked.                                                          |
 | `onHide`     | Non         | <code>() =&gt; void</code>                                                                                      | Callback that will be called when the menu is being hidden.                                                           |
 | `onSelect`   | Non         | <code>(value: any) =&gt; void</code>                                                                            | Callback that will be invoked when a menu item is selected.                                                           |
@@ -420,6 +372,27 @@ Exemple :
 | `selectable` | Non         | <code>boolean</code>                                                                                            | If true, the menu will keep a value to highlight the active child item.                                               |
 | `selected`   | Non         | <code>any</code>                                                                                                | Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. |
 | `theme`      | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                                                             | Classnames object defining the component style.                                                                       |
+
+## `MenuItem`
+
+Item de Menu a utiliser dans un `ButtonMenu`, `IconMenu` ou `Menu`.
+
+### Props
+
+| Nom            | Obligatoire | Type                                                | Description                                                                 |
+| -------------- | ----------- | --------------------------------------------------- | --------------------------------------------------------------------------- |
+| `caption`      | **Oui**     | <code>string</code>                                 | The text to include in the menu item. Required.                             |
+| `children`     | Non         | <code>ReactNode</code>                              | Children to pass through the component.                                     |
+| `className`    | Non         | <code>string</code>                                 |                                                                             |
+| `disabled`     | Non         | <code>boolean</code>                                | If true, the item will be displayed as disabled and is not selectable.      |
+| `icon`         | Non         | <code>ReactNode</code>                              | Icon font key string or Element to display in the right side of the option. |
+| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code> |                                                                             |
+| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code> |                                                                             |
+| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLLIElement&gt;</code> |                                                                             |
+| `selected`     | Non         | <code>boolean</code>                                | @internal                                                                   |
+| `shortcut`     | Non         | <code>string</code>                                 | Displays shortcut text on the right side of the caption attribute.          |
+| `theme`        | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                 | Classnames object defining the component style.                             |
+| `value`        | Non         | <code>string</code>                                 | Passed down to the root element.                                            |
 
 ## `Menu`
 
@@ -437,7 +410,6 @@ Affiche un menu, utilisé par ButtonMenu et IconMenu.
 | `onShow`     | Non         | <code>() =&gt; void</code>                                                                                      | Callback that will be invoked when the menu is being shown.                                                                                                                                                                                      |
 | `outline`    | Non         | <code>boolean</code>                                                                                            | If true the menu wrapper will show an outline with a soft shadow.                                                                                                                                                                                |
 | `position`   | Non         | <code>"bottomLeft" &#124; "bottomRight" &#124; "static" &#124; "topLeft" &#124; "topRight" &#124; "auto"</code> | Determine the position of the menu. With static value the menu will be always shown, auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. |
-| `ripple`     | Non         | <code>boolean</code>                                                                                            | If true, the menu items will show a ripple effect on click.                                                                                                                                                                                      |
 | `selectable` | Non         | <code>boolean</code>                                                                                            | If true, the menu will keep a value to highlight the active child item.                                                                                                                                                                          |
 | `selected`   | Non         | <code>string</code>                                                                                             | Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted.                                                                                                                            |
 | `theme`      | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                                                             | Classnames object defining the component style.                                                                                                                                                                                                  |
@@ -496,34 +468,31 @@ A utiliser dans un RadioGroup.
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                                                            | Description                                                  |
-| -------------- | ----------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `checked`      | Non         | <code>boolean</code>                                                                            | @internal                                                    |
-| `children`     | Non         | <code>ReactNode</code>                                                                          | Children to pass through the component.                      |
-| `className`    | Non         | <code>string</code>                                                                             |                                                              |
-| `disabled`     | Non         | <code>boolean</code>                                                                            | If true, the radio shown as disabled and cannot be modified. |
-| `id`           | Non         | <code>string</code>                                                                             | The id of the field to set in the input radio.               |
-| `label`        | Non         | <code>ReactNode</code>                                                                          | Text label to attach next to the radio element.              |
-| `name`         | Non         | <code>string</code>                                                                             | The name of the field to set in the input radio.             |
-| `onChange`     | Non         | <code>(value: boolean, event: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | @internal                                                    |
-| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLLabelElement&gt;</code>                                          |                                                              |
-| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLLabelElement&gt;</code>                                          |                                                              |
-| `theme`        | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                                                            |                                                              |
-| `value`        | **Oui**     | <code>string</code>                                                                             | Valeur.                                                      |
+| Nom         | Obligatoire | Type                                                                                            | Description                                                  |
+| ----------- | ----------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `checked`   | Non         | <code>boolean</code>                                                                            | @internal                                                    |
+| `children`  | Non         | <code>ReactNode</code>                                                                          | Children to pass through the component.                      |
+| `className` | Non         | <code>string</code>                                                                             |                                                              |
+| `disabled`  | Non         | <code>boolean</code>                                                                            | If true, the radio shown as disabled and cannot be modified. |
+| `id`        | Non         | <code>string</code>                                                                             | The id of the field to set in the input radio.               |
+| `label`     | Non         | <code>ReactNode</code>                                                                          | Text label to attach next to the radio element.              |
+| `name`      | Non         | <code>string</code>                                                                             | The name of the field to set in the input radio.             |
+| `onChange`  | Non         | <code>(value: boolean, event: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | @internal                                                    |
+| `theme`     | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                                                            | CSS.                                                         |
+| `value`     | **Oui**     | <code>string</code>                                                                             | Valeur.                                                      |
 
-## `rippleFactory`
+## `Ripple`
 
-Une factory pour ajouter des "ripples" à un composant. Est utilisé largement par les autres composants pour les divers boutons. S'utilise de la même manière que la [`tooltipFactory`](#tooltipfactory)
+Pose un Ripple au clic sur le composant/élément enfant.
 
 ### Props
 
-| Nom                 | Obligatoire | Type                                  | Description |
-| ------------------- | ----------- | ------------------------------------- | ----------- |
-| `rippleCentered`    | Non         | <code>boolean</code>                  |             |
-| `rippleMultiple`    | Non         | <code>boolean</code>                  |             |
-| `ripplePassthrough` | Non         | <code>boolean</code>                  |             |
-| `rippleSpread`      | Non         | <code>number</code>                   |             |
-| `theme`             | Non         | <code>CSSProp&lt;RippleCss&gt;</code> |             |
+| Nom            | Obligatoire | Type                   | Description                                                                                 |
+| -------------- | ----------- | ---------------------- | ------------------------------------------------------------------------------------------- |
+| `centered`     | Non         | <code>boolean</code>   | Centre le ripple sur la cible au lieu de l'endroit cliqué.                                  |
+| `children`     | Non         | <code>ReactNode</code> | Composant enfant dans lequel poser le ripple.                                               |
+| `className`    | Non         | <code>string</code>    | Classe CSS à passer au Ripple                                                               |
+| `rippleTarget` | Non         | <code>string</code>    | Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. |
 
 ## `Slider`
 
@@ -588,35 +557,6 @@ Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
 | `theme`     | Non         | <code>CSSProp&lt;SwitchCss&gt;</code>                                                 | CSS.                                                 |
 | `value`     | Non         | <code>boolean</code>                                                                  | Valeur (correspond à 'checked' sur l'input).         |
 
-## `Tab`
-
-Un Tab, à utiliser dans Tabs.
-
-### Props
-
-| Nom                 | Obligatoire | Type                                                                                         | Description                                                |
-| ------------------- | ----------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `active`            | Non         | <code>boolean</code>                                                                         | If true, the current component is visible.                 |
-| `className`         | Non         | <code>string</code>                                                                          |                                                            |
-| `disabled`          | Non         | <code>boolean</code>                                                                         | If true, the current component is not clickable.           |
-| `hidden`            | Non         | <code>boolean</code>                                                                         | If true, the current component is not visible.             |
-| `icon`              | Non         | <code>ReactNode</code>                                                                       | Icon to be used in inner FontIcon.                         |
-| `index`             | Non         | <code>number</code>                                                                          |                                                            |
-| `key`               | Non         | <code>Key</code>                                                                             |                                                            |
-| `label`             | Non         | <code>string</code>                                                                          | Label text for navigation header.                          |
-| `onActive`          | Non         | <code>() =&gt; void</code>                                                                   | Callback function that is fired when the tab is activated. |
-| `onClick`           | Non         | <code>(event: MouseEvent&lt;HTMLDivElement, MouseEvent&gt;, index: number) =&gt; void</code> |                                                            |
-| `onMouseDown`       | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt; & MouseEventHandler</code>                     |                                                            |
-| `onRippleEnded`     | Non         | <code>(event: TransitionEvent) =&gt; void</code>                                             |                                                            |
-| `onTouchStart`      | Non         | <code>TouchEventHandler&lt;HTMLDivElement&gt; & TouchEventHandler</code>                     |                                                            |
-| `ripple`            | Non         | <code>boolean</code>                                                                         |                                                            |
-| `rippleCentered`    | Non         | <code>boolean</code>                                                                         |                                                            |
-| `rippleMultiple`    | Non         | <code>boolean</code>                                                                         |                                                            |
-| `ripplePassthrough` | Non         | <code>boolean</code>                                                                         |                                                            |
-| `rippleSpread`      | Non         | <code>number</code>                                                                          |                                                            |
-| `rippleTheme`       | Non         | <code>CSSProp&lt;RippleCss&gt;</code>                                                        |                                                            |
-| `theme`             | Non         | <code>CSSProp&lt;TabsCss&gt;</code>                                                          | Classnames object defining the component style.            |
-
 ## `Tabs`
 
 Permet de poser un système de tabs avec Tab et TabContent.
@@ -633,6 +573,27 @@ Permet de poser un système de tabs avec Tab et TabContent.
 | `inverse`   | Non         | <code>boolean</code>                      | If True, the tabs will have an inverse style.                                                                                                                                                                  |
 | `onChange`  | Non         | <code>(idx: number) =&gt; void</code>     | Callback function that is fired when the tab changes.                                                                                                                                                          |
 | `theme`     | Non         | <code>CSSProp&lt;TabsCss&gt;</code>       | Classnames object defining the component style.                                                                                                                                                                |
+
+## `Tab`
+
+Un Tab, à utiliser dans Tabs.
+
+### Props
+
+| Nom            | Obligatoire | Type                                                                                         | Description                                                |
+| -------------- | ----------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `active`       | Non         | <code>boolean</code>                                                                         | If true, the current component is visible.                 |
+| `className`    | Non         | <code>string</code>                                                                          |                                                            |
+| `disabled`     | Non         | <code>boolean</code>                                                                         | If true, the current component is not clickable.           |
+| `hidden`       | Non         | <code>boolean</code>                                                                         | If true, the current component is not visible.             |
+| `icon`         | Non         | <code>ReactNode</code>                                                                       | Icon to be used in inner FontIcon.                         |
+| `index`        | Non         | <code>number</code>                                                                          |                                                            |
+| `label`        | Non         | <code>string</code>                                                                          | Label text for navigation header.                          |
+| `onActive`     | Non         | <code>() =&gt; void</code>                                                                   | Callback function that is fired when the tab is activated. |
+| `onClick`      | Non         | <code>(event: MouseEvent&lt;HTMLDivElement, MouseEvent&gt;, index: number) =&gt; void</code> |                                                            |
+| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code>                                         |                                                            |
+| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLDivElement&gt;</code>                                         |                                                            |
+| `theme`        | Non         | <code>CSSProp&lt;TabsCss&gt;</code>                                                          | Classnames object defining the component style.            |
 
 ## `TabContent`
 

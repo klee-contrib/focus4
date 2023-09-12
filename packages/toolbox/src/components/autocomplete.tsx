@@ -25,7 +25,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {Chip} from "./chip";
 import {Input, InputCss, InputProps} from "./input";
 import {ProgressBar} from "./progress-bar";
-import {rippleFactory, RippleProps} from "./ripple";
+import {Ripple} from "./ripple";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss, AutocompleteCss};
@@ -407,9 +407,13 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
     const RipplingLi = useMemo(
         () =>
             (ripple
-                ? rippleFactory({theme: {rippleWrapper: theme.rippleWrapper()}})("li")
+                ? props => (
+                      <Ripple>
+                          <li {...props} />
+                      </Ripple>
+                  )
                 : props => <li {...props} />) as (
-                props: React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> & RippleProps
+                props: React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>
             ) => ReactElement,
         [ripple, theme]
     );

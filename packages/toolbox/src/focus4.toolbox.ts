@@ -24,7 +24,7 @@ export {
 } from "./components/menu";
 export {ProgressBar, ProgressBarCss, ProgressBarProps, progressBarCss} from "./components/progress-bar";
 export {RadioButton, RadioButtonProps, RadioCss, RadioGroup, RadioGroupProps, radioCss} from "./components/radio";
-export {RippleCss, RippleOptions, RippleProps, rippleCss, rippleFactory} from "./components/ripple";
+export {Ripple, RippleCss, RippleProps, rippleCss} from "./components/ripple";
 export {Slider, SliderCss, SliderProps, sliderCss} from "./components/slider";
 export {Snackbar, SnackbarCss, SnackbarProps, snackbarCss} from "./components/snackbar";
 export {Switch, SwitchCss, SwitchProps, switchCss} from "./components/switch";

@@ -70,11 +70,6 @@
         pointer-events: none;
     }
 
-    & > .rippleWrapper {
-        overflow: hidden;
-        border-radius: 50%;
-    }
-
     &[disabled] {
         color: var(--button-disabled-text-color);
         cursor: auto;

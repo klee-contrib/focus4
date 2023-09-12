@@ -332,7 +332,6 @@ class ScrollableComponent extends Component<ScrollableProps> {
                                         className={theme.menuButton()}
                                         icon={`keyboard_arrow_${this.isMenuOpened ? "left" : "right"}`}
                                         onClick={() => (this.isMenuOpened = !this.isMenuOpened)}
-                                        ripple={false}
                                     />
                                 ) : null}
                             </motion.div>

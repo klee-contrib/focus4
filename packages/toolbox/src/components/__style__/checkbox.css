@@ -3,7 +3,6 @@
     --checkbox-disabled-color: rgba(var(--color-black), 0.26);
     --checkbox-field-margin-bottom: calc(1.5 * var(--unit));
     --checkbox-focus-checked-color: rgba(var(--color-primary), 0.26);
-    --checkbox-ripple-duration: 650ms;
     --checkbox-size: calc(1.8 * var(--unit));
     --checkbox-focus-color: rgba(var(--color-black), 0.01);
     --checkbox-focus-size: calc(var(--checkbox-size) * 2.3);
@@ -27,11 +26,6 @@
     & *::after,
     & *::before {
         box-sizing: border-box;
-    }
-    & .ripple {
-        background-color: var(--checkbox-color);
-        opacity: 0.3;
-        transition-duration: var(--checkbox-ripple-duration);
     }
 }
 

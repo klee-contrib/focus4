@@ -18,7 +18,7 @@ import {
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {FontIcon} from "./font-icon";
-import {rippleFactory} from "./ripple";
+import {Ripple} from "./ripple";
 
 import tabsCss, {TabsCss} from "./__style__/tabs.css";
 export {tabsCss, TabsCss};
@@ -71,7 +71,7 @@ export interface TabProps {
 /**
  * Un Tab, à utiliser dans Tabs.
  */
-export const Tab = rippleFactory({theme: {rippleWrapper: tabsCss.rippleWrapper}})(function RTTab({
+export function Tab({
     active = false,
     className = "",
     children,
@@ -104,21 +104,23 @@ export const Tab = rippleFactory({theme: {rippleWrapper: tabsCss.rippleWrapper}}
     );
 
     return (
-        <div
-            className={classNames(theme.label({active, disabled, hidden, withIcon: !!icon}), className)}
-            data-react-toolbox="tab"
-            onClick={handleClick}
-            onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
-            role="tab"
-            tabIndex={0}
-        >
-            {icon ? <FontIcon className={(theme as any).icon?.()} value={icon} /> : null}
-            {label}
-            {children}
-        </div>
+        <Ripple>
+            <div
+                className={classNames(theme.label({active, disabled, hidden, withIcon: !!icon}), className)}
+                data-react-toolbox="tab"
+                onClick={handleClick}
+                onMouseDown={onMouseDown}
+                onTouchStart={onTouchStart}
+                role="tab"
+                tabIndex={0}
+            >
+                {icon ? <FontIcon className={(theme as any).icon?.()} value={icon} /> : null}
+                {label}
+                {children}
+            </div>
+        </Ripple>
     );
-});
+}
 
 export interface TabsProps {
     /** Children to pass through the component. */

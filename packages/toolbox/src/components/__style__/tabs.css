@@ -77,10 +77,6 @@
         background-color: var(--tab-focus-color);
         outline: none;
     }
-
-    & > .rippleWrapper {
-        overflow: hidden;
-    }
 }
 
 .label--active {

@@ -1,42 +1,10 @@
-:root {
-    --ripple-duration: 800ms;
-    --ripple-final-opacity: 0.3;
-    --ripple-size: calc(15 * var(--unit));
-}
-
-.rippleWrapper {
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: var(--z-index-normal);
-}
-
 .ripple {
-    background-color: currentColor;
-    border-radius: 50%;
-    left: 50%;
     pointer-events: none;
+    background: currentcolor;
+    filter: blur(10px);
     position: absolute;
-    top: 50%;
-    transform-origin: 50% 50%;
-    transition-duration: var(--ripple-duration);
-    z-index: var(--z-index-high);
-}
-
-.ripple--restarting {
-    opacity: var(--ripple-final-opacity);
-    transition-property: none;
-}
-
-.ripple--active {
-    opacity: var(--ripple-final-opacity);
-    transition-property: transform;
-}
-
-.ripple:not(.ripple--active):not(.ripple--restarting) {
-    opacity: 0;
-    transition-property: opacity, transform;
+    transform-origin: center center;
+    opacity: 0.12;
+    transform: scale(0);
+    border-radius: 50%;
 }

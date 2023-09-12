@@ -13,7 +13,7 @@ import {
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {FontIcon} from "./font-icon";
-import {rippleFactory} from "./ripple";
+import {Ripple} from "./ripple";
 
 import buttonCss, {ButtonCss} from "./__style__/button.css";
 export {buttonCss, ButtonCss};
@@ -60,7 +60,7 @@ export interface ButtonProps {
 /**
  * Le bouton standard, qui peut être sous plusieurs formats (`raised`, `floating`) et de plusieurs couleurs (`primary`, `accent`), avoir une icône... Un bouton avec juste une icône est un [`IconButton`](#iconbutton)
  */
-export const Button = rippleFactory({theme: {rippleWrapper: buttonCss.rippleWrapper}})(function RTButton({
+export function Button({
     accent = false,
     children,
     className = "",
@@ -144,11 +144,15 @@ export const Button = rippleFactory({theme: {rippleWrapper: buttonCss.rippleWrap
         children
     );
 
-    return onMouseEnter && disabled ? (
-        <span onMouseLeave={handleMouseLeave} onMouseUp={handleMouseUp}>
-            {buttonElement}
-        </span>
-    ) : (
-        buttonElement
+    return (
+        <Ripple>
+            {onMouseEnter && disabled ? (
+                <span onMouseLeave={handleMouseLeave} onMouseUp={handleMouseUp}>
+                    {buttonElement}
+                </span>
+            ) : (
+                buttonElement
+            )}
+        </Ripple>
     );
-});
+}

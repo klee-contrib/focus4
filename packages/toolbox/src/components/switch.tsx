@@ -4,6 +4,7 @@ import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {FontIcon} from "./font-icon";
+import {Ripple} from "./ripple";
 
 import switchCss, {SwitchCss} from "./__style__/switch.css";
 export {switchCss, SwitchCss};
@@ -45,27 +46,34 @@ export function Switch({className, disabled, id, name, onChange, iconOn, iconOff
     }, [value, disabled]);
 
     return (
-        <div ref={node} className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}>
-            <input
-                checked={value}
-                className={theme.checkbox()}
-                disabled={disabled}
-                id={id}
-                name={name}
-                onChange={e => onChange?.(!value, e)}
-                type="checkbox"
-            />
-            <div className={theme.track()}>
-                <div className={theme.state()}>
-                    {value !== undefined ? (
-                        <div className={theme.outline()}>
-                            <div className={theme.thumb({icon: !!iconOff})} />
-                            {iconOn ? <FontIcon className={theme.icon({checked: true})}>{iconOn}</FontIcon> : null}
-                            {iconOff ? <FontIcon className={theme.icon({unchecked: true})}>{iconOff}</FontIcon> : null}
-                        </div>
-                    ) : null}
+        <Ripple centered rippleTarget={theme.state()}>
+            <div
+                ref={node}
+                className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}
+            >
+                <input
+                    checked={value ?? false}
+                    className={theme.checkbox()}
+                    disabled={disabled}
+                    id={id}
+                    name={name}
+                    onChange={e => onChange?.(!value, e)}
+                    type="checkbox"
+                />
+                <div className={theme.track()}>
+                    <div className={theme.state()}>
+                        {value !== undefined ? (
+                            <div className={theme.outline()}>
+                                <div className={theme.thumb({icon: !!iconOff})} />
+                                {iconOn ? <FontIcon className={theme.icon({checked: true})}>{iconOn}</FontIcon> : null}
+                                {iconOff ? (
+                                    <FontIcon className={theme.icon({unchecked: true})}>{iconOff}</FontIcon>
+                                ) : null}
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
             </div>
-        </div>
+        </Ripple>
     );
 }

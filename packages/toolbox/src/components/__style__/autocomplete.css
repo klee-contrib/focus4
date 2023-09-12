@@ -85,10 +85,6 @@
     background-color: var(--autocomplete-suggestion-active-background);
 }
 
-.rippleWrapper {
-    overflow: hidden;
-}
-
 .input {
     position: relative;
 

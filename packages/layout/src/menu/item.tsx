@@ -4,14 +4,14 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {MouseEvent as RMouseEvent, useCallback, useContext, useEffect, useRef} from "react";
 
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
-import {Button, ButtonCss, ButtonProps, IconButton, IconButtonCss, IconButtonProps, RippleProps} from "@focus4/toolbox";
+import {Button, ButtonCss, ButtonProps, IconButton, IconButtonCss, IconButtonProps} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
 import {mainMenuCss, MainMenuCss} from "./style";
 
 /** Props du MenuItem. */
-export interface MainMenuItemProps extends Omit<ButtonProps & IconButtonProps & RippleProps, "theme"> {
+export interface MainMenuItemProps extends Omit<ButtonProps & IconButtonProps, "theme"> {
     /** La route associée, pour comparaison avec la route active. */
     route?: string;
     /** CSS. */
@@ -72,7 +72,6 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
                         {...otherProps}
                         icon={icon}
                         onClick={onItemClick}
-                        rippleTheme={theme}
                         theme={theme as unknown as CSSProp<IconButtonCss>}
                     />
                 )}

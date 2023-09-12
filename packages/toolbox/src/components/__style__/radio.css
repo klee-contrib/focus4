@@ -40,12 +40,6 @@
         transition: transform 0.2s var(--animation-curve-default);
         width: 100%;
     }
-
-    & .ripple {
-        background-color: var(--radio-inner-color);
-        opacity: 0.3;
-        transition-duration: 650ms;
-    }
 }
 
 .radio--checked {

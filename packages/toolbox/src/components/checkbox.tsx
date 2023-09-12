@@ -3,7 +3,7 @@ import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, TouchEventHandl
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 
-import {rippleFactory} from "./ripple";
+import {Ripple} from "./ripple";
 
 import checkboxCss, {CheckboxCss} from "./__style__/checkbox.css";
 export {checkboxCss, CheckboxCss};
@@ -81,13 +81,7 @@ export function Checkbox({
                 readOnly
                 type="checkbox"
             />
-            <Check
-                disabled={disabled}
-                rippleTheme={{ripple: theme.ripple()}}
-                style={style}
-                theme={theme}
-                value={value}
-            />
+            <Check style={style} theme={theme} value={value} />
             {label ? (
                 <span className={theme.text()} data-react-toolbox="label">
                     {label}
@@ -107,23 +101,18 @@ interface CheckProps {
     value: boolean;
 }
 
-const Check = rippleFactory({rippleCentered: true, rippleSpread: 2.6})(function RTCheck({
-    children,
-    onMouseDown,
-    onTouchStart,
-    style,
-    theme,
-    value
-}: CheckProps) {
+function Check({children, onMouseDown, onTouchStart, style, theme, value}: CheckProps) {
     return (
-        <div
-            className={theme.check({checked: value})}
-            data-react-toolbox="check"
-            onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
-            style={style}
-        >
-            {children}
-        </div>
+        <Ripple centered>
+            <div
+                className={theme.check({checked: value})}
+                data-react-toolbox="check"
+                onMouseDown={onMouseDown}
+                onTouchStart={onTouchStart}
+                style={style}
+            >
+                {children}
+            </div>
+        </Ripple>
     );
-});
+}

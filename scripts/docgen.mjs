@@ -16,10 +16,6 @@ function generateDocFile(fileName, globPath, lines) {
             propFilter: {skipPropsWithName: "ref"}
         })
         .reverse()) {
-        if (component.displayName === "RippledComponent") {
-            continue;
-        }
-
         lines.push(`## \`${component.displayName}\``);
         lines.push("");
         lines.push(component.description);

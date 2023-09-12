@@ -13,9 +13,9 @@ import {
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 
-import {rippleFactory} from "./ripple";
+import {Ripple} from "./ripple";
 
-import {RadioCss, radioCss} from "./__style__/radio.css";
+import radioCss, {RadioCss} from "./__style__/radio.css";
 export {RadioCss, radioCss};
 
 interface RadioProps {
@@ -26,24 +26,20 @@ interface RadioProps {
     theme: ToBem<RadioCss>;
 }
 
-const Radio = rippleFactory({rippleCentered: true, rippleSpread: 2.6})(function RTRadio({
-    checked,
-    children,
-    onMouseDown,
-    onTouchStart,
-    theme
-}: RadioProps) {
+function Radio({checked, children, onMouseDown, onTouchStart, theme}: RadioProps) {
     return (
-        <div
-            className={theme.radio({checked})}
-            data-react-toolbox="radio"
-            onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
-        >
-            {children}
-        </div>
+        <Ripple centered>
+            <div
+                className={theme.radio({checked})}
+                data-react-toolbox="radio"
+                onMouseDown={onMouseDown}
+                onTouchStart={onTouchStart}
+            >
+                {children}
+            </div>
+        </Ripple>
     );
-});
+}
 
 /** Props du Radio. */
 export interface RadioButtonProps {
@@ -62,8 +58,7 @@ export interface RadioButtonProps {
     name?: string;
     /** @internal */
     onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
-    onMouseEnter?: MouseEventHandler<HTMLLabelElement>;
-    onMouseLeave?: MouseEventHandler<HTMLLabelElement>;
+    /** CSS. */
     theme?: CSSProp<RadioCss>;
     /** Valeur. */
     value: string;
@@ -80,8 +75,6 @@ export function RadioButton({
     label,
     id,
     onChange,
-    onMouseEnter,
-    onMouseLeave,
     name,
     theme: pTheme
 }: RadioButtonProps) {
@@ -101,12 +94,7 @@ export function RadioButton({
     );
 
     return (
-        <label
-            className={classNames(theme.field({disabled}), className)}
-            data-react-toolbox="radio"
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-        >
+        <label className={classNames(theme.field({disabled}), className)} data-react-toolbox="radio">
             <input
                 ref={inputNode}
                 checked={checked}
@@ -118,7 +106,7 @@ export function RadioButton({
                 readOnly
                 type="radio"
             />
-            <Radio checked={checked} disabled={disabled} rippleTheme={{ripple: theme.ripple()}} theme={theme} />
+            <Radio checked={checked} theme={theme} />
             {label ? (
                 <span className={theme.text()} data-react-toolbox="label">
                     {label}
