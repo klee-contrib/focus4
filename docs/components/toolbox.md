@@ -50,8 +50,11 @@ Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles 
 | `onMouseOver`                   | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                                 |                                                                                                                     |
 | `onMouseUp`                     | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                                 |                                                                                                                     |
 | `onPaste`                       | Non         | <code>ClipboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                             |                                                                                                                     |
+| `onPointerDown`                 | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                                      | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                               |
+| `onPointerEnter`                | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                                      | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                              |
+| `onPointerLeave`                | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                                      | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                              |
+| `onPointerUp`                   | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                                      | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                 |
 | `onQueryChange`                 | Non         | <code>(text: string) =&gt; void</code>                                                                                            | Callback function that is fired when the components's query value changes.                                          |
-| `onTouchStart`                  | Non         | <code>TouchEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                                 |                                                                                                                     |
 | `query`                         | Non         | <code>string</code>                                                                                                               | Overrides the inner query.                                                                                          |
 | `readOnly`                      | Non         | <code>boolean</code>                                                                                                              | If true, input is readonly.                                                                                         |
 | `required`                      | Non         | <code>boolean</code>                                                                                                              | If true, the html input has a required attribute.                                                                   |
@@ -73,30 +76,29 @@ Le bouton standard, qui peut être sous plusieurs formats (`raised`, `floating`)
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                                           | Description                                                                              |
-| -------------- | ----------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `accent`       | Non         | <code>boolean</code>                                                           | Indicates if the button should have accent color.                                        |
-| `children`     | Non         | <code>ReactNode</code>                                                         | Children to pass through the component.                                                  |
-| `className`    | Non         | <code>string</code>                                                            |                                                                                          |
-| `disabled`     | Non         | <code>boolean</code>                                                           | If true, component will be disabled.                                                     |
-| `floating`     | Non         | <code>boolean</code>                                                           | If true, the button will have a floating look.                                           |
-| `href`         | Non         | <code>string</code>                                                            | Creates a link for the button.                                                           |
-| `icon`         | Non         | <code>ReactNode</code>                                                         | Value of the icon (See Font Icon Component).                                             |
-| `inverse`      | Non         | <code>boolean</code>                                                           | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
-| `label`        | Non         | <code>string</code>                                                            | The text string to use for the name of the button.                                       |
-| `mini`         | Non         | <code>boolean</code>                                                           | To be used with floating button. If true, the button will be smaller.                    |
-| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseUp`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `primary`      | Non         | <code>boolean</code>                                                           | Indicates if the button should have primary color.                                       |
-| `raised`       | Non         | <code>boolean</code>                                                           | If true, the button will have a raised look.                                             |
-| `style`        | Non         | <code>CSSProperties</code>                                                     |                                                                                          |
-| `target`       | Non         | <code>string</code>                                                            | Passed down to the root element                                                          |
-| `theme`        | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                          | Classnames object defining the component style.                                          |
-| `type`         | Non         | <code>string</code>                                                            | Component root container type.                                                           |
+| Nom              | Obligatoire | Type                                                                                      | Description                                                                              |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `accent`         | Non         | <code>boolean</code>                                                                      | Indicates if the button should have accent color.                                        |
+| `children`       | Non         | <code>ReactNode</code>                                                                    | Children to pass through the component.                                                  |
+| `className`      | Non         | <code>string</code>                                                                       |                                                                                          |
+| `disabled`       | Non         | <code>boolean</code>                                                                      | If true, component will be disabled.                                                     |
+| `floating`       | Non         | <code>boolean</code>                                                                      | If true, the button will have a floating look.                                           |
+| `href`           | Non         | <code>string</code>                                                                       | Creates a link for the button.                                                           |
+| `icon`           | Non         | <code>ReactNode</code>                                                                    | Value of the icon (See Font Icon Component).                                             |
+| `inverse`        | Non         | <code>boolean</code>                                                                      | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
+| `label`          | Non         | <code>string</code>                                                                       | The text string to use for the name of the button.                                       |
+| `mini`           | Non         | <code>boolean</code>                                                                      | To be used with floating button. If true, the button will be smaller.                    |
+| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            |                                                                                          |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)    |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)   |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)   |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)      |
+| `primary`        | Non         | <code>boolean</code>                                                                      | Indicates if the button should have primary color.                                       |
+| `raised`         | Non         | <code>boolean</code>                                                                      | If true, the button will have a raised look.                                             |
+| `style`          | Non         | <code>CSSProperties</code>                                                                |                                                                                          |
+| `target`         | Non         | <code>string</code>                                                                       | Passed down to the root element                                                          |
+| `theme`          | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                                     | Classnames object defining the component style.                                          |
+| `type`           | Non         | <code>string</code>                                                                       | Component root container type.                                                           |
 
 ## `Calendar`
 
@@ -123,20 +125,21 @@ Une checkbox.
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                                                            | Description                                                     |
-| -------------- | ----------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `children`     | Non         | <code>ReactNode</code>                                                                          | Children to pass through the component.                         |
-| `className`    | Non         | <code>string</code>                                                                             |                                                                 |
-| `disabled`     | Non         | <code>boolean</code>                                                                            | If true, the checkbox shown as disabled and cannot be modified. |
-| `id`           | Non         | <code>string</code>                                                                             | The id of the field to set in the input checkbox.               |
-| `label`        | Non         | <code>ReactNode</code>                                                                          | Text label to attach next to the checkbox element.              |
-| `name`         | Non         | <code>string</code>                                                                             | The name of the field to set in the input checkbox.             |
-| `onChange`     | Non         | <code>(value: boolean, event: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Est appelé quand on coche la case.                              |
-| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLLabelElement&gt;</code>                                          |                                                                 |
-| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLLabelElement&gt;</code>                                          |                                                                 |
-| `style`        | Non         | <code>CSSProperties</code>                                                                      |                                                                 |
-| `theme`        | Non         | <code>CSSProp&lt;CheckboxCss&gt;</code>                                                         |                                                                 |
-| `value`        | Non         | <code>boolean</code>                                                                            | Valeur.                                                         |
+| Nom              | Obligatoire | Type                                                                                 | Description                                                                            |
+| ---------------- | ----------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                  | Classe CSS a ajouter au composant racine.                                              |
+| `disabled`       | Non         | <code>boolean</code>                                                                 | Désactive la Checkbox.                                                                 |
+| `error`          | Non         | <code>ReactNode</code>                                                               | Si renseigné, la Checkbox sera affichée en rouge.                                      |
+| `id`             | Non         | <code>string</code>                                                                  | Id pour l'input[type=checkbox] posé par la Checkbox.                                   |
+| `indeterminate`  | Non         | <code>boolean</code>                                                                 | Affiche une icône "indéterminée" à la place du "check"                                 |
+| `name`           | Non         | <code>string</code>                                                                  | Name pour l'input[type=checkbox] posé par la Checkbox.                                 |
+| `onChange`       | Non         | <code>(value: boolean, event: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code> | Handler appelé au clic sur la Checkbox.                                                |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;CheckboxCss&gt;</code>                                              | CSS.                                                                                   |
+| `value`          | Non         | <code>boolean</code>                                                                 | Valeur (correspond à 'checked' sur l'input).                                           |
 
 ## `Chip`
 
@@ -144,18 +147,17 @@ Affiche un chip pour représenter un élément sélectionné, qui peut avoir une
 
 ### Props
 
-| Nom             | Obligatoire | Type                                                  | Description                                             |
-| --------------- | ----------- | ----------------------------------------------------- | ------------------------------------------------------- |
-| `children`      | Non         | <code>ReactNode</code>                                | Children to pass through the component.                 |
-| `className`     | Non         | <code>string</code>                                   |                                                         |
-| `deletable`     | Non         | <code>boolean</code>                                  | If true, the chip will be rendered with a delete icon.  |
-| `onClick`       | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code>  |                                                         |
-| `onDeleteClick` | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code> | Callback to be invoked when the delete icon is clicked. |
-| `onMouseDown`   | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code>  |                                                         |
-| `onMouseEnter`  | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code>  |                                                         |
-| `onMouseLeave`  | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code>  |                                                         |
-| `onTouchStart`  | Non         | <code>TouchEventHandler&lt;HTMLDivElement&gt;</code>  |                                                         |
-| `theme`         | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                   | Classnames object defining the component style.         |
+| Nom              | Obligatoire | Type                                                             | Description                                                                            |
+| ---------------- | ----------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `children`       | Non         | <code>ReactNode</code>                                           | Children to pass through the component.                                                |
+| `className`      | Non         | <code>string</code>                                              |                                                                                        |
+| `deletable`      | Non         | <code>boolean</code>                                             | If true, the chip will be rendered with a delete icon.                                 |
+| `onDeleteClick`  | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code>            | Callback to be invoked when the delete icon is clicked.                                |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                              | Classnames object defining the component style.                                        |
 
 ## `Clock`
 
@@ -206,18 +208,17 @@ Affiche une icône. Prend directement un nom d'icône Material en enfant, ou bie
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                  | Description                                        |
-| -------------- | ----------- | ----------------------------------------------------- | -------------------------------------------------- |
-| `alt`          | Non         | <code>string</code>                                   | Alt text for the icon.                             |
-| `children`     | Non         | <code>ReactNode</code>                                | Children to pass through the component.            |
-| `className`    | Non         | <code>string</code>                                   |                                                    |
-| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code> |                                                    |
-| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code> |                                                    |
-| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code> |                                                    |
-| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code> |                                                    |
-| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLSpanElement&gt;</code> |                                                    |
-| `style`        | Non         | <code>CSSProperties</code>                            | Inline styles.                                     |
-| `value`        | Non         | <code>ReactNode</code>                                | The key string for the icon you want be displayed. |
+| Nom              | Obligatoire | Type                                                             | Description                                                                            |
+| ---------------- | ----------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `alt`            | Non         | <code>string</code>                                              | Alt text for the icon.                                                                 |
+| `children`       | Non         | <code>ReactNode</code>                                           | Children to pass through the component.                                                |
+| `className`      | Non         | <code>string</code>                                              |                                                                                        |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `style`          | Non         | <code>CSSProperties</code>                                       | Inline styles.                                                                         |
+| `value`          | Non         | <code>ReactNode</code>                                           | The key string for the icon you want be displayed.                                     |
 
 ## `IconButton`
 
@@ -225,26 +226,24 @@ Un bouton avec juste une icône. Les autres types de boutons sont réalisés ave
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                                           | Description                                                                              |
-| -------------- | ----------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `accent`       | Non         | <code>boolean</code>                                                           | Indicates if the button should have accent color.                                        |
-| `children`     | Non         | <code>ReactNode</code>                                                         | Children to pass through the component.                                                  |
-| `className`    | Non         | <code>string</code>                                                            |                                                                                          |
-| `disabled`     | Non         | <code>boolean</code>                                                           | If true, component will be disabled.                                                     |
-| `href`         | Non         | <code>string</code>                                                            |                                                                                          |
-| `icon`         | Non         | <code>ReactNode</code>                                                         | Value of the icon (See Font Icon Component).                                             |
-| `inverse`      | Non         | <code>boolean</code>                                                           | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
-| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onMouseUp`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> |                                                                                          |
-| `primary`      | Non         | <code>boolean</code>                                                           | Indicates if the button should have primary color.                                       |
-| `style`        | Non         | <code>CSSProperties</code>                                                     |                                                                                          |
-| `target`       | Non         | <code>string</code>                                                            |                                                                                          |
-| `theme`        | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                      |                                                                                          |
-| `type`         | Non         | <code>string</code>                                                            | Component root container type.                                                           |
+| Nom              | Obligatoire | Type                                                                                      | Description                                                                              |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `accent`         | Non         | <code>boolean</code>                                                                      | Indicates if the button should have accent color.                                        |
+| `className`      | Non         | <code>string</code>                                                                       |                                                                                          |
+| `disabled`       | Non         | <code>boolean</code>                                                                      | If true, component will be disabled.                                                     |
+| `href`           | Non         | <code>string</code>                                                                       |                                                                                          |
+| `icon`           | **Oui**     | <code>ReactNode</code>                                                                    | Value of the icon (See Font Icon Component).                                             |
+| `inverse`        | Non         | <code>boolean</code>                                                                      | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
+| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            |                                                                                          |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)    |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)   |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)   |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)      |
+| `primary`        | Non         | <code>boolean</code>                                                                      | Indicates if the button should have primary color.                                       |
+| `style`          | Non         | <code>CSSProperties</code>                                                                |                                                                                          |
+| `target`         | Non         | <code>string</code>                                                                       |                                                                                          |
+| `theme`          | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                                 |                                                                                          |
+| `type`           | Non         | <code>string</code>                                                                       | Component root container type.                                                           |
 
 ## `Input`
 
@@ -288,7 +287,10 @@ Champ de saisie texte standard. A priori à ne jamais utiliser directement et ut
 | `onMouseOver`          | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                            |                                                                                                                     |
 | `onMouseUp`            | Non         | <code>MouseEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                            |                                                                                                                     |
 | `onPaste`              | Non         | <code>ClipboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                        |                                                                                                                     |
-| `onTouchStart`         | Non         | <code>TouchEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                            |                                                                                                                     |
+| `onPointerDown`        | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                               |
+| `onPointerEnter`       | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                              |
+| `onPointerLeave`       | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                              |
+| `onPointerUp`          | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                 |
 | `readOnly`             | Non         | <code>boolean</code>                                                                                         | If true, input is readonly.                                                                                         |
 | `required`             | Non         | <code>boolean</code>                                                                                         | If true, the html input has a required attribute.                                                                   |
 | `rows`                 | Non         | <code>number</code>                                                                                          | The number of rows the multiline input field has.                                                                   |
@@ -379,20 +381,22 @@ Item de Menu a utiliser dans un `ButtonMenu`, `IconMenu` ou `Menu`.
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                | Description                                                                 |
-| -------------- | ----------- | --------------------------------------------------- | --------------------------------------------------------------------------- |
-| `caption`      | **Oui**     | <code>string</code>                                 | The text to include in the menu item. Required.                             |
-| `children`     | Non         | <code>ReactNode</code>                              | Children to pass through the component.                                     |
-| `className`    | Non         | <code>string</code>                                 |                                                                             |
-| `disabled`     | Non         | <code>boolean</code>                                | If true, the item will be displayed as disabled and is not selectable.      |
-| `icon`         | Non         | <code>ReactNode</code>                              | Icon font key string or Element to display in the right side of the option. |
-| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code> |                                                                             |
-| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code> |                                                                             |
-| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLLIElement&gt;</code> |                                                                             |
-| `selected`     | Non         | <code>boolean</code>                                | @internal                                                                   |
-| `shortcut`     | Non         | <code>string</code>                                 | Displays shortcut text on the right side of the caption attribute.          |
-| `theme`        | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                 | Classnames object defining the component style.                             |
-| `value`        | Non         | <code>string</code>                                 | Passed down to the root element.                                            |
+| Nom              | Obligatoire | Type                                                           | Description                                                                            |
+| ---------------- | ----------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `caption`        | **Oui**     | <code>string</code>                                            | The text to include in the menu item. Required.                                        |
+| `children`       | Non         | <code>ReactNode</code>                                         | Children to pass through the component.                                                |
+| `className`      | Non         | <code>string</code>                                            |                                                                                        |
+| `disabled`       | Non         | <code>boolean</code>                                           | If true, the item will be displayed as disabled and is not selectable.                 |
+| `icon`           | Non         | <code>ReactNode</code>                                         | Icon font key string or Element to display in the right side of the option.            |
+| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code>            |                                                                                        |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `selected`       | Non         | <code>boolean</code>                                           | @internal                                                                              |
+| `shortcut`       | Non         | <code>string</code>                                            | Displays shortcut text on the right side of the caption attribute.                     |
+| `theme`          | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                            | Classnames object defining the component style.                                        |
+| `value`          | Non         | <code>string</code>                                            | Passed down to the root element.                                                       |
 
 ## `Menu`
 
@@ -430,23 +434,22 @@ Une barre de chargement ou un spinner (`linear` ou `circular`). Peut être utili
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                 | Description                                                       |
-| -------------- | ----------- | ---------------------------------------------------- | ----------------------------------------------------------------- |
-| `buffer`       | Non         | <code>number</code>                                  | Value of a secondary progress bar useful for buffering.           |
-| `className`    | Non         | <code>string</code>                                  |                                                                   |
-| `key`          | Non         | <code>Key</code>                                     |                                                                   |
-| `max`          | Non         | <code>number</code>                                  | Maximum value permitted.                                          |
-| `min`          | Non         | <code>number</code>                                  | Minimum value permitted.                                          |
-| `mode`         | Non         | <code>"indeterminate" &#124; "determinate"</code>    | Mode of the progress bar, it can be determinate or indeterminate. |
-| `multicolor`   | Non         | <code>boolean</code>                                 | If true, the circular progress bar will be changing its color.    |
-| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                   |
-| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                   |
-| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                   |
-| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                   |
-| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLDivElement&gt;</code> |                                                                   |
-| `theme`        | Non         | <code>CSSProp&lt;ProgressBarCss&gt;</code>           | Classnames object defining the component style.                   |
-| `type`         | Non         | <code>"circular" &#124; "linear"</code>              | Type of the progress bar, it can be circular or linear.           |
-| `value`        | Non         | <code>number</code>                                  | Value of the current progress.                                    |
+| Nom              | Obligatoire | Type                                                            | Description                                                                            |
+| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `buffer`         | Non         | <code>number</code>                                             | Value of a secondary progress bar useful for buffering.                                |
+| `className`      | Non         | <code>string</code>                                             |                                                                                        |
+| `key`            | Non         | <code>Key</code>                                                |                                                                                        |
+| `max`            | Non         | <code>number</code>                                             | Maximum value permitted.                                                               |
+| `min`            | Non         | <code>number</code>                                             | Minimum value permitted.                                                               |
+| `mode`           | Non         | <code>"indeterminate" &#124; "determinate"</code>               | Mode of the progress bar, it can be determinate or indeterminate.                      |
+| `multicolor`     | Non         | <code>boolean</code>                                            | If true, the circular progress bar will be changing its color.                         |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;ProgressBarCss&gt;</code>                      | Classnames object defining the component style.                                        |
+| `type`           | Non         | <code>"circular" &#124; "linear"</code>                         | Type of the progress bar, it can be circular or linear.                                |
+| `value`          | Non         | <code>number</code>                                             | Value of the current progress.                                                         |
 
 ## `RadioGroup`
 
@@ -468,18 +471,22 @@ A utiliser dans un RadioGroup.
 
 ### Props
 
-| Nom         | Obligatoire | Type                                                                                            | Description                                                  |
-| ----------- | ----------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `checked`   | Non         | <code>boolean</code>                                                                            | @internal                                                    |
-| `children`  | Non         | <code>ReactNode</code>                                                                          | Children to pass through the component.                      |
-| `className` | Non         | <code>string</code>                                                                             |                                                              |
-| `disabled`  | Non         | <code>boolean</code>                                                                            | If true, the radio shown as disabled and cannot be modified. |
-| `id`        | Non         | <code>string</code>                                                                             | The id of the field to set in the input radio.               |
-| `label`     | Non         | <code>ReactNode</code>                                                                          | Text label to attach next to the radio element.              |
-| `name`      | Non         | <code>string</code>                                                                             | The name of the field to set in the input radio.             |
-| `onChange`  | Non         | <code>(value: boolean, event: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | @internal                                                    |
-| `theme`     | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                                                            | CSS.                                                         |
-| `value`     | **Oui**     | <code>string</code>                                                                             | Valeur.                                                      |
+| Nom              | Obligatoire | Type                                                                                            | Description                                                                            |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `checked`        | Non         | <code>boolean</code>                                                                            | @internal                                                                              |
+| `children`       | Non         | <code>ReactNode</code>                                                                          | Children to pass through the component.                                                |
+| `className`      | Non         | <code>string</code>                                                                             |                                                                                        |
+| `disabled`       | Non         | <code>boolean</code>                                                                            | If true, the radio shown as disabled and cannot be modified.                           |
+| `id`             | Non         | <code>string</code>                                                                             | The id of the field to set in the input radio.                                         |
+| `label`          | Non         | <code>ReactNode</code>                                                                          | Text label to attach next to the radio element.                                        |
+| `name`           | Non         | <code>string</code>                                                                             | The name of the field to set in the input radio.                                       |
+| `onChange`       | Non         | <code>(value: boolean, event: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | @internal                                                                              |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                                                            | CSS.                                                                                   |
+| `value`          | **Oui**     | <code>string</code>                                                                             | Valeur.                                                                                |
 
 ## `Ripple`
 
@@ -487,12 +494,16 @@ Pose un Ripple au clic sur le composant/élément enfant.
 
 ### Props
 
-| Nom            | Obligatoire | Type                   | Description                                                                                 |
-| -------------- | ----------- | ---------------------- | ------------------------------------------------------------------------------------------- |
-| `centered`     | Non         | <code>boolean</code>   | Centre le ripple sur la cible au lieu de l'endroit cliqué.                                  |
-| `children`     | Non         | <code>ReactNode</code> | Composant enfant dans lequel poser le ripple.                                               |
-| `className`    | Non         | <code>string</code>    | Classe CSS à passer au Ripple                                                               |
-| `rippleTarget` | Non         | <code>string</code>    | Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. |
+| Nom              | Obligatoire | Type                                               | Description                                                                                 |
+| ---------------- | ----------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `centered`       | Non         | <code>boolean</code>                               | Centre le ripple sur la cible au lieu de l'endroit cliqué.                                  |
+| `children`       | Non         | <code>ReactNode</code>                             | Composant enfant dans lequel poser le ripple.                                               |
+| `className`      | Non         | <code>string</code>                                | Classe CSS à passer au Ripple                                                               |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)       |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)      |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)      |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)         |
+| `rippleTarget`   | Non         | <code>string</code>                                | Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. |
 
 ## `Slider`
 
@@ -500,25 +511,24 @@ Un composant de saisie pour saisir un nombre avec un slider.
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                 | Description                                                                                                                                                      |
-| -------------- | ----------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `buffer`       | Non         | <code>number</code>                                  | Used to style the ProgressBar element                                                                                                                            |
-| `className`    | Non         | <code>string</code>                                  | CSS class for the root component.                                                                                                                                |
-| `disabled`     | Non         | <code>boolean</code>                                 | If true, component will be disabled.                                                                                                                             |
-| `editable`     | Non         | <code>boolean</code>                                 | If true, an input is shown and the user can set the slider from keyboard value.                                                                                  |
-| `max`          | Non         | <code>number</code>                                  | Maximum value permitted.                                                                                                                                         |
-| `min`          | Non         | <code>number</code>                                  | Minimum value permitted.                                                                                                                                         |
-| `onChange`     | Non         | <code>(value: number) =&gt; void</code>              | Callback function that will be invoked when the slider value changes.                                                                                            |
-| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                                                                                                                  |
-| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                                                                                                                  |
-| `onMouseEnter` | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                                                                                                                  |
-| `onMouseLeave` | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code> |                                                                                                                                                                  |
-| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLDivElement&gt;</code> |                                                                                                                                                                  |
-| `pinned`       | Non         | <code>boolean</code>                                 | If true, a pin with numeric value label is shown when the slider thumb is pressed. Use for settings for which users need to know the exact value of the setting. |
-| `snaps`        | Non         | <code>boolean</code>                                 | If true, the slider thumb snaps to tick marks evenly spaced based on the step property value.                                                                    |
-| `step`         | Non         | <code>number</code>                                  | Amount to vary the value when the knob is moved or increase/decrease is called.                                                                                  |
-| `theme`        | Non         | <code>CSSProp&lt;SliderCss&gt;</code>                | Classnames object defining the component style.                                                                                                                  |
-| `value`        | Non         | <code>number</code>                                  | Current value of the slider.                                                                                                                                     |
+| Nom              | Obligatoire | Type                                                            | Description                                                                                                                                                      |
+| ---------------- | ----------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `buffer`         | Non         | <code>number</code>                                             | Used to style the ProgressBar element                                                                                                                            |
+| `className`      | Non         | <code>string</code>                                             | CSS class for the root component.                                                                                                                                |
+| `disabled`       | Non         | <code>boolean</code>                                            | If true, component will be disabled.                                                                                                                             |
+| `editable`       | Non         | <code>boolean</code>                                            | If true, an input is shown and the user can set the slider from keyboard value.                                                                                  |
+| `max`            | Non         | <code>number</code>                                             | Maximum value permitted.                                                                                                                                         |
+| `min`            | Non         | <code>number</code>                                             | Minimum value permitted.                                                                                                                                         |
+| `onChange`       | Non         | <code>(value: number) =&gt; void</code>                         | Callback function that will be invoked when the slider value changes.                                                                                            |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                                                                            |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                                                                           |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                                                                           |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                                                              |
+| `pinned`         | Non         | <code>boolean</code>                                            | If true, a pin with numeric value label is shown when the slider thumb is pressed. Use for settings for which users need to know the exact value of the setting. |
+| `snaps`          | Non         | <code>boolean</code>                                            | If true, the slider thumb snaps to tick marks evenly spaced based on the step property value.                                                                    |
+| `step`           | Non         | <code>number</code>                                             | Amount to vary the value when the knob is moved or increase/decrease is called.                                                                                  |
+| `theme`          | Non         | <code>CSSProp&lt;SliderCss&gt;</code>                           | Classnames object defining the component style.                                                                                                                  |
+| `value`          | Non         | <code>number</code>                                             | Current value of the slider.                                                                                                                                     |
 
 ## `Snackbar`
 
@@ -545,17 +555,21 @@ Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
 
 ### Props
 
-| Nom         | Obligatoire | Type                                                                                  | Description                                          |
-| ----------- | ----------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `className` | Non         | <code>string</code>                                                                   | Classe CSS a ajouter au composant racine.            |
-| `disabled`  | Non         | <code>boolean</code>                                                                  | Désactive le Switch.                                 |
-| `iconOff`   | Non         | <code>ReactNode</code>                                                                | Icône a afficher dans le Switch quand il est "off".  |
-| `iconOn`    | Non         | <code>ReactNode</code>                                                                | Icône a afficher dans le Switch quand il est "on".   |
-| `id`        | Non         | <code>string</code>                                                                   | Id pour l'input[type=checkbox] posé par le Switch.   |
-| `name`      | Non         | <code>string</code>                                                                   | Name pour l'input[type=checkbox] posé par le Switch. |
-| `onChange`  | Non         | <code>(value: boolean, event?: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code> | Handler appelé au clic sur le Switch.                |
-| `theme`     | Non         | <code>CSSProp&lt;SwitchCss&gt;</code>                                                 | CSS.                                                 |
-| `value`     | Non         | <code>boolean</code>                                                                  | Valeur (correspond à 'checked' sur l'input).         |
+| Nom              | Obligatoire | Type                                                                                  | Description                                                                            |
+| ---------------- | ----------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                   | Classe CSS a ajouter au composant racine.                                              |
+| `disabled`       | Non         | <code>boolean</code>                                                                  | Désactive le Switch.                                                                   |
+| `iconOff`        | Non         | <code>ReactNode</code>                                                                | Icône a afficher dans le Switch quand il est "off".                                    |
+| `iconOn`         | Non         | <code>ReactNode</code>                                                                | Icône a afficher dans le Switch quand il est "on".                                     |
+| `id`             | Non         | <code>string</code>                                                                   | Id pour l'input[type=checkbox] posé par le Switch.                                     |
+| `name`           | Non         | <code>string</code>                                                                   | Name pour l'input[type=checkbox] posé par le Switch.                                   |
+| `onChange`       | Non         | <code>(value: boolean, event?: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code> | Handler appelé au clic sur le Switch.                                                  |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;SwitchCss&gt;</code>                                                 | CSS.                                                                                   |
+| `value`          | Non         | <code>boolean</code>                                                                  | Valeur (correspond à 'checked' sur l'input).                                           |
 
 ## `Tabs`
 
@@ -580,20 +594,22 @@ Un Tab, à utiliser dans Tabs.
 
 ### Props
 
-| Nom            | Obligatoire | Type                                                                                         | Description                                                |
-| -------------- | ----------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `active`       | Non         | <code>boolean</code>                                                                         | If true, the current component is visible.                 |
-| `className`    | Non         | <code>string</code>                                                                          |                                                            |
-| `disabled`     | Non         | <code>boolean</code>                                                                         | If true, the current component is not clickable.           |
-| `hidden`       | Non         | <code>boolean</code>                                                                         | If true, the current component is not visible.             |
-| `icon`         | Non         | <code>ReactNode</code>                                                                       | Icon to be used in inner FontIcon.                         |
-| `index`        | Non         | <code>number</code>                                                                          |                                                            |
-| `label`        | Non         | <code>string</code>                                                                          | Label text for navigation header.                          |
-| `onActive`     | Non         | <code>() =&gt; void</code>                                                                   | Callback function that is fired when the tab is activated. |
-| `onClick`      | Non         | <code>(event: MouseEvent&lt;HTMLDivElement, MouseEvent&gt;, index: number) =&gt; void</code> |                                                            |
-| `onMouseDown`  | Non         | <code>MouseEventHandler&lt;HTMLDivElement&gt;</code>                                         |                                                            |
-| `onTouchStart` | Non         | <code>TouchEventHandler&lt;HTMLDivElement&gt;</code>                                         |                                                            |
-| `theme`        | Non         | <code>CSSProp&lt;TabsCss&gt;</code>                                                          | Classnames object defining the component style.            |
+| Nom              | Obligatoire | Type                                                                                         | Description                                                                            |
+| ---------------- | ----------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `active`         | Non         | <code>boolean</code>                                                                         | If true, the current component is visible.                                             |
+| `className`      | Non         | <code>string</code>                                                                          |                                                                                        |
+| `disabled`       | Non         | <code>boolean</code>                                                                         | If true, the current component is not clickable.                                       |
+| `hidden`         | Non         | <code>boolean</code>                                                                         | If true, the current component is not visible.                                         |
+| `icon`           | Non         | <code>ReactNode</code>                                                                       | Icon to be used in inner FontIcon.                                                     |
+| `index`          | Non         | <code>number</code>                                                                          |                                                                                        |
+| `label`          | Non         | <code>string</code>                                                                          | Label text for navigation header.                                                      |
+| `onActive`       | Non         | <code>() =&gt; void</code>                                                                   | Callback function that is fired when the tab is activated.                             |
+| `onClick`        | Non         | <code>(event: MouseEvent&lt;HTMLDivElement, MouseEvent&gt;, index: number) =&gt; void</code> | Called on click on the tab.                                                            |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;TabsCss&gt;</code>                                                          | Classnames object defining the component style.                                        |
 
 ## `TabContent`
 
