@@ -17,11 +17,6 @@ export interface RippleProps {
     rippleTarget?: string;
 }
 
-const options: KeyframeAnimationOptions = {
-    duration: 400,
-    easing: "ease-in-out"
-};
-
 /**
  * Pose un Ripple au clic sur le composant/élément enfant.
  */
@@ -35,12 +30,23 @@ export function Ripple({centered, className, children, rippleTarget}: RippleProp
         element: null as HTMLDivElement | null
     });
 
+    const getOptions = useCallback(function getOptions() {
+        return {
+            easing: "ease-in-out",
+            duration: toMs(
+                getComputedStyle(
+                    rippleState.current?.element?.parentElement ?? document.documentElement
+                ).getPropertyValue("--ripple-duration")
+            )
+        };
+    }, []);
+
     const onRippleFinish = useCallback(function onRippleFinish() {
         if (!rippleState.current.element || !rippleState.current.isPointerOut || rippleState.current.isFinishing) {
             return;
         }
         rippleState.current.isFinishing = true;
-        const anim = rippleState.current.element.animate([{opacity: 0.12}, {opacity: 0}], options);
+        const anim = rippleState.current.element.animate([{opacity: 0.12}, {opacity: 0}], getOptions());
         anim.addEventListener(
             "finish",
             () => {
@@ -102,7 +108,7 @@ export function Ripple({centered, className, children, rippleTarget}: RippleProp
                             transform: "translate(-50%, -50%) scale(1)"
                         }
                     ],
-                    {...options, fill: "forwards"}
+                    {...getOptions(), fill: "forwards"}
                 );
                 rippleState.current.animation.addEventListener("finish", onRippleFinish, {
                     once: true
@@ -141,4 +147,12 @@ export function Ripple({centered, className, children, rippleTarget}: RippleProp
         onPointerLeave: rippleOut,
         onPointerUp: rippleOut
     });
+}
+
+function toMs(d: string) {
+    if (d.endsWith("ms")) {
+        return +d.substring(0, d.length - 2);
+    } else {
+        return +d.substring(0, d.length - 1) * 1000;
+    }
 }

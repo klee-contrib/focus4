@@ -1,3 +1,7 @@
+:root {
+    --ripple-duration: 350ms;
+}
+
 .ripple {
     pointer-events: none;
     background: currentcolor;

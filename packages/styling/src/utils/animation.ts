@@ -51,9 +51,9 @@ export function cssTransitionProps({
 }
 
 function toMs(d: string) {
-    if (d.endsWith("s")) {
-        return +d.substring(0, d.length - 1) * 1000;
-    } else {
+    if (d.endsWith("ms")) {
         return +d.substring(0, d.length - 2);
+    } else {
+        return +d.substring(0, d.length - 1) * 1000;
     }
 }

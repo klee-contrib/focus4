@@ -46,7 +46,7 @@ export function Switch({className, disabled, id, name, onChange, iconOn, iconOff
     }, [value, disabled]);
 
     return (
-        <Ripple centered rippleTarget={theme.state()}>
+        <Ripple rippleTarget={theme.state()}>
             <div
                 ref={node}
                 className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}

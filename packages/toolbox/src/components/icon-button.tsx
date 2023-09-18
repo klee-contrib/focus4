@@ -21,14 +21,12 @@ export {iconButtonCss, IconButtonCss};
 export interface IconButtonProps {
     /** Indicates if the button should have accent color. */
     accent?: boolean;
-    /** Children to pass through the component. */
-    children?: ReactNode;
     className?: string;
     /** If true, component will be disabled. */
     disabled?: boolean;
     href?: string;
     /** Value of the icon (See Font Icon Component). */
-    icon?: ReactNode;
+    icon: ReactNode;
     /** If true, the neutral colors are inverted. Useful to put a button over a dark background. */
     inverse?: boolean;
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
@@ -51,7 +49,6 @@ export interface IconButtonProps {
  */
 export function IconButton({
     accent = false,
-    children,
     className = "",
     disabled,
     href,
@@ -103,12 +100,16 @@ export function IconButton({
         onTouchStart,
         style,
         target,
-        type: !href ? type : null,
-        "data-react-toolbox": "button"
+        type: !href ? type : null
     };
 
-    const iconElement = (
-        <Ripple centered>{typeof icon === "string" ? <FontIcon className={theme.icon()} value={icon} /> : icon}</Ripple>
+    return (
+        <Ripple centered>
+            {createElement(
+                element,
+                props,
+                typeof icon === "string" ? <FontIcon className={theme.icon()} value={icon} /> : icon
+            )}
+        </Ripple>
     );
-    return createElement(element, props, icon && iconElement, children);
 }
