@@ -3,7 +3,7 @@ import {MouseEventHandler} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import chipCss, {ChipCss} from "./__style__/chip.css";
 export {chipCss, ChipCss};

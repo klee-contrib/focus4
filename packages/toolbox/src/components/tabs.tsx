@@ -15,7 +15,7 @@ import {
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";

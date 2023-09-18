@@ -1,9 +1,10 @@
 import classNames from "classnames";
-import {createElement, CSSProperties, MouseEventHandler, PointerEvent, ReactNode, useCallback, useRef} from "react";
+import {createElement, CSSProperties, MouseEventHandler, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
+import {useFixedBlurRef} from "../utils/use-fixed-blur-ref";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
@@ -54,29 +55,12 @@ export function IconButton({
     type = "button"
 }: IconButtonProps) {
     const theme = useTheme("RTIconButton", iconButtonCss, pTheme);
-
-    const buttonNode = useRef<HTMLButtonElement | HTMLLinkElement | null>(null);
-
-    const handlePointerUp = useCallback(
-        (event: PointerEvent<HTMLButtonElement | HTMLLinkElement>) => {
-            buttonNode.current?.blur();
-            onPointerUp?.(event);
-        },
-        [onPointerUp]
-    );
-
-    const handlePointerLeave = useCallback(
-        (event: PointerEvent<HTMLButtonElement | HTMLLinkElement>) => {
-            buttonNode.current?.blur();
-            onPointerLeave?.(event);
-        },
-        [onPointerLeave]
-    );
+    const {ref, handlePointerLeave, handlePointerUp} = useFixedBlurRef({onPointerLeave, onPointerUp});
 
     const element = href ? "a" : "button";
 
     const props = {
-        ref: buttonNode,
+        ref,
         className: classNames(theme.toggle({accent, inverse, neutral: !primary && !accent, primary}), className),
         disabled,
         href,

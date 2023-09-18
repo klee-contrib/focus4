@@ -1,7 +1,7 @@
 import classnames from "classnames";
 import {CSSProperties, ReactNode} from "react";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 export interface FontIconProps extends PointerEvents<HTMLSpanElement> {
     /** Alt text for the icon. */

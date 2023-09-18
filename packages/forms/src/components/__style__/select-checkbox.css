@@ -1,18 +1,18 @@
-.select {
-    margin-top: 6px;
-    margin-bottom: 12px;
-
-    & ul {
-        padding: 0;
-        margin: 0;
-    }
+.select ul {
+    padding: 0;
+    margin: -2px -4px;
 }
 
 .option {
+    --checkbox-state-ratio: 1.41;
+
     list-style: none;
+    display: flex;
+    align-items: center;
+    color: rgb(var(--color-black));
 
     & > label {
-        margin-bottom: 4px;
+        margin-left: 6px;
     }
 }
 

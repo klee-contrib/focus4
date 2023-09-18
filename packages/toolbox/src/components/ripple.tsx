@@ -3,7 +3,7 @@ import {cloneElement, PointerEvent, ReactElement, ReactNode, useCallback, useRef
 
 import {useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import rippleCss, {RippleCss} from "./__style__/ripple.css";
 export {rippleCss, RippleCss};

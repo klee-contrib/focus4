@@ -3,7 +3,7 @@ import {Children, cloneElement, MouseEvent, ReactElement, ReactNode, useCallback
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import {Ripple} from "./ripple";
 

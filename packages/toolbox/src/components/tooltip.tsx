@@ -3,7 +3,7 @@ import {createPortal} from "react-dom";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import tooltipCss, {TooltipCss} from "./__style__/tooltip.css";
 export {tooltipCss, TooltipCss};

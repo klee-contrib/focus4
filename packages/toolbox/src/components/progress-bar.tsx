@@ -3,7 +3,7 @@ import {forwardRef, Ref, useCallback, useMemo} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import progressBarCss, {ProgressBarCss} from "./__style__/progress-bar.css";
 export {progressBarCss, ProgressBarCss};

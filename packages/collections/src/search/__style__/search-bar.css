@@ -88,13 +88,10 @@
         font-weight: 500;
     }
 
-    & > label {
+    & > div:first-of-type {
         font-weight: bold;
+        margin-left: -4px;
         margin-bottom: 10px;
-    }
-
-    & > div {
-        margin-bottom: 0;
     }
 }
 

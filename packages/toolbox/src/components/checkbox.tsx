@@ -1,33 +1,35 @@
 import classNames from "classnames";
-import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, TouchEventHandler, useCallback, useRef} from "react";
+import {ChangeEvent, ReactNode} from "react";
 
-import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents, useFixedBlurRef, useLoaded} from "../focus4.toolbox";
 
+import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import checkboxCss, {CheckboxCss} from "./__style__/checkbox.css";
 export {checkboxCss, CheckboxCss};
 
 /** Props du Checkbox. */
-export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
+export interface CheckboxProps extends PointerEvents<HTMLInputElement> {
+    /** Classe CSS a ajouter au composant racine. */
     className?: string;
-    /** Children to pass through the component. */
-    children?: ReactNode;
-    /** If true, the checkbox shown as disabled and cannot be modified. */
+    /** Désactive la Checkbox. */
     disabled?: boolean;
-    /** Text label to attach next to the checkbox element. */
-    label?: ReactNode;
-    /** The id of the field to set in the input checkbox. */
+    /** Si renseigné, la Checkbox sera affichée en rouge. */
+    error?: ReactNode;
+    /** Affiche une icône "indéterminée" à la place du "check" */
+    indeterminate?: boolean;
+    /** Id pour l'input[type=checkbox] posé par la Checkbox. */
     id?: string;
-    /** The name of the field to set in the input checkbox. */
+    /** Name pour l'input[type=checkbox] posé par la Checkbox. */
     name?: string;
-    /** Est appelé quand on coche la case. */
-    onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
-    style?: CSSProperties;
+    /** Handler appelé au clic sur la Checkbox. */
+    onChange?: (value: boolean, event: ChangeEvent<HTMLInputElement>) => void;
+    /** CSS. */
     theme?: CSSProp<CheckboxCss>;
-    /** Valeur. */
+    /** Valeur (correspond à 'checked' sur l'input). */
     value?: boolean;
 }
 
@@ -35,87 +37,53 @@ export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
  * Une checkbox.
  */
 export function Checkbox({
-    children,
-    className = "",
-    disabled = false,
-    label,
+    className,
+    disabled,
+    error,
     id,
+    indeterminate,
+    name,
     onChange,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
-    name,
     theme: pTheme,
-    style,
-    value = false
+    value
 }: CheckboxProps) {
     const theme = useTheme("RTCheckbox", checkboxCss, pTheme);
-    const inputNode = useRef<HTMLInputElement | null>(null);
-
-    const handleToggle = useCallback(
-        (event: MouseEvent<HTMLInputElement>) => {
-            if (event.pageX !== 0 && event.pageY !== 0) {
-                inputNode.current?.blur();
-            }
-            if (!disabled && onChange) {
-                onChange(!value, event);
-            }
-        },
-        [disabled, onChange, value]
-    );
+    const {ref, handlePointerLeave, handlePointerUp} = useFixedBlurRef({onPointerLeave, onPointerUp});
+    const loaded = useLoaded(disabled, value);
 
     return (
-        <label
-            className={classNames(theme.field({disabled}), className)}
-            data-react-toolbox="checkbox"
+        <Ripple
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
-            onPointerLeave={onPointerLeave}
-            onPointerUp={onPointerUp}
+            onPointerLeave={handlePointerLeave}
+            onPointerUp={handlePointerUp}
+            rippleTarget={theme.state()}
         >
-            <input
-                ref={inputNode}
-                checked={value}
-                className={theme.input()}
-                disabled={disabled}
-                id={id}
-                name={name}
-                onClick={handleToggle}
-                readOnly
-                type="checkbox"
-            />
-            <Check style={style} theme={theme} value={value} />
-            {label ? (
-                <span className={theme.text()} data-react-toolbox="label">
-                    {label}
-                </span>
-            ) : null}
-            {children}
-        </label>
-    );
-}
-
-interface CheckProps {
-    children?: ReactNode;
-    onMouseDown?: MouseEventHandler<HTMLDivElement>;
-    onTouchStart?: TouchEventHandler<HTMLDivElement>;
-    style?: CSSProperties;
-    theme: ToBem<CheckboxCss>;
-    value: boolean;
-}
-
-function Check({children, onMouseDown, onTouchStart, style, theme, value}: CheckProps) {
-    return (
-        <Ripple centered>
             <div
-                className={theme.check({checked: value})}
-                data-react-toolbox="check"
-                onMouseDown={onMouseDown}
-                onTouchStart={onTouchStart}
-                style={style}
+                className={classNames(
+                    theme.checkbox({checked: value, disabled, error: !!error, loading: !loaded}),
+                    className
+                )}
             >
-                {children}
+                <input
+                    ref={ref}
+                    checked={value ?? false}
+                    className={theme.input()}
+                    disabled={disabled}
+                    id={id}
+                    name={name}
+                    onChange={e => onChange?.(!value, e)}
+                    type="checkbox"
+                />
+                <div className={theme.state()}>
+                    <div className={theme.outline()}>
+                        <FontIcon className={theme.check()}>{indeterminate ? "remove" : "check"}</FontIcon>
+                    </div>
+                </div>
             </div>
         </Ripple>
     );

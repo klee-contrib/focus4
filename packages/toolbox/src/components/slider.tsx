@@ -12,7 +12,7 @@ import {
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import {Input} from "./input";
 import {ProgressBar} from "./progress-bar";

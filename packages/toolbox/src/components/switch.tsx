@@ -1,9 +1,10 @@
 import classNames from "classnames";
-import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
+import {ChangeEvent, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {useLoaded} from "../focus4.toolbox";
+import {PointerEvents} from "../utils/pointer-events";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
@@ -51,15 +52,7 @@ export function Switch({
     value
 }: SwitchProps) {
     const theme = useTheme("RTSwitch", switchCss, pTheme);
-
-    const node = useRef(null);
-    const [loaded, setLoaded] = useState(false);
-
-    useEffect(() => {
-        if (value !== undefined) {
-            setLoaded(true);
-        }
-    }, [value, disabled]);
+    const loaded = useLoaded(disabled, value);
 
     return (
         <Ripple
@@ -69,10 +62,7 @@ export function Switch({
             onPointerUp={onPointerUp}
             rippleTarget={theme.state()}
         >
-            <div
-                ref={node}
-                className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}
-            >
+            <div className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}>
                 <input
                     checked={value ?? false}
                     className={theme.checkbox()}

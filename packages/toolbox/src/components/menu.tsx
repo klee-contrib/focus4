@@ -13,11 +13,10 @@ import {
     useRef,
     useState
 } from "react";
-import {findDOMNode} from "react-dom";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../types/pointer-events";
+import {PointerEvents} from "../utils/pointer-events";
 
 import {Button, ButtonProps} from "./button";
 import {FontIcon} from "./font-icon";
@@ -439,7 +438,6 @@ export function ButtonMenu({
     ...menuProps
 }: ButtonMenuProps) {
     const ref = useRef<HTMLDivElement | null>(null);
-    const button = useRef<any>(null);
 
     /** Menu ouvert. */
     const [opened, setOpened] = useState(false);
@@ -449,8 +447,7 @@ export function ButtonMenu({
 
     // On récupère à tout instant la hauteur du bouton.
     useLayoutEffect(() => {
-        // eslint-disable-next-line react/no-find-dom-node
-        setButtonHeight((findDOMNode(button.current) as Element).clientHeight);
+        setButtonHeight(ref.current?.querySelector("button")?.clientHeight ?? 0);
     });
 
     const clickHandler = useCallback(
@@ -483,12 +480,7 @@ export function ButtonMenu({
     const FinalButton = buttonProps.tooltip ? TooltipButton : Button;
     return (
         <div ref={ref} data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
-            <FinalButton
-                ref={button}
-                {...buttonProps}
-                icon={opened && openedIcon ? openedIcon : icon}
-                onClick={clickHandler}
-            />
+            <FinalButton {...buttonProps} icon={opened && openedIcon ? openedIcon : icon} onClick={clickHandler} />
             <div style={menuStyle}>
                 <Menu {...menuProps} active={opened} onHide={hideHandler} position={position} theme={menuProps.theme}>
                     {menuProps.children}
