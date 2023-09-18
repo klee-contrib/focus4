@@ -1,16 +1,9 @@
 import classNames from "classnames";
-import {
-    createElement,
-    CSSProperties,
-    MouseEvent,
-    MouseEventHandler,
-    ReactNode,
-    TouchEventHandler,
-    useCallback,
-    useRef
-} from "react";
+import {createElement, CSSProperties, MouseEventHandler, PointerEvent, ReactNode, useCallback, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
@@ -18,7 +11,7 @@ import {Ripple} from "./ripple";
 import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
 export {iconButtonCss, IconButtonCss};
 
-export interface IconButtonProps {
+export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {
     /** Indicates if the button should have accent color. */
     accent?: boolean;
     className?: string;
@@ -30,11 +23,6 @@ export interface IconButtonProps {
     /** If true, the neutral colors are inverted. Useful to put a button over a dark background. */
     inverse?: boolean;
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseDown?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseEnter?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseLeave?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseUp?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onTouchStart?: TouchEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Indicates if the button should have primary color. */
     primary?: boolean;
     style?: CSSProperties;
@@ -55,11 +43,10 @@ export function IconButton({
     icon,
     inverse,
     onClick,
-    onMouseDown,
-    onMouseEnter,
-    onMouseLeave,
-    onMouseUp,
-    onTouchStart,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     primary = false,
     style,
     target,
@@ -67,22 +54,23 @@ export function IconButton({
     type = "button"
 }: IconButtonProps) {
     const theme = useTheme("RTIconButton", iconButtonCss, pTheme);
+
     const buttonNode = useRef<HTMLButtonElement | HTMLLinkElement | null>(null);
 
-    const handleMouseUp = useCallback(
-        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
+    const handlePointerUp = useCallback(
+        (event: PointerEvent<HTMLButtonElement | HTMLLinkElement>) => {
             buttonNode.current?.blur();
-            onMouseUp?.(event);
+            onPointerUp?.(event);
         },
-        [onMouseUp]
+        [onPointerUp]
     );
 
-    const handleMouseLeave = useCallback(
-        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
+    const handlePointerLeave = useCallback(
+        (event: PointerEvent<HTMLButtonElement | HTMLLinkElement>) => {
             buttonNode.current?.blur();
-            onMouseLeave?.(event);
+            onPointerLeave?.(event);
         },
-        [onMouseLeave]
+        [onPointerLeave]
     );
 
     const element = href ? "a" : "button";
@@ -93,18 +81,19 @@ export function IconButton({
         disabled,
         href,
         onClick,
-        onMouseDown,
-        onMouseEnter,
-        onMouseLeave: handleMouseLeave,
-        onMouseUp: handleMouseUp,
-        onTouchStart,
         style,
         target,
         type: !href ? type : null
     };
 
     return (
-        <Ripple centered>
+        <Ripple
+            centered
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={handlePointerLeave}
+            onPointerUp={handlePointerUp}
+        >
             {createElement(
                 element,
                 props,

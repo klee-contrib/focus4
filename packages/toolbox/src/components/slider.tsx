@@ -1,10 +1,8 @@
 import classNames from "classnames";
 import {range} from "lodash";
 import {
-    MouseEventHandler,
     MouseEvent as RMouseEvent,
     TouchEvent as RTouchEvent,
-    TouchEventHandler,
     useCallback,
     useEffect,
     useMemo,
@@ -14,13 +12,15 @@ import {
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
+import {PointerEvents} from "../types/pointer-events";
+
 import {Input} from "./input";
 import {ProgressBar} from "./progress-bar";
 
 import sliderCss, {SliderCss} from "./__style__/slider.css";
 export {sliderCss, SliderCss};
 
-export interface SliderProps {
+export interface SliderProps extends PointerEvents<HTMLDivElement> {
     /** Used to style the ProgressBar element */
     buffer?: number;
     /** CSS class for the root component. */
@@ -35,11 +35,6 @@ export interface SliderProps {
     min?: number;
     /** Callback function that will be invoked when the slider value changes. */
     onChange?: (value: number) => void;
-    onClick?: MouseEventHandler<HTMLDivElement>;
-    onMouseDown?: MouseEventHandler<HTMLDivElement>;
-    onMouseEnter?: MouseEventHandler<HTMLDivElement>;
-    onMouseLeave?: MouseEventHandler<HTMLDivElement>;
-    onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** If true, a pin with numeric value label is shown when the slider thumb is pressed. Use for settings for which users need to know the exact value of the setting. */
     pinned?: boolean;
     /** If true, the slider thumb snaps to tick marks evenly spaced based on the step property value. */
@@ -63,11 +58,10 @@ export function Slider({
     max = 100,
     min = 0,
     onChange,
-    onClick,
-    onMouseDown,
-    onMouseEnter,
-    onMouseLeave,
-    onTouchStart,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     pinned = false,
     snaps = false,
     step = 0.01,
@@ -266,12 +260,11 @@ export function Slider({
             className={classNames(theme.slider({editable, pinned, pressed, ring: value === min}), className)}
             data-react-toolbox="slider"
             onBlur={() => setSliderFocused(false)}
-            onClick={onClick}
             onFocus={() => setSliderFocused(true)}
-            onMouseDown={onMouseDown}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onTouchStart={onTouchStart}
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
             tabIndex={0}
         >
             <div className={theme.container()} onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}>

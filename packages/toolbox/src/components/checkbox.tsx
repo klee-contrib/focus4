@@ -3,13 +3,15 @@ import {CSSProperties, MouseEvent, MouseEventHandler, ReactNode, TouchEventHandl
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 
+import {PointerEvents} from "../types/pointer-events";
+
 import {Ripple} from "./ripple";
 
 import checkboxCss, {CheckboxCss} from "./__style__/checkbox.css";
 export {checkboxCss, CheckboxCss};
 
 /** Props du Checkbox. */
-export interface CheckboxProps {
+export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
     className?: string;
     /** Children to pass through the component. */
     children?: ReactNode;
@@ -23,8 +25,6 @@ export interface CheckboxProps {
     name?: string;
     /** Est appelé quand on coche la case. */
     onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
-    onMouseEnter?: MouseEventHandler<HTMLLabelElement>;
-    onMouseLeave?: MouseEventHandler<HTMLLabelElement>;
     style?: CSSProperties;
     theme?: CSSProp<CheckboxCss>;
     /** Valeur. */
@@ -41,8 +41,10 @@ export function Checkbox({
     label,
     id,
     onChange,
-    onMouseEnter,
-    onMouseLeave,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     name,
     theme: pTheme,
     style,
@@ -67,8 +69,10 @@ export function Checkbox({
         <label
             className={classNames(theme.field({disabled}), className)}
             data-react-toolbox="checkbox"
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
         >
             <input
                 ref={inputNode}

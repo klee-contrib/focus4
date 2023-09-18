@@ -1,16 +1,9 @@
-import {
-    Component,
-    ComponentType,
-    forwardRef,
-    HTMLAttributes,
-    MouseEvent,
-    MouseEventHandler,
-    ReactNode,
-    TouchEventHandler
-} from "react";
+import {Component, ComponentType, forwardRef, HTMLAttributes, PointerEvent, ReactNode} from "react";
 import {createPortal} from "react-dom";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import tooltipCss, {TooltipCss} from "./__style__/tooltip.css";
 export {tooltipCss, TooltipCss};
@@ -33,13 +26,8 @@ export interface TooltipOptions {
     theme?: CSSProp<TooltipCss>;
 }
 
-export interface TooltipProps extends Omit<TooltipOptions, "theme"> {
+export interface TooltipProps extends Omit<TooltipOptions, "theme">, PointerEvents<HTMLElement> {
     children?: ReactNode;
-    onClick?: MouseEventHandler;
-    onMouseDown?: MouseEventHandler;
-    onMouseEnter?: MouseEventHandler;
-    onMouseLeave?: MouseEventHandler;
-    onTouchStart?: TouchEventHandler;
     tooltip?: ReactNode;
     tooltipTheme?: CSSProp<TooltipCss>;
 }
@@ -129,21 +117,21 @@ class TooltippedComponent<P> extends Component<
         return tooltipPosition;
     }
 
-    handleMouseEnter = (event: MouseEvent) => {
+    handlePointerEnter = (event: PointerEvent<HTMLElement>) => {
         this.activate(this.calculatePosition(event.currentTarget as HTMLElement));
-        if (this.props.onMouseEnter) {
-            this.props.onMouseEnter(event);
+        if (this.props.onPointerEnter) {
+            this.props.onPointerEnter(event);
         }
     };
 
-    handleMouseLeave = (event: MouseEvent) => {
+    handlePointerLeave = (event: PointerEvent<HTMLElement>) => {
         this.deactivate();
-        if (this.props.onMouseLeave) {
-            this.props.onMouseLeave(event);
+        if (this.props.onPointerLeave) {
+            this.props.onPointerLeave(event);
         }
     };
 
-    handleClick = (event: MouseEvent) => {
+    handlePointerUp = (event: PointerEvent<HTMLElement>) => {
         if (this.props.tooltipHideOnClick && this.state.active) {
             this.deactivate();
         }
@@ -152,8 +140,8 @@ class TooltippedComponent<P> extends Component<
             this.activate(this.calculatePosition(event.currentTarget as HTMLElement));
         }
 
-        if (this.props.onClick) {
-            this.props.onClick(event);
+        if (this.props.onPointerUp) {
+            this.props.onPointerUp(event);
         }
     };
 
@@ -220,9 +208,9 @@ class TooltippedComponent<P> extends Component<
         const {
             children,
             tooltipTheme: tTheme,
-            onClick,
-            onMouseEnter,
-            onMouseLeave,
+            onPointerEnter,
+            onPointerLeave,
+            onPointerUp,
             tooltip,
             tooltipDelay,
             tooltipHideOnClick,
@@ -235,9 +223,9 @@ class TooltippedComponent<P> extends Component<
 
         const childProps = {
             ...other,
-            onClick: this.handleClick,
-            onMouseEnter: this.handleMouseEnter,
-            onMouseLeave: this.handleMouseLeave
+            onPointerEnter: this.handlePointerEnter,
+            onPointerLeave: this.handlePointerLeave,
+            onPointerUp: this.handlePointerUp
         };
 
         const shouldPass = typeof ComposedComponent !== "string" && tooltipPassthrough;

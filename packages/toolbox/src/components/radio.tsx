@@ -1,17 +1,9 @@
 import classNames from "classnames";
-import {
-    Children,
-    cloneElement,
-    MouseEvent,
-    MouseEventHandler,
-    ReactElement,
-    ReactNode,
-    TouchEventHandler,
-    useCallback,
-    useRef
-} from "react";
+import {Children, cloneElement, MouseEvent, ReactElement, ReactNode, useCallback, useRef} from "react";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import {Ripple} from "./ripple";
 
@@ -21,20 +13,13 @@ export {RadioCss, radioCss};
 interface RadioProps {
     checked: boolean;
     children?: ReactNode;
-    onMouseDown?: MouseEventHandler<HTMLSpanElement>;
-    onTouchStart?: TouchEventHandler<HTMLSpanElement>;
     theme: ToBem<RadioCss>;
 }
 
-function Radio({checked, children, onMouseDown, onTouchStart, theme}: RadioProps) {
+function Radio({checked, children, theme}: RadioProps) {
     return (
         <Ripple centered>
-            <div
-                className={theme.radio({checked})}
-                data-react-toolbox="radio"
-                onMouseDown={onMouseDown}
-                onTouchStart={onTouchStart}
-            >
+            <div className={theme.radio({checked})} data-react-toolbox="radio">
                 {children}
             </div>
         </Ripple>
@@ -42,7 +27,7 @@ function Radio({checked, children, onMouseDown, onTouchStart, theme}: RadioProps
 }
 
 /** Props du Radio. */
-export interface RadioButtonProps {
+export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
     /** @internal */
     checked?: boolean;
     className?: string;
@@ -75,6 +60,10 @@ export function RadioButton({
     label,
     id,
     onChange,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     name,
     theme: pTheme
 }: RadioButtonProps) {
@@ -94,7 +83,14 @@ export function RadioButton({
     );
 
     return (
-        <label className={classNames(theme.field({disabled}), className)} data-react-toolbox="radio">
+        <label
+            className={classNames(theme.field({disabled}), className)}
+            data-react-toolbox="radio"
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
+        >
             <input
                 ref={inputNode}
                 checked={checked}

@@ -9,7 +9,6 @@ import {
     KeyboardEventHandler,
     MouseEventHandler,
     ReactNode,
-    TouchEventHandler,
     useCallback,
     useEffect,
     useImperativeHandle,
@@ -18,12 +17,14 @@ import {
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
+import {PointerEvents} from "../types/pointer-events";
+
 import {FontIcon} from "./font-icon";
 
 import inputCss, {InputCss} from "./__style__/input.css";
 export {inputCss, InputCss};
 
-export interface InputProps {
+export interface InputProps extends PointerEvents<HTMLInputElement | HTMLTextAreaElement> {
     autoComplete?: string;
     className?: string;
     /** Children to pass through the component. */
@@ -67,7 +68,6 @@ export interface InputProps {
     onMouseOver?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onMouseUp?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     onPaste?: ClipboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-    onTouchStart?: TouchEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** If true, input is readonly. */
     readOnly?: boolean;
     /** If true, the html input has a required attribute. */
@@ -123,7 +123,10 @@ export const Input = forwardRef(function RTInput(
         onMouseOver,
         onMouseUp,
         onPaste,
-        onTouchStart,
+        onPointerDown,
+        onPointerEnter,
+        onPointerLeave,
+        onPointerUp,
         readOnly,
         required = false,
         rows = 1,
@@ -245,7 +248,10 @@ export const Input = forwardRef(function RTInput(
         onMouseOver,
         onMouseUp,
         onPaste,
-        onTouchStart,
+        onPointerDown,
+        onPointerEnter,
+        onPointerLeave,
+        onPointerUp,
         readOnly,
         required,
         style,

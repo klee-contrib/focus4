@@ -1,12 +1,14 @@
 import classNames from "classnames";
-import {forwardRef, MouseEventHandler, Ref, TouchEventHandler, useCallback, useMemo} from "react";
+import {forwardRef, Ref, useCallback, useMemo} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import progressBarCss, {ProgressBarCss} from "./__style__/progress-bar.css";
 export {progressBarCss, ProgressBarCss};
 
-export interface ProgressBarProps {
+export interface ProgressBarProps extends PointerEvents<HTMLDivElement> {
     /** Value of a secondary progress bar useful for buffering. */
     buffer?: number;
     className?: string;
@@ -18,11 +20,6 @@ export interface ProgressBarProps {
     mode?: "determinate" | "indeterminate";
     /** If true, the circular progress bar will be changing its color. */
     multicolor?: boolean;
-    onClick?: MouseEventHandler<HTMLDivElement>;
-    onMouseDown?: MouseEventHandler<HTMLDivElement>;
-    onMouseEnter?: MouseEventHandler<HTMLDivElement>;
-    onMouseLeave?: MouseEventHandler<HTMLDivElement>;
-    onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
     theme?: CSSProp<ProgressBarCss>;
     /** Type of the progress bar, it can be circular or linear. */
@@ -42,14 +39,13 @@ export const ProgressBar = forwardRef<HTMLDivElement | SVGSVGElement, ProgressBa
         min = 0,
         mode = "indeterminate",
         multicolor = false,
-        onClick,
-        onMouseDown,
-        onMouseEnter,
-        onMouseLeave,
-        onTouchStart,
+        onPointerDown,
+        onPointerEnter,
+        onPointerLeave,
+        onPointerUp,
+        theme: pTheme,
         type = "linear",
-        value = 0,
-        theme: pTheme
+        value = 0
     },
     ref
 ) {
@@ -96,11 +92,10 @@ export const ProgressBar = forwardRef<HTMLDivElement | SVGSVGElement, ProgressBa
                 className
             )}
             data-react-toolbox="progress-bar"
-            onClick={onClick}
-            onMouseDown={onMouseDown}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onTouchStart={onTouchStart}
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
         >
             {type === "circular" ? (
                 <svg ref={ref as Ref<SVGSVGElement>} className={theme.circle()} viewBox="0 0 60 60">

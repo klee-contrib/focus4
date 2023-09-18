@@ -3,13 +3,15 @@ import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
+import {PointerEvents} from "../types/pointer-events";
+
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import switchCss, {SwitchCss} from "./__style__/switch.css";
 export {switchCss, SwitchCss};
 
-export interface SwitchProps {
+export interface SwitchProps extends PointerEvents<HTMLDivElement> {
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Désactive le Switch. */
@@ -33,7 +35,21 @@ export interface SwitchProps {
 /**
  * Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
  */
-export function Switch({className, disabled, id, name, onChange, iconOn, iconOff, theme: pTheme, value}: SwitchProps) {
+export function Switch({
+    className,
+    disabled,
+    id,
+    name,
+    onChange,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
+    iconOn,
+    iconOff,
+    theme: pTheme,
+    value
+}: SwitchProps) {
     const theme = useTheme("RTSwitch", switchCss, pTheme);
 
     const node = useRef(null);
@@ -46,7 +62,13 @@ export function Switch({className, disabled, id, name, onChange, iconOn, iconOff
     }, [value, disabled]);
 
     return (
-        <Ripple rippleTarget={theme.state()}>
+        <Ripple
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
+            rippleTarget={theme.state()}
+        >
             <div
                 ref={node}
                 className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}

@@ -6,7 +6,6 @@ import {
     MouseEventHandler,
     ReactElement,
     ReactNode,
-    TouchEventHandler,
     useCallback,
     useEffect,
     useLayoutEffect,
@@ -17,6 +16,8 @@ import {
 import {findDOMNode} from "react-dom";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import {Button, ButtonProps} from "./button";
 import {FontIcon} from "./font-icon";
@@ -67,7 +68,7 @@ export interface IconMenuProps {
     theme?: CSSProp<MenuCss>;
 }
 
-export interface MenuItemProps {
+export interface MenuItemProps extends PointerEvents<HTMLLIElement> {
     /** The text to include in the menu item. Required. */
     caption: string;
     className?: string;
@@ -78,8 +79,6 @@ export interface MenuItemProps {
     /** Icon font key string or Element to display in the right side of the option. */
     icon?: ReactNode;
     onClick?: MouseEventHandler<HTMLLIElement>;
-    onMouseDown?: MouseEventHandler<HTMLLIElement>;
-    onTouchStart?: TouchEventHandler<HTMLLIElement>;
     /** @internal */
     selected?: boolean;
     /** Displays shortcut text on the right side of the caption attribute. */
@@ -303,8 +302,10 @@ export function MenuItem({
     disabled = false,
     icon,
     onClick,
-    onMouseDown,
-    onTouchStart,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     selected = false,
     shortcut,
     theme: pTheme
@@ -321,13 +322,16 @@ export function MenuItem({
     );
 
     return (
-        <Ripple>
+        <Ripple
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
+        >
             <li
                 className={classNames(theme.menuItem({disabled, selected}), className)}
                 data-react-toolbox="menu-item"
                 onClick={handleClick}
-                onMouseDown={onMouseDown}
-                onTouchStart={onTouchStart}
             >
                 {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
                 <span className={theme.caption()}>{caption}</span>

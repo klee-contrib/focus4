@@ -1,24 +1,21 @@
 import classNames from "classnames";
-import {MouseEventHandler, TouchEventHandler} from "react";
+import {MouseEventHandler} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import chipCss, {ChipCss} from "./__style__/chip.css";
 export {chipCss, ChipCss};
 
-export interface ChipProps {
+export interface ChipProps extends PointerEvents<HTMLSpanElement> {
     className?: string;
     /** Children to pass through the component. */
     children?: React.ReactNode;
     /** If true, the chip will be rendered with a delete icon. */
     deletable?: boolean;
-    onClick?: MouseEventHandler<HTMLDivElement>;
     /** Callback to be invoked when the delete icon is clicked. */
     onDeleteClick?: MouseEventHandler<HTMLSpanElement>;
-    onMouseDown?: MouseEventHandler<HTMLDivElement>;
-    onMouseEnter?: MouseEventHandler<HTMLDivElement>;
-    onMouseLeave?: MouseEventHandler<HTMLDivElement>;
-    onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
     theme?: CSSProp<ChipCss>;
 }
@@ -30,12 +27,11 @@ export function Chip({
     className = "",
     children,
     deletable,
-    onClick,
     onDeleteClick,
-    onMouseDown,
-    onMouseEnter,
-    onMouseLeave,
-    onTouchStart,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     theme: pTheme
 }: ChipProps) {
     const theme = useTheme("RTChip", chipCss, pTheme);
@@ -44,11 +40,10 @@ export function Chip({
         <div
             className={classNames(theme.chip({deletable}), className)}
             data-react-toolbox="chip"
-            onClick={onClick}
-            onMouseDown={onMouseDown}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onTouchStart={onTouchStart}
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
         >
             {typeof children === "string" ? <span>{children}</span> : children}
             {deletable ? (

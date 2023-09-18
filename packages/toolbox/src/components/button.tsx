@@ -1,16 +1,9 @@
 import classNames from "classnames";
-import {
-    createElement,
-    CSSProperties,
-    MouseEvent,
-    MouseEventHandler,
-    ReactNode,
-    TouchEventHandler,
-    useCallback,
-    useRef
-} from "react";
+import {createElement, CSSProperties, MouseEventHandler, PointerEvent, ReactNode, useCallback, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
@@ -18,7 +11,7 @@ import {Ripple} from "./ripple";
 import buttonCss, {ButtonCss} from "./__style__/button.css";
 export {buttonCss, ButtonCss};
 
-export interface ButtonProps {
+export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {
     /** Indicates if the button should have accent color. */
     accent?: boolean;
     /** Children to pass through the component. */
@@ -39,11 +32,6 @@ export interface ButtonProps {
     /** To be used with floating button. If true, the button will be smaller. */
     mini?: boolean;
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseDown?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseEnter?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseLeave?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onMouseUp?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    onTouchStart?: TouchEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Indicates if the button should have primary color. */
     primary?: boolean;
     /** If true, the button will have a raised look. */
@@ -72,11 +60,10 @@ export function Button({
     label,
     mini = false,
     onClick,
-    onMouseDown,
-    onMouseEnter,
-    onMouseLeave,
-    onMouseUp,
-    onTouchStart,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     primary = false,
     raised = false,
     style,
@@ -87,20 +74,20 @@ export function Button({
     const theme = useTheme("RTButton", buttonCss, pTheme);
     const buttonNode = useRef<HTMLButtonElement | HTMLLinkElement | null>(null);
 
-    const handleMouseUp = useCallback(
-        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
+    const handlePointerUp = useCallback(
+        (event: PointerEvent<HTMLButtonElement | HTMLLinkElement>) => {
             buttonNode.current?.blur();
-            onMouseUp?.(event);
+            onPointerUp?.(event);
         },
-        [onMouseUp]
+        [onPointerUp]
     );
 
-    const handleMouseLeave = useCallback(
-        (event: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
+    const handlePointerLeave = useCallback(
+        (event: PointerEvent<HTMLButtonElement | HTMLLinkElement>) => {
             buttonNode.current?.blur();
-            onMouseLeave?.(event);
+            onPointerLeave?.(event);
         },
-        [onMouseLeave]
+        [onPointerLeave]
     );
 
     const element = href ? "a" : "button";
@@ -125,11 +112,6 @@ export function Button({
         disabled,
         href,
         onClick,
-        onMouseDown,
-        onMouseEnter,
-        onMouseUp: handleMouseUp,
-        onMouseLeave: handleMouseLeave,
-        onTouchStart,
         style,
         target,
         type: !href ? type : null,
@@ -145,14 +127,13 @@ export function Button({
     );
 
     return (
-        <Ripple>
-            {onMouseEnter && disabled ? (
-                <span onMouseLeave={handleMouseLeave} onMouseUp={handleMouseUp}>
-                    {buttonElement}
-                </span>
-            ) : (
-                buttonElement
-            )}
+        <Ripple
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={handlePointerLeave}
+            onPointerUp={handlePointerUp}
+        >
+            {buttonElement}
         </Ripple>
     );
 }

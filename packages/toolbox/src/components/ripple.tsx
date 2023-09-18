@@ -1,12 +1,14 @@
 import classNames from "classnames";
-import {cloneElement, ReactElement, ReactNode, SyntheticEvent, useCallback, useRef} from "react";
+import {cloneElement, PointerEvent, ReactElement, ReactNode, useCallback, useRef} from "react";
 
 import {useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import rippleCss, {RippleCss} from "./__style__/ripple.css";
 export {rippleCss, RippleCss};
 
-export interface RippleProps {
+export interface RippleProps<T extends HTMLElement = HTMLElement> extends PointerEvents<T> {
     /** Centre le ripple sur la cible au lieu de l'endroit cliqué. */
     centered?: boolean;
     /** Classe CSS à passer au Ripple */
@@ -20,7 +22,13 @@ export interface RippleProps {
 /**
  * Pose un Ripple au clic sur le composant/élément enfant.
  */
-export function Ripple({centered, className, children, rippleTarget}: RippleProps) {
+export function Ripple<T extends HTMLElement = HTMLElement>({
+    centered,
+    className,
+    children,
+    rippleTarget,
+    ...props
+}: RippleProps<T>) {
     const theme = useTheme("RTRipple", rippleCss, className ? {ripple: className} : {});
 
     const rippleState = useRef({
@@ -72,7 +80,17 @@ export function Ripple({centered, className, children, rippleTarget}: RippleProp
     }, []);
 
     const ripple = useCallback(
-        function ripple({event, element}: {event: MouseEvent; element: HTMLElement}) {
+        function ripple(lol: PointerEvent<T>) {
+            const target = lol.nativeEvent.target as HTMLElement;
+            if (target?.closest("[disabled]")) {
+                return;
+            }
+
+            const event = lol.nativeEvent;
+            const element =
+                (rippleTarget ? lol.currentTarget.querySelector<HTMLElement>(`.${rippleTarget}`) : null) ??
+                lol.currentTarget;
+
             rippleState.current.isPointerOut = false;
             rippleState.current.element ??= document.createElement("div");
 
@@ -122,31 +140,42 @@ export function Ripple({centered, className, children, rippleTarget}: RippleProp
 
             rippleState.current.isFinishing = false;
         },
-        [className, centered]
+        [className, centered, rippleTarget]
     );
 
     const onPointerDown = useCallback(
-        function onClick(event: SyntheticEvent) {
-            const target = event.nativeEvent.target as HTMLElement;
-            if (target?.closest("[disabled]")) {
-                return;
-            }
-            ripple({
-                event: event.nativeEvent as PointerEvent,
-                element:
-                    (rippleTarget ? event.currentTarget.querySelector(`.${rippleTarget}`) : null) ??
-                    (event.currentTarget as HTMLElement)
-            });
+        function onPointerDown(e: PointerEvent<T>) {
+            ripple(e);
+            props.onPointerDown?.(e);
         },
-        [ripple, rippleTarget]
+        [ripple, props.onPointerDown]
     );
 
-    return cloneElement(children as ReactElement, {
-        onPointerDown,
-        onPointerEnter: rippleIn,
-        onPointerLeave: rippleOut,
-        onPointerUp: rippleOut
-    });
+    const onPointerEnter = useCallback(
+        function onPointerEnter(e: PointerEvent<T>) {
+            rippleIn();
+            props.onPointerEnter?.(e);
+        },
+        [rippleIn, props.onPointerEnter]
+    );
+
+    const onPointerLeave = useCallback(
+        function onPointerLeave(e: PointerEvent<T>) {
+            rippleOut();
+            props.onPointerLeave?.(e);
+        },
+        [rippleOut, props.onPointerLeave]
+    );
+
+    const onPointerUp = useCallback(
+        function onPointerUp(e: PointerEvent<T>) {
+            rippleOut();
+            props.onPointerUp?.(e);
+        },
+        [rippleOut, props.onPointerUp]
+    );
+
+    return cloneElement(children as ReactElement, {onPointerDown, onPointerEnter, onPointerLeave, onPointerUp});
 }
 
 function toMs(d: string) {

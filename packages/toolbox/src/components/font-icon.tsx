@@ -1,17 +1,14 @@
 import classnames from "classnames";
-import {CSSProperties, MouseEventHandler, ReactNode, TouchEventHandler} from "react";
+import {CSSProperties, ReactNode} from "react";
 
-export interface FontIconProps {
+import {PointerEvents} from "../types/pointer-events";
+
+export interface FontIconProps extends PointerEvents<HTMLSpanElement> {
     /** Alt text for the icon. */
     alt?: string;
     className?: string;
     /** Children to pass through the component. */
     children?: ReactNode;
-    onClick?: MouseEventHandler<HTMLSpanElement>;
-    onMouseDown?: MouseEventHandler<HTMLSpanElement>;
-    onMouseEnter?: MouseEventHandler<HTMLSpanElement>;
-    onMouseLeave?: MouseEventHandler<HTMLSpanElement>;
-    onTouchStart?: TouchEventHandler<HTMLSpanElement>;
     /** Inline styles. */
     style?: CSSProperties;
     /** The key string for the icon you want be displayed. */
@@ -25,11 +22,10 @@ export function FontIcon({
     alt = "",
     className = "",
     children,
-    onClick,
-    onMouseDown,
-    onMouseEnter,
-    onMouseLeave,
-    onTouchStart,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     style,
     value
 }: FontIconProps) {
@@ -41,11 +37,10 @@ export function FontIcon({
                 className
             )}
             data-react-toolbox="font-icon"
-            onClick={onClick}
-            onMouseDown={onMouseDown}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onTouchStart={onTouchStart}
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
             style={style}
         >
             {value}

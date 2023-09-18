@@ -51,7 +51,7 @@ export function Label({
             {comment && showTooltip ? (
                 <TooltipIcon
                     className={theme.icon({clickable: !!onTooltipClick})}
-                    onClick={onTooltipClick}
+                    onPointerDown={onTooltipClick}
                     tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
                     tooltipHideOnClick={!onTooltipClick}
                     tooltipTheme={tooltipTheme}

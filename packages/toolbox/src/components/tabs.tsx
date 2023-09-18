@@ -4,10 +4,8 @@ import {
     cloneElement,
     CSSProperties,
     MouseEvent,
-    MouseEventHandler,
     ReactElement,
     ReactNode,
-    TouchEventHandler,
     useCallback,
     useEffect,
     useMemo,
@@ -16,6 +14,8 @@ import {
 } from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {PointerEvents} from "../types/pointer-events";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
@@ -45,7 +45,7 @@ export function TabContent({active = false, children, className = "", hidden = t
     );
 }
 
-export interface TabProps {
+export interface TabProps extends PointerEvents<HTMLDivElement> {
     /** If true, the current component is visible. */
     active?: boolean;
     children?: ReactNode;
@@ -61,9 +61,8 @@ export interface TabProps {
     label?: string;
     /** Callback function that is fired when the tab is activated. */
     onActive?: () => void;
+    /** Called on click on the tab. */
     onClick?: (event: MouseEvent<HTMLDivElement>, index: number) => void;
-    onMouseDown?: MouseEventHandler<HTMLDivElement>;
-    onTouchStart?: TouchEventHandler<HTMLDivElement>;
     /** Classnames object defining the component style. */
     theme?: CSSProp<TabsCss>;
 }
@@ -82,8 +81,10 @@ export function Tab({
     label,
     onActive,
     onClick,
-    onMouseDown,
-    onTouchStart,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
     theme: pTheme
 }: TabProps) {
     const theme = useTheme("RTTabs", tabsCss, pTheme);
@@ -104,13 +105,16 @@ export function Tab({
     );
 
     return (
-        <Ripple>
+        <Ripple
+            onPointerDown={onPointerDown}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerUp={onPointerUp}
+        >
             <div
                 className={classNames(theme.label({active, disabled, hidden, withIcon: !!icon}), className)}
                 data-react-toolbox="tab"
                 onClick={handleClick}
-                onMouseDown={onMouseDown}
-                onTouchStart={onTouchStart}
                 role="tab"
                 tabIndex={0}
             >

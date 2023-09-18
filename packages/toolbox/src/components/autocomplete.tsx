@@ -117,7 +117,11 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
         onMouseOut,
         onMouseOver,
         onMouseUp,
-        onTouchStart,
+        onPaste,
+        onPointerDown,
+        onPointerEnter,
+        onPointerLeave,
+        onPointerUp,
         onQueryChange,
         query: pQuery,
         required,
@@ -451,7 +455,11 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
                 onMouseUp={onMouseUp}
-                onTouchStart={onTouchStart}
+                onPaste={onPaste}
+                onPointerDown={onPointerDown}
+                onPointerEnter={onPointerEnter}
+                onPointerLeave={onPointerLeave}
+                onPointerUp={onPointerUp}
                 required={required}
                 rows={rows}
                 style={style}
