@@ -1,14 +1,16 @@
 :root {
-    --ripple-duration: 350ms;
+    --ripple-duration: var(--animation-duration);
+    --ripple-filter: blur(10px);
+    --ripple-opacity: 0.24;
 }
 
 .ripple {
     pointer-events: none;
     background: currentcolor;
-    filter: blur(10px);
+    filter: var(--ripple-filter);
     position: absolute;
     transform-origin: center center;
-    opacity: 0.12;
+    opacity: var(--ripple-opacity);
     transform: scale(0);
     border-radius: 50%;
 }

@@ -41,13 +41,11 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
     });
 
     const getOptions = useCallback(function getOptions(ripple: HTMLDivElement) {
+        const parent = getComputedStyle(ripple?.parentElement ?? document.documentElement);
         return {
             easing: "ease-in-out",
-            duration: toMs(
-                getComputedStyle(ripple?.parentElement ?? document.documentElement).getPropertyValue(
-                    "--ripple-duration"
-                )
-            )
+            duration: toMs(parent.getPropertyValue("--ripple-duration")),
+            opacity: parent.getPropertyValue("--ripple-opacity")
         };
     }, []);
 
@@ -55,8 +53,9 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
         if (!ripple || !state.current.isPointerOut || state.current.isFinishing.has(ripple)) {
             return;
         }
+        const {opacity, ...options} = getOptions(ripple);
         state.current.isFinishing.add(ripple);
-        const anim = ripple.animate([{opacity: 0.12}, {opacity: 0}], getOptions(ripple));
+        const anim = ripple.animate([{opacity}, {opacity: 0}], options);
         anim.addEventListener(
             "finish",
             () => {
@@ -112,6 +111,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
             element.style.overflow = "hidden";
             element.appendChild(ripple);
 
+            const {opacity, ...options} = getOptions(ripple);
             const animation = ripple.animate(
                 [
                     {
@@ -121,7 +121,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
                         transform: "translate(-50%, -50%) scale(1)"
                     }
                 ],
-                {...getOptions(ripple), fill: "forwards"}
+                {...options, fill: "forwards"}
             );
             animation.addEventListener("finish", () => onRippleFinish(ripple), {
                 once: true
