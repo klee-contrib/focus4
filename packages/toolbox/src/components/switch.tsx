@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {ChangeEvent, ReactNode} from "react";
+import {MouseEvent, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -26,7 +26,7 @@ export interface SwitchProps extends PointerEvents<HTMLDivElement> {
     /** Name pour l'input[type=checkbox] posé par le Switch. */
     name?: string;
     /** Handler appelé au clic sur le Switch. */
-    onChange?: (value: boolean, event?: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
     /** CSS. */
     theme?: CSSProp<SwitchCss>;
     /** Valeur (correspond à 'checked' sur l'input). */
@@ -69,7 +69,7 @@ export function Switch({
                     disabled={disabled}
                     id={id}
                     name={name}
-                    onChange={e => onChange?.(!value, e)}
+                    onClick={e => onChange?.(!value, e)}
                     type="checkbox"
                 />
                 <div className={theme.track()}>

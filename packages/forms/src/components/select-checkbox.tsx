@@ -93,10 +93,10 @@ export function SelectCheckbox<T extends "number" | "string">({
                             <Checkbox
                                 disabled={isDisabled}
                                 id={`${id!}-${optVal as string}`}
+                                label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
                                 value={isSelected}
                             />
-                            <label htmlFor={`${id!}-${optVal as string}`}>{i18next.t(optLabel)}</label>
                         </li>
                     );
                 })}

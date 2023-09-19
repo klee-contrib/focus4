@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {cloneElement, PointerEvent, ReactElement, ReactNode, useCallback, useRef} from "react";
+import {cloneElement, PointerEvent, ReactElement, useCallback, useRef} from "react";
 
 import {useTheme} from "@focus4/styling";
 
@@ -14,7 +14,9 @@ export interface RippleProps<T extends HTMLElement = HTMLElement> extends Pointe
     /** Classe CSS à passer au Ripple */
     className?: string;
     /** Composant enfant dans lequel poser le ripple. */
-    children?: ReactNode;
+    children: ReactElement;
+    /** Force la désactivation du ripple. */
+    disabled?: boolean;
     /** Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. */
     rippleTarget?: string;
 }
@@ -26,6 +28,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
     centered,
     className,
     children,
+    disabled,
     rippleTarget,
     ...props
 }: RippleProps<T>) {
@@ -82,7 +85,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
     const ripple = useCallback(
         function ripple(lol: PointerEvent<T>) {
             const target = lol.nativeEvent.target as HTMLElement;
-            if (target?.closest("[disabled]")) {
+            if (!!disabled || target?.closest("[disabled]")) {
                 return;
             }
 
@@ -140,7 +143,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
 
             rippleState.current.isFinishing = false;
         },
-        [className, centered, rippleTarget]
+        [className, centered, disabled, rippleTarget]
     );
 
     const onPointerDown = useCallback(
@@ -175,7 +178,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
         [rippleOut, props.onPointerUp]
     );
 
-    return cloneElement(children as ReactElement, {onPointerDown, onPointerEnter, onPointerLeave, onPointerUp});
+    return cloneElement(children, {onPointerDown, onPointerEnter, onPointerLeave, onPointerUp});
 }
 
 function toMs(d: string) {

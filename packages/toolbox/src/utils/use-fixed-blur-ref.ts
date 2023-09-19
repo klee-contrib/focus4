@@ -2,11 +2,14 @@ import {PointerEvent, useCallback, useRef} from "react";
 
 import {PointerEvents} from "./pointer-events";
 
-export function useFixedBlurRef<T extends HTMLElement>({onPointerLeave, onPointerUp}: PointerEvents<T>) {
-    const ref = useRef<T | null>(null);
+export function useFixedBlurRef<TElement extends HTMLElement, TEvent extends HTMLElement>({
+    onPointerLeave,
+    onPointerUp
+}: PointerEvents<TEvent>) {
+    const ref = useRef<TElement | null>(null);
 
     const handlePointerUp = useCallback(
-        (event: PointerEvent<T>) => {
+        (event: PointerEvent<TEvent>) => {
             ref.current?.blur();
             onPointerUp?.(event);
         },
@@ -14,7 +17,7 @@ export function useFixedBlurRef<T extends HTMLElement>({onPointerLeave, onPointe
     );
 
     const handlePointerLeave = useCallback(
-        (event: PointerEvent<T>) => {
+        (event: PointerEvent<TEvent>) => {
             ref.current?.blur();
             onPointerLeave?.(event);
         },

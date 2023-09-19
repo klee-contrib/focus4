@@ -4,23 +4,14 @@
 }
 
 .option {
-    --checkbox-state-ratio: 1.41;
-
+    --checkbox-state-size: 28px;
     list-style: none;
-    display: flex;
-    align-items: center;
-    color: rgb(var(--color-black));
-
-    & > label {
-        margin-left: 6px;
-    }
 }
 
 .error {
     color: var(--input-text-error-color);
     font-size: var(--input-label-font-size);
     line-height: 20px;
-    margin-top: -4px;
+    margin-left: 8px;
     margin-bottom: -20px;
-    white-space: nowrap;
 }

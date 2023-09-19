@@ -125,21 +125,22 @@ Une checkbox.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                 | Description                                                                            |
-| ---------------- | ----------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                  | Classe CSS a ajouter au composant racine.                                              |
-| `disabled`       | Non         | <code>boolean</code>                                                                 | Désactive la Checkbox.                                                                 |
-| `error`          | Non         | <code>ReactNode</code>                                                               | Si renseigné, la Checkbox sera affichée en rouge.                                      |
-| `id`             | Non         | <code>string</code>                                                                  | Id pour l'input[type=checkbox] posé par la Checkbox.                                   |
-| `indeterminate`  | Non         | <code>boolean</code>                                                                 | Affiche une icône "indéterminée" à la place du "check"                                 |
-| `name`           | Non         | <code>string</code>                                                                  | Name pour l'input[type=checkbox] posé par la Checkbox.                                 |
-| `onChange`       | Non         | <code>(value: boolean, event: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code> | Handler appelé au clic sur la Checkbox.                                                |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLInputElement&gt;) =&gt; void</code>                    | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;CheckboxCss&gt;</code>                                              | CSS.                                                                                   |
-| `value`          | Non         | <code>boolean</code>                                                                 | Valeur (correspond à 'checked' sur l'input).                                           |
+| Nom              | Obligatoire | Type                                                                                             | Description                                                                            |
+| ---------------- | ----------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                              | Classe CSS a ajouter au composant racine.                                              |
+| `disabled`       | Non         | <code>boolean</code>                                                                             | Désactive la Checkbox.                                                                 |
+| `error`          | Non         | <code>ReactNode</code>                                                                           | Si renseigné, la Checkbox sera affichée en rouge.                                      |
+| `id`             | Non         | <code>string</code>                                                                              | Id pour l'input[type=checkbox] posé par la Checkbox.                                   |
+| `indeterminate`  | Non         | <code>boolean</code>                                                                             | Affiche une icône "indéterminée" à la place du "check"                                 |
+| `label`          | Non         | <code>ReactNode</code>                                                                           | Libellé à poser à côté de la Checkbox.                                                 |
+| `name`           | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par la Checkbox.                                 |
+| `onChange`       | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur la Checkbox.                                                |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;CheckboxCss&gt;</code>                                                          | CSS.                                                                                   |
+| `value`          | Non         | <code>boolean</code>                                                                             | Valeur (correspond à 'checked' sur l'input).                                           |
 
 ## `Chip`
 
@@ -494,16 +495,17 @@ Pose un Ripple au clic sur le composant/élément enfant.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                               | Description                                                                                 |
-| ---------------- | ----------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `centered`       | Non         | <code>boolean</code>                               | Centre le ripple sur la cible au lieu de l'endroit cliqué.                                  |
-| `children`       | Non         | <code>ReactNode</code>                             | Composant enfant dans lequel poser le ripple.                                               |
-| `className`      | Non         | <code>string</code>                                | Classe CSS à passer au Ripple                                                               |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)       |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)      |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)      |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)         |
-| `rippleTarget`   | Non         | <code>string</code>                                | Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. |
+| Nom              | Obligatoire | Type                                                                                 | Description                                                                                 |
+| ---------------- | ----------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `centered`       | Non         | <code>boolean</code>                                                                 | Centre le ripple sur la cible au lieu de l'endroit cliqué.                                  |
+| `children`       | **Oui**     | <code>ReactElement&lt;any, string &#124; JSXElementConstructor&lt;any&gt;&gt;</code> | Composant enfant dans lequel poser le ripple.                                               |
+| `className`      | Non         | <code>string</code>                                                                  | Classe CSS à passer au Ripple                                                               |
+| `disabled`       | Non         | <code>boolean</code>                                                                 | Force la désactivation du ripple.                                                           |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)       |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)      |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)      |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)         |
+| `rippleTarget`   | Non         | <code>string</code>                                                                  | Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. |
 
 ## `Slider`
 
@@ -555,21 +557,21 @@ Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                  | Description                                                                            |
-| ---------------- | ----------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                   | Classe CSS a ajouter au composant racine.                                              |
-| `disabled`       | Non         | <code>boolean</code>                                                                  | Désactive le Switch.                                                                   |
-| `iconOff`        | Non         | <code>ReactNode</code>                                                                | Icône a afficher dans le Switch quand il est "off".                                    |
-| `iconOn`         | Non         | <code>ReactNode</code>                                                                | Icône a afficher dans le Switch quand il est "on".                                     |
-| `id`             | Non         | <code>string</code>                                                                   | Id pour l'input[type=checkbox] posé par le Switch.                                     |
-| `name`           | Non         | <code>string</code>                                                                   | Name pour l'input[type=checkbox] posé par le Switch.                                   |
-| `onChange`       | Non         | <code>(value: boolean, event?: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code> | Handler appelé au clic sur le Switch.                                                  |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                       | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;SwitchCss&gt;</code>                                                 | CSS.                                                                                   |
-| `value`          | Non         | <code>boolean</code>                                                                  | Valeur (correspond à 'checked' sur l'input).                                           |
+| Nom              | Obligatoire | Type                                                                                             | Description                                                                            |
+| ---------------- | ----------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                              | Classe CSS a ajouter au composant racine.                                              |
+| `disabled`       | Non         | <code>boolean</code>                                                                             | Désactive le Switch.                                                                   |
+| `iconOff`        | Non         | <code>ReactNode</code>                                                                           | Icône a afficher dans le Switch quand il est "off".                                    |
+| `iconOn`         | Non         | <code>ReactNode</code>                                                                           | Icône a afficher dans le Switch quand il est "on".                                     |
+| `id`             | Non         | <code>string</code>                                                                              | Id pour l'input[type=checkbox] posé par le Switch.                                     |
+| `name`           | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par le Switch.                                   |
+| `onChange`       | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur le Switch.                                                  |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                                  | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                                  | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                                  | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                                  | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;SwitchCss&gt;</code>                                                            | CSS.                                                                                   |
+| `value`          | Non         | <code>boolean</code>                                                                             | Valeur (correspond à 'checked' sur l'input).                                           |
 
 ## `Tabs`
 

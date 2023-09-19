@@ -82,13 +82,15 @@
 }
 
 .searchFields {
+    --checkbox-state-size: 28px;
+
     & > h6 {
         color: rgb(var(--color-primary));
         margin: 0 0 6px 0;
         font-weight: 500;
     }
 
-    & > div:first-of-type {
+    & > label:first-of-type {
         font-weight: bold;
         margin-left: -4px;
         margin-bottom: 10px;

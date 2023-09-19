@@ -1,7 +1,8 @@
 :root {
-    --checkbox-size: 20px;
+    --checkbox-size: 18px;
     --checkbox-outline-size: 2px;
-    --checkbox-state-ratio: 2;
+    --checkbox-state-size: 40px;
+    --checkbox-focus-ring-width: 3px;
 
     --checkbox-error-palette: var(--palette-red-600);
     --checkbox-state-palette: var(--palette-grey-600);
@@ -16,15 +17,17 @@
 
     --checkbox-error-hover-color: rgba(var(--checkbox-error-palette), var(--checkbox-hover-alpha));
     --checkbox-state-hover-color: rgba(var(--checkbox-state-palette), var(--checkbox-hover-alpha));
+
+    --checkbox-focus-ring-color: var(--checkbox-checked-color);
+    --checkbox-focus-ring-error-color: var(--checkbox-error-color);
 }
 
 .checkbox {
+    display: flex;
+    align-items: center;
     user-select: none;
-    border-radius: 50%;
-    position: relative;
-    height: calc(var(--checkbox-size) * var(--checkbox-state-ratio));
-    width: calc(var(--checkbox-size) * var(--checkbox-state-ratio));
-    overflow: hidden;
+    width: fit-content;
+    cursor: pointer;
 }
 
 .checkbox--loading * {
@@ -33,17 +36,18 @@
 
 .input {
     opacity: 0;
-    width: calc(var(--checkbox-size) * var(--checkbox-state-ratio));
-    height: calc(var(--checkbox-size) * var(--checkbox-state-ratio));
+    width: var(--checkbox-state-size);
+    height: var(--checkbox-state-size);
     position: absolute;
     margin: 0;
     z-index: 1;
-    cursor: pointer;
+    pointer-events: none;
 }
 
 .state {
-    width: calc(var(--checkbox-size) * var(--checkbox-state-ratio));
-    height: calc(var(--checkbox-size) * var(--checkbox-state-ratio));
+    position: relative;
+    width: var(--checkbox-state-size);
+    height: var(--checkbox-state-size);
     border-radius: 50%;
     transition: background-color var(--animation-duration) var(--animation-curve-default) 0s;
 }
@@ -52,8 +56,8 @@
     position: absolute;
     width: var(--checkbox-size);
     height: var(--checkbox-size);
-    top: calc((var(--checkbox-state-ratio) - 1) * var(--checkbox-size) / 2);
-    left: calc((var(--checkbox-state-ratio) - 1) * var(--checkbox-size) / 2);
+    top: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
+    left: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
     border: var(--checkbox-outline-size) solid var(--checkbox-outline-color);
     box-sizing: border-box;
     border-radius: var(--checkbox-outline-size);
@@ -63,8 +67,13 @@
 
 span.check {
     font-size: calc(var(--checkbox-size) - var(--checkbox-outline-size));
-    margin: calc(-1 * var(--checkbox-outline-size) / var(--checkbox-state-ratio));
+    margin: calc(var(--checkbox-outline-size) / -2);
     clip-path: inset(0 50% 0 50%);
+}
+
+.label {
+    color: rgb(var(--color-black));
+    margin: 0 4px;
 }
 
 .checkbox--checked {
@@ -81,9 +90,7 @@ span.check {
 }
 
 .checkbox--disabled {
-    & .input {
-        cursor: auto;
-    }
+    cursor: auto;
 
     & .outline {
         border-color: var(--checkbox-disabled-color);
@@ -115,5 +122,28 @@ span.check {
 
     &.checkbox--checked .outline {
         background-color: var(--checkbox-error-color);
+    }
+}
+
+.input:focus + .state {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--checkbox-focus-ring-width) solid var(--checkbox-focus-ring-color);
+}
+
+.checkbox--error .input:focus + .state {
+    outline-color: var(--checkbox-focus-ring-error-color);
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--checkbox-focus-ring-width));
+    }
+    100% {
+        outline-width: var(--checkbox-focus-ring-width);
     }
 }

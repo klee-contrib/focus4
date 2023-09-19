@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {ChangeEvent, ReactNode} from "react";
+import {MouseEvent, ReactNode, useCallback} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -12,7 +12,7 @@ import checkboxCss, {CheckboxCss} from "./__style__/checkbox.css";
 export {checkboxCss, CheckboxCss};
 
 /** Props du Checkbox. */
-export interface CheckboxProps extends PointerEvents<HTMLInputElement> {
+export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Désactive la Checkbox. */
@@ -23,10 +23,12 @@ export interface CheckboxProps extends PointerEvents<HTMLInputElement> {
     indeterminate?: boolean;
     /** Id pour l'input[type=checkbox] posé par la Checkbox. */
     id?: string;
+    /** Libellé à poser à côté de la Checkbox. */
+    label?: ReactNode;
     /** Name pour l'input[type=checkbox] posé par la Checkbox. */
     name?: string;
     /** Handler appelé au clic sur la Checkbox. */
-    onChange?: (value: boolean, event: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
     /** CSS. */
     theme?: CSSProp<CheckboxCss>;
     /** Valeur (correspond à 'checked' sur l'input). */
@@ -42,6 +44,7 @@ export function Checkbox({
     error,
     id,
     indeterminate,
+    label,
     name,
     onChange,
     onPointerDown,
@@ -52,39 +55,53 @@ export function Checkbox({
     value
 }: CheckboxProps) {
     const theme = useTheme("RTCheckbox", checkboxCss, pTheme);
-    const {ref, handlePointerLeave, handlePointerUp} = useFixedBlurRef({onPointerLeave, onPointerUp});
+    const {ref, handlePointerLeave, handlePointerUp} = useFixedBlurRef<HTMLInputElement, HTMLLabelElement>({
+        onPointerLeave,
+        onPointerUp
+    });
     const loaded = useLoaded(disabled, value);
 
+    const handleToggle = useCallback(
+        (event: MouseEvent<HTMLInputElement>) => {
+            if (event.pageX !== 0 && event.pageY !== 0) {
+                ref.current?.blur();
+            }
+            if (!disabled && onChange) {
+                onChange(!value, event);
+            }
+        },
+        [disabled, onChange, value]
+    );
+
     return (
-        <Ripple
+        <label
+            className={classNames(
+                theme.checkbox({checked: value, disabled, error: !!error, loading: !loaded}),
+                className
+            )}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
             onPointerLeave={handlePointerLeave}
             onPointerUp={handlePointerUp}
-            rippleTarget={theme.state()}
         >
-            <div
-                className={classNames(
-                    theme.checkbox({checked: value, disabled, error: !!error, loading: !loaded}),
-                    className
-                )}
-            >
-                <input
-                    ref={ref}
-                    checked={value ?? false}
-                    className={theme.input()}
-                    disabled={disabled}
-                    id={id}
-                    name={name}
-                    onChange={e => onChange?.(!value, e)}
-                    type="checkbox"
-                />
+            <input
+                ref={ref}
+                checked={value ?? false}
+                className={theme.input()}
+                disabled={disabled}
+                id={id}
+                name={name}
+                onClick={handleToggle}
+                type="checkbox"
+            />
+            <Ripple disabled={disabled}>
                 <div className={theme.state()}>
                     <div className={theme.outline()}>
                         <FontIcon className={theme.check()}>{indeterminate ? "remove" : "check"}</FontIcon>
                     </div>
                 </div>
-            </div>
-        </Ripple>
+            </Ripple>
+            {label ? <span className={theme.label()}>{label}</span> : null}
+        </label>
     );
 }

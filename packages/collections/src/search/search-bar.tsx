@@ -5,7 +5,7 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
-import {fieldFor, SelectCheckbox, selectCheckboxCss} from "@focus4/forms";
+import {fieldFor, SelectCheckbox} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
 import {CSSProp, getIcon, springTransition, useTheme} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
@@ -248,28 +248,23 @@ export function SearchBar<T, C>({
                         {store.availableSearchFields.length > 0 ? (
                             <div className={theme.searchFields()}>
                                 <h6>{i18next.t(`${i18nPrefix}.search.bar.searchFields`)}</h6>
-                                <div className={selectCheckboxCss.option}>
-                                    <Checkbox
-                                        id="select-all"
-                                        onChange={() => {
-                                            if (
-                                                !store.searchFields ||
-                                                store.searchFields.length === store.availableSearchFields.length
-                                            ) {
-                                                store.searchFields = [];
-                                            } else {
-                                                store.searchFields = store.availableSearchFields.map(x => x);
-                                            }
-                                        }}
-                                        value={
+                                <Checkbox
+                                    label={i18next.t(`${i18nPrefix}.search.bar.selectAll`)}
+                                    onChange={() => {
+                                        if (
                                             !store.searchFields ||
                                             store.searchFields.length === store.availableSearchFields.length
+                                        ) {
+                                            store.searchFields = [];
+                                        } else {
+                                            store.searchFields = store.availableSearchFields.map(x => x);
                                         }
-                                    />
-                                    <label htmlFor="select-all">
-                                        {i18next.t(`${i18nPrefix}.search.bar.selectAll`)}
-                                    </label>
-                                </div>
+                                    }}
+                                    value={
+                                        !store.searchFields ||
+                                        store.searchFields.length === store.availableSearchFields.length
+                                    }
+                                />
                                 <SelectCheckbox<"string">
                                     onChange={fields => (store.searchFields = fields)}
                                     type="string"
