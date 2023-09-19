@@ -3,7 +3,7 @@ import {MouseEvent, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {useLoaded} from "../focus4.toolbox";
+import {useInputRef} from "../focus4.toolbox";
 import {PointerEvents} from "../utils/pointer-events";
 
 import {FontIcon} from "./font-icon";
@@ -12,7 +12,7 @@ import {Ripple} from "./ripple";
 import switchCss, {SwitchCss} from "./__style__/switch.css";
 export {switchCss, SwitchCss};
 
-export interface SwitchProps extends PointerEvents<HTMLDivElement> {
+export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Désactive le Switch. */
@@ -23,6 +23,8 @@ export interface SwitchProps extends PointerEvents<HTMLDivElement> {
     iconOn?: ReactNode;
     /** Id pour l'input[type=checkbox] posé par le Switch. */
     id?: string;
+    /** Libellé à poser à côté du Switch. */
+    label?: ReactNode;
     /** Name pour l'input[type=checkbox] posé par le Switch. */
     name?: string;
     /** Handler appelé au clic sur le Switch. */
@@ -40,6 +42,7 @@ export function Switch({
     className,
     disabled,
     id,
+    label,
     name,
     onChange,
     onPointerDown,
@@ -52,40 +55,46 @@ export function Switch({
     value
 }: SwitchProps) {
     const theme = useTheme("RTSwitch", switchCss, pTheme);
-    const loaded = useLoaded(disabled, value);
+    const {loaded, ref, handleOnClick, handlePointerLeave, handlePointerUp} = useInputRef({
+        disabled,
+        onChange,
+        onPointerLeave,
+        onPointerUp,
+        value
+    });
 
     return (
-        <Ripple
+        <label
+            className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
-            onPointerLeave={onPointerLeave}
-            onPointerUp={onPointerUp}
-            rippleTarget={theme.state()}
+            onPointerLeave={handlePointerLeave}
+            onPointerUp={handlePointerUp}
         >
-            <div className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}>
-                <input
-                    checked={value ?? false}
-                    className={theme.checkbox()}
-                    disabled={disabled}
-                    id={id}
-                    name={name}
-                    onClick={e => onChange?.(!value, e)}
-                    type="checkbox"
-                />
-                <div className={theme.track()}>
-                    <div className={theme.state()}>
-                        {value !== undefined ? (
-                            <div className={theme.outline()}>
-                                <div className={theme.thumb({icon: !!iconOff})} />
-                                {iconOn ? <FontIcon className={theme.icon({checked: true})}>{iconOn}</FontIcon> : null}
-                                {iconOff ? (
-                                    <FontIcon className={theme.icon({unchecked: true})}>{iconOff}</FontIcon>
-                                ) : null}
-                            </div>
-                        ) : null}
-                    </div>
+            <input
+                ref={ref}
+                checked={value ?? false}
+                className={theme.checkbox()}
+                disabled={disabled}
+                id={id}
+                name={name}
+                onClick={handleOnClick}
+                readOnly
+                type="checkbox"
+            />
+            <div className={theme.track()} />
+            <Ripple disabled={disabled}>
+                <div className={theme.state()}>
+                    {value !== undefined ? (
+                        <>
+                            <div className={theme.thumb({icon: !!iconOff})} />
+                            {iconOn ? <FontIcon className={theme.icon({checked: true})}>{iconOn}</FontIcon> : null}
+                            {iconOff ? <FontIcon className={theme.icon({unchecked: true})}>{iconOff}</FontIcon> : null}
+                        </>
+                    ) : null}
                 </div>
-            </div>
-        </Ripple>
+            </Ripple>
+            {label ? <span className={theme.label()}>{label}</span> : null}
+        </label>
     );
 }

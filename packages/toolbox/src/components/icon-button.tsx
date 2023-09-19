@@ -4,7 +4,7 @@ import {createElement, CSSProperties, MouseEventHandler, ReactNode} from "react"
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
-import {useFixedBlurRef} from "../utils/use-fixed-blur-ref";
+import {useInputRef} from "../utils/use-input-ref";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
@@ -55,7 +55,7 @@ export function IconButton({
     type = "button"
 }: IconButtonProps) {
     const theme = useTheme("RTIconButton", iconButtonCss, pTheme);
-    const {ref, handlePointerLeave, handlePointerUp} = useFixedBlurRef({onPointerLeave, onPointerUp});
+    const {ref, handlePointerLeave, handlePointerUp} = useInputRef({onPointerLeave, onPointerUp});
 
     const element = href ? "a" : "button";
 

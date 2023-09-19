@@ -31,5 +31,4 @@ export {Switch, SwitchCss, SwitchProps, switchCss} from "./components/switch";
 export {Tab, TabProps, Tabs, TabsCss, TabsProps, tabsCss} from "./components/tabs";
 export {TooltipCss, TooltipOptions, TooltipProps, tooltipCss, tooltipFactory} from "./components/tooltip";
 export {PointerEvents} from "./utils/pointer-events";
-export {useFixedBlurRef} from "./utils/use-fixed-blur-ref";
-export {useLoaded} from "./utils/use-loaded";
+export {useInputRef} from "./utils/use-input-ref";

@@ -2,9 +2,11 @@
     --switch-animation-curve: cubic-bezier(0.47, 1.64, 0.41, 1);
     --switch-animation-duration: 0.2s;
 
-    --switch-height: calc(3.2 * var(--unit));
+    --switch-height: 32px;
+    --switch-state-size: 40px;
 
-    --switch-track-length: calc(5.2 * var(--unit));
+    --switch-track-length: 52px;
+    --switch-track-border-size: 2px;
     --switch-track-on-color: rgb(var(--color-primary));
     --switch-track-off-color: rgba(var(--color-black), 0.12);
     --switch-track-disabled-color: rgba(var(--color-black), 0.09);
@@ -22,15 +24,19 @@
     --switch-hover-alpha: 0.12;
     --switch-state-color: rgb(var(--switch-state-palette));
     --switch-state-hover-color: rgba(var(--switch-state-palette), var(--switch-hover-alpha));
+
+    --switch-focus-ring-width: 3px;
+    --switch-focus-ring-offset: var(--switch-track-border-size);
+    --switch-focus-ring-color: var(--switch-track-on-color);
 }
 
 .switch {
-    user-select: none;
-    border-radius: calc(var(--switch-height) / 2);
-    width: calc(var(--switch-track-length));
-    height: var(--switch-height);
     position: relative;
-    margin: calc(var(--switch-height) / 8);
+    display: flex;
+    align-items: center;
+    user-select: none;
+    width: fit-content;
+    cursor: pointer;
 }
 
 .switch--loading * {
@@ -39,33 +45,34 @@
 
 .checkbox {
     opacity: 0;
-    z-index: 1;
+    position: absolute;
     width: calc(var(--switch-track-length));
     height: var(--switch-height);
-    position: absolute;
-    cursor: pointer;
-    margin: 0;
+    margin: calc((var(--switch-state-size) - var(--switch-height)) / 2);
+    z-index: 1;
+    pointer-events: none;
 }
 
 .track {
-    position: relative;
-    height: 100%;
-    width: 100%;
+    width: calc(var(--switch-track-length));
+    height: var(--switch-height);
+    margin: calc((var(--switch-state-size) - var(--switch-height)) / 2);
     background-color: var(--switch-track-off-color);
     border-radius: calc(var(--switch-height) / 2);
     transition: background-color var(--animation-duration) var(--animation-curve-default) 0s,
-        outline-color var(--animation-duration) linear 0s;
-    outline-offset: -2px;
+        border-color var(--animation-duration) var(--animation-curve-default) 0s;
+    border: var(--switch-track-border-size) solid var(--switch-thumb-off-color);
+    box-sizing: border-box;
 }
 
 .state {
     display: grid;
     place-items: center;
     position: absolute;
-    top: calc(var(--switch-height) / -8);
-    left: calc(var(--switch-height) / -8);
-    width: calc(var(--switch-height) * 1.25);
-    height: calc(var(--switch-height) * 1.25);
+    top: 0;
+    left: 0;
+    width: var(--switch-state-size);
+    height: var(--switch-state-size);
     border-radius: 50%;
     transition: transform var(--switch-animation-duration) var(--switch-animation-curve) 0s,
         background-color var(--animation-duration) var(--animation-curve-default) 0s;
@@ -74,16 +81,26 @@
     color: var(--switch-state-color);
 }
 
-.outline {
+.thumb {
     position: absolute;
-    top: calc(var(--switch-height) * 0.375);
-    left: calc(var(--switch-height) * 0.375);
+    top: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
+    left: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
+    transition: transform var(--switch-thumb-animation-duration) var(--animation-curve-default) 0s,
+        background-color var(--animation-duration) var(--animation-curve-default) 0s;
+    background-color: var(--switch-thumb-off-color);
+    width: calc(var(--switch-height) / 2);
+    height: calc(var(--switch-height) / 2);
+    border-radius: 50%;
+}
+
+.thumb--icon {
+    transform: scale(1.5);
 }
 
 span.icon {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
+    left: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
     transition: clip-path var(--animation-duration) var(--animation-curve-default) 0s;
     font-size: calc(var(--switch-height) / 2);
 }
@@ -98,18 +115,9 @@ span.icon {
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 }
 
-.thumb {
-    transition: transform var(--switch-thumb-animation-duration) var(--animation-curve-default) 0s,
-        background-color var(--animation-duration) var(--animation-curve-default) 0s;
-    position: absolute;
-    background-color: var(--switch-thumb-off-color);
-    width: calc(var(--switch-height) / 2);
-    height: calc(var(--switch-height) / 2);
-    border-radius: 50%;
-}
-
-.thumb--icon {
-    transform: scale(1.5);
+.label {
+    color: rgb(var(--color-black));
+    margin: 0 4px;
 }
 
 .switch--checked {
@@ -132,8 +140,8 @@ span.icon {
 
 .switch--checked:not(.switch--disabled) {
     & .track {
-        outline-color: var(--switch-track-on-color);
         background-color: var(--switch-track-on-color);
+        border-color: var(--switch-track-on-color);
     }
 
     & .thumb {
@@ -147,8 +155,8 @@ span.icon {
     }
 
     & .track {
-        outline-color: var(--switch-track-disabled-color);
         background-color: var(--switch-track-disabled-color);
+        border-color: var(--switch-thumb-disabled-color);
     }
 
     & .thumb {
@@ -166,4 +174,24 @@ span.icon {
 
 .switch:not(.switch--disabled):hover .state {
     background-color: var(--switch-state-hover-color);
+}
+
+.checkbox:focus + .track {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--switch-focus-ring-width) solid var(--switch-focus-ring-color);
+    outline-offset: var(--switch-focus-ring-offset);
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--switch-focus-ring-width));
+    }
+    100% {
+        outline-width: var(--switch-focus-ring-width);
+    }
 }

@@ -1,9 +1,10 @@
 import classNames from "classnames";
-import {MouseEvent, ReactNode, useCallback} from "react";
+import {MouseEvent, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents, useFixedBlurRef, useLoaded} from "../focus4.toolbox";
+import {PointerEvents} from "../utils/pointer-events";
+import {useInputRef} from "../utils/use-input-ref";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
@@ -55,23 +56,16 @@ export function Checkbox({
     value
 }: CheckboxProps) {
     const theme = useTheme("RTCheckbox", checkboxCss, pTheme);
-    const {ref, handlePointerLeave, handlePointerUp} = useFixedBlurRef<HTMLInputElement, HTMLLabelElement>({
+    const {ref, loaded, handleOnClick, handlePointerLeave, handlePointerUp} = useInputRef<
+        HTMLInputElement,
+        HTMLLabelElement
+    >({
+        disabled,
+        onChange,
         onPointerLeave,
-        onPointerUp
+        onPointerUp,
+        value
     });
-    const loaded = useLoaded(disabled, value);
-
-    const handleToggle = useCallback(
-        (event: MouseEvent<HTMLInputElement>) => {
-            if (event.pageX !== 0 && event.pageY !== 0) {
-                ref.current?.blur();
-            }
-            if (!disabled && onChange) {
-                onChange(!value, event);
-            }
-        },
-        [disabled, onChange, value]
-    );
 
     return (
         <label
@@ -91,7 +85,8 @@ export function Checkbox({
                 disabled={disabled}
                 id={id}
                 name={name}
-                onClick={handleToggle}
+                onClick={handleOnClick}
+                readOnly
                 type="checkbox"
             />
             <Ripple disabled={disabled}>
