@@ -74,7 +74,7 @@ export function Switch({
             <input
                 ref={ref}
                 checked={value ?? false}
-                className={theme.checkbox()}
+                className={theme.input()}
                 disabled={disabled}
                 id={id}
                 name={name}

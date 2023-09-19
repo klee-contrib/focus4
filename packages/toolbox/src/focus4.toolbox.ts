@@ -1,3 +1,5 @@
+import "./components/__style__/variables.css";
+
 export {Autocomplete, AutocompleteCss, AutocompleteProps, autocompleteCss} from "./components/autocomplete";
 export {Button, ButtonCss, ButtonProps, buttonCss} from "./components/button";
 export {Calendar, CalendarCss, CalendarProps, calendarCss} from "./components/calendar";

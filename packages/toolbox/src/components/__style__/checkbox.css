@@ -2,24 +2,6 @@
     --checkbox-size: 18px;
     --checkbox-outline-size: 2px;
     --checkbox-state-size: 40px;
-    --checkbox-focus-ring-width: 3px;
-
-    --checkbox-error-palette: var(--palette-red-600);
-    --checkbox-state-palette: var(--palette-grey-600);
-    --checkbox-hover-alpha: 0.12;
-
-    --checkbox-check-color: rgb(var(--color-white));
-    --checkbox-checked-color: rgb(var(--color-primary));
-    --checkbox-error-color: rgb(var(--checkbox-error-palette));
-    --checkbox-disabled-color: rgb(var(--palette-grey-400));
-    --checkbox-outline-color: rgb(var(--palette-grey-800));
-    --checkbox-state-color: rgb(var(--checkbox-state-palette));
-
-    --checkbox-error-hover-color: rgba(var(--checkbox-error-palette), var(--checkbox-hover-alpha));
-    --checkbox-state-hover-color: rgba(var(--checkbox-state-palette), var(--checkbox-hover-alpha));
-
-    --checkbox-focus-ring-color: var(--checkbox-checked-color);
-    --checkbox-focus-ring-error-color: var(--checkbox-error-color);
 }
 
 .checkbox {
@@ -58,7 +40,7 @@
     height: var(--checkbox-size);
     top: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
     left: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
-    border: var(--checkbox-outline-size) solid var(--checkbox-outline-color);
+    border: var(--checkbox-outline-size) solid var(--input-outline-color);
     box-sizing: border-box;
     border-radius: var(--checkbox-outline-size);
     transition: background-color var(--animation-duration) var(--animation-curve-default) 0s,
@@ -67,23 +49,24 @@
 
 span.check {
     font-size: calc(var(--checkbox-size) - var(--checkbox-outline-size));
+    font-weight: bold;
     margin: calc(var(--checkbox-outline-size) / -2);
     clip-path: inset(0 50% 0 50%);
 }
 
 .label {
-    color: rgb(var(--color-black));
+    color: var(--input-text-color);
     margin: 0 4px;
 }
 
 .checkbox--checked {
     & .outline {
-        border-color: var(--checkbox-checked-color);
-        background-color: var(--checkbox-checked-color);
+        border-color: var(--input-on-color);
+        background-color: var(--input-on-color);
     }
 
     & span.check {
-        color: var(--checkbox-check-color);
+        color: var(--input-on-accent-color);
         clip-path: inset(0 0 0 0);
         transition: clip-path var(--animation-duration) var(--animation-curve-default) 0s;
     }
@@ -93,35 +76,31 @@ span.check {
     cursor: auto;
 
     & .outline {
-        border-color: var(--checkbox-disabled-color);
-    }
-
-    & .check {
-        color: var(--checkbox-check-color);
+        border-color: var(--input-disabled-color);
     }
 }
 
 .checkbox--checked.checkbox--disabled .outline {
-    background-color: var(--checkbox-disabled-color);
+    background-color: var(--input-disabled-color);
 }
 
 .checkbox:hover:not(.checkbox--disabled) .state {
-    color: var(--checkbox-state-color);
-    background-color: var(--checkbox-state-hover-color);
+    color: var(--input-state-color);
+    background-color: var(--input-state-hover-color);
 }
 
 .checkbox--error:not(.checkbox--disabled):hover .state {
-    color: var(--checkbox-error-color);
-    background-color: var(--checkbox-error-hover-color);
+    color: var(--input-error-color);
+    background-color: var(--input-error-hover-color);
 }
 
 .checkbox--error:not(.checkbox--disabled) {
     & .outline {
-        border-color: var(--checkbox-error-color);
+        border-color: var(--input-error-color);
     }
 
     &.checkbox--checked .outline {
-        background-color: var(--checkbox-error-color);
+        background-color: var(--input-error-color);
     }
 }
 
@@ -129,11 +108,11 @@ span.check {
     animation-name: focus;
     animation-duration: var(--animation-duration);
     animation-timing-function: var(--animation-curve-focus-ring);
-    outline: var(--checkbox-focus-ring-width) solid var(--checkbox-focus-ring-color);
+    outline: var(--input-focus-ring-width) solid var(--input-focus-ring-color);
 }
 
 .checkbox--error .input:focus + .state {
-    outline-color: var(--checkbox-focus-ring-error-color);
+    outline-color: var(--input-focus-ring-error-color);
 }
 
 @keyframes focus {
@@ -141,9 +120,9 @@ span.check {
         outline-width: 0px;
     }
     50% {
-        outline-width: calc(2 * var(--checkbox-focus-ring-width));
+        outline-width: calc(2 * var(--input-focus-ring-width));
     }
     100% {
-        outline-width: var(--checkbox-focus-ring-width);
+        outline-width: var(--input-focus-ring-width);
     }
 }

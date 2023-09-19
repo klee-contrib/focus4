@@ -34,56 +34,51 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
 }: RippleProps<T>) {
     const theme = useTheme("RTRipple", rippleCss, className ? {ripple: className} : {});
 
-    const rippleState = useRef({
+    const state = useRef({
         isPointerOut: false,
-        isFinishing: false,
-        animation: undefined as Animation | undefined,
-        element: null as HTMLDivElement | null
+        isFinishing: new Set<HTMLDivElement>(),
+        ripples: new Map<HTMLDivElement, Animation>()
     });
 
-    const getOptions = useCallback(function getOptions() {
+    const getOptions = useCallback(function getOptions(ripple: HTMLDivElement) {
         return {
             easing: "ease-in-out",
             duration: toMs(
-                getComputedStyle(
-                    rippleState.current?.element?.parentElement ?? document.documentElement
-                ).getPropertyValue("--ripple-duration")
+                getComputedStyle(ripple?.parentElement ?? document.documentElement).getPropertyValue(
+                    "--ripple-duration"
+                )
             )
         };
     }, []);
 
-    const onRippleFinish = useCallback(function onRippleFinish() {
-        if (!rippleState.current.element || !rippleState.current.isPointerOut || rippleState.current.isFinishing) {
+    const onRippleFinish = useCallback(function onRippleFinish(ripple: HTMLDivElement) {
+        if (!ripple || !state.current.isPointerOut || state.current.isFinishing.has(ripple)) {
             return;
         }
-        rippleState.current.isFinishing = true;
-        const anim = rippleState.current.element.animate([{opacity: 0.12}, {opacity: 0}], getOptions());
+        state.current.isFinishing.add(ripple);
+        const anim = ripple.animate([{opacity: 0.12}, {opacity: 0}], getOptions(ripple));
         anim.addEventListener(
             "finish",
             () => {
-                if (rippleState.current.element?.parentElement) {
-                    rippleState.current.element.parentElement.style.overflow = undefined!;
-                    rippleState.current.element.parentElement.style.clipPath = "";
-                    rippleState.current.element.remove();
-                    rippleState.current.element = null;
-                    rippleState.current.animation = undefined;
+                if (ripple?.parentElement) {
+                    ripple.parentElement.style.overflow = undefined!;
+                    ripple.parentElement.style.clipPath = "";
+                    ripple.remove();
+                    state.current.ripples.delete(ripple);
+                    state.current.isFinishing.delete(ripple);
                 }
             },
             {once: true}
         );
     }, []);
 
-    const rippleIn = useCallback(function rippleIn() {
-        rippleState.current.isPointerOut = false;
+    const clearRipples = useCallback(function clearRipples() {
+        state.current.isPointerOut = true;
+        state.current.ripples.forEach((_, ripple) => onRippleFinish(ripple));
     }, []);
 
-    const rippleOut = useCallback(function rippleOut() {
-        rippleState.current.isPointerOut = true;
-        onRippleFinish();
-    }, []);
-
-    const ripple = useCallback(
-        function ripple(lol: PointerEvent<T>) {
+    const addRipple = useCallback(
+        function addRipple(lol: PointerEvent<T>) {
             const target = lol.nativeEvent.target as HTMLElement;
             if (!!disabled || target?.closest("[disabled]")) {
                 return;
@@ -94,8 +89,8 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
                 (rippleTarget ? lol.currentTarget.querySelector<HTMLElement>(`.${rippleTarget}`) : null) ??
                 lol.currentTarget;
 
-            rippleState.current.isPointerOut = false;
-            rippleState.current.element ??= document.createElement("div");
+            state.current.isPointerOut = false;
+            const ripple = document.createElement("div");
 
             const elementRect = element.getBoundingClientRect();
             const targetRect = (event.target as HTMLElement).getBoundingClientRect();
@@ -108,74 +103,65 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
             const b = oHeight + 2 * Math.abs(oHeight / 2 - y);
             const side = (a ** 2 + b ** 2) ** 0.5;
 
-            rippleState.current.element.className = classNames(theme.ripple(), className);
-            rippleState.current.element.style.top = `${y}px`;
-            rippleState.current.element.style.left = `${x}px`;
-            rippleState.current.element.style.width = `${side}px`;
-            rippleState.current.element.style.height = `${side}px`;
+            ripple.className = classNames(theme.ripple(), className);
+            ripple.style.top = `${y}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.width = `${side}px`;
+            ripple.style.height = `${side}px`;
 
-            if (!rippleState.current.element.parentElement) {
-                element.style.overflow = "hidden";
-                element.appendChild(rippleState.current.element);
-            }
+            element.style.overflow = "hidden";
+            element.appendChild(ripple);
 
-            if (!rippleState.current.animation) {
-                rippleState.current.animation = rippleState.current.element.animate(
-                    [
-                        {
-                            transform: "translate(-50%, -50%) scale(0)"
-                        },
-                        {
-                            transform: "translate(-50%, -50%) scale(1)"
-                        }
-                    ],
-                    {...getOptions(), fill: "forwards"}
-                );
-                rippleState.current.animation.addEventListener("finish", onRippleFinish, {
-                    once: true
-                });
-            } else {
-                for (const anim of rippleState.current.element.getAnimations()) {
-                    anim.cancel();
-                }
-                rippleState.current.animation.play();
-            }
+            const animation = ripple.animate(
+                [
+                    {
+                        transform: "translate(-50%, -50%) scale(0)"
+                    },
+                    {
+                        transform: "translate(-50%, -50%) scale(1)"
+                    }
+                ],
+                {...getOptions(ripple), fill: "forwards"}
+            );
+            animation.addEventListener("finish", () => onRippleFinish(ripple), {
+                once: true
+            });
 
-            rippleState.current.isFinishing = false;
+            state.current.ripples.set(ripple, animation);
         },
         [className, centered, disabled, rippleTarget]
     );
 
     const onPointerDown = useCallback(
         function onPointerDown(e: PointerEvent<T>) {
-            ripple(e);
+            addRipple(e);
             props.onPointerDown?.(e);
         },
-        [ripple, props.onPointerDown]
+        [addRipple, props.onPointerDown]
     );
 
     const onPointerEnter = useCallback(
         function onPointerEnter(e: PointerEvent<T>) {
-            rippleIn();
+            state.current.isPointerOut = false;
             props.onPointerEnter?.(e);
         },
-        [rippleIn, props.onPointerEnter]
+        [props.onPointerEnter]
     );
 
     const onPointerLeave = useCallback(
         function onPointerLeave(e: PointerEvent<T>) {
-            rippleOut();
+            clearRipples();
             props.onPointerLeave?.(e);
         },
-        [rippleOut, props.onPointerLeave]
+        [clearRipples, props.onPointerLeave]
     );
 
     const onPointerUp = useCallback(
         function onPointerUp(e: PointerEvent<T>) {
-            rippleOut();
+            clearRipples();
             props.onPointerUp?.(e);
         },
-        [rippleOut, props.onPointerUp]
+        [clearRipples, props.onPointerUp]
     );
 
     return cloneElement(children, {onPointerDown, onPointerEnter, onPointerLeave, onPointerUp});

@@ -5,8 +5,8 @@ import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react
 import {getEmptyImage} from "react-dnd-html5-backend";
 
 import {CollectionStore} from "@focus4/stores";
-import {getIcon, springTransition, ToBem} from "@focus4/styling";
-import {IconButton} from "@focus4/toolbox";
+import {springTransition, ToBem} from "@focus4/styling";
+import {Checkbox} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "../contextual-actions";
 import {useDragSource} from "../dnd-utils";
@@ -35,8 +35,6 @@ export interface LineWrapperProps<T> {
     dragItemType?: string;
     /** Affiche ou non la checkbox de sélection. */
     hasSelection?: boolean;
-    /** Préfixe i18n. Par défaut: "focus". */
-    i18nPrefix?: string;
     /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
     LineComponent: ComponentType<LineProps<T> & {ref?: Ref<any>}>;
     /** Configuration de la mosaïque (si applicable). */
@@ -57,7 +55,6 @@ export function LineWrapper<T>({
     domRef,
     draggedItems,
     dragItemType = "item",
-    i18nPrefix = "focus",
     LineComponent,
     mosaic,
     operationList,
@@ -167,12 +164,10 @@ export function LineWrapper<T>({
         >
             <LineComponent data={props.data} toggleDetail={toggleDetail} />
             {state.isSelectable ? (
-                <IconButton
+                <Checkbox
                     className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}
-                    icon={getIcon(`${i18nPrefix}.icons.line.${state.isSelected ? "" : "un"}selected`)}
-                    onClick={state.onSelection}
-                    primary={state.isSelected}
-                    theme={{toggle: theme.toggle(), icon: theme.checkboxIcon()}}
+                    onChange={state.onSelection}
+                    value={state.isSelected}
                 />
             ) : null}
             {operationList?.(props.data)?.length ? (

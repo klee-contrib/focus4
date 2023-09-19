@@ -66,12 +66,9 @@
 }
 
 .checkbox {
+    --checkbox-state-size: 36px;
     top: calc(50% - 18px);
     left: 10px;
-}
-
-.toggle .checkboxIcon {
-    font-size: 24px;
 }
 
 .mosaic .checkbox {

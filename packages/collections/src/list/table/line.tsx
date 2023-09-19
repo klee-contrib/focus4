@@ -4,8 +4,8 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {getIcon, ToBem} from "@focus4/styling";
-import {IconButton} from "@focus4/toolbox";
+import {ToBem} from "@focus4/styling";
+import {Checkbox} from "@focus4/toolbox";
 
 import {TableColumn} from "./header";
 
@@ -86,14 +86,7 @@ export function TableLine<T>({
         >
             {props.hasSelection ? (
                 <td className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}>
-                    {state.isSelectable ? (
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.line.${state.isSelected ? "" : "un"}selected`)}
-                            onClick={state.onSelection}
-                            primary={state.isSelected}
-                            theme={{toggle: theme.toggle(), icon: theme.checkboxIcon()}}
-                        />
-                    ) : null}
+                    {state.isSelectable ? <Checkbox onChange={state.onSelection} value={state.isSelected} /> : null}
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (

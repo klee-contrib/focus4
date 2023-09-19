@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, getIcon, useTheme} from "@focus4/styling";
-import {Button, ButtonMenu, IconButton, Input, MenuItem} from "@focus4/toolbox";
+import {Button, ButtonMenu, Checkbox, IconButton, Input, MenuItem} from "@focus4/toolbox";
 
 import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 
@@ -154,10 +154,11 @@ export function ActionBar<T>({
                 <div className={theme.buttons()}>
                     {/** Bouton de sélection (case à cocher). */}
                     {hasSelection ? (
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.actionBar.${store.selectionStatus}`)}
-                            onClick={store.toggleAll}
-                            theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
+                        <Checkbox
+                            indeterminate={store.selectionStatus === "partial"}
+                            onChange={store.toggleAll}
+                            theme={{checkbox: theme.selectionToggle()}}
+                            value={store.selectionStatus !== "none"}
                         />
                     ) : null}
 

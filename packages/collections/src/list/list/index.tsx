@@ -218,7 +218,6 @@ export function List<T>({
                     draggedItems={hasDragAndDrop ? state.draggedItems : undefined}
                     dragItemType={dragItemType}
                     hasSelection={store ? hasSelection : undefined}
-                    i18nPrefix={i18nPrefix}
                     LineComponent={Component}
                     mosaic={state.mode === "mosaic" ? mosaic : undefined}
                     operationList={operationList}

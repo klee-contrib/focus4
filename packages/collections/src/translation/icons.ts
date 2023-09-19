@@ -12,21 +12,9 @@ export const icons = {
             library: "material",
             name: "arrow_drop_up"
         },
-        none: {
-            library: "material",
-            name: "check_box_outline_blank"
-        },
-        partial: {
-            library: "material",
-            name: "indeterminate_check_box"
-        },
         search: {
             library: "material",
             name: "search"
-        },
-        selected: {
-            library: "material",
-            name: "check_box"
         }
     },
     contextualActions: {
@@ -67,16 +55,6 @@ export const icons = {
         close: {
             library: "material",
             name: "keyboard_arrow_up"
-        }
-    },
-    line: {
-        selected: {
-            library: "material",
-            name: "check_box"
-        },
-        unselected: {
-            library: "material",
-            name: "check_box_outline_blank"
         }
     },
     list: {

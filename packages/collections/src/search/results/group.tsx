@@ -5,7 +5,7 @@ import {ComponentType, useContext} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
-import {IconButton} from "@focus4/toolbox";
+import {Checkbox, IconButton} from "@focus4/toolbox";
 
 import {ActionBar, List, ListBaseProps, ListProps, OperationListItem} from "../../list";
 
@@ -92,10 +92,11 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
             ) : (
                 <div className={theme.header()}>
                     {hasSelection ? (
-                        <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.actionBar.${state.store.selectionStatus}`)}
-                            onClick={state.store.toggleAll}
-                            theme={{toggle: theme.selectionToggle(), icon: theme.selectionIcon()}}
+                        <Checkbox
+                            indeterminate={state.store.selectionStatus === "partial"}
+                            onChange={state.store.toggleAll}
+                            theme={{checkbox: theme.selectionToggle()}}
+                            value={state.store.selectionStatus !== "none"}
                         />
                     ) : null}
                     <GroupHeader group={group} openedMap={openedMap} />

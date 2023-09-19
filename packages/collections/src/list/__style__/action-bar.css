@@ -38,12 +38,17 @@
     color: var(--action-bar-selection-color);
 }
 
-.selectionToggle > .selectionIcon:not([data-react-toolbox="tooltip"]) {
-    font-size: 24px;
-    vertical-align: initial;
+.selectionToggle {
+    --checkbox-state-size: 36px;
 }
 
-.bar--selection .selectionToggle > .selectionIcon,
+.bar--selection .selectionToggle {
+    --input-on-color: var(--action-bar-selection-color);
+    --input-on-accent-color: var(--action-bar-selection-background);
+    --input-state-color: rgb(var(--palette-grey-100));
+    --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-alpha));
+}
+
 .bar--selection button {
     color: var(--action-bar-selection-color) !important;
 }

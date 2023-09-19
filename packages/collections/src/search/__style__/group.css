@@ -1,6 +1,5 @@
-.selectionToggle > .selectionIcon:not([data-react-toolbox="tooltip"]) {
-    font-size: 24px;
-    vertical-align: initial;
+.selectionToggle {
+    --checkbox-state-size: 36px;
 }
 
 .header {

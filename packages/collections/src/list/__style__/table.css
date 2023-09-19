@@ -22,16 +22,13 @@
     padding: 0 8px 0 12px;
 }
 
-.checkbox button {
+.checkbox label {
+    --checkbox-state-size: 36px;
     opacity: 0;
 }
 
-.toggle .checkboxIcon {
-    font-size: 24px;
-}
-
-.checkbox--forceDisplay button,
-.table tr:hover td.checkbox button {
+.checkbox--forceDisplay label,
+.table tr:hover td.checkbox label {
     opacity: 1;
 }
 
