@@ -103,7 +103,7 @@ export interface LayoutStyleProviderProps {
     RTAutocomplete?: CSSProp<AutocompleteCss>;
     RTButton?: CSSProp<ButtonCss>;
     RTCalendar?: CSSProp<CalendarCss>;
-    RTCheckbox?: CSSProp<CheckboxCss>;
+    checkbox?: CSSProp<CheckboxCss>;
     RTChip?: CSSProp<ChipCss>;
     RTClock?: CSSProp<ClockCss>;
     RTDropdown?: CSSProp<DropdownCss>;
@@ -111,11 +111,11 @@ export interface LayoutStyleProviderProps {
     RTInput?: CSSProp<InputCss>;
     RTMenu?: CSSProp<MenuCss>;
     RTProgressBar?: CSSProp<ProgressBarCss>;
-    RTRadio?: CSSProp<RadioCss>;
-    RTRipple?: CSSProp<RippleCss>;
+    radio?: CSSProp<RadioCss>;
+    ripple?: CSSProp<RippleCss>;
     RTSlider?: CSSProp<SliderCss>;
     RTSnackbar?: CSSProp<SnackbarCss>;
-    RTSwitch?: CSSProp<SwitchCss>;
+    switch?: CSSProp<SwitchCss>;
     RTTabs?: CSSProp<TabsCss>;
     RTTooltip?: CSSProp<TooltipCss>;
 }

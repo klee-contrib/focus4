@@ -1,51 +1,35 @@
 import classNames from "classnames";
-import {Children, cloneElement, MouseEvent, ReactElement, ReactNode, useCallback, useRef} from "react";
+import {Children, cloneElement, MouseEvent, ReactElement, ReactNode} from "react";
 
-import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
+import {useInputRef} from "../utils/use-input-ref";
 
 import {Ripple} from "./ripple";
 
 import radioCss, {RadioCss} from "./__style__/radio.css";
 export {RadioCss, radioCss};
 
-interface RadioProps {
-    checked: boolean;
-    children?: ReactNode;
-    theme: ToBem<RadioCss>;
-}
-
-function Radio({checked, children, theme}: RadioProps) {
-    return (
-        <Ripple centered>
-            <div className={theme.radio({checked})} data-react-toolbox="radio">
-                {children}
-            </div>
-        </Ripple>
-    );
-}
-
 /** Props du Radio. */
 export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
     /** @internal */
     checked?: boolean;
+    /** Classe CSS a ajouter au composant racine. */
     className?: string;
-    /** Children to pass through the component. */
-    children?: ReactNode;
-    /** If true, the radio shown as disabled and cannot be modified. */
+    /** Désactive le RadioButton. */
     disabled?: boolean;
-    /** Text label to attach next to the radio element. */
-    label?: ReactNode;
-    /** The id of the field to set in the input radio. */
+    /** Id pour l'input[type=radio] posé par le RadioButton. */
     id?: string;
-    /** The name of the field to set in the input radio. */
+    /** Libellé à poser à côté de la Checkbox. */
+    label?: ReactNode;
+    /** Name pour l'input[type=radio] posé par le RadioButton. */
     name?: string;
     /** @internal */
     onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
     /** CSS. */
     theme?: CSSProp<RadioCss>;
-    /** Valeur. */
+    /** Valeur du RadioGroup quand ce RadioButton est sélectionné. */
     value: string;
 }
 
@@ -54,7 +38,6 @@ export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
  */
 export function RadioButton({
     checked = false,
-    children,
     className = "",
     disabled = false,
     label,
@@ -67,61 +50,59 @@ export function RadioButton({
     name,
     theme: pTheme
 }: RadioButtonProps) {
-    const theme = useTheme("RTRadio", radioCss, pTheme);
-    const inputNode = useRef<HTMLInputElement | null>(null);
-
-    const handleToggle = useCallback(
-        (event: MouseEvent<HTMLInputElement>) => {
-            if (event.pageX !== 0 && event.pageY !== 0) {
-                inputNode.current?.blur();
-            }
-            if (!disabled && onChange) {
-                onChange(!checked, event);
-            }
-        },
-        [disabled, onChange, checked]
-    );
+    const theme = useTheme("radio", radioCss, pTheme);
+    const {ref, loaded, handleOnClick, handlePointerLeave, handlePointerUp} = useInputRef<
+        HTMLInputElement,
+        HTMLLabelElement
+    >({
+        disabled,
+        onChange,
+        onPointerLeave,
+        onPointerUp,
+        value: checked
+    });
 
     return (
         <label
-            className={classNames(theme.field({disabled}), className)}
-            data-react-toolbox="radio"
+            className={classNames(theme.radio({checked, disabled, loading: !loaded}), className)}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
-            onPointerLeave={onPointerLeave}
-            onPointerUp={onPointerUp}
+            onPointerLeave={handlePointerLeave}
+            onPointerUp={handlePointerUp}
         >
             <input
-                ref={inputNode}
+                ref={ref}
                 checked={checked}
                 className={theme.input()}
                 disabled={disabled}
                 id={id}
                 name={name}
-                onClick={handleToggle}
+                onClick={handleOnClick}
                 readOnly
                 type="radio"
             />
-            <Radio checked={checked} theme={theme} />
-            {label ? (
-                <span className={theme.text()} data-react-toolbox="label">
-                    {label}
-                </span>
-            ) : null}
-            {children}
+            <Ripple disabled={disabled}>
+                <div className={theme.state()}>
+                    <div className={theme.outline()}>
+                        <div className={theme.dot()} />
+                    </div>
+                </div>
+            </Ripple>
+            {label ? <span className={theme.label()}>{label}</span> : null}
         </label>
     );
 }
 
 export interface RadioGroupProps {
+    /** Classe CSS a ajouter au composant racine. */
     className?: string;
-    /** Children to pass through the component. */
+    /** Les RadioButtons passés en enfant de ce composant seront ajoutés au groupe. */
     children?: ReactNode;
-    /** If true, the group will be displayed as disabled. */
+    /** Désactive les RadioButtons. */
     disabled?: boolean;
-    /** Callback function that will be invoked when the value changes. */
+    /** Handler appelé au clic sur un RadioButton. */
     onChange?: (value: string) => void;
-    /** Default value selected in the radio group. */
+    /** Valeur séléctionnée parmis les RadioButtons. */
     value?: string;
 }
 
@@ -130,7 +111,7 @@ export interface RadioGroupProps {
  */
 export function RadioGroup({className = "", children, disabled = false, onChange, value}: RadioGroupProps) {
     return (
-        <div className={className} data-react-toolbox="radio-group">
+        <div className={className}>
             {Children.map(children, child => {
                 if (!child) {
                     return child;

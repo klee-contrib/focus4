@@ -32,7 +32,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
     rippleTarget,
     ...props
 }: RippleProps<T>) {
-    const theme = useTheme("RTRipple", rippleCss, className ? {ripple: className} : {});
+    const theme = useTheme("ripple", rippleCss, className ? {ripple: className} : {});
 
     const state = useRef({
         isPointerOut: false,

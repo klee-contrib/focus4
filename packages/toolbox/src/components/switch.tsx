@@ -54,7 +54,7 @@ export function Switch({
     theme: pTheme,
     value
 }: SwitchProps) {
-    const theme = useTheme("RTSwitch", switchCss, pTheme);
+    const theme = useTheme("switch", switchCss, pTheme);
     const {loaded, ref, handleOnClick, handlePointerLeave, handlePointerUp} = useInputRef({
         disabled,
         onChange,

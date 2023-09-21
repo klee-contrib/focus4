@@ -22,8 +22,11 @@
     margin-bottom: -15px;
 }
 
-.field--edit .value > label[class^="checkbox_checkbox"] {
-    margin: -10px 0 0 -10px;
+.field--edit .value {
+    & > label[class^="checkbox_checkbox"],
+    & > div[class^="boolean-radio"] {
+        margin: -10px 0 0 -10px;
+    }
 }
 
 .field--edit.field--error [data-react-toolbox="input"] {

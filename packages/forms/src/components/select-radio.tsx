@@ -87,7 +87,6 @@ export function SelectRadio<T extends "number" | "string">({
                                 key={optVal || "undefined"}
                                 label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
-                                theme={{field: theme.option()}}
                                 value={`${optVal as string}`}
                             />
                         );

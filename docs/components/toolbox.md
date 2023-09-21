@@ -458,13 +458,13 @@ A utiliser avec RadioButton pour faire des radios. Les composants [`BooleanRadio
 
 ### Props
 
-| Nom         | Obligatoire | Type                                    | Description                                                    |
-| ----------- | ----------- | --------------------------------------- | -------------------------------------------------------------- |
-| `children`  | Non         | <code>ReactNode</code>                  | Children to pass through the component.                        |
-| `className` | Non         | <code>string</code>                     |                                                                |
-| `disabled`  | Non         | <code>boolean</code>                    | If true, the group will be displayed as disabled.              |
-| `onChange`  | Non         | <code>(value: string) =&gt; void</code> | Callback function that will be invoked when the value changes. |
-| `value`     | Non         | <code>string</code>                     | Default value selected in the radio group.                     |
+| Nom         | Obligatoire | Type                                    | Description                                                                 |
+| ----------- | ----------- | --------------------------------------- | --------------------------------------------------------------------------- |
+| `children`  | Non         | <code>ReactNode</code>                  | Les RadioButtons passés en enfant de ce composant seront ajoutés au groupe. |
+| `className` | Non         | <code>string</code>                     | Classe CSS a ajouter au composant racine.                                   |
+| `disabled`  | Non         | <code>boolean</code>                    | Désactive les RadioButtons.                                                 |
+| `onChange`  | Non         | <code>(value: string) =&gt; void</code> | Handler appelé au clic sur un RadioButton.                                  |
+| `value`     | Non         | <code>string</code>                     | Valeur séléctionnée parmis les RadioButtons.                                |
 
 ## `RadioButton`
 
@@ -475,19 +475,18 @@ A utiliser dans un RadioGroup.
 | Nom              | Obligatoire | Type                                                                                            | Description                                                                            |
 | ---------------- | ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `checked`        | Non         | <code>boolean</code>                                                                            | @internal                                                                              |
-| `children`       | Non         | <code>ReactNode</code>                                                                          | Children to pass through the component.                                                |
-| `className`      | Non         | <code>string</code>                                                                             |                                                                                        |
-| `disabled`       | Non         | <code>boolean</code>                                                                            | If true, the radio shown as disabled and cannot be modified.                           |
-| `id`             | Non         | <code>string</code>                                                                             | The id of the field to set in the input radio.                                         |
-| `label`          | Non         | <code>ReactNode</code>                                                                          | Text label to attach next to the radio element.                                        |
-| `name`           | Non         | <code>string</code>                                                                             | The name of the field to set in the input radio.                                       |
+| `className`      | Non         | <code>string</code>                                                                             | Classe CSS a ajouter au composant racine.                                              |
+| `disabled`       | Non         | <code>boolean</code>                                                                            | Désactive le RadioButton.                                                              |
+| `id`             | Non         | <code>string</code>                                                                             | Id pour l'input[type=radio] posé par le RadioButton.                                   |
+| `label`          | Non         | <code>ReactNode</code>                                                                          | Libellé à poser à côté de la Checkbox.                                                 |
+| `name`           | Non         | <code>string</code>                                                                             | Name pour l'input[type=radio] posé par le RadioButton.                                 |
 | `onChange`       | Non         | <code>(value: boolean, event: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | @internal                                                                              |
 | `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
 | `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                               | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
 | `theme`          | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                                                            | CSS.                                                                                   |
-| `value`          | **Oui**     | <code>string</code>                                                                             | Valeur.                                                                                |
+| `value`          | **Oui**     | <code>string</code>                                                                             | Valeur du RadioGroup quand ce RadioButton est sélectionné.                             |
 
 ## `Ripple`
 

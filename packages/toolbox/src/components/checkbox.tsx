@@ -55,7 +55,7 @@ export function Checkbox({
     theme: pTheme,
     value
 }: CheckboxProps) {
-    const theme = useTheme("RTCheckbox", checkboxCss, pTheme);
+    const theme = useTheme("checkbox", checkboxCss, pTheme);
     const {ref, loaded, handleOnClick, handlePointerLeave, handlePointerUp} = useInputRef<
         HTMLInputElement,
         HTMLLabelElement
