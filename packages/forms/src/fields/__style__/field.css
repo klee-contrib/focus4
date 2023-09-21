@@ -22,7 +22,7 @@
     margin-bottom: -15px;
 }
 
-.field--edit .value > div[class^="checkbox_checkbox"] {
+.field--edit .value > label[class^="checkbox_checkbox"] {
     margin: -10px 0 0 -10px;
 }
 

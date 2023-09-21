@@ -5,7 +5,7 @@ import {useState} from "react";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {Button, IconButton} from "@focus4/toolbox";
+import {Button, Checkbox, IconButton} from "@focus4/toolbox";
 
 import facetCss, {FacetCss} from "../__style__/facet.css";
 export {FacetCss, facetCss};
@@ -91,14 +91,11 @@ export function Facet({
                                 });
                                 return (
                                     <li key={item.code}>
-                                        <IconButton
-                                            className={theme.icon({selected})}
-                                            icon={getIcon(
-                                                `${i18nPrefix}.icons.facets.${
-                                                    selected ? "selected" : excluded ? "excluded" : "none"
-                                                }`
-                                            )}
-                                            onClick={clickHandler}
+                                        <Checkbox
+                                            className={theme.checkbox({selected})}
+                                            indeterminate={excluded}
+                                            onChange={clickHandler}
+                                            value={selected || excluded}
                                         />
                                         <div className={theme.label({excluded})} onClick={clickHandler}>
                                             {i18next.t(item.label)}

@@ -93,6 +93,14 @@
     margin-right: 9px;
 }
 
+.checkbox {
+    --checkbox-state-size: 24px;
+}
+
+.checkbox:not(.checkbox--selected) {
+    --input-on-color: rgb(var(--color-black));
+}
+
 .icon {
     width: 24px;
     height: 24px;
@@ -103,8 +111,4 @@
     transition: color 0.1s ease-in-out;
     line-height: 24px;
     vertical-align: top;
-}
-
-.icon--selected > span {
-    color: rgb(var(--color-primary));
 }
