@@ -95,17 +95,6 @@ Un radio oui/non pour un booléen.
 | `theme`    | Non         | <code>CSSProp&lt;BooleanRadioCss&gt;</code> | CSS.                                                   |
 | `value`    | Non         | <code>boolean</code>                        | Value.                                                 |
 
-## `ButtonHelp`
-
-Affiche un bouton pour ouvrir le centre d'aide (...).
-
-### Props
-
-| Nom          | Obligatoire | Type                | Description |
-| ------------ | ----------- | ------------------- | ----------- |
-| `blockName`  | **Oui**     | <code>string</code> |             |
-| `i18nPrefix` | Non         | <code>string</code> |             |
-
 ## `Display`
 
 Le composant d'affichage par défaut pour [toutes les fonctions d'affichage de champs](model/display-fields.md). Résout les listes de références, les autocompletes via `keyResolver`, les traductions i18n et peut afficher des listes de valeurs.
@@ -280,7 +269,6 @@ Le composant standard pour afficher un bloc avec un titre, des actions et un con
 | `onClickCancel`   | Non         | <code>() =&gt; void</code>                                     | Appelé au clic sur le bouton "Annuler".                                                          |
 | `onClickEdit`     | Non         | <code>() =&gt; void</code>                                     | Appelé au clic sur le bouton "Modifier".                                                         |
 | `save`            | Non         | <code>() =&gt; void</code>                                     | Handler du bouton save.                                                                          |
-| `showHelp`        | Non         | <code>boolean</code>                                           | Affiche le bouton d'aide.                                                                        |
 | `theme`           | Non         | <code>CSSProp&lt;PanelCss&gt;</code>                           | CSS.                                                                                             |
 | `title`           | Non         | <code>string</code>                                            | Titre du panel.                                                                                  |
 

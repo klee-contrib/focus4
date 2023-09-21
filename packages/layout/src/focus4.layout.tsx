@@ -117,7 +117,7 @@ export interface LayoutStyleProviderProps {
     RTSnackbar?: CSSProp<SnackbarCss>;
     switch?: CSSProp<SwitchCss>;
     RTTabs?: CSSProp<TabsCss>;
-    RTTooltip?: CSSProp<TooltipCss>;
+    tooltip?: CSSProp<TooltipCss>;
 }
 
 /**

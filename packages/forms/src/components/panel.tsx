@@ -5,7 +5,6 @@ import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "r
 import {CSSProp, ScrollspyContext, useTheme} from "@focus4/styling";
 import {ProgressBar} from "@focus4/toolbox";
 
-import {ButtonHelp} from "./button-help";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
 import panelCss, {PanelCss} from "./__style__/panel.css";
@@ -23,8 +22,6 @@ export interface PanelProps extends PanelButtonsProps {
     hideProgressBar?: boolean;
     /** Identifiant du panel. Par défaut : premier mot du titre, si renseigné. */
     name?: string;
-    /** Affiche le bouton d'aide. */
-    showHelp?: boolean;
     /** CSS. */
     theme?: CSSProp<PanelCss>;
     /** Titre du panel. */
@@ -45,7 +42,6 @@ export function Panel({
     onClickCancel,
     onClickEdit,
     save,
-    showHelp,
     title,
     theme: pTheme
 }: PropsWithChildren<PanelProps>) {
@@ -92,7 +88,6 @@ export function Panel({
                     {title ? (
                         <h3>
                             <span>{i18next.t(title)}</span>
-                            {showHelp && name ? <ButtonHelp blockName={name} i18nPrefix={i18nPrefix} /> : null}
                         </h3>
                     ) : null}
                     {areButtonsTop ? buttons : null}

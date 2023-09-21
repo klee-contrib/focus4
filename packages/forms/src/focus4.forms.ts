@@ -5,7 +5,6 @@ export {
     BooleanRadio,
     BooleanRadioCss,
     BooleanRadioProps,
-    ButtonHelp,
     Display,
     DisplayCss,
     DisplayProps,

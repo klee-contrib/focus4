@@ -1,13 +1,10 @@
 import {ComponentType, ReactElement, ReactNode, SyntheticEvent} from "react";
 
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, tooltipFactory} from "@focus4/toolbox";
+import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, Tooltip} from "@focus4/toolbox";
 
 import contextualActionsCss, {ContextualActionsCss} from "./__style__/contextual-actions.css";
 export {contextualActionsCss, ContextualActionsCss};
-
-const TooltipButton = tooltipFactory()(Button);
-const TooltipIconButton = tooltipFactory()(IconButton);
 
 /** Props passée à un composant d'action custom. */
 export interface OperationListItemComponentProps<T> {
@@ -29,7 +26,7 @@ export type OperationListItem<T> =
           label?: string;
           /** L'icône du bouton */
           icon?: ReactNode;
-          /** Type d'affichage pour l'action. Seul "secondary" sera pris en compte pour un mosaïque. Par défaut : "icon-label". */
+          /** Type d'affichage pour l'action. Seul "secondary" sera pris en compte pour une mosaïque. Par défaut : "icon-label". */
           type?: "icon-label" | "icon-tooltip" | "icon" | "label" | "secondary";
       };
 
@@ -79,15 +76,10 @@ export function ContextualActions({
             if (isComponent(Operation)) {
                 customComponents.push(<Operation data={data} onClickMenu={onClickMenu} onHideMenu={onHideMenu} />);
             } else if (Operation.type !== "secondary") {
+                const hasTooltip = (isMosaic && !!Operation.label) || Operation.type === "icon-tooltip";
                 const FinalButton =
-                    isMosaic && Operation.label
-                        ? TooltipButton
-                        : (isMosaic && !Operation.label) || !Operation.type || Operation.type.includes("label")
-                        ? Button
-                        : Operation.type === "icon"
-                        ? IconButton
-                        : TooltipIconButton;
-                primaryActions.push(
+                    !isMosaic && (Operation.type === "icon" || Operation.type === "icon-tooltip") ? IconButton : Button;
+                const button = (
                     <FinalButton
                         key={key}
                         floating={isMosaic ? true : undefined}
@@ -97,13 +89,9 @@ export function ContextualActions({
                         label={!isMosaic && FinalButton === Button ? Operation.label : undefined}
                         onClick={(e: any) => handleAction(key, e)}
                         primary={isMosaic}
-                        tooltip={
-                            FinalButton === TooltipButton || FinalButton === TooltipIconButton
-                                ? Operation.label
-                                : undefined
-                        }
                     />
                 );
+                primaryActions.push(hasTooltip ? <Tooltip tooltip={Operation.label}>{button}</Tooltip> : button);
             } else if (Operation.label) {
                 secondaryActions.push({
                     icon: Operation.icon,

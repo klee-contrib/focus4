@@ -22,7 +22,7 @@ import {Button, ButtonProps} from "./button";
 import {FontIcon} from "./font-icon";
 import {IconButton} from "./icon-button";
 import {Ripple} from "./ripple";
-import {tooltipFactory, TooltipProps} from "./tooltip";
+import {Tooltip, TooltipProps} from "./tooltip";
 
 import menuCss, {MenuCss} from "./__style__/menu.css";
 export {menuCss, MenuCss};
@@ -30,11 +30,12 @@ export {menuCss, MenuCss};
 /** Props du ButtonMenu, qui est un simple menu React-Toolbox avec un bouton personnalisable. */
 export interface ButtonMenuProps extends MenuProps {
     /** Les props du bouton. */
-    button: ButtonProps &
-        TooltipProps & {
-            /** L'icône à afficher quand le bouton est ouvert. */
-            openedIcon?: ReactNode;
-        };
+    button: ButtonProps & {
+        /** A renseigner pour poser une tooltip autour du bouton. */
+        tooltip?: TooltipProps;
+        /** L'icône à afficher quand le bouton est ouvert. */
+        openedIcon?: ReactNode;
+    };
     onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -116,8 +117,6 @@ export interface MenuDividerProps {
     /** Classnames object defining the component style. */
     theme: CSSProp<MenuCss>;
 }
-
-const TooltipButton = tooltipFactory()(Button);
 
 /**
  * Séparateur dans un Menu, entre des MenuItems.
@@ -477,10 +476,10 @@ export function ButtonMenu({
         };
     }, [position, buttonHeight]);
 
-    const FinalButton = buttonProps.tooltip ? TooltipButton : Button;
+    const button = <Button {...buttonProps} icon={opened && openedIcon ? openedIcon : icon} onClick={clickHandler} />;
     return (
         <div ref={ref} data-focus="button-menu" style={{position: "relative", display: "inline-block"}}>
-            <FinalButton {...buttonProps} icon={opened && openedIcon ? openedIcon : icon} onClick={clickHandler} />
+            {buttonProps.tooltip ? <Tooltip {...buttonProps.tooltip}>{button}</Tooltip> : button}
             <div style={menuStyle}>
                 <Menu {...menuProps} active={opened} onHide={hideHandler} position={position} theme={menuProps.theme}>
                     {menuProps.children}

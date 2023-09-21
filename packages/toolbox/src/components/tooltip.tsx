@@ -1,255 +1,204 @@
-import {Component, ComponentType, forwardRef, HTMLAttributes, PointerEvent, ReactNode} from "react";
+import {cloneElement, PointerEvent, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from "react";
 import {createPortal} from "react-dom";
 
-import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
 import tooltipCss, {TooltipCss} from "./__style__/tooltip.css";
 export {tooltipCss, TooltipCss};
 
-const POSITION = {
-    BOTTOM: "bottom",
-    HORIZONTAL: "horizontal",
-    LEFT: "left",
-    RIGHT: "right",
-    TOP: "top",
-    VERTICAL: "vertical"
-} as const;
-
-export interface TooltipOptions {
-    tooltipDelay?: number;
-    tooltipHideOnClick?: boolean;
-    tooltipPassthrough?: boolean;
-    tooltipPosition?: "bottom" | "horizontal" | "left" | "right" | "top" | "vertical";
-    tooltipShowOnClick?: boolean;
+export interface TooltipProps<T extends HTMLElement = HTMLElement> extends PointerEvents<T> {
+    /** Composant enfant autour duquel poser la tooltip. */
+    children: ReactElement;
+    /** Comportement de la tooltip au clic. Par défaut : "hide". */
+    clickBehavior?: "hide" | "none" | "show";
+    /** Position de la tooltip ("vertical" = "top" ou "bottom", "horizontal" = "left" ou "right"). Par défaut : "vertical" */
+    position?: "bottom" | "horizontal" | "left" | "right" | "top" | "vertical";
+    /** Contenu de la tooltip. */
+    tooltip: ReactNode;
+    /** CSS. */
     theme?: CSSProp<TooltipCss>;
 }
 
-export interface TooltipProps extends Omit<TooltipOptions, "theme">, PointerEvents<HTMLElement> {
-    children?: ReactNode;
-    tooltip?: ReactNode;
-    tooltipTheme?: CSSProp<TooltipCss>;
-}
-
 /**
- * Une factory pour ajouter une tooltip à un composant ou un élément HTML. Cela permet de créer une version du même composant/élément avec une tooltip de la façon suivante :
- *
- *  ```tsx
- *  const TooltippedButton = tooltipFactory()(Button);
- *
- *  <TooltippedButton label="Click" tooltip="Click me" />; // Les props de la tooltip sont ajoutées aux props existantes du composant.
- *  ```
+ * Pose une tooltip autour de l'élement enfant qui s'activera au survol.
  */
-export function tooltipFactory({
-    tooltipDelay = 0,
-    tooltipHideOnClick = true,
-    tooltipPassthrough = true,
-    tooltipPosition = POSITION.VERTICAL,
-    tooltipShowOnClick = false,
-    theme: oTheme
-}: TooltipOptions = {}) {
-    return function Tooltip<P = HTMLAttributes<HTMLElement>>(ComposedComponent: ComponentType<P> | string) {
-        return forwardRef<TooltippedComponent<P>, P & TooltipProps>((p, ref) => {
-            const theme = useTheme("RTTooltip", tooltipCss, p.tooltipTheme, oTheme);
-            return (
-                <TooltippedComponent
-                    ref={ref}
-                    tooltipDelay={tooltipDelay}
-                    tooltipHideOnClick={tooltipHideOnClick}
-                    tooltipPassthrough={tooltipPassthrough}
-                    tooltipPosition={tooltipPosition}
-                    tooltipShowOnClick={tooltipShowOnClick}
-                    {...p}
-                    ComposedComponent={ComposedComponent}
-                    tooltipTheme={theme}
-                />
-            );
-        });
-    };
-}
+export function Tooltip({
+    children,
+    clickBehavior = "hide",
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
+    position: pPosition = "vertical",
+    tooltip,
+    theme: pTheme
+}: TooltipProps) {
+    const [active, setActive] = useState(false);
+    const [position, setPosition] = useState(pPosition);
+    const [visible, setVisible] = useState(false);
+    const [left, setLeft] = useState(0);
+    const [top, setTop] = useState(0);
 
-class TooltippedComponent<P> extends Component<
-    TooltipProps & {ComposedComponent: ComponentType<P> | string} & {tooltipTheme: ToBem<TooltipCss>}
-> {
-    // eslint-disable-next-line react/state-in-constructor
-    state = {
-        active: false,
-        position: this.props.tooltipPosition!,
-        visible: false,
-        left: 0,
-        top: 0
-    };
+    const timeout = useRef<NodeJS.Timeout>();
+    const tooltipNode = useRef<HTMLSpanElement>(null);
 
-    timeout?: NodeJS.Timeout | number;
-    tooltipNode?: HTMLSpanElement | null;
-
-    componentWillUnmount() {
-        if (this.tooltipNode) {
-            this.tooltipNode?.removeEventListener("transitionend", this.onTransformEnd);
-        }
-        if (this.timeout) {
-            clearTimeout(this.timeout as number);
-        }
-    }
-
-    onTransformEnd = (e: any) => {
+    const onTransformEnd = useCallback(function onTransformEnd(e: any) {
         if (e.propertyName === "transform") {
-            this.tooltipNode?.removeEventListener("transitionend", this.onTransformEnd);
-            this.setState({visible: false});
+            tooltipNode.current?.removeEventListener("transitionend", onTransformEnd);
+            setVisible(false);
         }
-    };
+    }, []);
 
-    getPosition(element: HTMLElement) {
-        const {tooltipPosition} = this.props;
-        if (tooltipPosition === POSITION.HORIZONTAL) {
-            const origin = element.getBoundingClientRect();
-            const ww = window.innerWidth || document.documentElement.offsetWidth;
-            const toRight = origin.left < ww / 2 - origin.width / 2;
-            return toRight ? POSITION.RIGHT : POSITION.LEFT;
-        }
-        if (tooltipPosition === POSITION.VERTICAL) {
-            const origin = element.getBoundingClientRect();
-            const wh = window.innerHeight || document.documentElement.offsetHeight;
-            const toBottom = origin.top < wh / 2 - origin.height / 2;
-            return toBottom ? POSITION.BOTTOM : POSITION.TOP;
-        }
-        return tooltipPosition;
-    }
+    useEffect(
+        () => () => {
+            tooltipNode.current?.removeEventListener("transitionend", onTransformEnd);
+            if (timeout.current) {
+                clearTimeout(timeout.current);
+            }
+        },
+        []
+    );
 
-    handlePointerEnter = (event: PointerEvent<HTMLElement>) => {
-        this.activate(this.calculatePosition(event.currentTarget as HTMLElement));
-        if (this.props.onPointerEnter) {
-            this.props.onPointerEnter(event);
-        }
-    };
+    const getPosition = useCallback(
+        function getPosition(element: HTMLElement) {
+            if (pPosition === "horizontal") {
+                const origin = element.getBoundingClientRect();
+                const ww = window.innerWidth || document.documentElement.offsetWidth;
+                const toRight = origin.left < ww / 2 - origin.width / 2;
+                return toRight ? "right" : "left";
+            } else if (pPosition === "vertical") {
+                const origin = element.getBoundingClientRect();
+                const wh = window.innerHeight || document.documentElement.offsetHeight;
+                const toBottom = origin.top < wh / 2 - origin.height / 2;
+                return toBottom ? "bottom" : "top";
+            } else {
+                return pPosition;
+            }
+        },
+        [pPosition]
+    );
 
-    handlePointerLeave = (event: PointerEvent<HTMLElement>) => {
-        this.deactivate();
-        if (this.props.onPointerLeave) {
-            this.props.onPointerLeave(event);
+    const activate = useCallback(function activate({
+        top: newTop,
+        left: newLeft,
+        position: newPosition
+    }: NonNullable<ReturnType<typeof calculatePosition>>) {
+        if (timeout.current) {
+            clearTimeout(timeout.current);
         }
-    };
+        setVisible(true);
+        setPosition(newPosition);
+        tooltipNode.current?.removeEventListener("transitionend", onTransformEnd);
+        timeout.current = setTimeout(() => {
+            setActive(true);
+            setTop(newTop);
+            setLeft(newLeft);
+        }, 100);
+    },
+    []);
 
-    handlePointerUp = (event: PointerEvent<HTMLElement>) => {
-        if (this.props.tooltipHideOnClick && this.state.active) {
-            this.deactivate();
-        }
+    const deactivate = useCallback(
+        function deactivate() {
+            if (timeout.current) {
+                clearTimeout(timeout.current);
+            }
+            if (active) {
+                tooltipNode.current?.addEventListener("transitionend", onTransformEnd);
+                setActive(false);
+            } else if (visible) {
+                setVisible(false);
+            }
+        },
+        [active, visible]
+    );
 
-        if (this.props.tooltipShowOnClick && !this.state.active) {
-            this.activate(this.calculatePosition(event.currentTarget as HTMLElement));
-        }
+    const calculatePosition = useCallback(
+        function calculatePosition(element: HTMLElement) {
+            const {top: newTop, left: newLeft, height, width} = element.getBoundingClientRect();
+            const xOffset = window.scrollX || window.pageXOffset;
+            const yOffset = window.scrollY || window.pageYOffset;
+            const newPosition = getPosition(element);
+            switch (newPosition) {
+                case "bottom":
+                    return {
+                        top: newTop + height + yOffset,
+                        left: newLeft + width / 2 + xOffset,
+                        position: newPosition
+                    };
+                case "top":
+                    return {
+                        top: newTop + yOffset,
+                        left: newLeft + width / 2 + xOffset,
+                        position: newPosition
+                    };
+                case "left":
+                    return {
+                        top: newTop + height / 2 + yOffset,
+                        left: newLeft + xOffset,
+                        position: newPosition
+                    };
+                case "right":
+                    return {
+                        top: newTop + height / 2 + yOffset,
+                        left: newLeft + width + xOffset,
+                        position: newPosition
+                    };
+            }
+        },
+        [getPosition]
+    );
 
-        if (this.props.onPointerUp) {
-            this.props.onPointerUp(event);
-        }
-    };
+    const handlePointerEnter = useCallback(
+        function handlePointerEnter(event: PointerEvent<HTMLElement>) {
+            if (clickBehavior !== "show") {
+                activate(calculatePosition(event.currentTarget as HTMLElement));
+            }
+            onPointerEnter?.(event);
+        },
+        [activate, calculatePosition, clickBehavior, onPointerEnter]
+    );
 
-    activate({top, left, position}: {top?: number; left?: number; position?: string} = {}) {
-        if (this.timeout) {
-            clearTimeout(this.timeout as number);
-        }
-        this.setState({visible: true, position});
-        this.timeout = setTimeout(() => {
-            this.setState({active: true, top, left});
-        }, this.props.tooltipDelay);
-    }
+    const handlePointerLeave = useCallback(
+        function handlePointerLeave(event: PointerEvent<HTMLElement>) {
+            deactivate();
+            onPointerLeave?.(event);
+        },
+        [deactivate, onPointerLeave]
+    );
 
-    deactivate() {
-        if (this.timeout) {
-            clearTimeout(this.timeout as number);
-        }
-        if (this.state.active) {
-            this.tooltipNode?.addEventListener("transitionend", this.onTransformEnd);
-            this.setState({active: false});
-        } else if (this.state.visible) {
-            this.setState({visible: false});
-        }
-    }
+    const handlePointerUp = useCallback(
+        function handlePointerUp(event: PointerEvent<HTMLElement>) {
+            if (clickBehavior === "hide" && active) {
+                deactivate();
+            } else if (clickBehavior === "show" && !active) {
+                activate(calculatePosition(event.currentTarget as HTMLElement));
+            }
 
-    calculatePosition(element: HTMLElement) {
-        const position = this.getPosition(element);
-        const {top, left, height, width} = element.getBoundingClientRect();
-        const xOffset = window.scrollX || window.pageXOffset;
-        const yOffset = window.scrollY || window.pageYOffset;
-        if (position === POSITION.BOTTOM) {
-            return {
-                top: top + height + yOffset,
-                left: left + width / 2 + xOffset,
-                position
-            };
-        }
-        if (position === POSITION.TOP) {
-            return {
-                top: top + yOffset,
-                left: left + width / 2 + xOffset,
-                position
-            };
-        }
-        if (position === POSITION.LEFT) {
-            return {
-                top: top + height / 2 + yOffset,
-                left: left + xOffset,
-                position
-            };
-        }
-        if (position === POSITION.RIGHT) {
-            return {
-                top: top + height / 2 + yOffset,
-                left: left + width + xOffset,
-                position
-            };
-        }
-        return undefined;
-    }
+            onPointerUp?.(event);
+        },
+        [activate, active, calculatePosition, clickBehavior, deactivate, onPointerUp]
+    );
 
-    render() {
-        const {active, left, top, position, visible} = this.state;
-        const {
-            children,
-            tooltipTheme: tTheme,
-            onPointerEnter,
-            onPointerLeave,
-            onPointerUp,
-            tooltip,
-            tooltipDelay,
-            tooltipHideOnClick,
-            tooltipPassthrough,
-            tooltipPosition,
-            tooltipShowOnClick,
-            ComposedComponent,
-            ...other
-        } = this.props;
+    const theme = useTheme("tooltip", tooltipCss, pTheme);
 
-        const childProps = {
-            ...other,
-            onPointerEnter: this.handlePointerEnter,
-            onPointerLeave: this.handlePointerLeave,
-            onPointerUp: this.handlePointerUp
-        };
-
-        const shouldPass = typeof ComposedComponent !== "string" && tooltipPassthrough;
-        const finalProps = shouldPass ? {...childProps} : childProps;
-
-        return (
-            <>
-                <ComposedComponent {...(finalProps as any)}>{children}</ComposedComponent>
-                {visible
-                    ? createPortal(
-                          <span
-                              ref={node => {
-                                  this.tooltipNode = node;
-                              }}
-                              className={tTheme.tooltip({active, [position]: true})}
-                              data-react-toolbox="tooltip"
-                              style={{top, left}}
-                          >
-                              <span className={tTheme.tooltipInner()}>{tooltip}</span>
-                          </span>,
-                          document.body
-                      )
-                    : null}
-            </>
-        );
-    }
+    return (
+        <>
+            {cloneElement(children, {
+                onPointerDown,
+                onPointerEnter: handlePointerEnter,
+                onPointerLeave: handlePointerLeave,
+                onPointerUp: handlePointerUp
+            })}
+            {visible
+                ? createPortal(
+                      <span ref={tooltipNode} className={theme.tooltip({active, [position]: true})} style={{top, left}}>
+                          <span className={theme.content()}>{tooltip}</span>
+                      </span>,
+                      document.body
+                  )
+                : null}
+        </>
+    );
 }

@@ -1,46 +1,45 @@
 :root {
-    --tooltip-background: rgba(var(--palette-grey-700), 0.9);
-    --tooltip-margin: calc(0.5 * var(--unit));
-    --tooltip-border-radius: calc(0.2 * var(--unit));
+    --tooltip-margin: 4px;
     --tooltip-color: rgb(var(--color-white));
-    --tooltip-font-size: var(--unit);
-    --tooltip-max-width: calc(17 * var(--unit));
-    --tooltip-padding: calc(0.8 * var(--unit));
-    --tooltip-animation-duration: 200ms;
+    --tooltip-background: rgb(var(--palette-grey-800));
+    --tooltip-font-size: 12px;
+    --tooltip-max-width: 200px;
+    --tooltip-border-radius: 4px;
+    --tooltip-padding: 4px 8px;
 }
 
 .tooltip {
     display: block;
-    font-family: var(--preferred-font);
-    font-size: var(--tooltip-font-size);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--font-size-small);
-    max-width: var(--tooltip-max-width);
-    padding: var(--tooltip-margin);
-    pointer-events: none;
     position: absolute;
-    text-align: center;
-    text-transform: none;
-    transform: scale(0) translateX(-50%);
-    transform-origin: top left;
-    transition: var(--animation-curve-default) var(--tooltip-animation-duration) transform;
+    pointer-events: none;
     z-index: var(--z-index-higher);
-    box-sizing: border-box;
-    font-family: var(--preferred-font);
-
-    & *,
-    & *::after,
-    & *::before {
-        box-sizing: border-box;
-    }
+    transform-origin: top left;
+    transition: var(--animation-curve-default) calc(var(--animation-duration) - 100ms) transform;
 }
 
-.tooltip--active {
-    transform: scale(1) translateX(-50%);
+.content {
+    display: block;
+    color: var(--tooltip-color);
+    background: var(--tooltip-background);
+    font-size: var(--tooltip-font-size);
+    max-width: var(--tooltip-max-width);
+    padding: var(--tooltip-padding);
+    border-radius: var(--tooltip-border-radius);
+    box-sizing: border-box;
+}
+
+.tooltip--bottom {
+    transform: scale(0) translateX(-50%);
+    padding-top: var(--tooltip-margin);
+
+    &.tooltip--active {
+        transform: scale(1) translateX(-50%);
+    }
 }
 
 .tooltip--top {
     transform: scale(0) translateX(-50%) translateY(-100%);
+    padding-bottom: var(--tooltip-margin);
 
     &.tooltip--active {
         transform: scale(1) translateX(-50%) translateY(-100%);
@@ -49,6 +48,7 @@
 
 .tooltip--left {
     transform: scale(0) translateX(-100%) translateY(-50%);
+    padding-right: var(--tooltip-margin);
 
     &.tooltip--active {
         transform: scale(1) translateX(-100%) translateY(-50%);
@@ -57,16 +57,9 @@
 
 .tooltip--right {
     transform: scale(0) translateX(0) translateY(-50%);
+    padding-left: var(--tooltip-margin);
 
     &.tooltip--active {
         transform: scale(1) translateX(0) translateY(-50%);
     }
-}
-
-.tooltipInner {
-    background: var(--tooltip-background);
-    border-radius: var(--tooltip-border-radius);
-    color: var(--tooltip-color);
-    display: block;
-    padding: var(--tooltip-padding);
 }

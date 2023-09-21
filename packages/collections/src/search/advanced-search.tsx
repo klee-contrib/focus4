@@ -5,7 +5,7 @@ import {ComponentType, ElementType, useContext, useEffect, useState} from "react
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
-import {ChipCss, IconButton as IB, tooltipFactory} from "@focus4/toolbox";
+import {ChipCss, IconButton, Tooltip} from "@focus4/toolbox";
 
 import {
     ActionBar,
@@ -25,8 +25,6 @@ import {Summary, SummaryCss} from "./summary";
 
 import advancedSearchCss, {AdvancedSearchCss} from "./__style__/advanced-search.css";
 export {advancedSearchCss, AdvancedSearchCss};
-
-const IconButton = tooltipFactory()(IB);
 
 /** Props de l'AdvancedSearch. */
 export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T>> {
@@ -241,18 +239,20 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                 <div className={theme.actions()}>
                     {LineComponent && MosaicComponent ? (
                         <>
-                            <IconButton
-                                accent={listContext.mode === "list"}
-                                icon={getIcon(`${i18nPrefix}.icons.list.list`)}
-                                onClick={() => (listContext.mode = "list")}
-                                tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}
-                            />
-                            <IconButton
-                                accent={listContext.mode === "mosaic"}
-                                icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
-                                onClick={() => (listContext.mode = "mosaic")}
-                                tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}
-                            />
+                            <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
+                                <IconButton
+                                    accent={listContext.mode === "list"}
+                                    icon={getIcon(`${i18nPrefix}.icons.list.list`)}
+                                    onClick={() => (listContext.mode = "list")}
+                                />
+                            </Tooltip>
+                            <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
+                                <IconButton
+                                    accent={listContext.mode === "mosaic"}
+                                    icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
+                                    onClick={() => (listContext.mode = "mosaic")}
+                                />
+                            </Tooltip>
                         </>
                     ) : null}
                     {addItemHandler && listContext.mode === "list" ? (

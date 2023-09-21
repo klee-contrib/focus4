@@ -31,6 +31,6 @@ export {Slider, SliderCss, SliderProps, sliderCss} from "./components/slider";
 export {Snackbar, SnackbarCss, SnackbarProps, snackbarCss} from "./components/snackbar";
 export {Switch, SwitchCss, SwitchProps, switchCss} from "./components/switch";
 export {Tab, TabProps, Tabs, TabsCss, TabsProps, tabsCss} from "./components/tabs";
-export {TooltipCss, TooltipOptions, TooltipProps, tooltipCss, tooltipFactory} from "./components/tooltip";
+export {Tooltip, TooltipCss, TooltipProps, tooltipCss} from "./components/tooltip";
 export {PointerEvents} from "./utils/pointer-events";
 export {useInputRef} from "./utils/use-input-ref";

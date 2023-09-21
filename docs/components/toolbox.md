@@ -60,7 +60,7 @@ Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles 
 | `required`                      | Non         | <code>boolean</code>                                                                                                              | If true, the html input has a required attribute.                                                                   |
 | `ripple`                        | Non         | <code>boolean</code>                                                                                                              | If set to false, disable the rippling effect on suggestions.                                                        |
 | `rows`                          | Non         | <code>number</code>                                                                                                               | The number of rows the multiline input field has.                                                                   |
-| `selectedPosition`              | Non         | <code>"above" &#124; "below" &#124; "none"</code>                                                                                 | Determines if the selected list is shown above or below input. It can be above or below.                            |
+| `selectedPosition`              | Non         | <code>"none" &#124; "above" &#124; "below"</code>                                                                                 | Determines if the selected list is shown above or below input. It can be above or below.                            |
 | `showSuggestionsWhenValueIsSet` | Non         | <code>boolean</code>                                                                                                              | If true, the list of suggestions will not be filtered when a value is selected.                                     |
 | `source`                        | Non         | <code>Record&lt;string, TSource&gt;</code>                                                                                        | Object of key/values representing all items suggested.                                                              |
 | `style`                         | Non         | <code>CSSProperties</code>                                                                                                        |                                                                                                                     |
@@ -329,7 +329,7 @@ Exemple :
 | Nom          | Obligatoire | Type                                                                                                            | Description                                                                                                                                                                                                                                      |
 | ------------ | ----------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `active`     | Non         | <code>boolean</code>                                                                                            | If true, the menu will be displayed as opened by default.                                                                                                                                                                                        |
-| `button`     | **Oui**     | <code>ButtonProps & TooltipProps & { openedIcon?: ReactNode; }</code>                                           | Les props du bouton.                                                                                                                                                                                                                             |
+| `button`     | **Oui**     | <code>ButtonProps & { tooltip?: TooltipProps&lt;HTMLElement&gt;; openedIcon?: ReactNode; }</code>               | Les props du bouton.                                                                                                                                                                                                                             |
 | `children`   | Non         | <code>ReactNode</code>                                                                                          | Children to pass through the component.                                                                                                                                                                                                          |
 | `className`  | Non         | <code>string</code>                                                                                             |                                                                                                                                                                                                                                                  |
 | `onClick`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement&gt;</code>                                                         |                                                                                                                                                                                                                                                  |
@@ -627,23 +627,20 @@ Contenu d'un Tab, à utiliser dans Tabs.
 | `tabIndex`  | Non         | <code>number</code>                 | @internal   |
 | `theme`     | Non         | <code>CSSProp&lt;TabsCss&gt;</code> |             |
 
-## `tooltipFactory`
+## `Tooltip`
 
-Une factory pour ajouter une tooltip à un composant ou un élément HTML. Cela permet de créer une version du même composant/élément avec une tooltip de la façon suivante :
-
- ```tsx
- const TooltippedButton = tooltipFactory()(Button);
-
- <TooltippedButton label="Click" tooltip="Click me" />; // Les props de la tooltip sont ajoutées aux props existantes du composant.
- ```
+Pose une tooltip autour de l'élement enfant qui s'activera au survol.
 
 ### Props
 
-| Nom                  | Obligatoire | Type                                                                                                  | Description |
-| -------------------- | ----------- | ----------------------------------------------------------------------------------------------------- | ----------- |
-| `theme`              | Non         | <code>CSSProp&lt;TooltipCss&gt;</code>                                                                |             |
-| `tooltipDelay`       | Non         | <code>number</code>                                                                                   |             |
-| `tooltipHideOnClick` | Non         | <code>boolean</code>                                                                                  |             |
-| `tooltipPassthrough` | Non         | <code>boolean</code>                                                                                  |             |
-| `tooltipPosition`    | Non         | <code>"bottom" &#124; "horizontal" &#124; "left" &#124; "right" &#124; "top" &#124; "vertical"</code> |             |
-| `tooltipShowOnClick` | Non         | <code>boolean</code>                                                                                  |             |
+| Nom              | Obligatoire | Type                                                                                                  | Description                                                                                                        |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `children`       | **Oui**     | <code>ReactElement&lt;any, string &#124; JSXElementConstructor&lt;any&gt;&gt;</code>                  | Composant enfant autour duquel poser la tooltip.                                                                   |
+| `clickBehavior`  | Non         | <code>"hide" &#124; "none" &#124; "show"</code>                                                       | Comportement de la tooltip au clic. Par défaut : "hide".                                                           |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                              |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                             |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                             |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                |
+| `position`       | Non         | <code>"bottom" &#124; "horizontal" &#124; "left" &#124; "right" &#124; "top" &#124; "vertical"</code> | Position de la tooltip ("vertical" = "top" ou "bottom", "horizontal" = "left" ou "right"). Par défaut : "vertical" |
+| `theme`          | Non         | <code>CSSProp&lt;TooltipCss&gt;</code>                                                                | CSS.                                                                                                               |
+| `tooltip`        | **Oui**     | <code>ReactNode</code>                                                                                | Contenu de la tooltip.                                                                                             |

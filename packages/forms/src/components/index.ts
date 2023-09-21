@@ -1,6 +1,5 @@
 export {Autocomplete, AutocompleteProps, AutocompleteResult} from "./autocomplete";
 export {BooleanRadio, BooleanRadioCss, BooleanRadioProps, booleanRadioCss} from "./boolean-radio";
-export {ButtonHelp} from "./button-help";
 export {Display, DisplayCss, DisplayProps, displayCss} from "./display";
 export {Input, InputProps} from "./input";
 export {InputDate, InputDateProps, inputDateCss} from "./input-date";

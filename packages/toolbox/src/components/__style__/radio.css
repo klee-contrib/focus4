@@ -1,6 +1,6 @@
 :root {
-    --radio-size: 17px;
-    --radio-dot-scale: 0.65;
+    --radio-size: 20px;
+    --radio-dot-scale: 0.5;
     --radio-outline-size: 2px;
     --radio-state-size: 40px;
 }
@@ -42,6 +42,7 @@
     top: calc((var(--radio-state-size) - var(--radio-size)) / 2);
     left: calc((var(--radio-state-size) - var(--radio-size)) / 2);
     outline: var(--radio-outline-size) solid var(--input-outline-color);
+    outline-offset: calc(-1 * var(--checkbox-outline-size));
     border-radius: 50%;
     transition: border-color var(--animation-duration) var(--animation-curve-default) 0s;
 }
