@@ -5,9 +5,11 @@ export {
     PanelDescriptor,
     ScrollableContext,
     ScrollspyContext,
+    colorScheme,
     cssTransitionProps,
     getDefaultTransition,
     getIcon,
+    initColorScheme,
     springTransition
 } from "./utils";
 export {
