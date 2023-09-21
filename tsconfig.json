@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         // Général
-        "lib": ["es2020", "dom"],
+        "lib": ["es2021", "dom"],
         "jsx": "react-jsx",
         "module": "esnext",
         "moduleResolution": "node",
-        "target": "es2020",
+        "target": "es2021",
 
         // Options obligatoires
         "allowSyntheticDefaultImports": true,
