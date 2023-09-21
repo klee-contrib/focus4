@@ -47,10 +47,10 @@ export function Clock({
 
     useEffect(() => {
         const handleCalculateShape = () => {
-            const {top, left, width} = placeholderNode.current!.getBoundingClientRect();
+            const {top, left, width, height} = placeholderNode.current!.getBoundingClientRect();
             setCenter({
                 x: left + (width / 2 - window.pageXOffset),
-                y: top + (width / 2 - window.pageXOffset)
+                y: top + (height / 2 - window.pageXOffset)
             });
             setRadius(width / 2);
         };
@@ -105,7 +105,7 @@ export function Clock({
     const css = fromBem(theme);
     return (
         <div className={theme.clock()} data-react-toolbox="clock">
-            <div ref={placeholderNode} className={theme.placeholder()} style={{height: radius * 2}}>
+            <div ref={placeholderNode} className={theme.placeholder()}>
                 <TransitionGroup component={null}>
                     <CSSTransition
                         key={display}
@@ -125,7 +125,7 @@ export function Clock({
                                   }
                         )}
                     >
-                        <div className={theme.clockWrapper()} style={{height: radius * 2}}>
+                        <div className={theme.clockWrapper()}>
                             {display === "hours" ? (
                                 <Hours
                                     center={center}

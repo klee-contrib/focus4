@@ -1,11 +1,9 @@
 import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {action, makeObservable, observable} from "mobx";
-import {observer} from "mobx-react";
-import {Component, createRef, KeyboardEvent, ReactNode} from "react";
+import {KeyboardEvent, ReactNode, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
-import {CSSProp, themr} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Clock, ClockCss, IconButton} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
@@ -13,12 +11,12 @@ import {Input, InputProps} from "./input";
 import inputTimeCss, {InputTimeCss} from "./__style__/input-time.css";
 export {inputTimeCss};
 
-const Theme = themr("inputTime", inputTimeCss);
-
 /** Props de l'InputTime. */
 export interface InputTimeProps {
-    /** Format du compoasnt Clock. */
+    /** Format pour le composant d'horloge. */
     clockFormat?: "24hr" | "ampm";
+    /** Position de l'horloge. Par défaut: "auto".  */
+    clockPosition?: "auto" | "down" | "up";
     /** CSS pour le composant Clock. */
     clockTheme?: CSSProp<ClockCss>;
     /** Composant affiché depuis la gauche ou la droite. */
@@ -49,241 +47,224 @@ export interface InputTimeProps {
 /**
  * Un champ de saisie d'heure avec double saisie en texte (avec un `Input`) et une horloge (`Clock`), qui s'affiche en dessous.
  */
-@observer
-// eslint-disable-next-line react/no-unsafe
-export class InputTime extends Component<InputTimeProps> {
-    protected clock?: HTMLDivElement | null;
-    protected inputRef = createRef<Input<"string">>();
+export function InputTime({
+    clockFormat = "24hr",
+    clockPosition: pClockPosition = "auto",
+    clockTheme,
+    displayFrom = "left",
+    error,
+    id,
+    inputFormat = "HH:mm",
+    inputProps = {},
+    name,
+    onChange,
+    value,
+    theme: pTheme,
+    timezoneCode
+}: InputTimeProps) {
+    const inputRef = useRef<Input<"string">>(null);
 
     /** Id unique de l'input time, pour gérer la fermeture en cliquant à l'extérieur. */
-    protected readonly _inputTimeId = uniqueId("input-time-");
+    const [inputTimeId] = useState(() => uniqueId("input-time-"));
 
-    /** Heure actuelle. */
-    @observable protected time = this.toLuxon(this.props.value);
-
-    /** Contenu du champ texte. */
-    @observable protected timeText = this.formatTime(this.props.value);
-
-    /** Affiche l'horloge. */
-    @observable protected showClock = false;
-
-    /** Mode de l'horloge. */
-    @observable protected clockDisplay = "hours" as "hours" | "minutes";
-
-    /** Position de l'horloge. */
-    @observable protected clockPosition?: "down" | "up";
-
-    constructor(props: InputTimeProps) {
-        super(props);
-        makeObservable(this);
-    }
-
-    componentDidMount() {
-        document.addEventListener("mousedown", this.onDocumentClick);
-    }
-
-    @action
-    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
-    UNSAFE_componentWillReceiveProps({value}: InputTimeProps) {
-        this.time = this.toLuxon(value);
-        this.timeText = this.formatTime(value);
-    }
-
-    // Met à jour la position du calendrier.
-    componentDidUpdate() {
-        if (this.clock && this.showClock) {
-            const client = this.clock.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
-            if (!this.clockPosition) {
-                if (client.top + client.height > screenHeight) {
-                    this.clockPosition = "up";
-                } else {
-                    this.clockPosition = "down";
-                }
+    /** Convertit le texte en objet Luxon. */
+    const toLuxon = useCallback(
+        function toLuxon(v?: string) {
+            if (isISOString(v)) {
+                return DateTime.fromISO(v, timezoneCode ? {zone: timezoneCode} : {});
+            } else {
+                return DateTime.now();
             }
-        } else {
-            this.clockPosition = undefined;
-        }
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener("mousedown", this.onDocumentClick);
-    }
-
-    /** Convertit le texte en objet momentJS. */
-    toLuxon(value?: string) {
-        const {timezoneCode} = this.props;
-        if (isISOString(value)) {
-            return DateTime.fromISO(value, timezoneCode ? {zone: timezoneCode} : {});
-        } else {
-            return DateTime.now();
-        }
-    }
-
-    /** Recupère la date pour le TimePicker */
-    getTime() {
-        const {timezoneCode} = this.props;
-        // Vérifie que la timezone existe
-        if (timezoneCode) {
-            return getPickerTime(this.time.toJSDate(), timezoneCode);
-        }
-        return this.time.toJSDate();
-    }
+        },
+        [timezoneCode]
+    );
 
     /** Formatte l'heure (ISO String) en entrée. */
-    formatTime(value?: string) {
-        const {inputFormat = "HH:mm", timezoneCode} = this.props;
-        if (isISOString(value)) {
-            return DateTime.fromISO(value, timezoneCode ? {zone: timezoneCode} : {}).toFormat(inputFormat);
-        } else {
-            return value;
-        }
-    }
+    const formatTime = useCallback(
+        function formatDate(v?: string) {
+            if (isISOString(v)) {
+                return DateTime.fromISO(v, timezoneCode ? {zone: timezoneCode} : {}).toFormat(inputFormat);
+            } else {
+                return v;
+            }
+        },
+        [inputFormat, timezoneCode]
+    );
 
-    @action.bound
-    closeClock() {
-        this.showClock = false;
-        this.clockDisplay = "hours";
-        this.inputRef.current?.htmlInput?.blur();
-    }
+    /** Heure actuelle. */
+    const [time, setTime] = useState(() => toLuxon(value));
 
-    /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
-    @action.bound
-    onDocumentClick({target}: Event) {
-        let parent = target as HTMLElement | null;
+    /** Contenu du champ texte. */
+    const [timeText, setTimeText] = useState(() => formatTime(value));
 
-        while (parent && parent.getAttribute("data-id") !== this._inputTimeId) {
-            parent = parent.parentElement;
-        }
+    useEffect(() => {
+        setTime(toLuxon(value));
+        setTimeText(formatTime(value));
+    }, [formatTime, toLuxon, value]);
 
-        if (this.showClock && !parent) {
-            this.closeClock();
-            this.onInputBlur();
-        }
-    }
+    /** Affiche l'horloge. */
+    const [showClock, setShowClock] = useState(false);
+
+    /** Mode de l'horloge. */
+    const [clockDisplay, setClockDisplay] = useState<"hours" | "minutes">("hours");
+
+    /** Position de l'horloge. */
+    const [clockPosition, setClockPosition] = useState(pClockPosition);
+
+    const closeClock = useCallback(function closeClock() {
+        setShowClock(false);
+        setClockDisplay("hours");
+        inputRef.current?.htmlInput?.blur();
+    }, []);
 
     /** Appelé lorsqu'on quitte le champ texte. */
-    @action.bound
-    onInputBlur() {
-        const {inputFormat = "HH:mm", onChange} = this.props;
-        const text = (this.timeText ?? "").trim() || undefined;
+    const onInputBlur = useCallback(
+        function onInputBlur() {
+            const text = (timeText ?? "").trim() || undefined;
 
-        const time = text ? DateTime.fromFormat(text, inputFormat) : DateTime.now();
+            const newTime = text ? DateTime.fromFormat(text, inputFormat) : DateTime.now();
 
-        const dateTime = this.time.set({hour: time.hour, minute: time.minute});
+            const dateTime = time.set({hour: newTime.hour, minute: newTime.minute});
 
-        if (dateTime.isValid) {
-            this.time = dateTime;
-            onChange(dateTime.toISO() ?? "");
-        } else {
-            onChange(text);
+            if (dateTime.isValid) {
+                setTime(dateTime);
+                onChange(dateTime.toISO() ?? "");
+            } else {
+                onChange(text);
+            }
+        },
+        [inputFormat, onChange, time, timeText]
+    );
+
+    /** Ferme l'horloge lorsqu'on clic à l'extérieur du picker. */
+    const onDocumentClick = useCallback(
+        function onDocumentClick({target}: Event) {
+            let parent = target as HTMLElement | null;
+
+            while (parent && parent.getAttribute("data-id") !== inputTimeId) {
+                parent = parent.parentElement;
+            }
+
+            if (showClock && !parent) {
+                closeClock();
+                onInputBlur();
+            }
+        },
+        [closeClock, onInputBlur, showClock]
+    );
+
+    useEffect(() => {
+        document.addEventListener("pointerdown", onDocumentClick);
+        return () => document.removeEventListener("pointerdown", onDocumentClick);
+    }, [onDocumentClick]);
+
+    // Recalcule la position de l'horloge quand elle est automatique.
+    useLayoutEffect(() => {
+        if (showClock && pClockPosition === "auto") {
+            const client = inputRef.current?.htmlInput?.getBoundingClientRect() ?? {top: 0, height: 0};
+            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            const up = client.top > screenHeight / 2 + client.height;
+            setClockPosition(up ? "up" : "down");
         }
-    }
+    }, [pClockPosition, showClock]);
+
+    /** Date pour le TimePicker */
+    const jsTime = useMemo(() => {
+        if (timezoneCode) {
+            return getPickerTime(time.toJSDate(), timezoneCode);
+        }
+        return time.toJSDate();
+    }, [time]);
+
+    const onClockChange = useCallback(
+        function onClockChange(newTime: Date) {
+            // Vérifie que la timezone existe
+            if (timezoneCode) {
+                newTime = getTimezoneTime(newTime, timezoneCode);
+            }
+            return onChange(DateTime.fromJSDate(newTime).toISO() ?? "");
+        },
+        [onChange, timezoneCode]
+    );
 
     /** Au clic sur l'horloge. */
-    @action.bound
-    onClockChange(time: Date) {
-        const {timezoneCode} = this.props;
-        // Vérifie que la timezone existe
-        if (timezoneCode) {
-            time = getTimezoneTime(time, timezoneCode);
-        }
-        return this.props.onChange(DateTime.fromJSDate(time).toISO() ?? "");
-    }
-
-    @action.bound
-    onHandMoved() {
-        if (this.clockDisplay === "hours") {
-            this.clockDisplay = "minutes";
-        } else {
-            this.closeClock();
-        }
-    }
+    const onHandMoved = useCallback(
+        function onHandMoved() {
+            if (clockDisplay === "hours") {
+                setClockDisplay("minutes");
+            } else {
+                closeClock();
+            }
+        },
+        [clockDisplay, closeClock]
+    );
 
     /** Ferme l'horloge lorsqu'on appuie sur Entrée ou Tab. */
-    @action.bound
-    handleKeyDown({key}: KeyboardEvent) {
-        if (key === "Tab" || key === "Enter") {
-            this.closeClock();
-            this.onInputBlur();
-        }
-    }
+    const handleKeyDown = useCallback(
+        function handleKeyDown({key}: KeyboardEvent) {
+            if (key === "Tab" || key === "Enter") {
+                closeClock();
+                onInputBlur();
+            }
+        },
+        [closeClock, onInputBlur]
+    );
 
-    render() {
-        const {
-            clockFormat = "24hr",
-            clockTheme,
-            displayFrom = "left",
-            error,
-            id,
-            inputFormat = "HH:mm",
-            inputProps = {},
-            name,
-            theme: pTheme
-        } = this.props;
-        return (
-            <Theme theme={pTheme}>
-                {theme => (
-                    <div className={theme.input()} data-focus="input-time" data-id={this._inputTimeId}>
-                        <Input
-                            {...inputProps}
-                            ref={this.inputRef}
-                            autoComplete={config.autocompleteOffValue}
-                            error={error}
-                            id={id}
-                            mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                            name={name}
-                            onChange={value => (this.timeText = value)}
-                            onFocus={() => (this.showClock = true)}
-                            onKeyDown={this.handleKeyDown}
-                            type="string"
-                            value={this.timeText ?? ""}
-                        />
-                        {this.showClock ? (
-                            <div
-                                ref={clo => (this.clock = clo)}
-                                className={theme.clock({
-                                    [this.clockPosition ?? "down"]: true,
-                                    fromRight: displayFrom === "right"
-                                })}
-                            >
-                                <header className={theme.header()}>
-                                    <span
-                                        className={theme.hours({selected: this.clockDisplay === "hours"})}
-                                        id="hours"
-                                        onClick={() => (this.clockDisplay = "hours")}
-                                    >
-                                        {`0${this.time.hour}`.slice(-2)}
-                                    </span>
-                                    <span className={theme.separator()}>:</span>
-                                    <span
-                                        className={theme.minutes({selected: this.clockDisplay === "minutes"})}
-                                        id="minutes"
-                                        onClick={() => (this.clockDisplay = "minutes")}
-                                    >
-                                        {`0${this.time.minute}`.slice(-2)}
-                                    </span>
-                                    <IconButton
-                                        icon="clear"
-                                        onClick={this.closeClock}
-                                        theme={{toggle: theme.toggle()}}
-                                    />
-                                </header>
-                                <Clock
-                                    display={this.clockDisplay}
-                                    format={clockFormat}
-                                    onChange={this.onClockChange}
-                                    onHandMoved={this.onHandMoved}
-                                    theme={clockTheme}
-                                    time={this.getTime()}
-                                />
-                            </div>
-                        ) : null}
-                    </div>
-                )}
-            </Theme>
-        );
-    }
+    const theme = useTheme("inputTime", inputTimeCss, pTheme);
+
+    return (
+        <div className={theme.input()} data-focus="input-time" data-id={inputTimeId}>
+            <Input
+                {...inputProps}
+                ref={inputRef}
+                autoComplete={config.autocompleteOffValue}
+                error={error}
+                id={id}
+                mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                name={name}
+                onChange={setTimeText}
+                onFocus={() => setShowClock(true)}
+                onKeyDown={handleKeyDown}
+                type="string"
+                value={timeText ?? ""}
+            />
+            {showClock ? (
+                <div
+                    className={theme.clock({
+                        [clockPosition]: true,
+                        fromRight: displayFrom === "right"
+                    })}
+                >
+                    <header className={theme.header()}>
+                        <span
+                            className={theme.hours({selected: clockDisplay === "hours"})}
+                            id="hours"
+                            onClick={() => setClockDisplay("hours")}
+                        >
+                            {`0${time.hour}`.slice(-2)}
+                        </span>
+                        <span className={theme.separator()}>:</span>
+                        <span
+                            className={theme.minutes({selected: clockDisplay === "minutes"})}
+                            id="minutes"
+                            onClick={() => setClockDisplay("minutes")}
+                        >
+                            {`0${time.minute}`.slice(-2)}
+                        </span>
+                        <IconButton icon="clear" onClick={closeClock} theme={{toggle: theme.toggle()}} />
+                    </header>
+                    <Clock
+                        display={clockDisplay}
+                        format={clockFormat}
+                        onChange={onClockChange}
+                        onHandMoved={onHandMoved}
+                        theme={clockTheme}
+                        time={jsTime}
+                    />
+                </div>
+            ) : null}
+        </div>
+    );
 }
 
 /** Détermine si une valeur est un ISO String. */

@@ -1,11 +1,9 @@
 import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {action, computed, makeObservable, observable} from "mobx";
-import {observer} from "mobx-react";
-import {Component, KeyboardEvent, ReactNode} from "react";
+import {KeyboardEvent, ReactNode, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
-import {CSSProp, themr} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Calendar, CalendarProps, IconButton} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
@@ -13,11 +11,11 @@ import {Input, InputProps} from "./input";
 import inputDateCss, {InputDateCss} from "./__style__/input-date.css";
 export {inputDateCss};
 
-const Theme = themr("inputDate", inputDateCss);
-
 export interface InputDateProps {
     /** Format de l'affichage de la date dans le calendrier. */
     calendarFormat?: Intl.DateTimeFormatOptions;
+    /** Position du calendrier. Par défaut: "auto".  */
+    calendarPosition?: "auto" | "down" | "up";
     /* Autres props du Calendar RT */
     calendarProps?: Omit<CalendarProps, "display" | "handleSelect" | "onChange" | "selectedDate">;
     /** Composant affiché depuis la gauche ou la droite. */
@@ -67,292 +65,264 @@ export interface InputDateProps {
 /**
  * Un champ de saisie de date avec double saisie en texte (avec un `Input`) et un calendrier (`Calendar`), qui s'affiche en dessous.
  */
-@observer
-// eslint-disable-next-line react/no-unsafe
-export class InputDate extends Component<InputDateProps> {
-    protected calendar?: HTMLDivElement | null;
-
-    /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
-    protected readonly _inputDateId = uniqueId("input-date-");
-
-    /** Date actuelle. */
-    @observable protected date = this.toLuxon(this.props.value);
-
-    /** Contenu du champ texte. */
-    @observable protected dateText = this.formatDate(this.props.value);
-
-    /** Affiche le calendrier. */
-    @observable protected showCalendar = false;
-
-    /** Mode du calendrier. */
-    @observable protected calendarDisplay = "months" as "months" | "years";
-
-    /** Position du calendrier. */
-    @observable protected calendarPosition?: "down" | "up";
-
-    constructor(props: InputDateProps) {
-        super(props);
-        makeObservable(this);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
-    UNSAFE_componentWillMount() {
-        document.addEventListener("mousedown", this.onDocumentClick);
-    }
-
-    @action
-    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
-    UNSAFE_componentWillReceiveProps({value}: InputDateProps) {
-        this.date = this.toLuxon(value);
-        this.dateText = this.formatDate(value);
-    }
-
-    // Met à jour la position du calendrier.
-    componentDidUpdate() {
-        if (this.calendar && this.showCalendar) {
-            const client = this.calendar.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
-            if (!this.calendarPosition) {
-                if (client.top + client.height > screenHeight) {
-                    this.calendarPosition = "up";
-                } else {
-                    this.calendarPosition = "down";
-                }
-            }
-        } else {
-            this.calendarPosition = undefined;
-        }
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener("mousedown", this.onDocumentClick);
-    }
-
-    @computed
-    get jsDate() {
-        const {timezoneCode} = this.props;
-        // Vérifie que la timezone existe
-        if (timezoneCode) {
-            return getPickerDate(this.date.toJSDate(), timezoneCode);
-        }
-        const {ISOStringFormat = "utc-midnight"} = this.props;
-        if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
-            return new Date(this.date.year, this.date.month - 1, this.date.day);
-        } else {
-            const jsDate = this.date.toJSDate();
-            jsDate.setHours(0);
-            jsDate.setMinutes(0);
-            jsDate.setSeconds(0);
-            jsDate.setMilliseconds(0);
-            return jsDate;
-        }
-    }
-
-    @computed
-    get zone() {
-        const {timezoneCode, ISOStringFormat = "utc-midnight"} = this.props;
-        return timezoneCode
-            ? timezoneCode
-            : ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only"
-            ? "utc"
-            : undefined;
-    }
+export function InputDate({
+    calendarFormat = {weekday: "short", month: "short", day: "2-digit"},
+    calendarPosition: pCalendarPosition = "auto",
+    calendarProps,
+    displayFrom = "left",
+    error,
+    id,
+    inputFormat = "MM/dd/yyyy",
+    inputProps = {},
+    ISOStringFormat = "utc-midnight",
+    name,
+    onChange,
+    theme: pTheme,
+    timezoneCode,
+    value
+}: InputDateProps) {
+    const zone = timezoneCode
+        ? timezoneCode
+        : ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only"
+        ? "utc"
+        : undefined;
 
     /** Convertit le texte en objet Luxon. */
-    toLuxon(value?: string) {
-        if (isISOString(value)) {
-            return DateTime.fromISO(value, this.zone ? {zone: this.zone} : {});
-        } else {
-            return (this.zone === "utc" ? DateTime.utc() : DateTime.now()).set({
-                hour: 0,
-                minute: 0,
-                second: 0,
-                millisecond: 0
-            });
-        }
-    }
+    const toLuxon = useCallback(
+        function toLuxon(v?: string) {
+            if (isISOString(v)) {
+                return DateTime.fromISO(v, zone ? {zone} : {});
+            } else {
+                return (zone === "utc" ? DateTime.utc() : DateTime.now()).set({
+                    hour: 0,
+                    minute: 0,
+                    second: 0,
+                    millisecond: 0
+                });
+            }
+        },
+        [zone]
+    );
 
     /** Formatte la date (ISO String) en entrée selon le format demandé. */
-    formatDate(value?: string) {
-        const {inputFormat = "MM/dd/yyyy", timezoneCode} = this.props;
-        if (isISOString(value)) {
-            return DateTime.fromISO(value, timezoneCode ? {zone: timezoneCode} : {}).toFormat(inputFormat);
-        } else {
-            return value;
-        }
-    }
+    const formatDate = useCallback(
+        function formatDate(v?: string) {
+            if (isISOString(v)) {
+                return DateTime.fromISO(v, timezoneCode ? {zone: timezoneCode} : {}).toFormat(inputFormat);
+            } else {
+                return v;
+            }
+        },
+        [inputFormat, timezoneCode]
+    );
 
-    /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
-    @action.bound
-    onDocumentClick({target}: Event) {
-        let parent = target as HTMLElement | null;
+    const inputRef = useRef<Input<"string">>(null);
 
-        while (parent && parent.getAttribute("data-id") !== this._inputDateId) {
-            parent = parent.parentElement;
-        }
+    /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
+    const [inputDateId] = useState(() => uniqueId("input-date-"));
 
-        if (this.showCalendar && !parent) {
-            this.showCalendar = false;
-            this.onInputBlur();
-        }
-    }
+    /** Date actuelle. */
+    const [date, setDate] = useState(() => toLuxon(value));
 
-    /** Appelé lorsqu'on quitte le champ texte. */
-    @action.bound
-    onInputBlur() {
-        const {inputFormat = "MM/dd/yyyy", ISOStringFormat = "utc-midnight", onChange} = this.props;
-        const text = (this.dateText ?? "").trim() || undefined;
+    /** Contenu du champ texte. */
+    const [dateText, setDateText] = useState(() => formatDate(value));
 
-        const date = text ? this.transformDate(text, inputFormat) : undefined;
+    useEffect(() => {
+        setDate(toLuxon(value));
+        setDateText(formatDate(value));
+    }, [formatDate, toLuxon, value]);
 
-        if (date?.isValid) {
-            this.date = date;
-            onChange(ISOStringFormat === "date-only" ? date.toFormat("yyyy-MM-dd") : date.toISO() ?? "");
-        } else {
-            onChange(text);
-        }
-    }
+    /** Affiche le calendrier. */
+    const [showCalendar, setShowCalendar] = useState(false);
 
-    /** Au clic sur le calendrier. */
-    @action.bound
-    onCalendarChange(date: Date, dayClick: boolean) {
-        const {ISOStringFormat = "utc-midnight", timezoneCode} = this.props;
-        // Vérifie que la timezone existe
-        if (timezoneCode) {
-            date = getTimezoneTime(date, timezoneCode);
-        } else if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
-            /*
-             * La date reçue est toujours à minuit en "local-midnight".
-             * Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
-             */
-            date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
-        }
-        const correctedDate =
-            ISOStringFormat === "date-only"
-                ? this.transformDate(date).toFormat("yyyy-MM-dd")
-                : this.transformDate(date).toISO() ?? "";
-        this.props.onChange(correctedDate);
-        if (!dayClick) {
-            this.calendarDisplay = "months";
-        } else {
-            this.showCalendar = false;
-        }
-    }
+    /** Mode du calendrier. */
+    const [calendarDisplay, setCalendarDisplay] = useState<"months" | "years">("months");
 
-    /** Ferme le calendrier lorsqu'on appuie sur Entrée ou Tab. */
-    @action.bound
-    handleKeyDown({key}: KeyboardEvent) {
-        if (key === "Tab" || key === "Enter") {
-            this.showCalendar = false;
-            this.onInputBlur();
-        }
-    }
+    /** Position du calendrier. */
+    const [calendarPosition, setCalendarPosition] = useState(pCalendarPosition);
 
     /** Transforme la date selon le format de date/timezone souhaité. */
-    transformDate(date: Date): DateTime; // Depuis le calendrier.
-    transformDate(date: string, inputFormat: string): DateTime; // Depuis la saisie manuelle.
-    transformDate(date: Date | string, inputFormat?: string) {
-        const {ISOStringFormat = "utc-midnight"} = this.props;
+    const transformDate = useCallback(
+        function transformDate(newDate: Date | string, targetInputFormat?: string) {
+            let dateTime =
+                typeof newDate === "string" && targetInputFormat
+                    ? DateTime.fromFormat(newDate, targetInputFormat, zone ? {zone} : {})
+                    : newDate instanceof Date
+                    ? DateTime.fromJSDate(newDate, zone ? {zone} : {})
+                    : zone === "utc"
+                    ? DateTime.utc()
+                    : DateTime.now();
 
-        let dateTime =
-            typeof date === "string" && inputFormat
-                ? DateTime.fromFormat(date, inputFormat, this.zone ? {zone: this.zone} : {})
-                : date instanceof Date
-                ? DateTime.fromJSDate(date, this.zone ? {zone: this.zone} : {})
-                : this.zone === "utc"
-                ? DateTime.utc()
-                : DateTime.now();
+            if (ISOStringFormat === "local-utc-midnight") {
+                dateTime = dateTime.toUTC();
+            }
 
-        if (ISOStringFormat === "local-utc-midnight") {
-            dateTime = dateTime.toUTC();
+            return dateTime;
+        },
+        [ISOStringFormat, zone]
+    );
+
+    /** Appelé lorsqu'on quitte le champ texte. */
+    const onInputBlur = useCallback(
+        function onInputBlur() {
+            const text = (dateText ?? "").trim() || undefined;
+            const newDate = text ? transformDate(text, inputFormat) : undefined;
+
+            if (newDate?.isValid) {
+                setDate(newDate);
+                onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
+            } else {
+                onChange(text);
+            }
+        },
+        [dateText, inputFormat, ISOStringFormat, onChange, transformDate]
+    );
+
+    /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
+    const onDocumentClick = useCallback(
+        function onDocumentClick({target}: Event) {
+            let parent = target as HTMLElement | null;
+
+            while (parent && parent.getAttribute("data-id") !== inputDateId) {
+                parent = parent.parentElement;
+            }
+
+            if (showCalendar && !parent) {
+                setShowCalendar(false);
+                onInputBlur();
+            }
+        },
+        [onInputBlur, showCalendar]
+    );
+
+    useEffect(() => {
+        document.addEventListener("pointerdown", onDocumentClick);
+        return () => document.removeEventListener("pointerdown", onDocumentClick);
+    }, [onDocumentClick]);
+
+    // Recalcule la position du calendrier quand elle est automatique.
+    useLayoutEffect(() => {
+        if (showCalendar && pCalendarPosition === "auto") {
+            const client = inputRef.current?.htmlInput?.getBoundingClientRect() ?? {top: 0, height: 0};
+            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
+            const up = client.top > screenHeight / 2 + client.height;
+            setCalendarPosition(up ? "up" : "down");
         }
+    }, [pCalendarPosition, showCalendar]);
 
-        return dateTime;
-    }
-
-    displayedDate() {
-        const {ISOStringFormat} = this.props;
-        if (ISOStringFormat === "local-utc-midnight") {
-            return this.date.toLocal();
+    const jsDate = useMemo(() => {
+        // Vérifie que la timezone existe
+        if (timezoneCode) {
+            return getPickerDate(date.toJSDate(), timezoneCode);
+        }
+        if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
+            return new Date(date.year, date.month - 1, date.day);
         } else {
-            return this.date;
+            const res = date.toJSDate();
+            res.setHours(0);
+            res.setMinutes(0);
+            res.setSeconds(0);
+            res.setMilliseconds(0);
+            return res;
         }
-    }
+    }, [date, ISOStringFormat, timezoneCode]);
 
-    render() {
-        const {
-            calendarFormat = {weekday: "short", month: "short", day: "2-digit"},
-            calendarProps = {},
-            displayFrom = "left",
-            error,
-            id,
-            inputFormat = "MM/dd/yyyy",
-            inputProps = {},
-            name,
-            theme: pTheme
-        } = this.props;
-        return (
-            <Theme theme={pTheme}>
-                {theme => (
-                    <div className={theme.input()} data-focus="input-date" data-id={this._inputDateId}>
-                        <Input
-                            {...inputProps}
-                            autoComplete={config.autocompleteOffValue}
-                            error={error}
-                            id={id}
-                            mask={{pattern: inputFormat.replace(/\w/g, "1")}}
-                            name={name}
-                            onChange={value => (this.dateText = value)}
-                            onFocus={() => (this.showCalendar = true)}
-                            onKeyDown={this.handleKeyDown}
-                            type="string"
-                            value={this.dateText ?? ""}
+    const displayedDate = useMemo(() => {
+        if (ISOStringFormat === "local-utc-midnight") {
+            return date.toLocal();
+        } else {
+            return date;
+        }
+    }, [date, ISOStringFormat]);
+
+    /** Au clic sur le calendrier. */
+    const onCalendarChange = useCallback(
+        function onCalendarChange(newDate: Date, dayClick: boolean) {
+            // Vérifie que la timezone existe
+            if (timezoneCode) {
+                newDate = getTimezoneTime(newDate, timezoneCode);
+            } else if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
+                /*
+                 * La date reçue est toujours à minuit en "local-midnight".
+                 * Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
+                 */
+                newDate.setHours(newDate.getHours() - newDate.getTimezoneOffset() / 60);
+            }
+            const correctedDate =
+                ISOStringFormat === "date-only"
+                    ? transformDate(newDate).toFormat("yyyy-MM-dd")
+                    : transformDate(newDate).toISO() ?? "";
+            onChange(correctedDate);
+            if (!dayClick) {
+                setCalendarDisplay("months");
+            } else {
+                setShowCalendar(false);
+            }
+        },
+        [ISOStringFormat, onChange, timezoneCode, transformDate]
+    );
+
+    const handleKeyDown = useCallback(
+        function handleKeyDown({key}: KeyboardEvent) {
+            if (key === "Tab" || key === "Enter") {
+                setShowCalendar(false);
+                onInputBlur();
+            }
+        },
+        [onInputBlur]
+    );
+
+    const theme = useTheme("inputDate", inputDateCss, pTheme);
+
+    return (
+        <div className={theme.input()} data-focus="input-date" data-id={inputDateId}>
+            <Input
+                {...inputProps}
+                ref={inputRef}
+                autoComplete={config.autocompleteOffValue}
+                error={error}
+                id={id}
+                mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                name={name}
+                onChange={setDateText}
+                onFocus={() => setShowCalendar(true)}
+                onKeyDown={handleKeyDown}
+                type="string"
+                value={dateText ?? ""}
+            />
+            {showCalendar ? (
+                <div
+                    className={theme.calendar({
+                        [calendarPosition]: true,
+                        fromRight: displayFrom === "right"
+                    })}
+                >
+                    <header className={theme.header({[calendarDisplay]: true})}>
+                        <span className={theme.year()} id="years" onClick={() => setCalendarDisplay("years")}>
+                            {displayedDate.year}
+                        </span>
+                        <h3 className={theme.date()} id="months" onClick={() => setCalendarDisplay("months")}>
+                            {displayedDate.toLocaleString(calendarFormat)}
+                        </h3>
+                        <IconButton
+                            icon="clear"
+                            onClick={() => setShowCalendar(false)}
+                            theme={{toggle: theme.toggle()}}
                         />
-                        {this.showCalendar ? (
-                            <div
-                                ref={cal => (this.calendar = cal)}
-                                className={theme.calendar({
-                                    [this.calendarPosition ?? "down"]: true,
-                                    fromRight: displayFrom === "right"
-                                })}
-                            >
-                                <header className={theme.header({[this.calendarDisplay]: true})}>
-                                    <span
-                                        className={theme.year()}
-                                        id="years"
-                                        onClick={() => (this.calendarDisplay = "years")}
-                                    >
-                                        {this.displayedDate().year}
-                                    </span>
-                                    <h3
-                                        className={theme.date()}
-                                        id="months"
-                                        onClick={() => (this.calendarDisplay = "months")}
-                                    >
-                                        {this.displayedDate().toLocaleString(calendarFormat)}
-                                    </h3>
-                                    <IconButton
-                                        icon="clear"
-                                        onClick={() => (this.showCalendar = false)}
-                                        theme={{toggle: theme.toggle()}}
-                                    />
-                                </header>
-                                <div className={theme.calendarWrapper()}>
-                                    <Calendar
-                                        {...calendarProps}
-                                        display={this.calendarDisplay}
-                                        handleSelect={() => null}
-                                        onChange={this.onCalendarChange}
-                                        selectedDate={this.jsDate}
-                                    />
-                                </div>
-                            </div>
-                        ) : null}
+                    </header>
+                    <div className={theme.calendarWrapper()}>
+                        <Calendar
+                            {...calendarProps}
+                            display={calendarDisplay}
+                            handleSelect={() => null}
+                            onChange={onCalendarChange}
+                            selectedDate={jsDate}
+                        />
                     </div>
-                )}
-            </Theme>
-        );
-    }
+                </div>
+            ) : null}
+        </div>
+    );
 }
 
 /** Détermine si une valeur est un ISO String. */

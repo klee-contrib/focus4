@@ -14,6 +14,7 @@ import {
     useCallback,
     useEffect,
     useImperativeHandle,
+    useLayoutEffect,
     useMemo,
     useRef,
     useState
@@ -234,7 +235,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
     }, [getQuery, multiple, pQuery, updateQuery, value]);
 
     // Recalcule la position de la sélection quand elle est automatique.
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (focus && pDirection === "auto") {
             const client = inputRef.current?.getBoundingClientRect() ?? {top: 0, height: 0};
             const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
