@@ -1,6 +1,6 @@
 {
     "name": "@focus4/styling",
-    "version": "11.8.4",
+    "version": "11.9.0-rc.0",
     "description": "Focus v4, styling module",
     "main": "lib/focus4.styling.js",
     "repository": {
@@ -18,7 +18,7 @@
         "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
     },
     "dependencies": {
-        "@focus4/core": "11.8.4",
+        "@focus4/core": "11.9.0-rc.0",
         "@types/react-dom": "18.2.7",
         "classnames": "2.3.2",
         "mobx-react": "7.6.0",
