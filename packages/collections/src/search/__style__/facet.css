@@ -24,7 +24,7 @@
     font-style: italic;
     box-sizing: content-box;
 
-    & > span:not([data-react-toolbox="tooltip"]) {
+    & > span {
         font-size: 26px;
         line-height: 24px;
         padding-right: 4px;
@@ -106,7 +106,7 @@
     height: 24px;
 }
 
-.icon > span:not([data-react-toolbox="tooltip"]) {
+.icon > span {
     font-size: 24px;
     transition: color 0.1s ease-in-out;
     line-height: 24px;

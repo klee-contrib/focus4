@@ -4,7 +4,7 @@ export const colorScheme = observable({dark: false});
 
 export function initColorScheme(disableAutoDarkMode = false) {
     const ls = localStorage.getItem("color-scheme");
-    if (ls === "dark" || (!disableAutoDarkMode && window.matchMedia?.("(prefers-color-scheme: dark)").matches)) {
+    if (ls === "dark" || (!ls && !disableAutoDarkMode && window.matchMedia?.("(prefers-color-scheme: dark)").matches)) {
         colorScheme.dark = true;
     }
     localStorage.setItem("color-scheme", colorScheme.dark ? "dark" : "light");
