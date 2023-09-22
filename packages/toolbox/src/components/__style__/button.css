@@ -52,6 +52,7 @@
     white-space: nowrap;
     box-sizing: border-box;
     font-family: var(--preferred-font);
+    vertical-align: inherit;
 
     & *,
     & *::after,

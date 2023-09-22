@@ -5,6 +5,7 @@
     --input-outline-color: rgb(var(--palette-grey-800));
     --input-disabled-color: rgb(var(--palette-grey-400));
 
+    --input-text-font-size: 14px;
     --input-text-color: rgb(var(--color-black));
 
     --input-hover-alpha: 0.12;

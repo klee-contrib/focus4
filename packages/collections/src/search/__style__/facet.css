@@ -107,8 +107,8 @@
 }
 
 .icon > span {
-    font-size: 24px;
+    --button-toggle-font-size: 24px;
+    --button-height: 24px;
     transition: color 0.1s ease-in-out;
-    line-height: 24px;
     vertical-align: top;
 }

@@ -39,6 +39,7 @@
     position: absolute;
     width: var(--checkbox-size);
     height: var(--checkbox-size);
+    line-height: var(--checkbox-size);
     top: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
     left: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
     border: var(--checkbox-outline-size) solid var(--input-outline-color);
@@ -58,6 +59,8 @@ span.check {
 .label {
     color: var(--input-text-color);
     margin: 0 4px;
+    font-size: var(--input-text-font-size);
+    line-height: var(--checkbox-state-size);
 }
 
 .checkbox--checked {

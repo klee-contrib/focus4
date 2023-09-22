@@ -1,9 +1,9 @@
 :root {
     --tooltip-margin: 4px;
     --tooltip-color: rgb(var(--color-white));
-    --tooltip-background: rgb(var(--palette-grey-800));
+    --tooltip-background: rgba(var(--palette-grey-800), 0.9);
     --tooltip-font-size: 12px;
-    --tooltip-max-width: 200px;
+    --tooltip-max-width: 250px;
     --tooltip-border-radius: 4px;
     --tooltip-padding: 4px 8px;
 }
@@ -20,6 +20,7 @@
 .content {
     display: block;
     color: var(--tooltip-color);
+    font-weight: 500;
     background: var(--tooltip-background);
     font-size: var(--tooltip-font-size);
     max-width: var(--tooltip-max-width);

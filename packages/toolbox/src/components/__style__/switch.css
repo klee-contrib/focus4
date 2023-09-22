@@ -97,6 +97,8 @@ span.icon {
 .label {
     color: var(--input-text-color);
     margin: 0 4px;
+    font-size: var(--input-text-font-size);
+    line-height: var(--switch-state-size);
 }
 
 .switch--checked {
