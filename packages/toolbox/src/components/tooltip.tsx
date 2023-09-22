@@ -191,7 +191,7 @@ export function Tooltip({
                 onPointerLeave: handlePointerLeave,
                 onPointerUp: handlePointerUp
             })}
-            {visible
+            {visible && tooltip
                 ? createPortal(
                       <span ref={tooltipNode} className={theme.tooltip({active, [position]: true})} style={{top, left}}>
                           <span className={theme.content()}>{tooltip}</span>

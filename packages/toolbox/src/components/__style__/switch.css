@@ -11,9 +11,9 @@
 }
 
 .switch {
-    position: relative;
     display: flex;
     align-items: center;
+    position: relative;
     user-select: none;
     width: fit-content;
     cursor: pointer;

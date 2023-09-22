@@ -32,7 +32,7 @@ export interface ButtonMenuProps extends MenuProps {
     /** Les props du bouton. */
     button: ButtonProps & {
         /** A renseigner pour poser une tooltip autour du bouton. */
-        tooltip?: TooltipProps;
+        tooltip?: Omit<TooltipProps, "children">;
         /** L'icône à afficher quand le bouton est ouvert. */
         openedIcon?: ReactNode;
     };
@@ -148,6 +148,7 @@ export function Menu({
     const menuNode = useRef<HTMLUListElement | null>(null);
 
     const [active, setActive] = useState(pActive);
+    const [activated, setActivated] = useState(false);
     const [rippled, setRippled] = useState(false);
     const [position, setPosition] = useState(pPosition === "auto" ? "topLeft" : pPosition);
     const [width, setWidth] = useState(0);
@@ -155,6 +156,8 @@ export function Menu({
 
     useLayoutEffect(() => {
         if (pActive) {
+            setActivated(true);
+            setActive(false);
             if (pPosition === "auto") {
                 const parentNode = rootNode.current?.parentNode;
                 if (parentNode) {
@@ -167,7 +170,6 @@ export function Menu({
                 }
             }
 
-            setActive(false);
             const timeout = setTimeout(() => setActive(true), 20);
             onShow?.();
             return () => {
@@ -235,7 +237,10 @@ export function Menu({
         return undefined;
     }, [active, height, position, width]);
 
-    const rootStyle = useMemo(() => (position !== "static" ? {width, height} : undefined), [height, position, width]);
+    const rootStyle = useMemo(
+        () => (position !== "static" ? (activated ? {width, height} : {width, height, display: "none"}) : undefined),
+        [activated, height, position, width]
+    );
 
     const outlineStyle = {width, height};
 
@@ -264,7 +269,7 @@ export function Menu({
         const {height: ch, width: cw} = menuNode.current!.getBoundingClientRect();
         setWidth(cw);
         setHeight(ch);
-    }, [items]);
+    }, [activated, items]);
 
     return (
         <div

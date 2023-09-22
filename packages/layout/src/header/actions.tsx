@@ -8,7 +8,7 @@ import headerCss from "./__style__/header.css";
 /** Action principale, affichée dans son propre bouton. */
 export type PrimaryAction = ButtonProps & {
     /** A renseigner pour poser une tooltip autour du bouton. */
-    tooltip?: TooltipProps;
+    tooltip?: Omit<TooltipProps, "children">;
     /** Icône custom (non material). */
     iconCustom?: boolean;
 };
