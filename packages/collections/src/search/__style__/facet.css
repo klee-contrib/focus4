@@ -24,7 +24,7 @@
     font-style: italic;
     box-sizing: content-box;
 
-    & > span {
+    & > span[aria-label] {
         font-size: 26px;
         line-height: 24px;
         padding-right: 4px;

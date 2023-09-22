@@ -24,6 +24,10 @@
     --button-squared-padding: 0 calc(1.2 * var(--unit));
 }
 
+:root[dark] {
+    --button-neutral-color: rgb(var(--palette-grey-100));
+}
+
 .button {
     align-content: center;
     align-items: center;

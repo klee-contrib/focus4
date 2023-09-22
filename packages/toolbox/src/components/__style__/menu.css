@@ -16,6 +16,11 @@
     --menu-icon-size: calc(2.3 * var(--unit));
 }
 
+:root[dark] {
+    --menu-background-color: rgb(var(--palette-grey-100));
+    --menu-item-hover-background: rgb(var(--palette-grey-300));
+}
+
 .iconMenu {
     display: inline-block;
     position: relative;
