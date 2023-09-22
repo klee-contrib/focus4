@@ -3,8 +3,8 @@ import {MouseEvent, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {useInputRef} from "../focus4.toolbox";
 import {PointerEvents} from "../utils/pointer-events";
+import {useInputRef} from "../utils/use-input-ref";
 
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
