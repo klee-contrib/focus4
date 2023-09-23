@@ -8,6 +8,10 @@
     --overflow: inherit;
 }
 
+:root[dark] {
+    --dialog-color-white: rgb(var(--palette-grey-50));
+}
+
 .wrapper {
     z-index: var(--z-index-higher);
     position: absolute;

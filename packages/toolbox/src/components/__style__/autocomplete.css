@@ -9,6 +9,10 @@
     --autocomplete-value-margin: calc(var(--unit) * 0.25) calc(var(--unit) * 0.5) calc(var(--unit) * 0.25) 0;
 }
 
+:root[dark] {
+    --autocomplete-suggestions-background: rgb(var(--palette-grey-100));
+}
+
 .autocomplete {
     position: relative;
     box-sizing: border-box;

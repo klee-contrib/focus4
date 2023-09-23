@@ -9,6 +9,10 @@
     --dropdown-value-border-radius: calc(0.2 * var(--unit));
 }
 
+:root[dark] {
+    --dropdown-color-white: rgb(var(--palette-grey-100));
+}
+
 .dropdown {
     position: relative;
     box-sizing: border-box;
