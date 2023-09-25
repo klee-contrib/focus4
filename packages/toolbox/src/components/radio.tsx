@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {Children, cloneElement, MouseEvent, ReactElement, ReactNode} from "react";
+import {createContext, ReactNode, useContext, useMemo} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -11,10 +11,14 @@ import {Ripple} from "./ripple";
 import radioCss, {RadioCss} from "./__style__/radio.css";
 export {RadioCss, radioCss};
 
+const RadioContext = createContext({
+    disabled: false,
+    onChange: undefined as ((value: string) => void) | undefined,
+    value: undefined as string | undefined
+});
+
 /** Props du Radio. */
 export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
-    /** @internal */
-    checked?: boolean;
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Désactive le RadioButton. */
@@ -25,8 +29,6 @@ export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
     label?: ReactNode;
     /** Name pour l'input[type=radio] posé par le RadioButton. */
     name?: string;
-    /** @internal */
-    onChange?: (value: boolean, event: MouseEvent<HTMLInputElement>) => void;
     /** CSS. */
     theme?: CSSProp<RadioCss>;
     /** Valeur du RadioGroup quand ce RadioButton est sélectionné. */
@@ -37,26 +39,30 @@ export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
  * A utiliser dans un RadioGroup.
  */
 export function RadioButton({
-    checked = false,
     className = "",
     disabled = false,
     label,
     id,
-    onChange,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
     name,
-    theme: pTheme
+    theme: pTheme,
+    value
 }: RadioButtonProps) {
     const theme = useTheme("radio", radioCss, pTheme);
+
+    const {disabled: pDisabled, onChange, value: selectedValue} = useContext(RadioContext);
+    const checked = selectedValue === value;
+    disabled &&= pDisabled;
+
     const {ref, loaded, handleOnClick, handlePointerLeave, handlePointerUp} = useInputRef<
         HTMLInputElement,
         HTMLLabelElement
     >({
         disabled,
-        onChange,
+        onChange: () => onChange?.(value),
         onPointerLeave,
         onPointerUp,
         value: checked
@@ -110,24 +116,10 @@ export interface RadioGroupProps {
  * A utiliser avec RadioButton pour faire des radios. Les composants [`BooleanRadio`](components/forms.md#booleanradio) et [`SelectRadio`](components/forms.md#selectradio) en sont des implémentations pour les usages les plus courants.
  */
 export function RadioGroup({className = "", children, disabled = false, onChange, value}: RadioGroupProps) {
+    const ctx = useMemo(() => ({disabled, onChange, value}), [disabled, onChange, value]);
     return (
-        <div className={className}>
-            {Children.map(children, child => {
-                if (!child) {
-                    return child;
-                }
-
-                const radioButton = child as ReactElement<RadioButtonProps>;
-                if (radioButton.type === RadioButton) {
-                    return cloneElement(radioButton, {
-                        checked: radioButton.props.value === value,
-                        disabled: disabled || radioButton.props.disabled,
-                        onChange: () => onChange?.(radioButton.props.value)
-                    });
-                }
-
-                return cloneElement(radioButton);
-            })}
-        </div>
+        <RadioContext.Provider value={ctx}>
+            <div className={className}>{children}</div>
+        </RadioContext.Provider>
     );
 }
