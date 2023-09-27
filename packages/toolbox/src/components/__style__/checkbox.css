@@ -37,16 +37,15 @@
 
 .outline {
     position: absolute;
-    width: var(--checkbox-size);
-    height: var(--checkbox-size);
+    top: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2 + var(--checkbox-outline-size));
+    left: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2 + var(--checkbox-outline-size));
+    width: calc(var(--checkbox-size) - 2 * var(--checkbox-outline-size));
+    height: calc(var(--checkbox-size) - 2 * var(--checkbox-outline-size));
     line-height: var(--checkbox-size);
-    top: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
-    left: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2);
-    border: var(--checkbox-outline-size) solid var(--input-outline-color);
-    box-sizing: border-box;
-    border-radius: var(--checkbox-outline-size);
+    outline: var(--checkbox-outline-size) solid var(--input-outline-color);
+    border-radius: 1%;
     transition: background-color var(--animation-duration) var(--animation-curve-default) 0s,
-        border-color var(--animation-duration) var(--animation-curve-default) 0s;
+        outline-color var(--animation-duration) var(--animation-curve-default) 0s;
 }
 
 span.check {
@@ -65,7 +64,7 @@ span.check {
 
 .checkbox--checked {
     & .outline {
-        border-color: var(--input-on-color);
+        outline-color: var(--input-on-color);
         background-color: var(--input-on-color);
     }
 
@@ -80,7 +79,7 @@ span.check {
     cursor: auto;
 
     & .outline {
-        border-color: var(--input-disabled-color);
+        outline-color: var(--input-disabled-color);
     }
 
     & .label {
@@ -104,7 +103,7 @@ span.check {
 
 .checkbox--error:not(.checkbox--disabled) {
     & .outline {
-        border-color: var(--input-error-color);
+        outline-color: var(--input-error-color);
     }
 
     &.checkbox--checked .outline {
