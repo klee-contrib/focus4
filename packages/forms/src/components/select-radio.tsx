@@ -4,7 +4,7 @@ import {ReactNode, useCallback} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {RadioButton, RadioGroup} from "@focus4/toolbox";
+import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
 
 import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
 export {selectRadioCss, SelectRadioCss};
@@ -23,6 +23,8 @@ export interface SelectRadioProps<T extends "number" | "string"> {
     name?: string;
     /** Est appelé à chaque changement de valeur. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    /** CSS des radios. */
+    radioTheme?: CSSProp<RadioCss>;
     /** CSS. */
     theme?: CSSProp<SelectRadioCss>;
     /** Type du champ (number ou string). */
@@ -47,6 +49,7 @@ export function SelectRadio<T extends "number" | "string">({
     hasUndefined = false,
     name,
     onChange,
+    radioTheme,
     theme: pTheme,
     type,
     undefinedLabel = "focus.select.none",
@@ -87,6 +90,7 @@ export function SelectRadio<T extends "number" | "string">({
                                 key={optVal || "undefined"}
                                 label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
+                                theme={radioTheme}
                                 value={`${optVal as string}`}
                             />
                         );

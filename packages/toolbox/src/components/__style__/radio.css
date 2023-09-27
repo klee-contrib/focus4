@@ -84,6 +84,10 @@
     & .dot {
         background-color: var(--input-disabled-color);
     }
+
+    & .label {
+        color: var(--input-disabled-color);
+    }
 }
 
 .radio:hover:not(.radio--disabled) .state {

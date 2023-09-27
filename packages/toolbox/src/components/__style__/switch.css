@@ -148,6 +148,10 @@ span.icon {
     & .icon--checked {
         color: var(--input-disabled-color);
     }
+
+    & .label {
+        color: var(--input-disabled-color);
+    }
 }
 
 .switch:active:not(.switch--disabled) .thumb {

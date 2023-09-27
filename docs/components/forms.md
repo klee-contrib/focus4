@@ -84,16 +84,17 @@ Un radio oui/non pour un booléen.
 
 ### Props
 
-| Nom        | Obligatoire | Type                                        | Description                                            |
-| ---------- | ----------- | ------------------------------------------- | ------------------------------------------------------ |
-| `disabled` | Non         | <code>boolean</code>                        | Disabled radio-select, default to: false               |
-| `error`    | Non         | <code>string</code>                         | Error message to display.                              |
-| `labelNo`  | Non         | <code>string</code>                         | Libellé pour le "non". Par défaut: "focus.boolean.no"  |
-| `labelYes` | Non         | <code>string</code>                         | Libellé pour le "oui". Par défaut: "focus.boolean.yes" |
-| `name`     | **Oui**     | <code>string</code>                         | Name for input field.                                  |
-| `onChange` | **Oui**     | <code>(value: boolean) =&gt; void</code>    | Call with each value change.                           |
-| `theme`    | Non         | <code>CSSProp&lt;BooleanRadioCss&gt;</code> | CSS.                                                   |
-| `value`    | Non         | <code>boolean</code>                        | Value.                                                 |
+| Nom          | Obligatoire | Type                                        | Description                                            |
+| ------------ | ----------- | ------------------------------------------- | ------------------------------------------------------ |
+| `disabled`   | Non         | <code>boolean</code>                        | Disabled radio-select, default to: false               |
+| `error`      | Non         | <code>string</code>                         | Error message to display.                              |
+| `labelNo`    | Non         | <code>string</code>                         | Libellé pour le "non". Par défaut: "focus.boolean.no"  |
+| `labelYes`   | Non         | <code>string</code>                         | Libellé pour le "oui". Par défaut: "focus.boolean.yes" |
+| `name`       | **Oui**     | <code>string</code>                         | Name for input field.                                  |
+| `onChange`   | **Oui**     | <code>(value: boolean) =&gt; void</code>    | Call with each value change.                           |
+| `radioTheme` | Non         | <code>CSSProp&lt;RadioCss&gt;</code>        | CSS des radios.                                        |
+| `theme`      | Non         | <code>CSSProp&lt;BooleanRadioCss&gt;</code> | CSS.                                                   |
+| `value`      | Non         | <code>boolean</code>                        | Value.                                                 |
 
 ## `Display`
 
@@ -280,6 +281,7 @@ Un composant de sélection multiple pour un champ de type liste de valeurs avec 
 
 | Nom             | Obligatoire | Type                                                                      | Description                                |
 | --------------- | ----------- | ------------------------------------------------------------------------- | ------------------------------------------ |
+| `checkboxTheme` | Non         | <code>CSSProp&lt;CheckboxCss&gt;</code>                                   | CSS des checkboxes.                        |
 | `disabled`      | Non         | <code>boolean</code>                                                      | Désactive le select.                       |
 | `error`         | Non         | <code>ReactNode</code>                                                    | Message d'erreur à afficher.               |
 | `id`            | Non         | <code>string</code>                                                       | Id de l'input.                             |
@@ -306,6 +308,7 @@ Un composant de saisie pour choisir un élément dans une liste de référence e
 | `label`             | Non         | <code>string</code>                                                   | Libellé.                                                                     |
 | `name`              | Non         | <code>string</code>                                                   | Nom de l'input.                                                              |
 | `onChange`          | **Oui**     | <code>(value: T extends "string" ? string : number) =&gt; void</code> | Est appelé à chaque changement de valeur.                                    |
+| `radioTheme`        | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                                  | CSS des radios.                                                              |
 | `theme`             | Non         | <code>CSSProp&lt;SelectRadioCss&gt;</code>                            | CSS.                                                                         |
 | `type`              | **Oui**     | <code>"string" &#124; "number"</code>                                 | Type du champ (number ou string).                                            |
 | `undefinedLabel`    | Non         | <code>string</code>                                                   | Libellé du cas vide.                                                         |

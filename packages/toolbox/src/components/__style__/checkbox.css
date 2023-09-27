@@ -82,6 +82,10 @@ span.check {
     & .outline {
         border-color: var(--input-disabled-color);
     }
+
+    & .label {
+        color: var(--input-disabled-color);
+    }
 }
 
 .checkbox--checked.checkbox--disabled .outline {

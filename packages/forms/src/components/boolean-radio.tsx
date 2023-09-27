@@ -1,7 +1,7 @@
 import i18next from "i18next";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import {RadioButton, RadioGroup} from "@focus4/toolbox";
+import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
 
 import booleanRadioCss, {BooleanRadioCss} from "./__style__/boolean-radio.css";
 export {booleanRadioCss, BooleanRadioCss};
@@ -19,6 +19,8 @@ export interface BooleanRadioProps {
     name: string;
     /** Call with each value change. */
     onChange: (value: boolean) => void;
+    /** CSS des radios. */
+    radioTheme?: CSSProp<RadioCss>;
     /** CSS. */
     theme?: CSSProp<BooleanRadioCss>;
     /** Value. */
@@ -35,6 +37,7 @@ export function BooleanRadio({
     labelYes = "focus.boolean.yes",
     name,
     onChange,
+    radioTheme,
     theme: pTheme,
     value
 }: BooleanRadioProps) {
@@ -46,8 +49,20 @@ export function BooleanRadio({
                 onChange={(x: string) => onChange(x === "true")}
                 value={value === true ? "true" : value === false ? "false" : undefined}
             >
-                <RadioButton disabled={disabled} label={i18next.t(labelYes)} name={`${name}-yes`} value="true" />
-                <RadioButton disabled={disabled} label={i18next.t(labelNo)} name={`${name}-no`} value="false" />
+                <RadioButton
+                    disabled={disabled}
+                    label={i18next.t(labelYes)}
+                    name={`${name}-yes`}
+                    theme={radioTheme}
+                    value="true"
+                />
+                <RadioButton
+                    disabled={disabled}
+                    label={i18next.t(labelNo)}
+                    name={`${name}-no`}
+                    theme={radioTheme}
+                    value="false"
+                />
             </RadioGroup>
             {error ? <div>{error}</div> : null}
         </>

@@ -4,7 +4,7 @@ import {ReactNode, SyntheticEvent} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {Checkbox} from "@focus4/toolbox";
+import {Checkbox, CheckboxCss} from "@focus4/toolbox";
 
 import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
 export {selectCheckboxCss, SelectCheckboxCss};
@@ -34,6 +34,8 @@ function clickHandlerFactory(
 
 /** Props du SelectCheckbox */
 export interface SelectCheckboxProps<T extends "number" | "string"> {
+    /** CSS des checkboxes. */
+    checkboxTheme?: CSSProp<CheckboxCss>;
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -62,6 +64,7 @@ export interface SelectCheckboxProps<T extends "number" | "string"> {
  * Un composant de sélection multiple pour un champ de type liste de valeurs avec plusieurs choix possibles, dans une liste de référence.
  */
 export function SelectCheckbox<T extends "number" | "string">({
+    checkboxTheme,
     disabled = false,
     error,
     label,
@@ -95,6 +98,7 @@ export function SelectCheckbox<T extends "number" | "string">({
                                 id={`${id!}-${optVal as string}`}
                                 label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
+                                theme={checkboxTheme}
                                 value={isSelected}
                             />
                         </li>
