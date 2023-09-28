@@ -98,7 +98,7 @@
 }
 
 .checkbox:not(.checkbox--selected) {
-    --input-on-color: rgb(var(--color-black));
+    --input-on-main-color: rgb(var(--color-black));
 }
 
 .icon {

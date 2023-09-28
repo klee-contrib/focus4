@@ -85,12 +85,12 @@ span.icon {
 }
 
 .icon--checked {
-    color: var(--input-on-color);
+    color: var(--input-on-main-color);
     clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
 }
 
 .icon--unchecked {
-    color: var(--input-on-accent-color);
+    color: var(--input-on-secondary-color);
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 }
 
@@ -107,13 +107,13 @@ span.icon {
     }
 
     &:not(.switch--disabled) .track {
-        background-color: var(--input-on-color);
-        border-color: var(--input-on-color);
+        background-color: var(--input-on-main-color);
+        border-color: var(--input-on-main-color);
     }
 
     & .thumb {
         transform: scale(1.5);
-        background-color: var(--input-on-accent-color);
+        background-color: var(--input-on-secondary-color);
     }
 
     & .icon--checked {
@@ -142,7 +142,7 @@ span.icon {
     }
 
     & .icon--unchecked {
-        color: var(--input-on-accent-color);
+        color: var(--input-on-secondary-color);
     }
 
     & .icon--checked {
@@ -166,7 +166,7 @@ span.icon {
     animation-name: focus;
     animation-duration: var(--animation-duration);
     animation-timing-function: var(--animation-curve-focus-ring);
-    outline: var(--input-focus-ring-width) solid var(--input-focus-ring-color);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--switch-focus-ring-offset);
 }
 
@@ -175,9 +175,9 @@ span.icon {
         outline-width: 0px;
     }
     50% {
-        outline-width: calc(2 * var(--input-focus-ring-width));
+        outline-width: calc(2 * var(--focus-ring-width));
     }
     100% {
-        outline-width: var(--input-focus-ring-width);
+        outline-width: var(--focus-ring-width);
     }
 }

@@ -64,12 +64,12 @@ span.check {
 
 .checkbox--checked {
     & .outline {
-        outline-color: var(--input-on-color);
-        background-color: var(--input-on-color);
+        outline-color: var(--input-on-main-color);
+        background-color: var(--input-on-main-color);
     }
 
     & span.check {
-        color: var(--input-on-accent-color);
+        color: var(--input-on-secondary-color);
         clip-path: inset(0 0 0 0);
         transition: clip-path var(--animation-duration) var(--animation-curve-default) 0s;
     }
@@ -115,11 +115,11 @@ span.check {
     animation-name: focus;
     animation-duration: var(--animation-duration);
     animation-timing-function: var(--animation-curve-focus-ring);
-    outline: var(--input-focus-ring-width) solid var(--input-focus-ring-color);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
 }
 
 .checkbox--error .input:focus + .state {
-    outline-color: var(--input-focus-ring-error-color);
+    outline-color: var(--focus-ring-error-color);
 }
 
 @keyframes focus {
@@ -127,9 +127,9 @@ span.check {
         outline-width: 0px;
     }
     50% {
-        outline-width: calc(2 * var(--input-focus-ring-width));
+        outline-width: calc(2 * var(--focus-ring-width));
     }
     100% {
-        outline-width: var(--input-focus-ring-width);
+        outline-width: var(--focus-ring-width);
     }
 }

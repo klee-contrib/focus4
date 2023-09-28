@@ -1,6 +1,6 @@
 :root {
-    --input-on-color: rgb(var(--color-primary));
-    --input-on-accent-color: rgb(var(--color-white));
+    --input-on-main-color: rgb(var(--color-primary));
+    --input-on-secondary-color: rgb(var(--color-white));
 
     --input-outline-color: rgb(var(--palette-grey-800));
     --input-disabled-color: rgb(var(--palette-grey-400));
@@ -8,17 +8,17 @@
     --input-text-font-size: 14px;
     --input-text-color: rgb(var(--color-black));
 
-    --input-hover-alpha: 0.12;
+    --input-hover-opacity: 0.12;
 
     --input-state-palette: var(--palette-grey-600);
     --input-state-color: rgb(var(--input-state-palette));
-    --input-state-hover-color: rgba(var(--input-state-palette), var(--input-hover-alpha));
+    --input-state-hover-color: rgba(var(--input-state-palette), var(--input-hover-opacity));
 
     --input-error-palette: var(--palette-red-600);
     --input-error-color: rgb(var(--input-error-palette));
-    --input-error-hover-color: rgba(var(--input-error-palette), var(--input-hover-alpha));
+    --input-error-hover-color: rgba(var(--input-error-palette), var(--input-hover-opacity));
 
-    --input-focus-ring-width: 3px;
-    --input-focus-ring-color: var(--input-on-color);
-    --input-focus-ring-error-color: var(--input-error-color);
+    --focus-ring-width: 3px;
+    --focus-ring-color: var(--input-on-main-color);
+    --focus-ring-error-color: var(--input-error-color);
 }

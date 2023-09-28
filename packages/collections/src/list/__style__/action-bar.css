@@ -43,10 +43,10 @@
 }
 
 .bar--selection .selectionToggle {
-    --input-on-color: var(--action-bar-selection-color);
-    --input-on-accent-color: var(--action-bar-selection-background);
+    --input-on-main-color: var(--action-bar-selection-color);
+    --input-on-secondary-color: var(--action-bar-selection-background);
     --input-state-color: rgb(var(--palette-grey-100));
-    --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-alpha));
+    --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-opacity));
 }
 
 .bar--selection button {
