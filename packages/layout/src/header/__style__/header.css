@@ -55,7 +55,7 @@
 }
 
 .scrolling--deployed .item--middle {
-    opacity: 0;
+    visibility: hidden;
 }
 
 .scrolling--deployed .actions {
@@ -65,7 +65,7 @@
 }
 
 .scrolling--undeployed {
-    opacity: 0;
+    visibility: hidden;
 }
 
 .scrolling--sticky {
