@@ -1,17 +1,36 @@
 import {AnimatePresence, motion} from "framer-motion";
 import {action, toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
-import {MouseEvent as RMouseEvent, useCallback, useContext, useEffect, useRef} from "react";
+import {
+    createElement,
+    MouseEventHandler,
+    ReactNode,
+    MouseEvent as RMouseEvent,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef
+} from "react";
 
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
-import {Button, ButtonCss, ButtonProps, IconButton, IconButtonCss, IconButtonProps} from "@focus4/toolbox";
+import {FontIcon, PointerEvents, Ripple, useInputRef} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
 import {mainMenuCss, MainMenuCss} from "./style";
 
 /** Props du MenuItem. */
-export interface MainMenuItemProps extends Omit<ButtonProps & IconButtonProps, "theme"> {
+export interface MainMenuItemProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {
+    /** Pour passer un sous-menu. */
+    children?: ReactNode;
+    /** Si renseigné, pose une balise <a> à la place du <button>. */
+    href?: string;
+    /** Icône a afficher dans l'item de menu. */
+    icon?: ReactNode;
+    /**  Libellé de l'item de menu. */
+    label?: string;
+    /** Au clic sur le l'item de menu. */
+    onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** La route associée, pour comparaison avec la route active. */
     route?: string;
     /** CSS. */
@@ -19,7 +38,19 @@ export interface MainMenuItemProps extends Omit<ButtonProps & IconButtonProps, "
 }
 
 /** Elément de menu. */
-export function MainMenuItem({label, icon, onClick, route, children, theme: pTheme, ...otherProps}: MainMenuItemProps) {
+export function MainMenuItem({
+    children,
+    href,
+    icon,
+    label,
+    onClick,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
+    route,
+    theme: pTheme
+}: MainMenuItemProps) {
     const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
     const context = useContext(MenuContext);
     const state = useLocalObservable(() => ({hasSubMenu: false, top: 0, left: 0}));
@@ -56,59 +87,72 @@ export function MainMenuItem({label, icon, onClick, route, children, theme: pThe
         return () => document.removeEventListener("mouseup", onDocumentClick);
     }, []);
 
-    return useObserver(() => (
-        <>
-            <li ref={li} className={theme.item({active: route === context.activeRoute, opened: state.hasSubMenu})}>
-                {label ? (
-                    <Button
-                        {...otherProps}
-                        icon={icon}
-                        label={label}
-                        onClick={onItemClick}
-                        theme={theme as unknown as CSSProp<ButtonCss>}
-                    />
-                ) : (
-                    <IconButton
-                        {...otherProps}
-                        icon={icon}
-                        onClick={onItemClick}
-                        theme={theme as unknown as CSSProp<IconButtonCss>}
-                    />
-                )}
-            </li>
-            {context.renderSubMenu(
-                <AnimatePresence>
-                    {state.hasSubMenu ? (
-                        <motion.div
-                            ref={panel}
-                            animate="visible"
-                            className={theme.panel()}
-                            exit="hidden"
-                            initial="hidden"
-                            style={toJS(state)}
-                            transition={getDefaultTransition()}
-                            variants={{
-                                visible: {
-                                    width: "auto",
-                                    opacity: 1
-                                },
-                                hidden: {
-                                    width: 0,
-                                    opacity: 0.7
-                                }
-                            }}
-                        >
-                            <MainMenuList
-                                activeRoute={context.activeRoute}
-                                closePanel={() => (state.hasSubMenu = false)}
-                                theme={theme}
+    const {ref, handlePointerLeave, handlePointerUp} = useInputRef({
+        onPointerLeave,
+        onPointerUp
+    });
+
+    const element = href ? "a" : "button";
+
+    return useObserver(() => {
+        const props = {
+            ref,
+            className: theme.item({active: route === context.activeRoute, opened: state.hasSubMenu}),
+            href,
+            onClick: onItemClick,
+            type: !href ? "button" : undefined
+        };
+        return (
+            <>
+                <li ref={li}>
+                    <Ripple
+                        onPointerDown={onPointerDown}
+                        onPointerEnter={onPointerEnter}
+                        onPointerLeave={handlePointerLeave}
+                        onPointerUp={handlePointerUp}
+                    >
+                        {createElement(
+                            element,
+                            props,
+                            icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null,
+                            label ? <div className={theme.label()}>{label}</div> : null
+                        )}
+                    </Ripple>
+                </li>
+                {context.renderSubMenu(
+                    <AnimatePresence>
+                        {state.hasSubMenu ? (
+                            <motion.div
+                                ref={panel}
+                                animate="visible"
+                                className={theme.panel()}
+                                exit="hidden"
+                                initial="hidden"
+                                style={toJS(state)}
+                                transition={getDefaultTransition()}
+                                variants={{
+                                    visible: {
+                                        width: "auto",
+                                        opacity: 1
+                                    },
+                                    hidden: {
+                                        width: 0,
+                                        opacity: 0.7
+                                    }
+                                }}
                             >
-                                {children}
-                            </MainMenuList>
-                        </motion.div>
-                    ) : null}
-                </AnimatePresence>
-            )}
-        </>
-    ));
+                                <MainMenuList
+                                    activeRoute={context.activeRoute}
+                                    closePanel={() => (state.hasSubMenu = false)}
+                                    theme={theme}
+                                >
+                                    {children}
+                                </MainMenuList>
+                            </motion.div>
+                        ) : null}
+                    </AnimatePresence>
+                )}
+            </>
+        );
+    });
 }

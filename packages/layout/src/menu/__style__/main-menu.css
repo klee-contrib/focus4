@@ -1,11 +1,22 @@
 :root {
     --main-menu-background: rgb(var(--color-white));
-    --main-menu-item-active-background: rgba(var(--color-black), 0.15);
-    --main-menu-item-opened-background: rgba(var(--color-black), 0.1);
-    --main-menu-item-active-color: rgb(var(--color-primary));
-    --main-menu-item-opened-color: rgb(var(--color-accent));
+
+    --main-menu-item-aspect-ratio: 1 / 1;
+    --main-menu-item-padding: 12px;
+    --main-menu-item-icon-size: 24px;
+    --main-menu-item-text-size: 14px;
+    --main-menu-item-gap: 15%;
+    --main-menu-item-focus-ring-radius: 7.5%;
+
     --main-menu-item-color: rgb(var(--color-black));
-    --main-menu-item-height: 60px;
+
+    --main-menu-item-hover-opacity: 0.18;
+
+    --main-menu-item-active-background: rgba(var(--color-primary), 0.15);
+    --main-menu-item-active-color: rgb(var(--color-primary));
+
+    --main-menu-item-opened-background: rgba(var(--color-accent), 0.15);
+    --main-menu-item-opened-color: rgb(var(--color-accent));
 }
 
 .menu {
@@ -25,58 +36,98 @@
 }
 
 .item {
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    font-family: var(--preferred-font);
+    border: none;
+    outline: none;
     display: flex;
     flex-direction: column;
-    width: 100%;
-}
-
-.toggle {
-    border-radius: 0;
-}
-
-.button,
-.button.button--neutral,
-.toggle,
-.toggle.toggle--neutral {
-    height: var(--main-menu-item-height);
+    align-items: center;
+    justify-content: center;
+    gap: var(--main-menu-item-gap);
+    text-decoration: none;
+    background-color: transparent;
     color: var(--main-menu-item-color);
-    min-width: var(--main-menu-item-height);
+    width: 100%;
+    aspect-ratio: var(--main-menu-item-aspect-ratio);
+    padding: var(--main-menu-item-padding);
+    cursor: pointer;
+    transition: background-color var(--animation-duration) var(--animation-curve-default) 0s,
+        color var(--animation-duration) var(--animation-curve-default) 0s;
 }
 
-.button {
-    text-align: left;
+.item::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: "";
+    pointer-events: none;
+    opacity: 0;
+    background: var(--main-menu-item-color);
+    transition: opacity var(--animation-duration) var(--animation-curve-default) 0s,
+        background-color var(--animation-duration) var(--animation-curve-default) 0s,
+        color var(--animation-duration) var(--animation-curve-default) 0s;
 }
 
-.button > .icon,
-.toggle > .icon {
-    width: 24px;
-    font-size: 24px;
+.item:hover::before {
+    opacity: var(--main-menu-item-hover-opacity);
+}
+
+.icon {
+    font-size: var(--main-menu-item-icon-size);
+}
+
+.label {
+    font-size: var(--main-menu-item-text-size);
+    font-weight: 500;
+}
+
+.item--active {
+    &::before {
+        background: var(--main-menu-item-active-color);
+    }
+
+    background: var(--main-menu-item-active-background);
+    color: var(--main-menu-item-active-color);
+}
+
+.item--opened {
+    &::before {
+        background: var(--main-menu-item-opened-color);
+    }
+
+    background: var(--main-menu-item-opened-background);
+    color: var(--main-menu-item-opened-color);
+}
+
+.item:focus {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(-1 * var(--focus-ring-width));
+    border-radius: var(--main-menu-item-focus-ring-radius);
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+        outline-offset: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+        outline-offset: calc(-2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
+        outline-offset: calc(-1 * var(--focus-ring-width));
+    }
 }
 
 .panel {
     position: fixed;
-}
-
-.item--active {
-    background: var(--main-menu-item-active-background);
-
-    & .icon,
-    & .button,
-    & .button.button--neutral,
-    & .toggle,
-    & .toggle.toggle--neutral {
-        color: var(--main-menu-item-active-color);
-    }
-}
-
-.item--opened {
-    background: var(--main-menu-item-opened-background);
-
-    & > .icon,
-    & > .button,
-    & > .button.button--neutral,
-    & > .toggle,
-    & > .toggle.toggle--neutral {
-        color: var(--main-menu-item-opened-color);
-    }
 }
