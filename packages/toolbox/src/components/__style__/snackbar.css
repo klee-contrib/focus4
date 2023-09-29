@@ -12,6 +12,8 @@
 }
 
 .snackbar {
+    --button-border-radius: var(--snackbar-border-radius);
+
     align-items: center;
     background-color: var(--snackbar-background-color);
     border-radius: var(--snackbar-border-radius);

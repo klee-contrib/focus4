@@ -1,13 +1,8 @@
 :root {
     --panel-title-border: 1px solid rgba(var(--color-black), 0.1);
     --panel-title-color: rgb(var(--color-primary));
-    --panel-shadow: var(--shadow-4p);
-}
-
-.progress {
-    position: absolute;
-    height: 3px;
-    z-index: var(--z-index-normal);
+    --panel-shadow: var(--shadow-2p);
+    --panel-border-radius: 12px;
 }
 
 .panel {
@@ -16,26 +11,20 @@
     margin-bottom: 30px;
     box-shadow: var(--panel-shadow);
     background: rgb(var(--color-white));
-    border-radius: 2px;
+    border-radius: var(--panel-border-radius);
 }
 
 .title {
     min-height: 36px;
-    padding: 8px 16px;
+    padding: 8px;
     display: flex;
     align-items: center;
 
     & h3 {
         margin: 0;
-        padding: 2px 0;
-        font-size: 22px;
+        padding: 0 8px;
+        font-size: 20px;
         color: var(--panel-title-color);
-        display: inline-block;
-
-        & button {
-            margin-left: 5px;
-            margin-top: -4px;
-        }
     }
 }
 
@@ -49,15 +38,8 @@
     justify-content: flex-end;
 }
 
-.actions {
-    display: none;
-}
-
-.panel--editing,
-.panel:hover {
-    & > .title > .actions {
-        display: block;
-    }
+.panel--editing .actions {
+    display: block;
 }
 
 .content {
@@ -76,4 +58,17 @@
     bottom: 0;
     background: rgb(var(--color-white));
     opacity: 0.7;
+}
+
+.progress {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 3px;
+    z-index: var(--z-index-normal);
+}
+
+.title--top + .content .progress {
+    top: -2px;
+    bottom: initial;
 }

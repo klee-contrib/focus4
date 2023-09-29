@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {createContext, ReactNode, useContext, useMemo} from "react";
+import {createContext, FocusEventHandler, ReactNode, useContext, useMemo} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -29,6 +29,10 @@ export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
     label?: ReactNode;
     /** Name pour l'input[type=radio] posé par le RadioButton. */
     name?: string;
+    /** Au blur du Radio. */
+    onBlur?: FocusEventHandler<HTMLInputElement>;
+    /** Au focus du Radio. */
+    onFocus?: FocusEventHandler<HTMLInputElement>;
     /** CSS. */
     theme?: CSSProp<RadioCss>;
     /** Valeur du RadioGroup quand ce RadioButton est sélectionné. */
@@ -43,6 +47,8 @@ export function RadioButton({
     disabled = false,
     label,
     id,
+    onBlur,
+    onFocus,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
@@ -83,7 +89,9 @@ export function RadioButton({
                 disabled={disabled}
                 id={id}
                 name={name}
+                onBlur={onBlur}
                 onClick={handleOnClick}
+                onFocus={onFocus}
                 readOnly
                 type="radio"
             />

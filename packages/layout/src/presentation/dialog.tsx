@@ -57,11 +57,7 @@ export function Dialog({
                                 {actions.length ? (
                                     <nav className={theme.navigation()}>
                                         {actions.map((action, idx) => (
-                                            <Button
-                                                key={idx}
-                                                {...action}
-                                                className={classNames(theme.button(), action.className)}
-                                            />
+                                            <Button key={idx} {...action} />
                                         ))}
                                     </nav>
                                 ) : null}

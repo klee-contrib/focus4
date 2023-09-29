@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, getIcon, useTheme} from "@focus4/styling";
-import {Button, ButtonMenu, Checkbox, IconButton, Input, MenuItem} from "@focus4/toolbox";
+import {Button, Checkbox, IconButton, Input, Menu, MenuItem, useMenu} from "@focus4/toolbox";
 
 import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 
@@ -77,6 +77,8 @@ export function ActionBar<T>({
     const [displayFacetBox, setDisplayFacetBox] = useState(false);
 
     const theme = useTheme("actionBar", actionBarCss, pTheme);
+    const groupMenu = useMenu<HTMLDivElement>();
+    const sortMenu = useMenu<HTMLDivElement>();
 
     function groupButton() {
         if (hasGrouping && !store.selectedItems.size && !store.groupingKey) {
@@ -107,17 +109,22 @@ export function ActionBar<T>({
 
             if (menuItems.length) {
                 return (
-                    <ButtonMenu
-                        button={{
-                            label: i18next.t(`${i18nPrefix}.search.action.group`),
-                            icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
-                            openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
-                            theme: {icon: theme.dropdown()}
-                        }}
-                        onClick={() => setDisplayFacetBox(false)}
-                    >
-                        {menuItems}
-                    </ButtonMenu>
+                    <div ref={groupMenu.anchor} style={{position: "relative"}}>
+                        <Button
+                            icon={
+                                groupMenu.active
+                                    ? getIcon(`${i18nPrefix}.icons.actionBar.dropup`)
+                                    : getIcon(`${i18nPrefix}.icons.actionBar.dropdown`)
+                            }
+                            iconPosition="right"
+                            label={i18next.t(`${i18nPrefix}.search.action.group`)}
+                            onClick={() => {
+                                groupMenu.toggle();
+                                setDisplayFacetBox(false);
+                            }}
+                        />
+                        <Menu {...groupMenu}>{menuItems}</Menu>
+                    </div>
                 );
             }
         }
@@ -178,9 +185,9 @@ export function ActionBar<T>({
                         <div style={{position: "relative"}}>
                             <Button
                                 icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`)}
+                                iconPosition="right"
                                 label={i18next.t(`${i18nPrefix}.search.action.filter`)}
                                 onClick={() => setDisplayFacetBox(!displayFacetBox)}
-                                theme={{icon: theme.dropdown()}}
                             />
                             {displayFacetBox ? <div className={theme.triangle()} /> : null}
                         </div>
@@ -188,26 +195,33 @@ export function ActionBar<T>({
 
                     {/** Bouton de tri. */}
                     {store.totalCount > 1 && !store.selectedItems.size && !store.groupingKey && orderableColumnList ? (
-                        <ButtonMenu
-                            button={{
-                                label: i18next.t(`${i18nPrefix}.search.action.sort`),
-                                icon: getIcon(`${i18nPrefix}.icons.actionBar.dropdown`),
-                                openedIcon: getIcon(`${i18nPrefix}.icons.actionBar.dropup`),
-                                theme: {icon: theme.dropdown()}
-                            }}
-                            onClick={() => setDisplayFacetBox(false)}
-                        >
-                            {orderableColumnList.map((description, idx) => (
-                                <MenuItem
-                                    key={idx}
-                                    caption={i18next.t(description.label)}
-                                    onClick={action("sort", () => {
-                                        store.sortBy = description.key;
-                                        store.sortAsc = description.order;
-                                    })}
-                                />
-                            ))}
-                        </ButtonMenu>
+                        <div ref={sortMenu.anchor} style={{position: "relative"}}>
+                            <Button
+                                icon={
+                                    sortMenu.active
+                                        ? getIcon(`${i18nPrefix}.icons.actionBar.dropup`)
+                                        : getIcon(`${i18nPrefix}.icons.actionBar.dropdown`)
+                                }
+                                iconPosition="right"
+                                label={i18next.t(`${i18nPrefix}.search.action.sort`)}
+                                onClick={() => {
+                                    sortMenu.toggle();
+                                    setDisplayFacetBox(false);
+                                }}
+                            />
+                            <Menu {...sortMenu}>
+                                {orderableColumnList.map((description, idx) => (
+                                    <MenuItem
+                                        key={idx}
+                                        caption={i18next.t(description.label)}
+                                        onClick={action("sort", () => {
+                                            store.sortBy = description.key;
+                                            store.sortAsc = description.order;
+                                        })}
+                                    />
+                                ))}
+                            </Menu>
+                        </div>
                     ) : null}
 
                     {/** Bouton de groupe. */}

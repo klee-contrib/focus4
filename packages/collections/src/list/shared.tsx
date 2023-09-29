@@ -49,11 +49,11 @@ export function DefaultAddItemComponent({addItemHandler, i18nPrefix = "focus", m
     } else {
         return (
             <Button
+                color="primary"
                 icon={getIcon(`${i18nPrefix}.icons.list.add`)}
                 label={i18next.t(`${i18nPrefix}.list.add`)}
                 onClick={addItemHandler}
-                primary
-                raised={mode === "search"}
+                variant={mode === "search" ? "elevated-filled" : undefined}
             />
         );
     }

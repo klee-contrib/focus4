@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {createElement, CSSProperties, MouseEventHandler, ReactNode} from "react";
+import {createElement, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -13,76 +13,95 @@ import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
 export {iconButtonCss, IconButtonCss};
 
 export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {
-    /** Indicates if the button should have accent color. */
-    accent?: boolean;
+    /** Classe CSS a ajouter au composant racine. */
     className?: string;
-    /** If true, component will be disabled. */
+    /** Couleur du bouton. */
+    color?: "accent" | "primary";
+    /** Désactive le bouton. */
     disabled?: boolean;
+    /** Si renseigné, pose une balise <a> à la place du <button>. */
     href?: string;
-    /** Value of the icon (See Font Icon Component). */
+    /** Icône a afficher dans le bouton. */
     icon: ReactNode;
-    /** If true, the neutral colors are inverted. Useful to put a button over a dark background. */
-    inverse?: boolean;
+    /**  Libellé du bouton. */
+    label?: string;
+    /** Au blur du bouton. */
+    onBlur?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    /** Au clic sur le bouton. */
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    /** Indicates if the button should have primary color. */
-    primary?: boolean;
-    style?: CSSProperties;
+    /** Au focus du bouton. */
+    onFocus?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    /** "target" pour le <a>, si `href` est rensigné. */
     target?: string;
+    /** CSS. */
     theme?: CSSProp<IconButtonCss>;
-    /** Component root container type. */
+    /** Type de bouton HTML (ignoré si `href` est renseigné). */
     type?: string;
+    /** Variante du bouton .*/
+    variant?: "filled" | "outlined";
 }
 
 /**
- * Un bouton avec juste une icône. Les autres types de boutons sont réalisés avec le [`Button`](#button).
+ * Bouton simple avec une icône.
  */
 export function IconButton({
-    accent = false,
-    className = "",
+    className,
+    color,
     disabled,
     href,
     icon,
-    inverse,
+    label,
+    onBlur,
     onClick,
+    onFocus,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
-    primary = false,
-    style,
     target,
     theme: pTheme,
-    type = "button"
+    type = "button",
+    variant
 }: IconButtonProps) {
-    const theme = useTheme("RTIconButton", iconButtonCss, pTheme);
-    const {ref, handlePointerLeave, handlePointerUp} = useInputRef({onPointerLeave, onPointerUp});
+    const theme = useTheme("iconButton", iconButtonCss, pTheme);
+    const {ref, handlePointerLeave, handlePointerUp} = useInputRef({
+        onPointerLeave,
+        onPointerUp
+    });
 
     const element = href ? "a" : "button";
 
     const props = {
         ref,
-        className: classNames(theme.toggle({accent, inverse, neutral: !primary && !accent, primary}), className),
-        disabled,
+        "aria-label": label,
+        className: classNames(
+            theme.button({
+                disabled,
+                outlined: variant === "outlined",
+                filled: variant?.includes("filled") && !!color,
+                accent: color === "accent",
+                primary: color === "primary"
+            }),
+            className
+        ),
+        disabled: !href ? disabled : undefined,
         href,
+        onBlur,
         onClick,
-        style,
-        target,
-        type: !href ? type : null
+        onFocus,
+        target: href ? target : undefined,
+        type: !href ? type : undefined
     };
 
     return (
         <Ripple
-            centered
+            disabled={disabled}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
             onPointerLeave={handlePointerLeave}
             onPointerUp={handlePointerUp}
         >
-            {createElement(
-                element,
-                props,
-                typeof icon === "string" ? <FontIcon className={theme.icon()} value={icon} /> : icon
-            )}
+            {createElement(element, props, <FontIcon className={theme.icon()}>{icon}</FontIcon>)}
         </Ripple>
     );
 }

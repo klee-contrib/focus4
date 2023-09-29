@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {MouseEvent, ReactNode} from "react";
+import {FocusEventHandler, MouseEvent, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -28,8 +28,12 @@ export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
     label?: ReactNode;
     /** Name pour l'input[type=checkbox] posé par la Checkbox. */
     name?: string;
+    /** Au blur de la Checkbox. */
+    onBlur?: FocusEventHandler<HTMLInputElement>;
     /** Handler appelé au clic sur la Checkbox. */
     onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
+    /** Au focus de la Checkbox. */
+    onFocus?: FocusEventHandler<HTMLInputElement>;
     /** CSS. */
     theme?: CSSProp<CheckboxCss>;
     /** Valeur (correspond à 'checked' sur l'input). */
@@ -47,7 +51,9 @@ export function Checkbox({
     indeterminate,
     label,
     name,
+    onBlur,
     onChange,
+    onFocus,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
@@ -85,7 +91,9 @@ export function Checkbox({
                 disabled={disabled}
                 id={id}
                 name={name}
+                onBlur={onBlur}
                 onClick={handleOnClick}
+                onFocus={onFocus}
                 readOnly
                 type="checkbox"
             />

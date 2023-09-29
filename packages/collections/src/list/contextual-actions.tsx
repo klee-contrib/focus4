@@ -1,7 +1,16 @@
-import {ComponentType, ReactElement, ReactNode, SyntheticEvent} from "react";
+import {ComponentType, ReactElement, ReactNode, SyntheticEvent, useEffect} from "react";
 
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {Button, ButtonMenu, IconButton, IconMenu, MenuItem, MenuItemProps, Tooltip} from "@focus4/toolbox";
+import {
+    Button,
+    FloatingActionButton,
+    IconButton,
+    Menu,
+    MenuItem,
+    MenuItemProps,
+    Tooltip,
+    useMenu
+} from "@focus4/toolbox";
 
 import contextualActionsCss, {ContextualActionsCss} from "./__style__/contextual-actions.css";
 export {contextualActionsCss, ContextualActionsCss};
@@ -70,25 +79,44 @@ export function ContextualActions({
         }
     }
 
+    const menu = useMenu<HTMLDivElement>();
+    useEffect(() => {
+        if (menu.active) {
+            onClickMenu?.();
+        } else {
+            onHideMenu?.();
+        }
+    }, [menu.active]);
+
+    function tryHideMenu() {
+        if (!menu.active) {
+            onHideMenu?.();
+        }
+    }
+
     const lists = operationList.reduce(
         (actionLists, Operation, key) => {
             const {customComponents, primaryActions, secondaryActions} = actionLists;
             if (isComponent(Operation)) {
-                customComponents.push(<Operation data={data} onClickMenu={onClickMenu} onHideMenu={onHideMenu} />);
+                customComponents.push(<Operation data={data} onClickMenu={onClickMenu} onHideMenu={tryHideMenu} />);
             } else if (Operation.type !== "secondary") {
                 const hasTooltip = (isMosaic && !!Operation.label) || Operation.type === "icon-tooltip";
-                const FinalButton =
-                    !isMosaic && (Operation.type === "icon" || Operation.type === "icon-tooltip") ? IconButton : Button;
+                const FinalButton = isMosaic
+                    ? FloatingActionButton
+                    : !isMosaic && (Operation.type === "icon" || Operation.type === "icon-tooltip")
+                    ? IconButton
+                    : Button;
                 const button = (
                     <FinalButton
                         key={key}
-                        floating={isMosaic ? true : undefined}
+                        color={isMosaic ? "primary" : undefined}
                         icon={
                             isMosaic || !Operation.type || Operation.type.includes("icon") ? Operation.icon : undefined
                         }
                         label={!isMosaic && FinalButton === Button ? Operation.label : undefined}
+                        onBlur={tryHideMenu}
                         onClick={(e: any) => handleAction(key, e)}
-                        primary={isMosaic}
+                        onFocus={onClickMenu}
                     />
                 );
                 primaryActions.push(hasTooltip ? <Tooltip tooltip={Operation.label}>{button}</Tooltip> : button);
@@ -107,35 +135,34 @@ export function ContextualActions({
             secondaryActions: [] as MenuItemProps[]
         }
     );
+
     return (
         <div className={!isMosaic ? theme.text() : theme.fab()}>
             {lists.customComponents}
             {lists.primaryActions}
             {lists.secondaryActions.length ? (
-                !isMosaic ? (
-                    <IconMenu
-                        icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
-                        onClick={onClickMenu}
-                        onHide={onHideMenu}
-                    >
+                <div ref={menu.anchor} style={{position: "relative"}}>
+                    {isMosaic ? (
+                        <FloatingActionButton
+                            icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
+                            onBlur={tryHideMenu}
+                            onClick={menu.toggle}
+                            onFocus={onClickMenu}
+                        />
+                    ) : (
+                        <IconButton
+                            icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
+                            onBlur={tryHideMenu}
+                            onClick={menu.toggle}
+                            onFocus={onClickMenu}
+                        />
+                    )}
+                    <Menu {...menu}>
                         {lists.secondaryActions.map((a, i) => (
                             <MenuItem key={i} {...a} />
                         ))}
-                    </IconMenu>
-                ) : (
-                    <ButtonMenu
-                        button={{
-                            icon: getIcon(`${i18nPrefix}.icons.contextualActions.secondary`),
-                            floating: true
-                        }}
-                        onClick={onClickMenu}
-                        onHide={onHideMenu}
-                    >
-                        {lists.secondaryActions.map((a, i) => (
-                            <MenuItem key={i} {...a} />
-                        ))}
-                    </ButtonMenu>
-                )
+                    </Menu>
+                </div>
             ) : null}
         </div>
     );

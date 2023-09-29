@@ -1,4 +1,34 @@
 :root {
+    /* Boutons */
+
+    --button-text-size: 14px;
+    --button-spacing: 6px;
+    --button-line-height-delta: -1px;
+    --button-focus-ring-offset: 2px;
+
+    --button-main-color: rgb(var(--color-white));
+    --button-secondary-color: rgb(var(--color-black));
+    --button-hover-opacity: 0.09;
+
+    --button-primary-main-color: rgb(var(--color-primary));
+    --button-primary-secondary-color: rgb(var(--color-white));
+    --button-primary-hover-opacity: 0.18;
+
+    --button-accent-main-color: rgb(var(--color-accent));
+    --button-accent-secondary-color: rgb(var(--color-white));
+    --button-accent-hover-opacity: 0.18;
+
+    --button-disabled-text-color: rgb(var(--palette-grey-400));
+    --button-disabled-background-color: rgb(var(--palette-grey-200));
+
+    /* Focus rings */
+
+    --focus-ring-width: 3px;
+    --focus-ring-color: var(--input-on-main-color);
+    --focus-ring-error-color: var(--input-error-color);
+
+    /* Inputs */
+
     --input-on-main-color: rgb(var(--color-primary));
     --input-on-secondary-color: rgb(var(--color-white));
 
@@ -17,8 +47,8 @@
     --input-error-palette: var(--palette-red-600);
     --input-error-color: rgb(var(--input-error-palette));
     --input-error-hover-color: rgba(var(--input-error-palette), var(--input-hover-opacity));
+}
 
-    --focus-ring-width: 3px;
-    --focus-ring-color: var(--input-on-main-color);
-    --focus-ring-error-color: var(--input-error-color);
+:root[dark] {
+    --button-main-color: rgb(var(--palette-grey-100));
 }

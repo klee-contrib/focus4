@@ -80,9 +80,12 @@ export function LineWrapper<T>({
         /** Force l'affichage des actions. */
         forceActionDisplay: false,
 
+        /** Force l'affichage de la checkbox. */
+        forceCheckboxDisplay: false,
+
         /** Précise si la checkbox doit être affichée. */
         get isCheckboxDisplayed() {
-            return !!props.store?.selectedItems.size || false;
+            return this.forceCheckboxDisplay || !!props.store?.selectedItems.size || false;
         },
 
         /** Précise si la ligne est en train d'être "draggée". */
@@ -166,7 +169,9 @@ export function LineWrapper<T>({
             {state.isSelectable ? (
                 <Checkbox
                     className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}
+                    onBlur={() => (state.forceCheckboxDisplay = false)}
                     onChange={state.onSelection}
+                    onFocus={() => (state.forceCheckboxDisplay = true)}
                     value={state.isSelected}
                 />
             ) : null}

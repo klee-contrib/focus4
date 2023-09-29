@@ -7,14 +7,16 @@ export {Checkbox, CheckboxCss, CheckboxProps, checkboxCss} from "./components/ch
 export {Chip, ChipCss, ChipProps, chipCss} from "./components/chip";
 export {Clock, ClockCss, ClockProps, clockCss} from "./components/clock";
 export {Dropdown, DropdownCss, DropdownProps, dropdownCss} from "./components/dropdown";
+export {
+    FloatingActionButton,
+    FloatingActionButtonCss,
+    FloatingActionButtonProps,
+    floatingActionButtonCss
+} from "./components/floating-action-button";
 export {FontIcon, FontIconProps} from "./components/font-icon";
 export {IconButton, IconButtonCss, IconButtonProps, iconButtonCss} from "./components/icon-button";
 export {Input, InputCss, InputProps, inputCss} from "./components/input";
 export {
-    ButtonMenu,
-    ButtonMenuProps,
-    IconMenu,
-    IconMenuProps,
     Menu,
     MenuCss,
     MenuDivider,
@@ -22,7 +24,8 @@ export {
     MenuItem,
     MenuItemProps,
     MenuProps,
-    menuCss
+    menuCss,
+    useMenu
 } from "./components/menu";
 export {ProgressBar, ProgressBarCss, ProgressBarProps, progressBarCss} from "./components/progress-bar";
 export {RadioButton, RadioButtonProps, RadioCss, RadioGroup, RadioGroupProps, radioCss} from "./components/radio";

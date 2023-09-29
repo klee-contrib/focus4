@@ -307,7 +307,7 @@ export function InputDate({
                         <IconButton
                             icon="clear"
                             onClick={() => setShowCalendar(false)}
-                            theme={{toggle: theme.toggle()}}
+                            theme={{button: theme.toggle()}}
                         />
                     </header>
                     <div className={theme.calendarWrapper()}>

@@ -46,11 +46,11 @@ export function PanelButtons({
             return (
                 <span ref={setRef}>
                     <Button
+                        color="primary"
                         disabled={loading}
                         icon={getIcon(`${i18nPrefix}.icons.button.save`)}
                         label={i18next.t(`${i18nPrefix}.button.save`)}
                         onClick={!isInForm ? save : undefined}
-                        primary
                         type="submit"
                     />
                     <Button

@@ -10,10 +10,6 @@
     --header-shadow: var(--shadow-2p);
 }
 
-.actions button {
-    margin: 0 5px;
-}
-
 .content {
     background-color: var(--header-content-background);
     padding: var(--header-content-padding);
@@ -58,12 +54,6 @@
     visibility: hidden;
 }
 
-.scrolling--deployed .actions {
-    position: absolute;
-    right: 0;
-    bottom: -28px;
-}
-
 .scrolling--undeployed {
     visibility: hidden;
 }
@@ -73,6 +63,29 @@
     top: 0;
 }
 
+.scrolling .actions {
+    display: inline-flex;
+    position: absolute;
+    right: 0;
+    bottom: calc(-1 * var(--floating-action-button-size) / 2);
+    margin-right: var(--header-actions-margin-right-mobile);
+}
+
+@media (min-width: 840px) {
+    .scrolling .actions {
+        margin-right: var(--header-actions-margin-right);
+    }
+}
+
+.secondaryActions {
+    position: relative;
+}
+
+.actions button + button,
+button + .secondaryActions {
+    margin-left: 9px;
+}
+
 .scrolling--undeployed,
 .scrolling--sticky {
     & .content {
@@ -80,18 +93,14 @@
     }
 
     & .actions {
-        position: absolute;
-        top: 30px;
-        right: 0;
+        --floating-action-button-icon-size: var(--floating-action-button-icon-size-small);
+        --floating-action-button-radius-size: var(--floating-action-button-radius-size-small);
+        --floating-action-button-size: var(--floating-action-button-size-small);
+        bottom: calc(-3 * var(--floating-action-button-size) / 5);
     }
-}
 
-.scrolling .actions {
-    margin-right: var(--header-actions-margin-right-mobile);
-}
-
-@media (min-width: 840px) {
-    .scrolling .actions {
-        margin-right: var(--header-actions-margin-right);
+    & .actions button + button,
+    & button + .secondaryActions {
+        margin-left: 6px;
     }
 }

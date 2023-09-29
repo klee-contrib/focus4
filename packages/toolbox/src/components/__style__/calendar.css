@@ -12,7 +12,7 @@
     --calendar-row-height: calc(3.6 * var(--unit));
     --calendar-day-padding-topbottom: calc(0.2 * var(--unit));
     --calendar-day-padding-leftright: 0;
-    --calendar-title-height: calc(3.6 * var(--unit));
+    --calendar-title-height: calc(4 * var(--unit));
     --calendar-total-height: calc(
         var(--calendar-row-height) * 7 + var(--calendar-title-height) + var(--calendar-day-padding-topbottom) * 12
     );
@@ -30,7 +30,7 @@
     & .prev,
     & .next {
         cursor: pointer;
-        height: calc(3.6 * var(--unit));
+        height: calc(4 * var(--unit));
         opacity: 0.7;
         position: absolute;
         top: 0;
@@ -54,7 +54,7 @@
 .title {
     display: inline-block;
     font-weight: 500;
-    line-height: var(--calendar-row-height);
+    line-height: var(--calendar-title-height);
 }
 
 .years {

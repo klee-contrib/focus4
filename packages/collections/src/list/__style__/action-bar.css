@@ -3,9 +3,10 @@
     --action-bar-facetbox-background: rgb(var(--palette-grey-200));
     --action-bar-facetbox-triangle-height: 15px;
     --action-bar-facetbox-triangle-width: 30px;
-    --action-bar-font-weight: bold;
+    --action-bar-font-weight: 600;
     --action-bar-height: 56px;
     --action-bar-margin: 0 0 10px 0;
+    --action-bar-border-radius: 12px;
     --action-bar-padding: 10px;
     --action-bar-search-bar-width: 250px;
     --action-bar-selection-background: rgb(var(--color-primary));
@@ -27,6 +28,7 @@
     position: relative;
     z-index: calc(var(--z-index-normal) + 1);
     background-color: var(--action-bar-background);
+    border-radius: var(--action-bar-border-radius);
     box-shadow: var(--action-bar-shadow);
     height: var(--action-bar-height);
     padding: var(--action-bar-padding);
@@ -34,12 +36,9 @@
 }
 
 .bar--selection {
+    --focus-ring-color: var(--action-bar-selection-color);
     background: var(--action-bar-selection-background);
     color: var(--action-bar-selection-color);
-}
-
-.selectionToggle {
-    --checkbox-state-size: 36px;
 }
 
 .bar--selection .selectionToggle {
@@ -136,10 +135,4 @@
     & ul {
         padding-left: 0;
     }
-}
-
-.dropdown {
-    float: right;
-    margin-left: 6px;
-    margin-right: -6px !important;
 }

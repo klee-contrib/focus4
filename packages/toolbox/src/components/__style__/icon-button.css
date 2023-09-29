@@ -1,115 +1,174 @@
-.toggle {
-    align-content: center;
-    align-items: center;
-    border: 0;
-    cursor: pointer;
-    display: inline-block;
-    flex-direction: row;
-    font-size: calc(1.4 * var(--unit));
-    font-weight: 500;
-    height: var(--button-height);
-    justify-content: center;
-    letter-spacing: 0;
-    line-height: var(--button-height);
-    outline: none;
-    padding: 0;
+:root {
+    --icon-button-size: 40px;
+    --icon-button-icon-size: 24px;
+    --icon-button-outline-size: 1px;
+}
+
+.button {
+    display: inline-flex;
     position: relative;
-    text-align: center;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: box-shadow 0.2s var(--animation-curve-fast-out-linear-in),
-        background-color 0.2s var(--animation-curve-default), color 0.2s var(--animation-curve-default);
-    white-space: nowrap;
-    box-sizing: border-box;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
     font-family: var(--preferred-font);
-    background: transparent;
-    border-radius: 50%;
+    border: none;
+    outline: none;
+    text-decoration: none;
+    text-align: center;
     vertical-align: middle;
-    width: var(--button-height);
-
-    & *,
-    & *::after,
-    & *::before {
-        box-sizing: border-box;
-    }
-
-    & > input {
-        height: 0.1px;
-        margin: 0;
-        opacity: 0;
-        overflow: hidden;
-        padding: 0;
-        position: absolute;
-        width: 0.1px;
-        z-index: 0;
-    }
-
-    & > span {
-        display: inline-block;
-        line-height: var(--button-height);
-        vertical-align: middle;
-    }
-
-    & > .icon,
-    & > svg {
-        font-size: var(--button-toggle-font-size);
-        line-height: var(--button-height);
-        vertical-align: top;
-    }
-
-    & > svg {
-        display: inline-block;
-        fill: currentColor;
-        font-size: 120%;
-        height: var(--button-height);
-        vertical-align: top;
-        width: 1em;
-    }
-
-    & > * {
-        pointer-events: none;
-    }
-
-    &[disabled] {
-        color: var(--button-disabled-text-color);
-        cursor: auto;
-        pointer-events: none;
-    }
+    border-radius: 50%;
+    padding: 0;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    background-color: transparent;
+    color: var(--button-secondary-color);
+    transition: background-color var(--animation-duration) var(--animation-curve-default) 0s;
 }
 
-.toggle--primary:not([disabled]) {
-    color: var(--button-primary-color);
-
-    &:focus:not(:active) {
-        background: var(--button-primary-color-hover);
-    }
+.button::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: "";
+    pointer-events: none;
+    opacity: 0;
+    background-color: var(--button-secondary-color);
+    transition: opacity var(--animation-duration) var(--animation-curve-default) 0s;
 }
 
-.toggle--accent:not([disabled]) {
-    color: var(--button-accent-color);
-
-    &:focus:not(:active) {
-        background: var(--button-accent-color-hover);
-    }
+.button:hover::before {
+    opacity: var(--button-hover-opacity);
 }
 
-.toggle--neutral:not([disabled]) {
-    color: var(--button-neutral-color-contrast);
+.button--outlined {
+    outline: var(--icon-button-outline-size) solid var(--button-secondary-color);
+    outline-offset: calc(-1 * var(--icon-button-outline-size));
+}
 
-    &:focus:not(:active) {
-        background: var(--button-neutral-color-hover);
-    }
+.button--primary {
+    color: var(--button-primary-main-color);
+}
 
-    &.toggle--inverse {
-        color: var(--button-neutral-color);
+.button--primary::before {
+    background-color: var(--button-primary-main-color);
+}
 
-        &:focus:not(:active) {
-            background: var(--button-neutral-color-hover);
+.button--primary:hover::before {
+    opacity: var(--button-primary-hover-opacity);
+}
+
+.button--accent {
+    color: var(--button-accent-main-color);
+}
+
+.button--accent::before {
+    background-color: var(--button-accent-main-color);
+}
+
+.button--accent:hover::before {
+    opacity: var(--button-accent-hover-opacity);
+}
+
+.button--filled {
+    &.button--primary {
+        background-color: var(--button-primary-main-color);
+        color: var(--button-primary-secondary-color);
+
+        &::before {
+            background-color: var(--button-primary-secondary-color);
         }
+    }
 
-        &[disabled] {
-            background-color: var(--button-disabled-background-inverse);
-            color: var(--button-disabled-text-color-inverse);
+    &.button--accent {
+        background-color: var(--button-accent-main-color);
+        color: var(--button-accent-secondary-color);
+
+        &::before {
+            background-color: var(--button-accent-secondary-color);
         }
+    }
+}
+
+.button--outlined {
+    &.button--primary {
+        outline-color: var(--button-primary-main-color);
+    }
+
+    &.button--accent {
+        outline-color: var(--button-accent-main-color);
+    }
+}
+
+.icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    font-size: var(--icon-button-icon-size);
+    line-height: var(--icon-button-size);
+}
+
+.button--filled + .button,
+.button--outlined + .button,
+.button + .button--filled,
+.button + .button--outlined {
+    margin-inline-start: var(--button-spacing);
+}
+
+.button.button--disabled {
+    cursor: default;
+    color: var(--button-disabled-text-color);
+    outline-color: var(--button-disabled-text-color);
+
+    &.button--filled {
+        background-color: var(--button-disabled-background-color);
+    }
+}
+
+.button.button--disabled:hover::before {
+    opacity: 0;
+}
+
+.button:focus-visible {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+}
+
+.button--filled,
+.button--elevated {
+    outline-offset: var(--button-focus-ring-offset);
+}
+
+.button--outlined:focus-visible {
+    animation-name: focusOutline;
+    outline-width: calc(var(--icon-button-outline-size) + var(--focus-ring-width));
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
+    }
+}
+
+@keyframes focusOutline {
+    0% {
+        outline-width: var(--icon-button-outline-size);
+    }
+    50% {
+        outline-width: calc(var(--icon-button-outline-size) + 2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: calc(var(--icon-button-outline-size) + var(--focus-ring-width));
     }
 }

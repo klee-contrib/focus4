@@ -251,7 +251,7 @@ export function InputTime({
                         >
                             {`0${time.minute}`.slice(-2)}
                         </span>
-                        <IconButton icon="clear" onClick={closeClock} theme={{toggle: theme.toggle()}} />
+                        <IconButton icon="clear" onClick={closeClock} theme={{button: theme.toggle()}} />
                     </header>
                     <Clock
                         display={clockDisplay}

@@ -21,23 +21,6 @@
     --menu-item-hover-background: rgb(var(--palette-grey-300));
 }
 
-.iconMenu {
-    display: inline-block;
-    position: relative;
-    text-align: center;
-    box-sizing: border-box;
-    font-family: var(--preferred-font);
-
-    & *,
-    & *::after,
-    & *::before {
-        box-sizing: border-box;
-    }
-    & .icon {
-        cursor: pointer;
-    }
-}
-
 .menu {
     display: inline-block;
     position: relative;
@@ -83,7 +66,7 @@
     }
 }
 
-.menu:not(.menu--static) {
+.menu {
     pointer-events: none;
     z-index: var(--z-index-higher);
 

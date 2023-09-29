@@ -241,14 +241,14 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                         <>
                             <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
                                 <IconButton
-                                    accent={listContext.mode === "list"}
+                                    color={listContext.mode === "list" ? "accent" : undefined}
                                     icon={getIcon(`${i18nPrefix}.icons.list.list`)}
                                     onClick={() => (listContext.mode = "list")}
                                 />
                             </Tooltip>
                             <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
                                 <IconButton
-                                    accent={listContext.mode === "mosaic"}
+                                    color={listContext.mode === "mosaic" ? "accent" : undefined}
                                     icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
                                     onClick={() => (listContext.mode = "mosaic")}
                                 />

@@ -66,8 +66,7 @@
 }
 
 .checkbox {
-    --checkbox-state-size: 36px;
-    top: calc(50% - 18px);
+    top: calc(50% - var(--checkbox-state-size) / 2);
     left: 10px;
 }
 
@@ -82,7 +81,7 @@
 }
 
 .line .actions {
-    top: calc(50% - 18px);
+    top: calc(50% - var(--icon-button-size) / 2);
     right: 10px;
 }
 

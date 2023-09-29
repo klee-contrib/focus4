@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {MouseEvent, ReactNode} from "react";
+import {FocusEventHandler, MouseEvent, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -27,8 +27,12 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     label?: ReactNode;
     /** Name pour l'input[type=checkbox] posé par le Switch. */
     name?: string;
+    /** Au blur du Switch. */
+    onBlur?: FocusEventHandler<HTMLInputElement>;
     /** Handler appelé au clic sur le Switch. */
     onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
+    /** Au focus du Switch. */
+    onFocus?: FocusEventHandler<HTMLInputElement>;
     /** CSS. */
     theme?: CSSProp<SwitchCss>;
     /** Valeur (correspond à 'checked' sur l'input). */
@@ -44,7 +48,9 @@ export function Switch({
     id,
     label,
     name,
+    onBlur,
     onChange,
+    onFocus,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
@@ -78,7 +84,9 @@ export function Switch({
                 disabled={disabled}
                 id={id}
                 name={name}
+                onBlur={onBlur}
                 onClick={handleOnClick}
+                onFocus={onFocus}
                 readOnly
                 type="checkbox"
             />

@@ -1,12 +1,21 @@
 import {motion} from "framer-motion";
 
 import {CSSProp, getDefaultTransition, getIcon, useTheme} from "@focus4/styling";
-import {Button, ButtonMenu, ButtonProps, MenuItem, MenuItemProps, Tooltip, TooltipProps} from "@focus4/toolbox";
+import {
+    FloatingActionButton,
+    FloatingActionButtonProps,
+    Menu,
+    MenuItem,
+    MenuItemProps,
+    Tooltip,
+    TooltipProps,
+    useMenu
+} from "@focus4/toolbox";
 
 import headerCss from "./__style__/header.css";
 
 /** Action principale, affichée dans son propre bouton. */
-export type PrimaryAction = ButtonProps & {
+export type PrimaryAction = FloatingActionButtonProps & {
     /** A renseigner pour poser une tooltip autour du bouton. */
     tooltip?: Omit<TooltipProps, "children">;
     /** Icône custom (non material). */
@@ -32,6 +41,7 @@ export interface HeaderActionsProps {
     /** CSS. */
     theme?: CSSProp<{
         actions?: string;
+        secondaryActions?: string;
     }>;
 }
 
@@ -44,6 +54,7 @@ export function HeaderActions({
     theme: pTheme
 }: HeaderActionsProps) {
     const theme = useTheme("header", headerCss, pTheme);
+    const menu = useMenu<HTMLDivElement>();
     return (
         <motion.div
             className={theme.actions()}
@@ -61,7 +72,11 @@ export function HeaderActions({
         >
             {primary.map((action, i) => {
                 const button = (
-                    <Button key={`${i}`} floating {...action} icon={getIcon(action.icon, action.iconCustom ?? false)} />
+                    <FloatingActionButton
+                        key={`${i}`}
+                        {...action}
+                        icon={getIcon(action.icon, action.iconCustom ?? false)}
+                    />
                 );
 
                 if (action.tooltip) {
@@ -75,20 +90,26 @@ export function HeaderActions({
                 }
             })}
             {secondary.length > 0 ? (
-                <ButtonMenu
-                    button={{
-                        floating: true,
-                        ...secondaryButton,
-                        icon: secondaryButton.icon
-                            ? getIcon(secondaryButton.icon, secondaryButton.iconCustom ?? false)
-                            : getIcon(`${i18nPrefix}.icons.headerActions.secondary`)
-                    }}
-                    position="topRight"
-                >
-                    {secondary.map((action, i) => (
-                        <MenuItem key={`${i}`} {...action} icon={getIcon(action.icon, action.iconCustom ?? false)} />
-                    ))}
-                </ButtonMenu>
+                <div ref={menu.anchor} className={theme.secondaryActions()}>
+                    <FloatingActionButton
+                        {...secondaryButton}
+                        icon={
+                            secondaryButton.icon
+                                ? getIcon(secondaryButton.icon, secondaryButton.iconCustom ?? false)
+                                : getIcon(`${i18nPrefix}.icons.headerActions.secondary`)
+                        }
+                        onClick={menu.toggle}
+                    />
+                    <Menu {...menu}>
+                        {secondary.map((action, i) => (
+                            <MenuItem
+                                key={`${i}`}
+                                {...action}
+                                icon={getIcon(action.icon, action.iconCustom ?? false)}
+                            />
+                        ))}
+                    </Menu>
+                </div>
             ) : null}
         </motion.div>
     );

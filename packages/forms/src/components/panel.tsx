@@ -80,20 +80,18 @@ export function Panel({
 
     return (
         <div ref={ref} className={theme.panel({loading, editing})} id={name ? `panel-${name}` : undefined}>
-            {!hideProgressBar && loading ? (
-                <ProgressBar mode="indeterminate" theme={{progressBar: theme.progress()}} />
-            ) : null}
             {!!title || areButtonsTop ? (
                 <div className={theme.title({top: true})}>
-                    {title ? (
-                        <h3>
-                            <span>{i18next.t(title)}</span>
-                        </h3>
-                    ) : null}
+                    {title ? <h3>{i18next.t(title)}</h3> : null}
                     {areButtonsTop ? buttons : null}
                 </div>
             ) : null}
-            <div className={theme.content()}>{children}</div>
+            <div className={theme.content()}>
+                {!hideProgressBar && loading ? (
+                    <ProgressBar mode="indeterminate" theme={{progressBar: theme.progress()}} />
+                ) : null}
+                {children}
+            </div>
             {areButtonsDown ? <div className={theme.title({bottom: true})}>{buttons}</div> : null}
         </div>
     );

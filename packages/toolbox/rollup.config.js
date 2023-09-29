@@ -32,6 +32,7 @@ export default (async () => {
             ...Object.keys(pkg.dependencies || {}),
             "classnames",
             "lodash",
+            "framer-motion",
             "react",
             "react/jsx-runtime",
             "react-dom",

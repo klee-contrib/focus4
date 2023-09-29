@@ -1,0 +1,188 @@
+:root {
+    --floating-action-button-size: 56px;
+    --floating-action-button-size-small: 40px;
+    --floating-action-button-size-large: 96px;
+
+    --floating-action-button-icon-size: 24px;
+    --floating-action-button-icon-size-small: 24px;
+    --floating-action-button-icon-size-large: 36px;
+
+    --floating-action-button-radius-size: 16px;
+    --floating-action-button-radius-size-small: 12px;
+    --floating-action-button-radius-size-large: 28px;
+}
+
+.button {
+    display: inline-flex;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    font-family: var(--preferred-font);
+    border: none;
+    outline: none;
+    text-decoration: none;
+    padding: 0 calc((var(--floating-action-button-size) - var(--floating-action-button-icon-size)) / 2);
+    box-sizing: border-box;
+    min-width: var(--floating-action-button-size);
+    height: var(--floating-action-button-size);
+    background-color: var(--button-main-color);
+    color: var(--button-secondary-color);
+    border-radius: var(--floating-action-button-radius-size);
+    box-shadow: var(--shadow-4p);
+    transition: box-shadow var(--animation-duration) var(--animation-curve-default) 0s,
+        background-color var(--animation-duration) var(--animation-curve-default) 0s,
+        width var(--animation-duration) var(--animation-curve-default) 0s,
+        height var(--animation-duration) var(--animation-curve-default) 0s,
+        line-height var(--animation-duration) var(--animation-curve-default) 0s,
+        border-radius var(--animation-duration) var(--animation-curve-default) 0s;
+}
+
+.button::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: "";
+    pointer-events: none;
+    opacity: 0;
+    background-color: var(--button-secondary-color);
+    transition: opacity var(--animation-duration) var(--animation-curve-default) 0s;
+}
+
+.button:hover::before {
+    opacity: var(--button-hover-opacity);
+}
+
+.button:active {
+    box-shadow: var(--shadow-2p);
+}
+
+.button--lowered {
+    box-shadow: var(--shadow-2p);
+}
+
+.button--primary {
+    background-color: var(--button-primary-main-color);
+    color: var(--button-primary-secondary-color);
+}
+
+.button--primary::before {
+    background-color: var(--button-primary-secondary-color);
+}
+
+.button--primary:hover::before {
+    opacity: var(--button-primary-hover-opacity);
+}
+
+.button--accent {
+    background-color: var(--button-accent-main-color);
+    color: var(--button-accent-secondary-color);
+}
+
+.button--accent::before {
+    background-color: var(--button-accent-secondary-color);
+}
+
+.button--accent:hover::before {
+    opacity: var(--button-accent-hover-opacity);
+}
+
+.icon {
+    position: absolute;
+    width: var(--floating-action-button-icon-size);
+    height: var(--floating-action-button-size);
+    font-size: var(--floating-action-button-icon-size);
+    line-height: var(--floating-action-button-size);
+    transition: width var(--animation-duration) var(--animation-curve-default) 0s,
+        height var(--animation-duration) var(--animation-curve-default) 0s,
+        line-height var(--animation-duration) var(--animation-curve-default) 0s;
+}
+
+.label {
+    margin: 0;
+    font-weight: 500;
+    font-size: var(--button-text-size);
+    height: var(--floating-action-button-size);
+    line-height: calc(var(--floating-action-button-size) + var(--button-line-height-delta));
+    white-space: nowrap;
+    opacity: 0;
+    transition: line-height var(--animation-duration) var(--animation-curve-default) 0s,
+        opacity var(--animation-duration) var(--animation-curve-default) 0s,
+        margin var(--animation-duration) var(--animation-curve-default) 0s;
+}
+
+.button--extended .label {
+    opacity: 1;
+}
+
+.button--extended .icon + .label {
+    margin-left: calc((var(--floating-action-button-size) + 3 * var(--floating-action-button-icon-size)) / 4);
+}
+
+.button--small {
+    height: var(--floating-action-button-size-small);
+    min-width: var(--floating-action-button-size-small);
+    padding: 0 calc((var(--floating-action-button-size-small) - var(--floating-action-button-icon-size-small)) / 2);
+    border-radius: var(--floating-action-button-radius-size-small);
+
+    & .icon {
+        width: var(--floating-action-button-icon-size-small);
+        height: var(--floating-action-button-size-small);
+        font-size: var(--floating-action-button-icon-size-small);
+        line-height: var(--floating-action-button-size-small);
+    }
+
+    & .label {
+        line-height: var(--floating-action-button-size-small);
+    }
+}
+
+.button--large {
+    height: var(--floating-action-button-size-large);
+    min-width: var(--floating-action-button-size-large);
+    padding: 0 calc((var(--floating-action-button-size-large) - var(--floating-action-button-icon-size-large)) / 2);
+    border-radius: var(--floating-action-button-radius-size-large);
+
+    & .icon {
+        width: var(--floating-action-button-icon-size-large);
+        height: var(--floating-action-button-size-large);
+        font-size: var(--floating-action-button-icon-size-large);
+        line-height: var(--floating-action-button-size-large);
+    }
+
+    & .label {
+        line-height: var(--floating-action-button-size-large);
+    }
+}
+
+.button.button--disabled {
+    cursor: default;
+    background-color: var(--button-disabled-background-color);
+    color: var(--button-disabled-text-color);
+}
+
+.button.button--disabled:hover::before {
+    opacity: 0;
+}
+
+.button:focus-visible {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--button-focus-ring-offset);
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
+    }
+}

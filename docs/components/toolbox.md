@@ -72,33 +72,30 @@ Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles 
 
 ## `Button`
 
-Le bouton standard, qui peut être sous plusieurs formats (`raised`, `floating`) et de plusieurs couleurs (`primary`, `accent`), avoir une icône... Un bouton avec juste une icône est un [`IconButton`](#iconbutton)
+Bouton standard.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                      | Description                                                                              |
-| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `accent`         | Non         | <code>boolean</code>                                                                      | Indicates if the button should have accent color.                                        |
-| `children`       | Non         | <code>ReactNode</code>                                                                    | Children to pass through the component.                                                  |
-| `className`      | Non         | <code>string</code>                                                                       |                                                                                          |
-| `disabled`       | Non         | <code>boolean</code>                                                                      | If true, component will be disabled.                                                     |
-| `floating`       | Non         | <code>boolean</code>                                                                      | If true, the button will have a floating look.                                           |
-| `href`           | Non         | <code>string</code>                                                                       | Creates a link for the button.                                                           |
-| `icon`           | Non         | <code>ReactNode</code>                                                                    | Value of the icon (See Font Icon Component).                                             |
-| `inverse`        | Non         | <code>boolean</code>                                                                      | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
-| `label`          | Non         | <code>string</code>                                                                       | The text string to use for the name of the button.                                       |
-| `mini`           | Non         | <code>boolean</code>                                                                      | To be used with floating button. If true, the button will be smaller.                    |
-| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            |                                                                                          |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)    |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)   |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)   |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)      |
-| `primary`        | Non         | <code>boolean</code>                                                                      | Indicates if the button should have primary color.                                       |
-| `raised`         | Non         | <code>boolean</code>                                                                      | If true, the button will have a raised look.                                             |
-| `style`          | Non         | <code>CSSProperties</code>                                                                |                                                                                          |
-| `target`         | Non         | <code>string</code>                                                                       | Passed down to the root element                                                          |
-| `theme`          | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                                     | Classnames object defining the component style.                                          |
-| `type`           | Non         | <code>string</code>                                                                       | Component root container type.                                                           |
+| Nom              | Obligatoire | Type                                                                                      | Description                                                                            |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                       | Classe CSS a ajouter au composant racine.                                              |
+| `color`          | Non         | <code>"accent" &#124; "primary"</code>                                                    | Couleur du bouton.                                                                     |
+| `disabled`       | Non         | <code>boolean</code>                                                                      | Désactive le bouton.                                                                   |
+| `href`           | Non         | <code>string</code>                                                                       | Si renseigné, pose une balise <a> à la place du <button>.                              |
+| `icon`           | Non         | <code>ReactNode</code>                                                                    | Icône a afficher dans le bouton.                                                       |
+| `iconPosition`   | Non         | <code>"left" &#124; "right"</code>                                                        | Position de l'icône dans le bouton. Par défaut : "left".                               |
+| `label`          | Non         | <code>string</code>                                                                       | Libellé du bouton.                                                                     |
+| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au blur du bouton.                                                                     |
+| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au clic sur le bouton.                                                                 |
+| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au focus du bouton.                                                                    |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `target`         | Non         | <code>string</code>                                                                       | "target" pour le <a>, si `href` est rensigné.                                          |
+| `theme`          | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                                     | CSS.                                                                                   |
+| `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
+| `variant`        | Non         | <code>"filled" &#124; "elevated" &#124; "outlined" &#124; "elevated-filled"</code>        | Variante du bouton .                                                                   |
 
 ## `Calendar`
 
@@ -134,7 +131,9 @@ Une checkbox.
 | `indeterminate`  | Non         | <code>boolean</code>                                                                             | Affiche une icône "indéterminée" à la place du "check"                                 |
 | `label`          | Non         | <code>ReactNode</code>                                                                           | Libellé à poser à côté de la Checkbox.                                                 |
 | `name`           | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par la Checkbox.                                 |
+| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au blur de la Checkbox.                                                                |
 | `onChange`       | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur la Checkbox.                                                |
+| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au focus de la Checkbox.                                                               |
 | `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
@@ -203,6 +202,34 @@ Composant de sélection avec personnalisation de l'affichage des éléments (à 
 | `value`      | Non         | <code>T</code>                                                                                                                                                                   | Current value of the dropdown element.                                                                        |
 | `valueKey`   | Non         | <code>string</code>                                                                                                                                                              | Used for setting the value from source                                                                        |
 
+## `FloatingActionButton`
+
+Bouton action flottant.
+
+### Props
+
+| Nom              | Obligatoire | Type                                                                                      | Description                                                                            |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                       | Classe CSS a ajouter au composant racine.                                              |
+| `color`          | Non         | <code>"accent" &#124; "primary"</code>                                                    | Couleur du bouton.                                                                     |
+| `disabled`       | Non         | <code>boolean</code>                                                                      | Désactive le bouton.                                                                   |
+| `extended`       | Non         | <code>boolean</code>                                                                      | Affiche le libellé du bouton dans le bouton.                                           |
+| `href`           | Non         | <code>string</code>                                                                       | Si renseigné, pose une balise <a> à la place du <button>.                              |
+| `icon`           | Non         | <code>ReactNode</code>                                                                    | Icône a afficher dans le bouton.                                                       |
+| `label`          | Non         | <code>string</code>                                                                       | Libellé du bouton.                                                                     |
+| `lowered`        | Non         | <code>boolean</code>                                                                      | Variation du bouton avec moins d'élévation (ombre moins marquée).                      |
+| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au blur du bouton.                                                                     |
+| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au clic sur le bouton.                                                                 |
+| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au focus du bouton.                                                                    |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `size`           | Non         | <code>"large" &#124; "small"</code>                                                       | Taille du bouton.                                                                      |
+| `target`         | Non         | <code>string</code>                                                                       | "target" pour le <a>, si `href` est rensigné.                                          |
+| `theme`          | Non         | <code>CSSProp&lt;FloatingActionButtonCss&gt;</code>                                       | CSS.                                                                                   |
+| `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
+
 ## `FontIcon`
 
 Affiche une icône. Prend directement un nom d'icône Material en enfant, ou bien une icône personnalisée avec `getIcon`.
@@ -223,28 +250,29 @@ Affiche une icône. Prend directement un nom d'icône Material en enfant, ou bie
 
 ## `IconButton`
 
-Un bouton avec juste une icône. Les autres types de boutons sont réalisés avec le [`Button`](#button).
+Bouton simple avec une icône.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                      | Description                                                                              |
-| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `accent`         | Non         | <code>boolean</code>                                                                      | Indicates if the button should have accent color.                                        |
-| `className`      | Non         | <code>string</code>                                                                       |                                                                                          |
-| `disabled`       | Non         | <code>boolean</code>                                                                      | If true, component will be disabled.                                                     |
-| `href`           | Non         | <code>string</code>                                                                       |                                                                                          |
-| `icon`           | **Oui**     | <code>ReactNode</code>                                                                    | Value of the icon (See Font Icon Component).                                             |
-| `inverse`        | Non         | <code>boolean</code>                                                                      | If true, the neutral colors are inverted. Useful to put a button over a dark background. |
-| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            |                                                                                          |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)    |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)   |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)   |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)      |
-| `primary`        | Non         | <code>boolean</code>                                                                      | Indicates if the button should have primary color.                                       |
-| `style`          | Non         | <code>CSSProperties</code>                                                                |                                                                                          |
-| `target`         | Non         | <code>string</code>                                                                       |                                                                                          |
-| `theme`          | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                                 |                                                                                          |
-| `type`           | Non         | <code>string</code>                                                                       | Component root container type.                                                           |
+| Nom              | Obligatoire | Type                                                                                      | Description                                                                            |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                       | Classe CSS a ajouter au composant racine.                                              |
+| `color`          | Non         | <code>"accent" &#124; "primary"</code>                                                    | Couleur du bouton.                                                                     |
+| `disabled`       | Non         | <code>boolean</code>                                                                      | Désactive le bouton.                                                                   |
+| `href`           | Non         | <code>string</code>                                                                       | Si renseigné, pose une balise <a> à la place du <button>.                              |
+| `icon`           | **Oui**     | <code>ReactNode</code>                                                                    | Icône a afficher dans le bouton.                                                       |
+| `label`          | Non         | <code>string</code>                                                                       | Libellé du bouton.                                                                     |
+| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au blur du bouton.                                                                     |
+| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au clic sur le bouton.                                                                 |
+| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au focus du bouton.                                                                    |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `target`         | Non         | <code>string</code>                                                                       | "target" pour le <a>, si `href` est rensigné.                                          |
+| `theme`          | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                                 | CSS.                                                                                   |
+| `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
+| `variant`        | Non         | <code>"filled" &#124; "outlined"</code>                                                   | Variante du bouton .                                                                   |
 
 ## `Input`
 
@@ -301,84 +329,60 @@ Champ de saisie texte standard. A priori à ne jamais utiliser directement et ut
 | `type`                 | Non         | <code>string</code>                                                                                          | Type of the input element. It can be a valid HTML5 input type.                                                      |
 | `value`                | Non         | <code>string</code>                                                                                          | Current value of the input element.                                                                                 |
 
-## `ButtonMenu`
+## `Menu`
 
-Crée un menu à partir d'un `Button`.
+Menu déroulant. Peut s'attacher à un élément parent. A utiliser avec `useMenu()`.
 
 Exemple :
-
  ```tsx
- <ButtonMenu
-     button={{
-         label: userStore.userName,
-         icon: "more_vert"
-     }}
-     position="topRight"
- >
-     <MenuItem
-         caption={mode.dark ? "Mode clair" : "Mode sombre"}
-         icon={mode.dark ? "light_mode" : "dark_mode"}
-         onClick={() => (mode.dark = !mode.dark)}
-     />
-     <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
- </ButtonMenu>
+ const menu = useMenu<HTMLDivElement>();
+
+ // Remarque : L'élément conteneur impérativement avoir "position: relative".
+ return (
+     <span ref={menu.anchor} style={{position: "relative", display: "inline-block"}}>
+         <IconButton icon="more_vert" onClick={menu.toggle}>
+         <Menu {...menu}>
+             <MenuItem
+                 caption={mode.dark ? "Mode clair" : "Mode sombre"}
+                 icon={mode.dark ? "light_mode" : "dark_mode"}
+                 onClick={() => (mode.dark = !mode.dark)}
+             />
+             <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
+         </Menu>
+     </span>
+ );
  ```
 
 ### Props
 
-| Nom          | Obligatoire | Type                                                                                                                      | Description                                                                                                                                                                                                                                      |
-| ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `active`     | Non         | <code>boolean</code>                                                                                                      | If true, the menu will be displayed as opened by default.                                                                                                                                                                                        |
-| `button`     | **Oui**     | <code>ButtonProps & { tooltip?: Omit&lt;TooltipProps&lt;HTMLElement&gt;, "children"&gt;; openedIcon?: ReactNode; }</code> | Les props du bouton.                                                                                                                                                                                                                             |
-| `children`   | Non         | <code>ReactNode</code>                                                                                                    | Children to pass through the component.                                                                                                                                                                                                          |
-| `className`  | Non         | <code>string</code>                                                                                                       |                                                                                                                                                                                                                                                  |
-| `onClick`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement&gt;</code>                                                                   |                                                                                                                                                                                                                                                  |
-| `onHide`     | Non         | <code>() =&gt; void</code>                                                                                                | Callback that will be called when the menu is being hidden.                                                                                                                                                                                      |
-| `onSelect`   | Non         | <code>(value?: string) =&gt; void</code>                                                                                  | Callback that will be invoked when a menu item is selected.                                                                                                                                                                                      |
-| `onShow`     | Non         | <code>() =&gt; void</code>                                                                                                | Callback that will be invoked when the menu is being shown.                                                                                                                                                                                      |
-| `outline`    | Non         | <code>boolean</code>                                                                                                      | If true the menu wrapper will show an outline with a soft shadow.                                                                                                                                                                                |
-| `position`   | Non         | <code>"bottomLeft" &#124; "bottomRight" &#124; "static" &#124; "topLeft" &#124; "topRight" &#124; "auto"</code>           | Determine the position of the menu. With static value the menu will be always shown, auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. |
-| `selectable` | Non         | <code>boolean</code>                                                                                                      | If true, the menu will keep a value to highlight the active child item.                                                                                                                                                                          |
-| `selected`   | Non         | <code>string</code>                                                                                                       | Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted.                                                                                                                            |
-| `theme`      | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                                                                       | Classnames object defining the component style.                                                                                                                                                                                                  |
+| Nom          | Obligatoire | Type                                                                                            | Description                                                                                                                                                                                     |
+| ------------ | ----------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `active`     | Non         | <code>boolean</code>                                                                            | If true, the menu will be displayed as opened by default.                                                                                                                                       |
+| `anchor`     | Non         | <code>RefObject&lt;HTMLElement&gt;</code>                                                       | Anchor element for the menu.                                                                                                                                                                    |
+| `children`   | Non         | <code>ReactNode</code>                                                                          | Children to pass through the component.                                                                                                                                                         |
+| `className`  | Non         | <code>string</code>                                                                             | Class name for root element.                                                                                                                                                                    |
+| `onHide`     | Non         | <code>() =&gt; void</code>                                                                      | Callback that will be called when the menu is being hidden.                                                                                                                                     |
+| `onSelect`   | Non         | <code>(value?: string) =&gt; void</code>                                                        | Callback that will be invoked when a menu item is selected.                                                                                                                                     |
+| `onShow`     | Non         | <code>() =&gt; void</code>                                                                      | Callback that will be invoked when the menu is being shown.                                                                                                                                     |
+| `outline`    | Non         | <code>boolean</code>                                                                            | If true the menu wrapper will show an outline with a soft shadow.                                                                                                                               |
+| `position`   | Non         | <code>"bottomLeft" &#124; "bottomRight" &#124; "topLeft" &#124; "topRight" &#124; "auto"</code> | Determine the position of the menu. Auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. |
+| `selectable` | Non         | <code>boolean</code>                                                                            | If true, the menu will keep a value to highlight the active child item.                                                                                                                         |
+| `selected`   | Non         | <code>string</code>                                                                             | Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted.                                                                           |
+| `theme`      | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                                             | Classnames object defining the component style.                                                                                                                                                 |
+| `toggle`     | Non         | <code>() =&gt; void</code>                                                                      | Toggle menu on/off.                                                                                                                                                                             |
 
-## `IconMenu`
+## `useMenu`
 
-Crée un menu à partir d'un `IconButton`.
-
-Exemple :
- ```tsx
- <IconMenu icon="more_vert" position="topRight">
-     <MenuItem
-         caption={mode.dark ? "Mode clair" : "Mode sombre"}
-         icon={mode.dark ? "light_mode" : "dark_mode"}
-         onClick={() => (mode.dark = !mode.dark)}
-     />
-     <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
- </IconMenu>
- ```
+Hook pour attacher un menu à un élément et une fonction pour l'ouvrir et le fermer.
 
 ### Props
 
-| Nom          | Obligatoire | Type                                                                                                            | Description                                                                                                           |
-| ------------ | ----------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `active`     | Non         | <code>boolean</code>                                                                                            | If true, the inner Menu component will be active.                                                                     |
-| `children`   | Non         | <code>ReactNode</code>                                                                                          | Children to pass through the component.                                                                               |
-| `className`  | Non         | <code>string</code>                                                                                             | Class for the root node.                                                                                              |
-| `icon`       | Non         | <code>ReactNode</code>                                                                                          | Icon font key string or Element to display the opener icon.                                                           |
-| `inverse`    | Non         | <code>boolean</code>                                                                                            | If true, the neutral colors are inverted. Useful if the icon is over a dark background.                               |
-| `onClick`    | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                                  | Callback that will be called when the menu is being clicked.                                                          |
-| `onHide`     | Non         | <code>() =&gt; void</code>                                                                                      | Callback that will be called when the menu is being hidden.                                                           |
-| `onSelect`   | Non         | <code>(value: any) =&gt; void</code>                                                                            | Callback that will be invoked when a menu item is selected.                                                           |
-| `onShow`     | Non         | <code>() =&gt; void</code>                                                                                      | Callback that will be invoked when the menu is being shown.                                                           |
-| `position`   | Non         | <code>"bottomLeft" &#124; "bottomRight" &#124; "static" &#124; "topLeft" &#124; "topRight" &#124; "auto"</code> | Determines the position of the menu. This property is transferred to the inner Menu component.                        |
-| `selectable` | Non         | <code>boolean</code>                                                                                            | If true, the menu will keep a value to highlight the active child item.                                               |
-| `selected`   | Non         | <code>any</code>                                                                                                | Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. |
-| `theme`      | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                                                             | Classnames object defining the component style.                                                                       |
+| Nom | Obligatoire | Type | Description |
+| --- | ----------- | ---- | ----------- |
 
 ## `MenuItem`
 
-Item de Menu a utiliser dans un `ButtonMenu`, `IconMenu` ou `Menu`.
+Item de Menu a utiliser dans un `Menu`.
 
 ### Props
 
@@ -398,26 +402,6 @@ Item de Menu a utiliser dans un `ButtonMenu`, `IconMenu` ou `Menu`.
 | `shortcut`       | Non         | <code>string</code>                                            | Displays shortcut text on the right side of the caption attribute.                     |
 | `theme`          | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                            | Classnames object defining the component style.                                        |
 | `value`          | Non         | <code>string</code>                                            | Passed down to the root element.                                                       |
-
-## `Menu`
-
-Affiche un menu, utilisé par ButtonMenu et IconMenu.
-
-### Props
-
-| Nom          | Obligatoire | Type                                                                                                            | Description                                                                                                                                                                                                                                      |
-| ------------ | ----------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `active`     | Non         | <code>boolean</code>                                                                                            | If true, the menu will be displayed as opened by default.                                                                                                                                                                                        |
-| `children`   | Non         | <code>ReactNode</code>                                                                                          | Children to pass through the component.                                                                                                                                                                                                          |
-| `className`  | Non         | <code>string</code>                                                                                             |                                                                                                                                                                                                                                                  |
-| `onHide`     | Non         | <code>() =&gt; void</code>                                                                                      | Callback that will be called when the menu is being hidden.                                                                                                                                                                                      |
-| `onSelect`   | Non         | <code>(value?: string) =&gt; void</code>                                                                        | Callback that will be invoked when a menu item is selected.                                                                                                                                                                                      |
-| `onShow`     | Non         | <code>() =&gt; void</code>                                                                                      | Callback that will be invoked when the menu is being shown.                                                                                                                                                                                      |
-| `outline`    | Non         | <code>boolean</code>                                                                                            | If true the menu wrapper will show an outline with a soft shadow.                                                                                                                                                                                |
-| `position`   | Non         | <code>"bottomLeft" &#124; "bottomRight" &#124; "static" &#124; "topLeft" &#124; "topRight" &#124; "auto"</code> | Determine the position of the menu. With static value the menu will be always shown, auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. |
-| `selectable` | Non         | <code>boolean</code>                                                                                            | If true, the menu will keep a value to highlight the active child item.                                                                                                                                                                          |
-| `selected`   | Non         | <code>string</code>                                                                                             | Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted.                                                                                                                            |
-| `theme`      | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                                                                             | Classnames object defining the component style.                                                                                                                                                                                                  |
 
 ## `MenuDivider`
 
@@ -479,6 +463,8 @@ A utiliser dans un RadioGroup.
 | `id`             | Non         | <code>string</code>                                               | Id pour l'input[type=radio] posé par le RadioButton.                                   |
 | `label`          | Non         | <code>ReactNode</code>                                            | Libellé à poser à côté de la Checkbox.                                                 |
 | `name`           | Non         | <code>string</code>                                               | Name pour l'input[type=radio] posé par le RadioButton.                                 |
+| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>            | Au blur du Radio.                                                                      |
+| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>            | Au focus du Radio.                                                                     |
 | `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
@@ -563,7 +549,9 @@ Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
 | `id`             | Non         | <code>string</code>                                                                              | Id pour l'input[type=checkbox] posé par le Switch.                                     |
 | `label`          | Non         | <code>ReactNode</code>                                                                           | Libellé à poser à côté du Switch.                                                      |
 | `name`           | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par le Switch.                                   |
+| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au blur du Switch.                                                                     |
 | `onChange`       | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur le Switch.                                                  |
+| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au focus du Switch.                                                                    |
 | `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
