@@ -118,7 +118,7 @@ export function Tab({
                 role="tab"
                 tabIndex={0}
             >
-                {icon ? <FontIcon className={(theme as any).icon?.()} value={icon} /> : null}
+                {icon ? <FontIcon className={(theme as any).icon?.()}>{icon}</FontIcon> : null}
                 {label}
                 {children}
             </div>
@@ -262,7 +262,7 @@ export function Tabs({
             <div className={theme.navigationContainer()}>
                 {arrows.left ? (
                     <div className={theme.arrowContainer()} onClick={scrollRight}>
-                        <FontIcon className={theme.arrow()} value="keyboard_arrow_left" />
+                        <FontIcon className={theme.arrow()}>keyboard_arrow_left</FontIcon>
                     </div>
                 ) : null}
                 <div ref={navigationNode} className={theme.navigation()} role="tablist">
@@ -289,7 +289,7 @@ export function Tabs({
                 </div>
                 {arrows.right ? (
                     <div className={theme.arrowContainer()} onClick={scrollLeft}>
-                        <FontIcon className={theme.arrow()} value="keyboard_arrow_right" />
+                        <FontIcon className={theme.arrow()}>keyboard_arrow_right</FontIcon>
                     </div>
                 ) : null}
             </div>

@@ -53,11 +53,9 @@ export function Label({
                     theme={tooltipTheme}
                     tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
                 >
-                    <FontIcon
-                        className={theme.icon({clickable: !!onTooltipClick})}
-                        onPointerDown={onTooltipClick}
-                        value={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
-                    />
+                    <FontIcon className={theme.icon({clickable: !!onTooltipClick})} onPointerDown={onTooltipClick}>
+                        {getIcon(`${i18nPrefix}.icons.label.tooltip`)}
+                    </FontIcon>
                 </Tooltip>
             ) : null}
         </div>

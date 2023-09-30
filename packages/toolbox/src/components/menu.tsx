@@ -129,7 +129,7 @@ export function MenuItem({
                 data-react-toolbox="menu-item"
                 onClick={handleClick}
             >
-                {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
+                {icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null}
                 <span className={theme.caption()}>{caption}</span>
                 {shortcut ? <small className={theme.shortcut()}>{shortcut}</small> : null}
                 {children}

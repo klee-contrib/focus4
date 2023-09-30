@@ -4,15 +4,14 @@ import {CSSProperties, ReactNode} from "react";
 import {PointerEvents} from "../utils/pointer-events";
 
 export interface FontIconProps extends PointerEvents<HTMLSpanElement> {
-    /** Alt text for the icon. */
+    /** Texte alternatif pour l'icône. */
     alt?: string;
+    /** Classe CSS à poser sur le composant racine. */
     className?: string;
-    /** Children to pass through the component. */
+    /** Icône à afficher. */
     children?: ReactNode;
-    /** Inline styles. */
+    /** Styles inline */
     style?: CSSProperties;
-    /** The key string for the icon you want be displayed. */
-    value?: ReactNode;
 }
 
 /**
@@ -26,24 +25,18 @@ export function FontIcon({
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
-    style,
-    value
+    style
 }: FontIconProps) {
     return (
         <span
             aria-label={alt}
-            className={classnames(
-                {"material-icons": typeof value === "string" || typeof children === "string"},
-                className
-            )}
-            data-react-toolbox="font-icon"
+            className={classnames({"material-icons": typeof children === "string"}, className)}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
             onPointerUp={onPointerUp}
             style={style}
         >
-            {value}
             {children}
         </span>
     );

@@ -12,6 +12,8 @@ export type ChipType = "facet" | "filter" | "group" | "sort";
 
 /** Props du SearchChip. */
 export interface SearchChipProps {
+    /** Classe CSS à passer au Chip. */
+    className?: string;
     /** Code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`). */
     code: string;
     /** Libellé associé au code. */
@@ -51,6 +53,7 @@ export interface SearchChipProps {
 /** Chip avec un keyResolver. */
 export function SearchChip(props: SearchChipProps) {
     const {
+        className,
         code,
         codeLabel,
         deletable,
@@ -90,8 +93,10 @@ export function SearchChip(props: SearchChipProps) {
             .join(` ${i18next.t(`${i18nPrefix}.search.summary.${valueOperator}`)} `);
         return (
             <Chip
-                deletable={deletable}
-                onDeleteClick={onDeleteClick}
+                className={className}
+                color="primary"
+                label={!tValueLabel ? tCodeLabel : `${tCodeLabel} : ${tValueLabel}`}
+                onDeleteClick={deletable ? onDeleteClick : undefined}
                 theme={themeable(
                     theme,
                     themer?.(
@@ -100,9 +105,7 @@ export function SearchChip(props: SearchChipProps) {
                         values?.map(v => v.code)
                     ) ?? {}
                 )}
-            >
-                {!tValueLabel ? tCodeLabel : `${tCodeLabel} : ${tValueLabel}`}
-            </Chip>
+            />
         );
     });
 }

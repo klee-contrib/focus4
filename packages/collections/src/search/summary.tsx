@@ -165,7 +165,7 @@ export function Summary<T>({
             <div className={theme.summary()}>
                 {/* Nombre de résultats. */}
                 {!hideResults ? (
-                    <span className={theme.sentence()}>
+                    <span>
                         <strong>{totalCount}&nbsp;</strong>
                         {i18next.t(`${i18nPrefix}.search.summary.result`, {count: totalCount})}
                     </span>
@@ -173,30 +173,32 @@ export function Summary<T>({
 
                 {/* Texte de recherche. */}
                 {!hideQuery && query && query.trim().length > 0 ? (
-                    <span className={theme.sentence()}>
-                        {" "}
-                        {`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}
-                    </span>
+                    <span>{`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
                 ) : null}
 
                 {/* Liste des filtres (facettes + critères) */}
                 {state.includeList.length ? (
-                    <div className={theme.chips()}>
-                        <span className={theme.sentence()}>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
+                    <>
+                        <span>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
                         {state.includeList.map(chip => (
                             // eslint-disable-next-line react/jsx-key
-                            <SearchChip {...chip} deletable keyResolver={chipKeyResolver} themer={chipThemer} />
+                            <SearchChip
+                                {...chip}
+                                className={theme.chip()}
+                                deletable
+                                keyResolver={chipKeyResolver}
+                                themer={chipThemer}
+                            />
                         ))}
-                    </div>
+                    </>
                 ) : null}
 
                 {/* Groupe. */}
                 {groupingKey && !hideGroup ? (
-                    <div className={theme.chips()}>
-                        <span className={theme.sentence()}>
-                            {i18next.t(`${i18nPrefix}.search.summary.group`, {count: totalCount})}
-                        </span>
+                    <>
+                        <span>{i18next.t(`${i18nPrefix}.search.summary.group`, {count: totalCount})}</span>
                         <SearchChip
+                            className={theme.chip()}
                             code={groupingKey}
                             codeLabel={store.groupingLabel!}
                             deletable
@@ -204,14 +206,15 @@ export function Summary<T>({
                             themer={chipThemer}
                             type="group"
                         />
-                    </div>
+                    </>
                 ) : null}
 
                 {/* Tri. */}
                 {state.currentSort && !hideSort && !groupingKey && totalCount > 1 ? (
-                    <div className={theme.chips()}>
-                        <span className={theme.sentence()}>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
+                    <>
+                        <span>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <SearchChip
+                            className={theme.chip()}
                             code={state.currentSort.key}
                             codeLabel={state.currentSort.label}
                             deletable={canRemoveSort}
@@ -219,7 +222,7 @@ export function Summary<T>({
                             themer={chipThemer}
                             type="sort"
                         />
-                    </div>
+                    </>
                 ) : null}
 
                 {/* Action d'export. */}

@@ -391,9 +391,12 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
     const renderSelected = useCallback(() => {
         if (multiple) {
             const selectedItems = toPairs(suggestions).map(([key, val]) => (
-                <Chip key={key} className={theme.value()} deletable onDeleteClick={(e: any) => unselect(key, e)}>
-                    {getLabel(val)}
-                </Chip>
+                <Chip
+                    key={key}
+                    className={theme.value()}
+                    label={getLabel(val)}
+                    onDeleteClick={(e: any) => unselect(key, e)}
+                />
             ));
 
             return <ul className={theme.values()}>{selectedItems}</ul>;

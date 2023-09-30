@@ -1,28 +1,23 @@
 .summary {
-    display: flex;
+    display: inline-flex;
     flex-wrap: wrap;
-    line-height: 38px;
-    padding: 9px 0;
-    min-height: 56px;
-    box-sizing: border-box;
+    align-items: center;
+    gap: var(--button-spacing);
+    min-height: var(--chip-height);
+    margin-bottom: 10px;
+    font-size: 20px;
 }
 
-.sentence {
-    font-size: 20px;
-    margin-right: 6px;
+.chip {
+    --button-primary-main-color: rgba(var(--color-primary), 0.5);
+    --button-primary-secondary-color: rgba(var(--color-black));
+    outline-color: transparent;
+}
+
+.chip + .chip {
+    margin-inline: 0;
 }
 
 .print {
     float: right;
-}
-
-.chips {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-right: 6px;
-}
-
-.chips :global([data-focus="chips"]) {
-    margin: 2.5px 3px;
 }

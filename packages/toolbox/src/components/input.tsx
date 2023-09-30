@@ -283,7 +283,7 @@ export const Input = forwardRef(function RTInput(
                     placeholder={hint && !labelText ? hint : undefined}
                 />
             )}
-            {icon ? <FontIcon className={theme.icon()} value={icon} /> : null}
+            {icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null}
             <span className={theme.bar()} />
             {labelText ? (
                 <label className={theme.label({fixed: !floating})}>

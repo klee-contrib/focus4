@@ -11,18 +11,19 @@ import dialogCss, {DialogCss} from "./__style__/dialog.css";
 export {dialogCss, DialogCss};
 
 export interface DialogProps {
-    /** A array of objects representing the buttons for the dialog navigation area. The properties will be transferred to the buttons. */
+    /** Liste de props de boutons pour définir les actions du Dialog. */
     actions?: ButtonProps[];
-    /** If true, the dialog will be active. */
+    /** Affiche le Dialog. */
     active?: boolean;
-    /** Children to pass through the component. */
+    /** Contenu du Dialog. */
     children?: ReactNode;
+    /** Classe CSS pour le composant racine. */
     className?: string;
-    /** Callback to be invoked when the dialog overlay is clicked. */
+    /** Au click sur l'overlay du Dialog, à priori pour le fermer. Si non renseigné, le Dialog ne se fermera pas au clic sur l'overlay. */
     onOverlayClick?: () => void;
-    /** The text string to use as standar title of the dialog. */
+    /** Titre du Dialog. */
     title?: string;
-    /**  Classnames object defining the component style. */
+    /** CSS. */
     theme?: CSSProp<DialogCss>;
 }
 
@@ -45,11 +46,7 @@ export function Dialog({
                 {active ? (
                     <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
                         <div className={theme.wrapper()}>
-                            <div
-                                className={classNames(theme.dialog(), className)}
-                                data-react-toolbox="dialog"
-                                onClick={e => e.stopPropagation()}
-                            >
+                            <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
                                 <section className={theme.body()} role="body">
                                     {title ? <h6 className={theme.title()}>{title}</h6> : null}
                                     {children}

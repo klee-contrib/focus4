@@ -1,71 +1,175 @@
 :root {
-    --chip-height: calc(3.2 * var(--unit));
-    --chip-padding: calc(1.2 * var(--unit));
-    --chip-margin-right: calc(0.25 * var(--unit));
-    --chip-background: rgb(var(--palette-grey-200));
-    --chip-icon-font-size: calc(2 * var(--unit));
-    --chip-icon-margin-right: calc(0.8 * var(--unit));
-    --chip-color: rgb(var(--color-text-secondary));
-    --chip-font-size: var(--font-size-small);
-    --chip-remove-size: calc(2.4 * var(--unit));
-    --chip-remove-margin: calc(0.4 * var(--unit));
-    --chip-remove-stroke-width: calc(0.4 * var(--unit));
-    --chip-remove-background: rgb(var(--palette-grey-400));
-    --chip-remove-background-hover: rgb(var(--palette-grey-500));
-    --chip-remove-color: rgb(var(--color-white));
+    --chip-height: 32px;
+    --chip-padding: 16px;
+    --chip-outline-size: 1px;
+    --chip-border-radius: 8px;
+    --chip-icon-size: 18px;
+    --chip-text-size: 14px;
 }
 
 .chip {
-    background-color: var(--chip-background);
-    border-radius: var(--chip-height);
-    color: var(--chip-color);
-    display: inline-block;
-    font-size: var(--chip-font-size);
-    line-height: var(--chip-height);
-    margin-right: var(--chip-margin-right);
-    max-width: 100%;
-    overflow: hidden;
-    padding: 0 var(--chip-padding);
+    display: inline-flex;
     position: relative;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    box-sizing: border-box;
+    overflow: hidden;
+    user-select: none;
     font-family: var(--preferred-font);
-
-    & *,
-    & *::after,
-    & *::before {
-        box-sizing: border-box;
-    }
+    border: none;
+    outline: var(--chip-outline-size) solid var(--button-secondary-color);
+    outline-offset: calc(-1 * var(--chip-outline-size));
+    text-decoration: none;
+    padding: 0 var(--chip-padding);
+    box-sizing: border-box;
+    height: var(--chip-height);
+    background-color: transparent;
+    color: var(--button-secondary-color);
+    border-radius: var(--chip-border-radius);
+    transition: background-color var(--animation-duration) var(--animation-curve-default) 0s;
 }
 
-.chip--deletable {
-    padding-right: calc(var(--chip-remove-size) + 2 * var(--chip-remove-margin));
+.chip + .chip {
+    margin-inline-start: var(--button-spacing);
+}
+
+.chip--clickable {
+    cursor: pointer;
+}
+
+.chip--clickable::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: "";
+    pointer-events: none;
+    opacity: 0;
+    background-color: var(--button-secondary-color);
+    transition: opacity var(--animation-duration) var(--animation-curve-default) 0s;
+}
+
+.chip:hover::before {
+    opacity: var(--button-hover-opacity);
+}
+
+.chip--elevated {
+    box-shadow: var(--shadow-2p);
+    background-color: var(--button-main-color);
+    outline: none;
+}
+
+.chip--primary {
+    --button-secondary-color: var(--button-primary-secondary-color);
+    background-color: var(--button-primary-main-color);
+    outline-color: var(--button-primary-main-color);
+    color: var(--button-primary-secondary-color);
+}
+
+.chip--primary::before {
+    background-color: var(--button-primary-secondary-color);
+}
+
+.chip--primary:hover::before {
+    opacity: var(--button-primary-hover-opacity);
+}
+
+.chip--accent {
+    --button-secondary-color: var(--button-accent-secondary-color);
+    background-color: var(--button-accent-main-color);
+    outline-color: var(--button-accent-main-color);
+    color: var(--button-accent-secondary-color);
+}
+
+.chip--accent::before {
+    background-color: var(--button-accent-secondary-color);
+}
+
+.chip--accent:hover::before {
+    opacity: var(--button-accent-hover-opacity);
+}
+
+.icon {
+    position: absolute;
+    top: 0;
+    left: calc(var(--chip-padding) / 2);
+    bottom: 0;
+    height: var(--chip-height);
+    font-size: var(--chip-icon-size);
+    line-height: var(--chip-height);
+}
+
+.label {
+    font-weight: 500;
+    font-size: var(--chip-text-size);
+    height: var(--chip-height);
+    line-height: calc(var(--chip-height) + var(--button-line-height-delta));
+    white-space: nowrap;
 }
 
 .delete {
-    cursor: pointer;
-    display: inline-block;
-    height: var(--chip-remove-size);
-    margin: var(--chip-remove-margin);
-    padding: var(--chip-remove-margin);
+    --icon-button-size: calc(4 * var(--chip-icon-size) / 3);
+    --icon-button-icon-size: var(--chip-icon-size);
     position: absolute;
-    right: 0;
-    width: var(--chip-remove-size);
+    top: calc((var(--chip-height) - var(--icon-button-size)) / 2);
+    bottom: calc((var(--chip-height) - var(--icon-button-size)) / 2);
+    right: calc(var(--chip-padding) / 2 + (var(--icon-button-icon-size) - var(--icon-button-size)) / 2);
+}
 
-    &:hover .deleteIcon {
-        background: var(--chip-remove-background-hover);
+.icon ~ .label {
+    margin-left: calc(var(--chip-icon-size) / 2 + var(--chip-padding) / 2);
+}
+
+.delete + .label {
+    margin-right: calc(var(--chip-icon-size) / 2 + var(--chip-padding) / 2);
+}
+
+.chip.chip--disabled {
+    cursor: default;
+    color: var(--button-disabled-text-color);
+    outline-color: var(--button-disabled-text-color);
+
+    &.chip--primary,
+    &.chip--accent {
+        background-color: var(--button-disabled-background-color);
     }
 }
 
-.deleteIcon {
-    background: var(--chip-remove-background);
-    border-radius: var(--chip-remove-size);
-    vertical-align: top;
+.chip.chip--disabled:hover::before {
+    opacity: 0;
+}
 
-    & .deleteX {
-        fill: transparent;
-        stroke: var(--chip-remove-color);
-        stroke-width: var(--chip-remove-stroke-width);
+.chip:focus-visible {
+    animation-name: focusOutline;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: calc(var(--chip-outline-size) + var(--focus-ring-width)) solid var(--focus-ring-color);
+}
+
+.chip--elevated:focus-visible {
+    animation-name: focus;
+    outline-width: var(--focus-ring-width);
+    outline-offset: var(--button-focus-ring-offset);
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
+    }
+}
+
+@keyframes focusOutline {
+    0% {
+        outline-width: var(--chip-outline-size);
+    }
+    50% {
+        outline-width: calc(var(--chip-outline-size) + 2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: calc(var(--chip-outline-size) + var(--focus-ring-width));
     }
 }

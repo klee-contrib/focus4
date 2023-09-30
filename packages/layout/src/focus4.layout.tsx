@@ -7,6 +7,7 @@ import {
     ChipCss,
     ClockCss,
     DropdownCss,
+    FloatingActionButtonCss,
     IconButtonCss,
     InputCss,
     MenuCss,
@@ -101,13 +102,14 @@ export interface LayoutStyleProviderProps {
     timeline?: {};
 
     RTAutocomplete?: CSSProp<AutocompleteCss>;
-    RTButton?: CSSProp<ButtonCss>;
+    button?: CSSProp<ButtonCss>;
     RTCalendar?: CSSProp<CalendarCss>;
     checkbox?: CSSProp<CheckboxCss>;
-    RTChip?: CSSProp<ChipCss>;
+    chip?: CSSProp<ChipCss>;
     RTClock?: CSSProp<ClockCss>;
     RTDropdown?: CSSProp<DropdownCss>;
-    RTIconButton?: CSSProp<IconButtonCss>;
+    floatingActionButton?: CSSProp<FloatingActionButtonCss>;
+    iconButton?: CSSProp<IconButtonCss>;
     RTInput?: CSSProp<InputCss>;
     RTMenu?: CSSProp<MenuCss>;
     RTProgressBar?: CSSProp<ProgressBarCss>;

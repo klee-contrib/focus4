@@ -143,21 +143,29 @@ Une checkbox.
 
 ## `Chip`
 
-Affiche un chip pour représenter un élément sélectionné, qui peut avoir une action de suppression.
+
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                             | Description                                                                            |
-| ---------------- | ----------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `children`       | Non         | <code>ReactNode</code>                                           | Children to pass through the component.                                                |
-| `className`      | Non         | <code>string</code>                                              |                                                                                        |
-| `deletable`      | Non         | <code>boolean</code>                                             | If true, the chip will be rendered with a delete icon.                                 |
-| `onDeleteClick`  | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code>            | Callback to be invoked when the delete icon is clicked.                                |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                              | Classnames object defining the component style.                                        |
+| Nom              | Obligatoire | Type                                                                                                             | Description                                                                            |
+| ---------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                                                                              | Classe CSS a ajouter au composant racine.                                              |
+| `color`          | Non         | <code>"accent" &#124; "primary"</code>                                                                           | Couleur du Chip.                                                                       |
+| `disabled`       | Non         | <code>boolean</code>                                                                                             | Désactive le Chip.                                                                     |
+| `elevated`       | Non         | <code>boolean</code>                                                                                             | Si renseigné, le Chip est affiché avec une élévation.                                  |
+| `href`           | Non         | <code>string</code>                                                                                              | Si renseigné, pose une balise <a> à la place du <button> ou <span>.                    |
+| `icon`           | Non         | <code>ReactNode</code>                                                                                           | Icône a afficher dans le Chip (à gauche).                                              |
+| `label`          | **Oui**     | <code>string</code>                                                                                              | Libellé du chip.                                                                       |
+| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                                   | Au blur du Chip (si actionnable).                                                      |
+| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement&gt;</code>                                                          | Au click sur le Chip. Pose un <button> au lieu d'un <span> si rensgeiné.               |
+| `onDeleteClick`  | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code>                                                            | Si renseigné, le Chip a une action de suppression via un bouton icône (à droite).      |
+| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                                   | Au focus du Chip (si actionnable).                                                     |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement &#124; HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement &#124; HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement &#124; HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement &#124; HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `target`         | Non         | <code>string</code>                                                                                              | "target" pour le <a>, si `href` est rensigné.                                          |
+| `theme`          | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                                                                              | CSS.                                                                                   |
 
 ## `Clock`
 
@@ -238,15 +246,14 @@ Affiche une icône. Prend directement un nom d'icône Material en enfant, ou bie
 
 | Nom              | Obligatoire | Type                                                             | Description                                                                            |
 | ---------------- | ----------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `alt`            | Non         | <code>string</code>                                              | Alt text for the icon.                                                                 |
-| `children`       | Non         | <code>ReactNode</code>                                           | Children to pass through the component.                                                |
-| `className`      | Non         | <code>string</code>                                              |                                                                                        |
+| `alt`            | Non         | <code>string</code>                                              | Texte alternatif pour l'icône.                                                         |
+| `children`       | Non         | <code>ReactNode</code>                                           | Icône à afficher.                                                                      |
+| `className`      | Non         | <code>string</code>                                              | Classe CSS à poser sur le composant racine.                                            |
 | `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
 | `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `style`          | Non         | <code>CSSProperties</code>                                       | Inline styles.                                                                         |
-| `value`          | Non         | <code>ReactNode</code>                                           | The key string for the icon you want be displayed.                                     |
+| `style`          | Non         | <code>CSSProperties</code>                                       | Styles inline                                                                          |
 
 ## `IconButton`
 
