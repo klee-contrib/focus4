@@ -79,7 +79,7 @@ export function HeaderActions({
                     />
                 );
 
-                if (action.tooltip) {
+                if (action.tooltip && !action.disabled) {
                     return (
                         <Tooltip key={`${i}`} {...action.tooltip}>
                             {button}

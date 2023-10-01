@@ -22,16 +22,18 @@
     margin-left: calc(var(--advanced-search-facets-width) + 8px);
 }
 
+.topRow {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
 .actions {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
-    padding: 9px 0;
-    min-height: 56px;
-    float: right;
-    box-sizing: border-box;
 
-    & button:not(:first-child):not(:last-child) {
-        margin-left: 10px;
+    & button {
+        margin-bottom: 10px;
     }
 }

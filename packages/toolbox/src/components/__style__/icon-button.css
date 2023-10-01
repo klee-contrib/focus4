@@ -111,10 +111,10 @@
     line-height: var(--icon-button-size);
 }
 
-.button--filled + .button,
-.button--outlined + .button,
-.button + .button--filled,
-.button + .button--outlined {
+.button--filled + .button--filled,
+.button--filled + .button--outlined,
+.button--outlined + .button--filled,
+.button--outlined + .button--outlined {
     margin-inline-start: var(--button-spacing);
 }
 

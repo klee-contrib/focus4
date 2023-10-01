@@ -14,20 +14,19 @@
 }
 
 .facet h4 + button {
-    padding: 4px;
-    height: 24px;
-    line-height: 24px;
+    --button-height: 32px;
+    --button-border-radius: 3px;
+    --button-icon-size: 26px;
+    --button-padding: 6px;
+
     text-transform: none;
     margin: 3px 0 -6px -8px;
-    width: calc(100% + 5px);
-    text-align: left;
+    width: calc(100% + 13px);
     font-style: italic;
-    box-sizing: content-box;
 
-    & > span[aria-label] {
-        font-size: 26px;
-        line-height: 24px;
-        padding-right: 4px;
+    & > div:nth-child(2) {
+        --button-icon-size: 34px;
+        text-align: left;
     }
 }
 
@@ -102,13 +101,10 @@
 }
 
 .icon {
-    width: 24px;
-    height: 24px;
+    --icon-button-size: 24px;
+    --icon-button-icon-size: 24px;
 }
 
 .icon > span {
-    --button-toggle-font-size: 24px;
-    --button-height: 24px;
-    transition: color 0.1s ease-in-out;
-    vertical-align: top;
+    transition: color var(--animation-duration) var(--animation-curve-default);
 }

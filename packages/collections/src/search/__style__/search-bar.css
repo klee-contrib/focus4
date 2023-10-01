@@ -7,6 +7,10 @@
 }
 
 .bar {
+    --button-border-radius: 2px;
+    --button-height: 36px;
+    --button-padding: 20px;
+
     display: flex;
     align-items: center;
     background-color: var(--search-bar-background);

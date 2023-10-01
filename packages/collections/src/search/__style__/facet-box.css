@@ -1,4 +1,7 @@
 .facetBox {
+    --icon-button-icon-size: 20px;
+    --icon-button-size: 36px;
+
     padding: 10px;
 }
 
@@ -9,6 +12,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    gap: 3px;
     width: calc(100% + 15px);
 
     & > span {

@@ -119,8 +119,10 @@
     font-size: var(--button-text-size);
     height: var(--button-height);
     line-height: calc(var(--button-height) + var(--button-line-height-delta));
+    text-align: center;
     white-space: nowrap;
     min-width: var(--button-icon-size);
+    width: 100%;
 }
 
 .button--left.button--label {
@@ -143,12 +145,12 @@
     }
 }
 
-.button--filled + .button,
 .button--elevated + .button,
-.button--outlined + .button,
-.button + .button--filled,
 .button + .button--elevated,
-.button + .button--outlined {
+.button--filled + .button--filled,
+.button--filled + .button--outlined,
+.button--outlined + .button--filled,
+.button--outlined + .button--outlined {
     margin-inline-start: var(--button-spacing);
 }
 

@@ -236,49 +236,51 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                     withFacetBox: facetBoxPosition === "left"
                 })}
             >
-                <div className={theme.actions()}>
-                    {LineComponent && MosaicComponent ? (
-                        <>
-                            <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
-                                <IconButton
-                                    color={listContext.mode === "list" ? "accent" : undefined}
-                                    icon={getIcon(`${i18nPrefix}.icons.list.list`)}
-                                    onClick={() => (listContext.mode = "list")}
-                                />
-                            </Tooltip>
-                            <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
-                                <IconButton
-                                    color={listContext.mode === "mosaic" ? "accent" : undefined}
-                                    icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
-                                    onClick={() => (listContext.mode = "mosaic")}
-                                />
-                            </Tooltip>
-                        </>
-                    ) : null}
-                    {addItemHandler && listContext.mode === "list" ? (
-                        <AddItemComponent
-                            addItemHandler={addItemHandler}
-                            i18nPrefix={i18nPrefix}
-                            mode="search"
-                            store={store}
-                        />
-                    ) : null}
+                <div className={theme.topRow()}>
+                    <Summary
+                        canRemoveSort={canRemoveSort}
+                        chipKeyResolver={chipKeyResolver}
+                        chipThemer={chipThemer}
+                        hideCriteria={hideSummaryCriteria}
+                        hideFacets={hideSummaryFacets}
+                        hideGroup={hideSummaryGroup}
+                        hideQuery={hideSummaryQuery}
+                        hideResults={hideSummaryResults}
+                        hideSort={hideSummarySort}
+                        i18nPrefix={i18nPrefix}
+                        orderableColumnList={orderableColumnList}
+                        store={store}
+                        theme={summaryTheme}
+                    />
+                    <div className={theme.actions()}>
+                        {LineComponent && MosaicComponent ? (
+                            <>
+                                <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
+                                    <IconButton
+                                        color={listContext.mode === "list" ? "accent" : undefined}
+                                        icon={getIcon(`${i18nPrefix}.icons.list.list`)}
+                                        onClick={() => (listContext.mode = "list")}
+                                    />
+                                </Tooltip>
+                                <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
+                                    <IconButton
+                                        color={listContext.mode === "mosaic" ? "accent" : undefined}
+                                        icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
+                                        onClick={() => (listContext.mode = "mosaic")}
+                                    />
+                                </Tooltip>
+                            </>
+                        ) : null}
+                        {addItemHandler && listContext.mode === "list" ? (
+                            <AddItemComponent
+                                addItemHandler={addItemHandler}
+                                i18nPrefix={i18nPrefix}
+                                mode="search"
+                                store={store}
+                            />
+                        ) : null}
+                    </div>
                 </div>
-                <Summary
-                    canRemoveSort={canRemoveSort}
-                    chipKeyResolver={chipKeyResolver}
-                    chipThemer={chipThemer}
-                    hideCriteria={hideSummaryCriteria}
-                    hideFacets={hideSummaryFacets}
-                    hideGroup={hideSummaryGroup}
-                    hideQuery={hideSummaryQuery}
-                    hideResults={hideSummaryResults}
-                    hideSort={hideSummarySort}
-                    i18nPrefix={i18nPrefix}
-                    orderableColumnList={orderableColumnList}
-                    store={store}
-                    theme={summaryTheme}
-                />
                 {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
                     <ActionBar
                         defaultFoldedFacets={defaultFoldedFacets}
