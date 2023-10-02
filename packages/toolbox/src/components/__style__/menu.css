@@ -115,7 +115,7 @@
 .outline {
     background-color: var(--menu-background-color);
     border-radius: var(--menu-outline-border-radius);
-    box-shadow: var(--shadow-2p);
+    box-shadow: var(--shadow-4p);
     display: block;
     left: 0;
     position: absolute;
@@ -164,7 +164,7 @@
 
 .caption {
     flex-grow: 1;
-    font-size: var(--font-size-normal);
+    font-size: var(--font-size);
 }
 
 .shortcut {

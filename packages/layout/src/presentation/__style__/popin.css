@@ -1,5 +1,5 @@
 :root {
-    --popin-background: rgb(var(--palette-grey-50));
+    --popin-background: rgb(var(--palette-grey-100));
 }
 
 .popin {

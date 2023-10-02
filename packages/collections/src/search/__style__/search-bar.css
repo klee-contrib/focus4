@@ -49,7 +49,7 @@
 
 .searchIcon {
     margin: 0 10px;
-    color: var(--button-neutral-color-contrast);
+    color: var(--button-secondary-color);
 }
 
 .input input {
