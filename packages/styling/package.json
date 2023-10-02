@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@focus4/core": "11.9.0",
-        "@types/react-dom": "18.2.7",
+        "@types/react-dom": "18.2.8",
         "classnames": "2.3.2",
         "mobx-react": "7.6.0",
         "react": "18.2.0",

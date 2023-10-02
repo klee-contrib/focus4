@@ -18,7 +18,7 @@
         "@focus4/core": "11.9.0",
         "@focus4/styling": "11.9.0",
         "@types/luxon": "3.3.2",
-        "@types/react-transition-group": "4.4.6",
+        "@types/react-transition-group": "4.4.7",
         "framer-motion": "10.16.4",
         "luxon": "3.4.3",
         "react-transition-group": "4.4.5"

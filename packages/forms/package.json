@@ -21,7 +21,7 @@
         "@focus4/stores": "11.9.0",
         "@focus4/styling": "11.9.0",
         "@focus4/toolbox": "11.9.2",
-        "@types/numeral": "2.0.2",
+        "@types/numeral": "2.0.3",
         "inputmask-core": "2.2.0",
         "lodash-decorators": "6.0.1",
         "numeral": "2.0.6"
