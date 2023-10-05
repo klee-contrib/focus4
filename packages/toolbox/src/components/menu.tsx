@@ -139,7 +139,7 @@ export function MenuItem({
 }
 
 /** Hook pour attacher un menu à un élément et une fonction pour l'ouvrir et le fermer. */
-export function useMenu<T extends HTMLElement>() {
+export function useMenu<T extends HTMLElement = HTMLDivElement>() {
     const anchor = useRef<T | null>(null);
     const [active, setActive] = useState(false);
     return {anchor, active, toggle: () => setActive(a => !a)};

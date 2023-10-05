@@ -17,7 +17,8 @@ import {FontIcon, PointerEvents, Ripple, useInputRef} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
-import {mainMenuCss, MainMenuCss} from "./style";
+
+import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
 
 /** Props du MenuItem. */
 export interface MainMenuItemProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {

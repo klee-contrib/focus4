@@ -7,8 +7,8 @@ import {Overlay} from "../presentation/overlay";
 
 import {MainMenuItem} from "./item";
 import {MainMenuList} from "./list";
-import {MainMenuCss, mainMenuCss} from "./style";
 
+import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
 export {MainMenuItem, MainMenuCss, mainMenuCss};
 
 /** Props du Menu. */

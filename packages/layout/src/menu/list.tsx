@@ -4,7 +4,8 @@ import {createPortal} from "react-dom";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {MenuContext} from "./context";
-import {MainMenuCss, mainMenuCss} from "./style";
+
+import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
 
 /** Props du MenuList. */
 export interface MainMenuListProps {
