@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {createElement, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
+import {createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -33,6 +33,8 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Au focus du bouton. */
     onFocus?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
+    /** CSS inline pour l'élément racine. */
+    style?: CSSProperties;
     /** "target" pour le <a>, si `href` est rensigné. */
     target?: string;
     /** CSS. */
@@ -61,6 +63,7 @@ export function Button({
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
+    style,
     target,
     theme: pTheme,
     type = "button",
@@ -95,6 +98,7 @@ export function Button({
         onBlur,
         onClick,
         onFocus,
+        style,
         target: href ? target : undefined,
         type: !href ? type : undefined
     };

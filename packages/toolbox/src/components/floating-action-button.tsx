@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import {motion} from "framer-motion";
-import {createElement, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
+import {createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
 
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 
@@ -38,6 +38,8 @@ export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonEleme
     onFocus?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Taille du bouton. */
     size?: "large" | "small";
+    /** CSS inline pour l'élément racine. */
+    style?: CSSProperties;
     /** "target" pour le <a>, si `href` est rensigné. */
     target?: string;
     /** CSS. */
@@ -66,6 +68,7 @@ export function FloatingActionButton({
     onPointerLeave,
     onPointerUp,
     size,
+    style,
     target,
     theme: pTheme,
     type = "button"
@@ -100,6 +103,7 @@ export function FloatingActionButton({
         onBlur,
         onClick,
         onFocus,
+        style,
         target: href ? target : undefined,
         type: !href ? type : undefined
     };

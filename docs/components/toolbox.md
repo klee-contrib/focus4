@@ -92,6 +92,7 @@ Bouton standard.
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
 | `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `style`          | Non         | <code>CSSProperties</code>                                                                | CSS inline pour l'élément racine.                                                      |
 | `target`         | Non         | <code>string</code>                                                                       | "target" pour le <a>, si `href` est rensigné.                                          |
 | `theme`          | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                                     | CSS.                                                                                   |
 | `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
@@ -234,6 +235,7 @@ Bouton action flottant.
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
 | `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
 | `size`           | Non         | <code>"large" &#124; "small"</code>                                                       | Taille du bouton.                                                                      |
+| `style`          | Non         | <code>CSSProperties</code>                                                                | CSS inline pour l'élément racine.                                                      |
 | `target`         | Non         | <code>string</code>                                                                       | "target" pour le <a>, si `href` est rensigné.                                          |
 | `theme`          | Non         | <code>CSSProp&lt;FloatingActionButtonCss&gt;</code>                                       | CSS.                                                                                   |
 | `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
@@ -276,6 +278,7 @@ Bouton simple avec une icône.
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
 | `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `style`          | Non         | <code>CSSProperties</code>                                                                | CSS inline pour l'élément racine.                                                      |
 | `target`         | Non         | <code>string</code>                                                                       | "target" pour le <a>, si `href` est rensigné.                                          |
 | `theme`          | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                                 | CSS.                                                                                   |
 | `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
