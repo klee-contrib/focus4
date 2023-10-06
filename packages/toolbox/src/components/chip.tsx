@@ -90,10 +90,13 @@ export function Chip({
         type: onClick ? "button" : undefined
     };
 
-    const handleDeleteClick = useCallback(function handleDeleteClick(e: MouseEvent<HTMLButtonElement>) {
-        e.stopPropagation();
-        onDeleteClick?.(e);
-    }, []);
+    const handleDeleteClick = useCallback(
+        function handleDeleteClick(e: MouseEvent<HTMLButtonElement>) {
+            e.stopPropagation();
+            onDeleteClick?.(e);
+        },
+        [onDeleteClick]
+    );
 
     return (
         <Ripple
