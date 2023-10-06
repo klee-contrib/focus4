@@ -7,9 +7,9 @@
     --floating-action-button-icon-size-small: 24px;
     --floating-action-button-icon-size-large: 36px;
 
-    --floating-action-button-radius-size: 16px;
-    --floating-action-button-radius-size-small: 12px;
-    --floating-action-button-radius-size-large: 28px;
+    --floating-action-button-border-radius: 16px;
+    --floating-action-button-border-radius-small: 12px;
+    --floating-action-button-border-radius-large: 28px;
 }
 
 .button {
@@ -28,7 +28,7 @@
     height: var(--floating-action-button-size);
     background-color: var(--button-main-color);
     color: var(--button-secondary-color);
-    border-radius: var(--floating-action-button-radius-size);
+    border-radius: var(--floating-action-button-border-radius);
     box-shadow: var(--shadow-4p);
     transition: box-shadow var(--animation-duration) var(--animation-curve-default) 0s,
         background-color var(--animation-duration) var(--animation-curve-default) 0s,
@@ -125,7 +125,7 @@
     height: var(--floating-action-button-size-small);
     min-width: var(--floating-action-button-size-small);
     padding: 0 calc((var(--floating-action-button-size-small) - var(--floating-action-button-icon-size-small)) / 2);
-    border-radius: var(--floating-action-button-radius-size-small);
+    border-radius: var(--floating-action-button-border-radius-small);
 
     & .icon {
         width: var(--floating-action-button-icon-size-small);
@@ -143,7 +143,7 @@
     height: var(--floating-action-button-size-large);
     min-width: var(--floating-action-button-size-large);
     padding: 0 calc((var(--floating-action-button-size-large) - var(--floating-action-button-icon-size-large)) / 2);
-    border-radius: var(--floating-action-button-radius-size-large);
+    border-radius: var(--floating-action-button-border-radius-large);
 
     & .icon {
         width: var(--floating-action-button-icon-size-large);

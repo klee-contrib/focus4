@@ -94,7 +94,7 @@ button + .secondaryActions {
 
     & .actions {
         --floating-action-button-icon-size: var(--floating-action-button-icon-size-small);
-        --floating-action-button-radius-size: var(--floating-action-button-radius-size-small);
+        --floating-action-button-border-radius: var(--floating-action-button-border-radius-small);
         --floating-action-button-size: var(--floating-action-button-size-small);
         bottom: calc(-3 * var(--floating-action-button-size) / 5);
     }
