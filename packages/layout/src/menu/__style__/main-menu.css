@@ -79,6 +79,8 @@
 
 .icon {
     font-size: var(--main-menu-item-icon-size);
+    width: var(--main-menu-item-icon-size);
+    height: var(--main-menu-item-icon-size);
 }
 
 .label {
