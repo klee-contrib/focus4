@@ -24,8 +24,9 @@
 
 .topRow {
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
+    min-height: calc(var(--button-height) + var(--summary-margin-bottom));
 }
 
 .actions {
@@ -34,6 +35,6 @@
     align-items: center;
 
     & button {
-        margin-bottom: 10px;
+        margin-bottom: var(--summary-margin-bottom);
     }
 }

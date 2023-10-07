@@ -1,10 +1,14 @@
+:root {
+    --summary-margin-bottom: 10px;
+}
+
 .summary {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--button-spacing);
     min-height: var(--chip-height);
-    margin-bottom: 10px;
+    margin-bottom: var(--summary-margin-bottom);
     font-size: 20px;
 }
 
