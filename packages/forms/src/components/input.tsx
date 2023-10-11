@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import numeral from "numeral";
 import {ClipboardEvent, Component, KeyboardEvent} from "react";
 
-import {Input as RTInput, InputProps as RTInputProps} from "@focus4/toolbox";
+import {TextField, TextFieldProps} from "@focus4/toolbox";
 
 /** Définition d'un masque de saisie. */
 export interface MaskDefinition {
@@ -19,7 +19,10 @@ export interface MaskDefinition {
     placeholderChar?: string;
 }
 
-export interface InputProps<T extends "number" | "string"> extends Omit<RTInputProps, "onChange" | "value"> {
+export interface InputProps<T extends "number" | "string">
+    extends Omit<TextFieldProps, "error" | "onChange" | "value"> {
+    /** Erreur à afficher sous le champ. */
+    error?: string;
     /** Pour un input de type "number", affiche les séparateurs de milliers. */
     hasThousandsSeparator?: boolean;
     /** Pour un input de type "text", paramètre un masque de saisie. */
@@ -37,9 +40,8 @@ export interface InputProps<T extends "number" | "string"> extends Omit<RTInputP
 }
 
 /**
- * **_A ne pas confondre avec le composant du même nom `Input` dans le module `@focus4/toolbox` !_**
  *
- * Surcharge du `Input` de `@focus4/toolbox` pour ajouter :
+ * Surcharge du `TextField` de `@focus4/toolbox` pour ajouter :
  *
  * -   La gestion de masques de saisie
  * -   Une gestion propre de saisie de nombre (avec formattage, restrictions de décimales, et un `onChange` qui renvoie bien un nombre)
@@ -333,15 +335,18 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
     }
 
     render() {
-        const {mask, hasThousandsSeparator, maxDecimals, noNegativeNumbers, ...props} = this.props;
+        const {mask, hasThousandsSeparator, maxDecimals, noNegativeNumbers, error, supportingText, ...props} =
+            this.props;
         return (
-            <RTInput
+            <TextField
                 {...props}
                 ref={i => (this.inputElement = i!)}
+                error={!!error}
                 onChange={this.onChange}
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
                 onPaste={this.onPaste}
+                supportingText={error ?? supportingText}
                 type="text"
                 value={this.value}
             />

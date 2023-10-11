@@ -6,7 +6,6 @@
     --switch-focus-ring-offset: var(--switch-border-size);
 
     --switch-animation-curve: cubic-bezier(0.47, 1.64, 0.41, 1);
-    --switch-animation-duration: 0.2s;
     --switch-thumb-animation-duration: 0.15s;
 }
 
@@ -53,7 +52,7 @@
     width: var(--switch-state-size);
     height: var(--switch-state-size);
     border-radius: 50%;
-    transition: transform var(--switch-animation-duration) var(--switch-animation-curve) 0s,
+    transition: transform var(--animation-duration-short) var(--switch-animation-curve) 0s,
         background-color var(--animation-duration) var(--animation-curve-default) 0s;
     transform-origin: center center;
     transform: translateX(0px);

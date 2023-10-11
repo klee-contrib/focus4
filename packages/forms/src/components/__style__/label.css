@@ -3,13 +3,13 @@
 }
 
 .label {
-    text-align: right;
-    font-weight: bold;
-    font-size: var(--label-font-size);
-    line-height: 20px;
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
+    text-align: right;
+    font-weight: bold;
+    font-size: var(--label-font-size);
+    line-height: var(--text-field-height);
 }
 
 .icon {

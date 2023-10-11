@@ -6,7 +6,6 @@
     --slider-knob-size: calc(3.2 * var(--unit));
     --slider-inner-knob-size: calc(1.2 * var(--unit));
     --slider-snap-size: calc(0.2 * var(--unit));
-    --slider-input-width: calc(5 * var(--unit));
     --slider-bar-height: calc(0.2 * var(--unit));
     --slider-pin-size: calc(2.6 * var(--unit));
     --slider-pin-elevation: calc(1.7 * var(--unit));
@@ -96,16 +95,6 @@
     }
 }
 
-.input {
-    margin-bottom: 0;
-    padding: 0;
-    width: var(--slider-input-width);
-
-    & > input {
-        text-align: center;
-    }
-}
-
 .progress {
     height: 100%;
     left: calc(var(--slider-knob-size) / 2);
@@ -144,12 +133,6 @@
     & .innerknob {
         background-color: var(--slider-disabled-color);
     }
-}
-
-.slider--editable {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
 }
 
 .slider--pinned {

@@ -9,7 +9,6 @@ import {
     DropdownCss,
     FloatingActionButtonCss,
     IconButtonCss,
-    InputCss,
     MenuCss,
     ProgressBarCss,
     RadioCss,
@@ -18,6 +17,7 @@ import {
     SnackbarCss,
     SwitchCss,
     TabsCss,
+    TextFieldCss,
     TooltipCss
 } from "@focus4/toolbox";
 
@@ -110,7 +110,6 @@ export interface LayoutStyleProviderProps {
     RTDropdown?: CSSProp<DropdownCss>;
     floatingActionButton?: CSSProp<FloatingActionButtonCss>;
     iconButton?: CSSProp<IconButtonCss>;
-    RTInput?: CSSProp<InputCss>;
     RTMenu?: CSSProp<MenuCss>;
     RTProgressBar?: CSSProp<ProgressBarCss>;
     radio?: CSSProp<RadioCss>;
@@ -118,6 +117,7 @@ export interface LayoutStyleProviderProps {
     RTSlider?: CSSProp<SliderCss>;
     RTSnackbar?: CSSProp<SnackbarCss>;
     switch?: CSSProp<SwitchCss>;
+    textField?: CSSProp<TextFieldCss>;
     RTTabs?: CSSProp<TabsCss>;
     tooltip?: CSSProp<TooltipCss>;
 }

@@ -72,11 +72,11 @@
 }
 
 .calendar--up {
-    bottom: 60px;
+    bottom: calc(var(--text-field-height) + var(--focus-ring-width));
 }
 
 .calendar--down {
-    top: 60px;
+    top: calc(var(--text-field-height) + var(--focus-ring-width));
 }
 
 .toggle {

@@ -15,7 +15,7 @@ export {
 } from "./components/floating-action-button";
 export {FontIcon, FontIconProps} from "./components/font-icon";
 export {IconButton, IconButtonCss, IconButtonProps, iconButtonCss} from "./components/icon-button";
-export {Input, InputCss, InputProps, inputCss} from "./components/input";
+export {TextField, TextFieldCss, TextFieldProps, textFieldCss} from "./components/text-field";
 export {
     Menu,
     MenuCss,

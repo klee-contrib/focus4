@@ -24,15 +24,15 @@ import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Chip} from "./chip";
-import {Input, InputCss, InputProps} from "./input";
 import {ProgressBar} from "./progress-bar";
 import {Ripple} from "./ripple";
+import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss, AutocompleteCss};
 
 export interface AutocompleteProps<TValue extends string[] | string = string, TSource = string>
-    extends Omit<InputProps, "autoComplete" | "onChange" | "theme" | "type" | "value"> {
+    extends Omit<TextFieldProps, "autoComplete" | "onChange" | "theme" | "type" | "value"> {
     /** Determines if user can create a new option with the current typed value. */
     allowCreate?: boolean;
     /** Determines the opening direction. It can be auto, up or down. */
@@ -66,7 +66,7 @@ export interface AutocompleteProps<TValue extends string[] | string = string, TS
     suggestionMatch?: "anywhere" | "disabled" | "start" | "word";
     /** If set, sorts the suggestions by key or label ascending. */
     suggestionSort?: "key" | "label";
-    theme?: CSSProp<AutocompleteCss & InputCss>;
+    theme?: CSSProp<AutocompleteCss & TextFieldCss>;
     value?: TValue;
 }
 
@@ -84,13 +84,12 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
     {
         allowCreate = false,
         className,
-        children,
         direction: pDirection = "auto",
         disabled,
         error,
         finalSuggestion,
-        floating,
         getLabel = defaultGetLabel,
+        hideSupportingText,
         hint,
         icon,
         id,
@@ -104,36 +103,32 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
         name,
         onBlur,
         onChange,
-        onClick,
         onContextMenu,
-        onDoubleClick,
         onFocus,
         onKeyDown,
         onKeyPress,
         onKeyUp,
-        onMouseDown,
-        onMouseEnter,
-        onMouseLeave,
-        onMouseMove,
-        onMouseOut,
-        onMouseOver,
-        onMouseUp,
         onPaste,
         onPointerDown,
         onPointerEnter,
         onPointerLeave,
         onPointerUp,
         onQueryChange,
+        prefix,
         query: pQuery,
+        readOnly,
         required,
         ripple = true,
         rows,
         selectedPosition = "above",
         showSuggestionsWhenValueIsSet = false,
+        supportingText,
+        suffix,
         suggestionSort,
         source = {},
         suggestionMatch = "start",
-        style,
+        tabIndex,
+        trailing,
         theme: pTheme,
         value
     }: AutocompleteProps<TValue, TSource>,
@@ -429,13 +424,12 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
     return (
         <div className={classNames(theme.autocomplete({focus}), className)} data-react-toolbox="autocomplete">
             {selectedPosition === "above" ? renderSelected() : null}
-            <Input
+            <TextField
                 ref={inputRef}
                 autoComplete={config.autocompleteOffValue}
-                className={theme.input()}
                 disabled={disabled}
                 error={error}
-                floating={floating}
+                hideSupportingText={hideSupportingText}
                 hint={hint}
                 icon={icon}
                 id={id}
@@ -445,34 +439,28 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
                 name={name}
                 onBlur={onBlur}
                 onChange={handleQueryChange}
-                onClick={onClick}
                 onContextMenu={onContextMenu}
-                onDoubleClick={onDoubleClick}
                 onFocus={handleQueryFocus}
                 onKeyDown={handleQueryKeyDown}
                 onKeyPress={onKeyPress}
                 onKeyUp={handleQueryKeyUp}
-                onMouseDown={onMouseDown}
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
-                onMouseMove={onMouseMove}
-                onMouseOut={onMouseOut}
-                onMouseOver={onMouseOver}
-                onMouseUp={onMouseUp}
                 onPaste={onPaste}
                 onPointerDown={onPointerDown}
                 onPointerEnter={onPointerEnter}
                 onPointerLeave={onPointerLeave}
                 onPointerUp={onPointerUp}
+                prefix={prefix}
+                readOnly={readOnly}
                 required={required}
                 rows={rows}
-                style={style}
-                theme={theme as unknown as CSSProp<InputCss>}
+                suffix={suffix}
+                supportingText={supportingText}
+                tabIndex={tabIndex}
+                theme={theme as unknown as CSSProp<TextFieldCss>}
+                trailing={trailing}
                 type="search"
                 value={query}
-            >
-                {children}
-            </Input>
+            />
             {loading ? (
                 <ProgressBar mode="indeterminate" theme={{progressBar: theme.progressBar()}} type="linear" />
             ) : null}

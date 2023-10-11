@@ -1,6 +1,6 @@
 import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {KeyboardEvent, ReactNode, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {KeyboardEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -21,8 +21,8 @@ export interface InputTimeProps {
     clockTheme?: CSSProp<ClockCss>;
     /** Composant affiché depuis la gauche ou la droite. */
     displayFrom?: "left" | "right";
-    /** Give an error node to display under the field. */
-    error?: ReactNode;
+    /** Erreur à afficher sous le champ. */
+    error?: string;
     /** Id pour l'input. */
     id?: string;
     /** Format de la date dans l'input. */

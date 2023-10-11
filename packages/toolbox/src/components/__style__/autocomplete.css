@@ -89,31 +89,6 @@
     background-color: var(--autocomplete-suggestion-active-background);
 }
 
-.input {
-    position: relative;
-
-    &::after {
-        border-left: var(--autocomplete-border-size) solid transparent;
-        border-right: var(--autocomplete-border-size) solid transparent;
-        border-top: var(--autocomplete-border-size) solid var(--input-text-bottom-border-color);
-        content: "";
-        height: 0;
-        pointer-events: none;
-        position: absolute;
-        right: var(--input-chevron-offset);
-        top: 50%;
-        transition: transform var(--animation-duration) var(--animation-curve-default);
-        width: 0;
-    }
-}
-
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
-    display: none;
-}
-
 .progressBar {
     position: absolute;
     bottom: var(--input-padding);

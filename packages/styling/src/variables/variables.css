@@ -27,6 +27,7 @@
     --zdepth-shadow-5: 0 19px 60px rgba(0, 0, 0, 0.3), 0 15px 20px rgba(0, 0, 0, 0.22);
 
     --animation-duration: 0.35s;
+    --animation-duration-short: 0.2s;
     --animation-delay: calc(var(--animation-duration) / 5);
 
     --animation-curve-fast-out-slow-in: cubic-bezier(0.4, 0, 0.2, 1);

@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import {ReactNode, SyntheticEvent} from "react";
+import {SyntheticEvent} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -39,7 +39,7 @@ export interface SelectCheckboxProps<T extends "number" | "string"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
-    error?: ReactNode;
+    error?: string;
     /** Libellé. */
     label?: string;
     /** Id de l'input. */

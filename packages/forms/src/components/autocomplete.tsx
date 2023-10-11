@@ -18,9 +18,11 @@ export interface AutocompleteResult<T = {key: string; label: string}> {
 /** Props du composant d'autocomplétion */
 // @ts-ignore
 export interface AutocompleteProps<T extends "number" | "string", TSource = {key: string; label: string}>
-    extends Omit<RTAutocompleteProps<string, TSource>, "getLabel" | "loading" | "onChange" | "value"> {
+    extends Omit<RTAutocompleteProps<string, TSource>, "error" | "getLabel" | "loading" | "onChange" | "value"> {
     /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
     autoSelect?: boolean;
+    /** Erreur à afficher sous le champ. */
+    error?: string;
     /** Détermine la propriété de l'objet a utiliser comme clé. Par défaut : `item => item.key` */
     getKey?: (item: TSource) => string;
     /** Détermine la propriété de l'objet a utiliser comme libellé. Par défaut : `item => i18next.t(item.label)` */
@@ -213,11 +215,14 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
             querySearcher,
             isQuickSearch,
             autoSelect,
+            error,
+            supportingText,
             ...props
         } = this.props;
         return (
             <RTAutocomplete
                 {...props}
+                error={!!error}
                 getLabel={getLabel}
                 loading={this.isLoading}
                 maxLength={undefined}
@@ -228,6 +233,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
                 query={this.query}
                 source={this.source}
                 suggestionMatch="disabled"
+                supportingText={error ?? supportingText}
                 value={`${props.value ?? ""}`}
             />
         );

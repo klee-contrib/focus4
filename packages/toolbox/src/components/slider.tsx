@@ -14,7 +14,6 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import {Input} from "./input";
 import {ProgressBar} from "./progress-bar";
 
 import sliderCss, {SliderCss} from "./__style__/slider.css";
@@ -25,8 +24,6 @@ export interface SliderProps extends PointerEvents<HTMLDivElement> {
     buffer?: number;
     /** CSS class for the root component. */
     className?: string;
-    /** If true, an input is shown and the user can set the slider from keyboard value. */
-    editable?: boolean;
     /** If true, component will be disabled. */
     disabled?: boolean;
     /** Maximum value permitted. */
@@ -54,7 +51,6 @@ export function Slider({
     buffer = 0,
     className = "",
     disabled,
-    editable = false,
     max = 100,
     min = 0,
     onChange,
@@ -69,9 +65,7 @@ export function Slider({
     value = 0
 }: SliderProps) {
     const theme = useTheme("RTSlider", sliderCss, pTheme);
-    const [inputFocused, setInputFocused] = useState(false);
     const [sliderFocused, setSliderFocused] = useState(false);
-    const [inputValue, setInputValue] = useState<string>("");
     const [sliderLength, setSliderLength] = useState(0);
     const [sliderStart, setSliderStart] = useState(0);
     const [pressed, setPressed] = useState(false);
@@ -86,14 +80,6 @@ export function Slider({
     }, []);
 
     const stepDecimals = useMemo(() => (step.toString().split(".")[1] || []).length, [step]);
-
-    const valueForInput = useCallback(
-        (v: number) => {
-            const decimals = stepDecimals;
-            return decimals > 0 ? v.toFixed(decimals) : v.toString();
-        },
-        [stepDecimals]
-    );
 
     const trimValue = useCallback(
         (v: number) => {
@@ -111,13 +97,13 @@ export function Slider({
 
     const addToValue = useCallback(
         (increment: number) => {
-            let newValue = inputFocused ? parseFloat(inputValue) : value;
+            let newValue = value;
             newValue = trimValue(value + increment);
             if (newValue !== value) {
                 onChange?.(newValue);
             }
         },
-        [inputFocused, inputValue, onChange, trimValue, value]
+        [onChange, trimValue, value]
     );
 
     const positionToValue = useCallback(
@@ -136,12 +122,6 @@ export function Slider({
         };
     }, []);
 
-    useEffect(() => {
-        if (inputFocused) {
-            setInputValue(valueForInput(value));
-        }
-    }, [inputFocused, value, valueForInput]);
-
     const start = useCallback(
         (position: {x: number}) => {
             handleResize();
@@ -153,26 +133,20 @@ export function Slider({
 
     const handleMouseDown = useCallback(
         (event: RMouseEvent<HTMLDivElement>) => {
-            if (inputFocused) {
-                inputNode.current?.blur();
-            }
             start({x: event.pageX - (window.scrollX || window.pageXOffset)});
             event.stopPropagation();
             event.preventDefault();
         },
-        [inputFocused, start]
+        [start]
     );
 
     const handleTouchStart = useCallback(
         (event: RTouchEvent<HTMLDivElement>) => {
-            if (inputFocused) {
-                inputNode.current?.blur();
-            }
             start({x: event.touches[0].pageX - (window.scrollX || window.pageXOffset)});
             event.stopPropagation();
             event.preventDefault();
         },
-        [inputFocused, start]
+        [start]
     );
 
     useEffect(() => {
@@ -209,22 +183,6 @@ export function Slider({
         }
     }, [positionToValue, pressed]);
 
-    const handleInputFocus = useCallback(() => {
-        setInputFocused(true);
-        setInputValue(valueForInput(value));
-    }, [value, valueForInput]);
-
-    const handleInputChange = useCallback((newValue: string) => {
-        setInputValue(newValue);
-    }, []);
-
-    const handleInputBlur = useCallback(() => {
-        const newValue = +inputValue || 0;
-        setInputFocused(false);
-        setInputValue("");
-        onChange?.(trimValue(newValue));
-    }, [inputValue, onChange, trimValue]);
-
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
             if (disabled) {
@@ -257,7 +215,7 @@ export function Slider({
 
     return (
         <div
-            className={classNames(theme.slider({editable, pinned, pressed, ring: value === min}), className)}
+            className={classNames(theme.slider({pinned, pressed, ring: value === min}), className)}
             data-react-toolbox="slider"
             onBlur={() => setSliderFocused(false)}
             onFocus={() => setSliderFocused(true)}
@@ -296,17 +254,6 @@ export function Slider({
                     ) : null}
                 </div>
             </div>
-            {editable ? (
-                <Input
-                    ref={inputNode}
-                    className={theme.input()}
-                    disabled={disabled}
-                    onBlur={handleInputBlur}
-                    onChange={handleInputChange}
-                    onFocus={handleInputFocus}
-                    value={inputFocused ? inputValue : valueForInput(value)}
-                />
-            ) : null}
         </div>
     );
 }

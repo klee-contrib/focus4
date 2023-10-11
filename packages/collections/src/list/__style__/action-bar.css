@@ -8,7 +8,7 @@
     --action-bar-margin: 0 0 10px 0;
     --action-bar-border-radius: 12px;
     --action-bar-padding: 10px;
-    --action-bar-search-bar-width: 250px;
+    --action-bar-search-bar-width: 300px;
     --action-bar-selection-background: rgb(var(--color-primary));
     --action-bar-selection-color: rgb(var(--color-white));
     --action-bar-shadow: var(--shadow-2p);
@@ -53,19 +53,11 @@
 }
 
 .searchBar {
-    display: flex;
-}
-
-.searchBarField {
-    margin-left: 42px !important;
     width: var(--action-bar-search-bar-width);
-    padding: 0;
-    height: 36px;
 }
 
-.searchBarIcon {
-    top: -5px;
-    left: -30px;
+.searchBar:not(:first-child) {
+    margin-left: var(--button-spacing);
 }
 
 .buttons {

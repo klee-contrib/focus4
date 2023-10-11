@@ -150,7 +150,7 @@ export function useMenu<T extends HTMLElement = HTMLDivElement>() {
  *
  * Exemple :
  *  ```tsx
- *  const menu = useMenu<HTMLDivElement>();
+ *  const menu = useMenu();
  *
  *  // Remarque : L'élément conteneur impérativement avoir "position: relative".
  *  return (

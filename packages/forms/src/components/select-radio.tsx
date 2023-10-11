@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import {ReactNode, useCallback} from "react";
+import {useCallback} from "react";
 
 import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -14,7 +14,7 @@ export interface SelectRadioProps<T extends "number" | "string"> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
-    error?: ReactNode;
+    error?: string;
     /** Libellé. */
     label?: string;
     /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "false". */

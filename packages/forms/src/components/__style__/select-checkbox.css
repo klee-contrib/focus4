@@ -1,10 +1,14 @@
+:root {
+    --select-checkbox-state-size: 32px;
+}
+
 .select ul {
-    padding: 0;
-    margin: -2px -4px;
+    padding: calc((var(--checkbox-state-size) - var(--select-checkbox-state-size)) / 2);
+    margin: 0;
 }
 
 .option {
-    --checkbox-state-size: 28px;
+    --checkbox-state-size: var(--select-checkbox-state-size);
     list-style: none;
 }
 

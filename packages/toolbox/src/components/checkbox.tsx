@@ -19,7 +19,7 @@ export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
     /** Désactive la Checkbox. */
     disabled?: boolean;
     /** Si renseigné, la Checkbox sera affichée en rouge. */
-    error?: ReactNode;
+    error?: string;
     /** Affiche une icône "indéterminée" à la place du "check" */
     indeterminate?: boolean;
     /** Id pour l'input[type=checkbox] posé par la Checkbox. */

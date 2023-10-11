@@ -1,4 +1,5 @@
 .display {
-    font-size: var(--input-field-font-size);
-    line-height: 20px;
+    font-size: var(--text-field-font-size);
+    line-height: var(--text-field-height);
+    min-height: var(--text-field-height);
 }

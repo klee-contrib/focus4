@@ -1,0 +1,234 @@
+:root {
+    --text-field-height: 40px /* 56px */;
+    --text-field-padding-horizontal: 12px /* 16px */;
+    --text-field-padding-vertical: 8px /* 16px */;
+    --text-field-border-radius: 4px;
+    --text-field-outline-size: 1px;
+    --text-field-focused-outline-size: 2px /* 3px */;
+
+    --text-field-font-size: 16px;
+
+    --text-field-affix-padding: 2px;
+
+    --text-field-icon-size: 20px /* 24px */;
+    --text-field-icon-button-size: 32px /* 40px */;
+    --text-field-icon-padding: 10px /* 12px */;
+
+    --text-field-supporting-text-padding: 3px /* 4px */;
+    --text-field-supporting-text-size: 12px;
+}
+
+.textField {
+    position: relative;
+}
+
+.textField--loading * {
+    transition: none 0s ease 0s !important;
+}
+
+.field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--text-field-height);
+}
+
+.outline {
+    position: absolute;
+    pointer-events: none;
+    inset: 0px;
+    border-radius: var(--text-field-border-radius);
+    border: var(--text-field-outline-size) solid var(--input-state-color);
+    transition: clip-path var(--animation-duration-short) var(--animation-curve-default) 0s,
+        border-color var(--animation-duration-short) var(--animation-curve-default) 0s, border-width 0.1s linear 0s;
+}
+
+.icon {
+    user-select: none;
+    width: var(--text-field-icon-size);
+    height: var(--text-field-icon-size);
+    color: var(--input-text-color);
+    transition: color var(--animation-duration-short) var(--animation-curve-default) 0s;
+
+    & > span {
+        font-size: var(--text-field-icon-size);
+    }
+}
+
+.trailingButton {
+    flex: 0 0 auto;
+    --icon-button-size: var(--text-field-icon-button-size);
+    --icon-button-icon-size: var(--text-field-icon-size);
+    margin-left: calc((var(--text-field-icon-size) - var(--text-field-icon-button-size)) / 2);
+    margin-right: calc(
+        var(--text-field-icon-padding) - (var(--text-field-icon-button-size) - var(--text-field-icon-size)) / 2
+    );
+}
+
+.tooltip {
+    opacity: 1;
+}
+
+.label {
+    position: absolute;
+    top: var(--text-field-padding-vertical);
+    pointer-events: none;
+    color: var(--input-state-color);
+    font-size: var(--text-field-font-size);
+    line-height: calc(var(--text-field-height) - 2 * var(--text-field-padding-vertical));
+    transform: translate(var(--text-field-padding-horizontal), 0) scale(1);
+    transform-origin: 0px 50%;
+    transition: color var(--animation-duration-short) var(--animation-curve-default) 0s,
+        transform var(--animation-duration-short) var(--animation-curve-default) 0s;
+}
+
+.inputContainer {
+    width: 100%;
+    min-height: calc(var(--text-field-height) - 2 * var(--text-field-padding-vertical));
+    padding: var(--text-field-padding-vertical) var(--text-field-padding-horizontal);
+    display: flex;
+    cursor: text;
+    line-height: calc(var(--text-field-height) - 2 * var(--text-field-padding-vertical));
+}
+
+.input,
+.prefix,
+.suffix {
+    padding: 0;
+    font-family: var(--preferred-font);
+    font-size: var(--text-field-font-size);
+    line-height: calc(var(--text-field-height) - 2 * var(--text-field-padding-vertical));
+}
+
+.input {
+    background-color: transparent;
+    min-height: calc(var(--text-field-height) - 2 * var(--text-field-padding-vertical));
+    border: none;
+    color: var(--input-text-color);
+    width: 100%;
+    resize: none;
+}
+
+.input:focus {
+    outline: none;
+}
+
+.prefix,
+.suffix {
+    pointer-events: none;
+    color: var(--input-outline-color);
+}
+
+.prefix {
+    margin-right: var(--text-field-affix-padding);
+}
+
+.suffix {
+    margin-left: var(--text-field-affix-padding);
+    text-align: right;
+}
+
+.supportingText {
+    padding: var(--text-field-supporting-text-padding) var(--text-field-padding-horizontal);
+    display: flex;
+    gap: var(--text-field-padding-horizontal);
+    color: var(--input-state-color);
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: var(--text-field-supporting-text-size);
+}
+
+.textField--leadingIcon {
+    & .icon--leading {
+        margin-left: var(--text-field-icon-padding);
+    }
+
+    & .inputContainer {
+        padding-left: var(--text-field-icon-padding);
+    }
+
+    & .label {
+        transform: translate(
+            calc(var(--text-field-icon-padding) + var(--text-field-icon-size) + var(--text-field-padding-horizontal)),
+            0
+        );
+    }
+}
+
+.textField--trailingIcon {
+    & .icon--trailing {
+        margin-right: var(--text-field-icon-padding);
+    }
+
+    & .inputContainer {
+        padding-right: var(--text-field-icon-padding);
+    }
+}
+
+.field:hover {
+    & .label {
+        color: var(--input-outline-color);
+    }
+
+    & .outline {
+        border-color: var(--input-outline-color);
+    }
+}
+
+.textField--focused,
+.textField--filled {
+    & .icon {
+        color: var(--input-outline-color);
+    }
+
+    & .label {
+        transform: translate(var(--text-field-padding-horizontal), calc(var(--text-field-height) / -2)) scale(0.75);
+    }
+}
+
+.textField.textField--focused {
+    & .outline {
+        border-width: var(--text-field-focused-outline-size);
+        border-color: var(--input-on-main-color);
+    }
+
+    & .label {
+        color: var(--input-on-main-color);
+    }
+}
+
+.textField.textField--disabled {
+    pointer-events: none;
+
+    & .label,
+    & .supportingText,
+    & .icon,
+    & .input,
+    & .prefix,
+    & .suffix {
+        color: var(--input-disabled-color);
+    }
+}
+
+.textField.textField--error {
+    & .outline {
+        border-color: var(--input-error-color);
+    }
+
+    & .label,
+    & .supportingText {
+        color: var(--input-error-color);
+    }
+}
+
+.textField .icon--error {
+    color: var(--input-error-color);
+}
+
+.trailingButton--error {
+    --button-secondary-color: var(--input-error-color);
+}
+
+.tooltip--error {
+    background: rgba(var(--input-error-palette), 0.9);
+}

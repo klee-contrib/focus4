@@ -1,6 +1,13 @@
+:root {
+    --select-radio-state-size: 32px;
+}
+
 .select {
-    --radio-state-size: 28px;
-    margin: -2px -4px;
+    padding: calc((var(--radio-state-size) - var(--select-radio-state-size)) / 2);
+}
+
+.select > div {
+    --radio-state-size: var(--select-radio-state-size);
 }
 
 .title {

@@ -4,11 +4,23 @@
     flex-wrap: wrap;
 }
 
+.field:not(:last-child) {
+    padding-bottom: 6px;
+}
+
 .label,
 .value {
     flex-shrink: 0;
-    padding: 8px;
     box-sizing: border-box;
+    min-height: var(--text-field-height);
+}
+
+.label {
+    padding-right: 8px;
+}
+
+.value {
+    padding-left: 8px;
 }
 
 .field--edit.field--required .label label::after {
@@ -16,25 +28,8 @@
     margin-left: 3px;
 }
 
-.field--edit [data-react-toolbox="input"],
-.field--edit [data-focus="select"] {
-    margin-top: -27px;
-    margin-bottom: -15px;
-}
-
-.field--edit .value {
-    & > label[class^="checkbox_checkbox"],
-    & > div[class^="boolean-radio"] {
-        margin: -10px 0 0 -10px;
-    }
-}
-
-.field--edit.field--error [data-react-toolbox="input"] {
-    margin-top: -28px;
-}
-
 .field--error .label label {
-    color: var(--input-text-error-color);
+    color: var(--input-error-color);
 }
 
 .error {

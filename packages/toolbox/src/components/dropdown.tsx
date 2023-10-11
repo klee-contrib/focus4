@@ -15,7 +15,7 @@ import {
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {Input} from "./input";
+import {TextField} from "./text-field";
 
 import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
 export {dropdownCss, DropdownCss};
@@ -35,7 +35,7 @@ export interface DropdownProps<
     /** If true, component will be disabled. */
     disabled?: boolean;
     /** Give an error node to display under the field. */
-    error?: ReactNode;
+    error?: string;
     /** Used for setting the label from source */
     labelKey?: LK;
     /** Id for the input field. */
@@ -220,7 +220,7 @@ export function Dropdown<
             onFocus={handleFocus}
             tabIndex={-1}
         >
-            <Input
+            <TextField
                 className={theme.input()}
                 id={id}
                 name={name}

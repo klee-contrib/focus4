@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, getIcon, useTheme} from "@focus4/styling";
-import {Button, Checkbox, IconButton, Input, Menu, MenuItem, useMenu} from "@focus4/toolbox";
+import {Button, Checkbox, IconButton, Menu, MenuItem, TextField, useMenu} from "@focus4/toolbox";
 
 import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 
@@ -77,8 +77,8 @@ export function ActionBar<T>({
     const [displayFacetBox, setDisplayFacetBox] = useState(false);
 
     const theme = useTheme("actionBar", actionBarCss, pTheme);
-    const groupMenu = useMenu<HTMLDivElement>();
-    const sortMenu = useMenu<HTMLDivElement>();
+    const groupMenu = useMenu();
+    const sortMenu = useMenu();
 
     function groupButton() {
         if (hasGrouping && !store.selectedItems.size && !store.groupingKey) {
@@ -230,22 +230,22 @@ export function ActionBar<T>({
                     {/** Barre de recherche */}
                     {!store.selectedItems.size && hasSearchBar ? (
                         <div className={theme.searchBar()}>
-                            <Input
+                            <TextField
                                 hint={searchBarPlaceholder}
                                 icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
                                 onChange={(text: string) => (store.query = text)}
-                                theme={{
-                                    input: theme.searchBarField(),
-                                    icon: theme.searchBarIcon()
-                                }}
+                                trailing={
+                                    store.query
+                                        ? [
+                                              {
+                                                  icon: getIcon(`${i18nPrefix}.icons.actionBar.close`),
+                                                  onClick: () => (store.query = "")
+                                              }
+                                          ]
+                                        : []
+                                }
                                 value={store.query}
                             />
-                            {store.query ? (
-                                <IconButton
-                                    icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
-                                    onClick={() => (store.query = "")}
-                                />
-                            ) : null}
                         </div>
                     ) : null}
                 </div>

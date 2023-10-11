@@ -9,7 +9,7 @@ export interface WithThemeProps {
 export type OmitButKeepTheme<T extends WithThemeProps, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
 
 export interface BaseInputProps extends WithThemeProps {
-    error?: ReactNode;
+    error?: string;
     id?: string;
     name?: string;
     onChange?: (value: any) => void;

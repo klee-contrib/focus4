@@ -1,57 +1,56 @@
-:root {
-    --select-height: 36px;
-    --select-arrow-color: rgb(var(--color-black));
-    --select-line-color: var(--input-text-bottom-border-color);
-}
-
 .select {
     position: relative;
     display: inline-block;
-    padding: var(--input-padding) 0;
 
     & select {
         font-family: var(--preferred-font);
-        border-top: 0;
-        border-left: 0;
-        border-right: 0;
-        border-bottom: 1px solid var(--select-line-color);
-        color: rgb(var(--color-text));
-        height: var(--select-height);
-        font-size: var(--input-field-font-size);
+        border: var(--text-field-outline-size) solid var(--input-state-color);
+        border-radius: var(--text-field-border-radius);
+        color: var(--input-text-color);
+        height: var(--text-field-height);
+        font-size: var(--text-field-font-size);
         appearance: none;
-        padding-right: 20px;
+        padding: var(--text-field-padding-vertical)
+            calc(var(--text-field-padding-horizontal) + var(--text-field-icon-size)) var(--text-field-padding-vertical)
+            var(--text-field-padding-horizontal);
         background: transparent;
+        transition: border-color var(--animation-duration-short) var(--animation-curve-default) 0s;
+    }
 
-        &::-ms-expand {
-            display: none;
-        }
+    & select:hover {
+        border-color: var(--input-outline-color);
+    }
+
+    & select:focus {
+        outline-color: var(--input-on-main-color);
     }
 
     & option {
-        background: rgb(var(--color-white));
+        background: var(--input-on-secondary-color);
     }
 
     &::before {
         content: "\E313";
         font-family: "Material Icons";
         position: absolute;
-        bottom: 25px;
-        right: 0;
+        bottom: calc(var(--text-field-padding-vertical) + var(--text-field-outline-size));
+        right: var(--text-field-icon-padding);
         pointer-events: none;
-        font-size: var(--input-field-font-size);
-        color: var(--select-arrow-color);
+        font-size: var(--text-field-icon-size);
+        height: var(--text-field-icon-size);
+        line-height: var(--text-field-icon-size);
     }
 }
 
 .select--error {
     & select {
-        border-bottom: 1px solid var(--input-text-error-color);
+        border: 1px solid var(--input-error-color);
     }
 
     & .error {
-        color: var(--input-text-error-color);
+        color: var(--input-error-color);
         position: absolute;
-        font-size: var(--input-label-font-size);
+        font-size: var(--text-field-supporting-text-size);
         white-space: nowrap;
     }
 }
