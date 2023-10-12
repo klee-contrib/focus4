@@ -23,6 +23,8 @@ export interface SelectProps<T extends "number" | "string"> {
     name?: string;
     /** Est appelé à chaque changement de valeur. */
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
+    showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
     theme?: CSSProp<SelectCss>;
     /** Type du champ (number ou string). */
@@ -46,6 +48,7 @@ export function Select<T extends "number" | "string">({
     id,
     name,
     onChange,
+    showSupportingText = "always",
     theme: pTheme,
     type,
     value,
@@ -88,7 +91,9 @@ export function Select<T extends "number" | "string">({
                         );
                     })}
                 </select>
-                {error ? <div className={theme.error()}>{error}</div> : null}
+                {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
+                    <div className={theme.supportingText()}>{error}</div>
+                ) : null}
             </div>
         );
     });

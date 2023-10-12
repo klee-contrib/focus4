@@ -21,6 +21,8 @@ export interface BooleanRadioProps {
     onChange: (value: boolean) => void;
     /** CSS des radios. */
     radioTheme?: CSSProp<RadioCss>;
+    /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
+    showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
     theme?: CSSProp<BooleanRadioCss>;
     /** Value. */
@@ -38,6 +40,7 @@ export function BooleanRadio({
     name,
     onChange,
     radioTheme,
+    showSupportingText = "always",
     theme: pTheme,
     value
 }: BooleanRadioProps) {
@@ -64,7 +67,9 @@ export function BooleanRadio({
                     value="false"
                 />
             </RadioGroup>
-            {error ? <div>{error}</div> : null}
+            {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
+                <div className={theme.supportingText({error: !!error})}>{error}</div>
+            ) : null}
         </>
     );
 }

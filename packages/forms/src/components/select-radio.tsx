@@ -25,6 +25,8 @@ export interface SelectRadioProps<T extends "number" | "string"> {
     onChange: (value: (T extends "string" ? string : number) | undefined) => void;
     /** CSS des radios. */
     radioTheme?: CSSProp<RadioCss>;
+    /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
+    showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
     theme?: CSSProp<SelectRadioCss>;
     /** Type du champ (number ou string). */
@@ -50,6 +52,7 @@ export function SelectRadio<T extends "number" | "string">({
     name,
     onChange,
     radioTheme,
+    showSupportingText = "always",
     theme: pTheme,
     type,
     undefinedLabel = "focus.select.none",
@@ -78,7 +81,7 @@ export function SelectRadio<T extends "number" | "string">({
         }
 
         return (
-            <div className={theme.select()}>
+            <div className={theme.select({error: !!error})}>
                 {label ? <h5 className={theme.title()}>{i18next.t(label)}</h5> : null}
                 <RadioGroup disabled={disabled} onChange={handleChange} value={`${value!}`}>
                     {definitiveValues.map(option => {
@@ -96,7 +99,9 @@ export function SelectRadio<T extends "number" | "string">({
                         );
                     })}
                 </RadioGroup>
-                {error ? <div className={theme.error()}>{error}</div> : null}
+                {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
+                    <div className={theme.supportingText()}>{error}</div>
+                ) : null}
             </div>
         );
     });

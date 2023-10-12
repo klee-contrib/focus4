@@ -4,10 +4,6 @@
     flex-wrap: wrap;
 }
 
-.field:not(:last-child) {
-    padding-bottom: 6px;
-}
-
 .label,
 .value {
     flex-shrink: 0;

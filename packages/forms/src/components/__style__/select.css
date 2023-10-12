@@ -15,6 +15,7 @@
             var(--text-field-padding-horizontal);
         background: transparent;
         transition: border-color var(--animation-duration-short) var(--animation-curve-default) 0s;
+        width: 100%;
     }
 
     & select:hover {
@@ -33,7 +34,7 @@
         content: "\E313";
         font-family: "Material Icons";
         position: absolute;
-        bottom: calc(var(--text-field-padding-vertical) + var(--text-field-outline-size));
+        top: calc(var(--text-field-padding-vertical) + var(--text-field-outline-size));
         right: var(--text-field-icon-padding);
         pointer-events: none;
         font-size: var(--text-field-icon-size);
@@ -42,15 +43,20 @@
     }
 }
 
+.supportingText {
+    padding: var(--text-field-supporting-text-padding) var(--text-field-padding-horizontal);
+    color: var(--input-state-color);
+    line-height: var(--text-field-supporting-text-height);
+    min-height: var(--text-field-supporting-text-height);
+    font-size: var(--text-field-supporting-text-size);
+}
+
 .select--error {
     & select {
-        border: 1px solid var(--input-error-color);
+        border-color: var(--input-error-color);
     }
 
-    & .error {
+    & .supportingText {
         color: var(--input-error-color);
-        position: absolute;
-        font-size: var(--text-field-supporting-text-size);
-        white-space: nowrap;
     }
 }

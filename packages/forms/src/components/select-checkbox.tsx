@@ -50,6 +50,8 @@ export interface SelectCheckboxProps<T extends "number" | "string"> {
     name?: string;
     /** Est appelé à chaque changement de valeur. */
     onChange: (value: (T extends "string" ? string : number)[] | undefined) => void;
+    /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
+    showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
     theme?: CSSProp<SelectCheckboxCss>;
     /** Type du champ (number ou string). */
@@ -72,6 +74,7 @@ export function SelectCheckbox<T extends "number" | "string">({
     maxSelectable,
     name,
     onChange,
+    showSupportingText = "always",
     theme: pTheme,
     value,
     values
@@ -79,7 +82,7 @@ export function SelectCheckbox<T extends "number" | "string">({
     const theme = useTheme("selectCheckbox", selectCheckboxCss, pTheme);
 
     return useObserver(() => (
-        <div className={theme.select()}>
+        <div className={theme.select({error: !!error})}>
             {label ? <h5>{i18next.t(label)}</h5> : null}
             <ul>
                 {values.map(option => {
@@ -105,7 +108,9 @@ export function SelectCheckbox<T extends "number" | "string">({
                     );
                 })}
             </ul>
-            {error ? <div className={theme.error()}>{error}</div> : null}
+            {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
+                <div className={theme.supportingText()}>{error}</div>
+            ) : null}
         </div>
     ));
 }

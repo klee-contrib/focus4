@@ -53,8 +53,6 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     disabled?: boolean;
     /** Affiche le champ texte en erreur. */
     error?: boolean;
-    /** Cache le texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. */
-    hideSupportingText?: boolean;
     /** Placeholder pour le champ texte. */
     hint?: string;
     /** Icône à poser devant le texte. */
@@ -95,6 +93,8 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     required?: boolean;
     /** Nombre de lignes pour le <textarea> (si `multiline`). */
     rows?: number;
+    /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "auto". */
+    showSupportingText?: "always" | "auto" | "never";
     /** Préfixe à poser après le texte. */
     suffix?: string;
     /** Texte à afficher en dessous du champ. Sera affiché en rouge si `error`. */
@@ -117,7 +117,6 @@ export const TextField = forwardRef(function TextField(
         className,
         disabled = false,
         error,
-        hideSupportingText = false,
         hint,
         icon,
         id,
@@ -142,6 +141,7 @@ export const TextField = forwardRef(function TextField(
         readOnly,
         required = false,
         rows = 1,
+        showSupportingText = "auto",
         supportingText,
         suffix,
         tabIndex,
@@ -333,7 +333,7 @@ export const TextField = forwardRef(function TextField(
                     }
                 })}
             </div>
-            {!hideSupportingText && (!!supportingText || !!maxLength) ? (
+            {showSupportingText === "always" || (showSupportingText === "auto" && (!!supportingText || !!maxLength)) ? (
                 <div className={theme.supportingText()}>
                     <div>{supportingText}</div>
                     {maxLength ? (

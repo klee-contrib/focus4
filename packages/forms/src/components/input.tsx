@@ -346,6 +346,7 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
                 onPaste={this.onPaste}
+                showSupportingText="always"
                 supportingText={error ?? supportingText}
                 type="text"
                 value={this.value}

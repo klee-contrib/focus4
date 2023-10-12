@@ -5,3 +5,15 @@
         margin-right: 4px;
     }
 }
+
+.supportingText {
+    padding: var(--text-field-supporting-text-padding) var(--text-field-padding-horizontal);
+    color: var(--input-state-color);
+    line-height: var(--text-field-supporting-text-height);
+    min-height: var(--text-field-supporting-text-height);
+    font-size: var(--text-field-supporting-text-size);
+}
+
+.supportingText--error {
+    color: var(--input-error-color);
+}

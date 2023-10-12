@@ -14,6 +14,7 @@
     --text-field-icon-button-size: 32px /* 40px */;
     --text-field-icon-padding: 10px /* 12px */;
 
+    --text-field-supporting-text-height: 16px;
     --text-field-supporting-text-padding: 3px /* 4px */;
     --text-field-supporting-text-size: 12px;
 }
@@ -136,6 +137,8 @@
     flex-direction: row;
     justify-content: space-between;
     font-size: var(--text-field-supporting-text-size);
+    line-height: var(--text-field-supporting-text-height);
+    min-height: var(--text-field-supporting-text-height);
 }
 
 .textField--leadingIcon {

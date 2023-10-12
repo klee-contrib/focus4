@@ -231,6 +231,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
                 onFocus={this.onFocus}
                 onQueryChange={query => (this.query = query ?? "")}
                 query={this.query}
+                showSupportingText="always"
                 source={this.source}
                 suggestionMatch="disabled"
                 supportingText={error ?? supportingText}

@@ -89,7 +89,6 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
         error,
         finalSuggestion,
         getLabel = defaultGetLabel,
-        hideSupportingText,
         hint,
         icon,
         id,
@@ -122,6 +121,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
         rows,
         selectedPosition = "above",
         showSuggestionsWhenValueIsSet = false,
+        showSupportingText = "auto",
         supportingText,
         suffix,
         suggestionSort,
@@ -429,7 +429,6 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
                 autoComplete={config.autocompleteOffValue}
                 disabled={disabled}
                 error={error}
-                hideSupportingText={hideSupportingText}
                 hint={hint}
                 icon={icon}
                 id={id}
@@ -453,6 +452,7 @@ export const Autocomplete = forwardRef(function RTAutocomplete<
                 readOnly={readOnly}
                 required={required}
                 rows={rows}
+                showSupportingText={showSupportingText}
                 suffix={suffix}
                 supportingText={supportingText}
                 tabIndex={tabIndex}
