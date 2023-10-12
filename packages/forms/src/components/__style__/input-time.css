@@ -62,7 +62,7 @@
 }
 
 .clock--up {
-    bottom: calc(var(--text-field-height) + var(--focus-ring-width));
+    bottom: calc(100% + var(--focus-ring-width));
 }
 
 .clock--down {

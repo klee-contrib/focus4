@@ -1,12 +1,7 @@
 :root {
-    --autocomplete-border-size: calc(var(--input-field-height) / 7);
-    --autocomplete-color-primary-contrast: rgb(var(--color-primary-contrast));
-    --autocomplete-color-primary: rgb(var(--color-primary));
     --autocomplete-overflow-max-height: 45vh;
     --autocomplete-suggestion-active-background: rgb(var(--palette-grey-200));
-    --autocomplete-suggestion-padding: calc(0.8 * var(--unit));
     --autocomplete-suggestions-background: rgb(var(--color-white));
-    --autocomplete-value-margin: calc(var(--unit) * 0.25) calc(var(--unit) * 0.5) calc(var(--unit) * 0.25) 0;
 }
 
 :root[dark] {
@@ -25,18 +20,6 @@
     }
 }
 
-.values {
-    flex-direction: row;
-    flex-wrap: wrap;
-    list-style: none;
-    margin: 0;
-    padding: 0 0 calc(var(--unit) / 2) 0;
-}
-
-.value {
-    margin: var(--autocomplete-value-margin);
-}
-
 .suggestions {
     background-color: var(--autocomplete-suggestions-background);
     list-style: none;
@@ -52,19 +35,14 @@
     visibility: hidden;
     width: 100%;
     z-index: var(--z-index-highest);
-
-    &::-webkit-scrollbar {
-        height: 0;
-        width: 0;
-    }
 }
 
 .suggestions--down {
-    top: calc(100% - var(--input-padding));
+    top: var(--text-field-height);
 }
 
 .suggestions--up {
-    bottom: calc(100% - var(--input-padding));
+    bottom: 100%;
 }
 
 .autocomplete--focus .suggestions {
@@ -74,11 +52,11 @@
 }
 
 .suggestion {
-    cursor: pointer;
-    font-size: var(--input-field-font-size);
-    padding: var(--autocomplete-suggestion-padding);
-    overflow: hidden;
     position: relative;
+    min-height: var(--text-field-height);
+    padding: var(--text-field-padding-vertical) var(--text-field-padding-horizontal);
+    font-size: var(--text-field-font-size);
+    cursor: pointer;
 }
 
 .suggestion--final {
@@ -91,7 +69,7 @@
 
 .progressBar {
     position: absolute;
-    bottom: var(--input-padding);
+    top: var(--text-field-height);
     height: 2px;
     width: 100%;
 }

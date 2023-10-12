@@ -18,7 +18,7 @@ export interface AutocompleteResult<T = {key: string; label: string}> {
 /** Props du composant d'autocomplétion */
 // @ts-ignore
 export interface AutocompleteProps<T extends "number" | "string", TSource = {key: string; label: string}>
-    extends Omit<RTAutocompleteProps<string, TSource>, "error" | "getLabel" | "loading" | "onChange" | "value"> {
+    extends Omit<RTAutocompleteProps<TSource>, "error" | "getLabel" | "loading" | "onChange" | "value"> {
     /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
     autoSelect?: boolean;
     /** Erreur à afficher sous le champ. */
@@ -226,7 +226,6 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
                 getLabel={getLabel}
                 loading={this.isLoading}
                 maxLength={undefined}
-                multiple={false}
                 onChange={value => this.onValueChange(value as string)}
                 onFocus={this.onFocus}
                 onQueryChange={query => (this.query = query ?? "")}

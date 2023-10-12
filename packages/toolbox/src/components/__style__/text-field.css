@@ -114,6 +114,10 @@
     outline: none;
 }
 
+.input::-webkit-search-cancel-button {
+    appearance: none;
+}
+
 .prefix,
 .suffix {
     pointer-events: none;
