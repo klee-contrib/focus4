@@ -22,7 +22,7 @@ import {
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {ProgressBar} from "./progress-bar";
+import {LinearProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
@@ -356,9 +356,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
                 type="search"
                 value={query}
             />
-            {loading ? (
-                <ProgressBar mode="indeterminate" theme={{progressBar: theme.progressBar()}} type="linear" />
-            ) : null}
+            {loading ? <LinearProgressIndicator indeterminate theme={{linear: theme.progressBar()}} /> : null}
             <ul
                 className={theme.suggestions({up: direction === "up", down: direction === "down"})}
                 data-id={suggestionsUlId}

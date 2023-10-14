@@ -10,7 +10,7 @@ import {
     FloatingActionButtonCss,
     IconButtonCss,
     MenuCss,
-    ProgressBarCss,
+    ProgressIndicatorCss,
     RadioCss,
     RippleCss,
     SliderCss,
@@ -25,7 +25,6 @@ import {HeaderCss} from "./header";
 import {MainMenuCss} from "./menu";
 import {DialogCss, LayoutBase, LayoutCss, LayoutProps, OverlayCss, PopinCss, ScrollspyCss} from "./presentation";
 import {ButtonBttCss, ScrollableCss} from "./scrollable";
-import {LoadingBarCss} from "./utils";
 
 export {
     HeaderActions,
@@ -59,7 +58,7 @@ export {
 } from "./presentation";
 export {ButtonBttCss, Scrollable, ScrollableProps, ScrollableCss, buttonBttCss, scrollableCss} from "./scrollable";
 export {translation} from "./translation";
-export {LoadingBar, LoadingBarCss, MessageCenter, MessageCenterProps, loadingBarCss} from "./utils";
+export {MessageCenter, MessageCenterProps} from "./utils";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {
@@ -82,7 +81,6 @@ export interface LayoutStyleProviderProps {
     inputTime?: {};
     label?: {};
     layout?: CSSProp<LayoutCss>;
-    loadingBar?: CSSProp<LoadingBarCss>;
     list?: {};
     listBase?: {};
     mainMenu?: CSSProp<MainMenuCss>;
@@ -109,7 +107,7 @@ export interface LayoutStyleProviderProps {
     floatingActionButton?: CSSProp<FloatingActionButtonCss>;
     iconButton?: CSSProp<IconButtonCss>;
     menu?: CSSProp<MenuCss>;
-    RTProgressBar?: CSSProp<ProgressBarCss>;
+    progressIndicator?: CSSProp<ProgressIndicatorCss>;
     radio?: CSSProp<RadioCss>;
     ripple?: CSSProp<RippleCss>;
     RTSlider?: CSSProp<SliderCss>;

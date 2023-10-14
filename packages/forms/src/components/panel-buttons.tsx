@@ -64,6 +64,7 @@ export function PanelButtons({
         } else {
             return (
                 <Button
+                    disabled={loading}
                     icon={getIcon(`${i18nPrefix}.icons.button.edit`)}
                     label={i18next.t(`${i18nPrefix}.button.edit`)}
                     onClick={onClickEdit}

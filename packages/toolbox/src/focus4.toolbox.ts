@@ -17,7 +17,13 @@ export {FontIcon, FontIconProps} from "./components/font-icon";
 export {IconButton, IconButtonCss, IconButtonProps, iconButtonCss} from "./components/icon-button";
 export {TextField, TextFieldCss, TextFieldProps, textFieldCss} from "./components/text-field";
 export {Menu, MenuCss, MenuItem, MenuItemProps, MenuProps, menuCss, useMenu} from "./components/menu";
-export {ProgressBar, ProgressBarCss, ProgressBarProps, progressBarCss} from "./components/progress-bar";
+export {
+    CircularProgressIndicator,
+    LinearProgressIndicator,
+    ProgressIndicatorCss,
+    ProgressIndicatorProps,
+    progressIndicatorCss
+} from "./components/progress-indicator";
 export {RadioButton, RadioButtonProps, RadioCss, RadioGroup, RadioGroupProps, radioCss} from "./components/radio";
 export {Ripple, RippleCss, RippleProps, rippleCss} from "./components/ripple";
 export {Slider, SliderCss, SliderProps, sliderCss} from "./components/slider";

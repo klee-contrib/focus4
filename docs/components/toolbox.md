@@ -345,28 +345,43 @@ Item de Menu a utiliser dans un `Menu`.
 | `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
 | `theme`          | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                            | CSS.                                                                                   |
 
-## `ProgressBar`
+## `LinearProgressIndicator`
 
-Une barre de chargement ou un spinner (`linear` ou `circular`). Peut être utilisé de façon déterminée ou indéterminée.
+Indicateur de progression linéaire.
 
 ### Props
 
 | Nom              | Obligatoire | Type                                                            | Description                                                                            |
 | ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `buffer`         | Non         | <code>number</code>                                             | Value of a secondary progress bar useful for buffering.                                |
-| `className`      | Non         | <code>string</code>                                             |                                                                                        |
-| `key`            | Non         | <code>Key</code>                                                |                                                                                        |
-| `max`            | Non         | <code>number</code>                                             | Maximum value permitted.                                                               |
-| `min`            | Non         | <code>number</code>                                             | Minimum value permitted.                                                               |
-| `mode`           | Non         | <code>"indeterminate" &#124; "determinate"</code>               | Mode of the progress bar, it can be determinate or indeterminate.                      |
-| `multicolor`     | Non         | <code>boolean</code>                                            | If true, the circular progress bar will be changing its color.                         |
+| `className`      | Non         | <code>string</code>                                             | Classe CSS pour l'élément racine.                                                      |
+| `indeterminate`  | Non         | <code>boolean</code>                                            | Progression indéterminée                                                               |
+| `max`            | Non         | <code>number</code>                                             | Valeur maximum. Par défaut: 100.                                                       |
+| `min`            | Non         | <code>number</code>                                             | Valeur minimum. Par défaut: 0.                                                         |
 | `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
 | `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
 | `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
 | `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;ProgressBarCss&gt;</code>                      | Classnames object defining the component style.                                        |
-| `type`           | Non         | <code>"circular" &#124; "linear"</code>                         | Type of the progress bar, it can be circular or linear.                                |
-| `value`          | Non         | <code>number</code>                                             | Value of the current progress.                                                         |
+| `theme`          | Non         | <code>CSSProp&lt;ProgressIndicatorCss&gt;</code>                | CSS.                                                                                   |
+| `value`          | Non         | <code>number</code>                                             | Valeur courante (entre `min` et `max`). Par défaut : 0.                                |
+
+## `CircularProgressIndicator`
+
+Indicateur de progression circulaire.
+
+### Props
+
+| Nom              | Obligatoire | Type                                                            | Description                                                                            |
+| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                             | Classe CSS pour l'élément racine.                                                      |
+| `indeterminate`  | Non         | <code>boolean</code>                                            | Progression indéterminée                                                               |
+| `max`            | Non         | <code>number</code>                                             | Valeur maximum. Par défaut: 100.                                                       |
+| `min`            | Non         | <code>number</code>                                             | Valeur minimum. Par défaut: 0.                                                         |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;ProgressIndicatorCss&gt;</code>                | CSS.                                                                                   |
+| `value`          | Non         | <code>number</code>                                             | Valeur courante (entre `min` et `max`). Par défaut : 0.                                |
 
 ## `RadioGroup`
 
@@ -430,7 +445,6 @@ Un composant de saisie pour saisir un nombre avec un slider.
 
 | Nom              | Obligatoire | Type                                                            | Description                                                                                                                                                      |
 | ---------------- | ----------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `buffer`         | Non         | <code>number</code>                                             | Used to style the ProgressBar element                                                                                                                            |
 | `className`      | Non         | <code>string</code>                                             | CSS class for the root component.                                                                                                                                |
 | `disabled`       | Non         | <code>boolean</code>                                            | If true, component will be disabled.                                                                                                                             |
 | `max`            | Non         | <code>number</code>                                             | Maximum value permitted.                                                                                                                                         |

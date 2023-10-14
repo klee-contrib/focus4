@@ -3,7 +3,7 @@ import {snakeCase} from "lodash";
 import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "react";
 
 import {CSSProp, ScrollspyContext, useTheme} from "@focus4/styling";
-import {ProgressBar} from "@focus4/toolbox";
+import {LinearProgressIndicator} from "@focus4/toolbox";
 
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
@@ -88,7 +88,7 @@ export function Panel({
             ) : null}
             <div className={theme.content()}>
                 {!hideProgressBar && loading ? (
-                    <ProgressBar mode="indeterminate" theme={{progressBar: theme.progress()}} />
+                    <LinearProgressIndicator indeterminate theme={{linear: theme.progress()}} />
                 ) : null}
                 {children}
             </div>

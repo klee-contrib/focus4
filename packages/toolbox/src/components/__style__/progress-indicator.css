@@ -1,0 +1,47 @@
+:root {
+    --progress-indicator-color: rgb(var(--color-primary));
+    --progress-indicator-track-color: rgb(var(--palette-grey-300));
+    --progress-indicator-width: 4px;
+    --progress-indicator-circular-size: 48px;
+    --progress-indicator-animation-duration: 1.5s;
+}
+
+.linear {
+    user-select: none;
+    height: var(--progress-indicator-width);
+}
+
+.linear svg {
+    width: 100%;
+    height: var(--progress-indicator-width);
+}
+
+.circular {
+    user-select: none;
+    height: var(--progress-indicator-circular-size);
+    width: var(--progress-indicator-circular-size);
+    fill: transparent;
+    stroke-width: var(--progress-indicator-width);
+}
+
+.track {
+    stroke: var(--progress-indicator-track-color);
+}
+
+.track--linear {
+    stroke-width: var(--progress-indicator-width);
+}
+
+.indicator {
+    transition: stroke-dasharray var(--animation-duration-short) var(--animation-curve-default) 0s;
+    stroke: var(--progress-indicator-color);
+}
+
+.indicator--linear {
+    stroke-width: var(--progress-indicator-width);
+}
+
+.indicator--circular {
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}

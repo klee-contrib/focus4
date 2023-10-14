@@ -14,14 +14,12 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import {ProgressBar} from "./progress-bar";
+import {LinearProgressIndicator} from "./progress-indicator";
 
 import sliderCss, {SliderCss} from "./__style__/slider.css";
 export {sliderCss, SliderCss};
 
 export interface SliderProps extends PointerEvents<HTMLDivElement> {
-    /** Used to style the ProgressBar element */
-    buffer?: number;
     /** CSS class for the root component. */
     className?: string;
     /** If true, component will be disabled. */
@@ -48,7 +46,6 @@ export interface SliderProps extends PointerEvents<HTMLDivElement> {
  * Un composant de saisie pour saisir un nombre avec un slider.
  */
 export function Slider({
-    buffer = 0,
     className = "",
     disabled,
     max = 100,
@@ -235,16 +232,8 @@ export function Slider({
                     <div className={theme.innerknob()} data-value={value} />
                 </div>
 
-                <div className={theme.progress()}>
-                    <ProgressBar
-                        ref={progressBar}
-                        buffer={buffer}
-                        className={theme.innerprogress()}
-                        max={max}
-                        min={min}
-                        mode="determinate"
-                        value={value}
-                    />
+                <div ref={progressBar} className={theme.progress()}>
+                    <LinearProgressIndicator className={theme.innerprogress()} max={max} min={min} value={value} />
                     {snaps ? (
                         <div className={theme.snaps()}>
                             {range(0, (max - min) / step).map(i => (

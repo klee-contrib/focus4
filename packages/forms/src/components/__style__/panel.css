@@ -62,10 +62,11 @@
 }
 
 .progress {
+    --progress-indicator-width: 3px;
     position: absolute;
     bottom: -2px;
     left: 0;
-    height: 3px;
+    width: 100%;
     z-index: var(--z-index-normal);
 }
 
