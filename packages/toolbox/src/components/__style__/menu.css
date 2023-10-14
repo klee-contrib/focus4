@@ -1,19 +1,16 @@
 :root {
-    --menu-expand-duration: 0.3s;
-    --menu-fade-duration: 0.2s;
-    --menu-ripple-delay: 0.3s;
     --menu-background-color: rgb(var(--color-white));
-    --menu-padding: calc(0.8 * var(--unit)) 0;
-    --menu-outline-border-radius: calc(0.2 * var(--unit));
-    --menu-item-hover-background: rgb(var(--palette-grey-200));
-    --menu-item-selected-background: transparent;
-    --menu-item-icon-font-size: calc(2.4 * var(--unit));
-    --menu-item-icon-size: calc(1.6 * var(--menu-item-icon-font-size));
-    --menu-item-height: calc(4.8 * var(--unit));
-    --menu-item-padding: calc(1.6 * var(--unit));
-    --menu-item-font-size: calc(1.6 * var(--unit));
-    --menu-divider-height: calc((4.8 / 4) * var(--unit));
-    --menu-icon-size: calc(2.3 * var(--unit));
+    --menu-padding: 8px 0;
+    --menu-border-radius: 4px;
+    --menu-max-height: 45vh;
+    --menu-focus-ring-border-radius: 4px;
+
+    --menu-item-icon-size: 24px;
+    --menu-item-height: 48px;
+    --menu-item-padding: 12px;
+    --menu-item-font-size: 16px;
+
+    --menu-divider-height: 8px;
 }
 
 :root[dark] {
@@ -22,156 +19,104 @@
 }
 
 .menu {
-    display: inline-block;
-    position: relative;
-}
-
-.menu--topLeft {
-    left: 0;
-    position: absolute;
-    top: 0;
-
-    & > .outline {
-        transform-origin: 0 0;
-    }
-}
-
-.menu--topRight {
-    position: absolute;
-    right: 0;
-    top: 0;
-
-    & > .outline {
-        transform-origin: 100% 0;
-    }
-}
-
-.menu--bottomLeft {
-    bottom: 0;
-    left: 0;
-    position: absolute;
-
-    & > .outline {
-        transform-origin: 0 100%;
-    }
-}
-
-.menu--bottomRight {
-    bottom: 0;
-    position: absolute;
-    right: 0;
-
-    & > .outline {
-        transform-origin: 100% 100%;
-    }
-}
-
-.menu {
-    pointer-events: none;
+    margin: 0;
     z-index: var(--z-index-higher);
-
-    & > .outline {
-        opacity: 0;
-        transform: scale(0);
-        transition: transform var(--menu-expand-duration) var(--animation-curve-default),
-            opacity var(--menu-fade-duration) var(--animation-curve-default);
-        will-change: transform;
-    }
-
-    & > .menuInner {
-        left: 0;
-        margin: 0;
-        opacity: 0;
-        position: absolute;
-        top: 0;
-    }
-
-    &.menu--rippled:not(.menu--active) {
-        & > .outline {
-            transition-delay: var(--menu-ripple-delay);
-        }
-
-        & > .menuInner {
-            transition-delay: var(--menu-ripple-delay);
-        }
-    }
-
-    &.menu--active {
-        pointer-events: all;
-
-        & > .outline {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        & > .menuInner {
-            opacity: 1;
-            transition: opacity var(--menu-fade-duration) var(--animation-curve-default),
-                clip var(--menu-expand-duration) var(--animation-curve-default);
-        }
-    }
-}
-
-.outline {
-    background-color: var(--menu-background-color);
-    border-radius: var(--menu-outline-border-radius);
-    box-shadow: var(--shadow-4p);
-    display: block;
-    left: 0;
     position: absolute;
-    top: 0;
-}
-
-.menuInner {
     display: block;
     list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: var(--menu-max-height);
+    overflow-y: auto;
+    background-color: var(--menu-background-color);
+    border-radius: var(--menu-border-radius);
+    z-index: var(--z-index-highest);
+    box-shadow: var(--shadow-4p);
+}
+
+.menu--active {
     padding: var(--menu-padding);
-    position: relative;
-    text-align: left;
-    white-space: nowrap;
+}
+
+.menu--full {
+    width: 100%;
+}
+
+.item {
+    overflow: hidden;
+}
+
+.item--focused {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(-1 * var(--focus-ring-width));
+    border-radius: var(--menu-focus-ring-border-radius);
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+        outline-offset: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+        outline-offset: calc(-2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
+        outline-offset: calc(-1 * var(--focus-ring-width));
+    }
 }
 
 .menuItem {
+    position: relative;
     align-items: center;
-    color: rgb(var(--color-text));
+    color: var(--button-secondary-color);
     display: flex;
+    gap: var(--menu-item-padding);
     font-size: var(--menu-item-font-size);
     height: var(--menu-item-height);
-    overflow: hidden;
     padding: 0 var(--menu-item-padding);
-    position: relative;
+    cursor: pointer;
+}
 
-    &:not(.menuItem--disabled):hover {
-        background-color: var(--menu-item-hover-background);
-        cursor: pointer;
-    }
+.menuItem::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: "";
+    pointer-events: none;
+    opacity: 0;
+    background-color: var(--button-secondary-color);
+    transition: opacity var(--animation-duration-short) var(--animation-curve-default) 0s;
+}
+
+.menuItem:hover::before {
+    opacity: var(--button-hover-opacity);
 }
 
 .menuItem--disabled {
-    opacity: 0.5;
     pointer-events: none;
-}
-
-.menuItem--selected {
-    background-color: var(--menu-item-selected-background);
-    font-weight: 500;
+    color: var(--input-disabled-color);
 }
 
 .menuItem .icon {
-    font-size: var(--menu-item-icon-font-size);
+    font-size: var(--menu-item-icon-size);
     width: var(--menu-item-icon-size);
+    height: var(--menu-item-icon-size);
 }
 
 .caption {
     flex-grow: 1;
-    font-size: var(--font-size);
+    font-size: var(--menu-item-font-size);
+    white-space: nowrap;
 }
 
-.shortcut {
-    margin-left: var(--menu-item-padding);
-}
-
-.menuDivider {
+.menu hr {
     background-color: rgb(var(--color-divider));
     border: 0;
     display: block;

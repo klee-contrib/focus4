@@ -6,7 +6,6 @@
     --main-menu-item-icon-size: 24px;
     --main-menu-item-text-size: 14px;
     --main-menu-item-gap: 15%;
-    --main-menu-item-focus-ring-radius: 7.5%;
 
     --main-menu-item-color: rgb(var(--color-black));
 
@@ -68,7 +67,7 @@
     pointer-events: none;
     opacity: 0;
     background: var(--main-menu-item-color);
-    transition: opacity var(--animation-duration) var(--animation-curve-default) 0s,
+    transition: opacity var(--animation-duration-short) var(--animation-curve-default) 0s,
         background-color var(--animation-duration) var(--animation-curve-default) 0s,
         color var(--animation-duration) var(--animation-curve-default) 0s;
 }
@@ -112,7 +111,7 @@
     animation-timing-function: var(--animation-curve-focus-ring);
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: calc(-1 * var(--focus-ring-width));
-    border-radius: var(--main-menu-item-focus-ring-radius);
+    border-radius: var(--menu-focus-ring-border-radius);
 }
 
 @keyframes focus {

@@ -130,7 +130,7 @@ export function ContextualActions({
                 );
             } else if (Operation.label) {
                 secondaryActions.push({
-                    icon: Operation.icon,
+                    iconLeft: Operation.icon,
                     onClick: (e: any) => handleAction(key, e),
                     caption: Operation.label
                 });

@@ -15,18 +15,10 @@ import {
 import headerCss from "./__style__/header.css";
 
 /** Action principale, affichée dans son propre bouton. */
-export type PrimaryAction = FloatingActionButtonProps & {
+type PrimaryAction = FloatingActionButtonProps & {
     /** A renseigner pour poser une tooltip autour du bouton. */
     tooltip?: Omit<TooltipProps, "children">;
-    /** Icône custom (non material). */
-    iconCustom?: boolean;
 };
-
-/** Action secondaire, affichée dans un menu. */
-export interface SecondaryAction extends MenuItemProps {
-    /** Icône custom (non material). */
-    iconCustom?: boolean;
-}
 
 /** Props des actions du header. */
 export interface HeaderActionsProps {
@@ -35,7 +27,7 @@ export interface HeaderActionsProps {
     /** Actions principales. */
     primary?: PrimaryAction[];
     /** Actions secondaires. */
-    secondary?: SecondaryAction[];
+    secondary?: MenuItemProps[];
     /** Pour personnaliser le bouton du menu des actions secondaires. */
     secondaryButton?: PrimaryAction;
     /** CSS. */
@@ -54,7 +46,7 @@ export function HeaderActions({
     theme: pTheme
 }: HeaderActionsProps) {
     const theme = useTheme("header", headerCss, pTheme);
-    const menu = useMenu<HTMLDivElement>();
+    const menu = useMenu();
     return (
         <motion.div
             className={theme.actions()}
@@ -71,13 +63,7 @@ export function HeaderActions({
             }}
         >
             {primary.map((action, i) => {
-                const button = (
-                    <FloatingActionButton
-                        key={`${i}`}
-                        {...action}
-                        icon={getIcon(action.icon, action.iconCustom ?? false)}
-                    />
-                );
+                const button = <FloatingActionButton key={`${i}`} {...action} />;
 
                 if (action.tooltip && !action.disabled) {
                     return (
@@ -93,20 +79,12 @@ export function HeaderActions({
                 <div ref={menu.anchor} className={theme.secondaryActions()}>
                     <FloatingActionButton
                         {...secondaryButton}
-                        icon={
-                            secondaryButton.icon
-                                ? getIcon(secondaryButton.icon, secondaryButton.iconCustom ?? false)
-                                : getIcon(`${i18nPrefix}.icons.headerActions.secondary`)
-                        }
+                        icon={secondaryButton.icon ?? getIcon(`${i18nPrefix}.icons.headerActions.secondary`)}
                         onClick={menu.toggle}
                     />
                     <Menu {...menu}>
                         {secondary.map((action, i) => (
-                            <MenuItem
-                                key={`${i}`}
-                                {...action}
-                                icon={getIcon(action.icon, action.iconCustom ?? false)}
-                            />
+                            <MenuItem key={`${i}`} {...action} />
                         ))}
                     </Menu>
                 </div>

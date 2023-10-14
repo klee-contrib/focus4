@@ -1,7 +1,7 @@
 import classNames from "classnames";
+import {AnimatePresence, motion} from "framer-motion";
 import {
     Children,
-    cloneElement,
     MouseEvent,
     MouseEventHandler,
     ReactElement,
@@ -15,7 +15,7 @@ import {
     useState
 } from "react";
 
-import {CSSProp, useTheme} from "@focus4/styling";
+import {CSSProp, springTransition, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
@@ -25,67 +25,72 @@ import {Ripple} from "./ripple";
 import menuCss, {MenuCss} from "./__style__/menu.css";
 export {menuCss, MenuCss};
 
-export interface MenuProps {
-    /** If true, the menu will be displayed as opened by default. */
-    active?: boolean;
-    /** Anchor element for the menu. */
-    anchor?: RefObject<HTMLElement | null>;
-    /** Class name for root element. */
+export interface MenuControls<T extends HTMLElement = HTMLDivElement> {
+    /** Element HTML parent du menu sur lequel le menu s'attachera (au dessus ou en dessous, selon la position).  */
+    anchor: RefObject<T>;
+    /** Affiche le menu. */
+    active: boolean;
+    /** Ferme le menu. */
+    close: () => void;
+    /** Ouvre le menu. */
+    open: () => void;
+    /** Ouvre ou ferme le menu, selon son état. */
+    toggle: () => void;
+}
+
+export interface MenuProps extends MenuControls {
+    /** Classe CSS pour le composant racine du Menu. */
     className?: string;
-    /** Children to pass through the component. */
+    /**
+     * Eléments enfants à afficher dans le menu.
+     * Ces éléments seront sélectionnables au clavier par le Menu, qui appelera leur `onClick` (si défini) lorsqu'on appuie sur Entrée.
+     */
     children?: ReactNode;
-    /** Callback that will be called when the menu is being hidden. */
-    onHide?: () => void;
-    /** Callback that will be invoked when a menu item is selected. */
-    onSelect?: (value?: string) => void;
-    /** Callback that will be invoked when the menu is being shown. */
-    onShow?: () => void;
-    /** If true the menu wrapper will show an outline with a soft shadow. */
-    outline?: boolean;
-    /** Determine the position of the menu. Auto means that the it will decide the opening direction based on the current position. To force a position use topLeft, topRight, bottomLeft, bottomRight. */
-    position?: "auto" | "bottomLeft" | "bottomRight" | "topLeft" | "topRight";
-    /** If true, the menu will keep a value to highlight the active child item. */
-    selectable?: boolean;
-    /** Used for selectable menus. Indicates the current selected value so the child item with this value can be highlighted. */
+    /**
+     * Ne vide pas l'élément du Menu sélectionné lorsque la souris sort du Menu
+     * (pour pouvoir toujours cliquer sur cet élément en appuyant sur Entrée par exemple).
+     */
+    keepSelectionOnPointerLeave?: boolean;
+    /** Si renseigné, la navigation clavier dans le Menu n'appelera pas le `blur` de l'élément courant actif (pour un input par exemple). */
+    noBlurOnArrowPress?: boolean;
+    /** N'affiche pas le focus ring lors de la navigation clavier dans le Menu. */
+    noRing?: boolean;
+    /** Handler optionel appelé au clic (y compris au clavier) d'un élément du Menu. La `key` de l'enfant sera passée en paramètre. */
+    onItemClick?: (key?: string) => void;
+    /** Handler appelé lorsque l'élément sélectionné par le Menu change (au hover ou au clavier).  */
+    onSelectedChange?: (key?: string) => void;
+    /**
+     * Détermine la position du Menu par rapport à son élément ancre.
+     *
+     * Le Menu peut être placé en haut ou en bas, et optionnellement sur la gauche ou à droite (au lieu de prendre toute la largeur de l'ancre).
+     *
+     * La position peut être également définie en `auto` (choisie entre `topLeft`, `topRight`, `bottomLeft` et `bottomRight`) ou `full-auto`
+     * (choisie entre `top` et `bottom`), selon la position de l'ancre sur la page au moment de son ouverture.
+     *
+     * Par défaut : `auto`.
+     */
+    position?: "auto" | "bottom" | "bottomLeft" | "bottomRight" | "full-auto" | "top" | "topLeft" | "topRight";
+    /** Permet de surcharger l'élement sélectionné du Menu, au lieu de le laisser utiliser son état interne. A utiliser avec `onSelectedChange`. */
     selected?: string;
-    /** Toggle menu on/off. */
-    toggle?: () => void;
-    /** Classnames object defining the component style. */
+    /** CSS. */
     theme?: CSSProp<MenuCss>;
 }
 
 export interface MenuItemProps extends PointerEvents<HTMLLIElement> {
-    /** The text to include in the menu item. Required. */
+    /** Le libellé de l'item de Menu. */
     caption: string;
+    /** Classe CSS pour le composant racine. */
     className?: string;
-    /** Children to pass through the component. */
-    children?: ReactNode;
-    /** If true, the item will be displayed as disabled and is not selectable. */
+    /** Désactive l'élément de Menu, qui ne pourra plus être sélectionné. */
     disabled?: boolean;
-    /** Icon font key string or Element to display in the right side of the option. */
-    icon?: ReactNode;
+    /** Icône à poser devant l'item de Menu. */
+    iconLeft?: ReactNode;
+    /** Icône à poser derrière l'item de Menu. */
+    iconRight?: ReactNode;
+    /** Handler de clic sur l'item de Menu. */
     onClick?: MouseEventHandler<HTMLLIElement>;
-    /** @internal */
-    selected?: boolean;
-    /** Displays shortcut text on the right side of the caption attribute. */
-    shortcut?: string;
-    /** Classnames object defining the component style. */
+    /** CSS. */
     theme?: CSSProp<MenuCss>;
-    /** Passed down to the root element. */
-    value?: string;
-}
-
-export interface MenuDividerProps {
-    /** Classnames object defining the component style. */
-    theme: CSSProp<MenuCss>;
-}
-
-/**
- * Séparateur dans un Menu, entre des MenuItems.
- */
-export function MenuDivider({theme: pTheme}: MenuDividerProps) {
-    const theme = useTheme("RTMenu", menuCss, pTheme);
-    return <hr className={theme.menuDivider()} data-react-toolbox="menu-divider" />;
 }
 
 /**
@@ -93,20 +98,18 @@ export function MenuDivider({theme: pTheme}: MenuDividerProps) {
  */
 export function MenuItem({
     caption,
-    children,
     className = "",
     disabled = false,
-    icon,
+    iconLeft,
+    iconRight,
     onClick,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
-    selected = false,
-    shortcut,
     theme: pTheme
 }: MenuItemProps) {
-    const theme = useTheme("RTMenu", menuCss, pTheme);
+    const theme = useTheme("menu", menuCss, pTheme);
 
     const handleClick = useCallback(
         (event: MouseEvent<HTMLLIElement>) => {
@@ -124,25 +127,26 @@ export function MenuItem({
             onPointerLeave={onPointerLeave}
             onPointerUp={onPointerUp}
         >
-            <li
-                className={classNames(theme.menuItem({disabled, selected}), className)}
-                data-react-toolbox="menu-item"
-                onClick={handleClick}
-            >
-                {icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null}
+            <li className={classNames(theme.menuItem({disabled}), className)} onClick={handleClick}>
+                {iconLeft ? <FontIcon className={theme.icon()}>{iconLeft}</FontIcon> : null}
                 <span className={theme.caption()}>{caption}</span>
-                {shortcut ? <small className={theme.shortcut()}>{shortcut}</small> : null}
-                {children}
+                {iconRight ? <FontIcon className={theme.icon()}>{iconRight}</FontIcon> : null}
             </li>
         </Ripple>
     );
 }
 
-/** Hook pour attacher un menu à un élément et une fonction pour l'ouvrir et le fermer. */
-export function useMenu<T extends HTMLElement = HTMLDivElement>() {
+/** Hook pour attacher un menu à un élément et des fonctions pour l'ouvrir et le fermer. */
+export function useMenu<T extends HTMLElement = HTMLDivElement>(): MenuControls<T> {
     const anchor = useRef<T | null>(null);
     const [active, setActive] = useState(false);
-    return {anchor, active, toggle: () => setActive(a => !a)};
+    return {
+        anchor,
+        active,
+        close: useCallback(() => setActive(false), []),
+        open: useCallback(() => setActive(true), []),
+        toggle: useCallback(() => setActive(a => !a), [])
+    };
 }
 
 /**
@@ -169,180 +173,218 @@ export function useMenu<T extends HTMLElement = HTMLDivElement>() {
  *  ```
  */
 export function Menu({
-    active: pActive,
+    active,
     anchor,
     children,
     className = "",
-    onHide,
-    onSelect,
-    onShow,
-    outline = true,
+    close,
+    keepSelectionOnPointerLeave = false,
+    noBlurOnArrowPress = false,
+    noRing = false,
+    onItemClick,
+    onSelectedChange,
     position: pPosition = "auto",
-    selected,
-    selectable = true,
-    toggle,
+    selected: pSelected,
     theme: pTheme
 }: MenuProps) {
-    const theme = useTheme("RTMenu", menuCss, pTheme);
+    const theme = useTheme("menu", menuCss, pTheme);
 
-    const rootNode = useRef<HTMLDivElement | null>(null);
-    const menuNode = useRef<HTMLUListElement | null>(null);
+    const ref = useRef<HTMLUListElement>(null);
+    const pointerDisabled = useRef<NodeJS.Timeout>();
 
-    const [active, setActive] = useState(pActive);
-    const [activated, setActivated] = useState(false);
-    const [rippled, setRippled] = useState(false);
-    const [position, setPosition] = useState(pPosition === "auto" ? "topLeft" : pPosition);
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
+    const [showRing, setShowRing] = useState(false);
+
+    // Taille de l'élément ancre.
     const [anchorHeight, setAnchorHeight] = useState(0);
+    useLayoutEffect(() => setAnchorHeight(anchor?.current?.clientHeight ?? 0));
 
+    // Position du menu.
+    const [position, setPosition] = useState(
+        pPosition === "auto" ? "topLeft" : pPosition === "full-auto" ? "top" : pPosition
+    );
     useLayoutEffect(() => {
-        setAnchorHeight(anchor?.current?.clientHeight ?? 0);
-    });
-
-    useLayoutEffect(() => {
-        if (pActive) {
-            setActivated(true);
-            setActive(false);
-            if (pPosition === "auto") {
-                const parentNode = rootNode.current?.parentNode;
+        if (active) {
+            if (pPosition === "auto" || pPosition === "full-auto") {
+                const parentNode = ref.current?.parentNode;
                 if (parentNode) {
                     const {top, left, height: ph, width: pw} = (parentNode as HTMLElement).getBoundingClientRect();
                     const ww = window.innerWidth || document.documentElement.offsetWidth;
                     const wh = window.innerHeight || document.documentElement.offsetHeight;
                     const toTop = top < wh / 2 - ph / 2;
                     const toLeft = left < ww / 2 - pw / 2;
-                    setPosition(`${toTop ? "top" : "bottom"}${toLeft ? "Left" : "Right"}` as const);
+                    setPosition(
+                        `${toTop ? "top" : "bottom"}${pPosition === "auto" ? (toLeft ? "Left" : "Right") : ""}` as const
+                    );
                 }
             }
-
-            const timeout = setTimeout(() => setActive(true), 20);
-            onShow?.();
-            return () => {
-                clearTimeout(timeout);
-            };
-        } else {
-            setActive(false);
-            onHide?.();
         }
-    }, [pActive, pPosition, onHide, onShow]);
+    }, [active, pPosition]);
 
+    // Fermeture du menu au clic à l'extérieur.
     useEffect(() => {
         function handleDocumentClick(event: Event) {
-            if (!targetIsDescendant(event, rootNode.current)) {
-                setActive(false);
-                setRippled(false);
-                toggle?.();
-                onHide?.();
+            if (anchor?.current && !anchor.current.contains(event.target as Node)) {
+                close?.();
+                setShowRing(false);
             }
         }
         if (active) {
-            document.addEventListener("click", handleDocumentClick);
-            document.addEventListener("touchend", handleDocumentClick);
+            document.addEventListener("pointerdown", handleDocumentClick);
         }
         return () => {
             if (active) {
-                document.removeEventListener("click", handleDocumentClick);
-                document.removeEventListener("touchend", handleDocumentClick);
+                document.removeEventListener("pointerdown", handleDocumentClick);
             }
         };
-    }, [active, onHide, toggle]);
+    }, [active, close]);
 
-    const handleSelect = useCallback(
-        (item: ReactElement, event: MouseEvent<HTMLLIElement>) => {
-            const {value, onClick} = item.props;
-            if (onClick) {
-                event.persist();
-            }
-            setActive(false);
-            setRippled(true);
-            onClick?.(event);
-            onSelect?.(value);
-            onHide?.();
-            toggle?.();
+    // Element sélectionné.
+    const [selected, setSelected] = useState<string | undefined>(pSelected);
+    useEffect(() => setSelected(pSelected), [pSelected]);
+
+    const handleSelectedChange = useCallback(
+        function handleSelectedChange(s?: string) {
+            setSelected(s);
+            onSelectedChange?.(s);
         },
-        [onSelect, onSelect, toggle]
+        [onSelectedChange]
     );
 
-    const rootStyle = useMemo(
-        () => ({
-            position: "absolute" as const,
-            width,
-            height,
-            top: position.startsWith("top") ? anchorHeight : undefined,
-            bottom: position.startsWith("bottom") ? anchorHeight : undefined,
-            right: position.endsWith("Right") ? 0 : undefined,
-            display: !activated ? "none" : undefined
-        }),
-        [activated, height, position, width, anchorHeight]
-    );
+    useEffect(() => handleSelectedChange(undefined), [active, handleSelectedChange]);
 
-    const outlineStyle = {width, height};
-
-    const menuStyle = useMemo(() => {
-        if (active) {
-            return {clip: `rect(0 ${width}px ${height}px 0)`};
-        } else {
-            switch (position) {
-                case "bottomLeft":
-                    return {clip: `rect(${height}px 0 ${height}px 0)`};
-                case "bottomRight":
-                    return {clip: `rect(${height}px ${width}px ${height}px ${width}px)`};
-                case "topLeft":
-                    return {clip: "rect(0 0 0 0)"};
-                case "topRight":
-                    return {clip: `rect(0 ${width}px 0 ${width}px)`};
+    // Au clic/appui sur Entrée sur un item.
+    const handleItemClick = useCallback(
+        function handleItemClick(item: ReactElement, e?: KeyboardEvent | MouseEvent<HTMLLIElement>) {
+            if (e) {
+                e.stopPropagation();
             }
-        }
-    }, [active, height, position, width]);
-
-    const items = useMemo(
-        () =>
-            Children.map(children, item => {
-                if (!item) {
-                    return item;
-                }
-
-                const item2 = item as ReactElement;
-                if (item2.type === MenuItem) {
-                    return cloneElement(item2, {
-                        selected:
-                            typeof item2.props.value !== "undefined" && selectable && item2.props.value === selected,
-                        onClick: (e: MouseEvent<HTMLLIElement>) => handleSelect(item2, e)
-                    });
-                }
-
-                return cloneElement(item2);
-            }),
-        [children, handleSelect, selectable, selected]
+            item.props.onClick?.();
+            if (item.key) {
+                onItemClick?.(item.key);
+            }
+            setShowRing(false);
+            close?.();
+        },
+        [onItemClick, close]
     );
 
-    useLayoutEffect(() => {
-        const {height: ch, width: cw} = menuNode.current!.getBoundingClientRect();
-        setWidth(cw);
-        setHeight(ch);
-    }, [activated, items]);
+    // Navigation clavier.
+    useEffect(() => {
+        if (active) {
+            const items = (
+                Children.map(children, (item, i) => ({
+                    key: (item as ReactElement)?.key ?? `${i}`,
+                    item: item as ReactElement
+                })) ?? []
+            ).filter(({item}) => !!item && !unselectable(item));
+
+            const handleKeyDown = (event: KeyboardEvent) => {
+                if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                    setShowRing(true);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (!noBlurOnArrowPress) {
+                        (document.activeElement as HTMLElement)?.blur();
+                    }
+                    const keys = items?.map(c => c?.key).filter(x => x) ?? [];
+                    let index =
+                        (!selected ? (position.startsWith("top") ? -1 : keys.length) : keys.indexOf(selected)) +
+                        (event.key === "ArrowDown" ? +1 : -1);
+                    if (index < 0) {
+                        index = keys.length - 1;
+                    }
+                    if (index >= keys.length) {
+                        index = 0;
+                    }
+
+                    handleSelectedChange(keys[index]);
+
+                    if (ref.current) {
+                        clearTimeout(pointerDisabled.current);
+                        ref.current.style.pointerEvents = "none";
+                        pointerDisabled.current = setTimeout(() => (ref.current!.style.pointerEvents = ""), 500);
+                        ref.current
+                            .querySelector(`[data-key="${keys[index]}"]`)
+                            ?.scrollIntoView({block: "nearest", inline: "nearest", behavior: "smooth"});
+                    }
+                } else if (event.key === "Enter" && selected) {
+                    const item = items.find(i => i.key === selected);
+                    if (item) {
+                        handleItemClick(item.item, event);
+                    }
+                } else if (event.key === "Tab" || event.key === "Escape") {
+                    setShowRing(false);
+                    close?.();
+                }
+            };
+
+            document.addEventListener("keydown", handleKeyDown);
+            return () => document.removeEventListener("keydown", handleKeyDown);
+        }
+    }, [active, children, close, handleItemClick, handleSelectedChange, noBlurOnArrowPress, position, selected]);
 
     return (
-        <div
-            ref={rootNode}
-            className={classNames(theme.menu({[position]: true, active, rippled}), className)}
-            data-react-toolbox="menu"
-            style={rootStyle}
+        <ul
+            ref={ref}
+            className={classNames(
+                theme.menu({
+                    active: active && Children.toArray(children).filter(x => x).length > 0,
+                    full: position === "top" || position === "bottom"
+                }),
+                className
+            )}
+            onPointerLeave={() => {
+                if (!keepSelectionOnPointerLeave) {
+                    handleSelectedChange();
+                }
+            }}
+            style={useMemo(
+                () => ({
+                    top: position.startsWith("top") ? anchorHeight : undefined,
+                    bottom: position.startsWith("bottom") ? anchorHeight : undefined,
+                    right: position.endsWith("Right") ? 0 : undefined
+                }),
+                [position, anchorHeight]
+            )}
         >
-            {outline ? <div className={theme.outline()} style={outlineStyle} /> : null}
-            <ul ref={menuNode} className={theme.menuInner()} style={menuStyle}>
-                {items}
-            </ul>
-        </div>
+            <AnimatePresence>
+                {active
+                    ? Children.map(children, (item, i) => {
+                          if (!item) {
+                              return item;
+                          }
+
+                          const isHr = unselectable(item);
+                          const key = (item as ReactElement)?.key ?? `${i}`;
+
+                          return (
+                              <motion.li
+                                  animate={{height: "auto", opacity: 1}}
+                                  className={theme.item({focused: !noRing && selected === key && showRing})}
+                                  data-key={key}
+                                  exit={{height: 0, opacity: 0}}
+                                  initial={{height: 0, opacity: 0}}
+                                  onClick={isHr ? undefined : e => handleItemClick(item as ReactElement, e)}
+                                  onPointerEnter={
+                                      isHr
+                                          ? undefined
+                                          : () => {
+                                                handleSelectedChange(key);
+                                                setShowRing(false);
+                                            }
+                                  }
+                                  transition={{height: {...springTransition, restDelta: 0.5}}}
+                              >
+                                  {item}
+                              </motion.li>
+                          );
+                      })
+                    : null}
+            </AnimatePresence>
+        </ul>
     );
 }
 
-function targetIsDescendant(event: Event, parent: Element | null) {
-    let node = event.target;
-    while (node !== null) {
-        if (node === parent) return true;
-        node = (node as Element).parentNode;
-    }
-    return false;
+function unselectable(item: ReactNode): boolean {
+    return (item as ReactElement)?.type === "hr" || (item as ReactElement)?.props.disabled;
 }

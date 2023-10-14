@@ -36,8 +36,6 @@ export {
     HeaderScrolling,
     HeaderSummary,
     HeaderTopRow,
-    PrimaryAction,
-    SecondaryAction,
     headerCss
 } from "./header";
 export {MainMenu, MainMenuItem, MainMenuProps, MainMenuCss, mainMenuCss} from "./menu";
@@ -110,7 +108,7 @@ export interface LayoutStyleProviderProps {
     RTDropdown?: CSSProp<DropdownCss>;
     floatingActionButton?: CSSProp<FloatingActionButtonCss>;
     iconButton?: CSSProp<IconButtonCss>;
-    RTMenu?: CSSProp<MenuCss>;
+    menu?: CSSProp<MenuCss>;
     RTProgressBar?: CSSProp<ProgressBarCss>;
     radio?: CSSProp<RadioCss>;
     ripple?: CSSProp<RippleCss>;
