@@ -223,7 +223,12 @@ export function Menu({
     // Fermeture du menu au clic à l'extérieur.
     useEffect(() => {
         function handleDocumentClick(event: Event) {
-            if (anchor?.current && !anchor.current.contains(event.target as Node)) {
+            if (
+                anchor.current &&
+                ref.current &&
+                !anchor.current.contains(event.target as Node) &&
+                !ref.current.contains(event.target as Node)
+            ) {
                 close?.();
                 setShowRing(false);
             }

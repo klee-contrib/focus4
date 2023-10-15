@@ -4,8 +4,7 @@ import {v4} from "uuid";
 
 import {messageStore} from "@focus4/core";
 import {
-    AutocompleteProps,
-    AutocompleteResult,
+    AutocompleteSearchProps,
     DisplayProps,
     fieldFor,
     FieldOptions,
@@ -337,7 +336,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     autocompleteFor<
         DT extends "boolean" | "number" | "object" | "string",
         T extends DomainType<DT>,
-        ACDProps extends BaseAutocompleteProps = AutocompleteProps<DT extends "number" ? "number" : "string">,
+        ACDProps extends BaseAutocompleteProps = AutocompleteSearchProps<DT extends "number" ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
         LCDProps extends BaseLabelProps = LabelProps,
         ACProps extends BaseAutocompleteProps = ACDProps,
@@ -351,7 +350,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
                 isEdit?: boolean;
                 name?: string;
                 keyResolver?: (key: T) => Promise<string | undefined>;
-                querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+                querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
             } = {}
     ): JSX.Element {
         const {name, ...o} = options;

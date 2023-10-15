@@ -2,7 +2,7 @@ import {flatten} from "lodash";
 import {useObserver} from "mobx-react";
 import {ComponentType, ReactNode, useEffect, useMemo} from "react";
 
-import {autocompleteFor, AutocompleteResult, fieldFor, FieldOptions, selectFor} from "@focus4/forms";
+import {autocompleteFor, fieldFor, FieldOptions, selectFor} from "@focus4/forms";
 import {EntityField, FieldEntry, makeField, Metadata, ReferenceList, validateField, Validator} from "@focus4/stores";
 
 export function FieldWrapper<F extends FieldEntry>({
@@ -40,7 +40,7 @@ export function FieldWrapper<F extends FieldEntry>({
     onErrorChange: (error: string | undefined) => void;
     options: FieldOptions<F> & {
         keyResolver?: (key: number | string) => Promise<string | undefined>;
-        querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+        querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
     };
     SelectComponent?: ComponentType<any>;
     type: "autocomplete" | "input" | "select";
@@ -135,7 +135,7 @@ export function fieldWrapperFor(
             error?: string;
             isEdit?: boolean;
             keyResolver?: (key: number | string) => Promise<string | undefined>;
-            querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+            querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
         } = {},
     values?: ReferenceList
 ) {

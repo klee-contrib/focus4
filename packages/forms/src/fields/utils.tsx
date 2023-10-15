@@ -12,8 +12,6 @@ import {
     SelectComponents
 } from "@focus4/stores";
 
-import {AutocompleteResult} from "../components/autocomplete";
-
 import {Field, FieldOptions} from "./field";
 
 function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
@@ -25,22 +23,24 @@ function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
 
 /** Options pour `autocompleteFor` */
 export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponents<
-        NonNullable<F["domain"]["autocompleteProps"]>,
-        NonNullable<F["domain"]["displayProps"]>,
-        NonNullable<F["domain"]["labelProps"]>
-    > & Partial<FieldOptions<F>> & {
+    NonNullable<F["domain"]["autocompleteProps"]>,
+    NonNullable<F["domain"]["displayProps"]>,
+    NonNullable<F["domain"]["labelProps"]>
+> &
+    Partial<FieldOptions<F>> & {
         /** Service de résolution de code. */
         keyResolver?: (key: NonNullable<F["fieldType"]>) => Promise<string | undefined>;
         /** Service de recherche. */
-        querySearcher?: (text: string) => Promise<AutocompleteResult | undefined>;
+        querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
     };
 
 /** Options pour `fieldFor` */
 export type FieldForOptions<F extends FieldEntry> = InputComponents<
-        NonNullable<F["domain"]["inputProps"]>,
-        NonNullable<F["domain"]["displayProps"]>,
-        NonNullable<F["domain"]["labelProps"]>
-    > & Partial<FieldOptions<F>>;
+    NonNullable<F["domain"]["inputProps"]>,
+    NonNullable<F["domain"]["displayProps"]>,
+    NonNullable<F["domain"]["labelProps"]>
+> &
+    Partial<FieldOptions<F>>;
 
 /** Options pour `selectFor`. */
 export type SelectForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &

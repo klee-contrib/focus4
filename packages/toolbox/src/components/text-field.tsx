@@ -11,6 +11,7 @@ import {
     MouseEvent,
     MouseEventHandler,
     ReactNode,
+    RefObject,
     useCallback,
     useEffect,
     useImperativeHandle,
@@ -54,6 +55,8 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     disabled?: boolean;
     /** Affiche le champ texte en erreur. */
     error?: boolean;
+    /** Ref vers le champ (pour ancrer un Menu dessus par exemple). */
+    fieldRef?: RefObject<HTMLDivElement>;
     /** Placeholder pour le champ texte. */
     hint?: string;
     /** Icône à poser devant le texte. */
@@ -120,6 +123,7 @@ export const TextField = forwardRef(function TextField(
         className,
         disabled = false,
         error,
+        fieldRef,
         hint,
         icon,
         id,
@@ -291,7 +295,7 @@ export const TextField = forwardRef(function TextField(
                 className
             )}
         >
-            <div className={theme.field()} onClick={handleClick} tabIndex={-1}>
+            <div ref={fieldRef} className={theme.field()} onClick={handleClick} tabIndex={-1}>
                 <div ref={outlineNode} className={theme.outline()} />
                 {icon ? (
                     <div className={theme.icon({leading: true})}>

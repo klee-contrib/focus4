@@ -1,7 +1,6 @@
 export {
-    Autocomplete,
-    AutocompleteProps,
-    AutocompleteResult,
+    AutocompleteSearch,
+    AutocompleteSearchProps,
     BooleanRadio,
     BooleanRadioCss,
     BooleanRadioProps,

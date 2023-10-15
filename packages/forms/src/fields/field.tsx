@@ -15,7 +15,7 @@ import {
 } from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {Autocomplete, Display, Input, Label, Select} from "../components";
+import {AutocompleteSearch, Display, Input, Label, Select} from "../components";
 
 import {documentHelper} from "./document-helper";
 import {FormContext} from "./form";
@@ -146,7 +146,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                 name,
                 isRequired,
                 domain: {
-                    AutocompleteComponent = Autocomplete,
+                    AutocompleteComponent = AutocompleteSearch,
                     autocompleteProps: domainACP = {},
                     className = "",
                     DisplayComponent = Display,

@@ -1,235 +1,120 @@
-import i18next from "i18next";
-import {debounce} from "lodash-decorators";
-import {action, computed, makeObservable, observable, runInAction} from "mobx";
-import {observer} from "mobx-react";
-import {Component} from "react";
-import {findDOMNode} from "react-dom";
+import {debounce} from "lodash";
+import {ForwardedRef, forwardRef, ReactElement, useCallback, useEffect, useState} from "react";
 
-import {Autocomplete as RTAutocomplete, AutocompleteProps as RTAutocompleteProps} from "@focus4/toolbox";
+import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
-/** Résultat du service de recherche. */
-export interface AutocompleteResult<T = {key: string; label: string}> {
-    /** Données. */
-    data?: T[];
-    /** Nombre total de résultat. */
-    totalCount: number;
-}
-
-/** Props du composant d'autocomplétion */
-// @ts-ignore
-export interface AutocompleteProps<T extends "number" | "string", TSource = {key: string; label: string}>
-    extends Omit<RTAutocompleteProps<TSource>, "error" | "getLabel" | "loading" | "onChange" | "value"> {
-    /** Sélectionne automatiquement le résultat d'une recherche qui envoie un seul élément. */
-    autoSelect?: boolean;
+export interface AutocompleteSearchProps<T extends "number" | "string", TSource = {key: string; label: string}>
+    extends Omit<
+        AutocompleteProps<TSource>,
+        "error" | "loading" | "onChange" | "showSupportingText" | "suggestionMatch" | "value" | "values"
+    > {
     /** Erreur à afficher sous le champ. */
     error?: string;
-    /** Détermine la propriété de l'objet a utiliser comme clé. Par défaut : `item => item.key` */
-    getKey?: (item: TSource) => string;
-    /** Détermine la propriété de l'objet a utiliser comme libellé. Par défaut : `item => i18next.t(item.label)` */
-    getLabel?: (item: TSource) => string;
-    /** Utilise l'autocomplete en mode "quick search" (pas de valeur, champ vidé à la sélection). */
-    isQuickSearch?: boolean;
     /** Service de résolution de clé. Doit retourner le libellé. */
     keyResolver?: (key: T extends "string" ? string : number) => Promise<string | undefined>;
-    /** Service de recherche. */
-    querySearcher?: (text: string) => Promise<AutocompleteResult<TSource> | undefined>;
     /** Au changement. */
-    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
+    onChange?: (value: (T extends "string" ? string : number) | undefined) => void;
+    /** Service de recherche. */
+    querySearcher?: (text: string) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
     /** Type du champ ("string" ou "number"). */
     type: T;
     /** Valeur. */
-    value: (T extends "string" ? string : number) | undefined;
+    value?: (T extends "string" ? string : number) | undefined;
 }
 
 /**
- * **_A ne pas confondre avec le composant du même nom `Autocomplete` dans le module `@focus4/toolbox` !_**
+ * Champ de saisie en autocomplétion à partir d'un **service de recherche**.
  *
- * Champ de saisie en autocomplétion à partir d'un **service de recherche**. Il s'agit d'un wrapper autour de l'autre `Autocomplete` pour construire la liste des valeurs disponibles via un appel à une API.
- *
- * Il s'agit du composant par défaut pour [`autocompleteFor`](model/display-fields.md#autocompleteforfield-options).
+ * Il s'agit du composant par défaut de `autocompleteFor`.
  */
-@observer
-export class Autocomplete<T extends "number" | "string", TSource = {key: string; label: string}> extends Component<
-    AutocompleteProps<T, TSource>
-> {
-    /** Cette valeur est gardée à chaque retour de l'autocomplete pour savoir s'il faut ou non vider la valeur lorsqu'on saisit du texte. */
-    protected value?: string;
-
-    protected inputElement!: HTMLInputElement | null;
-
-    /** Requête d'autocomplete en cours. */
-    @observable protected isLoading = false;
-
-    /** Contenu du champ texte. */
-    @observable protected _query = this.props.query ?? "";
-
-    /** Résultat de la recherche d'autocomplétion. */
-    protected readonly values = observable<{key: string; item: TSource}>([]);
-
-    constructor(props: AutocompleteProps<T, TSource>) {
-        super(props);
-        makeObservable(this);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
-    async UNSAFE_componentWillMount() {
-        const {value, keyResolver, isQuickSearch} = this.props;
-        if ((!!value || value === 0) && !isQuickSearch && keyResolver) {
-            const label = i18next.t((await keyResolver(value)) ?? "");
-            runInAction(() => {
-                this._query = label || `${value}`;
-            });
-        }
-    }
-
-    componentDidMount() {
-        // eslint-disable-next-line react/no-find-dom-node
-        this.inputElement = (findDOMNode(this) as Element).querySelector("input");
-    }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention, camelcase
-    async UNSAFE_componentWillReceiveProps({
-        autoSelect,
+export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
+    T extends "number" | "string",
+    TSource = {key: string; label: string}
+>(
+    {
+        error,
+        keyResolver,
+        onChange,
+        onQueryChange,
+        query: pQuery = "",
+        querySearcher,
+        searchOnEmptyQuery,
+        supportingText,
+        type,
         value,
-        isQuickSearch,
-        keyResolver
-    }: AutocompleteProps<T, TSource>) {
-        if (autoSelect && value !== this.props.value && value && !isQuickSearch && keyResolver) {
-            this._query = i18next.t((await keyResolver(value)) ?? "") || value?.toString() || "";
+        ...props
+    }: AutocompleteSearchProps<T, TSource>,
+    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
+) {
+    const [query, setQuery] = useState(pQuery);
+    useEffect(() => setQuery(pQuery), [pQuery]);
+
+    const [loading, setLoading] = useState(false);
+    const [values, setValues] = useState<TSource[]>([]);
+
+    useEffect(() => {
+        if ((!!value || value === 0) && keyResolver) {
+            keyResolver(value).then(label => setQuery(label ?? `${value}`));
         }
-    }
+    }, [keyResolver, value]);
 
-    @computed
-    get query() {
-        return this.props.query ?? this._query;
-    }
-
-    set query(query) {
-        const {
-            getLabel = item => i18next.t((item as any).label),
-            onQueryChange,
-            onChange,
-            isQuickSearch,
-            searchOnEmptyQuery
-        } = this.props;
-
-        // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
-        const match = this.value && this.values.find(v => v.key === this.value);
-        if ((!match || (match && getLabel(match.item) !== query)) && onChange) {
-            onChange(undefined);
-        }
-
-        if (query !== this.query && (!this.value || !isQuickSearch)) {
-            this._query = query;
-            if (onQueryChange) {
-                onQueryChange(query);
+    const search = useCallback(
+        debounce(async function search(newQuery: string) {
+            if (querySearcher && (searchOnEmptyQuery ?? newQuery.trim().length)) {
+                setLoading(true);
+                const result = await querySearcher(encodeURIComponent(newQuery.trim()));
+                setValues(result);
+                setLoading(false);
             }
-            this.debouncedSearch(query);
+        }, 200),
+        [querySearcher, searchOnEmptyQuery]
+    );
+
+    function handleQueryChange(newQuery: string) {
+        setQuery(newQuery);
+        onQueryChange?.(newQuery);
+
+        if (!newQuery && !searchOnEmptyQuery) {
+            setValues([]);
         }
 
-        if (isQuickSearch) {
-            this.value = "";
-        }
-        if (!searchOnEmptyQuery && !query) {
-            this.values.clear();
-        }
+        search(newQuery);
     }
 
-    focus() {
-        // C'est moche mais sinon ça marche pas...
-        setTimeout(() => this.inputElement?.focus(), 0);
-    }
-
-    /**
-     * Est appelé lorsque l'on sélectionne une valeur.
-     * @param value La valeur sélectionnée.
-     */
-    @action.bound
-    onValueChange(value?: string) {
-        const {isQuickSearch, onChange, type} = this.props;
-
-        if (isQuickSearch && value) {
-            this.query = "";
-            this.values.clear();
-            this.focus();
-        }
-
-        this.value = value;
-
+    function handleChange(newValue?: string) {
         if (onChange) {
-            const v = (type === "number" && value ? parseFloat(value) : value) as T extends "string" ? string : number;
+            const v = (type === "number" && newValue ? parseFloat(newValue) : newValue) as T extends "string"
+                ? string
+                : number;
             onChange(v || v === 0 ? v : undefined);
         }
     }
 
-    /**
-     * Effectue la recherche sur le serveur.
-     * @param query Le champ texte.
-     */
-    @action.bound
-    async search(query: string) {
-        const {autoSelect, getKey = item => (item as any).key, querySearcher, searchOnEmptyQuery = false} = this.props;
-
-        if (querySearcher && (searchOnEmptyQuery || query.trim().length)) {
-            this.isLoading = true;
-            const result = await querySearcher(encodeURIComponent(query.trim()));
-            runInAction(() => {
-                this.values.replace(result?.data?.map(item => ({key: getKey(item), item})) ?? []);
-                this.isLoading = false;
-
-                if (autoSelect) {
-                    if (this.values && this.values.length === 1) {
-                        this.onValueChange(query);
-                    } else {
-                        this.onValueChange("");
-                    }
-                }
-            });
+    function handleFocus() {
+        if (searchOnEmptyQuery && !values.length) {
+            search(query);
         }
     }
 
-    @debounce(200)
-    private debouncedSearch(query: string) {
-        this.search(query);
-    }
-
-    @action.bound
-    onFocus() {
-        if (!this.values.length && this.props.searchOnEmptyQuery) {
-            this.search(this.query);
-        }
-    }
-
-    render() {
-        const {
-            getLabel = item => i18next.t((item as any).label),
-            keyResolver,
-            querySearcher,
-            isQuickSearch,
-            autoSelect,
-            error,
-            supportingText,
-            ...props
-        } = this.props;
-        return (
-            <RTAutocomplete
-                {...props}
-                error={!!error}
-                getLabel={getLabel}
-                loading={this.isLoading}
-                maxLength={undefined}
-                onChange={value => this.onValueChange(value)}
-                onFocus={this.onFocus}
-                onQueryChange={query => (this.query = query ?? "")}
-                query={this.query}
-                showSupportingText="always"
-                suggestionMatch="disabled"
-                supportingText={error ?? supportingText}
-                value={`${props.value ?? ""}`}
-                values={this.values}
-            />
-        );
-    }
-}
+    return (
+        <Autocomplete
+            {...props}
+            ref={ref}
+            error={!!error}
+            loading={loading}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onQueryChange={handleQueryChange}
+            query={query}
+            showSupportingText="always"
+            suggestionMatch="disabled"
+            supportingText={error ?? supportingText}
+            value={value !== undefined ? `${value}` : undefined}
+            values={values}
+        />
+    );
+}) as <T extends "number" | "string", TSource = {key: string; label: string}>(
+    props: AutocompleteSearchProps<T, TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
+) => ReactElement;

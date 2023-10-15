@@ -25,24 +25,29 @@ import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss, AutocompleteCss};
 
-export interface AutocompleteProps<TValue = string>
-    extends Omit<TextFieldProps, "autoComplete" | "onChange" | "theme" | "type"> {
+export interface AutocompleteProps<TSource = {key: string; label: string}>
+    extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "theme" | "type"> {
     /** Suggestions supplémentaires à afficher en plus des suggestions issues de `values`, pour effectuer des actions différentes.  */
     additionalSuggestions?: {key: string; content: ReactNode; onClick: () => void}[];
     /** Autorise la sélection d'une valeur qui n'existe pas dans `values` (le contenu de la `query` sera retourné en tant que valeur). */
     allowUnmatched?: boolean;
+    /** Vide la query à la sélection d'une valeur. */
+    clearQueryOnChange?: boolean;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
     /**
-     * Permet de récupérer le libellé à partir de l'objet correspondant à une clé dans les valeurs.
-     *
-     * Le libellé de l'objet est le texte utilisé pour chercher la correspondance avec le texte saisi dans le champ.
-     *
-     * Si non renseigné, l'objet entier sera utilisé (ce qui fonctionne si l'objet est directement un string).
+     * Détermine la propriété de l'objet a utiliser comme clé. *
+     * Par défaut : `item => item.key`
      */
-    getLabel?: (x: TValue) => string;
+    getKey?: (item: TSource) => string;
+    /**
+     * Détermine la propriété de l'objet à utiliser comme libellé.
+     * Le libellé de l'objet est le texte utilisé pour chercher la correspondance avec le texte saisi dans le champ.
+     * Par défaut : `item => item.label`
+     */
+    getLabel?: (item: TSource) => string;
     /** Composant personnalisé pour afficher les suggestions. */
-    LineComponent?: (props: {item: TValue}) => ReactElement;
+    LineComponent?: (props: {item: TSource}) => ReactElement;
     /**
      * Appelé avec la clé correspondante lors de la sélection d'une valeur.
      *
@@ -59,24 +64,25 @@ export interface AutocompleteProps<TValue = string>
     /** CSS. */
     theme?: CSSProp<AutocompleteCss & TextFieldCss>;
     /** Valeurs disponibles pour la sélection. */
-    values?: {key: string; item: TValue}[];
+    values?: TSource[];
 }
 
-const defaultGetLabel = (x: any) => x;
+const defaultGetKey = (x: any) => x.key;
+const defaultGetLabel = (x: any) => x.label;
 
 /**
- * **_A ne pas confondre avec le composant du même nom `Autocomplete` dans le module `@focus4/forms` !_**
- *
  * Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles en entrée**.
  */
-export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
+export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: string; label: string}>(
     {
+        additionalSuggestions,
         allowUnmatched = false,
         className,
+        clearQueryOnChange,
         direction = "auto",
         disabled,
         error,
-        additionalSuggestions,
+        getKey = defaultGetKey,
         getLabel = defaultGetLabel,
         hint,
         icon,
@@ -84,7 +90,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
         label,
         LineComponent,
         loading = false,
-        maxLength,
         multiline,
         name,
         onBlur,
@@ -110,11 +115,11 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
         suffix,
         suggestionMatch = "start",
         tabIndex,
-        trailing,
+        trailing = [],
         theme: pTheme,
         value,
         values = []
-    }: AutocompleteProps<TValue>,
+    }: AutocompleteProps<TSource>,
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) {
     const theme = useTheme("autocomplete", autocompleteCss, pTheme);
@@ -129,15 +134,15 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
     const getQuery = useCallback(
         (v?: string) => {
             if (v) {
-                const match = values.find(i => i.key === v);
+                const match = values.find(i => getKey(i) === v);
                 if (match) {
-                    return getLabel(match.item);
+                    return getLabel(match);
                 }
             }
 
             return v ?? "";
         },
-        [getLabel, values]
+        [getKey, getLabel, values]
     );
     const [query, setQuery] = useState(pQuery ?? getQuery(value));
     const updateQuery = useCallback(
@@ -154,7 +159,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
         [onQueryChange]
     );
 
-    useEffect(() => updateQuery(pQuery ? pQuery : getQuery(value), false), [getQuery, pQuery, updateQuery, value]);
+    useEffect(() => updateQuery(pQuery ?? getQuery(value), false), [getQuery, pQuery, updateQuery, value]);
 
     // Suggestions.
     const suggestions = useMemo(() => {
@@ -178,7 +183,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
         }
 
         if (newQuery) {
-            return values.filter(i => isMatch(normalise(getLabel(i.item)), newQuery));
+            return values.filter(v => isMatch(normalise(getLabel(v)), newQuery));
         } else {
             return values;
         }
@@ -187,17 +192,17 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
     // Détermine la valeur sélectionnée dans la liste de suggestions.
     useEffect(() => {
         if (!selected && query && suggestions.length) {
-            setSelected(suggestions[0].key);
+            setSelected(getKey(suggestions[0]));
         } else if (
             selected &&
             !suggestions
-                .map(s => s.key)
+                .map(getKey)
                 .concat(additionalSuggestions?.map(s => s.key) ?? [])
                 .includes(selected)
         ) {
             setSelected(undefined);
         }
-    }, [query, selected, suggestions]);
+    }, [getKey, query, selected, suggestions]);
 
     // Appelé à la sélection d'une valeur.
     const onValueChange = useCallback(
@@ -212,12 +217,11 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
                 key = undefined;
             }
 
-            const newQuery = getQuery(key);
-            updateQuery(newQuery, !!pQuery);
+            updateQuery(!clearQueryOnChange ? getQuery(key) : "", pQuery !== undefined);
             onChange?.(key);
             inputRef.current?.blur();
         },
-        [allowUnmatched, getQuery, onChange, pQuery, query, suggestions, updateQuery]
+        [allowUnmatched, clearQueryOnChange, getQuery, onChange, pQuery, query, suggestions, updateQuery]
     );
 
     // Handlers sur l'input.
@@ -260,18 +264,18 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
     );
 
     return (
-        <div ref={menu.anchor} className={classNames(theme.autocomplete(), className)}>
+        <div className={classNames(theme.autocomplete(), className)}>
             <TextField
                 ref={inputRef}
                 autoComplete={config.autocompleteOffValue}
                 disabled={disabled}
                 error={error}
+                fieldRef={menu.anchor}
                 hint={hint}
                 icon={icon}
                 id={id}
                 label={label}
                 loading={loading}
-                maxLength={maxLength}
                 multiline={multiline}
                 name={name}
                 onBlur={handleBlur}
@@ -295,7 +299,11 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
                 supportingText={supportingText}
                 tabIndex={tabIndex}
                 theme={theme as unknown as CSSProp<TextFieldCss>}
-                trailing={trailing}
+                trailing={
+                    query && !suggestions.length && !loading && !allowUnmatched
+                        ? [{icon: "warning"}, ...(Array.isArray(trailing) ? trailing : [trailing])]
+                        : trailing
+                }
                 type="search"
                 value={query}
             />
@@ -309,10 +317,10 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
                 position={direction === "auto" ? "full-auto" : direction === "up" ? "bottom" : "top"}
                 selected={selected}
             >
-                {suggestions.map(({key, item}) => (
-                    <Ripple key={key}>
-                        <span className={theme.suggestion({active: key === selected})}>
-                            {LineComponent ? <LineComponent item={item} /> : getLabel(item)}
+                {suggestions.map(s => (
+                    <Ripple key={getKey(s)}>
+                        <span className={theme.suggestion({active: getKey(s) === selected})}>
+                            {LineComponent ? <LineComponent item={s} /> : getLabel(s)}
                         </span>
                     </Ripple>
                 ))}
@@ -324,7 +332,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
             </Menu>
         </div>
     );
-}) as <TSource = string>(
+}) as <TSource = {key: string; label: string}>(
     props: AutocompleteProps<TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
 ) => ReactElement;
 
