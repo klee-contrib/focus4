@@ -16,7 +16,7 @@
     height: var(--progress-indicator-width);
 }
 
-.circular {
+.circular svg {
     user-select: none;
     height: var(--progress-indicator-circular-size);
     width: var(--progress-indicator-circular-size);

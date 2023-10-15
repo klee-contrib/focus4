@@ -24,6 +24,7 @@ import {PointerEvents} from "../utils/pointer-events";
 
 import {FontIcon} from "./font-icon";
 import {IconButton} from "./icon-button";
+import {CircularProgressIndicator} from "./progress-indicator";
 import {Tooltip} from "./tooltip";
 
 import textFieldCss, {TextFieldCss} from "./__style__/text-field.css";
@@ -61,6 +62,8 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     id?: string;
     /** Libellé du champ, sera affiché à la place du `hint` et se déplacera sur le dessus lorsque le champ est utilisé. */
     label?: string;
+    /** Affiche un indicateur de chargement dans le champ texte. */
+    loading?: boolean;
     /** Taille maximum du champ. Sera affiché en dessous du champ à côté de `supportingText`. */
     maxLength?: number;
     /** Si renseigné, affiche un <textarea> à la place de l'<input>.  */
@@ -121,6 +124,7 @@ export const TextField = forwardRef(function TextField(
         icon,
         id,
         label,
+        loading = false,
         maxLength,
         multiline = false,
         name,
@@ -162,7 +166,7 @@ export const TextField = forwardRef(function TextField(
     useImperativeHandle(ref, () => inputNode.current!, []);
 
     const [hasFocus, setHasFocus] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loaded, setLoaded] = useState(false);
     const smallLabelWidth = useRef(0);
 
     useEffect(() => {
@@ -170,7 +174,7 @@ export const TextField = forwardRef(function TextField(
             const width = labelNode.current.getBoundingClientRect().width * (value?.length ? 1 : 0.75);
             smallLabelWidth.current = width;
         }
-        setLoading(false);
+        setLoaded(true);
     }, []);
 
     useEffect(() => {
@@ -278,7 +282,7 @@ export const TextField = forwardRef(function TextField(
                 theme.textField({
                     disabled,
                     error,
-                    loading,
+                    loading: !loaded,
                     filled: !!value?.length,
                     focused: hasFocus,
                     leadingIcon: !!icon,
@@ -308,6 +312,7 @@ export const TextField = forwardRef(function TextField(
                         <span className={theme.suffix()}>{suffix}</span>
                     ) : null}
                 </div>
+                {loading ? <CircularProgressIndicator className={theme.progress()} indeterminate /> : null}
                 {trailings.map((t, i) => {
                     const iconElement = t.onClick ? (
                         <IconButton

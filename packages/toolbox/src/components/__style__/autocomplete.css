@@ -1,5 +1,4 @@
 :root {
-    --autocomplete-overflow-max-height: 45vh;
     --autocomplete-suggestion-active-background: rgb(var(--palette-grey-200));
     --autocomplete-suggestions-background: rgb(var(--color-white));
 }
@@ -10,66 +9,20 @@
 
 .autocomplete {
     position: relative;
-    box-sizing: border-box;
-    font-family: var(--preferred-font);
-
-    & *,
-    & *::after,
-    & *::before {
-        box-sizing: border-box;
-    }
-}
-
-.suggestions {
-    background-color: var(--autocomplete-suggestions-background);
-    list-style: none;
-    max-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    transition-duration: var(--animation-duration);
-    transition-property: max-height, box-shadow;
-    transition-timing-function: var(--animation-curve-default);
-    visibility: hidden;
-    width: 100%;
-    z-index: var(--z-index-highest);
-}
-
-.suggestions--down {
-    top: var(--text-field-height);
-}
-
-.suggestions--up {
-    bottom: 100%;
-}
-
-.autocomplete--focus .suggestions {
-    box-shadow: var(--zdepth-shadow-1);
-    max-height: var(--autocomplete-overflow-max-height);
-    visibility: visible;
 }
 
 .suggestion {
+    display: inline-block;
+    width: 100%;
     position: relative;
-    min-height: var(--text-field-height);
+    min-height: calc(var(--text-field-height) - 2 * var(--text-field-outline-size));
     padding: var(--text-field-padding-vertical) var(--text-field-padding-horizontal);
     font-size: var(--text-field-font-size);
+    box-sizing: border-box;
     cursor: pointer;
-}
-
-.suggestion--final {
-    cursor: inherit;
+    vertical-align: middle;
 }
 
 .suggestion--active {
-    background-color: var(--autocomplete-suggestion-active-background);
-}
-
-.progressBar {
-    position: absolute;
-    top: var(--text-field-height);
-    height: 2px;
-    width: 100%;
+    background: var(--input-on-light-color);
 }

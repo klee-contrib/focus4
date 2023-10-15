@@ -5,11 +5,10 @@
     --color-text-secondary: var(--palette-grey-600);
 
     --color-primary: var(--palette-indigo-500);
+    --color-primary-light: var(--palette-indigo-100);
     --color-primary-dark: var(--palette-indigo-700);
+    --color-primary-contrast: var(--color-white);
     --color-accent: var(--palette-pink-a200);
-    --color-accent-dark: var(--palette-pink-700);
-    --color-primary-contrast: var(--color-dark-contrast);
-    --color-accent-contrast: var(--color-dark-contrast);
 
     --unit: 10px;
 
@@ -46,6 +45,9 @@
 
     --color-white: 11, 11, 11;
     --color-black: 238, 238, 238;
+    --color-primary: var(--palette-indigo-300);
+    --color-primary-light: var(--palette-indigo-800);
+    --color-primary-dark: var(--palette-indigo-100);
 
     --palette-grey-50: 22, 22, 22;
     --palette-grey-100: 33, 33, 33;

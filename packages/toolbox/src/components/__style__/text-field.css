@@ -133,6 +133,11 @@
     text-align: right;
 }
 
+.progress {
+    --progress-indicator-circular-size: calc(var(--text-field-height) - var(--text-field-padding-vertical));
+    padding-right: calc(var(--text-field-icon-padding) / 2);
+}
+
 .supportingText {
     padding: var(--text-field-supporting-text-padding) var(--text-field-padding-horizontal);
     display: flex;

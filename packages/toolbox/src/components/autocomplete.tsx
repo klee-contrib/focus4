@@ -1,19 +1,15 @@
 import classNames from "classnames";
-import {orderBy, toPairs, uniqueId} from "lodash";
 import {
+    FocusEvent,
     FocusEventHandler,
-    FormEvent,
     ForwardedRef,
     forwardRef,
     KeyboardEventHandler,
     ReactElement,
-    ReactEventHandler,
     ReactNode,
-    SyntheticEvent,
     useCallback,
     useEffect,
     useImperativeHandle,
-    useLayoutEffect,
     useMemo,
     useRef,
     useState
@@ -22,40 +18,48 @@ import {
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {LinearProgressIndicator} from "./progress-indicator";
+import {Menu, useMenu} from "./menu";
 import {Ripple} from "./ripple";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss, AutocompleteCss};
 
-export interface AutocompleteProps<TSource = string>
-    extends Omit<TextFieldProps, "autoComplete" | "onChange" | "theme" | "type" | "value"> {
-    /** Determines if user can create a new option with the current typed value. */
-    allowCreate?: boolean;
-    /** Determines the opening direction. It can be auto, up or down. */
+export interface AutocompleteProps<TValue = string>
+    extends Omit<TextFieldProps, "autoComplete" | "onChange" | "theme" | "type"> {
+    /** Suggestions supplémentaires à afficher en plus des suggestions issues de `values`, pour effectuer des actions différentes.  */
+    additionalSuggestions?: {key: string; content: ReactNode; onClick: () => void}[];
+    /** Autorise la sélection d'une valeur qui n'existe pas dans `values` (le contenu de la `query` sera retourné en tant que valeur). */
+    allowUnmatched?: boolean;
+    /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
-    /** React Node to display as the last suggestion. */
-    finalSuggestion?: ReactNode;
-    /** Gets the label from a source item. Defaults to returning the item (works if the item is a regular string). */
-    getLabel?: (x: TSource) => string;
-    /** Displays an indeteminate progress bar below the input field. */
-    loading?: boolean;
-    /** Custom component for rendering suggestions. */
-    LineComponent?: (props: {item: TSource}) => ReactElement;
-    onChange?: (value: string, event: FormEvent<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement>) => void;
-    /** Callback function that is fired when the components's query value changes. */
-    onQueryChange?: (text: string) => void;
-    /** Overrides the inner query. */
+    /**
+     * Permet de récupérer le libellé à partir de l'objet correspondant à une clé dans les valeurs.
+     *
+     * Le libellé de l'objet est le texte utilisé pour chercher la correspondance avec le texte saisi dans le champ.
+     *
+     * Si non renseigné, l'objet entier sera utilisé (ce qui fonctionne si l'objet est directement un string).
+     */
+    getLabel?: (x: TValue) => string;
+    /** Composant personnalisé pour afficher les suggestions. */
+    LineComponent?: (props: {item: TValue}) => ReactElement;
+    /**
+     * Appelé avec la clé correspondante lors de la sélection d'une valeur.
+     *
+     * Sera appelé avec `undefined` (si `allowUnmatched = false`) si aucune suggestion n'est disponible lors de la confirmation de la saisie
+     * (au blur du champ ou en appuyant sur Entrée).
+     */
+    onChange?: (value?: string) => void;
+    /** Handler appelé lorsque la query (= contenu du champ texte) change. */
+    onQueryChange?: (query: string) => void;
+    /** Permet de surcharger la query (= contenu du champ texte). A utiliser avec `onQueryChange`.  */
     query?: string;
-    /** Object of key/values representing all items suggested. */
-    source?: Record<string, TSource>;
-    /** Determines how suggestions are supplied. */
+    /** Précise le mode de correspondance utilisé entre la query et le libellé. Par défaut : "start". */
     suggestionMatch?: "anywhere" | "disabled" | "start" | "word";
-    /** If set, sorts the suggestions by key or label ascending. */
-    suggestionSort?: "key" | "label";
+    /** CSS. */
     theme?: CSSProp<AutocompleteCss & TextFieldCss>;
-    value?: string;
+    /** Valeurs disponibles pour la sélection. */
+    values?: {key: string; item: TValue}[];
 }
 
 const defaultGetLabel = (x: any) => x;
@@ -65,14 +69,14 @@ const defaultGetLabel = (x: any) => x;
  *
  * Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles en entrée**.
  */
-export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
+export const Autocomplete = forwardRef(function Autocomplete<TValue = string>(
     {
-        allowCreate = false,
+        allowUnmatched = false,
         className,
-        direction: pDirection = "auto",
+        direction = "auto",
         disabled,
         error,
-        finalSuggestion,
+        additionalSuggestions,
         getLabel = defaultGetLabel,
         hint,
         icon,
@@ -104,34 +108,57 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
         showSupportingText = "auto",
         supportingText,
         suffix,
-        suggestionSort,
-        source = {} as Record<string, TSource>,
         suggestionMatch = "start",
         tabIndex,
         trailing,
         theme: pTheme,
-        value
-    }: AutocompleteProps<TSource>,
+        value,
+        values = []
+    }: AutocompleteProps<TValue>,
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) {
-    /** Détermine la query à partir de la valeur. */
-    const getQuery = useCallback(
-        (v?: string) => (v ? (source[v] && getLabel(source[v])) || v : ""),
-        [getLabel, source]
-    );
+    const theme = useTheme("autocomplete", autocompleteCss, pTheme);
 
-    const theme = useTheme("RTAutocomplete", autocompleteCss, pTheme);
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     useImperativeHandle(ref, () => inputRef.current!, []);
 
-    const [active, setActive] = useState<string>();
-    const [direction, setDirection] = useState(pDirection);
-    const [focus, setFocus] = useState(false);
-    const [query, setQuery] = useState(pQuery ?? getQuery(value));
+    const menu = useMenu();
+    const [selected, setSelected] = useState<string>();
 
+    // Gestion de la `query`.
+    const getQuery = useCallback(
+        (v?: string) => {
+            if (v) {
+                const match = values.find(i => i.key === v);
+                if (match) {
+                    return getLabel(match.item);
+                }
+            }
+
+            return v ?? "";
+        },
+        [getLabel, values]
+    );
+    const [query, setQuery] = useState(pQuery ?? getQuery(value));
+    const updateQuery = useCallback(
+        (newQuery: string, notify: boolean) => {
+            if (notify && onQueryChange) {
+                onQueryChange(newQuery);
+            }
+            setQuery(newQuery);
+
+            if (!newQuery) {
+                setSelected(undefined);
+            }
+        },
+        [onQueryChange]
+    );
+
+    useEffect(() => updateQuery(pQuery ? pQuery : getQuery(value), false), [getQuery, pQuery, updateQuery, value]);
+
+    // Suggestions.
     const suggestions = useMemo(() => {
-        const rawQuery = (query || value) ?? "";
-        const newQuery = normalise(`${rawQuery}`);
+        const newQuery = normalise(`${query}`);
 
         /** Détermine si la valeur est une match pour la requête.  */
         function isMatch(v: string, q: string) {
@@ -151,81 +178,52 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
         }
 
         if (newQuery) {
-            return toPairs<TSource>(source).reduce((suggest, [k, v]) => {
-                if (isMatch(normalise(getLabel(v)), newQuery)) {
-                    suggest[k] = v;
-                }
-                return suggest;
-            }, {} as Record<string, TSource>);
+            return values.filter(i => isMatch(normalise(getLabel(i.item)), newQuery));
         } else {
-            return source;
+            return values;
         }
-    }, [getLabel, query, source, suggestionMatch, value]);
+    }, [getLabel, query, suggestionMatch, value, values]);
 
-    const updateQuery = useCallback(
-        (newQuery: string, notify: boolean) => {
-            if (notify && onQueryChange) {
-                onQueryChange(newQuery);
-            }
-            setQuery(newQuery);
-        },
-        [onQueryChange]
-    );
-
-    // Met à jour `query` quand les props changent.
+    // Détermine la valeur sélectionnée dans la liste de suggestions.
     useEffect(() => {
-        const q = pQuery ? pQuery : getQuery(value);
-        updateQuery(q, false);
-    }, [getQuery, pQuery, updateQuery, value]);
-
-    // Recalcule la position de la sélection quand elle est automatique.
-    useLayoutEffect(() => {
-        if (focus && pDirection === "auto") {
-            const client = inputRef.current?.getBoundingClientRect() ?? {top: 0, height: 0};
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
-            const up = client.top > screenHeight / 2 + client.height;
-            setDirection(up ? "up" : "down");
+        if (!selected && query && suggestions.length) {
+            setSelected(suggestions[0].key);
+        } else if (
+            selected &&
+            !suggestions
+                .map(s => s.key)
+                .concat(additionalSuggestions?.map(s => s.key) ?? [])
+                .includes(selected)
+        ) {
+            setSelected(undefined);
         }
-    }, [pDirection, focus]);
+    }, [query, selected, suggestions]);
 
     // Appelé à la sélection d'une valeur.
-    const handleChange = useCallback(
-        (newValue: string, event: FormEvent<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement>) => {
-            const newQuery = getQuery(newValue);
+    const onValueChange = useCallback(
+        (key?: string) => {
+            if (!key && allowUnmatched) {
+                key = query;
+            }
+
+            const additionalSuggestion = additionalSuggestions?.find(s => s.key === key);
+            if (additionalSuggestion) {
+                additionalSuggestion.onClick();
+                key = undefined;
+            }
+
+            const newQuery = getQuery(key);
             updateQuery(newQuery, !!pQuery);
-            onChange?.(newValue, event);
-            setFocus(false);
+            onChange?.(key);
             inputRef.current?.blur();
         },
-        [getQuery, onChange, pQuery, updateQuery]
+        [allowUnmatched, getQuery, onChange, pQuery, query, suggestions, updateQuery]
     );
 
-    const select = useCallback(
-        (event: SyntheticEvent<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement>, target: string) => {
-            event.stopPropagation();
-            event.preventDefault();
-            handleChange(target, event);
-        },
-        [handleChange]
-    );
-
-    const selectOrCreateActiveItem: ReactEventHandler<HTMLInputElement | HTMLLIElement | HTMLTextAreaElement> =
-        useCallback(
-            event => {
-                let target = active;
-                if (!target) {
-                    target = allowCreate ? query : Object.keys(suggestions)[0];
-                    setActive(target);
-                }
-                select(event, target);
-            },
-            [active, allowCreate, query, select, suggestions]
-        );
-
+    // Handlers sur l'input.
     const handleQueryChange = useCallback(
         (newQuery: string) => {
             updateQuery(newQuery, true);
-            setActive(undefined);
         },
         [updateQuery]
     );
@@ -233,8 +231,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
     const handleQueryFocus: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
             event.target.scrollTop = 0;
-            setActive("");
-            setFocus(true);
+            menu.open();
             onFocus?.(event);
         },
         [onFocus]
@@ -243,82 +240,27 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
     const handleQueryKeyDown: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
             if (event.key === "Enter" || event.key === "Tab") {
-                selectOrCreateActiveItem(event);
+                onValueChange(selected);
+                menu.close();
             }
 
             onKeyDown?.(event);
         },
-        [onKeyDown, selectOrCreateActiveItem]
+        [onKeyDown, onValueChange, selected]
     );
 
-    const handleQueryKeyUp: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
-        event => {
-            if (event.key === "Escape") {
-                inputRef.current?.blur();
-                setFocus(false);
+    const handleBlur = useCallback(
+        (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            if (!value && !selected && !allowUnmatched) {
+                setQuery("");
             }
-
-            if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-                const suggestionsKeys = Object.keys(suggestions);
-                let index = !active ? 0 : suggestionsKeys.indexOf(active) + (event.key === "ArrowDown" ? +1 : -1);
-                if (index < 0) {
-                    index = suggestionsKeys.length - 1;
-                }
-                if (index >= suggestionsKeys.length) {
-                    index = 0;
-                }
-                setActive(suggestionsKeys[index]);
-            }
-
-            onKeyUp?.(event);
+            onBlur?.(event);
         },
-        [active, onKeyUp, suggestions]
+        [allowUnmatched, onBlur, selected, value]
     );
-
-    const [suggestionsUlId] = useState(() => uniqueId("autocomplete_suggestions"));
-    const [finalSuggestionId] = useState(() => uniqueId("autocomplete_final_suggestion"));
-
-    const onDocumentClick = useCallback(({target}: Event) => {
-        let parent = target as HTMLElement | null;
-
-        while (
-            parent &&
-            parent.getAttribute("data-id") !== suggestionsUlId &&
-            parent.getAttribute("data-id") !== finalSuggestionId &&
-            parent !== inputRef.current
-        ) {
-            parent = parent.parentElement;
-        }
-
-        if (!parent) {
-            setFocus(false);
-        } else if (parent.getAttribute("data-id") === finalSuggestionId) {
-            const closeOnClick = () => {
-                setFocus(false);
-                window.removeEventListener("pointerup", closeOnClick);
-            };
-            window.addEventListener("pointerup", closeOnClick);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (focus) {
-            window.addEventListener("pointerdown", onDocumentClick);
-            return () => window.removeEventListener("pointerdown", onDocumentClick);
-        }
-    }, [focus]);
-
-    const suggestionList = useMemo(() => {
-        const list = toPairs(suggestions).map(([key, val]) => ({key, val}));
-        if (suggestionSort) {
-            return orderBy(list, i => (suggestionSort === "label" ? getLabel(i.val) : i.key));
-        } else {
-            return list;
-        }
-    }, [suggestions, suggestionSort]);
 
     return (
-        <div className={classNames(theme.autocomplete({focus}), className)} data-react-toolbox="autocomplete">
+        <div ref={menu.anchor} className={classNames(theme.autocomplete(), className)}>
             <TextField
                 ref={inputRef}
                 autoComplete={config.autocompleteOffValue}
@@ -328,16 +270,17 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
                 icon={icon}
                 id={id}
                 label={label}
+                loading={loading}
                 maxLength={maxLength}
                 multiline={multiline}
                 name={name}
-                onBlur={onBlur}
+                onBlur={handleBlur}
                 onChange={handleQueryChange}
                 onContextMenu={onContextMenu}
                 onFocus={handleQueryFocus}
                 onKeyDown={handleQueryKeyDown}
                 onKeyPress={onKeyPress}
-                onKeyUp={handleQueryKeyUp}
+                onKeyUp={onKeyUp}
                 onPaste={onPaste}
                 onPointerDown={onPointerDown}
                 onPointerEnter={onPointerEnter}
@@ -356,29 +299,29 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = string>(
                 type="search"
                 value={query}
             />
-            {loading ? <LinearProgressIndicator indeterminate theme={{linear: theme.progressBar()}} /> : null}
-            <ul
-                className={theme.suggestions({up: direction === "up", down: direction === "down"})}
-                data-id={suggestionsUlId}
+            <Menu
+                {...menu}
+                keepSelectionOnPointerLeave
+                noBlurOnArrowPress
+                noRing
+                onItemClick={key => onValueChange(key)}
+                onSelectedChange={setSelected}
+                position={direction === "auto" ? "full-auto" : direction === "up" ? "bottom" : "top"}
+                selected={selected}
             >
-                {suggestionList.map(({key, val}) => (
+                {suggestions.map(({key, item}) => (
                     <Ripple key={key}>
-                        <li
-                            className={theme.suggestion({active: active === key})}
-                            id={key}
-                            onClick={selectOrCreateActiveItem}
-                            onMouseOver={event => setActive(event.currentTarget.id)}
-                        >
-                            {LineComponent ? <LineComponent item={val} /> : getLabel(val)}
-                        </li>
+                        <span className={theme.suggestion({active: key === selected})}>
+                            {LineComponent ? <LineComponent item={item} /> : getLabel(item)}
+                        </span>
                     </Ripple>
                 ))}
-                {finalSuggestion ? (
-                    <li className={theme.suggestion({final: true})} data-id={finalSuggestionId}>
-                        {finalSuggestion}
-                    </li>
-                ) : null}
-            </ul>
+                {additionalSuggestions?.map(({key, content}) => (
+                    <Ripple key={key}>
+                        <span className={theme.suggestion({active: key === selected})}>{content}</span>
+                    </Ripple>
+                ))}
+            </Menu>
         </div>
     );
 }) as <TSource = string>(

@@ -66,7 +66,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
     @observable protected _query = this.props.query ?? "";
 
     /** Résultat de la recherche d'autocomplétion. */
-    protected readonly data = observable.map<string, TSource>();
+    protected readonly values = observable<{key: string; item: TSource}>([]);
 
     constructor(props: AutocompleteProps<T, TSource>) {
         super(props);
@@ -101,12 +101,6 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
         }
     }
 
-    /** Résultats sous format JSON, pour l'autocomplete. */
-    @computed.struct
-    get source() {
-        return Object.fromEntries(this.data);
-    }
-
     @computed
     get query() {
         return this.props.query ?? this._query;
@@ -122,8 +116,8 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
         } = this.props;
 
         // On compare la query à la dernière valeur retournée par l'autocomplete : si elles sont différentes, alors on vide le champ.
-        const item = this.value && this.data.get(this.value);
-        if ((!item || (item && getLabel(item) !== query)) && onChange) {
+        const match = this.value && this.values.find(v => v.key === this.value);
+        if ((!match || (match && getLabel(match.item) !== query)) && onChange) {
             onChange(undefined);
         }
 
@@ -139,7 +133,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
             this.value = "";
         }
         if (!searchOnEmptyQuery && !query) {
-            this.data.clear();
+            this.values.clear();
         }
     }
 
@@ -153,19 +147,19 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
      * @param value La valeur sélectionnée.
      */
     @action.bound
-    onValueChange(value: string) {
+    onValueChange(value?: string) {
         const {isQuickSearch, onChange, type} = this.props;
 
         if (isQuickSearch && value) {
             this.query = "";
-            this.data.clear();
+            this.values.clear();
             this.focus();
         }
 
         this.value = value;
 
         if (onChange) {
-            const v = (type === "number" ? parseFloat(value) : value) as T extends "string" ? string : number;
+            const v = (type === "number" && value ? parseFloat(value) : value) as T extends "string" ? string : number;
             onChange(v || v === 0 ? v : undefined);
         }
     }
@@ -182,11 +176,11 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
             this.isLoading = true;
             const result = await querySearcher(encodeURIComponent(query.trim()));
             runInAction(() => {
-                this.data.replace(result?.data?.reduce((acc, next) => ({...acc, [getKey(next)]: next}), {}) ?? {});
+                this.values.replace(result?.data?.map(item => ({key: getKey(item), item})) ?? []);
                 this.isLoading = false;
 
                 if (autoSelect) {
-                    if (this.data && this.data.size === 1) {
+                    if (this.values && this.values.length === 1) {
                         this.onValueChange(query);
                     } else {
                         this.onValueChange("");
@@ -203,7 +197,7 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
 
     @action.bound
     onFocus() {
-        if (!this.data.size && this.props.searchOnEmptyQuery) {
+        if (!this.values.length && this.props.searchOnEmptyQuery) {
             this.search(this.query);
         }
     }
@@ -226,15 +220,15 @@ export class Autocomplete<T extends "number" | "string", TSource = {key: string;
                 getLabel={getLabel}
                 loading={this.isLoading}
                 maxLength={undefined}
-                onChange={value => this.onValueChange(value as string)}
+                onChange={value => this.onValueChange(value)}
                 onFocus={this.onFocus}
                 onQueryChange={query => (this.query = query ?? "")}
                 query={this.query}
                 showSupportingText="always"
-                source={this.source}
                 suggestionMatch="disabled"
                 supportingText={error ?? supportingText}
                 value={`${props.value ?? ""}`}
+                values={this.values}
             />
         );
     }
