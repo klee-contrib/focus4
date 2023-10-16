@@ -79,7 +79,7 @@ export function ContextualActions({
         }
     }
 
-    const menu = useMenu<HTMLDivElement>();
+    const menu = useMenu();
     useEffect(() => {
         if (menu.active) {
             onClickMenu?.();
@@ -119,7 +119,15 @@ export function ContextualActions({
                         onFocus={onClickMenu}
                     />
                 );
-                primaryActions.push(hasTooltip ? <Tooltip tooltip={Operation.label}>{button}</Tooltip> : button);
+                primaryActions.push(
+                    hasTooltip ? (
+                        <Tooltip key={key} tooltip={Operation.label}>
+                            {button}
+                        </Tooltip>
+                    ) : (
+                        button
+                    )
+                );
             } else if (Operation.label) {
                 secondaryActions.push({
                     icon: Operation.icon,
