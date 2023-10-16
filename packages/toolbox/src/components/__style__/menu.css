@@ -2,7 +2,6 @@
     --menu-background-color: rgb(var(--color-white));
     --menu-padding: 8px 0;
     --menu-border-radius: 4px;
-    --menu-max-height: 45vh;
     --menu-focus-ring-border-radius: 4px;
 
     --menu-item-icon-size: 24px;
@@ -26,12 +25,12 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: var(--menu-max-height);
     overflow-y: auto;
     background-color: var(--menu-background-color);
     border-radius: var(--menu-border-radius);
     z-index: var(--z-index-highest);
     box-shadow: var(--shadow-4p);
+    box-sizing: border-box;
 }
 
 .menu--active {

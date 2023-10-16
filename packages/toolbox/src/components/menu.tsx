@@ -198,22 +198,24 @@ export function Menu({
         pPosition === "auto" ? "topLeft" : pPosition === "full-auto" ? "top" : pPosition
     );
     const [positions, setPositions] = useState({top: 0, bottom: 0, left: 0, right: 0});
-    useLayoutEffect(() => {
-        if (active) {
-            if (pPosition === "auto" || pPosition === "full-auto") {
-                if (ref.current && anchor.current) {
-                    const {top: at, left: al, height: ah, width: aw} = anchor.current.getBoundingClientRect();
-                    const {
-                        top: pt,
-                        left: pl,
-                        height: ph,
-                        width: pw
-                    } = (ref.current.offsetParent ?? anchor.current).getBoundingClientRect();
-                    const ww = window.innerWidth || document.documentElement.offsetWidth;
-                    const wh = window.innerHeight || document.documentElement.offsetHeight;
-                    const toTop = at < wh / 2 - ah / 2;
-                    const toLeft = al < ww / 2 - aw / 2;
+    const [maxHeight, setMaxHeight] = useState(0);
 
+    const updatePositions = useCallback(
+        function updatePositions() {
+            if (ref.current && anchor.current) {
+                const {top: at, left: al, height: ah, width: aw} = anchor.current.getBoundingClientRect();
+                const {
+                    top: pt,
+                    left: pl,
+                    height: ph,
+                    width: pw
+                } = (ref.current.offsetParent ?? anchor.current).getBoundingClientRect();
+                const ww = window.innerWidth || document.documentElement.offsetWidth;
+                const wh = window.innerHeight || document.documentElement.offsetHeight;
+                const toTop = at < wh / 2 - ah / 2;
+                const toLeft = al < ww / 2 - aw / 2;
+
+                if (pPosition === "auto" || pPosition === "full-auto") {
                     setPosition(
                         `${toTop ? "top" : "bottom"}${pPosition === "auto" ? (toLeft ? "Left" : "Right") : ""}` as const
                     );
@@ -224,9 +226,24 @@ export function Menu({
                         right: pl + pw - al - aw
                     });
                 }
+
+                setMaxHeight(toTop ? wh - ah - at : at);
             }
+        },
+        [pPosition]
+    );
+
+    useLayoutEffect(() => {
+        if (active && anchor.current) {
+            updatePositions();
+            getScrollableParent(anchor.current).addEventListener("scroll", updatePositions);
+            window.addEventListener("resize", updatePositions);
+            return () => {
+                getScrollableParent(anchor.current!).addEventListener("scroll", updatePositions);
+                window.addEventListener("resize", updatePositions);
+            };
         }
-    }, [active, pPosition]);
+    }, [active, updatePositions]);
 
     // Fermeture du menu au clic à l'extérieur.
     useEffect(() => {
@@ -363,43 +380,47 @@ export function Menu({
                     top: position.startsWith("top") ? positions.top : undefined,
                     bottom: position.startsWith("bottom") ? positions.bottom : undefined,
                     left: position.endsWith("Left") ? positions.left : undefined,
-                    right: position.endsWith("Right") ? positions.right : undefined
+                    right: position.endsWith("Right") ? positions.right : undefined,
+                    maxHeight
                 }),
-                [position, positions]
+                [maxHeight, position, positions]
             )}
         >
             <AnimatePresence>
                 {active
-                    ? Children.map(children, (item, i) => {
-                          if (!item) {
-                              return item;
-                          }
+                    ? (Array.isArray(children) ? children.flat(Infinity) : [children])
+                          .map((item, i) => {
+                              if (!item) {
+                                  return item;
+                              }
 
-                          const isHr = unselectable(item);
-                          const key = (item as ReactElement)?.key ?? `${i}`;
+                              const isHr = unselectable(item);
+                              const key = (item as ReactElement)?.key ?? `${i}`;
 
-                          return (
-                              <motion.li
-                                  animate={{height: "auto", opacity: 1}}
-                                  className={theme.item({focused: !noRing && selected === key && showRing})}
-                                  data-key={key}
-                                  exit={{height: 0, opacity: 0}}
-                                  initial={{height: 0, opacity: 0}}
-                                  onClick={isHr ? undefined : e => handleItemClick(item as ReactElement, e)}
-                                  onPointerEnter={
-                                      isHr
-                                          ? undefined
-                                          : () => {
-                                                handleSelectedChange(key);
-                                                setShowRing(false);
-                                            }
-                                  }
-                                  transition={{height: {...springTransition, restDelta: 0.5}}}
-                              >
-                                  {item}
-                              </motion.li>
-                          );
-                      })
+                              return (
+                                  <motion.li
+                                      key={i}
+                                      animate={{height: "auto", opacity: 1}}
+                                      className={theme.item({focused: !noRing && selected === key && showRing})}
+                                      data-key={key}
+                                      exit={{height: 0, opacity: 0}}
+                                      initial={{height: 0, opacity: 0}}
+                                      onClick={isHr ? undefined : e => handleItemClick(item as ReactElement, e)}
+                                      onPointerEnter={
+                                          isHr
+                                              ? undefined
+                                              : () => {
+                                                    handleSelectedChange(key);
+                                                    setShowRing(false);
+                                                }
+                                      }
+                                      transition={{height: {...springTransition, restDelta: 0.5}}}
+                                  >
+                                      {item}
+                                  </motion.li>
+                              );
+                          })
+                          .filter(x => !!x)
                     : null}
             </AnimatePresence>
         </ul>
@@ -408,4 +429,21 @@ export function Menu({
 
 function unselectable(item: ReactNode): boolean {
     return (item as ReactElement)?.type === "hr" || (item as ReactElement)?.props.disabled;
+}
+
+function isScrollable(ele: HTMLElement) {
+    const hasScrollableContent = ele.scrollHeight > ele.clientHeight;
+
+    const overflowYStyle = window.getComputedStyle(ele).overflowY;
+    const isOverflowHidden = overflowYStyle.includes("hidden");
+
+    return hasScrollableContent && !isOverflowHidden;
+}
+
+function getScrollableParent(ele: HTMLElement): HTMLElement {
+    return !ele || ele === document.body
+        ? document.body
+        : isScrollable(ele)
+        ? ele
+        : getScrollableParent(ele.parentNode as HTMLElement);
 }
