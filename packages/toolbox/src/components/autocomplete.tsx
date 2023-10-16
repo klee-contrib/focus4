@@ -127,6 +127,11 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     useImperativeHandle(ref, () => inputRef.current!, []);
 
+    const valueRef = useRef<string | undefined>(value);
+    useEffect(() => {
+        valueRef.current = value;
+    }, [value]);
+
     const menu = useMenu();
     const [selected, setSelected] = useState<string>();
 
@@ -219,6 +224,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
             updateQuery(!clearQueryOnChange ? getQuery(key) : "", pQuery !== undefined);
             onChange?.(key);
+            valueRef.current = key;
             inputRef.current?.blur();
         },
         [allowUnmatched, clearQueryOnChange, getQuery, onChange, pQuery, query, suggestions, updateQuery]
@@ -228,6 +234,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
     const handleQueryChange = useCallback(
         (newQuery: string) => {
             updateQuery(newQuery, true);
+            valueRef.current = undefined;
         },
         [updateQuery]
     );
@@ -246,6 +253,8 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
             if (event.key === "Enter" || event.key === "Tab") {
                 onValueChange(selected);
                 menu.close();
+            } else if (event.key !== "Escape") {
+                menu.open();
             }
 
             onKeyDown?.(event);
@@ -255,12 +264,13 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
     const handleBlur = useCallback(
         (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            if (!value && !selected && !allowUnmatched) {
-                setQuery("");
+            if ((!valueRef.current || !selected) && !allowUnmatched && !menu.active) {
+                updateQuery("", true);
+                onValueChange(undefined);
             }
             onBlur?.(event);
         },
-        [allowUnmatched, onBlur, selected, value]
+        [allowUnmatched, menu.active, onBlur, selected]
     );
 
     return (

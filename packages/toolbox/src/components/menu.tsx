@@ -190,31 +190,39 @@ export function Menu({
     const theme = useTheme("menu", menuCss, pTheme);
 
     const ref = useRef<HTMLUListElement>(null);
-    const pointerDisabled = useRef<NodeJS.Timeout>();
 
     const [showRing, setShowRing] = useState(false);
-
-    // Taille de l'élément ancre.
-    const [anchorHeight, setAnchorHeight] = useState(0);
-    useLayoutEffect(() => setAnchorHeight(anchor?.current?.clientHeight ?? 0));
 
     // Position du menu.
     const [position, setPosition] = useState(
         pPosition === "auto" ? "topLeft" : pPosition === "full-auto" ? "top" : pPosition
     );
+    const [positions, setPositions] = useState({top: 0, bottom: 0, left: 0, right: 0});
     useLayoutEffect(() => {
         if (active) {
             if (pPosition === "auto" || pPosition === "full-auto") {
-                const parentNode = ref.current?.parentNode;
-                if (parentNode) {
-                    const {top, left, height: ph, width: pw} = (parentNode as HTMLElement).getBoundingClientRect();
+                if (ref.current && anchor.current) {
+                    const {top: at, left: al, height: ah, width: aw} = anchor.current.getBoundingClientRect();
+                    const {
+                        top: pt,
+                        left: pl,
+                        height: ph,
+                        width: pw
+                    } = (ref.current.offsetParent ?? anchor.current).getBoundingClientRect();
                     const ww = window.innerWidth || document.documentElement.offsetWidth;
                     const wh = window.innerHeight || document.documentElement.offsetHeight;
-                    const toTop = top < wh / 2 - ph / 2;
-                    const toLeft = left < ww / 2 - pw / 2;
+                    const toTop = at < wh / 2 - ah / 2;
+                    const toLeft = al < ww / 2 - aw / 2;
+
                     setPosition(
                         `${toTop ? "top" : "bottom"}${pPosition === "auto" ? (toLeft ? "Left" : "Right") : ""}` as const
                     );
+                    setPositions({
+                        top: at + ah - pt,
+                        bottom: pt + ph - at,
+                        left: al - pl,
+                        right: pl + pw - al - aw
+                    });
                 }
             }
         }
@@ -273,6 +281,14 @@ export function Menu({
         [onItemClick, close]
     );
 
+    const resetPointerEvents = useCallback(function resetPointerEvents() {
+        if (ref.current) {
+            ref.current.style.pointerEvents = "";
+            document.removeEventListener("pointermove", resetPointerEvents);
+        }
+    }, []);
+    useEffect(() => resetPointerEvents, []);
+
     // Navigation clavier.
     useEffect(() => {
         if (active) {
@@ -305,9 +321,8 @@ export function Menu({
                     handleSelectedChange(keys[index]);
 
                     if (ref.current) {
-                        clearTimeout(pointerDisabled.current);
                         ref.current.style.pointerEvents = "none";
-                        pointerDisabled.current = setTimeout(() => (ref.current!.style.pointerEvents = ""), 500);
+                        document.addEventListener("pointermove", resetPointerEvents);
                         ref.current
                             .querySelector(`[data-key="${keys[index]}"]`)
                             ?.scrollIntoView({block: "nearest", inline: "nearest", behavior: "smooth"});
@@ -345,11 +360,12 @@ export function Menu({
             }}
             style={useMemo(
                 () => ({
-                    top: position.startsWith("top") ? anchorHeight : undefined,
-                    bottom: position.startsWith("bottom") ? anchorHeight : undefined,
-                    right: position.endsWith("Right") ? 0 : undefined
+                    top: position.startsWith("top") ? positions.top : undefined,
+                    bottom: position.startsWith("bottom") ? positions.bottom : undefined,
+                    left: position.endsWith("Left") ? positions.left : undefined,
+                    right: position.endsWith("Right") ? positions.right : undefined
                 }),
-                [position, anchorHeight]
+                [position, positions]
             )}
         >
             <AnimatePresence>
