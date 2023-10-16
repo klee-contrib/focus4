@@ -61,7 +61,7 @@ export {
 } from "./presentation";
 export {ButtonBttCss, Scrollable, ScrollableProps, ScrollableCss, buttonBttCss, scrollableCss} from "./scrollable";
 export {translation} from "./translation";
-export {LoadingBar, LoadingBarCss, MessageCenter, MessageCenterProps, loadingBarCss, snackBarCss} from "./utils";
+export {LoadingBar, LoadingBarCss, MessageCenter, MessageCenterProps, loadingBarCss} from "./utils";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface LayoutStyleProviderProps {

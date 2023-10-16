@@ -1,7 +1,7 @@
 :root {
-    --snackbar-color-cancel: rgb(var(--palette-red-500));
-    --snackbar-color-accept: rgb(var(--palette-green-500));
-    --snackbar-color-warning: rgb(var(--palette-lime-a200));
+    --snackbar-color-cancel: rgb(var(--palette-red-600));
+    --snackbar-color-accept: rgb(var(--palette-green-600));
+    --snackbar-color-warning: rgb(var(--palette-yellow-800));
     --snackbar-background-color: rgb(var(--color-text));
     --snackbar-border-radius: calc(0.2 * var(--unit));
     --snackbar-button-offset: calc(4.8 * var(--unit));
@@ -9,6 +9,12 @@
     --snackbar-horizontal-offset: calc(2.4 * var(--unit));
     --snackbar-vertical-offset: calc(1.4 * var(--unit));
     --snackbar-width: 400px;
+}
+
+:root[dark] {
+    --snackbar-color-cancel: rgb(var(--palette-red-400));
+    --snackbar-color-accept: rgb(var(--palette-green-400));
+    --snackbar-color-warning: rgb(var(--palette-yellow-600));
 }
 
 .snackbar {
@@ -23,16 +29,11 @@
     padding: var(--snackbar-vertical-offset) var(--snackbar-horizontal-offset);
     position: fixed;
     right: var(--snackbar-horizontal-offset);
-    transition: all var(--animation-duration) var(--animation-curve-default) var(--animation-duration);
-    z-index: var(--z-index-higher);
+    transition: transform var(--animation-duration) var(--animation-curve-default) var(--animation-duration);
+    z-index: var(--z-index-highest);
     box-sizing: border-box;
     font-family: var(--preferred-font);
-
-    & *,
-    & *::after,
-    & *::before {
-        box-sizing: border-box;
-    }
+    width: var(--snackbar-width);
 }
 
 .snackbar--accept {
@@ -63,7 +64,8 @@
 .button {
     --button-border-radius: var(--snackbar-border-radius);
     --button-padding: 20px;
+    --button-secondary-color: var(--snackbar-color);
     margin: calc(-1 * var(--snackbar-vertical-offset) / 2) calc(-1 * var(--snackbar-horizontal-offset) / 2)
         calc(-1 * var(--snackbar-vertical-offset) / 2) var(--snackbar-button-offset);
-    min-width: inherit;
+    flex: 0 0 auto;
 }

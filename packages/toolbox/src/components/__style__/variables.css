@@ -51,4 +51,6 @@
 
 :root[dark] {
     --button-main-color: rgb(var(--palette-grey-100));
+    --button-hover-opacity: 0.12;
+    --input-error-palette: var(--palette-red-400);
 }

@@ -6,9 +6,6 @@ import {useCallback, useEffect} from "react";
 import {messageStore} from "@focus4/core";
 import {Snackbar} from "@focus4/toolbox";
 
-import snackBarCss from "./__style__/snackbar.css";
-export {snackBarCss};
-
 export interface MessageCenterProps {
     /** Types de messages à afficher dans le message center avec leur durée d'affichage en ms. Par défaut : "success", "error", "info" et "warning", tous à 3000 sauf "error" à 8000. */
     messageTypes?: Record<string, number>;
@@ -73,7 +70,6 @@ export function MessageCenter({
             label={i18next.t(state.currentNotification.message)}
             onClick={closeSnackbar}
             onTimeout={closeSnackbar}
-            theme={snackBarCss}
             timeout={state.currentNotification.timeout}
             type={
                 state.currentNotification.type === "error"
