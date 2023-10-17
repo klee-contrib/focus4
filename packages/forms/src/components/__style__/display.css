@@ -1,5 +1,10 @@
+:root {
+    --display-line-height: 24px;
+}
+
 .display {
     font-size: var(--text-field-font-size);
-    line-height: var(--text-field-height);
-    min-height: var(--text-field-height);
+    min-height: var(--display-line-height);
+    line-height: var(--display-line-height);
+    padding: calc((var(--text-field-height) - var(--display-line-height)) / 2) 0;
 }

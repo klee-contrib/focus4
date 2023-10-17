@@ -206,29 +206,21 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                                 {...domainSCP}
                                 {...selectProps}
                                 {...iProps}
-                                theme={themeable(
-                                    {error: theme.error()},
-                                    domainSCP.theme || {},
-                                    selectProps.theme || {}
-                                )}
+                                theme={themeable(domainSCP.theme || {}, selectProps.theme || {})}
                             />
                         ) : inputType === "autocomplete" ? (
                             <AutocompleteComponent
                                 {...domainACP}
                                 {...autocompleteProps}
                                 {...iProps}
-                                theme={themeable(
-                                    {error: theme.error()},
-                                    domainACP.theme || {},
-                                    autocompleteProps.theme || {}
-                                )}
+                                theme={themeable(domainACP.theme || {}, autocompleteProps.theme || {})}
                             />
                         ) : (
                             <InputComponent
                                 {...domainICP}
                                 {...inputProps}
                                 {...iProps}
-                                theme={themeable({error: theme.error()}, domainICP.theme || {}, inputProps.theme || {})}
+                                theme={themeable(domainICP.theme || {}, inputProps.theme || {})}
                             />
                         )
                     ) : (

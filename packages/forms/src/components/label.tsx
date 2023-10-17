@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {CSSProperties, ReactNode} from "react";
 
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {FontIcon, Tooltip, TooltipCss} from "@focus4/toolbox";
+import {FontIcon, IconButton, Tooltip, TooltipCss} from "@focus4/toolbox";
 
 import labelCss, {LabelCss} from "./__style__/label.css";
 export {labelCss, LabelCss};
@@ -53,9 +53,17 @@ export function Label({
                     theme={tooltipTheme}
                     tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
                 >
-                    <FontIcon className={theme.icon({clickable: !!onTooltipClick})} onPointerDown={onTooltipClick}>
-                        {getIcon(`${i18nPrefix}.icons.label.tooltip`)}
-                    </FontIcon>
+                    {onTooltipClick ? (
+                        <IconButton
+                            className={theme.icon()}
+                            icon={getIcon(`${i18nPrefix}.icons.label.tooltip`)}
+                            onClick={onTooltipClick}
+                        />
+                    ) : (
+                        <FontIcon className={theme.icon()} onPointerDown={onTooltipClick}>
+                            {getIcon(`${i18nPrefix}.icons.label.tooltip`)}
+                        </FontIcon>
+                    )}
                 </Tooltip>
             ) : null}
         </div>
