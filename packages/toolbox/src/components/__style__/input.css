@@ -23,6 +23,11 @@
     --input-hint-opacity: 1;
 }
 
+:root[dark] {
+    --input-text-error-color: rgb(var(--palette-red-400));
+    --input-text-required-color: rgb(var(--palette-red-400));
+}
+
 .input {
     padding: var(--input-padding) 0;
     position: relative;
