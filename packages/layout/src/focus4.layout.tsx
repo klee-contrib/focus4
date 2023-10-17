@@ -64,7 +64,6 @@ export {MessageCenter, MessageCenterProps} from "./utils";
 export interface LayoutStyleProviderProps {
     actionBar?: {};
     advancedSearch?: {};
-    autocomplete?: {};
     booleanRadio?: {};
     buttonBTT?: CSSProp<ButtonBttCss>;
     contextualActions?: {};
@@ -97,7 +96,7 @@ export interface LayoutStyleProviderProps {
     table?: {};
     timeline?: {};
 
-    RTAutocomplete?: CSSProp<AutocompleteCss>;
+    autocomplete?: CSSProp<AutocompleteCss>;
     button?: CSSProp<ButtonCss>;
     RTCalendar?: CSSProp<CalendarCss>;
     checkbox?: CSSProp<CheckboxCss>;
@@ -110,7 +109,7 @@ export interface LayoutStyleProviderProps {
     progressIndicator?: CSSProp<ProgressIndicatorCss>;
     radio?: CSSProp<RadioCss>;
     ripple?: CSSProp<RippleCss>;
-    RTSlider?: CSSProp<SliderCss>;
+    slider?: CSSProp<SliderCss>;
     RTSnackbar?: CSSProp<SnackbarCss>;
     switch?: CSSProp<SwitchCss>;
     textField?: CSSProp<TextFieldCss>;

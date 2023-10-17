@@ -56,7 +56,7 @@
         background-color var(--animation-duration) var(--animation-curve-default) 0s;
     transform-origin: center center;
     transform: translateX(0px);
-    color: var(--switch-state-color);
+    color: var(--input-state-color);
 }
 
 .thumb {

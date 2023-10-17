@@ -1,53 +1,44 @@
 import classNames from "classnames";
 import {range} from "lodash";
-import {
-    MouseEvent as RMouseEvent,
-    TouchEvent as RTouchEvent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState
-} from "react";
+import {PointerEvent as RPointerEvent, useCallback, useEffect, useLayoutEffect, useRef, useState} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import {LinearProgressIndicator} from "./progress-indicator";
+import {Ripple} from "./ripple";
 
 import sliderCss, {SliderCss} from "./__style__/slider.css";
 export {sliderCss, SliderCss};
 
 export interface SliderProps extends PointerEvents<HTMLDivElement> {
-    /** CSS class for the root component. */
+    /** Classe CSS pour le composant racine. */
     className?: string;
-    /** If true, component will be disabled. */
+    /** Désactive le Slider. */
     disabled?: boolean;
-    /** Maximum value permitted. */
+    /** Affiche un libellé au dessus de la poignée au survol avec la valeur exacte du Slider. */
+    labeled?: boolean;
+    /** Valeur maximale du Slider. Par défaut : 100. */
     max?: number;
-    /** Minimum value permitted. */
+    /** Valeur minimale du Slider. Par défaut : 0. */
     min?: number;
-    /** Callback function that will be invoked when the slider value changes. */
+    /** Handler appelé au changement de la valeur du Slider. */
     onChange?: (value: number) => void;
-    /** If true, a pin with numeric value label is shown when the slider thumb is pressed. Use for settings for which users need to know the exact value of the setting. */
-    pinned?: boolean;
-    /** If true, the slider thumb snaps to tick marks evenly spaced based on the step property value. */
-    snaps?: boolean;
-    /** Amount to vary the value when the knob is moved or increase/decrease is called. */
+    /** Valeur minimale par incrément du Slider. Par défaut : 1. */
     step?: number;
-    /** Classnames object defining the component style. */
+    /** Affiche des indicateurs pour chaque valeur de `step` sur le Slider. */
+    ticks?: boolean;
+    /** CSS. */
     theme?: CSSProp<SliderCss>;
-    /** Current value of the slider. */
-    value?: number;
+    /** Valeur du Slider. */
+    value: number;
 }
 
-/**
- * Un composant de saisie pour saisir un nombre avec un slider.
- */
+/** Slider. */
 export function Slider({
-    className = "",
-    disabled,
+    className,
+    disabled = false,
+    labeled = false,
     max = 100,
     min = 0,
     onChange,
@@ -55,194 +46,144 @@ export function Slider({
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
-    pinned = false,
-    snaps = false,
-    step = 0.01,
+    step = 1,
+    ticks = false,
     theme: pTheme,
-    value = 0
+    value
 }: SliderProps) {
-    const theme = useTheme("RTSlider", sliderCss, pTheme);
-    const [sliderFocused, setSliderFocused] = useState(false);
-    const [sliderLength, setSliderLength] = useState(0);
-    const [sliderStart, setSliderStart] = useState(0);
-    const [pressed, setPressed] = useState(false);
+    const theme = useTheme("slider", sliderCss, pTheme);
+    const track = useRef<HTMLDivElement>(null);
 
-    const progressBar = useRef<HTMLDivElement>(null);
-    const inputNode = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+    const [focused, setFocused] = useState(false);
 
-    const handleResize = useCallback(() => {
-        const {left = 0, right = 0} = progressBar.current?.getBoundingClientRect() ?? {};
-        setSliderStart(left);
-        setSliderLength(right - left);
-    }, []);
-
-    const stepDecimals = useMemo(() => (step.toString().split(".")[1] || []).length, [step]);
-
-    const trimValue = useCallback(
-        (v: number) => {
-            if (v < min) {
-                return min;
-            }
-            if (v > max) {
-                return max;
-            }
-            const decimalPower = 10 ** stepDecimals;
-            return Math.round(v * decimalPower) / decimalPower;
-        },
-        [max, min, stepDecimals]
-    );
-
-    const addToValue = useCallback(
-        (increment: number) => {
-            let newValue = value;
-            newValue = trimValue(value + increment);
-            if (newValue !== value) {
-                onChange?.(newValue);
-            }
-        },
-        [onChange, trimValue, value]
-    );
-
-    const positionToValue = useCallback(
-        (position: {x: number}) => {
-            const pos = ((position.x - sliderStart) / sliderLength) * (max - min);
-            return trimValue(Math.round(pos / step) * step + min);
-        },
-        [max, min, step, sliderStart, sliderLength, trimValue]
-    );
-
-    useEffect(() => {
-        window.addEventListener("resize", handleResize);
-        handleResize();
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, []);
-
-    const start = useCallback(
-        (position: {x: number}) => {
-            handleResize();
-            setPressed(true);
-            onChange?.(positionToValue(position));
-        },
-        [handleResize, onChange, positionToValue]
-    );
-
-    const handleMouseDown = useCallback(
-        (event: RMouseEvent<HTMLDivElement>) => {
-            start({x: event.pageX - (window.scrollX || window.pageXOffset)});
-            event.stopPropagation();
-            event.preventDefault();
-        },
-        [start]
-    );
-
-    const handleTouchStart = useCallback(
-        (event: RTouchEvent<HTMLDivElement>) => {
-            start({x: event.touches[0].pageX - (window.scrollX || window.pageXOffset)});
-            event.stopPropagation();
-            event.preventDefault();
-        },
-        [start]
-    );
-
-    useEffect(() => {
-        if (pressed) {
-            const move = (position: {x: number}) => {
-                onChange?.(positionToValue(position));
-            };
-
-            const handleMouseMove = (event: MouseEvent) => {
-                event.stopPropagation();
-                event.preventDefault();
-                move({x: event.pageX - (window.scrollX || window.pageXOffset)});
-            };
-
-            const handleTouchMove = (event: TouchEvent) => {
-                move({x: event.touches[0].pageX - (window.scrollX || window.pageXOffset)});
-            };
-
-            const end = () => {
-                setPressed(false);
-            };
-
-            document.addEventListener("mousemove", handleMouseMove);
-            document.addEventListener("touchmove", handleTouchMove);
-            document.addEventListener("mouseup", end);
-            document.addEventListener("touchend", end);
-
-            return () => {
-                document.removeEventListener("mousemove", handleMouseMove);
-                document.removeEventListener("touchmove", handleTouchMove);
-                document.removeEventListener("mouseup", end);
-                document.removeEventListener("touchend", end);
-            };
+    // Taille du slider.
+    const [width, setWidth] = useState(0);
+    const [start, setStart] = useState(0);
+    useLayoutEffect(() => {
+        function getSize() {
+            const {width: tw, x: tx} = track.current?.getBoundingClientRect() ?? {};
+            setStart(tx ?? 0);
+            setWidth(tw ?? 0);
         }
-    }, [positionToValue, pressed]);
 
-    const handleKeyDown = useCallback(
-        (event: KeyboardEvent) => {
-            if (disabled) {
-                return;
-            }
-            if (["Enter", "Escape"].includes(event.code)) {
-                inputNode.current?.blur();
-            }
-            if (event.code === "ArrowUp") {
-                addToValue(step);
-            }
-            if (event.code === "ArrowDown") {
-                addToValue(-step);
-            }
+        getSize();
+        if (track.current) {
+            const observer = new ResizeObserver(getSize);
+            observer.observe(track.current);
+            return () => observer.disconnect();
+        }
+    }, []);
+
+    // Sélection au pointeur.
+    const handleChange = useCallback(
+        function handleChange(x: number) {
+            const decimals = (step.toString().split(".")[1] || []).length;
+            const decimalPower = 10 ** decimals;
+
+            const pos = ((x - start) / width) * (max - min);
+            onChange?.(
+                Math.round(Math.min(Math.max(Math.round(pos / step) * step + min, min), max) * decimalPower) /
+                    decimalPower
+            );
         },
-        [addToValue, disabled, step]
+        [max, min, onChange, start, width, step]
     );
 
+    const handlePointerMove = useCallback(
+        function handlePointerMove(e: PointerEvent) {
+            e.stopPropagation();
+            e.preventDefault();
+            handleChange(e.pageX);
+        },
+        [handleChange]
+    );
+
+    const handlePointerUp = useCallback(
+        function handlePointerUp(e: PointerEvent) {
+            e.stopPropagation();
+            e.preventDefault();
+            document.removeEventListener("pointermove", handlePointerMove);
+            document.removeEventListener("pointerup", handlePointerUp);
+        },
+        [handlePointerMove]
+    );
+
+    const handlePointerDown = useCallback(
+        function handlePointerDown(e: RPointerEvent<HTMLDivElement>) {
+            e.stopPropagation();
+            e.preventDefault();
+            handleChange(e.pageX);
+            document.addEventListener("pointermove", handlePointerMove);
+            document.addEventListener("pointerup", handlePointerUp);
+            onPointerDown?.(e);
+        },
+        [handlePointerMove]
+    );
+
+    // Navigation clavier.
     useEffect(() => {
-        if (sliderFocused) {
+        if (focused) {
+            const handleKeyDown = (event: KeyboardEvent) => {
+                if (event.key === "ArrowLeft") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onChange?.(Math.max(min, value - step));
+                } else if (event.key === "ArrowRight") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onChange?.(Math.min(max, value + step));
+                }
+            };
+
             document.addEventListener("keydown", handleKeyDown);
-            return () => {
-                document.removeEventListener("keydown", handleKeyDown);
-            };
+            return () => document.removeEventListener("keydown", handleKeyDown);
         }
-    }, [handleKeyDown, sliderFocused]);
+    }, [focused, max, min, step, value]);
 
-    const knobOffset = useMemo(() => ((value - min) / (max - min)) * 100, [max, min, value]);
-    const knobStyles = {left: `${knobOffset}%`};
+    const handleFocus = useCallback(function handleFocus() {
+        setFocused(true);
+    }, []);
 
+    const handleBlur = useCallback(function handleBlur() {
+        setFocused(false);
+    }, []);
+
+    const left = ((value - min) / (max - min)) * width;
     return (
-        <div
-            className={classNames(theme.slider({pinned, pressed, ring: value === min}), className)}
-            data-react-toolbox="slider"
-            onBlur={() => setSliderFocused(false)}
-            onFocus={() => setSliderFocused(true)}
-            onPointerDown={onPointerDown}
+        <Ripple
+            onPointerDown={handlePointerDown}
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
             onPointerUp={onPointerUp}
-            tabIndex={0}
+            rippleTarget={theme.state()}
         >
-            <div className={theme.container()} onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}>
+            <div
+                aria-disabled={disabled}
+                aria-valuemax={max}
+                aria-valuemin={min}
+                aria-valuenow={value}
+                className={classNames(theme.slider({disabled, labeled}), className)}
+                role="slider"
+            >
+                <div ref={track} className={theme.track()} />
+                <div className={theme.indicator()} data-value={value} style={{width: `${left}px`}} />
+                {ticks ? (
+                    <div className={theme.ticks()}>
+                        {range(0, (max - min) / step + 1).map(i => (
+                            <div key={`tick-${i}`} className={theme.tick({active: i * step <= value})} />
+                        ))}
+                    </div>
+                ) : null}
                 <div
-                    className={theme.knob()}
-                    onMouseDown={handleMouseDown}
-                    onTouchStart={handleTouchStart}
-                    style={knobStyles}
+                    className={theme.state()}
+                    onBlur={handleBlur}
+                    onFocus={handleFocus}
+                    style={{transform: `translateX(${left}px)`}}
+                    tabIndex={0}
                 >
-                    <div className={theme.innerknob()} data-value={value} />
-                </div>
-
-                <div ref={progressBar} className={theme.progress()}>
-                    <LinearProgressIndicator className={theme.innerprogress()} max={max} min={min} value={value} />
-                    {snaps ? (
-                        <div className={theme.snaps()}>
-                            {range(0, (max - min) / step).map(i => (
-                                <div key={`span-${i}`} className={theme.snap()} />
-                            ))}
-                        </div>
-                    ) : null}
+                    <div className={theme.handle()} />
                 </div>
             </div>
-        </div>
+        </Ripple>
     );
 }

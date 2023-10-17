@@ -438,26 +438,26 @@ Pose un Ripple au clic sur le composant/élément enfant.
 
 ## `Slider`
 
-Un composant de saisie pour saisir un nombre avec un slider.
+Slider.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                            | Description                                                                                                                                                      |
-| ---------------- | ----------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                             | CSS class for the root component.                                                                                                                                |
-| `disabled`       | Non         | <code>boolean</code>                                            | If true, component will be disabled.                                                                                                                             |
-| `max`            | Non         | <code>number</code>                                             | Maximum value permitted.                                                                                                                                         |
-| `min`            | Non         | <code>number</code>                                             | Minimum value permitted.                                                                                                                                         |
-| `onChange`       | Non         | <code>(value: number) =&gt; void</code>                         | Callback function that will be invoked when the slider value changes.                                                                                            |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                                                                            |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                                                                           |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                                                                           |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                                                              |
-| `pinned`         | Non         | <code>boolean</code>                                            | If true, a pin with numeric value label is shown when the slider thumb is pressed. Use for settings for which users need to know the exact value of the setting. |
-| `snaps`          | Non         | <code>boolean</code>                                            | If true, the slider thumb snaps to tick marks evenly spaced based on the step property value.                                                                    |
-| `step`           | Non         | <code>number</code>                                             | Amount to vary the value when the knob is moved or increase/decrease is called.                                                                                  |
-| `theme`          | Non         | <code>CSSProp&lt;SliderCss&gt;</code>                           | Classnames object defining the component style.                                                                                                                  |
-| `value`          | Non         | <code>number</code>                                             | Current value of the slider.                                                                                                                                     |
+| Nom              | Obligatoire | Type                                                            | Description                                                                            |
+| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `className`      | Non         | <code>string</code>                                             | Classe CSS pour le composant racine.                                                   |
+| `disabled`       | Non         | <code>boolean</code>                                            | Désactive le Slider.                                                                   |
+| `labeled`        | Non         | <code>boolean</code>                                            | Affiche un libellé au dessus de la poignée au survol avec la valeur exacte du Slider.  |
+| `max`            | Non         | <code>number</code>                                             | Valeur maximale du Slider. Par défaut : 100.                                           |
+| `min`            | Non         | <code>number</code>                                             | Valeur minimale du Slider. Par défaut : 0.                                             |
+| `onChange`       | Non         | <code>(value: number) =&gt; void</code>                         | Handler appelé au changement de la valeur du Slider.                                   |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `step`           | Non         | <code>number</code>                                             | Valeur minimale par incrément du Slider. Par défaut : 1.                               |
+| `theme`          | Non         | <code>CSSProp&lt;SliderCss&gt;</code>                           | CSS.                                                                                   |
+| `ticks`          | Non         | <code>boolean</code>                                            | Affiche des indicateurs pour chaque valeur de `step` sur le Slider.                    |
+| `value`          | **Oui**     | <code>number</code>                                             | Valeur du Slider.                                                                      |
 
 ## `Snackbar`
 

@@ -1,220 +1,169 @@
 :root {
-    --slider-main-color: rgb(var(--color-primary));
-    --slider-main-color-contrast: rgb(var(--color-primary-contrast));
-    --slider-snap-color: rgb(var(--color-black));
-    --slider-disabled-color: rgba(177, 177, 177, 1);
-    --slider-knob-size: calc(3.2 * var(--unit));
-    --slider-inner-knob-size: calc(1.2 * var(--unit));
-    --slider-snap-size: calc(0.2 * var(--unit));
-    --slider-bar-height: calc(0.2 * var(--unit));
-    --slider-pin-size: calc(2.6 * var(--unit));
-    --slider-pin-elevation: calc(1.7 * var(--unit));
-    --slider-side-separation: calc(1 * var(--unit));
-    --slider-empty-knob-border: calc(0.2 * var(--unit));
+    --slider-state-size: 40px;
+    --slider-handle-size: 20px;
+    --slider-tick-size: 2px;
+
+    --slider-track-height: 4px;
+    --slider-track-color: rgb(var(--palette-grey-300));
+
+    --slider-label-size: 28px;
+    --slider-label-font-size: 12px;
+    --slider-label-line-height: 14px;
 }
 
-.container {
-    height: var(--slider-knob-size);
-    margin-right: var(--slider-knob-size);
+.slider {
     position: relative;
-    user-select: none;
-    width: calc(100% - var(--slider-knob-size));
-    box-sizing: border-box;
-    font-family: var(--preferred-font);
-
-    & *,
-    & *::after,
-    & *::before {
-        box-sizing: border-box;
-    }
-
-    &:not(:last-child) {
-        margin-right: calc(var(--slider-side-separation) + var(--slider-knob-size));
-    }
-
-    &:not(:first-child) {
-        margin-left: var(--slider-side-separation);
-    }
-}
-
-.knob {
-    align-items: center;
-    background-color: transparent;
-    display: flex;
-    flex-direction: row;
-    height: var(--slider-knob-size);
-    justify-content: center;
-    left: 0;
-    position: relative;
-    top: 0;
-    width: var(--slider-knob-size);
-    z-index: var(--z-index-higher);
-}
-
-.innerknob {
-    background-color: var(--slider-main-color);
-    border-radius: 50%;
-    height: var(--slider-inner-knob-size);
-    transition-duration: 0.1s;
-    transition-property: height, width, background-color, border;
-    transition-timing-function: var(--animation-curve-default);
-    width: var(--slider-inner-knob-size);
-    z-index: var(--z-index-high);
-}
-
-.snaps {
-    display: flex;
-    flex-direction: row;
-    height: var(--slider-snap-size);
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    top: calc(var(--slider-knob-size) / 2 - var(--slider-snap-size) / 2);
-    width: calc(100% + var(--slider-snap-size));
-
-    &::after {
-        background-color: var(--slider-snap-color);
-        border-radius: 50%;
-        content: "";
-        display: block;
-        height: var(--slider-snap-size);
-        width: var(--slider-snap-size);
-    }
-}
-
-.snap {
-    flex: 1;
-
-    &::after {
-        background-color: var(--slider-snap-color);
-        border-radius: 50%;
-        content: "";
-        display: block;
-        height: var(--slider-snap-size);
-        width: var(--slider-snap-size);
-    }
-}
-
-.progress {
-    height: 100%;
-    left: calc(var(--slider-knob-size) / 2);
-    position: absolute;
-    top: 0;
     width: 100%;
+    height: var(--slider-state-size);
+    cursor: pointer;
+}
 
-    & .innerprogress {
-        height: var(--slider-bar-height);
+.track,
+.indicator {
+    position: absolute;
+    top: calc((var(--slider-state-size) - var(--slider-track-height)) / 2);
+    left: calc(var(--slider-state-size) / 2);
+    right: calc(var(--slider-state-size) / 2);
+    height: var(--slider-track-height);
+}
+
+.track {
+    background-color: var(--slider-track-color);
+}
+
+.indicator {
+    position: relative;
+    background-color: var(--input-on-main-color);
+}
+
+.ticks {
+    position: absolute;
+    top: calc((var(--slider-state-size) - var(--slider-tick-size)) / 2);
+    left: calc(var(--slider-state-size) / 2 - var(--slider-tick-size) / 2);
+    right: calc(var(--slider-state-size) / 2 - var(--slider-tick-size) / 2);
+    height: var(--slider-tick-size);
+    display: flex;
+    pointer-events: none;
+    justify-content: space-between;
+}
+
+.tick {
+    flex: 0 0 auto;
+    height: var(--slider-tick-size);
+    width: var(--slider-tick-size);
+    border-radius: 50%;
+    background-color: var(--input-on-main-color);
+}
+
+.tick--active {
+    background-color: var(--slider-track-color);
+}
+
+.state {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--slider-state-size);
+    height: var(--slider-state-size);
+    border-radius: 50%;
+    transition: background-color var(--animation-duration) var(--animation-curve-default) 0s;
+    transform-origin: center center;
+    transform: translateX(0px);
+    color: var(--input-state-color);
+}
+
+.handle {
+    position: absolute;
+    top: calc(var(--slider-state-size) / 2 - var(--slider-handle-size) / 2);
+    left: calc(var(--slider-state-size) / 2 - var(--slider-handle-size) / 2);
+    background-color: var(--input-on-main-color);
+    width: var(--slider-handle-size);
+    height: var(--slider-handle-size);
+    border-radius: 50%;
+    transition: transform 0.1s var(--animation-curve-default);
+}
+
+.slider:active:not(.slider--disabled) .handle {
+    transform: scale(1.25);
+}
+
+.slider:hover .state {
+    background-color: var(--input-state-hover-color);
+}
+
+.slider--labeled {
+    & .indicator::before,
+    & .indicator::after {
         position: absolute;
-        top: calc(var(--slider-knob-size) / 2 - var(--slider-bar-height) / 2);
+        bottom: 0;
+        right: calc(-0.5 * var(--slider-label-size));
+        width: var(--slider-label-size);
+        height: var(--slider-label-size);
+        transition: transform var(--animation-duration-short) var(--animation-curve-default);
+        z-index: var(--z-index-higher);
+    }
 
-        & [data-ref="value"] {
-            transition-duration: 0s;
-        }
+    & .indicator::before {
+        content: "";
+        background-color: var(--input-on-main-color);
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg) scale(0) translate(0);
+    }
+
+    & .indicator::after {
+        content: attr(data-value);
+        color: var(--input-on-secondary-color);
+        font-size: var(--slider-label-font-size);
+        line-height: var(--slider-label-line-height);
+        font-weight: 500;
+        text-align: center;
+        transform: scale(0) translate(0);
     }
 }
 
-.slider:focus .knob::before {
-    background-color: var(--slider-main-color);
-    border-radius: 50%;
-    bottom: 0;
-    content: "";
-    left: 0;
-    opacity: 0.26;
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: var(--z-index-normal);
+.slider--labeled:hover,
+.slider--labeled:active {
+    & .indicator::before {
+        transform: rotate(-45deg) scale(1)
+            translate(calc(0.8 * var(--slider-handle-size)), calc(-0.8 * var(--slider-handle-size)));
+        transition-delay: 0.1s;
+    }
+
+    & .indicator::after {
+        transform: scale(1) translate(0, calc(-0.8 * var(--slider-handle-size)));
+        transition-delay: 0.1s;
+    }
 }
 
-.slider[disabled] {
-    cursor: auto;
+.slider.slider--disabled {
     pointer-events: none;
 
-    & .innerknob {
-        background-color: var(--slider-disabled-color);
-    }
-}
-
-.slider--pinned {
-    &.innerknob::before {
-        background-color: var(--slider-main-color);
-        border-radius: 50% 50% 50% 0;
-        content: "";
-        height: var(--slider-pin-size);
-        left: 0;
-        margin-left: calc((var(--slider-knob-size) - var(--slider-pin-size)) / 2);
-        position: absolute;
-        top: 0;
-        transform: rotate(-45deg) scale(0) translate(0);
-        transition: transform 0.2s ease, background-color 0.18s ease;
-        width: var(--slider-pin-size);
+    & .indicator,
+    & .handle,
+    & .tick:not(.tick--active) {
+        background-color: var(--input-disabled-color);
     }
 
-    &.innerknob::after {
-        color: rgb(var(--color-background));
-        content: attr(data-value);
-        font-size: 10px;
-        height: var(--slider-pin-size);
-        left: 0;
-        position: absolute;
-        text-align: center;
-        top: 0;
-        transform: scale(0) translate(0);
-        transition: transform 0.2s ease, background-color 0.18s ease;
-        width: var(--slider-knob-size);
-    }
-}
-
-.slider--pressed.slider--pinned {
-    & .innerknob::before {
-        transform: rotate(-45deg) scale(1)
-            translate(var(--slider-pin-elevation), calc(-1 * var(--slider-pin-elevation)));
-        transition-delay: 100ms;
-    }
-
-    & .innerknob::after {
-        transform: scale(1) translate(0, calc(-1 * var(--slider-pin-elevation)));
-        transition-delay: 100ms;
-    }
-}
-
-.slider--pressed:not(.slider--pinned) {
-    &.slider--ring .progress {
-        left: calc(var(--slider-knob-size) / 2 + (var(--slider-knob-size) - var(--slider-empty-knob-border) * 2) / 2);
-        width: calc(100% - ((var(--slider-knob-size) - var(--slider-empty-knob-border) * 2) / 2));
-    }
-
-    & .innerknob {
-        height: 100%;
-        transform: translateZ(0);
-        width: 100%;
-    }
-}
-
-.slider--ring {
-    & .innerknob {
+    & .state {
         background-color: transparent;
-        border: var(--slider-empty-knob-border) solid rgb(var(--color-divider));
-
-        &::before {
-            background-color: var(--slider-main-color);
-        }
     }
+}
 
-    & .progress {
-        left: calc(var(--slider-knob-size) / 2 + var(--slider-empty-knob-border) * 2);
-        transition: left 0.18s ease, width 0.18s ease;
-        width: calc(100% - var(--slider-empty-knob-border) * 2);
+.state:focus {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
     }
-
-    &.slider--pinned {
-        & .innerknob {
-            background-color: rgb(var(--color-background));
-        }
-
-        & .progress {
-            left: calc(var(--slider-knob-size) / 2);
-            width: 100%;
-        }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
     }
 }
