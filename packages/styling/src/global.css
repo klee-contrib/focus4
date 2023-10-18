@@ -12,12 +12,6 @@ body {
     animation-timing-function: var(--animation-curve-default);
 }
 
-fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0;
-}
-
 textarea {
     resize: vertical;
 }

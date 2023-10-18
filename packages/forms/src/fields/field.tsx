@@ -58,7 +58,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
 
     const {
         autocompleteProps = {},
-        disableInlineSizing = fieldProps?.disableInlineSizing,
+        disableInlineSizing = fieldProps?.disableInlineSizing ?? context.disableInlineSizing,
         displayProps = {},
         hasLabel = fieldProps?.hasLabel ?? true,
         field,

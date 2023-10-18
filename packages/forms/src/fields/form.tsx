@@ -10,6 +10,8 @@ export {formCss, FormCss};
 export interface FormProps {
     /** Children. */
     children?: ReactNode;
+    /** Désactive le style inline sur les champs qui spécifie la largeur du label et de la valeur.  */
+    disableInlineSizing?: boolean;
     /** Force l'affichage des erreurs sur les champs. */
     forceErrorDisplay?: boolean;
     /** Modifie le labelRatio par défaut des champs posés dans le formulaire (33%); */
@@ -26,6 +28,7 @@ export interface FormProps {
 
 export const FormContext = createContext({
     forceErrorDisplay: false,
+    disableInlineSizing: false,
     labelRatio: undefined as number | undefined,
     valueRatio: undefined as number | undefined
 });
@@ -33,6 +36,7 @@ export const FormContext = createContext({
 /** Composant de formulaire */
 export function Form({
     children,
+    disableInlineSizing = false,
     forceErrorDisplay = false,
     labelRatio,
     noForm,
@@ -41,8 +45,9 @@ export function Form({
     valueRatio
 }: FormProps) {
     const theme = useTheme("form", formCss, pTheme);
-    const context = useLocalObservable(() => ({forceErrorDisplay, labelRatio, valueRatio}));
+    const context = useLocalObservable(() => ({disableInlineSizing, forceErrorDisplay, labelRatio, valueRatio}));
     useEffect(() => {
+        context.disableInlineSizing = disableInlineSizing;
         context.forceErrorDisplay = forceErrorDisplay;
         context.labelRatio = labelRatio;
         context.valueRatio = valueRatio;
@@ -59,7 +64,7 @@ export function Form({
                         save();
                     }}
                 >
-                    <fieldset>{children}</fieldset>
+                    {children}
                 </form>
             ) : (
                 children
