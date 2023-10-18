@@ -1,247 +1,264 @@
 import classNames from "classnames";
 import {
-    FocusEvent,
     FocusEventHandler,
-    MouseEvent,
-    MouseEventHandler,
+    ForwardedRef,
+    forwardRef,
+    ReactElement,
     ReactNode,
-    SyntheticEvent,
     useCallback,
     useEffect,
-    useMemo,
+    useImperativeHandle,
     useRef,
     useState
 } from "react";
 
+import {themeable} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {TextField} from "./text-field";
+import {Menu, useMenu} from "./menu";
+import {Ripple} from "./ripple";
+import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
 export {dropdownCss, DropdownCss};
 
-export interface DropdownProps<
-    T,
-    VK extends string = "value",
-    LK extends string = "label",
-    S extends {[P in LK]?: string} & {[P in VK]?: T} = any
-> {
-    /** If true the dropdown will preselect the first item if the supplied value matches none of the options' values. */
-    allowBlank?: boolean;
-    /** If true, the dropdown will open up or down depending on the position in the screen. */
-    auto?: boolean;
-    /** CSS class for the root component. */
-    className?: string;
-    /** If true, component will be disabled. */
-    disabled?: boolean;
-    /** Give an error node to display under the field. */
-    error?: string;
-    /** Used for setting the label from source */
-    labelKey?: LK;
-    /** Id for the input field. */
-    id?: string;
-    /** The text string to use for the floating label element. */
-    label?: ReactNode;
-    /** Name for the input field. */
-    name?: string;
-    onBlur?: (
-        event: FocusEvent<HTMLDivElement | HTMLInputElement | HTMLTextAreaElement> | MouseEvent<HTMLLIElement>
-    ) => void;
-    onChange?: (value: T, event: MouseEvent<HTMLLIElement>) => void;
-    onClick?: MouseEventHandler<HTMLDivElement | HTMLInputElement | HTMLTextAreaElement>;
-    onFocus?: FocusEventHandler<HTMLDivElement>;
-    /** If true, the html input has a required attribute. */
-    required?: boolean;
-    /** Array of data objects with the data to represent in the dropdown. */
-    source: S[];
-    /** Callback function that returns a JSX template to represent the element. */
-    template?: (item: S) => JSX.Element;
-    /** Classnames object defining the component style. */
-    theme?: CSSProp<DropdownCss>;
-    /** Current value of the dropdown element. */
-    value?: T;
-    /** Used for setting the value from source */
-    valueKey?: VK;
+export interface DropdownProps<TSource = {key: string; label: string}>
+    extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "readonly" | "theme" | "type"> {
+    /** Précise dans quel sens les valeurs doivent s'afficher. Par défaut : "auto". */
+    direction?: "auto" | "down" | "up";
+    /**
+     * Détermine la propriété de l'objet a utiliser comme clé. *
+     * Par défaut : `item => item.key`
+     */
+    getKey?: (item: TSource) => string;
+    /**
+     * Détermine la propriété de l'objet à utiliser comme libellé.
+     * Par défaut : `item => item.label`
+     */
+    getLabel?: (item: TSource) => string;
+    /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
+    hasUndefined?: boolean;
+    /** Composant personnalisé pour afficher les valeurs. */
+    LineComponent?: (props: {item: TSource}) => ReactElement;
+    /** Appelé avec la clé correspondante lors de la sélection d'une valeur. */
+    onChange?: (value?: string) => void;
+    /** CSS. */
+    theme?: CSSProp<DropdownCss & TextFieldCss>;
+    /** Libellé de l'option vide. */
+    undefinedLabel?: ReactNode;
+    /** Valeurs disponibles pour la sélection. */
+    values: TSource[];
 }
 
-/**
- * Composant de sélection avec personnalisation de l'affichage des éléments (à l'inverse du [`Select`](components/forms.md#select) qui est un simple `<select>`).
- */
-export function Dropdown<
-    T,
-    VK extends string = "value",
-    LK extends string = "label",
-    S extends {[P in LK]?: string} & {[P in VK]?: T} = any
->({
-    allowBlank = true,
-    auto = true,
-    className,
-    disabled = false,
-    error,
-    id,
-    label,
-    labelKey = "label" as LK,
-    name,
-    onBlur,
-    onChange,
-    onClick,
-    onFocus,
-    required = false,
-    source,
-    template,
-    value,
-    valueKey = "value" as VK,
-    theme: pTheme
-}: DropdownProps<T, VK, LK, S>) {
-    const theme = useTheme("RTDropdown", dropdownCss, pTheme);
+const defaultGetKey = (x: any) => x.key;
+const defaultGetLabel = (x: any) => x.label;
 
-    const domNode = useRef<HTMLDivElement | null>(null);
-    const [active, setActive] = useState(false);
-    const [up, setUp] = useState(false);
+const undefinedKey = "$$undefined$$";
+
+export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; label: string}>(
+    {
+        className,
+        direction = "auto",
+        disabled,
+        error,
+        getKey = defaultGetKey,
+        getLabel = defaultGetLabel,
+        hasUndefined = true,
+        hint,
+        icon,
+        id,
+        label,
+        LineComponent,
+        loading = false,
+        multiline,
+        name,
+        onBlur,
+        onChange,
+        onContextMenu,
+        onFocus,
+        onKeyDown,
+        onKeyPress,
+        onKeyUp,
+        onPaste,
+        onPointerDown,
+        onPointerEnter,
+        onPointerLeave,
+        onPointerUp,
+        prefix,
+        required,
+        rows,
+        showSupportingText = "auto",
+        supportingText,
+        suffix,
+        tabIndex,
+        trailing = [],
+        theme: pTheme,
+        undefinedLabel = "",
+        value,
+        values = []
+    }: DropdownProps<TSource>,
+    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
+) {
+    const theme = useTheme("dropdown", dropdownCss, pTheme);
+
+    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+    useImperativeHandle(ref, () => inputRef.current!, []);
+
+    const [focused, setFocused] = useState(false);
+    const [selected, setSelected] = useState(value ?? undefinedKey);
+    const onSelectedChange = useCallback(function onSelectedChange(key?: string | undefined) {
+        setSelected(key ?? undefinedKey);
+    }, []);
+
+    const menu = useMenu();
+
+    const handleKeyDown = useCallback(
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key === "Enter" || e.key === "Space") {
+                if (!menu.active) {
+                    menu.open();
+                }
+            }
+        },
+        [menu.active]
+    );
 
     useEffect(() => {
-        function handleDocumentClick(event: Event) {
-            if (!targetIsDescendant(event, domNode.current)) {
-                setActive(false);
-            }
+        if (focused) {
+            document.addEventListener("keydown", handleKeyDown);
+            return () => document.removeEventListener("keydown", handleKeyDown);
         }
-        if (active) {
-            document.addEventListener("click", handleDocumentClick);
-            document.addEventListener("touchend", handleDocumentClick);
-        }
-        return () => {
-            if (active) {
-                document.removeEventListener("click", handleDocumentClick);
-                document.removeEventListener("touchend", handleDocumentClick);
-            }
-        };
-    }, [active]);
+    }, [focused, handleKeyDown]);
 
-    const open = useCallback(
-        (event: SyntheticEvent<HTMLDivElement | HTMLInputElement | HTMLTextAreaElement>) => {
-            if (active) {
-                return;
-            }
-            setActive(true);
-            const client = event.currentTarget.getBoundingClientRect();
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
-            setUp(auto ? client.top > screenHeight / 2 + client.height : false);
+    const handleChange = useCallback(
+        (key?: string) => {
+            onChange?.(key === undefinedKey ? undefined : key);
+            setSelected(key ?? undefinedKey);
+            setFocused(false);
+            inputRef.current?.blur();
         },
-        [active, auto]
+        [onChange]
     );
 
-    const handleBlur = useCallback(
-        (event: FocusEvent<HTMLDivElement>) => {
-            event.stopPropagation();
-            setActive(false);
-            onBlur?.(event);
-        },
-        [onBlur]
-    );
-
-    const handleClick = useCallback(
-        (event: MouseEvent<HTMLDivElement | HTMLInputElement | HTMLTextAreaElement>) => {
-            open(event);
-            event.stopPropagation();
-            event.preventDefault();
-            onClick?.(event);
-        },
-        [onClick, open]
-    );
-
-    const handleFocus = useCallback(
-        (event: FocusEvent<HTMLDivElement>) => {
-            event.stopPropagation();
-            if (!disabled) {
-                open(event);
-            }
+    const handleFocus: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
+        event => {
+            setFocused(true);
             onFocus?.(event);
         },
-        [disabled, onFocus, open]
+        [onFocus]
     );
 
-    const handleSelect = useCallback(
-        (item: T, event: MouseEvent<HTMLLIElement>) => {
-            event.stopPropagation();
-            event.preventDefault();
-            onBlur?.(event);
-            if (!disabled && onChange) {
-                onChange(item, event);
-                setActive(false);
+    const handleBlur: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
+        event => {
+            if (!menu.active) {
+                setFocused(false);
+                menu.close();
+                onBlur?.(event);
             }
         },
-        [disabled, onBlur, onChange]
+        [menu.active, onBlur]
     );
 
-    const renderTemplateValue = useCallback(
-        (sel: S) => (
-            <div className={theme.field({disabled, errored: !!error})} onClick={handleClick}>
-                <div className={`${theme.templateValue()} ${theme.value()}`}>{template!(sel)}</div>
-                {label ? (
-                    <label className={theme.label()}>
-                        {label}
-                        {required ? <span className={theme.required()}> * </span> : null}
-                    </label>
-                ) : null}
-                {error ? <span className={theme.error()}>{error}</span> : null}
-            </div>
-        ),
-        [disabled, error, handleClick, label, required, template, theme]
-    );
-
-    const renderValue = useCallback(
-        (item: S, idx: number) => (
-            <li
-                key={idx}
-                className={theme.value({disabled: (item as any).disabled, selected: item[valueKey] === value})}
-                onMouseDown={!(item as any).disabled ? event => handleSelect(item[valueKey]!, event) : undefined}
-            >
-                {template ? template(item) : item[labelKey]}
-            </li>
-        ),
-        [labelKey, template, theme, value, valueKey]
-    );
-
-    const selected = useMemo(() => {
-        for (const item of source) {
-            if (item[valueKey] === value) {
-                return item;
-            }
-        }
-        return !allowBlank ? source[0] : undefined;
-    }, [allowBlank, source, value]);
+    const selectedValue = values.find(v => getKey(v) === value);
 
     return (
         <div
-            ref={domNode}
-            className={classNames(theme.dropdown({active, disabled, up}), className)}
-            data-react-toolbox="dropdown"
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-            tabIndex={-1}
+            aria-activedescendant={id ? `${id}-${selected}` : undefined}
+            className={classNames(theme.dropdown(), className)}
+            data-name={name}
+            data-value={value}
+            id={id}
+            role="listbox"
         >
             <TextField
-                className={theme.input()}
-                id={id}
-                name={name}
-                onClick={handleClick}
-                readOnly
+                ref={inputRef}
+                disabled={disabled}
+                error={error}
+                fieldRef={menu.anchor}
+                hint={hint}
+                icon={icon}
+                label={label}
+                loading={loading}
+                multiline={multiline}
+                onBlur={handleBlur}
+                onClick={menu.toggle}
+                onContextMenu={onContextMenu}
+                onFocus={handleFocus}
+                onKeyDown={onKeyDown}
+                onKeyPress={onKeyPress}
+                onKeyUp={onKeyUp}
+                onPaste={onPaste}
+                onPointerDown={onPointerDown}
+                onPointerEnter={onPointerEnter}
+                onPointerLeave={onPointerLeave}
+                onPointerUp={onPointerUp}
+                prefix={prefix}
+                readonly
                 required={required}
-                tabIndex={0}
-                type={template && selected ? "hidden" : undefined}
-                value={selected?.[labelKey] ? selected[labelKey] : ""}
+                rows={rows}
+                showSupportingText={showSupportingText}
+                suffix={suffix}
+                supportingText={supportingText}
+                tabIndex={tabIndex}
+                theme={themeable({inputContainer: theme.input()}, theme as unknown as CSSProp<TextFieldCss>)}
+                trailing={[
+                    {icon: `arrow_drop_${menu.active ? "up" : "down"}`, error},
+                    ...(Array.isArray(trailing) ? trailing : [trailing])
+                ]}
+                type="text"
+                value={
+                    selectedValue ? (
+                        LineComponent ? (
+                            <LineComponent item={selectedValue} />
+                        ) : (
+                            getLabel(selectedValue)
+                        )
+                    ) : (
+                        (undefinedLabel as any)
+                    )
+                }
             />
-            {template && selected ? renderTemplateValue(selected) : null}
-            <ul className={theme.values()}>{source.map(renderValue)}</ul>
+            <Menu
+                {...menu}
+                keepItemsInDOMWhenClosed
+                keepSelectionOnPointerLeave
+                keepSelectionOnToggle
+                noBlurOnArrowPress
+                onItemClick={handleChange}
+                onSelectedChange={onSelectedChange}
+                position={direction === "auto" ? "full-auto" : direction === "up" ? "bottom" : "top"}
+                selected={selected}
+            >
+                {hasUndefined ? (
+                    <Ripple key={undefinedKey}>
+                        <span
+                            aria-label=""
+                            aria-selected={!value}
+                            className={theme.value({selected: !value})}
+                            id={id ? `${id}-${undefinedKey}` : undefined}
+                            role="option"
+                        >
+                            {undefinedLabel}
+                        </span>
+                    </Ripple>
+                ) : null}
+                {values.map(s => (
+                    <Ripple key={getKey(s)}>
+                        <span
+                            aria-label={getLabel(s)}
+                            aria-selected={getKey(s) === value}
+                            className={theme.value({selected: getKey(s) === value})}
+                            data-value={getKey(s)}
+                            id={id ? `${id}-${getKey(s)}` : undefined}
+                            role="option"
+                        >
+                            {LineComponent ? <LineComponent item={s} /> : getLabel(s)}
+                        </span>
+                    </Ripple>
+                ))}
+            </Menu>
         </div>
     );
-}
-
-function targetIsDescendant(event: Event, parent: Element | null) {
-    let node = event.target;
-    while (node !== null) {
-        if (node === parent) return true;
-        node = (node as Element).parentNode;
-    }
-    return false;
-}
+}) as <TSource = {key: string; label: string}>(
+    props: DropdownProps<TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
+) => ReactElement;

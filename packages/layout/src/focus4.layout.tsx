@@ -102,7 +102,7 @@ export interface LayoutStyleProviderProps {
     checkbox?: CSSProp<CheckboxCss>;
     chip?: CSSProp<ChipCss>;
     RTClock?: CSSProp<ClockCss>;
-    RTDropdown?: CSSProp<DropdownCss>;
+    dropdown?: CSSProp<DropdownCss>;
     floatingActionButton?: CSSProp<FloatingActionButtonCss>;
     iconButton?: CSSProp<IconButtonCss>;
     menu?: CSSProp<MenuCss>;

@@ -340,7 +340,7 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
         return (
             <TextField
                 {...props}
-                ref={i => (this.inputElement = i!)}
+                ref={i => (this.inputElement = i as any)}
                 error={!!error}
                 onChange={this.onChange}
                 onKeyDown={this.onKeyDown}

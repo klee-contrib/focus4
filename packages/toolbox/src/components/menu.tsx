@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
 import {
+    AriaRole,
     Children,
     MouseEvent,
     MouseEventHandler,
@@ -47,10 +48,23 @@ export interface MenuProps extends MenuControls {
      */
     children?: ReactNode;
     /**
+     * Si renseigné, les items de Menu ne sont jamais retirés du DOM quand le Menu est fermé.
+     *
+     * Les animations au retrait d'éléments du Menu lorsqu'il est ouvert ne pourront pas fonctionner avec cette option.
+     */
+    keepItemsInDOMWhenClosed?: boolean;
+    /**
      * Ne vide pas l'élément du Menu sélectionné lorsque la souris sort du Menu
      * (pour pouvoir toujours cliquer sur cet élément en appuyant sur Entrée par exemple).
      */
     keepSelectionOnPointerLeave?: boolean;
+    /**
+     * Ne vide pas l'élément du Menu sélectionné lorsque le menu s'ouvre ou se ferme.
+     * (pour pouvoir contrôler l'élément sélectionné depuis un composant parent).
+     */
+    keepSelectionOnToggle?: boolean;
+    /** Valeur de `id` pour le `ul` HTML. */
+    id?: string;
     /** Si renseigné, la navigation clavier dans le Menu n'appelera pas le `blur` de l'élément courant actif (pour un input par exemple). */
     noBlurOnArrowPress?: boolean;
     /** N'affiche pas le focus ring lors de la navigation clavier dans le Menu. */
@@ -70,6 +84,8 @@ export interface MenuProps extends MenuControls {
      * Par défaut : `auto`.
      */
     position?: "auto" | "bottom" | "bottomLeft" | "bottomRight" | "full-auto" | "top" | "topLeft" | "topRight";
+    /** Valeur de `role` pour le `ul` HTML. */
+    role?: AriaRole;
     /** Permet de surcharger l'élement sélectionné du Menu, au lieu de le laisser utiliser son état interne. A utiliser avec `onSelectedChange`. */
     selected?: string;
     /** CSS. */
@@ -178,12 +194,16 @@ export function Menu({
     children,
     className = "",
     close,
+    keepItemsInDOMWhenClosed = false,
     keepSelectionOnPointerLeave = false,
+    keepSelectionOnToggle = false,
+    id,
     noBlurOnArrowPress = false,
     noRing = false,
     onItemClick,
     onSelectedChange,
     position: pPosition = "auto",
+    role,
     selected: pSelected,
     theme: pTheme
 }: MenuProps) {
@@ -280,7 +300,11 @@ export function Menu({
         [onSelectedChange]
     );
 
-    useEffect(() => handleSelectedChange(undefined), [active, handleSelectedChange]);
+    useEffect(() => {
+        if (!keepSelectionOnToggle) {
+            handleSelectedChange(undefined);
+        }
+    }, [active, keepSelectionOnToggle, handleSelectedChange]);
 
     // Au clic/appui sur Entrée sur un item.
     const handleItemClick = useCallback(
@@ -360,6 +384,42 @@ export function Menu({
         }
     }, [active, children, close, handleItemClick, handleSelectedChange, noBlurOnArrowPress, position, selected]);
 
+    const items = (Array.isArray(children) ? children.flat(Infinity) : [children])
+        .map((item, i) => {
+            if (!item) {
+                return item;
+            }
+
+            const isHr = unselectable(item);
+            const key = (item as ReactElement)?.key ?? `${i}`;
+
+            return (
+                <motion.li
+                    key={i}
+                    animate={
+                        !keepItemsInDOMWhenClosed || active ? {height: "auto", opacity: 1} : {height: 0, opacity: 0}
+                    }
+                    className={theme.item({focused: !noRing && selected === key && showRing})}
+                    data-key={key}
+                    exit={{height: 0, opacity: 0}}
+                    initial={{height: 0, opacity: 0}}
+                    onClick={isHr ? undefined : e => handleItemClick(item as ReactElement, e)}
+                    onPointerEnter={
+                        isHr
+                            ? undefined
+                            : () => {
+                                  handleSelectedChange(key);
+                                  setShowRing(false);
+                              }
+                    }
+                    transition={{height: {...springTransition, restDelta: 0.5}}}
+                >
+                    {item}
+                </motion.li>
+            );
+        })
+        .filter(x => !!x);
+
     return (
         <ul
             ref={ref}
@@ -370,11 +430,13 @@ export function Menu({
                 }),
                 className
             )}
+            id={id}
             onPointerLeave={() => {
                 if (!keepSelectionOnPointerLeave) {
                     handleSelectedChange();
                 }
             }}
+            role={role}
             style={useMemo(
                 () => ({
                     top: position.startsWith("top") ? positions.top : undefined,
@@ -386,43 +448,7 @@ export function Menu({
                 [maxHeight, position, positions]
             )}
         >
-            <AnimatePresence>
-                {active
-                    ? (Array.isArray(children) ? children.flat(Infinity) : [children])
-                          .map((item, i) => {
-                              if (!item) {
-                                  return item;
-                              }
-
-                              const isHr = unselectable(item);
-                              const key = (item as ReactElement)?.key ?? `${i}`;
-
-                              return (
-                                  <motion.li
-                                      key={i}
-                                      animate={{height: "auto", opacity: 1}}
-                                      className={theme.item({focused: !noRing && selected === key && showRing})}
-                                      data-key={key}
-                                      exit={{height: 0, opacity: 0}}
-                                      initial={{height: 0, opacity: 0}}
-                                      onClick={isHr ? undefined : e => handleItemClick(item as ReactElement, e)}
-                                      onPointerEnter={
-                                          isHr
-                                              ? undefined
-                                              : () => {
-                                                    handleSelectedChange(key);
-                                                    setShowRing(false);
-                                                }
-                                      }
-                                      transition={{height: {...springTransition, restDelta: 0.5}}}
-                                  >
-                                      {item}
-                                  </motion.li>
-                              );
-                          })
-                          .filter(x => !!x)
-                    : null}
-            </AnimatePresence>
+            {keepItemsInDOMWhenClosed ? items : <AnimatePresence>{active ? items : null}</AnimatePresence>}
         </ul>
     );
 }

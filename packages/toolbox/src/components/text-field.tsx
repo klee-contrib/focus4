@@ -1,5 +1,7 @@
 import classNames from "classnames";
 import {
+    AriaAttributes,
+    AriaRole,
     ChangeEvent,
     ClipboardEventHandler,
     FocusEvent,
@@ -46,7 +48,7 @@ interface TrailingIcon {
 }
 
 /** Props du champ texte.  */
-export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTextAreaElement> {
+export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTextAreaElement>, AriaAttributes {
     /** Valeur de `autocomplete` sur l'input HTML. */
     autoComplete?: string;
     /** Classe CSS pour le composant racine. */
@@ -74,7 +76,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     /** `name` pour l'input HTML. */
     name?: string;
     /** Au blur du champ texte. */
-    onBlur?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onBlur?: FocusEventHandler<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>;
     /** Handler appelé à chaque modification du texte dans le champ. */
     onChange?: (value: string, event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     /** Au clic sur le champ texte. */
@@ -82,7 +84,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     /** Au clic-droit dans le champ texte. */
     onContextMenu?: MouseEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Au focus du champ texte. */
-    onFocus?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+    onFocus?: FocusEventHandler<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>;
     /** Au `keydown` du champ. */
     onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Au `keypress` du champ. */
@@ -93,10 +95,12 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     onPaste?: ClipboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Préfixe à poser devant le texte. */
     prefix?: string;
-    /** Valeur de `readonly` sur l'input HTML. */
-    readOnly?: boolean;
+    /** Si renseigné, crée un champ texte en lecture seule sans <input> HTML. */
+    readonly?: boolean;
     /** Valeur de `required` sur l'input HTML. */
     required?: boolean;
+    /** Valeur de `role` sur l'input HTML. */
+    role?: AriaRole;
     /** Nombre de lignes pour le <textarea> (si `multiline`). */
     rows?: number;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "auto". */
@@ -128,7 +132,7 @@ export const TextField = forwardRef(function TextField(
         icon,
         id,
         label,
-        loading = false,
+        loading,
         maxLength,
         multiline = false,
         name,
@@ -146,8 +150,9 @@ export const TextField = forwardRef(function TextField(
         onPointerLeave,
         onPointerUp,
         prefix,
-        readOnly,
+        readonly,
         required = false,
+        role,
         rows = 1,
         showSupportingText = "auto",
         supportingText,
@@ -156,16 +161,17 @@ export const TextField = forwardRef(function TextField(
         theme: pTheme,
         trailing,
         type = "text",
-        value
+        value,
+        ...props
     }: TextFieldProps,
-    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
+    ref: ForwardedRef<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>
 ) {
     const theme = useTheme("textField", textFieldCss, pTheme);
 
     const rootNode = useRef<HTMLDivElement>(null);
     const outlineNode = useRef<HTMLDivElement>(null);
     const labelNode = useRef<HTMLDivElement>(null);
-    const inputNode = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+    const inputNode = useRef<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>(null);
 
     useImperativeHandle(ref, () => inputNode.current!, []);
 
@@ -215,7 +221,7 @@ export const TextField = forwardRef(function TextField(
     }, [hasFocus, value]);
 
     const handleFocus = useCallback(
-        function handleFocus(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        function handleFocus(e: FocusEvent<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>) {
             setHasFocus(true);
             onFocus?.(e);
         },
@@ -223,7 +229,7 @@ export const TextField = forwardRef(function TextField(
     );
 
     const handleBlur = useCallback(
-        function handleBlur(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        function handleBlur(e: FocusEvent<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>) {
             if (!rootNode.current?.contains(e.relatedTarget)) {
                 setHasFocus(false);
                 onBlur?.(e);
@@ -272,12 +278,17 @@ export const TextField = forwardRef(function TextField(
         onPointerLeave,
         onPointerUp,
         placeholder: hint && !label ? hint : undefined,
-        readOnly,
         required,
+        role,
         tabIndex,
         type,
-        value
+        value,
+        ...props
     };
+
+    if (loading !== undefined) {
+        inputElementProps["aria-busy"] = loading;
+    }
 
     return (
         <div
@@ -311,7 +322,21 @@ export const TextField = forwardRef(function TextField(
                     {prefix && !multiline && (hasFocus || !!value?.length) ? (
                         <span className={theme.prefix()}>{prefix}</span>
                     ) : null}
-                    {multiline ? <textarea {...inputElementProps} rows={rows} /> : <input {...inputElementProps} />}
+                    {readonly ? (
+                        <span
+                            ref={inputNode}
+                            className={theme.input()}
+                            onBlur={handleBlur}
+                            onFocus={handleFocus}
+                            tabIndex={tabIndex ?? 0}
+                        >
+                            {value}
+                        </span>
+                    ) : multiline ? (
+                        <textarea {...inputElementProps} rows={rows} />
+                    ) : (
+                        <input {...inputElementProps} />
+                    )}
                     {suffix && !multiline && (hasFocus || !!value?.length) ? (
                         <span className={theme.suffix()}>{suffix}</span>
                     ) : null}

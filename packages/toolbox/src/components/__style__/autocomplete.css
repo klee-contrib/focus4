@@ -1,12 +1,3 @@
-:root {
-    --autocomplete-suggestion-active-background: rgb(var(--palette-grey-200));
-    --autocomplete-suggestions-background: rgb(var(--color-white));
-}
-
-:root[dark] {
-    --autocomplete-suggestions-background: rgb(var(--palette-grey-100));
-}
-
 .autocomplete {
     position: relative;
 }

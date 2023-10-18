@@ -26,7 +26,7 @@ import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss, AutocompleteCss};
 
 export interface AutocompleteProps<TSource = {key: string; label: string}>
-    extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "theme" | "type"> {
+    extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "readonly" | "theme" | "type"> {
     /** Suggestions supplémentaires à afficher en plus des suggestions issues de `values`, pour effectuer des actions différentes.  */
     additionalSuggestions?: {key: string; content: ReactNode; onClick: () => void}[];
     /** Autorise la sélection d'une valeur qui n'existe pas dans `values` (le contenu de la `query` sera retourné en tant que valeur). */
@@ -36,7 +36,7 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
     /**
-     * Détermine la propriété de l'objet a utiliser comme clé. *
+     * Détermine la propriété de l'objet a utiliser comme clé.
      * Par défaut : `item => item.key`
      */
     getKey?: (item: TSource) => string;
@@ -64,7 +64,7 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
     /** CSS. */
     theme?: CSSProp<AutocompleteCss & TextFieldCss>;
     /** Valeurs disponibles pour la sélection. */
-    values?: TSource[];
+    values: TSource[];
 }
 
 const defaultGetKey = (x: any) => x.key;
@@ -107,7 +107,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         onQueryChange,
         prefix,
         query: pQuery,
-        readOnly,
         required,
         rows,
         showSupportingText = "auto",
@@ -277,6 +276,10 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         <div className={classNames(theme.autocomplete(), className)}>
             <TextField
                 ref={inputRef}
+                aria-activedescendant={id ? `${id}-${selected}` : undefined}
+                aria-autocomplete="list"
+                aria-controls={id ? `${id}-suggestions` : undefined}
+                aria-expanded={menu.active}
                 autoComplete={config.autocompleteOffValue}
                 disabled={disabled}
                 error={error}
@@ -301,8 +304,8 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 onPointerLeave={onPointerLeave}
                 onPointerUp={onPointerUp}
                 prefix={prefix}
-                readOnly={readOnly}
                 required={required}
+                role="combobox"
                 rows={rows}
                 showSupportingText={showSupportingText}
                 suffix={suffix}
@@ -318,6 +321,8 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 value={query}
             />
             <Menu
+                id={`${id}-suggestions`}
+                role="listbox"
                 {...menu}
                 keepSelectionOnPointerLeave
                 noBlurOnArrowPress
@@ -329,14 +334,25 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
             >
                 {suggestions.map(s => (
                     <Ripple key={getKey(s)}>
-                        <span className={theme.suggestion({active: getKey(s) === selected})}>
+                        <span
+                            aria-label={getLabel(s)}
+                            className={theme.suggestion({active: getKey(s) === selected})}
+                            id={id ? `${id}-${getKey(s)}` : undefined}
+                            role="option"
+                        >
                             {LineComponent ? <LineComponent item={s} /> : getLabel(s)}
                         </span>
                     </Ripple>
                 ))}
                 {additionalSuggestions?.map(({key, content}) => (
                     <Ripple key={key}>
-                        <span className={theme.suggestion({active: key === selected})}>{content}</span>
+                        <span
+                            className={theme.suggestion({active: key === selected})}
+                            id={id ? `${id}-${key}` : undefined}
+                            role="option"
+                        >
+                            {content}
+                        </span>
                     </Ripple>
                 ))}
             </Menu>
