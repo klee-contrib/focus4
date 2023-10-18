@@ -24,6 +24,8 @@ export interface AutocompleteSearchProps<T extends "number" | "string", TSource 
     value?: (T extends "string" ? string : number) | undefined;
 }
 
+const defaultGetKey = (x: any) => x.key;
+
 /**
  * Champ de saisie en autocomplétion à partir d'un **service de recherche**.
  *
@@ -35,6 +37,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
 >(
     {
         error,
+        getKey = defaultGetKey,
         keyResolver,
         onChange,
         onQueryChange,
@@ -56,9 +59,16 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
 
     useEffect(() => {
         if ((!!value || value === 0) && keyResolver) {
-            keyResolver(value).then(label => setQuery(label ?? `${value}`));
+            setLoading(true);
+            keyResolver(value).then(async label => {
+                setQuery(label ?? `${value}`);
+                if (!values.find(v => getKey(v) === value) && label && querySearcher) {
+                    setValues(await querySearcher(encodeURIComponent(label)));
+                }
+                setLoading(false);
+            });
         }
-    }, [keyResolver, value]);
+    }, [value]);
 
     const search = useCallback(
         debounce(async function search(newQuery: string) {
