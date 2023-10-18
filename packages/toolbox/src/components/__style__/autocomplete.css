@@ -1,5 +1,7 @@
 .autocomplete {
     position: relative;
+    min-width: var(--text-field-min-width);
+    max-width: var(--text-field-max-width);
 }
 
 .suggestion {

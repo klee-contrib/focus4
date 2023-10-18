@@ -12,7 +12,6 @@ import {
     useState
 } from "react";
 
-import {themeable} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Menu, useMenu} from "./menu";
@@ -164,7 +163,8 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
     return (
         <div
             aria-activedescendant={id ? `${id}-${selected}` : undefined}
-            className={classNames(theme.dropdown(), className)}
+            aria-disabled={disabled}
+            className={classNames(theme.dropdown({disabled}), className)}
             data-name={name}
             data-value={value}
             id={id}
@@ -200,7 +200,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 suffix={suffix}
                 supportingText={supportingText}
                 tabIndex={tabIndex}
-                theme={themeable({inputContainer: theme.input()}, theme as unknown as CSSProp<TextFieldCss>)}
+                theme={theme as unknown as CSSProp<TextFieldCss>}
                 trailing={[
                     {icon: `arrow_drop_${menu.active ? "up" : "down"}`, error},
                     ...(Array.isArray(trailing) ? trailing : [trailing])

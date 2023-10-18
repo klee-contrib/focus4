@@ -1,11 +1,18 @@
 .dropdown {
     position: relative;
-    cursor: pointer;
+    min-width: var(--text-field-min-width);
+    max-width: var(--text-field-max-width);
 }
 
-.input {
-    cursor: pointer;
-    user-select: none;
+.dropdown:not(.dropdown--disabled) {
+    & .field {
+        cursor: pointer;
+        user-select: none;
+    }
+    & .inputContainer {
+        cursor: pointer;
+        user-select: none;
+    }
 }
 
 .value {

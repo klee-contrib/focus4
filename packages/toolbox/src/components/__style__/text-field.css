@@ -6,6 +6,9 @@
     --text-field-outline-size: 1px;
     --text-field-focused-outline-size: 2px /* 3px */;
 
+    --text-field-min-width: 100px;
+    --text-field-max-width: 400px;
+
     --text-field-font-size: 16px;
 
     --text-field-affix-padding: 2px;
@@ -21,6 +24,8 @@
 
 .textField {
     position: relative;
+    min-width: var(--text-field-min-width);
+    max-width: var(--text-field-max-width);
 }
 
 .textField--loading * {
