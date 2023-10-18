@@ -21,7 +21,7 @@
         "test-ci": "lerna run test-ci"
     },
     "devDependencies": {
-        "@rollup/plugin-node-resolve": "15.2.2",
+        "@rollup/plugin-node-resolve": "15.2.3",
         "@rollup/plugin-typescript": "11.1.5",
         "lerna": "6.6.2",
         "markdown-table": "3.0.3",
