@@ -24,7 +24,6 @@ export {
     SelectCheckbox,
     SelectCheckboxCss,
     SelectCheckboxProps,
-    SelectCss,
     SelectProps,
     SelectRadio,
     SelectRadioCss,
@@ -35,7 +34,6 @@ export {
     labelCss,
     panelCss,
     selectCheckboxCss,
-    selectCss,
     selectRadioCss
 } from "./components";
 export {

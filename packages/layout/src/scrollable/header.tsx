@@ -1,7 +1,7 @@
 import {HTMLMotionProps, motion} from "framer-motion";
 import {useLayoutEffect, useState} from "react";
 
-import {springTransition} from "@focus4/styling";
+import {getSpringTransition} from "@focus4/styling";
 
 interface HeaderProps extends HTMLMotionProps<"header"> {
     onHeightChange: (height: number) => void;
@@ -26,7 +26,7 @@ export function Header({onHeightChange, animated, ...props}: HeaderProps) {
             animate="visible"
             exit={animated ? "hidden" : {display: "none"}}
             initial={animated ? "hidden" : false}
-            transition={springTransition}
+            transition={getSpringTransition()}
             variants={{visible: {y: "0%"}, hidden: {y: "-105%"}}}
             {...props}
         />

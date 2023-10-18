@@ -19,13 +19,15 @@ export function getDefaultTransition() {
     } as const;
 }
 
-export const springTransition = {
-    type: "spring",
-    stiffness: 170,
-    damping: 26,
-    restDelta: 1,
-    restSpeed: 1000
-} as const;
+export function getSpringTransition() {
+    return {
+        type: "spring",
+        bounce: 0,
+        duration: get().duration / 1000,
+        restDelta: 1,
+        restSpeed: 1000
+    } as const;
+}
 
 export function cssTransitionProps({
     enter,

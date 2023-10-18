@@ -30,12 +30,12 @@
     color: var(--button-secondary-color);
     border-radius: var(--floating-action-button-border-radius);
     box-shadow: var(--shadow-4p);
-    transition: box-shadow var(--animation-duration) var(--animation-curve-default) 0s,
-        background-color var(--animation-duration) var(--animation-curve-default) 0s,
-        width var(--animation-duration) var(--animation-curve-default) 0s,
-        height var(--animation-duration) var(--animation-curve-default) 0s,
-        line-height var(--animation-duration) var(--animation-curve-default) 0s,
-        border-radius var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: box-shadow var(--animation-duration) var(--animation-curve-default),
+        background-color var(--animation-duration) var(--animation-curve-default),
+        width var(--animation-duration) var(--animation-curve-default),
+        height var(--animation-duration) var(--animation-curve-default),
+        line-height var(--animation-duration) var(--animation-curve-default),
+        border-radius var(--animation-duration) var(--animation-curve-default);
 }
 
 .button::before {
@@ -48,7 +48,7 @@
     pointer-events: none;
     opacity: 0;
     background-color: var(--button-secondary-color);
-    transition: opacity var(--animation-duration-short) var(--animation-curve-default) 0s;
+    transition: opacity var(--animation-duration-short) var(--animation-curve-default);
 }
 
 .button:hover::before {
@@ -95,9 +95,9 @@
     height: var(--floating-action-button-size);
     font-size: var(--floating-action-button-icon-size);
     line-height: var(--floating-action-button-size);
-    transition: width var(--animation-duration) var(--animation-curve-default) 0s,
-        height var(--animation-duration) var(--animation-curve-default) 0s,
-        line-height var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: width var(--animation-duration) var(--animation-curve-default),
+        height var(--animation-duration) var(--animation-curve-default),
+        line-height var(--animation-duration) var(--animation-curve-default);
 }
 
 .label {
@@ -108,9 +108,9 @@
     line-height: calc(var(--floating-action-button-size) + var(--button-line-height-delta));
     white-space: nowrap;
     opacity: 0;
-    transition: line-height var(--animation-duration) var(--animation-curve-default) 0s,
-        opacity var(--animation-duration) var(--animation-curve-default) 0s,
-        margin var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: line-height var(--animation-duration) var(--animation-curve-default),
+        opacity var(--animation-duration) var(--animation-curve-default),
+        margin var(--animation-duration) var(--animation-curve-default);
 }
 
 .button--extended .label {

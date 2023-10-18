@@ -6,7 +6,7 @@ import {observer, useObserver} from "mobx-react";
 import {cloneElement, Component, forwardRef, HTMLProps, Key, PropsWithChildren, ReactNode, Ref} from "react";
 import {createPortal, findDOMNode} from "react-dom";
 
-import {CSSProp, ScrollableContext, springTransition, themr} from "@focus4/styling";
+import {CSSProp, getSpringTransition, ScrollableContext, themr} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import {headerCss} from "../header";
@@ -321,7 +321,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
                                 onUpdate={({x}) => {
                                     this.updateMenuParentNodes(x as string);
                                 }}
-                                transition={this.menuRefs.size ? springTransition : {duration: 0}}
+                                transition={this.menuRefs.size ? getSpringTransition() : {duration: 0}}
                                 variants={{
                                     opened: {x: "0%"},
                                     closed: {x: "-100%"}

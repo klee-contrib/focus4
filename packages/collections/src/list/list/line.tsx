@@ -5,7 +5,7 @@ import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react
 import {getEmptyImage} from "react-dnd-html5-backend";
 
 import {CollectionStore} from "@focus4/stores";
-import {springTransition, ToBem} from "@focus4/styling";
+import {getSpringTransition, ToBem} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "../contextual-actions";
@@ -153,7 +153,7 @@ export function LineWrapper<T>({
             exit={{}}
             initial={false}
             style={{opacity: state.isDragged && !disableDragAnimation ? 0 : 1}}
-            transition={springTransition}
+            transition={getSpringTransition()}
             variants={{
                 dragging: {
                     width: mosaic?.width ? 0 : undefined,

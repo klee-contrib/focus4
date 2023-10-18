@@ -22,7 +22,7 @@
     background-color: transparent;
     color: var(--button-secondary-color);
     border-radius: var(--button-border-radius);
-    transition: background-color var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: background-color var(--animation-duration) var(--animation-curve-default);
 }
 
 .button::before {
@@ -35,7 +35,7 @@
     pointer-events: none;
     opacity: 0;
     background-color: var(--button-secondary-color);
-    transition: opacity var(--animation-duration-short) var(--animation-curve-default) 0s;
+    transition: opacity var(--animation-duration-short) var(--animation-curve-default);
 }
 
 .button:hover::before {

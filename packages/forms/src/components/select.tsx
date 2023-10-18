@@ -4,9 +4,6 @@ import {useObserver} from "mobx-react";
 import {ReferenceList} from "@focus4/stores";
 import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
-import selectCss, {SelectCss} from "./__style__/select.css";
-export {selectCss, SelectCss};
-
 /** Props du Select. */
 export interface SelectProps<T extends "number" | "string">
     extends Omit<

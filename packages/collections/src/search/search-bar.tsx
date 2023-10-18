@@ -7,7 +7,7 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {config} from "@focus4/core";
 import {fieldFor, SelectCheckbox} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
-import {CSSProp, getIcon, springTransition, useTheme} from "@focus4/styling";
+import {CSSProp, getIcon, getSpringTransition, useTheme} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";
@@ -231,7 +231,7 @@ export function SearchBar<T, C>({
                         className={theme.panel()}
                         exit={{height: 0, y: -40, overflow: "hidden", transitionEnd: {overflow: "auto"}}}
                         initial={{height: 0, y: -40}}
-                        transition={springTransition}
+                        transition={getSpringTransition()}
                     >
                         {criteriaComponent
                             ? fieldFor(

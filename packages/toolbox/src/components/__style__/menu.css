@@ -31,6 +31,7 @@
     z-index: var(--z-index-highest);
     box-shadow: var(--shadow-4p);
     box-sizing: border-box;
+    transition: padding var(--animation-duration) var(--animation-curve-default);
 }
 
 .menu--active {
@@ -100,7 +101,7 @@
     pointer-events: none;
     opacity: 0;
     background-color: var(--button-secondary-color);
-    transition: opacity var(--animation-duration-short) var(--animation-curve-default) 0s;
+    transition: opacity var(--animation-duration-short) var(--animation-curve-default);
 }
 
 .menuItem:hover::before {

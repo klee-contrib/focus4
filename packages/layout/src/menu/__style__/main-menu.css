@@ -53,8 +53,8 @@
     aspect-ratio: var(--main-menu-item-aspect-ratio);
     padding: var(--main-menu-item-padding);
     cursor: pointer;
-    transition: background-color var(--animation-duration) var(--animation-curve-default) 0s,
-        color var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: background-color var(--animation-duration) var(--animation-curve-default),
+        color var(--animation-duration) var(--animation-curve-default);
 }
 
 .item::before {
@@ -67,9 +67,9 @@
     pointer-events: none;
     opacity: 0;
     background: var(--main-menu-item-color);
-    transition: opacity var(--animation-duration-short) var(--animation-curve-default) 0s,
-        background-color var(--animation-duration) var(--animation-curve-default) 0s,
-        color var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: opacity var(--animation-duration-short) var(--animation-curve-default),
+        background-color var(--animation-duration) var(--animation-curve-default),
+        color var(--animation-duration) var(--animation-curve-default);
 }
 
 .item:hover::before {

@@ -16,7 +16,7 @@ import {
     useState
 } from "react";
 
-import {CSSProp, springTransition, useTheme} from "@focus4/styling";
+import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
@@ -143,11 +143,11 @@ export function MenuItem({
             onPointerLeave={onPointerLeave}
             onPointerUp={onPointerUp}
         >
-            <li className={classNames(theme.menuItem({disabled}), className)} onClick={handleClick}>
+            <span className={classNames(theme.menuItem({disabled}), className)} onClick={handleClick}>
                 {iconLeft ? <FontIcon className={theme.icon()}>{iconLeft}</FontIcon> : null}
                 <span className={theme.caption()}>{caption}</span>
                 {iconRight ? <FontIcon className={theme.icon()}>{iconRight}</FontIcon> : null}
-            </li>
+            </span>
         </Ripple>
     );
 }
@@ -412,7 +412,7 @@ export function Menu({
                                   setShowRing(false);
                               }
                     }
-                    transition={{height: {...springTransition, restDelta: 0.5}}}
+                    transition={{height: {...getSpringTransition(), restDelta: 5}, opacity: {duration: 0.1}}}
                 >
                     {item}
                 </motion.li>

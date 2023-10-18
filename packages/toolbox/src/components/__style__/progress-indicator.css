@@ -33,7 +33,7 @@
 }
 
 .indicator {
-    transition: stroke-dasharray var(--animation-duration-short) var(--animation-curve-default) 0s;
+    transition: stroke-dasharray var(--animation-duration-short) var(--animation-curve-default);
     stroke: var(--progress-indicator-color);
 }
 

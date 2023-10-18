@@ -37,8 +37,8 @@
     height: var(--switch-height);
     margin: calc((var(--switch-state-size) - var(--switch-height)) / 2);
     border-radius: calc(var(--switch-height) / 2);
-    transition: background-color var(--animation-duration) var(--animation-curve-default) 0s,
-        border-color var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: background-color var(--animation-duration) var(--animation-curve-default),
+        border-color var(--animation-duration) var(--animation-curve-default);
     border: var(--switch-border-size) solid var(--input-outline-color);
     box-sizing: border-box;
 }
@@ -53,7 +53,7 @@
     height: var(--switch-state-size);
     border-radius: 50%;
     transition: transform var(--animation-duration-short) var(--switch-animation-curve) 0s,
-        background-color var(--animation-duration) var(--animation-curve-default) 0s;
+        background-color var(--animation-duration) var(--animation-curve-default);
     transform-origin: center center;
     transform: translateX(0px);
     color: var(--input-state-color);
@@ -63,8 +63,8 @@
     position: absolute;
     top: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
     left: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
-    transition: transform var(--switch-thumb-animation-duration) var(--animation-curve-default) 0s,
-        background-color var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: transform var(--switch-thumb-animation-duration) var(--animation-curve-default),
+        background-color var(--animation-duration) var(--animation-curve-default);
     background-color: var(--input-outline-color);
     width: calc(var(--switch-height) / 2);
     height: calc(var(--switch-height) / 2);
@@ -79,7 +79,7 @@ span.icon {
     position: absolute;
     top: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
     left: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
-    transition: clip-path var(--animation-duration) var(--animation-curve-default) 0s;
+    transition: clip-path var(--animation-duration) var(--animation-curve-default);
     font-size: calc(var(--switch-height) / 2);
 }
 

@@ -10,7 +10,7 @@ export {
     getDefaultTransition,
     getIcon,
     initColorScheme,
-    springTransition
+    getSpringTransition
 } from "./utils";
 export {
     CSSContext,
