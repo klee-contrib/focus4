@@ -111,15 +111,45 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
 
     const menu = useMenu();
 
+    const handleChange = useCallback(
+        (key?: string, noBlur = false) => {
+            onChange?.(key === undefinedKey ? undefined : key);
+            setSelected(key ?? undefinedKey);
+            if (!noBlur) {
+                setFocused(false);
+                inputRef.current?.blur();
+            }
+        },
+        [onChange]
+    );
+
     const handleKeyDown = useCallback(
         function handleKeyDown(e: KeyboardEvent) {
             if (e.key === "Enter" || e.key === "Space") {
                 if (!menu.active) {
                     menu.open();
                 }
+            } else if (!menu.active && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let keys = values.map(getKey);
+                if (hasUndefined) {
+                    keys = [undefinedKey, ...keys];
+                }
+                const key = value ?? undefinedKey;
+                let index = keys.indexOf(key) + (e.key === "ArrowDown" ? +1 : -1);
+                if (index < 0) {
+                    index = keys.length - 1;
+                }
+                if (index >= keys.length) {
+                    index = 0;
+                }
+
+                handleChange(keys[index], true);
             }
         },
-        [menu.active]
+        [handleChange, menu.active, value, values]
     );
 
     useEffect(() => {
@@ -128,16 +158,6 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
             return () => document.removeEventListener("keydown", handleKeyDown);
         }
     }, [focused, handleKeyDown]);
-
-    const handleChange = useCallback(
-        (key?: string) => {
-            onChange?.(key === undefinedKey ? undefined : key);
-            setSelected(key ?? undefinedKey);
-            setFocused(false);
-            inputRef.current?.blur();
-        },
-        [onChange]
-    );
 
     const handleFocus: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
