@@ -29,6 +29,7 @@
 }
 
 .state {
+    display: block;
     position: relative;
     width: var(--radio-state-size);
     height: var(--radio-state-size);
@@ -37,6 +38,7 @@
 }
 
 .outline {
+    display: block;
     position: absolute;
     width: var(--radio-size);
     height: var(--radio-size);
@@ -49,6 +51,7 @@
 }
 
 .dot {
+    display: block;
     width: var(--radio-size);
     height: var(--radio-size);
     transform: scale(0);

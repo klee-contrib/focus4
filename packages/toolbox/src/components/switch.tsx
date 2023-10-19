@@ -90,17 +90,17 @@ export function Switch({
                 readOnly
                 type="checkbox"
             />
-            <div className={theme.track()} />
+            <span className={theme.track()} />
             <Ripple disabled={disabled}>
-                <div className={theme.state()}>
+                <span className={theme.state()}>
                     {value !== undefined ? (
                         <>
-                            <div className={theme.thumb({icon: !!iconOff})} />
+                            <span className={theme.thumb({icon: !!iconOff})} />
                             {iconOn ? <FontIcon className={theme.icon({checked: true})}>{iconOn}</FontIcon> : null}
                             {iconOff ? <FontIcon className={theme.icon({unchecked: true})}>{iconOff}</FontIcon> : null}
                         </>
                     ) : null}
-                </div>
+                </span>
             </Ripple>
             {label ? <span className={theme.label()}>{label}</span> : null}
         </label>

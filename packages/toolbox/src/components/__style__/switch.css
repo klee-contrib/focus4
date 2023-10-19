@@ -33,6 +33,7 @@
 }
 
 .track {
+    display: block;
     width: calc(var(--switch-length));
     height: var(--switch-height);
     margin: calc((var(--switch-state-size) - var(--switch-height)) / 2);
@@ -60,6 +61,7 @@
 }
 
 .thumb {
+    display: block;
     position: absolute;
     top: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
     left: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);

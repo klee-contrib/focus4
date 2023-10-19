@@ -96,11 +96,11 @@ export function RadioButton({
                 type="radio"
             />
             <Ripple disabled={disabled}>
-                <div className={theme.state()}>
-                    <div className={theme.outline()}>
-                        <div className={theme.dot()} />
-                    </div>
-                </div>
+                <span className={theme.state()}>
+                    <span className={theme.outline()}>
+                        <span className={theme.dot()} />
+                    </span>
+                </span>
             </Ripple>
             {label ? <span className={theme.label()}>{label}</span> : null}
         </label>

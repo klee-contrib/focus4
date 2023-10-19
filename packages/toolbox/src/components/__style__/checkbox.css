@@ -28,6 +28,7 @@
 }
 
 .state {
+    display: block;
     position: relative;
     width: var(--checkbox-state-size);
     height: var(--checkbox-state-size);
@@ -36,6 +37,7 @@
 }
 
 .outline {
+    display: block;
     position: absolute;
     top: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2 + var(--checkbox-outline-size));
     left: calc((var(--checkbox-state-size) - var(--checkbox-size)) / 2 + var(--checkbox-outline-size));

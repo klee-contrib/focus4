@@ -115,7 +115,7 @@ export function Button({
                 element,
                 props,
                 icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null,
-                <div className={theme.label()}>{label ?? "\xa0"}</div>
+                <span className={theme.label()}>{label ?? "\xa0"}</span>
             )}
         </Ripple>
     );

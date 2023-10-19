@@ -52,12 +52,13 @@
 .icon {
     user-select: none;
     width: var(--text-field-icon-size);
-    height: var(--text-field-icon-size);
+    height: var(--text-field-icon-button-size);
     color: var(--input-text-color);
     transition: color var(--animation-duration-short) var(--animation-curve-default);
 
     & > span {
         font-size: var(--text-field-icon-size);
+        line-height: var(--text-field-icon-button-size);
     }
 }
 

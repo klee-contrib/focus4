@@ -98,11 +98,11 @@ export function Checkbox({
                 type="checkbox"
             />
             <Ripple disabled={disabled}>
-                <div className={theme.state()}>
-                    <div className={theme.outline()}>
+                <span className={theme.state()}>
+                    <span className={theme.outline()}>
                         <FontIcon className={theme.check()}>{indeterminate ? "remove" : "check"}</FontIcon>
-                    </div>
-                </div>
+                    </span>
+                </span>
             </Ripple>
             {label ? <span className={theme.label()}>{label}</span> : null}
         </label>
