@@ -37,7 +37,7 @@ export {
     NodeToType,
     ObjectEntry,
     RecursiveListEntry,
-    SimpleDomainFieldType,
+    SingleDomainFieldType,
     StoreListNode,
     StoreNode,
     Validator,

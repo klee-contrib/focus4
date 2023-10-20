@@ -1,4 +1,4 @@
-import {DomainFieldType, DomainType, SimpleDomainFieldType} from "@focus4/stores";
+import {DomainFieldType, DomainType, SingleDomainFieldType} from "@focus4/stores";
 
 export function stringToDomainType<T extends DomainFieldType>(value: string | undefined, type: T) {
     if (type === "string" && value) {
@@ -23,5 +23,5 @@ export function toSimpleType<T extends DomainFieldType>(type: T) {
             : type === "number-array" || type === "number"
             ? "number"
             : "string"
-    ) as SimpleDomainFieldType<T>;
+    ) as SingleDomainFieldType<T>;
 }

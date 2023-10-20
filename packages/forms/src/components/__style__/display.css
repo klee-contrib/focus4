@@ -1,5 +1,9 @@
 :root {
     --display-line-height: 24px;
+    --display-list-min-width: 100px;
+    --display-list-max-width: 400px;
+    --display-list-gap: 15px;
+    --display-list-padding: 20px;
 }
 
 .display {
@@ -7,4 +11,17 @@
     min-height: var(--display-line-height);
     line-height: var(--display-line-height);
     padding: calc((var(--text-field-height) - var(--display-line-height)) / 2) 0;
+}
+
+.lists {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--display-list-gap);
+
+    & ul {
+        min-width: var(--display-list-min-width);
+        max-width: var(--display-list-max-width);
+        padding-left: var(--display-list-padding);
+        margin: 0;
+    }
 }

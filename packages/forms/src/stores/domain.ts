@@ -17,7 +17,7 @@ export function domain<
     ICProps extends BaseInputProps = InputProps<DT>,
     SCProps extends BaseSelectProps = SelectProps<DT>,
     ACProps extends BaseAutocompleteProps = AutocompleteSearchProps<DT>,
-    DCProps extends BaseDisplayProps = DisplayProps,
+    DCProps extends BaseDisplayProps = DisplayProps<DT>,
     LCProps extends BaseLabelProps = LabelProps
 >(
     d: Domain<

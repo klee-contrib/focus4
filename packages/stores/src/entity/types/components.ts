@@ -30,6 +30,7 @@ export interface BaseAutocompleteProps extends BaseInputProps {
 export interface BaseDisplayProps extends WithThemeProps {
     formatter?: (value: any) => string;
     keyResolver?: (key: any) => Promise<string | undefined>;
+    type?: DomainFieldType;
     value?: any;
     values?: ReferenceList;
 }

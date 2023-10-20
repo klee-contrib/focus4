@@ -7,7 +7,7 @@ import {
     DomainTypeMultiple,
     DomainTypeSingle,
     ReferenceList,
-    SimpleDomainFieldType
+    SingleDomainFieldType
 } from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss} from "@focus4/toolbox";
@@ -19,7 +19,7 @@ function clickHandlerFactory<T extends DomainFieldType>(
     isDisabled: boolean,
     isSelected: boolean,
     value: DomainTypeMultiple<T> | undefined,
-    optVal: DomainTypeSingle<SimpleDomainFieldType<T>>,
+    optVal: DomainTypeSingle<SingleDomainFieldType<T>>,
     onChange: (value: DomainTypeMultiple<T>) => void
 ) {
     return (e: SyntheticEvent<any>) => {

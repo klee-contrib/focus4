@@ -84,13 +84,16 @@ Le composant d'affichage par défaut pour [toutes les fonctions d'affichage de c
 
 ### Props
 
-| Nom           | Obligatoire | Type                                                | Description                     |
-| ------------- | ----------- | --------------------------------------------------- | ------------------------------- |
-| `formatter`   | Non         | <code>(value: any) =&gt; string</code>              | Formatteur.                     |
-| `keyResolver` | Non         | <code>(key: any) =&gt; Promise&lt;string&gt;</code> | Service de résolution de code.  |
-| `theme`       | Non         | <code>CSSProp&lt;DisplayCss&gt;</code>              | CSS.                            |
-| `value`       | Non         | <code>any</code>                                    | Valeur à afficher.              |
-| `values`      | Non         | <code>ReferenceList&lt;any, any, any&gt;</code>     | Liste des valeurs de référence. |
+| Nom                 | Obligatoire | Type                                                                                                   | Description                                                                                                                                                                          |
+| ------------------- | ----------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `formatter`         | Non         | <code>(value: DomainTypeSingle&lt;SingleDomainFieldType&lt;T&gt;&gt;) =&gt; string</code>              | Formatteur.                                                                                                                                                                          |
+| `keyResolver`       | Non         | <code>(key: DomainTypeSingle&lt;SingleDomainFieldType&lt;T&gt;&gt;) =&gt; Promise&lt;string&gt;</code> | Service de résolution de code.                                                                                                                                                       |
+| `listChunkSize`     | Non         | <code>number</code>                                                                                    | Si renseigné pour un affichage multiple en mode `list`, découpe les listes en plusieurs morceaux pour pouvoir les afficher en colonnes par exemple.                                  |
+| `multiValueDisplay` | Non         | <code>"inline" &#124; "lists-if-multiple" &#124; "lists"</code>                                        | Permet de choisir si les valeurs multiples sont affichées en liste(s) ou sur une seule ligne.<br />Par défaut : `lists-if-multiple` (`inline` si une seule valeur et `lists` sinon). |
+| `theme`             | Non         | <code>CSSProp&lt;DisplayCss&gt;</code>                                                                 | CSS.                                                                                                                                                                                 |
+| `type`              | **Oui**     | <code>DomainFieldType</code>                                                                           | Type du champ (celui du domaine).                                                                                                                                                    |
+| `value`             | Non         | <code>any</code>                                                                                       | Valeur à afficher.                                                                                                                                                                   |
+| `values`            | Non         | <code>ReferenceList&lt;any, any, any&gt;</code>                                                        | Liste des valeurs de référence.                                                                                                                                                      |
 
 ## `InputDate`
 

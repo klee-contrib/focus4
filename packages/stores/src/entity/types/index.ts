@@ -24,7 +24,7 @@ export {
     ListEntry,
     ObjectEntry,
     RecursiveListEntry,
-    SimpleDomainFieldType
+    SingleDomainFieldType
 } from "./entity";
 export {FormEntityField, FormListNode, FormNode} from "./form";
 export {StoreListNode, StoreNode} from "./store";

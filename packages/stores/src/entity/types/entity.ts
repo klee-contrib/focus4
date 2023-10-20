@@ -22,7 +22,7 @@ export type DomainFieldType =
     | "string";
 
 /** Récupère le type de domaine simple d'un type de domaine multiple. */
-export type SimpleDomainFieldType<DT> = DT extends "boolean-array" | "boolean"
+export type SingleDomainFieldType<DT> = DT extends "boolean-array" | "boolean"
     ? "boolean"
     : DT extends "number-array" | "number"
     ? "number"

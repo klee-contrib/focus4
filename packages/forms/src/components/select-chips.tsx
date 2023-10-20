@@ -7,7 +7,7 @@ import {
     DomainTypeMultiple,
     DomainTypeSingle,
     ReferenceList,
-    SimpleDomainFieldType
+    SingleDomainFieldType
 } from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {Chip, ChipCss, DropdownCss, TextFieldCss} from "@focus4/toolbox";
@@ -71,7 +71,7 @@ export function SelectChips<T extends DomainFieldType>({
     const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
 
     const handleAddValue = useCallback(
-        function handleAddValue(v?: DomainTypeSingle<SimpleDomainFieldType<T>>) {
+        function handleAddValue(v?: DomainTypeSingle<SingleDomainFieldType<T>>) {
             if (v && (!maxSelectable || value.length < maxSelectable)) {
                 onChange?.([...value, v] as DomainTypeMultiple<T>);
             }
@@ -80,7 +80,7 @@ export function SelectChips<T extends DomainFieldType>({
     );
 
     const handleRemoveValue = useCallback(
-        function handleRemoveValue(v: DomainTypeSingle<SimpleDomainFieldType<T>>) {
+        function handleRemoveValue(v: DomainTypeSingle<SingleDomainFieldType<T>>) {
             onChange?.(value.filter(i => i !== v) as DomainTypeMultiple<T>);
         },
         [onChange, value]
@@ -149,7 +149,7 @@ export function SelectChips<T extends DomainFieldType>({
                         className={theme.chip()}
                         disabled={disabled}
                         label={values.getLabel(item)}
-                        onDeleteClick={() => handleRemoveValue(item as DomainTypeSingle<SimpleDomainFieldType<T>>)}
+                        onDeleteClick={() => handleRemoveValue(item as DomainTypeSingle<SingleDomainFieldType<T>>)}
                         theme={chipTheme}
                     />
                 ))}

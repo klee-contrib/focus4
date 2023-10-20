@@ -230,6 +230,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                             formatter={displayFormatter}
                             keyResolver={autocompleteProps.keyResolver}
                             theme={themeable(domainDCP.theme || {}, displayProps.theme || {})}
+                            type={type}
                             value={value}
                             values={selectProps.values}
                         />
