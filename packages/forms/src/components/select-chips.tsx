@@ -147,6 +147,7 @@ export function SelectChips<T extends DomainFieldType>({
                     <Chip
                         key={`${item}`}
                         className={theme.chip()}
+                        color="light"
                         disabled={disabled}
                         label={values.getLabel(item)}
                         onDeleteClick={() => handleRemoveValue(item as DomainTypeSingle<SingleDomainFieldType<T>>)}

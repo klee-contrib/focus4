@@ -60,6 +60,10 @@
     opacity: var(--button-primary-hover-opacity);
 }
 
+.button--light {
+    color: var(--button-primary-light-color);
+}
+
 .button--accent {
     color: var(--button-accent-main-color);
 }
@@ -82,6 +86,10 @@
         }
     }
 
+    &.button--light {
+        background-color: var(--button-primary-light-color);
+    }
+
     &.button--accent {
         background-color: var(--button-accent-main-color);
         color: var(--button-accent-secondary-color);
@@ -95,6 +103,10 @@
 .button--outlined {
     &.button--primary {
         outline-color: var(--button-primary-main-color);
+    }
+
+    &.button--light {
+        outline-color: var(--button-primary-light-color);
     }
 
     &.button--accent {

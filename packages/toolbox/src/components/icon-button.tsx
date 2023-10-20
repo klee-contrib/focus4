@@ -16,7 +16,7 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Couleur du bouton. */
-    color?: "accent" | "primary";
+    color?: "accent" | "light" | "primary";
     /** Désactive le bouton. */
     disabled?: boolean;
     /** Si renseigné, pose une balise <a> à la place du <button>. */
@@ -83,7 +83,8 @@ export function IconButton({
                 outlined: variant === "outlined",
                 filled: variant?.includes("filled") && !!color,
                 accent: color === "accent",
-                primary: color === "primary"
+                primary: color === "primary",
+                light: color === "light"
             }),
             className
         ),

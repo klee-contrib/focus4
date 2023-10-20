@@ -12,12 +12,6 @@
     font-size: 20px;
 }
 
-.chip {
-    --button-primary-main-color: rgba(var(--color-primary), 0.5);
-    --button-primary-secondary-color: rgba(var(--color-black));
-    outline-color: transparent;
-}
-
 .chip + .chip {
     margin-inline: 0;
 }

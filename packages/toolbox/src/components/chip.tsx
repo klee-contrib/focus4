@@ -17,7 +17,7 @@ export interface ChipProps extends PointerEvents<HTMLButtonElement | HTMLLinkEle
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Couleur du Chip. */
-    color?: "accent" | "primary";
+    color?: "accent" | "light" | "primary";
     /** Désactive le Chip. */
     disabled?: boolean;
     /** Si renseigné, le Chip est affiché avec une élévation. */
@@ -77,7 +77,8 @@ export function Chip({
                 disabled,
                 elevated,
                 accent: color === "accent",
-                primary: color === "primary"
+                primary: color === "primary",
+                light: color === "light"
             }),
             className
         ),

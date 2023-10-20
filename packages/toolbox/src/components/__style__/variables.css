@@ -12,6 +12,7 @@
 
     --button-primary-main-color: rgb(var(--color-primary));
     --button-primary-secondary-color: rgb(var(--color-white));
+    --button-primary-light-color: rgb(var(--color-primary-light));
     --button-primary-hover-opacity: 0.18;
 
     --button-accent-main-color: rgb(var(--color-accent));

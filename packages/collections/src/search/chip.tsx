@@ -94,7 +94,7 @@ export function SearchChip(props: SearchChipProps) {
         return (
             <Chip
                 className={className}
-                color="primary"
+                color="light"
                 label={!tValueLabel ? tCodeLabel : `${tCodeLabel} : ${tValueLabel}`}
                 onDeleteClick={deletable ? onDeleteClick : undefined}
                 theme={themeable(

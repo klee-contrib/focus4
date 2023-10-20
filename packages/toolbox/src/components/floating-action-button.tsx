@@ -17,7 +17,7 @@ export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonEleme
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Couleur du bouton. */
-    color?: "accent" | "primary";
+    color?: "accent" | "light" | "primary";
     /** Désactive le bouton. */
     disabled?: boolean;
     /** Affiche le libellé du bouton dans le bouton. */
@@ -94,7 +94,8 @@ export function FloatingActionButton({
                 lowered,
                 accent: color === "accent",
                 small: !extended && size === "small",
-                primary: color === "primary"
+                primary: color === "primary",
+                light: color === "light"
             }),
             className
         ),

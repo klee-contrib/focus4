@@ -72,6 +72,11 @@
     opacity: var(--button-primary-hover-opacity);
 }
 
+.chip--light {
+    background-color: var(--button-primary-light-color);
+    outline-color: var(--button-primary-light-color);
+}
+
 .chip--accent {
     --button-secondary-color: var(--button-accent-secondary-color);
     background-color: var(--button-accent-main-color);
@@ -128,6 +133,7 @@
     outline-color: var(--button-disabled-text-color);
 
     &.chip--primary,
+    &.chip--light,
     &.chip--accent {
         background-color: var(--button-disabled-background-color);
     }

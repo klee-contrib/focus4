@@ -16,7 +16,7 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Couleur du bouton. */
-    color?: "accent" | "primary";
+    color?: "accent" | "light" | "primary";
     /** Désactive le bouton. */
     disabled?: boolean;
     /** Si renseigné, pose une balise <a> à la place du <button>. */
@@ -87,6 +87,7 @@ export function Button({
                 elevated: variant?.includes("elevated"),
                 accent: color === "accent",
                 primary: color === "primary",
+                light: color === "light",
                 label: !!label,
                 left: !!icon && iconPosition === "left",
                 right: !!icon && iconPosition === "right"
