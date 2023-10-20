@@ -13,7 +13,7 @@ function generateDocFile(fileName, globPath, lines) {
     for (const component of docgen
         .parse(glob.sync(globPath), {
             savePropValueAsString: true,
-            propFilter: {skipPropsWithName: "ref"}
+            propFilter: prop => !(prop.name == "ref" || prop.name.startsWith("aria-"))
         })
         .reverse()) {
         lines.push(`## \`${component.displayName}\``);

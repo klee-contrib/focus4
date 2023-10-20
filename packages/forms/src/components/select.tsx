@@ -6,10 +6,7 @@ import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
 /** Props du Select. */
 export interface SelectProps<T extends "number" | "string">
-    extends Omit<
-        DropdownProps<any>,
-        "error" | "getKey" | "getLabel" | "onChange" | "showSupportingText" | "value" | "values"
-    > {
+    extends Omit<DropdownProps<any>, "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"> {
     /** Message d'erreur à afficher. */
     error?: string;
     /** Préfixe i18n. Par défaut : "focus". */
@@ -33,6 +30,7 @@ export function Select<T extends "number" | "string">({
     error,
     i18nPrefix = "focus",
     onChange,
+    showSupportingText = "always",
     supportingText,
     type,
     value,
@@ -51,7 +49,7 @@ export function Select<T extends "number" | "string">({
                 const v = type === "number" && val ? parseFloat(val) : val;
                 onChange(!!v || v === 0 ? (v as any) : undefined);
             }}
-            showSupportingText="always"
+            showSupportingText={showSupportingText}
             supportingText={error ?? supportingText}
             undefinedLabel={typeof undefinedLabel === "string" ? i18next.t(undefinedLabel) : undefinedLabel}
             value={value !== undefined ? `${value}` : undefined}

@@ -6,7 +6,7 @@ import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 export interface AutocompleteSearchProps<T extends "number" | "string", TSource = {key: string; label: string}>
     extends Omit<
         AutocompleteProps<TSource>,
-        "error" | "loading" | "onChange" | "showSupportingText" | "suggestionMatch" | "value" | "values"
+        "error" | "loading" | "onChange" | "suggestionMatch" | "value" | "values"
     > {
     /** Erreur à afficher sous le champ. */
     error?: string;
@@ -45,6 +45,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         querySearcher,
         searchOnEmptyQuery,
         supportingText,
+        showSupportingText = "always",
         type,
         value,
         ...props
@@ -118,7 +119,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
             onFocus={handleFocus}
             onQueryChange={handleQueryChange}
             query={query}
-            showSupportingText="always"
+            showSupportingText={showSupportingText}
             suggestionMatch="disabled"
             supportingText={error ?? supportingText}
             value={value !== undefined ? `${value}` : undefined}
