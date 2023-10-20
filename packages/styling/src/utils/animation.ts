@@ -23,9 +23,7 @@ export function getSpringTransition() {
     return {
         type: "spring",
         bounce: 0,
-        duration: get().duration / 1000,
-        restDelta: 1,
-        restSpeed: 1000
+        duration: get().duration / 1000
     } as const;
 }
 

@@ -26,16 +26,20 @@
     padding: 0;
     margin: 0;
     overflow-y: auto;
+    opacity: 0;
     background-color: var(--menu-background-color);
     border-radius: var(--menu-border-radius);
     z-index: var(--z-index-highest);
     box-shadow: var(--shadow-4p);
     box-sizing: border-box;
-    transition: padding var(--animation-duration) var(--animation-curve-default);
+    transition: padding var(--animation-duration) var(--animation-curve-default), opacity 0.1s ease-out;
+    transition-delay: 0s, calc(var(--animation-duration) - 0.1s);
 }
 
 .menu--active {
     padding: var(--menu-padding);
+    opacity: 1;
+    transition-delay: 0s;
 }
 
 .menu--full {

@@ -412,7 +412,7 @@ export function Menu({
                                   setShowRing(false);
                               }
                     }
-                    transition={{height: {...getSpringTransition(), restDelta: 5}, opacity: {duration: 0.1}}}
+                    transition={{height: getSpringTransition(), opacity: {duration: 0.1}}}
                 >
                     {item}
                 </motion.li>
