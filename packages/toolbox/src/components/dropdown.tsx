@@ -25,6 +25,8 @@ export interface DropdownProps<TSource = {key: string; label: string}>
     extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "readonly" | "theme" | "type"> {
     /** Précise dans quel sens les valeurs doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
+    /** Désactive la sélection de valeurs au clavier lorsque la Dropdown est fermée. */
+    disableArrowSelectionWhenClosed?: boolean;
     /**
      * Détermine la propriété de l'objet a utiliser comme clé. *
      * Par défaut : `item => item.key`
@@ -58,6 +60,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
     {
         className,
         direction = "auto",
+        disableArrowSelectionWhenClosed,
         disabled,
         error,
         getKey = defaultGetKey,
@@ -129,7 +132,11 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 if (!menu.active) {
                     menu.open();
                 }
-            } else if (!menu.active && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+            } else if (
+                !disableArrowSelectionWhenClosed &&
+                !menu.active &&
+                (e.key === "ArrowUp" || e.key === "ArrowDown")
+            ) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -149,7 +156,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 handleChange(keys[index], true);
             }
         },
-        [handleChange, menu.active, value, values]
+        [disableArrowSelectionWhenClosed, handleChange, menu.active, value, values]
     );
 
     useEffect(() => {
@@ -223,7 +230,16 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 theme={theme as unknown as CSSProp<TextFieldCss>}
                 trailing={[
                     {icon: `arrow_drop_${menu.active ? "up" : "down"}`, error},
-                    ...(Array.isArray(trailing) ? trailing : [trailing])
+                    ...(Array.isArray(trailing) ? trailing : [trailing]).map(t => ({
+                        ...t,
+                        onClick: t.blurOnClick
+                            ? () => {
+                                  t.onClick?.();
+                                  setFocused(false);
+                                  menu.close();
+                              }
+                            : undefined
+                    }))
                 ]}
                 type="text"
                 value={

@@ -19,12 +19,10 @@ export interface BooleanRadioProps {
     name: string;
     /** Call with each value change. */
     onChange: (value: boolean) => void;
-    /** CSS des radios. */
-    radioTheme?: CSSProp<RadioCss>;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
-    theme?: CSSProp<BooleanRadioCss>;
+    theme?: CSSProp<BooleanRadioCss & RadioCss>;
     /** Value. */
     value?: boolean;
 }
@@ -39,16 +37,15 @@ export function BooleanRadio({
     labelYes = "focus.boolean.yes",
     name,
     onChange,
-    radioTheme,
     showSupportingText = "always",
     theme: pTheme,
     value
 }: BooleanRadioProps) {
-    const theme = useTheme("booleanRadio", booleanRadioCss, pTheme);
+    const theme = useTheme<BooleanRadioCss & RadioCss>("booleanRadio", booleanRadioCss, pTheme);
     return (
         <>
             <RadioGroup
-                className={theme.radio()}
+                className={theme.boolean()}
                 onChange={(x: string) => onChange(x === "true")}
                 value={value === true ? "true" : value === false ? "false" : undefined}
             >
@@ -56,14 +53,14 @@ export function BooleanRadio({
                     disabled={disabled}
                     label={i18next.t(labelYes)}
                     name={`${name}-yes`}
-                    theme={radioTheme}
+                    theme={theme}
                     value="true"
                 />
                 <RadioButton
                     disabled={disabled}
                     label={i18next.t(labelNo)}
                     name={`${name}-no`}
-                    theme={radioTheme}
+                    theme={theme}
                     value="false"
                 />
             </RadioGroup>

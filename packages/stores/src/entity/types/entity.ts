@@ -11,9 +11,28 @@ import {
 } from "./components";
 import {Validator} from "./validation";
 
+/** Type possible pour un champ de domaine.  */
+export type DomainFieldType =
+    | "boolean-array"
+    | "boolean"
+    | "number-array"
+    | "number"
+    | "object"
+    | "string-array"
+    | "string";
+
+/** Récupère le type de domaine simple d'un type de domaine multiple. */
+export type SimpleDomainFieldType<DT> = DT extends "boolean-array" | "boolean"
+    ? "boolean"
+    : DT extends "number-array" | "number"
+    ? "number"
+    : DT extends "object" | "string-array" | "string"
+    ? "string"
+    : never;
+
 /** Définition d'un domaine. */
 export interface Domain<
-    DT extends "boolean" | "number" | "object" | "string" = any,
+    DT extends DomainFieldType = any,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
     ACProps extends BaseAutocompleteProps = any,
@@ -44,7 +63,7 @@ export interface Domain<
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
-    DT extends "boolean" | "number" | "object" | "string" = any,
+    DT extends DomainFieldType = any,
     T extends DomainType<DT> = DomainType<DT>,
     ICProps extends BaseInputProps = any,
     SCProps extends BaseSelectProps = any,
@@ -96,7 +115,21 @@ export type DomainType<DT> = DT extends "string"
     ? number
     : DT extends "boolean"
     ? boolean
+    : DT extends "string-array"
+    ? string[]
+    : DT extends "number-array"
+    ? number[]
+    : DT extends "boolean-array"
+    ? boolean[]
     : any;
+
+/** Récupère le type de champ simple associé à un domaine, ou never. */
+export type DomainTypeSingle<DT> = DT extends "boolean" | "number" | "string" ? DomainType<DT> : never;
+
+/** Récupère le type de champ multiple associé à un domaine, ou never. */
+export type DomainTypeMultiple<DT> = DT extends "boolean-array" | "number-array" | "string-array"
+    ? DomainType<DT>
+    : never;
 
 /** Type effectif d'un champ. */
 export type FieldEntryType<F extends FieldEntry> = F extends FieldEntry<infer _, infer T> ? T : never;

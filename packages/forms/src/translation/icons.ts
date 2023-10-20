@@ -22,5 +22,15 @@ export const icons = {
             library: "material",
             name: "info"
         }
+    },
+    select: {
+        selectAll: {
+            library: "material",
+            name: "format_align_justify"
+        },
+        unselectAll: {
+            library: "material",
+            name: "clear"
+        }
     }
 };

@@ -31,7 +31,8 @@
     border-radius: var(--floating-action-button-border-radius);
     box-shadow: var(--shadow-4p);
     transition: box-shadow var(--animation-duration) var(--animation-curve-default),
-        background-color var(--animation-duration) var(--animation-curve-default),
+        color var(--animation-duration-short) var(--animation-curve-default),
+        background-color var(--animation-duration-short) var(--animation-curve-default),
         width var(--animation-duration) var(--animation-curve-default),
         height var(--animation-duration) var(--animation-curve-default),
         line-height var(--animation-duration) var(--animation-curve-default),

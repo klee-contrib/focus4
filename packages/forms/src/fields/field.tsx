@@ -168,7 +168,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
             error: store.showError ? error : undefined,
             name,
             id,
-            type: type === "number" ? "number" : "string",
+            type,
             onChange
         };
 

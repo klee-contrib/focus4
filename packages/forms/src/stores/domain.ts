@@ -4,7 +4,8 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    Domain
+    Domain,
+    DomainFieldType
 } from "@focus4/stores";
 
 import {AutocompleteSearchProps, DisplayProps, InputProps, LabelProps, SelectProps} from "../components";
@@ -12,10 +13,10 @@ import {FieldOptions} from "../fields";
 
 /** Crée un domaine. */
 export function domain<
-    DT extends "boolean" | "number" | "object" | "string",
-    ICProps extends BaseInputProps = InputProps<DT extends "number" ? "number" : "string">,
-    SCProps extends BaseSelectProps = SelectProps<DT extends "number" ? "number" : "string">,
-    ACProps extends BaseAutocompleteProps = AutocompleteSearchProps<DT extends "number" ? "number" : "string">,
+    DT extends DomainFieldType,
+    ICProps extends BaseInputProps = InputProps<DT>,
+    SCProps extends BaseSelectProps = SelectProps<DT>,
+    ACProps extends BaseAutocompleteProps = AutocompleteSearchProps<DT>,
     DCProps extends BaseDisplayProps = DisplayProps,
     LCProps extends BaseLabelProps = LabelProps
 >(

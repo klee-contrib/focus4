@@ -265,9 +265,9 @@ export function SearchBar<T, C>({
                                         store.searchFields.length === store.availableSearchFields.length
                                     }
                                 />
-                                <SelectCheckbox<"string">
+                                <SelectCheckbox
                                     onChange={fields => (store.searchFields = fields)}
-                                    type="string"
+                                    type="string-array"
                                     value={store.searchFields ?? store.availableSearchFields}
                                     values={makeReferenceList(
                                         store.availableSearchFields.map(f => ({

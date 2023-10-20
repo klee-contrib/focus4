@@ -199,10 +199,6 @@
 
 .textField--focused,
 .textField--filled {
-    & .icon {
-        color: var(--input-outline-color);
-    }
-
     & .label {
         transform: translate(var(--text-field-padding-horizontal), calc(var(--text-field-height) / -2)) scale(0.75);
     }

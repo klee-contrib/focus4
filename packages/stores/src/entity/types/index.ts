@@ -12,7 +12,10 @@ export {
 } from "./components";
 export {
     Domain,
+    DomainFieldType,
     DomainType,
+    DomainTypeMultiple,
+    DomainTypeSingle,
     EntityField,
     EntityToType,
     FieldEntry,
@@ -20,7 +23,8 @@ export {
     FieldEntryType,
     ListEntry,
     ObjectEntry,
-    RecursiveListEntry
+    RecursiveListEntry,
+    SimpleDomainFieldType
 } from "./entity";
 export {FormEntityField, FormListNode, FormNode} from "./form";
 export {StoreListNode, StoreNode} from "./store";

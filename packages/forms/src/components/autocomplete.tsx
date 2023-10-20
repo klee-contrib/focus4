@@ -1,9 +1,12 @@
 import {debounce} from "lodash";
 import {ForwardedRef, forwardRef, ReactElement, useCallback, useEffect, useState} from "react";
 
+import {DomainFieldType, DomainTypeSingle} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
-export interface AutocompleteSearchProps<T extends "number" | "string", TSource = {key: string; label: string}>
+import {stringToDomainType} from "./utils";
+
+export interface AutocompleteSearchProps<T extends DomainFieldType, TSource = {key: string; label: string}>
     extends Omit<
         AutocompleteProps<TSource>,
         "error" | "loading" | "onChange" | "suggestionMatch" | "value" | "values"
@@ -11,17 +14,17 @@ export interface AutocompleteSearchProps<T extends "number" | "string", TSource 
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Service de résolution de clé. Doit retourner le libellé. */
-    keyResolver?: (key: T extends "string" ? string : number) => Promise<string | undefined>;
+    keyResolver?: (key: DomainTypeSingle<T>) => Promise<string | undefined>;
     /** Au changement. */
-    onChange?: (value: (T extends "string" ? string : number) | undefined) => void;
+    onChange?: (value: DomainTypeSingle<T> | undefined) => void;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
-    /** Type du champ ("string" ou "number"). */
+    /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
-    value?: (T extends "string" ? string : number) | undefined;
+    value?: DomainTypeSingle<T>;
 }
 
 const defaultGetKey = (x: any) => x.key;
@@ -32,7 +35,7 @@ const defaultGetKey = (x: any) => x.key;
  * Il s'agit du composant par défaut de `autocompleteFor`.
  */
 export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
-    T extends "number" | "string",
+    T extends DomainFieldType,
     TSource = {key: string; label: string}
 >(
     {
@@ -62,6 +65,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         if ((!!value || value === 0) && keyResolver) {
             setLoading(true);
             keyResolver(value).then(async label => {
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 setQuery(label ?? `${value}`);
                 if (!values.find(v => getKey(v) === value) && label && querySearcher) {
                     setValues(await querySearcher(encodeURIComponent(label)));
@@ -95,12 +99,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
     }
 
     function handleChange(newValue?: string) {
-        if (onChange) {
-            const v = (type === "number" && newValue ? parseFloat(newValue) : newValue) as T extends "string"
-                ? string
-                : number;
-            onChange(v || v === 0 ? v : undefined);
-        }
+        onChange?.(stringToDomainType(newValue, type));
     }
 
     function handleFocus() {
@@ -122,10 +121,11 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
             showSupportingText={showSupportingText}
             suggestionMatch="disabled"
             supportingText={error ?? supportingText}
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             value={value !== undefined ? `${value}` : undefined}
             values={values}
         />
     );
-}) as <T extends "number" | "string", TSource = {key: string; label: string}>(
+}) as <T extends DomainFieldType, TSource = {key: string; label: string}>(
     props: AutocompleteSearchProps<T, TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
 ) => ReactElement;

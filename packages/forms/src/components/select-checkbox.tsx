@@ -2,19 +2,25 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {SyntheticEvent} from "react";
 
-import {ReferenceList} from "@focus4/stores";
+import {
+    DomainFieldType,
+    DomainTypeMultiple,
+    DomainTypeSingle,
+    ReferenceList,
+    SimpleDomainFieldType
+} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss} from "@focus4/toolbox";
 
 import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
 export {selectCheckboxCss, SelectCheckboxCss};
 
-function clickHandlerFactory(
+function clickHandlerFactory<T extends DomainFieldType>(
     isDisabled: boolean,
     isSelected: boolean,
-    value: any[] | undefined,
-    optVal: number | string,
-    onChange: (value: any[] | undefined) => void
+    value: DomainTypeMultiple<T> | undefined,
+    optVal: DomainTypeSingle<SimpleDomainFieldType<T>>,
+    onChange: (value: DomainTypeMultiple<T>) => void
 ) {
     return (e: SyntheticEvent<any>) => {
         e.stopPropagation();
@@ -23,19 +29,17 @@ function clickHandlerFactory(
         if (!isDisabled) {
             if (isSelected) {
                 // Is selected -> remove it
-                onChange(value ? value.filter(val => val !== optVal) : undefined);
+                onChange((value ? value.filter(val => val !== optVal) : []) as DomainTypeMultiple<T>);
             } else {
                 // Is not selected -> add it
-                onChange(value ? [...value.slice(), optVal] : [optVal]);
+                onChange((value ? [...value.slice(), optVal] : [optVal]) as DomainTypeMultiple<T>);
             }
         }
     };
 }
 
 /** Props du SelectCheckbox */
-export interface SelectCheckboxProps<T extends "number" | "string"> {
-    /** CSS des checkboxes. */
-    checkboxTheme?: CSSProp<CheckboxCss>;
+export interface SelectCheckboxProps<T extends DomainFieldType> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -49,15 +53,15 @@ export interface SelectCheckboxProps<T extends "number" | "string"> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: (T extends "string" ? string : number)[] | undefined) => void;
+    onChange: (value: DomainTypeMultiple<T>) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
-    theme?: CSSProp<SelectCheckboxCss>;
-    /** Type du champ (number ou string). */
+    theme?: CSSProp<CheckboxCss & SelectCheckboxCss>;
+    /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
-    value: (T extends "string" ? string : number)[] | undefined;
+    value?: DomainTypeMultiple<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -65,8 +69,7 @@ export interface SelectCheckboxProps<T extends "number" | "string"> {
 /**
  * Un composant de sélection multiple pour un champ de type liste de valeurs avec plusieurs choix possibles, dans une liste de référence.
  */
-export function SelectCheckbox<T extends "number" | "string">({
-    checkboxTheme,
+export function SelectCheckbox<T extends DomainFieldType>({
     disabled = false,
     error,
     label,
@@ -79,7 +82,7 @@ export function SelectCheckbox<T extends "number" | "string">({
     value,
     values
 }: SelectCheckboxProps<T>) {
-    const theme = useTheme("selectCheckbox", selectCheckboxCss, pTheme);
+    const theme = useTheme<CheckboxCss & SelectCheckboxCss>("selectCheckbox", selectCheckboxCss, pTheme);
 
     return useObserver(() => (
         <div className={theme.select({error: !!error})}>
@@ -89,7 +92,7 @@ export function SelectCheckbox<T extends "number" | "string">({
                     const optVal = option[values.$valueKey];
                     const optLabel = option[values.$labelKey];
 
-                    const isSelected = value ? !!(value as any).find((val: any) => optVal === val) : false;
+                    const isSelected = value ? !!value.find((val: any) => optVal === val) : false;
                     const isDisabled =
                         disabled || (maxSelectable !== undefined && maxSelectable === value?.length && !isSelected);
                     const clickHandler = clickHandlerFactory(isDisabled, isSelected, value, optVal, onChange);
@@ -101,7 +104,7 @@ export function SelectCheckbox<T extends "number" | "string">({
                                 id={`${id!}-${optVal as string}`}
                                 label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
-                                theme={checkboxTheme}
+                                theme={theme}
                                 value={isSelected}
                             />
                         </li>

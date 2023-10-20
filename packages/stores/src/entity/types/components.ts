@@ -2,6 +2,8 @@ import {CSSProperties, ReactNode} from "react";
 
 import {ReferenceList} from "../../reference";
 
+import {DomainFieldType} from "./entity";
+
 export interface WithThemeProps {
     theme?: object;
 }
@@ -13,7 +15,7 @@ export interface BaseInputProps extends WithThemeProps {
     id?: string;
     name?: string;
     onChange?: (value: any) => void;
-    type?: "number" | "string";
+    type?: DomainFieldType;
     value?: any;
 }
 

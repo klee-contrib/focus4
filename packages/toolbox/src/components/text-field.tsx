@@ -37,6 +37,8 @@ const CUT_START = 12;
 
 /** Définition des icônes de fin de champ texte. */
 interface TrailingIcon {
+    /** Blur le champ au clic sur l'icône. */
+    blurOnClick?: boolean;
     /** Affiche l'icône en erreur. */
     error?: boolean;
     /** Icône. */
@@ -175,7 +177,7 @@ export const TextField = forwardRef(function TextField(
 
     useImperativeHandle(ref, () => inputNode.current!, []);
 
-    const [hasFocus, setHasFocus] = useState(false);
+    const [focused, setFocused] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const smallLabelWidth = useRef(0);
 
@@ -189,7 +191,7 @@ export const TextField = forwardRef(function TextField(
 
     useEffect(() => {
         if (labelNode.current && outlineNode.current) {
-            if (!hasFocus && value?.length === 0) {
+            if (!focused && value?.length === 0) {
                 const length = labelNode.current.getBoundingClientRect().width;
                 outlineNode.current.style.clipPath = `polygon(
                     0 0,
@@ -218,11 +220,11 @@ export const TextField = forwardRef(function TextField(
                 )`;
             }
         }
-    }, [hasFocus, value]);
+    }, [focused, value]);
 
     const handleFocus = useCallback(
         function handleFocus(e: FocusEvent<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>) {
-            setHasFocus(true);
+            setFocused(true);
             onFocus?.(e);
         },
         [onFocus]
@@ -231,7 +233,7 @@ export const TextField = forwardRef(function TextField(
     const handleBlur = useCallback(
         function handleBlur(e: FocusEvent<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>) {
             if (!rootNode.current?.contains(e.relatedTarget)) {
-                setHasFocus(false);
+                setFocused(false);
                 onBlur?.(e);
             }
         },
@@ -248,7 +250,7 @@ export const TextField = forwardRef(function TextField(
 
     const handleClick = useCallback(
         function handleClick(e: MouseEvent<HTMLDivElement>) {
-            setHasFocus(true);
+            setFocused(true);
             inputNode.current?.focus();
             onClick?.(e);
         },
@@ -299,7 +301,7 @@ export const TextField = forwardRef(function TextField(
                     error,
                     loading: !loaded,
                     filled: !!value?.length,
-                    focused: hasFocus,
+                    focused,
                     leadingIcon: !!icon,
                     trailingIcon: trailings.length > 0
                 }),
@@ -319,7 +321,7 @@ export const TextField = forwardRef(function TextField(
                     </div>
                 ) : null}
                 <div className={theme.inputContainer()}>
-                    {prefix && !multiline && (hasFocus || !!value?.length) ? (
+                    {prefix && !multiline && (focused || !!value?.length) ? (
                         <span className={theme.prefix()}>{prefix}</span>
                     ) : null}
                     {readonly ? (
@@ -337,7 +339,7 @@ export const TextField = forwardRef(function TextField(
                     ) : (
                         <input {...inputElementProps} />
                     )}
-                    {suffix && !multiline && (hasFocus || !!value?.length) ? (
+                    {suffix && !multiline && (focused || !!value?.length) ? (
                         <span className={theme.suffix()}>{suffix}</span>
                     ) : null}
                 </div>
@@ -349,11 +351,20 @@ export const TextField = forwardRef(function TextField(
                             className={theme.trailingButton({error: t.error})}
                             disabled={disabled}
                             icon={t.icon}
-                            onClick={t.onClick}
+                            label={typeof t.tooltip === "string" ? t.tooltip : undefined}
+                            onClick={e => {
+                                if (t.blurOnClick) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    inputNode.current?.blur();
+                                    setFocused(false);
+                                }
+                                t.onClick?.();
+                            }}
                         />
                     ) : (
                         <div key={i} className={theme.icon({error: t.error, trailing: true})}>
-                            <FontIcon>{t.icon}</FontIcon>
+                            <FontIcon alt={typeof t.tooltip === "string" ? t.tooltip : undefined}>{t.icon}</FontIcon>
                         </div>
                     );
                     if (t.tooltip) {

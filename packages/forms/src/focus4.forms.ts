@@ -24,6 +24,9 @@ export {
     SelectCheckbox,
     SelectCheckboxCss,
     SelectCheckboxProps,
+    SelectChips,
+    SelectChipsCss,
+    SelectChipsProps,
     SelectProps,
     SelectRadio,
     SelectRadioCss,
@@ -34,7 +37,10 @@ export {
     labelCss,
     panelCss,
     selectCheckboxCss,
-    selectRadioCss
+    selectChipsCss,
+    selectRadioCss,
+    stringToDomainType,
+    toSimpleType
 } from "./components";
 export {
     AutocompleteForOptions,

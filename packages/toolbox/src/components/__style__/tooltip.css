@@ -12,7 +12,7 @@
     display: block;
     position: absolute;
     pointer-events: none;
-    z-index: var(--z-index-higher);
+    z-index: var(--z-index-highest);
     transform-origin: top left;
     transition: var(--animation-curve-default) calc(var(--animation-duration) - 100ms) transform;
 }

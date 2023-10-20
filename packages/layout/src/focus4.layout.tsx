@@ -91,6 +91,7 @@ export interface LayoutStyleProviderProps {
     searchBar?: {};
     select?: {};
     selectCheckbox?: {};
+    selectChips?: {};
     selectRadio?: {};
     summary?: {};
     table?: {};

@@ -9,4 +9,6 @@ export {Panel, PanelCss, PanelProps, panelCss} from "./panel";
 export {PanelButtons} from "./panel-buttons";
 export {Select, SelectProps} from "./select";
 export {SelectCheckbox, SelectCheckboxCss, SelectCheckboxProps, selectCheckboxCss} from "./select-checkbox";
+export {SelectChips, SelectChipsCss, SelectChipsProps, selectChipsCss} from "./select-chips";
 export {SelectRadio, SelectRadioCss, SelectRadioProps, selectRadioCss} from "./select-radio";
+export {stringToDomainType, toSimpleType} from "./utils";

@@ -93,13 +93,7 @@
             "never"
         ],
         "prefer-arrow-callback": "off",
-        "prefer-destructuring": [
-            "warn",
-            {
-                "array": false,
-                "object": true
-            }
-        ],
+        "prefer-destructuring": "off",
         "prefer-named-capture-group": "off",
         "quote-props": [
             "warn",
@@ -242,6 +236,13 @@
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/prefer-destructuring": [
+            "warn",
+            {
+                "array": false,
+                "object": true
+            }
+        ],
         "@typescript-eslint/prefer-readonly-parameter-types": "off",
         "@typescript-eslint/prefer-reduce-type-parameter": "off",
         "@typescript-eslint/prefer-return-this-type": "off",

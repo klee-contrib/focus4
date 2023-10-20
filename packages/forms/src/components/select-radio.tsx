@@ -2,15 +2,17 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback} from "react";
 
-import {ReferenceList} from "@focus4/stores";
+import {DomainFieldType, DomainTypeSingle, ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
+
+import {stringToDomainType} from "./utils";
 
 import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
 export {selectRadioCss, SelectRadioCss};
 
 /** Props du SelectRadio. */
-export interface SelectRadioProps<T extends "number" | "string"> {
+export interface SelectRadioProps<T extends DomainFieldType> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -22,21 +24,19 @@ export interface SelectRadioProps<T extends "number" | "string"> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
-    /** CSS des radios. */
-    radioTheme?: CSSProp<RadioCss>;
+    onChange: (value: DomainTypeSingle<T> | undefined) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
-    theme?: CSSProp<SelectRadioCss>;
-    /** Type du champ (number ou string). */
+    theme?: CSSProp<RadioCss & SelectRadioCss>;
+    /** Type du champ (celui du domaine). */
     type: T;
     /** Libellé du cas vide. */
     undefinedLabel?: string;
     /** Position du cas vide. Par défaut : "bottom". */
     undefinedPosition?: "bottom" | "top";
     /** Valeur. */
-    value: (T extends "string" ? string : number) | undefined;
+    value?: DomainTypeSingle<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -44,14 +44,13 @@ export interface SelectRadioProps<T extends "number" | "string"> {
 /**
  * Un composant de saisie pour choisir un élément dans une liste de référence en utilisant un [`Radio`](components/toolbox.md#radiogroup)
  */
-export function SelectRadio<T extends "number" | "string">({
+export function SelectRadio<T extends DomainFieldType>({
     disabled = false,
     error,
     label,
     hasUndefined = false,
     name,
     onChange,
-    radioTheme,
     showSupportingText = "always",
     theme: pTheme,
     type,
@@ -60,15 +59,14 @@ export function SelectRadio<T extends "number" | "string">({
     value,
     values
 }: SelectRadioProps<T>) {
-    const theme = useTheme("selectRadio", selectRadioCss, pTheme);
+    const theme = useTheme<RadioCss & SelectRadioCss>("selectRadio", selectRadioCss, pTheme);
     const {$labelKey, $valueKey} = values;
 
     const handleChange = useCallback(
         (newValue: string) => {
-            const v = (type === "number" ? parseFloat(newValue) : newValue) as T extends "string" ? string : number;
-            onChange(v || v === 0 ? v : undefined);
+            onChange(stringToDomainType(newValue, type));
         },
-        [onChange]
+        [onChange, type]
     );
 
     return useObserver(() => {
@@ -83,7 +81,7 @@ export function SelectRadio<T extends "number" | "string">({
         return (
             <div className={theme.select({error: !!error})}>
                 {label ? <h5 className={theme.title()}>{i18next.t(label)}</h5> : null}
-                <RadioGroup disabled={disabled} onChange={handleChange} value={`${value!}`}>
+                <RadioGroup disabled={disabled} onChange={handleChange} value={`${value}`}>
                     {definitiveValues.map(option => {
                         const optVal = option[$valueKey];
                         const optLabel = option[$labelKey];
@@ -93,7 +91,7 @@ export function SelectRadio<T extends "number" | "string">({
                                 key={optVal || "undefined"}
                                 label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
-                                theme={radioTheme}
+                                theme={theme}
                                 value={`${optVal as string}`}
                             />
                         );

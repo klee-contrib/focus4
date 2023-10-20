@@ -5,6 +5,7 @@ import {observer} from "mobx-react";
 import numeral from "numeral";
 import {ClipboardEvent, Component, KeyboardEvent} from "react";
 
+import {DomainFieldType, DomainTypeSingle} from "@focus4/stores";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
 
 /** Définition d'un masque de saisie. */
@@ -19,8 +20,7 @@ export interface MaskDefinition {
     placeholderChar?: string;
 }
 
-export interface InputProps<T extends "number" | "string">
-    extends Omit<TextFieldProps, "error" | "onChange" | "value"> {
+export interface InputProps<T extends DomainFieldType> extends Omit<TextFieldProps, "error" | "onChange" | "value"> {
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Pour un input de type "number", affiche les séparateurs de milliers. */
@@ -32,11 +32,11 @@ export interface InputProps<T extends "number" | "string">
     /** Pour un input de type "number", interdit la saisie de nombres négatifs. */
     noNegativeNumbers?: boolean;
     /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
-    onChange: (value: (T extends "string" ? string : number) | undefined) => void;
-    /** Type de l'input. */
+    onChange: (value: DomainTypeSingle<T> | undefined) => void;
+    /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
-    value: (T extends "string" ? string : number) | undefined;
+    value?: DomainTypeSingle<T>;
 }
 
 /**
@@ -50,7 +50,7 @@ export interface InputProps<T extends "number" | "string">
  */
 @observer
 // eslint-disable-next-line react/no-unsafe
-export class Input<T extends "number" | "string"> extends Component<InputProps<T>> {
+export class Input<T extends DomainFieldType> extends Component<InputProps<T>> {
     protected inputElement!: HTMLInputElement | HTMLTextAreaElement;
     protected mask?: InputMask;
     private pendingAnimationFrame = false;

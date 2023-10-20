@@ -16,7 +16,9 @@ export const fr = {
     },
     select: {
         noLabel: "",
-        unselected: ""
+        selectAll: "Tout sélectionner",
+        unselected: "",
+        unselectAll: "Tout désélectionner"
     },
     validation: {
         date: "La date saisie est invalide",

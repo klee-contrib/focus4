@@ -20,6 +20,7 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
+    DomainFieldType,
     DomainType,
     EntityField,
     FieldEntry,
@@ -296,7 +297,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
      * @param options Les options du champ.
      */
     displayFor<
-        DT extends "boolean" | "number" | "object" | "string",
+        DT extends DomainFieldType,
         T extends DomainType<DT>,
         DCDProps extends BaseDisplayProps = DisplayProps,
         LCDProps extends BaseLabelProps = LabelProps,
@@ -334,7 +335,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
      * @param options Les options du champ.
      */
     autocompleteFor<
-        DT extends "boolean" | "number" | "object" | "string",
+        DT extends DomainFieldType,
         T extends DomainType<DT>,
         ACDProps extends BaseAutocompleteProps = AutocompleteSearchProps<DT extends "number" ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
@@ -369,7 +370,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
      * @param options Les options du champ.
      */
     fieldFor<
-        DT extends "boolean" | "number" | "object" | "string",
+        DT extends DomainFieldType,
         T extends DomainType<DT>,
         ICDProps extends BaseInputProps = InputProps<DT extends number ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,
@@ -403,7 +404,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
      * @param options Les options du champ.
      */
     selectFor<
-        DT extends "boolean" | "number" | "object" | "string",
+        DT extends DomainFieldType,
         T extends DomainType<DT>,
         SCDProps extends BaseSelectProps = SelectProps<DT extends "number" ? "number" : "string">,
         DCDProps extends BaseDisplayProps = DisplayProps,

@@ -1,9 +1,17 @@
-.boolean {
+.select {
     display: flex;
+    flex-direction: column;
+}
 
-    & > label:not(:last-child) {
-        margin-right: 4px;
-    }
+.chips {
+    padding-top: var(--button-spacing);
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--button-spacing);
+}
+
+.chip + .chip {
+    margin-inline: 0;
 }
 
 .supportingText {
@@ -14,6 +22,6 @@
     font-size: var(--text-field-supporting-text-size);
 }
 
-.supportingText--error {
+.select--error .supportingText {
     color: var(--input-error-color);
 }

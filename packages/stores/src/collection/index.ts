@@ -707,7 +707,7 @@ function groupByFacet<T>(list: T[], fieldName: keyof T) {
     return list.reduce((buckets, item) => {
         let value = item[fieldName];
         if (isEntityField(value)) {
-            // eslint-disable-next-line prefer-destructuring
+            // eslint-disable-next-line @typescript-eslint/prefer-destructuring
             value = value.value;
         }
 
