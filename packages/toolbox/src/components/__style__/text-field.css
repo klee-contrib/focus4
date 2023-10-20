@@ -124,6 +124,10 @@
     appearance: none;
 }
 
+.input::placeholder {
+    color: var(--input-disabled-color);
+}
+
 .prefix,
 .suffix {
     pointer-events: none;

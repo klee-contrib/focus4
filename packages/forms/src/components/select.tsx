@@ -54,8 +54,8 @@ export function Select<T extends "number" | "string">({
             showSupportingText="always"
             supportingText={error ?? supportingText}
             undefinedLabel={typeof undefinedLabel === "string" ? i18next.t(undefinedLabel) : undefinedLabel}
-            value={value ? `${value}` : undefined}
-            values={values}
+            value={value !== undefined ? `${value}` : undefined}
+            values={values.slice()}
         />
     ));
 }
