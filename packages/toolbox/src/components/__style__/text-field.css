@@ -145,6 +145,7 @@
 
 .progress {
     --progress-indicator-circular-size: calc(var(--text-field-height) - var(--text-field-padding-vertical));
+    height: var(--progress-indicator-circular-size);
     padding-right: calc(var(--text-field-icon-padding) / 2);
 }
 

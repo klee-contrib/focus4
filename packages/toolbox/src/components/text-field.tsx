@@ -352,6 +352,7 @@ export const TextField = forwardRef(function TextField(
                             disabled={disabled}
                             icon={t.icon}
                             label={typeof t.tooltip === "string" ? t.tooltip : undefined}
+                            onBlur={handleBlur}
                             onClick={e => {
                                 if (t.blurOnClick) {
                                     e.stopPropagation();
@@ -361,6 +362,7 @@ export const TextField = forwardRef(function TextField(
                                 }
                                 t.onClick?.();
                             }}
+                            onFocus={() => setFocused(true)}
                         />
                     ) : (
                         <div key={i} className={theme.icon({error: t.error, trailing: true})}>

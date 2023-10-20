@@ -240,7 +240,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
     const handleQueryFocus: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
-            event.target.scrollTop = 0;
             menu.open();
             onFocus?.(event);
         },
@@ -249,7 +248,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
     const handleQueryKeyDown: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
-            if (event.key === "Enter" || event.key === "Tab") {
+            if ((event.key === "Enter" && !!(query || selected)) || event.key === "Tab") {
                 onValueChange(selected);
                 menu.close();
             } else if (event.key !== "Escape") {
@@ -258,7 +257,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
             onKeyDown?.(event);
         },
-        [onKeyDown, onValueChange, selected]
+        [onKeyDown, onValueChange, query, selected]
     );
 
     const handleBlur = useCallback(
