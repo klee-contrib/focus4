@@ -26,17 +26,7 @@ import {MainMenuCss} from "./menu";
 import {DialogCss, LayoutBase, LayoutCss, LayoutProps, OverlayCss, PopinCss, ScrollspyCss} from "./presentation";
 import {ButtonBttCss, ScrollableCss} from "./scrollable";
 
-export {
-    HeaderActions,
-    HeaderBarLeft,
-    HeaderBarRight,
-    HeaderContent,
-    HeaderCss,
-    HeaderScrolling,
-    HeaderSummary,
-    HeaderTopRow,
-    headerCss
-} from "./header";
+export {HeaderActions, HeaderContent, HeaderCss, HeaderItem, HeaderScrolling, HeaderTopRow, headerCss} from "./header";
 export {MainMenu, MainMenuItem, MainMenuProps, MainMenuCss, mainMenuCss} from "./menu";
 export {
     Content,

@@ -335,8 +335,16 @@ export class Input<T extends DomainFieldType> extends Component<InputProps<T>> {
     }
 
     render() {
-        const {mask, hasThousandsSeparator, maxDecimals, noNegativeNumbers, error, supportingText, ...props} =
-            this.props;
+        const {
+            mask,
+            hasThousandsSeparator,
+            maxDecimals,
+            noNegativeNumbers,
+            error,
+            showSupportingText = "always",
+            supportingText,
+            ...props
+        } = this.props;
         return (
             <TextField
                 {...props}
@@ -346,7 +354,7 @@ export class Input<T extends DomainFieldType> extends Component<InputProps<T>> {
                 onKeyDown={this.onKeyDown}
                 onKeyPress={this.onKeyPress}
                 onPaste={this.onPaste}
-                showSupportingText="always"
+                showSupportingText={showSupportingText}
                 supportingText={error ?? supportingText}
                 type="text"
                 value={this.value}

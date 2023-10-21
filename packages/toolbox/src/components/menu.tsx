@@ -118,7 +118,6 @@ export function MenuItem({
     disabled = false,
     iconLeft,
     iconRight,
-    onClick,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
@@ -126,16 +125,6 @@ export function MenuItem({
     theme: pTheme
 }: MenuItemProps) {
     const theme = useTheme("menu", menuCss, pTheme);
-
-    const handleClick = useCallback(
-        (event: MouseEvent<HTMLLIElement>) => {
-            if (onClick && !disabled) {
-                onClick(event);
-            }
-        },
-        [disabled, onClick]
-    );
-
     return (
         <Ripple
             onPointerDown={onPointerDown}
@@ -143,7 +132,7 @@ export function MenuItem({
             onPointerLeave={onPointerLeave}
             onPointerUp={onPointerUp}
         >
-            <span className={classNames(theme.menuItem({disabled}), className)} onClick={handleClick}>
+            <span className={classNames(theme.menuItem({disabled}), className)}>
                 {iconLeft ? <FontIcon className={theme.icon()}>{iconLeft}</FontIcon> : null}
                 <span className={theme.caption()}>{caption}</span>
                 {iconRight ? <FontIcon className={theme.icon()}>{iconRight}</FontIcon> : null}
@@ -312,7 +301,9 @@ export function Menu({
             if (e) {
                 e.stopPropagation();
             }
-            item.props.onClick?.();
+            if (!item.props.disabled) {
+                item.props.onClick?.();
+            }
             if (item.key) {
                 onItemClick?.(item.key);
             }

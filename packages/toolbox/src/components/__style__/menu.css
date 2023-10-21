@@ -49,6 +49,7 @@
 .item {
     overflow: hidden;
     position: relative;
+    color: var(--input-text-color);
 }
 
 .item--focused::before {

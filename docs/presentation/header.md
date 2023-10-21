@@ -5,9 +5,11 @@ Le Header se construit à partir de tous ses éléments. Un Header complet se re
 ```tsx
 <HeaderScrolling canDeploy={/* ... */}>
     <HeaderTopRow>
-        <HeaderBarLeft>{/* ... */}</HeaderBarLeft>
-        <HeaderSummary>{/* ... */}</HeaderSummary>
-        <HeaderBarRight>{/* ... */}</HeaderBarRight>
+        <HeaderItem>{/* ... */}</HeaderItem>
+        <HeaderItem fillWidth stickyOnly>
+            {/* ... */}
+        </HeaderItem>
+        <HeaderItem>{/* ... */}</HeaderItem>
     </HeaderTopRow>
     <HeaderContent>{/* ... */}</HeaderContent>
     <HeaderActions primary={/* ... */} secondary={/* ... */} />
