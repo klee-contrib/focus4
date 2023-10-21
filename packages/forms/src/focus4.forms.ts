@@ -1,4 +1,6 @@
 export {
+    AutocompleteChips,
+    AutocompleteChipsProps,
     AutocompleteSearch,
     AutocompleteSearchProps,
     BooleanRadio,

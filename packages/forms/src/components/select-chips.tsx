@@ -2,13 +2,7 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 
-import {
-    DomainFieldType,
-    DomainTypeMultiple,
-    DomainTypeSingle,
-    ReferenceList,
-    SingleDomainFieldType
-} from "@focus4/stores";
+import {DomainFieldType, DomainTypeMultiple, ReferenceList} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {Chip, ChipCss, DropdownCss, TextFieldCss} from "@focus4/toolbox";
 
@@ -51,6 +45,9 @@ export interface SelectChipsProps<T extends DomainFieldType> {
     values: ReferenceList;
 }
 
+/**
+ * Select permettant de sélectionner plusieurs valeurs, affichées dans des `Chips` en dessous du champ.
+ */
 export function SelectChips<T extends DomainFieldType>({
     chipTheme,
     disabled = false,
@@ -71,7 +68,7 @@ export function SelectChips<T extends DomainFieldType>({
     const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
 
     const handleAddValue = useCallback(
-        function handleAddValue(v?: DomainTypeSingle<SingleDomainFieldType<T>>) {
+        function handleAddValue(v?: boolean | number | string) {
             if (v && (!maxSelectable || value.length < maxSelectable)) {
                 onChange?.([...value, v] as DomainTypeMultiple<T>);
             }
@@ -80,7 +77,7 @@ export function SelectChips<T extends DomainFieldType>({
     );
 
     const handleRemoveValue = useCallback(
-        function handleRemoveValue(v: DomainTypeSingle<SingleDomainFieldType<T>>) {
+        function handleRemoveValue(v: boolean | number | string) {
             onChange?.(value.filter(i => i !== v) as DomainTypeMultiple<T>);
         },
         [onChange, value]
@@ -150,7 +147,7 @@ export function SelectChips<T extends DomainFieldType>({
                         color="light"
                         disabled={disabled}
                         label={values.getLabel(item)}
-                        onDeleteClick={() => handleRemoveValue(item as DomainTypeSingle<SingleDomainFieldType<T>>)}
+                        onDeleteClick={() => handleRemoveValue(item)}
                         theme={chipTheme}
                     />
                 ))}

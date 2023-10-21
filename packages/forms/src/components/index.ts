@@ -1,4 +1,5 @@
 export {AutocompleteSearch, AutocompleteSearchProps} from "./autocomplete";
+export {AutocompleteChips, AutocompleteChipsProps} from "./autocomplete-chips";
 export {BooleanRadio, BooleanRadioCss, BooleanRadioProps, booleanRadioCss} from "./boolean-radio";
 export {Display, DisplayCss, DisplayProps, displayCss} from "./display";
 export {Input, InputProps} from "./input";

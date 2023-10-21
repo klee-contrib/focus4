@@ -2,6 +2,32 @@
 
 `@focus4/forms` contient, en plus des [composants de formulaires](./model/form-usage.md), quelques composants supplémentaires qui s'ajoutent à ceux `@focus4/toolbox` et peuvent parfois les surcharger. Historiquement, ces composants n'étaient pas dans `react-toolbox`, ce qui est la principale raison pour laquelle ils sont dans un module différent...
 
+## `AutocompleteChips`
+
+AutocompleteSearch permettant de sélectionner plusieurs valeurs, affichées dans des `Chips` en dessous du champ.
+
+### Props
+
+| Nom                  | Obligatoire | Type                                                                                                   | Description                                                                                                                                                                                                           |
+| -------------------- | ----------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chipTheme`          | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                                                                    | CSS pour les Chips.                                                                                                                                                                                                   |
+| `disabled`           | Non         | <code>boolean</code>                                                                                   | Désactive le select.                                                                                                                                                                                                  |
+| `error`              | Non         | <code>string</code>                                                                                    | Message d'erreur à afficher.                                                                                                                                                                                          |
+| `getKey`             | Non         | <code>(item: TSource) =&gt; string</code>                                                              | Détermine la propriété de l'objet a utiliser comme clé.<br />Par défaut : `item => item.key`                                                                                                                          |
+| `getLabel`           | Non         | <code>(item: TSource) =&gt; string</code>                                                              | Détermine la propriété de l'objet à utiliser comme libellé.<br />Le libellé de l'objet est le texte utilisé pour chercher la correspondance avec le texte saisi dans le champ.<br />Par défaut : `item => item.label` |
+| `i18nPrefix`         | Non         | <code>string</code>                                                                                    | Préfixe i18n. Par défaut : "focus".                                                                                                                                                                                   |
+| `id`                 | Non         | <code>string</code>                                                                                    | Id de l'input.                                                                                                                                                                                                        |
+| `keyResolver`        | Non         | <code>(key: DomainTypeSingle&lt;SingleDomainFieldType&lt;T&gt;&gt;) =&gt; Promise&lt;string&gt;</code> | Service de résolution de clé. Doit retourner le libellé.                                                                                                                                                              |
+| `maxSelectable`      | Non         | <code>number</code>                                                                                    | Nombre maximal d'éléments sélectionnables.                                                                                                                                                                            |
+| `name`               | Non         | <code>string</code>                                                                                    | Nom de l'input.                                                                                                                                                                                                       |
+| `onChange`           | **Oui**     | <code>(value: DomainTypeMultiple&lt;T&gt;) =&gt; void</code>                                           | Est appelé à chaque changement de valeur.                                                                                                                                                                             |
+| `querySearcher`      | Non         | <code>(text: string) =&gt; Promise&lt;TSource[]&gt;</code>                                             | Service de recherche.                                                                                                                                                                                                 |
+| `searchOnEmptyQuery` | Non         | <code>boolean</code>                                                                                   | Active l'appel à la recherche si le champ est vide.                                                                                                                                                                   |
+| `showSupportingText` | Non         | <code>"always" &#124; "auto" &#124; "never"</code>                                                     | Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always".                                                                                  |
+| `theme`              | Non         | <code>CSSProp&lt;AutocompleteCss & SelectChipsCss & TextFieldCss&gt;</code>                            | CSS.                                                                                                                                                                                                                  |
+| `type`               | **Oui**     | <code>DomainFieldType</code>                                                                           | Type du champ (celui du domaine).                                                                                                                                                                                     |
+| `value`              | Non         | <code>boolean[] &#124; number[] &#124; string[]</code>                                                 | Valeur.                                                                                                                                                                                                               |
+
 ## `AutocompleteSearch`
 
 Champ de saisie en autocomplétion à partir d'un **service de recherche**.
@@ -276,7 +302,7 @@ Un composant de sélection multiple pour un champ de type liste de valeurs avec 
 
 ## `SelectChips`
 
-
+Select permettant de sélectionner plusieurs valeurs, affichées dans des `Chips` en dessous du champ.
 
 ### Props
 

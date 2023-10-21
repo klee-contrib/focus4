@@ -46,7 +46,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         onQueryChange,
         query: pQuery = "",
         querySearcher,
-        searchOnEmptyQuery,
+        searchOnEmptyQuery = false,
         supportingText,
         showSupportingText = "always",
         type,
@@ -77,7 +77,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
 
     const search = useCallback(
         debounce(async function search(newQuery: string) {
-            if (querySearcher && (searchOnEmptyQuery ?? newQuery.trim().length)) {
+            if (querySearcher && (searchOnEmptyQuery || newQuery.trim().length)) {
                 setLoading(true);
                 const result = await querySearcher(encodeURIComponent(newQuery.trim()));
                 setValues(result);

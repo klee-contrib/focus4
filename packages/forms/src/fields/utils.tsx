@@ -4,12 +4,14 @@ import {action} from "mobx";
 import {
     AutocompleteComponents,
     BaseSelectProps,
+    DomainTypeSingle,
     EntityField,
     FieldEntry,
     FieldEntryType,
     InputComponents,
     ReferenceList,
-    SelectComponents
+    SelectComponents,
+    SingleDomainFieldType
 } from "@focus4/stores";
 
 import {Field, FieldOptions} from "./field";
@@ -29,7 +31,9 @@ export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponent
 > &
     Partial<FieldOptions<F>> & {
         /** Service de résolution de code. */
-        keyResolver?: (key: NonNullable<F["fieldType"]>) => Promise<string | undefined>;
+        keyResolver?: (
+            key: DomainTypeSingle<SingleDomainFieldType<F["domain"]["type"]>>
+        ) => Promise<string | undefined>;
         /** Service de recherche. */
         querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
     };
