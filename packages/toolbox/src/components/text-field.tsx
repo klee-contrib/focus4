@@ -36,7 +36,7 @@ export {textFieldCss, TextFieldCss};
 const CUT_START = 12;
 
 /** Définition des icônes de fin de champ texte. */
-interface TrailingIcon {
+export interface TrailingIcon {
     /** Blur le champ au clic sur l'icône. */
     blurOnClick?: boolean;
     /** Affiche l'icône en erreur. */

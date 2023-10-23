@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import {useCallback, useMemo} from "react";
+import {ReactNode, useCallback, useMemo} from "react";
 
 import {DomainFieldType, DomainTypeMultiple, ReferenceList} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
@@ -15,7 +15,9 @@ export {selectChipsCss, SelectChipsCss};
 export interface SelectChipsProps<T extends DomainFieldType> {
     /** CSS pour les Chips. */
     chipTheme?: CSSProp<ChipCss>;
-    /** Désactive le select. */
+    /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
+    direction?: "auto" | "down" | "up";
+    /** Désactive le champ texte. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
     error?: string;
@@ -23,6 +25,8 @@ export interface SelectChipsProps<T extends DomainFieldType> {
     hasSelectAll?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Icône à poser devant le texte. */
+    icon?: ReactNode;
     /** Id de l'input. */
     id?: string;
     /** Nombre maximal d'éléments sélectionnables. */
@@ -50,10 +54,12 @@ export interface SelectChipsProps<T extends DomainFieldType> {
  */
 export function SelectChips<T extends DomainFieldType>({
     chipTheme,
+    direction,
     disabled = false,
     error,
     hasSelectAll = false,
     i18nPrefix = "focus",
+    icon,
     id,
     maxSelectable,
     name,
@@ -123,9 +129,11 @@ export function SelectChips<T extends DomainFieldType>({
     return useObserver(() => (
         <div className={theme.select({error: !!error})}>
             <Select
+                direction={direction}
                 disableArrowSelectionWhenClosed
                 disabled={disabled}
                 error={error}
+                icon={icon}
                 id={id}
                 name={name}
                 onChange={handleAddValue}
@@ -139,19 +147,21 @@ export function SelectChips<T extends DomainFieldType>({
                         (!unselectable || !unselectable(v))
                 )}
             />
-            <div className={theme.chips()}>
-                {value.map(item => (
-                    <Chip
-                        key={`${item}`}
-                        className={theme.chip()}
-                        color="light"
-                        disabled={disabled}
-                        label={values.getLabel(item)}
-                        onDeleteClick={() => handleRemoveValue(item)}
-                        theme={chipTheme}
-                    />
-                ))}
-            </div>
+            {value.length > 0 ? (
+                <div className={theme.chips()}>
+                    {value.map(item => (
+                        <Chip
+                            key={`${item}`}
+                            className={theme.chip()}
+                            color="light"
+                            disabled={disabled}
+                            label={values.getLabel(item)}
+                            onDeleteClick={() => handleRemoveValue(item)}
+                            theme={chipTheme}
+                        />
+                    ))}
+                </div>
+            ) : null}
             {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
                 <div className={theme.supportingText()}>{error}</div>
             ) : null}

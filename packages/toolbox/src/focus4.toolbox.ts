@@ -15,7 +15,6 @@ export {
 } from "./components/floating-action-button";
 export {FontIcon, FontIconProps} from "./components/font-icon";
 export {IconButton, IconButtonCss, IconButtonProps, iconButtonCss} from "./components/icon-button";
-export {TextField, TextFieldCss, TextFieldProps, textFieldCss} from "./components/text-field";
 export {Menu, MenuCss, MenuItem, MenuItemProps, MenuProps, menuCss, useMenu} from "./components/menu";
 export {
     CircularProgressIndicator,
@@ -30,6 +29,7 @@ export {Slider, SliderCss, SliderProps, sliderCss} from "./components/slider";
 export {Snackbar, SnackbarCss, SnackbarProps, snackbarCss} from "./components/snackbar";
 export {Switch, SwitchCss, SwitchProps, switchCss} from "./components/switch";
 export {Tab, TabProps, Tabs, TabsCss, TabsProps, tabsCss} from "./components/tabs";
+export {TextField, TextFieldCss, TextFieldProps, textFieldCss, TrailingIcon} from "./components/text-field";
 export {Tooltip, TooltipCss, TooltipProps, tooltipCss} from "./components/tooltip";
 export {PointerEvents} from "./utils/pointer-events";
 export {useInputRef} from "./utils/use-input-ref";

@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {observable} from "mobx";
 import {useObserver} from "mobx-react";
-import {useCallback, useEffect, useState} from "react";
+import {ReactNode, useCallback, useEffect, useState} from "react";
 
 import {DomainFieldType, DomainTypeMultiple, DomainTypeSingle, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
@@ -14,6 +14,8 @@ import {toSimpleType} from "./utils";
 export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {key: string; label: string}> {
     /** CSS pour les Chips. */
     chipTheme?: CSSProp<ChipCss>;
+    /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
+    direction?: "auto" | "down" | "up";
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -31,8 +33,12 @@ export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {ke
     getLabel?: (item: TSource) => string;
     /** Service de résolution de clé. Doit retourner le libellé. */
     keyResolver?: (key: DomainTypeSingle<SingleDomainFieldType<T>>) => Promise<string | undefined>;
+    /** Placeholder pour le champ texte. */
+    hint?: string;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Icône à poser devant le texte. */
+    icon?: ReactNode;
     /** Id de l'input. */
     id?: string;
     /** Nombre maximal d'éléments sélectionnables. */
@@ -62,9 +68,12 @@ const defaultGetKey = (x: any) => x.key;
  */
 export function AutocompleteChips<T extends DomainFieldType, TSource = {key: string; label: string}>({
     chipTheme,
+    direction,
     disabled = false,
     error,
+    hint,
     i18nPrefix = "focus",
+    icon,
     id,
     getKey = defaultGetKey,
     getLabel,
@@ -133,10 +142,13 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
         <div className={theme.select({error: !!error})}>
             <AutocompleteSearch<SingleDomainFieldType<T>, TSource>
                 clearQueryOnChange
+                direction={direction}
                 disabled={disabled}
                 error={error}
                 getKey={getKey}
                 getLabel={getLabel}
+                hint={hint}
+                icon={icon}
                 id={id}
                 keyResolver={keyResolver}
                 name={name}
@@ -153,19 +165,21 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
                 }}
                 type={toSimpleType(type)}
             />
-            <div className={theme.chips()}>
-                {value.map(item => (
-                    <Chip
-                        key={`${item}`}
-                        className={theme.chip()}
-                        color="light"
-                        disabled={disabled}
-                        label={labels.get(item) ?? ""}
-                        onDeleteClick={() => handleRemoveValue(item)}
-                        theme={chipTheme}
-                    />
-                ))}
-            </div>
+            {value.length > 0 ? (
+                <div className={theme.chips()}>
+                    {value.map(item => (
+                        <Chip
+                            key={`${item}`}
+                            className={theme.chip()}
+                            color="light"
+                            disabled={disabled}
+                            label={labels.get(item) ?? ""}
+                            onDeleteClick={() => handleRemoveValue(item)}
+                            theme={chipTheme}
+                        />
+                    ))}
+                </div>
+            ) : null}
             {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
                 <div className={theme.supportingText()}>{error}</div>
             ) : null}

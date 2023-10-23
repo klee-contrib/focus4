@@ -20,6 +20,8 @@
     --text-field-supporting-text-height: 16px;
     --text-field-supporting-text-padding: 3px /* 4px */;
     --text-field-supporting-text-size: 12px;
+
+    --text-field-background-color: transparent;
 }
 
 .textField {
@@ -41,10 +43,12 @@
 
 .outline {
     position: absolute;
+    z-index: -1;
     pointer-events: none;
     inset: 0px;
     border-radius: var(--text-field-border-radius);
     border: var(--text-field-outline-size) solid var(--input-state-color);
+    background-color: var(--text-field-background-color);
     transition: clip-path var(--animation-duration-short) var(--animation-curve-default),
         border-color var(--animation-duration-short) var(--animation-curve-default), border-width 0.1s linear 0s;
 }
