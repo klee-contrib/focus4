@@ -39,6 +39,7 @@
     display: flex;
     align-items: center;
     min-height: var(--text-field-height);
+    z-index: 0;
 }
 
 .outline {
