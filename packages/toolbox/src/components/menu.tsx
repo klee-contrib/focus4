@@ -236,7 +236,7 @@ export function Menu({
                     });
                 }
 
-                setMaxHeight(toTop ? wh - ah - at : at);
+                setMaxHeight(Math.floor(toTop ? wh - ah - at : at));
             }
         },
         [pPosition]
