@@ -236,7 +236,23 @@ export function Menu({
                     });
                 }
 
-                setMaxHeight(Math.floor(toTop ? wh - ah - at : at));
+                const mh = Math.floor(toTop ? wh - ah - at : at);
+                let cssMh = mh;
+
+                const cssMhValue = getComputedStyle(ref.current).getPropertyValue("--menu-max-height");
+                if (cssMhValue) {
+                    if (cssMhValue.endsWith("vh")) {
+                        cssMh = (+cssMhValue.substring(0, cssMhValue.length - 2) / 100) * wh;
+                    } else if (cssMhValue.endsWith("px")) {
+                        cssMh = +cssMhValue.substring(0, cssMhValue.length - 2);
+                    } else {
+                        console.error(
+                            `Invalid '${cssMhValue}' value for '--menu-max-height'. Value should be in 'px' or 'vh'.`
+                        );
+                    }
+                }
+
+                setMaxHeight(Math.min(mh, cssMh));
             }
         },
         [pPosition]

@@ -1,4 +1,5 @@
 :root {
+    --menu-max-height: 75vh;
     --menu-background-color: rgb(var(--color-white));
     --menu-padding: 8px 0;
     --menu-border-radius: 4px;
