@@ -75,8 +75,8 @@ export function Panel({
         </div>
     );
 
-    const areButtonsTop = ["top", "both"].find(i => i === buttonsPosition);
-    const areButtonsDown = ["bottom", "both"].find(i => i === buttonsPosition);
+    const areButtonsTop = !!["top", "both"].find(i => i === buttonsPosition);
+    const areButtonsDown = !!["bottom", "both"].find(i => i === buttonsPosition);
 
     return (
         <div ref={ref} className={theme.panel({loading, editing})} id={name ? `panel-${name}` : undefined}>
@@ -88,7 +88,10 @@ export function Panel({
             ) : null}
             <div className={theme.content()}>
                 {!hideProgressBar && loading ? (
-                    <LinearProgressIndicator indeterminate theme={{linear: theme.progress()}} />
+                    <LinearProgressIndicator
+                        indeterminate
+                        theme={{linear: theme.progress({bottom: !areButtonsTop && areButtonsDown})}}
+                    />
                 ) : null}
                 {children}
             </div>

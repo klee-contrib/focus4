@@ -64,7 +64,7 @@
 .progress {
     --progress-indicator-width: 3px;
     position: absolute;
-    bottom: -2px;
+    top: 0;
     left: 0;
     width: 100%;
     z-index: var(--z-index-normal);
@@ -72,5 +72,9 @@
 
 .title--top + .content .progress {
     top: -2px;
-    bottom: initial;
+}
+
+.progress--bottom {
+    bottom: -2px;
+    top: initial;
 }
