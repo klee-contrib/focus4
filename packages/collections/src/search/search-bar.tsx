@@ -267,6 +267,7 @@ export function SearchBar<T, C>({
                                 />
                                 <SelectCheckbox
                                     onChange={fields => (store.searchFields = fields)}
+                                    showSupportingText="never"
                                     type="string-array"
                                     value={store.searchFields ?? store.availableSearchFields}
                                     values={makeReferenceList(

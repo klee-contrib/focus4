@@ -1,68 +1,69 @@
+:root {
+    --facet-spacing: 5px;
+    --facet-gap: 5px;
+    --facet-title-font-size: 17px;
+    --facet-list-margin: 5px;
+    --facet-list-max-height: 300px;
+    --facet-font-size: 14px;
+}
+
 .facet {
-    margin-bottom: 5px;
+    --icon-button-size: 32px;
 }
 
-.facet:last-child {
-    margin-bottom: 0;
+.facet + .facet {
+    margin-top: var(--facet-spacing);
 }
 
-.facet h4 {
-    margin: 0 5px -6px -9px;
-    font-size: 17px;
+.facet > h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--facet-gap);
+    margin: 0;
+    font-size: var(--facet-title-font-size);
     font-weight: bold;
     cursor: pointer;
 }
 
-.facet h4 + button {
+.facet > h4 + button {
     --button-height: 32px;
-    --button-border-radius: 3px;
+    --button-border-radius: 4px;
     --button-icon-size: 26px;
     --button-padding: 6px;
-
     text-transform: none;
-    margin: 3px 0 -6px -8px;
-    width: calc(100% + 13px);
+    width: 100%;
     font-style: italic;
 
-    & > div:nth-child(2) {
+    & > span:nth-child(2) {
         --button-icon-size: 34px;
         text-align: left;
     }
 }
 
-.facet h4 + span {
-    margin-left: 27px;
+.facet > h4 + span {
+    margin-left: calc(var(--icon-button-size) + var(--facet-gap));
 }
 
-.facet ul {
-    margin: 0 -9px 0 -15px;
-    padding: 9px 0 9px 12px;
+.facet > ul {
+    --checkbox-state-size: 28px;
+
+    margin: var(--facet-list-margin) calc((var(--icon-button-size) - var(--checkbox-state-size)) / 2);
+    padding: 0;
     list-style-type: none;
-    max-height: 300px;
+    max-height: var(--facet-list-max-height);
     overflow-y: auto;
-
-    & label {
-        margin: 0;
-    }
 }
 
-.facet li {
-    margin: 0;
-    padding: 3px 0;
+.facet > ul li {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    line-height: 1.6;
-
-    & > button:last-child {
-        margin-right: 3px;
-        margin-left: -3px;
-    }
+    gap: var(--facet-gap);
 }
 
 .label {
     flex: 1;
-    padding-left: 12px;
+    padding-left: var(--facet-gap);
 }
 
 .label--excluded {
@@ -71,13 +72,13 @@
 
 .show {
     text-align: right;
-    margin: 5px 10px 0 0;
+    padding: var(--facet-list-margin) calc((var(--icon-button-size) - var(--icon-button-icon-size)) / 2);
 }
 
-.facet li,
+.facet > ul li,
 .show {
     cursor: pointer;
-    font-size: 14px;
+    font-size: var(--facet-font-size);
     color: rgb(var(--palette-grey-900));
 }
 
@@ -88,12 +89,10 @@
 
 .count {
     font-weight: bold;
-    padding-left: 5px;
-    margin-right: 9px;
 }
 
-.checkbox {
-    --checkbox-state-size: 24px;
+.count:last-child {
+    padding-right: calc((var(--checkbox-state-size) - var(--icon-button-icon-size)) / 2);
 }
 
 .checkbox:not(.checkbox--selected) {
@@ -101,7 +100,7 @@
 }
 
 .icon {
-    --icon-button-size: 24px;
+    --icon-button-size: 28px;
     --icon-button-icon-size: 24px;
 }
 

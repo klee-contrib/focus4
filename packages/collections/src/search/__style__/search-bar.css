@@ -61,7 +61,7 @@
     height: 100%;
     left: 0;
     outline: none;
-    font-size: var(--input-field-font-size);
+    font-size: var(--text-field-font-size);
     text-overflow: ellipsis;
     background: var(--search-bar-background);
     color: rgb(var(--color-black));
@@ -106,6 +106,10 @@
         font-weight: bold;
         margin-left: -4px;
         margin-bottom: 10px;
+    }
+
+    & > div {
+        margin-left: -6px;
     }
 }
 

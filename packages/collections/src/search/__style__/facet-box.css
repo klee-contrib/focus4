@@ -1,35 +1,40 @@
+:root {
+    --facet-box-title-font-size: 22px;
+    --facet-box-section-margin: 40px;
+    --facet-box-section-title-font-size: 20px;
+    --facet-box-section-title-margin-bottom: 15px;
+}
+
 .facetBox {
     --icon-button-icon-size: 20px;
     --icon-button-size: 36px;
-
-    padding: 10px;
 }
 
 .facetBox > h3 {
-    font-size: 22px;
-    margin: 0 0 12px -9px;
+    font-size: var(--facet-box-title-font-size);
+    margin: 0;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 3px;
-    width: calc(100% + 15px);
+    gap: 5px;
 
     & > span {
         flex: 1;
     }
 }
 
-.section {
-    margin-top: 40px;
-
-    & h5 {
-        margin-bottom: 15px;
-        margin-top: 0;
-        text-transform: uppercase;
-    }
+.section h5 {
+    margin: 0 calc((var(--icon-button-size) - var(--icon-button-icon-size)) / 2)
+        var(--facet-box-section-title-margin-bottom);
+    font-size: var(--facet-box-section-title-font-size);
+    text-transform: uppercase;
 }
 
 h3 + .section {
-    margin-top: 25px;
+    margin-top: calc(var(--facet-box-section-margin) / 2);
+}
+
+.section + .section {
+    margin-top: var(--facet-box-section-margin);
 }

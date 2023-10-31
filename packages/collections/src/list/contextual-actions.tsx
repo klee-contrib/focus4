@@ -1,4 +1,4 @@
-import {ComponentType, ReactElement, ReactNode, SyntheticEvent, useEffect} from "react";
+import {ComponentType, ReactElement, ReactNode, useEffect} from "react";
 
 import {CSSProp, getIcon, useTheme} from "@focus4/styling";
 import {
@@ -69,10 +69,7 @@ export function ContextualActions({
 }: ContextualActionsProps) {
     const theme = useTheme("contextualActions", contextualActionsCss, pTheme);
 
-    function handleAction(key: number, e: SyntheticEvent<any>) {
-        // On arrête bien tous les autres évènements, pour être sûr.
-        e.preventDefault();
-        e.stopPropagation();
+    function handleAction(key: number) {
         const item = operationList[key];
         if (!isComponent(item)) {
             item.action(data);
@@ -115,7 +112,7 @@ export function ContextualActions({
                         }
                         label={!isMosaic && FinalButton === Button ? Operation.label : undefined}
                         onBlur={tryHideMenu}
-                        onClick={(e: any) => handleAction(key, e)}
+                        onClick={() => handleAction(key)}
                         onFocus={onClickMenu}
                     />
                 );
@@ -131,7 +128,7 @@ export function ContextualActions({
             } else if (Operation.label) {
                 secondaryActions.push({
                     iconLeft: Operation.icon,
-                    onClick: (e: any) => handleAction(key, e),
+                    onClick: () => handleAction(key),
                     caption: Operation.label
                 });
             }
