@@ -7,10 +7,6 @@
     --facet-font-size: 14px;
 }
 
-.facet {
-    --icon-button-size: 32px;
-}
-
 .facet + .facet {
     margin-top: var(--facet-spacing);
 }

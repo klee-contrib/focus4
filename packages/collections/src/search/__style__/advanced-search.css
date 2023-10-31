@@ -1,5 +1,6 @@
 :root {
     --advanced-search-facets-width: 275px;
+    --advanced-search-facets-padding: 8px;
 }
 
 .search {
@@ -9,7 +10,7 @@
 .facetContainer {
     float: left;
     width: var(--advanced-search-facets-width);
-    padding: var(--content-padding-top) 8px 8px 12px;
+    padding: var(--content-padding-top) var(--advanced-search-facets-padding) var(--advanced-search-facets-padding);
     box-sizing: content-box;
 }
 
@@ -19,7 +20,7 @@
 }
 
 .resultContainer--withFacetBox {
-    margin-left: calc(var(--advanced-search-facets-width) + 8px);
+    margin-left: calc(var(--advanced-search-facets-width) + var(--advanced-search-facets-padding));
 }
 
 .topRow {
