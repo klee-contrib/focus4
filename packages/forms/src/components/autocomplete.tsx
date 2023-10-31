@@ -21,6 +21,8 @@ export interface AutocompleteSearchProps<T extends DomainFieldType, TSource = {k
     querySearcher?: (text: string) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
+    /** Rappelle la recherche quand le `querySearcher` change (nécessite un `querySearcher` stable). */
+    searchOnQuerySearcherChange?: boolean;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
@@ -47,6 +49,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         query: pQuery = "",
         querySearcher,
         searchOnEmptyQuery = false,
+        searchOnQuerySearcherChange = false,
         supportingText,
         showSupportingText = "always",
         type,
@@ -86,6 +89,12 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         }, 200),
         [querySearcher, searchOnEmptyQuery]
     );
+
+    useEffect(() => {
+        if (searchOnQuerySearcherChange && query) {
+            search(query);
+        }
+    }, [search, searchOnQuerySearcherChange]);
 
     function handleQueryChange(newQuery: string) {
         setQuery(newQuery);
