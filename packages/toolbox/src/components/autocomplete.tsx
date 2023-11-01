@@ -54,7 +54,7 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
      * Sera appelé avec `undefined` (si `allowUnmatched = false`) si aucune suggestion n'est disponible lors de la confirmation de la saisie
      * (au blur du champ ou en appuyant sur Entrée).
      */
-    onChange?: (value?: string) => void;
+    onChange?: (key?: string, value?: TSource) => void;
     /** Handler appelé lorsque la query (= contenu du champ texte) change. */
     onQueryChange?: (query: string) => void;
     /** Permet de surcharger la query (= contenu du champ texte). A utiliser avec `onQueryChange`.  */
@@ -218,15 +218,19 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
             const additionalSuggestion = additionalSuggestions?.find(s => s.key === key);
             if (additionalSuggestion) {
                 additionalSuggestion.onClick();
-                key = undefined;
+                inputRef.current?.blur();
+                return;
             }
 
             updateQuery(!clearQueryOnChange ? getQuery(key) : "", pQuery !== undefined);
-            onChange?.(key);
+            onChange?.(
+                key,
+                values.find(v => getKey(v) === key)
+            );
             valueRef.current = key;
             inputRef.current?.blur();
         },
-        [allowUnmatched, clearQueryOnChange, getQuery, onChange, pQuery, query, suggestions, updateQuery]
+        [allowUnmatched, clearQueryOnChange, getQuery, onChange, pQuery, query, suggestions, updateQuery, values]
     );
 
     // Handlers sur l'input.
@@ -249,6 +253,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
     const handleQueryKeyDown: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
             if ((event.key === "Enter" && !!(query || selected)) || event.key === "Tab") {
+                event.stopPropagation();
                 onValueChange(selected);
                 menu.close();
             } else if (event.key !== "Escape") {

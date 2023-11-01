@@ -2,7 +2,7 @@ import classNames from "classnames";
 import i18next from "i18next";
 import {uniqueId} from "lodash";
 import {useLocalObservable, useObserver} from "mobx-react";
-import {useContext, useLayoutEffect, useMemo} from "react";
+import {Ref, useContext, useLayoutEffect, useMemo} from "react";
 
 import {themeable} from "@focus4/core";
 import {
@@ -31,6 +31,8 @@ export interface FieldOptions<F extends FieldEntry> {
     hasLabel?: boolean;
     /** Pour l'icône de la Tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Ref à poser sur le component de saisie (Autocomplete, Input, Select). */
+    inputRef?: Ref<any>;
     /** @internal */
     /** L'input à utiliser. */
     inputType?: "autocomplete" | "input" | "select";
@@ -163,13 +165,14 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
             }
         } = field as FormEntityField<F>;
 
-        const iProps: BaseInputProps = {
+        const iProps: BaseInputProps & {ref?: Ref<any>} = {
             value,
             error: store.showError ? error : undefined,
             name,
             id,
             type,
-            onChange
+            onChange,
+            ref: props.inputRef
         };
 
         return (

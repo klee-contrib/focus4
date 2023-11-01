@@ -16,7 +16,7 @@ export interface AutocompleteSearchProps<T extends DomainFieldType, TSource = {k
     /** Service de résolution de clé. Doit retourner le libellé. */
     keyResolver?: (key: DomainTypeSingle<T>) => Promise<string | undefined>;
     /** Au changement. */
-    onChange?: (value: DomainTypeSingle<T> | undefined) => void;
+    onChange?: (key: DomainTypeSingle<T> | undefined, value?: TSource) => void;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
@@ -65,9 +65,14 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
     const [values, setValues] = useState<TSource[]>([]);
 
     useEffect(() => {
-        if ((!!value || value === 0) && keyResolver) {
+        if ((!!value || value === 0) && (!!keyResolver || !!pQuery)) {
             setLoading(true);
-            keyResolver(value).then(async label => {
+            (keyResolver
+                ? keyResolver(value)
+                : new Promise<string>(r => {
+                      r(pQuery);
+                  })
+            ).then(async label => {
                 // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 setQuery(label ?? `${value}`);
                 if (!values.find(v => getKey(v) === value) && label && querySearcher) {
@@ -82,8 +87,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         debounce(async function search(newQuery: string) {
             if (querySearcher && (searchOnEmptyQuery || newQuery.trim().length)) {
                 setLoading(true);
-                const result = await querySearcher(encodeURIComponent(newQuery.trim()));
-                setValues(result);
+                setValues(await querySearcher(encodeURIComponent(newQuery.trim())));
                 setLoading(false);
             }
         }, 200),
@@ -92,6 +96,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
 
     useEffect(() => {
         if (searchOnQuerySearcherChange && query) {
+            setValues([]);
             search(query);
         }
     }, [search, searchOnQuerySearcherChange]);
@@ -107,8 +112,8 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         search(newQuery);
     }
 
-    function handleChange(newValue?: string) {
-        onChange?.(stringToDomainType(newValue, type));
+    function handleChange(newKey?: string, newValue?: TSource) {
+        onChange?.(stringToDomainType(newKey, type), newValue);
     }
 
     function handleFocus() {
