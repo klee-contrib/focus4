@@ -43,8 +43,8 @@
 .facet > ul {
     --checkbox-state-size: 28px;
 
-    margin: var(--facet-list-margin) calc((var(--icon-button-size) - var(--checkbox-state-size)) / 2);
-    padding: 0;
+    margin: 0;
+    padding: var(--facet-list-margin) calc((var(--icon-button-size) - var(--checkbox-state-size)) / 2);
     list-style-type: none;
     max-height: var(--facet-list-max-height);
     overflow-y: auto;
