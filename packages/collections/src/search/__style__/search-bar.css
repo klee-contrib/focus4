@@ -10,6 +10,8 @@
     --button-border-radius: 2px;
     --button-height: 36px;
     --button-padding: 20px;
+    --icon-button-size: 36px;
+    --icon-button-icon-size: 20px;
 
     display: flex;
     align-items: center;
@@ -21,6 +23,10 @@
     box-shadow: var(--shadow-2p);
     margin: 10px 0;
     transition: box-shadow var(--animation-duration) var(--animation-curve-fast-out-slow-in);
+}
+
+.bar > * {
+    flex-shrink: 0;
 }
 
 .bar:hover {
@@ -44,7 +50,7 @@
     height: 25px;
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    flex: 1;
 }
 
 .searchIcon {
