@@ -161,6 +161,7 @@
                 "exceptAfterSingleLine": true
             }
         ],
+        "@typescript-eslint/max-params": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/method-signature-style": "off",
         "@typescript-eslint/naming-convention": [
