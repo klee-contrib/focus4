@@ -333,7 +333,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 noRing
                 onItemClick={key => onValueChange(key)}
                 onSelectedChange={setSelected}
-                position={direction === "auto" ? "full-auto" : direction === "up" ? "bottom" : "top"}
+                position={direction === "auto" ? "auto-fill" : direction === "up" ? "top" : "bottom"}
                 selected={selected}
             >
                 {suggestions.map(s => (

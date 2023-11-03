@@ -262,7 +262,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 noBlurOnArrowPress
                 onItemClick={handleChange}
                 onSelectedChange={onSelectedChange}
-                position={direction === "auto" ? "full-auto" : direction === "up" ? "bottom" : "top"}
+                position={direction === "auto" ? "auto-fill" : direction === "up" ? "top" : "bottom"}
                 selected={selected}
             >
                 {hasUndefined ? (

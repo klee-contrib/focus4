@@ -76,14 +76,33 @@ export interface MenuProps extends MenuControls {
     /**
      * Détermine la position du Menu par rapport à son élément ancre.
      *
-     * Le Menu peut être placé en haut ou en bas, et optionnellement sur la gauche ou à droite (au lieu de prendre toute la largeur de l'ancre).
+     * Le Menu peut être placé au dessus (`top`) ou en dessous (`bottom`) en prenant toute la largeur de l'ancre,
+     * ou bien en gardant la taille de son contenu l'alignant à gauche (`top-left` et `bottom-left`) ou à droite (`top-right` et `bottom-right`).
      *
-     * La position peut être également définie en `auto` (choisie entre `topLeft`, `topRight`, `bottomLeft` et `bottomRight`) ou `full-auto`
-     * (choisie entre `top` et `bottom`), selon la position de l'ancre sur la page au moment de son ouverture.
+     * La position peut être déterminée automatiquement selon la position de l'ancre sur la page au moment de son ouverture.
+     * Il est possible de choisir entre
+     * - `auto-fill` (`bottom` ou `top`)
+     * - `auto-fit` (`bottom-left`, `bottom-right`, `top-left`, `top-right`)
+     * - `auto-left` (`bottom-left` ou `top-left`)
+     * - `auto-right` (`bottom-right` ou `top-right`)
+     * - `bottom-auto` (`bottom-left` ou `bottom-right`)
+     * - `top-auto` (`top-left` ou `top-right`)
      *
-     * Par défaut : `auto`.
+     * Par défaut : `auto-fit`.
      */
-    position?: "auto" | "bottom" | "bottomLeft" | "bottomRight" | "full-auto" | "top" | "topLeft" | "topRight";
+    position?:
+        | "auto-fill"
+        | "auto-fit"
+        | "auto-left"
+        | "auto-right"
+        | "bottom-auto"
+        | "bottom-left"
+        | "bottom-right"
+        | "bottom"
+        | "top-auto"
+        | "top-left"
+        | "top-right"
+        | "top";
     /** Valeur de `role` pour le `ul` HTML. */
     role?: AriaRole;
     /** Permet de surcharger l'élement sélectionné du Menu, au lieu de le laisser utiliser son état interne. A utiliser avec `onSelectedChange`. */
@@ -191,7 +210,7 @@ export function Menu({
     noRing = false,
     onItemClick,
     onSelectedChange,
-    position: pPosition = "auto",
+    position: pPosition = "auto-fit",
     role,
     selected: pSelected,
     theme: pTheme
@@ -204,7 +223,15 @@ export function Menu({
 
     // Position du menu.
     const [position, setPosition] = useState(
-        pPosition === "auto" ? "topLeft" : pPosition === "full-auto" ? "top" : pPosition
+        pPosition === "auto-fill"
+            ? "bottom"
+            : pPosition === "auto-fit" || pPosition === "auto-left" || pPosition === "bottom-auto"
+            ? "bottom-left"
+            : pPosition === "auto-right"
+            ? "bottom-right"
+            : pPosition === "top-auto"
+            ? "top-left"
+            : pPosition
     );
     const [positions, setPositions] = useState({top: 0, bottom: 0, left: 0, right: 0});
     const [maxHeight, setMaxHeight] = useState(0);
@@ -221,22 +248,31 @@ export function Menu({
                 } = (ref.current.offsetParent ?? anchor.current).getBoundingClientRect();
                 const ww = window.innerWidth || document.documentElement.offsetWidth;
                 const wh = window.innerHeight || document.documentElement.offsetHeight;
-                const toTop = at < wh / 2 - ah / 2;
-                const toLeft = al < ww / 2 - aw / 2;
+                const bt = at < wh / 2 - ah / 2 ? "bottom" : "top";
+                const lr = al < ww / 2 - aw / 2 ? "left" : "right";
 
-                if (pPosition === "auto" || pPosition === "full-auto") {
-                    setPosition(
-                        `${toTop ? "top" : "bottom"}${pPosition === "auto" ? (toLeft ? "Left" : "Right") : ""}` as const
-                    );
-                    setPositions({
-                        top: at + ah - pt,
-                        bottom: pt + ph - at,
-                        left: al - pl,
-                        right: pl + pw - al - aw
-                    });
+                if (pPosition === "auto-fill") {
+                    setPosition(bt);
+                } else if (pPosition === "auto-fit") {
+                    setPosition(`${bt}-${lr}`);
+                } else if (pPosition === "auto-left") {
+                    setPosition(`${bt}-left`);
+                } else if (pPosition === "auto-right") {
+                    setPosition(`${bt}-right`);
+                } else if (pPosition === "bottom-auto") {
+                    setPosition(`bottom-${lr}`);
+                } else if (pPosition === "top-auto") {
+                    setPosition(`top-${lr}`);
                 }
 
-                const mh = Math.floor(toTop ? wh - ah - at : at);
+                setPositions({
+                    top: at + ah - pt,
+                    bottom: pt + ph - at,
+                    left: al - pl,
+                    right: pl + pw - al - aw
+                });
+
+                const mh = Math.floor(bt === "bottom" ? wh - ah - at : at);
                 let cssMh = mh;
 
                 const cssMhValue = getComputedStyle(ref.current).getPropertyValue("--menu-max-height");
@@ -446,10 +482,10 @@ export function Menu({
             role={role}
             style={useMemo(
                 () => ({
-                    top: position.startsWith("top") ? positions.top : undefined,
-                    bottom: position.startsWith("bottom") ? positions.bottom : undefined,
-                    left: position.endsWith("Left") ? positions.left : undefined,
-                    right: position.endsWith("Right") ? positions.right : undefined,
+                    top: position.includes("bottom") ? positions.top : undefined,
+                    bottom: position.includes("top") ? positions.bottom : undefined,
+                    left: position.includes("left") ? positions.left : undefined,
+                    right: position.includes("right") ? positions.right : undefined,
                     maxHeight
                 }),
                 [maxHeight, position, positions]
