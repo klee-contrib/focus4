@@ -155,21 +155,6 @@ Une checkbox.
 | `target`         | Non         | <code>string</code>                                                                                              | "target" pour le <a>, si `href` est rensigné.                                          |
 | `theme`          | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                                                                              | CSS.                                                                                   |
 
-## `Clock`
-
-Affiche une horloge. Utilisé par l'[`InputTime`](components/forms.md#inputdate).
-
-### Props
-
-| Nom           | Obligatoire | Type                                  | Description |
-| ------------- | ----------- | ------------------------------------- | ----------- |
-| `display`     | Non         | <code>"hours" &#124; "minutes"</code> |             |
-| `format`      | Non         | <code>"24hr" &#124; "ampm"</code>     |             |
-| `onChange`    | Non         | <code>(date: Date) =&gt; void</code>  |             |
-| `onHandMoved` | Non         | <code>() =&gt; void</code>            |             |
-| `theme`       | Non         | <code>CSSProp&lt;ClockCss&gt;</code>  |             |
-| `time`        | Non         | <code>Date</code>                     |             |
-
 ## `Dropdown`
 
 

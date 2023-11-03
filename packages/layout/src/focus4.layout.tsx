@@ -5,7 +5,6 @@ import {
     CalendarCss,
     CheckboxCss,
     ChipCss,
-    ClockCss,
     DropdownCss,
     FloatingActionButtonCss,
     IconButtonCss,
@@ -67,7 +66,6 @@ export interface LayoutStyleProviderProps {
     group?: {};
     header?: CSSProp<HeaderCss>;
     inputDate?: {};
-    inputTime?: {};
     label?: {};
     layout?: CSSProp<LayoutCss>;
     list?: {};
@@ -92,7 +90,6 @@ export interface LayoutStyleProviderProps {
     RTCalendar?: CSSProp<CalendarCss>;
     checkbox?: CSSProp<CheckboxCss>;
     chip?: CSSProp<ChipCss>;
-    RTClock?: CSSProp<ClockCss>;
     dropdown?: CSSProp<DropdownCss>;
     floatingActionButton?: CSSProp<FloatingActionButtonCss>;
     iconButton?: CSSProp<IconButtonCss>;

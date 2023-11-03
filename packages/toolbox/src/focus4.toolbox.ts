@@ -5,7 +5,6 @@ export {Button, ButtonCss, ButtonProps, buttonCss} from "./components/button";
 export {Calendar, CalendarCss, CalendarProps, calendarCss} from "./components/calendar";
 export {Checkbox, CheckboxCss, CheckboxProps, checkboxCss} from "./components/checkbox";
 export {Chip, ChipCss, ChipProps, chipCss} from "./components/chip";
-export {Clock, ClockCss, ClockProps, clockCss} from "./components/clock";
 export {Dropdown, DropdownCss, DropdownProps, dropdownCss} from "./components/dropdown";
 export {
     FloatingActionButton,

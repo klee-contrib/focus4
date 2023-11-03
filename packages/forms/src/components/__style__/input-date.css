@@ -61,10 +61,6 @@
     & header {
         box-sizing: border-box;
     }
-
-    & .clock {
-        position: static;
-    }
 }
 
 .calendar--fromRight {

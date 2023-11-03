@@ -13,8 +13,6 @@ export {
     InputDate,
     InputDateProps,
     InputProps,
-    InputTime,
-    InputTimeProps,
     Label,
     LabelCss,
     LabelProps,
