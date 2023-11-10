@@ -29,7 +29,7 @@ function generateDocFile(fileName, globPath, lines) {
                     `\`${p.name}\``,
                     p.required ? "**Oui**" : "Non",
                     `<code>${p.type.name.replace(/\|/g, "&#124;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>`,
-                    p.description.replace(/\n/g, "<br />")
+                    p.description.replace(/\n/g, "<br />").replace(/</g, "&lt;").replace(/>/g, "&gt;")
                 ])
             ])
         );
