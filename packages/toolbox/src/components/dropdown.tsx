@@ -115,13 +115,9 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
     const menu = useMenu();
 
     const handleChange = useCallback(
-        (key?: string, noBlur = false) => {
+        (key?: string) => {
             onChange?.(key === undefinedKey ? undefined : key);
             setSelected(key ?? undefinedKey);
-            if (!noBlur) {
-                setFocused(false);
-                inputRef.current?.blur();
-            }
         },
         [onChange]
     );
@@ -153,7 +149,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                     index = 0;
                 }
 
-                handleChange(keys[index], true);
+                handleChange(keys[index]);
             }
         },
         [disableArrowSelectionWhenClosed, handleChange, menu.active, value, values]

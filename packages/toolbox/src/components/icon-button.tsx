@@ -33,6 +33,8 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
     onFocus?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** CSS inline pour l'élément racine. */
     style?: CSSProperties;
+    /** "tabindex" pour l'élément HTML. */
+    tabIndex?: number;
     /** "target" pour le <a>, si `href` est rensigné. */
     target?: string;
     /** CSS. */
@@ -61,6 +63,7 @@ export function IconButton({
     onPointerLeave,
     onPointerUp,
     style,
+    tabIndex,
     target,
     theme: pTheme,
     type = "button",
@@ -94,6 +97,7 @@ export function IconButton({
         onClick,
         onFocus,
         style,
+        tabIndex,
         target: href ? target : undefined,
         type: !href ? type : undefined
     };

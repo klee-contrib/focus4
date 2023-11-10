@@ -3,6 +3,7 @@ import {AnimatePresence, motion} from "framer-motion";
 import {
     AriaRole,
     Children,
+    createElement,
     MouseEvent,
     MouseEventHandler,
     ReactElement,
@@ -67,8 +68,12 @@ export interface MenuProps extends MenuControls {
     id?: string;
     /** Si renseigné, la navigation clavier dans le Menu n'appelera pas le `blur` de l'élément courant actif (pour un input par exemple). */
     noBlurOnArrowPress?: boolean;
+    /** Si renseigné, utilise des <div> à la place d'un <ul> et des <li> pour les éléments du Menu. */
+    noList?: boolean;
     /** N'affiche pas le focus ring lors de la navigation clavier dans le Menu. */
     noRing?: boolean;
+    /** Désactive complètement la sélection d'items dans le Menu (en particulier au clavier). */
+    noSelection?: boolean;
     /** Handler optionel appelé au clic (y compris au clavier) d'un élément du Menu. La `key` de l'enfant sera passée en paramètre. */
     onItemClick?: (key?: string) => void;
     /** Handler appelé lorsque l'élément sélectionné par le Menu change (au hover ou au clavier).  */
@@ -207,7 +212,9 @@ export function Menu({
     keepSelectionOnToggle = false,
     id,
     noBlurOnArrowPress = false,
+    noList = false,
     noRing = false,
+    noSelection = false,
     onItemClick,
     onSelectedChange,
     position: pPosition = "auto-fit",
@@ -217,7 +224,7 @@ export function Menu({
 }: MenuProps) {
     const theme = useTheme("menu", menuCss, pTheme);
 
-    const ref = useRef<HTMLUListElement>(null);
+    const ref = useRef<HTMLDivElement | HTMLUListElement>(null);
 
     const [showRing, setShowRing] = useState(false);
 
@@ -335,10 +342,12 @@ export function Menu({
 
     const handleSelectedChange = useCallback(
         function handleSelectedChange(s?: string) {
-            setSelected(s);
-            onSelectedChange?.(s);
+            if (!noSelection) {
+                setSelected(s);
+                onSelectedChange?.(s);
+            }
         },
-        [onSelectedChange]
+        [noSelection, onSelectedChange]
     );
 
     useEffect(() => {
@@ -350,19 +359,27 @@ export function Menu({
     // Au clic/appui sur Entrée sur un item.
     const handleItemClick = useCallback(
         function handleItemClick(item: ReactElement, e?: KeyboardEvent | MouseEvent<HTMLLIElement>) {
+            if (noSelection) {
+                return;
+            }
+
             if (e) {
                 e.stopPropagation();
+                e.preventDefault();
             }
+
             if (!item.props.disabled) {
                 item.props.onClick?.();
             }
+
             if (item.key) {
                 onItemClick?.(item.key);
             }
+
             setShowRing(false);
             close?.();
         },
-        [onItemClick, close]
+        [noSelection, onItemClick, close]
     );
 
     const resetPointerEvents = useCallback(function resetPointerEvents() {
@@ -384,7 +401,12 @@ export function Menu({
             ).filter(({item}) => !!item && !unselectable(item));
 
             const handleKeyDown = (event: KeyboardEvent) => {
-                if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                if (event.key === "Tab" || event.key === "Escape") {
+                    setShowRing(false);
+                    close?.();
+                } else if (noSelection) {
+                    return;
+                } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
                     setShowRing(true);
                     event.preventDefault();
                     event.stopPropagation();
@@ -416,16 +438,23 @@ export function Menu({
                     if (item) {
                         handleItemClick(item.item, event);
                     }
-                } else if (event.key === "Tab" || event.key === "Escape") {
-                    setShowRing(false);
-                    close?.();
                 }
             };
 
             document.addEventListener("keydown", handleKeyDown);
             return () => document.removeEventListener("keydown", handleKeyDown);
         }
-    }, [active, children, close, handleItemClick, handleSelectedChange, noBlurOnArrowPress, position, selected]);
+    }, [
+        active,
+        children,
+        close,
+        handleItemClick,
+        handleSelectedChange,
+        noBlurOnArrowPress,
+        noSelection,
+        position,
+        selected
+    ]);
 
     const items = (Array.isArray(children) ? children.flat(Infinity) : [children])
         .map((item, i) => {
@@ -433,54 +462,55 @@ export function Menu({
                 return item;
             }
 
-            const isHr = unselectable(item);
+            const isHr = noSelection || unselectable(item);
             const key = (item as ReactElement)?.key ?? `${i}`;
 
-            return (
-                <motion.li
-                    key={i}
-                    animate={
-                        !keepItemsInDOMWhenClosed || active ? {height: "auto", opacity: 1} : {height: 0, opacity: 0}
-                    }
-                    className={theme.item({focused: !noRing && selected === key && showRing})}
-                    data-key={key}
-                    exit={{height: 0, opacity: 0}}
-                    initial={{height: 0, opacity: 0}}
-                    onClick={isHr ? undefined : e => handleItemClick(item as ReactElement, e)}
-                    onPointerEnter={
-                        isHr
-                            ? undefined
-                            : () => {
-                                  handleSelectedChange(key);
-                                  setShowRing(false);
-                              }
-                    }
-                    transition={{height: getSpringTransition(), opacity: {duration: 0.1}}}
-                >
-                    {item}
-                </motion.li>
+            const itemElement = noList ? motion.div : motion.li;
+
+            return createElement(
+                itemElement as typeof motion.li,
+                {
+                    key: i,
+                    animate:
+                        !keepItemsInDOMWhenClosed || active ? {height: "auto", opacity: 1} : {height: 0, opacity: 0},
+                    className: theme.item({focused: !noRing && selected === key && showRing}),
+                    ...{"data-key": key},
+                    exit: {height: 0, opacity: 0},
+                    initial: {height: 0, opacity: 0},
+                    onClick: isHr ? undefined : e => handleItemClick(item as ReactElement, e),
+                    onPointerEnter: isHr
+                        ? undefined
+                        : () => {
+                              handleSelectedChange(key);
+                              setShowRing(false);
+                          },
+                    transition: {height: getSpringTransition(), opacity: {duration: 0.1}}
+                },
+                item
             );
         })
         .filter(x => !!x);
 
-    return (
-        <ul
-            ref={ref}
-            className={classNames(
+    const rootElement = noList ? "div" : "ul";
+    return createElement(
+        rootElement,
+        {
+            ref,
+            className: classNames(
                 theme.menu({
                     active: active && Children.toArray(children).filter(x => x).length > 0,
                     full: position === "top" || position === "bottom"
                 }),
                 className
-            )}
-            id={id}
-            onPointerLeave={() => {
+            ),
+            id,
+            onPointerLeave: () => {
                 if (!keepSelectionOnPointerLeave) {
                     handleSelectedChange();
                 }
-            }}
-            role={role}
-            style={useMemo(
+            },
+            role,
+            style: useMemo(
                 () => ({
                     top: position.includes("bottom") ? positions.top : undefined,
                     bottom: position.includes("top") ? positions.bottom : undefined,
@@ -489,10 +519,9 @@ export function Menu({
                     maxHeight
                 }),
                 [maxHeight, position, positions]
-            )}
-        >
-            {keepItemsInDOMWhenClosed ? items : <AnimatePresence>{active ? items : null}</AnimatePresence>}
-        </ul>
+            )
+        },
+        keepItemsInDOMWhenClosed ? items : <AnimatePresence>{active ? items : null}</AnimatePresence>
     );
 }
 

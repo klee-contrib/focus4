@@ -37,6 +37,8 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
     style?: CSSProperties;
     /** "target" pour le <a>, si `href` est rensigné. */
     target?: string;
+    /** "tabindex" pour l'élément HTML. */
+    tabIndex?: number;
     /** CSS. */
     theme?: CSSProp<ButtonCss>;
     /** Type de bouton HTML (ignoré si `href` est renseigné). */
@@ -64,6 +66,7 @@ export function Button({
     onPointerLeave,
     onPointerUp,
     style,
+    tabIndex,
     target,
     theme: pTheme,
     type = "button",
@@ -100,6 +103,7 @@ export function Button({
         onClick,
         onFocus,
         style,
+        tabIndex,
         target: href ? target : undefined,
         type: !href ? type : undefined
     };

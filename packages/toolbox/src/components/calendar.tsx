@@ -183,6 +183,7 @@ export function Calendar({
                         setAnimationLeft();
                         setPending({months: -1});
                     }}
+                    tabIndex={-1}
                 />
                 <IconButton
                     className={theme.next()}
@@ -191,6 +192,7 @@ export function Calendar({
                         setAnimationRight();
                         setPending({months: +1});
                     }}
+                    tabIndex={-1}
                 />
                 <TransitionGroup component={null}>
                     <CSSTransition key={viewDate.getMonth()} {...cssTransitionProps(animation)}>

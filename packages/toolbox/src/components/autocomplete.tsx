@@ -218,7 +218,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
             const additionalSuggestion = additionalSuggestions?.find(s => s.key === key);
             if (additionalSuggestion) {
                 additionalSuggestion.onClick();
-                inputRef.current?.blur();
                 return;
             }
 
@@ -228,7 +227,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 values.find(v => getKey(v) === key)
             );
             valueRef.current = key;
-            inputRef.current?.blur();
         },
         [allowUnmatched, clearQueryOnChange, getQuery, onChange, pQuery, query, suggestions, updateQuery, values]
     );
@@ -252,6 +250,10 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
     const handleQueryKeyDown: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+            }
+
             if ((event.key === "Enter" && !!(query || selected)) || event.key === "Tab") {
                 event.stopPropagation();
                 onValueChange(selected);

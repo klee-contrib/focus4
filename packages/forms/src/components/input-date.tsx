@@ -1,10 +1,10 @@
 import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {KeyboardEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {Calendar, CalendarProps, IconButton} from "@focus4/toolbox";
+import {Calendar, CalendarProps, Menu, useMenu} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
@@ -14,12 +14,33 @@ export {inputDateCss};
 export interface InputDateProps {
     /** Format de l'affichage de la date dans le calendrier. */
     calendarFormat?: Intl.DateTimeFormatOptions;
-    /** Position du calendrier. Par défaut: "auto".  */
-    calendarPosition?: "auto" | "down" | "up";
+    /**
+     * Détermine la position du Calendrier par rapport au champ texte.
+     *
+     * Le calendrier peut être placé en haut/en bas et à gauche/à droite (`top-left`, `top-right`, `bottom-left` ou `bottom-right`).
+     *
+     * La position peut être déterminée automatiquement selon la position du champ sur la page au moment de l'ouverture du calendrier.
+     * Il est possible de choisir entre
+     * - `auto` (`bottom-left`, `bottom-right`, `top-left`, `top-right`)
+     * - `left` (`bottom-left`, `top-left`)
+     * - `right` (`bottom-right` ou `top-right`)
+     * - `top` (`top-left` ou `top-right`)
+     * - `bottom` (`bottom-left` ou `bottom-right`)
+     *
+     * Par défaut : `left`.
+     */
+    calendarPosition?:
+        | "auto"
+        | "bottom-left"
+        | "bottom-right"
+        | "bottom"
+        | "left"
+        | "right"
+        | "top-left"
+        | "top-right"
+        | "top";
     /* Autres props du Calendar RT */
     calendarProps?: Omit<CalendarProps, "display" | "handleSelect" | "onChange" | "selectedDate">;
-    /** Composant affiché depuis la gauche ou la droite. */
-    displayFrom?: "left" | "right";
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Id pour l'input. */
@@ -67,9 +88,8 @@ export interface InputDateProps {
  */
 export function InputDate({
     calendarFormat = {weekday: "short", month: "short", day: "2-digit"},
-    calendarPosition: pCalendarPosition = "auto",
+    calendarPosition = "left",
     calendarProps,
-    displayFrom = "left",
     error,
     id,
     inputFormat = "MM/dd/yyyy",
@@ -132,14 +152,10 @@ export function InputDate({
         setDateText(formatDate(value));
     }, [formatDate, toLuxon, value]);
 
-    /** Affiche le calendrier. */
-    const [showCalendar, setShowCalendar] = useState(false);
+    const menu = useMenu();
 
     /** Mode du calendrier. */
     const [calendarDisplay, setCalendarDisplay] = useState<"months" | "years">("months");
-
-    /** Position du calendrier. */
-    const [calendarPosition, setCalendarPosition] = useState(pCalendarPosition);
 
     /** Transforme la date selon le format de date/timezone souhaité. */
     const transformDate = useCallback(
@@ -161,54 +177,6 @@ export function InputDate({
         },
         [ISOStringFormat, zone]
     );
-
-    /** Appelé lorsqu'on quitte le champ texte. */
-    const onInputBlur = useCallback(
-        function onInputBlur() {
-            const text = (dateText ?? "").trim() || undefined;
-            const newDate = text ? transformDate(text, inputFormat) : undefined;
-
-            if (newDate?.isValid) {
-                setDate(newDate);
-                onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
-            } else {
-                onChange(text);
-            }
-        },
-        [dateText, inputFormat, ISOStringFormat, onChange, transformDate]
-    );
-
-    /** Ferme le calendrier lorsqu'on clic à l'extérieur du picker. */
-    const onDocumentClick = useCallback(
-        function onDocumentClick({target}: Event) {
-            let parent = target as HTMLElement | null;
-
-            while (parent && parent.getAttribute("data-id") !== inputDateId) {
-                parent = parent.parentElement;
-            }
-
-            if (showCalendar && !parent) {
-                setShowCalendar(false);
-                onInputBlur();
-            }
-        },
-        [onInputBlur, showCalendar]
-    );
-
-    useEffect(() => {
-        document.addEventListener("pointerdown", onDocumentClick);
-        return () => document.removeEventListener("pointerdown", onDocumentClick);
-    }, [onDocumentClick]);
-
-    // Recalcule la position du calendrier quand elle est automatique.
-    useLayoutEffect(() => {
-        if (showCalendar && pCalendarPosition === "auto") {
-            const client = inputRef.current?.htmlInput?.getBoundingClientRect() ?? {top: 0, height: 0};
-            const screenHeight = window.innerHeight || document.documentElement.offsetHeight;
-            const up = client.top > screenHeight / 2 + client.height;
-            setCalendarPosition(up ? "up" : "down");
-        }
-    }, [pCalendarPosition, showCalendar]);
 
     const jsDate = useMemo(() => {
         // Vérifie que la timezone existe
@@ -256,21 +224,55 @@ export function InputDate({
             if (!dayClick) {
                 setCalendarDisplay("months");
             } else {
-                setShowCalendar(false);
+                menu.close();
             }
         },
         [ISOStringFormat, onChange, timezoneCode, transformDate]
     );
 
-    const handleKeyDown = useCallback(
-        function handleKeyDown({key}: KeyboardEvent) {
-            if (key === "Tab" || key === "Enter") {
-                setShowCalendar(false);
-                onInputBlur();
+    const commitDate = useCallback(
+        function commitDate() {
+            const text = (dateText ?? "").trim() || undefined;
+            const newDate = text ? transformDate(text, inputFormat) : undefined;
+
+            if (newDate?.isValid) {
+                setDate(newDate);
+                onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
+            } else {
+                onChange(text);
             }
         },
-        [onInputBlur]
+        [dateText, inputFormat, ISOStringFormat, onChange, transformDate]
     );
+
+    /** Appelé lorsqu'on quitte le champ texte. */
+    const onInputBlur = useCallback(
+        function onInputBlur() {
+            if (menu.active) {
+                return;
+            }
+            commitDate();
+        },
+        [commitDate, menu.active]
+    );
+
+    /** Gestion appuie sur "Entrée". */
+    const onKeyDown = useCallback(
+        function onKeyDown(e: KeyboardEvent) {
+            if (e.key === "Enter") {
+                menu.close();
+                commitDate();
+            }
+        },
+        [commitDate]
+    );
+
+    useEffect(() => {
+        if (menu.active) {
+            document.addEventListener("keydown", onKeyDown);
+            return () => document.removeEventListener("keydown", onKeyDown);
+        }
+    }, [menu.active, onKeyDown]);
 
     const theme = useTheme("inputDate", inputDateCss, pTheme);
 
@@ -281,22 +283,35 @@ export function InputDate({
                 ref={inputRef}
                 autoComplete={config.autocompleteOffValue}
                 error={error}
+                fieldRef={menu.anchor}
                 id={id}
                 mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                 name={name}
+                onBlur={onInputBlur}
                 onChange={setDateText}
-                onFocus={() => setShowCalendar(true)}
-                onKeyDown={handleKeyDown}
+                onFocus={menu.open}
                 type="string"
                 value={dateText ?? ""}
             />
-            {showCalendar ? (
-                <div
-                    className={theme.calendar({
-                        [calendarPosition]: true,
-                        fromRight: displayFrom === "right"
-                    })}
-                >
+            <Menu
+                {...menu}
+                noList
+                noSelection
+                position={
+                    calendarPosition === "bottom"
+                        ? "bottom-auto"
+                        : calendarPosition === "top"
+                        ? "top-auto"
+                        : calendarPosition === "left"
+                        ? "auto-left"
+                        : calendarPosition === "right"
+                        ? "auto-right"
+                        : calendarPosition === "auto"
+                        ? "auto-fit"
+                        : calendarPosition
+                }
+            >
+                <div className={theme.calendar()}>
                     <header className={theme.header({[calendarDisplay]: true})}>
                         <span className={theme.year()} id="years" onClick={() => setCalendarDisplay("years")}>
                             {displayedDate.year}
@@ -304,11 +319,6 @@ export function InputDate({
                         <h3 className={theme.date()} id="months" onClick={() => setCalendarDisplay("months")}>
                             {displayedDate.toLocaleString(calendarFormat)}
                         </h3>
-                        <IconButton
-                            icon="clear"
-                            onClick={() => setShowCalendar(false)}
-                            theme={{button: theme.toggle()}}
-                        />
                     </header>
                     <div className={theme.calendarWrapper()}>
                         <Calendar
@@ -320,7 +330,7 @@ export function InputDate({
                         />
                     </div>
                 </div>
-            ) : null}
+            </Menu>
         </div>
     );
 }

@@ -18,6 +18,10 @@
     );
 }
 
+:root[dark] {
+    --calendar-primary-contrast-color: rgb(var(--palette-grey-100));
+}
+
 .calendar {
     background: var(--calendar-primary-contrast-color);
     font-size: var(--font-size-small);
