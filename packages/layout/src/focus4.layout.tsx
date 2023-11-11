@@ -98,7 +98,7 @@ export interface LayoutStyleProviderProps {
     radio?: CSSProp<RadioCss>;
     ripple?: CSSProp<RippleCss>;
     slider?: CSSProp<SliderCss>;
-    RTSnackbar?: CSSProp<SnackbarCss>;
+    snackbar?: CSSProp<SnackbarCss>;
     switch?: CSSProp<SwitchCss>;
     textField?: CSSProp<TextFieldCss>;
     RTTabs?: CSSProp<TabsCss>;

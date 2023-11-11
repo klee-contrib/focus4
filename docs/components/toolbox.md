@@ -483,18 +483,16 @@ Le composant pour afficher des toasts utilisé par le [`MessageCenter`](basics/m
 
 ### Props
 
-| Nom         | Obligatoire | Type                                                                           | Description                                                                                                     |
-| ----------- | ----------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `action`    | Non         | <code>string</code>                                                            | Label for the action component inside the Snackbar.                                                             |
-| `active`    | **Oui**     | <code>boolean</code>                                                           | If true, the snackbar will be active.                                                                           |
-| `children`  | Non         | <code>ReactNode</code>                                                         | Children to pass through the component.                                                                         |
-| `className` | Non         | <code>string</code>                                                            |                                                                                                                 |
-| `label`     | Non         | <code>string &#124; Element</code>                                             | Text to display in the content.                                                                                 |
-| `onClick`   | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Callback function that will be called when the action button is clicked.                                        |
-| `onTimeout` | **Oui**     | <code>() =&gt; void</code>                                                     | Callback function that will be called once the set timeout is finished.                                         |
-| `theme`     | Non         | <code>CSSProp&lt;SnackbarCss&gt;</code>                                        | Classnames object defining the component style.                                                                 |
-| `timeout`   | Non         | <code>number</code>                                                            | Amount of time in milliseconds after which the `onTimeout` callback will be called after `active` becomes true. |
-| `type`      | Non         | <code>"accept" &#124; "cancel" &#124; "warning"</code>                         | Indicates the action type. Can be accept, warning or cancel                                                     |
+| Nom         | Obligatoire | Type                                                    | Description                                                              |
+| ----------- | ----------- | ------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `action`    | Non         | <code>{ label: string; onClick: () =&gt; void; }</code> | Action de la Snackbar.                                                   |
+| `active`    | **Oui**     | <code>boolean</code>                                    | Affiche la Snackbar.                                                     |
+| `className` | Non         | <code>string</code>                                     | Classe CSS pour l'élément racine.                                        |
+| `close`     | Non         | <code>() =&gt; void</code>                              | Si renseigné, affiche un bouton pour fermer la Snackbar avec ce handler. |
+| `level`     | Non         | <code>"error" &#124; "success" &#124; "warning"</code>  | Niveau du message de la Snackbar.                                        |
+| `message`   | **Oui**     | <code>string</code>                                     | Message à afficher dans la Snackbar.                                     |
+| `onClose`   | Non         | <code>() =&gt; void</code>                              | Handler appelé à la fermeture de la Snackbar.                            |
+| `theme`     | Non         | <code>CSSProp&lt;SnackbarCss&gt;</code>                 | CSS.                                                                     |
 
 ## `Switch`
 

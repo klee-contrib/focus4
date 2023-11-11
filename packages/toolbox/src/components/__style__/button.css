@@ -68,6 +68,10 @@
     color: var(--button-primary-light-color);
 }
 
+.button--light::before {
+    background-color: var(--button-primary-light-color);
+}
+
 .button--accent {
     color: var(--button-accent-main-color);
 }

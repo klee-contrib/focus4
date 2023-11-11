@@ -11,6 +11,5 @@ import {translation as lt} from "@focus4/layout";
 export const translation = {
     ...ct.fr,
     ...ft.fr,
-    ...lt.fr,
     icons: {...ct.icons, ...ft.icons, ...lt.icons}
 };

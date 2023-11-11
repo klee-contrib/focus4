@@ -1,71 +1,77 @@
 :root {
-    --snackbar-color-cancel: rgb(var(--palette-red-600));
-    --snackbar-color-accept: rgb(var(--palette-green-600));
-    --snackbar-color-warning: rgb(var(--palette-yellow-800));
-    --snackbar-background-color: rgb(var(--color-text));
-    --snackbar-border-radius: calc(0.2 * var(--unit));
-    --snackbar-button-offset: calc(4.8 * var(--unit));
+    --snackbar-background-color: rgb(var(--color-black));
     --snackbar-color: rgb(var(--color-white));
-    --snackbar-horizontal-offset: calc(2.4 * var(--unit));
-    --snackbar-vertical-offset: calc(1.4 * var(--unit));
+    --snackbar-border-radius: 4px;
     --snackbar-width: 400px;
+    --snackbar-min-height: 48px;
+    --snackbar-padding: 16px;
+    --snackbar-button-padding: 12px;
+
+    --snackbar-font-size: 14px;
+    --snackbar-line-height: 20px;
+
+    --snackbar-color-error: rgb(var(--palette-red-600));
+    --snackbar-color-success: rgb(var(--palette-green-600));
+    --snackbar-color-warning: rgb(var(--palette-yellow-800));
 }
 
 :root[dark] {
-    --snackbar-color-cancel: rgb(var(--palette-red-400));
-    --snackbar-color-accept: rgb(var(--palette-green-400));
+    --snackbar-color-error: rgb(var(--palette-red-400));
+    --snackbar-color-success: rgb(var(--palette-green-400));
     --snackbar-color-warning: rgb(var(--palette-yellow-600));
 }
 
 .snackbar {
-    align-items: center;
-    background-color: var(--snackbar-background-color);
-    border-radius: var(--snackbar-border-radius);
-    bottom: 0;
-    color: var(--snackbar-color);
-    display: flex;
-    left: var(--snackbar-horizontal-offset);
-    margin: var(--snackbar-vertical-offset) auto 0;
-    padding: var(--snackbar-vertical-offset) var(--snackbar-horizontal-offset);
     position: fixed;
-    right: var(--snackbar-horizontal-offset);
-    transition: transform var(--animation-duration) var(--animation-curve-default) var(--animation-duration);
-    z-index: var(--z-index-highest);
-    box-sizing: border-box;
-    font-family: var(--preferred-font);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    border-radius: var(--snackbar-border-radius);
+    background-color: var(--snackbar-background-color);
+    color: var(--snackbar-color);
     width: var(--snackbar-width);
+    min-height: var(--snackbar-min-height);
+    z-index: var(--z-index-highest);
 }
 
-.snackbar--accept {
-    background-color: var(--snackbar-color-accept);
+.snackbar--success {
+    background-color: var(--snackbar-color-success);
 }
 
 .snackbar--warning {
     background-color: var(--snackbar-color-warning);
 }
 
-.snackbar--cancel {
-    background-color: var(--snackbar-color-cancel);
+.snackbar--error {
+    background-color: var(--snackbar-color-error);
 }
 
-.snackbar:not(.snackbar--active) {
-    transform: translateY(100%);
+.message {
+    flex: 1;
+    padding: calc((var(--snackbar-min-height) - var(--snackbar-line-height)) / 2) 0
+        calc((var(--snackbar-min-height) - var(--snackbar-line-height)) / 2) var(--snackbar-padding);
+    line-height: var(--snackbar-line-height);
+    font-size: var(--snackbar-font-size);
 }
 
-.snackbar--active {
-    transform: translateY(0%);
-}
-
-.label {
-    flex-grow: 1;
-    font-size: var(--font-size-small);
-}
-
-.button {
-    --button-border-radius: var(--snackbar-border-radius);
-    --button-padding: 20px;
-    --button-secondary-color: var(--snackbar-color);
-    margin: calc(-1 * var(--snackbar-vertical-offset) / 2) calc(-1 * var(--snackbar-horizontal-offset) / 2)
-        calc(-1 * var(--snackbar-vertical-offset) / 2) var(--snackbar-button-offset);
+.action,
+.close {
+    margin: 0 calc(var(--snackbar-button-padding) - (var(--icon-button-size) - var(--icon-button-icon-size)) / 2);
     flex: 0 0 auto;
+}
+
+.action {
+    --button-border-radius: var(--snackbar-border-radius);
+    --button-padding: calc((var(--icon-button-size) - var(--icon-button-icon-size)) / 2);
+}
+
+.close {
+    --button-secondary-color: var(--snackbar-color);
+}
+
+.action + .close {
+    margin-left: 0;
 }

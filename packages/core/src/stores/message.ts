@@ -1,11 +1,19 @@
 import {lowerFirst} from "lodash";
 import {action, observable} from "mobx";
 
-export type MessageListener = (type: string, message: string) => void;
+export interface Message {
+    label: string;
+    action?: {
+        label: string;
+        onClick: () => void;
+    };
+}
+
+export type MessageListener = (type: string, message: Message) => void;
 
 /** Store de messages */
 export class MessageStore {
-    private readonly messages = observable.map<string, string[]>();
+    private readonly messages = observable.map<string, Message[]>();
     private readonly listeners = new Map<string, MessageListener[]>();
 
     /** Types de messages à traiter dans un appel à `addMessages`.  */
@@ -16,50 +24,64 @@ export class MessageStore {
      * @param type Le type
      * @param message Le message.
      */
+    addMessage(type: string, message: string): void;
+    addMessage(type: string, message: Message): void;
     @action.bound
-    addMessage(type: string, message: string) {
+    addMessage(type: string, message: Message | string) {
         if (!this.messages.get(type)) {
             this.messages.set(type, []);
         }
 
+        if (typeof message === "string") {
+            message = {label: message};
+        }
+
         this.messages.get(type)!.push(message);
-        (this.listeners.get(type) ?? []).forEach(listener => listener(type, message));
+        (this.listeners.get(type) ?? []).forEach(listener => listener(type, message as Message));
     }
 
     /**
      * Ajoute un message d'avertissement.
      * @param message Le message.
      */
+    addWarningMessage(message: string): void;
+    addWarningMessage(message: Message): void;
     @action.bound
-    addWarningMessage(message: string) {
-        this.addMessage("warning", message);
+    addWarningMessage(message: Message | string) {
+        this.addMessage("warning", message as Message);
     }
 
     /**
      * Ajoute un message d'information.
      * @param message Le message.
      */
+    addInformationMessage(message: string): void;
+    addInformationMessage(message: Message): void;
     @action.bound
-    addInformationMessage(message: string) {
-        this.addMessage("info", message);
+    addInformationMessage(message: Message | string) {
+        this.addMessage("info", message as Message);
     }
 
     /**
      * Ajoute un message d'erreur.
      * @param message Le message.
      */
+    addErrorMessage(message: string): void;
+    addErrorMessage(message: Message): void;
     @action.bound
-    addErrorMessage(message: string) {
-        this.addMessage("error", message);
+    addErrorMessage(message: Message | string) {
+        this.addMessage("error", message as Message);
     }
 
     /**
      * Ajoute un message de succès.
      * @param message Le message.
      */
+    addSuccessMessage(message: string): void;
+    addSuccessMessage(message: Message): void;
     @action.bound
-    addSuccessMessage(message: string) {
-        this.addMessage("success", message);
+    addSuccessMessage(message: Message | string) {
+        this.addMessage("success", message as Message);
     }
 
     /**

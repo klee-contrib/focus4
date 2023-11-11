@@ -10,5 +10,5 @@ declare module "i18next" {
 
 export {coreFetch, downloadFile, getFileObjectUrl, requestStore} from "./network";
 export {Router, RouterConstraintBuilder, makeRouter, param} from "./router";
-export {messageStore, UserStore} from "./stores";
+export {Message, MessageListener, MessageStore, UserStore, messageStore} from "./stores";
 export {config, themeable} from "./utils";
