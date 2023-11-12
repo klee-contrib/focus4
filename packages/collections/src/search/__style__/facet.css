@@ -4,7 +4,7 @@
     --facet-title-font-size: 17px;
     --facet-list-margin: 5px;
     --facet-list-max-height: 300px;
-    --facet-font-size: 14px;
+    --facet-font-size: var(--font-size-small);
 }
 
 .facet + .facet {
@@ -17,7 +17,7 @@
     gap: var(--facet-gap);
     margin: 0;
     font-size: var(--facet-title-font-size);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     cursor: pointer;
 }
 
@@ -84,7 +84,7 @@
 }
 
 .count {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .count:last-child {

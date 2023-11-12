@@ -20,7 +20,7 @@
 .content {
     display: block;
     color: var(--tooltip-color);
-    font-weight: 500;
+    font-weight: var(--font-weight-semi-bold);
     background: var(--tooltip-background);
     font-size: var(--tooltip-font-size);
     max-width: var(--tooltip-max-width);

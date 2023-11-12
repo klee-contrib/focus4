@@ -1,7 +1,7 @@
 :root {
     /* Boutons */
 
-    --button-text-size: 14px;
+    --button-text-size: var(--font-size-small);
     --button-spacing: 6px;
     --button-line-height-delta: 0px;
     --button-focus-ring-offset: 2px;
@@ -37,7 +37,7 @@
     --input-outline-color: rgb(var(--palette-grey-800));
     --input-disabled-color: rgb(var(--palette-grey-400));
 
-    --input-text-font-size: 14px;
+    --input-text-font-size: var(--font-size-small);
     --input-text-color: rgb(var(--color-black));
 
     --input-hover-opacity: 0.12;

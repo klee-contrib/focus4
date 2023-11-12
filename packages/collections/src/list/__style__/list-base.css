@@ -22,7 +22,7 @@
 
 .bottomRow button {
     margin: 0;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     text-transform: none;
 }
 

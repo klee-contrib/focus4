@@ -165,7 +165,7 @@ export function Tabs({children, className = "", index = 0, onChange, secondary, 
         );
 
     return (
-        <div className={classNames(theme.tabs({secondary}), className)} data-react-toolbox="tabs">
+        <div className={classNames(theme.tabs({secondary}), className)}>
             <div ref={navigationNode} className={theme.navigation()} role="tablist">
                 {tabs}
                 <span className={theme.pointer()} style={pointer} />

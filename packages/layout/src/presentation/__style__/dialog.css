@@ -1,15 +1,21 @@
 :root {
-    --dialog-border-radius: calc(2.8 * var(--unit));
-    --dialog-color-title: rgb(var(--color-black));
-    --dialog-color-white: rgb(var(--color-white));
-    --dialog-content-padding: calc(2.4 * var(--unit));
-    --dialog-navigation-padding: calc(1.2 * var(--unit));
-    --dialog-translate-y: calc(4 * var(--unit));
-    --overflow: inherit;
+    --dialog-min-width: 50%;
+    --dialog-max-width: 96%;
+    --dialog-border-radius: 28px;
+    --dialog-box-shadow: 0 19px 60px rgba(0, 0, 0, 0.3), 0 15px 20px rgba(0, 0, 0, 0.22);
+
+    --dialog-title-color: rgb(var(--color-black));
+    --dialog-body-color: rgb(var(--palette-grey-700));
+    --dialog-background-color: rgb(var(--color-white));
+
+    --dialog-padding: 24px;
+    --dialog-title-padding: 16px;
+
+    --dialog-translate-y: 40px;
 }
 
 :root[dark] {
-    --dialog-color-white: rgb(var(--palette-grey-50));
+    --dialog-background-color: rgb(var(--palette-grey-50));
 }
 
 .wrapper {
@@ -26,14 +32,14 @@
 }
 
 .dialog {
-    background-color: var(--dialog-color-white);
+    background-color: var(--dialog-background-color);
     border-radius: var(--dialog-border-radius);
-    box-shadow: var(--zdepth-shadow-5);
+    box-shadow: var(--dialog-box-shadow);
     display: flex;
     flex-direction: column;
-    min-width: 50%;
-    max-width: 96%;
-    overflow: var(--overflow);
+    padding: var(--dialog-padding);
+    min-width: var(--dialog-min-width);
+    max-width: var(--dialog-max-width);
     pointer-events: auto;
 }
 
@@ -51,37 +57,22 @@
 
 .enterActive .dialog,
 .exitActive .dialog {
-    transition: opacity var(--animation-duration) var(--animation-curve-default),
-        transform var(--animation-duration) var(--animation-curve-default);
-    transition-delay: var(--animation-delay);
+    transition: opacity var(--animation-duration) var(--animation-curve-default) var(--animation-delay),
+        transform var(--animation-duration) var(--animation-curve-default) var(--animation-delay);
 }
 
 .title {
-    color: var(--dialog-color-title);
-    flex-grow: 0;
-    font-size: calc(2 * var(--unit));
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    line-height: 1;
-    margin: 0 0 calc(1.6 * var(--unit));
+    color: var(--dialog-title-color);
+    margin: 0;
+    padding-bottom: var(--dialog-title-padding);
 }
 
 .body {
-    color: rgb(var(--color-text-secondary));
-    flex-grow: 2;
-    padding: var(--dialog-content-padding);
-
-    & p {
-        font-size: calc(1.4 * var(--unit));
-        font-weight: 400;
-        letter-spacing: 0;
-        line-height: calc(2.4 * var(--unit));
-        margin: 0;
-    }
+    flex: 1;
+    color: var(--dialog-body-color);
 }
 
 .navigation {
-    flex-grow: 0;
-    padding: var(--dialog-navigation-padding);
+    padding-top: var(--dialog-padding);
     text-align: right;
 }

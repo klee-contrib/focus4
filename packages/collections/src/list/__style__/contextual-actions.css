@@ -13,7 +13,7 @@
 }
 
 .text button {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .fab button {

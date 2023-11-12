@@ -8,7 +8,7 @@
     --menu-item-icon-size: 24px;
     --menu-item-height: 48px;
     --menu-item-padding: 12px;
-    --menu-item-font-size: 16px;
+    --menu-item-font-size: var(--font-size);
 
     --menu-divider-height: 8px;
 }

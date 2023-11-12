@@ -47,8 +47,8 @@ export function Dialog({
                     <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
                         <div className={theme.wrapper()}>
                             <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
+                                {title ? <h5 className={theme.title()}>{title}</h5> : null}
                                 <section className={theme.body()} role="body">
-                                    {title ? <h6 className={theme.title()}>{title}</h6> : null}
                                     {children}
                                 </section>
                                 {actions.length ? (

@@ -115,7 +115,7 @@
         color: var(--input-on-secondary-color);
         font-size: var(--slider-label-font-size);
         line-height: var(--slider-label-line-height);
-        font-weight: 500;
+        font-weight: var(--font-weight-semi-bold);
         text-align: center;
         transform: scale(0) translate(0);
     }

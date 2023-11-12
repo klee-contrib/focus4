@@ -57,7 +57,7 @@
 
 .title {
     display: inline-block;
-    font-weight: 500;
+    font-weight: var(--font-weight-semi-bold);
     line-height: var(--calendar-title-height);
 }
 

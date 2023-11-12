@@ -7,7 +7,7 @@
     --snackbar-padding: 16px;
     --snackbar-button-padding: 12px;
 
-    --snackbar-font-size: 14px;
+    --snackbar-font-size: var(--font-size-small);
     --snackbar-line-height: 20px;
 
     --snackbar-color-error: rgb(var(--palette-red-600));

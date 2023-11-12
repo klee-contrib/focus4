@@ -2,7 +2,7 @@
     --tab-height: 64px;
     --tab-padding: 12px;
     --tab-icon-size: 24px;
-    --tab-font-size: 14px;
+    --tab-font-size: var(--font-size-small);
     --tab-pointer-height: 3px;
 
     --tab-height-secondary: 48px;
@@ -55,7 +55,7 @@
     justify-content: end;
     flex-direction: column;
     padding: calc((var(--tab-height) - 2 * var(--tab-icon-size)) / 2) var(--tab-padding);
-    font-weight: 500;
+    font-weight: var(--font-weight-semi-bold);
     cursor: pointer;
     transition: color var(--animation-duration) var(--animation-curve-default);
 }

@@ -1,5 +1,5 @@
 :root {
-    --label-font-size: 14px;
+    --label-font-size: var(--font-size-small);
     --label-line-height: 20px;
 }
 
@@ -8,7 +8,7 @@
     align-items: flex-start;
     justify-content: flex-end;
     text-align: right;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     font-size: var(--label-font-size);
     line-height: var(--label-line-height);
     min-height: var(--label-line-height);

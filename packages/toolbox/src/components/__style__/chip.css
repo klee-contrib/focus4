@@ -4,7 +4,7 @@
     --chip-outline-size: 1px;
     --chip-border-radius: 8px;
     --chip-icon-size: 18px;
-    --chip-text-size: 14px;
+    --chip-text-size: var(--font-size-small);
 }
 
 .chip {
@@ -103,7 +103,7 @@
 }
 
 .label {
-    font-weight: 500;
+    font-weight: var(--font-weight-semi-bold);
     font-size: var(--chip-text-size);
     height: var(--chip-height);
     line-height: calc(var(--chip-height) + var(--button-line-height-delta));

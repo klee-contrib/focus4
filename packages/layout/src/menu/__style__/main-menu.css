@@ -4,7 +4,7 @@
     --main-menu-item-aspect-ratio: 1 / 1;
     --main-menu-item-padding: 12px;
     --main-menu-item-icon-size: 24px;
-    --main-menu-item-text-size: 14px;
+    --main-menu-item-text-size: var(--font-size-small);
     --main-menu-item-gap: 15%;
 
     --main-menu-item-color: rgb(var(--color-black));
@@ -84,7 +84,7 @@
 
 .label {
     font-size: var(--main-menu-item-text-size);
-    font-weight: 500;
+    font-weight: var(--font-weight-semi-bold);
 }
 
 .item--active {

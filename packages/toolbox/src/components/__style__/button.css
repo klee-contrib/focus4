@@ -132,7 +132,7 @@
 }
 
 .label {
-    font-weight: 500;
+    font-weight: var(--font-weight-semi-bold);
     font-size: var(--button-text-size);
     height: var(--button-height);
     line-height: calc(var(--button-height) + var(--button-line-height-delta));

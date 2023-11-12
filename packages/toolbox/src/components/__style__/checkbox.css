@@ -52,7 +52,7 @@
 
 span.check {
     font-size: calc(var(--checkbox-size) - var(--checkbox-outline-size));
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     margin: calc(var(--checkbox-outline-size) / -2);
     clip-path: inset(0 50% 0 50%);
 }

@@ -107,7 +107,7 @@
 
 .label {
     margin: 0;
-    font-weight: 500;
+    font-weight: var(--font-weight-semi-bold);
     font-size: var(--button-text-size);
     height: var(--floating-action-button-size);
     line-height: calc(var(--floating-action-button-size) + var(--button-line-height-delta));

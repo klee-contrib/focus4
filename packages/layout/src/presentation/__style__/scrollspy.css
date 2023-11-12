@@ -35,7 +35,7 @@
 
     & .active {
         margin-left: -4px;
-        font-weight: bold;
+        font-weight: var(--font-weight-bold);
         border-left: 3px solid var(--scrollspy-active-border-color);
         color: var(--scrollspy-active-color);
     }
