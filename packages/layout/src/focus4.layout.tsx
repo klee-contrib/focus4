@@ -101,7 +101,7 @@ export interface LayoutStyleProviderProps {
     snackbar?: CSSProp<SnackbarCss>;
     switch?: CSSProp<SwitchCss>;
     textField?: CSSProp<TextFieldCss>;
-    RTTabs?: CSSProp<TabsCss>;
+    tabs?: CSSProp<TabsCss>;
     tooltip?: CSSProp<TooltipCss>;
 }
 

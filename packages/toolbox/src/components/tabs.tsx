@@ -1,17 +1,5 @@
 import classNames from "classnames";
-import {
-    Children,
-    cloneElement,
-    CSSProperties,
-    MouseEvent,
-    ReactElement,
-    ReactNode,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState
-} from "react";
+import {cloneElement, CSSProperties, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -21,49 +9,43 @@ import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import tabsCss, {TabsCss} from "./__style__/tabs.css";
-export {tabsCss, TabsCss};
+export {TabsCss, tabsCss};
 
-export interface TabContentProps {
-    active?: boolean;
-    className?: string;
-    children?: ReactNode;
-    hidden?: boolean;
+export interface TabProps extends PointerEvents<HTMLDivElement> {
     /** @internal */
-    tabIndex?: number;
+    active?: boolean;
+    /** Contenu du Tab. */
+    children?: ReactNode;
+    /** Classe CSS pour l'élément racine. */
+    className?: string;
+    /** Désactive le Tab. */
+    disabled?: boolean;
+    /** Icône du Tab. */
+    icon?: ReactNode;
+    /** @internal */
+    index?: number;
+    /** Libellé du Tab. */
+    label?: string;
+    /** Handler appelé lorsque le Tab devient actif. */
+    onActive?: () => void;
+    /** @internal */
+    onClick?: (index: number) => void;
+    /** CSS. */
     theme?: CSSProp<TabsCss>;
 }
 
-/**
- * Contenu d'un Tab, à utiliser dans Tabs.
- */
-export function TabContent({active = false, children, className = "", hidden = true, theme: pTheme}: TabContentProps) {
-    const theme = useTheme("RTTabs", tabsCss, pTheme);
-    return (
-        <section aria-expanded={hidden} className={classNames(theme.tab({active}), className)} role="tabpanel">
-            {children}
-        </section>
-    );
-}
-
-export interface TabProps extends PointerEvents<HTMLDivElement> {
-    /** If true, the current component is visible. */
-    active?: boolean;
+export interface TabsProps {
+    /** Seuls des <Tab> sont supportés en tant qu'enfant de Tabs. */
     children?: ReactNode;
+    /** Classe CSS pour l'élément racine. */
     className?: string;
-    /** If true, the current component is not clickable. */
-    disabled?: boolean;
-    /** If true, the current component is not visible. */
-    hidden?: boolean;
-    /** Icon to be used in inner FontIcon. */
-    icon?: ReactNode;
+    /** Index du Tab actif. */
     index?: number;
-    /** Label text for navigation header. */
-    label?: string;
-    /** Callback function that is fired when the tab is activated. */
-    onActive?: () => void;
-    /** Called on click on the tab. */
-    onClick?: (event: MouseEvent<HTMLDivElement>, index: number) => void;
-    /** Classnames object defining the component style. */
+    /** Handler appelé au changement de Tab. */
+    onChange?: (index: number) => void;
+    /** Affiche les Tabs comme des Tabs "secondaires". */
+    secondary?: boolean;
+    /** CSS. */
     theme?: CSSProp<TabsCss>;
 }
 
@@ -73,9 +55,7 @@ export interface TabProps extends PointerEvents<HTMLDivElement> {
 export function Tab({
     active = false,
     className = "",
-    children,
     disabled = false,
-    hidden = false,
     icon,
     index = 0,
     label,
@@ -87,7 +67,7 @@ export function Tab({
     onPointerUp,
     theme: pTheme
 }: TabProps) {
-    const theme = useTheme("RTTabs", tabsCss, pTheme);
+    const theme = useTheme("tabs", tabsCss, pTheme);
 
     useEffect(() => {
         if (active) {
@@ -95,121 +75,73 @@ export function Tab({
         }
     }, [active, onActive]);
 
-    const handleClick = useCallback(
-        (event: MouseEvent<HTMLDivElement>) => {
-            if (!disabled && onClick) {
-                onClick(event, index);
-            }
-        },
-        [disabled, index, onClick]
-    );
+    const handleClick = useCallback(() => {
+        if (!disabled && onClick) {
+            onClick(index);
+        }
+    }, [disabled, index, onClick]);
 
     return (
         <Ripple
+            disabled={disabled}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
             onPointerUp={onPointerUp}
         >
             <div
-                className={classNames(theme.label({active, disabled, hidden, withIcon: !!icon}), className)}
-                data-react-toolbox="tab"
+                className={classNames(theme.tab({active, disabled}), className)}
                 onClick={handleClick}
+                onKeyDown={e => e.key === "Enter" && handleClick()}
                 role="tab"
-                tabIndex={0}
+                tabIndex={disabled ? undefined : 0}
             >
-                {icon ? <FontIcon className={(theme as any).icon?.()}>{icon}</FontIcon> : null}
-                {label}
-                {children}
+                {icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null}
+                {label ? <span className={theme.label()}>{label}</span> : null}
             </div>
         </Ripple>
     );
 }
 
-export interface TabsProps {
-    /** Children to pass through the component. */
-    children?: ReactNode;
-    className?: string;
-    /** Current  */
-    index?: number;
-    /**
-     * `unmounted` mode will not mount the tab content of inactive tabs.
-     * `display` mode will mount but hide inactive tabs.
-     * Consider holding state outside of the Tabs component before using `display` mode
-     */
-    hideMode?: "display" | "unmounted";
-    /**  If True, the tabs will have an inverse style. */
-    inverse?: boolean;
-    /** If True, the tabs will be fixed, covering the whole width. */
-    fixed?: boolean;
-    /** Callback function that is fired when the tab changes. */
-    onChange?: (idx: number) => void;
-    /** Classnames object defining the component style. */
-    theme?: CSSProp<TabsCss>;
-}
-
-/**
- * Permet de poser un système de tabs avec Tab et TabContent.
- */
-export function Tabs({
-    children,
-    className = "",
-    fixed = false,
-    hideMode = "unmounted",
-    index = 0,
-    inverse = false,
-    onChange,
-    theme: pTheme
-}: TabsProps) {
-    const theme = useTheme("RTTabs", tabsCss, pTheme);
+/** Permet de poser un système de tabs avec Tab. */
+export function Tabs({children, className = "", index = 0, onChange, secondary, theme: pTheme}: TabsProps) {
+    const theme = useTheme("tabs", tabsCss, pTheme);
     const navigationNode = useRef<HTMLDivElement | null>(null);
 
-    const [arrows, setArrows] = useState<{left: boolean; right: boolean}>({left: false, right: false});
-    const updateArrows = useCallback(() => {
-        if (navigationNode.current) {
-            const idx = navigationNode.current.children.length - 2;
-
-            if (idx >= 0) {
-                const left = navigationNode.current.scrollLeft;
+    const [pointer, setPointer] = useState<CSSProperties>({});
+    const updatePointer = useCallback(
+        (idx: number) => {
+            if (navigationNode.current?.children[idx]) {
                 const nav = navigationNode.current.getBoundingClientRect();
-                const lastLabel = navigationNode.current.children[idx].getBoundingClientRect();
-
-                setArrows({
-                    left: left > 0,
-                    right: nav.right < lastLabel.right - 5
+                const tab = (
+                    secondary
+                        ? navigationNode.current.children[idx]
+                        : navigationNode.current.children[idx].querySelector("span:last-of-type")!
+                )?.getBoundingClientRect();
+                const left = navigationNode.current.scrollLeft;
+                setPointer({
+                    top: `${nav.height}px`,
+                    left: `${tab?.left + left - nav.left}px`,
+                    width: `${tab?.width}px`
                 });
             }
-        }
-    }, []);
-
-    const [pointer, setPointer] = useState<CSSProperties>({});
-    const updatePointer = useCallback((idx: number) => {
-        if (navigationNode.current?.children[idx]) {
-            const nav = navigationNode.current.getBoundingClientRect();
-            const label = navigationNode.current.children[idx].getBoundingClientRect();
-            const left = navigationNode.current.scrollLeft;
-            setPointer({
-                top: `${nav.height}px`,
-                left: `${label.left + left - nav.left}px`,
-                width: `${label.width}px`
-            });
-        }
-    }, []);
+        },
+        [secondary]
+    );
 
     useEffect(() => {
         updatePointer(index);
     }, [index, children]);
 
     useEffect(() => {
-        let resizeTimeout: number;
+        let resizeTimeout: NodeJS.Timeout;
         const handleResize = () => {
             if (resizeTimeout) {
                 clearTimeout(resizeTimeout);
             }
             resizeTimeout = setTimeout(() => {
                 updatePointer(index);
-                updateArrows();
-            }, 100) as any;
+            }, 100);
         };
 
         window.addEventListener("resize", handleResize);
@@ -220,92 +152,37 @@ export function Tabs({
         };
     }, [index]);
 
-    const scrollNavigation = useCallback((factor: number) => {
-        if (navigationNode.current) {
-            const oldScrollLeft = navigationNode.current.scrollLeft;
-            navigationNode.current.scrollLeft += factor * navigationNode.current.clientWidth;
-            if (navigationNode.current.scrollLeft !== oldScrollLeft) {
-                updateArrows();
-            }
-        }
-    }, []);
-
-    const scrollRight = useCallback(() => scrollNavigation(-1), [scrollNavigation]);
-    const scrollLeft = useCallback(() => scrollNavigation(+1), [scrollNavigation]);
-
-    const c = useMemo(() => {
-        const headers: ReactElement<TabProps>[] = [];
-        const contents: ReactElement<TabContentProps>[] = [];
-
-        Children.forEach(children, item => {
-            if (!item) {
-                return;
-            }
-
-            const tab = item as ReactElement<TabProps>;
-            const tabContent = item as ReactElement<TabContentProps>;
-            if (tab.type === Tab) {
-                headers.push(tab);
-                if (tab.props.children) {
-                    contents.push(<TabContent theme={theme}>{tab.props.children}</TabContent>);
-                }
-            } else if (tabContent.type === TabContent) {
-                contents.push(tabContent);
-            }
-        });
-
-        return {headers, contents};
-    }, [children]);
+    const tabs = (Array.isArray(children) ? children.flat(Infinity) : [children])
+        .filter(child => (child as ReactElement)?.type === Tab)
+        .map((child, i) =>
+            cloneElement(child as ReactElement<TabProps>, {
+                key: i,
+                index: i,
+                theme,
+                active: index === i,
+                onClick: onChange
+            })
+        );
 
     return (
-        <div className={classNames(theme.tabs({fixed, inverse}), className)} data-react-toolbox="tabs">
-            <div className={theme.navigationContainer()}>
-                {arrows.left ? (
-                    <div className={theme.arrowContainer()} onClick={scrollRight}>
-                        <FontIcon className={theme.arrow()}>keyboard_arrow_left</FontIcon>
-                    </div>
-                ) : null}
-                <div ref={navigationNode} className={theme.navigation()} role="tablist">
-                    {useMemo(
-                        () =>
-                            c.headers.map((item, i) =>
-                                cloneElement(item, {
-                                    children: null,
-                                    key: i,
-                                    index: i,
-                                    theme,
-                                    active: index === i,
-                                    onClick: (event: MouseEvent<HTMLDivElement>, idx: number) => {
-                                        onChange?.(idx);
-                                        if (item.props.onClick) {
-                                            item.props.onClick(event, idx);
-                                        }
-                                    }
-                                })
-                            ),
-                        [c.headers, index, onChange, theme]
-                    )}
-                    <span className={theme.pointer()} style={pointer} />
-                </div>
-                {arrows.right ? (
-                    <div className={theme.arrowContainer()} onClick={scrollLeft}>
-                        <FontIcon className={theme.arrow()}>keyboard_arrow_right</FontIcon>
-                    </div>
-                ) : null}
+        <div className={classNames(theme.tabs({secondary}), className)} data-react-toolbox="tabs">
+            <div ref={navigationNode} className={theme.navigation()} role="tablist">
+                {tabs}
+                <span className={theme.pointer()} style={pointer} />
             </div>
-            {useMemo(() => {
-                const contentElements = c.contents.map((item, idx) =>
-                    cloneElement(item, {
-                        key: idx,
-                        theme,
-                        active: index === idx,
-                        hidden: index !== idx && hideMode === "display",
-                        tabIndex: idx
-                    })
-                );
-
-                return hideMode === "display" ? contentElements : contentElements.filter((_, idx) => idx === index);
-            }, [c.contents, index, theme])}
+            {tabs.some(tab => tab.props.children) ? (
+                <div className={theme.content()}>
+                    {tabs.map(tab => (
+                        <section
+                            key={tab.props.index}
+                            role="tabpanel"
+                            style={{transform: `translateX(-${100 * index}%)`}}
+                        >
+                            {tab.props.children}
+                        </section>
+                    ))}
+                </div>
+            ) : null}
         </div>
     );
 }

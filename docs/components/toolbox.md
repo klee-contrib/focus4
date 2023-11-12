@@ -521,20 +521,18 @@ Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
 
 ## `Tabs`
 
-Permet de poser un système de tabs avec Tab et TabContent.
+Permet de poser un système de tabs avec Tab.
 
 ### Props
 
-| Nom         | Obligatoire | Type                                      | Description                                                                                                                                                                                                                |
-| ----------- | ----------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `children`  | Non         | <code>ReactNode</code>                    | Children to pass through the component.                                                                                                                                                                                    |
-| `className` | Non         | <code>string</code>                       |                                                                                                                                                                                                                            |
-| `fixed`     | Non         | <code>boolean</code>                      | If True, the tabs will be fixed, covering the whole width.                                                                                                                                                                 |
-| `hideMode`  | Non         | <code>"display" &#124; "unmounted"</code> | `unmounted` mode will not mount the tab content of inactive tabs.&lt;br /&gt;`display` mode will mount but hide inactive tabs.&lt;br /&gt;Consider holding state outside of the Tabs component before using `display` mode |
-| `index`     | Non         | <code>number</code>                       | Current                                                                                                                                                                                                                    |
-| `inverse`   | Non         | <code>boolean</code>                      | If True, the tabs will have an inverse style.                                                                                                                                                                              |
-| `onChange`  | Non         | <code>(idx: number) =&gt; void</code>     | Callback function that is fired when the tab changes.                                                                                                                                                                      |
-| `theme`     | Non         | <code>CSSProp&lt;TabsCss&gt;</code>       | Classnames object defining the component style.                                                                                                                                                                            |
+| Nom         | Obligatoire | Type                                    | Description                                                     |
+| ----------- | ----------- | --------------------------------------- | --------------------------------------------------------------- |
+| `children`  | Non         | <code>ReactNode</code>                  | Seuls des &lt;Tab&gt; sont supportés en tant qu'enfant de Tabs. |
+| `className` | Non         | <code>string</code>                     | Classe CSS pour l'élément racine.                               |
+| `index`     | Non         | <code>number</code>                     | Index du Tab actif.                                             |
+| `onChange`  | Non         | <code>(index: number) =&gt; void</code> | Handler appelé au changement de Tab.                            |
+| `secondary` | Non         | <code>boolean</code>                    | Affiche les Tabs comme des Tabs "secondaires".                  |
+| `theme`     | Non         | <code>CSSProp&lt;TabsCss&gt;</code>     | CSS.                                                            |
 
 ## `Tab`
 
@@ -542,36 +540,22 @@ Un Tab, à utiliser dans Tabs.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                         | Description                                                                            |
-| ---------------- | ----------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `active`         | Non         | <code>boolean</code>                                                                         | If true, the current component is visible.                                             |
-| `className`      | Non         | <code>string</code>                                                                          |                                                                                        |
-| `disabled`       | Non         | <code>boolean</code>                                                                         | If true, the current component is not clickable.                                       |
-| `hidden`         | Non         | <code>boolean</code>                                                                         | If true, the current component is not visible.                                         |
-| `icon`           | Non         | <code>ReactNode</code>                                                                       | Icon to be used in inner FontIcon.                                                     |
-| `index`          | Non         | <code>number</code>                                                                          |                                                                                        |
-| `label`          | Non         | <code>string</code>                                                                          | Label text for navigation header.                                                      |
-| `onActive`       | Non         | <code>() =&gt; void</code>                                                                   | Callback function that is fired when the tab is activated.                             |
-| `onClick`        | Non         | <code>(event: MouseEvent&lt;HTMLDivElement, MouseEvent&gt;, index: number) =&gt; void</code> | Called on click on the tab.                                                            |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;TabsCss&gt;</code>                                                          | Classnames object defining the component style.                                        |
-
-## `TabContent`
-
-Contenu d'un Tab, à utiliser dans Tabs.
-
-### Props
-
-| Nom         | Obligatoire | Type                                | Description |
-| ----------- | ----------- | ----------------------------------- | ----------- |
-| `active`    | Non         | <code>boolean</code>                |             |
-| `className` | Non         | <code>string</code>                 |             |
-| `hidden`    | Non         | <code>boolean</code>                |             |
-| `tabIndex`  | Non         | <code>number</code>                 | @internal   |
-| `theme`     | Non         | <code>CSSProp&lt;TabsCss&gt;</code> |             |
+| Nom              | Obligatoire | Type                                                            | Description                                                                            |
+| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `active`         | Non         | <code>boolean</code>                                            | @internal                                                                              |
+| `children`       | Non         | <code>ReactNode</code>                                          | Contenu du Tab.                                                                        |
+| `className`      | Non         | <code>string</code>                                             | Classe CSS pour l'élément racine.                                                      |
+| `disabled`       | Non         | <code>boolean</code>                                            | Désactive le Tab.                                                                      |
+| `icon`           | Non         | <code>ReactNode</code>                                          | Icône du Tab.                                                                          |
+| `index`          | Non         | <code>number</code>                                             | @internal                                                                              |
+| `label`          | Non         | <code>string</code>                                             | Libellé du Tab.                                                                        |
+| `onActive`       | Non         | <code>() =&gt; void</code>                                      | Handler appelé lorsque le Tab devient actif.                                           |
+| `onClick`        | Non         | <code>(index: number) =&gt; void</code>                         | @internal                                                                              |
+| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
+| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
+| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
+| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
+| `theme`          | Non         | <code>CSSProp&lt;TabsCss&gt;</code>                             | CSS.                                                                                   |
 
 ## `TextField`
 
