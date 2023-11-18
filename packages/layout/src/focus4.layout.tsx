@@ -87,7 +87,7 @@ export interface LayoutStyleProviderProps {
 
     autocomplete?: CSSProp<AutocompleteCss>;
     button?: CSSProp<ButtonCss>;
-    RTCalendar?: CSSProp<CalendarCss>;
+    calendar?: CSSProp<CalendarCss>;
     checkbox?: CSSProp<CheckboxCss>;
     chip?: CSSProp<ChipCss>;
     dropdown?: CSSProp<DropdownCss>;

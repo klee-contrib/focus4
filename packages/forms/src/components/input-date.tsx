@@ -1,6 +1,6 @@
 import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -12,8 +12,6 @@ import inputDateCss, {InputDateCss} from "./__style__/input-date.css";
 export {inputDateCss};
 
 export interface InputDateProps {
-    /** Format de l'affichage de la date dans le calendrier. */
-    calendarFormat?: Intl.DateTimeFormatOptions;
     /**
      * Détermine la position du Calendrier par rapport au champ texte.
      *
@@ -40,7 +38,7 @@ export interface InputDateProps {
         | "top-right"
         | "top";
     /* Autres props du Calendar RT */
-    calendarProps?: Omit<CalendarProps, "display" | "handleSelect" | "onChange" | "selectedDate">;
+    calendarProps?: Omit<CalendarProps, "className" | "onChange" | "value">;
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Id pour l'input. */
@@ -87,7 +85,6 @@ export interface InputDateProps {
  * Un champ de saisie de date avec double saisie en texte (avec un `Input`) et un calendrier (`Calendar`), qui s'affiche en dessous.
  */
 export function InputDate({
-    calendarFormat = {weekday: "short", month: "short", day: "2-digit"},
     calendarPosition = "left",
     calendarProps,
     error,
@@ -154,20 +151,14 @@ export function InputDate({
 
     const menu = useMenu();
 
-    /** Mode du calendrier. */
-    const [calendarDisplay, setCalendarDisplay] = useState<"months" | "years">("months");
-
     /** Transforme la date selon le format de date/timezone souhaité. */
     const transformDate = useCallback(
-        function transformDate(newDate: Date | string, targetInputFormat?: string) {
-            let dateTime =
-                typeof newDate === "string" && targetInputFormat
-                    ? DateTime.fromFormat(newDate, targetInputFormat, zone ? {zone} : {})
-                    : newDate instanceof Date
-                    ? DateTime.fromJSDate(newDate, zone ? {zone} : {})
-                    : zone === "utc"
-                    ? DateTime.utc()
-                    : DateTime.now();
+        function transformDate(newDate: string, targetInputFormat?: string) {
+            let dateTime = targetInputFormat
+                ? DateTime.fromFormat(newDate, targetInputFormat, zone ? {zone} : {})
+                : zone === "utc"
+                ? DateTime.utc()
+                : DateTime.now();
 
             if (ISOStringFormat === "local-utc-midnight") {
                 dateTime = dateTime.toUTC();
@@ -178,56 +169,15 @@ export function InputDate({
         [ISOStringFormat, zone]
     );
 
-    const jsDate = useMemo(() => {
-        // Vérifie que la timezone existe
-        if (timezoneCode) {
-            return getPickerDate(date.toJSDate(), timezoneCode);
-        }
-        if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
-            return new Date(date.year, date.month - 1, date.day);
-        } else {
-            const res = date.toJSDate();
-            res.setHours(0);
-            res.setMinutes(0);
-            res.setSeconds(0);
-            res.setMilliseconds(0);
-            return res;
-        }
-    }, [date, ISOStringFormat, timezoneCode]);
-
-    const displayedDate = useMemo(() => {
-        if (ISOStringFormat === "local-utc-midnight") {
-            return date.toLocal();
-        } else {
-            return date;
-        }
-    }, [date, ISOStringFormat]);
-
     /** Au clic sur le calendrier. */
     const onCalendarChange = useCallback(
-        function onCalendarChange(newDate: Date, dayClick: boolean) {
-            // Vérifie que la timezone existe
-            if (timezoneCode) {
-                newDate = getTimezoneTime(newDate, timezoneCode);
-            } else if (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only") {
-                /*
-                 * La date reçue est toujours à minuit en "local-midnight".
-                 * Dans ce cas, on modifie l'heure pour se mettre à minuit UTC en local.
-                 */
-                newDate.setHours(newDate.getHours() - newDate.getTimezoneOffset() / 60);
-            }
-            const correctedDate =
-                ISOStringFormat === "date-only"
-                    ? transformDate(newDate).toFormat("yyyy-MM-dd")
-                    : transformDate(newDate).toISO() ?? "";
-            onChange(correctedDate);
-            if (!dayClick) {
-                setCalendarDisplay("months");
-            } else {
-                menu.close();
-            }
+        function onCalendarChange(newValue: string) {
+            const {year, month, day} = DateTime.fromISO(newValue);
+            const newDate = date.set({year, month, day});
+            onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
+            menu.close();
         },
-        [ISOStringFormat, onChange, timezoneCode, transformDate]
+        [date, ISOStringFormat, onChange]
     );
 
     const commitDate = useCallback(
@@ -311,25 +261,7 @@ export function InputDate({
                         : calendarPosition
                 }
             >
-                <div className={theme.calendar()}>
-                    <header className={theme.header({[calendarDisplay]: true})}>
-                        <span className={theme.year()} id="years" onClick={() => setCalendarDisplay("years")}>
-                            {displayedDate.year}
-                        </span>
-                        <h3 className={theme.date()} id="months" onClick={() => setCalendarDisplay("months")}>
-                            {displayedDate.toLocaleString(calendarFormat)}
-                        </h3>
-                    </header>
-                    <div className={theme.calendarWrapper()}>
-                        <Calendar
-                            {...calendarProps}
-                            display={calendarDisplay}
-                            handleSelect={() => null}
-                            onChange={onCalendarChange}
-                            selectedDate={jsDate}
-                        />
-                    </div>
-                </div>
+                <Calendar {...calendarProps} className={theme.calendar()} onChange={onCalendarChange} value={value} />
             </Menu>
         </div>
     );
@@ -338,29 +270,4 @@ export function InputDate({
 /** Détermine si une valeur est un ISO String. */
 function isISOString(value?: string): value is string {
     return value ? DateTime.fromISO(value).isValid : false;
-}
-
-/** Détermine la date pour le picker en prenant en compte la timezone */
-function getPickerDate(tzDate: Date, timezoneCode: string) {
-    const tzUTCOffset = DateTime.fromJSDate(tzDate, {zone: timezoneCode}).offset;
-    const utcDate = new Date();
-    utcDate.setTime(tzDate.getTime() + tzUTCOffset * 60000);
-
-    const pickerDate = new Date();
-    const pickerOffset = pickerDate.getTimezoneOffset();
-    pickerDate.setTime(utcDate.getTime() + pickerOffset * 60000);
-
-    return pickerDate;
-}
-
-/** Détermine la date pour retourné en prenant en compte la timezone */
-function getTimezoneTime(pickerDate: Date, timezoneCode: string) {
-    const pickerOffset = pickerDate.getTimezoneOffset();
-    const utcDate = new Date();
-    utcDate.setTime(pickerDate.getTime() - pickerOffset * 60000);
-
-    const tzOffset = DateTime.fromJSDate(pickerDate, {zone: timezoneCode}).offset;
-    const tzDate = new Date();
-    tzDate.setTime(utcDate.getTime() - tzOffset * 60000);
-    return tzDate;
 }

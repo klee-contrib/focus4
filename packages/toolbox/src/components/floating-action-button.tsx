@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import {motion} from "framer-motion";
-import {createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
+import {AriaAttributes, createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
 
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 
@@ -13,7 +13,7 @@ import {Ripple} from "./ripple";
 import floatingActionButtonCss, {FloatingActionButtonCss} from "./__style__/floating-action-button.css";
 export {floatingActionButtonCss, FloatingActionButtonCss};
 
-export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {
+export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement>, AriaAttributes {
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Couleur du bouton. */
@@ -74,7 +74,8 @@ export function FloatingActionButton({
     tabIndex,
     target,
     theme: pTheme,
-    type = "button"
+    type = "button",
+    ...other
 }: FloatingActionButtonProps) {
     extended = (extended && !!label) || !icon;
 
@@ -87,6 +88,7 @@ export function FloatingActionButton({
     const element = href ? "a" : "button";
 
     const props = {
+        ...other,
         ref,
         "aria-label": !extended ? label : undefined,
         className: classNames(

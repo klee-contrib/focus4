@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
+import {AriaAttributes, createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -12,7 +12,7 @@ import {Ripple} from "./ripple";
 import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
 export {iconButtonCss, IconButtonCss};
 
-export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {
+export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement>, AriaAttributes {
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Couleur du bouton. */
@@ -67,7 +67,8 @@ export function IconButton({
     target,
     theme: pTheme,
     type = "button",
-    variant
+    variant,
+    ...other
 }: IconButtonProps) {
     const theme = useTheme("iconButton", iconButtonCss, pTheme);
     const {ref, handlePointerLeave, handlePointerUp} = useInputRef({
@@ -78,6 +79,7 @@ export function IconButton({
     const element = href ? "a" : "button";
 
     const props = {
+        ...other,
         ref,
         "aria-label": label,
         className: classNames(

@@ -21,15 +21,15 @@
         "@focus4/stores": "11.11.3",
         "@focus4/styling": "11.11.3",
         "@focus4/toolbox": "11.11.5",
-        "@types/numeral": "2.0.4",
+        "@types/numeral": "2.0.5",
         "inputmask-core": "2.2.0",
         "lodash-decorators": "6.0.1",
         "numeral": "2.0.6"
     },
     "devDependencies": {
         "@focus4/tooling": "11.11.3",
-        "@testing-library/react": "14.0.0",
-        "@types/jest": "29.5.7",
+        "@testing-library/react": "14.1.2",
+        "@types/jest": "29.5.8",
         "identity-obj-proxy": "3.0.0",
         "jest": "29.7.0",
         "jest-environment-jsdom": "29.7.0",

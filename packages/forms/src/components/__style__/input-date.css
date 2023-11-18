@@ -1,52 +1,3 @@
-:root {
-    --input-date-inactive-opacity: 0.6;
-    --input-date-primary-color: rgb(var(--color-primary));
-    --input-date-primary-contrast-color: rgb(var(--color-primary-contrast));
-    --input-date-shadow: var(--shadow-4p);
-    --input-date-width: 330px;
-    --input-date-year-font-size: var(--font-size-small);
-}
-
-.header {
-    background-color: var(--input-date-primary-color);
-    color: var(--input-date-primary-contrast-color);
-    cursor: pointer;
-    padding: calc(1.6 * var(--unit)) calc(2 * var(--unit));
-}
-
-.header--years .date {
-    opacity: var(--input-date-inactive-opacity);
-}
-
-.header--years .year {
-    font-size: var(--font-size);
-}
-
-.header--months .year {
-    opacity: var(--input-date-inactive-opacity);
-}
-
-.year {
-    display: inline-block;
-    font-size: var(--input-date-year-font-size);
-    transition: opacity, font-size var(--animation-duration) var(--animation-curve-default);
-}
-
-.date {
-    display: block;
-    font-size: calc(3.4 * var(--unit));
-    font-weight: 400;
-    font-weight: var(--font-weight-semi-bold);
-    line-height: calc(4 * var(--unit));
-    margin: 0;
-    text-transform: capitalize;
-    transition: opacity var(--animation-duration) var(--animation-curve-default);
-}
-
-.calendarWrapper {
-    padding: var(--unit) calc(0.5 * var(--unit)) 0;
-}
-
 .input {
     --menu-padding: 0;
     position: relative;
@@ -55,9 +6,5 @@
 }
 
 .calendar {
-    width: var(--input-date-width);
-
-    & header {
-        box-sizing: border-box;
-    }
+    padding: 4px;
 }
