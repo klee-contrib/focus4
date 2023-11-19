@@ -2,7 +2,17 @@ import classnames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
 import {groupBy, map, range, upperFirst} from "lodash";
 import {DateTime} from "luxon";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {
+    ForwardedRef,
+    forwardRef,
+    MouseEvent,
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 
 import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 
@@ -15,17 +25,17 @@ export {calendarCss, CalendarCss};
 export interface CalendarProps {
     /** Classe CSS pour le composant racine. */
     className?: string;
-    /** Date maximale autorisée pour la saisie. */
-    max?: string;
-    /** Date minimale autorisée pour la saisie. */
-    min?: string;
     /**
      * Format de la date retournée par le Calendar. "yyyy-MM" limite la sélection à un mois uniquement, tandis que "yyyy" la limite à une année.
      * Par défaut : "yyyy-MM-dd"
      */
     format?: "yyyy-MM-dd" | "yyyy-MM" | "yyyy";
+    /** Date maximale autorisée pour la saisie. */
+    max?: string;
+    /** Date minimale autorisée pour la saisie. */
+    min?: string;
     /** Handler appelé à la sélection d'une date. */
-    onChange?: (value: string) => void;
+    onChange?: (value: string, fromKeyDown: boolean) => void;
     /** CSS. */
     theme?: CSSProp<CalendarCss>;
     /** Date. */
@@ -35,25 +45,26 @@ export interface CalendarProps {
 /**
  * Calendrier permettant de choisir un jour, un mois ou une année. Utilisé par `InputDate`.
  */
-export function Calendar({className, max, min, format = "yyyy-MM-dd", onChange, theme: pTheme, value}: CalendarProps) {
+export const Calendar = forwardRef(function Calendar(
+    {className, max, min, format = "yyyy-MM-dd", onChange, theme: pTheme, value}: CalendarProps,
+    ref: ForwardedRef<{focus: () => void}>
+) {
     const theme = useTheme("calendar", calendarCss, pTheme);
 
-    const [date, setDate] = useState(value ? DateTime.fromISO(DateTime.fromISO(value).toFormat(format)) : undefined);
-    useEffect(
-        () => setDate(value ? DateTime.fromISO(DateTime.fromISO(value).toFormat(format)) : undefined),
-        [format, value]
-    );
+    const [date, setDate] = useState(handleValue(value, format));
+    useEffect(() => setDate(handleValue(value, format)), [format, value]);
 
-    const [maxDate, setMaxDate] = useState(max ? DateTime.fromISO(DateTime.fromISO(max).toFormat(format)) : undefined);
-    useEffect(
-        () => setMaxDate(max ? DateTime.fromISO(DateTime.fromISO(max).toFormat(format)) : undefined),
-        [format, max]
-    );
+    const [maxDate, setMaxDate] = useState(handleValue(max, format));
+    useEffect(() => setMaxDate(handleValue(max, format)), [format, max]);
 
-    const [minDate, setMinDate] = useState(min ? DateTime.fromISO(DateTime.fromISO(min).toFormat(format)) : undefined);
-    useEffect(
-        () => setMinDate(min ? DateTime.fromISO(DateTime.fromISO(min).toFormat(format)) : undefined),
-        [format, min]
+    const [minDate, setMinDate] = useState(handleValue(min, format));
+    useEffect(() => setMinDate(handleValue(min, format)), [format, min]);
+
+    const isDisabled = useCallback(
+        function isDisabled(d: DateTime) {
+            return !!(maxDate && maxDate.toMillis() < d.toMillis()) || !!(minDate && minDate.toMillis() > d.toMillis());
+        },
+        [maxDate, minDate]
     );
 
     const [viewChange, setViewChange] = useState<
@@ -127,28 +138,30 @@ export function Calendar({className, max, min, format = "yyyy-MM-dd", onChange, 
         }
     }, [displayedMonth, view]);
 
-    const isDisabled = useCallback(
-        function isDisabled(d: DateTime) {
-            return !!(maxDate && maxDate.toMillis() < d.toMillis()) || !!(minDate && minDate.toMillis() > d.toMillis());
-        },
-        [maxDate, minDate]
-    );
-
     const root = useRef<HTMLDivElement>(null);
     const main = useRef<HTMLDivElement>(null);
+
+    useImperativeHandle(ref, () => ({
+        focus() {
+            root.current?.focus();
+        }
+    }));
+
     const [focused, setFocused] = useState(false);
     const [showRing, setShowRing] = useState(false);
+    const willShowRing = useRef(true);
 
     const [focusedDate, setFocusedDate] = useState((date ?? DateTime.now()).toFormat(viewFormat));
     useEffect(() => {
-        let newDate = date ?? DateTime.now();
+        let newDate = DateTime.fromISO(focusedDate);
 
-        if (newDate.toMillis() < lines[0].items[0].toMillis()) {
-            newDate = lines[1].items[1];
-        } else if (
+        if (
+            focusedDate.length < viewFormat.length ||
+            newDate.toMillis() < lines[0].items[0].toMillis() ||
             newDate.toMillis() > lines[lines.length - 1].items[lines[lines.length - 1].items.length - 1].toMillis()
         ) {
-            newDate = lines[lines.length - 2].items[lines[lines.length - 2].items.length - 2];
+            const middle = lines[Math.floor((lines.length - 1) / 2)];
+            newDate = middle.items[(middle.items.length - 1) / 2];
         }
 
         setFocusedDate(newDate.toFormat(viewFormat));
@@ -161,7 +174,7 @@ export function Calendar({className, max, min, format = "yyyy-MM-dd", onChange, 
                 0
             );
         }
-    }, [date, focused, showRing, viewFormat]);
+    }, [focused, showRing, viewFormat]);
 
     const onKeyDown = useCallback(
         function onKeyDown(e: KeyboardEvent) {
@@ -227,33 +240,31 @@ export function Calendar({className, max, min, format = "yyyy-MM-dd", onChange, 
         }
     }, [focused, onKeyDown]);
 
-    const willShowRing = useRef(true);
-
     return (
         <div
             ref={root}
             className={classnames(className, theme.calendar({focused: showRing}))}
-            onBlur={() => {
+            onBlur={useCallback(() => {
                 setFocused(false);
                 setShowRing(false);
-            }}
-            onClick={e => {
+            }, [])}
+            onClick={useCallback((e: MouseEvent<HTMLDivElement>) => {
                 setShowRing(false);
                 willShowRing.current = e.pageX === 0 && e.pageY === 0;
                 setFocused(true);
                 root.current?.focus();
                 willShowRing.current = true;
-            }}
-            onFocus={() => {
+            }, [])}
+            onFocus={useCallback(() => {
                 setFocused(true);
                 if (willShowRing.current) {
                     setShowRing(true);
                 }
-            }}
-            onPointerDown={() => {
+            }, [])}
+            onPointerDown={useCallback(() => {
                 willShowRing.current = false;
                 setShowRing(false);
-            }}
+            }, [])}
             tabIndex={focused ? -1 : 0}
         >
             <div className={theme.header()}>
@@ -269,30 +280,37 @@ export function Calendar({className, max, min, format = "yyyy-MM-dd", onChange, 
                                   .toString()
                                   .substring(0, 3)}9`
                     }
-                    onClick={() => setViewChange(view === "days" ? "days-to-months" : "months-to-years")}
+                    onClick={useCallback(
+                        () => setViewChange(view === "days" ? "days-to-months" : "months-to-years"),
+                        [view]
+                    )}
                     tabIndex={-1}
                 />
                 <div className={theme.controls()}>
                     <IconButton
                         icon="keyboard_arrow_up"
-                        onClick={() =>
-                            setDisplayedMonth(
-                                displayedMonth.minus(
-                                    view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
-                                )
-                            )
-                        }
+                        onClick={useCallback(
+                            () =>
+                                setDisplayedMonth(
+                                    displayedMonth.minus(
+                                        view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
+                                    )
+                                ),
+                            [displayedMonth, view]
+                        )}
                         tabIndex={-1}
                     />
                     <IconButton
                         icon="keyboard_arrow_down"
-                        onClick={() =>
-                            setDisplayedMonth(
-                                displayedMonth.plus(
-                                    view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
-                                )
-                            )
-                        }
+                        onClick={useCallback(
+                            () =>
+                                setDisplayedMonth(
+                                    displayedMonth.plus(
+                                        view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
+                                    )
+                                ),
+                            [displayedMonth, view]
+                        )}
                         tabIndex={-1}
                     />
                 </div>
@@ -382,7 +400,7 @@ export function Calendar({className, max, min, format = "yyyy-MM-dd", onChange, 
                                         }
                                         onClick={e => {
                                             if (viewFormat === format) {
-                                                onChange?.(d.toFormat(format));
+                                                onChange?.(d.toFormat(format), e.pageX === 0 && e.pageY === 0);
                                                 setTimeout(() => (e.target as HTMLElement)?.focus(), 0);
                                             } else {
                                                 setDisplayedMonth(d);
@@ -420,6 +438,20 @@ export function Calendar({className, max, min, format = "yyyy-MM-dd", onChange, 
             </div>
         </div>
     );
+});
+
+function handleValue(value: string | undefined, format: string) {
+    if (!value) {
+        return undefined;
+    }
+
+    const date = DateTime.fromISO(value);
+
+    if (!date.isValid) {
+        return undefined;
+    }
+
+    return DateTime.fromISO(date.toFormat(format));
 }
 
 function getWeekNumber(day: DateTime) {

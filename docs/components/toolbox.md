@@ -88,22 +88,20 @@ Bouton standard.
 
 ## `Calendar`
 
-Affiche un calendrier. Utilisé par l'[`InputDate`](components/forms.md#inputdate).
+Calendrier permettant de choisir un jour, un mois ou une année. Utilisé par `InputDate`.
 
 ### Props
 
-| Nom                    | Obligatoire | Type                                                    | Description |
-| ---------------------- | ----------- | ------------------------------------------------------- | ----------- |
-| `disabledDates`        | Non         | <code>Date[]</code>                                     |             |
-| `display`              | Non         | <code>"months" &#124; "years"</code>                    |             |
-| `enabledDates`         | Non         | <code>Date[]</code>                                     |             |
-| `handleSelect`         | Non         | <code>() =&gt; void</code>                              |             |
-| `maxDate`              | Non         | <code>Date</code>                                       |             |
-| `minDate`              | Non         | <code>Date</code>                                       |             |
-| `onChange`             | **Oui**     | <code>(date: Date, dayClick: boolean) =&gt; void</code> |             |
-| `selectedDate`         | Non         | <code>Date</code>                                       |             |
-| `sundayFirstDayOfWeek` | Non         | <code>boolean</code>                                    |             |
-| `theme`                | Non         | <code>CSSProp&lt;CalendarCss&gt;</code>                 |             |
+| Nom         | Obligatoire | Type                                                     | Description                                                                                                                                                                    |
+| ----------- | ----------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `className` | Non         | <code>string</code>                                      | Classe CSS pour le composant racine.                                                                                                                                           |
+| `format`    | Non         | <code>"yyyy-MM-dd" &#124; "yyyy-MM" &#124; "yyyy"</code> | Format de la date retournée par le Calendar. "yyyy-MM" limite la sélection à un mois uniquement, tandis que "yyyy" la limite à une année.&lt;br /&gt;Par défaut : "yyyy-MM-dd" |
+| `key`       | Non         | <code>Key</code>                                         |                                                                                                                                                                                |
+| `max`       | Non         | <code>string</code>                                      | Date maximale autorisée pour la saisie.                                                                                                                                        |
+| `min`       | Non         | <code>string</code>                                      | Date minimale autorisée pour la saisie.                                                                                                                                        |
+| `onChange`  | Non         | <code>(value: string) =&gt; void</code>                  | Handler appelé à la sélection d'une date.                                                                                                                                      |
+| `theme`     | Non         | <code>CSSProp&lt;CalendarCss&gt;</code>                  | CSS.                                                                                                                                                                           |
+| `value`     | Non         | <code>string</code>                                      | Date.                                                                                                                                                                          |
 
 ## `Checkbox`
 

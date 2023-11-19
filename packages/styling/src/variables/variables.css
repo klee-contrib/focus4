@@ -1,16 +1,13 @@
 :root {
     --color-primary: var(--palette-indigo-500);
     --color-primary-light: var(--palette-indigo-100);
-    --color-primary-contrast: var(--color-white);
     --color-accent: var(--palette-pink-a200);
-
     --color-divider: var(--palette-grey-300);
-    --unit: 10px;
 
     --preferred-font: "Roboto", "Helvetica", "Arial", sans-serif;
-    --font-size: calc(1.6 * var(--unit));
-    --font-size-small: calc(1.4 * var(--unit));
-    --font-size-big: calc(1.8 * var(--unit));
+    --font-size: 16px;
+    --font-size-small: 14px;
+    --font-size-big: 18px;
     --font-weight-semi-bold: 500;
     --font-weight-bold: 700;
 

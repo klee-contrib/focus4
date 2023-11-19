@@ -1,6 +1,6 @@
 import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {KeyboardEvent, useCallback, useEffect, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -98,6 +98,8 @@ export function InputDate({
     timezoneCode,
     value
 }: InputDateProps) {
+    const theme = useTheme("inputDate", inputDateCss, pTheme);
+
     const zone = timezoneCode
         ? timezoneCode
         : ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only"
@@ -133,6 +135,7 @@ export function InputDate({
         [inputFormat, timezoneCode]
     );
 
+    const calendarRef = useRef<{focus: () => void}>(null);
     const inputRef = useRef<Input<"string">>(null);
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
@@ -153,7 +156,7 @@ export function InputDate({
 
     /** Transforme la date selon le format de date/timezone souhaité. */
     const transformDate = useCallback(
-        function transformDate(newDate: string, targetInputFormat?: string) {
+        function transformDate(newDate: string, targetInputFormat: string) {
             let dateTime = targetInputFormat
                 ? DateTime.fromFormat(newDate, targetInputFormat, zone ? {zone} : {})
                 : zone === "utc"
@@ -171,11 +174,19 @@ export function InputDate({
 
     /** Au clic sur le calendrier. */
     const onCalendarChange = useCallback(
-        function onCalendarChange(newValue: string) {
+        function onCalendarChange(newValue: string, fromKeyDown: boolean) {
             const {year, month, day} = DateTime.fromISO(newValue);
-            const newDate = date.set({year, month, day});
+            let newDate = date.set({year, month, day});
+            if (ISOStringFormat === "local-utc-midnight") {
+                newDate = newDate.toUTC();
+            }
             onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
-            menu.close();
+            setTimeout(() => {
+                if (fromKeyDown) {
+                    inputRef.current?.htmlInput.focus();
+                }
+                menu.close();
+            }, 50);
         },
         [date, ISOStringFormat, onChange]
     );
@@ -206,25 +217,13 @@ export function InputDate({
         [commitDate, menu.active]
     );
 
-    /** Gestion appuie sur "Entrée". */
-    const onKeyDown = useCallback(
-        function onKeyDown(e: KeyboardEvent) {
-            if (e.key === "Enter") {
-                menu.close();
-                commitDate();
-            }
-        },
-        [commitDate]
-    );
-
-    useEffect(() => {
-        if (menu.active) {
-            document.addEventListener("keydown", onKeyDown);
-            return () => document.removeEventListener("keydown", onKeyDown);
+    /** Gestion bascule navigation dans le Calendrier. */
+    const onKeyDown = useCallback(function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+            menu.open();
+            setTimeout(() => calendarRef.current?.focus(), 50);
         }
-    }, [menu.active, onKeyDown]);
-
-    const theme = useTheme("inputDate", inputDateCss, pTheme);
+    }, []);
 
     return (
         <div className={theme.input()} data-focus="input-date" data-id={inputDateId}>
@@ -239,7 +238,9 @@ export function InputDate({
                 name={name}
                 onBlur={onInputBlur}
                 onChange={setDateText}
+                onClick={menu.open}
                 onFocus={menu.open}
+                onKeyDown={onKeyDown}
                 type="string"
                 value={dateText ?? ""}
             />
@@ -261,7 +262,13 @@ export function InputDate({
                         : calendarPosition
                 }
             >
-                <Calendar {...calendarProps} className={theme.calendar()} onChange={onCalendarChange} value={value} />
+                <Calendar
+                    ref={calendarRef}
+                    {...calendarProps}
+                    className={theme.calendar()}
+                    onChange={onCalendarChange}
+                    value={value}
+                />
             </Menu>
         </div>
     );

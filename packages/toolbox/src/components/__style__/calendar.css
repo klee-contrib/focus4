@@ -25,8 +25,8 @@
     --icon-button-size: var(--calendar-day-size);
     --focus-ring-width: var(--calendar-focus-ring-width);
 
-    width: calc(var(--button-height) * 7 + 4 * var(--focus-ring-width));
-    height: calc(var(--button-height) * 8 + 7 * var(--focus-ring-width));
+    width: calc(var(--calendar-day-size) * 7 + 4 * var(--calendar-focus-ring-width));
+    height: calc(var(--calendar-day-size) * 8 + 7 * var(--calendar-focus-ring-width));
     background-color: var(--calendar-background-color);
 }
 
