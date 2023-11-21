@@ -109,7 +109,7 @@ export const Calendar = forwardRef(function Calendar(
             return map(
                 groupBy(
                     range(0, 12).map(month => startMonth.plus({month})),
-                    m => `${m.year}-${m.month - ((m.month - 1) % 3)}`
+                    m => `${m.year}-${`${m.month - ((m.month - 1) % 3)}`.padStart(2, "0")}`
                 ),
                 (items, line) => ({line, items})
             );
@@ -170,7 +170,8 @@ export const Calendar = forwardRef(function Calendar(
                 () =>
                     main.current
                         ?.querySelector<HTMLButtonElement>(`[data-date='${newDate.toFormat(viewFormat)}']`)
-                        ?.focus(),
+                        // @ts-ignore
+                        ?.focus({focusVisible: true}),
                 0
             );
         }
@@ -204,13 +205,18 @@ export const Calendar = forwardRef(function Calendar(
 
                 setFocusedDate(newDate.toFormat(viewFormat));
 
-                if (newDate.toMillis() < lines[0].items[0].toMillis()) {
+                if (
+                    (view === "days" && newDate.toFormat("yyyy-MM") < displayedMonth.toFormat("yyyy-MM")) ||
+                    (view === "months" && newDate.year < displayedMonth.year) ||
+                    (view === "years" && `${newDate.year}`.substring(0, 3) < `${displayedMonth.year}`.substring(0, 3))
+                ) {
                     setDisplayedMonth(
                         displayedMonth.minus(view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10})
                     );
                 } else if (
-                    newDate.toMillis() >
-                    lines[lines.length - 1].items[lines[lines.length - 1].items.length - 1].toMillis()
+                    (view === "days" && newDate.toFormat("yyyy-MM") > displayedMonth.toFormat("yyyy-MM")) ||
+                    (view === "months" && newDate.year > displayedMonth.year) ||
+                    (view === "years" && `${newDate.year}`.substring(0, 3) > `${displayedMonth.year}`.substring(0, 3))
                 ) {
                     setDisplayedMonth(
                         displayedMonth.plus(view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10})
@@ -221,7 +227,8 @@ export const Calendar = forwardRef(function Calendar(
                     () =>
                         main.current
                             ?.querySelector<HTMLButtonElement>(`[data-date='${newDate.toFormat(viewFormat)}']`)
-                            ?.focus(),
+                            // @ts-ignore
+                            ?.focus({focusVisible: true}),
                     0
                 );
             }
@@ -458,13 +465,13 @@ function getWeekNumber(day: DateTime) {
     // @ts-ignore
     if (day.localWeekNumber === 1 && day.month === 12) {
         // @ts-ignore
-        return `${day.year + 1}-${day.localWeekNumber}`;
+        return `${day.year + 1}-${`${day.localWeekNumber}`.padStart(2, "0")}`;
     }
     // @ts-ignore
     if (day.localWeekNumber > 50 && day.month === 1) {
         // @ts-ignore
-        return `${day.year - 1}-${day.localWeekNumber}`;
+        return `${day.year - 1}-${`${day.localWeekNumber}`.padStart(2, "0")}`;
     }
     // @ts-ignore
-    return `${day.year}-${day.localWeekNumber}`;
+    return `${day.year}-${`${day.localWeekNumber}`.padStart(2, "0")}`;
 }
