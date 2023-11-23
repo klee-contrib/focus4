@@ -2,6 +2,7 @@
     --calendar-scale: 1;
 
     --calendar-day-size: calc(var(--calendar-scale) * 40px);
+    --calendar-day-header-margin: calc(var(--calendar-scale) * 6px);
     --calendar-month-year-height: calc(var(--calendar-scale) * 56px);
     --calendar-font-size: calc(var(--calendar-scale) * 14px);
     --calendar-header-icon-size: calc(var(--calendar-scale) * 18px);
@@ -26,7 +27,7 @@
     --focus-ring-width: var(--calendar-focus-ring-width);
 
     width: calc(var(--calendar-day-size) * 7 + 4 * var(--calendar-focus-ring-width));
-    height: calc(var(--calendar-day-size) * 8 + 7 * var(--calendar-focus-ring-width));
+    height: calc(var(--calendar-day-size) * 8 + 6 * var(--calendar-focus-ring-width));
     background-color: var(--calendar-background-color);
 }
 
@@ -46,7 +47,7 @@
     overflow: hidden;
     position: relative;
     width: calc(var(--button-height) * 7 + 4 * var(--focus-ring-width));
-    height: calc(var(--button-height) * 7 + 3 * var(--focus-ring-width));
+    height: calc(var(--button-height) * 7 + 2 * var(--focus-ring-width));
 }
 
 .days,
@@ -54,7 +55,7 @@
 .years {
     --button-disabled-text-color: var(--calendar-item-disabled-color);
     position: absolute;
-    width: calc(var(--button-height) * 7 + 4 * var(--focus-ring-width));
+    width: calc(var(--button-height) * 7);
     background-color: var(--calendar-background-color);
     padding: 0 calc(2 * var(--focus-ring-width)) calc(2 * var(--focus-ring-width));
 }
@@ -63,6 +64,10 @@
 .years {
     display: flex;
     flex-wrap: wrap;
+
+    & div[data-line] {
+        height: 70px;
+    }
 }
 
 .days {
@@ -78,10 +83,14 @@
 }
 
 .weekdays {
+    position: relative;
     display: flex;
-    height: var(--button-height);
-    line-height: var(--button-height);
+    height: calc(var(--button-height) - var(--calendar-day-header-margin));
+    line-height: calc(var(--button-height) - var(--calendar-day-header-margin));
+    margin-bottom: var(--calendar-day-header-margin);
     color: rgb(var(--palette-grey-600));
+    z-index: 1;
+    background-color: var(--calendar-background-color);
 }
 
 .weekday {
@@ -90,10 +99,16 @@
     font-size: var(--calendar-font-size);
 }
 
+.day,
+.month,
+.year {
+    transition: background-color var(--animation-duration-short) var(--animation-curve-default),
+        color var(--animation-duration) var(--animation-curve-default) var(--animation-delay);
+}
+
 .day {
     --button-padding: 0;
     width: var(--button-height);
-    transition: background-color var(--animation-duration-short) var(--animation-curve-default);
 }
 
 .month,
@@ -103,7 +118,6 @@
     --button-border-radius: calc(var(--button-height) / 2);
     margin: calc((var(--calendar-day-size) * 7 - var(--button-height) * 4) / 8) 0;
     width: calc(var(--calendar-day-size) * 7 / 3);
-    transition: background-color var(--animation-duration-short) var(--animation-curve-default);
 }
 
 .day--outside,
@@ -120,23 +134,4 @@
 
 .calendar:focus {
     outline: none;
-}
-
-.calendar.calendar--focused {
-    animation-name: focus;
-    animation-duration: var(--animation-duration);
-    animation-timing-function: var(--animation-curve-focus-ring);
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
-}
-
-@keyframes focus {
-    0% {
-        outline-width: 0px;
-    }
-    50% {
-        outline-width: calc(2 * var(--focus-ring-width));
-    }
-    100% {
-        outline-width: var(--focus-ring-width);
-    }
 }

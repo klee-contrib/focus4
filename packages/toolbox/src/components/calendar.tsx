@@ -1,18 +1,8 @@
 import classnames from "classnames";
-import {AnimatePresence, motion} from "framer-motion";
-import {groupBy, map, range, upperFirst} from "lodash";
+import {animate, AnimatePresence, motion} from "framer-motion";
+import {differenceBy, groupBy, map, range, sortBy, uniqBy, upperFirst} from "lodash";
 import {DateTime} from "luxon";
-import {
-    ForwardedRef,
-    forwardRef,
-    MouseEvent,
-    useCallback,
-    useEffect,
-    useImperativeHandle,
-    useMemo,
-    useRef,
-    useState
-} from "react";
+import {ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
 import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 
@@ -77,69 +67,62 @@ export const Calendar = forwardRef(function Calendar(
         DateTime.fromISO((date ? date : DateTime.now()).toFormat("yyyyMM"))
     );
 
-    const lines = useMemo(() => {
-        if (view === "days") {
-            const w = map(
-                groupBy(
-                    range(1, displayedMonth.daysInMonth).map(day => displayedMonth.set({day})),
-                    getWeekNumber
-                ),
-                (items, line) => ({line, items})
-            );
+    const lines = useMemo(() => getLines(displayedMonth, view), [displayedMonth, view]);
 
-            while (w[0].items.length < 7) {
-                w[0].items.splice(0, 0, w[0].items[0].minus({day: 1}));
-            }
+    const [oldLines, setOldLines] = useState<
+        {
+            line: string;
+            items: DateTime[];
+        }[]
+    >([]);
 
-            while (w[w.length - 1].items.length < 7) {
-                w[w.length - 1].items.push(w[w.length - 1].items[w[w.length - 1].items.length - 1].plus({day: 1}));
-            }
-
-            while (w.length < 6) {
-                const nextDay = w[w.length - 1].items[w[w.length - 1].items.length - 1].plus({day: 1});
-                w.push({
-                    line: getWeekNumber(nextDay),
-                    items: range(0, 7).map(day => nextDay.plus({day}))
-                });
-            }
-
-            return w;
-        } else if (view === "months") {
-            const startMonth = DateTime.fromObject({year: displayedMonth.year, month: 1});
-            return map(
-                groupBy(
-                    range(0, 12).map(month => startMonth.plus({month})),
-                    m => `${m.year}-${`${m.month - ((m.month - 1) % 3)}`.padStart(2, "0")}`
-                ),
-                (items, line) => ({line, items})
-            );
-        } else {
-            const start = +`${displayedMonth.year.toString().substring(0, 3)}0`;
-
-            const years = map(
-                groupBy(
-                    range(0, 10).map(i => DateTime.fromObject({year: start + i})),
-                    y => y.year - (y.year % 3)
-                ),
-                (items, line) => ({line, items})
-            );
-
-            while (years[0].items.length < 3) {
-                years[0].items.splice(0, 0, years[0].items[0].minus({year: 1}));
-            }
-
-            while (years[years.length - 1].items.length < 3) {
-                years[years.length - 1].items.push(
-                    years[years.length - 1].items[years[years.length - 1].items.length - 1].plus({year: 1})
-                );
-            }
-
-            return years;
-        }
-    }, [displayedMonth, view]);
+    const allLines = sortBy(
+        uniqBy(oldLines.concat(lines), l => l.line),
+        l => l.line
+    );
 
     const root = useRef<HTMLDivElement>(null);
     const main = useRef<HTMLDivElement>(null);
+    const displayed = useRef<HTMLDivElement>();
+    const animationId = useRef<number>(0);
+
+    const changeDisplayedMonth = useCallback(
+        async function changeDisplayedMonth(d: DateTime, scroll = true) {
+            setDisplayedMonth(d);
+            if (scroll) {
+                const up = displayedMonth.toMillis() > d.toMillis();
+                setOldLines(lines);
+                if (displayed.current) {
+                    const lineHeight = displayed.current.querySelector("button")?.parentElement?.clientHeight ?? 0;
+                    const newLines = getLines(d, view);
+                    const newDisplayedLines = differenceBy(newLines, lines, l => l.line);
+                    const oldDisplayedLines = differenceBy(lines, newLines, l => l.line);
+                    const lol = ++animationId.current;
+                    await animate(
+                        displayed.current,
+                        {y: -lineHeight * (up ? newDisplayedLines : oldDisplayedLines).length},
+                        {duration: up ? 0 : getSpringTransition().duration}
+                    );
+                    await animate(displayed.current, {y: 0}, {duration: up ? getSpringTransition().duration : 0});
+                    if (lol === animationId.current) {
+                        for (const line of oldDisplayedLines) {
+                            const dLine = displayed.current.querySelector<HTMLElement>(`[data-line='${line.line}']`);
+                            if (dLine) {
+                                dLine.style.display = "none";
+                            }
+                        }
+                        setOldLines([]);
+                    }
+                }
+            }
+        },
+        [displayedMonth, lines, view]
+    );
+
+    const changeView = useCallback((v: typeof viewChange) => {
+        setViewChange(v);
+        setOldLines([]);
+    }, []);
 
     useImperativeHandle(ref, () => ({
         focus() {
@@ -148,8 +131,6 @@ export const Calendar = forwardRef(function Calendar(
     }));
 
     const [focused, setFocused] = useState(false);
-    const [showRing, setShowRing] = useState(false);
-    const willShowRing = useRef(true);
 
     const [focusedDate, setFocusedDate] = useState((date ?? DateTime.now()).toFormat(viewFormat));
     useEffect(() => {
@@ -165,17 +146,17 @@ export const Calendar = forwardRef(function Calendar(
         }
 
         setFocusedDate(newDate.toFormat(viewFormat));
-        if (showRing) {
+        if (focused) {
             setTimeout(
                 () =>
                     main.current
                         ?.querySelector<HTMLButtonElement>(`[data-date='${newDate.toFormat(viewFormat)}']`)
                         // @ts-ignore
-                        ?.focus({focusVisible: true}),
+                        ?.focus({preventScroll: true, focusVisible: true}),
                 0
             );
         }
-    }, [focused, showRing, viewFormat]);
+    }, [focused, viewFormat]);
 
     const onKeyDown = useCallback(
         function onKeyDown(e: KeyboardEvent) {
@@ -195,6 +176,9 @@ export const Calendar = forwardRef(function Calendar(
                     : 0;
 
             if (change) {
+                e.preventDefault();
+                e.stopPropagation();
+
                 const newDate = DateTime.fromFormat(focusedDate, viewFormat).plus(
                     view === "days" ? {day: change} : view === "months" ? {month: change} : {year: change}
                 );
@@ -210,7 +194,7 @@ export const Calendar = forwardRef(function Calendar(
                     (view === "months" && newDate.year < displayedMonth.year) ||
                     (view === "years" && `${newDate.year}`.substring(0, 3) < `${displayedMonth.year}`.substring(0, 3))
                 ) {
-                    setDisplayedMonth(
+                    changeDisplayedMonth(
                         displayedMonth.minus(view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10})
                     );
                 } else if (
@@ -218,7 +202,7 @@ export const Calendar = forwardRef(function Calendar(
                     (view === "months" && newDate.year > displayedMonth.year) ||
                     (view === "years" && `${newDate.year}`.substring(0, 3) > `${displayedMonth.year}`.substring(0, 3))
                 ) {
-                    setDisplayedMonth(
+                    changeDisplayedMonth(
                         displayedMonth.plus(view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10})
                     );
                 }
@@ -228,16 +212,16 @@ export const Calendar = forwardRef(function Calendar(
                         main.current
                             ?.querySelector<HTMLButtonElement>(`[data-date='${newDate.toFormat(viewFormat)}']`)
                             // @ts-ignore
-                            ?.focus({focusVisible: true}),
+                            ?.focus({preventScroll: true, focusVisible: true}),
                     0
                 );
             }
 
             if (e.key === "PageUp" && view !== "years") {
-                setViewChange(view === "months" ? "months-to-years" : "days-to-months");
+                changeView(view === "months" ? "months-to-years" : "days-to-months");
             }
         },
-        [displayedMonth, focusedDate, isDisabled, lines, view, viewFormat]
+        [changeDisplayedMonth, displayedMonth, focusedDate, isDisabled, lines, view, viewFormat]
     );
 
     useEffect(() => {
@@ -250,27 +234,16 @@ export const Calendar = forwardRef(function Calendar(
     return (
         <div
             ref={root}
-            className={classnames(className, theme.calendar({focused: showRing}))}
+            className={classnames(className, theme.calendar())}
             onBlur={useCallback(() => {
                 setFocused(false);
-                setShowRing(false);
             }, [])}
-            onClick={useCallback((e: MouseEvent<HTMLDivElement>) => {
-                setShowRing(false);
-                willShowRing.current = e.pageX === 0 && e.pageY === 0;
+            onClick={useCallback(() => {
                 setFocused(true);
                 root.current?.focus();
-                willShowRing.current = true;
             }, [])}
             onFocus={useCallback(() => {
                 setFocused(true);
-                if (willShowRing.current) {
-                    setShowRing(true);
-                }
-            }, [])}
-            onPointerDown={useCallback(() => {
-                willShowRing.current = false;
-                setShowRing(false);
             }, [])}
             tabIndex={focused ? -1 : 0}
         >
@@ -288,7 +261,7 @@ export const Calendar = forwardRef(function Calendar(
                                   .substring(0, 3)}9`
                     }
                     onClick={useCallback(
-                        () => setViewChange(view === "days" ? "days-to-months" : "months-to-years"),
+                        () => changeView(view === "days" ? "days-to-months" : "months-to-years"),
                         [view]
                     )}
                     tabIndex={-1}
@@ -298,12 +271,12 @@ export const Calendar = forwardRef(function Calendar(
                         icon="keyboard_arrow_up"
                         onClick={useCallback(
                             () =>
-                                setDisplayedMonth(
+                                changeDisplayedMonth(
                                     displayedMonth.minus(
                                         view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
                                     )
                                 ),
-                            [displayedMonth, view]
+                            [changeDisplayedMonth, displayedMonth, view]
                         )}
                         tabIndex={-1}
                     />
@@ -311,12 +284,12 @@ export const Calendar = forwardRef(function Calendar(
                         icon="keyboard_arrow_down"
                         onClick={useCallback(
                             () =>
-                                setDisplayedMonth(
+                                changeDisplayedMonth(
                                     displayedMonth.plus(
                                         view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
                                     )
                                 ),
-                            [displayedMonth, view]
+                            [changeDisplayedMonth, displayedMonth, view]
                         )}
                         tabIndex={-1}
                     />
@@ -361,85 +334,98 @@ export const Calendar = forwardRef(function Calendar(
                                 ))}
                             </div>
                         ) : null}
-                        {lines.map(l => (
-                            <div key={l.line}>
-                                {l.items.map(d => (
-                                    <Button
-                                        key={view === "days" ? d.day : view === "months" ? d.month : d.year}
-                                        className={
-                                            view === "days"
-                                                ? theme.day({outside: d.month !== displayedMonth.month})
-                                                : view === "months"
-                                                ? theme.month({outside: d.year !== displayedMonth.year})
-                                                : theme.year({
-                                                      outside:
-                                                          d.year.toString()[2] !== displayedMonth?.year.toString()[2]
-                                                  })
-                                        }
-                                        color={
-                                            (view === "days" &&
-                                                ((!!date && d.equals(date)) ||
-                                                    d.equals(
-                                                        DateTime.now().set({
-                                                            hour: 0,
-                                                            minute: 0,
-                                                            second: 0,
-                                                            millisecond: 0
-                                                        })
-                                                    ))) ||
-                                            (view === "months" &&
-                                                ((d.year === date?.year && d.month === date?.month) ||
-                                                    (d.year === DateTime.now().year &&
-                                                        d.month === DateTime.now().month))) ||
-                                            (view === "years" &&
-                                                (d.year === date?.year || d.year === DateTime.now().year))
-                                                ? "primary"
-                                                : undefined
-                                        }
-                                        data-date={d.toFormat(viewFormat)}
-                                        disabled={isDisabled(d)}
-                                        label={
-                                            view === "days"
-                                                ? d.day.toString()
-                                                : view === "months"
-                                                ? d.monthLong!
-                                                : d.year.toString()
-                                        }
-                                        onClick={e => {
-                                            if (viewFormat === format) {
-                                                onChange?.(d.toFormat(format), e.pageX === 0 && e.pageY === 0);
-                                                setTimeout(() => (e.target as HTMLElement)?.focus(), 0);
-                                            } else {
-                                                setDisplayedMonth(d);
-                                                setViewChange(view === "months" ? "months-to-days" : "years-to-months");
+                        <div
+                            ref={useCallback((d: HTMLDivElement | null) => {
+                                if (d) {
+                                    displayed.current = d;
+                                }
+                            }, [])}
+                        >
+                            {allLines.map(l => (
+                                <div key={l.line} data-line={l.line}>
+                                    {l.items.map(d => (
+                                        <Button
+                                            key={view === "days" ? d.day : view === "months" ? d.month : d.year}
+                                            className={
+                                                view === "days"
+                                                    ? theme.day({outside: d.month !== displayedMonth.month})
+                                                    : view === "months"
+                                                    ? theme.month({outside: d.year !== displayedMonth.year})
+                                                    : theme.year({
+                                                          outside:
+                                                              d.year.toString()[2] !==
+                                                              displayedMonth?.year.toString()[2]
+                                                      })
                                             }
-                                        }}
-                                        tabIndex={-1}
-                                        variant={
-                                            (view === "years" && d.year === date?.year) ||
-                                            (view === "months" && d.year === date?.year && d.month === date?.month) ||
-                                            (view === "days" && date && d.equals(date))
-                                                ? "filled"
-                                                : (view === "years" && d.year === DateTime.now().year) ||
-                                                  (view === "months" &&
-                                                      d.year === DateTime.now().year &&
-                                                      d.month === DateTime.now().month) ||
-                                                  (view === "days" &&
-                                                      d.equals(
-                                                          DateTime.now().set({
-                                                              hour: 0,
-                                                              minute: 0,
-                                                              second: 0,
-                                                              millisecond: 0
-                                                          })
-                                                      ))
-                                                ? "outlined"
-                                                : undefined
-                                        }
-                                    />
-                                ))}
-                            </div>
-                        ))}
+                                            color={
+                                                (view === "days" &&
+                                                    ((!!date && d.equals(date)) ||
+                                                        d.equals(
+                                                            DateTime.now().set({
+                                                                hour: 0,
+                                                                minute: 0,
+                                                                second: 0,
+                                                                millisecond: 0
+                                                            })
+                                                        ))) ||
+                                                (view === "months" &&
+                                                    ((d.year === date?.year && d.month === date?.month) ||
+                                                        (d.year === DateTime.now().year &&
+                                                            d.month === DateTime.now().month))) ||
+                                                (view === "years" &&
+                                                    (d.year === date?.year || d.year === DateTime.now().year))
+                                                    ? "primary"
+                                                    : undefined
+                                            }
+                                            data-date={d.toFormat(viewFormat)}
+                                            disabled={isDisabled(d)}
+                                            label={
+                                                view === "days"
+                                                    ? d.day.toString()
+                                                    : view === "months"
+                                                    ? d.monthLong!
+                                                    : d.year.toString()
+                                            }
+                                            onClick={e => {
+                                                if (viewFormat === format) {
+                                                    onChange?.(d.toFormat(format), e.pageX === 0 && e.pageY === 0);
+                                                    setTimeout(() => (e.target as HTMLElement)?.focus(), 0);
+                                                } else {
+                                                    changeDisplayedMonth(d, false);
+                                                    changeView(
+                                                        view === "months" ? "months-to-days" : "years-to-months"
+                                                    );
+                                                }
+                                            }}
+                                            tabIndex={-1}
+                                            variant={
+                                                (view === "years" && d.year === date?.year) ||
+                                                (view === "months" &&
+                                                    d.year === date?.year &&
+                                                    d.month === date?.month) ||
+                                                (view === "days" && date && d.equals(date))
+                                                    ? "filled"
+                                                    : (view === "years" && d.year === DateTime.now().year) ||
+                                                      (view === "months" &&
+                                                          d.year === DateTime.now().year &&
+                                                          d.month === DateTime.now().month) ||
+                                                      (view === "days" &&
+                                                          d.equals(
+                                                              DateTime.now().set({
+                                                                  hour: 0,
+                                                                  minute: 0,
+                                                                  second: 0,
+                                                                  millisecond: 0
+                                                              })
+                                                          ))
+                                                    ? "outlined"
+                                                    : undefined
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
                     </motion.div>
                 </AnimatePresence>
             </div>
@@ -459,6 +445,67 @@ function handleValue(value: string | undefined, format: string) {
     }
 
     return DateTime.fromISO(date.toFormat(format));
+}
+
+function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
+    if (view === "days") {
+        const w = map(
+            groupBy(
+                range(1, displayedMonth.daysInMonth).map(day => displayedMonth.set({day})),
+                getWeekNumber
+            ),
+            (items, line) => ({line, items})
+        );
+
+        while (w[0].items.length < 7) {
+            w[0].items.splice(0, 0, w[0].items[0].minus({day: 1}));
+        }
+
+        while (w[w.length - 1].items.length < 7) {
+            w[w.length - 1].items.push(w[w.length - 1].items[w[w.length - 1].items.length - 1].plus({day: 1}));
+        }
+
+        while (w.length < 6) {
+            const nextDay = w[w.length - 1].items[w[w.length - 1].items.length - 1].plus({day: 1});
+            w.push({
+                line: getWeekNumber(nextDay),
+                items: range(0, 7).map(day => nextDay.plus({day}))
+            });
+        }
+
+        return w;
+    } else if (view === "months") {
+        const startMonth = DateTime.fromObject({year: displayedMonth.year, month: 1});
+        return map(
+            groupBy(
+                range(0, 12).map(month => startMonth.plus({month})),
+                m => `${m.year}-${`${m.month - ((m.month - 1) % 3)}`.padStart(2, "0")}`
+            ),
+            (items, line) => ({line, items})
+        );
+    } else {
+        const start = +`${displayedMonth.year.toString().substring(0, 3)}0`;
+
+        const years = map(
+            groupBy(
+                range(0, 10).map(i => DateTime.fromObject({year: start + i})),
+                y => y.year - (y.year % 3)
+            ),
+            (items, line) => ({line, items})
+        );
+
+        while (years[0].items.length < 3) {
+            years[0].items.splice(0, 0, years[0].items[0].minus({year: 1}));
+        }
+
+        while (years[years.length - 1].items.length < 3) {
+            years[years.length - 1].items.push(
+                years[years.length - 1].items[years[years.length - 1].items.length - 1].plus({year: 1})
+            );
+        }
+
+        return years;
+    }
 }
 
 function getWeekNumber(day: DateTime) {
