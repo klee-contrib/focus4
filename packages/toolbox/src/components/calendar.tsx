@@ -175,13 +175,18 @@ export const Calendar = forwardRef(function Calendar(
                     ? 3
                     : 0;
 
-            if (change) {
+            if (change || e.key === "PageUp" || e.key === "PageDown") {
                 e.preventDefault();
                 e.stopPropagation();
 
-                const newDate = DateTime.fromFormat(focusedDate, viewFormat).plus(
-                    view === "days" ? {day: change} : view === "months" ? {month: change} : {year: change}
-                );
+                const newDate =
+                    e.key === "PageUp" || e.key === "PageDown"
+                        ? DateTime.fromFormat(focusedDate, viewFormat)[e.key === "PageUp" ? "minus" : "plus"](
+                              view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
+                          )
+                        : DateTime.fromFormat(focusedDate, viewFormat).plus(
+                              view === "days" ? {day: change} : view === "months" ? {month: change} : {year: change}
+                          );
 
                 if (isDisabled(newDate)) {
                     return;
@@ -217,7 +222,7 @@ export const Calendar = forwardRef(function Calendar(
                 );
             }
 
-            if (e.key === "PageUp" && view !== "years") {
+            if (e.key === "Backspace" && view !== "years") {
                 changeView(view === "months" ? "months-to-years" : "days-to-months");
             }
         },
