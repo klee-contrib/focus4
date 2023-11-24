@@ -1,29 +1,35 @@
 :root {
-    --panel-title-border: 1px solid rgba(var(--color-black), 0.1);
-    --panel-title-color: rgb(var(--color-primary));
     --panel-shadow: var(--shadow-2p);
     --panel-border-radius: 12px;
+    --panel-margin-bottom: 30px;
+
+    --panel-title-color: rgb(var(--color-primary));
+    --panel-title-padding: 8px;
+    --panel-title-font-size: 20px;
+    --panel-title-border: 1px solid rgba(var(--color-black), 0.1);
+
+    --panel-content-padding: 16px;
 }
 
 .panel {
     position: relative;
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: var(--panel-margin-bottom);
     box-shadow: var(--panel-shadow);
     background: rgb(var(--color-white));
     border-radius: var(--panel-border-radius);
 }
 
 .title {
-    min-height: 36px;
-    padding: 8px;
+    min-height: var(--button-height);
+    padding: var(--panel-title-padding);
     display: flex;
     align-items: center;
 
     & h3 {
         margin: 0;
-        padding: 0 8px;
-        font-size: 20px;
+        padding: 0 var(--panel-title-padding);
+        font-size: var(--panel-title-font-size);
         color: var(--panel-title-color);
     }
 }
@@ -45,7 +51,7 @@
 .content {
     width: 100%;
     box-sizing: border-box;
-    padding: 16px;
+    padding: var(--panel-content-padding);
     position: relative;
 }
 
