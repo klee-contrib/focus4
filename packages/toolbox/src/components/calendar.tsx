@@ -16,7 +16,7 @@ export interface CalendarProps {
     /** Classe CSS pour le composant racine. */
     className?: string;
     /**
-     * Format de la date retournée par le Calendar. "yyyy-MM" limite la sélection à un mois uniquement, tandis que "yyyy" la limite à une année.
+     * Format de la date à choisir. "yyyy-MM" limite la sélection à un mois uniquement, tandis que "yyyy" la limite à une année.
      * Par défaut : "yyyy-MM-dd"
      */
     format?: "yyyy-MM-dd" | "yyyy-MM" | "yyyy";

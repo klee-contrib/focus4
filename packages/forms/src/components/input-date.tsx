@@ -4,7 +4,7 @@ import {KeyboardEvent, useCallback, useEffect, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {Calendar, CalendarProps, Menu, useMenu} from "@focus4/toolbox";
+import {Calendar, CalendarCss, Menu, useMenu} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
@@ -12,6 +12,11 @@ import inputDateCss, {InputDateCss} from "./__style__/input-date.css";
 export {inputDateCss};
 
 export interface InputDateProps {
+    /**
+     * Format de la date à choisir dans le Calendar. "yyyy-MM" limite la sélection à un mois uniquement, tandis que "yyyy" la limite à une année.
+     * Par défaut : "yyyy-MM-dd"
+     */
+    calendarFormat?: "yyyy-MM-dd" | "yyyy-MM" | "yyyy";
     /**
      * Détermine la position du Calendrier par rapport au champ texte.
      *
@@ -37,8 +42,6 @@ export interface InputDateProps {
         | "top-left"
         | "top-right"
         | "top";
-    /* Autres props du Calendar RT */
-    calendarProps?: Omit<CalendarProps, "className" | "onChange" | "tabIndex" | "value">;
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Id pour l'input. */
@@ -66,6 +69,10 @@ export interface InputDateProps {
      * Par défaut "utc-midnight".
      */
     ISOStringFormat?: "date-only" | "local-midnight" | "local-utc-midnight" | "utc-midnight";
+    /** Date maximale autorisée pour la saisie dans le Calendar. */
+    max?: string;
+    /** Date minimale autorisée pour la saisie dans le Calendar. */
+    min?: string;
     /** Name pour l'input. */
     name?: string;
     /** Appelé lorsque la date change. */
@@ -76,7 +83,7 @@ export interface InputDateProps {
      */
     timezoneCode?: string;
     /** CSS. */
-    theme?: CSSProp<InputDateCss>;
+    theme?: CSSProp<CalendarCss & InputDateCss>;
     /** Valeur. */
     value: string | undefined;
 }
@@ -85,13 +92,15 @@ export interface InputDateProps {
  * Un champ de saisie de date avec double saisie en texte (avec un `Input`) et un calendrier (`Calendar`), qui s'affiche en dessous.
  */
 export function InputDate({
+    calendarFormat = "yyyy-MM-dd",
     calendarPosition = "left",
-    calendarProps,
     error,
     id,
     inputFormat = "MM/dd/yyyy",
     inputProps = {},
     ISOStringFormat = "utc-midnight",
+    max,
+    min,
     name,
     onChange,
     theme: pTheme,
@@ -264,10 +273,13 @@ export function InputDate({
             >
                 <Calendar
                     ref={calendarRef}
-                    {...calendarProps}
                     className={theme.calendar()}
+                    format={calendarFormat}
+                    max={max}
+                    min={min}
                     onChange={onCalendarChange}
                     tabIndex={-1}
+                    theme={theme}
                     value={value}
                 />
             </Menu>
