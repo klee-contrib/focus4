@@ -15,8 +15,8 @@
         "start": "rollup -cw --bundleConfigAsCjs --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@types/lodash": "4.14.201",
-        "@types/react": "18.2.37",
+        "@types/lodash": "4.14.202",
+        "@types/react": "18.2.38",
         "@types/uuid": "9.0.7",
         "i18next": "23.7.6",
         "lodash": "4.17.21",

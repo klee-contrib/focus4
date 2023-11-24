@@ -69,7 +69,7 @@ export const Calendar = forwardRef(function Calendar(
 
     const lines = useMemo(() => getLines(displayedMonth, view), [displayedMonth, view]);
 
-    const [oldLines, setOldLines] = useState<
+    const [transitionLines, setTransitionLines] = useState<
         {
             line: string;
             items: DateTime[];
@@ -77,7 +77,7 @@ export const Calendar = forwardRef(function Calendar(
     >([]);
 
     const allLines = sortBy(
-        uniqBy(oldLines.concat(lines), l => l.line),
+        uniqBy(transitionLines.concat(lines), l => l.line),
         l => l.line
     );
 
@@ -87,41 +87,54 @@ export const Calendar = forwardRef(function Calendar(
     const animationId = useRef<number>(0);
 
     const changeDisplayedMonth = useCallback(
-        async function changeDisplayedMonth(d: DateTime, scroll = true) {
+        async function changeDisplayedMonth(direction: "down" | "up") {
+            const change = view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10};
+            const d = displayedMonth[direction === "up" ? "minus" : "plus"](change);
             setDisplayedMonth(d);
-            if (scroll) {
-                const up = displayedMonth.toMillis() > d.toMillis();
-                setOldLines(lines);
-                if (displayed.current) {
-                    const lineHeight = displayed.current.querySelector("button")?.parentElement?.clientHeight ?? 0;
-                    const newLines = getLines(d, view);
-                    const newDisplayedLines = differenceBy(newLines, lines, l => l.line);
-                    const oldDisplayedLines = differenceBy(lines, newLines, l => l.line);
-                    const lol = ++animationId.current;
-                    await animate(
-                        displayed.current,
-                        {y: -lineHeight * (up ? newDisplayedLines : oldDisplayedLines).length},
-                        {duration: up ? 0 : getSpringTransition().duration}
-                    );
-                    await animate(displayed.current, {y: 0}, {duration: up ? getSpringTransition().duration : 0});
-                    if (lol === animationId.current) {
-                        for (const line of oldDisplayedLines) {
-                            const dLine = displayed.current.querySelector<HTMLElement>(`[data-line='${line.line}']`);
-                            if (dLine) {
-                                dLine.style.display = "none";
-                            }
+            if (displayed.current) {
+                const oldLines = getLines(displayedMonth, view);
+                const linesAbove = getLines(displayedMonth.minus(change), view);
+                const newLinesAbove = differenceBy(linesAbove, oldLines, l => l.line);
+                const linesBelow = getLines(displayedMonth.plus(change), view);
+                const newTransitionLines = differenceBy(
+                    oldLines.concat(direction === "up" ? linesBelow : linesAbove),
+                    direction === "up" ? linesAbove : linesBelow,
+                    l => l.line
+                );
+                setTransitionLines(newTransitionLines);
+
+                const id = ++animationId.current;
+                const lineHeight = displayed.current.querySelector("button")?.parentElement?.clientHeight ?? 0;
+                await animate(displayed.current, {y: -lineHeight * newLinesAbove.length}, {duration: 0});
+                await animate(
+                    displayed.current,
+                    {
+                        y:
+                            direction === "up"
+                                ? 0
+                                : -lineHeight *
+                                  differenceBy(oldLines.concat(newLinesAbove), linesBelow, l => l.line).length
+                    },
+                    {duration: 0.275}
+                );
+                await animate(displayed.current, {y: 0}, {duration: 0});
+                if (id === animationId.current) {
+                    for (const line of newTransitionLines) {
+                        const dLine = displayed.current.querySelector<HTMLElement>(`[data-line='${line.line}']`);
+                        if (dLine) {
+                            dLine.style.display = "none";
                         }
-                        setOldLines([]);
                     }
+                    setTransitionLines([]);
                 }
             }
         },
-        [displayedMonth, lines, view]
+        [displayedMonth, view]
     );
 
     const changeView = useCallback((v: typeof viewChange) => {
         setViewChange(v);
-        setOldLines([]);
+        setTransitionLines([]);
     }, []);
 
     useImperativeHandle(ref, () => ({
@@ -199,17 +212,13 @@ export const Calendar = forwardRef(function Calendar(
                     (view === "months" && newDate.year < displayedMonth.year) ||
                     (view === "years" && `${newDate.year}`.substring(0, 3) < `${displayedMonth.year}`.substring(0, 3))
                 ) {
-                    changeDisplayedMonth(
-                        displayedMonth.minus(view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10})
-                    );
+                    changeDisplayedMonth("up");
                 } else if (
                     (view === "days" && newDate.toFormat("yyyy-MM") > displayedMonth.toFormat("yyyy-MM")) ||
                     (view === "months" && newDate.year > displayedMonth.year) ||
                     (view === "years" && `${newDate.year}`.substring(0, 3) > `${displayedMonth.year}`.substring(0, 3))
                 ) {
-                    changeDisplayedMonth(
-                        displayedMonth.plus(view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10})
-                    );
+                    changeDisplayedMonth("down");
                 }
 
                 setTimeout(
@@ -275,12 +284,7 @@ export const Calendar = forwardRef(function Calendar(
                     <IconButton
                         icon="keyboard_arrow_up"
                         onClick={useCallback(
-                            () =>
-                                changeDisplayedMonth(
-                                    displayedMonth.minus(
-                                        view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
-                                    )
-                                ),
+                            () => changeDisplayedMonth("up"),
                             [changeDisplayedMonth, displayedMonth, view]
                         )}
                         tabIndex={-1}
@@ -288,12 +292,7 @@ export const Calendar = forwardRef(function Calendar(
                     <IconButton
                         icon="keyboard_arrow_down"
                         onClick={useCallback(
-                            () =>
-                                changeDisplayedMonth(
-                                    displayedMonth.plus(
-                                        view === "days" ? {month: 1} : view === "months" ? {year: 1} : {year: 10}
-                                    )
-                                ),
+                            () => changeDisplayedMonth("down"),
                             [changeDisplayedMonth, displayedMonth, view]
                         )}
                         tabIndex={-1}
@@ -396,7 +395,8 @@ export const Calendar = forwardRef(function Calendar(
                                                     onChange?.(d.toFormat(format), e.pageX === 0 && e.pageY === 0);
                                                     setTimeout(() => (e.target as HTMLElement)?.focus(), 0);
                                                 } else {
-                                                    changeDisplayedMonth(d, false);
+                                                    setDisplayedMonth(d);
+                                                    setTransitionLines([]);
                                                     changeView(
                                                         view === "months" ? "months-to-days" : "years-to-months"
                                                     );
