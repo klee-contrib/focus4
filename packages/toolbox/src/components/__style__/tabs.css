@@ -9,6 +9,7 @@
     --tab-pointer-height-secondary: 2px;
     --tab-secondary-gap: 6px;
 
+    --tab-color: rgb(var(--color-black));
     --tab-active-color: rgb(var(--color-primary));
     --tab-disabled-color: rgb(var(--palette-grey-400));
 
@@ -56,12 +57,39 @@
     flex-direction: column;
     padding: calc((var(--tab-height) - 2 * var(--tab-icon-size)) / 2) var(--tab-padding);
     font-weight: var(--font-weight-semi-bold);
+    color: var(--tab-color);
     cursor: pointer;
     transition: color var(--animation-duration) var(--animation-curve-default);
 }
 
+.tab::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: "";
+    pointer-events: none;
+    opacity: 0;
+    background-color: var(--tab-color);
+    transition: opacity var(--animation-duration-short) var(--animation-curve-default),
+        color var(--animation-duration-short) var(--animation-curve-default);
+}
+
+.tab:hover::before {
+    opacity: var(--button-hover-opacity);
+}
+
 .tab--active {
     color: var(--tab-active-color);
+}
+
+.tab--active {
+    color: var(--tab-active-color);
+}
+
+.tab--active::before {
+    background-color: var(--tab-active-color);
 }
 
 .tab.tab--disabled {
