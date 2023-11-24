@@ -1,13 +1,6 @@
 :root {
     --calendar-scale: 1;
 
-    --calendar-day-size: calc(var(--calendar-scale) * 40px);
-    --calendar-day-header-margin: calc(var(--calendar-scale) * 6px);
-    --calendar-month-year-height: calc(var(--calendar-scale) * 56px);
-    --calendar-font-size: calc(var(--calendar-scale) * 14px);
-    --calendar-header-icon-size: calc(var(--calendar-scale) * 18px);
-    --calendar-focus-ring-width: calc(var(--calendar-scale) * var(--focus-ring-width));
-
     --calendar-background-color: rgb(var(--color-white));
     --calendar-item-outside-color: rgb(var(--palette-grey-400));
     --calendar-item-disabled-color: rgb(var(--palette-grey-200));
@@ -18,6 +11,13 @@
 }
 
 .calendar {
+    --calendar-day-size: calc(var(--calendar-scale) * 40px);
+    --calendar-day-header-margin: calc(var(--calendar-scale) * 6px);
+    --calendar-month-year-height: calc(var(--calendar-scale) * 56px);
+    --calendar-font-size: calc(var(--calendar-scale) * 14px);
+    --calendar-header-icon-size: calc(var(--calendar-scale) * 18px);
+    --calendar-focus-ring-width: calc(var(--calendar-scale) * 3px);
+
     --button-border-radius: calc(var(--button-height) / 2);
     --button-height: var(--calendar-day-size);
     --button-icon-size: var(--calendar-header-icon-size);

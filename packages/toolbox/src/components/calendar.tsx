@@ -26,6 +26,8 @@ export interface CalendarProps {
     min?: string;
     /** Handler appelé à la sélection d'une date. */
     onChange?: (value: string, fromKeyDown: boolean) => void;
+    /** TabIndex pour le Calendar. Par défaut : 0. */
+    tabIndex?: number;
     /** CSS. */
     theme?: CSSProp<CalendarCss>;
     /** Date. */
@@ -36,7 +38,7 @@ export interface CalendarProps {
  * Calendrier permettant de choisir un jour, un mois ou une année. Utilisé par `InputDate`.
  */
 export const Calendar = forwardRef(function Calendar(
-    {className, max, min, format = "yyyy-MM-dd", onChange, theme: pTheme, value}: CalendarProps,
+    {className, max, min, format = "yyyy-MM-dd", onChange, tabIndex = 0, theme: pTheme, value}: CalendarProps,
     ref: ForwardedRef<{focus: () => void}>
 ) {
     const theme = useTheme("calendar", calendarCss, pTheme);
@@ -259,7 +261,7 @@ export const Calendar = forwardRef(function Calendar(
             onFocus={useCallback(() => {
                 setFocused(true);
             }, [])}
-            tabIndex={focused ? -1 : 0}
+            tabIndex={focused ? -1 : tabIndex}
         >
             <div className={theme.header()}>
                 <Button

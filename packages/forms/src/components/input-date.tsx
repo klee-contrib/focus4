@@ -38,7 +38,7 @@ export interface InputDateProps {
         | "top-right"
         | "top";
     /* Autres props du Calendar RT */
-    calendarProps?: Omit<CalendarProps, "className" | "onChange" | "value">;
+    calendarProps?: Omit<CalendarProps, "className" | "onChange" | "tabIndex" | "value">;
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Id pour l'input. */
@@ -267,6 +267,7 @@ export function InputDate({
                     {...calendarProps}
                     className={theme.calendar()}
                     onChange={onCalendarChange}
+                    tabIndex={-1}
                     value={value}
                 />
             </Menu>
