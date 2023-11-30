@@ -1,4 +1,3 @@
-import {flatten} from "lodash";
 import {useObserver} from "mobx-react";
 import {ComponentType, ReactNode, useEffect, useMemo} from "react";
 
@@ -70,11 +69,13 @@ export function FieldWrapper<F extends FieldEntry>({
                             DisplayComponent: DisplayComponent ?? pField.$field.domain.DisplayComponent,
                             displayFormatter: displayFormatter ?? pField.$field.domain.displayFormatter,
                             LabelComponent: LabelComponent ?? pField.$field.domain.LabelComponent,
-                            SelectComponent: SelectComponent ?? pField.$field.domain.SelectComponent
+                            SelectComponent: SelectComponent ?? pField.$field.domain.SelectComponent,
+                            validator: pValidator as Validator<F["fieldType"]>[]
                         })
                 ),
             [
                 pField,
+                pValidator,
                 AutocompleteComponent,
                 InputComponent,
                 className,
@@ -87,17 +88,10 @@ export function FieldWrapper<F extends FieldEntry>({
         );
 
         const error = useMemo(() => {
-            const {validator: dValidator} = field.$field.domain;
-            const e =
-                pError ??
-                validateField(
-                    field.value,
-                    field.$field.isRequired,
-                    flatten([dValidator, pValidator]).filter(v => v) as Validator<F["fieldType"]>[]
-                );
+            const e = pError ?? validateField(field);
             onErrorChange(isEdit ? e : undefined);
             return e;
-        }, [pError, field.value, isEdit, field.$field.isRequired, pValidator]);
+        }, [pError, field, isEdit]);
 
         const formField = useMemo(
             () => ({

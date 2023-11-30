@@ -4,7 +4,10 @@ import {DateTime} from "luxon";
 
 import {
     DateValidator,
+    DomainFieldType,
     EmailValidator,
+    EntityField,
+    FieldEntry,
     FunctionValidator,
     NumberValidator,
     RegexValidator,
@@ -16,18 +19,26 @@ const EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
-export function validateField<T>(
-    value: T,
-    isRequired: boolean,
-    validator?: Validator<T> | Validator<T>[]
-): string | undefined {
+export function validateField({
+    $field: {
+        domain: {type, validator},
+        isRequired
+    },
+    value
+}: EntityField<FieldEntry<DomainFieldType>>): string | undefined {
     // On vérifie que le champ n'est pas vide et obligatoire.
-    if (isRequired && (value === undefined || value === null || (typeof value === "string" && value.trim() === ""))) {
+    if (
+        isRequired &&
+        (value === undefined ||
+            value === null ||
+            (typeof value === "string" && value.trim() === "") ||
+            (type.endsWith("array") && Array.isArray(value) && value.length === 0))
+    ) {
         return i18next.t("focus.validation.required");
     }
 
     // On applique le validateur du domaine.
-    if (validator && value !== undefined && value !== null) {
+    if (!!validator && value !== undefined && value !== null) {
         const errors = validate(value, Array.isArray(validator) ? validator : [validator]);
         if (errors.length) {
             return errors.map(e => i18next.t(e)).join(", ");
