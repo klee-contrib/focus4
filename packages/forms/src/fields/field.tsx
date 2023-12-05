@@ -123,7 +123,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
             if (valueElement) {
                 this.valueElement = valueElement;
                 if (this.hideErrorOnInit) {
-                    valueElement.addEventListener("mousedown", this.disableHideError);
+                    valueElement.addEventListener("focusin", this.disableHideError);
                 }
             }
         },
@@ -132,7 +132,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
         disableHideError() {
             this.hideErrorOnInit = false;
             if (this.valueElement) {
-                this.valueElement.removeEventListener("mousedown", this.disableHideError);
+                this.valueElement.removeEventListener("focusin", this.disableHideError);
             }
         }
     }));
