@@ -17,9 +17,9 @@
     "dependencies": {
         "@focus4/core": "11.12.0",
         "@focus4/styling": "11.12.0",
-        "@types/luxon": "3.3.5",
-        "@types/react-transition-group": "4.4.9",
-        "framer-motion": "10.16.5",
+        "@types/luxon": "3.3.7",
+        "@types/react-transition-group": "4.4.10",
+        "framer-motion": "10.16.14",
         "luxon": "3.4.4",
         "react-transition-group": "4.4.5"
     },

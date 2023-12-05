@@ -20,6 +20,11 @@ export const baseConfig = {
             }
         },
         postcss: {plugins: [nesting()]}
+    },
+    esbuild: {
+        supported: {
+            "top-level-await": true
+        }
     }
 } satisfies UserConfigExport;
 
