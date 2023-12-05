@@ -3,13 +3,13 @@ import {AnimatePresence, motion} from "framer-motion";
 import {useCallback} from "react";
 import {createPortal} from "react-dom";
 
-import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
+import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 
 import {Button} from "./button";
 import {IconButton} from "./icon-button";
 
 import snackbarCss, {SnackbarCss} from "./__style__/snackbar.css";
-export {snackbarCss, SnackbarCss};
+export {SnackbarCss, snackbarCss};
 
 export interface SnackbarProps {
     /** Action de la Snackbar. */
@@ -61,7 +61,7 @@ export function Snackbar({active, action, className, close, level, message, onCl
                     exit={{y: "100%"}}
                     initial={{y: "100%"}}
                     role={level === "warning" || level === "error" ? "alert" : "status"}
-                    transition={{...getDefaultTransition(), delay: 0.1}}
+                    transition={{...getSpringTransition(), delay: 0.2}}
                 >
                     <span className={theme.message()}>{message}</span>
                     {action ? (
