@@ -1,6 +1,6 @@
 import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {KeyboardEvent, useCallback, useEffect, useRef, useState} from "react";
+import {FocusEvent, KeyboardEvent, useCallback, useEffect, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -144,6 +144,7 @@ export function InputDate({
         [inputFormat, timezoneCode]
     );
 
+    const rootRef = useRef<HTMLDivElement>(null);
     const calendarRef = useRef<{focus: () => void}>(null);
     const inputRef = useRef<Input<"string">>(null);
 
@@ -217,13 +218,13 @@ export function InputDate({
 
     /** Appelé lorsqu'on quitte le champ texte. */
     const onInputBlur = useCallback(
-        function onInputBlur() {
-            if (menu.active) {
+        function onInputBlur(e: FocusEvent<HTMLInputElement>) {
+            if (rootRef.current?.contains(e.relatedTarget)) {
                 return;
             }
             commitDate();
         },
-        [commitDate, menu.active]
+        [commitDate]
     );
 
     /** Gestion bascule navigation dans le Calendrier. */
@@ -235,7 +236,7 @@ export function InputDate({
     }, []);
 
     return (
-        <div className={theme.input()} data-focus="input-date" data-id={inputDateId}>
+        <div ref={rootRef} className={theme.input()} data-focus="input-date" data-id={inputDateId}>
             <Input
                 {...inputProps}
                 ref={inputRef}

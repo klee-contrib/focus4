@@ -328,10 +328,12 @@ export function Menu({
         }
         if (active) {
             document.addEventListener("pointerdown", handleDocumentClick);
+            document.addEventListener("focusin", handleDocumentClick);
         }
         return () => {
             if (active) {
                 document.removeEventListener("pointerdown", handleDocumentClick);
+                document.removeEventListener("focusin", handleDocumentClick);
             }
         };
     }, [active, close]);
@@ -401,7 +403,7 @@ export function Menu({
             ).filter(({item}) => !!item && !unselectable(item));
 
             const handleKeyDown = (event: KeyboardEvent) => {
-                if (event.key === "Tab" || event.key === "Escape") {
+                if (event.key === "Escape") {
                     setShowRing(false);
                     close?.();
                 } else if (noSelection) {
@@ -519,7 +521,8 @@ export function Menu({
                     maxHeight
                 }),
                 [maxHeight, position, positions]
-            )
+            ),
+            tabIndex: -1
         },
         keepItemsInDOMWhenClosed ? items : <AnimatePresence>{active ? items : null}</AnimatePresence>
     );

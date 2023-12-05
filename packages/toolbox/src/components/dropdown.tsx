@@ -103,6 +103,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
 ) {
     const theme = useTheme("dropdown", dropdownCss, pTheme);
 
+    const rootRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     useImperativeHandle(ref, () => inputRef.current!, []);
 
@@ -172,19 +173,20 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
 
     const handleBlur: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
         event => {
-            if (!menu.active) {
+            if (!rootRef.current?.contains(event.relatedTarget)) {
                 setFocused(false);
                 menu.close();
                 onBlur?.(event);
             }
         },
-        [menu.active, onBlur]
+        [onBlur]
     );
 
     const selectedValue = values.find(v => getKey(v) === value);
 
     return (
         <div
+            ref={rootRef}
             aria-activedescendant={id ? `${id}-${selected}` : undefined}
             aria-disabled={disabled}
             className={classNames(theme.dropdown({disabled}), className)}
