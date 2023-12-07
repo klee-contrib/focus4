@@ -55,8 +55,14 @@
     white-space: nowrap;
 }
 
-.table thead tr:first-child {
-    border-radius: var(--table-border-radius) var(--table-border-radius) 0 0;
+.table thead tr:first-child th {
+    &:first-child {
+        border-top-left-radius: var(--table-border-radius);
+    }
+
+    &:last-child {
+        border-top-right-radius: var(--table-border-radius);
+    }
 }
 
 .table tbody tr.row {
