@@ -11,7 +11,7 @@
     --action-bar-search-bar-width: 300px;
     --action-bar-selection-background: rgb(var(--color-primary));
     --action-bar-selection-color: rgb(var(--color-white));
-    --action-bar-shadow: var(--shadow-2p);
+    --action-bar-box-shadow: var(--shadow-2p);
     --action-bar-transition: 0.1s ease-out;
 }
 
@@ -29,7 +29,7 @@
     z-index: calc(var(--z-index-normal) + 1);
     background-color: var(--action-bar-background);
     border-radius: var(--action-bar-border-radius);
-    box-shadow: var(--action-bar-shadow);
+    box-shadow: var(--action-bar-box-shadow);
     height: var(--action-bar-height);
     padding: var(--action-bar-padding);
     transition: background-color var(--action-bar-transition);

@@ -1,5 +1,5 @@
 :root {
-    --panel-shadow: var(--shadow-2p);
+    --panel-box-shadow: var(--shadow-2p);
     --panel-border-radius: 12px;
     --panel-margin-bottom: 30px;
 
@@ -15,7 +15,7 @@
     position: relative;
     width: 100%;
     margin-bottom: var(--panel-margin-bottom);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--panel-box-shadow);
     background: rgb(var(--color-white));
     border-radius: var(--panel-border-radius);
 }

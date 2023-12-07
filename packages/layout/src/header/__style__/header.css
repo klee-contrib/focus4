@@ -7,7 +7,7 @@
     --header-toprow-background: rgb(var(--color-white));
     --header-toprow-height: 60px;
     --header-toprow-padding: 10px;
-    --header-shadow: var(--shadow-2p);
+    --header-box-shadow: var(--shadow-2p);
 }
 
 .content {
@@ -36,7 +36,7 @@
 .scrolling {
     position: relative;
     color: var(--header-color);
-    box-shadow: var(--header-shadow);
+    box-shadow: var(--header-box-shadow);
     z-index: calc(var(--z-index-high) + 1);
 }
 
