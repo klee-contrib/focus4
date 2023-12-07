@@ -41,18 +41,18 @@
 }
 
 .snackbar--success {
-    color: var(--snackbar-color-success);
-    background-color: var(--snackbar-background-color-success);
+    --snackbar-color: var(--snackbar-color-success);
+    --snackbar-background-color: var(--snackbar-background-color-success);
 }
 
 .snackbar--warning {
-    color: var(--snackbar-color-warning);
-    background-color: var(--snackbar-background-color-warning);
+    --snackbar-color: var(--snackbar-color-warning);
+    --snackbar-background-color: var(--snackbar-background-color-warning);
 }
 
 .snackbar--error {
-    color: var(--snackbar-color-error);
-    background-color: var(--snackbar-background-color-error);
+    --snackbar-color: var(--snackbar-color-error);
+    --snackbar-background-color: var(--snackbar-background-color-error);
 }
 
 .message {
