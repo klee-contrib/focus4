@@ -228,12 +228,17 @@ export function InputDate({
     );
 
     /** Gestion bascule navigation dans le Calendrier. */
-    const onKeyDown = useCallback(function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-            menu.open();
-            setTimeout(() => calendarRef.current?.focus(), 50);
-        }
-    }, []);
+    const onKeyDown = useCallback(
+        function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                menu.open();
+                setTimeout(() => calendarRef.current?.focus(), 50);
+            } else if (e.key === "Enter") {
+                commitDate();
+            }
+        },
+        [commitDate]
+    );
 
     return (
         <div ref={rootRef} className={theme.input()} data-focus="input-date" data-id={inputDateId}>
