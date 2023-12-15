@@ -19,7 +19,7 @@
         "@focus4/styling": "11.12.2",
         "@types/luxon": "3.3.7",
         "@types/react-transition-group": "4.4.10",
-        "framer-motion": "10.16.14",
+        "framer-motion": "10.16.16",
         "luxon": "3.4.4",
         "react-transition-group": "4.4.5"
     },

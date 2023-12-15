@@ -29,7 +29,7 @@
     "devDependencies": {
         "@focus4/tooling": "11.12.3",
         "@testing-library/react": "14.1.2",
-        "@types/jest": "29.5.10",
+        "@types/jest": "29.5.11",
         "identity-obj-proxy": "3.0.0",
         "jest": "29.7.0",
         "jest-environment-jsdom": "29.7.0",
