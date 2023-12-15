@@ -5,6 +5,10 @@
     --menu-border-radius: 4px;
     --menu-focus-ring-border-radius: 4px;
 
+    --menu-webkit-scrollbar-width: 5px;
+    --menu-webkit-scrollbar-background-color: rgb(var(--palette-grey-200));
+    --menu-webkit-scrollbar-thumb-color: rgb(var(--palette-grey-500));
+
     --menu-item-icon-size: 24px;
     --menu-item-height: 48px;
     --menu-item-padding: 12px;
@@ -27,6 +31,7 @@
     padding: 0;
     margin: 0;
     overflow-y: auto;
+    outline: none;
     opacity: 0;
     background-color: var(--menu-background-color);
     border-radius: var(--menu-border-radius);
@@ -45,6 +50,27 @@
 
 .menu--full {
     width: 100%;
+}
+
+.menu::-webkit-scrollbar {
+    width: var(--menu-webkit-scrollbar-width);
+}
+
+.menu::-webkit-scrollbar-button {
+    display: none;
+}
+
+.menu::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.menu::-webkit-scrollbar-track-piece {
+    background-color: var(--menu-webkit-scrollbar-background-color);
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background-color: var(--menu-webkit-scrollbar-thumb-color);
+    border-radius: var(--menu-webkit-scrollbar-width);
 }
 
 .item {

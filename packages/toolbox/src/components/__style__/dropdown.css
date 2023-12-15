@@ -21,7 +21,7 @@
     width: 100%;
     position: relative;
     min-height: calc(var(--text-field-height) - 2 * var(--text-field-outline-size));
-    padding: var(--text-field-padding-vertical) var(--text-field-padding-horizontal);
+    padding: var(--text-field-padding-vertical) 0;
     font-size: var(--text-field-font-size);
     box-sizing: border-box;
     cursor: pointer;
@@ -47,4 +47,13 @@
 
 .value--selected {
     background: var(--input-on-light-color);
+}
+
+.dropdown--singleLine {
+    & .value,
+    & .input {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }

@@ -8,6 +8,8 @@ import {
     useCallback,
     useEffect,
     useImperativeHandle,
+    useLayoutEffect,
+    useMemo,
     useRef,
     useState
 } from "react";
@@ -43,6 +45,14 @@ export interface DropdownProps<TSource = {key: string; label: string}>
     LineComponent?: (props: {item: TSource}) => ReactElement;
     /** Appelé avec la clé correspondante lors de la sélection d'une valeur. */
     onChange?: (value?: string) => void;
+    /**
+     * Contrôle la mise en forme du Dropdown :
+     * - `fit-to-field-and-wrap` va forcer la largeur du menu sur la largeur du champ, et faire des retours à la ligne si nécessaire. (par défaut).
+     * - `fit-to-field-single-line` force également la largeur du menu sur la largeur du champ, mais le texte sera coupé avec une ellipse au lieu de revenir à la ligne.
+     * - `no-fit-single-line` laisse le champ et le menu avec leurs largeurs respectives, sans retour à la ligne.
+     * - `fit-to-values` force la largeur du champ sur la largeur des valeurs, sans retour à la ligne.
+     */
+    sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
     /** CSS. */
     theme?: CSSProp<DropdownCss & TextFieldCss>;
     /** Libellé de l'option vide. */
@@ -89,6 +99,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
         prefix,
         required,
         rows,
+        sizing = "fit-to-field-and-wrap",
         showSupportingText = "auto",
         supportingText,
         suffix,
@@ -182,6 +193,28 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
         [onBlur]
     );
 
+    const [width, setWidth] = useState<number | undefined>(undefined);
+    useLayoutEffect(() => {
+        if (rootRef.current && sizing === "fit-to-values") {
+            const ul = rootRef.current.querySelector("ul");
+            if (ul) {
+                setWidth(ul.clientWidth);
+            }
+        }
+    }, [values]);
+
+    const itemStyle = useMemo(
+        () => ({
+            paddingLeft: `calc(var(--text-field-${icon ? "icon-padding" : "padding-horizontal"})${
+                icon ? " + var(--text-field-icon-padding) + var(--text-field-icon-size)" : ""
+            })`,
+            paddingRight: `calc(var(--text-field-padding-horizontal) + ${
+                1 + (!trailing ? 0 : Array.isArray(trailing) ? trailing.length : 1)
+            } * (var(--text-field-icon-padding) + var(--text-field-icon-size)))`
+        }),
+        [icon, trailing]
+    );
+
     const selectedValue = values.find(v => getKey(v) === value);
 
     return (
@@ -189,11 +222,18 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
             ref={rootRef}
             aria-activedescendant={id ? `${id}-${selected}` : undefined}
             aria-disabled={disabled}
-            className={classNames(theme.dropdown({disabled}), className)}
+            className={classNames(
+                theme.dropdown({
+                    disabled,
+                    singleLine: sizing !== "fit-to-field-and-wrap"
+                }),
+                className
+            )}
             data-name={name}
             data-value={value}
             id={id}
             role="listbox"
+            style={width ? {width} : {}}
         >
             <TextField
                 ref={inputRef}
@@ -260,7 +300,21 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 noBlurOnArrowPress
                 onItemClick={handleChange}
                 onSelectedChange={onSelectedChange}
-                position={direction === "auto" ? "auto-fill" : direction === "up" ? "top" : "bottom"}
+                position={
+                    direction === "auto"
+                        ? `auto-${
+                              sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                                  ? "fill"
+                                  : "left"
+                          }`
+                        : direction === "up"
+                        ? sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                            ? "top"
+                            : "top-left"
+                        : sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                        ? "bottom"
+                        : "bottom-left"
+                }
                 selected={selected}
             >
                 {hasUndefined ? (
@@ -271,6 +325,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                             className={theme.value({selected: !value})}
                             id={id ? `${id}-${undefinedKey}` : undefined}
                             role="option"
+                            style={itemStyle}
                         >
                             {undefinedLabel}
                         </span>
@@ -285,6 +340,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                             data-value={getKey(s)}
                             id={id ? `${id}-${getKey(s)}` : undefined}
                             role="option"
+                            style={itemStyle}
                         >
                             {LineComponent ? <LineComponent item={s} /> : getLabel(s)}
                         </span>

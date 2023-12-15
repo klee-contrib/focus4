@@ -95,7 +95,8 @@
 }
 
 .inputContainer {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     min-height: calc(var(--text-field-height) - 2 * var(--text-field-padding-vertical));
     padding: var(--text-field-padding-vertical) var(--text-field-padding-horizontal);
     display: flex;

@@ -302,7 +302,7 @@ export function Menu({
     );
 
     useLayoutEffect(() => {
-        if (active && anchor.current) {
+        if (anchor.current) {
             updatePositions();
             getScrollableParent(anchor.current).addEventListener("scroll", updatePositions);
             window.addEventListener("resize", updatePositions);
