@@ -75,7 +75,7 @@ export interface MenuProps extends MenuControls {
     /** Désactive complètement la sélection d'items dans le Menu (en particulier au clavier). */
     noSelection?: boolean;
     /** Handler optionel appelé au clic (y compris au clavier) d'un élément du Menu. La `key` de l'enfant sera passée en paramètre. */
-    onItemClick?: (key?: string) => void;
+    onItemClick?: (key: string, from: "click" | "keyboard") => void;
     /** Handler appelé lorsque l'élément sélectionné par le Menu change (au hover ou au clavier).  */
     onSelectedChange?: (key?: string) => void;
     /**
@@ -360,22 +360,20 @@ export function Menu({
 
     // Au clic/appui sur Entrée sur un item.
     const handleItemClick = useCallback(
-        function handleItemClick(item: ReactElement, e?: KeyboardEvent | MouseEvent<HTMLLIElement>) {
+        function handleItemClick(item: ReactElement, e: KeyboardEvent | MouseEvent<HTMLLIElement>) {
             if (noSelection) {
                 return;
             }
 
-            if (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
+            e.stopPropagation();
+            e.preventDefault();
 
             if (!item.props.disabled) {
                 item.props.onClick?.();
             }
 
             if (item.key) {
-                onItemClick?.(item.key);
+                onItemClick?.(item.key, e instanceof KeyboardEvent ? "keyboard" : "click");
             }
 
             setShowRing(false);
