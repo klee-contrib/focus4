@@ -21,6 +21,8 @@ export {
     PanelCss,
     PanelProps,
     Select,
+    SelectAutocomplete,
+    SelectAutocompleteProps,
     SelectCheckbox,
     SelectCheckboxCss,
     SelectCheckboxProps,

@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import {take} from "lodash";
 import {
     FocusEvent,
     FocusEventHandler,
@@ -49,6 +50,12 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
     /** Composant personnalisé pour afficher les suggestions. */
     LineComponent?: (props: {item: TSource}) => ReactElement;
     /**
+     * Nombre maximal de suggestions affichées. Passer `0` ou `undefined` permet de désactiver cette limitation (à vos risques et périls).
+     *
+     * Par défaut : 50.
+     */
+    maxDisplayed?: number;
+    /**
      * Appelé avec la clé correspondante lors de la sélection d'une valeur.
      *
      * Sera appelé avec `undefined` (si `allowUnmatched = false`) si aucune suggestion n'est disponible lors de la confirmation de la saisie
@@ -90,6 +97,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         label,
         LineComponent,
         loading = false,
+        maxDisplayed = 50,
         multiline,
         name,
         onBlur,
@@ -338,7 +346,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 position={direction === "auto" ? "auto-fill" : direction === "up" ? "top" : "bottom"}
                 selected={selected}
             >
-                {suggestions.map(s => (
+                {(maxDisplayed ? take(suggestions, maxDisplayed) : suggestions).map(s => (
                     <Ripple key={getKey(s)}>
                         <span
                             aria-label={getLabel(s)}

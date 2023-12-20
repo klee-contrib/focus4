@@ -8,6 +8,7 @@ export {Label, LabelCss, LabelProps, labelCss} from "./label";
 export {Panel, PanelCss, PanelProps, panelCss} from "./panel";
 export {PanelButtons} from "./panel-buttons";
 export {Select, SelectProps} from "./select";
+export {SelectAutocomplete, SelectAutocompleteProps} from "./select-autocomplete";
 export {SelectCheckbox, SelectCheckboxCss, SelectCheckboxProps, selectCheckboxCss} from "./select-checkbox";
 export {SelectChips, SelectChipsCss, SelectChipsProps, selectChipsCss} from "./select-chips";
 export {SelectRadio, SelectRadioCss, SelectRadioProps, selectRadioCss} from "./select-radio";
