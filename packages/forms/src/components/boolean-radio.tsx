@@ -46,23 +46,12 @@ export function BooleanRadio({
         <>
             <RadioGroup
                 className={theme.boolean()}
+                disabled={disabled}
                 onChange={(x: string) => onChange(x === "true")}
                 value={value === true ? "true" : value === false ? "false" : undefined}
             >
-                <RadioButton
-                    disabled={disabled}
-                    label={i18next.t(labelYes)}
-                    name={`${name}-yes`}
-                    theme={theme}
-                    value="true"
-                />
-                <RadioButton
-                    disabled={disabled}
-                    label={i18next.t(labelNo)}
-                    name={`${name}-no`}
-                    theme={theme}
-                    value="false"
-                />
+                <RadioButton label={i18next.t(labelYes)} name={`${name}-yes`} theme={theme} value="true" />
+                <RadioButton label={i18next.t(labelNo)} name={`${name}-no`} theme={theme} value="false" />
             </RadioGroup>
             {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
                 <div className={theme.supportingText({error: !!error})}>{error}</div>

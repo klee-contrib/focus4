@@ -81,7 +81,7 @@
     cursor: auto;
 
     & .outline {
-        border-color: var(--input-disabled-color);
+        outline-color: var(--input-disabled-color);
     }
 
     & .dot {

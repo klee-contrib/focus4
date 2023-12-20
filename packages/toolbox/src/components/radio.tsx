@@ -61,7 +61,7 @@ export function RadioButton({
 
     const {disabled: pDisabled, onChange, value: selectedValue} = useContext(RadioContext);
     const checked = selectedValue === value;
-    disabled &&= pDisabled;
+    disabled ||= pDisabled;
 
     const {ref, loaded, handleOnClick, handlePointerLeave, handlePointerUp} = useInputRef<
         HTMLInputElement,
@@ -112,7 +112,7 @@ export interface RadioGroupProps {
     className?: string;
     /** Les RadioButtons passés en enfant de ce composant seront ajoutés au groupe. */
     children?: ReactNode;
-    /** Désactive les RadioButtons. */
+    /** Désactive le RadioGroup. */
     disabled?: boolean;
     /** Handler appelé au clic sur un RadioButton. */
     onChange?: (value: string) => void;
