@@ -119,7 +119,7 @@ export function List<T>({
             /** Ref vers la liste pour déterminer sa largeur. */
             ulRef: null as HTMLUListElement | null,
             /** Liste des éléments sélectionnés par le drag and drop. */
-            draggedItems: observable<T>([]),
+            draggedItems: observable<T>([], {deep: false}),
 
             /** Toggle le détail depuis la ligne. */
             async toggleDetail(
