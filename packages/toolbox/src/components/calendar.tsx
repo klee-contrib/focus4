@@ -44,7 +44,16 @@ export const Calendar = forwardRef(function Calendar(
     const theme = useTheme("calendar", calendarCss, pTheme);
 
     const [date, setDate] = useState(handleValue(value, format));
-    useEffect(() => setDate(handleValue(value, format)), [format, value]);
+    const [displayedMonth, setDisplayedMonth] = useState(
+        DateTime.fromISO((date ? date : DateTime.now()).toFormat("yyyyMM"))
+    );
+    useEffect(() => {
+        const newDate = handleValue(value, format);
+        setDate(newDate);
+        if (newDate) {
+            setDisplayedMonth(DateTime.fromISO(newDate.toFormat("yyyyMM")));
+        }
+    }, [format, value]);
 
     const [maxDate, setMaxDate] = useState(handleValue(max, format));
     useEffect(() => setMaxDate(handleValue(max, format)), [format, max]);
@@ -64,10 +73,6 @@ export const Calendar = forwardRef(function Calendar(
     >(format === "yyyy" ? "months-to-years" : format === "yyyy-MM" ? "days-to-months" : "months-to-days");
     const view = viewChange === "months-to-days" ? "days" : viewChange === "months-to-years" ? "years" : "months";
     const viewFormat = view === "days" ? "yyyy-MM-dd" : view === "months" ? "yyyy-MM" : "yyyy";
-
-    const [displayedMonth, setDisplayedMonth] = useState(
-        DateTime.fromISO((date ? date : DateTime.now()).toFormat("yyyyMM"))
-    );
 
     const lines = useMemo(() => getLines(displayedMonth, view), [displayedMonth, view]);
 

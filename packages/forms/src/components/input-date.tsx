@@ -202,8 +202,8 @@ export function InputDate({
     );
 
     const commitDate = useCallback(
-        function commitDate() {
-            const text = (dateText ?? "").trim() || undefined;
+        function commitDate(newDateText?: string) {
+            const text = (newDateText ?? dateText ?? "").trim() || undefined;
             const newDate = text ? transformDate(text, inputFormat) : undefined;
 
             if (newDate?.isValid) {
@@ -240,6 +240,17 @@ export function InputDate({
         [commitDate]
     );
 
+    /** Permet de commit la date dès que la saisie dans le champ texte est "complète". */
+    const onInputChange = useCallback(
+        function onInputChange(text?: string) {
+            setDateText(text);
+            if (text?.replaceAll("_", "").length === inputFormat.length) {
+                commitDate(text);
+            }
+        },
+        [commitDate, inputFormat]
+    );
+
     return (
         <div ref={rootRef} className={theme.input()} data-focus="input-date" data-id={inputDateId}>
             <Input
@@ -252,7 +263,7 @@ export function InputDate({
                 mask={{pattern: inputFormat.replace(/\w/g, "1")}}
                 name={name}
                 onBlur={onInputBlur}
-                onChange={setDateText}
+                onChange={onInputChange}
                 onClick={menu.open}
                 onFocus={menu.open}
                 onKeyDown={onKeyDown}
