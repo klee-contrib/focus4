@@ -142,6 +142,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                  * Il se s'agit pas d'une navigation, donc ce ne sera pas enregistré dans l'historique.
                  */
                 if (isActive && !isUndefined) {
+                    // eslint-disable-next-line @typescript-eslint/no-useless-template-literals
                     store._activeParams[cIn[0]] = `${change.newValue as string}`;
                     let route = store._activeRoute + buildQueryString(store._activeQuery);
 
@@ -187,6 +188,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
             if (change.newValue === undefined || change.newValue === "") {
                 delete store._activeQuery[key];
             } else {
+                // eslint-disable-next-line @typescript-eslint/no-useless-template-literals
                 store._activeQuery[key] = `${change.newValue as string}`;
             }
 

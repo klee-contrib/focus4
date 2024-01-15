@@ -68,7 +68,7 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                 error = value && !EMAIL_REGEX.test(value) ? validator.errorMessage ?? "focus.validation.email" : false;
             } else if (isStringValidator(validator)) {
                 const {maxLength, minLength, errorMessage} = validator;
-                const text = `${(value as unknown as string) || ""}`;
+                const text = value?.toString() ?? "";
                 const isMinLength = text.length < (minLength ?? 0);
                 const isMaxLength = maxLength !== undefined && text.length > maxLength;
                 error = isMinLength || isMaxLength ? errorMessage ?? "focus.validation.string" : undefined;

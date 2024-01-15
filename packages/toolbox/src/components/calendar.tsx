@@ -521,16 +521,11 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
 }
 
 function getWeekNumber(day: DateTime) {
-    // @ts-ignore
     if (day.localWeekNumber === 1 && day.month === 12) {
-        // @ts-ignore
         return `${day.year + 1}-${`${day.localWeekNumber}`.padStart(2, "0")}`;
     }
-    // @ts-ignore
     if (day.localWeekNumber > 50 && day.month === 1) {
-        // @ts-ignore
         return `${day.year - 1}-${`${day.localWeekNumber}`.padStart(2, "0")}`;
     }
-    // @ts-ignore
     return `${day.year}-${`${day.localWeekNumber}`.padStart(2, "0")}`;
 }

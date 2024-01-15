@@ -175,7 +175,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
     // Suggestions.
     const suggestions = useMemo(() => {
-        const newQuery = normalize(`${query}`);
+        const newQuery = normalize(query);
 
         /** Détermine si la valeur est une match pour la requête.  */
         function isMatch(v: string, q: string) {

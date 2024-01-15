@@ -90,9 +90,9 @@ export function SelectRadio<T extends DomainFieldType>({
                             <RadioButton
                                 key={optVal || "undefined"}
                                 label={i18next.t(optLabel)}
-                                name={`${name!}-${optVal as string}`}
+                                name={`${name!}-${optVal}`}
                                 theme={theme}
-                                value={`${optVal as string}`}
+                                value={optVal?.toString() ?? ""}
                             />
                         );
                     })}
