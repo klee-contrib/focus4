@@ -175,7 +175,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
     // Suggestions.
     const suggestions = useMemo(() => {
-        const newQuery = normalise(`${query}`);
+        const newQuery = normalize(`${query}`);
 
         /** Détermine si la valeur est une match pour la requête.  */
         function isMatch(v: string, q: string) {
@@ -195,7 +195,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         }
 
         if (newQuery) {
-            return values.filter(v => isMatch(normalise(getLabel(v)), newQuery));
+            return values.filter(v => isMatch(normalize(getLabel(v)), newQuery));
         } else {
             return values;
         }
@@ -376,20 +376,10 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
     props: AutocompleteProps<TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
 ) => ReactElement;
 
-function normalise(value: string) {
-    const sdiak =
-        "áâäąáâäąččććççĉĉďđďđééěëēėęéěëēėęĝĝğğġġģģĥĥħħíîíîĩĩīīĭĭįįi̇ıĵĵķķĸĺĺļļŀŀłłĺľĺľňńņŋŋņňńŉóöôőøōōóöőôøřřŕŕŗŗššśśŝŝşşţţťťŧŧũũūūŭŭůůűűúüúüűųųŵŵýyŷŷýyžžźźżżß";
-    const bdiak =
-        "AAAAAAAACCCCCCCCDDDDEEEEEEEEEEEEEGGGGGGGGHHHHIIIIIIIIIIIIIIJJKKKLLLLLLLLLLLLNNNNNNNNNOOOOOOOOOOOORRRRRRSSSSSSSSTTTTTTUUUUUUUUUUUUUUUUUWWYYYYYYZZZZZZS";
-
-    let normalised = "";
-    for (let p = 0; p < value.length; p++) {
-        if (sdiak.includes(value.charAt(p))) {
-            normalised += bdiak.charAt(sdiak.indexOf(value.charAt(p)));
-        } else {
-            normalised += value.charAt(p);
-        }
-    }
-
-    return normalised.toLowerCase().trim();
+function normalize(value: string) {
+    return value
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .toLowerCase()
+        .trim();
 }
