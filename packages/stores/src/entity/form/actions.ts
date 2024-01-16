@@ -1,9 +1,9 @@
 import i18next from "i18next";
-import {action, computed, extendObservable, Lambda, observable, runInAction} from "mobx";
+import {action, computed, extendObservable, observable, runInAction} from "mobx";
 
-import {messageStore} from "@focus4/core";
+import {messageStore, requestStore} from "@focus4/core";
 
-import {NodeLoadBuilder, registerLoad, toFlatValues} from "../store";
+import {LoadRegistration, NodeLoadBuilder, registerLoad, toFlatValues} from "../store";
 import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, NodeToType} from "../types";
 
 type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
@@ -31,22 +31,19 @@ export interface ActionsPanelProps {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export type FormActions<S extends string = "default"> = ActionsFormProps & {
-    /** Dispose la réaction de chargement. */
-    dispose?: Lambda;
-    /** Formulaire en chargement. */
-    isLoading: boolean;
-    /** Récupère les props à fournir à un Form pour lui fournir les actions. */
-    readonly formProps: ActionsFormProps;
-    /** Récupère les props à fournir à un Panel pour relier ses boutons aux actions. */
-    readonly panelProps: ActionsPanelProps;
-    /** Appelle le service de chargement (appelé par la réaction de chargement). */
-    load(): Promise<void>;
-    /** Handler de clic sur le bouton "Annuler". */
-    onClickCancel(): void;
-    /** Handler de clic sur le bouton "Modifier". */
-    onClickEdit(): void;
-} & {[P in Exclude<S, "default">]: () => Promise<void>};
+export type FormActions<S extends string = "default"> = ActionsFormProps &
+    LoadRegistration & {
+        /** Récupère les props à fournir à un Form pour lui fournir les actions. */
+        readonly formProps: ActionsFormProps;
+        /** Récupère les props à fournir à un Panel pour relier ses boutons aux actions. */
+        readonly panelProps: ActionsPanelProps;
+        /** Appelle le service de chargement (appelé par la réaction de chargement). */
+        load(): Promise<void>;
+        /** Handler de clic sur le bouton "Annuler". */
+        onClickCancel(): void;
+        /** Handler de clic sur le bouton "Modifier". */
+        onClickEdit(): void;
+    } & {[P in Exclude<S, "default">]: () => Promise<void>};
 
 export class FormActionsBuilder<
     FN extends FormListNode | FormNode,
@@ -121,6 +118,25 @@ export class FormActionsBuilder<
     }
 
     /**
+     * Attache un (ou plusieurs) ids de suivi de requêtes au service de chargement (en plus de l'id par défaut).
+     *
+     * Cela permettra d'ajouter l'état du service au `isLoading` de cet(ces) id(s).
+     * @param trackingIds Id(s) de suivi.
+     */
+    trackingId(...trackingIds: string[]): FormActionsBuilder<FN, A, S> {
+        return super.trackingId(...trackingIds) as any;
+    }
+
+    /**
+     * Active ou désactive la prise en compte de l'état de chargement des listes de référence dans l'état de chargement du service.
+     *
+     * Le comportement par défaut se pilote via `config.trackReferenceLoading` (qui est lui-même `true` par défaut).
+     */
+    withReferenceTracking(active: boolean): FormActionsBuilder<FN, A, S> {
+        return super.withReferenceTracking(active) as any;
+    }
+
+    /**
      * Change le préfixe i18n pour les messages du formulaire.
      * @param prefix: Le préfixe.
      */
@@ -137,7 +153,7 @@ export class FormActionsBuilder<
 
     /** Construit le FormActions. */
     build(): FormActions<S> {
-        const {saveServices, formNode, prefix, saveNamesForMessages, handlers} = this;
+        const {saveServices, formNode, prefix, saveNamesForMessages, handlers, trackingIds} = this;
         // On se prépare à construire plusieurs actions de sauvegarde.
         function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {
             return async function save(this: FormActions<Extract<keyof S, string>>) {
@@ -158,10 +174,10 @@ export class FormActionsBuilder<
                         };
                     }
 
-                    this.isLoading = true;
-                    const data = await saveService(toFlatValues(formNode));
+                    const data = await requestStore.track([loadObject.trackingId, ...trackingIds], () =>
+                        saveService(toFlatValues(formNode))
+                    );
                     runInAction(() => {
-                        this.isLoading = false;
                         formNode.form.isEdit = false;
 
                         // On met à jour le _initialData avec les valeurs qu'on avait à la sauvegarde.
@@ -206,8 +222,6 @@ export class FormActionsBuilder<
                 } catch (e: unknown) {
                     (handlers.error || []).forEach(handler => handler("error", name as any));
                     throw e;
-                } finally {
-                    this.isLoading = false;
                 }
             };
         }
@@ -216,15 +230,19 @@ export class FormActionsBuilder<
 
         const formActions = observable(
             {
-                forceErrorDisplay: false,
-                dispose: loadObject?.dispose,
+                get dispose() {
+                    return loadObject.dispose;
+                },
 
                 get isLoading() {
                     return loadObject.isLoading;
                 },
-                set isLoading(isLoading) {
-                    loadObject.isLoading = isLoading;
+
+                get trackingId() {
+                    return loadObject.trackingId;
                 },
+
+                forceErrorDisplay: false,
 
                 get formProps(): ActionsFormProps {
                     return {

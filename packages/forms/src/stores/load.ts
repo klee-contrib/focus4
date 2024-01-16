@@ -1,5 +1,5 @@
 import {autorun} from "mobx";
-import {useEffect, useState} from "react";
+import {useEffect, useId, useState} from "react";
 
 import {NodeLoadBuilder, registerLoad, StoreListNode, StoreNode} from "@focus4/stores";
 
@@ -16,13 +16,14 @@ export function useLoad<SN extends StoreListNode | StoreNode>(
     deps: any[] = []
 ) {
     const [isLoading, setIsLoading] = useState(false);
+    const trackingId = useId();
     useEffect(() => {
-        const res = registerLoad(node, loadBuilder);
+        const res = registerLoad(node, loadBuilder, trackingId);
         const disposer = autorun(() => setIsLoading(res.isLoading));
         return () => {
             disposer();
             res.dispose();
         };
     }, deps);
-    return isLoading;
+    return [isLoading, trackingId] as const;
 }

@@ -29,6 +29,7 @@ export {
     FormNodeToSourceType,
     InputComponents,
     ListEntry,
+    LoadRegistration,
     Metadata,
     NodeLoadBuilder,
     NodeToType,
@@ -64,5 +65,6 @@ export {
     ReferenceList,
     emptyReferenceList,
     makeReferenceList,
-    makeReferenceStore
+    makeReferenceStore,
+    referenceTrackingId
 } from "./reference";

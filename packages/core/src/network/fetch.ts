@@ -1,10 +1,9 @@
 import {isObject, merge, toPairs} from "lodash";
-import {v4} from "uuid";
 
 import {config} from "../utils";
 
 import {ManagedErrorResponse, manageResponseErrors} from "./error-parsing";
-import {requestStore} from "./store";
+import {HttpMethod, requestStore} from "./store";
 
 /**
  * Effectue une requête HTTP avec du log et la gestion des erreurs.
@@ -14,7 +13,7 @@ import {requestStore} from "./store";
  * @param options Les options de la requête, qui surchargeront les valeurs par défaut.
  */
 export async function coreFetch(
-    method: "CONNECT" | "DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT" | "TRACE",
+    method: HttpMethod,
     url: string,
     {body, query}: {body?: {}; query?: {}} = {},
     options: RequestInit = {}
@@ -36,15 +35,8 @@ export async function coreFetch(
         options
     );
 
-    /*
-     * On crée une première Promise autorésolue ici pour éviter de trigger une mise à jour d'état synchrone avec l'appel du fetch.
-     * Ni React, ni MobX n'apprécient ça.
-     */
-    const id = v4();
-    await new Promise(resolve => {
-        setTimeout(resolve, 0);
-    });
-    requestStore.updateRequest({id, url, status: "pending"}); // On crée la requête dans le store (= la mise à jour d'état en question).
+    // On crée la requête dans le store.
+    const id = await requestStore.startRequest(method, url);
 
     let errorHandled = false;
 
@@ -56,11 +48,11 @@ export async function coreFetch(
         try {
             const response = await window.fetch(url, options);
 
+            // On termine la requête dans le store.
+            requestStore.endRequest(id);
+
             if (response.status >= 200 && response.status < 300) {
                 // Retour en succès.
-
-                // On met à jour en succès la requête dans le store.
-                requestStore.updateRequest({id, url, status: "success"});
 
                 // On détermine le type de retour en fonction du Content-Type dans le header.
                 const contentType = response.headers.get("Content-Type");
@@ -76,9 +68,6 @@ export async function coreFetch(
             } else {
                 // Retour en erreur
                 errorHandled = true;
-
-                // On met à jour en erreur la requête dans le store.
-                requestStore.updateRequest({id, url, status: "error"});
 
                 // On détermine le type de retour en fonction du Content-Type dans le header.
                 const contentType = response.headers.get("Content-Type");
@@ -103,7 +92,7 @@ export async function coreFetch(
                     });
                 } else {
                     // Sinon, on retourne une erreur technique.
-                    requestStore.updateRequest({id, url, status: "error"});
+                    requestStore.endRequest(id);
                     console.error(
                         `Une erreur technique non gérée est survenue lors de l'appel à "${url}" après ${tryCount} tentatives. Dernière erreur : ${
                             error as string

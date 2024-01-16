@@ -18,7 +18,7 @@ Néanmoins, c'est un peu fastidieux, donc on va abstraire une bonne partie de ce
 Focus met à disposition le hook **`useLoad`**, à utiliser dans un composant React, pour attacher un service de chargement à un `StoreNode`. Il s'utilise de la manière suivante :
 
 ```ts
-const isLoading = useLoad(storeNode, a => a.params(() => state.id).load(loadService));
+const [isLoading] = useLoad(storeNode, a => a.params(() => state.id).load(loadService));
 ```
 
 Il prend le `StoreNode` en premier paramètre et la description du service de chargement (le service et ses paramètres) en deuxième paramètre, via un `NodeLoadBuilder`, décrit en dessous. Il retourne un état de chargement qui indique si la requête est en cours.

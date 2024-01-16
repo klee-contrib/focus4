@@ -1,38 +1,77 @@
 import {isFunction} from "lodash";
-import {autorun, extendObservable, runInAction} from "mobx";
+import {autorun, extendObservable, Lambda, runInAction} from "mobx";
+import {v4} from "uuid";
 
-import {isAnyFormNode, isStoreListNode, isStoreNode, NodeToType, StoreListNode, StoreNode} from "../types";
+import {config, requestStore} from "@focus4/core";
+
+import {referenceTrackingId} from "../../reference";
+import {
+    EntityToType,
+    isAnyFormNode,
+    isStoreListNode,
+    isStoreNode,
+    NodeToType,
+    StoreListNode,
+    StoreNode
+} from "../types";
 
 import {defaultLoad} from "./store";
+
+/** Enregistrement de chargement. */
+export interface LoadRegistration {
+    /**
+     * Id du suivi de requêtes associé à cette enregistrement de chargement.
+     *
+     * Il pourra être utilisé pour enregistrer d'autres services sur cet id pour combiner leur état de chargement.
+     */
+    readonly trackingId: string;
+    /** Retourne `true` si le service de chargement (ou un autre service avec le même id de suivi) est en cours de chargement. */
+    readonly isLoading: boolean;
+    /** Permet de désactiver l'enregistrement de chargement. */
+    readonly dispose: Lambda;
+}
 
 /**
  * Enregistre un service de chargement sur un noeud.
  * @param node Le noeud.
  * @param loadBuilder Builder pour le service de chargement.
+ * @param trackingId Id de suivi de requête pour ce load.
  * @returns disposer.
  */
 export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
     node: SN,
-    loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>
-): {isLoading: boolean; dispose: () => void};
+    loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>,
+    trackingId?: string
+): LoadRegistration;
 export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
     node: SN,
-    loadBuilder: NodeLoadBuilder<SN, A>
-): {isLoading: boolean; dispose: () => void};
+    loadBuilder: NodeLoadBuilder<SN, A>,
+    trackingId?: string
+): LoadRegistration;
 export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
     node: SN,
-    loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>)
+    loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>),
+    trackingId?: string
 ) {
-    const {getLoadParams, handlers, loadService} = isFunction(loadBuilder)
+    const {getLoadParams, trackingIds, handlers, loadService, trackReferenceLoading} = isFunction(loadBuilder)
         ? loadBuilder(new NodeLoadBuilder())
         : loadBuilder;
+    trackingId ??= v4();
     const state = extendObservable(
         {
+            trackingId,
             dispose: () => {
                 /** */
             }
         },
-        {isLoading: false}
+        {
+            get isLoading() {
+                return (
+                    requestStore.isLoading(trackingId!) ||
+                    (trackReferenceLoading && requestStore.isLoading(referenceTrackingId))
+                );
+            }
+        }
     );
 
     if (getLoadParams && loadService) {
@@ -43,22 +82,20 @@ export function registerLoad<SN extends StoreListNode | StoreNode, A extends rea
         // eslint-disable-next-line func-style
         const load = async function load() {
             let params = getLoadParams();
-            if (params || params === 0) {
-                state.isLoading = true;
+            if (params !== undefined) {
                 if (!Array.isArray(params)) {
                     params = [params];
                 }
-                const data = await loadService(...params);
+                const data = await requestStore.track([trackingId!, ...trackingIds], () => loadService(...params));
                 runInAction(() => {
                     if (data) {
                         if (isStoreNode(node)) {
-                            node.replace(data as any);
+                            node.replace(data as EntityToType<any>);
                         } else if (isStoreListNode(node)) {
-                            node.replaceNodes(data as any);
+                            node.replaceNodes(data as EntityToType<any>[]);
                         }
                     }
 
-                    state.isLoading = false;
                     (handlers.load || []).forEach(handler => handler("load"));
                 });
             }
@@ -85,6 +122,10 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
     getLoadParams?: () => any | undefined;
     /** @internal */
     loadService?: (...args: A) => Promise<NodeToType<SN> | undefined>;
+    /** @internal */
+    trackingIds: string[] = [];
+    /** @internal */
+    trackReferenceLoading = config.trackReferenceLoading;
 
     /**
      * Précise la getter permettant de récupérer la liste des paramètres pour l'action de chargement.
@@ -142,6 +183,27 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
             }
         });
 
+        return this;
+    }
+
+    /**
+     * Attache un (ou plusieurs) ids de suivi de requêtes au service de chargement (en plus de l'id par défaut).
+     *
+     * Cela permettra d'ajouter l'état du service au `isLoading` de cet(ces) id(s).
+     * @param trackingIds Id(s) de suivi.
+     */
+    trackingId(...trackingIds: string[]): NodeLoadBuilder<SN, A> {
+        this.trackingIds = trackingIds;
+        return this;
+    }
+
+    /**
+     * Active ou désactive la prise en compte de l'état de chargement des listes de référence dans l'état de chargement du service.
+     *
+     * Le comportement par défaut se pilote via `config.trackReferenceLoading` (qui est lui-même `true` par défaut).
+     */
+    withReferenceTracking(active: boolean): NodeLoadBuilder<SN, A> {
+        this.trackReferenceLoading = active;
         return this;
     }
 }

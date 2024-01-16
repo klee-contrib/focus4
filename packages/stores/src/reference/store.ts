@@ -1,10 +1,14 @@
 import {upperFirst} from "lodash";
 import {action, extendObservable, observable} from "mobx";
+import {v4} from "uuid";
 
-import {config} from "@focus4/core";
+import {config, requestStore} from "@focus4/core";
 
 import {AsList, ReferenceDefinition} from "./types";
 import {filter, getLabel} from "./util";
+
+/** Id du suivi de requêtes du ReferenceStore. */
+export const referenceTrackingId = v4();
 
 /**
  * Construit un store de référence à partir de la config donnée.
@@ -17,6 +21,8 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
     refConfig: T,
     referenceClearer?: (refName?: string) => Promise<void>
 ): AsList<T> & {
+    /** Si l'une des listes de référence est en cours de chargement. */
+    readonly isLoading: boolean;
     /**
      * Recharge une liste ou le store.
      * @param refName L'éventuelle liste demandée.
@@ -48,13 +54,15 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                     referenceStore[`_${ref}_loading`] = true;
 
                     // On effectue l'appel et on met à jour la liste.
-                    referenceLoader(ref).then(
-                        action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
-                            referenceStore[`_${ref}_cache`] = new Date().getTime();
-                            referenceStore[`_${ref}`].replace(refList);
-                            delete referenceStore[`_${ref}_loading`];
-                        })
-                    );
+                    requestStore
+                        .track(referenceTrackingId, () => referenceLoader(ref))
+                        .then(
+                            action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
+                                referenceStore[`_${ref}_cache`] = new Date().getTime();
+                                referenceStore[`_${ref}`].replace(refList);
+                                delete referenceStore[`_${ref}_loading`];
+                            })
+                        );
                 }
 
                 // Dans tous les cas, on renvoie la liste "cachée". Ainsi, sa mise à jour relancera toujours la dérivation.
@@ -78,6 +86,12 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
             }
         }
     };
+
+    extendObservable(referenceStore, {
+        get isLoading() {
+            return requestStore.isLoading(referenceTrackingId);
+        }
+    });
 
     return referenceStore;
 }
