@@ -449,7 +449,7 @@ export class CollectionStore<T = any, C = any> {
 
         const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top, skipToken} = this;
 
-        if (this.criteriaMode === "manual") {
+        if (this.criteriaMode === "manual" && !isScroll) {
             this.criteria.sourceNode.replace(toFlatValues(this.criteria) as EntityToType<C>);
         }
 
