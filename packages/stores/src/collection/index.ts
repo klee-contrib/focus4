@@ -16,9 +16,18 @@ import {v4} from "uuid";
 
 import {config} from "@focus4/core";
 
-import {buildNode, FormEntityField, FormNode, isEntityField, nodeToFormNode, toFlatValues} from "../entity";
+import {
+    buildNode,
+    EntityToType,
+    FormEntityField,
+    FormNode,
+    FormNodeBuilder,
+    isEntityField,
+    toFlatValues
+} from "../entity";
 
 import {
+    CollectionStoreInitProperties,
     FacetInput,
     FacetItem,
     FacetOutput,
@@ -93,6 +102,9 @@ export class CollectionStore<T = any, C = any> {
     /** StoreNode contenant les critères personnalisés de recherche. */
     readonly criteria!: FormNode<C>;
 
+    /** Mode de prise en compte de l'objet de critère. */
+    readonly criteriaMode!: CollectionStoreInitProperties["criteriaMode"];
+
     /** Set contenant les éléments sélectionnés. */
     readonly selectedItems = observable.set<T>();
 
@@ -107,26 +119,18 @@ export class CollectionStore<T = any, C = any> {
      * @param criteria La description du critère de recherche personnalisé.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      */
-    constructor(
-        service: SearchService<T>,
-        criteria?: C,
-        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean}
-    );
+    constructor(service: SearchService<T>, criteria?: C, initialQuery?: CollectionStoreInitProperties<C>);
     /**
      * Crée un nouveau store de recherche.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      * @param service Le service de recherche.
      * @param criteria La description du critère de recherche personnalisé.
      */
-    constructor(
-        service: SearchService<T>,
-        initialQuery?: SearchProperties<C> & {debounceCriteria?: boolean},
-        criteria?: C
-    );
+    constructor(service: SearchService<T>, initialQuery?: CollectionStoreInitProperties<C>, criteria?: C);
     constructor(
         firstParam?: LocalStoreConfig<T> | SearchService<T>,
-        secondParam?: C | (SearchProperties<C> & {debounceCriteria?: boolean}),
-        thirdParam?: C | (SearchProperties<C> & {debounceCriteria?: boolean})
+        secondParam?: C | CollectionStoreInitProperties<C>,
+        thirdParam?: C | CollectionStoreInitProperties<C>
     ) {
         makeObservable(this);
         if (isFunction(firstParam)) {
@@ -134,7 +138,7 @@ export class CollectionStore<T = any, C = any> {
             this.service = firstParam;
 
             // On gère les paramètres du constructeur dans les deux ordres.
-            let initialQuery: SearchProperties<C> & {debounceCriteria?: boolean};
+            let initialQuery: CollectionStoreInitProperties<C>;
             let criteria;
 
             if (secondParam && (secondParam as any)[Object.keys(secondParam)[0]].type) {
@@ -147,14 +151,17 @@ export class CollectionStore<T = any, C = any> {
 
             // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
             if (criteria) {
-                const node = buildNode(criteria);
-                nodeToFormNode(node, node);
-                this.criteria = node as any;
+                const {criteriaBuilder = (x: any) => x} = initialQuery ?? {};
+                this.criteria = criteriaBuilder(new FormNodeBuilder(buildNode(criteria as C)))
+                    .edit(() => true)
+                    .build();
             }
 
             if (initialQuery) {
                 this.setProperties(initialQuery);
             }
+
+            this.criteriaMode = initialQuery?.criteriaMode ?? "direct";
 
             // Relance la recherche à chaque modification de propriété.
             reaction(
@@ -162,7 +169,7 @@ export class CollectionStore<T = any, C = any> {
                     this.groupingKey,
                     this.inputFacets,
                     this.searchFields,
-                    !initialQuery?.debounceCriteria ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
+                    this.criteriaMode === "direct" ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
                     this.sortAsc,
                     this.sortBy
                 ],
@@ -172,7 +179,7 @@ export class CollectionStore<T = any, C = any> {
             // Pour les champs texte, on utilise la recherche "debouncée" pour ne pas surcharger le serveur.
             reaction(
                 () => [
-                    initialQuery?.debounceCriteria ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
+                    this.criteriaMode === "debounced" ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
                     this.query
                 ],
                 debounce(() => this.search(), config.textSearchDelay)
@@ -368,7 +375,11 @@ export class CollectionStore<T = any, C = any> {
     /** Récupère l'objet de critères personnalisé à plat (sans le StoreNode) */
     @computed.struct
     get flatCriteria() {
-        const criteria = this.criteria && (toFlatValues(this.criteria) as {});
+        const criteria =
+            this.criteria &&
+            (toFlatValues(
+                this.criteriaMode === "manual" ? this.criteria.sourceNode : this.criteria
+            ) as EntityToType<C>);
         if (criteria) {
             // On enlève les critères en erreur.
             for (const error in this.criteriaErrors) {
@@ -437,6 +448,10 @@ export class CollectionStore<T = any, C = any> {
         }
 
         const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top, skipToken} = this;
+
+        if (this.criteriaMode === "manual") {
+            this.criteria.sourceNode.replace(toFlatValues(this.criteria) as EntityToType<C>);
+        }
 
         const data = {
             criteria: {...this.flatCriteria, query, searchFields: this.searchFields},

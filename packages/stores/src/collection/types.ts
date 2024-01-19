@@ -1,4 +1,4 @@
-import {EntityToType} from "../entity";
+import {EntityToType, FormNodeBuilder} from "../entity";
 
 /** Définition d'un service de recherche. */
 export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T>>;
@@ -60,6 +60,20 @@ export interface SearchProperties<C = any> {
     sortBy?: string;
     /** Nombre de résultats à retourner par requête. */
     top?: number;
+}
+
+/** Initialisation du CollectionStore */
+export interface CollectionStoreInitProperties<C = any> extends SearchProperties<C> {
+    /**
+     * Mode de prise en compte de l'objet de critère :
+     *
+     * - `direct` : La mise à jour d'un critère lance la recherche immédiatement (valeur par défaut)
+     * - `debounced` : La mise à jour d'un critère lance la recherche après un petit délai (comme pour `query`)
+     * - `manual` : Les critères ne seront appliqués que via un appel explicite à `search()`.
+     */
+    criteriaMode?: "debounced" | "direct" | "manual";
+    /** Configurateur pour le formulaire de critères. */
+    criteriaBuilder?: (s: FormNodeBuilder<C, C>) => FormNodeBuilder<any, C>;
 }
 
 /** Valeur de facette. */
