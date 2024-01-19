@@ -69,14 +69,14 @@ export class FormActionsBuilder<
      * Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification.
      * @param get Getter.
      */
-    params<NA extends readonly any[]>(get: () => NA | undefined): FormActionsBuilder<FN, NonNullable<NA>, S>;
+    params<const NA extends any[]>(get: () => NA | undefined): FormActionsBuilder<FN, NonNullable<NA>, S>;
     params<NA>(get: () => NA): FormActionsBuilder<FN, [NonNullable<NA>], S>;
     /**
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    params<NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S>;
-    params<NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S> {
+    params<const NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S>;
+    params<const NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>, S> {
         return super.params(...params) as any;
     }
 

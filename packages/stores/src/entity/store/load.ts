@@ -132,14 +132,14 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
      * Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification.
      * @param get Getter.
      */
-    params<NA extends readonly any[]>(get: () => NA | undefined): NodeLoadBuilder<SN, NonNullable<NA>>;
+    params<const NA extends any[]>(get: () => NA | undefined): NodeLoadBuilder<SN, NonNullable<NA>>;
     params<NA>(get: () => NA): NodeLoadBuilder<SN, [NonNullable<NA>]>;
     /**
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    params<NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>>;
-    params<NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>> {
+    params<const NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>>;
+    params<const NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>> {
         if (!params.length) {
             // @ts-ignore
             this.getLoadParams = () => [];

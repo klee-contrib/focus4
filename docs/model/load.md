@@ -58,8 +58,6 @@ params(1);
 
 Il est possible d'appeler `params()` tel quel, sans arguments, pour indiquer que le service de chargement ne prend pas de paramètres.
 
-Si vous devez renvoyer plusieurs paramètres non fixes, alors il faudra marquer l'array renvoyé comme `as const` (cf. `load` juste en dessous). Exemple : `params(() => [this.props.id, "test"] as const)`
-
 _Remarque : Si `params` est appelé avec `undefined` ou si la fonction passée renvoie `undefined`, la service de chargement **ne sera pas appelé**. Cela permet par exemple de gérer des formulaires en mode création et modification en désactivant simplement le service de chargement s'il n'y a pas d'id, par exemple. Attention tout de même à `params([])` qui correspond à `params()` et qui appelle sans paramètres le service, et à `params([undefined])` qui appellera quand même le service avec `undefined` comme paramètre._
 
 ### `load(service)`
