@@ -1,0 +1,30 @@
+{
+    "name": "@focus4/docs",
+    "description": "Focus v4 docs",
+    "type": "module",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KleeGroup/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/.storybook",
+    "dependencies": {
+        "@focus4/collections": "11.13.2",
+        "@focus4/core": "11.13.0",
+        "@focus4/forms": "11.13.2",
+        "@focus4/layout": "11.13.2",
+        "@focus4/stores": "11.13.1",
+        "@focus4/styling": "11.13.2",
+        "@focus4/toolbox": "11.13.2"
+    },
+    "devDependencies": {
+        "@focus4/tooling": "11.13.2",
+        "@storybook/addon-essentials": "7.6.10",
+        "@storybook/blocks": "7.6.10",
+        "@storybook/react-vite": "7.6.10",
+        "storybook": "7.6.10",
+        "storybook-dark-mode": "3.0.3"
+    }
+}

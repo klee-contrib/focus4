@@ -42,6 +42,13 @@ export interface ChipProps extends PointerEvents<HTMLButtonElement | HTMLLinkEle
     theme?: CSSProp<ChipCss>;
 }
 
+/**
+ * Un chip permet aux utilisateurs de renseigner de l'information, faire des sélections, filtrer du contenu ou déclencher des actions.
+ *
+ * - Peut contenir une icône à l'avant, et une action de suppression à l'arrière.
+ * - 3 couleurs au choix : primaire, accentuée, ou primaire claire.
+ * - Peut être utilisé comme un bouton ou un lien.
+ */
 export function Chip({
     className,
     color,

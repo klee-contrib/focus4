@@ -48,7 +48,12 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
 }
 
 /**
- * Bouton standard.
+ * Le bouton standard permet de déclencher la plupart des actions dans une interface.
+ *
+ * - Peut contenir une icône, à l'avant ou l'arrière.
+ * - 5 types de boutons : simple, entouré, plein, surélevé et plein + surélevé.
+ * - 3 couleurs au choix : primaire, accentuée, ou primaire claire.
+ * - Peut être utilisé comme un bouton ou un lien.
  */
 export function Button({
     className,

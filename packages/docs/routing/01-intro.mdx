@@ -1,0 +1,17 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Routage/Présentation" />
+
+# Routage
+
+Le routeur est le composant qui permet de gérer les différentes pages d'une application et la navigation entre-elles. Il permet de faire correspondre une URL à son contenu. On retrouve un routeur sur une application "front" pour gérer des pages comme sur une application "back" pour renvoyer la ressource demandée.
+
+Pour un routeur "front", comme pour une SPA, la première idée serait de chercher à faire correspondre nos routes à des pages, ce qui équivaudrait, pour une application React par exemple, à poser des composants en face de chaque route. C'est comme ça que fonctionne la plupart des routeurs existants que les gens utilisent, comme [react-router](https://reactrouter.com/) par exemple. En pratique, relier des composants à des routes entraîne une très forte dépendance entre les deux et peut devenir rapidement limitant en terme de champ des possibles.
+
+Pour Focus, on va donc plutôt remonter d'un cran, et on va plutôt chercher à faire correspondre nos routes à **de l'état**. En utilisant MobX pour cet état, il devient en plus facile à utiliser, et puisque l'on dérive de toute façon nos composants d'état en général, cela s'inclura naturellement dans le reste de l'application. Nous ne sommes pas les seuls à faire ça, mais c'est un système qui est encore peu répandu.
+
+Le routeur qui va être décrit va donc s'occuper de traduire des routes en état (et inversement). Traduire cet état vers un rendu de page via des composants est laissé à la discrétion du dévelopeur pour son application. Les APIs proposées par le routeur posent néanmoins un cadre et vont le guider, tout de même.
+
+Le router est disponible dans le module `@focus4/core`.
+
+Ce router remplace un [ancien routeur](routing/legacy.md), qui utilise des concepts similaires mais ne va pas aussi loin sur la structuration des routes. Les deux routeurs ont vocation a cohabiter puisqu'ils ne sont complètement distincts. Néanmoins, si vous avez le choix, utilisez le plus récent :)

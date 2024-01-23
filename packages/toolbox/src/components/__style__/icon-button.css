@@ -92,7 +92,11 @@
 
     &.button--light {
         background-color: var(--button-primary-light-color);
-        color: inherit;
+        color: var(--button-secondary-color);
+
+        &::before {
+            background-color: var(--button-secondary-color);
+        }
     }
 
     &.button--accent {

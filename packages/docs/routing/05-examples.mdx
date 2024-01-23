@@ -1,0 +1,75 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Routage/Exemples d'utilisation" />
+
+# Exemples d'utilisation
+
+## Sélection du composant à afficher
+
+Le composant racine d'une application pourrait ressembler à ça :
+
+```tsx
+export function Main() {
+    // Cet effet permet de réinitialiser le scroll de la page à chaque changement de module.
+    const scrollable = useContext(ScrollableContext);
+    useLayoutEffect(() => {
+        scrollable.scrollTo({left: 0, top: 0, behavior: "auto"});
+    });
+
+    return useObserver(() => {
+        const strRouter = router.sub(x => x("structure")("strId")) as StructureRouter;
+        const prjRouter = router.sub(x => x("projet")("prjId")) as ProjetRouter;
+        const lgnRouter = router.sub(x => x("ligne")("lgnId")) as LigneRouter;
+
+        switch (router.get(x => x)) {
+            case "encaissement":
+                return <Encaissement router={router.sub(x => x("encaissement"))} />;
+            case "decaissement":
+                return <Decaissement router={router.sub(x => x("decaissement"))} />;
+            case "administration":
+                return <AdminPage router={router.sub(x => x("administration"))} />;
+            default:
+                if (strRouter.is(x => x)) {
+                    return <Structure router={strRouter} />;
+                } else if (prjRouter.is(x => x)) {
+                    return <Projet router={prjRouter} />;
+                } else if (lgnRouter.is(x => x)) {
+                    return <Ligne router={lgnRouter} />;
+                } else {
+                    return <Home />;
+                }
+        }
+    });
+}
+```
+
+On effectue un "switch" sur `router.get(x => x)`, qui permet de choisir le "module" à afficher en fonction de la première section de route active, qui correspond au "module", puis on passe le sous-routeur correspondant à chaque module.
+
+Pour les 4 derniers composants, les modules "Structure", "Projet" et "Ligne" sont liés à des pages de "détail", donc ils contiennent un "id" dans leur routeur de module, à l'inverse des 3 précédents. De plus, le module "Home" inclus les routes de ces modules sans le paramètre (`/structure`, `/projet` et `/ligne`), donc voilà comment cela pourrait être traité.
+
+Ce genre de mécanisme pourra être décliné pour tous les autres écrans de l'application.
+
+## Chargement de données
+
+Puisque les paramètres du routeur dans le `state` sont observables, il est facile de définir des réactions qui permettent de charger les données correspondante automatiquement.
+
+Par exemple :
+
+```ts
+autorun(async () => {
+    const {prjId} = router.state.projet;
+    if (prjId) {
+        data = await loadProjet(prjId);
+    }
+});
+```
+
+Cette réaction peut être posée dans un composant (via `useEffect` ou `@disposeOnUnmount`), ou même dans un "store" externe indépendant si on préfère. Il est **nécessaire de vérifier que le paramètre n'est pas nul**, systématiquement (même dans un composant), au risque d'avoir une mauvaise surprise.
+
+Cela s'intègre parfaitement avec les `FormActions` du module `@focus4/stores`, qui pose une réaction sur les paramètres de la fonction `load` :
+
+```ts
+a => a.params(() => router.state.projet.prjId);
+```
+
+La fonction `load` n'est déjà appelée que si `params` ne renvoie pas `undefined`, donc il n'y a rien de plus à vérifier.

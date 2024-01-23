@@ -51,7 +51,12 @@ export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonEleme
 }
 
 /**
- * Bouton action flottant.
+ * Le bouton d'action flottant permet aux utilisateurs de réaliser des actions principales.
+ *
+ * - Doit contenir une icône, et peut être étendu avec un libellé.
+ * - 3 tailles de boutons : petite, normale ou grande.
+ * - 3 couleurs au choix : primaire, accentuée, ou primaire claire.
+ * - Peut être utilisé comme un bouton ou un lien.
  */
 export function FloatingActionButton({
     className,

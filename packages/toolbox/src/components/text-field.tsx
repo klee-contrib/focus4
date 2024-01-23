@@ -49,7 +49,7 @@ export interface TrailingIcon {
     tooltip?: ReactNode;
 }
 
-/** Props du champ texte.  */
+/** Props du champ texte. */
 export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTextAreaElement>, AriaAttributes {
     /** Valeur de `autocomplete` sur l'input HTML. */
     autoComplete?: string;
@@ -123,7 +123,16 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     value?: string;
 }
 
-/** Champ texte de base. */
+/**
+ * Un champ texte permet au utilisateurs de renseigner du texte dans une interface.
+ *
+ * - Permet de faire de la saisie sur une ou plusieurs lignes.
+ * - Peut limiter le nombre de caractères saisissables.
+ * - Le texte saisi peut être entouré d'un préfixe ou d'un suffixe.
+ * - Peut afficher une icône à l'avant, et un nombre arbitraire d'icônes à l'arrière ainsi qu'un indicateur de chargement.
+ * - Les icônes arrières peuvent être munies d'une action et d'une tooltip.
+ * - Peut afficher une erreur.
+ */
 export const TextField = forwardRef(function TextField(
     {
         autoComplete,

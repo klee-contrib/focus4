@@ -1,0 +1,18 @@
+:root {
+    --preferred-font: Manrope;
+    --button-line-height-delta: -1px;
+}
+
+.container {
+    display: flex;
+    gap: var(--button-spacing);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--button-spacing);
+}

@@ -46,7 +46,12 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
 }
 
 /**
- * Bouton simple avec une icône.
+ * Le bouton icône permet aux utilisateurs de réaliser une action secondaire en un seul clic.
+ *
+ * - Ne peut contenir qu'une icône.
+ * - 3 types de boutons : simple, entouré ou plein.
+ * - 3 couleurs au choix : primaire, accentuée, ou primaire claire.
+ * - Peut être utilisé comme un bouton ou un lien.
  */
 export function IconButton({
     className,

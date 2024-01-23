@@ -8,10 +8,33 @@ import _ from "lodash";
 
 const __filename = fileURLToPath(import.meta.url);
 
-function generateDocFile(fileName, globPath, lines) {
+function getName(name, type) {
+    if (["string", "number", "boolean", "enum"].includes(type)) {
+        return type;
+    } else if (type == "ReactNode" && name.includes("icon")) {
+        return "string";
+    } else if (name.startsWith("on")) {
+        return "function";
+    } else {
+        return "other";
+    }
+}
+
+function getType(p) {
+    return p.type.raw ?? p.type.name;
+}
+
+function generateDocFile(fileName, globPath) {
+    const module = fileName.substring(0, fileName.length - 3);
+
+    if (!fs.existsSync(path.resolve(__filename, `../../packages/docs/components/${module}/metas`))) {
+        fs.mkdirSync(path.resolve(__filename, `../../packages/docs/components/${module}/metas`), {recursive: true});
+    }
+
     // Parse a file for docgen info
     for (const component of docgen
         .parse(glob.sync(globPath), {
+            shouldExtractLiteralValuesFromEnum: true,
             propFilter: prop =>
                 !(
                     prop.name == "ref" ||
@@ -20,43 +43,56 @@ function generateDocFile(fileName, globPath, lines) {
                     prop.name.startsWith("onPointer")
                 )
         })
-        .reverse()) {
-        lines.push(`## \`${component.displayName}\``);
-        lines.push("");
-        lines.push(component.description);
-        lines.push("");
-        lines.push("### Props");
-        lines.push("");
-        lines.push(
-            markdownTable([
-                ["Nom", "Obligatoire", "Type", "Description"],
-                ..._.orderBy(Object.values(component.props), x => x.name.toLowerCase()).map(p => [
-                    `\`${p.name}\``,
-                    p.required ? "**Oui**" : "Non",
-                    `<code>${p.type.name.replace(/\|/g, "&#124;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>`,
-                    p.description.replace(/\n/g, "<br />").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                ])
-            ])
-        );
-        lines.push("");
-    }
+        .reverse()
+        .filter(c => !c.displayName.startsWith("use"))) {
+        fs.writeFileSync(
+            path.resolve(
+                __filename,
+                `../../packages/docs/components/${module}/metas/${_.kebabCase(component.displayName)}.ts`
+            ),
+            `import {${component.displayName}} from "@focus4/${module}";
 
-    if (!fs.existsSync(path.resolve(__filename, "../../docs/components"))) {
-        fs.mkdirSync(path.resolve(__filename, "../../docs/components"));
+import type {Meta} from "@storybook/react";
+
+export const ${component.displayName}Meta: Meta<typeof ${component.displayName}> = {
+    component: ${component.displayName},
+    parameters: {
+        layout: "centered",
+        docs: {
+            description: {component: \`${component.description.replaceAll('"', '\\"').replaceAll("`", "\\`")}\`}
+        }
+    },
+    argTypes: {
+        ${Object.keys(component.props)
+            .map(
+                prop =>
+                    `${prop}: {
+            description: \`${component.props[prop].description
+                ?.replaceAll("`", "\\`")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")}\`,
+            type: {
+                name: "${getName(prop, component.props[prop].type.name)}",
+                required: ${component.props[prop].required}${
+                        component.props[prop].type.value
+                            ? `,
+                value: [${component.props[prop].type.value.map(value => value.value).join(", ")}]`
+                            : getName(prop, component.props[prop].type.name) === "other"
+                            ? `,
+                value: "${component.props[prop].type.name.replaceAll('"', '\\"')}"`
+                            : ""
+                    }
+            },
+            table: {type: {summary: \`${getType(component.props[prop])}\`}}
+        }`
+            )
+            .join(",\n        ")}
     }
-    fs.writeFileSync(path.resolve(__filename, `../../docs/components/${fileName}`), lines.join("\r\n"));
+};`.replaceAll("\n", "\r\n")
+        );
+    }
 }
 
-generateDocFile("toolbox.md", "./packages/toolbox/src/components/*.tsx", [
-    "# Composants de `@focus4/toolbox` <!-- {docsify-ignore-all} -->",
-    "",
-    "`@focus4/toolbox` est une réimplémentation en React moderne de [React Toolbox](https://react-toolbox.io/#/components), une librairie qui implémentait Material Design pour le web. Cette librairie avait été choisie au lancement de la v4 de Focus (en 2016), mais son développement a été malheureusement abandonné 2 ans plus tard... Sans autre alternative viable, elle a fini par être intégralement intégrée dans Focus.",
-    ""
-]);
+generateDocFile("toolbox.md", "./packages/toolbox/src/components/*.tsx");
 
-generateDocFile("forms.md", "./packages/forms/src/components/*.tsx", [
-    "# Composants de `@focus4/forms` <!-- {docsify-ignore-all} -->",
-    "",
-    "`@focus4/forms` contient, en plus des [composants de formulaires](./model/form-usage.md), quelques composants supplémentaires qui s'ajoutent à ceux `@focus4/toolbox` et peuvent parfois les surcharger. Historiquement, ces composants n'étaient pas dans `react-toolbox`, ce qui est la principale raison pour laquelle ils sont dans un module différent...",
-    ""
-]);
+generateDocFile("forms.md", "./packages/forms/src/components/*.tsx");

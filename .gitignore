@@ -1,5 +1,7 @@
 npm-debug.log
 node_modules
+docs
 lib
+metas
 *.css.d.ts
 lerna-debug.log
