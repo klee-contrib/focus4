@@ -38,10 +38,6 @@ Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles 
 | `onKeyPress`            | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                   | Au `keypress` du champ.                                                                                                                                                                                                                                                                    |
 | `onKeyUp`               | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                   | Au `keyup` du champ.                                                                                                                                                                                                                                                                       |
 | `onPaste`               | Non         | <code>ClipboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                  | Au collage de texte dans le champ.                                                                                                                                                                                                                                                         |
-| `onPointerDown`         | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                           | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                                                                                                                                                                                                      |
-| `onPointerEnter`        | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                           | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                                                                                                                                                                                                     |
-| `onPointerLeave`        | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                           | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                                                                                                                                                                                                     |
-| `onPointerUp`           | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                           | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                                                                                                                                                                                        |
 | `onQueryChange`         | Non         | <code>(query: string) =&gt; void</code>                                                                                | Handler appelé lorsque la query (= contenu du champ texte) change.                                                                                                                                                                                                                         |
 | `prefix`                | Non         | <code>string</code>                                                                                                    | Préfixe à poser devant le texte.                                                                                                                                                                                                                                                           |
 | `query`                 | Non         | <code>string</code>                                                                                                    | Permet de surcharger la query (= contenu du champ texte). A utiliser avec `onQueryChange`.                                                                                                                                                                                                 |
@@ -64,28 +60,24 @@ Bouton standard.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                      | Description                                                                            |
-| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                       | Classe CSS a ajouter au composant racine.                                              |
-| `color`          | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                                     | Couleur du bouton.                                                                     |
-| `disabled`       | Non         | <code>boolean</code>                                                                      | Désactive le bouton.                                                                   |
-| `href`           | Non         | <code>string</code>                                                                       | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt;.                  |
-| `icon`           | Non         | <code>ReactNode</code>                                                                    | Icône a afficher dans le bouton.                                                       |
-| `iconPosition`   | Non         | <code>"left" &#124; "right"</code>                                                        | Position de l'icône dans le bouton. Par défaut : "left".                               |
-| `label`          | Non         | <code>string</code>                                                                       | Libellé du bouton.                                                                     |
-| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au blur du bouton.                                                                     |
-| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au clic sur le bouton.                                                                 |
-| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au focus du bouton.                                                                    |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `style`          | Non         | <code>CSSProperties</code>                                                                | CSS inline pour l'élément racine.                                                      |
-| `tabIndex`       | Non         | <code>number</code>                                                                       | "tabindex" pour l'élément HTML.                                                        |
-| `target`         | Non         | <code>string</code>                                                                       | "target" pour le &lt;a&gt;, si `href` est rensigné.                                    |
-| `theme`          | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                                     | CSS.                                                                                   |
-| `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
-| `variant`        | Non         | <code>"filled" &#124; "elevated" &#124; "outlined" &#124; "elevated-filled"</code>        | Variante du bouton .                                                                   |
+| Nom            | Obligatoire | Type                                                                               | Description                                                           |
+| -------------- | ----------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `className`    | Non         | <code>string</code>                                                                | Classe CSS a ajouter au composant racine.                             |
+| `color`        | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                              | Couleur du bouton.                                                    |
+| `disabled`     | Non         | <code>boolean</code>                                                               | Désactive le bouton.                                                  |
+| `href`         | Non         | <code>string</code>                                                                | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt;. |
+| `icon`         | Non         | <code>ReactNode</code>                                                             | Icône a afficher dans le bouton.                                      |
+| `iconPosition` | Non         | <code>"left" &#124; "right"</code>                                                 | Position de l'icône dans le bouton. Par défaut : "left".              |
+| `label`        | Non         | <code>string</code>                                                                | Libellé du bouton.                                                    |
+| `onBlur`       | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>     | Au blur du bouton.                                                    |
+| `onClick`      | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>     | Au clic sur le bouton.                                                |
+| `onFocus`      | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>     | Au focus du bouton.                                                   |
+| `style`        | Non         | <code>CSSProperties</code>                                                         | CSS inline pour l'élément racine.                                     |
+| `tabIndex`     | Non         | <code>number</code>                                                                | "tabindex" pour l'élément HTML.                                       |
+| `target`       | Non         | <code>string</code>                                                                | "target" pour le &lt;a&gt;, si `href` est rensigné.                   |
+| `theme`        | Non         | <code>CSSProp&lt;ButtonCss&gt;</code>                                              | CSS.                                                                  |
+| `type`         | Non         | <code>string</code>                                                                | Type de bouton HTML (ignoré si `href` est renseigné).                 |
+| `variant`      | Non         | <code>"filled" &#124; "elevated" &#124; "outlined" &#124; "elevated-filled"</code> | Variante du bouton .                                                  |
 
 ## `Calendar`
 
@@ -97,7 +89,6 @@ Calendrier permettant de choisir un jour, un mois ou une année. Utilisé par `I
 | ----------- | ----------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `className` | Non         | <code>string</code>                                           | Classe CSS pour le composant racine.                                                                                                                           |
 | `format`    | Non         | <code>"yyyy-MM-dd" &#124; "yyyy-MM" &#124; "yyyy"</code>      | Format de la date à choisir. "yyyy-MM" limite la sélection à un mois uniquement, tandis que "yyyy" la limite à une année.&lt;br /&gt;Par défaut : "yyyy-MM-dd" |
-| `key`       | Non         | <code>Key</code>                                              |                                                                                                                                                                |
 | `max`       | Non         | <code>string</code>                                           | Date maximale autorisée pour la saisie.                                                                                                                        |
 | `min`       | Non         | <code>string</code>                                           | Date minimale autorisée pour la saisie.                                                                                                                        |
 | `onChange`  | Non         | <code>(value: string, fromKeyDown: boolean) =&gt; void</code> | Handler appelé à la sélection d'une date.                                                                                                                      |
@@ -111,24 +102,20 @@ Une checkbox.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                             | Description                                                                            |
-| ---------------- | ----------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                              | Classe CSS a ajouter au composant racine.                                              |
-| `disabled`       | Non         | <code>boolean</code>                                                                             | Désactive la Checkbox.                                                                 |
-| `error`          | Non         | <code>string</code>                                                                              | Si renseigné, la Checkbox sera affichée en rouge.                                      |
-| `id`             | Non         | <code>string</code>                                                                              | Id pour l'input[type=checkbox] posé par la Checkbox.                                   |
-| `indeterminate`  | Non         | <code>boolean</code>                                                                             | Affiche une icône "indéterminée" à la place du "check"                                 |
-| `label`          | Non         | <code>ReactNode</code>                                                                           | Libellé à poser à côté de la Checkbox.                                                 |
-| `name`           | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par la Checkbox.                                 |
-| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au blur de la Checkbox.                                                                |
-| `onChange`       | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur la Checkbox.                                                |
-| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au focus de la Checkbox.                                                               |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;CheckboxCss&gt;</code>                                                          | CSS.                                                                                   |
-| `value`          | Non         | <code>boolean</code>                                                                             | Valeur (correspond à 'checked' sur l'input).                                           |
+| Nom             | Obligatoire | Type                                                                                             | Description                                            |
+| --------------- | ----------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| `className`     | Non         | <code>string</code>                                                                              | Classe CSS a ajouter au composant racine.              |
+| `disabled`      | Non         | <code>boolean</code>                                                                             | Désactive la Checkbox.                                 |
+| `error`         | Non         | <code>string</code>                                                                              | Si renseigné, la Checkbox sera affichée en rouge.      |
+| `id`            | Non         | <code>string</code>                                                                              | Id pour l'input[type=checkbox] posé par la Checkbox.   |
+| `indeterminate` | Non         | <code>boolean</code>                                                                             | Affiche une icône "indéterminée" à la place du "check" |
+| `label`         | Non         | <code>ReactNode</code>                                                                           | Libellé à poser à côté de la Checkbox.                 |
+| `name`          | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par la Checkbox. |
+| `onBlur`        | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au blur de la Checkbox.                                |
+| `onChange`      | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur la Checkbox.                |
+| `onFocus`       | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au focus de la Checkbox.                               |
+| `theme`         | Non         | <code>CSSProp&lt;CheckboxCss&gt;</code>                                                          | CSS.                                                   |
+| `value`         | Non         | <code>boolean</code>                                                                             | Valeur (correspond à 'checked' sur l'input).           |
 
 ## `Chip`
 
@@ -136,25 +123,21 @@ Une checkbox.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                                             | Description                                                                            |
-| ---------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                                              | Classe CSS a ajouter au composant racine.                                              |
-| `color`          | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                                                            | Couleur du Chip.                                                                       |
-| `disabled`       | Non         | <code>boolean</code>                                                                                             | Désactive le Chip.                                                                     |
-| `elevated`       | Non         | <code>boolean</code>                                                                                             | Si renseigné, le Chip est affiché avec une élévation.                                  |
-| `href`           | Non         | <code>string</code>                                                                                              | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt; ou &lt;span&gt;.  |
-| `icon`           | Non         | <code>ReactNode</code>                                                                                           | Icône a afficher dans le Chip (à gauche).                                              |
-| `label`          | **Oui**     | <code>string</code>                                                                                              | Libellé du chip.                                                                       |
-| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                                   | Au blur du Chip (si actionnable).                                                      |
-| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement&gt;</code>                                                          | Au click sur le Chip. Pose un &lt;button&gt; au lieu d'un &lt;span&gt; si rensgeiné.   |
-| `onDeleteClick`  | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code>                                                            | Si renseigné, le Chip a une action de suppression via un bouton icône (à droite).      |
-| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>                                   | Au focus du Chip (si actionnable).                                                     |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement &#124; HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement &#124; HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement &#124; HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement &#124; HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `target`         | Non         | <code>string</code>                                                                                              | "target" pour le &lt;a&gt;, si `href` est rensigné.                                    |
-| `theme`          | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                                                                              | CSS.                                                                                   |
+| Nom             | Obligatoire | Type                                                                           | Description                                                                           |
+| --------------- | ----------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| `className`     | Non         | <code>string</code>                                                            | Classe CSS a ajouter au composant racine.                                             |
+| `color`         | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                          | Couleur du Chip.                                                                      |
+| `disabled`      | Non         | <code>boolean</code>                                                           | Désactive le Chip.                                                                    |
+| `elevated`      | Non         | <code>boolean</code>                                                           | Si renseigné, le Chip est affiché avec une élévation.                                 |
+| `href`          | Non         | <code>string</code>                                                            | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt; ou &lt;span&gt;. |
+| `icon`          | Non         | <code>ReactNode</code>                                                         | Icône a afficher dans le Chip (à gauche).                                             |
+| `label`         | **Oui**     | <code>string</code>                                                            | Libellé du chip.                                                                      |
+| `onBlur`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au blur du Chip (si actionnable).                                                     |
+| `onClick`       | Non         | <code>MouseEventHandler&lt;HTMLButtonElement&gt;</code>                        | Au click sur le Chip. Pose un &lt;button&gt; au lieu d'un &lt;span&gt; si rensgeiné.  |
+| `onDeleteClick` | Non         | <code>MouseEventHandler&lt;HTMLSpanElement&gt;</code>                          | Si renseigné, le Chip a une action de suppression via un bouton icône (à droite).     |
+| `onFocus`       | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au focus du Chip (si actionnable).                                                    |
+| `target`        | Non         | <code>string</code>                                                            | "target" pour le &lt;a&gt;, si `href` est rensigné.                                   |
+| `theme`         | Non         | <code>CSSProp&lt;ChipCss&gt;</code>                                            | CSS.                                                                                  |
 
 ## `Dropdown`
 
@@ -190,10 +173,6 @@ Une checkbox.
 | `onKeyPress`                      | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      | Au `keypress` du champ.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `onKeyUp`                         | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                      | Au `keyup` du champ.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `onPaste`                         | Non         | <code>ClipboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                                     | Au collage de texte dans le champ.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `onPointerDown`                   | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `onPointerEnter`                  | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `onPointerLeave`                  | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `onPointerUp`                     | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                              | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `prefix`                          | Non         | <code>string</code>                                                                                                       | Préfixe à poser devant le texte.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `required`                        | Non         | <code>boolean</code>                                                                                                      | Valeur de `required` sur l'input HTML.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `role`                            | Non         | <code>AriaRole</code>                                                                                                     | Valeur de `role` sur l'input HTML.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -215,29 +194,25 @@ Bouton action flottant.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                      | Description                                                                            |
-| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                       | Classe CSS a ajouter au composant racine.                                              |
-| `color`          | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                                     | Couleur du bouton.                                                                     |
-| `disabled`       | Non         | <code>boolean</code>                                                                      | Désactive le bouton.                                                                   |
-| `extended`       | Non         | <code>boolean</code>                                                                      | Affiche le libellé du bouton dans le bouton.                                           |
-| `href`           | Non         | <code>string</code>                                                                       | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt;.                  |
-| `icon`           | Non         | <code>ReactNode</code>                                                                    | Icône a afficher dans le bouton.                                                       |
-| `label`          | Non         | <code>string</code>                                                                       | Libellé du bouton.                                                                     |
-| `lowered`        | Non         | <code>boolean</code>                                                                      | Variation du bouton avec moins d'élévation (ombre moins marquée).                      |
-| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au blur du bouton.                                                                     |
-| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au clic sur le bouton.                                                                 |
-| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au focus du bouton.                                                                    |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `size`           | Non         | <code>"large" &#124; "small"</code>                                                       | Taille du bouton.                                                                      |
-| `style`          | Non         | <code>CSSProperties</code>                                                                | CSS inline pour l'élément racine.                                                      |
-| `tabIndex`       | Non         | <code>number</code>                                                                       | "tabindex" pour l'élément HTML.                                                        |
-| `target`         | Non         | <code>string</code>                                                                       | "target" pour le &lt;a&gt;, si `href` est rensigné.                                    |
-| `theme`          | Non         | <code>CSSProp&lt;FloatingActionButtonCss&gt;</code>                                       | CSS.                                                                                   |
-| `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
+| Nom         | Obligatoire | Type                                                                           | Description                                                           |
+| ----------- | ----------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `className` | Non         | <code>string</code>                                                            | Classe CSS a ajouter au composant racine.                             |
+| `color`     | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                          | Couleur du bouton.                                                    |
+| `disabled`  | Non         | <code>boolean</code>                                                           | Désactive le bouton.                                                  |
+| `extended`  | Non         | <code>boolean</code>                                                           | Affiche le libellé du bouton dans le bouton.                          |
+| `href`      | Non         | <code>string</code>                                                            | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt;. |
+| `icon`      | Non         | <code>ReactNode</code>                                                         | Icône a afficher dans le bouton.                                      |
+| `label`     | Non         | <code>string</code>                                                            | Libellé du bouton.                                                    |
+| `lowered`   | Non         | <code>boolean</code>                                                           | Variation du bouton avec moins d'élévation (ombre moins marquée).     |
+| `onBlur`    | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au blur du bouton.                                                    |
+| `onClick`   | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au clic sur le bouton.                                                |
+| `onFocus`   | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au focus du bouton.                                                   |
+| `size`      | Non         | <code>"large" &#124; "small"</code>                                            | Taille du bouton.                                                     |
+| `style`     | Non         | <code>CSSProperties</code>                                                     | CSS inline pour l'élément racine.                                     |
+| `tabIndex`  | Non         | <code>number</code>                                                            | "tabindex" pour l'élément HTML.                                       |
+| `target`    | Non         | <code>string</code>                                                            | "target" pour le &lt;a&gt;, si `href` est rensigné.                   |
+| `theme`     | Non         | <code>CSSProp&lt;FloatingActionButtonCss&gt;</code>                            | CSS.                                                                  |
+| `type`      | Non         | <code>string</code>                                                            | Type de bouton HTML (ignoré si `href` est renseigné).                 |
 
 ## `FontIcon`
 
@@ -245,16 +220,12 @@ Affiche une icône. Prend directement un nom d'icône Material en enfant, ou bie
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                             | Description                                                                            |
-| ---------------- | ----------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `alt`            | Non         | <code>string</code>                                              | Texte alternatif pour l'icône.                                                         |
-| `children`       | Non         | <code>ReactNode</code>                                           | Icône à afficher.                                                                      |
-| `className`      | Non         | <code>string</code>                                              | Classe CSS à poser sur le composant racine.                                            |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLSpanElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `style`          | Non         | <code>CSSProperties</code>                                       | Styles inline                                                                          |
+| Nom         | Obligatoire | Type                       | Description                                 |
+| ----------- | ----------- | -------------------------- | ------------------------------------------- |
+| `alt`       | Non         | <code>string</code>        | Texte alternatif pour l'icône.              |
+| `children`  | Non         | <code>ReactNode</code>     | Icône à afficher.                           |
+| `className` | Non         | <code>string</code>        | Classe CSS à poser sur le composant racine. |
+| `style`     | Non         | <code>CSSProperties</code> | Styles inline                               |
 
 ## `IconButton`
 
@@ -262,27 +233,23 @@ Bouton simple avec une icône.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                      | Description                                                                            |
-| ---------------- | ----------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                       | Classe CSS a ajouter au composant racine.                                              |
-| `color`          | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                                     | Couleur du bouton.                                                                     |
-| `disabled`       | Non         | <code>boolean</code>                                                                      | Désactive le bouton.                                                                   |
-| `href`           | Non         | <code>string</code>                                                                       | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt;.                  |
-| `icon`           | **Oui**     | <code>ReactNode</code>                                                                    | Icône a afficher dans le bouton.                                                       |
-| `label`          | Non         | <code>string</code>                                                                       | Libellé du bouton.                                                                     |
-| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au blur du bouton.                                                                     |
-| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au clic sur le bouton.                                                                 |
-| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code>            | Au focus du bouton.                                                                    |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `style`          | Non         | <code>CSSProperties</code>                                                                | CSS inline pour l'élément racine.                                                      |
-| `tabIndex`       | Non         | <code>number</code>                                                                       | "tabindex" pour l'élément HTML.                                                        |
-| `target`         | Non         | <code>string</code>                                                                       | "target" pour le &lt;a&gt;, si `href` est rensigné.                                    |
-| `theme`          | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                                 | CSS.                                                                                   |
-| `type`           | Non         | <code>string</code>                                                                       | Type de bouton HTML (ignoré si `href` est renseigné).                                  |
-| `variant`        | Non         | <code>"filled" &#124; "outlined"</code>                                                   | Variante du bouton .                                                                   |
+| Nom         | Obligatoire | Type                                                                           | Description                                                           |
+| ----------- | ----------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `className` | Non         | <code>string</code>                                                            | Classe CSS a ajouter au composant racine.                             |
+| `color`     | Non         | <code>"accent" &#124; "light" &#124; "primary"</code>                          | Couleur du bouton.                                                    |
+| `disabled`  | Non         | <code>boolean</code>                                                           | Désactive le bouton.                                                  |
+| `href`      | Non         | <code>string</code>                                                            | Si renseigné, pose une balise &lt;a&gt; à la place du &lt;button&gt;. |
+| `icon`      | **Oui**     | <code>ReactNode</code>                                                         | Icône a afficher dans le bouton.                                      |
+| `label`     | Non         | <code>string</code>                                                            | Libellé du bouton.                                                    |
+| `onBlur`    | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au blur du bouton.                                                    |
+| `onClick`   | Non         | <code>MouseEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au clic sur le bouton.                                                |
+| `onFocus`   | Non         | <code>FocusEventHandler&lt;HTMLButtonElement &#124; HTMLLinkElement&gt;</code> | Au focus du bouton.                                                   |
+| `style`     | Non         | <code>CSSProperties</code>                                                     | CSS inline pour l'élément racine.                                     |
+| `tabIndex`  | Non         | <code>number</code>                                                            | "tabindex" pour l'élément HTML.                                       |
+| `target`    | Non         | <code>string</code>                                                            | "target" pour le &lt;a&gt;, si `href` est rensigné.                   |
+| `theme`     | Non         | <code>CSSProp&lt;IconButtonCss&gt;</code>                                      | CSS.                                                                  |
+| `type`      | Non         | <code>string</code>                                                            | Type de bouton HTML (ignoré si `href` est renseigné).                 |
+| `variant`   | Non         | <code>"filled" &#124; "outlined"</code>                                        | Variante du bouton .                                                  |
 
 ## `Menu`
 
@@ -349,19 +316,15 @@ Item de Menu a utiliser dans un `Menu`.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                           | Description                                                                            |
-| ---------------- | ----------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `caption`        | **Oui**     | <code>string</code>                                            | Le libellé de l'item de Menu.                                                          |
-| `className`      | Non         | <code>string</code>                                            | Classe CSS pour le composant racine.                                                   |
-| `disabled`       | Non         | <code>boolean</code>                                           | Désactive l'élément de Menu, qui ne pourra plus être sélectionné.                      |
-| `iconLeft`       | Non         | <code>ReactNode</code>                                         | Icône à poser devant l'item de Menu.                                                   |
-| `iconRight`      | Non         | <code>ReactNode</code>                                         | Icône à poser derrière l'item de Menu.                                                 |
-| `onClick`        | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code>            | Handler de clic sur l'item de Menu.                                                    |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLIElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                            | CSS.                                                                                   |
+| Nom         | Obligatoire | Type                                                | Description                                                       |
+| ----------- | ----------- | --------------------------------------------------- | ----------------------------------------------------------------- |
+| `caption`   | **Oui**     | <code>string</code>                                 | Le libellé de l'item de Menu.                                     |
+| `className` | Non         | <code>string</code>                                 | Classe CSS pour le composant racine.                              |
+| `disabled`  | Non         | <code>boolean</code>                                | Désactive l'élément de Menu, qui ne pourra plus être sélectionné. |
+| `iconLeft`  | Non         | <code>ReactNode</code>                              | Icône à poser devant l'item de Menu.                              |
+| `iconRight` | Non         | <code>ReactNode</code>                              | Icône à poser derrière l'item de Menu.                            |
+| `onClick`   | Non         | <code>MouseEventHandler&lt;HTMLLIElement&gt;</code> | Handler de clic sur l'item de Menu.                               |
+| `theme`     | Non         | <code>CSSProp&lt;MenuCss&gt;</code>                 | CSS.                                                              |
 
 ## `LinearProgressIndicator`
 
@@ -369,18 +332,14 @@ Indicateur de progression linéaire.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                            | Description                                                                            |
-| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                             | Classe CSS pour l'élément racine.                                                      |
-| `indeterminate`  | Non         | <code>boolean</code>                                            | Progression indéterminée                                                               |
-| `max`            | Non         | <code>number</code>                                             | Valeur maximum. Par défaut: 100.                                                       |
-| `min`            | Non         | <code>number</code>                                             | Valeur minimum. Par défaut: 0.                                                         |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;ProgressIndicatorCss&gt;</code>                | CSS.                                                                                   |
-| `value`          | Non         | <code>number</code>                                             | Valeur courante (entre `min` et `max`). Par défaut : 0.                                |
+| Nom             | Obligatoire | Type                                             | Description                                             |
+| --------------- | ----------- | ------------------------------------------------ | ------------------------------------------------------- |
+| `className`     | Non         | <code>string</code>                              | Classe CSS pour l'élément racine.                       |
+| `indeterminate` | Non         | <code>boolean</code>                             | Progression indéterminée                                |
+| `max`           | Non         | <code>number</code>                              | Valeur maximum. Par défaut: 100.                        |
+| `min`           | Non         | <code>number</code>                              | Valeur minimum. Par défaut: 0.                          |
+| `theme`         | Non         | <code>CSSProp&lt;ProgressIndicatorCss&gt;</code> | CSS.                                                    |
+| `value`         | Non         | <code>number</code>                              | Valeur courante (entre `min` et `max`). Par défaut : 0. |
 
 ## `CircularProgressIndicator`
 
@@ -388,18 +347,14 @@ Indicateur de progression circulaire.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                            | Description                                                                            |
-| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                             | Classe CSS pour l'élément racine.                                                      |
-| `indeterminate`  | Non         | <code>boolean</code>                                            | Progression indéterminée                                                               |
-| `max`            | Non         | <code>number</code>                                             | Valeur maximum. Par défaut: 100.                                                       |
-| `min`            | Non         | <code>number</code>                                             | Valeur minimum. Par défaut: 0.                                                         |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;ProgressIndicatorCss&gt;</code>                | CSS.                                                                                   |
-| `value`          | Non         | <code>number</code>                                             | Valeur courante (entre `min` et `max`). Par défaut : 0.                                |
+| Nom             | Obligatoire | Type                                             | Description                                             |
+| --------------- | ----------- | ------------------------------------------------ | ------------------------------------------------------- |
+| `className`     | Non         | <code>string</code>                              | Classe CSS pour l'élément racine.                       |
+| `indeterminate` | Non         | <code>boolean</code>                             | Progression indéterminée                                |
+| `max`           | Non         | <code>number</code>                              | Valeur maximum. Par défaut: 100.                        |
+| `min`           | Non         | <code>number</code>                              | Valeur minimum. Par défaut: 0.                          |
+| `theme`         | Non         | <code>CSSProp&lt;ProgressIndicatorCss&gt;</code> | CSS.                                                    |
+| `value`         | Non         | <code>number</code>                              | Valeur courante (entre `min` et `max`). Par défaut : 0. |
 
 ## `RadioGroup`
 
@@ -421,21 +376,17 @@ A utiliser dans un RadioGroup.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                              | Description                                                                            |
-| ---------------- | ----------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                               | Classe CSS a ajouter au composant racine.                                              |
-| `disabled`       | Non         | <code>boolean</code>                                              | Désactive le RadioButton.                                                              |
-| `id`             | Non         | <code>string</code>                                               | Id pour l'input[type=radio] posé par le RadioButton.                                   |
-| `label`          | Non         | <code>ReactNode</code>                                            | Libellé à poser à côté de la Checkbox.                                                 |
-| `name`           | Non         | <code>string</code>                                               | Name pour l'input[type=radio] posé par le RadioButton.                                 |
-| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>            | Au blur du Radio.                                                                      |
-| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>            | Au focus du Radio.                                                                     |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                              | CSS.                                                                                   |
-| `value`          | **Oui**     | <code>string</code>                                               | Valeur du RadioGroup quand ce RadioButton est sélectionné.                             |
+| Nom         | Obligatoire | Type                                                   | Description                                                |
+| ----------- | ----------- | ------------------------------------------------------ | ---------------------------------------------------------- |
+| `className` | Non         | <code>string</code>                                    | Classe CSS a ajouter au composant racine.                  |
+| `disabled`  | Non         | <code>boolean</code>                                   | Désactive le RadioButton.                                  |
+| `id`        | Non         | <code>string</code>                                    | Id pour l'input[type=radio] posé par le RadioButton.       |
+| `label`     | Non         | <code>ReactNode</code>                                 | Libellé à poser à côté de la Checkbox.                     |
+| `name`      | Non         | <code>string</code>                                    | Name pour l'input[type=radio] posé par le RadioButton.     |
+| `onBlur`    | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code> | Au blur du Radio.                                          |
+| `onFocus`   | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code> | Au focus du Radio.                                         |
+| `theme`     | Non         | <code>CSSProp&lt;RadioCss&gt;</code>                   | CSS.                                                       |
+| `value`     | **Oui**     | <code>string</code>                                    | Valeur du RadioGroup quand ce RadioButton est sélectionné. |
 
 ## `Ripple`
 
@@ -443,17 +394,13 @@ Pose un Ripple au clic sur le composant/élément enfant.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                 | Description                                                                                 |
-| ---------------- | ----------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| `centered`       | Non         | <code>boolean</code>                                                                 | Centre le ripple sur la cible au lieu de l'endroit cliqué.                                  |
-| `children`       | **Oui**     | <code>ReactElement&lt;any, string &#124; JSXElementConstructor&lt;any&gt;&gt;</code> | Composant enfant dans lequel poser le ripple.                                               |
-| `className`      | Non         | <code>string</code>                                                                  | Classe CSS à passer au Ripple                                                               |
-| `disabled`       | Non         | <code>boolean</code>                                                                 | Force la désactivation du ripple.                                                           |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)       |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)      |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)      |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;T&gt;) =&gt; void</code>                                   | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)         |
-| `rippleTarget`   | Non         | <code>string</code>                                                                  | Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. |
+| Nom            | Obligatoire | Type                                                                                 | Description                                                                                 |
+| -------------- | ----------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `centered`     | Non         | <code>boolean</code>                                                                 | Centre le ripple sur la cible au lieu de l'endroit cliqué.                                  |
+| `children`     | **Oui**     | <code>ReactElement&lt;any, string &#124; JSXElementConstructor&lt;any&gt;&gt;</code> | Composant enfant dans lequel poser le ripple.                                               |
+| `className`    | Non         | <code>string</code>                                                                  | Classe CSS à passer au Ripple                                                               |
+| `disabled`     | Non         | <code>boolean</code>                                                                 | Force la désactivation du ripple.                                                           |
+| `rippleTarget` | Non         | <code>string</code>                                                                  | Classe CSS de l'élément HTML dans lequel poser le ripple, si ce n'est pas l'élément racine. |
 
 ## `Slider`
 
@@ -461,22 +408,18 @@ Slider.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                            | Description                                                                            |
-| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                             | Classe CSS pour le composant racine.                                                   |
-| `disabled`       | Non         | <code>boolean</code>                                            | Désactive le Slider.                                                                   |
-| `labeled`        | Non         | <code>boolean</code>                                            | Affiche un libellé au dessus de la poignée au survol avec la valeur exacte du Slider.  |
-| `max`            | Non         | <code>number</code>                                             | Valeur maximale du Slider. Par défaut : 100.                                           |
-| `min`            | Non         | <code>number</code>                                             | Valeur minimale du Slider. Par défaut : 0.                                             |
-| `onChange`       | Non         | <code>(value: number) =&gt; void</code>                         | Handler appelé au changement de la valeur du Slider.                                   |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `step`           | Non         | <code>number</code>                                             | Valeur minimale par incrément du Slider. Par défaut : 1.                               |
-| `theme`          | Non         | <code>CSSProp&lt;SliderCss&gt;</code>                           | CSS.                                                                                   |
-| `ticks`          | Non         | <code>boolean</code>                                            | Affiche des indicateurs pour chaque valeur de `step` sur le Slider.                    |
-| `value`          | **Oui**     | <code>number</code>                                             | Valeur du Slider.                                                                      |
+| Nom         | Obligatoire | Type                                    | Description                                                                           |
+| ----------- | ----------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
+| `className` | Non         | <code>string</code>                     | Classe CSS pour le composant racine.                                                  |
+| `disabled`  | Non         | <code>boolean</code>                    | Désactive le Slider.                                                                  |
+| `labeled`   | Non         | <code>boolean</code>                    | Affiche un libellé au dessus de la poignée au survol avec la valeur exacte du Slider. |
+| `max`       | Non         | <code>number</code>                     | Valeur maximale du Slider. Par défaut : 100.                                          |
+| `min`       | Non         | <code>number</code>                     | Valeur minimale du Slider. Par défaut : 0.                                            |
+| `onChange`  | Non         | <code>(value: number) =&gt; void</code> | Handler appelé au changement de la valeur du Slider.                                  |
+| `step`      | Non         | <code>number</code>                     | Valeur minimale par incrément du Slider. Par défaut : 1.                              |
+| `theme`     | Non         | <code>CSSProp&lt;SliderCss&gt;</code>   | CSS.                                                                                  |
+| `ticks`     | Non         | <code>boolean</code>                    | Affiche des indicateurs pour chaque valeur de `step` sur le Slider.                   |
+| `value`     | **Oui**     | <code>number</code>                     | Valeur du Slider.                                                                     |
 
 ## `Snackbar`
 
@@ -501,24 +444,20 @@ Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                             | Description                                                                            |
-| ---------------- | ----------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `className`      | Non         | <code>string</code>                                                                              | Classe CSS a ajouter au composant racine.                                              |
-| `disabled`       | Non         | <code>boolean</code>                                                                             | Désactive le Switch.                                                                   |
-| `iconOff`        | Non         | <code>ReactNode</code>                                                                           | Icône a afficher dans le Switch quand il est "off".                                    |
-| `iconOn`         | Non         | <code>ReactNode</code>                                                                           | Icône a afficher dans le Switch quand il est "on".                                     |
-| `id`             | Non         | <code>string</code>                                                                              | Id pour l'input[type=checkbox] posé par le Switch.                                     |
-| `label`          | Non         | <code>ReactNode</code>                                                                           | Libellé à poser à côté du Switch.                                                      |
-| `name`           | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par le Switch.                                   |
-| `onBlur`         | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au blur du Switch.                                                                     |
-| `onChange`       | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur le Switch.                                                  |
-| `onFocus`        | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au focus du Switch.                                                                    |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLLabelElement&gt;) =&gt; void</code>                                | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;SwitchCss&gt;</code>                                                            | CSS.                                                                                   |
-| `value`          | Non         | <code>boolean</code>                                                                             | Valeur (correspond à 'checked' sur l'input).                                           |
+| Nom         | Obligatoire | Type                                                                                             | Description                                          |
+| ----------- | ----------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| `className` | Non         | <code>string</code>                                                                              | Classe CSS a ajouter au composant racine.            |
+| `disabled`  | Non         | <code>boolean</code>                                                                             | Désactive le Switch.                                 |
+| `iconOff`   | Non         | <code>ReactNode</code>                                                                           | Icône a afficher dans le Switch quand il est "off".  |
+| `iconOn`    | Non         | <code>ReactNode</code>                                                                           | Icône a afficher dans le Switch quand il est "on".   |
+| `id`        | Non         | <code>string</code>                                                                              | Id pour l'input[type=checkbox] posé par le Switch.   |
+| `label`     | Non         | <code>ReactNode</code>                                                                           | Libellé à poser à côté du Switch.                    |
+| `name`      | Non         | <code>string</code>                                                                              | Name pour l'input[type=checkbox] posé par le Switch. |
+| `onBlur`    | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au blur du Switch.                                   |
+| `onChange`  | Non         | <code>(value: boolean, event?: MouseEvent&lt;HTMLInputElement, MouseEvent&gt;) =&gt; void</code> | Handler appelé au clic sur le Switch.                |
+| `onFocus`   | Non         | <code>FocusEventHandler&lt;HTMLInputElement&gt;</code>                                           | Au focus du Switch.                                  |
+| `theme`     | Non         | <code>CSSProp&lt;SwitchCss&gt;</code>                                                            | CSS.                                                 |
+| `value`     | Non         | <code>boolean</code>                                                                             | Valeur (correspond à 'checked' sur l'input).         |
 
 ## `Tabs`
 
@@ -541,26 +480,22 @@ Un Tab, à utiliser dans Tabs.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                            | Description                                                                            |
-| ---------------- | ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `active`         | Non         | <code>boolean</code>                                            | @internal                                                                              |
-| `children`       | Non         | <code>ReactNode</code>                                          | Contenu du Tab.                                                                        |
-| `className`      | Non         | <code>string</code>                                             | Classe CSS pour l'élément racine.                                                      |
-| `disabled`       | Non         | <code>boolean</code>                                            | Désactive le Tab.                                                                      |
-| `icon`           | Non         | <code>ReactNode</code>                                          | Icône du Tab.                                                                          |
-| `index`          | Non         | <code>number</code>                                             | @internal                                                                              |
-| `label`          | Non         | <code>string</code>                                             | Libellé du Tab.                                                                        |
-| `onActive`       | Non         | <code>() =&gt; void</code>                                      | Handler appelé lorsque le Tab devient actif.                                           |
-| `onClick`        | Non         | <code>(index: number) =&gt; void</code>                         | @internal                                                                              |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)  |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLDivElement&gt;) =&gt; void</code> | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)    |
-| `theme`          | Non         | <code>CSSProp&lt;TabsCss&gt;</code>                             | CSS.                                                                                   |
+| Nom         | Obligatoire | Type                                    | Description                                  |
+| ----------- | ----------- | --------------------------------------- | -------------------------------------------- |
+| `active`    | Non         | <code>boolean</code>                    | @internal                                    |
+| `children`  | Non         | <code>ReactNode</code>                  | Contenu du Tab.                              |
+| `className` | Non         | <code>string</code>                     | Classe CSS pour l'élément racine.            |
+| `disabled`  | Non         | <code>boolean</code>                    | Désactive le Tab.                            |
+| `icon`      | Non         | <code>ReactNode</code>                  | Icône du Tab.                                |
+| `index`     | Non         | <code>number</code>                     | @internal                                    |
+| `label`     | Non         | <code>string</code>                     | Libellé du Tab.                              |
+| `onActive`  | Non         | <code>() =&gt; void</code>              | Handler appelé lorsque le Tab devient actif. |
+| `onClick`   | Non         | <code>(index: number) =&gt; void</code> | @internal                                    |
+| `theme`     | Non         | <code>CSSProp&lt;TabsCss&gt;</code>     | CSS.                                         |
 
 ## `TextField`
 
-
+Champ texte de base.
 
 ### Props
 
@@ -574,7 +509,6 @@ Un Tab, à utiliser dans Tabs.
 | `hint`               | Non         | <code>string</code>                                                                                          | Placeholder pour le champ texte.                                                                                                   |
 | `icon`               | Non         | <code>ReactNode</code>                                                                                       | Icône à poser devant le texte.                                                                                                     |
 | `id`                 | Non         | <code>string</code>                                                                                          | `id` pour l'input HTML.                                                                                                            |
-| `key`                | Non         | <code>Key</code>                                                                                             |                                                                                                                                    |
 | `label`              | Non         | <code>string</code>                                                                                          | Libellé du champ, sera affiché à la place du `hint` et se déplacera sur le dessus lorsque le champ est utilisé.                    |
 | `loading`            | Non         | <code>boolean</code>                                                                                         | Affiche un indicateur de chargement dans le champ texte.                                                                           |
 | `maxLength`          | Non         | <code>number</code>                                                                                          | Taille maximum du champ. Sera affiché en dessous du champ à côté de `supportingText`.                                              |
@@ -589,10 +523,6 @@ Un Tab, à utiliser dans Tabs.
 | `onKeyPress`         | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                         | Au `keypress` du champ.                                                                                                            |
 | `onKeyUp`            | Non         | <code>KeyboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                         | Au `keyup` du champ.                                                                                                               |
 | `onPaste`            | Non         | <code>ClipboardEventHandler&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;</code>                        | Au collage de texte dans le champ.                                                                                                 |
-| `onPointerDown`      | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                                              |
-| `onPointerEnter`     | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                                             |
-| `onPointerLeave`     | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                                             |
-| `onPointerUp`        | Non         | <code>(e: PointerEvent&lt;HTMLInputElement &#124; HTMLTextAreaElement&gt;) =&gt; void</code>                 | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                                |
 | `prefix`             | Non         | <code>string</code>                                                                                          | Préfixe à poser devant le texte.                                                                                                   |
 | `readonly`           | Non         | <code>boolean</code>                                                                                         | Si renseigné, crée un champ texte en lecture seule sans &lt;input&gt; HTML.                                                        |
 | `required`           | Non         | <code>boolean</code>                                                                                         | Valeur de `required` sur l'input HTML.                                                                                             |
@@ -613,14 +543,10 @@ Pose une tooltip autour de l'élement enfant qui s'activera au survol.
 
 ### Props
 
-| Nom              | Obligatoire | Type                                                                                                  | Description                                                                                                        |
-| ---------------- | ----------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `children`       | **Oui**     | <code>ReactElement&lt;any, string &#124; JSXElementConstructor&lt;any&gt;&gt;</code>                  | Composant enfant autour duquel poser la tooltip.                                                                   |
-| `clickBehavior`  | Non         | <code>"hide" &#124; "none" &#124; "show"</code>                                                       | Comportement de la tooltip au clic. Par défaut : "hide".                                                           |
-| `onPointerDown`  | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event)                              |
-| `onPointerEnter` | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event)                             |
-| `onPointerLeave` | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event)                             |
-| `onPointerUp`    | Non         | <code>(e: PointerEvent&lt;HTMLElement&gt;) =&gt; void</code>                                          | [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event)                                |
-| `position`       | Non         | <code>"bottom" &#124; "horizontal" &#124; "left" &#124; "right" &#124; "top" &#124; "vertical"</code> | Position de la tooltip ("vertical" = "top" ou "bottom", "horizontal" = "left" ou "right"). Par défaut : "vertical" |
-| `theme`          | Non         | <code>CSSProp&lt;TooltipCss&gt;</code>                                                                | CSS.                                                                                                               |
-| `tooltip`        | **Oui**     | <code>ReactNode</code>                                                                                | Contenu de la tooltip.                                                                                             |
+| Nom             | Obligatoire | Type                                                                                                  | Description                                                                                                        |
+| --------------- | ----------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `children`      | **Oui**     | <code>ReactElement&lt;any, string &#124; JSXElementConstructor&lt;any&gt;&gt;</code>                  | Composant enfant autour duquel poser la tooltip.                                                                   |
+| `clickBehavior` | Non         | <code>"hide" &#124; "none" &#124; "show"</code>                                                       | Comportement de la tooltip au clic. Par défaut : "hide".                                                           |
+| `position`      | Non         | <code>"bottom" &#124; "horizontal" &#124; "left" &#124; "right" &#124; "top" &#124; "vertical"</code> | Position de la tooltip ("vertical" = "top" ou "bottom", "horizontal" = "left" ou "right"). Par défaut : "vertical" |
+| `theme`         | Non         | <code>CSSProp&lt;TooltipCss&gt;</code>                                                                | CSS.                                                                                                               |
+| `tooltip`       | **Oui**     | <code>ReactNode</code>                                                                                | Contenu de la tooltip.                                                                                             |

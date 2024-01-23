@@ -35,7 +35,8 @@
     --color-white: 11, 11, 11;
     --color-black: 238, 238, 238;
     --color-primary: var(--palette-indigo-300);
-    --color-primary-light: var(--palette-indigo-800);
+    --color-primary-light: var(--palette-indigo-900);
+    --color-accent: var(--palette-pink-a100);
 
     --palette-grey-50: 22, 22, 22;
     --palette-grey-100: 33, 33, 33;

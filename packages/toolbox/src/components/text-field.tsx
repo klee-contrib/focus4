@@ -123,6 +123,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     value?: string;
 }
 
+/** Champ texte de base. */
 export const TextField = forwardRef(function TextField(
     {
         autoComplete,

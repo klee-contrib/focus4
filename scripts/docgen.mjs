@@ -12,8 +12,13 @@ function generateDocFile(fileName, globPath, lines) {
     // Parse a file for docgen info
     for (const component of docgen
         .parse(glob.sync(globPath), {
-            savePropValueAsString: true,
-            propFilter: prop => !(prop.name == "ref" || prop.name.startsWith("aria-"))
+            propFilter: prop =>
+                !(
+                    prop.name == "ref" ||
+                    prop.name == "key" ||
+                    prop.name.startsWith("aria-") ||
+                    prop.name.startsWith("onPointer")
+                )
         })
         .reverse()) {
         lines.push(`## \`${component.displayName}\``);
