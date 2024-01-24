@@ -4,7 +4,7 @@ import {useObserver} from "mobx-react";
 import {useState} from "react";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, Checkbox, IconButton} from "@focus4/toolbox";
 
 import facetCss, {FacetCss} from "../__style__/facet.css";
@@ -59,7 +59,7 @@ export function Facet({
         return (
             <div className={theme.facet()} data-facet={facet.code}>
                 <h4 onClick={() => openedMap.set(facet.code, !opened)}>
-                    <IconButton icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)} />
+                    <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
                     {i18next.t(facet.label)}
                 </h4>
                 {opened ? (
@@ -67,7 +67,7 @@ export function Facet({
                         {facet.isMultiSelectable && facet.isMultiValued ? (
                             <Button
                                 color="primary"
-                                icon={getIcon(`${i18nPrefix}.icons.facets.${inputFacet?.operator ?? "or"}`)}
+                                icon={{i18nKey: `${i18nPrefix}.icons.facets.${inputFacet?.operator ?? "or"}`}}
                                 label={i18next.t(`${i18nPrefix}.search.facets.${inputFacet?.operator ?? "or"}`)}
                                 onClick={() => store.toggleFacetOperator(facet.code)}
                             />
@@ -110,14 +110,14 @@ export function Facet({
                                             (!facet.isMultiValued && !inputFacet?.selected?.length)) ? (
                                             <IconButton
                                                 className={theme.icon()}
-                                                icon={getIcon(`${i18nPrefix}.icons.facets.exclude`)}
+                                                icon={{i18nKey: `${i18nPrefix}.icons.facets.exclude`}}
                                                 onClick={() => store.addFacetValue(facet.code, item.code, "excluded")}
                                             />
                                         ) : facet.canExclude ? (
                                             <IconButton
                                                 className={theme.icon()}
                                                 disabled
-                                                icon={getIcon(`${i18nPrefix}.icons.facets.exclude`)}
+                                                icon={{i18nKey: `${i18nPrefix}.icons.facets.exclude`}}
                                             />
                                         ) : null}
                                     </li>

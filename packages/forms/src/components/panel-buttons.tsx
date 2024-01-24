@@ -1,7 +1,6 @@
 import i18next from "i18next";
 import {useEffect, useState} from "react";
 
-import {getIcon} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 /** Props des boutons du Panel. */
@@ -48,14 +47,14 @@ export function PanelButtons({
                     <Button
                         color="primary"
                         disabled={loading}
-                        icon={getIcon(`${i18nPrefix}.icons.button.save`)}
+                        icon={{i18nKey: `${i18nPrefix}.icons.button.save`}}
                         label={i18next.t(`${i18nPrefix}.button.save`)}
                         onClick={!isInForm ? save : undefined}
                         type="submit"
                     />
                     <Button
                         disabled={loading}
-                        icon={getIcon(`${i18nPrefix}.icons.button.cancel`)}
+                        icon={{i18nKey: `${i18nPrefix}.icons.button.cancel`}}
                         label={i18next.t(`${i18nPrefix}.button.cancel`)}
                         onClick={onClickCancel}
                     />
@@ -65,7 +64,7 @@ export function PanelButtons({
             return (
                 <Button
                     disabled={loading}
-                    icon={getIcon(`${i18nPrefix}.icons.button.edit`)}
+                    icon={{i18nKey: `${i18nPrefix}.icons.button.edit`}}
                     label={i18next.t(`${i18nPrefix}.button.edit`)}
                     onClick={onClickEdit}
                 />

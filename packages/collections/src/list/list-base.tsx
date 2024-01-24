@@ -5,7 +5,7 @@ import {useLocalObservable} from "mobx-react";
 import {useContext, useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import listBaseCss, {ListBaseCss} from "./__style__/list-base.css";
@@ -173,7 +173,7 @@ export function useListBase<T>({
                             <div className={theme.bottomRow()}>
                                 {isManualFetch && state.hasMoreData ? (
                                     <Button
-                                        icon={getIcon(`${i18nPrefix}.icons.list.add`)}
+                                        icon={{i18nKey: `${i18nPrefix}.icons.list.add`}}
                                         label={state.showMoreLabel}
                                         onClick={() => state.handleShowMore()}
                                     />
@@ -182,7 +182,7 @@ export function useListBase<T>({
                                 )}
                                 {showAllHandler ? (
                                     <Button
-                                        icon={getIcon(`${i18nPrefix}.icons.list.showAll`)}
+                                        icon={{i18nKey: `${i18nPrefix}.icons.list.showAll`}}
                                         label={i18next.t(`${i18nPrefix}.list.show.all`)}
                                         onClick={showAllHandler}
                                     />

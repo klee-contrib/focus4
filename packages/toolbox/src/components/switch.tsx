@@ -6,7 +6,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {PointerEvents} from "../utils/pointer-events";
 import {useInputRef} from "../utils/use-input-ref";
 
-import {FontIcon} from "./font-icon";
+import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import switchCss, {SwitchCss} from "./__style__/switch.css";
@@ -18,9 +18,9 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     /** Désactive le Switch. */
     disabled?: boolean;
     /** Icône a afficher dans le Switch quand il est "off". */
-    iconOff?: ReactNode;
+    iconOff?: Icon;
     /** Icône a afficher dans le Switch quand il est "on". */
-    iconOn?: ReactNode;
+    iconOn?: Icon;
     /** Id pour l'input[type=checkbox] posé par le Switch. */
     id?: string;
     /** Libellé à poser à côté du Switch. */

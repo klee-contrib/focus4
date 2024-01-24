@@ -7,7 +7,7 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {config} from "@focus4/core";
 import {fieldFor, SelectCheckbox} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
-import {CSSProp, getIcon, getSpringTransition, useTheme} from "@focus4/styling";
+import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";
@@ -195,7 +195,7 @@ export function SearchBar<T, C>({
             <div className={theme.bar({error: !!state.error})}>
                 <div className={theme.input()}>
                     <FontIcon className={theme.searchIcon()}>
-                        {getIcon(`${i18nPrefix}.icons.searchBar.search`)}
+                        {{i18nKey: `${i18nPrefix}.icons.searchBar.search`}}
                     </FontIcon>
                     <input
                         ref={input}
@@ -207,11 +207,11 @@ export function SearchBar<T, C>({
                     />
                 </div>
                 {state.text ? (
-                    <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} onClick={state.clear} />
+                    <IconButton icon={{i18nKey: `${i18nPrefix}.icons.searchBar.clear`}} onClick={state.clear} />
                 ) : null}
                 {!!criteriaComponent || store.availableSearchFields.length > 0 ? (
                     <Button
-                        icon={getIcon(`${i18nPrefix}.icons.searchBar.${showPanel ? "close" : "open"}`)}
+                        icon={{i18nKey: `${i18nPrefix}.icons.searchBar.${showPanel ? "close" : "open"}`}}
                         label={
                             store.availableSearchFields.length > 0
                                 ? `(${store.searchFields?.length ?? store.availableSearchFields.length}/${

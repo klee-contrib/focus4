@@ -1,11 +1,11 @@
 import i18next from "i18next";
 import {observable} from "mobx";
 import {useObserver} from "mobx-react";
-import {ReactNode, useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 import {DomainFieldType, DomainTypeMultiple, DomainTypeSingle, SingleDomainFieldType} from "@focus4/stores";
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {AutocompleteCss, Chip, ChipCss, TextFieldCss} from "@focus4/toolbox";
+import {CSSProp, useTheme} from "@focus4/styling";
+import {AutocompleteCss, Chip, ChipCss, Icon, TextFieldCss} from "@focus4/toolbox";
 
 import {AutocompleteSearch} from "./autocomplete";
 import {SelectChipsCss, selectChipsCss} from "./select-chips";
@@ -38,7 +38,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {ke
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Icône à poser devant le texte. */
-    icon?: ReactNode;
+    icon?: Icon;
     /** Id de l'input. */
     id?: string;
     /** Nombre maximal d'éléments sélectionnables. */
@@ -158,7 +158,7 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
                 showSupportingText="never"
                 theme={theme}
                 trailing={{
-                    icon: getIcon(`${i18nPrefix}.icons.select.unselectAll`),
+                    icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
                     onClick: handleRemoveAll,
                     tooltip: i18next.t(`${i18nPrefix}.select.unselectAll`),
                     blurOnClick: true

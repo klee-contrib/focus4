@@ -4,7 +4,7 @@ import {useObserver} from "mobx-react";
 import {ElementType, MouseEvent, useEffect, useState} from "react";
 
 import {CollectionStore, FacetOutput, FormEntityField} from "@focus4/stores";
-import {CSSProp, fromBem, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
 import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
@@ -204,10 +204,10 @@ export function FacetBox<T>({
         return (
             <div className={theme.facetBox()}>
                 <h3 onClick={() => toggleAll(!opened, false)}>
-                    <IconButton icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)} />
+                    <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
                     <span>{i18next.t(`${i18nPrefix}.search.facets.title`)}</span>
                     {shouldDisplayClear ? (
-                        <IconButton icon={getIcon(`${i18nPrefix}.icons.searchBar.clear`)} onClick={clearFacets} />
+                        <IconButton icon={{i18nKey: `${i18nPrefix}.icons.searchBar.clear`}} onClick={clearFacets} />
                     ) : null}
                 </h3>
                 {sectionElements ?? filteredFacets.map(renderFacet)}

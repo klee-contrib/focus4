@@ -25,7 +25,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import {FontIcon} from "./font-icon";
+import {FontIcon, Icon} from "./font-icon";
 import {IconButton} from "./icon-button";
 import {CircularProgressIndicator} from "./progress-indicator";
 import {Tooltip} from "./tooltip";
@@ -42,7 +42,7 @@ export interface TrailingIcon {
     /** Affiche l'icône en erreur. */
     error?: boolean;
     /** Icône. */
-    icon: ReactNode;
+    icon: Icon;
     /** Handler de clic sur l'icône (pose un bouton icône si renseigné au lieu d'une icône simple.) */
     onClick?: () => void;
     /** Tooltip pour l'icône. */
@@ -64,7 +64,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     /** Placeholder pour le champ texte. */
     hint?: string;
     /** Icône à poser devant le texte. */
-    icon?: ReactNode;
+    icon?: Icon;
     /** `id` pour l'input HTML. */
     id?: string;
     /** Libellé du champ, sera affiché à la place du `hint` et se déplacera sur le dessus lorsque le champ est utilisé. */

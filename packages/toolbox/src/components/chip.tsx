@@ -1,12 +1,12 @@
 import classNames from "classnames";
-import {createElement, FocusEventHandler, MouseEvent, MouseEventHandler, ReactNode, useCallback} from "react";
+import {createElement, FocusEventHandler, MouseEvent, MouseEventHandler, useCallback} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 import {useInputRef} from "../utils/use-input-ref";
 
-import {FontIcon} from "./font-icon";
+import {FontIcon, Icon} from "./font-icon";
 import {IconButton} from "./icon-button";
 import {Ripple} from "./ripple";
 
@@ -25,7 +25,7 @@ export interface ChipProps extends PointerEvents<HTMLButtonElement | HTMLLinkEle
     /** Si renseigné, pose une balise <a> à la place du <button> ou <span>. */
     href?: string;
     /** Icône a afficher dans le Chip (à gauche). */
-    icon?: ReactNode;
+    icon?: Icon;
     /**  Libellé du chip. */
     label: string;
     /** Au blur du Chip (si actionnable). */

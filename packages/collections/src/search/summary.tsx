@@ -4,7 +4,7 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
 
 import {CollectionStore, FormEntityField} from "@focus4/stores";
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, ChipCss} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
@@ -229,7 +229,7 @@ export function Summary<T>({
                 {exportAction ? (
                     <div className={theme.print()}>
                         <Button
-                            icon={getIcon(`${i18nPrefix}.icons.summary.export`)}
+                            icon={{i18nKey: `${i18nPrefix}.icons.summary.export`}}
                             label={`${i18nPrefix}.search.summary.export`}
                             onClick={exportAction}
                             type="button"

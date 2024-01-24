@@ -1,6 +1,6 @@
 import {motion} from "framer-motion";
 
-import {CSSProp, getDefaultTransition, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 import {
     FloatingActionButton,
     FloatingActionButtonProps,
@@ -79,7 +79,7 @@ export function HeaderActions({
                 <div ref={menu.anchor} className={theme.secondaryActions()}>
                     <FloatingActionButton
                         {...secondaryButton}
-                        icon={secondaryButton.icon ?? getIcon(`${i18nPrefix}.icons.headerActions.secondary`)}
+                        icon={secondaryButton.icon ?? {i18nKey: `${i18nPrefix}.icons.headerActions.secondary`}}
                         onClick={menu.toggle}
                     />
                     <Menu {...menu}>

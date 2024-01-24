@@ -1,9 +1,10 @@
-import {ComponentType, ReactElement, ReactNode, useEffect} from "react";
+import {ComponentType, ReactElement, useEffect} from "react";
 
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {
     Button,
     FloatingActionButton,
+    Icon,
     IconButton,
     Menu,
     MenuItem,
@@ -34,7 +35,7 @@ export type OperationListItem<T> =
           /** Le libellé (ou la tooltip) du bouton. */
           label?: string;
           /** L'icône du bouton */
-          icon?: ReactNode;
+          icon?: Icon;
           /** Type d'affichage pour l'action. Seul "secondary" sera pris en compte pour une mosaïque. Par défaut : "icon-label". */
           type?: "icon-label" | "icon-tooltip" | "icon" | "label" | "secondary";
       };
@@ -108,7 +109,9 @@ export function ContextualActions({
                         key={key}
                         color={isMosaic ? "primary" : undefined}
                         icon={
-                            isMosaic || !Operation.type || Operation.type.includes("icon") ? Operation.icon : undefined
+                            (isMosaic || !Operation.type || Operation.type.includes("icon")
+                                ? Operation.icon
+                                : undefined) as Icon
                         }
                         label={!isMosaic && FinalButton === Button ? Operation.label : undefined}
                         onBlur={tryHideMenu}
@@ -149,14 +152,14 @@ export function ContextualActions({
                 <div ref={menu.anchor} style={{position: "relative"}}>
                     {isMosaic ? (
                         <FloatingActionButton
-                            icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
+                            icon={{i18nKey: `${i18nPrefix}.icons.contextualActions.secondary`}}
                             onBlur={tryHideMenu}
                             onClick={menu.toggle}
                             onFocus={onClickMenu}
                         />
                     ) : (
                         <IconButton
-                            icon={getIcon(`${i18nPrefix}.icons.contextualActions.secondary`)}
+                            icon={{i18nKey: `${i18nPrefix}.icons.contextualActions.secondary`}}
                             onBlur={tryHideMenu}
                             onClick={menu.toggle}
                             onFocus={onClickMenu}

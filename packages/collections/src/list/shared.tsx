@@ -1,7 +1,7 @@
 import i18next from "i18next";
 
 import {CollectionStore} from "@focus4/stores";
-import {getIcon, useTheme} from "@focus4/styling";
+import {useTheme} from "@focus4/styling";
 import {Button, FontIcon} from "@focus4/toolbox";
 
 import listBaseCss from "./__style__/list-base.css";
@@ -42,7 +42,7 @@ export function DefaultAddItemComponent({addItemHandler, i18nPrefix = "focus", m
     if (mode === "mosaic") {
         return (
             <div className={theme.add()} onClick={addItemHandler}>
-                <FontIcon>{getIcon(`${i18nPrefix}.icons.list.add`)}</FontIcon>
+                <FontIcon>{{i18nKey: `${i18nPrefix}.icons.list.add`}}</FontIcon>
                 {i18next.t(`${i18nPrefix}.list.add`)}
             </div>
         );
@@ -50,7 +50,7 @@ export function DefaultAddItemComponent({addItemHandler, i18nPrefix = "focus", m
         return (
             <Button
                 color="primary"
-                icon={getIcon(`${i18nPrefix}.icons.list.add`)}
+                icon={{i18nKey: `${i18nPrefix}.icons.list.add`}}
                 label={i18next.t(`${i18nPrefix}.list.add`)}
                 onClick={addItemHandler}
                 variant={mode === "search" ? "elevated-filled" : undefined}

@@ -13,7 +13,7 @@ import {
 } from "react";
 
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
-import {FontIcon, PointerEvents, Ripple, useInputRef} from "@focus4/toolbox";
+import {FontIcon, Icon, PointerEvents, Ripple, useInputRef} from "@focus4/toolbox";
 
 import {MenuContext} from "./context";
 import {MainMenuList} from "./list";
@@ -27,7 +27,7 @@ export interface MainMenuItemProps extends PointerEvents<HTMLButtonElement | HTM
     /** Si renseigné, pose une balise <a> à la place du <button>. */
     href?: string;
     /** Icône a afficher dans l'item de menu. */
-    icon?: ReactNode;
+    icon?: Icon;
     /**  Libellé de l'item de menu. */
     label?: string;
     /** Au clic sur le l'item de menu. */

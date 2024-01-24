@@ -1,13 +1,13 @@
 import classNames from "classnames";
 import {motion} from "framer-motion";
-import {AriaAttributes, createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
+import {AriaAttributes, createElement, CSSProperties, FocusEventHandler, MouseEventHandler} from "react";
 
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 import {useInputRef} from "../utils/use-input-ref";
 
-import {FontIcon} from "./font-icon";
+import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import floatingActionButtonCss, {FloatingActionButtonCss} from "./__style__/floating-action-button.css";
@@ -25,7 +25,7 @@ export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonEleme
     /** Si renseigné, pose une balise <a> à la place du <button>. */
     href?: string;
     /** Icône a afficher dans le bouton. */
-    icon?: ReactNode;
+    icon?: Icon;
     /**  Libellé du bouton. */
     label?: string;
     /** Variation du bouton avec moins d'élévation (ombre moins marquée). */

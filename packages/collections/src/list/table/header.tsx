@@ -3,7 +3,7 @@ import {action} from "mobx";
 import {ReactNode} from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {getIcon, ToBem} from "@focus4/styling";
+import {ToBem} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
 import {TableCss} from "../__style__/table.css";
@@ -46,11 +46,11 @@ export function TableHeader<T>({
             >
                 {store && sortKey ? (
                     <FontIcon>
-                        {getIcon(
-                            `${i18nPrefix}.icons.table.sort${
+                        {{
+                            i18nKey: `${i18nPrefix}.icons.table.sort${
                                 store.sortBy !== sortKey || store.sortAsc ? "Asc" : "Desc"
                             }`
-                        )}
+                        }}
                     </FontIcon>
                 ) : null}
                 <span className={theme.headerText()}>{i18next.t(title)}</span>

@@ -12,7 +12,7 @@ export {
     FloatingActionButtonProps,
     floatingActionButtonCss
 } from "./components/floating-action-button";
-export {FontIcon, FontIconProps} from "./components/font-icon";
+export {FontIcon, FontIconProps, Icon} from "./components/font-icon";
 export {IconButton, IconButtonCss, IconButtonProps, iconButtonCss} from "./components/icon-button";
 export {Menu, MenuCss, MenuItem, MenuItemProps, MenuProps, menuCss, useMenu} from "./components/menu";
 export {

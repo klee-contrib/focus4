@@ -1,12 +1,12 @@
 import classNames from "classnames";
-import {AriaAttributes, createElement, CSSProperties, FocusEventHandler, MouseEventHandler, ReactNode} from "react";
+import {AriaAttributes, createElement, CSSProperties, FocusEventHandler, MouseEventHandler} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 import {useInputRef} from "../utils/use-input-ref";
 
-import {FontIcon} from "./font-icon";
+import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
@@ -22,7 +22,7 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
     /** Si renseigné, pose une balise <a> à la place du <button>. */
     href?: string;
     /** Icône a afficher dans le bouton. */
-    icon: ReactNode;
+    icon: Icon;
     /**  Libellé du bouton. */
     label?: string;
     /** Au blur du bouton. */

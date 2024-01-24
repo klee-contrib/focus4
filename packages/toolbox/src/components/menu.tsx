@@ -21,7 +21,7 @@ import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import {FontIcon} from "./font-icon";
+import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import menuCss, {MenuCss} from "./__style__/menu.css";
@@ -124,9 +124,9 @@ export interface MenuItemProps extends PointerEvents<HTMLLIElement> {
     /** Désactive l'élément de Menu, qui ne pourra plus être sélectionné. */
     disabled?: boolean;
     /** Icône à poser devant l'item de Menu. */
-    iconLeft?: ReactNode;
+    iconLeft?: Icon;
     /** Icône à poser derrière l'item de Menu. */
-    iconRight?: ReactNode;
+    iconRight?: Icon;
     /** Handler de clic sur l'item de Menu. */
     onClick?: MouseEventHandler<HTMLLIElement>;
     /** CSS. */

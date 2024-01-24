@@ -5,7 +5,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import {FontIcon} from "./font-icon";
+import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import tabsCss, {TabsCss} from "./__style__/tabs.css";
@@ -21,7 +21,7 @@ export interface TabProps extends PointerEvents<HTMLDivElement> {
     /** Désactive le Tab. */
     disabled?: boolean;
     /** Icône du Tab. */
-    icon?: ReactNode;
+    icon?: Icon;
     /** @internal */
     index?: number;
     /** Libellé du Tab. */

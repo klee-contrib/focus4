@@ -4,7 +4,7 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, ElementType, useContext, useEffect, useState} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
-import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 import {ChipCss, IconButton, Tooltip} from "@focus4/toolbox";
 
 import {
@@ -258,14 +258,14 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                                 <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
                                     <IconButton
                                         color={listContext.mode === "list" ? "accent" : undefined}
-                                        icon={getIcon(`${i18nPrefix}.icons.list.list`)}
+                                        icon={{i18nKey: `${i18nPrefix}.icons.list.list`}}
                                         onClick={() => (listContext.mode = "list")}
                                     />
                                 </Tooltip>
                                 <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
                                     <IconButton
                                         color={listContext.mode === "mosaic" ? "accent" : undefined}
-                                        icon={getIcon(`${i18nPrefix}.icons.list.mosaic`)}
+                                        icon={{i18nKey: `${i18nPrefix}.icons.list.mosaic`}}
                                         onClick={() => (listContext.mode = "mosaic")}
                                     />
                                 </Tooltip>

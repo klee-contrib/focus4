@@ -1,10 +1,10 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import {ReactNode, useCallback, useMemo} from "react";
+import {useCallback, useMemo} from "react";
 
 import {DomainFieldType, DomainTypeMultiple, ReferenceList} from "@focus4/stores";
-import {CSSProp, getIcon, useTheme} from "@focus4/styling";
-import {Chip, ChipCss, DropdownCss, TextFieldCss} from "@focus4/toolbox";
+import {CSSProp, useTheme} from "@focus4/styling";
+import {Chip, ChipCss, DropdownCss, Icon, TextFieldCss} from "@focus4/toolbox";
 
 import {Select} from "./select";
 import {toSimpleType} from "./utils";
@@ -26,7 +26,7 @@ export interface SelectChipsProps<T extends DomainFieldType> {
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Icône à poser devant le texte. */
-    icon?: ReactNode;
+    icon?: Icon;
     /** Id de l'input. */
     id?: string;
     /** Nombre maximal d'éléments sélectionnables. */
@@ -105,7 +105,7 @@ export function SelectChips<T extends DomainFieldType>({
 
     const trailing = useMemo(() => {
         const clear = {
-            icon: getIcon(`${i18nPrefix}.icons.select.unselectAll`),
+            icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
             onClick: handleRemoveAll,
             tooltip: i18next.t(`${i18nPrefix}.select.unselectAll`),
             blurOnClick: true
@@ -114,7 +114,7 @@ export function SelectChips<T extends DomainFieldType>({
         if (hasSelectAll) {
             return [
                 {
-                    icon: getIcon(`${i18nPrefix}.icons.select.selectAll`),
+                    icon: {i18nKey: `${i18nPrefix}.icons.select.selectAll`},
                     onClick: handleAddAll,
                     tooltip: i18next.t(`${i18nPrefix}.select.selectAll`),
                     blurOnClick: true

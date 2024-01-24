@@ -3,6 +3,9 @@ export const config = {
     /** Valeur de "autocomplete" sur les inputs pour lesquels on ne veut pas d'autocomplétion. */
     autocompleteOffValue: /Firefox/.exec(navigator.userAgent) ? "off" : "one-time-code",
 
+    /** Classe CSS par défaut des icônes. */
+    defaultIconClassName: "material-icons",
+
     /** Durée de cache par défaut pour les listes de référence. */
     referenceCacheDuration: 3600000, // 1h.
 

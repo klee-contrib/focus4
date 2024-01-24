@@ -4,7 +4,7 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, useContext} from "react";
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
-import {CSSProp, getIcon, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 import {Checkbox, IconButton} from "@focus4/toolbox";
 
 import {ActionBar, List, ListBaseProps, ListProps, OperationListItem} from "../../list";
@@ -122,7 +122,7 @@ export function DefaultGroupHeader<T>({group, i18nPrefix = "focus", openedMap}: 
         return (
             <>
                 <IconButton
-                    icon={getIcon(`${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`)}
+                    icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}}
                     onClick={() => openedMap.set(group.code, !opened)}
                 />
                 <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>

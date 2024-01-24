@@ -8,7 +8,6 @@ export {
     colorScheme,
     cssTransitionProps,
     getDefaultTransition,
-    getIcon,
     initColorScheme,
     getSpringTransition
 } from "./utils";

@@ -6,7 +6,7 @@ import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {CSSProp, getDefaultTransition, getIcon, useTheme} from "@focus4/styling";
+import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 import {Button, Checkbox, IconButton, Menu, MenuItem, TextField, useMenu} from "@focus4/toolbox";
 
 import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
@@ -113,8 +113,8 @@ export function ActionBar<T>({
                         <Button
                             icon={
                                 groupMenu.active
-                                    ? getIcon(`${i18nPrefix}.icons.actionBar.dropup`)
-                                    : getIcon(`${i18nPrefix}.icons.actionBar.dropdown`)
+                                    ? {i18nKey: `${i18nPrefix}.icons.actionBar.dropup`}
+                                    : {i18nKey: `${i18nPrefix}.icons.actionBar.dropdown`}
                             }
                             iconPosition="right"
                             label={i18next.t(`${i18nPrefix}.search.action.group`)}
@@ -184,7 +184,7 @@ export function ActionBar<T>({
                     ) ? (
                         <div style={{position: "relative"}}>
                             <Button
-                                icon={getIcon(`${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`)}
+                                icon={{i18nKey: `${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`}}
                                 iconPosition="right"
                                 label={i18next.t(`${i18nPrefix}.search.action.filter`)}
                                 onClick={() => setDisplayFacetBox(!displayFacetBox)}
@@ -199,8 +199,8 @@ export function ActionBar<T>({
                             <Button
                                 icon={
                                     sortMenu.active
-                                        ? getIcon(`${i18nPrefix}.icons.actionBar.dropup`)
-                                        : getIcon(`${i18nPrefix}.icons.actionBar.dropdown`)
+                                        ? {i18nKey: `${i18nPrefix}.icons.actionBar.dropup`}
+                                        : {i18nKey: `${i18nPrefix}.icons.actionBar.dropdown`}
                                 }
                                 iconPosition="right"
                                 label={i18next.t(`${i18nPrefix}.search.action.sort`)}
@@ -232,13 +232,13 @@ export function ActionBar<T>({
                         <div className={theme.searchBar()}>
                             <TextField
                                 hint={searchBarPlaceholder}
-                                icon={getIcon(`${i18nPrefix}.icons.actionBar.search`)}
+                                icon={{i18nKey: `${i18nPrefix}.icons.actionBar.search`}}
                                 onChange={(text: string) => (store.query = text)}
                                 trailing={
                                     store.query
                                         ? [
                                               {
-                                                  icon: getIcon(`${i18nPrefix}.icons.actionBar.close`),
+                                                  icon: {i18nKey: `${i18nPrefix}.icons.actionBar.close`},
                                                   onClick: () => (store.query = "")
                                               }
                                           ]
@@ -266,7 +266,7 @@ export function ActionBar<T>({
                                 transition={getDefaultTransition()}
                             >
                                 <IconButton
-                                    icon={getIcon(`${i18nPrefix}.icons.actionBar.close`)}
+                                    icon={{i18nKey: `${i18nPrefix}.icons.actionBar.close`}}
                                     onClick={() => setDisplayFacetBox(false)}
                                 />
                                 <FacetBox
