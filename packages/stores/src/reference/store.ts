@@ -1,5 +1,5 @@
 import {upperFirst} from "lodash";
-import {action, extendObservable, observable} from "mobx";
+import {action, extendObservable, observable, when} from "mobx";
 import {v4} from "uuid";
 
 import {config, requestStore} from "@focus4/core";
@@ -21,6 +21,12 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
     refConfig: T,
     referenceClearer?: (refName?: string) => Promise<void>
 ): AsList<T> & {
+    /**
+     * Récupère une liste de référence, depuis le serveur si nécessaire.
+     * @param refName Liste de référence demandée.
+     */
+    get<K extends string & keyof T>(refName?: K): Promise<AsList<T>[K]>;
+
     /** Si l'une des listes de référence est en cours de chargement. */
     readonly isLoading: boolean;
     /**
@@ -70,6 +76,11 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
             }
         });
     }
+
+    referenceStore.get = async (refName: string & keyof T) => {
+        await when(() => referenceStore[refName].length > 0);
+        return referenceStore[refName];
+    };
 
     referenceStore.reload = async (refName?: string & keyof T) => {
         if (refName) {
