@@ -1,12 +1,32 @@
 import {promises as fs} from "fs";
 import path from "path";
 
-import Core from "css-modules-loader-core";
 import glob from "glob";
 import {camelCase, sortBy, upperFirst} from "lodash";
+import postcss from "postcss";
+import extractImports from "postcss-modules-extract-imports";
+import localByDefault from "postcss-modules-local-by-default";
+import scope from "postcss-modules-scope";
+
+export async function loadCSS(sourceString: string) {
+    const {root} = await postcss([localByDefault, extractImports, scope]).process(sourceString);
+
+    const exportTokens: string[] = [];
+    root.each(node => {
+        if (node.type === "rule" && node.selector === ":export") {
+            node.each(decl => {
+                if (decl.type === "decl") {
+                    exportTokens.push(decl.prop);
+                }
+            });
+            node.remove();
+        }
+    });
+
+    return exportTokens;
+}
 
 export async function generateCSSTypings(rootDir: string) {
-    const cssLoader = new Core();
     const root = path.join(process.cwd(), rootDir).replace(/\\/g, "/");
     const pattern = `${root}/**/*.css`;
     console.info(`Recherche des fichiers dans ${pattern}...`);
@@ -21,11 +41,11 @@ export async function generateCSSTypings(rootDir: string) {
         files.map(async ({file, interfaceName}) => {
             const content = await fs.readFile(file);
             const filePath = file.replace(root, rootDir);
-            const {exportTokens} = await cssLoader.load(content.toString());
+            const exportTokens = await loadCSS(content.toString());
             const elements = new Set<string>();
             let hasModifier = false;
             const tokens = sortBy(
-                Object.keys(exportTokens).map(token => {
+                exportTokens.map(token => {
                     const [element, modifier] = token.split("--");
                     const Element = upperFirst(element);
                     elements.add(Element);
