@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "11.13.1",
+    "version": "11.13.2",
     "description": "Focus v4, collections module",
     "main": "lib/focus4.collections.js",
     "repository": {
@@ -16,14 +16,14 @@
     },
     "dependencies": {
         "@focus4/core": "11.13.0",
-        "@focus4/forms": "11.13.1",
+        "@focus4/forms": "11.13.2",
         "@focus4/stores": "11.13.1",
-        "@focus4/styling": "11.13.0",
-        "@focus4/toolbox": "11.13.0",
+        "@focus4/styling": "11.13.2",
+        "@focus4/toolbox": "11.13.2",
         "react-dnd": "16.0.1",
         "react-dnd-html5-backend": "16.0.1"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.13.0"
+        "@focus4/tooling": "11.13.2"
     }
 }
