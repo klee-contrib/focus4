@@ -9,7 +9,7 @@ import localByDefault from "postcss-modules-local-by-default";
 import scope from "postcss-modules-scope";
 
 export async function loadCSS(sourceString: string) {
-    const {root} = await postcss([localByDefault, extractImports, scope]).process(sourceString);
+    const {root} = await postcss([localByDefault, extractImports, scope]).process(sourceString, {from: undefined});
 
     const exportTokens: string[] = [];
     root.each(node => {
