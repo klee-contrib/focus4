@@ -180,26 +180,6 @@ export function useMenu<T extends HTMLElement = HTMLDivElement>(): MenuControls<
 
 /**
  * Menu déroulant. Peut s'attacher à un élément parent. A utiliser avec `useMenu()`.
- *
- * Exemple :
- *  ```tsx
- *  const menu = useMenu();
- *
- *  // Remarque : L'élément conteneur impérativement avoir "position: relative".
- *  return (
- *      <span ref={menu.anchor} style={{position: "relative", display: "inline-block"}}>
- *          <IconButton icon="more_vert" onClick={menu.toggle}>
- *          <Menu {...menu}>
- *              <MenuItem
- *                  caption={mode.dark ? "Mode clair" : "Mode sombre"}
- *                  icon={mode.dark ? "light_mode" : "dark_mode"}
- *                  onClick={() => (mode.dark = !mode.dark)}
- *              />
- *              <MenuItem caption="Se déconnecter" icon="login" onClick={signOut} />
- *          </Menu>
- *      </span>
- *  );
- *  ```
  */
 export function Menu({
     active,

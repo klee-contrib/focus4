@@ -43,7 +43,6 @@ function generateDocFile(fileName, globPath) {
                     prop.name.startsWith("onPointer")
                 )
         })
-        .reverse()
         .filter(c => !c.displayName.startsWith("use"))) {
         fs.writeFileSync(
             path.resolve(
@@ -64,6 +63,7 @@ export const ${component.displayName}Meta: Meta<typeof ${component.displayName}>
     },
     argTypes: {
         ${Object.keys(component.props)
+            .sort((a, b) => a.localeCompare(b))
             .map(
                 prop =>
                     `${prop}: {

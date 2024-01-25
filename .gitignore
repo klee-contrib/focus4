@@ -1,6 +1,6 @@
 npm-debug.log
 node_modules
-docs
+/docs
 lib
 metas
 *.css.d.ts
