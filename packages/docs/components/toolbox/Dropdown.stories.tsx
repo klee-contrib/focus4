@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {Dropdown} from "@focus4/toolbox";
 
 import {DropdownMeta} from "./metas/dropdown";
@@ -15,4 +17,21 @@ export default {
     }
 } as Meta<typeof Dropdown>;
 
-export const Showcase: StoryObj<typeof Dropdown> = {};
+export const Showcase: StoryObj<typeof Dropdown> = {
+    render(props) {
+        const [selected, setSelected] = useState<string>();
+        return (
+            <div className="stack">
+                <Dropdown value={selected} {...props} onChange={setSelected} />
+                <Dropdown icon="add" value={selected} {...props} onChange={setSelected} />
+                <Dropdown
+                    sizing="fit-to-values"
+                    trailing={{icon: "clear", tooltip: "Vider le champ", onClick: () => setSelected(undefined)}}
+                    value={selected}
+                    {...props}
+                    onChange={setSelected}
+                />
+            </div>
+        );
+    }
+};

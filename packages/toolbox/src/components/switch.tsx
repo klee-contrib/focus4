@@ -40,7 +40,10 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
 }
 
 /**
- * Un switch, fonctionnellement identique à la [`Checkbox`](#checkbox).
+ * Un switch permet à un utilisateur de changer le statut d'un objet à actif/inactif.
+ *
+ * - Peut avoir un libellé.
+ * - Peut afficher des icônes à l'intérieur, qui changent selon l'état du switch.
  */
 export function Switch({
     className,

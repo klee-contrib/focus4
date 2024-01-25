@@ -8,8 +8,17 @@ export default {
     ...CircularProgressIndicatorMeta,
     title: "Composants/@focus4∕toolbox/CircularProgressIndicator",
     args: {
-        indeterminate: true
+        value: 55
     }
 } as Meta<typeof CircularProgressIndicator>;
 
-export const Showcase: StoryObj<typeof CircularProgressIndicator> = {};
+export const Showcase: StoryObj<typeof CircularProgressIndicator> = {
+    render(props) {
+        return (
+            <div className="stack">
+                <CircularProgressIndicator {...props} />
+                <CircularProgressIndicator {...props} indeterminate />
+            </div>
+        );
+    }
+};

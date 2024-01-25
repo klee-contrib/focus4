@@ -41,7 +41,10 @@ export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
 }
 
 /**
- * Une checkbox.
+ * Une checkbox permet à un utilisateur de choisir un ou plusieurs objets dans une liste, ou d'activer/désactiver un objet.
+ *
+ * - Peut avoir un libellé.
+ * - Peut afficher un statut indéterminé.
  */
 export function Checkbox({
     className,

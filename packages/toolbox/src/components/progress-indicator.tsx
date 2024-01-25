@@ -23,7 +23,11 @@ export interface ProgressIndicatorProps extends PointerEvents<HTMLDivElement> {
     value?: number;
 }
 
-/** Indicateur de progression circulaire. */
+/**
+ * Un indicateur de chargement permet d'afficher le status d'un processus en cours, ici sous forme circulaire.
+ *
+ * Il peut indiquer une progression déterminée comme indéterminée.
+ */
 export function CircularProgressIndicator({
     className,
     indeterminate = false,
@@ -101,7 +105,11 @@ export function CircularProgressIndicator({
     );
 }
 
-/** Indicateur de progression linéaire. */
+/**
+ * Un indicateur de chargement permet d'afficher le status d'un processus en cours, ici sous forme linéaire.
+ *
+ * Il peut indiquer une progression déterminée comme indéterminée.
+ */
 export function LinearProgressIndicator({
     className,
     indeterminate = false,

@@ -66,6 +66,13 @@ const defaultGetLabel = (x: any) => x.label;
 
 const undefinedKey = "$$undefined$$";
 
+/**
+ * Un Dropdown combine un champ texte avec un menu déroulant, pour effectuer une sélection parmi une liste de valeurs disponibles.
+ *
+ * - Toutes les options du champ texte sont disponibles.
+ * - Le rendu de chaque ligne est paramétrable.
+ * - La mise en page du champ et du menu déroulant contenant les valeurs est paramétrable.
+ */
 export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; label: string}>(
     {
         className,
@@ -274,7 +281,8 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                     {icon: `arrow_drop_${menu.active ? "up" : "down"}`, error},
                     ...(Array.isArray(trailing) ? trailing : [trailing]).map(t => ({
                         ...t,
-                        onClick: t.blurOnClick
+                        blurOnClick: !!t.onClick || t.blurOnClick,
+                        onClick: t.onClick
                             ? () => {
                                   t.onClick?.();
                                   setFocused(false);

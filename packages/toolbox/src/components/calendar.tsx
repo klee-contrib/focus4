@@ -35,7 +35,10 @@ export interface CalendarProps {
 }
 
 /**
- * Calendrier permettant de choisir un jour, un mois ou une année. Utilisé par `InputDate`.
+ * Un calendrier permet à un utilisateur de choisir une date.
+ *
+ * - Intégré avec un champ de saisie texte via le composant `InputDate`.
+ * - Peut être configuré pour limiter la saisie à un mois ou une année.
  */
 export const Calendar = forwardRef(function Calendar(
     {className, max, min, format = "yyyy-MM-dd", onChange, tabIndex = 0, theme: pTheme, value}: CalendarProps,

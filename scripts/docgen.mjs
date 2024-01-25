@@ -56,7 +56,6 @@ import type {Meta} from "@storybook/react";
 export const ${component.displayName}Meta: Meta<typeof ${component.displayName}> = {
     component: ${component.displayName},
     parameters: {
-        layout: "centered",
         docs: {
             description: {component: \`${component.description.replaceAll('"', '\\"').replaceAll("`", "\\`")}\`}
         }

@@ -16,3 +16,13 @@
     flex-direction: column;
     gap: var(--button-spacing);
 }
+
+.sbdocs,
+.docs-story {
+    overflow: visible !important;
+    z-index: 1;
+}
+
+.docs-story > div {
+    overflow: visible;
+}
