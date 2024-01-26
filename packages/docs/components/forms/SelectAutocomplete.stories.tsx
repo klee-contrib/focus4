@@ -8,6 +8,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...SelectAutocompleteMeta,
     title: "Composants/@focus4∕forms/SelectAutocomplete",
+    tags: ["autodocs"],
     args: {
         type: "string-array",
         values: makeReferenceList([

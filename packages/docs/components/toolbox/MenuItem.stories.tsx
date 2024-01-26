@@ -6,8 +6,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...MenuItemMeta,
-    title: "Composants/@focus4∕toolbox/MenuItem",
-    args: {caption: "Action"}
+    title: "Composants/@focus4∕toolbox/MenuItem"
 } as Meta<typeof MenuItem>;
 
 export const Showcase: StoryObj<typeof MenuItem> = {};

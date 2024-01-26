@@ -99,8 +99,8 @@ export function Switch({
                     {value !== undefined ? (
                         <>
                             <span className={theme.thumb({icon: !!iconOff})} />
-                            {iconOn ? <FontIcon className={theme.icon({checked: true})}>{iconOn}</FontIcon> : null}
-                            {iconOff ? <FontIcon className={theme.icon({unchecked: true})}>{iconOff}</FontIcon> : null}
+                            {iconOn ? <FontIcon className={theme.icon({checked: true})} icon={iconOn} /> : null}
+                            {iconOff ? <FontIcon className={theme.icon({unchecked: true})} icon={iconOff} /> : null}
                         </>
                     ) : null}
                 </span>

@@ -131,7 +131,7 @@ export function FloatingActionButton({
             {createElement(
                 element,
                 props,
-                icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null,
+                icon ? <FontIcon className={theme.icon()} icon={icon} /> : null,
                 <motion.div
                     animate={extended ? "extended" : "folded"}
                     className={theme.label()}

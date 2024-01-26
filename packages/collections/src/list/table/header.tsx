@@ -45,13 +45,13 @@ export function TableHeader<T>({
                 }
             >
                 {store && sortKey ? (
-                    <FontIcon>
-                        {{
+                    <FontIcon
+                        icon={{
                             i18nKey: `${i18nPrefix}.icons.table.sort${
                                 store.sortBy !== sortKey || store.sortAsc ? "Asc" : "Desc"
                             }`
                         }}
-                    </FontIcon>
+                    />
                 ) : null}
                 <span className={theme.headerText()}>{i18next.t(title)}</span>
             </div>

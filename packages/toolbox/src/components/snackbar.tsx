@@ -31,7 +31,12 @@ export interface SnackbarProps {
 }
 
 /**
- * Le composant pour afficher des toasts utilisé par le [`MessageCenter`](basics/messages.md).
+ * Une snackbar affiche un message court à un utilisateur en bas de l'écran pour le notifier du status d'une action dans l'application.
+ *
+ * Elle est posée par défaut par le `MessageCenter` du `Layout`.
+ *
+ * - 4 types de messages : succès, erreur, avertissement ou information
+ * - Peut inclure une action.
  */
 export function Snackbar({active, action, className, close, level, message, onClose, theme: pTheme}: SnackbarProps) {
     const theme = useTheme("snackbar", snackbarCss, pTheme);

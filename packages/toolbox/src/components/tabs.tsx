@@ -50,7 +50,9 @@ export interface TabsProps {
 }
 
 /**
- * Un Tab, à utiliser dans Tabs.
+ * Définit un tab à inclure dans une instance de `Tabs`.
+ *
+ * Peut inclure le contenu du tab en enfant ou peut être simplement utilisé pour le titre.
  */
 export function Tab({
     active = false,
@@ -96,14 +98,19 @@ export function Tab({
                 role="tab"
                 tabIndex={disabled ? undefined : 0}
             >
-                {icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null}
+                {icon ? <FontIcon className={theme.icon()} icon={icon} /> : null}
                 {label ? <span className={theme.label()}>{label}</span> : null}
             </div>
         </Ripple>
     );
 }
 
-/** Permet de poser un système de tabs avec Tab. */
+/**
+ * Les tabs permettent d'organiser du contenu à travers différents écrans ou vues.
+ *
+ * - 2 types : primaires et secondaires
+ * - Les tabs peuvent inclure le contenu ou simplement servir de barre de titres. Le changement de tab animera le contenu s'il est inclus.
+ */
 export function Tabs({children, className = "", index = 0, onChange, secondary, theme: pTheme}: TabsProps) {
     const theme = useTheme("tabs", tabsCss, pTheme);
     const navigationNode = useRef<HTMLDivElement | null>(null);

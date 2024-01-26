@@ -7,15 +7,18 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...TooltipMeta,
     title: "Composants/@focus4∕toolbox/Tooltip",
+    tags: ["autodocs"],
     args: {tooltip: "Tooltip"}
 } as Meta<typeof Tooltip>;
 
 export const Showcase: StoryObj<typeof Tooltip> = {
     render(props) {
         return (
-            <Tooltip {...props}>
-                <div>Test</div>
-            </Tooltip>
+            <div className="container">
+                <Tooltip {...props}>
+                    <div>Test</div>
+                </Tooltip>
+            </div>
         );
     }
 };

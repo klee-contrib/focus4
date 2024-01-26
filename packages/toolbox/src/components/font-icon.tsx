@@ -9,7 +9,7 @@ import {PointerEvents} from "../utils/pointer-events";
 /**
  * Définition d'une icône. Peut être :
  *
- * - Le nom d'une icône, utilisera la classe CSS définie dans `config.defaultIconClassName` (par défaut : "material-symbols-outlined").
+ * - Le nom d'une icône, utilisera la classe CSS définie dans `config.defaultIconClassName` (par défaut : `"material-icons"`).
  * - Un objet `{name, className?}`, décrivant le nom le icône et sa classe CSS associée (la classe par défaut sera sélectionnée si `className` n'est pas renseigné).
  * - Une clé i18n pointant vers un objet `{name, className?}`.
  *
@@ -23,52 +23,78 @@ export interface FontIconProps extends PointerEvents<HTMLSpanElement> {
     alt?: string;
     /** Classe CSS à poser sur le composant racine. */
     className?: string;
-    /** Icône à afficher. */
-    children: Icon;
-    /** Styles inline */
+    /**
+     * Nom de l'icône à afficher. Ne sera pas posé en enfant du <span> si la classe CSS de l'icône est un template de `{name}`.
+     *
+     * Ignoré si `iconI18nKey` est renseigné.
+     */
+    children?: string;
+    /**
+     * Définition d'icône mixte, peut être utilisé à la place de `children` / `iconClassName` / `iconI18nKey`.
+     *
+     * N'a pas la priorité sur ces définitions-là.
+     */
+    icon?: Icon;
+    /**
+     * Classe CSS de l'icône, pour retrouver la police associée. Peut être utilisée comme template du nom de l'icône (en y remplaçant `{name}`).
+     *
+     * Ignoré si `iconI18nKey` est renseigné.
+     */
+    iconClassName?: string;
+    /**
+     * Clé i18n pour retrouver l'icône. Doit correspondre à un objet `{name, className?}`.
+     *
+     * Remplace `children` et `iconClassName`.
+     */
+    iconI18nKey?: string;
+    /** Styles inline. */
     style?: CSSProperties;
 }
 
 /**
- * Affiche une icône. Prend une `Icon` comme enfant.
+ * Affiche une icône. Une icône est définie par son nom et sa classe CSS, qui servira à retrouver la police d'icône associée.
+ *
+ * Une icône définie avec seulement un nom utilisera la classe CSS définie dans `config.defaultIconClassName` (par défaut : `"material-icons"`).
+ *
+ * La classe CSS sera interprétée comme un template du nom si elle contient `{name}` dans sa définition.
+ * Dans ce cas, le `name` ne sera pas posé en enfant du `<span>` qui définira l'icône.
+ *
+ * Une icône peut également être définie via une clé i18n, qui devra pointer vers un objet `{name, className?}` représentant l'icône.
  */
 export function FontIcon({
+    icon,
     alt = "",
     className = "",
-    children,
+    children = typeof icon === "string" ? icon : typeof icon === "object" && "name" in icon ? icon.name : undefined,
+    iconClassName = typeof icon === "object" && "className" in icon ? icon.className : config.defaultIconClassName,
+    iconI18nKey = typeof icon === "object" && "i18nKey" in icon ? icon.i18nKey : undefined,
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
     onPointerUp,
     style
 }: FontIconProps) {
-    let inputClassName = config.defaultIconClassName;
-    let inputName;
-
-    if (typeof children === "string") {
-        inputName = children;
-    } else if ("name" in children) {
-        inputName = children.name;
-        if (children.className) {
-            inputClassName = children.className;
+    if (iconI18nKey) {
+        const nameKey = `${iconI18nKey}.name`;
+        const i18nName = i18next.t(nameKey);
+        if (i18nName !== nameKey) {
+            children = i18nName;
         }
-    } else {
-        inputName = i18next.t(`${children.i18nKey}.name`);
-        const classNameKey = `${children.i18nKey}.className`;
+        const classNameKey = `${iconI18nKey}.className`;
         const i18nClassName = i18next.t(classNameKey);
         if (i18nClassName !== classNameKey) {
-            inputClassName = i18nClassName;
+            iconClassName = i18nClassName;
         }
     }
 
     let baseClassName;
     let name;
 
-    if (inputClassName.includes("{name}")) {
-        baseClassName = inputClassName.replaceAll("{name}", inputName);
+    if (iconClassName.includes("{name}")) {
+        baseClassName = iconClassName.replaceAll("{name}", children ?? "");
     } else {
-        baseClassName = inputClassName;
-        name = inputName;
+        baseClassName = iconClassName;
+        name = children;
     }
 
     return (

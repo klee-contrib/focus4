@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...LinearProgressIndicatorMeta,
     title: "Composants/@focus4∕toolbox/LinearProgressIndicator",
+    tags: ["autodocs"],
     args: {
         value: 55
     }

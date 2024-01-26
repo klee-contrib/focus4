@@ -8,6 +8,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...SelectRadioMeta,
     title: "Composants/@focus4∕forms/SelectRadio",
+    tags: ["autodocs"],
     args: {
         type: "string",
         values: makeReferenceList([

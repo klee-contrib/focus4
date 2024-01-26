@@ -78,7 +78,12 @@ const defaultGetKey = (x: any) => x.key;
 const defaultGetLabel = (x: any) => x.label;
 
 /**
- * Champ de saisie en autocomplétion à partir d'une **liste de valeurs possibles en entrée**.
+ * Un Autocomplete combine un champ texte en autocomplétion avec un menu déroulant, pour effectuer une sélection parmi une **liste de valeurs disponibles en entrée**.
+ *
+ * - Le filtrage des valeurs s'effecue dans le composant selon plusieurs modes de correspondance.
+ * - Toutes les options du champ texte sont disponibles.
+ * - Peut être utilisé comme un champ de recherche rapide.
+ * - Peut afficher des suggestions complémentaires.
  */
 export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: string; label: string}>(
     {

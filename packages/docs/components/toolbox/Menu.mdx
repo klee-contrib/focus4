@@ -1,0 +1,18 @@
+import {Meta, Description, Title, Controls, Canvas} from "@storybook/blocks";
+
+import MenuStories, {Showcase} from "./Menu.stories";
+import MenuItemStories, {Showcase as MenuItem} from "./MenuItem.stories";
+
+<Meta of={MenuStories} />
+
+<Title />
+<Description />
+
+<Canvas of={Showcase} />
+
+<Controls of={Showcase} />
+
+<Title>{MenuItemStories.title.split("/")[2]}</Title>
+<Description>{MenuItemStories.parameters.docs.description.component}</Description>
+
+<Controls of={MenuItem} />

@@ -42,7 +42,7 @@ export function DefaultAddItemComponent({addItemHandler, i18nPrefix = "focus", m
     if (mode === "mosaic") {
         return (
             <div className={theme.add()} onClick={addItemHandler}>
-                <FontIcon>{{i18nKey: `${i18nPrefix}.icons.list.add`}}</FontIcon>
+                <FontIcon icon={{i18nKey: `${i18nPrefix}.icons.list.add`}} />
                 {i18next.t(`${i18nPrefix}.list.add`)}
             </div>
         );

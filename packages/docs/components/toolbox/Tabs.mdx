@@ -1,0 +1,18 @@
+import {Meta, Description, Title, Controls, Canvas} from "@storybook/blocks";
+
+import TabsStories, {Showcase} from "./Tabs.stories";
+import TabStories, {Showcase as Tab} from "./Tab.stories";
+
+<Meta of={TabsStories} />
+
+<Title />
+<Description />
+
+<Canvas of={Showcase} />
+
+<Controls of={Showcase} />
+
+<Title>{TabStories.title.split("/")[2]}</Title>
+<Description>{TabStories.parameters.docs.description.component}</Description>
+
+<Controls of={Tab} />

@@ -2,7 +2,8 @@ import "@focus4/styling/lib/focus4.styling.css";
 import "@focus4/toolbox/lib/focus4.toolbox.css";
 import "./preview.css";
 
-import {translation} from "@focus4/forms";
+import {translation as collections} from "@focus4/collections";
+import {translation as forms} from "@focus4/forms";
 import {colorScheme, initColorScheme} from "@focus4/styling";
 import {DocsContainer as BaseContainer} from "@storybook/blocks";
 import type {Preview} from "@storybook/react";
@@ -19,7 +20,9 @@ initColorScheme(true);
 
 i18next.init({
     lng: "fr",
-    resources: {fr: {translation: {focus: {...translation.fr, icons: translation.icons}}}},
+    resources: {
+        fr: {translation: {focus: {...collections.fr, ...forms.fr, icons: {...collections.icons, ...forms.icons}}}}
+    },
     nsSeparator: "🤷‍♂️"
 });
 
@@ -30,12 +33,7 @@ function DocsContainer(props) {
 
 export default {
     parameters: {
-        actions: {argTypesRegex: "^on[A-Z].*"},
         controls: {
-            matchers: {
-                color: /(background|color)$/i,
-                date: /Date$/i
-            },
             sort: "requiredFirst"
         },
         docs: {
@@ -48,6 +46,7 @@ export default {
                     "Les bases",
                     "Modèle métier",
                     "Composants",
+                    ["Composants de base", "@focus4∕toolbox", "@focus4∕forms"],
                     "Routage",
                     "Mise en page",
                     "Listes et recherche",

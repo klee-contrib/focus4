@@ -7,7 +7,15 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...SnackbarMeta,
     title: "Composants/@focus4∕toolbox/Snackbar",
-    args: {active: true, message: "Salut"}
+    tags: ["autodocs"],
+    args: {
+        active: true,
+        message: "Salut",
+        close: () => {
+            /* */
+        },
+        action: {label: "Action"}
+    }
 } as Meta<typeof Snackbar>;
 
 export const Showcase: StoryObj<typeof Snackbar> = {};

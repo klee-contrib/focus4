@@ -194,9 +194,7 @@ export function SearchBar<T, C>({
         <div data-focus="search-bar" style={{position: "relative"}}>
             <div className={theme.bar({error: !!state.error})}>
                 <div className={theme.input()}>
-                    <FontIcon className={theme.searchIcon()}>
-                        {{i18nKey: `${i18nPrefix}.icons.searchBar.search`}}
-                    </FontIcon>
+                    <FontIcon className={theme.searchIcon()} icon={{i18nKey: `${i18nPrefix}.icons.searchBar.search`}} />
                     <input
                         ref={input}
                         autoComplete={config.autocompleteOffValue}

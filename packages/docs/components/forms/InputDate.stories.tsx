@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...InputDateMeta,
     title: "Composants/@focus4∕forms/InputDate",
+    tags: ["autodocs"],
     args: {type: "string"}
 } as Meta<typeof InputDate>;
 

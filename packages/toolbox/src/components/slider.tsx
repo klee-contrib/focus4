@@ -34,7 +34,13 @@ export interface SliderProps extends PointerEvents<HTMLDivElement> {
     value: number;
 }
 
-/** Slider. */
+/**
+ * Un slider permet à un utilisateur de choisir une valeur numérique dans un intervalle donné.
+ *
+ * - Le pas du slider peut être configuré.
+ * - Peut indiquer la valeur précise lors l'interaction.
+ * - Peut afficher un indicateur à chaque pas sur le slider.
+ */
 export function Slider({
     className,
     disabled = false,

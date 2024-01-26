@@ -22,7 +22,9 @@ export interface RippleProps<T extends HTMLElement = HTMLElement> extends Pointe
 }
 
 /**
- * Pose un Ripple au clic sur le composant/élément enfant.
+ * Le `Ripple` est un composant à poser autour d'un autre élément pour y ajouter un effet "ripple" lors du clic.
+ *
+ * Tous les composants qui attendent un clic d'un utilisateur dans leur action principale en sont munis.
  */
 export function Ripple<T extends HTMLElement = HTMLElement>({
     centered,

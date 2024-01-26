@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...IconButtonMeta,
     title: "Composants/@focus4∕toolbox/IconButton",
+    tags: ["autodocs"],
     args: {
         icon: "add"
     }

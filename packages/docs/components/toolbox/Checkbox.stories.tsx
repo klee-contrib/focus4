@@ -8,7 +8,8 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...CheckboxMeta,
-    title: "Composants/@focus4∕toolbox/Checkbox"
+    title: "Composants/@focus4∕toolbox/Checkbox",
+    tags: ["autodocs"]
 } as Meta<typeof Checkbox>;
 
 export const Showcase: StoryObj<typeof Checkbox> = {

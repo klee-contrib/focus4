@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...LabelMeta,
     title: "Composants/@focus4∕forms/Label",
+    tags: ["autodocs"],
     args: {label: "Label"}
 } as Meta<typeof Label>;
 

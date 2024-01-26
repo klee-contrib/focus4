@@ -8,6 +8,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...SelectCheckboxMeta,
     title: "Composants/@focus4∕forms/SelectCheckbox",
+    tags: ["autodocs"],
     args: {
         type: "string-array",
         values: makeReferenceList([

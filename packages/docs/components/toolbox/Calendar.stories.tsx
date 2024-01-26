@@ -8,7 +8,8 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...CalendarMeta,
-    title: "Composants/@focus4∕toolbox/Calendar"
+    title: "Composants/@focus4∕toolbox/Calendar",
+    tags: ["autodocs"]
 } as Meta<typeof Calendar>;
 
 export const Showcase: StoryObj<typeof Calendar> = {

@@ -126,7 +126,7 @@ export function Button({
             {createElement(
                 element,
                 props,
-                icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null,
+                icon ? <FontIcon className={theme.icon()} icon={icon} /> : null,
                 <span className={theme.label()}>{label ?? "\xa0"}</span>
             )}
         </Ripple>

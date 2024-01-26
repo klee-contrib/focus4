@@ -9,6 +9,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...DropdownMeta,
     title: "Composants/@focus4∕toolbox/Dropdown",
+    tags: ["autodocs"],
     args: {
         values: [
             {key: "1", label: "Option 1"},

@@ -6,7 +6,8 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...PanelMeta,
-    title: "Composants/@focus4∕forms/Panel"
+    title: "Composants/@focus4∕forms/Panel",
+    tags: ["autodocs"]
 } as Meta<typeof Panel>;
 
 export const Showcase: StoryObj<typeof Panel> = {};

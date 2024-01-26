@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...CircularProgressIndicatorMeta,
     title: "Composants/@focus4∕toolbox/CircularProgressIndicator",
+    tags: ["autodocs"],
     args: {
         value: 55
     }

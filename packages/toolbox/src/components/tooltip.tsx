@@ -22,7 +22,7 @@ export interface TooltipProps<T extends HTMLElement = HTMLElement> extends Point
 }
 
 /**
- * Pose une tooltip autour de l'élement enfant qui s'activera au survol.
+ * Une tooltip permet d'afficher un bref libellé ou message à un utilisateur au survol.
  */
 export function Tooltip({
     children,

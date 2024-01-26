@@ -132,6 +132,10 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
  * - Peut afficher une icône à l'avant, et un nombre arbitraire d'icônes à l'arrière ainsi qu'un indicateur de chargement.
  * - Les icônes arrières peuvent être munies d'une action et d'une tooltip.
  * - Peut afficher une erreur.
+ *
+ * Le `TextField` ne respecte pas les dimensions de la spécification Material Design 3 : il est volontairement plus compact pour s'inclure plus
+ * naturellement dans le type de formulaires que l'on réalise avec Focus. Les dimensions originales sont indiquées en commentaire des variables CSS
+ * du composant pour information et comparaison.
  */
 export const TextField = forwardRef(function TextField(
     {
@@ -322,7 +326,7 @@ export const TextField = forwardRef(function TextField(
                 <div ref={outlineNode} className={theme.outline()} />
                 {icon ? (
                     <div className={theme.icon({leading: true})}>
-                        <FontIcon>{icon}</FontIcon>
+                        <FontIcon icon={icon} />
                     </div>
                 ) : null}
                 {label ? (
@@ -376,7 +380,7 @@ export const TextField = forwardRef(function TextField(
                         />
                     ) : (
                         <div key={i} className={theme.icon({error: t.error, trailing: true})}>
-                            <FontIcon alt={typeof t.tooltip === "string" ? t.tooltip : undefined}>{t.icon}</FontIcon>
+                            <FontIcon alt={typeof t.tooltip === "string" ? t.tooltip : undefined} icon={t.icon} />
                         </div>
                     );
                     if (t.tooltip) {

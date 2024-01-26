@@ -1,7 +1,8 @@
 import type {StorybookConfig} from "@storybook/react-vite";
+import {mergeConfig} from "vite";
 
 export default {
-    stories: ["../**/*.stories.tsx", "../**/*.mdx"],
+    stories: ["../**/*.@(stories.tsx|mdx)"],
     addons: ["@storybook/addon-essentials", "storybook-dark-mode"],
     staticDirs: ["./public"],
     framework: {
@@ -9,9 +10,10 @@ export default {
         options: {}
     },
     docs: {
-        autodocs: true
+        autodocs: "tag"
     },
     typescript: {
         reactDocgen: "react-docgen-typescript"
-    }
+    },
+    viteFinal: config => mergeConfig(config, {esbuild: {minifyIdentifiers: false}})
 } satisfies StorybookConfig;

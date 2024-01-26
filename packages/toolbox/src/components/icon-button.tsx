@@ -117,7 +117,7 @@ export function IconButton({
             onPointerLeave={handlePointerLeave}
             onPointerUp={handlePointerUp}
         >
-            {createElement(element, props, <FontIcon className={theme.icon()}>{icon}</FontIcon>)}
+            {createElement(element, props, <FontIcon className={theme.icon()} icon={icon} />)}
         </Ripple>
     );
 }

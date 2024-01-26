@@ -134,7 +134,7 @@ export interface MenuItemProps extends PointerEvents<HTMLLIElement> {
 }
 
 /**
- * Item de Menu a utiliser dans un `Menu`.
+ * Composant générique à inclure dans un `Menu`, comprenant un libellé et d'éventuelles icônes à l'avant et l'arrière.
  */
 export function MenuItem({
     caption,
@@ -157,9 +157,9 @@ export function MenuItem({
             onPointerUp={onPointerUp}
         >
             <span className={classNames(theme.menuItem({disabled}), className)}>
-                {iconLeft ? <FontIcon className={theme.icon()}>{iconLeft}</FontIcon> : null}
+                {iconLeft ? <FontIcon className={theme.icon()} icon={iconLeft} /> : null}
                 <span className={theme.caption()}>{caption}</span>
-                {iconRight ? <FontIcon className={theme.icon()}>{iconRight}</FontIcon> : null}
+                {iconRight ? <FontIcon className={theme.icon()} icon={iconRight} /> : null}
             </span>
         </Ripple>
     );
@@ -179,7 +179,13 @@ export function useMenu<T extends HTMLElement = HTMLDivElement>(): MenuControls<
 }
 
 /**
- * Menu déroulant. Peut s'attacher à un élément parent. A utiliser avec `useMenu()`.
+ * Un menu permet d'afficher une zone temporaire pour afficher une liste de valeurs qu'un utilisateur peut sélectionner.
+ * Il doit s'attacher à un élément parent comme un `Button` ou un `TextField`.
+ *
+ * Le hook `useMenu()` permet de créer les éléments nécessaires pour l'attacher et contrôler son affichage.
+ *
+ * L'élément générique d'un menu est le `MenuItem`, mais il est possible d'y mettre toute sorte de composant à l'intérieur.
+ * L'`Autocomplete`, le `Dropdown` ou encore l'`InputDate` utilisent un `Menu` pour afficher leurs listes de sélection/le calendrier.
  */
 export function Menu({
     active,

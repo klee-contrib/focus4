@@ -60,9 +60,11 @@ export function Label({
                             onClick={onTooltipClick}
                         />
                     ) : (
-                        <FontIcon className={theme.icon()} onPointerDown={onTooltipClick}>
-                            {{i18nKey: `${i18nPrefix}.icons.label.tooltip`}}
-                        </FontIcon>
+                        <FontIcon
+                            className={theme.icon()}
+                            icon={{i18nKey: `${i18nPrefix}.icons.label.tooltip`}}
+                            onPointerDown={onTooltipClick}
+                        />
                     )}
                 </Tooltip>
             ) : null}

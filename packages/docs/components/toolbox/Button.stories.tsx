@@ -6,6 +6,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...ButtonMeta,
     title: "Composants/@focus4∕toolbox/Button",
+    tags: ["autodocs"],
     args: {
         label: "Button"
     }

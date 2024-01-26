@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...ChipMeta,
     title: "Composants/@focus4∕toolbox/Chip",
+    tags: ["autodocs"],
     args: {
         label: "Chip"
     }
@@ -16,10 +17,30 @@ export const Showcase: StoryObj<typeof Chip> = {
     render(props) {
         return (
             <div className="container">
-                <Chip {...props} onClick={undefined} onDeleteClick={undefined} />
-                <Chip color="primary" {...props} onClick={undefined} />
-                <Chip color="accent" elevated {...props} onDeleteClick={undefined} />
-                <Chip color="light" icon="add" {...props} onDeleteClick={undefined} />
+                <Chip {...props} />
+                <Chip
+                    color="primary"
+                    onDeleteClick={() => {
+                        /* */
+                    }}
+                    {...props}
+                />
+                <Chip
+                    color="accent"
+                    elevated
+                    onClick={() => {
+                        /* */
+                    }}
+                    {...props}
+                />
+                <Chip
+                    color="light"
+                    icon="add"
+                    onClick={() => {
+                        /* */
+                    }}
+                    {...props}
+                />
             </div>
         );
     }

@@ -6,7 +6,8 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...TextFieldMeta,
-    title: "Composants/@focus4∕toolbox/TextField"
+    title: "Composants/@focus4∕toolbox/TextField",
+    tags: ["autodocs"]
 } as Meta<typeof TextField>;
 
 export const Showcase: StoryObj<typeof TextField> = {

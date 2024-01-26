@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...AutocompleteSearchMeta,
     title: "Composants/@focus4∕forms/AutocompleteSearch",
+    tags: ["autodocs"],
     args: {type: "string"}
 } as Meta<typeof AutocompleteSearch>;
 

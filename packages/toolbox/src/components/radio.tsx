@@ -40,7 +40,9 @@ export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
 }
 
 /**
- * A utiliser dans un RadioGroup.
+ * Un bouton radio permet aux utilisateurs de choisir une option parmi un ensemble de valeurs.
+ *
+ * Un ensemble de `RadioButton` doit être contenu dans un `RadioGroup`.
  */
 export function RadioButton({
     className = "",
@@ -121,7 +123,10 @@ export interface RadioGroupProps {
 }
 
 /**
- * A utiliser avec RadioButton pour faire des radios. Les composants [`BooleanRadio`](components/forms.md#booleanradio) et [`SelectRadio`](components/forms.md#selectradio) en sont des implémentations pour les usages les plus courants.
+ * Conteneur pour un ensemble de `RadioButton`, permettant de former un champ de saisie unique.
+ *
+ * Les composants `BooleanRadio` et `SelectRadio` sont des implémentations de plus haut niveau qui couvrent la plupart des cas d'utilisation
+ * et sont à privilégier par rapport à l'usage direct d'un `RadioGroup` et de `RadioButton`.
  */
 export function RadioGroup({className = "", children, disabled = false, onChange, value}: RadioGroupProps) {
     const ctx = useMemo(() => ({disabled, onChange, value}), [disabled, onChange, value]);

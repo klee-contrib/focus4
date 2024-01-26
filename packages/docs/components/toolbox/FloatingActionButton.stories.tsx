@@ -9,6 +9,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...FloatingActionButtonMeta,
     title: "Composants/@focus4∕toolbox/FloatingActionButton",
+    tags: ["autodocs"],
     args: {
         icon: "add",
         label: "Ajouter"

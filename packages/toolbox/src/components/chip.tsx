@@ -117,7 +117,7 @@ export function Chip({
             {createElement(
                 element,
                 props,
-                icon ? <FontIcon className={theme.icon()}>{icon}</FontIcon> : null,
+                icon ? <FontIcon className={theme.icon()} icon={icon} /> : null,
                 onDeleteClick ? (
                     <IconButton
                         className={theme.delete()}

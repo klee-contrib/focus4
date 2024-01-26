@@ -8,7 +8,8 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SwitchMeta,
-    title: "Composants/@focus4∕toolbox/Switch"
+    title: "Composants/@focus4∕toolbox/Switch",
+    tags: ["autodocs"]
 } as Meta<typeof Switch>;
 
 export const Showcase: StoryObj<typeof Switch> = {

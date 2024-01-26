@@ -7,6 +7,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...BooleanRadioMeta,
     title: "Composants/@focus4∕forms/BooleanRadio",
+    tags: ["autodocs"],
     args: {type: "boolean"}
 } as Meta<typeof BooleanRadio>;
 

@@ -8,6 +8,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...SelectMeta,
     title: "Composants/@focus4∕forms/Select",
+    tags: ["autodocs"],
     args: {
         type: "string",
         values: makeReferenceList([
