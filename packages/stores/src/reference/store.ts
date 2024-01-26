@@ -25,8 +25,8 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
     for (const ref in refConfig) {
         // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé, le résolveur de libellé et la surcharge de filter.
         referenceStore[`_${ref}`] = observable.array([], {deep: false});
-        referenceStore[`_${ref}`].$valueKey = refConfig[ref].valueKey || "code";
-        referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey || "label";
+        referenceStore[`_${ref}`].$valueKey = refConfig[ref].valueKey ?? "code";
+        referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey ?? "label";
         referenceStore[`_${ref}`].getLabel = (value: any) => getLabel(value, referenceStore[`_${ref}`]);
         referenceStore[`_${ref}`].filter = (callbackFn: any) => filter(referenceStore[`_${ref}`], callbackFn);
         referenceStore[`_${ref}_trackingIds`] = new Map<string, string[]>();
@@ -91,7 +91,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
         }
     };
 
-    referenceStore.track = (trackingIds: string | string[], ...refNames: (string & keyof T)[]) => {
+    referenceStore.track = (trackingIds: string[] | string, ...refNames: (string & keyof T)[]) => {
         if (!refNames.length) {
             refNames = Object.keys(refConfig);
         }

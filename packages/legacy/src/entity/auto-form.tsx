@@ -215,9 +215,9 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
                 const data = await load(...params);
                 runInAction(() => {
                     if (isStoreListNode(this.storeData)) {
-                        this.storeData.replaceNodes(data || []);
+                        this.storeData.replaceNodes(data ?? []);
                     } else {
-                        this.storeData.replace(data || {});
+                        this.storeData.replace(data ?? {});
                     }
                     this.isLoading = false;
                 });

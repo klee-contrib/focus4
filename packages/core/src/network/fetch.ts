@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 import {isObject, merge, toPairs} from "lodash";
 
 import {config} from "../utils";

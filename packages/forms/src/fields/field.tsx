@@ -195,7 +195,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                         id={id}
                         label={label}
                         style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
-                        theme={themeable({label: theme.label()}, domainLCP.theme || {}, labelProps.theme || {})}
+                        theme={themeable({label: theme.label()}, domainLCP.theme ?? {}, labelProps.theme ?? {})}
                     />
                 ) : null}
                 <div
@@ -209,21 +209,21 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                                 {...domainSCP}
                                 {...selectProps}
                                 {...iProps}
-                                theme={themeable(domainSCP.theme || {}, selectProps.theme || {})}
+                                theme={themeable(domainSCP.theme ?? {}, selectProps.theme ?? {})}
                             />
                         ) : inputType === "autocomplete" ? (
                             <AutocompleteComponent
                                 {...domainACP}
                                 {...autocompleteProps}
                                 {...iProps}
-                                theme={themeable(domainACP.theme || {}, autocompleteProps.theme || {})}
+                                theme={themeable(domainACP.theme ?? {}, autocompleteProps.theme ?? {})}
                             />
                         ) : (
                             <InputComponent
                                 {...domainICP}
                                 {...inputProps}
                                 {...iProps}
-                                theme={themeable(domainICP.theme || {}, inputProps.theme || {})}
+                                theme={themeable(domainICP.theme ?? {}, inputProps.theme ?? {})}
                             />
                         )
                     ) : (
@@ -232,7 +232,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                             {...displayProps}
                             formatter={displayFormatter}
                             keyResolver={autocompleteProps.keyResolver}
-                            theme={themeable(domainDCP.theme || {}, displayProps.theme || {})}
+                            theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
                             type={type}
                             value={value}
                             values={selectProps.values}

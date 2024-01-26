@@ -111,7 +111,7 @@ export function ContextualActions({
                         icon={
                             (isMosaic || !Operation.type || Operation.type.includes("icon")
                                 ? Operation.icon
-                                : undefined) as Icon
+                                : undefined)!
                         }
                         label={!isMosaic && FinalButton === Button ? Operation.label : undefined}
                         onBlur={tryHideMenu}
