@@ -4,7 +4,7 @@ import {v4} from "uuid";
 
 import {config, requestStore} from "@focus4/core";
 
-import {AsList, ReferenceDefinition} from "./types";
+import {ReferenceDefinition, ReferenceStore} from "./types";
 import {filter, getLabel} from "./util";
 
 /** Id du suivi de requêtes du ReferenceStore. */
@@ -20,21 +20,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
     referenceLoader: (refName: string) => Promise<{}[]>,
     refConfig: T,
     referenceClearer?: (refName?: string) => Promise<void>
-): AsList<T> & {
-    /**
-     * Récupère une liste de référence, depuis le serveur si nécessaire.
-     * @param refName Liste de référence demandée.
-     */
-    get<K extends string & keyof T>(refName?: K): Promise<AsList<T>[K]>;
-
-    /** Si l'une des listes de référence est en cours de chargement. */
-    readonly isLoading: boolean;
-    /**
-     * Recharge une liste ou le store.
-     * @param refName L'éventuelle liste demandée.
-     */
-    reload(refName?: keyof T): Promise<void>;
-} {
+): ReferenceStore<T> {
     const referenceStore: any = {};
     for (const ref in refConfig) {
         // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé, le résolveur de libellé et la surcharge de filter.
@@ -43,6 +29,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
         referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey || "label";
         referenceStore[`_${ref}`].getLabel = (value: any) => getLabel(value, referenceStore[`_${ref}`]);
         referenceStore[`_${ref}`].filter = (callbackFn: any) => filter(referenceStore[`_${ref}`], callbackFn);
+        referenceStore[`_${ref}_trackingIds`] = new Map<string, string[]>();
 
         extendObservable(referenceStore, {
             // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
@@ -61,7 +48,13 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
 
                     // On effectue l'appel et on met à jour la liste.
                     requestStore
-                        .track(referenceTrackingId, () => referenceLoader(ref))
+                        .track(
+                            [
+                                referenceTrackingId,
+                                ...Array.from<string[]>(referenceStore[`_${ref}_trackingIds`].values()).flat()
+                            ],
+                            () => referenceLoader(ref)
+                        )
                         .then(
                             action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
                                 referenceStore[`_${ref}_cache`] = new Date().getTime();
@@ -96,6 +89,24 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                 referenceStore[`_${ref}_cache`] = undefined;
             }
         }
+    };
+
+    referenceStore.track = (trackingIds: string | string[], ...refNames: (string & keyof T)[]) => {
+        if (!refNames.length) {
+            refNames = Object.keys(refConfig);
+        }
+        if (!Array.isArray(trackingIds)) {
+            trackingIds = [trackingIds];
+        }
+        const id = v4();
+        for (const refName of refNames) {
+            referenceStore[`_${refName}_trackingIds`].set(id, trackingIds);
+        }
+        return () => {
+            for (const refName of refNames) {
+                referenceStore[`_${refName}_trackingIds`].delete(id);
+            }
+        };
     };
 
     extendObservable(referenceStore, {

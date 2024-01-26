@@ -61,5 +61,13 @@ export {
     formCss,
     selectFor
 } from "./fields";
-export {domain, makeFormActions, makeFormNode, useFormActions, useFormNode, useLoad} from "./stores";
+export {
+    domain,
+    makeFormActions,
+    makeFormNode,
+    useFormActions,
+    useFormNode,
+    useLoad,
+    useReferenceTracking
+} from "./stores";
 export {translation} from "./translation";

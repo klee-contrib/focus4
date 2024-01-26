@@ -2,9 +2,8 @@ import {isFunction} from "lodash";
 import {autorun, extendObservable, Lambda, runInAction} from "mobx";
 import {v4} from "uuid";
 
-import {config, requestStore} from "@focus4/core";
+import {requestStore} from "@focus4/core";
 
-import {referenceTrackingId} from "../../reference";
 import {
     EntityToType,
     isAnyFormNode,
@@ -53,7 +52,7 @@ export function registerLoad<SN extends StoreListNode | StoreNode, A extends rea
     loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>),
     trackingId?: string
 ) {
-    const {getLoadParams, trackingIds, handlers, loadService, trackReferenceLoading} = isFunction(loadBuilder)
+    const {getLoadParams, trackingIds, handlers, loadService} = isFunction(loadBuilder)
         ? loadBuilder(new NodeLoadBuilder())
         : loadBuilder;
     trackingId ??= v4();
@@ -66,10 +65,7 @@ export function registerLoad<SN extends StoreListNode | StoreNode, A extends rea
         },
         {
             get isLoading() {
-                return (
-                    requestStore.isLoading(trackingId!) ||
-                    (trackReferenceLoading && requestStore.isLoading(referenceTrackingId))
-                );
+                return requestStore.isLoading(trackingId!);
             }
         }
     );
@@ -124,8 +120,6 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
     loadService?: (...args: A) => Promise<NodeToType<SN> | undefined>;
     /** @internal */
     trackingIds: string[] = [];
-    /** @internal */
-    trackReferenceLoading = config.trackReferenceLoading;
 
     /**
      * Précise la getter permettant de récupérer la liste des paramètres pour l'action de chargement.
@@ -194,16 +188,6 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
      */
     trackingId(...trackingIds: string[]): NodeLoadBuilder<SN, A> {
         this.trackingIds = trackingIds;
-        return this;
-    }
-
-    /**
-     * Active ou désactive la prise en compte de l'état de chargement des listes de référence dans l'état de chargement du service.
-     *
-     * Le comportement par défaut se pilote via `config.trackReferenceLoading` (qui est lui-même `true` par défaut).
-     */
-    withReferenceTracking(active: boolean): NodeLoadBuilder<SN, A> {
-        this.trackReferenceLoading = active;
         return this;
     }
 }

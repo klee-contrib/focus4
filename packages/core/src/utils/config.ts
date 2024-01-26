@@ -15,9 +15,6 @@ export const config = {
     /** Délai avant la tentative suivante de fetch après un "Failed to fetch" */
     retryDelayOnFailedFetch: 300,
 
-    /** Ajoute par défaut l'état de chargement des listes de références à `useLoad` et aux `FormActions`. */
-    trackReferenceLoading: true,
-
     /** Délai entre la saisie du texte et la recherche dans la barre de recherche. */
     textSearchDelay: 500
 };

@@ -128,15 +128,6 @@ export class FormActionsBuilder<
     }
 
     /**
-     * Active ou désactive la prise en compte de l'état de chargement des listes de référence dans l'état de chargement du service.
-     *
-     * Le comportement par défaut se pilote via `config.trackReferenceLoading` (qui est lui-même `true` par défaut).
-     */
-    withReferenceTracking(active: boolean): FormActionsBuilder<FN, A, S> {
-        return super.withReferenceTracking(active) as any;
-    }
-
-    /**
      * Change le préfixe i18n pour les messages du formulaire.
      * @param prefix: Le préfixe.
      */

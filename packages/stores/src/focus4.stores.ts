@@ -60,9 +60,9 @@ export {
     validateField
 } from "./entity";
 export {
-    AsList,
     ReferenceDefinition,
     ReferenceList,
+    ReferenceStore,
     emptyReferenceList,
     makeReferenceList,
     makeReferenceStore,

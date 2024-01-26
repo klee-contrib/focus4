@@ -1,3 +1,4 @@
+import {uniq} from "lodash";
 import {action, computed, makeObservable, observable} from "mobx";
 import {computedFn} from "mobx-utils";
 import {v4} from "uuid";
@@ -68,7 +69,9 @@ export class RequestStore {
      */
     async track<T>(trackingId: string[] | string, fetch: () => Promise<T>) {
         const id = v4();
-        await setTimeout0(() => this.trackedRequests.set(id, Array.isArray(trackingId) ? trackingId : [trackingId]));
+        await setTimeout0(() =>
+            this.trackedRequests.set(id, uniq(Array.isArray(trackingId) ? trackingId : [trackingId]))
+        );
         try {
             return await fetch();
         } finally {
