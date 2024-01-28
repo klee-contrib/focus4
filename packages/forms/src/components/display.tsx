@@ -33,7 +33,14 @@ export interface DisplayProps<T extends DomainFieldType> {
 }
 
 /**
- * Le composant d'affichage par défaut pour [toutes les fonctions d'affichage de champs](model/display-fields.md). Résout les listes de références, les autocompletes via `keyResolver`, les traductions i18n et peut afficher des listes de valeurs.
+ * Un `Display` permet d'afficher la valeur d'un champ.
+ *
+ * - Résout les listes de références (avec `values`).
+ * - Résout les autocompletes (avec `keyResolver`).
+ * - Résout les traductions i18n.
+ * - Peut afficher des listes de valeurs.
+ *
+ * Il s'agit du composant d'affichage par défaut de tous les domaines (`DisplayComponent`).
  */
 export function Display<T extends DomainFieldType>({
     formatter = x => `${x}`,
@@ -64,15 +71,19 @@ export function Display<T extends DomainFieldType>({
                         setLabel(undefined);
                     }
                 } else if (Array.isArray(value)) {
-                    setLabel(
-                        values
-                            ?.filter(v =>
-                                value.find(
-                                    (v2: DomainTypeSingle<SingleDomainFieldType<T>>) => v[values.$valueKey] === v2
+                    if (values) {
+                        setLabel(
+                            values
+                                ?.filter(v =>
+                                    value.find(
+                                        (v2: DomainTypeSingle<SingleDomainFieldType<T>>) => v[values.$valueKey] === v2
+                                    )
                                 )
-                            )
-                            .map(v => formatter(v[values.$labelKey] ?? `${v[values.$valueKey]}`))
-                    );
+                                .map(v => formatter(v[values.$labelKey] ?? `${v[values.$valueKey]}`))
+                        );
+                    } else {
+                        setLabel(value.map((v: DomainTypeSingle<SingleDomainFieldType<T>>) => formatter(v)));
+                    }
                 } else {
                     setLabel(formatter(values?.getLabel(value) ?? value));
                 }

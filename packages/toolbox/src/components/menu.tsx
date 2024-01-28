@@ -180,12 +180,12 @@ export function useMenu<T extends HTMLElement = HTMLDivElement>(): MenuControls<
 
 /**
  * Un menu permet d'afficher une zone temporaire pour afficher une liste de valeurs qu'un utilisateur peut sélectionner.
- * Il doit s'attacher à un élément parent comme un `Button` ou un `TextField`.
+ * Il doit s'attacher à un élément parent comme un [`Button`](/docs/composants-focus4∕toolbox-button--docs) ou un [`TextField`](/docs/composants-focus4∕toolbox-textfield--docs).
  *
  * Le hook `useMenu()` permet de créer les éléments nécessaires pour l'attacher et contrôler son affichage.
  *
  * L'élément générique d'un menu est le `MenuItem`, mais il est possible d'y mettre toute sorte de composant à l'intérieur.
- * L'`Autocomplete`, le `Dropdown` ou encore l'`InputDate` utilisent un `Menu` pour afficher leurs listes de sélection/le calendrier.
+ * L'[`Autocomplete`](/docs/composants-focus4∕toolbox-autocomplete--docs), le [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) ou encore l'[`InputDate`](/docs/composants-focus4∕forms-inputdate--docs) utilisent un `Menu` pour afficher leurs listes de sélection/le calendrier.
  */
 export function Menu({
     active,

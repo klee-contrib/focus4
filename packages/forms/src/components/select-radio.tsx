@@ -42,7 +42,9 @@ export interface SelectRadioProps<T extends DomainFieldType> {
 }
 
 /**
- * Un composant de saisie pour choisir un élément dans une liste de référence en utilisant un [`Radio`](components/toolbox.md#radiogroup)
+ * Un [`RadioGroup`](/docs/composants-focus4∕toolbox-radiobutton--docs) avec un [`RadioButton`](/docs/composants-focus4∕toolbox-radiobutton--docs) par élément d'une liste de référence.
+ *
+ * S'utilise avec `selectFor`.
  */
 export function SelectRadio<T extends DomainFieldType>({
     disabled = false,

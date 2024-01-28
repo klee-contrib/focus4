@@ -78,7 +78,7 @@ const defaultGetKey = (x: any) => x.key;
 const defaultGetLabel = (x: any) => x.label;
 
 /**
- * Un Autocomplete combine un champ texte en autocomplétion avec un menu déroulant, pour effectuer une sélection parmi une **liste de valeurs disponibles en entrée**.
+ * Un Autocomplete combine un champ texte ([`TextField`](/docs/composants-focus4∕toolbox-textfield--docs)) en autocomplétion avec un menu déroulant ([`Menu`](/docs/composants-focus4∕toolbox-menu--docs)), pour effectuer une sélection à partir d'une **liste de valeurs pré-chargée**.
  *
  * - Le filtrage des valeurs s'effecue dans le composant selon plusieurs modes de correspondance.
  * - Toutes les options du champ texte sont disponibles.

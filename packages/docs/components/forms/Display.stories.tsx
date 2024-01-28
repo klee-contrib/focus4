@@ -1,3 +1,5 @@
+import {DateTime} from "luxon";
+
 import {Display} from "@focus4/forms";
 
 import {DisplayMeta} from "./metas/display";
@@ -11,4 +13,19 @@ export default {
     args: {type: "string", value: "Valeur"}
 } as Meta<typeof Display>;
 
-export const Showcase: StoryObj<typeof Display> = {};
+export const Showcase: StoryObj<typeof Display> = {
+    render(props) {
+        return (
+            <div className="stack">
+                <Display {...props} />
+                <Display {...props} type="string-array" value={["Valeur 1", "Valeur 2"]} />
+                <Display
+                    {...props}
+                    formatter={v => (v ? DateTime.fromISO(v).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS) : "")}
+                    type="string"
+                    value={DateTime.now().toISO()}
+                />
+            </div>
+        );
+    }
+};

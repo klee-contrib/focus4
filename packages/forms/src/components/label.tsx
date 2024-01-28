@@ -30,7 +30,12 @@ export interface LabelProps {
 }
 
 /**
- * Le composant d'affichage du libellé par défaut pour [toutes les fonctions d'affichage de champs](model/display-fields.md). Peut inclure une tooltip à côté du libellé.
+ * Un `Label` permet d'afficher le libellé d'un champ.
+ *
+ * - Résout les traductions i18n.
+ * - Peut afficher le commentaire du champ en tooltip.
+ *
+ * Il s'agit du composant de libellé par défaut de tous les domaines (`LabelComponent`).
  */
 export function Label({
     comment,

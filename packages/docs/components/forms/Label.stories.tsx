@@ -8,7 +8,7 @@ export default {
     ...LabelMeta,
     title: "Composants/@focus4∕forms/Label",
     tags: ["autodocs"],
-    args: {label: "Label"}
+    args: {label: "Label", showTooltip: true, comment: "Une tooltip"}
 } as Meta<typeof Label>;
 
 export const Showcase: StoryObj<typeof Label> = {};

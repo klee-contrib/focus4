@@ -50,7 +50,9 @@ export interface SelectChipsProps<T extends DomainFieldType> {
 }
 
 /**
- * Select permettant de sélectionner plusieurs valeurs, affichées dans des `Chips` en dessous du champ.
+ * Un [`Select`](/docs/composants-focus4∕forms-select--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
+ *
+ * S'utilise avec `selectFor` sur un champ liste.
  */
 export function SelectChips<T extends DomainFieldType>({
     chipTheme,

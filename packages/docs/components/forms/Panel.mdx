@@ -1,0 +1,18 @@
+import {Meta, Description, Title, Controls, Canvas} from "@storybook/blocks";
+
+import PanelStories, {Showcase} from "./Panel.stories";
+import PanelButtonsStories, {Showcase as PanelButtons} from "./PanelButtons.stories";
+
+<Meta of={PanelStories} />
+
+<Title />
+<Description />
+
+<Canvas of={Showcase} />
+
+<Controls of={Showcase} />
+
+<Title>{PanelButtonsStories.title.split("/")[2]}</Title>
+<Description>{PanelButtonsStories.parameters.docs.description.component}</Description>
+
+<Controls of={PanelButtons} />

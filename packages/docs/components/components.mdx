@@ -11,12 +11,12 @@ maximum de cas.
 
 -   Le module `@focus4/toolbox` contient les versions de base de ces composants, qui sont directement repris de la spécification Material Design.
 -   Le module `@focus4/forms` contient :
-    -   Quelques "surcharges" de ces composants pour pouvoir s'interfacer directement avec un formulaire (`Input` pour `TextField` et `Select` pour
-        `Dropdown` par exemple)
-    -   Des composants un peu plus avancés qui combinent des composants de base pour réaliser des saisies plus complexes (comme `InputDate` ou
-        `SelectChips`), ou simplifier des cas d'usage courants (comme `BooleanRadio` ou `SelectCheckbox`). Ces composants n'existent pas en tant que
+    -   Quelques "surcharges" de ces composants pour pouvoir s'interfacer directement avec un formulaire ([`Input`](/docs/composants-focus4∕forms-input--docs) pour [`TextField`](/docs/composants-focus4∕toolbox-textfield--docs) et [`Select`](/docs/composants-focus4∕forms-select--docs) pour
+        [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) par exemple)
+    -   Des composants un peu plus avancés qui combinent des composants de base pour réaliser des saisies plus complexes (comme [`InputDate`](/docs/composants-focus4∕forms-inputdate--docs) ou
+        [`SelectChips`](/docs/composants-focus4∕forms-selectchips--docs)), ou simplifier des cas d'usage courants (comme [`BooleanRadio`](/docs/composants-focus4∕forms-booleanradio--docs) ou [`SelectCheckbox`](/docs/composants-focus4∕forms-selectcheckbox--docs)). Ces composants n'existent pas en tant que
         tels dans la spécification Material Design.
-    -   Les composants d'affichage pour les formulaires (`Display`, `Label` et `Panel`)
+    -   Les composants d'affichage pour les formulaires ([`Display`](/docs/composants-focus4∕forms-display--docs), [`Label`](/docs/composants-focus4∕forms-label--docs) et [`Panel`](/docs/composants-focus4∕forms-panel--docs))
 
 **Un composant de saisie d'un domaine pour un champ doit venir du module `@focus4/forms`**, car il doit respecter le contrat d'interface correspondant du
 domaine (`BaseInputProps` / `BaseSelectProps` / `BaseAutocompleteProps`). Si vous voulez construire votre propre composant de saisie, vous pouvez

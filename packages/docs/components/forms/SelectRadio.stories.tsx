@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {SelectRadio} from "@focus4/forms";
 import {makeReferenceList} from "@focus4/stores";
 
@@ -18,4 +20,9 @@ export default {
     }
 } as Meta<typeof SelectRadio>;
 
-export const Showcase: StoryObj<typeof SelectRadio> = {};
+export const Showcase: StoryObj<typeof SelectRadio<"string">> = {
+    render(props) {
+        const [value, setValue] = useState<string>();
+        return <SelectRadio {...props} onChange={setValue} value={value} />;
+    }
+};

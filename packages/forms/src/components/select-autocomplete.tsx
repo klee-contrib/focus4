@@ -30,7 +30,9 @@ export interface SelectAutocompleteProps<T extends DomainFieldType>
 const undefinedKey = "$$undefined$$";
 
 /**
- * Un composant de saisie pour choisir un élément dans une liste de référence, via un Autocomplete.
+ * Un [`Autocomplete`](/docs/composants-focus4∕toolbox-autocomplete--docs) qui prend ses valeurs dans une liste de référence.
+ *
+ * S'utilise avec `selectFor`.
  */
 export function SelectAutocomplete<T extends DomainFieldType>({
     error,

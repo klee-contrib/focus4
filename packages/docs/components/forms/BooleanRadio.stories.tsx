@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {BooleanRadio} from "@focus4/forms";
 
 import {BooleanRadioMeta} from "./metas/boolean-radio";
@@ -11,4 +13,9 @@ export default {
     args: {type: "boolean"}
 } as Meta<typeof BooleanRadio>;
 
-export const Showcase: StoryObj<typeof BooleanRadio> = {};
+export const Showcase: StoryObj<typeof BooleanRadio> = {
+    render(props) {
+        const [selected, setSelected] = useState(false);
+        return <BooleanRadio value={selected} {...props} onChange={setSelected} />;
+    }
+};

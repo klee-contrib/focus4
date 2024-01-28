@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {Select} from "@focus4/forms";
 import {makeReferenceList} from "@focus4/stores";
 
@@ -18,4 +20,9 @@ export default {
     }
 } as Meta<typeof Select>;
 
-export const Showcase: StoryObj<typeof Select> = {};
+export const Showcase: StoryObj<typeof Select<"string">> = {
+    render(props) {
+        const [value, setValue] = useState<string>();
+        return <Select {...props} onChange={setValue} value={value} />;
+    }
+};

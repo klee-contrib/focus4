@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {SelectCheckbox} from "@focus4/forms";
 import {makeReferenceList} from "@focus4/stores";
 
@@ -13,9 +15,15 @@ export default {
         type: "string-array",
         values: makeReferenceList([
             {code: "1", label: "Valeur 1"},
-            {code: "2", label: "Valeur 2"}
+            {code: "2", label: "Valeur 2"},
+            {code: "3", label: "Valeur 3"}
         ])
     }
 } as Meta<typeof SelectCheckbox>;
 
-export const Showcase: StoryObj<typeof SelectCheckbox> = {};
+export const Showcase: StoryObj<typeof SelectCheckbox<"string-array">> = {
+    render(props) {
+        const [value, setValue] = useState<string[]>();
+        return <SelectCheckbox {...props} onChange={setValue} value={value} />;
+    }
+};

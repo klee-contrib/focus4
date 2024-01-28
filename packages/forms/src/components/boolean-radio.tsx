@@ -28,7 +28,7 @@ export interface BooleanRadioProps {
 }
 
 /**
- * Un radio oui/non pour un booléen.
+ * Un [`RadioGroup`](/docs/composants-focus4∕toolbox-radiobutton--docs) avec 2 [`RadioButtons`](/docs/composants-focus4∕toolbox-radiobutton--docs) pour sélectionner un booléen (Oui/Non).
  */
 export function BooleanRadio({
     disabled,

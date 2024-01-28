@@ -41,12 +41,12 @@ export interface InputProps<T extends DomainFieldType> extends Omit<TextFieldPro
 
 /**
  *
- * Surcharge du `TextField` de `@focus4/toolbox` pour ajouter :
+ * Surcharge du [`TextField`](/docs/composants-focus4∕toolbox-textfield--docs) de `@focus4/toolbox` pour ajouter :
  *
  * -   La gestion de masques de saisie
  * -   Une gestion propre de saisie de nombre (avec formattage, restrictions de décimales, et un `onChange` qui renvoie bien un nombre)
  *
- * Il s'agit du composant par défaut pour [`fieldFor`](model/display-fields.md#fieldforfield-options).
+ * Il s'agit du composant par défaut de tous les domaines pour `fieldFor` (`InputComponent`).
  */
 @observer
 // eslint-disable-next-line react/no-unsafe

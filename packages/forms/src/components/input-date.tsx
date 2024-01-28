@@ -89,7 +89,12 @@ export interface InputDateProps {
 }
 
 /**
- * Un champ de saisie de date avec double saisie en texte (avec un `Input`) et un calendrier (`Calendar`), qui s'affiche en dessous.
+ * Un champ de saisie de date avec double saisie en texte (avec un [`Input`](/docs/composants-focus4∕forms-input--docs)) et un calendrier ([`Calendar`](/docs/composants-focus4∕toolbox-calendar--docs)), qui s'affiche dans un [`Menu`](/docs/composants-focus4∕toolbox-menu--docs) en dessous ou au dessus.
+ *
+ * - Réexpose toutes les options du `TextField` et du `Calendar`.
+ * - Affiche un masque de saisie sur le champ texte.
+ * - Permet de choisir parmi 4 formats de dates (et la saisie de jour/mois/année du `Calendar`)
+ * - Peut gérer un fuseau horaire séparé.
  */
 export function InputDate({
     calendarFormat = "yyyy-MM-dd",

@@ -67,7 +67,7 @@ const defaultGetLabel = (x: any) => x.label;
 const undefinedKey = "$$undefined$$";
 
 /**
- * Un Dropdown combine un champ texte avec un menu déroulant, pour effectuer une sélection parmi une liste de valeurs disponibles.
+ * Un Dropdown combine un champ texte ([`TextField`](/docs/composants-focus4∕toolbox-textfield--docs)) avec un menu déroulant ([`Menu`](/docs/composants-focus4∕toolbox-menu--docs)), pour effectuer une sélection parmi une liste de valeurs disponibles.
  *
  * - Toutes les options du champ texte sont disponibles.
  * - Le rendu de chaque ligne est paramétrable.

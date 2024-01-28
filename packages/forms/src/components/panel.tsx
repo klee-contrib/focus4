@@ -28,7 +28,13 @@ export interface PanelProps extends PanelButtonsProps {
     title?: string;
 }
 
-/** Le composant standard pour afficher un bloc avec un titre, des actions et un contenu. Utilisé largement par les formulaires. */
+/**
+ * Le Panel est le composant standard pour afficher un bloc.
+ *
+ * Il peut avoir un titre, des actions (en haut et/ou en bas) et un contenu.
+ *
+ * Il s'interface nativement avec les actions de formulaire et le `ScrollspyContainer`.
+ */
 export function Panel({
     Buttons = PanelButtons,
     buttonsPosition = "top",

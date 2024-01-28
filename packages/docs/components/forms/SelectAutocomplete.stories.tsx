@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {SelectAutocomplete} from "@focus4/forms";
 import {makeReferenceList} from "@focus4/stores";
 
@@ -10,7 +12,7 @@ export default {
     title: "Composants/@focus4∕forms/SelectAutocomplete",
     tags: ["autodocs"],
     args: {
-        type: "string-array",
+        type: "string",
         values: makeReferenceList([
             {code: "1", label: "Valeur 1"},
             {code: "2", label: "Valeur 2"}
@@ -18,4 +20,9 @@ export default {
     }
 } as Meta<typeof SelectAutocomplete>;
 
-export const Showcase: StoryObj<typeof SelectAutocomplete> = {};
+export const Showcase: StoryObj<typeof SelectAutocomplete<"string">> = {
+    render(props) {
+        const [value, setValue] = useState<string>();
+        return <SelectAutocomplete {...props} onChange={setValue} value={value} />;
+    }
+};

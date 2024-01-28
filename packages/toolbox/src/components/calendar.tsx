@@ -37,7 +37,7 @@ export interface CalendarProps {
 /**
  * Un calendrier permet à un utilisateur de choisir une date.
  *
- * - Intégré avec un champ de saisie texte via le composant `InputDate`.
+ * - Intégré avec un champ de saisie texte via le composant [`InputDate`](/docs/composants-focus4∕forms-inputdate--docs).
  * - Peut être configuré pour limiter la saisie à un mois ou une année.
  */
 export const Calendar = forwardRef(function Calendar(

@@ -24,9 +24,9 @@ export interface SelectProps<T extends DomainFieldType>
 }
 
 /**
- * Un composant de saisie pour choisir un élément dans une liste de référence, via un Dropdown.
+ * Surcharge du [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) de `@focus4/toolbox` pour fonctionner avec une liste de référence.
  *
- * Il s'agit du composant par défaut pour [`selectFor`](model/display-fields.md#selectforfield-values-options).
+ * Il s'agit du composant par défaut de tous les domaines pour `selectFor` (`SelectComponent`).
  */
 export function Select<T extends DomainFieldType>({
     error,

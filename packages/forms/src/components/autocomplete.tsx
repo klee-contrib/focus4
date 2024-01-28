@@ -32,9 +32,10 @@ export interface AutocompleteSearchProps<T extends DomainFieldType, TSource = {k
 const defaultGetKey = (x: any) => x.key;
 
 /**
- * Champ de saisie en autocomplétion à partir d'un **service de recherche**.
+ * Un [`Autocomplete`](/docs/composants-focus4∕toolbox-autocomplete--docs) qui récupère ses suggestions à partir **d'un service de recherche** au lieu d'une liste pré-chargée.
+ * Aucun filtre supplémentaire ne sera réalisé dans le composant.
  *
- * Il s'agit du composant par défaut de `autocompleteFor`.
+ * Il s'agit du composant par défaut de tous les domaines pour `autocompleteFor` (`AutocompleteComponent`).
  */
 export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
     T extends DomainFieldType,

@@ -19,7 +19,13 @@ export interface PanelButtonsProps {
     save?: () => void;
 }
 
-/** Buttons par défaut du panel : edit / save / cancel. */
+/**
+ * Boutons par défaut pour un `Panel`.
+ *
+ * Affiche un bouton "Modifier" en consultation, et 2 boutons "Enregistrer" et "Annuler" en édition.
+ *
+ * Les boutons seront désactivés pendant le chargement.
+ */
 export function PanelButtons({
     editing,
     i18nPrefix = "focus",
