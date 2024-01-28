@@ -15,6 +15,7 @@ export const referenceTrackingId = v4();
  * (Les valeurs données aux différentes listes de références de la config n'importent peu et ne servent que pour le typage)
  * @param referenceLoader Le service de chargement des listes de référence, par nom.
  * @param refConfig Un objet dont les propriétés représentent les noms des listes de référence. Le type de chaque objet ne doit pas contenir la liste.
+ * @param referenceClearer Un service pour réinitialiser une (ou toutes) les listes de référence sur le serveur.
  */
 export function makeReferenceStore<T extends Record<string, ReferenceDefinition>>(
     referenceLoader: (refName: string) => Promise<{}[]>,

@@ -1,0 +1,56 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Les bases/Gestion des requêtes" />
+
+# Gestion des requêtes
+
+## `coreFetch`
+
+Focus propose un wrapper à [`window.fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) appelé **`coreFetch`**, qui a pour vocation de simplifier son usage dans les cas courants et de traiter automatiquement les erreurs.
+
+Son API est la suivante :
+
+**`coreFetch(method, url, {body?, query?}, options?)`**
+
+-   **`method`** permet de renseigner le verbe HTTP (GET, POST, PUT, DELETE...) de la requête.
+-   **`url`** permet de renseigner l'URL que l'on veut appeler.
+-   **`{body?, query?}`** permettent de renseigner le contenu du _body_ de la requête (pour un POST ou un PUT), ainsi que les _query params_ qui devront être
+    ajoutés à l'URL. La méthode s'occupera d'inclure les _query params_ à l'URL et gère donc leur caractère optionnel.
+-   **`options`** est le paramètre d'options de `window.fetch`. Cet objet d'options est prérempli par `coreFetch` pour y inclure ce qu'on a déjà défini (la
+    méthode et le body en particulier), mais il est surchargeable via ce paramètre.
+
+Si `coreFetch` reçoit une erreur et que le corps de la réponse est un JSON, alors cette réponse sera envoyée au [`messageStore`](/docs/les-bases-gestion-des-messages--docs) en appelant sa méthode
+`addMessages`. Pour assurer une intégration native avec la gestion de messages Focus, les APIs appelées devront renvoyer des réponses de la forme.
+`{error: "Message d'erreur"}` ou `{errors: ["Message 1", "Message 2"]}`.
+
+## `RequestStore`
+
+Le `RequestStore` est un store dédié au suivi des requêtes en cours dans l'application.
+
+### Suivi automatique des requêtes
+
+Par défaut, toute requête faite avec `coreFetch` est automatiquement suivie dans ce store. Les requêtes en cours peuvent se récupérer dans
+`requestStore.pending` et la propriété `requestStore.loading` permet de savoir s'il y au moins une requête encore en cours. Cette propriété peut être
+utilisée directement pour poser un "spinner" global sur votre application à moindre frais.
+
+### Suivi personnalisé de services
+
+Le `requestStore` dispose également d'une API pour suivre le statut de vos propres services (n'importe quelle fonction retournant une `Promise`) via
+`requestStore.track` :
+
+```ts
+const id = useId(); // ou v4() du package "uuid" si vous n'est pas dans un composant
+
+/* ---- */
+
+const user = await requestStore.track(id, () => getUser(id)); // Enregistre le service sur cet ID et l'appelle
+
+/* ---- */
+
+requestStore.isLoading(id); // La requête est-elle en cours ?
+```
+
+**Plusieurs services peuvent être enregistré sur le même ID de suivi**, ce qui permet de récupérer facilement un état de chargement sur plusieurs services à la
+fois.
+
+Ce suivi est automatiquement intégré à `useLoad` et `useFormActions`, qui génèrent un ID de suivi pour leurs services et peuvent y associer d'autres IDs.

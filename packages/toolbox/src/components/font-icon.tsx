@@ -59,7 +59,7 @@ export interface FontIconProps extends PointerEvents<HTMLSpanElement> {
  * La classe CSS sera interprétée comme un template du nom si elle contient `{name}` dans sa définition.
  * Dans ce cas, le `name` ne sera pas posé en enfant du `<span>` qui définira l'icône.
  *
- * Une icône peut également être définie via une clé i18n, qui devra pointer vers un objet `{name, className?}` représentant l'icône.
+ * Une icône peut également être définie via une [clé i18n](/docs/les-bases-libellés-et-icônes--docs), qui devra pointer vers un objet `{name, className?}` représentant l'icône.
  */
 export function FontIcon({
     icon,
