@@ -11,16 +11,16 @@
     "license": "MIT",
     "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/.storybook",
     "dependencies": {
-        "@focus4/collections": "11.13.2",
-        "@focus4/core": "11.13.0",
-        "@focus4/forms": "11.13.2",
-        "@focus4/layout": "11.13.2",
-        "@focus4/stores": "11.13.1",
-        "@focus4/styling": "11.13.2",
-        "@focus4/toolbox": "11.13.2"
+        "@focus4/collections": "11.14.0",
+        "@focus4/core": "11.14.0",
+        "@focus4/forms": "11.14.0",
+        "@focus4/layout": "11.14.0",
+        "@focus4/stores": "11.14.0",
+        "@focus4/styling": "11.14.0",
+        "@focus4/toolbox": "11.14.0"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.13.2",
+        "@focus4/tooling": "11.14.0",
         "@storybook/addon-essentials": "7.6.10",
         "@storybook/blocks": "7.6.10",
         "@storybook/react-vite": "7.6.10",
