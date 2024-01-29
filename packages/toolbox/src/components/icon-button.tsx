@@ -7,6 +7,7 @@ import {PointerEvents} from "../utils/pointer-events";
 import {useInputRef} from "../utils/use-input-ref";
 
 import {FontIcon, Icon} from "./font-icon";
+import {CircularProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 
 import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
@@ -25,6 +26,8 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
     icon: Icon;
     /**  Libellé du bouton. */
     label?: string;
+    /** Affiche un indicateur de progression circulaire à la place de l'icône. */
+    loading?: boolean;
     /** Au blur du bouton. */
     onBlur?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Au clic sur le bouton. */
@@ -48,7 +51,7 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
 /**
  * Le bouton icône permet aux utilisateurs de réaliser une action secondaire en un seul clic.
  *
- * - Ne peut contenir qu'une icône.
+ * - Ne peut contenir qu'une icône (ou un spinner).
  * - 3 types de boutons : simple, entouré ou plein.
  * - 3 couleurs au choix : primaire, accentuée, ou primaire claire.
  * - Peut être utilisé comme un bouton ou un lien.
@@ -60,6 +63,7 @@ export function IconButton({
     href,
     icon,
     label,
+    loading,
     onBlur,
     onClick,
     onFocus,
@@ -117,7 +121,15 @@ export function IconButton({
             onPointerLeave={handlePointerLeave}
             onPointerUp={handlePointerUp}
         >
-            {createElement(element, props, <FontIcon className={theme.icon()} icon={icon} />)}
+            {createElement(
+                element,
+                props,
+                loading ? (
+                    <CircularProgressIndicator className={theme.spinner()} indeterminate />
+                ) : (
+                    <FontIcon className={theme.icon()} icon={icon} />
+                )
+            )}
         </Ripple>
     );
 }

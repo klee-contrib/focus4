@@ -2,6 +2,7 @@
     "name": "@focus4/docs",
     "description": "Focus v4 docs",
     "type": "module",
+    "version": "11.14.0",
     "private": true,
     "repository": {
         "type": "git",

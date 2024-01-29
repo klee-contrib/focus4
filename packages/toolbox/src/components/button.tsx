@@ -7,6 +7,7 @@ import {PointerEvents} from "../utils/pointer-events";
 import {useInputRef} from "../utils/use-input-ref";
 
 import {FontIcon, Icon} from "./font-icon";
+import {CircularProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 
 import buttonCss, {ButtonCss} from "./__style__/button.css";
@@ -27,6 +28,8 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
     iconPosition?: "left" | "right";
     /**  Libellé du bouton. */
     label?: string;
+    /** Affiche un indicateur de progression circulaire à la place de l'icône. */
+    loading?: boolean;
     /** Au blur du bouton. */
     onBlur?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** Au clic sur le bouton. */
@@ -50,7 +53,7 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
 /**
  * Le bouton standard permet de déclencher la plupart des actions dans une interface.
  *
- * - Peut contenir une icône, à l'avant ou l'arrière.
+ * - Peut contenir une icône (ou un spinner), à l'avant ou l'arrière.
  * - 5 types de boutons : simple, entouré, plein, surélevé et plein + surélevé.
  * - 3 couleurs au choix : primaire, accentuée, ou primaire claire.
  * - Peut être utilisé comme un bouton ou un lien.
@@ -63,6 +66,7 @@ export function Button({
     icon,
     iconPosition = "left",
     label,
+    loading,
     onBlur,
     onClick,
     onFocus,
@@ -99,8 +103,8 @@ export function Button({
                 primary: color === "primary",
                 light: color === "light",
                 label: !!label,
-                left: !!icon && iconPosition === "left",
-                right: !!icon && iconPosition === "right"
+                left: (!!icon || !!loading) && iconPosition === "left",
+                right: (!!icon || !!loading) && iconPosition === "right"
             }),
             className
         ),
@@ -126,7 +130,11 @@ export function Button({
             {createElement(
                 element,
                 props,
-                icon ? <FontIcon className={theme.icon()} icon={icon} /> : null,
+                loading ? (
+                    <CircularProgressIndicator className={theme.spinner()} indeterminate />
+                ) : icon ? (
+                    <FontIcon className={theme.icon()} icon={icon} />
+                ) : null,
                 <span className={theme.label()}>{label ?? "\xa0"}</span>
             )}
         </Ripple>

@@ -1,6 +1,7 @@
 :root {
     --button-height: 40px;
     --button-icon-size: 18px;
+    --button-spinner-size: 20px;
     --button-border-radius: 20px;
     --button-padding: 24px;
     --button-outline-size: 1px;
@@ -21,6 +22,7 @@
     height: var(--button-height);
     background-color: transparent;
     color: var(--button-secondary-color);
+    --progress-indicator-color: var(--button-secondary-color);
     border-radius: var(--button-border-radius);
     transition: color var(--animation-duration-short) var(--animation-curve-default),
         background-color var(--animation-duration-short) var(--animation-curve-default);
@@ -54,6 +56,7 @@
 
 .button--primary {
     color: var(--button-primary-main-color);
+    --progress-indicator-color: var(--button-primary-main-color);
 }
 
 .button--primary::before {
@@ -66,6 +69,7 @@
 
 .button--light {
     color: var(--button-primary-light-color);
+    --progress-indicator-color: var(--button-primary-light-color);
 }
 
 .button--light::before {
@@ -74,6 +78,7 @@
 
 .button--accent {
     color: var(--button-accent-main-color);
+    --progress-indicator-color: var(--button-accent-main-color);
 }
 
 .button--accent::before {
@@ -89,6 +94,11 @@
         background-color: var(--button-primary-main-color);
         color: var(--button-primary-secondary-color);
 
+        &:not(.button--disabled) {
+            --progress-indicator-color: var(--button-primary-secondary-color);
+            --progress-indicator-track-color: var(--button-disabled-text-color);
+        }
+
         &::before {
             background-color: var(--button-primary-secondary-color);
         }
@@ -98,6 +108,10 @@
         background-color: var(--button-primary-light-color);
         color: var(--button-secondary-color);
 
+        &:not(.button--disabled) {
+            --progress-indicator-color: var(--button-secondary-color);
+        }
+
         &::before {
             background-color: var(--button-secondary-color);
         }
@@ -106,6 +120,11 @@
     &.button--accent {
         background-color: var(--button-accent-main-color);
         color: var(--button-accent-secondary-color);
+
+        &:not(.button--disabled) {
+            --progress-indicator-color: var(--button-accent-secondary-color);
+            --progress-indicator-track-color: var(--button-disabled-text-color);
+        }
 
         &::before {
             background-color: var(--button-accent-secondary-color);
@@ -136,6 +155,13 @@
     line-height: var(--button-height);
 }
 
+.spinner {
+    --progress-indicator-circular-size: var(--button-spinner-size);
+    position: absolute;
+    top: calc((var(--button-height) - var(--button-spinner-size)) / 2);
+    bottom: calc((var(--button-height) - var(--button-spinner-size)) / 2);
+}
+
 .label {
     font-weight: var(--font-weight-semi-bold);
     font-size: var(--button-text-size);
@@ -152,6 +178,10 @@
         left: calc(2 * var(--button-padding) / 3);
     }
 
+    & .spinner {
+        left: calc(2 * var(--button-padding) / 3 + var(--button-icon-size) - var(--button-spinner-size));
+    }
+
     & .label {
         margin-left: var(--button-icon-size);
     }
@@ -160,6 +190,10 @@
 .button--right.button--label {
     & .icon {
         right: calc(2 * var(--button-padding) / 3);
+    }
+
+    & .spinner {
+        right: calc(2 * var(--button-padding) / 3 + var(--button-icon-size) - var(--button-spinner-size));
     }
 
     & .label {

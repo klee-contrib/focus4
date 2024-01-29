@@ -22,6 +22,7 @@
     height: var(--icon-button-size);
     background-color: transparent;
     color: var(--button-secondary-color);
+    --progress-indicator-color: var(--button-secondary-color);
     transition: color var(--animation-duration-short) var(--animation-curve-default),
         background-color var(--animation-duration-short) var(--animation-curve-default);
 }
@@ -50,6 +51,7 @@
 
 .button--primary {
     color: var(--button-primary-main-color);
+    --progress-indicator-color: var(--button-primary-main-color);
 }
 
 .button--primary::before {
@@ -62,6 +64,7 @@
 
 .button--light {
     color: var(--button-primary-light-color);
+    --progress-indicator-color: var(--button-primary-light-color);
 }
 
 .button--light::before {
@@ -70,6 +73,7 @@
 
 .button--accent {
     color: var(--button-accent-main-color);
+    --progress-indicator-color: var(--button-accent-main-color);
 }
 
 .button--accent::before {
@@ -85,6 +89,11 @@
         background-color: var(--button-primary-main-color);
         color: var(--button-primary-secondary-color);
 
+        &:not(.button--disabled) {
+            --progress-indicator-color: var(--button-primary-secondary-color);
+            --progress-indicator-track-color: var(--button-disabled-text-color);
+        }
+
         &::before {
             background-color: var(--button-primary-secondary-color);
         }
@@ -94,6 +103,10 @@
         background-color: var(--button-primary-light-color);
         color: var(--button-secondary-color);
 
+        &:not(.button--disabled) {
+            --progress-indicator-color: var(--button-secondary-color);
+        }
+
         &::before {
             background-color: var(--button-secondary-color);
         }
@@ -102,6 +115,11 @@
     &.button--accent {
         background-color: var(--button-accent-main-color);
         color: var(--button-accent-secondary-color);
+
+        &:not(.button--disabled) {
+            --progress-indicator-color: var(--button-accent-secondary-color);
+            --progress-indicator-track-color: var(--button-disabled-text-color);
+        }
 
         &::before {
             background-color: var(--button-accent-secondary-color);
@@ -131,6 +149,13 @@
     height: var(--icon-button-size);
     font-size: var(--icon-button-icon-size);
     line-height: var(--icon-button-size);
+}
+
+.spinner {
+    --progress-indicator-circular-size: var(--icon-button-icon-size);
+    position: absolute;
+    top: calc((var(--icon-button-size) - var(--icon-button-icon-size)) / 2);
+    left: calc((var(--icon-button-size) - var(--icon-button-icon-size)) / 2);
 }
 
 .button--filled + .button--filled,
