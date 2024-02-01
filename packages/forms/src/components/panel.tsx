@@ -3,7 +3,7 @@ import {snakeCase} from "lodash";
 import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "react";
 
 import {CSSProp, ScrollspyContext, useTheme} from "@focus4/styling";
-import {LinearProgressIndicator} from "@focus4/toolbox";
+import {FontIcon, Icon, LinearProgressIndicator} from "@focus4/toolbox";
 
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
@@ -20,6 +20,8 @@ export interface PanelProps extends PanelButtonsProps {
     hideOnScrollspy?: boolean;
     /** Masque la progress bar lors du chargement/sauvegarde. */
     hideProgressBar?: boolean;
+    /** Affiche une icône devant le titre. */
+    icon?: Icon;
     /** Identifiant du panel. Par défaut : premier mot du titre, si renseigné. */
     name?: string;
     /** CSS. */
@@ -43,6 +45,7 @@ export function Panel({
     i18nPrefix,
     hideOnScrollspy,
     hideProgressBar,
+    icon,
     loading,
     name,
     onClickCancel,
@@ -88,7 +91,12 @@ export function Panel({
         <div ref={ref} className={theme.panel({loading, editing})} id={name ? `panel-${name}` : undefined}>
             {!!title || areButtonsTop ? (
                 <div className={theme.title({top: true})}>
-                    {title ? <h3>{i18next.t(title)}</h3> : null}
+                    {title ? (
+                        <h3>
+                            {icon ? <FontIcon className={theme.icon()} icon={icon} /> : null}
+                            {i18next.t(title)}
+                        </h3>
+                    ) : null}
                     {areButtonsTop ? buttons : null}
                 </div>
             ) : null}

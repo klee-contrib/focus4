@@ -6,6 +6,7 @@
     --panel-title-color: rgb(var(--color-primary));
     --panel-title-padding: 8px;
     --panel-title-font-size: 20px;
+    --panel-title-icon-size: 24px;
     --panel-title-border: 1px solid rgba(var(--color-black), 0.1);
 
     --panel-content-padding: 16px;
@@ -27,11 +28,18 @@
     align-items: center;
 
     & h3 {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--button-spacing);
         margin: 0;
         padding: 0 var(--panel-title-padding);
         font-size: var(--panel-title-font-size);
         color: var(--panel-title-color);
     }
+}
+
+.icon {
+    font-size: var(--panel-title-icon-size);
 }
 
 .title--top {
