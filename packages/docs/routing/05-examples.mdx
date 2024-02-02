@@ -64,9 +64,9 @@ autorun(async () => {
 });
 ```
 
-Cette réaction peut être posée dans un composant (via `useEffect` ou `@disposeOnUnmount`), ou même dans un "store" externe indépendant si on préfère. Il est **nécessaire de vérifier que le paramètre n'est pas nul**, systématiquement (même dans un composant), au risque d'avoir une mauvaise surprise.
+Cette réaction peut être posée dans un composant (via `useEffect`, ou `@disposeOnUnmount` dans une classe), ou même dans un "store" externe indépendant si on préfère. Il est **nécessaire de vérifier que le paramètre n'est pas nul**, systématiquement (même dans un composant), au risque d'avoir une mauvaise surprise.
 
-Cela s'intègre parfaitement avec les `FormActions` du module `@focus4/stores`, qui pose une réaction sur les paramètres de la fonction `load` :
+Pour simplifier ce cas très courant, les fonctions `useLoad` et `useFormActions` du module `@focus4/stores` posent une réaction sur les paramètres de leur fonction `load` via le paramètre `params` :
 
 ```ts
 a => a.params(() => router.state.projet.prjId);

@@ -71,7 +71,7 @@ router.is(a => a("operation")("ofaId")("echeance")("echId")("reglement")("regId"
 
 `is` vérifiant que la **section** demandée est active, ce qui veut dire que dans l'exemple du dessus, si la deuxième condition est vraie alors la première l'est aussi. `is` ne vérifie pas la valeur des paramètres, il vérifie simplement qu'ils sont renseignés (car actifs dans l'URL avec une valeur quelconque).
 
-`is` est une fonction "computed", ce qui veut dire qu'elle a vocation a être utilisée dans des réactions (y compris un `render()`) et donc que tout changement de résultat (true > false ou false > true) relancera la réaction.
+`is` est une fonction "computed", ce qui veut dire qu'elle a vocation a être utilisée dans des réactions (y compris dans le rendu d'un composant) et donc que tout changement de résultat (true > false ou false > true) relancera la réaction.
 
 ## `get(url)`
 
@@ -115,9 +115,9 @@ L'URL générée peut être complétée de query params avec le deuxième param�
 
 ## `sub(url)`
 
-Il ne peut y avoir qu'un seul routeur pour toute l'application, puisqu'il n'y a qu'on ne peut utiliser qu'une seule URL en même temps et qu'elle doit être partagée. Cependant, cela forcerait à toute l'application à dépendre du routeur central qui lui même est constitué de toutes les routes de l'application. Un tel système ne serait pas modulaire du tout et serait vite limitant pour une application de taille conséquente.
+Il ne peut y avoir qu'un seul routeur pour toute l'application, puisqu'il n'y a qu'une seule URL accessible : celle de la barre d'adresses. Cette limitation pourrait forcer toute l'application à dépendre du routeur central, qui lui même est constitué de toutes les routes de l'application, ce qui ne serait pas du tout modulaire et peu pratique pour une application de taille conséquente.
 
-Pour répondre à ce problème, le routeur dispose d'une méthode `sub` qui permet de construire une **vue du routeur**, qui correspond à **une sous-section**. Ce "sous-routeur" dispose de toutes les méthodes déjà présentées du routeur (`state`, `is()`, `get()`, `to()` et même `sub()`).
+Pour répondre à cette problématique, le routeur dispose d'une méthode `sub` qui permet de construire une **vue du routeur**, qui correspond à **une sous-section**. Ce "sous-routeur" dispose de toutes les méthodes déjà présentées du routeur (`state`, `is()`, `get()`, `to()` et même `sub()`).
 
 ```ts
 const echRouter = router.sub(a => a("operation")("ofaId")("echeance"));
