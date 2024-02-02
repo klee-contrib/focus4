@@ -49,9 +49,9 @@ export default {
                     "Modèle métier",
                     "Composants",
                     ["Composants de base", "@focus4∕toolbox", "@focus4∕forms"],
+                    "Listes",
                     "Routage",
                     "Mise en page",
-                    "Listes et recherche",
                     "CSS",
                     "Autres modules"
                 ]

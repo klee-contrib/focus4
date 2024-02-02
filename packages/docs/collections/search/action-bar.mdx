@@ -1,0 +1,16 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Listes/Composants de recherche/ActionBar" />
+
+# `ActionBar`
+
+C'est le composant principal pour piloter un store (liste ou recherche). On y retrouve, dans l'ordre :
+
+-   La case à cocher de sélection (si `hasSelection = true`).
+-   Le menu de tri (si `orderableColumnList` a été renseigné).
+-   Le bouton d'ouverture des filtres (si `hasFacetBox = true`).
+-   Le menu de groupe (si `hasGroup = true`).
+-   La barre de recherche (si `hasSearchBar = true`)
+-   Les actions de sélection (si au moins un élément est sélectionné et que `operationList` a été renseigné).
+
+Lorsqu'un élément au moins a été sélectionné, toutes les autres actions disparaissent pour afficher le nombre d'éléments sélectionnés à la place. Ces mêmes actions sont absentes de l'ActionBar d'un groupe et le nom du groupe est affiché à la place.

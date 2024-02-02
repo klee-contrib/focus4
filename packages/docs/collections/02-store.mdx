@@ -1,0 +1,139 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Listes/Store de collection" />
+
+# Store de collection
+
+Le **`CollectionStore`** est un store spécialisé dans le stockage et la manipulation de listes, qui peut se brancher à une API dédiée côté serveur.
+
+Il est indispensable dès lors qu'on a besoin de fonctionnalités avancées avec un [composant de liste](/docs/listes-composants-de-listes--docs).
+
+## Fonctionnalités
+
+Le `CollectionStore` permet, en plus de stocker une liste, de gérer :
+
+-   Des compteurs d'éléments
+-   De la pagination côté serveur
+-   De la **sélection** d'élements
+-   Du **tri**
+-   Du **filtrage** par critère
+-   Des **facettes**
+-   Une répartition en **groupes**
+
+Le store peut être utilisé dans **2 modes** :
+
+-   le mode **`local`** : il gère toutes les fonctionnalité du store à partir d'une liste _complète_ préchargée qu'on lui fournit. Dans ce mode-là, tout est géré côté client
+    (facettes, tri, filtrage...). Les possibilités y sont donc limitées (en particulier pour filtrer via un champ texte), mais devraient tout de même convenir pour des
+    volumes de données faibles et des recherches simples.
+-   le mode **`server`** : il est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur type ElasticSearch. Dans ce mode là,
+    tout est géré côté serveur via l'API, et le store ne fait qu'exposer cette API et récupérer ses résultats. Il est indispensable dès que les volumes de données
+    sont importants ou que les critères de recherches sont trop compliqués pour l'implémentation simpliste du mode local.
+
+## Usage
+
+Son usage standard est très simple puisqu'il sera intégralement piloté et affiché par les composants de recherche.
+
+En mode local, il suffit de renseigner la propriété `list` avec la liste en question pour le remplir (qui sera remplie par le serveur en mode `server`).
+
+Il est évidemment toujours possible de renseigner les différents critères du store manuellement ou via des composants personnalisés. Ils sont exposés dans les
+propriétés :
+
+-   `query` : le champ texte
+-   `sortBy`: le champ sur lequel trier.
+-   `sortAsc` : le sens du tri.
+-   `inputFacets` : les facettes sélectionnées.
+-   `groupingKey` : le champ sur lequel grouper.
+-   `top` : le nombre de résultats à retourner par requête (utilisé en mode `server` uniquement)
+
+A ces critères-là, **avec un store en mode `server`** on peut ajouter un objet de critère `criteria` personnalisé pour ajouter d'autres champs à utiliser pour la
+recherche. Cet objet sera stocké sous la forme d'un `FormNode` afin de pouvoir l'utiliser directement avec des champs de formulaire. Il devra donc être défini à
+partir d'une définition d'entité.
+
+**Toute modification d'une de ces propriétés va immédiatement déclencher la mise à jour des données du store** :
+
+-   En mode `local`, la liste est immédiatement recalculée.
+-   En mode `server`, le service est appelé, et la liste sera mise à jour avec la réponse du serveur.
+
+Pour `query`, "immédiatement" est en réalité après un petit délai, une fois que l'utilisateur a fini de faire sa saisie.
+
+Pour `criteria`, il y a aussi 3 modes de prise en compte :
+
+-   `"direct"` : prise en compte immédiate.
+-   `"debounced"` : prise en compte après un petit délai (comme `query`)
+-   `"manual"` : prise en compte uniquement après un appel à `search` explicite, pour contourner la mise à jour automatique.
+
+## Initialisation
+
+Un `CollectionStore` s'instancie avec son constructeur. Il dispose de plusieurs signatures selon le mode :
+
+### `local`
+
+Le `CollectionStore` prend un seul paramètre facultatif `localStoreConfig`, qui peut contenir :
+
+-   `filterFields`, la liste des champs sur lequels `query` va pouvoir filtrer.
+-   `facetDefinitions`, les définitions de facettes.
+
+Une définition de facette comprend, comme si elle était définie côté serveur :
+
+-   Un `code`, un `libelle`, et le nom du champ `fieldName` sur lequel facetter.
+-   Un `ordering`, pour savoir comment trier les résultats (par valeur ou par nombre de résultats, dans les deux sens).
+-   Un `displayFormatter`, pour mettre en forme les valeurs de facettes.
+-   Les `isMultiSelectable` et `canExclude`, qui précisent si on peut sélectionner plusieurs valeurs dans le filtre, ou exclure certaines valeurs.
+
+### `server`
+
+Le constructeur, en mode `server` prend jusqu'à 3 paramètres :
+
+-   `searchService` (obligatoire) : le service de recherche, qui doit respecter impérativement l'API de recherche prévue :
+    `(query: QueryInput) => Promise<QueryOutput<T>>`
+-   `initialProperties` (facultatif) : les valeurs des critères par défaut à la création du store, ainsi que `criteriaMode` et `criteriaBuilder` pour
+    personnaliser le critère.
+-   `criteria` (facultatif) : la définition d'entité pour le critère.
+
+_(Note : l'ordre des deux derniers paramètres sont interchangeables)_
+
+## Limitations du mode `local`
+
+-   L'objet de critère `criteria` n'est pas supporté (on ne saurait pas comment traiter ces critères).
+-   Le fitrage par `query` sur les champs de `filterFields` ne fait qu'un simple `includes` (en minuscule).
+-   Le filtrage par facette, en dehors des nombres et de booléens, se fait avec un simple `==` (sachant que toutes les valeurs dans `inputFacets` sont des strings).
+
+## Intégration avec les composants de listes
+
+### Pagination serveur
+
+Elle est gérée automatiquement par toutes les listes, en plus de la pagination locale éventuellement décrite dans le composant.
+
+Si les deux paginations sont définies, alors l'appel à la page suivante regardera d'abord s'il y a d'autres éléments chargés à afficher (et les affichera), puis
+n'appellera le serveur que s'il n'y a plus d'éléments disponibles au moment de l'appel. La pagination locale n'a donc de sens que si les pages sont plus petites
+que celles du serveur, et il est conseillé d'utiliser un multiple de la pagination locale pour la pagination serveur afin d'avoir une pagination constante.
+
+_**Remarque : la pagination serveur ne sera appelée que si le serveur à retourné un `totalCount` plus grand que le nombre d'éléments déjà chargé.**_
+
+### Sélection
+
+La sélection peut être activée sur [`listFor`](/docs/listes-composants-de-listes-listfor--list) et [`tableFor`](/docs/listes-composants-de-listes-tablefor--table) via la prop `hasSelection`.
+
+### Tri
+
+Les définitions de colonnes dans [`tableFor`](/docs/listes-composants-de-listes-tablefor--table) peuvent inclure `sortKey`, qui rendra le titre de la colonne cliquable pour trier par cette colonne là. Recliquer sur
+la colonne permettra de changer le sens.
+
+## Lien avec les stores d'entité
+
+En mode local, puisque la propriété `list` est directement renseignée, il est possible d'y passer une liste de `StoreNode` ou de `FormNode`. **En revanche, il n'est pas possible de combiner un `CollectionStore` serveur avec un store d'entité**. Si vous avez par exemple une recherche avancée, votre composant de liste devra nécessairement prendre en entrée un objet "JS natif" en entrée.
+
+Vous pouvez néanmoins reconstruire un `StoreNode` dans votre composant de ligne si cela simplifie l'affichage de vos champs, par exemple :
+
+```tsx
+export function ItemLine({data, onClick}: {data: Item; onClick?: () => void}) {
+    const node = buildNode(ItemEntity).replace(data);
+    return useObserver(() => (
+        <div onClick={onClick}>
+            {stringFor(node.nom)}
+            {stringFor(node.codes, referenceStore.code)}
+            {stringFor(node.date)}
+        </div>
+    ));
+}
+```

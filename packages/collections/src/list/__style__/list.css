@@ -59,8 +59,8 @@
     box-sizing: border-box;
 }
 
-.checkbox,
-.actions {
+.line .checkbox,
+.line .actions {
     position: absolute;
 }
 

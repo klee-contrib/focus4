@@ -1,0 +1,9 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Listes/Composants de recherche/SearchBar" />
+
+# `SearchBar`
+
+La `SearchBar` est un composant indépendant de l'`AdvancedSearch` que l'on peut donc poser séparament (par exemple dans le `Header`) pour gérer la partie textuelle de la recherche.
+
+Le composant agit naturellement sur le champ `query`, mais également sur les critères personnalisés `criteria`, qu'il va par défaut ajouter dans le champ texte pour une saisie manuelle (du genre `criteriaName:criteriaValue` ; ce comportement est désactivable via la prop `disableInputCriteria`). Il est possible également de lui passer un composant personnalisé de saisie des critères qu'il va pouvoir afficher à la demande pour saisir de manière plus précise les différents critères.

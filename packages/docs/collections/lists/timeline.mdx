@@ -1,18 +1,22 @@
-import {Meta} from "@storybook/blocks";
+import {Meta, Story, Description, Title, Subtitle, Controls, Canvas} from "@storybook/blocks";
 
-<Meta title="Listes et recherche/Composants de listes/timelineFor" />
+import TimelineStories, {Data, Store} from "./Timeline.stories";
 
-# La timeline
+<Meta of={TimelineStories} />
 
-La timeline doit include un `dateSelector` pour déterminer quel champ doit être utilisé pour la date.
+<Title />
+<Description />
 
-Exemple :
+## Exemples
 
-```ts
-timelineFor({
-    data: adminStore.historique,
-    dateSelector: item => item.date,
-    itemKey: item => item.id.value,
-    TimelineComponent: HistoriqueAdministrationLine
-});
-```
+### {Data.name}
+
+<Description of={Data} />
+<Canvas of={Data} />
+<Controls of={Data} sort="alpha" />
+
+### {Store.name}
+
+<Description of={Store} />
+<Canvas of={Store} />
+<Controls of={Store} sort="alpha" />

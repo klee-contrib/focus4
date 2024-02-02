@@ -28,7 +28,7 @@ import listCss, {ListCss} from "../__style__/list.css";
 export {listCss, ListCss};
 
 /** Props du composant de liste standard. */
-export type ListProps<T> = ListBaseProps<T> & {
+export type ListProps<T> = Omit<ListBaseProps<T>, "isLoading"> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
     AddItemComponent?: ComponentType<AddItemProps<T>>;
     /** Handler au clic sur le bouton "Ajouter". */
@@ -47,8 +47,6 @@ export type ListProps<T> = ListBaseProps<T> & {
     EmptyComponent?: ComponentType<EmptyProps<T>>;
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
-    /** Affiche la sélection sur les lignes (store uniquement). */
-    hasSelection?: boolean;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
@@ -67,16 +65,46 @@ export type ListProps<T> = ListBaseProps<T> & {
     theme?: CSSProp<ListCss>;
 } & (
         | {
+              /** Affiche la sélection sur les lignes. */
+              hasSelection?: boolean;
               /** Le store contenant la liste. */
               store: CollectionStore<T>;
           }
         | {
               /** Les données du tableau. */
               data: T[];
+              /** Affiche un indicateur de chargement après la liste. */
+              isLoading?: boolean;
           }
     );
 
-/** Composant de liste standard */
+/**
+ * Le composant `List`, généralement posé par la fonction `listFor`, permet d'afficher des données sous forme d'une liste simple.
+ *
+ * Comme tous les composants de listes :
+ * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ *
+ * La liste se base sur le `LineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a
+ * aucune mise en forme pré-définie pour ses éléments : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le `LineComponent`.
+ *
+ * Il est en revanche possible de définir des actions pour chaque ligne de la liste via `operationList` : ces actions seront posée sur la droite de chaque élément
+ * au dessus du `LineComponent`.
+ *
+ * Lorsqu'elle est interfacée avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), la liste peut aussi gérer de la sélection d'éléments, en renseignant `hasSelection`.
+ *
+ * La liste dispose également d'une série de fonctionnalités un peu spécifiques qui ont été développées il y a longtemps et qui ne sont pas entièrement
+ * maintenues, à utiliser à vos risques et périls :
+ * - Possibilité de définir un `MosaicComponent` et `mosaic` pour afficher les éléments comme une mosaïque au lieu d'une liste.
+ * - Possibilité de définir un `DetailComponent` et `canOpenDetail` qui s'ouvrira après l'élément de la liste cliqué, pour afficher des informations
+ *  complémentaires (il s'ouvre bien au bon endroit en mode mosaïque).
+ * - Possibilité de définir un `addItemHandler` et son `AddItemComponent`, pour avoir un composant générique pour ajouter un nouvel élément (utile en
+ *  particulier pour l'affichage mosaïque).
+ * - Possibilité de définir les éléments de la liste comme des [sources de drag and drop](https://react-dnd.github.io/react-dnd/docs/api/use-drag) (via `hasDragAndDrop`)
+ *
+ * **Ce composant n'a d'intérêt que si vous avez besoin d'une des fonctionnalités listées dans cette description** (la plupart du temps, il s'agit de la pagination, de
+ * la sélection, ou des actions de ligne). Sans ça, il n'a aucun avantage sur un simple `list.map()` React classique et apporte une complexité inutile.
+ */
 export function List<T>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
@@ -87,6 +115,7 @@ export function List<T>({
     dragLayerTheme,
     EmptyComponent = DefaultEmptyComponent,
     hasDragAndDrop,
+    // @ts-ignore
     hasSelection,
     hideAdditionalItems,
     LineComponent,
@@ -286,8 +315,31 @@ export function List<T>({
 }
 
 /**
- * Crée un composant de liste standard.
- * @param props Les props de la liste.
+ * `listFor` permet de poser le composant `List`, qui permet d'afficher des données sous forme d'une liste simple.
+ *
+ * Comme tous les composants de listes :
+ * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ *
+ * La liste se base sur le `LineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a
+ * aucune mise en forme pré-définie pour ses éléments : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le `LineComponent`.
+ *
+ * Il est en revanche possible de définir des actions pour chaque ligne de la liste via `operationList` : ces actions seront posée sur la droite de chaque élément
+ * au dessus du `LineComponent`.
+ *
+ * Lorsqu'elle est interfacée avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), la liste peut aussi gérer de la sélection d'éléments, en renseignant `hasSelection`.
+ *
+ * La liste dispose également d'une série de fonctionnalités un peu spécifiques qui ont été développées il y a longtemps et qui ne sont pas entièrement
+ * maintenues, à utiliser à vos risques et périls :
+ * - Possibilité de définir un `MosaicComponent` et `mosaic` pour afficher les éléments comme une mosaïque au lieu d'une liste.
+ * - Possibilité de définir un `DetailComponent` et `canOpenDetail` qui s'ouvrira après l'élément de la liste cliqué, pour afficher des informations
+ *  complémentaires (il s'ouvre bien au bon endroit en mode mosaïque).
+ * - Possibilité de définir un `addItemHandler` et son `AddItemComponent`, pour avoir un composant générique pour ajouter un nouvel élément (utile en
+ *  particulier pour l'affichage mosaïque).
+ * - Possibilité de définir les éléments de la liste comme des [sources de drag and drop](https://react-dnd.github.io/react-dnd/docs/api/use-drag) (via `hasDragAndDrop`)
+ *
+ * **Ce composant n'a d'intérêt que si vous avez besoin d'une des fonctionnalités listées dans cette description** (la plupart du temps, il s'agit de la pagination, de
+ * la sélection, ou des actions de ligne). Sans ça, il n'a aucun avantage sur un simple `list.map()` React classique et apporte une complexité inutile.
  */
 export function listFor<T>(props: ListProps<T>) {
     return <List<T> {...props} />;

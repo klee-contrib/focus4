@@ -10,7 +10,7 @@ const {data, hasSelection, hasSelectAll, isLoading, store, ...argTypes} = TableM
 export default {
     ...TableMeta,
     argTypes,
-    title: "Listes et recherche/Composants de listes/tableFor",
+    title: "Listes/Composants de listes/tableFor",
     args: {}
 } as Meta<typeof Table>;
 

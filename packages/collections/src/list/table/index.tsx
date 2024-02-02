@@ -53,7 +53,7 @@ export type TableProps<T> = Omit<ListBaseProps<T>, "isLoading"> & {
  * Le composant `Table`, généralement posé par la fonction `tableFor`, permet d'afficher des données sous forme d'un tableau simple.
  *
  * Comme tous les composants de listes :
- * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-et-recherche-store-de-collection--docs) passé dans la prop `store`.
+ * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
  * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
  *
  * Le tableau se base sur des définitions de colonnes (`columns`) qui doivent définir un titre et un contenu, ce dernier étant défini comme une fonction des
@@ -62,7 +62,7 @@ export type TableProps<T> = Omit<ListBaseProps<T>, "isLoading"> & {
  * Il est possible de définir des actions pour chaque ligne du tableau (via `lineOperationList`), ainsi que des actions globales qui se positionneront dans le header
  * via `operationList`.
  *
- * Lorsqu'il est interfacé avec un  [`CollectionStore`](/docs/listes-et-recherche-store-de-collection--docs), le tableau peut aussi :
+ * Lorsqu'il est interfacé avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), le tableau peut aussi :
  * - Gérer du tri par colonne, en renseignant `sortKey` dans une définition de colonne.
  * - Gérer de la sélection d'éléments, en renseignant `hasSelection`.
  * - Gérer la sélection en masse avec `hasSelectAll`, qui ajoute une `Checkbox` dans le header pour tout sélectionner. Son comportement est similaire à
@@ -162,7 +162,7 @@ export function Table<T>({
  * `tableFor` permet de poser le composant `Table`, qui permet d'afficher des données sous forme d'un tableau simple.
  *
  * Comme tous les composants de listes :
- * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-et-recherche-store-de-collection--docs) passé dans la prop `store`.
+ * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
  * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
  *
  * Le tableau se base sur des définitions de colonnes (`columns`) qui doivent définir un titre et un contenu, ce dernier étant défini comme une fonction des
@@ -171,7 +171,7 @@ export function Table<T>({
  * Il est possible de définir des actions pour chaque ligne du tableau (via `lineOperationList`), ainsi que des actions globales qui se positionneront dans le header
  * via `operationList`.
  *
- * Lorsqu'il est interfacé avec un  [`CollectionStore`](/docs/listes-et-recherche-store-de-collection--docs), le tableau peut aussi :
+ * Lorsqu'il est interfacé avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), le tableau peut aussi :
  * - Gérer du tri par colonne, en renseignant `sortKey` dans une définition de colonne.
  * - Gérer de la sélection d'éléments, en renseignant `hasSelection`.
  * - Gérer la sélection en masse avec `hasSelectAll`, qui ajoute une `Checkbox` dans le header pour tout sélectionner. Son comportement est similaire à

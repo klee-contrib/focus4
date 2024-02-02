@@ -47,7 +47,21 @@ export type TimelineProps<T> = ListBaseProps<T> & {
           }
     );
 
-/** Composant affichant une liste sous forme de Timeline. */
+/**
+ * Le composant `Timeline`, généralement posé par la fonction `timelineFor`, permet d'afficher des données sous forme d'une liste avec une timeline sur la gauche.
+ *
+ * Comme tous les composants de listes :
+ * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ *
+ * La timeline se définit avec :
+ * - un `TimelineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a aucune
+ *   mise en forme pré-définie pour ses éléments en dehors de la timeline : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le
+ *   `TimelineComponent`.
+ * - un `dateSelector`, qui doit renvoyer le champ à utiliser pour la date dans la Timeline.
+ *
+ * Ce composant est très simple et assez limité dans ce qu'il peut faire. A n'utiliser que si son rendu vous intéresse et correspond exactement à votre besoin.
+ */
 export function Timeline<T>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
@@ -93,8 +107,19 @@ export function Timeline<T>({
 }
 
 /**
- * Crée un composant affichant une liste sous forme de Timeline.
- * @param props Les props de la timeline.
+ * Le composant `Timeline`, généralement posé par la fonction `timelineFor`, permet d'afficher des données sous forme d'une liste avec une timeline sur la gauche.
+ *
+ * Comme tous les composants de listes :
+ * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ *
+ * La timeline se définit avec :
+ * - un `TimelineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a aucune
+ *   mise en forme pré-définie pour ses éléments en dehors de la timeline : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le
+ *   `TimelineComponent`.
+ * - un `dateSelector`, qui doit renvoyer le champ à utiliser pour la date dans la Timeline.
+ *
+ * Ce composant est très simple et assez limité dans ce qu'il peut faire. A n'utiliser que si son rendu vous intéresse et correspond exactement à votre besoin.
  */
 export function timelineFor<T>(props: TimelineProps<T>) {
     return <Timeline {...props} />;

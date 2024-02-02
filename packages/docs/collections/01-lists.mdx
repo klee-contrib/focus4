@@ -1,0 +1,28 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Listes/Composants de listes" />
+
+# Composants de listes
+
+Focus propose 3 composants de listes :
+
+-   [`listFor`](/docs/listes-composants-de-listes-listfor--list), la liste de base.
+-   [`tableFor`](/docs/listes-composants-de-listes-tablefor--table), le tableau.
+-   [`timelineFor`](/docs/listes-composants-de-listes-timelinefor--timeline), la timeline.
+
+Ces composants partagent tous la même base (via le hook `useListBase`) qui leur permet de gérer de la pagination (en scroll infini ou manuelle).
+
+Leur usage minimal est assez simple et très similaire parmi les 3 composants, il suffit de renseigner les props :
+
+-   `data`, avec la liste à afficher.
+-   `itemKey`, un getter pour la `key` React à poser sur chaque élément.
+-   La description de l'affichage d'un élément de la liste : `LineComponent`, `columns` ou `TimelineComponent` selon le composant.
+
+En particulier, **`data` peut être n'importe quel type de liste** : il peut s'agir aussi bien d'une liste "JS native" que d'une liste issue d'un store d'entité ou de
+formulaire. Ces composants n'ont pas du tout besoin d'être utilisés en conjonction avec des stores Focus. Cependant, le type de liste impactera bien
+évidemment le type de la prop `data` du composant de ligne (ou de la définition de colonne), donc il faudra bien choisir en fonction de ce qu'il y a besoin
+d'afficher.
+
+Si vous avez besoin d'aller plus loin que de simplement affficher une liste, par exemple pour gérer du tri, de la sélection, ou de la pagination serveur, il vous faudra
+associer ces composants avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), qui servira à stocker la liste ainsi que ses états associés. Tous les composants acceptent
+également une prop `store`, à utiliser à la place de `data`, pour les associer à un store de collection.
