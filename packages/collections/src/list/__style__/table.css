@@ -3,42 +3,31 @@
     --table-border-radius: 12px;
     --table-box-shadow: var(--shadow-2p);
 
-    --table-header-font-size: 12px;
-    --table-header-sort-icon-size: 16px;
-    --table-header-color: rgba(var(--color-black), 0.54);
-    --table-header-sorted-color: rgba(var(--color-black), 0.87);
-    --table-header-sorted-icon-hover-color: rgba(var(--color-black), 0.26);
-
-    --table-dividers: 1px solid rgb(var(--color-divider));
-
-    --table-row-color: rgba(var(--color-black), 0.87);
-    --table-hover-color: rgb(var(--palette-grey-200));
-
-    --table-selection-color: inherit;
-    --table-selection-hover-color: var(--table-hover-color);
-
     --table-row-height: 48px;
+    --table-cell-padding: 18px;
 
-    --table-column-spacing: 36px;
-    --table-column-padding: calc(var(--table-column-spacing) / 2);
+    --table-divider: 1px solid rgb(var(--color-divider));
 
-    --table-cell-padding: 24px;
-    --table-cell-top: calc(var(--table-cell-padding) / 2);
-}
+    --table-header-sort-icon-size: 24px;
+    --table-header-sort-label-border: 1px dashed;
 
-.table tr td.checkbox {
-    width: 34px;
-    padding: 0 8px 0 12px;
-}
+    --table-header-color: rgb(var(--palette-grey-500));
+    --table-header-background-color: inherit;
+    --table-header-sorted-color: rgb(var(--color-primary));
 
-.checkbox label {
-    --checkbox-state-size: 36px;
-    opacity: 0;
-}
+    --table-header-selected-color: rgb(var(--color-primary-light));
+    --table-header-background-selected-color: rgb(var(--color-primary));
+    --table-header-sorted-selected-color: rgb(var(--color-white));
 
-.checkbox--forceDisplay label,
-.table tr:hover td.checkbox label {
-    opacity: 1;
+    --table-row-color: rgb(var(--color-black));
+    --table-row-background-color: inherit;
+    --table-row-background-hover-color: rgb(var(--palette-grey-200));
+    --table-row-background-active-color: rgb(var(--palette-grey-300));
+
+    --table-row-selected-color: var(--table-row-color);
+    --table-row-background-selected-color: var(--table-row-background-color);
+    --table-row-background-hover-selected-color: var(--table-row-background-hover-color);
+    --table-row-background-active-selected-color: var(--table-row-background-active-color);
 }
 
 .table {
@@ -50,12 +39,11 @@
     border-radius: var(--table-border-radius);
 }
 
-.table thead {
-    padding-bottom: 3px;
-    white-space: nowrap;
+.table td {
+    border-top: var(--table-divider);
 }
 
-.table thead tr:first-child th {
+.table th {
     &:first-child {
         border-top-left-radius: var(--table-border-radius);
     }
@@ -65,107 +53,154 @@
     }
 }
 
-.table tbody tr.row {
+.table tbody tr:last-child td {
+    &:first-child {
+        border-bottom-left-radius: var(--table-border-radius);
+    }
+
+    &:last-child {
+        border-bottom-right-radius: var(--table-border-radius);
+    }
+}
+
+.header,
+.row {
     transition: background-color var(--animation-duration-short) var(--animation-curve-default);
-
-    &.row--clickable {
-        cursor: pointer;
-
-        &:hover {
-            background-color: var(--table-hover-color);
-        }
-    }
-
-    &.row--selected {
-        background-color: var(--table-selection-color);
-
-        &:hover {
-            background-color: var(--table-selection-hover-color);
-        }
-    }
 }
 
-.table td,
-.table th {
+.header {
+    white-space: nowrap;
+    background-color: var(--table-header-background-color);
+}
+
+.row {
     color: var(--table-row-color);
-    padding: 0 var(--table-column-padding);
-    text-align: left;
+    background-color: var(--table-row-background-color);
+
+    --button-secondary-color: var(--table-row-color);
+    --input-outline-color: var(--table-row-color);
 }
 
-.table td {
-    border-bottom: var(--table-dividers);
-    border-top: var(--table-dividers);
+.header--selected {
+    --focus-ring-color: var(--table-header-sorted-selected-color);
+
+    --table-header-color: var(--table-header-selected-color);
+    --table-header-background-color: var(--table-header-background-selected-color);
+    --table-header-sorted-color: var(--table-header-sorted-selected-color);
+
+    --input-on-main-color: var(--table-header-sorted-selected-color);
+    --input-on-secondary-color: var(--table-header-background-selected-color);
+    --input-state-color: rgb(var(--palette-grey-100));
+    --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-opacity));
+
+    --button-secondary-color: var(--table-header-sorted-selected-color);
+}
+
+.row--clickable {
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--table-row-background-hover-color);
+    }
+
+    &:active {
+        background-color: var(--table-row-background-active-color);
+    }
+}
+
+.row--selected {
+    --table-row-color: var(--table-row-selected-color);
+    --table-row-background-color: var(--table-row-background-selected-color);
+    --table-row-background-hover-color: var(--table-row-background-hover-selected-color);
+}
+
+.heading,
+.cell {
+    padding: 0 var(--table-cell-padding);
     height: var(--table-row-height);
+    text-align: left;
+
+    &:first-of-type {
+        padding-left: calc(var(--table-cell-padding) * 2);
+    }
+
+    &:last-of-type {
+        padding-right: calc(var(--table-cell-padding) * 2);
+    }
 }
 
-.table th {
+.heading {
     color: var(--table-header-color);
     font-weight: var(--font-weight-bold);
-    height: var(--table-row-height);
-    line-height: 24px;
+    line-height: var(--table-header-sort-icon-size);
     text-overflow: ellipsis;
 }
 
-.table tbody tr:last-child {
-    & td {
-        border-bottom: none;
-
-        &:first-child {
-            border-bottom-left-radius: var(--table-border-radius);
-        }
-
-        &:last-child {
-            border-bottom-right-radius: var(--table-border-radius);
-        }
-    }
+.sortIcon,
+.label {
+    transition: color var(--animation-duration-short) var(--animation-curve-default),
+        border-color var(--animation-duration-short) var(--animation-curve-default);
+    vertical-align: middle;
 }
 
-.table td:first-of-type,
-.table th:first-of-type {
-    padding-left: 34px;
+.sortIcon {
+    opacity: 0;
+    font-size: var(--table-header-sort-icon-size);
+    margin-left: calc(-1.1 * var(--table-header-sort-icon-size));
+    margin-right: calc(0.1 * var(--table-header-sort-icon-size));
 }
 
-.table td:last-of-type,
-.table th:last-of-type {
-    padding-right: 34px;
-}
-
-.sortable {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: all ease-out 0.1s;
-
-    & span:first-child {
-        transition: all ease-out 0.1s;
-        margin-left: -26px;
-        margin-right: 2px;
-        opacity: 0;
-    }
-}
-
-.headerText {
+.label {
     display: inline-block;
-    border: 1px dashed transparent;
-    transition: all ease-out 0.1s;
+    border-top: var(--table-header-sort-label-border) transparent;
+    border-bottom: var(--table-header-sort-label-border) transparent;
 }
 
-.sortable:not(.sortable--sorted),
-.sortable:hover {
-    & .headerText {
+.heading--sortable {
+    cursor: pointer;
+
+    & .label {
         border-bottom-color: var(--table-header-color);
     }
 }
 
-.sortable:hover .headerText {
-    border-bottom-color: rgb(var(--color-primary));
+.heading--sortable:hover .label {
+    border-bottom-color: var(--table-header-sorted-color);
 }
 
-.sortable:hover,
-.sortable--sorted {
-    color: rgb(var(--color-primary));
+.heading--sortable:hover,
+.heading--sorted {
+    color: var(--table-header-sorted-color);
 
-    & span:first-child {
+    & .sortIcon {
         opacity: 1;
+        color: var(--table-header-sorted-color);
     }
+}
+
+.checkbox,
+.actions {
+    width: 0;
+    padding: 0 calc(var(--table-cell-padding) / 2);
+    text-align: right;
+}
+
+.checkbox,
+.actions {
+    opacity: 0;
+}
+
+.header .actions > div {
+    visibility: hidden;
+}
+
+tr:hover .checkbox,
+tr:hover .actions,
+.checkbox--forceDisplay,
+.actions--forceDisplay {
+    opacity: 1;
+}
+
+.header .actions--forceDisplay > div {
+    visibility: visible;
 }

@@ -7,6 +7,8 @@ import {CollectionStore} from "@focus4/stores";
 import {ToBem} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
+import {ContextualActions, OperationListItem} from "../contextual-actions";
+
 import {TableColumn} from "./header";
 
 import {TableCss} from "../__style__/table.css";
@@ -16,8 +18,10 @@ export function TableLine<T>({
     className,
     columns,
     domRef,
+    hasActions,
     i18nPrefix = "focus",
     onClick,
+    operationList,
     theme,
     ...oProps
 }: {
@@ -29,12 +33,16 @@ export function TableLine<T>({
     data: T;
     /** Ref vers le <td>. */
     domRef: ((listNode: HTMLElement | null) => void) | undefined;
+    /** Si le tableau à des actions (globales ou par ligne). */
+    hasActions?: boolean;
     /** Affiche la sélection sur les lignes (store uniquement). */
     hasSelection?: boolean;
     /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Appelé au clic sur une ligne. */
     onClick?: (data: T) => void;
+    /** La liste des actions sur chaque élément de la liste. */
+    operationList?: (data: T) => OperationListItem<T>[];
     /** Le store contenant la liste. */
     store?: CollectionStore<T>;
     /** CSS. */
@@ -55,9 +63,15 @@ export function TableLine<T>({
     }, [oProps.data, oProps.hasSelection, oProps.store]);
 
     const state = useLocalObservable(() => ({
+        /** Force l'affichage des actions. */
+        forceActionDisplay: false,
+
+        /** Force l'affichage de la checkbox. */
+        forceCheckboxDisplay: false,
+
         /** Précise si la checkbox doit être affichée. */
         get isCheckboxDisplayed() {
-            return !!props.store?.selectedItems.size || false;
+            return this.forceCheckboxDisplay || !!props.store?.selectedItems.size || false;
         },
 
         /** Précise si la ligne est sélectionnable. */
@@ -73,6 +87,14 @@ export function TableLine<T>({
         /** Handler de clic sur la case de sélection. */
         onSelection() {
             props.store?.toggle(props.data);
+        },
+
+        setForceActionDisplay() {
+            state.forceActionDisplay = true;
+        },
+
+        unsetForceActionDisplay() {
+            state.forceActionDisplay = false;
         }
     }));
 
@@ -86,14 +108,33 @@ export function TableLine<T>({
         >
             {props.hasSelection ? (
                 <td className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}>
-                    {state.isSelectable ? <Checkbox onChange={state.onSelection} value={state.isSelected} /> : null}
+                    {state.isSelectable ? (
+                        <Checkbox
+                            onBlur={() => (state.forceCheckboxDisplay = false)}
+                            onChange={state.onSelection}
+                            onFocus={() => (state.forceCheckboxDisplay = true)}
+                            value={state.isSelected}
+                        />
+                    ) : null}
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (
-                <td key={idx} className={cellClassName} onClick={() => onClick?.(props.data)}>
+                <td key={idx} className={classNames(cellClassName, theme.cell())} onClick={() => onClick?.(props.data)}>
                     {content(props.data)}
                 </td>
             ))}
+            {hasActions ? (
+                <td className={theme.actions({forceDisplay: state.forceActionDisplay})}>
+                    {operationList?.(props.data) ? (
+                        <ContextualActions
+                            data={props.data}
+                            onClickMenu={state.setForceActionDisplay}
+                            onHideMenu={state.unsetForceActionDisplay}
+                            operationList={operationList(props.data)}
+                        />
+                    ) : null}
+                </td>
+            ) : null}
         </tr>
     ));
 }

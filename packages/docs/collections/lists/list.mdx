@@ -1,0 +1,29 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Listes et recherche/Composants de listes/listFor" />
+
+# La liste
+
+Si les composants de tableau et de timeline sont assez simples, la liste possède quelques fonctionnalités supplémentaires :
+
+-   On peut passer et afficher des actions sur chaque élement (`operationList`).
+-   Elle peut gérer d'un mode liste et d'un mode mosaïque, avec deux composants séparés. (`LineComponent` et `MosaicComponent`)
+-   Elle peut gérer un détail d'élément, dont l'affichage se fait par accordéon. (`DetailComponent` et la prop supplémentaire `openDetail` passée aux lignes.)
+-   Les lignes de la liste peuvent être des sources de drag and drop.
+-   On peut ajouter un handler d'ajout d'élément (affiché uniquement en mosaïque). (`addItemHandler`)
+
+Exemple :
+
+```tsx
+listFor({
+    data: mainStore.itemList,
+    itemKey: e => e.id.value,
+    LineComponent: ({data}) => <ItemLine data={data} onLineClick={onItemClick} />,
+    EmptyComponent: () => (
+        <div>
+            <br />
+            {i18next.t("page.main.items.empty")}
+        </div>
+    )
+});
+```

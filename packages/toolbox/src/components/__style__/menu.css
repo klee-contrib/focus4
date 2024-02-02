@@ -13,6 +13,7 @@
     --menu-item-height: 48px;
     --menu-item-padding: 12px;
     --menu-item-font-size: var(--font-size);
+    --menu-item-color: rgb(var(--color-black));
 
     --menu-divider-height: 8px;
 }
@@ -114,7 +115,7 @@
 .menuItem {
     position: relative;
     align-items: center;
-    color: var(--button-secondary-color);
+    color: var(--menu-item-color);
     display: flex;
     gap: var(--menu-item-padding);
     font-size: var(--menu-item-font-size);

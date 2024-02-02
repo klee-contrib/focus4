@@ -1,0 +1,22 @@
+import {Meta, Story, Description, Title, Subtitle, Controls, Canvas} from "@storybook/blocks";
+
+import TableStories, {Data, Store} from "./Table.stories";
+
+<Meta of={TableStories} />
+
+<Title />
+<Description />
+
+## Exemples
+
+### {Data.name}
+
+<Description of={Data} />
+<Canvas of={Data} />
+<Controls of={Data} sort="alpha" />
+
+### {Store.name}
+
+<Description of={Store} />
+<Canvas of={Store} />
+<Controls of={Store} sort="alpha" />

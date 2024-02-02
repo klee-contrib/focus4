@@ -1,0 +1,18 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Listes et recherche/Composants de listes/timelineFor" />
+
+# La timeline
+
+La timeline doit include un `dateSelector` pour déterminer quel champ doit être utilisé pour la date.
+
+Exemple :
+
+```ts
+timelineFor({
+    data: adminStore.historique,
+    dateSelector: item => item.date,
+    itemKey: item => item.id.value,
+    TimelineComponent: HistoriqueAdministrationLine
+});
+```

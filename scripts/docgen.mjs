@@ -3,7 +3,6 @@ import {glob} from "glob";
 import fs from "fs";
 import {fileURLToPath} from "url";
 import path from "path";
-import {markdownTable} from "markdown-table";
 import _ from "lodash";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,11 +23,9 @@ function getType(p) {
     return p.type.raw ?? p.type.name;
 }
 
-function generateDocFile(fileName, globPath) {
-    const module = fileName.substring(0, fileName.length - 3);
-
-    if (!fs.existsSync(path.resolve(__filename, `../../packages/docs/components/${module}/metas`))) {
-        fs.mkdirSync(path.resolve(__filename, `../../packages/docs/components/${module}/metas`), {recursive: true});
+function generateDocFile(module, globPath, componentFilter) {
+    if (!fs.existsSync(path.resolve(__filename, `../../packages/docs/${module}/metas`))) {
+        fs.mkdirSync(path.resolve(__filename, `../../packages/docs/${module}/metas`), {recursive: true});
     }
 
     // Parse a file for docgen info
@@ -43,17 +40,18 @@ function generateDocFile(fileName, globPath) {
                     prop.name.startsWith("onPointer")
                 )
         })
-        .filter(c => !c.displayName.startsWith("use"))) {
+        .filter(
+            c =>
+                c.displayName[0] === c.displayName[0].toUpperCase() &&
+                (!componentFilter || componentFilter.includes(c.displayName))
+        )) {
         fs.writeFileSync(
-            path.resolve(
-                __filename,
-                `../../packages/docs/components/${module}/metas/${_.kebabCase(component.displayName)}.ts`
-            ),
-            `import {${component.displayName}} from "@focus4/${module}";
+            path.resolve(__filename, `../../packages/docs/${module}/metas/${_.kebabCase(component.displayName)}.ts`),
+            `import {${component.displayName}} from "@focus4/${module.split("/")[module.split("/").length - 1]}";
 
 import type {Meta} from "@storybook/react";
 
-export const ${component.displayName}Meta: Meta<typeof ${component.displayName}> = {
+export const ${component.displayName}Meta = {
     component: ${component.displayName},
     parameters: {
         docs: {
@@ -87,11 +85,21 @@ export const ${component.displayName}Meta: Meta<typeof ${component.displayName}>
             )
             .join(",\n        ")}
     }
-};`.replaceAll("\n", "\r\n")
+} satisfies Meta<typeof ${component.displayName}>;`.replaceAll("\n", "\r\n")
         );
     }
 }
 
-generateDocFile("toolbox.md", "./packages/toolbox/src/components/*.tsx");
-
-generateDocFile("forms.md", "./packages/forms/src/components/*.tsx");
+generateDocFile("components/toolbox", "./packages/toolbox/src/components/*.tsx");
+generateDocFile("components/forms", "./packages/forms/src/components/*.tsx");
+generateDocFile("collections", "./packages/collections/src/**/*.tsx", [
+    "ActionBar",
+    "AdvancedSearch",
+    "FacetBox",
+    "List",
+    "Results",
+    "SearchBar",
+    "Summary",
+    "Table",
+    "Timeline"
+]);

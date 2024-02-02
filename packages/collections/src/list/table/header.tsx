@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import i18next from "i18next";
 import {action} from "mobx";
 import {ReactNode} from "react";
@@ -32,29 +33,31 @@ export function TableHeader<T>({
     theme: ToBem<TableCss>;
 }) {
     return (
-        <th className={cellClassName}>
-            <div
-                className={store && sortKey ? theme.sortable({sorted: store.sortBy === sortKey}) : undefined}
-                onClick={
-                    store && sortKey
-                        ? action(() => {
-                              store.sortAsc = store.sortBy !== sortKey ? true : !store.sortAsc;
-                              store.sortBy = sortKey;
-                          })
-                        : undefined
-                }
-            >
-                {store && sortKey ? (
-                    <FontIcon
-                        icon={{
-                            i18nKey: `${i18nPrefix}.icons.table.sort${
-                                store.sortBy !== sortKey || store.sortAsc ? "Asc" : "Desc"
-                            }`
-                        }}
-                    />
-                ) : null}
-                <span className={theme.headerText()}>{i18next.t(title)}</span>
-            </div>
+        <th
+            className={classNames(
+                cellClassName,
+                theme.heading({sortable: !!(store && sortKey), sorted: store && store?.sortBy === sortKey})
+            )}
+            onClick={
+                store && sortKey
+                    ? action(() => {
+                          store.sortAsc = store.sortBy !== sortKey ? true : !store.sortAsc;
+                          store.sortBy = sortKey;
+                      })
+                    : undefined
+            }
+        >
+            {store && sortKey ? (
+                <FontIcon
+                    className={theme.sortIcon()}
+                    icon={{
+                        i18nKey: `${i18nPrefix}.icons.table.sort${
+                            store.sortBy !== sortKey || store.sortAsc ? "Asc" : "Desc"
+                        }`
+                    }}
+                />
+            ) : null}
+            <span className={theme.label()}>{i18next.t(title)}</span>
         </th>
     );
 }
