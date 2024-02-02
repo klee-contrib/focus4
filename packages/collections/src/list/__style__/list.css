@@ -61,7 +61,6 @@
 
 .checkbox,
 .actions {
-    opacity: 0;
     position: absolute;
 }
 
@@ -90,13 +89,4 @@
     right: 0;
     background: rgba(var(--color-black), 0.15);
     pointer-events: none;
-}
-
-.actions--forceDisplay,
-.checkbox--forceDisplay,
-.line:hover .checkbox,
-.mosaic:hover .checkbox,
-.line:hover .actions,
-.mosaic:hover .actions {
-    opacity: 1;
 }

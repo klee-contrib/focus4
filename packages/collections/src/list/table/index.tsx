@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import {ComponentType, useState} from "react";
+import {ComponentType} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -87,7 +87,6 @@ export function Table<T>({
     ...baseProps
 }: TableProps<T>) {
     const theme = useTheme("table", tableCss, pTheme);
-    const [forceHeaderCheckboxDisplay, setForceHeaderCheckboxDisplay] = useState(false);
 
     return useObserver(() => {
         const {bottomRow, displayedData, getDomRef, i18nPrefix, isLoading, itemKey, store} = useListBase(baseProps);
@@ -97,22 +96,11 @@ export function Table<T>({
                     <thead>
                         <tr className={theme.header({selected: (store && store.selectionStatus !== "none") ?? false})}>
                             {hasSelection ? (
-                                <th
-                                    className={
-                                        hasSelectAll
-                                            ? theme.checkbox({
-                                                  forceDisplay:
-                                                      forceHeaderCheckboxDisplay || store?.selectionStatus !== "none"
-                                              })
-                                            : undefined
-                                    }
-                                >
+                                <th className={hasSelectAll ? theme.checkbox() : undefined}>
                                     {hasSelectAll ? (
                                         <Checkbox
                                             indeterminate={store?.selectionStatus === "partial"}
-                                            onBlur={() => setForceHeaderCheckboxDisplay(false)}
                                             onChange={store?.toggleAll}
-                                            onFocus={() => setForceHeaderCheckboxDisplay(true)}
                                             value={store?.selectionStatus !== "none"}
                                         />
                                     ) : null}
@@ -128,7 +116,11 @@ export function Table<T>({
                                 />
                             ))}
                             {!!lineOperationList || !!operationList ? (
-                                <th className={theme.actions({forceDisplay: store?.selectionStatus !== "none"})}>
+                                <th
+                                    className={theme.actions({
+                                        hidden: hasSelectAll && store?.selectionStatus === "none"
+                                    })}
+                                >
                                     {operationList ? (
                                         <ContextualActions
                                             data={store ? Array.from(store.selectedItems) : displayedData}

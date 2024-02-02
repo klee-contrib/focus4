@@ -63,17 +63,6 @@ export function TableLine<T>({
     }, [oProps.data, oProps.hasSelection, oProps.store]);
 
     const state = useLocalObservable(() => ({
-        /** Force l'affichage des actions. */
-        forceActionDisplay: false,
-
-        /** Force l'affichage de la checkbox. */
-        forceCheckboxDisplay: false,
-
-        /** Précise si la checkbox doit être affichée. */
-        get isCheckboxDisplayed() {
-            return this.forceCheckboxDisplay || !!props.store?.selectedItems.size || false;
-        },
-
         /** Précise si la ligne est sélectionnable. */
         get isSelectable() {
             return (props.hasSelection && props.store?.isItemSelectionnable(props.data)) ?? false;
@@ -87,14 +76,6 @@ export function TableLine<T>({
         /** Handler de clic sur la case de sélection. */
         onSelection() {
             props.store?.toggle(props.data);
-        },
-
-        setForceActionDisplay() {
-            state.forceActionDisplay = true;
-        },
-
-        unsetForceActionDisplay() {
-            state.forceActionDisplay = false;
         }
     }));
 
@@ -107,15 +88,8 @@ export function TableLine<T>({
             )}
         >
             {props.hasSelection ? (
-                <td className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}>
-                    {state.isSelectable ? (
-                        <Checkbox
-                            onBlur={() => (state.forceCheckboxDisplay = false)}
-                            onChange={state.onSelection}
-                            onFocus={() => (state.forceCheckboxDisplay = true)}
-                            value={state.isSelected}
-                        />
-                    ) : null}
+                <td className={theme.checkbox()}>
+                    {state.isSelectable ? <Checkbox onChange={state.onSelection} value={state.isSelected} /> : null}
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (
@@ -124,14 +98,9 @@ export function TableLine<T>({
                 </td>
             ))}
             {hasActions ? (
-                <td className={theme.actions({forceDisplay: state.forceActionDisplay})}>
+                <td className={theme.actions()}>
                     {operationList?.(props.data) ? (
-                        <ContextualActions
-                            data={props.data}
-                            onClickMenu={state.setForceActionDisplay}
-                            onHideMenu={state.unsetForceActionDisplay}
-                            operationList={operationList(props.data)}
-                        />
+                        <ContextualActions data={props.data} operationList={operationList(props.data)} />
                     ) : null}
                 </td>
             ) : null}

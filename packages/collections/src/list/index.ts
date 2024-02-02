@@ -4,7 +4,6 @@ export {
     ContextualActionsCss,
     ContextualActionsProps,
     OperationListItem,
-    OperationListItemComponentProps,
     contextualActionsCss
 } from "./contextual-actions";
 export {getDraggedItems} from "./dnd-utils";

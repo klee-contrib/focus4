@@ -77,17 +77,6 @@ export function LineWrapper<T>({
     }, [oProps.data, oProps.hasSelection, oProps.store]);
 
     const state = useLocalObservable(() => ({
-        /** Force l'affichage des actions. */
-        forceActionDisplay: false,
-
-        /** Force l'affichage de la checkbox. */
-        forceCheckboxDisplay: false,
-
-        /** Précise si la checkbox doit être affichée. */
-        get isCheckboxDisplayed() {
-            return this.forceCheckboxDisplay || !!props.store?.selectedItems.size || false;
-        },
-
         /** Précise si la ligne est en train d'être "draggée". */
         get isDragged() {
             return draggedItems?.find(i => i === props.data) ?? false;
@@ -106,14 +95,6 @@ export function LineWrapper<T>({
         /** Handler de clic sur la case de sélection. */
         onSelection() {
             props.store?.toggle(props.data);
-        },
-
-        setForceActionDisplay() {
-            state.forceActionDisplay = true;
-        },
-
-        unsetForceActionDisplay() {
-            state.forceActionDisplay = false;
         }
     }));
 
@@ -167,24 +148,13 @@ export function LineWrapper<T>({
         >
             <LineComponent data={props.data} toggleDetail={toggleDetail} />
             {state.isSelectable ? (
-                <Checkbox
-                    className={theme.checkbox({forceDisplay: state.isCheckboxDisplayed})}
-                    onBlur={() => (state.forceCheckboxDisplay = false)}
-                    onChange={state.onSelection}
-                    onFocus={() => (state.forceCheckboxDisplay = true)}
-                    value={state.isSelected}
-                />
+                <Checkbox className={theme.checkbox()} onChange={state.onSelection} value={state.isSelected} />
             ) : null}
             {operationList?.(props.data)?.length ? (
-                <div
-                    className={theme.actions({forceDisplay: state.forceActionDisplay})}
-                    style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}
-                >
+                <div className={theme.actions()} style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}>
                     <ContextualActions
                         data={props.data}
                         isMosaic={!!mosaic}
-                        onClickMenu={state.setForceActionDisplay}
-                        onHideMenu={state.unsetForceActionDisplay}
                         operationList={operationList(props.data)}
                     />
                 </div>

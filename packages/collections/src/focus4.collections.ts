@@ -21,7 +21,6 @@ export {
     ListProps,
     LoadingProps,
     OperationListItem,
-    OperationListItemComponentProps,
     Table,
     TableColumn,
     TableCss,

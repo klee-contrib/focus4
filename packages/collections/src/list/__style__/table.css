@@ -5,6 +5,7 @@
 
     --table-row-height: 48px;
     --table-cell-padding: 18px;
+    --table-column-min-width: 0px;
 
     --table-divider: 1px solid rgb(var(--color-divider));
 
@@ -119,6 +120,7 @@
     padding: 0 var(--table-cell-padding);
     height: var(--table-row-height);
     text-align: left;
+    min-width: var(--table-column-min-width);
 
     &:first-of-type {
         padding-left: calc(var(--table-cell-padding) * 2);
@@ -185,22 +187,6 @@
     text-align: right;
 }
 
-.checkbox,
-.actions {
-    opacity: 0;
-}
-
-.header .actions > div {
+.actions--hidden > div {
     visibility: hidden;
-}
-
-tr:hover .checkbox,
-tr:hover .actions,
-.checkbox--forceDisplay,
-.actions--forceDisplay {
-    opacity: 1;
-}
-
-.header .actions--forceDisplay > div {
-    visibility: visible;
 }
