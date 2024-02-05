@@ -60,7 +60,12 @@ const paramTypeBuilder: ParamTypeBuilder = {
 };
 
 /**
- * Crée un paramètre dans un routeur.
+ * Crée une définition de paramètre dans le routeur. A utiliser dans `makeRouter`.
+ *
+ * Un paramètre à un nom, un type (`number` ou `string`) et peut être obligatoire ou non. Si le paramètre est obligatoire, alors la section de route
+ * le précédant ne pourra pas être atteinte si le paramètre n'est pas renseigné.
+ *
+ * Les sections de route suivant le paramètres se précisent en troisième paramètre de cette fonction.
  * @param name Nom du paramètre.
  * @param type Type du paramètre.
  * @param next Suite de la route.

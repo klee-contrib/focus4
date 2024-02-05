@@ -109,8 +109,16 @@ export type ParamObject<C = any> = C extends ParamDef<infer K1, Param<infer T1>,
       };
 
 /**
- * Construit un routeur.
- * @param config Configufration du routeur.
+ * `makeRouter` permet de construire le routeur de l'application.
+ *
+ * Il prend en paramètre la définition de toutes les routes possibles dans l'application, définies avec des objets JS et la fonction `param`.
+ *
+ * Le routeur maintiendra ensuite un état interne qui sera le miroir de l'URL courante (la section après le #), et il pourra être requêté pour
+ * connaître la route courante ou les valeurs des paramètres, afin de contrôler les données à charger et afficher dans vos composants.
+ *
+ * Il pourra aussi être utilisé pour générer des URLs et naviguer entre différents états d'URL.
+ *
+ * @param config Configuration du routeur.
  * @param constraintConfigurator Constraintes du routeur.
  */
 export function makeRouter<C, Q extends QueryParamConfig>(

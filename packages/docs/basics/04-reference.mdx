@@ -110,3 +110,9 @@ Une `ReferenceList` est une liste contenue dans un `ReferenceStore`. En plus d'�
 Cette fonction permet de transformer une liste classique en une liste de référence. Elle contrôlera que `valueKey` et `labelKey` existent, et dans le cas
 contraire demandera de les renseigner. Un grand nombre d'APIs et composants Focus demandent des listes de référence en entrée, donc cette fonction pourra
 être utilisée pour les utiliser avec des listes classiques (en particulier des listes à ne pas mettre en cache qui seront chargées "normalement").
+
+### `emptyReferenceList<T>()`
+
+Cette fonction permet de créer une liste de référence vide, utile à passer en tant que valeur initiale d'un `useState()` dans un composant avant d'avoir chargé
+la liste depuis le serveur (et d'avoir appelé `makeReferenceList` dessus). Cela permet de ne pas à avoir à gérer différemment le cas où la liste n'est pas
+encore disponible, de la même façon qu'une liste de référence classique du store.
