@@ -12,7 +12,7 @@ export interface ThemeConsumerProps<T> {
 }
 
 /**
- * Crée un composant pour injecter le theme souhaité dans un composant, via une render props (à la place du HoC de `react-css-themr`).
+ * Permet de créer un composant wrapper pour utiliser `useTheme` dans le `render()` d'un composant classe.
  * @param name Le nom de la clé de theme.
  * @param localTheme Le theme local, fourni par le composant.
  */

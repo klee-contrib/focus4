@@ -5,7 +5,15 @@ import {themeable} from "@focus4/core";
 import {CSSToStrings, ThemeContext} from "./common";
 import {fromBem, toBem, ToBem} from "./to-bem";
 
-/** Hook pour récupérer le theme du contexte et le fusionner avec d'autres. */
+/**
+ * `useTheme` permet de récupérer les classes CSS passées dans un éventuel `ThemeProvider` parent et de les fusionner avec d'autres classes CSS
+ * passées en paramètre.
+ *
+ * `useTheme` accepte aussi bien des objets de classes CSS classiques (importés d'un module CSS), que des objets créés avec `toBem`.
+ *
+ * @param name L'identifiant du composant dans le `appTheme` du `ThemeProvider`
+ * @param themes Les objets de classes CSS à fusionner ensemble et avec celui du contexte.
+ */
 export function useTheme<T>(
     name: string,
     ...themes: (CSSToStrings<T> | Partial<ToBem<T>> | T | undefined)[]
