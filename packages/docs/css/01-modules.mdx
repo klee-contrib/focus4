@@ -1,0 +1,75 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="CSS/Modules CSS" />
+
+# Modules CSS
+
+Un [Module CSS](https://github.com/css-modules/css-modules) est un fichier CSS qui définit du CSS de façon tout à fait standard, mais qui devra être importé et référencé explicitement dans le code.
+
+Par exemple, le fichier CSS suivant qui définit la classe CSS `element` :
+
+```css
+/* style.css */
+.element {
+    color: green;
+}
+```
+
+devra être importé comme un module Javascript classique et référencé explicitement dans un composant :
+
+```tsx
+// component.tsx
+import css from "./style.css";
+
+export function Component() {
+    return <p className={css.element}>Hello</p>;
+}
+```
+
+Le vrai nom de la classe `element` sera généré au build, avec une convention de nommage qui garantira l'unicité du nom (en général sous la forme
+`{nom du fichier}__{nom de la classe}__{hash du fichier}`), afin d'obtenir des classes CSS qui ne pourront jamais se confondre entre plusieurs
+fichiers (et donc plusieurs composants).
+
+Le CSS de Focus est directement packagé avec cette convention de nommage, et vous pouvez la reproduire dans votre projet pour vos fichiers CSS avec le
+plugin Vite de `@focus4/tooling` `cssAutoModules(regex)`
+
+_Remarque : Vite par défaut ne traite que les fichiers en `.module.css` comme des modules CSS, le plugin de Focus permet de le faire pour tous les fichiers
+`.css` qui matchent la regex passée en paramètre._
+
+## Typage des modules CSS
+
+Pour garantir l'existence des classes CSS référencées dans le vode, Focus expose un outil pour générer les types Typescript correspondant aux classes CSS
+d'un fichier CSS. Il génèrera un fichier `*.css.d.ts` à côté de vos fichiers CSS qui permettra aux imports dans vos composants d'être typés correctement
+comme n'importe quel autre import Typescript.
+
+Il se lance via la commande `npx focus4 cssgen /src`, souvent redéfinie en `npm run cssgen` dans votre `package.json`
+
+Focus génère ses types CSS avec également, et vous pouvez référencer le CSS de Focus dans vos components en l'important si vous en avez besoin (ex
+: `import {popinCss} from "@focus4/layout`).
+
+Les fichiers `.css.d.ts` générés peuvent paraîtrent un peu étranges au premier abord...
+
+```ts
+// Extrait de table.css.d.ts du module `collections`.
+import {CSSElement, CSSMod} from "@focus4/styling";
+
+interface Header {
+    _51308: void;
+}
+interface Heading {
+    _66b1d: void;
+}
+
+export interface TableCss {
+    header: CSSElement<Header>;
+    "header--selected": CSSMod<"selected", Header>;
+    heading: CSSElement<Heading>;
+    "heading--sortable": CSSMod<"sortable", Heading>;
+    "heading--sorted": CSSMod<"sorted", Heading>;
+}
+
+declare const tableCss: TableCss;
+export default tableCss;
+```
+
+Mais ce format sera utile pour utiliser la fonction [`toBem`](/docs/css-tobem--docs#tobem-et-frombem) par la suite 😉.

@@ -1,0 +1,32 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="CSS/Mode sombre" />
+
+# Mode sombre
+
+Focus intègre par défaut un **mode sombre** (qui est d'ailleurs branché avec le mode sombre de la doc 😉).
+
+Il s'active avec la méthode `initColorScheme()`, que vous pouvez appeler à l'initialisation de votre application. Cela enregistrera une clé dans le local storage
+de l'utilisateur avec le thème choisi (`light` ou `dark`). Par défaut, elle prendra le thème du navigateur de l'utilisateur, mais peut être forcé au thème clair
+avec `initColorScheme(true)`.
+
+Vous pouvez ensuite changer le thème en modifiant la valeur de `colorScheme.dark` (`true` ou `false`), que vous pouvez brancher sur un [`Switch`](/docs/composants-focus4∕toolbox-switch--docs) par
+exemple.
+
+Le mode sombre va ajouter l'attribut `dark=true` à la balise `<html>`, ce qui vous permettra d'utiliser le sélecteur `:root[dark]` pour contrôler le rendu
+CSS en thème sombre. **Il est évidemment très recommandé de n'agir sur sur des variables CSS de couleurs avec le thème sombre**. C'est l'une des raisons
+principales (hormis la maintenabilité...) d'utiliser le plus de variables possibles dans votre code.
+
+## Implémentation dans Focus
+
+En plus de redéfinir quelques couleurs explicitement dans quelques composants, le thème sombre :
+
+-   Pose un `color-scheme: dark` pour demander au navigateur d'afficher des éléments d'UI en thème sombre (par exemple les scrollbars).
+-   Inverse la valeur de `--color-black` et `--color-white` (enfin pas tout à fait, `--color-white` est en fait `11, 11, 11`...)
+-   Redéfinit les valeurs des différentes `--palette-grey-XXX` pour être du plus foncé au plus clair (la correspondance n'est pas exacte à cause du noir qui
+    n'est pas 100% noir).
+-   Rédéfinit `--color-primary`, `--color-primary-light` et `--color-accent` dans des couleurs qui passent mieux sur du noir. En général, si vos
+    couleurs sont vives, il faut des couleurs moins vives, et inversement. Evidemment, si vous surchargez ces couleurs dans votre application (ce qui devrait
+    toujours être le cas), alors ces surcharges ne vous conviendront pas et il vous faudra les remplacer aussi.
+
+Ces variables sont bien évidemment redéfinies avec le sélecteur `:root[dark]`.

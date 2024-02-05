@@ -1,0 +1,130 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="CSS/toBem" />
+
+# Convention BEM et utilitaire `toBem`
+
+## Présentation de la convention
+
+En général, un fichier CSS ne contient pas que des noms de classes "simples". Une pratique courante en CSS est d'utiliser la convention [**BEM**](https://getbem.com/naming/), pour "**B**lock -
+**E**lement - **M**odifier", qui est une règle de nommage des classes CSS où chaque classe se divise jusqu'en 3 morceaux :
+
+Supposons que l'on ait un composant `panel`, qui à un `content`, un `title`, dont le dernier peut être positionné en haut (`top`) ou en bas (`bottom`) :
+
+-   Le "Block", qui correspondrait ici à `panel`
+-   Les "Elements", qui correspondraient ici à `content` et à `title`
+-   Les "Modifiers", qui correspondraient ici à `top` et à `bottom`
+
+En convention BEM, ces classes s'appelleraient :
+
+-   `.panel`
+-   `.panel_content`
+-   `.panel_title`
+-   `.panel_title--top`
+-   `.panel_title--bottom`
+
+Puisque l'on divise déjà nos classes CSS en fichiers distincts, on obtient déjà le niveau "Block - Element" immédiatement :
+
+-   `panel.css : .panel` -> `.panel_panel` -> `panelCss.panel` (celui-là est un peu malheureux mais on pourra s'y faire)
+-   `panel.css : .title` -> `.panel_title` -> `panelCss.title`
+-   `panel.css : .content` -> `.panel_content` -> `panelCss.content`
+
+Si on ajoute les cas de modifiers en revanche, ça devient tout de suite un peu moins sympa :
+
+-   `panel.css : .title--top` -> `.panel_title--top` -> `panelCss['title--top']`
+-   `panel.css : .title--bottom` -> `.panel_title--bottom` -> `panelCss['title--bottom']`
+
+_Remarque : malgré l'usage de l'indexeur d'objet, Typescript valide quand même le nom de la classe_
+
+De plus, l'utilisation des modifiers est un peu pénible sans aide extérieure :
+
+```tsx
+import panelCss from "./panel.css";
+
+function Panel({tPos}: {tPos?: "top" | "bottom"}) {
+    return (
+        <div className={panelCss.panel}>
+            <h5 className={`${panelCss.title} ${tPos ? panelCss[`title--${tPos}`] : ""}`}>Titre</h5>
+            <p className={panelCss.content}>Contenu</p>
+        </div>
+}
+```
+
+## `toBem` (et `fromBem`)
+
+Pour simplifier l'usage des modificateurs et garder le typage fort que les CSS Modules et Typescript nous apporte, le [générateur de types de Focus](/docs/css-modules-css--docs#typage-des-modules-css) **comprend
+ce qu'est un modifier** :
+
+Au lieu de générer le type précédent comme :
+
+```ts
+interface PanelCss {
+    panel: string;
+    content: string;
+    title: string;
+    "title--top": string;
+    "title--bottom": string;
+}
+
+declare const panelCss: PanelCss;
+export default panelCss;
+```
+
+Ce qui serait le plus direct, Focus génère à la place :
+
+```ts
+import {CSSElement, CSSMod} from "@focus4/styling";
+
+interface Panel {
+    _353e5: void;
+}
+interface Content {
+    _196cd: void;
+}
+interface Title {
+    _4bf8f: void;
+}
+
+export interface PanelCss {
+    panel: CSSElement<Panel>;
+    title: CSSElement<Title>;
+    content: CSSElement<Content>;
+    "title--top": CSSMod<"top", Title>;
+    "title--bottom": CSSMod<"bottom", Title>;
+}
+
+declare const panelCss: PanelCss;
+export default panelCss;
+```
+
+Les types `CSSElement` et `CSSMod` sont bien évidemment toujours des `string`, mais ils portent également des informations supplémentaires qui
+permettent l'identification de chaque classe, pour savoir ce qui est un "élément" et à quel "élément" et rattaché quel "modificateur".
+
+La méthode **`toBem`** permet de convertir l'objet décrit par `PanelCss` en **un objet contenant une fonction par "élément"**, qui peut s'utiliser de la manière
+suivante :
+
+```tsx
+import {toBem} from "@focus4/styling";
+import panelCss from "./panel.css";
+
+const theme = toBem(panelCss);
+
+function Panel({tPos}: {tPos?: "top" |"bottom"}) {
+    return (
+        <div className={panelCss.panel()}>
+            <h5 className={panelCss.title({top: tPos == "top", bottom: tPos == "bottom"})}>Titre</h5>
+            <p className={panelCss.content()}>Contenu</p>
+        </div>
+}
+```
+
+Un appel à une fonction retournera la classe CSS de l'"élément", à laquelle seront ajoutées ou non les classes des différents "modificateurs", selon les valeurs
+des différents booléens (ici `top` et `bottom` pour `title()`).
+
+Vous pouvez donc utiliser `toBem` pour éviter d'avoir à concaténer des classes CSS à la main et pour rendre vos composants et votre CSS plus propres.
+Son usage est bien évidemment totalement facultatif et à utiliser si cela vous arrange.
+
+De la même façon, la fonction **`fromBem`** permet de faire la transformation inverse. Elle n'a pas vocation à être utilisée directement mais est un composant
+essentiel de l'usage du CSS dans les composants Focus.
+
+_Remarque : Les propriétés `theme` des différents composants Focus acceptent aussi bien un objet CSS classique ou un objet créé par `toBem`._

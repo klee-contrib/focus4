@@ -33,7 +33,7 @@ export interface SnackbarProps {
 /**
  * Une snackbar affiche un message court à un utilisateur en bas de l'écran pour le notifier du status d'une action dans l'application.
  *
- * Elle est posée par défaut par le `MessageCenter` du `Layout`.
+ * Elle est posée par défaut par le `MessageCenter` du [`Layout`](/docs/mise-en-page-layout--docs).
  *
  * - 4 types de messages : succès, erreur, avertissement ou information
  * - Peut inclure une action.
