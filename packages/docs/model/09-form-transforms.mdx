@@ -1,0 +1,191 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Modèle métier/Personnalisation" />
+
+# Personnalisation de formulaire
+
+Puisque les définitions de domaines, champs et entités sont définies globalement dans l'application (et pour les deux dernières à priori générées), on a très
+souvent besoin de pouvoir **modifier ces définitions** lors de la création du formulaire. On pourrait par exemple avoir besoin de :
+
+-   Définir un état d'édition initial
+-   Désactiver l'édition sur un ou plusieurs champs
+-   Rendre certains champs obligatoires (ou non)
+-   Implémenter des validateurs supplémentaires
+-   Modifier des métadonnées comme un libellé ou un composant d'affichage/saisie
+-   Rendre n'importe lequel de ces exemples dépendant de la valeur d'un champ en particulier
+-   ...
+
+Cela se fait via **le deuxième paramètre de `useFormNode`** qui est un "builder" qui va permettre de reconfigurer toutes ces définitions.
+
+## `FormNodeBuilder`
+
+Il s'agit du builder qui va s'appliquer sur un `StoreNode`, via `useFormNode()`, ou `patch()` et `items()` qui sont décrits plus bas.
+
+Il dispose des méthodes suivantes :
+
+### `edit(value)`
+
+Permet de contrôler l'état d'édition du noeud. Elle fonctionne comme [`edit()`](/docs/modèle-métier-makefield--docs#editvalue) sur un champ.
+
+`value` peut donc valoir :
+
+-   `true` ou `false`, selon l'état souhaité.
+-   Une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du noeud** à la valeur retournée par la fonction, au
+    lieu de la rendre librement modifiable.
+
+### `edit(value, ...props)`
+
+`edit()` dispose d'une surcharge permettant de passer des propriétés du `StoreNode` en paramètres. Dans ce cas, **la valeur initiale/fonction sera appliquée
+aux champs/listes/objets demandés au lieu de l'objet en lui-même**. Il est donc parfaitement possible d'utiliser `edit` plusieurs fois, tant que ça s'applique à
+des propriétés différentes.
+
+Exemple :
+
+```ts
+s.edit(!router.state.proId) // objet en entier
+    .edit(false, "id", "dateCreation", "dateModification") // valeur par défaut sur certains champs
+    .edit(() => !router.state.proId, "typeProfilCode"); // édition forcée sur un champ
+```
+
+La façon standard de modifier l'état d'édition d'un membre d'objet est de passer par `patch` (ou `add`), décrits plus bas, mais cette version de `edit()`
+permet de spécifier le même état d'édition à plusieurs champs à la fois. C'est aussi une version plus courte pour une seule propriété si l'édition est la seule
+chose à modifier dessus.
+
+### `add(name, fieldBuilder)`
+
+La fonction `add` permet d'ajouter un nouveau champ au `FormNode`. Son API est identique à celle de [`makeField`](/docs/modèle-métier-makefield--docs#makefieldname-builder) :
+
+-   Le premier paramètre est le nom du champ.
+-   Le deuxième paramètre est un [`EntityFieldBuilder`](/docs/modèle-métier-makefield--docs#entityfieldbuilder).
+
+Un champ ajouté dans un noeud de formulaire se comportera comme un champ classique au sein du noeud de formulaire, et sera mis à jour par les actions de
+ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un champ correspondant dans le noeud source, **il ne sera pas affecté par les
+modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce champ.
+
+De plus, un champ ajouté sera **omis par défaut du résultat de [`toFlatValues`](/docs/modèle-métier-stores-d-entité--docs#toflatvaluesnode-includeaddedfields)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il
+est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le
+second paramètre (optionnel) de `toFlatValues` à `true`.
+
+### `patch(name, builder)`
+
+La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un champ, une sous-liste ou un sous-objet. Elle prend comme paramètres :
+
+-   `name`, qui est le nom du champ/sous-objet/sous-liste. **Ce nom est typé et changera la signature en fonction de ce à quoi il correspond**.
+-   `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le
+    builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
+
+### `remove(...fields)`
+
+La fonction `remove` permet de supprimer les champs passés en paramètres du `FormNode`. Les champs supprimés existeront toujours sur le noeud source.
+
+La suppression de champs permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", **qui ne seront pas envoyé au
+service de sauvegarde**. Vous pouvez toujours retrouver les champs origniaux supprimés du formulaire dans le `sourceNode`.
+
+Par exemple :
+
+```ts
+const entity = useFormNode(profil, a => a.remove("dateCreation", "dateModification"));
+
+return (
+    <>
+        {fieldFor(entity.libelle)}
+        {fieldFor(entity.sourceNode.dateCreation)}
+        {fieldFor(entity.sourceNode.dateModification)}
+    </>
+);
+```
+
+De cette façon, n'aurez même pas besoin de définir les champs supprimés comme non éditables puisqu'ils ne sont même pas dans le formulaire.
+
+### `removeAllBut(...fields)`
+
+La fonction `removeAllBut` fonctionne comme `remove`, sauf qu'elle permet à la place de supprimer tous les champs du `FormNode`, à l'exception de ceux
+passés en paramètres.
+
+## `FormListNodeBuilder`
+
+Il s'agit du builder qui va s'appliquer sur un `StoreListNode`, via `useFormNode()` ou `patch()`.
+
+Il dispose des méthodes suivantes :
+
+### `edit(value)`
+
+Idem `FormNodeBuilder`
+
+### `items(objectBuilder)`
+
+La fonction `items` permet de modifier les items de la liste (qui sont, pour rappel, des `FormNode`). Elle prend comme unique paramètre `objectBuilder`,
+pour préciser la configuration. Comme toujours, cette fonction est donc appelée avec un `FormNodeBuilder` ainsi que le `FormListNode` courant.
+
+## Exemple de personnalisation fixe
+
+```ts
+useFormNode(utilisateurStore.utilisateur, e =>
+    e
+        .remove("id", "dateCreation", "dateModification")
+        .patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio}))
+        .add(
+            // Ce champ ajouté ne sera pas transmis au serveur lors de la sauvegarde
+            "nombreUtilisateursMax",
+            f =>
+                f
+                    .domain(DO_ENTIER)
+                    .metadata({
+                        label: "Nombre maximal d'utilisateurs",
+                        InputComponent: Slider,
+                        inputProps: {labeled: true, ticks: true, max: 20},
+                        // Ce validateur S'AJOUTE à celui du domaine.
+                        validator: {type: "number", max: 20}
+                    })
+                    .value(8) // Valeur initiale.
+        )
+);
+```
+
+## Personnalisation dynamique
+
+L'ensemble de ces personnalisation peut aussi être **dynamique**, en référençant d'autres champs du formulaire ou d'autre état observable externe (et **observable
+uniquement**). Il faudra donc bien utiliser les versions des méthodes qui prennent des **dérivations** en paramètre (pour `edit()`, `metadata()` et `value()` en
+particulier).
+
+Le noeud courant pourra être récupéré dans un paramètre supplémentaire à l'appel de `edit()`, `add()`, `patch()` et `items()`, afin de pouvoir définir
+simplement des personnalisations qui dépendent de l'état d'un champ du formulaire.
+
+Par exemple :
+
+```ts
+useFormNode(utilisateurStore.utilisateur, f =>
+    f
+        // Puisque passer une dérivation à edit() force l'état d'édition, on peut créer un formulaire en édition permanente.
+        .edit(() => true)
+        .edit(() => !!router.state.id, "nom", "prenom")
+        .patch(
+            "email",
+            // Pour accéder au formulaire, il faut récupérer `node` ici
+            (f, node) =>
+                // metadata prend bien ici une dérivation qui dépend de `node.prenom.value`
+                f.metadata(() => ({isRequired: !!node.prenom.value}))
+        )
+        .add("length", (f, node) =>
+            f // Champ calculé avec un validateur dessus qui s'ajoutera à ceux des champs.
+                .domain(DO_ENTIER)
+                .metadata({validator: {type: "number", max: 50}})
+                .value(() => node.email.value?.length ?? 0)
+        )
+);
+```
+
+## Valeurs initiales
+
+A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir du quel il a été créé. Il est cependant
+possible de renseigner des valeurs initiales :
+
+-   En renseignant les divers `value()` des champs qui le compose avec des `add()` ou des `patch()`
+-   En renseignant le troisième paramètre de `useFormNode` avec un objet contenant les valeurs initiales du formulaire (elles s'appliqueront après celles
+    définies dans les `value()`). Vous pouvez d'ailleurs utiliser ce paramètre pour passer `toFlatValues(node)` pour recopier le contenu du store original.
+
+L'appel à `reset()` sur le `FormNode` ou `FormListNode` restaurera cet état initial, quelques soient les modifications effectuées sur le store.
+
+En général, si vous avez besoin d'initialiser le store avec les données issues du serveur, le chargement se fera dans le même composant qui définit le formulaire
+(et donc **après** qu'il soit construit). Par conséquent, le chargement qui mettra à jour le `StoreNode` ou `StoreListNode` mettra aussi à jour le `FormNode` ou
+`FormListNode` associé via la synchronisation assurée par `useFormNode`.

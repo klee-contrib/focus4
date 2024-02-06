@@ -69,7 +69,7 @@ export interface SelectCheckboxProps<T extends DomainFieldType> {
 /**
  * Un ensemble de [`Checkbox`](/docs/composants-focus4∕toolbox-checkbox--docs) qui constituent un composant de sélection multiple à partir d'une liste de référence.
  *
- * S'utilise avec `selectFor` sur un champ liste.
+ * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) sur un champ liste.
  */
 export function SelectCheckbox<T extends DomainFieldType>({
     disabled = false,

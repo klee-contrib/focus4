@@ -35,7 +35,7 @@ const defaultGetKey = (x: any) => x.key;
  * Un [`Autocomplete`](/docs/composants-focus4∕toolbox-autocomplete--docs) qui récupère ses suggestions à partir **d'un service de recherche** au lieu d'une liste pré-chargée.
  * Aucun filtre supplémentaire ne sera réalisé dans le composant.
  *
- * Il s'agit du composant par défaut de tous les domaines pour `autocompleteFor` (`AutocompleteComponent`).
+ * Il s'agit du composant par défaut de tous les domaines pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  */
 export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
     T extends DomainFieldType,

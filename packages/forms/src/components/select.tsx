@@ -26,7 +26,7 @@ export interface SelectProps<T extends DomainFieldType>
 /**
  * Surcharge du [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) de `@focus4/toolbox` pour fonctionner avec une liste de référence.
  *
- * Il s'agit du composant par défaut de tous les domaines pour `selectFor` (`SelectComponent`).
+ * Il s'agit du composant par défaut de tous les domaines pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
 export function Select<T extends DomainFieldType>({
     error,

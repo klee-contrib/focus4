@@ -1,0 +1,143 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Modèle métier/Stores d'entité" />
+
+# Stores d'entité
+
+Une entité retournée directement depuis le serveur via une API est, naturellement, un objet JSON simple. Si parfois ce sont bien les seules données qui nous
+intéressent (et dans ce cas, elles peuvent être stockées dans un état React ou observable classique), la plupart du temps **on voudra pouvoir les associer à leurs
+définitions**, afin de pouvoir utiliser tous les métadonnées associées pour de l'affichage (formatteurs...) ou de l'édition (composants, validation...) qui ont été
+renseignées principalement dans les domaines.
+
+Focus met à disposition un **store d'entité**, qui est comme son nom l'indique est un store dédié au stockage d'entités, qui se construit à partir de leurs définitions,
+avec la méthode **`makeEntityStore`** :
+
+```ts
+const profilStore = makeEntityStore({
+    profil: ProfilReadEntity, // profilStore.profil contiendra un `ProfilRead`
+    profils: [ProfilItemEntity] // profilStore.profils contiendra une liste de `ProfilItem`
+});
+```
+
+Utiliser la définition directement créera un **`StoreNode`**, un objet pour contenir une entité, alors que l'entourer dans un array permettra de créer un
+**`StoreListNode`**, une liste d'entité.
+
+_Remarque : `StoreListNode` est une liste de `StoreNode`, mais contient des informations en plus qui permettront de gérer l'ajout de nouveaux éléments. Par
+conséquent, `StoreListNode extends StoreNode[]` mais `StoreListNode` != `StoreNode[]`._
+
+Vos stores d'entités peuvent être déclarés globalement dans votre application et importés explicitement dans les composants où vous en avez besoin. Les
+propriétés contenant les valeurs sont observables et leurs modifications seront suivies par n'importe quelle réaction ou dérivation.
+
+## Format d'un `StoreNode`
+
+Un **`StoreNode`** (ou **`StoreListNode`**) est un store qui contiendra en plus des valeurs la **définition de son entité**.
+
+Par exemple, la propriété `profil.libelle` contiendra la **valeur du champ** dans **`profil.libelle.value`** et la **définition du champ** dans
+**`profil.libelle.$field`**. Tous les champs sont définis à la construction et leurs valeurs sont initialisées à `undefined`.
+
+Le champ `profil.libelle` est appelé **`EntityField`** et sera l'objet de base qui va être manipulé par la suite.
+
+Pour prendre un exemple complet, l'objet `profil` de la forme :
+
+```ts
+{id: 1, libelle: "Profil 1", utilisateurs: [{id: 1, nom: "Utilisateur 1"}, {id: 2, nom: "Utilisateur 2"}]}
+```
+
+sera stocké dans un **`StoreNode`** sous la forme :
+
+```ts
+{
+    id: {
+        $field: {type: "field", name: "id", isRequired: true, domain: DO_ID, label: "securite.profil.profil.id"},
+        value: 1
+    },
+
+    label: {
+        $field: {type: "field", name: "libelle", isRequired: true, domain: DO_LIBELLE, label: "securite.profil.libelle"},
+        value: "Profil 1"
+    },
+
+    utilisateurs: [
+        {
+            id: {
+                $field: {type: "field", name: "id", isRequired: true, domain: DO_ID, label: "securite.utilisateur.id"},
+                value: 1
+            },
+
+            nom: {
+                $field: {type: "field", name: "nom", isRequired: true, domain: DO_LIBELLE, label: "securite.utilisateur.nom"},
+                value: "Utilisateur 1"
+            }
+        },
+        {
+            id: {
+                $field: {type: "field", name: "id", isRequired: true, domain: DO_ID, label: "securite.utilisateur.id"},
+                value: 2
+            },
+
+            nom: {
+                $field: {type: "field", name: "nom", isRequired: true, domain: DO_LIBELLE, label: "securite.utilisateur.nom"},
+                value: "Utilisateur 2"
+            }
+        }
+    ]
+}
+```
+
+Contrairement à de la donnée brute sous forme de JSON, un `StoreNode` contient toujours l'ensemble de tous les champs du noeud. Si une valeur n'est pas
+renseignée, la propriété `value` du champ a simplement pour valeur `undefined`. De même, il faut toujours garder à l'esprit que `profil.libelle` est un
+_`EntityField`_ (qui est donc toujours "vrai") et non un _`string | undefined`_. La valeur est bien toujours `profil.libelle.value`.
+
+## APIs globales
+
+### `makeEntityStore(config)`
+
+La fonction `makeEntityStore` permet de créer un `StoreNode` composite à partir de plusieurs entités. Son unique paramètre est un objet de configuration,
+qui permet de décrire le contenu du `StoreNode` que l'on souhaite créer. Il peut donc contenir :
+
+-   Des objets de définition d'entité (généralement générés sous le nom `ProfilReadEntity`), pour générér les `StoreNode` correspondants.
+-   Des arrays contenants un objet d'entité (`[ProfilReadEntity]`), pour générer les `StoreListNode`s correspondants.
+-   Des `StoreNode`s pré-existants. Cela permet de les rattacher aux méthodes `replace`, `set` et `clear` du store, pour associer des ensembles
+    d'entités liées par exemple.
+
+### `buildNode(entity)`
+
+La fonction `buildNode` permet de créer un `StoreNode` ou un `StoreListNode` à partir d'un objet de définition d'entité. Comme pour `makeEntityStore`,
+un `StoreListNode` s'obtient en passant un array.
+
+Cette fonction est plutôt préconisée lorsqu'on a besoin de créer un noeud unique à la volée (pour des données provenant d'[un store de collection](/docs/listes-store-de-collection--docs), par exemple).
+`makeEntityStore` est plus adapté pour des stores stables qui seront utilisés à travers plusieurs composants.
+
+### `toFlatValues(node, includeAddedFields?)`
+
+Cette fonction prend un noeud quelconque en paramètre et récupère toutes les valeurs de champs dans son objet "JSON" équivalent. Elle permet par exemple
+de récupérer les valeurs avant de les envoyer au serveur, ou de les ajouter dans un autre store.
+
+Pour un `FormNode` avec des champs ajoutés, `toFlatValues` les retirera de l'objet résultant par défaut, sauf si le second paramètre `includeAddedFields`
+est renseigné.
+
+---
+
+## APIs de `StoreNode` et `StoreListNode`
+
+Pour rappel, un `StoreNode` ne peut contenir sur des `EntityField` et des `StoreNode`/`StoreListNode`.
+
+Le `StoreNode` expose les APIs suivantes :
+
+-   **`node.clear()`**, pour vider le store et le retourner à son état initial (vide).
+-   **`node.replace(data)`**, pour remplacer son contenu par l'objet `data` (au format "normal") dans le store.
+-   **`node.set(data)`** pour mettre à jour les champs définis dans l'objet `data` (au format "normal") dans le store.
+
+    _Remarque : Vous n'êtes pas obligés d'utiliser `set()` pour mettre à jour une valeur, `field.value = value` fonctionne tout aussi bien. En revanche,
+    `set()` à l'avantage de poser une action MobX, ce qui est idéal lorsque l'on veut mettre à jour **plusieurs** champs à la fois._
+
+Le `StoreListNode` expose les mêmes APIs, à la distinction près que `node.replace` devient **`list.replaceNodes`** et `list.set` devient
+**`node.setNodes`**.
+
+_Remarque : `StoreListNode` est un array observable, qui contient quelques méthodes supplémentaires par rapport à un array classique. En particulier, il
+contient déjà une méthode `replace` qui sert déjà à remplacer le contenu de l'array. Puisque `StoreListNode` est un array de `StoreNode`, les méthodes
+existantes de l'array prennent des `StoreNode` en paramètres, ce qui n'est pas ce dont on a besoin ici. `setNodes` a été choisi pour être homogène avec
+`replaceNodes` (il n'y a pas de méthode `set`)._
+
+Suite à la remarque précédente, le `StoreListNode` expose aussi la méthode **`list.pushNode(...items)`**, équivalent à `list.push(...items)` mais qui
+prend des objets "normaux" en paramètre.

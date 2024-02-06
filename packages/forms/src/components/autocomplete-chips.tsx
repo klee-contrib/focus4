@@ -66,7 +66,7 @@ const defaultGetKey = (x: any) => x.key;
 /**
  * Un [`AutocompleteSearch`](/docs/composants-focus4∕forms-autocompletesearch--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
  *
- * S'utilise avec `autocompleteFor` sur un champ liste.
+ * S'utilise avec [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) sur un champ liste.
  */
 export function AutocompleteChips<T extends DomainFieldType, TSource = {key: string; label: string}>({
     chipTheme,

@@ -1,0 +1,68 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Modèle métier/Composants de formulaire" />
+
+# Composants de formulaire
+
+Une fois le [store de formulaire](/docs/modèle-métier-stores-de-formulaire--docs) et les [actions](/docs/modèle-métier-actions-de-formulaires--docs) définies, il ne reste plus qu'à poser les composants pour réaliser les formulaires.
+
+Pour afficher les champs, on utilisera les [composants de champs](/docs/modèle-métier-afficher-des-champs--docs#méthodes-de-champs) dédiés, de même que si on affichait des champs sans formulaire.
+
+Il existe néanmoins 2 autres composants globaux pour le formulaire, qu'il est conseillé de poser en plus en général :
+
+## `Form`
+
+`Form` est un composant qui sert à poser le formulaire dans un composant React.
+
+L'objet d'actions expose une propriété **`formProps`** dédiée qui contient toutes les props nécessaires au `Form`, donc son utilisation est très simple :
+
+```tsx
+<Form {...actions.formProps}>{/* champs... */}</Form>
+```
+
+Ce composant permet de :
+
+-   Poser un formulaire HTML (désactivable avec la prop `noForm`).
+-   Poser le service de sauvegarde (`save`) en `submit` du formulaire HTML.
+-   Passer `forceErrorDisplay` aux champs posés à l'intérieur pour forcer l'affichage des erreurs à la première sauvegarde.
+-   Configurer `labelRatio`, `valueRatio` et `disableInlineSizing` pour tous les champs posés à l'intérieur.
+
+## `Panel`
+
+Il s'agit du composant [`Panel`](/docs/composants-focus4∕forms-panel--docs) standard, pour lequel, comme pour `Form`, l'objet d'actions expose une propriété dédiée **`panelProps`**, avec les propriétés suivantes du Panel :
+
+-   `editing` (`node.form.isEdit`)
+-   `loading` (`actions.isLoading`)
+-   `onClickCancel`
+-   `onClickEdit`
+-   `save`
+
+Après avoir passé `{...actions.panelProps}` au `Panel`, vous pouvez utiliser (et même surcharger) les props classiques du `Panel`.
+
+## Exemple standard complet de formulaire
+
+Un formulaire simple complet ressemblera donc à :
+
+```tsx
+export function BasicForm() {
+    const entity = useFormNode(utilisateurStore.utilisateur);
+
+    const actions = useFormActions(entity, a =>
+        a
+            .params(() => router.state.id)
+            .load(getUtilisateur)
+            .save(addOrUpdateUtilisateur)
+            .on("save", () => utilisateurStore.load())
+    );
+
+    return useObserver(() => (
+        <Form {...actions.formProps}>
+            <Panel title="Utilisateur" {...actions.panelProps}>
+                {fieldFor(entity.prenom)}
+                {fieldFor(entity.nom)}
+                {selectFor(entity.typeUtilisateur, referenceStore.typeUtilisateur)}
+            </Panel>
+        </Form>
+    ));
+}
+```

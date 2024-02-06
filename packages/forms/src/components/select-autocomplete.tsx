@@ -32,7 +32,7 @@ const undefinedKey = "$$undefined$$";
 /**
  * Un [`Autocomplete`](/docs/composants-focus4∕toolbox-autocomplete--docs) qui prend ses valeurs dans une liste de référence.
  *
- * S'utilise avec `selectFor`.
+ * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
 export function SelectAutocomplete<T extends DomainFieldType>({
     error,

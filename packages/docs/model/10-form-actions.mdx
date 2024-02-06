@@ -1,0 +1,75 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Modèle métier/Actions de formulaires" />
+
+# Actions de formulaire
+
+Les actions du formulaire se définissent avec **`useFormActions`**, qui est un **superset de [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload)** qui s'utilise sur un [`FormNode`](/docs/modèle-métier-stores-de-formulaire--docs) pour y ajouter un deuxième
+service pour la sauvegarde.
+
+Par exemple :
+
+```ts
+const actions = useFormActions(
+    formNode,
+    a =>
+        a
+            .params(() => router.state.id)
+            .load(getUtilisateur)
+            .save(addOrUpdateUtilisateur)
+            .on("save", () => utilisateurStore.load()) // Appelé après la sauvegarde
+);
+```
+
+`actions` est un objet qui contient toutes les actions liées au formulaire :
+
+-   `trackingId` : [id de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) propre à ces actions de formulaire.
+-   `isLoading` : Précise si le formulaire est en cours de chargement ou de sauvegarde (`trackingId` est ajouté à tous les services).
+-   `forceErrorDisplay` : Booléen renseigné à `true` après le premier appel à la sauvegarde dans le champ, qui permet aux champs de forcer l'affichage
+    de leurs erreurs (cela permet de ne pas affiche immédiatement tous les champs obligatoires en erreurs).
+-   `onClickEdit()` : Passe le formulaire en édition.
+-   `onClickCancel()` : Repasse le formulaire en consultation et annule toutes les modifications.
+-   `save()`: Appelle le service de sauvegarde par défaut avec la valeur courante du noeud de formulaire, puis enregistre le retour du service (si non vide) dans le **noeud source** du formulaire (qui mettra ensuite le formulaire à jour). Si l'état d'édition du noeud de formulaire n'est pas forcé, elle repassera également le formulaire en consultation.
+
+    Les autres services de sauvegarde sont disponibles sous le nom qui leur a été donné, et leur comportement est le même.
+
+_Remarque : `useFormActions` ne supporte **pas** de liste de dépendances et vous ne pouvez donc **pas** utiliser d'état non observable dedans comme `useLoad`
+([un jour peut-être...](https://github.com/klee-contrib/focus4/issues/191))_
+
+_Remarque 2 : `useFormActions` pose en réalité `useLoad` sur le `sourceNode` du store de formulaire._
+
+## API de `FormActionsBuilder`
+
+Il hérite directement de [`NodeLoadBuilder`](/docs/modèle-métier-chargement-des-données--docs#api-de-nodeloadbuilder), et dispose des méthodes supplémentaires suivantes (en plus donc de `params`, `load`, `trackingId` et
+`on("load")`) :
+
+### `save(service, name?)`
+
+Permet de préciser un service de sauvegarde.
+
+Il est possible d'en spécifier plusieurs : pour se faire il suffit de renseigner le deuxième paramètre `name` avec le nom du service désiré (le service sans nom est
+appelé `"default"` et sera accessible sous `actions.save()`)
+
+### `on(events, handler)`
+
+La fonction `on` est étendue pour les actions de formulaires et propose de définir des handlers pour les évènements suivant en plus de `"load"` :
+
+-   `"error"` : appelé en cas d'erreur retournée par le serveur lors de la sauvegarde.
+-   `"save"` : appelé après une sauvegarde en succès sur le serveur.
+-   `"cancel"` : appelé avec `onClickCancel()`.
+-   `"edit"` : appelé avec `onClickEdit()`.
+
+On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec le nom de l'évènement qui l'a déclenché,
+ainsi que le nom du save pour `"error"` et `"save"`.
+
+### `i18nPrefix(prefix)`
+
+Après un appel à un service de sauvegarde avec succès, un message sera affiché, dont la clé i18n par défaut est `"focus.detail.saved"`. `i18nPrefix()`
+permet de remplacer `"focus"` par autre chose.
+
+Par ailleurs, si le contenu du message d'erreur est vide (par exemple avec un préfixe personnalisé), **le message ne sera pas affiché après sauvegarde**.
+
+### `useSaveNamesForMessages()`
+
+Cette méthode permet de demander à ce que le nom du service de sauvegarde (ce qui n'est utile que s'il n'y a plusieurs) soit inclus dans le message de succès,
+comme ceci : `"focus.detail.{saveName}.saved"`.

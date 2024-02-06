@@ -1,0 +1,103 @@
+import {Meta} from "@storybook/blocks";
+
+<Meta title="Modèle métier/Domaines" />
+
+# Domaines
+
+Le **domaine** d'un champ représente le **type de donnée métier** qui lui est associé (par exemple : une date, un numéro de téléphone, un montant...).
+
+## Type de champ
+
+Un domaine se définit au minimum avec un **type de champ**, qui peut être :
+
+-   Soit un type primitif : `"string"` / `"number"` / `"boolean"`
+-   Soit un type array : `"string-array"` / `"number-array"` / `"boolean-array"`
+-   Soit un type objet autre : `"object"`
+
+Le type de champ (sauf `"object"`) contraindra le type Typescript "réel" d'un champ de ce domaine (`string`/`number`/`boolean`, `string[]`/`number[]`
+/`boolean[]`), mais il pourra être **plus précis** (par exemple avec un type `"admin" | "gestionnaire" | "consultaant"` pour un domaine `"string"` )
+
+Le type de champ sera nécessaire pour d'autres fonctionnalités (puisqu'on ne peut pas se baser sur le type Typescript 😉)
+
+Un domaine se définit avec la fonction **`domain`**, et au moins le type de champ associé :
+
+```ts
+import {domain} from "@focus4/forms";
+
+const DO_LIBELLE = domain({type: "string"});
+```
+
+## Validation
+
+Un domaine peut définir **un ou plusieurs validateurs**, qui permettront de vérifier que la valeur d'un champ de ce domaine correspond bien à ce que l'on veut.
+
+Il existe quelques validateurs par défaut :
+
+-   Type de champ `"string"` :
+    -   `"string"` : avec `minLength` et `maxLength`, permet de valider une longueur minimale ou maximale.
+    -   `"date"` : permet de valider que le string est une date ISO valide. (`2024-01-01T00:00:00Z` par exemple).
+    -   `"email"` : permet de valider que le string est un email valide (via une regex intégrée).
+    -   `"regex"` : permet de valider que le string est conforme à une regex donnée (dans `regex`).
+-   Type de champ `"number"` :
+    -   `"number"` : permet de valider que le nombre est compris entre `min` et `max`, et de spécifier un nombre maximum de décimales (`maxDecimals`).
+
+Tous ces validateurs prennent également une propriété `errorMessage`, pour surcharger le message d'erreur par défaut en cas d'erreur de validation.
+
+Si ces validateurs ne vous conviennent par, vous pouvez toujours définir un validateur comme une **fonction qui retourne un message d'erreur** (ou `undefined`
+si le champ est valide).
+
+Par exemple :
+
+```ts
+// `validator` peut aussi être un array
+const DO_LIBELLE = domain({type: "string", validator: {type: "string", maxLength: 100}});
+const DO_DATE = domain({type: "string", validator: {type: "date"}});
+const DO_ENTIER = domain({type: "number", validator: {type: "number", maxDecimals: 0}});
+const DO_IBAN = domain({
+    type: "string",
+    validator: input => (!ibanChecker.isValid(input) ? "IBAN invalide" : undefined)
+});
+```
+
+## Composants
+
+Un domaine définit **5 composants** pour gérer l'affichage des champs associés :
+
+-   Le composant d'affichage en consultation, **`DisplayComponent`**.
+-   Le composant de saisie classique **`InputComponent`**.
+-   Le composant de saisie via liste de réference **`SelectComponent`**.
+-   Le composant de saisie via service d'autocomplétion **`AutocompleteComponent`**.
+-   Le composant pour le libellé, **`LabelComponent`**
+
+Il existe des composants par défaut pour les 5. Dans la grande majorité des cas :
+
+-   Le `DisplayComponent` et le `LabelComponent` par défaut répondent au besoin.
+-   Un champ n'utilise pas plusieurs types de saisie, donc un seul des 3 composants doit être personnalisé.
+
+Les propriétés `inputProps` / `selectProps` / `autocompleteProps` / `displayProps` / `labelProps` permettent de passer des props par défaut aux
+composants. La propriété `fieldProps` permettra en plus de passer des props au composant global d'affichage de champ, qui utilisera les 5 autres
+composants.
+
+La propriété `displayFormatter` est une fonction qui permet de contrôler comme un champ soit être affiché (en texte) et est en général la seule
+personnalisation à faire pour l'affichage.
+
+Par exemple :
+
+```ts
+const DO_DATE = domain({
+    type: "string",
+    validator: {type: "date"},
+    displayFormatter: date => (date ? DateTime.fromISO(date, {zone: "utc"}).toFormat("dd/MM/yyyy") : ""),
+    InputComponent: InputDate,
+    inputProps: {
+        inputFormat: "dd/MM/yyyy",
+        inputProps: {icon: "calendar_month"}
+    }
+});
+const DO_EMAIL = domain({type: "string", validator: {type: "email"}, inputProps: {icon: "email"}});
+const DO_BOOLEEN = domain({
+    type: "boolean",
+    displayFormatter: value => (value ? "Oui" : "Non"),
+    InputComponent: BooleanRadio
+});
+```

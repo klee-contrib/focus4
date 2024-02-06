@@ -46,7 +46,7 @@ export interface InputProps<T extends DomainFieldType> extends Omit<TextFieldPro
  * -   La gestion de masques de saisie
  * -   Une gestion propre de saisie de nombre (avec formattage, restrictions de décimales, et un `onChange` qui renvoie bien un nombre)
  *
- * Il s'agit du composant par défaut de tous les domaines pour `fieldFor` (`InputComponent`).
+ * Il s'agit du composant par défaut de tous les domaines pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 @observer
 // eslint-disable-next-line react/no-unsafe

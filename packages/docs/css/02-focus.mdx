@@ -68,8 +68,8 @@ application. Toutes les classes CSS seront mises bout à bout sur le composant f
 ### Surcharge dans le domaine
 
 Les classes CSS passées dans les props `theme` des composants de domaines dans les domaines (`inputProps`/`selectProps`/`autocompleteProps`/
-`displayProps`/`labelProps`/`fieldProps`) **ne seront pas surchargées** par celles passées dans un `patch()` de `metadata()`, et le tout **ne le sera pas
-non plus** par les classes passées dans les `inputProps`/`selectProps`... de `fieldFor`/`selectFor`/`autocompleteFor`.
+`displayProps`/`labelProps`/`fieldProps`) **ne seront pas surchargées** par celles passées dans un [`patch()`](/docs/modèle-métier-personnalisation--docs#patchname-builder) de [`metadata()`](/docs/modèle-métier-makefield--docs#metadatametadata), et le tout **ne le sera pas
+non plus** par les classes passées dans les `inputProps`/`selectProps`... de [`fieldFor`/`selectFor`/`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#méthodes-de-champs).
 
 Vous pouvez donc, en plus des surcharges locales et globales, définir du CSS personnalisé qui ne s'appliquera qu'aux composants d'un domaine, sans
 compromettre une éventuelle surcharge locale future.
