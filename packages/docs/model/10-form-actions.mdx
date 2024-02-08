@@ -67,6 +67,9 @@ ainsi que le nom du save pour `"error"` et `"save"`.
 Après un appel à un service de sauvegarde avec succès, un message sera affiché, dont la clé i18n par défaut est `"focus.detail.saved"`. `i18nPrefix()`
 permet de remplacer `"focus"` par autre chose.
 
+Vous pouvez [personnaliser ce message](/docs/les-bases-libellés-et-icônes--docs#surcharge-de-libellés) comme n'importe quel autre libellé de l'application (soit `"focus.detail.saved"` pour le modifier partout, ou
+`"{i18nPrefix}.detail.saved"` pour un message surchargé).
+
 Par ailleurs, si le contenu du message d'erreur est vide (par exemple avec un préfixe personnalisé), **le message ne sera pas affiché après sauvegarde**.
 
 ### `useSaveNamesForMessages()`

@@ -27,9 +27,15 @@ export type ConfigToEntities<T> = {
 };
 
 /**
- * Construit un store d'entité à partir de la config et les entités données.
- * Le store d'entité inclut les métadonnées pour tous les champs des entités utilsées.
- * @param config Un objet dont les propriétés décrivent tous les noeuds du store.
+ * Construit un store d'entité à partir des définitions d'entités demandées :
+ *
+ * - Une définition simple (`ProfilReadEntity` par exemple) créera un `StoreNode` pour contenir une instance de l'entité (`ProfilRead`).
+ * - Une définition dans un array (`[ProfilReadEntity]` par exemple) créera un `StoreListNode` pour contenir une liste d'instances de l'entité (`ProfilRead[]`).
+ *
+ * Ces noeuds de store contiendront à la fois les données ainsi que les définitions des entités qui leur correspondent, ce qui permettra d'utiliser les métadonnées
+ * des champs et de leurs domaines pour de la consultation et de la saisie.
+ *
+ * @param config Un objet dont les propriétés décrivent tous les noeuds du store à créer.
  */
 export function makeEntityStore<C extends Record<string, any>>(config: C): StoreNode<ConfigToEntities<C>> {
     const entityStore: StoreNode<ConfigToEntities<C>> = {} as any;

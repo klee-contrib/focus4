@@ -53,7 +53,6 @@ export {
     isStoreNode,
     makeEntityStore,
     makeField,
-    nodeToFormNode,
     registerLoad,
     stringFor,
     toFlatValues,

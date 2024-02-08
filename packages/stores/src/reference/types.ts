@@ -8,6 +8,14 @@ export interface ReferenceDefinition<T = any, VK extends keyof T = any, LK exten
     valueKey: VK;
 }
 
+/**
+ * Liste de référence.
+ *
+ * Il s'agit d'un array classique auquel on a ajouté :
+ * - `$valueKey` et `$labelKey` pour retrouver le code et le libellé pour chaque objet de la liste
+ * - `getLabel(value)` pour retrouver le libellé associé à un code
+ * - Une surcharge de `array.filter()` qui retourne une liste de référence de même type.
+ */
 export interface ReferenceList<T = any, VK extends keyof T = any, LK extends keyof T = any> extends Array<T> {
     /** Propriété représentant le libellé. */
     $labelKey: LK;

@@ -55,7 +55,7 @@ export type SelectForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     >;
 
 /**
- * Crée un champ avec saisie en autocomplete
+ * Crée un champ avec résolution de la valeur avec un service d'autocomplétion, en utilisant l'`AutocompleteComponent` du domaine pour la saisie.
  * @param field La définition de champ.
  * @param values La liste de référence.
  * @param options Les options du champ.
@@ -74,7 +74,7 @@ export function autocompleteFor<F extends FieldEntry>(field: EntityField<F>, opt
 }
 
 /**
- * Crée un champ standard.
+ * Crée un champ de base, en utilisant l'`InputComponent` du domaine pour la saisie.
  * @param field La définition de champ.
  * @param options Les options du champ.
  */
@@ -83,7 +83,7 @@ export function fieldFor<F extends FieldEntry>(field: EntityField<F>, options: F
 }
 
 /**
- * Crée un champ avec résolution de référence.
+ * Crée un champ avec résolution de la valeur avec une liste de référence, en utilisant le `SelectComponent` du domaine pour la saisie.
  * @param field La définition de champ.
  * @param values La liste de référence.
  * @param options Les options du champ.

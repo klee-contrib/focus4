@@ -7,15 +7,7 @@ export {
     FormListNodeBuilder,
     FormNodeBuilder
 } from "./form";
-export {
-    LoadRegistration,
-    NodeLoadBuilder,
-    buildNode,
-    makeEntityStore,
-    nodeToFormNode,
-    registerLoad,
-    toFlatValues
-} from "./store";
+export {LoadRegistration, NodeLoadBuilder, buildNode, makeEntityStore, registerLoad, toFlatValues} from "./store";
 export {stringFor} from "./string-for";
 export {
     AutocompleteComponents,

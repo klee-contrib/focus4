@@ -11,10 +11,12 @@ import {filter, getLabel} from "./util";
 export const referenceTrackingId = v4();
 
 /**
- * Construit un store de référence à partir de la config donnée.
- * (Les valeurs données aux différentes listes de références de la config n'importent peu et ne servent que pour le typage)
+ * Construit un store de référence à partir d'un service de chargement et de définitions de listes de référence à charger.
+ *
+ * Le store de référence pourra être utilisé pour accéder aux listes de référence dans toute l'application sans avoir à se préoccuper de leur chargement.
+ *
  * @param referenceLoader Le service de chargement des listes de référence, par nom.
- * @param refConfig Un objet dont les propriétés représentent les noms des listes de référence. Le type de chaque objet ne doit pas contenir la liste.
+ * @param refConfig Un objet dont les propriétés correspondent aux définitions de toutes les listes de référence souhaitées.
  * @param referenceClearer Un service pour réinitialiser une (ou toutes) les listes de référence sur le serveur.
  */
 export function makeReferenceStore<T extends Record<string, ReferenceDefinition>>(

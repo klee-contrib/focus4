@@ -1,9 +1,10 @@
 import {ReferenceList} from "./types";
 
 /**
- * Ajoute les clés pour faire une liste de référence.
+ * Construit une liste de référence à partir d'une liste classique.
+ *
  * @param list La liste.
- * @param keys Les clés pour la liste.
+ * @param keys Les propriétés à faire correspondre à `valueKey` et `labelKey`, si ce n'est pas `"code"` ou `"label"`.
  */
 export function makeReferenceList<T extends {code: any; label: any}>(list: T[]): ReferenceList<T, "code", "label">;
 export function makeReferenceList<T extends {label: any}, VK extends keyof T>(
@@ -30,7 +31,7 @@ export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
     return newList;
 }
 
-/** Initialise une liste de référence vide. */
+/** Crée une liste de référence vide. */
 export function emptyReferenceList<T>(): ReferenceList<T> {
     return makeReferenceList([]);
 }

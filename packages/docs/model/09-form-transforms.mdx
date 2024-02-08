@@ -120,7 +120,7 @@ pour préciser la configuration. Comme toujours, cette fonction est donc appelé
 ## Exemple de personnalisation fixe
 
 ```ts
-useFormNode(utilisateurStore.utilisateur, e =>
+const entity = useFormNode(utilisateurStore.utilisateur, e =>
     e
         .remove("id", "dateCreation", "dateModification")
         .patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio}))
@@ -141,6 +141,19 @@ useFormNode(utilisateurStore.utilisateur, e =>
         )
 );
 ```
+
+Le type de la variable `entity` prend bien en compte ici les trois modifications qu'on a fait qui l'impacte :
+
+-   Les 3 champs retirés.
+-   Le type du `SelectComponent` de la propriété `typeUtilisateurCode`.
+-   Le champ `nombreUtilisateursMax` en plus.
+
+Par conséquent, son type n'est pas simplement `FormNode<UtilisateurReadEntity>`, mais un type plus compliqué qui retire les propriétés retirées ou
+modifiées (avec des `Omit<...>`) et ajoute les propriétés ajoutées ou modifiées (avec des `& {[prop]: FieldEntry<...>}`).
+
+Cela rend donc le type difficile à décrire, ce qui est problématique si on veut passer ce store de formulaire à un composant enfant. [Cette issue](https://github.com/klee-contrib/focus4/issues/190) suit une évolution
+pour simplifier ce problème. En attendant, essayez au moins d'ajouter les champs en plus dans le type, et n'hésitez pas à utiliser `as any` là ou ça bloque (avec
+modération !).
 
 ## Personnalisation dynamique
 

@@ -5,7 +5,10 @@ import {ReferenceList} from "../reference";
 import {EntityField, FieldEntry} from "./types";
 
 /**
- * Récupère le texte correspondant à un champ.
+ * Formatte un champ et récupère la représentation textuelle associée.
+ *
+ * Utilise le `displayFormatter` du domaine et peut résoudre une liste de référence.
+ *
  * @param field La définition de champ.
  * @param values L'éventulle liste de référence associée.
  */

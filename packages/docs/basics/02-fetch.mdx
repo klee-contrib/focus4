@@ -20,7 +20,7 @@ Son API est la suivante :
     méthode et le body en particulier), mais il est surchargeable via ce paramètre.
 
 Si `coreFetch` reçoit une erreur et que le corps de la réponse est un JSON, alors cette réponse sera envoyée au [`messageStore`](/docs/les-bases-gestion-des-messages--docs) en appelant sa méthode
-`addMessages`. Pour assurer une intégration native avec la gestion de messages Focus, les APIs appelées devront renvoyer des réponses de la forme.
+`addMessages`. Pour assurer une intégration native avec la gestion de messages Focus, les APIs appelées devront renvoyer des réponses de la forme
 `{error: "Message d'erreur"}` ou `{errors: ["Message 1", "Message 2"]}`.
 
 ## `RequestStore`
