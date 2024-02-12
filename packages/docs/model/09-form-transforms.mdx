@@ -161,6 +161,9 @@ L'ensemble de ces personnalisation peut aussi être **dynamique**, en référen�
 uniquement**). Il faudra donc bien utiliser les versions des méthodes qui prennent des **dérivations** en paramètre (pour `edit()`, `metadata()` et `value()` en
 particulier).
 
+_Remarque : La limitation sur les dépendances à des états observables dans la personnalisation vous forcera donc à utiliser `useLocalObservable()` plutôt
+que `useState()` dans vos composants, si vous avez besoin d'y référencer un état local._
+
 Le noeud courant pourra être récupéré dans un paramètre supplémentaire à l'appel de `edit()`, `add()`, `patch()` et `items()`, afin de pouvoir définir
 simplement des personnalisations qui dépendent de l'état d'un champ du formulaire.
 

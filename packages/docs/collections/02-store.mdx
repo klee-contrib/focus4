@@ -62,6 +62,25 @@ Pour `criteria`, il y a aussi 3 modes de prise en compte :
 -   `"debounced"` : prise en compte après un petit délai (comme `query`)
 -   `"manual"` : prise en compte uniquement après un appel à `search` explicite, pour contourner la mise à jour automatique.
 
+## Sélection
+
+Les éléments sélectionnés sont enregistrés dans la propriété **`selectedItems`**, qui est un set. Ils sont aussi disponibles dans `selectedList` qui est la même
+chose mais dans un array.
+
+La méthode **`toggle(item)`** permet d'ajouter ou supprimer un élément sélectionné, tandis que **`toggleAll()`** permet de tout sélectionner ou déselectionner.
+
+Le status de sélection est disponible dans **`selectionStatus`** (`none`, `partial` ou `selected`, selon le nombre d'éléments sélectionnés).
+
+Il est également possible de contrôler les éléments sélectionnables en renseignant la propriété **`isItemSelectable`**, qui est une fonction d'un item et qui
+renvoie un booléen. Le status de sélection sera `selected` si tous les éléments sélectionnables ont été sélectionnés (par défaut, tous les éléments sont
+sélectionnables).
+
+_Remarque : **Seuls les éléments chargés dans le store peuvent être sélectionnés**. C'est important en mode `server`, où il peut rester des éléments encore à
+charger depuis le serveur. Dans ce cas, le status de sélection sera bien `selected` dès que tous les éléments chargés sont sélectionnés, et `toggleAll()` ne
+sélectionnera que les éléments chargés. Si vous avez besoin d'agir sur plus d'éléments que ceux déjà chargés, vous pouvez soit charger les éléments
+manquants, soit faire complètement autrement. De manière générale, c'est une bonne pratique de mettre une limite sur le nombre d'éléments sélectionnés en même
+temps, afin de pouvoir contrôler le temps de traitement de l'action en masse réalisée sur ces éléments._
+
 ## Initialisation
 
 Un `CollectionStore` s'instancie avec son constructeur. Il dispose de plusieurs signatures selon le mode :

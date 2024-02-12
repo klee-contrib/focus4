@@ -34,7 +34,8 @@ const actions = useFormActions(
     Les autres services de sauvegarde sont disponibles sous le nom qui leur a été donné, et leur comportement est le même.
 
 _Remarque : `useFormActions` ne supporte **pas** de liste de dépendances et vous ne pouvez donc **pas** utiliser d'état non observable dedans comme `useLoad`
-([un jour peut-être...](https://github.com/klee-contrib/focus4/issues/191))_
+([un jour peut-être...](https://github.com/klee-contrib/focus4/issues/191)). En particulier, il vous faudra utiliser `useLocalObservable()` à la place de `useState()` pour définir un état local utilisé dans l'une des
+fonctions `load`, `save` ou `on` par exemple._
 
 _Remarque 2 : `useFormActions` pose en réalité `useLoad` sur le `sourceNode` du store de formulaire._
 

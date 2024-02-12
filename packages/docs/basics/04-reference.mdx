@@ -79,11 +79,13 @@ Ce composant sera initialement rendu 3 fois :
 ### Autres APIs de `ReferenceStore`
 
 -   `referenceStore.isLoading` permet de savoir s'il y a au moins une liste de référence en cours de chargement.
--   `referenceStore.reload(ref?)` permet de forcer le rechargement d'une liste de référence (après une modification par exemple). Cela appellera
-    également le `referenceClearer` s'il a été défini.
 -   `referenceStore.get(ref)` permet de récupérer une liste de référence, en appelant le service de chargement si la liste n'est pas chargée. Cette fonction
-    est asynchrone (car elle peut appeler le serveur) et sert à récupérer une liste de référence de manière certaine en dehors d'une réaction.
--   `referenceStore.track(trackingId, ...refNames)` permet d'ajouter un [ID de suivi](/docs/les-bases-gestion-des-requêtes--docs) sur des listes de référence demandées (ou toutes si `refNames`
+    est asynchrone (car elle peut appeler le serveur) et sert à récupérer une liste de référence de manière certaine en dehors d'une réaction ou du rendu
+    d'un composant. Vous pouvez l'utiliser dans des handlers d'évènements ou dans des fonctions d'initialisation ([`on("load")`](/docs/modèle-métier-chargement-des-données--docs#onload-callback) ou un `useEffect`) par exemple.
+-   `referenceStore.reload(ref?)` permet de **vider le store** (pour toutes les listes, ou seulement celles passées en paramètre), afin de forcer le
+    rechargement d'une liste de référence au **prochain appel**. Cela appellera également le `referenceClearer` s'il a été défini. Cette fonction est à utiliser
+    lorsque vous modifiez le contenu d'une liste de référence et qu'il y a besoin de la recharger.
+-   `referenceStore.track(trackingId, ...refNames)` permet d'ajouter un [ID de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) sur des listes de référence demandées (ou toutes si `refNames`
     est vide). Cela permet d'ajouter l'état de chargement de listes de référence à un autre état préexistant.
 
     `referenceStore.track` renvoie une fonction pour retirer l'ID de suivi des listes de référence. Pour une intégration simplifiée dans un composant React,
