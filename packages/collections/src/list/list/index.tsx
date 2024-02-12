@@ -282,7 +282,12 @@ export function List<T>({
         return (
             <>
                 {hasDragAndDrop ? <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} /> : null}
-                <div className={state.mode === "list" ? theme.list() : theme.mosaic()}>
+                <div
+                    className={theme.list({
+                        mosaic: state.mode === "mosaic",
+                        selected: (store && store.selectionStatus !== "none") ?? false
+                    })}
+                >
                     {/* Gestion de l'empty state. */}
                     {!isLoading && !hideAdditionalItems && !displayedData.length ? (
                         <EmptyComponent addItemHandler={state.addItemHandler} i18nPrefix={i18nPrefix} store={store} />

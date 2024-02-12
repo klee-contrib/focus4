@@ -92,9 +92,9 @@ export function Table<T>({
         const {bottomRow, displayedData, getDomRef, i18nPrefix, isLoading, itemKey, store} = useListBase(baseProps);
         return (
             <>
-                <table className={theme.table()}>
+                <table className={theme.table({selected: (store && store.selectionStatus !== "none") ?? false})}>
                     <thead>
-                        <tr className={theme.header({selected: (store && store.selectionStatus !== "none") ?? false})}>
+                        <tr className={theme.header()}>
                             {hasSelection ? (
                                 <th className={hasSelectAll ? theme.checkbox() : undefined}>
                                     {hasSelectAll ? (

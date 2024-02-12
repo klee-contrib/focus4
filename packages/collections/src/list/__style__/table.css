@@ -40,6 +40,11 @@
     border-radius: var(--table-border-radius);
 }
 
+.table td,
+.table th {
+    transition: background-color var(--animation-duration-short) var(--animation-curve-default);
+}
+
 .table td {
     border-top: var(--table-divider);
 }
@@ -64,55 +69,15 @@
     }
 }
 
-.header,
-.row {
-    transition: background-color var(--animation-duration-short) var(--animation-curve-default);
-}
-
 .header {
     white-space: nowrap;
-    background-color: var(--table-header-background-color);
 }
 
 .row {
     color: var(--table-row-color);
-    background-color: var(--table-row-background-color);
 
     --button-secondary-color: var(--table-row-color);
     --input-outline-color: var(--table-row-color);
-}
-
-.header--selected {
-    --focus-ring-color: var(--table-header-sorted-selected-color);
-
-    --table-header-color: var(--table-header-selected-color);
-    --table-header-background-color: var(--table-header-background-selected-color);
-    --table-header-sorted-color: var(--table-header-sorted-selected-color);
-
-    --input-on-main-color: var(--table-header-sorted-selected-color);
-    --input-on-secondary-color: var(--table-header-background-selected-color);
-    --input-state-color: rgb(var(--palette-grey-100));
-    --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-opacity));
-
-    --button-secondary-color: var(--table-header-sorted-selected-color);
-}
-
-.row--clickable {
-    cursor: pointer;
-
-    &:hover {
-        background-color: var(--table-row-background-hover-color);
-    }
-
-    &:active {
-        background-color: var(--table-row-background-active-color);
-    }
-}
-
-.row--selected {
-    --table-row-color: var(--table-row-selected-color);
-    --table-row-background-color: var(--table-row-background-selected-color);
-    --table-row-background-hover-color: var(--table-row-background-hover-selected-color);
 }
 
 .heading,
@@ -133,6 +98,7 @@
 
 .heading {
     color: var(--table-header-color);
+    background-color: var(--table-header-background-color);
     font-weight: var(--font-weight-bold);
     line-height: var(--table-header-sort-icon-size);
     text-overflow: ellipsis;
@@ -158,6 +124,61 @@
     border-bottom: var(--table-header-sort-label-border) transparent;
 }
 
+.cell {
+    background-color: var(--table-row-background-color);
+}
+
+.checkbox,
+.actions {
+    width: 0;
+    padding: 0 calc(var(--table-cell-padding) / 2);
+    text-align: right;
+}
+
+.header {
+    & .checkbox,
+    & .actions {
+        background-color: var(--table-header-background-color);
+    }
+}
+
+.actions--hidden > div {
+    visibility: hidden;
+}
+
+.table--selected .header {
+    --focus-ring-color: var(--table-header-sorted-selected-color);
+
+    --table-header-color: var(--table-header-selected-color);
+    --table-header-background-color: var(--table-header-background-selected-color);
+    --table-header-sorted-color: var(--table-header-sorted-selected-color);
+
+    --input-on-main-color: var(--table-header-sorted-selected-color);
+    --input-on-secondary-color: var(--table-header-background-selected-color);
+    --input-state-color: rgb(var(--palette-grey-100));
+    --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-opacity));
+
+    --button-secondary-color: var(--table-header-sorted-selected-color);
+}
+
+.row--clickable {
+    cursor: pointer;
+
+    &:hover .cell {
+        background-color: var(--table-row-background-hover-color);
+    }
+
+    &:active .cell {
+        background-color: var(--table-row-background-active-color);
+    }
+}
+
+.row--selected {
+    --table-row-color: var(--table-row-selected-color);
+    --table-row-background-color: var(--table-row-background-selected-color);
+    --table-row-background-hover-color: var(--table-row-background-hover-selected-color);
+}
+
 .heading--sortable {
     cursor: pointer;
 
@@ -178,15 +199,4 @@
         opacity: 1;
         color: var(--table-header-sorted-color);
     }
-}
-
-.checkbox,
-.actions {
-    width: 0;
-    padding: 0 calc(var(--table-cell-padding) / 2);
-    text-align: right;
-}
-
-.actions--hidden > div {
-    visibility: hidden;
 }
