@@ -7,14 +7,16 @@ import "./preview.css";
 import {translation as collections} from "@focus4/collections";
 import {translation as forms} from "@focus4/forms";
 import {colorScheme, initColorScheme} from "@focus4/styling";
-import {DocsContainer as BaseContainer} from "@storybook/blocks";
+
+import {Title, Subtitle, Description, Primary, Controls} from "@storybook/blocks";
 import type {Preview} from "@storybook/react";
 import {addons} from "@storybook/preview-api";
 import i18next from "i18next";
 import React from "react";
-import {DARK_MODE_EVENT_NAME, useDarkMode} from "storybook-dark-mode";
+import {DARK_MODE_EVENT_NAME} from "storybook-dark-mode";
 
-import {darkTheme, lightTheme} from "./themes";
+import {CssVariables} from "./custom/CssVariables";
+import {DocsContainer} from "./custom/DocsContainer";
 
 const channel = addons.getChannel();
 channel.on(DARK_MODE_EVENT_NAME, v => (colorScheme.dark = v));
@@ -28,18 +30,25 @@ i18next.init({
     nsSeparator: "🤷‍♂️"
 });
 
-function DocsContainer(props) {
-    const dark = useDarkMode();
-    return <BaseContainer {...props} theme={dark ? darkTheme : lightTheme} />;
-}
-
 export default {
     parameters: {
         controls: {
             sort: "alpha"
         },
         docs: {
-            container: DocsContainer
+            container: DocsContainer,
+            page: () => (
+                <>
+                    <Title />
+                    <Subtitle />
+                    <Description />
+                    <Primary />
+                    <h3>Props</h3>
+                    <Controls sort="requiredFirst" />
+                    <h3>Variables CSS</h3>
+                    <CssVariables />
+                </>
+            )
         },
         options: {
             storySort: {

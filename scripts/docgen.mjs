@@ -4,6 +4,7 @@ import fs from "fs";
 import {fileURLToPath} from "url";
 import path from "path";
 import _ from "lodash";
+import {parse, findAll, walk} from "css-tree";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -22,6 +23,63 @@ function getName(name, type) {
 function getType(p) {
     return p.type.raw ?? p.type.name;
 }
+
+/**
+ * @param {string} css
+ * @returns {{property: string, value: {main: string, dark?: string}}[]}
+ */
+function getCssVariables(css) {
+    const ast = parse(css);
+    const variables = findAll(
+        ast,
+        node =>
+            node.type === "Rule" &&
+            node.prelude.type === "SelectorList" &&
+            node.prelude.children.first?.type === "Selector" &&
+            node.prelude.children.first.children.first?.type === "PseudoClassSelector" &&
+            node.prelude.children.first.children.first.name === "root" &&
+            node.prelude.children.first.children.size === 1
+    )
+        .flatMap(node => (node.type === "Rule" && node.block.children.toArray()) || [])
+        .map(node => ({
+            property: node.property,
+            value: {
+                main: node.value.value?.trim().replaceAll('"', '\\"')
+            }
+        }));
+
+    walk(ast, node => {
+        if (
+            node.type === "Rule" &&
+            node.prelude.type === "SelectorList" &&
+            node.prelude.children.first?.type === "Selector" &&
+            node.prelude.children.first.children.first?.type === "PseudoClassSelector" &&
+            node.prelude.children.first.children.first.name === "root" &&
+            node.prelude.children.first.children.size === 2
+        ) {
+            for (const n of node.block.children.toArray().flat()) {
+                const prop = variables.find(v => v.property === n.property);
+                if (prop) {
+                    prop.value.dark = n.value.value?.trim().replaceAll('"', '\\"');
+                }
+            }
+        }
+    });
+
+    return variables;
+}
+
+const globalCssVariables = ["variables", "colors"].flatMap(file =>
+    getCssVariables(
+        fs.readFileSync(path.resolve(__filename, `../../packages/styling/src/variables/${file}.css`)).toString()
+    )
+);
+
+const commonCssVariables = getCssVariables(
+    fs
+        .readFileSync(path.resolve(__filename, `../../packages/toolbox/src/components/__style__/variables.css`))
+        .toString()
+);
 
 function generateDocFile(module, globPath, componentFilter) {
     if (!fs.existsSync(path.resolve(__filename, `../../packages/docs/${module}/metas`))) {
@@ -45,6 +103,34 @@ function generateDocFile(module, globPath, componentFilter) {
                 c.displayName[0] === c.displayName[0].toUpperCase() &&
                 (!componentFilter || componentFilter.includes(c.displayName))
         )) {
+        const cssFilePaths = fs
+            .readFileSync(component.filePath)
+            .toString()
+            .split("\n")
+            .filter(l => l.includes(".css"))
+            .map(cssImport => /from "(.+)"/.exec(cssImport)[1])
+            .map(cssImport => path.resolve(path.dirname(component.filePath), cssImport));
+
+        const usedVariables = [];
+        const localCssVariables = cssFilePaths.flatMap(cssFilePath => {
+            const css = fs.readFileSync(cssFilePath).toString();
+            usedVariables.push(...Array.from(css.matchAll(/var\(([a-z0-9-]+)\)/g)).map(m => m[1]));
+            return getCssVariables(css);
+        });
+
+        const usedCommonVariables = commonCssVariables.filter(v => usedVariables.includes(v.property));
+        usedVariables.push(
+            ...usedCommonVariables.flatMap(({value: {main}}) =>
+                Array.from(main.matchAll(/var\(([a-z0-9-]+)\)/g)).map(m => m[1])
+            )
+        );
+        const usedGlobalVariables = globalCssVariables.filter(v => usedVariables.includes(v.property));
+        usedVariables.push(
+            ...usedGlobalVariables.flatMap(({value: {main}}) =>
+                Array.from(main.matchAll(/var\(([a-z0-9-]+)\)/g)).map(m => m[1])
+            )
+        );
+
         fs.writeFileSync(
             path.resolve(__filename, `../../packages/docs/${module}/metas/${_.kebabCase(component.displayName)}.ts`),
             `import {${component.displayName}} from "@focus4/${module.split("/")[module.split("/").length - 1]}";
@@ -56,6 +142,39 @@ export const ${component.displayName}Meta = {
     parameters: {
         docs: {
             description: {component: \`${component.description.replaceAll('"', '\\"').replaceAll("`", "\\`")}\`}
+        },
+        cssVariables: {
+            global: {
+                ${globalCssVariables
+                    .filter(v => usedVariables.includes(v.property))
+                    .map(
+                        css =>
+                            `"${css.property}": {main: "${css.value.main}"${
+                                css.value.dark ? `, dark: "${css.value.dark}"` : ""
+                            }}`
+                    )
+                    .join(",\n                ")}
+            },
+            common: {
+                ${usedCommonVariables
+                    .map(
+                        css =>
+                            `"${css.property}": {main: "${css.value.main}"${
+                                css.value.dark ? `, dark: "${css.value.dark}"` : ""
+                            }}`
+                    )
+                    .join(",\n                ")}
+            },
+            local: {
+                ${localCssVariables
+                    .map(
+                        css =>
+                            `"${css.property}": {main: "${css.value.main}"${
+                                css.value.dark ? `, dark: "${css.value.dark}"` : ""
+                            }}`
+                    )
+                    .join(",\n                ")}
+            }
         }
     },
     argTypes: {

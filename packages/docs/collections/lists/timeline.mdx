@@ -1,5 +1,7 @@
 import {Meta, Story, Description, Title, Subtitle, Controls, Canvas} from "@storybook/blocks";
 
+import {CssVariables} from "../../.storybook/custom/CssVariables";
+
 import TimelineStories, {Data, Store} from "./Timeline.stories";
 
 <Meta of={TimelineStories} />
@@ -13,10 +15,13 @@ import TimelineStories, {Data, Store} from "./Timeline.stories";
 
 <Description of={Data} />
 <Canvas of={Data} />
-<Controls of={Data} sort="alpha" />
+<Controls of={Data} sort="requiredFirst" />
 
 ### {Store.name}
 
 <Description of={Store} />
 <Canvas of={Store} />
-<Controls of={Store} sort="alpha" />
+<Controls of={Store} sort="requiredFirst" />
+
+<h3>Variables CSS</h3>
+<CssVariables />

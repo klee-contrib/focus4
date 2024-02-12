@@ -1,4 +1,7 @@
 :root {
+    --color-black: 0, 0, 0;
+    --color-white: 255, 255, 255;
+
     --palette-red-50: 255, 235, 238;
     --palette-red-100: 255, 205, 210;
     --palette-red-200: 239, 154, 154;
@@ -271,7 +274,20 @@
     --palette-blue-grey-700: 69, 90, 100;
     --palette-blue-grey-800: 55, 71, 79;
     --palette-blue-grey-900: 38, 50, 56;
+}
 
-    --color-black: 0, 0, 0;
-    --color-white: 255, 255, 255;
+:root[dark] {
+    --color-black: 238, 238, 238;
+    --color-white: 11, 11, 11;
+
+    --palette-grey-50: 22, 22, 22;
+    --palette-grey-100: 33, 33, 33;
+    --palette-grey-200: 44, 44, 44;
+    --palette-grey-300: 66, 66, 66;
+    --palette-grey-400: 97, 97, 97;
+    --palette-grey-500: 117, 117, 117;
+    --palette-grey-600: 158, 158, 158;
+    --palette-grey-700: 189, 189, 189;
+    --palette-grey-800: 224, 224, 224;
+    --palette-grey-900: 238, 238, 238;
 }

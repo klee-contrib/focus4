@@ -1,5 +1,7 @@
 import {Meta, Description, Title, Controls, Canvas} from "@storybook/blocks";
 
+import {CssVariables} from "../../.storybook/custom/CssVariables";
+
 import RadioButtonStories, {Showcase} from "./RadioButton.stories";
 import RadioGroupStories, {Showcase as RadioGroup} from "./RadioGroup.stories";
 
@@ -16,3 +18,6 @@ import RadioGroupStories, {Showcase as RadioGroup} from "./RadioGroup.stories";
 <Description>{RadioGroupStories.parameters.docs.description.component}</Description>
 
 <Controls of={RadioGroup} />
+
+<h3>Variables CSS</h3>
+<CssVariables />

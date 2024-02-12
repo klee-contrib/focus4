@@ -32,20 +32,7 @@
 :root[dark] {
     color-scheme: dark;
 
-    --color-white: 11, 11, 11;
-    --color-black: 238, 238, 238;
     --color-primary: var(--palette-indigo-300);
     --color-primary-light: var(--palette-indigo-900);
     --color-accent: var(--palette-pink-a100);
-
-    --palette-grey-50: 22, 22, 22;
-    --palette-grey-100: 33, 33, 33;
-    --palette-grey-200: 44, 44, 44;
-    --palette-grey-300: 66, 66, 66;
-    --palette-grey-400: 97, 97, 97;
-    --palette-grey-500: 117, 117, 117;
-    --palette-grey-600: 158, 158, 158;
-    --palette-grey-700: 189, 189, 189;
-    --palette-grey-800: 224, 224, 224;
-    --palette-grey-900: 238, 238, 238;
 }
