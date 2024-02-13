@@ -46,6 +46,7 @@
 
 .scrolling--undeployed {
     visibility: hidden;
+    overflow: hidden;
 }
 
 .scrolling--sticky {
