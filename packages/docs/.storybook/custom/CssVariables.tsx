@@ -42,7 +42,7 @@ export function CssVariables() {
                 ...obj,
                 [name]: {
                     name,
-                    type: {required: computedDefaultValue !== value},
+                    type: {required: computedDefaultValue.replace(/0\./g, ".") !== value.replace(/0\./g, ".")},
                     table: {type: {summary: value}},
                     defaultValue: {summary: defaultValue},
                     control: {type: "text"}

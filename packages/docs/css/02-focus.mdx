@@ -153,8 +153,17 @@ proposent nativement ces trois couleurs comme choix.
 -   Les variables `--font-size-XXX` et `--font-weight-XXX` parlent d'elles-mêmes
 -   Les variables `--z-index-XXX` définissent des valeurs standard de z-index.
 
-### Variables de composants
+### Variables partagées
 
-En attendant qu'elles soient intégrées à la doc des composants (...), vous pouvez soit consulter le fichier CSS du composant en question dans les sources de
-Focus (elles sont définies tout en haut), où bien inspecter le DOM dans la console pour comprendre quelle est la variable qui correspond à ce que vous voulez
-changer. Vous pouvez d'ailleurs appliquer la même stratégie pour découvrir les noms de classes CSS utilisées...
+Un certain nombre de variables, en particulier pour définir des couleurs, sont partagées entre plusieurs composants :
+
+-   Certaines variables en `--button-XXX` sont utilisées dans tous les composants de boutons.
+-   Les variables en `--input-XXX` sont partagées entre tous les composants de saisie.
+-   Les variables en `--focus-ring-X` sont utilisés pour gérer les indicateurs de focus sur tous les composants.
+
+### Variables locales
+
+Chaque composant peut également définir des variables locales, dédiées à un composant en particulier. Elles sont en général identifiables par leur nom en
+`--{composant}-XXX`.
+
+Toutes les variables locales sont listées sur la page de documentation de chaque composant, ainsi que les variables globales et partagées utilisées dedans.

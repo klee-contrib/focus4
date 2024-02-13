@@ -156,7 +156,8 @@ export const ${component.displayName}Meta = {
                     .join(",\n                ")}
             },
             common: {
-                ${usedCommonVariables
+                ${commonCssVariables
+                    .filter(v => usedVariables.includes(v.property))
                     .map(
                         css =>
                             `"${css.property}": {main: "${css.value.main}"${
