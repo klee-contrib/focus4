@@ -22,8 +22,8 @@
         "@types/postcss-modules-extract-imports": "3.0.5",
         "@types/postcss-modules-local-by-default": "4.0.2",
         "@types/postcss-modules-scope": "3.0.4",
-        "@typescript-eslint/eslint-plugin": "6.19.1",
-        "@typescript-eslint/parser": "6.19.1",
+        "@typescript-eslint/eslint-plugin": "7.0.1",
+        "@typescript-eslint/parser": "7.0.1",
         "@vitejs/plugin-react": "4.2.1",
         "eslint": "8.56.0",
         "eslint-config-prettier": "9.1.0",
@@ -32,13 +32,13 @@
         "eslint-plugin-react": "7.33.2",
         "glob": "10.3.10",
         "lodash": "4.17.21",
-        "postcss": "8.4.33",
+        "postcss": "8.4.35",
         "postcss-modules-extract-imports": "3.0.0",
         "postcss-modules-local-by-default": "4.0.4",
         "postcss-modules-scope": "3.1.1",
         "postcss-nesting": "12.0.1",
         "typescript": "5.3.3",
-        "vite": "5.0.12",
-        "vite-plugin-checker": "0.6.2"
+        "vite": "5.1.1",
+        "vite-plugin-checker": "0.6.4"
     }
 }
