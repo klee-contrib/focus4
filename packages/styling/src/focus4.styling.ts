@@ -16,7 +16,6 @@ export {
     CSSElement,
     CSSMod,
     CSSProp,
-    CSSTheme,
     CSSToStrings,
     FocusCSSContext,
     ThemeContext,

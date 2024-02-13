@@ -11,12 +11,8 @@ export type BemFunction<CSS = any, P extends number | string | symbol = any, E =
 }) &
     (Mods<CSS, E> extends never | undefined ? () => string : (mods?: {[_ in Mods<CSS, E>]?: boolean}) => string);
 
-export interface CSSTheme {
-    [key: string]: BemFunction | string;
-}
-
 export interface CSSContext {
-    [key: string]: CSSTheme;
+    [key: string]: {};
 }
 
 export const ThemeContext = createContext<CSSContext>({});

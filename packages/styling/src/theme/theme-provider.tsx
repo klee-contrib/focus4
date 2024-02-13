@@ -2,69 +2,69 @@ import {ReactNode, useContext, useMemo} from "react";
 
 import {themeable} from "@focus4/core";
 
-import {CSSContext, CSSTheme, ThemeContext} from "./common";
+import {CSSContext, ThemeContext} from "./common";
 import {fromBem} from "./to-bem";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface FocusCSSContext extends CSSContext {
     // Collections
-    actionBar: CSSTheme;
-    advancedSearch: CSSTheme;
-    contextualActions: CSSTheme;
-    dragLayer: CSSTheme;
-    facet: CSSTheme;
-    facetBox: CSSTheme;
-    group: CSSTheme;
-    list: CSSTheme;
-    listBase: CSSTheme;
-    searchBar: CSSTheme;
-    summary: CSSTheme;
-    table: CSSTheme;
-    timeline: CSSTheme;
+    actionBar: {};
+    advancedSearch: {};
+    contextualActions: {};
+    dragLayer: {};
+    facet: {};
+    facetBox: {};
+    group: {};
+    list: {};
+    listBase: {};
+    searchBar: {};
+    summary: {};
+    table: {};
+    timeline: {};
 
     // Forms
-    booleanRadio: CSSTheme;
-    display: CSSTheme;
-    field: CSSTheme;
-    form: CSSTheme;
-    inputDate: CSSTheme;
-    label: CSSTheme;
-    panel: CSSTheme;
-    select: CSSTheme;
-    selectCheckbox: CSSTheme;
-    selectChips: CSSTheme;
-    selectRadio: CSSTheme;
+    booleanRadio: {};
+    display: {};
+    field: {};
+    form: {};
+    inputDate: {};
+    label: {};
+    panel: {};
+    select: {};
+    selectCheckbox: {};
+    selectChips: {};
+    selectRadio: {};
 
     // Layout
-    buttonBTT: CSSTheme;
-    dialog: CSSTheme;
-    header: CSSTheme;
-    layout: CSSTheme;
-    mainMenu: CSSTheme;
-    overlay: CSSTheme;
-    popin: CSSTheme;
-    scrollable: CSSTheme;
-    scrollspy: CSSTheme;
+    buttonBTT: {};
+    dialog: {};
+    header: {};
+    layout: {};
+    mainMenu: {};
+    overlay: {};
+    popin: {};
+    scrollable: {};
+    scrollspy: {};
 
     // Toolbox
-    autocomplete: CSSTheme;
-    button: CSSTheme;
-    calendar: CSSTheme;
-    checkbox: CSSTheme;
-    chip: CSSTheme;
-    dropdown: CSSTheme;
-    floatingActionButton: CSSTheme;
-    iconButton: CSSTheme;
-    menu: CSSTheme;
-    progressIndicator: CSSTheme;
-    radio: CSSTheme;
-    ripple: CSSTheme;
-    slider: CSSTheme;
-    snackbar: CSSTheme;
-    switch: CSSTheme;
-    textField: CSSTheme;
-    tabs: CSSTheme;
-    tooltip: CSSTheme;
+    autocomplete: {};
+    button: {};
+    calendar: {};
+    checkbox: {};
+    chip: {};
+    dropdown: {};
+    floatingActionButton: {};
+    iconButton: {};
+    menu: {};
+    progressIndicator: {};
+    radio: {};
+    ripple: {};
+    slider: {};
+    snackbar: {};
+    switch: {};
+    textField: {};
+    tabs: {};
+    tooltip: {};
 }
 
 /** Props du ThemeProvider. */
@@ -90,7 +90,7 @@ export function ThemeProvider({appTheme, children}: ThemeProviderProps) {
 
         for (const key in context) {
             if (key in appTheme && appTheme[key]) {
-                mc[key] = themeable(fromBem(context[key]), fromBem(appTheme[key]!)) as CSSTheme;
+                mc[key] = themeable(fromBem(context[key]), fromBem(appTheme[key]!)) as {};
             } else {
                 mc[key] = context[key];
             }

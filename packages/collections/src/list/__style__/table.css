@@ -13,7 +13,7 @@
     --table-header-sort-label-border: 1px dashed;
 
     --table-header-color: rgb(var(--palette-grey-500));
-    --table-header-background-color: inherit;
+    --table-header-background-color: rgb(var(--color-white));
     --table-header-sorted-color: rgb(var(--color-primary));
 
     --table-header-selected-color: rgb(var(--color-primary-light));
@@ -21,7 +21,7 @@
     --table-header-sorted-selected-color: rgb(var(--color-white));
 
     --table-row-color: rgb(var(--color-black));
-    --table-row-background-color: inherit;
+    --table-row-background-color: rgb(var(--color-white));
     --table-row-background-hover-color: rgb(var(--palette-grey-200));
     --table-row-background-active-color: rgb(var(--palette-grey-300));
 
@@ -32,7 +32,6 @@
 }
 
 .table {
-    background-color: rgb(var(--color-white));
     box-shadow: var(--table-box-shadow);
     border-collapse: collapse;
     font-size: var(--table-font-size);
@@ -142,34 +141,44 @@
     }
 }
 
+.row {
+    & .checkbox,
+    & .actions {
+        background-color: var(--table-row-background-color);
+    }
+}
+
 .actions--hidden > div {
     visibility: hidden;
 }
 
 .table--selected .header {
-    --focus-ring-color: var(--table-header-sorted-selected-color);
+    .checkbox,
+    .checkbox ~ th {
+        --focus-ring-color: var(--table-header-sorted-selected-color);
 
-    --table-header-color: var(--table-header-selected-color);
-    --table-header-background-color: var(--table-header-background-selected-color);
-    --table-header-sorted-color: var(--table-header-sorted-selected-color);
+        --table-header-color: var(--table-header-selected-color);
+        --table-header-background-color: var(--table-header-background-selected-color);
+        --table-header-sorted-color: var(--table-header-sorted-selected-color);
 
-    --input-on-main-color: var(--table-header-sorted-selected-color);
-    --input-on-secondary-color: var(--table-header-background-selected-color);
-    --input-state-color: rgb(var(--palette-grey-100));
-    --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-opacity));
+        --input-on-main-color: var(--table-header-sorted-selected-color);
+        --input-on-secondary-color: var(--table-header-background-selected-color);
+        --input-state-color: rgb(var(--palette-grey-100));
+        --input-state-hover-color: rgba(var(--palette-grey-100), var(--input-hover-opacity));
 
-    --button-secondary-color: var(--table-header-sorted-selected-color);
+        --button-secondary-color: var(--table-header-sorted-selected-color);
+    }
 }
 
 .row--clickable {
     cursor: pointer;
 
-    &:hover .cell {
-        background-color: var(--table-row-background-hover-color);
+    &:hover {
+        --table-row-background-color: var(--table-row-background-hover-color);
     }
 
-    &:active .cell {
-        background-color: var(--table-row-background-active-color);
+    &:has(.cell:active) {
+        --table-row-background-color: var(--table-row-background-active-color);
     }
 }
 
