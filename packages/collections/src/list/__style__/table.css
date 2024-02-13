@@ -46,9 +46,12 @@
 
 .table td {
     border-top: var(--table-divider);
+    background-color: var(--table-row-background-color);
 }
 
 .table th {
+    background-color: var(--table-header-background-color);
+
     &:first-child {
         border-top-left-radius: var(--table-border-radius);
     }
@@ -97,7 +100,6 @@
 
 .heading {
     color: var(--table-header-color);
-    background-color: var(--table-header-background-color);
     font-weight: var(--font-weight-bold);
     line-height: var(--table-header-sort-icon-size);
     text-overflow: ellipsis;
@@ -123,29 +125,11 @@
     border-bottom: var(--table-header-sort-label-border) transparent;
 }
 
-.cell {
-    background-color: var(--table-row-background-color);
-}
-
 .checkbox,
 .actions {
     width: 0;
     padding: 0 calc(var(--table-cell-padding) / 2);
     text-align: right;
-}
-
-.header {
-    & .checkbox,
-    & .actions {
-        background-color: var(--table-header-background-color);
-    }
-}
-
-.row {
-    & .checkbox,
-    & .actions {
-        background-color: var(--table-row-background-color);
-    }
 }
 
 .actions--hidden > div {
