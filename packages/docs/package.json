@@ -2,7 +2,7 @@
     "name": "@focus4/docs",
     "description": "Focus v4 docs",
     "type": "module",
-    "version": "11.14.1",
+    "version": "11.15.0",
     "private": true,
     "repository": {
         "type": "git",
@@ -12,16 +12,16 @@
     "license": "MIT",
     "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/.storybook",
     "dependencies": {
-        "@focus4/collections": "11.14.1",
-        "@focus4/core": "11.14.0",
-        "@focus4/forms": "11.14.1",
-        "@focus4/layout": "11.14.1",
-        "@focus4/stores": "11.14.0",
-        "@focus4/styling": "11.14.0",
-        "@focus4/toolbox": "11.14.1"
+        "@focus4/collections": "11.15.0",
+        "@focus4/core": "11.15.0",
+        "@focus4/forms": "11.15.0",
+        "@focus4/layout": "11.15.0",
+        "@focus4/stores": "11.15.0",
+        "@focus4/styling": "11.15.0",
+        "@focus4/toolbox": "11.15.0"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.14.0",
+        "@focus4/tooling": "11.15.0",
         "@storybook/addon-essentials": "7.6.12",
         "@storybook/blocks": "7.6.12",
         "@storybook/react-vite": "7.6.12",
