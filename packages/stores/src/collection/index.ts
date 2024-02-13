@@ -65,6 +65,9 @@ export class CollectionStore<T = any, C = any> {
     /** Liste brute (non triée, non filtrée) des données, fournie en local ou récupérée du serveur si recherche non groupée. */
     private readonly innerList: IObservableArray<T> = observable([]);
 
+    /** `isLoading` setté manuellement, pour le mode `local`. */
+    @observable private localIsLoading = false;
+
     /** Identifiant de la requête en cours. */
     @observable private pendingQuery?: string;
 
@@ -314,7 +317,11 @@ export class CollectionStore<T = any, C = any> {
     /** Store en chargement. */
     @computed
     get isLoading() {
-        return this.type === "local" ? undefined : !!this.pendingQuery;
+        return this.type === "local" ? this.localIsLoading : !!this.pendingQuery;
+    }
+
+    set isLoading(loading) {
+        this.localIsLoading = loading;
     }
 
     /** Nombre d'éléments récupérés depuis le serveur. */

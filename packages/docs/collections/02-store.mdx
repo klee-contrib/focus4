@@ -33,7 +33,10 @@ Le store peut être utilisé dans **2 modes** :
 
 Son usage standard est très simple puisqu'il sera intégralement piloté et affiché par les composants de recherche.
 
-En mode local, il suffit de renseigner la propriété `list` avec la liste en question pour le remplir (qui sera remplie par le serveur en mode `server`).
+En mode `local`, il suffit de renseigner la propriété `list` (et `isLoading` si vous voulez suivre son état de chargement dans le store) avec la liste en
+question pour le remplir.
+
+_Remarque : En mode `server`, `list` sera renseigné par le serveur et `isLoading` sera géré automatiquement par le store._
 
 Il est évidemment toujours possible de renseigner les différents critères du store manuellement ou via des composants personnalisés. Ils sont exposés dans les
 propriétés :

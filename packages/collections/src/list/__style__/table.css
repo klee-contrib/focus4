@@ -61,6 +61,16 @@
     }
 }
 
+.table--empty th {
+    &:first-child {
+        border-bottom-left-radius: var(--table-border-radius);
+    }
+
+    &:last-child {
+        border-bottom-right-radius: var(--table-border-radius);
+    }
+}
+
 .table tbody tr:last-child td {
     &:first-child {
         border-bottom-left-radius: var(--table-border-radius);

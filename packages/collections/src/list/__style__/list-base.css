@@ -29,3 +29,7 @@
 .loading {
     padding: 5px;
 }
+
+table + .loading {
+    margin-top: 5px;
+}
