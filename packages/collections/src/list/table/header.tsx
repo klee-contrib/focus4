@@ -36,7 +36,7 @@ export function TableHeader<T>({
         <th
             className={classNames(
                 cellClassName,
-                theme.heading({sortable: !!(store && sortKey), sorted: store && store?.sortBy === sortKey})
+                theme.heading({sortable: !!(store && sortKey), sorted: store && !!sortKey && store?.sortBy === sortKey})
             )}
             onClick={
                 store && sortKey

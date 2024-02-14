@@ -147,8 +147,8 @@
 }
 
 .table--selected .header {
-    .checkbox,
-    .checkbox ~ th {
+    .checkbox--all,
+    .checkbox--all ~ th {
         --focus-ring-color: var(--table-header-sorted-selected-color);
 
         --table-header-color: var(--table-header-selected-color);
