@@ -2,7 +2,7 @@
     "name": "@focus4/docs",
     "description": "Focus v4 docs",
     "type": "module",
-    "version": "11.15.3",
+    "version": "11.15.4",
     "private": true,
     "repository": {
         "type": "git",
@@ -12,7 +12,7 @@
     "license": "MIT",
     "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/.storybook",
     "dependencies": {
-        "@focus4/collections": "11.15.3",
+        "@focus4/collections": "11.15.4",
         "@focus4/core": "11.15.0",
         "@focus4/forms": "11.15.3",
         "@focus4/layout": "11.15.1",
