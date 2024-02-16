@@ -13,6 +13,7 @@ Un champ se défini avec :
 -   Son caractère obligatoire (`isRequired`).
 -   Un libellé (`label`).
 -   Un commentaire (facultatif) (`comment`).
+-   Un type Typescript, si plus précis que celui porté par le domaine.
 
 Exemple de champ :
 
@@ -30,19 +31,19 @@ const libelle = {
 Le type Typescript de Focus qui représente un champ est le type `FieldEntry`. C'est un type générique avec 8 paramètres (!!) parce qu'il doit contenir (dans
 l'ordre) :
 
--   Le type de champ du domaine
--   Le type Typescript du champ
+-   Le type de champ du domaine.
+-   Le type Typescript du champ (qui est contraint par le type de champ du domaine).
 -   Le type du composant de saisie classique (`InputComponent`).
 -   Le type du composant de saisie via liste de réference (`SelectComponent`).
 -   Le type du composant de saisie via service d'autocomplétion (`AutocompleteComponent`).
 -   Le type du composant d'affichage en consultation, (`DisplayComponent`).
--   Le type du composant pour le libellé, (`LabelComponent`)
--   Le type du composant de champ (qui est lui toujours le même, `Field`)
+-   Le type du composant pour le libellé, (`LabelComponent`).
+-   Le type du composant de champ (qui est lui toujours le même, `Field`).
 
 Une version simplifée de ce type, `FieldEntry2`, existe pour réduire ce nombre de paramètres à 2 :
 
--   Le type du domaine (c'est lui qui porte en réalité les 7 autres types...)
--   Le type du Typescript du champ
+-   Le type du domaine (c'est lui qui porte en réalité les 7 autres types...).
+-   Le type du Typescript du champ (qui est d'ailleurs facultatif s'il n'a pas besoin d'être plus précis que le type de champ du domaine).
 
 Vous n'avez en général pas à vous soucier de ce "détail" d'implémentation et de la complexité apparente des types de champs. Vous risquez cependant de le
 voir passer au détour de certains messages d'erreurs Typescript lorsque vous ne passez pas les bons champs aux bons endroits...

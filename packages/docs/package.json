@@ -6,11 +6,11 @@
     "private": true,
     "repository": {
         "type": "git",
-        "url": "https://github.com/KleeGroup/focus4.git"
+        "url": "https://github.com/klee-contrib/focus4.git"
     },
     "author": "damien.frikha@kleegroup.com",
     "license": "MIT",
-    "homepage": "https://github.com/KleeGroup/focus4/tree/master/packages/.storybook",
+    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/docs",
     "dependencies": {
         "@focus4/collections": "11.15.4",
         "@focus4/core": "11.15.0",
@@ -22,10 +22,10 @@
     },
     "devDependencies": {
         "@focus4/tooling": "11.15.0",
-        "@storybook/addon-essentials": "7.6.15",
-        "@storybook/blocks": "7.6.15",
-        "@storybook/react-vite": "7.6.15",
-        "storybook": "7.6.15",
+        "@storybook/addon-essentials": "7.6.16",
+        "@storybook/blocks": "7.6.16",
+        "@storybook/react-vite": "7.6.16",
+        "storybook": "7.6.16",
         "storybook-dark-mode": "3.0.3"
     }
 }

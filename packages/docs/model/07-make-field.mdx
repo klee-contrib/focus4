@@ -71,6 +71,12 @@ Permet de contrôler l'état d'édition du champ.
 -   **Dans un formulaire uniquement**, une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du champ** à la
     valeur retournée par la fonction, au lieu de la rendre librement modifiable.
 
+### `domain(domain)`
+
+Cette fonction permet de (re)définir le domaine d'un champ. A l'inverse des autres méthodes, le domaine ne peut pas être calculé, car il fixe le type du champ.
+
+Le reste des propriétés du domaine pourront être modifiées par la suite (et rendues dynamiques) par la fonction `metadata`.
+
 ### `value(initialValue)` / `value(get, set?)`
 
 La fonction `value` peut être utilisée pour:
@@ -82,11 +88,8 @@ La fonction `value` peut être utilisée pour:
 
 `value()` peut être utilisé aussi bien sur des nouveaux champs (`makeField` / `add`) que des champs préexistants (`patch`).
 
-### `domain(domain)`
-
-Cette fonction permet de (re)définir le domaine d'un champ. A l'inverse des autres méthodes, le domaine ne peut pas être calculé, car il fixe le type du champ.
-
-Le reste des propriétés du domaine pourront être modifiées par la suite (et rendues dynamiques) par la fonction `metadata`.
+Le type de `value()` est contraint par le [type de champ du domaine](/docs/modèle-métier-domaines--docs#type-de-champ), mais peut être rendu plus précis en passant le type souhaité en générique, par exemple
+avec `value<TypeDroitCode>()`. La fonction peut d'ailleurs être appelée sans paramètres juste pour cet usage.
 
 ### `metadata($metadata)`
 
