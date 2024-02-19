@@ -159,3 +159,22 @@ export function ItemLine({data, onClick}: {data: Item; onClick?: () => void}) {
     ));
 }
 ```
+
+Vous pouvez aussi utiliser `makeField` (en consultation) directement en récupérant la définition du champ dans l'entité, par exemple dans un `tableFor` :
+
+```ts
+[
+    {
+        title: "Nom",
+        content: data => stringFor(makeField(data.nom, ItemEntity.nom))
+    },
+    {
+        title: "Codes",
+        content: data => stringFor(makeField(data.codes, ItemEntity.codes), referenceStore.code)
+    },
+    {
+        title: "Date",
+        content: data => stringFor(makeField(data.date, ItemEntity.date))
+    }
+];
+```
