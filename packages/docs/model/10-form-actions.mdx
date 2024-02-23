@@ -25,8 +25,7 @@ const actions = useFormActions(
 
 -   `trackingId` : [id de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) propre à ces actions de formulaire.
 -   `isLoading` : Précise si le formulaire est en cours de chargement ou de sauvegarde (`trackingId` est ajouté à tous les services).
--   `forceErrorDisplay` : Booléen renseigné à `true` après le premier appel à la sauvegarde dans le champ, qui permet aux champs de forcer l'affichage
-    de leurs erreurs (cela permet de ne pas affiche immédiatement tous les champs obligatoires en erreurs).
+-   `errorDisplay` : Le mode d'affichage des erreurs pour les champs du formulaire (décrit plus bas).
 -   `onClickEdit()` : Passe le formulaire en édition.
 -   `onClickCancel()` : Repasse le formulaire en consultation et annule toutes les modifications.
 -   `save()`: Appelle le service de sauvegarde par défaut avec la valeur courante du noeud de formulaire, puis enregistre le retour du service (si non vide) dans le **noeud source** du formulaire (qui mettra ensuite le formulaire à jour). Si l'état d'édition du noeud de formulaire n'est pas forcé, elle repassera également le formulaire en consultation.
@@ -62,6 +61,20 @@ La fonction `on` est étendue pour les actions de formulaires et propose de déf
 
 On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec le nom de l'évènement qui l'a déclenché,
 ainsi que le nom du save pour `"error"` et `"save"`.
+
+### `errorDisplay(mode)`
+
+Permet de configurer le mode d'affichage des erreurs sur les champs du formulaire. Correspond à [`errorDisplay`](/docs/modèle-métier-afficher-des-champs--docs#errordisplay) dans les options de champ.
+
+Dans un formulaire, **le mode `"after-focus"` forcera également l'affichage des erreurs à la soumission du formulaire** (via un appel à `save()`). Vous
+pouvez suivre la valeur effective du mode dans `actions.errorDisplay` (qui passera donc à `"always"` à l'appel de `save()` et reviendra à
+`"after-focus"` une fois la sauvegarde en succès ou après une annulation). `actions.errorDisplay` peut également être modifié manuellement si vous
+avez besoin de changer le mode sans passer par les actions classiques du formulaire.
+
+La valeur par défaut dépend du type de formulaire :
+
+-   Pour un formulaire initialement en édition, le mode d'affichage est `"after-focus"`
+-   Pour un formulaire initialement en consultation, le mode d'affichage est `"always"`
 
 ### `i18nPrefix(prefix)`
 

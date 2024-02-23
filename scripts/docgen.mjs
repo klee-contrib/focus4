@@ -141,7 +141,7 @@ export const ${component.displayName}Meta = {
     component: ${component.displayName},
     parameters: {
         docs: {
-            description: {component: \`${component.description.replaceAll('"', '\\"').replaceAll("`", "\\`")}\`}
+            description: {component: \`${component.description.replaceAll("`", "\\`")}\`}
         },
         cssVariables: {
             global: {

@@ -10,8 +10,8 @@ type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
 
 /** Props passées au composant de formulaire. */
 export interface ActionsFormProps {
-    /** Pour forcer l'affichage des erreurs aux Fields enfants. */
-    forceErrorDisplay: boolean;
+    /** Mode d'affichage des erreurs du formulaire. */
+    errorDisplay: "after-focus" | "always" | "never";
     /** Appelle le service de sauvegarde. */
     save(): Promise<void>;
 }
@@ -56,12 +56,14 @@ export class FormActionsBuilder<
     protected readonly saveServices = {} as Record<S, (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>>;
     protected readonly formNode: FN;
 
+    protected actionsErrorDisplay: "after-focus" | "always" | "never";
     protected prefix = "focus";
     protected saveNamesForMessages = false;
 
     constructor(formNode: FN) {
         super();
         this.formNode = formNode;
+        this.actionsErrorDisplay = this.formNode.form.isEdit ? "after-focus" : "always";
     }
 
     /**
@@ -136,6 +138,23 @@ export class FormActionsBuilder<
         return this;
     }
 
+    /**
+     * Change le mode d'affichage des erreurs dans les champs du formulaire (via le composant `Form` et `formProps`).
+     * Les modes possibles sont :
+     *
+     * - `"always"` : Les erreurs sont toujours affichées.
+     * - `"after-focus"` : Chaque champ affiche son erreur après avoir été focus au moins une fois, ou bien après avoir appelé la sauvegarde du formulaire.
+     * - `"never"` : Les erreurs ne sont jamais affichées.
+     *
+     * Par défaut, le mode est `"after-focus"` pour un formulaire initialement en édition, et `"always"` sinon.
+     *
+     * @param mode Mode d'affichage des erreurs.
+     */
+    errorDisplay(mode: "after-focus" | "always" | "never"): FormActionsBuilder<FN, A, S> {
+        this.actionsErrorDisplay = mode;
+        return this;
+    }
+
     /** Utilise le nom du save dans le message de succès de la sauvegarde (prefix.detail.saved => prefix.detail.name.saved). */
     useSaveNameForMessages(): FormActionsBuilder<FN, A, S> {
         this.saveNamesForMessages = true;
@@ -144,11 +163,13 @@ export class FormActionsBuilder<
 
     /** Construit le FormActions. */
     build(): FormActions<S> {
-        const {saveServices, formNode, prefix, saveNamesForMessages, handlers, trackingIds} = this;
+        const {saveServices, formNode, prefix, actionsErrorDisplay, saveNamesForMessages, handlers, trackingIds} = this;
         // On se prépare à construire plusieurs actions de sauvegarde.
         function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {
             return async function save(this: FormActions<Extract<keyof S, string>>) {
-                this.forceErrorDisplay = true;
+                if (actionsErrorDisplay === "after-focus") {
+                    this.errorDisplay = "always";
+                }
 
                 // On ne fait rien si on est déjà en chargement.
                 if (this.isLoading) {
@@ -207,7 +228,9 @@ export class FormActionsBuilder<
                     }
 
                     // On ne force plus l'affichage des erreurs une fois la sauvegarde effectuée, puisqu'il n'y a plus.
-                    this.forceErrorDisplay = false;
+                    if (actionsErrorDisplay === "after-focus") {
+                        this.errorDisplay = "after-focus";
+                    }
 
                     (handlers.save || []).forEach(handler => handler("save", name as any));
                 } catch (e: unknown) {
@@ -233,11 +256,11 @@ export class FormActionsBuilder<
                     return loadObject.trackingId;
                 },
 
-                forceErrorDisplay: false,
+                errorDisplay: actionsErrorDisplay,
 
                 get formProps(): ActionsFormProps {
                     return {
-                        forceErrorDisplay: this.forceErrorDisplay,
+                        errorDisplay: this.errorDisplay,
                         save: this.save
                     };
                 },
@@ -255,12 +278,18 @@ export class FormActionsBuilder<
                 load: formNode.load,
 
                 onClickCancel() {
+                    if (actionsErrorDisplay === "after-focus") {
+                        this.errorDisplay = "after-focus";
+                    }
                     formNode.form.isEdit = false;
                     formNode.reset();
                     (handlers.cancel || []).forEach(handler => handler("cancel"));
                 },
 
                 onClickEdit() {
+                    if (actionsErrorDisplay === "after-focus") {
+                        this.errorDisplay = "after-focus";
+                    }
                     formNode.form.isEdit = true;
                     (handlers.edit || []).forEach(handler => handler("edit"));
                 }

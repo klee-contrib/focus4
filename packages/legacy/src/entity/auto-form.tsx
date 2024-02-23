@@ -54,6 +54,9 @@ export interface AutoFormOptions<ST extends StoreListNode | StoreNode> {
 
     /** Par défaut: false */
     initiallyEditing?: boolean;
+
+    /** Mode d'affichage des erreurs du formulaire. */
+    errorDisplay?: "after-focus" | "always" | "never";
 }
 
 /** Config de services à fournir à AutoForm. */
@@ -92,13 +95,15 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     readonly errors = new Map<string, string | undefined>();
 
     /** Force l'affichage des erreurs. */
-    @observable forceErrorDisplay = false;
+    @observable errorDisplay!: "after-focus" | "always" | "never";
 
     /** Formulaire en édition. */
     @observable isEdit!: boolean;
 
     /** Formulaire en chargement. */
     @observable isLoading = false;
+
+    private actionsErrorDisplay!: "after-focus" | "always" | "never";
 
     /** Classe CSS additionnelle (passée en options). */
     private className!: string;
@@ -159,7 +164,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     formInit(
         storeData: ST,
         services: ServiceConfig<any, any>,
-        {entity, className, hasForm, i18nPrefix, initiallyEditing}: AutoFormOptions<ST> = {}
+        {entity, className, hasForm, i18nPrefix, initiallyEditing, errorDisplay}: AutoFormOptions<ST> = {}
     ) {
         this.storeData = storeData;
         this.services = services;
@@ -169,6 +174,8 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
         this.hasForm = hasForm ?? true;
         this.className = className ?? "";
         this.i18nPrefix = i18nPrefix ?? "focus";
+        this.actionsErrorDisplay = errorDisplay ?? (initiallyEditing ? "after-focus" : "always");
+        this.errorDisplay = this.actionsErrorDisplay;
 
         // On met en place la réaction de chargement.
         if (services.getLoadParams) {
@@ -180,6 +187,9 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     @action
     toggleEdit = (isEdit: boolean) => {
         this.isEdit = isEdit;
+        if (this.actionsErrorDisplay === "after-focus") {
+            this.errorDisplay = "after-focus";
+        }
         if (!isEdit) {
             this.entity.reset();
         }
@@ -264,6 +274,9 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
 
     /** Est appelé après la sauvegarde. */
     onFormSaved() {
+        if (this.actionsErrorDisplay === "after-focus") {
+            this.errorDisplay = "after-focus";
+        }
         messageStore.addSuccessMessage(`${this.i18nPrefix}.detail.saved`);
     }
 
@@ -274,7 +287,9 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
      */
     validate() {
         // On force en premier lieu l'affichage des erreurs sur tous les champs.
-        this.forceErrorDisplay = true;
+        if (this.actionsErrorDisplay === "after-focus") {
+            this.errorDisplay = "always";
+        }
 
         // La validation est en succès si chaque champ n'est pas en erreur.
         return !Array.from(this.errors.values()).some(e => !!e);
@@ -438,7 +453,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     render() {
         return (
             <Form
-                forceErrorDisplay={this.forceErrorDisplay}
+                errorDisplay={this.errorDisplay}
                 noForm={!this.hasForm}
                 save={() => this.save()}
                 theme={{form: this.className}}

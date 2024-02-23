@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import i18next from "i18next";
-import {uniqueId} from "lodash";
-import {useLocalObservable, useObserver} from "mobx-react";
-import {Ref, useContext, useLayoutEffect, useMemo} from "react";
+import {useObserver} from "mobx-react";
+import {Ref, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
 
 import {themeable} from "@focus4/core";
 import {
@@ -17,7 +16,6 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {AutocompleteSearch, Display, Input, Label, Select} from "../components";
 
-import {documentHelper} from "./document-helper";
 import {FormContext} from "./form";
 
 import fieldCss, {FieldCss} from "./__style__/field.css";
@@ -27,10 +25,20 @@ export {fieldCss, FieldCss};
 export interface FieldOptions<F extends FieldEntry> {
     /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
     disableInlineSizing?: boolean;
+    /**
+     * Contrôle l'affichage de l'erreur dans le champ :
+     *
+     * - `"never"` : L'erreur n'est jamais affichée.
+     * - `"after-focus"` : L'erreur est affichée après avoir focus le champ au moins une fois.
+     * - `"always"` : L'erreur est toujours affichée.
+     *
+     * Dans tous les cas, l'erreur n'est pas affichée si le champ à le focus.
+     *
+     * @default "after-focus"
+     */
+    errorDisplay?: "after-focus" | "always" | "never";
     /** Affiche le label. */
     hasLabel?: boolean;
-    /** Pour l'icône de la Tooltip. Par défaut : "focus". */
-    i18nPrefix?: string;
     /** Ref à poser sur le component de saisie (Autocomplete, Input, Select). */
     inputRef?: Ref<any>;
     /** @internal */
@@ -38,8 +46,6 @@ export interface FieldOptions<F extends FieldEntry> {
     inputType?: "autocomplete" | "input" | "select";
     /** Largeur en % du label. Par défaut : 33. */
     labelRatio?: number;
-    /** N'affiche jamais le champ en erreur. */
-    noError?: boolean;
     /** Handler de modification de la valeur. */
     onChange?: (value: FieldEntryType<F> | undefined) => void;
     /** CSS. */
@@ -52,92 +58,88 @@ export interface FieldOptions<F extends FieldEntry> {
 let nameMap: [string, string][] = [];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-export function Field<F extends FieldEntry>(props: FieldComponents & FieldOptions<F> & {field: EntityField<F>}) {
-    const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
-
-    const context = useContext(FormContext);
-    const theme = useTheme("field", fieldCss, fieldProps?.theme, props.theme);
-
-    const {
-        autocompleteProps = {},
-        disableInlineSizing = fieldProps?.disableInlineSizing ?? context.disableInlineSizing,
-        displayProps = {},
-        hasLabel = fieldProps?.hasLabel ?? true,
-        field,
-        labelRatio = fieldProps?.labelRatio ?? context.labelRatio ?? 33,
-        labelProps = {},
-        i18nPrefix = fieldProps?.i18nPrefix ?? "focus",
-        inputProps = {},
-        inputType = "input",
-        onChange,
-        selectProps = {},
-        valueRatio = fieldProps?.valueRatio ?? context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
-    } = props;
-
-    /** On définit au premier rendu un identifiant unique pour le field. */
-    const fieldId = useMemo(() => uniqueId("field_"), []);
-
-    /**
-     * Toujours au premier rendu, on détermine l'id que l'on va mettre sur le label et l'input.
-     * On se base sur le `name` du champ, et on va regarder si on a pas déjà posé un champ avec le même `name`.
-     * Si oui, on suffixera le `name` par un numéro pour garder un id unique.
-     */
-    const id = useMemo(() => {
-        const {name} = field.$field;
-        const count = nameMap.filter(([_, n]) => n === name).length;
-        nameMap.push([fieldId, name]); // On s'ajoute dans la map ici.
-        if (count > 0) {
-            return `${name}_${count + 1}`;
-        }
-
-        return name;
-    }, []);
-
-    /* On enlève le field de la map des fields de la page quand on le démonte. */
-    useLayoutEffect(
-        () => () => {
-            nameMap = nameMap.filter(([fid]) => fieldId !== fid);
-        },
-        []
-    );
-
-    const store = useLocalObservable(() => ({
-        /** Masque l'erreur à l'initilisation du Field si on est en mode edit et que le valeur est vide (= cas standard de création). */
-        hideErrorOnInit: (props.field as FormEntityField<F>).isEdit && !props.field.value,
-
-        /** On récupère le <div> de valeur pour y mettre un listener pour vérifier si on a le focus dessus ou pas, pour masque le message d'erreur. */
-        valueElement: null as HTMLDivElement | null,
-
-        /** Détermine si on affiche l'erreur ou pas. En plus des surcharges du form et du field lui-même, l'erreur est masquée si le champ est en cours de saisie. */
-        get showError() {
-            const fp = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
-            return (
-                !(props.noError ?? fp?.noError) &&
-                !documentHelper.isElementActive(this.valueElement) &&
-                (!this.hideErrorOnInit || context.forceErrorDisplay)
-            );
-        },
-
-        /** Enregistre la ref vers le noeud de la valeur. */
-        setValueElement(valueElement: HTMLDivElement | null) {
-            if (valueElement) {
-                this.valueElement = valueElement;
-                if (this.hideErrorOnInit) {
-                    valueElement.addEventListener("focusin", this.disableHideError);
-                }
-            }
-        },
-
-        /** Désactive le masquage de l'erreur si le champ était en création avant le premier clic. */
-        disableHideError() {
-            this.hideErrorOnInit = false;
-            if (this.valueElement) {
-                this.valueElement.removeEventListener("focusin", this.disableHideError);
-            }
-        }
-    }));
-
+export function Field<F extends FieldEntry>(
+    props: FieldOptions<F> & Omit<FieldComponents, "fieldProps"> & {field: EntityField<F>}
+) {
     return useObserver(() => {
+        const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
+        const context = useContext(FormContext);
+        const theme = useTheme("field", fieldCss, fieldProps?.theme, props.theme);
+
+        const {
+            autocompleteProps = {},
+            disableInlineSizing = fieldProps?.disableInlineSizing ?? context.disableInlineSizing,
+            displayProps = {},
+            errorDisplay = fieldProps?.errorDisplay ?? context.errorDisplay ?? "after-focus",
+            field,
+            inputRef,
+            hasLabel = fieldProps?.hasLabel ?? !!field.$field.label,
+            labelRatio = fieldProps?.labelRatio ?? context.labelRatio ?? 33,
+            labelProps = {},
+            inputProps = {},
+            inputType = "input",
+            onChange,
+            selectProps = {},
+            valueRatio = fieldProps?.valueRatio ?? context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
+        } = props;
+
+        const fieldId = useId();
+
+        /**
+         * Au premier rendu, on détermine l'id que l'on va mettre sur le label et l'input.
+         * On se base sur le `name` du champ, et on va regarder si on a pas déjà posé un champ avec le même `name`.
+         * Si oui, on suffixera le `name` par un numéro pour garder un id unique.
+         */
+        const id = useMemo(() => {
+            const {name} = field.$field;
+            const count = nameMap.filter(([_, n]) => n === name).length;
+            nameMap.push([fieldId, name]); // On s'ajoute dans la map ici.
+            if (count > 0) {
+                return `${name}_${count + 1}`;
+            }
+
+            return name;
+        }, []);
+
+        /* On enlève le field de la map des fields de la page quand on le démonte. */
+        useLayoutEffect(
+            () => () => {
+                nameMap = nameMap.filter(([fid]) => fieldId !== fid);
+            },
+            []
+        );
+
+        // Détermine si le champ a (eu) le focus ou non.
+        const valueRef = useRef<HTMLDivElement>(null);
+        const [hasFocus, setHasFocus] = useState(false);
+        const [hasHadFocus, setHasHadFocus] = useState(false);
+        useLayoutEffect(() => {
+            function focusin() {
+                setHasFocus(true);
+                setHasHadFocus(true);
+            }
+
+            function focusout() {
+                setHasFocus(false);
+            }
+
+            valueRef.current?.addEventListener("focusin", focusin);
+            valueRef.current?.addEventListener("focusout", focusout);
+            return () => {
+                valueRef.current?.removeEventListener("focusin", focusin);
+                valueRef.current?.removeEventListener("focusout", focusout);
+            };
+        }, []);
+
+        // Détermine si on affiche l'erreur du champ ou non.
+        const showError = useMemo(
+            () =>
+                !hasFocus &&
+                errorDisplay !== "never" &&
+                (errorDisplay === "always" || (errorDisplay === "after-focus" && hasHadFocus)),
+            [errorDisplay, hasFocus, hasHadFocus]
+        );
+
         const {
             error,
             isEdit,
@@ -165,14 +167,18 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
             }
         } = field as FormEntityField<F>;
 
+        useEffect(() => {
+            setHasHadFocus(false);
+        }, [isEdit]);
+
         const iProps: BaseInputProps & {ref?: Ref<any>} = {
             value,
-            error: store.showError ? error : undefined,
+            error: showError ? error : undefined,
             name,
             id,
             type,
             onChange,
-            ref: props.inputRef
+            ref: inputRef
         };
 
         return (
@@ -180,7 +186,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                 className={classNames(
                     theme.field({
                         edit: isEdit,
-                        error: !!(isEdit && error && store.showError),
+                        error: !!(isEdit && error && showError),
                         required: isRequired
                     }),
                     className
@@ -191,7 +197,6 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                         {...domainLCP}
                         {...labelProps}
                         comment={comment}
-                        i18nPrefix={i18nPrefix}
                         id={id}
                         label={label}
                         style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
@@ -199,7 +204,7 @@ export function Field<F extends FieldEntry>(props: FieldComponents & FieldOption
                     />
                 ) : null}
                 <div
-                    ref={store.setValueElement}
+                    ref={valueRef}
                     className={classNames(theme.value(), className)}
                     style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
                 >

@@ -27,12 +27,6 @@ Ce composant permet utilise les [composants](/docs/modèle-métier-domaines--doc
 -   En consultation, il affichera le `LabelComponent` et le `DisplayComponent`
 -   En édition, il affichera le `LabelComponent` et le `InputComponent`/`SelectComponent`/`AutocompleteComponent` (selon la méthode utilisée).
 
-L'affichage du label peut être désactivé en y passant `hasLabel: false`.
-
-Aujourd'hui, les composants de libellé et de consultation/édition sont affichés sur la même ligne, à l'aide d'un style CSS inline défini via `labelRatio` et
-`valueRatio` (par défaut 33% et 67%). Il est possible de désactiver cette mise en page via `disableInlineSizing: true`, et de poser du CSS
-personnalisé par dessus pour faire autre chose. [Cette issue](https://github.com/klee-contrib/focus4/issues/194) sur Github suit une évolution permettant de refondre cette mise en page pour avoir un système plus flexible.
-
 ## Méthodes de champs
 
 Appelées sur un `EntityField` d'un `StoreNode`, ces méthodes **afficheront toujours le champ en consultation** (donc avec `LabelComponent` et
@@ -68,3 +62,52 @@ La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l
     -   Le `querySearcher`, qui permet d'effectuer la recherche dans le champ d'autocomplétion. Il est nécessaire dès lors qu'il y a une saisie à faire. Il doit
         renvoyer une liste d'objets contenant au moins `key` et `label` avec les valeurs et les libellés. Sa signature est
         `(query: string) => Promise<{key: string, label: string}[]>`.
+
+## `FieldOptions`
+
+Toutes les méthodes de champs peuvent prendre les options suivantes :
+
+### `disableInlineSizing` / `labelRatio` / `valueRatio`
+
+Par défaut, le libellé et la valeur sont affichés sur une ligne, en prenant 100% de la largeur disponible, avec un ratio prédéterminé :
+
+-   `labelRatio` permet de définir le ratio du composant de libellé (par défaut à 33%).
+-   `valueRatio` permet de définir le ratio du composant de valeur (par défaut à 67%).
+-   `disableInlineSizing` permet de désactiver complètement ces ratios (qui sont posés en CSS inline), pour les remplacer par un CSS personnalisé.
+
+[Cette issue](https://github.com/klee-contrib/focus4/issues/194) sur Github suit une évolution permettant de refondre cette mise en page pour avoir un système plus flexible.
+
+### `errorDisplay`
+
+Cette option permet de contrôler l'affichage de l'erreur pour un champ en édition dans le composant de saisie. Les trois possibilités sont :
+
+-   `"never"` : L'erreur n'est jamais affichée.
+-   `"after-focus"` : L'erreur est affichée après avoir focus le champ au moins une fois.
+-   `"always"` : L'erreur est toujours affichée.
+
+Dans tous les cas, l'erreur n'est pas affichée si le champ à le focus, afin de ne pas perturber la saisie de l'utilisateur.
+
+Le mode par défaut (si non surchargé par le formulaire) est `"after-focus"`.
+
+### `hasLabel`
+
+Permet de déterminer si on doit afficher le composant de libellé ou non dans le champ.
+
+Par défaut, il est affiché si le champ à un `label` non vide.
+
+### `onChange`
+
+Permet de surcharger le handler appelé lors de la modification du champ par le composant de saisie. Si non renseigné, la valeur du champ sera directement
+mise à jour avec la nouvelle valeur issue du composant. Vous pouvez utiliser cette option afin de personnaliser ce comportement.
+
+_Remarque : Si vous souhaitez conserver le comportement par défaut de `onChange` qui met à jour le champ, **vous devez réimplémenter l'affectation dans
+votre `onChange` personnalisé**. N'oubliez donc pas de faire `field.value = value` à l'intérieur._
+
+### `autocompleteProps` / `displayProps` / `labelProps` / `inputProps` / `selectProps`
+
+Vous pouvez surcharger les props des composants de domaine ici. Elles s'ajouteront aux props déjà définies dans le domaine et aux surcharges existantes dans
+la définition du formulaire.
+
+### `theme`
+
+Vous pouvez surcharger ici le CSS du composant de `Field`. A ne pas confondre avec les props `theme` des différents composants de domaine.

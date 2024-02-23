@@ -37,7 +37,6 @@ export interface BaseDisplayProps extends WithThemeProps {
 
 export interface BaseLabelProps extends WithThemeProps {
     comment?: ReactNode;
-    i18nPrefix?: string;
     label?: string;
     id?: string;
     style?: CSSProperties;
