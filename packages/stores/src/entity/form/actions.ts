@@ -57,8 +57,7 @@ export class FormActionsBuilder<
     protected readonly formNode: FN;
 
     protected actionsErrorDisplay: "after-focus" | "always" | "never";
-    protected prefix = "focus";
-    protected saveNamesForMessages = false;
+    protected message = "focus.detail.saved";
 
     constructor(formNode: FN) {
         super();
@@ -130,15 +129,6 @@ export class FormActionsBuilder<
     }
 
     /**
-     * Change le préfixe i18n pour les messages du formulaire.
-     * @param prefix: Le préfixe.
-     */
-    i18nPrefix(prefix: string): FormActionsBuilder<FN, A, S> {
-        this.prefix = prefix;
-        return this;
-    }
-
-    /**
      * Change le mode d'affichage des erreurs dans les champs du formulaire (via le composant `Form` et `formProps`).
      * Les modes possibles sont :
      *
@@ -155,15 +145,18 @@ export class FormActionsBuilder<
         return this;
     }
 
-    /** Utilise le nom du save dans le message de succès de la sauvegarde (prefix.detail.saved => prefix.detail.name.saved). */
-    useSaveNameForMessages(): FormActionsBuilder<FN, A, S> {
-        this.saveNamesForMessages = true;
+    /**
+     * Surcharge le message de succès à la sauvegarde du formulaire. Si le message est vide, aucun message ne sera affiché.
+     * @param message Le message de succès. Peut référencer `{name}`, qui sera remplacé avec le nom du service de sauvegarde (utile s'il y en a plusieurs).
+     */
+    successMessage(message: string): FormActionsBuilder<FN, A, S> {
+        this.message = message;
         return this;
     }
 
     /** Construit le FormActions. */
     build(): FormActions<S> {
-        const {saveServices, formNode, prefix, actionsErrorDisplay, saveNamesForMessages, handlers, trackingIds} = this;
+        const {saveServices, formNode, message, actionsErrorDisplay, handlers, trackingIds} = this;
         // On se prépare à construire plusieurs actions de sauvegarde.
         function buildSave(name: Extract<keyof S, string>, saveService: (entity: any) => Promise<any | void>) {
             return async function save(this: FormActions<Extract<keyof S, string>>) {
@@ -219,12 +212,8 @@ export class FormActionsBuilder<
                         }
                     });
 
-                    // Pour supprimer le message, il "suffit" de faire en sorte qu'il soit vide.
-                    const savedMessage = i18next.t(
-                        `${prefix || "focus"}.detail${saveNamesForMessages ? `.${name}` : ""}.saved`
-                    );
-                    if (savedMessage) {
-                        messageStore.addSuccessMessage(savedMessage);
+                    if (message) {
+                        messageStore.addSuccessMessage(i18next.t(message.replace("{name}", name)));
                     }
 
                     // On ne force plus l'affichage des erreurs une fois la sauvegarde effectuée, puisqu'il n'y a plus.

@@ -76,17 +76,11 @@ La valeur par défaut dépend du type de formulaire :
 -   Pour un formulaire initialement en édition, le mode d'affichage est `"after-focus"`
 -   Pour un formulaire initialement en consultation, le mode d'affichage est `"always"`
 
-### `i18nPrefix(prefix)`
+### `successMessage(message)`
 
-Après un appel à un service de sauvegarde avec succès, un message sera affiché, dont la clé i18n par défaut est `"focus.detail.saved"`. `i18nPrefix()`
-permet de remplacer `"focus"` par autre chose.
+Permet de surcharger le message de succès à la sauvegarde du formulaire.
 
-Vous pouvez [personnaliser ce message](/docs/les-bases-libellés-et-icônes--docs#surcharge-de-libellés) comme n'importe quel autre libellé de l'application (soit `"focus.detail.saved"` pour le modifier partout, ou
-`"{i18nPrefix}.detail.saved"` pour un message surchargé).
+Si le message est vide, aucun message ne sera affiché.
 
-Par ailleurs, si le contenu du message d'erreur est vide (par exemple avec un préfixe personnalisé), **le message ne sera pas affiché après sauvegarde**.
-
-### `useSaveNamesForMessages()`
-
-Cette méthode permet de demander à ce que le nom du service de sauvegarde (ce qui n'est utile que s'il n'y a plusieurs) soit inclus dans le message de succès,
-comme ceci : `"focus.detail.{saveName}.saved"`.
+Si vous avez plusieurs services de sauvegarde, vous pouvez utiliser `{name}` dans le message, qui sera remplacé par le nom du service de sauvegarde (pour
+résoudre une clé i18n différente).
