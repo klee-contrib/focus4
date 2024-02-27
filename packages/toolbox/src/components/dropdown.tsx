@@ -96,7 +96,6 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
         onContextMenu,
         onFocus,
         onKeyDown,
-        onKeyPress,
         onKeyUp,
         onPaste,
         onPointerDown,
@@ -261,7 +260,6 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 onContextMenu={onContextMenu}
                 onFocus={handleFocus}
                 onKeyDown={onKeyDown}
-                onKeyPress={onKeyPress}
                 onKeyUp={onKeyUp}
                 onPaste={onPaste}
                 onPointerDown={onPointerDown}

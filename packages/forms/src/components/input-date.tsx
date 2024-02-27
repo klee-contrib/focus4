@@ -151,7 +151,7 @@ export function InputDate({
 
     const rootRef = useRef<HTMLDivElement>(null);
     const calendarRef = useRef<{focus: () => void}>(null);
-    const inputRef = useRef<Input<"string">>(null);
+    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
     const [inputDateId] = useState(() => uniqueId("input-date-"));
@@ -198,7 +198,7 @@ export function InputDate({
             onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
             setTimeout(() => {
                 if (fromKeyDown) {
-                    inputRef.current?.htmlInput.focus();
+                    inputRef.current?.focus();
                 }
                 menu.close();
             }, 50);

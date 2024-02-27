@@ -110,7 +110,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         onContextMenu,
         onFocus,
         onKeyDown,
-        onKeyPress,
         onKeyUp,
         onPaste,
         onPointerDown,
@@ -315,7 +314,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 onContextMenu={onContextMenu}
                 onFocus={handleQueryFocus}
                 onKeyDown={handleQueryKeyDown}
-                onKeyPress={onKeyPress}
                 onKeyUp={onKeyUp}
                 onPaste={onPaste}
                 onPointerDown={onPointerDown}

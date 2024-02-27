@@ -89,8 +89,6 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     onFocus?: FocusEventHandler<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>;
     /** Au `keydown` du champ. */
     onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-    /** Au `keypress` du champ. */
-    onKeyPress?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Au `keyup` du champ. */
     onKeyUp?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Au collage de texte dans le champ. */
@@ -158,7 +156,6 @@ export const TextField = forwardRef(function TextField(
         onContextMenu,
         onFocus,
         onKeyDown,
-        onKeyPress,
         onKeyUp,
         onPaste,
         onPointerDown,
@@ -286,7 +283,6 @@ export const TextField = forwardRef(function TextField(
         onContextMenu,
         onFocus: handleFocus,
         onKeyDown,
-        onKeyPress,
         onKeyUp,
         onPaste,
         onPointerDown,
