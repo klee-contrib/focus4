@@ -13,7 +13,25 @@ export interface InputProps<T extends DomainFieldType> extends Omit<TextFieldPro
     error?: string;
     /** Pour un input de type "number", affiche les séparateurs de milliers. */
     hasThousandsSeparator?: boolean;
-    /** Pour un input de type "string", paramètre un masque de saisie. */
+    /**
+     * Pour un input de type "string", paramètre un masque de saisie.
+     *
+     * Le masque se renseigne dans `pattern`. Il doit définir au moins un caractère éditable, qui se représentent par défaut avec les caractères suivants :
+     *
+     * - `1` : nombre
+     * - `a` : lettre
+     * - `A` : lettre, forcée en majuscule à la saisie
+     * - `*` : alphanumérique
+     * - `#` : alphanumérique, forcé en majuscule à la saisie
+     *
+     * Si le masque doit inclure l'un de ses caractères dans sa partie statique, vous pouvez l'échapper avec un `\` (un `\` doit aussi être échappé).
+     * Les caractères éditables sont personnalisables avec `formatCharacters` (pour en ajouter des nouveaux ou bien en supprimer, en passant `null` pour le caractère).
+     *
+     * Par défaut, le caratère qui sert de placeholder lorsqu'un caractère éditable n'est pas encore renseigné est `_`. Il est modifiable avec `placeholderChar`.
+     *
+     * Enfin, le masque peut être configuré pour s'afficher au fur et à mesure de la saisie avec `isRevealingMask`. Dans ce cas, aucun placeholder ne sera jamais affiché
+     * (ce qui implique que si un caractère est effacé au milieu de la saisie, tous les caractères après le seront également).
+     */
     mask?: MaskDefinition;
     /** Pour un input de type "number", le nombre maximal de décimales qu'il est possible de saisir. Par défaut : 10. */
     maxDecimals?: number;

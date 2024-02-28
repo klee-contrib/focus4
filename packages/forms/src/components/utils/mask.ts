@@ -9,8 +9,16 @@ export interface InputMaskFormatOptions {
 
 /** Définition d'un masque de saisie. */
 export interface MaskDefinition {
-    /** Formatters personnalisés par caractère. */
-    formatCharacters?: Record<string, InputMaskFormatOptions>;
+    /**
+     * Formatteurs personnalisés par caractère. Ces formatteurs seront fusionnés avec les formatteurs par défaut (`1`, `a`, `A`, `*` et `#`).
+     *
+     * Il s'agit d'un objet dont chaque clé est un caractère et qui fait correspondre un objet avec :
+     * - `validate` (pour vérifier sa validité), obligatoire.
+     * - `transform` (pour le modifier après saisie), facultatif.
+     *
+     * Il est également possible supprimer un formatteur par défaut en passant `null` à son caractère à la place de l'objet.
+     */
+    formatCharacters?: Record<string, InputMaskFormatOptions | null>;
     /** Affiche le masque au fur et à mesure de la saisie. */
     isRevealingMask?: boolean;
     /** Le masque de saisie */
@@ -82,10 +90,10 @@ export function useMask({
             const chars = Object.keys(pFormatCharacters);
             for (let i = 0, l = chars.length; i < l; i++) {
                 const char = chars[i];
-                if (!pFormatCharacters[char]) {
+                if (pFormatCharacters[char] === null) {
                     delete merged[char];
                 } else {
-                    merged[char] = pFormatCharacters[char];
+                    merged[char] = pFormatCharacters[char]!;
                 }
             }
             return merged;

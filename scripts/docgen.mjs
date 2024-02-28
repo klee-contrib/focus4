@@ -141,7 +141,7 @@ export const ${component.displayName}Meta = {
     component: ${component.displayName},
     parameters: {
         docs: {
-            description: {component: \`${component.description.replaceAll("`", "\\`")}\`}
+            description: {component: \`${escape(component.description)}\`}
         },
         cssVariables: {
             global: {
@@ -184,10 +184,7 @@ export const ${component.displayName}Meta = {
             .map(
                 prop =>
                     `${prop}: {
-            description: \`${component.props[prop].description
-                ?.replaceAll("`", "\\`")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")}\`,
+            description: \`${escape(component.props[prop].description)}\`,
             type: {
                 name: "${getName(prop, component.props[prop].type.name)}",
                 required: ${component.props[prop].required}${
@@ -223,3 +220,7 @@ generateDocFile("collections", "./packages/collections/src/**/*.tsx", [
     "Table",
     "Timeline"
 ]);
+
+function escape(text) {
+    return text.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
