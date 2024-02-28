@@ -50,13 +50,6 @@ export const Calendar = forwardRef(function Calendar(
     const [displayedMonth, setDisplayedMonth] = useState(
         DateTime.fromISO((date ? date : DateTime.now()).toFormat("yyyyMM"))
     );
-    useEffect(() => {
-        const newDate = handleValue(value, format);
-        setDate(newDate);
-        if (newDate) {
-            setDisplayedMonth(DateTime.fromISO(newDate.toFormat("yyyyMM")));
-        }
-    }, [format, value]);
 
     const [maxDate, setMaxDate] = useState(handleValue(max, format));
     useEffect(() => setMaxDate(handleValue(max, format)), [format, max]);
@@ -141,6 +134,40 @@ export const Calendar = forwardRef(function Calendar(
         },
         [displayedMonth, view]
     );
+
+    useEffect(() => {
+        const newDate = handleValue(value, format);
+        setDate(newDate);
+        if (newDate) {
+            const newDisplayedMonth = DateTime.fromISO(newDate.toFormat("yyyyMM"));
+            let dir: "down" | "up" | undefined;
+            if (view === "days") {
+                dir =
+                    newDisplayedMonth.month + 1 === displayedMonth.month
+                        ? "up"
+                        : newDisplayedMonth.month - 1 === displayedMonth.month
+                        ? "down"
+                        : undefined;
+            } else if (view === "months") {
+                dir =
+                    newDisplayedMonth.year + 1 === displayedMonth.year
+                        ? "up"
+                        : newDisplayedMonth.year - 1 === displayedMonth.year
+                        ? "down"
+                        : undefined;
+            } else {
+                const ndmy = +`${newDisplayedMonth.year.toString().substring(0, 3)}0`;
+                const dmy = +`${displayedMonth.year.toString().substring(0, 3)}0`;
+                dir = ndmy + 10 === dmy ? "up" : ndmy - 10 === dmy ? "down" : undefined;
+            }
+
+            if (dir) {
+                changeDisplayedMonth(dir);
+            } else {
+                setDisplayedMonth(newDisplayedMonth);
+            }
+        }
+    }, [format, value]);
 
     const changeView = useCallback((v: typeof viewChange) => {
         setViewChange(v);
