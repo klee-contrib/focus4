@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-arguments */
-
 import {isFunction} from "lodash";
 import {disposeOnUnmount} from "mobx-react";
-import {Component, useEffect, useState} from "react";
+import {Component, useEffect, useId, useState} from "react";
 
 import {
     EntityToType,
@@ -67,7 +65,9 @@ export function makeFormNode(
         }
     }
     fn.form._initialData = toFlatValues(fn, true);
-    return withDisposer(fn, componentClass);
+    if (componentClass && fn.dispose) {
+        disposeOnUnmount(componentClass, fn.dispose);
+    }
 }
 
 /**
@@ -127,37 +127,37 @@ export function useFormNode(
  * @param formNode Le FormNode du formulaire.
  * @param builder Le configurateur.
  */
-export function makeFormActions<
-    FN extends FormListNode | FormNode,
-    A extends readonly any[] = never,
-    S extends string = never
->(
+export function makeFormActions<FN extends FormListNode | FormNode, A extends readonly any[] = never>(
     componentClass: Component | null,
     formNode: FN,
-    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, S>
-): FormActions<S> {
-    const formActions = builder(new FormActionsBuilder(formNode)).build();
-    return withDisposer(formActions, componentClass);
-}
-
-/**
- * Crée les actions d'un formulaire.
- * @param formNode Le FormNode du formulaire.
- * @param builder Le configurateur.
- */
-export function useFormActions<
-    FN extends FormListNode | FormNode,
-    A extends readonly any[] = never,
-    S extends string = never
->(node: FN, builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, S>) {
-    const [formActions] = useState(() => builder(new FormActionsBuilder(node)).build());
-    useEffect(() => formActions.dispose, []);
+    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A>
+): FormActions<FN, A> {
+    const formActions = new FormActions(formNode, builder(new FormActionsBuilder()));
+    if (componentClass) {
+        disposeOnUnmount(componentClass, formActions.register());
+    }
     return formActions;
 }
 
-function withDisposer(formNode: any, componentClass: Component | null) {
-    if (componentClass && formNode.dispose) {
-        disposeOnUnmount(componentClass, formNode.dispose);
-    }
-    return formNode;
+/**
+ * Permet de définir des actions de formulaires pour un noeud de formulaire. Les actions peuvent comprendre un service de chargement et un service de sauvegarde.
+ *
+ * Le service de chargement sera rappelé automatiquement à chaque fois que les paramètres définis changent.
+ *
+ * @param formNode FormNode ou FormListNode.
+ * @param builder Builder pour les actions de formulaires (permet de définir les paramètres, les services, et d'autres configurations).
+ * @param deps Liste de dépendances (React) pour les actions de formulaire. Le builder sera redéfini à tout changement d'une valeur de cette liste, et l'éventuel service de chargement sera rappelé.
+ * @returns Objet d'actions de formulaire.
+ */
+export function useFormActions<FN extends FormListNode | FormNode, A extends readonly any[] = never>(
+    node: FN,
+    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A>,
+    deps: any[] = []
+) {
+    const trackingId = useId();
+    const [formActions] = useState(() => new FormActions(node, builder(new FormActionsBuilder()), trackingId));
+
+    useEffect(() => formActions.register(node.sourceNode, builder(new FormActionsBuilder())), [node, ...deps]);
+
+    return formActions;
 }

@@ -2,36 +2,37 @@ import {autorun} from "mobx";
 import {useEffect, useId, useRef, useState} from "react";
 
 import {
+    LoadRegistration,
     NodeLoadBuilder,
     ReferenceDefinition,
     ReferenceStore,
-    registerLoad,
     StoreListNode,
     StoreNode
 } from "@focus4/stores";
 
 /**
- * Enregistre un service de chargement sur un StoreNode.
- * @param node StoreNode.
- * @param loadBuilder Service de chargement et paramètres.
- * @param deps Array de dépendances.
- * @returns Etat de chargement.
+ * Enregistre un service de chargement sur un noeud de store (`node.load()`).
+ *
+ * Ce service sera rappelé automatiquement à chaque fois que les paramètres définis changent.
+ *
+ * @param node StoreNode ou StoreListNode.
+ * @param builder Builder pour le service de chargement (permet de définir les paramètres et le service).
+ * @param deps Liste de dépendances (React) pour le service. Le builder sera redéfini à tout changement d'une valeur de cette liste, et le service de chargement sera rappelé.
+ * @returns Etat de chargement et ID de suivi.
  */
 export function useLoad<SN extends StoreListNode | StoreNode>(
     node: SN,
-    loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN>,
+    builder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN>,
     deps: any[] = []
 ) {
-    const [isLoading, setIsLoading] = useState(false);
     const trackingId = useId();
-    useEffect(() => {
-        const res = registerLoad(node, loadBuilder, trackingId);
-        const disposer = autorun(() => setIsLoading(res.isLoading));
-        return () => {
-            disposer();
-            res.dispose();
-        };
-    }, deps);
+    const [loadRegistration] = useState(() => new LoadRegistration(node, builder(new NodeLoadBuilder()), trackingId));
+
+    const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => autorun(() => setIsLoading(loadRegistration.isLoading)), []);
+
+    useEffect(() => loadRegistration.register(node, builder(new NodeLoadBuilder())), [node, ...deps]);
+
     return [isLoading, trackingId] as const;
 }
 

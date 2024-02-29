@@ -30,13 +30,36 @@ const actions = useFormActions(
 -   `onClickCancel()` : Repasse le formulaire en consultation et annule toutes les modifications.
 -   `save()`: Appelle le service de sauvegarde par défaut avec la valeur courante du noeud de formulaire, puis enregistre le retour du service (si non vide) dans le **noeud source** du formulaire (qui mettra ensuite le formulaire à jour). Si l'état d'édition du noeud de formulaire n'est pas forcé, elle repassera également le formulaire en consultation.
 
-    Les autres services de sauvegarde sont disponibles sous le nom qui leur a été donné, et leur comportement est le même.
+Comme pour `useLoad`, `useFormActions` peut prendre un array de dépendances en troisième paramètre, qui servira à réenregistrer les services du
+formulaire. Attention néanmoins ici car, comme pour `useLoad`, le service de chargement sera rappelé à tout changement de dépendances, ce qui n'est pas
+forcément souhaitable si vos dépendances sont utilisées dans le service de sauvegarde ou dans un handler. Si vous ne pouvez pas utiliser d'état observable à la
+place (ce qui résout le problème car la référence de l'objet qui le contient peut être stable, avec `useLocalObservable` par exemple), vous pouvez toujours
+séparer le service de chargement dans un `useLoad` à part avec ses propres dépendances, par exemple :
 
-_Remarque : `useFormActions` ne supporte **pas** de liste de dépendances et vous ne pouvez donc **pas** utiliser d'état non observable dedans comme `useLoad`
-([un jour peut-être...](https://github.com/klee-contrib/focus4/issues/191)). En particulier, il vous faudra utiliser `useLocalObservable()` à la place de `useState()` pour définir un état local utilisé dans l'une des
-fonctions `load`, `save` ou `on` par exemple._
+```ts
+const [message, setMessage] = useState("");
+const actions = useFormActions(
+    formNode,
+    a => a.save(addOrUpdateUtilisateur).on("save", () => messageStore.addSuccessMessage(message)),
+    [message] // Le `on: save` utilise `message`
+);
+useLoad(
+    formNode.sourceNode, // Le service de chargement s'enregistre bien sur le noeud source du noeud de formulaire.
+    a =>
+        a
+            .params(() => router.state.id)
+            .load(getUtilisateur)
+            .trackingId(actions.trackingId) // Pour prendre en compte l'état de chargement du `load` dans `actions.isLoading`.
+);
+```
 
-_Remarque 2 : `useFormActions` pose en réalité `useLoad` sur le `sourceNode` du store de formulaire._
+_Remarque : Il n'est pas possible d'enregistrer un service de chargement (avec `useLoad`) sur un `FormNode`. `useFormActions` le pose, quand il est défini,
+bien sur le `sourceNode` du store de formulaire, comme on a reproduit dans l'exemple au-dessus._
+
+_Remarque 2 : En dehors d'un composant fonction React, il est possible d'utiliser directement la classe `FormActions` (qui hérite de `LoadRegistration`), qui
+s'instancie avec les mêmes paramètres que `useFormActions`. Vous devrez ensuite appeler la fonction `register()` (sur le `sourceNode`) de la même
+façon que pour `LoadRegistration`. De plus, une version pour composant classe est disponible avec `makeFormActions`, qui prend les mêmes paramètres
+mais avec `this` en plus en premier._
 
 ## API de `FormActionsBuilder`
 
@@ -59,8 +82,7 @@ La fonction `on` est étendue pour les actions de formulaires et propose de déf
 -   `"cancel"` : appelé avec `onClickCancel()`.
 -   `"edit"` : appelé avec `onClickEdit()`.
 
-On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec le nom de l'évènement qui l'a déclenché,
-ainsi que le nom du save pour `"error"` et `"save"`.
+On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec le nom de l'évènement qui l'a déclenché.
 
 ### `errorDisplay(mode)`
 

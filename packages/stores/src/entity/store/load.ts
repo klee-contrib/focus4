@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {autorun, extendObservable, Lambda, runInAction} from "mobx";
+import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
 import {requestStore} from "@focus4/core";
@@ -17,99 +17,113 @@ import {
 import {defaultLoad} from "./store";
 
 /** Enregistrement de chargement. */
-export interface LoadRegistration {
+export class LoadRegistration<SN extends StoreListNode | StoreNode, A extends readonly any[]> {
     /**
      * Id du suivi de requêtes associé à cette enregistrement de chargement.
      *
      * Il pourra être utilisé pour enregistrer d'autres services sur cet id pour combiner leur état de chargement.
      */
     readonly trackingId: string;
-    /** Retourne `true` si le service de chargement (ou un autre service avec le même id de suivi) est en cours de chargement. */
-    readonly isLoading: boolean;
-    /** Permet de désactiver l'enregistrement de chargement. */
-    readonly dispose: Lambda;
-}
 
-/**
- * Enregistre un service de chargement sur un noeud.
- * @param node Le noeud.
- * @param loadBuilder Builder pour le service de chargement.
- * @param trackingId Id de suivi de requête pour ce load.
- * @returns disposer.
- */
-export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
-    node: SN,
-    loadBuilder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>,
-    trackingId?: string
-): LoadRegistration;
-export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
-    node: SN,
-    loadBuilder: NodeLoadBuilder<SN, A>,
-    trackingId?: string
-): LoadRegistration;
-export function registerLoad<SN extends StoreListNode | StoreNode, A extends readonly any[]>(
-    node: SN,
-    loadBuilder: NodeLoadBuilder<SN, A> | ((builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN, A>),
-    trackingId?: string
-) {
-    const {getLoadParams, trackingIds, handlers, loadService} = isFunction(loadBuilder)
-        ? loadBuilder(new NodeLoadBuilder())
-        : loadBuilder;
-    trackingId ??= v4();
-    const state = extendObservable(
-        {
-            trackingId,
-            dispose: () => {
-                /** */
-            }
-        },
-        {
-            get isLoading() {
-                return requestStore.isLoading(trackingId!);
-            }
-        }
-    );
+    protected builder: NodeLoadBuilder<SN, A>;
 
-    if (getLoadParams && loadService) {
+    private node: SN;
+
+    /**
+     * Enregistre un service de chargement sur un noeud.
+     * @param node Le noeud.
+     * @param builder Builder pour le service de chargement.
+     * @param trackingId Id de suivi de requête pour ce load.
+     */
+    constructor(node: SN, builder: NodeLoadBuilder<SN, A>, trackingId = v4()) {
         if (isAnyFormNode(node)) {
             throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
         }
 
-        // eslint-disable-next-line func-style
-        const load = async function load() {
-            let params = getLoadParams();
-            if (params !== undefined) {
-                if (!Array.isArray(params)) {
-                    params = [params];
-                }
-                const data = await requestStore.track([trackingId!, ...trackingIds], () => loadService(...params));
-                runInAction(() => {
-                    if (data) {
-                        if (isStoreNode(node)) {
-                            node.replace(data as EntityToType<any>);
-                        } else if (isStoreListNode(node)) {
-                            node.replaceNodes(data as EntityToType<any>[]);
-                        }
-                    }
+        this.node = node;
+        this.builder = builder;
+        this.trackingId = trackingId;
 
-                    (handlers.load || []).forEach(handler => handler("load"));
-                });
-            }
-        };
-
-        node.load = load;
-        const disposer = autorun(() => node.load());
-        state.dispose = () => {
-            disposer();
-            if (node.load === load) {
-                node.load = defaultLoad;
-            }
-        };
+        makeObservable<this, "builder" | "node">(this, {
+            builder: observable.ref,
+            isLoading: computed,
+            load: action.bound,
+            node: observable.ref,
+            register: action.bound
+        });
     }
 
-    return state;
+    /** Retourne `true` si le service de chargement (ou un autre service avec le même id de suivi) est en cours de chargement. */
+    get isLoading() {
+        return requestStore.isLoading(this.trackingId);
+    }
+
+    /**
+     * Appelle le service de chargement avec la valeur courante des paramètres, et insère le résultat dans le store associé.
+     *
+     * Cette méthode est également accessible depuis le store (via `node.load()`).
+     */
+    async load() {
+        let params = this.builder.getLoadParams?.();
+        if (params !== undefined && this.builder.loadService) {
+            if (!Array.isArray(params)) {
+                params = [params];
+            }
+            const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
+                this.builder.loadService!(...params)
+            );
+            runInAction(() => {
+                if (data) {
+                    if (isStoreNode(this.node)) {
+                        this.node.replace(data as EntityToType<any>);
+                    } else if (isStoreListNode(this.node)) {
+                        this.node.replaceNodes(data as EntityToType<any>[]);
+                    }
+                }
+
+                (this.builder.handlers.load || []).forEach(handler => handler("load"));
+            });
+        }
+    }
+
+    /**
+     * Enregistre le service de chargement sur le noeud et crée la réaction de chargmement.
+     *
+     * _Remarque : L'usage de cette méthode est déjà géré par `useLoad`/`useFormActions`._
+     *
+     * @param node Éventuel nouveau noeud de store, pour remplacer l'ancien.
+     * @param builder Éventuel nouveau builder, pour remplace l'ancien.
+     */
+    register(node?: SN, builder?: NodeLoadBuilder<SN, A>) {
+        if (node) {
+            if (isAnyFormNode(node)) {
+                throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
+            }
+
+            this.node = node;
+        }
+        if (builder) {
+            this.builder = builder;
+        }
+
+        if (this.builder.getLoadParams && this.builder.loadService) {
+            this.node.load = this.load;
+            const disposer = autorun(() => this.load());
+            return () => {
+                disposer?.();
+                if (this.node.load === this.load) {
+                    this.node.load = defaultLoad;
+                }
+            };
+        } else {
+            return () => {
+                /* */
+            };
+        }
+    }
 }
 
+/** Objet de configuration pour un enregistrement de chargement. */
 export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends readonly any[] = never> {
     /** @internal */
     readonly handlers = {} as Record<"load", ((event: "load") => void)[]>;

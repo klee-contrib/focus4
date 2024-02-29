@@ -24,6 +24,10 @@ _Remarque : Si on peut créer des champs en édition sans formulaire via [`makeF
     formulaire à un composant enfant.
 -   Il pose un réaction de synchronisation entre avec son noeud source, qui devra être proprement supprimée une fois le composant démonté.
 
+_Remarque : Si vous avez (encore) des composants classe, vous pouvez utiliser `makeFormNode`, qui prend les mêmes paramètres que `useFormNode` mais
+avec `this` en plus en premier. Vous pouvez aussi créer le noeud directement avec `Form(List)NodeBuilder`, en n'oubliant pas d'appeler `build()` et de
+gérer l'appel à `dispose()` sur le `FormNode` pour désactiver la réaction de synchronisation._
+
 ## Etat d'édition d'un formulaire
 
 **Chaque noeud et chaque champ du formulaire porte son propre état d'édition**.
