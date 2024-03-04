@@ -1,6 +1,6 @@
 {
     "name": "@focus4/toolbox",
-    "version": "11.15.1",
+    "version": "11.16.0",
     "description": "Focus v4, toolbox module",
     "main": "lib/focus4.toolbox.js",
     "repository": {
@@ -15,8 +15,8 @@
         "start": "rollup -cw --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "11.15.0",
-        "@focus4/styling": "11.15.1",
+        "@focus4/core": "11.16.0",
+        "@focus4/styling": "11.16.0",
         "@types/luxon": "3.4.2",
         "@types/react-transition-group": "4.4.10",
         "framer-motion": "11.0.8",
@@ -24,6 +24,6 @@
         "react-transition-group": "4.4.5"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.15.0"
+        "@focus4/tooling": "11.16.0"
     }
 }
