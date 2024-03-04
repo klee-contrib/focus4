@@ -4,7 +4,7 @@
         "lib": ["es2021", "dom"],
         "jsx": "react-jsx",
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "target": "es2021",
 
         // Options obligatoires

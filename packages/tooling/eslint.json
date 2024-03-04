@@ -149,6 +149,7 @@
         "@typescript-eslint/class-literal-property-style": "off",
         "@typescript-eslint/class-methods-use-this": "off",
         "@typescript-eslint/consistent-indexed-object-style": "off",
+        "@typescript-eslint/consistent-return": "off",
         "@typescript-eslint/consistent-type-exports": "off",
         "@typescript-eslint/consistent-type-imports": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
