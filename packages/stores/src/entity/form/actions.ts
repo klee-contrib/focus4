@@ -148,7 +148,7 @@ export class FormActions<FN extends FormListNode | FormNode, A extends readonly 
                 function updateInitialData(source: unknown, target: unknown) {
                     if (isFormNode(source) && target && typeof target === "object") {
                         for (const key in source) {
-                            const item = source[key];
+                            const item: any = source[key];
                             if (key in target) {
                                 if (isFormEntityField(item)) {
                                     (target as any)[key] = item.value;

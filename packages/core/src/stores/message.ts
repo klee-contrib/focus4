@@ -37,7 +37,7 @@ export class MessageStore {
         }
 
         this.messages.get(type)!.push(message);
-        (this.listeners.get(type) ?? []).forEach(listener => listener(type, message as Message));
+        (this.listeners.get(type) ?? []).forEach(listener => listener(type, message));
     }
 
     /**

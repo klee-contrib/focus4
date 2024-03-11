@@ -181,7 +181,7 @@ export function replaceNode<E>(
         } else if (isStoreNode(this) && isObject(value)) {
             // On affecte chaque valeur du noeud avec la valeur demandée, et on réappelle `replaceNode` si la valeur n'est pas primitive.
             for (const entry in this) {
-                const item = this[entry];
+                const item: any = this[entry];
                 const valueEntry = (value as any)[entry];
                 if (entry === "sourceNode") {
                     // Pas touche

@@ -21,21 +21,21 @@ import timelineCss, {TimelineCss} from "../__style__/timeline.css";
 export {timelineCss, TimelineCss};
 
 /** Props du composant de TimeLine. */
-export type TimelineProps<T> = ListBaseProps<T> & {
+export type TimelineProps<T> = ListBaseProps<NoInfer<T>> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
-    AddItemComponent?: ComponentType<AddItemProps<T>>;
+    AddItemComponent?: ComponentType<AddItemProps<NoInfer<T>>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Le sélecteur du champ contenant la date. */
-    dateSelector: (data: T) => EntityField<FieldEntry<"string">>;
+    dateSelector: (data: NoInfer<T>) => EntityField<FieldEntry<"string">>;
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: ComponentType<EmptyProps<T>>;
+    EmptyComponent?: ComponentType<EmptyProps<NoInfer<T>>>;
     /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: ComponentType<LoadingProps<T>>;
+    LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /** CSS. */
     theme?: CSSProp<TimelineCss>;
     /** Le composant de ligne. */
-    TimelineComponent: ComponentType<{data: T}>;
+    TimelineComponent: ComponentType<{data: NoInfer<T>}>;
 } & (
         | {
               /** Les données. */

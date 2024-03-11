@@ -29,7 +29,7 @@ export function createViewModel<ST extends StoreListNode | StoreNode>(model: ST)
     const reset = () => {
         untracked(() => viewModel.clear());
         if (isStoreListNode(viewModel) && isStoreListNode(model)) {
-            viewModel.replaceNodes(toFlatValues(model));
+            viewModel.replaceNodes(toFlatValues(model) as any);
         } else if (isStoreNode(viewModel) && isStoreNode(model)) {
             viewModel.replace(toFlatValues(model) as any);
         }
@@ -65,7 +65,7 @@ function clone(source: any): any {
     } else if (isStoreNode(source)) {
         const res: typeof source = {} as any;
         for (const key in source) {
-            (res as any)[key] = clone((source as any)[key]);
+            (res as any)[key] = clone(source[key]);
         }
         return res;
     } else if (isEntityField(source)) {

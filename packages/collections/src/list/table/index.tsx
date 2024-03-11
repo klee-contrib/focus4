@@ -17,19 +17,19 @@ import tableCss, {TableCss} from "../__style__/table.css";
 export {TableColumn, tableCss, TableCss};
 
 /** Props du tableau de base. */
-export type TableProps<T> = Omit<ListBaseProps<T>, "isLoading"> & {
+export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     /** La description des colonnes du tableau. */
-    columns: TableColumn<T>[];
+    columns: TableColumn<NoInfer<T>>[];
     /** Classe CSS pour une ligne. */
-    lineClassName?: (data: T) => string;
+    lineClassName?: (data: NoInfer<T>) => string;
     /** La liste des actions sur chaque élément de la liste. */
-    lineOperationList?: (data: T) => OperationListItem<T>[];
+    lineOperationList?: (data: NoInfer<T>) => OperationListItem<NoInfer<T>>[];
     /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: ComponentType<LoadingProps<T>>;
+    LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /** Appelé au clic sur une ligne. */
-    onLineClick?: (data: T) => void;
+    onLineClick?: (data: NoInfer<T>) => void;
     /** Actions globales sur le tableau, affichées dans le header. */
-    operationList?: OperationListItem<T[]>[];
+    operationList?: OperationListItem<NoInfer<T>[]>[];
     /** CSS. */
     theme?: CSSProp<TableCss>;
 } & (

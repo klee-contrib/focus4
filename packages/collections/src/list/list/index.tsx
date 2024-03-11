@@ -28,15 +28,15 @@ import listCss, {ListCss} from "../__style__/list.css";
 export {listCss, ListCss};
 
 /** Props du composant de liste standard. */
-export type ListProps<T> = Omit<ListBaseProps<T>, "isLoading"> & {
+export type ListProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
-    AddItemComponent?: ComponentType<AddItemProps<T>>;
+    AddItemComponent?: ComponentType<AddItemProps<NoInfer<T>>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Précise si chaque élément peut ouvrir le détail ou non. Par défaut () => true. */
-    canOpenDetail?: (data: T) => boolean;
+    canOpenDetail?: (data: NoInfer<T>) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
-    DetailComponent?: ComponentType<DetailProps<T>>;
+    DetailComponent?: ComponentType<DetailProps<NoInfer<T>>>;
     /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
     disableDragAnimThreshold?: number;
     /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
@@ -44,23 +44,23 @@ export type ListProps<T> = Omit<ListBaseProps<T>, "isLoading"> & {
     /** CSS du DragLayer. */
     dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
-    EmptyComponent?: ComponentType<EmptyProps<T>>;
+    EmptyComponent?: ComponentType<EmptyProps<NoInfer<T>>>;
     /** Active le drag and drop. */
     hasDragAndDrop?: boolean;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
-    LineComponent?: ComponentType<LineProps<T>>;
+    LineComponent?: ComponentType<LineProps<NoInfer<T>>>;
     /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: ComponentType<LoadingProps<T>>;
+    LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /** Mode des listes dans le wrapper. Par défaut : celui du composant fourni, ou "list". */
     mode?: "list" | "mosaic";
     /** Taille de la mosaïque. */
     mosaic?: {width: number; height: number};
     /** Composant de mosaïque. */
-    MosaicComponent?: ComponentType<LineProps<T>>;
+    MosaicComponent?: ComponentType<LineProps<NoInfer<T>>>;
     /** La liste des actions sur chaque élément de la liste. */
-    operationList?: (data: T) => OperationListItem<T>[];
+    operationList?: (data: NoInfer<T>) => OperationListItem<NoInfer<T>>[];
     /** CSS. */
     theme?: CSSProp<ListCss>;
 } & (
