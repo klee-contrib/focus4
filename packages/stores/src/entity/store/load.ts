@@ -17,7 +17,7 @@ import {
 import {defaultLoad} from "./store";
 
 /** Enregistrement de chargement. */
-export class LoadRegistration<SN extends StoreListNode | StoreNode, A extends readonly any[]> {
+export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A extends readonly any[] = any[]> {
     /**
      * Id du suivi de requêtes associé à cette enregistrement de chargement.
      *

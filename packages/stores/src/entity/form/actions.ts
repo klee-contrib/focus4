@@ -32,7 +32,7 @@ export interface ActionsPanelProps {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export class FormActions<FN extends FormListNode | FormNode, A extends readonly any[] = never> extends LoadRegistration<
+export class FormActions<FN extends FormListNode | FormNode = any, A extends readonly any[] = any[]> extends LoadRegistration<
     FN["sourceNode"],
     A
 > {
