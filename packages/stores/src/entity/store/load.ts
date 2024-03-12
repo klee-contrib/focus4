@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
+import {autorun, computed, makeObservable, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
 import {requestStore} from "@focus4/core";
@@ -44,12 +44,13 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
         this.builder = builder;
         this.trackingId = trackingId;
 
+        this.load = this.load.bind(this);
+        this.register = this.register.bind(this);
+
         makeObservable<this, "builder" | "node">(this, {
             builder: observable.ref,
             isLoading: computed,
-            load: action.bound,
-            node: observable.ref,
-            register: action.bound
+            node: observable.ref
         });
     }
 
