@@ -217,6 +217,17 @@ export function useMask({
         [characters, format, isRevealingMask, rawValue]
     );
 
+    const handleChange = useCallback(
+        function handleChange(newValue: string) {
+            if (newValue === emptyValue) {
+                onChange?.("");
+            } else {
+                onChange?.(newValue);
+            }
+        },
+        [emptyValue, onChange]
+    );
+
     const input = useCallback(
         function input(char: string, chars: string[], selection: InputSelection) {
             // Ignore additional input if the cursor's at the end of the pattern
@@ -263,7 +274,7 @@ export function useMask({
             // Advance the cursor to the next character
             return {characters: newCharacters, selection: {start: index + 1, end: index + 1}};
         },
-        [characters, firstEditableIndex, isEditableIndex, isValidAtIndex, onChange, pattern, placeholderChar]
+        [characters, firstEditableIndex, isEditableIndex, isValidAtIndex, pattern, placeholderChar]
     );
 
     const backspace = useCallback(
@@ -336,13 +347,13 @@ export function useMask({
                 const newValue = result.characters.join("");
                 setInputSelection(e.currentTarget, result.selection);
                 if (newValue !== value) {
-                    onChange?.(newValue);
+                    handleChange?.(newValue);
                 }
             }
 
             onKeyDown?.(e);
         },
-        [backspace, characters, input, onChange, onKeyDown, value]
+        [backspace, characters, handleChange, input, onKeyDown, value]
     );
 
     const handlePaste = useCallback(
@@ -402,12 +413,12 @@ export function useMask({
             const newValue = newCharacters.join("");
             setInputSelection(e.currentTarget, selection);
             if (newValue !== value) {
-                onChange?.(newValue);
+                handleChange?.(newValue);
             }
 
             onPaste?.(e);
         },
-        [characters, firstEditableIndex, lastEditableIndex, input, onChange, onPaste, pattern]
+        [characters, firstEditableIndex, lastEditableIndex, handleChange, input, onPaste, pattern]
     );
 
     if (!sourcePattern) {
