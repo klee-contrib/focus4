@@ -36,7 +36,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      * @param trackingId Id de suivi de requête pour ce load.
      */
     constructor(node: SN, builder: NodeLoadBuilder<SN, A>, trackingId = v4()) {
-        if (isAnyFormNode(node)) {
+        if (isAnyFormNode(node) && !!builder.loadService) {
             throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
         }
 
