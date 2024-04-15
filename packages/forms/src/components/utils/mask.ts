@@ -422,7 +422,7 @@ export function useMask({
     );
 
     if (!sourcePattern) {
-        return {stringValue: value, handleKeyDown: onKeyDown, handlePaste: onPaste};
+        return {stringValue: value ?? "", handleKeyDown: onKeyDown, handlePaste: onPaste};
     }
 
     return {
