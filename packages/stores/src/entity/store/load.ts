@@ -97,7 +97,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      */
     register(node?: SN, builder?: NodeLoadBuilder<SN, A>) {
         if (node) {
-            if (isAnyFormNode(node)) {
+            if (isAnyFormNode(node) && !!builder?.loadService) {
                 throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
             }
 
