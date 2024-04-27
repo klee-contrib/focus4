@@ -3,8 +3,8 @@ import {AnimatePresence, HTMLMotionProps, motion} from "framer-motion";
 import {memoize, range} from "lodash";
 import {action, computed, IReactionDisposer, makeObservable, observable, when} from "mobx";
 import {observer, useObserver} from "mobx-react";
-import {cloneElement, Component, forwardRef, HTMLProps, Key, PropsWithChildren, ReactNode, Ref} from "react";
-import {createPortal, findDOMNode} from "react-dom";
+import {cloneElement, Component, HTMLProps, Key, ReactNode, Ref} from "react";
+import {createPortal} from "react-dom";
 
 import {CSSProp, getSpringTransition, ScrollableContext, themr} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
@@ -41,7 +41,7 @@ export interface ScrollableProps {
 
 // eslint-disable-next-line react/no-unsafe
 @observer
-class ScrollableComponent extends Component<ScrollableProps> {
+export class Scrollable extends Component<ScrollableProps> {
     @observable.ref header?: HTMLElement;
     @observable.ref headerProps?: HTMLMotionProps<"header">;
 
@@ -106,8 +106,6 @@ class ScrollableComponent extends Component<ScrollableProps> {
     }
 
     componentDidMount() {
-        // eslint-disable-next-line react/no-find-dom-node
-        this.containerNode = findDOMNode(this) as HTMLDivElement;
         this.scrollableNode.addEventListener("scroll", this.onScroll);
         this.resizeObserver = new ResizeObserver(() => this.onScroll());
         this.resizeObserver.observe(this.scrollableNode);
@@ -257,6 +255,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
         this.isInitialized = true;
     };
 
+    setContainerNode = (ref: HTMLDivElement | null) => ref && (this.containerNode = ref);
     setMenuNode = (ref: HTMLDivElement | null) => ref && (this.menuNode = ref);
     setScrollableNode = (ref: HTMLDivElement | null) => ref && (this.scrollableNode = ref);
 
@@ -288,7 +287,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
     getHeaderStatus = () => this.headerStatus;
 
     render() {
-        const {children, className, innerRef} = this.props;
+        const {children, className} = this.props;
         return (
             <ScrollableContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -304,7 +303,7 @@ class ScrollableComponent extends Component<ScrollableProps> {
             >
                 <Theme theme={this.props.theme}>
                     {theme => (
-                        <div ref={innerRef} className={classNames(theme.container(), className)}>
+                        <div ref={this.setContainerNode} className={classNames(theme.container(), className)}>
                             <div ref={this.setScrollableNode} className={theme.scrollable()}>
                                 {this.intersectionObserver ? (
                                     <>
@@ -344,10 +343,6 @@ class ScrollableComponent extends Component<ScrollableProps> {
         );
     }
 }
-
-export const Scrollable = forwardRef<HTMLDivElement, PropsWithChildren<ScrollableProps>>((props, ref) => (
-    <ScrollableComponent {...props} innerRef={ref} />
-));
 
 function getOffsetTop(node: HTMLElement, container: HTMLElement) {
     let distance = node.offsetTop;

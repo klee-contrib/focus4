@@ -144,9 +144,7 @@ export function SelectChips<T extends DomainFieldType>({
                 trailing={trailing}
                 type={toSimpleType(type)}
                 values={values.filter(
-                    v =>
-                        !(value as (boolean | number | string)[]).includes(v[values.$valueKey]) &&
-                        (!unselectable || !unselectable(v))
+                    v => !(value as (boolean | number | string)[]).includes(v[values.$valueKey]) && !unselectable?.(v)
                 )}
             />
             {value.length > 0 ? (

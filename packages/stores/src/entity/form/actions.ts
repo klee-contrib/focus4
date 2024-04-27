@@ -32,10 +32,10 @@ export interface ActionsPanelProps {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export class FormActions<FN extends FormListNode | FormNode = any, A extends readonly any[] = any[]> extends LoadRegistration<
-    FN["sourceNode"],
-    A
-> {
+export class FormActions<
+    FN extends FormListNode | FormNode = any,
+    A extends readonly any[] = any[]
+> extends LoadRegistration<FN["sourceNode"], A> {
     /** Mode d'affichage des erreurs du formulaire. */
     errorDisplay: "after-focus" | "always" | "never";
 
@@ -131,7 +131,7 @@ export class FormActions<FN extends FormListNode | FormNode = any, A extends rea
         try {
             // On ne sauvegarde que si la validation est en succès.
             if (this.formNode.form && !this.formNode.form.isValid) {
-                // eslint-disable-next-line @typescript-eslint/no-throw-literal
+                // eslint-disable-next-line @typescript-eslint/only-throw-error
                 throw {
                     $validationError: true,
                     detail: this.formNode.form.errors
