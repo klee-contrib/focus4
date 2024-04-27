@@ -155,7 +155,7 @@ export class FormNodeBuilder<E, E0 = E> {
             b: FormListNodeBuilder<EntryToEntity<E[L]>>,
             node: StoreNode<E>
         ) => FormListNodeBuilder<NE, EntryToEntity<E[L]>>
-    ): FormNodeBuilder<E[L] extends NE ? E : Patch<E, {[_ in L]: ListEntry<NE>}>, E0>;
+    ): FormNodeBuilder<E[L] extends ListEntry<NE> ? E : Patch<E, {[_ in L]: ListEntry<NE>}>, E0>;
     /**
      * Modifie un noeud du FormNode.
      * @param node Nom du noeud.
@@ -167,7 +167,7 @@ export class FormNodeBuilder<E, E0 = E> {
             b: FormNodeBuilder<EntryToEntity<E[O]>>,
             node: StoreNode<E>
         ) => FormNodeBuilder<NE, EntryToEntity<E[O]>>
-    ): FormNodeBuilder<E[O] extends NE ? E : Patch<E, {[_ in O]: ObjectEntry<NE>}>, E0>;
+    ): FormNodeBuilder<E[O] extends ObjectEntry<NE> ? E : Patch<E, {[_ in O]: ObjectEntry<NE>}>, E0>;
     patch(node: keyof E, builder: (builder: any, node: any) => any): any {
         const child = this.node[node];
         if (isStoreListNode(child)) {

@@ -125,33 +125,3 @@ export interface FormEntityField<F extends FieldEntry = FieldEntry> extends Enti
     /** Précise si le champ associé est valide (pas d'erreur ou pas en édition). */
     readonly isValid: boolean;
 }
-
-/**
- * Patche le type d'une entité pour ajouter ou remplacer des entrées.
- *
- * Exemple : `Patch<MyEntity, {nouveauChamp: FieldEntry<"string">, champExistant: FieldEntry2<typeof DO_NEW_DOMAIN}>}`
- */
-export type Patch<E, P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>> = Omit<
-    E,
-    keyof P
-> & {[K in keyof P]: P[K]};
-
-/**
- * Patche le type d'un `FormNode` pour ajouter ou remplacer des entrées à son entité.
- *
- * Exemple : `PatchedFormNode<MyEntity, {nouveauChamp: FieldEntry<"string">, champExistant: FieldEntry2<typeof DO_NEW_DOMAIN}>}`
- */
-export type PatchedFormNode<
-    E,
-    P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>
-> = FormNode<Patch<E, P>, E>;
-
-/**
- * Patche le type d'un `FormListNode` pour ajouter ou remplacer des entrées à son entité.
- *
- * Exemple : `PatchedFormListNode<MyEntity, {nouveauChamp: FieldEntry<"string">, champExistant: FieldEntry2<typeof DO_NEW_DOMAIN}>}`
- */
-export type PatchedFormListNode<
-    E,
-    P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>
-> = FormListNode<Patch<E, P>, E>;

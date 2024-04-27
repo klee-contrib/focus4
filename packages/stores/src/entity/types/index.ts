@@ -26,7 +26,17 @@ export {
     RecursiveListEntry,
     SingleDomainFieldType
 } from "./entity";
-export {FormEntityField, FormListNode, FormNode, Patch, PatchedFormListNode, PatchedFormNode} from "./form";
+export {FormEntityField, FormListNode, FormNode} from "./form";
+export {
+    Patch,
+    PatchAutocomplete,
+    PatchDisplay,
+    PatchInput,
+    PatchLabel,
+    PatchSelect,
+    PatchedFormListNode,
+    PatchedFormNode
+} from "./patch";
 export {StoreListNode, StoreNode} from "./store";
 export {
     FormNodeToSourceType,
