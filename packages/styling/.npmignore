@@ -1,5 +1,5 @@
 .npmrc
-.rpt2_cache
 src
 rollup.config.js
 tsconfig.json
+vite.config.ts

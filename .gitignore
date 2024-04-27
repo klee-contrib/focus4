@@ -5,3 +5,4 @@ lib
 metas
 *.css.d.ts
 lerna-debug.log
+test-report.xml

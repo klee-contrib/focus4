@@ -1,6 +1,9 @@
 // Libs
 import {render} from "@testing-library/react";
 import i18next from "i18next";
+import React from "react";
+import {describe, test, expect} from "vitest";
+
 import {Panel} from "../panel";
 
 i18next.init();

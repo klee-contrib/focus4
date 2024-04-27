@@ -1,0 +1,76 @@
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  actions: read
+  checks: write
+  contents: read
+  id-token: write
+  pages: write
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: install
+        run: npm install
+
+      - name: bootstrap
+        run: npm run bootstrap
+
+      - name: eslint
+        run: npm run eslint
+
+      - name: test
+        run: npm run test-ci
+
+      - name: publish test results
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Tests
+          path: test-report.xml
+          reporter: jest-junit
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: install
+        run: npm install
+
+      - name: bootstrap
+        run: npm run bootstrap
+
+      - name: docgen
+        run: npm run docgen
+
+      - name: build
+        run: npm run docs-build
+
+      - name: upload
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: docs
+
+      - name: deploy
+        uses: actions/deploy-pages@v3
+        with:
+          token: ${{ github.token }}

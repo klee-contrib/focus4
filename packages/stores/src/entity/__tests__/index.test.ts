@@ -8,6 +8,7 @@ import {LigneEntity} from "./ligne";
 import {OperationEntity} from "./operation";
 import {ProjetEntity} from "./projet";
 import {StructureEntity} from "./structure";
+import {describe, expect, test, vi} from "vitest";
 
 i18next.init();
 
@@ -29,7 +30,7 @@ function getFormNodes() {
     const entry = getStore().operation;
     const entry2 = getStore().projetTest;
     const formNode = new FormNodeBuilder(entry).patch("montant", f => f.metadata({label: "montant"})).build();
-    const setter = jest.fn();
+    const setter = vi.fn();
     const formNode2 = new FormNodeBuilder(entry2)
         .add("test", f => f)
         .add("test2", f => f.value(() => "2", setter))

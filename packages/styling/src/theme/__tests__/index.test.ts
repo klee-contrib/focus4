@@ -1,4 +1,5 @@
 import {themeable} from "@focus4/core";
+import {expect, describe, test} from "vitest";
 
 import {CSSElement, CSSMod} from "../common";
 import {fromBem, toBem} from "../to-bem";

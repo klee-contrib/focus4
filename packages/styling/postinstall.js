@@ -1,15 +1,15 @@
-const fs = require("fs");
-const path = require("path");
+import {readFile, writeFile} from "fs";
+import {resolve} from "path";
 
 // Enlève la dépréciation sur "useObserver".
 [
-    path.resolve(__dirname, "./node_modules/mobx-react-lite/es/index.js"),
-    path.resolve(__dirname, "../../node_modules/mobx-react-lite/es/index.js"),
-    path.resolve(__dirname, "../../mobx-react-lite/es/index.js")
+    resolve(import.meta.dirname, "./node_modules/mobx-react-lite/es/index.js"),
+    resolve(import.meta.dirname, "../../node_modules/mobx-react-lite/es/index.js"),
+    resolve(import.meta.dirname, "../../mobx-react-lite/es/index.js")
 ].forEach(typeFile => {
-    fs.readFile(typeFile, "utf8", function (err, data) {
+    readFile(typeFile, "utf8", (err, data) => {
         if (!err) {
-            fs.writeFile(
+            writeFile(
                 typeFile,
                 data
                     .replace(
@@ -18,7 +18,7 @@ const path = require("path");
                     )
                     .replace("export function useObserver", "export function useObserverDeprecated"),
                 "utf8",
-                err => console.log(err || "useObserver undeprecated")
+                err2 => console.log(err2 ?? "useObserver undeprecated")
             );
         }
     });

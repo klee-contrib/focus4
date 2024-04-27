@@ -3,6 +3,7 @@
     "version": "11.16.6",
     "description": "Focus v4, all modules",
     "main": "index.js",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"

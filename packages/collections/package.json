@@ -3,6 +3,7 @@
     "version": "11.16.6",
     "description": "Focus v4, collections module",
     "main": "lib/focus4.collections.js",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"

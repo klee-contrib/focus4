@@ -3,6 +3,7 @@
     "version": "11.16.4",
     "description": "Focus v4, layout module",
     "main": "lib/focus4.layout.js",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"

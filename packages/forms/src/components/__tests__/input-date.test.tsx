@@ -1,24 +1,13 @@
 // Libs
 import {render} from "@testing-library/react";
+import React from "react";
+import {describe, expect, it} from "vitest";
+
 import {InputDate} from "../input-date";
 
 const props = {
-    inputProps: {
-        theme: {
-            bar: "bar",
-            "input--disabled": "disabled",
-            "input--errored": "errored",
-            "inputElement--filled": "filled",
-            "label--fixed": "fixed",
-            "input--hidden": "hidden",
-            icon: "icon",
-            input: "input",
-            inputElement: "inputElement",
-            label: "label",
-            "input--withIcon": "withIcon"
-        }
-    },
     theme: {
+        calendar: "calendar",
         input: "input"
     }
 };

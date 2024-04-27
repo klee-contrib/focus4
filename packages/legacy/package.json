@@ -3,6 +3,7 @@
     "version": "11.16.6",
     "description": "Focus v4, legacy module",
     "main": "lib/focus4.legacy.js",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"

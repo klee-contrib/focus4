@@ -3,6 +3,7 @@
     "version": "11.16.6",
     "description": "Focus v4, stores module",
     "main": "lib/focus4.stores.js",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"
@@ -12,19 +13,11 @@
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/stores",
     "scripts": {
         "prepare": "rollup -cm --bundleConfigAsCjs",
-        "start": "rollup -cw --bundleConfigAsCjs",
-        "test": "jest --reporters=default",
-        "test-ci": "jest --ci --reporters=default --reporters=jest-junit"
+        "start": "rollup -cw --bundleConfigAsCjs"
     },
     "dependencies": {
         "@focus4/core": "11.16.4",
         "@types/luxon": "3.4.2",
         "luxon": "3.4.4"
-    },
-    "devDependencies": {
-        "@types/jest": "29.5.12",
-        "jest": "29.7.0",
-        "jest-junit": "16.0.0",
-        "ts-jest": "29.1.2"
     }
 }
