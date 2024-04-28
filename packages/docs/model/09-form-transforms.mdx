@@ -142,18 +142,99 @@ const entity = useFormNode(utilisateurStore.utilisateur, e =>
 );
 ```
 
+## Description d'un `FormNode` patché
+
 Le type de la variable `entity` prend bien en compte ici les trois modifications qu'on a fait qui l'impacte :
 
 -   Les 3 champs retirés.
 -   Le type du `SelectComponent` de la propriété `typeUtilisateurCode`.
 -   Le champ `nombreUtilisateursMax` en plus.
 
-Par conséquent, son type n'est pas simplement `FormNode<UtilisateurReadEntity>`, mais un type plus compliqué qui retire les propriétés retirées ou
-modifiées (avec des `Omit<...>`) et ajoute les propriétés ajoutées ou modifiées (avec des `& {[prop]: FieldEntry<...>}`).
+Par conséquent, son type n'est pas simplement `FormNode<UtilisateurReadEntity>`, mais un type plus complexe qui prend en compte ces modifications. Si
+dans le cas général écrire ce type n'est pas nécessaire, cela peut l'être lorsque vos formulaires deviennent de plus en plus compliqués et que vous voulez le
+diviser en plusieurs composants. Dans ce cas, il va bien falloir écrire ce type dans les `props` d'un sous-composant.
 
-Cela rend donc le type difficile à décrire, ce qui est problématique si on veut passer ce store de formulaire à un composant enfant. [Cette issue](https://github.com/klee-contrib/focus4/issues/190) suit une évolution
-pour simplifier ce problème. En attendant, essayez au moins d'ajouter les champs en plus dans le type, et n'hésitez pas à utiliser `as any` là ou ça bloque (avec
-modération !).
+Pour simplifier l'écriture, il existe quelques types dédiés :
+
+### `Patch` (et `PatchedFormNode`/`PatchedFormListNode`)
+
+Le type **`Patch`** prend en premier paramètre le type de l'**entité à patcher** et en deuxième un objet décrivant les propriétés à ajouter ou modifier.
+
+Par exemple :
+
+```ts
+type PatchedUtilisateurEntityType = Patch<
+    UtilisateurEntityType,
+    {
+        nombreUtilisateursMax: FieldEntry2<typeof DO_ENTIER>; // Champ ajouté.
+        typeUtilisateurCode: FieldEntry<"string", TypeUtilisateurCode>; // Champ préexistant modifié.
+        liste: ListEntry<
+            Patch<
+                MySubEntity,
+                {
+                    // Champ ajouté dans `liste` (non existant dans l'exemple précédent...).
+                    nouveauChamp: FieldEntry2<typeof DO_ENTIER>;
+                }
+            >
+        >;
+    }
+>;
+```
+
+Vous pouvez ensuite utiliser ce type dans un `FormNode`, en n'oubliant pas de préciser le type original en deuxième paramètre :
+
+```ts
+type PatchedUtilisateurFormNode = FormNode<PatchedUtilisateurEntityType, UtilisateurEntityType>;
+
+// Vous pouvez utiliser `PatchedFormNode` directement si vous n'avez pas besoin du type ailleurs que pour écrire le `FormNode`
+type PatchedUtilisateurFormNode = PatchedFormNode<
+    UtilisateurEntityType,
+    {
+        /* Même définition que précédemment. */
+    }
+>;
+
+// `PatchedFormListNode` est bien évidemment également disponible pour `FormListNode`.
+
+// N'hésitez pas à utiliser le type pour typer explicitement le retour de `useFormNode`, afin d'être sûr qu'il est correct
+const entity: PatchedUtilisateurFormNode = useFormNode(utilisateurStore.utilisateur, e => /* ... */);
+// L'affectation sera en erreur si le type de correspond pas, donc pas de crainte à avoir là dessus :)
+```
+
+### Description d'un champ (et comment le patcher avec `PatchInput`/`PatchSelect`...)
+
+Dans l'exemple précédent, on voit qu'on utilise aussi bien `FieldEntry` que `FieldEntry2`, qui sont [décrits en intégralité ici](/docs/modèle-métier-champs-et-entités--docs#type-typescript-fieldentryfieldentry2).
+
+Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière générale), vous avez le choix du niveau de précision dont vous avez besoin.
+Idéalement, vous êtes le plus précis possible, mais si vos implémentations n'utilisent pas cette précision vous n'êtes pas obligés d'aller jusqu'au bout.
+
+Les différentes possibilités (par ordre de précision croissante) sont :
+
+-   `FieldEntry` => N'importe quel champ
+-   `FieldEntry<"string">` => Un champ avec un domaine de type `"string"`.
+-   `FieldEntry<"string", TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
+-   `FieldEntry2<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
+-   `FieldEntry2<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
+-   `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
+
+Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que
+vous n'avez pas besoin du détail dans son utilisation.
+
+Dans l'exemple précédent, le type de `typeUtilisateurCode` a été remplacé par `FieldEntry<"string", TypeUtilisateurCode>` dans le `Patch` afin
+qu'il reste compatible avec le type modifié dans le `patch` du `useFormNode` par la modification du `SelectComponent`. Attention néanmoins au fait que
+**avec cette définition là, le type du `SelectComponent` a été remplacé par `any`**, et que donc le type de `selectProps` ne sera pas vérifié dans l'appel à
+`selectFor`. La plupart du temps ce n'est pas très gênant donc ça peut rester un compromis acceptable.
+
+Si vous voulez matérialiser correctement un changement de type de composant sur un champ, les types `PatchInput`, `PatchSelect`, `PatchAutocomplete`,
+`PatchDisplay` et `PatchLabel` sont disponibles. Ils s'utilisent par dessus le type du champ avec le type des props du composant en question.
+
+```ts
+// Par conséquent, la manière la plus précise de définir le type du champ `typeUtilisateurCode` patché serait ce type-là :
+type PatchedTypeUtilisateurCode = PatchSelect<UtilisateurEntityType["typeUtilisateurCode"], SelectRadioProps>;
+
+// Mais vous pouvez le combiner avec un champ défini avec un domaine par exemple :
+type NouveauChamp = PatchAutocomplete<FieldEntry2<typeof DO_CODE>, MyCustomAutocompleteProps>;
+```
 
 ## Personnalisation dynamique
 
