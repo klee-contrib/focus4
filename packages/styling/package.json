@@ -1,6 +1,6 @@
 {
     "name": "@focus4/styling",
-    "version": "11.16.4",
+    "version": "11.17.0",
     "description": "Focus v4, styling module",
     "main": "lib/focus4.styling.js",
     "type": "module",
@@ -17,7 +17,7 @@
         "start": "rollup -cw --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "11.16.4",
+        "@focus4/core": "11.17.0",
         "@types/react-dom": "18.3.0",
         "classnames": "2.5.1",
         "mobx-react": "7.6.0",
