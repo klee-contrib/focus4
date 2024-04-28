@@ -255,9 +255,23 @@ export class Scrollable extends Component<ScrollableProps> {
         this.isInitialized = true;
     };
 
-    setContainerNode = (ref: HTMLDivElement | null) => ref && (this.containerNode = ref);
-    setMenuNode = (ref: HTMLDivElement | null) => ref && (this.menuNode = ref);
-    setScrollableNode = (ref: HTMLDivElement | null) => ref && (this.scrollableNode = ref);
+    setContainerNode = (ref: HTMLDivElement | null) => {
+        if (ref) {
+            this.containerNode = ref;
+        }
+    };
+
+    setMenuNode = (ref: HTMLDivElement | null) => {
+        if (ref) {
+            this.menuNode = ref;
+        }
+    };
+
+    setScrollableNode = (ref: HTMLDivElement | null) => {
+        if (ref) {
+            this.scrollableNode = ref;
+        }
+    };
 
     Header = () =>
         useObserver(() => (

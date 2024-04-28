@@ -292,7 +292,11 @@ export function List<T>({
                     {!isLoading && !hideAdditionalItems && !displayedData.length ? (
                         <EmptyComponent addItemHandler={state.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
                     ) : (
-                        <ul ref={ul => (state.ulRef = ul)}>
+                        <ul
+                            ref={ul => {
+                                state.ulRef = ul;
+                            }}
+                        >
                             {/* On regarde si on doit ajouter l'élément d'ajout. */}
                             {isAddItemShown ? (
                                 <li
