@@ -69,12 +69,13 @@ export function ContextualActions({
                 const FinalButton = isMosaic
                     ? FloatingActionButton
                     : !isMosaic && (operation.type === "icon" || operation.type === "icon-tooltip")
-                    ? IconButton
-                    : Button;
+                      ? IconButton
+                      : Button;
                 const button = (
                     <FinalButton
                         key={key}
                         color={isMosaic ? "primary" : operation.color}
+                        disabled={operation.disabled}
                         icon={
                             (isMosaic || !operation.type || operation.type.includes("icon")
                                 ? operation.icon
