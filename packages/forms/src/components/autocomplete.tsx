@@ -77,7 +77,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
                 // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 setQuery(label ?? `${value}`);
                 if (!values.find(v => getKey(v) === value) && label && querySearcher) {
-                    setValues(await querySearcher(encodeURIComponent(label)));
+                    setValues(await querySearcher(label));
                 }
                 setLoading(false);
             });
@@ -88,7 +88,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         debounce(async function search(newQuery: string) {
             if (querySearcher && (searchOnEmptyQuery || newQuery.trim().length)) {
                 setLoading(true);
-                setValues(await querySearcher(encodeURIComponent(newQuery.trim())));
+                setValues(await querySearcher(newQuery.trim()));
                 setLoading(false);
             }
         }, 200),
