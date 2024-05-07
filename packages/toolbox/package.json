@@ -1,6 +1,6 @@
 {
     "name": "@focus4/toolbox",
-    "version": "11.17.0",
+    "version": "11.17.2",
     "description": "Focus v4, toolbox module",
     "main": "lib/focus4.toolbox.js",
     "type": "module",
@@ -25,6 +25,6 @@
         "react-transition-group": "4.4.5"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.17.0"
+        "@focus4/tooling": "11.17.2"
     }
 }
