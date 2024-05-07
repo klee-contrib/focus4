@@ -113,6 +113,7 @@ export function Field<F extends FieldEntry>(
         const valueRef = useRef<HTMLDivElement>(null);
         const [hasFocus, setHasFocus] = useState(false);
         const [hasHadFocus, setHasHadFocus] = useState(false);
+        useEffect(() => setHasHadFocus(false), [errorDisplay]);
         useLayoutEffect(() => {
             function focusin() {
                 setHasFocus(true);
