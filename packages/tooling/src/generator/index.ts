@@ -26,16 +26,22 @@ export async function loadCSS(sourceString: string) {
     return exportTokens;
 }
 
-export async function generateCSSTypings(rootDir: string) {
+export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
     const root = path.join(process.cwd(), rootDir).replace(/\\/g, "/");
     const pattern = `${root}/**/*.css`;
     console.info(`Recherche des fichiers dans ${pattern}...`);
-    const files = glob.sync(pattern).map(file => {
-        const parts = file.replace(/\\/g, "/").split("/");
-        const fileName = parts[parts.length - 1];
-        const interfaceName = camelCase(fileName.substring(0, fileName.length - 4));
-        return {file, interfaceName};
-    });
+    const files = glob
+        .sync(pattern)
+        .map(file => {
+            if (regex && !regex.test(file)) {
+                return {file: ""};
+            }
+            const parts = file.replace(/\\/g, "/").split("/");
+            const fileName = parts[parts.length - 1];
+            const interfaceName = camelCase(fileName.substring(0, fileName.length - 4));
+            return {file, interfaceName};
+        })
+        .filter(f => !!f.file);
     console.info(`${files.length} fichiers trouvés.`);
     await Promise.all(
         files.map(async ({file, interfaceName}) => {

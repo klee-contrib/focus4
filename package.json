@@ -29,12 +29,12 @@
         "lerna": "6.6.2",
         "postcss": "8.4.38",
         "react-docgen-typescript": "2.2.2",
-        "rollup": "4.17.0",
+        "rollup": "4.17.2",
         "rollup-plugin-copy-glob": "0.3.2",
         "rollup-plugin-postcss": "4.0.2",
         "rollup-plugin-preserve-shebang": "1.0.1",
         "tslib": "2.6.2",
         "typescript": "5.4.5",
-        "vitest": "1.5.2"
+        "vitest": "1.6.0"
     }
 }

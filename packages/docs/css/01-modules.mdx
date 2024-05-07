@@ -42,7 +42,12 @@ Pour garantir l'existence des classes CSS référencées dans le vode, Focus exp
 d'un fichier CSS. Il génèrera un fichier `*.css.d.ts` à côté de vos fichiers CSS qui permettra aux imports dans vos composants d'être typés correctement
 comme n'importe quel autre import Typescript.
 
-Il se lance via la commande `npx focus4 cssgen /src`, souvent redéfinie en `npm run cssgen` dans votre `package.json`
+Il se lance via la commande `npx focus4 cssgen`, souvent redéfinie en `npm run cssgen` dans votre `package.json` avec ces deux paramètres :
+
+-   `rootDir` (obligatoire), le répertoire racine dans lequel chercher les fichiers CSS (souvent `.` ou `./src`)
+-   `regex` (optionnel), une regex pour filtrer les fichiers CSS à traiter. A priori, elle devrait être égale à celle de `cssAutoModules`.
+
+Vous devriez donc en général avoir un script `cssgen` dans votre `package.json` qui devrait ressembler à `focus4 cssgen . __style__`.
 
 Focus génère ses types CSS avec également, et vous pouvez référencer le CSS de Focus dans vos components en l'important si vous en avez besoin (ex
 : `import {popinCss} from "@focus4/layout`).
