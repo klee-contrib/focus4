@@ -2,7 +2,13 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 
-import {DomainFieldType, DomainTypeMultiple, ReferenceList} from "@focus4/stores";
+import {
+    DomainFieldType,
+    DomainTypeMultiple,
+    DomainTypeSingle,
+    ReferenceList,
+    SingleDomainFieldType
+} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Chip, ChipCss, DropdownCss, Icon, TextFieldCss} from "@focus4/toolbox";
 
@@ -41,6 +47,8 @@ export interface SelectChipsProps<T extends DomainFieldType> {
     theme?: CSSProp<DropdownCss & SelectChipsCss & TextFieldCss>;
     /** Type du champ (celui du domaine). */
     type: T;
+    /** Empêche la suppression des valeurs correspondants à ce filtre. */
+    undeletable?: (value: DomainTypeSingle<SingleDomainFieldType<T>>) => boolean;
     /** Retire les valeurs qui correspondent à ce filtre des valeurs sélectionnables dans le Select. */
     unselectable?: (value: any) => boolean;
     /** Valeur. */
@@ -69,6 +77,7 @@ export function SelectChips<T extends DomainFieldType>({
     showSupportingText = "always",
     theme: pTheme,
     type,
+    undeletable,
     unselectable,
     value = [] as DomainTypeMultiple<T>,
     values
@@ -156,7 +165,11 @@ export function SelectChips<T extends DomainFieldType>({
                             color="light"
                             disabled={disabled}
                             label={values.getLabel(item)}
-                            onDeleteClick={() => handleRemoveValue(item)}
+                            onDeleteClick={
+                                !undeletable?.(item as DomainTypeSingle<SingleDomainFieldType<T>>)
+                                    ? () => handleRemoveValue(item)
+                                    : undefined
+                            }
                             theme={chipTheme}
                         />
                     ))}

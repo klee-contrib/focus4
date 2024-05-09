@@ -57,6 +57,8 @@ export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {ke
     theme?: CSSProp<AutocompleteCss & SelectChipsCss & TextFieldCss>;
     /** Type du champ (celui du domaine). */
     type: T;
+    /** Empêche la suppression des valeurs correspondants à ce filtre. */
+    undeletable?: (value: DomainTypeSingle<SingleDomainFieldType<T>>) => boolean;
     /** Valeur. */
     value?: DomainTypeMultiple<T>;
 }
@@ -88,6 +90,7 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
     showSupportingText = "always",
     theme: pTheme,
     type,
+    undeletable,
     value = [] as DomainTypeMultiple<T>
 }: AutocompleteChipsProps<T, TSource>) {
     const theme = useTheme<AutocompleteCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
@@ -176,7 +179,11 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
                             color="light"
                             disabled={disabled}
                             label={labels.get(item) ?? ""}
-                            onDeleteClick={() => handleRemoveValue(item)}
+                            onDeleteClick={
+                                !undeletable?.(item as DomainTypeSingle<SingleDomainFieldType<T>>)
+                                    ? () => handleRemoveValue(item)
+                                    : undefined
+                            }
                             theme={chipTheme}
                         />
                     ))}
