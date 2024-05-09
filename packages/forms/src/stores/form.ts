@@ -52,22 +52,23 @@ export function makeFormNode(
     builder: (x: any) => any = (x: any) => x,
     initialData?: any
 ): any {
-    let fn;
+    let formNode;
     if (isStoreListNode(node)) {
-        fn = builder(new FormListNodeBuilder(node)).build();
+        formNode = builder(new FormListNodeBuilder(node)).build();
         if (initialData) {
-            fn.setNodes(isFunction(initialData) ? initialData() : initialData);
+            formNode.setNodes(isFunction(initialData) ? initialData() : initialData);
         }
     } else {
-        fn = builder(new FormNodeBuilder(node)).build();
+        formNode = builder(new FormNodeBuilder(node)).build();
         if (initialData) {
-            fn.set(isFunction(initialData) ? initialData() : initialData);
+            formNode.set(isFunction(initialData) ? initialData() : initialData);
         }
     }
-    fn.form._initialData = toFlatValues(fn, true);
-    if (componentClass && fn.dispose) {
-        disposeOnUnmount(componentClass, fn.dispose);
+    formNode.form._initialData = toFlatValues(formNode, true);
+    if (componentClass && formNode.dispose) {
+        disposeOnUnmount(componentClass, formNode.dispose);
     }
+    return formNode;
 }
 
 /**
