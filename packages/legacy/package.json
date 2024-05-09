@@ -12,8 +12,7 @@
     "license": "MIT",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/legacy",
     "scripts": {
-        "prepare": "rollup -cm --bundleConfigAsCjs",
-        "start": "rollup -cw --bundleConfigAsCjs"
+        "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
         "@focus4/core": "11.17.0",

@@ -14,8 +14,7 @@
         "focus4": "lib/focus4.tooling.js"
     },
     "scripts": {
-        "prepare": "rollup -cm --bundleConfigAsCjs",
-        "start": "rollup -cw --bundleConfigAsCjs"
+        "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
         "@types/glob": "8.1.0",
