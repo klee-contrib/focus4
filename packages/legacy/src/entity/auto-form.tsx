@@ -174,7 +174,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
         this.hasForm = hasForm ?? true;
         this.className = className ?? "";
         this.i18nPrefix = i18nPrefix ?? "focus";
-        this.actionsErrorDisplay = errorDisplay ?? (initiallyEditing ? "after-focus" : "always");
+        this.actionsErrorDisplay = errorDisplay ?? (this.isEdit ? "after-focus" : "always");
         this.errorDisplay = this.actionsErrorDisplay;
 
         // On met en place la réaction de chargement.

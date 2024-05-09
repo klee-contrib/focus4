@@ -91,7 +91,14 @@ export function FieldWrapper<F extends FieldEntry>({
             const e = pError ?? validateField(field);
             onErrorChange(isEdit ? e : undefined);
             return e;
-        }, [pError, field, isEdit]);
+        }, [
+            pError,
+            field.$field.domain.type,
+            field.$field.domain.validator,
+            field.$field.isRequired,
+            field.value,
+            isEdit
+        ]);
 
         const formField = useMemo(
             () => ({
