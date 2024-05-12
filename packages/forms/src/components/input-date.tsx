@@ -117,8 +117,8 @@ export function InputDate({
     const zone = timezoneCode
         ? timezoneCode
         : ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only"
-        ? "utc"
-        : undefined;
+          ? "utc"
+          : undefined;
 
     /** Convertit le texte en objet Luxon. */
     const toLuxon = useCallback(
@@ -175,8 +175,8 @@ export function InputDate({
             let dateTime = targetInputFormat
                 ? DateTime.fromFormat(newDate, targetInputFormat, zone ? {zone} : {})
                 : zone === "utc"
-                ? DateTime.utc()
-                : DateTime.now();
+                  ? DateTime.utc()
+                  : DateTime.now();
 
             if (ISOStringFormat === "local-utc-midnight") {
                 dateTime = dateTime.toUTC();
@@ -269,7 +269,6 @@ export function InputDate({
                 name={name}
                 onBlur={onInputBlur}
                 onChange={onInputChange}
-                onClick={menu.open}
                 onFocus={menu.open}
                 onKeyDown={onKeyDown}
                 type="string"
@@ -283,14 +282,14 @@ export function InputDate({
                     calendarPosition === "bottom"
                         ? "bottom-auto"
                         : calendarPosition === "top"
-                        ? "top-auto"
-                        : calendarPosition === "left"
-                        ? "auto-left"
-                        : calendarPosition === "right"
-                        ? "auto-right"
-                        : calendarPosition === "auto"
-                        ? "auto-fit"
-                        : calendarPosition
+                          ? "top-auto"
+                          : calendarPosition === "left"
+                            ? "auto-left"
+                            : calendarPosition === "right"
+                              ? "auto-right"
+                              : calendarPosition === "auto"
+                                ? "auto-fit"
+                                : calendarPosition
                 }
             >
                 <Calendar

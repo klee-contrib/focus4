@@ -219,12 +219,12 @@ export function Menu({
         pPosition === "auto-fill"
             ? "bottom"
             : pPosition === "auto-fit" || pPosition === "auto-left" || pPosition === "bottom-auto"
-            ? "bottom-left"
-            : pPosition === "auto-right"
-            ? "bottom-right"
-            : pPosition === "top-auto"
-            ? "top-left"
-            : pPosition
+              ? "bottom-left"
+              : pPosition === "auto-right"
+                ? "bottom-right"
+                : pPosition === "top-auto"
+                  ? "top-left"
+                  : pPosition
     );
     const [positions, setPositions] = useState({top: 0, bottom: 0, left: 0, right: 0});
     const [maxHeight, setMaxHeight] = useState(0);
@@ -308,8 +308,15 @@ export function Menu({
                 !anchor.current.contains(event.target as Node) &&
                 !ref.current.contains(event.target as Node)
             ) {
-                close?.();
-                setShowRing(false);
+                /*
+                 * Si jamais on est attaché à un input et qu'on clic sur son label alors il ne faut pas fermer,
+                 * sinon la réouverture immédiate du menu au refocus de l'input liée au clic sur le label fait tout planter...
+                 */
+                const input = anchor.current.querySelector("input");
+                if (input?.id && document.querySelector(`label[for="${input.id}"]`) !== event.target) {
+                    close?.();
+                    setShowRing(false);
+                }
             }
         }
         if (active) {
@@ -529,6 +536,6 @@ function getScrollableParent(ele: HTMLElement): HTMLElement {
     return !ele || ele === document.body
         ? document.body
         : isScrollable(ele)
-        ? ele
-        : getScrollableParent(ele.parentNode as HTMLElement);
+          ? ele
+          : getScrollableParent(ele.parentNode as HTMLElement);
 }
