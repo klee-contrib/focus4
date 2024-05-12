@@ -1,6 +1,6 @@
 {
     "name": "@focus4/forms",
-    "version": "11.17.5",
+    "version": "11.17.6",
     "description": "Focus v4, forms module",
     "main": "lib/focus4.forms.js",
     "type": "module",
@@ -18,7 +18,7 @@
         "@focus4/core": "11.17.5",
         "@focus4/stores": "11.17.5",
         "@focus4/styling": "11.17.5",
-        "@focus4/toolbox": "11.17.5",
+        "@focus4/toolbox": "11.17.6",
         "@types/numeral": "2.0.5",
         "lodash-decorators": "6.0.1",
         "numeral": "2.0.6"
