@@ -43,6 +43,14 @@ export interface SelectChipsProps<T extends DomainFieldType> {
     onChange: (value: DomainTypeMultiple<T>) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
+    /**
+     * Contrôle la mise en forme du Dropdown :
+     * - `fit-to-field-and-wrap` va forcer la largeur du menu sur la largeur du champ, et faire des retours à la ligne si nécessaire. (par défaut).
+     * - `fit-to-field-single-line` force également la largeur du menu sur la largeur du champ, mais le texte sera coupé avec une ellipse au lieu de revenir à la ligne.
+     * - `no-fit-single-line` laisse le champ et le menu avec leurs largeurs respectives, sans retour à la ligne.
+     * - `fit-to-values` force la largeur du champ sur la largeur des valeurs, sans retour à la ligne.
+     */
+    sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
     /** CSS. */
     theme?: CSSProp<DropdownCss & SelectChipsCss & TextFieldCss>;
     /** Type du champ (celui du domaine). */
@@ -75,6 +83,7 @@ export function SelectChips<T extends DomainFieldType>({
     name,
     onChange,
     showSupportingText = "always",
+    sizing,
     theme: pTheme,
     type,
     undeletable,
@@ -149,6 +158,7 @@ export function SelectChips<T extends DomainFieldType>({
                 name={name}
                 onChange={handleAddValue}
                 showSupportingText="never"
+                sizing={sizing}
                 theme={theme}
                 trailing={trailing}
                 type={toSimpleType(type)}
