@@ -313,7 +313,7 @@ export function Menu({
                  * sinon la réouverture immédiate du menu au refocus de l'input liée au clic sur le label fait tout planter...
                  */
                 const input = anchor.current.querySelector("input");
-                if (input?.id && document.querySelector(`label[for="${input.id}"]`) !== event.target) {
+                if (!input?.id || document.querySelector(`label[for="${input.id}"]`) !== event.target) {
                     close?.();
                     setShowRing(false);
                 }
