@@ -107,12 +107,10 @@ export class MessageStore {
 
             possibleTypes.forEach(possibleType => {
                 if (this.messageTypes.includes(possibleType)) {
-                    (Array.isArray(messages[type]) ? (messages[type] as string[]) : [messages[type] as string]).forEach(
-                        message => {
-                            this.addMessage(possibleType, message);
-                            allMessages.push(message);
-                        }
-                    );
+                    (Array.isArray(messages[type]) ? messages[type] : [messages[type]]).forEach(message => {
+                        this.addMessage(possibleType, message);
+                        allMessages.push(message);
+                    });
                 }
             });
         });

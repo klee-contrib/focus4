@@ -90,7 +90,7 @@ export function ThemeProvider({appTheme, children}: ThemeProviderProps) {
 
         for (const key in context) {
             if (key in appTheme && appTheme[key]) {
-                mc[key] = themeable(fromBem(context[key]), fromBem(appTheme[key]!)) as {};
+                mc[key] = themeable(fromBem(context[key]), fromBem(appTheme[key]));
             } else {
                 mc[key] = context[key];
             }

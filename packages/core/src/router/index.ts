@@ -14,19 +14,20 @@ export type UrlRouteDescriptor<C, _K = unknown, _T = unknown> = (C extends Param
       ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
           ? UrlRouteDescriptor<C[K]>
           : C[K] extends ParamDef<infer _4, infer _5>
-          ? void
-          : UrlRouteDescriptor<C[K]>) & {spec: C};
+            ? void
+            : UrlRouteDescriptor<C[K]>) & {spec: C};
 
 /** Callback permettant de décrire une URL. */
-export type UrlPathDescriptor<C> = C extends ParamDef<infer _0, Param<infer T>, infer V>
-    ? (param: T) => UrlPathDescriptor<V>
-    : <K extends keyof C>(
-          x: K
-      ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
-          ? UrlPathDescriptor<C[K]>
-          : C[K] extends ParamDef<infer _4, infer _5>
-          ? void
-          : UrlPathDescriptor<C[K]>;
+export type UrlPathDescriptor<C> =
+    C extends ParamDef<infer _0, Param<infer T>, infer V>
+        ? (param: T) => UrlPathDescriptor<V>
+        : <K extends keyof C>(
+              x: K
+          ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
+              ? UrlPathDescriptor<C[K]>
+              : C[K] extends ParamDef<infer _4, infer _5>
+                ? void
+                : UrlPathDescriptor<C[K]>;
 
 /** Router correspondant à la config donnée. */
 export interface Router<C, Q extends QueryParamConfig = {}> {
@@ -100,13 +101,14 @@ export interface RouterConstraintBuilder<C> {
 }
 
 /** Type décrivant l'objet de valeurs de paramètre d'un routeur de configuration quelconque. */
-export type ParamObject<C = any> = C extends ParamDef<infer K1, Param<infer T1>, ParamDef<infer K2, Param<infer T2>>>
-    ? Record<K1, T1> & Record<K2, T2>
-    : C extends ParamDef<infer A3, Param<infer N3>, infer U>
-    ? Record<A3, N3> & {readonly [P in keyof U]: ParamObject<U[P]>}
-    : {
-          readonly [P in keyof C]: ParamObject<C[P]>;
-      };
+export type ParamObject<C = any> =
+    C extends ParamDef<infer K1, Param<infer T1>, ParamDef<infer K2, Param<infer T2>>>
+        ? Record<K1, T1> & Record<K2, T2>
+        : C extends ParamDef<infer A3, Param<infer N3>, infer U>
+          ? Record<A3, N3> & {readonly [P in keyof U]: ParamObject<U[P]>}
+          : {
+                readonly [P in keyof C]: ParamObject<C[P]>;
+            };
 
 /**
  * `makeRouter` permet de construire le routeur de l'application.
@@ -150,7 +152,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                  * Il se s'agit pas d'une navigation, donc ce ne sera pas enregistré dans l'historique.
                  */
                 if (isActive && !isUndefined) {
-                    // eslint-disable-next-line @typescript-eslint/no-useless-template-literals
+                    // eslint-disable-next-line
                     store._activeParams[cIn[0]] = `${change.newValue as string}`;
                     let route = store._activeRoute + buildQueryString(store._activeQuery);
 
@@ -196,7 +198,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
             if (change.newValue === undefined || change.newValue === "") {
                 delete store._activeQuery[key];
             } else {
-                // eslint-disable-next-line @typescript-eslint/no-useless-template-literals
+                // eslint-disable-next-line
                 store._activeQuery[key] = `${change.newValue as string}`;
             }
 
@@ -314,7 +316,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
 
                                 return undefined;
                             })
-                        } as RouteConfig)
+                        }) as RouteConfig
                 ),
                 {
                     // Route non matchée => on revient là où on était avant (ou à la racine si premier appel).
@@ -554,14 +556,14 @@ function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams
                 value === undefined
                     ? undefined
                     : query[key] === "number"
-                    ? parseFloat(value)
-                    : query[key] === "boolean"
-                    ? value === "true"
-                        ? true
-                        : value === "false"
-                        ? false
-                        : Number.NaN
-                    : value;
+                      ? parseFloat(value)
+                      : query[key] === "boolean"
+                        ? value === "true"
+                            ? true
+                            : value === "false"
+                              ? false
+                              : Number.NaN
+                        : value;
             (object as any)[key] = newValue;
             return newValue;
         };
@@ -575,7 +577,7 @@ function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams
 function buildQueryString(query: Record<string, boolean | number | string | undefined>) {
     return Object.keys(query).reduce(
         (acc, qp) =>
-            query[qp] === undefined ? acc : `${acc + (acc === "" ? "?" : "&")}${qp}=${encodeURIComponent(query[qp]!)}`,
+            query[qp] === undefined ? acc : `${acc + (acc === "" ? "?" : "&")}${qp}=${encodeURIComponent(query[qp])}`,
         ""
     );
 }
