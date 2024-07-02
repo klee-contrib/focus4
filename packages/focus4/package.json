@@ -1,6 +1,6 @@
 {
     "name": "focus4",
-    "version": "11.17.7",
+    "version": "11.17.8",
     "description": "Focus v4, all modules",
     "main": "index.js",
     "type": "module",
@@ -12,12 +12,12 @@
     "license": "MIT",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/focus4",
     "dependencies": {
-        "@focus4/collections": "11.17.7",
-        "@focus4/core": "11.17.5",
-        "@focus4/forms": "11.17.7",
-        "@focus4/layout": "11.17.7",
-        "@focus4/stores": "11.17.5",
-        "@focus4/styling": "11.17.5",
-        "@focus4/toolbox": "11.17.7"
+        "@focus4/collections": "11.17.8",
+        "@focus4/core": "11.17.8",
+        "@focus4/forms": "11.17.8",
+        "@focus4/layout": "11.17.8",
+        "@focus4/stores": "11.17.8",
+        "@focus4/styling": "11.17.8",
+        "@focus4/toolbox": "11.17.8"
     }
 }
