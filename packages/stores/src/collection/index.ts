@@ -477,33 +477,38 @@ export class CollectionStore<T = any, C = any> {
         const pendingQuery = v4();
         this.pendingQuery = pendingQuery;
 
-        const response = await this.service(data);
+        try {
+            const response = await this.service(data);
 
-        runInAction(() => {
-            if (pendingQuery !== this.pendingQuery) {
-                return;
+            runInAction(() => {
+                if (pendingQuery !== this.pendingQuery) {
+                    return;
+                }
+
+                // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
+                if (isScroll) {
+                    this.innerList.push(...(response.list ?? []));
+                } else {
+                    this.innerList.replace(response.list ?? []);
+                }
+
+                this.innerFacets.replace(response.facets);
+                this.innerGroups.replace(response.groups ?? []);
+                this.availableSearchFields = response.searchFields ?? [];
+
+                if (!this.skipToken) {
+                    this.serverCount = response.totalCount; // Si on a utilisé un skipToken, le total serveur ne doit pas être mis à jour.
+                }
+
+                this.skipToken = response.skipToken;
+            });
+
+            return response;
+        } finally {
+            if (pendingQuery === this.pendingQuery) {
+                this.pendingQuery = undefined;
             }
-            this.pendingQuery = undefined;
-
-            // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
-            if (isScroll) {
-                this.innerList.push(...(response.list ?? []));
-            } else {
-                this.innerList.replace(response.list ?? []);
-            }
-
-            this.innerFacets.replace(response.facets);
-            this.innerGroups.replace(response.groups ?? []);
-            this.availableSearchFields = response.searchFields ?? [];
-
-            if (!this.skipToken) {
-                this.serverCount = response.totalCount; // Si on a utilisé un skipToken, le total serveur ne doit pas être mis à jour.
-            }
-
-            this.skipToken = response.skipToken;
-        });
-
-        return response;
+        }
     }
 
     /**
@@ -726,29 +731,32 @@ export class CollectionStore<T = any, C = any> {
 }
 
 function groupByFacet<T>(list: T[], fieldName: keyof T) {
-    return list.reduce((buckets, item) => {
-        let value = item[fieldName];
-        if (isEntityField(value)) {
-            // eslint-disable-next-line @typescript-eslint/prefer-destructuring
-            value = value.value;
-        }
-
-        function add(key?: any) {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
-        }
-
-        if (Array.isArray(value) || isObservableArray(value)) {
-            if (value.length === 0) {
-                add();
-            } else {
-                value.forEach(add);
+    return list.reduce(
+        (buckets, item) => {
+            let value = item[fieldName];
+            if (isEntityField(value)) {
+                // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+                value = value.value;
             }
-        } else {
-            add(value);
-        }
-        return buckets;
-    }, {} as Record<string, T[]>);
+
+            function add(key?: any) {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
+            }
+
+            if (Array.isArray(value) || isObservableArray(value)) {
+                if (value.length === 0) {
+                    add();
+                } else {
+                    value.forEach(add);
+                }
+            } else {
+                add(value);
+            }
+            return buckets;
+        },
+        {} as Record<string, T[]>
+    );
 }
 
 function isFacetMatch(facetValue: string, itemValue: any): boolean {
