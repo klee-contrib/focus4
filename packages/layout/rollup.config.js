@@ -44,7 +44,6 @@ export default (async () => {
             "react",
             "react/jsx-runtime",
             "react-dom",
-            "react-transition-group",
             "tslib"
         ]
     };

@@ -1,10 +1,11 @@
+import classNames from "classnames";
 import {PropsWithChildren, useContext} from "react";
-import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSProp, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 
 import {Scrollable} from "../scrollable";
 
+import {useActiveTransition} from "./active-transition";
 import {Overlay} from "./overlay";
 
 import popinCss, {PopinCss} from "./__style__/popin.css";
@@ -45,23 +46,24 @@ export function Popin({
     const theme = useTheme("popin", popinCss, pTheme);
     const context = useContext(ScrollableContext);
 
+    const [displayed, tClassName] = useActiveTransition(opened, theme);
+
     return context.portal(
         <>
             <Overlay active={opened} onClick={(!preventOverlayClick && closePopin) || undefined} />
-            <TransitionGroup component={null}>
-                {opened ? (
-                    <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
-                        <Scrollable
-                            backToTopOffset={backToTopOffset}
-                            className={theme.popin({left: type === "from-left", right: type === "from-right"})}
-                            hideBackToTop={hideBackToTop}
-                            scrollBehaviour={scrollBehaviour}
-                        >
-                            {children}
-                        </Scrollable>
-                    </CSSTransition>
-                ) : null}
-            </TransitionGroup>
+            {displayed ? (
+                <Scrollable
+                    backToTopOffset={backToTopOffset}
+                    className={classNames(
+                        tClassName,
+                        theme.popin({left: type === "from-left", right: type === "from-right"})
+                    )}
+                    hideBackToTop={hideBackToTop}
+                    scrollBehaviour={scrollBehaviour}
+                >
+                    {children}
+                </Scrollable>
+            ) : null}
         </>
     );
 }

@@ -17,7 +17,8 @@
     "dependencies": {
         "@focus4/core": "11.18.0",
         "@focus4/styling": "11.18.0",
-        "@focus4/toolbox": "11.18.0"
+        "@focus4/toolbox": "11.18.0",
+        "react-transition-state": "2.1.1"
     },
     "devDependencies": {
         "@focus4/tooling": "11.18.0"

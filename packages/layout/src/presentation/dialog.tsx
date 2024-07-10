@@ -1,10 +1,10 @@
 import classNames from "classnames";
 import {ReactNode, useContext} from "react";
-import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSProp, cssTransitionProps, fromBem, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
 import {Button, ButtonProps} from "@focus4/toolbox";
 
+import {useActiveTransition} from "./active-transition";
 import {Overlay} from "./overlay";
 
 import dialogCss, {DialogCss} from "./__style__/dialog.css";
@@ -39,30 +39,28 @@ export function Dialog({
     const theme = useTheme("dialog", dialogCss, pTheme);
     const context = useContext(ScrollableContext);
 
+    const [displayed, tClassName] = useActiveTransition(active, theme);
+
     return context.portal(
         <>
             <Overlay active={active} onClick={onOverlayClick} />
-            <TransitionGroup component={null}>
-                {active ? (
-                    <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
-                        <div className={theme.wrapper()}>
-                            <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
-                                {title ? <h5 className={theme.title()}>{title}</h5> : null}
-                                <section className={theme.body()} role="body">
-                                    {children}
-                                </section>
-                                {actions.length ? (
-                                    <nav className={theme.navigation()}>
-                                        {actions.map((action, idx) => (
-                                            <Button key={idx} {...action} />
-                                        ))}
-                                    </nav>
-                                ) : null}
-                            </div>
-                        </div>
-                    </CSSTransition>
-                ) : null}
-            </TransitionGroup>
+            {displayed ? (
+                <div className={classNames(tClassName, theme.wrapper())}>
+                    <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
+                        {title ? <h5 className={theme.title()}>{title}</h5> : null}
+                        <section className={theme.body()} role="body">
+                            {children}
+                        </section>
+                        {actions.length ? (
+                            <nav className={theme.navigation()}>
+                                {actions.map((action, idx) => (
+                                    <Button key={idx} {...action} />
+                                ))}
+                            </nav>
+                        ) : null}
+                    </div>
+                </div>
+            ) : null}
         </>
     );
 }

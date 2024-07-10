@@ -1,10 +1,12 @@
+import classNames from "classnames";
 import {isFunction} from "lodash";
 import {computed, observable} from "mobx";
 import {useObserver} from "mobx-react";
 import {PropsWithChildren, useEffect} from "react";
-import {CSSTransition, TransitionGroup} from "react-transition-group";
 
-import {CSSProp, cssTransitionProps, fromBem, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
+
+import {useActiveTransition} from "./active-transition";
 
 import overlayCss, {OverlayCss} from "./__style__/overlay.css";
 export {overlayCss, OverlayCss};
@@ -50,15 +52,12 @@ export function Overlay({
         };
     }, [active, onClick]);
 
-    return useObserver(() => (
-        <TransitionGroup component={null}>
-            {(isAdditional ? hasOneOverlay.get() : active) ? (
-                <CSSTransition {...cssTransitionProps(fromBem(theme) as any)}>
-                    <div className={theme.overlay()} onClick={onOverlayClick}>
-                        {children}
-                    </div>
-                </CSSTransition>
-            ) : null}
-        </TransitionGroup>
-    ));
+    return useObserver(() => {
+        const [displayed, tClassName] = useActiveTransition(isAdditional ? hasOneOverlay.get() : active, theme);
+        return displayed ? (
+            <div className={classNames(tClassName, theme.overlay())} onClick={onOverlayClick}>
+                {children}
+            </div>
+        ) : null;
+    });
 }

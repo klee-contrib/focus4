@@ -6,7 +6,6 @@ export {
     ScrollableContext,
     ScrollspyContext,
     colorScheme,
-    cssTransitionProps,
     getDefaultTransition,
     initColorScheme,
     getSpringTransition

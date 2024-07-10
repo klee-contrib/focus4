@@ -27,29 +27,6 @@ export function getSpringTransition() {
     } as const;
 }
 
-export function cssTransitionProps({
-    enter,
-    enterActive,
-    exit,
-    exitActive
-}: {
-    enter: string;
-    enterActive: string;
-    exit: string;
-    exitActive: string;
-}) {
-    const {delay, duration} = get();
-    return {
-        timeout: delay + duration,
-        classNames: {
-            enter,
-            enterActive,
-            exit,
-            exitActive
-        }
-    };
-}
-
 function toMs(d: string) {
     if (d.endsWith("ms")) {
         return +d.substring(0, d.length - 2);

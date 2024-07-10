@@ -20,7 +20,8 @@ export {
     layoutCss,
     overlayCss,
     popinCss,
-    scrollspyCss
+    scrollspyCss,
+    useActiveTransition
 } from "./presentation";
 export {ButtonBttCss, Scrollable, ScrollableProps, ScrollableCss, buttonBttCss, scrollableCss} from "./scrollable";
 export {translation} from "./translation";
