@@ -67,13 +67,14 @@ La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l
 
 Toutes les méthodes de champs peuvent prendre les options suivantes :
 
-### `disableInlineSizing` / `labelRatio` / `valueRatio`
+### `labelWidth` / `valueWidth`
 
 Par défaut, le libellé et la valeur sont affichés sur une ligne, en prenant 100% de la largeur disponible, avec un ratio prédéterminé :
 
--   `labelRatio` permet de définir le ratio du composant de libellé (par défaut à 33%).
--   `valueRatio` permet de définir le ratio du composant de valeur (par défaut à 67%).
--   `disableInlineSizing` permet de désactiver complètement ces ratios (qui sont posés en CSS inline), pour les remplacer par un CSS personnalisé.
+-   `labelWidth` permet de définir la largeur du composant de libellé (par défaut à 33%).
+-   `valueWidth` permet de définir la largeur du composant de valeur (par défaut à 67%).
+
+Ces propriétés surchargent les valeurs des variables CSS `--field-label-width` et `--field-value-width`. Vous pouvez également gérer tout directement en CSS comme le reste.
 
 [Cette issue](https://github.com/klee-contrib/focus4/issues/194) sur Github suit une évolution permettant de refondre cette mise en page pour avoir un système plus flexible.
 

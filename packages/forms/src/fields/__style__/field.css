@@ -1,3 +1,10 @@
+:root {
+    --field-label-width: 33%;
+    --field-value-width: 67%;
+    --field-label-value-spacing: 16px;
+    --field-label-required-star-margin: 3px;
+}
+
 .field {
     display: flex;
     align-items: stretch;
@@ -11,16 +18,18 @@
 }
 
 .label {
-    padding-right: 8px;
+    padding-right: calc(var(--field-label-value-spacing) / 2);
+    width: var(--field-label-width);
 }
 
 .value {
-    padding-left: 8px;
+    padding-left: calc(var(--field-label-value-spacing) / 2);
+    width: var(--field-value-width);
 }
 
 .field--edit.field--required .label label::after {
     content: "*";
-    margin-left: 3px;
+    margin-left: var(--field-label-required-star-margin);
 }
 
 .field--error .label label {

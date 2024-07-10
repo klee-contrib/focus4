@@ -23,8 +23,6 @@ export {fieldCss, FieldCss};
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
 export interface FieldOptions<F extends FieldEntry> {
-    /** Désactive le style inline qui spécifie la largeur du label et de la valeur.  */
-    disableInlineSizing?: boolean;
     /**
      * Contrôle l'affichage de l'erreur dans le champ :
      *
@@ -44,14 +42,14 @@ export interface FieldOptions<F extends FieldEntry> {
     /** @internal */
     /** L'input à utiliser. */
     inputType?: "autocomplete" | "input" | "select";
-    /** Largeur en % du label. Par défaut : 33. */
-    labelRatio?: number;
+    /** Surcharge la valeur de la variable CSS `--field-label-width` pour ce champ. */
+    labelWidth?: string;
     /** Handler de modification de la valeur. */
     onChange?: (value: FieldEntryType<F> | undefined) => void;
     /** CSS. */
     theme?: CSSProp<FieldCss>;
-    /** Largeur en % de la valeur. Par défaut : 100 - `labelRatio`. */
-    valueRatio?: number;
+    /** Surcharge la valeur de la variable CSS `--field-value-width` pour ce champ. */
+    valueWidth?: string;
 }
 
 /* Garde en mémoire tous les champs affichés avec le nom du field associé. */
@@ -68,19 +66,16 @@ export function Field<F extends FieldEntry>(
 
         const {
             autocompleteProps = {},
-            disableInlineSizing = fieldProps?.disableInlineSizing ?? context.disableInlineSizing,
             displayProps = {},
             errorDisplay = fieldProps?.errorDisplay ?? context.errorDisplay ?? "after-focus",
             field,
             inputRef,
             hasLabel = fieldProps?.hasLabel ?? !!field.$field.label,
-            labelRatio = fieldProps?.labelRatio ?? context.labelRatio ?? 33,
             labelProps = {},
             inputProps = {},
             inputType = "input",
             onChange,
-            selectProps = {},
-            valueRatio = fieldProps?.valueRatio ?? context.valueRatio ?? 100 - (hasLabel ? labelRatio : 0)
+            selectProps = {}
         } = props;
 
         const fieldId = useId();
@@ -182,6 +177,14 @@ export function Field<F extends FieldEntry>(
             ref: inputRef
         };
 
+        const style: Record<string, string> = {};
+        if (props.labelWidth) {
+            style["--field-label-width"] = props.labelWidth;
+        }
+        if (props.valueWidth) {
+            style["--field-value-width"] = props.valueWidth;
+        }
+
         return (
             <div
                 className={classNames(
@@ -192,6 +195,7 @@ export function Field<F extends FieldEntry>(
                     }),
                     className
                 )}
+                style={style}
             >
                 {hasLabel ? (
                     <LabelComponent
@@ -200,15 +204,10 @@ export function Field<F extends FieldEntry>(
                         comment={comment}
                         id={id}
                         label={label}
-                        style={!disableInlineSizing ? {width: `${labelRatio}%`} : {}}
                         theme={themeable({label: theme.label()}, domainLCP.theme ?? {}, labelProps.theme ?? {})}
                     />
                 ) : null}
-                <div
-                    ref={valueRef}
-                    className={classNames(theme.value(), className)}
-                    style={!disableInlineSizing ? {width: `${valueRatio}%`} : {}}
-                >
+                <div ref={valueRef} className={classNames(theme.value(), className)}>
                     {isEdit ? (
                         inputType === "select" ? (
                             <SelectComponent

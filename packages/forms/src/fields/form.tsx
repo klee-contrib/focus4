@@ -9,8 +9,6 @@ export {formCss, FormCss};
 export interface FormProps {
     /** Children. */
     children?: ReactNode;
-    /** Désactive le style inline sur les champs qui spécifie la largeur du label et de la valeur.  */
-    disableInlineSizing?: boolean;
     /**
      * Contrôle l'affichage des erreurs dans les champs posés dans le `Form` :
      *
@@ -21,46 +19,35 @@ export interface FormProps {
      * Dans tous les cas, l'erreur n'est pas affichée dans un champ s'il a le focus.
      */
     errorDisplay?: "after-focus" | "always" | "never";
-    /** Modifie le labelRatio par défaut des champs posés dans le formulaire (33%); */
-    labelRatio?: number;
+    /** Surcharge la valeur de la variable CSS `--field-label-width` dans le formulaire. */
+    labelWidth?: string;
     /** Retire le formulaire HTML */
     noForm?: boolean;
     /** Voir `FormActions` */
     save?: () => void;
     /** CSS. */
     theme?: CSSProp<FormCss>;
-    /** Modifie le valueRatio par défaut des champs posés dans le formulaire (33%); */
-    valueRatio?: number;
+    /** Surcharge la valeur de la variable CSS `--field-value-width` dans le formulaire. */
+    valueWidth?: string;
 }
 
 export const FormContext = createContext({
-    errorDisplay: undefined as FormProps["errorDisplay"],
-    disableInlineSizing: false,
-    labelRatio: undefined as number | undefined,
-    valueRatio: undefined as number | undefined
+    errorDisplay: undefined as "after-focus" | "always" | "never" | undefined
 });
 
 /** Composant de formulaire */
-export function Form({
-    children,
-    disableInlineSizing = false,
-    errorDisplay,
-    labelRatio,
-    noForm,
-    save,
-    theme: pTheme,
-    valueRatio
-}: FormProps) {
+export function Form({children, errorDisplay, labelWidth, noForm, save, theme: pTheme, valueWidth}: FormProps) {
     const theme = useTheme("form", formCss, pTheme);
-    const context = useMemo(
-        () => ({
-            disableInlineSizing,
-            errorDisplay,
-            labelRatio,
-            valueRatio
-        }),
-        [disableInlineSizing, errorDisplay, labelRatio, valueRatio]
-    );
+    const context = useMemo(() => ({errorDisplay}), [errorDisplay]);
+
+    const style: Record<string, string> = {};
+    if (labelWidth) {
+        style["--field-label-width"] = labelWidth;
+    }
+    if (valueWidth) {
+        style["--field-value-width"] = valueWidth;
+    }
+
     return (
         <FormContext.Provider value={context}>
             {!noForm && save ? (
@@ -71,11 +58,12 @@ export function Form({
                         e.preventDefault();
                         save();
                     }}
+                    style={style}
                 >
                     {children}
                 </form>
             ) : (
-                children
+                <div style={style}>{children}</div>
             )}
         </FormContext.Provider>
     );

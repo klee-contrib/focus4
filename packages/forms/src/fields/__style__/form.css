@@ -2,7 +2,3 @@
     margin: 0;
     padding: 0;
 }
-
-.form :global([data-focus="panel"]) {
-    position: relative;
-}
