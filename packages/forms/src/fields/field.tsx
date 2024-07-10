@@ -72,10 +72,12 @@ export function Field<F extends FieldEntry>(
             inputRef,
             hasLabel = fieldProps?.hasLabel ?? !!field.$field.label,
             labelProps = {},
+            labelWidth = fieldProps?.labelWidth,
             inputProps = {},
             inputType = "input",
             onChange,
-            selectProps = {}
+            selectProps = {},
+            valueWidth = fieldProps?.valueWidth
         } = props;
 
         const fieldId = useId();
@@ -178,11 +180,11 @@ export function Field<F extends FieldEntry>(
         };
 
         const style: Record<string, string> = {};
-        if (props.labelWidth) {
-            style["--field-label-width"] = props.labelWidth;
+        if (labelWidth) {
+            style["--field-label-width"] = labelWidth;
         }
-        if (props.valueWidth) {
-            style["--field-value-width"] = props.valueWidth;
+        if (valueWidth) {
+            style["--field-value-width"] = valueWidth;
         }
 
         return (
