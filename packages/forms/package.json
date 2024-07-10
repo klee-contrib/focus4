@@ -20,7 +20,6 @@
         "@focus4/styling": "11.17.8",
         "@focus4/toolbox": "11.17.8",
         "@types/numeral": "2.0.5",
-        "lodash-decorators": "6.0.1",
         "numeral": "2.0.6"
     },
     "devDependencies": {

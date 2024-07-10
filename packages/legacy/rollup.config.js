@@ -21,7 +21,6 @@ const config = {
         "i18next",
         "inputmask-core",
         "lodash",
-        "lodash-decorators",
         "luxon",
         "mobx",
         "mobx-react",
