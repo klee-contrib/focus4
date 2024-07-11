@@ -25,6 +25,11 @@
 .value {
     padding-left: calc(var(--field-label-value-spacing) / 2);
     width: var(--field-value-width);
+
+    &:first-child:last-child {
+        padding-left: 0;
+        width: calc(var(--field-label-width) + var(--field-value-width));
+    }
 }
 
 .field--edit.field--required .label label::after {
