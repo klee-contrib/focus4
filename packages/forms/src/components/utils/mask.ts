@@ -84,6 +84,11 @@ export function useMask({
         throw new Error("InputMask: placeholderChar should be a single character or an empty string.");
     }
 
+    // KeyPress ne renvoie pas de code de touche sur mobile donc le masque ne fonctionne pas...
+    if (/Android|iPhone|iPad/.exec(navigator.userAgent)) {
+        sourcePattern = undefined;
+    }
+
     const formatCharacters = useMemo(() => {
         if (pFormatCharacters) {
             const merged = {...defaultFormatCharacters};
