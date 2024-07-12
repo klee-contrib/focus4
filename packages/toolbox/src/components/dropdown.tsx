@@ -232,6 +232,8 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
             ref={rootRef}
             aria-activedescendant={id ? `${id}-${selected}` : undefined}
             aria-disabled={disabled}
+            aria-errormessage={error && id ? `${id}-st` : undefined}
+            aria-invalid={error ? true : undefined}
             className={classNames(
                 theme.dropdown({
                     disabled,
@@ -252,6 +254,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 fieldRef={menu.anchor}
                 hint={hint}
                 icon={icon}
+                id={id}
                 label={label}
                 loading={loading}
                 multiline={multiline}
@@ -318,12 +321,12 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                                   : "left"
                           }`
                         : direction === "up"
-                        ? sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
-                            ? "top"
-                            : "top-left"
-                        : sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
-                        ? "bottom"
-                        : "bottom-left"
+                          ? sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                              ? "top"
+                              : "top-left"
+                          : sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                            ? "bottom"
+                            : "bottom-left"
                 }
                 selected={selected}
             >

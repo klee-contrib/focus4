@@ -273,6 +273,8 @@ export const TextField = forwardRef(function TextField(
     const inputElementProps = {
         ref: inputNode as any,
         autoComplete,
+        "aria-errormessage": error && id ? `${id}-st` : undefined,
+        "aria-invalid": error ? true : undefined,
         className: theme.input(),
         disabled,
         id,
@@ -392,7 +394,7 @@ export const TextField = forwardRef(function TextField(
             </div>
             {showSupportingText === "always" || (showSupportingText === "auto" && (!!supportingText || !!maxLength)) ? (
                 <div className={theme.supportingText()}>
-                    <div>{supportingText}</div>
+                    <div id={id ? `${id}-st` : undefined}>{supportingText}</div>
                     {maxLength ? (
                         <div>
                             {value?.length ?? 0}/{maxLength}

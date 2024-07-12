@@ -100,7 +100,9 @@ export function SelectRadio<T extends DomainFieldType>({
                     })}
                 </RadioGroup>
                 {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                    <div className={theme.supportingText()}>{error}</div>
+                    <div className={theme.supportingText()}>
+                        <div>{error}</div>
+                    </div>
                 ) : null}
             </div>
         );

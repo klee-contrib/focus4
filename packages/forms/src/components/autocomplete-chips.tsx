@@ -190,7 +190,9 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
                 </div>
             ) : null}
             {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                <div className={theme.supportingText()}>{error}</div>
+                <div className={theme.supportingText()}>
+                    <div id={id ? `${id}-st` : undefined}>{error}</div>
+                </div>
             ) : null}
         </div>
     ));

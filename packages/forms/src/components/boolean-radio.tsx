@@ -54,7 +54,9 @@ export function BooleanRadio({
                 <RadioButton label={i18next.t(labelNo)} name={`${name}-no`} theme={theme} value="false" />
             </RadioGroup>
             {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                <div className={theme.supportingText({error: !!error})}>{error}</div>
+                <div className={theme.supportingText({error: !!error})}>
+                    <div>{error}</div>
+                </div>
             ) : null}
         </>
     );
