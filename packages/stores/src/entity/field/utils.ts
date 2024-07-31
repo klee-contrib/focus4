@@ -1,4 +1,5 @@
 import {isFunction} from "lodash";
+import {extendObservable} from "mobx";
 import {ComponentType, ReactNode} from "react";
 
 import {
@@ -15,7 +16,7 @@ import {
 } from "../types";
 import {BaseComponents, WithThemeProps} from "../types/components";
 
-import {EntityFieldBuilder} from "./builder";
+import {BuildingFormEntityField, EntityFieldBuilder} from "./builder";
 
 interface ReadonlyFieldOptions<
     DT extends DomainFieldType = "string",
@@ -43,15 +44,17 @@ interface ReadonlyFieldOptions<
  */
 export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: boolean) {
     const {domain, name, ...metadata} = field.$field;
-    return new EntityFieldBuilder(name)
-        .value(
-            () => field.value,
-            value => (field.value = value)
-        )
-        .domain(domain)
-        .metadata(metadata)
-        .edit(isEdit)
-        .collect();
+    return withIsEdit(
+        new EntityFieldBuilder(name)
+            .value(
+                () => field.value,
+                value => (field.value = value)
+            )
+            .domain(domain)
+            .metadata(metadata)
+            .edit(isEdit)
+            .collect()
+    );
 }
 
 /**
@@ -139,13 +142,7 @@ export function makeField<F extends FieldEntry>(
 ): EntityField<F>;
 export function makeField(param1: any, param2: any = {}) {
     if (isFunction(param2)) {
-        const field = param2(new EntityFieldBuilder(param1).edit(true)).collect();
-
-        if (isFunction(field.isEdit)) {
-            field.isEdit = field.isEdit();
-        }
-
-        return field;
+        return withIsEdit(param2(new EntityFieldBuilder(param1)).collect());
     } else {
         const {
             className,
@@ -160,20 +157,31 @@ export function makeField(param1: any, param2: any = {}) {
             labelProps,
             name = ""
         } = param2;
-        return new EntityFieldBuilder(name)
-            .domain(domain)
-            .metadata({
-                className,
-                comment,
-                displayFormatter,
-                label,
-                DisplayComponent,
-                LabelComponent,
-                displayProps: {...(domain?.displayProps ?? {}), ...displayProps},
-                labelProps: {...(domain?.labelProps ?? {}), ...labelProps},
-                fieldProps: {...(domain?.fieldProps ?? {}), ...fieldProps}
-            })
-            .value(() => param1)
-            .collect();
+        return withIsEdit(
+            new EntityFieldBuilder(name)
+                .domain(domain)
+                .metadata({
+                    className,
+                    comment,
+                    displayFormatter,
+                    label,
+                    DisplayComponent,
+                    LabelComponent,
+                    displayProps: {...(domain?.displayProps ?? {}), ...displayProps},
+                    labelProps: {...(domain?.labelProps ?? {}), ...labelProps},
+                    fieldProps: {...(domain?.fieldProps ?? {}), ...fieldProps}
+                })
+                .value(() => param1)
+                .edit(false)
+                .collect()
+        );
     }
+}
+
+function withIsEdit(field: BuildingFormEntityField) {
+    return extendObservable(field, {
+        get isEdit() {
+            return isFunction(field._isEdit) ? field._isEdit() : field._isEdit;
+        }
+    });
 }

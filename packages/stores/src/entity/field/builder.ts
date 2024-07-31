@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {extendObservable, observable, remove} from "mobx";
+import {computed, extendObservable, observable, remove} from "mobx";
 import {ComponentType, ReactNode} from "react";
 
 import {themeable} from "@focus4/core";
@@ -24,12 +24,10 @@ type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps :
 type DomainSelectProps<D> = D extends Domain<infer _0, infer _1, infer SCProps> ? SCProps : never;
 type DomainAutocompleteProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer ACProps> ? ACProps : never;
 type DomainDisplayProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer DCProps> ? DCProps : never;
-type DomainLabelProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer LCProps>
-    ? LCProps
-    : never;
-type DomainFieldProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer _5, infer FProps>
-    ? FProps
-    : never;
+type DomainLabelProps<D> =
+    D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer LCProps> ? LCProps : never;
+type DomainFieldProps<D> =
+    D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer _5, infer FProps> ? FProps : never;
 
 /** Métadonnées surchargeables dans un champ. */
 export interface Metadata<
@@ -66,32 +64,68 @@ export interface Metadata<
     SelectComponent?: ComponentType<SCProps>;
 }
 
+export type BuildingFormEntityField<F extends FieldEntry = any> = EntityField<F> & {
+    _added: boolean;
+    _domain: Domain;
+    _isEdit: boolean | (() => boolean);
+    _metadatas: (Metadata | (() => Metadata))[];
+};
+
 export class EntityFieldBuilder<F extends FieldEntry> {
     /** @internal */
-    field: EntityField<F> = extendObservable(
-        {
-            $field: {
-                type: "field",
-                name: "",
-                domain: {type: "string"},
-                isRequired: false,
-                label: ""
-            } as F,
-            _added: true
-        },
-        {
-            value: undefined
-        },
-        {value: observable.ref}
-    );
+    field: BuildingFormEntityField<F>;
 
     constructor(field: EntityField<F> | string) {
+        let source: EntityField<F>;
         if (typeof field === "string") {
-            // @ts-ignore
-            this.field.$field.name = field;
+            source = {
+                $field: {
+                    type: "field",
+                    domain: {type: "string"},
+                    isRequired: false,
+                    label: "",
+                    name: field
+                } as F,
+                value: undefined
+            };
         } else {
-            this.field = field;
+            source = field;
         }
+
+        if ("_domain" in source) {
+            this.field = source as BuildingFormEntityField<F>;
+            return;
+        }
+
+        const {domain, isRequired, label, name, type, comment, defaultValue} = source.$field;
+        this.field = observable(
+            {
+                _added: typeof field === "string",
+                _isEdit: true,
+                _domain: domain,
+                _metadatas: [{comment, isRequired, label}],
+                get $field() {
+                    return {
+                        type,
+                        name,
+                        ...mergeMetadatas(
+                            this._domain,
+                            this._metadatas.map(m => (isFunction(m) ? m() : m))
+                        )
+                    } as F;
+                },
+                value: defaultValue
+            },
+            {
+                _metadatas: observable.shallow,
+                _domain: observable.ref,
+                $field: computed.struct,
+                value: observable.ref
+            },
+            {
+                proxy: false
+            }
+        );
     }
 
     /**
@@ -99,7 +133,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * @param domain Le domaine.
      */
     domain<D extends Domain>(
-        domain?: D
+        domain: D
     ): EntityFieldBuilder<
         FieldEntry<
             D["type"],
@@ -112,11 +146,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainFieldProps<D>
         >
     > {
-        if (domain) {
-            // @ts-ignore
-            this.field.$field.domain = domain;
-        }
-        // @ts-ignore
+        this.field._domain = domain;
         return this;
     }
 
@@ -131,8 +161,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      */
     edit(value: () => boolean): EntityFieldBuilder<F>;
     edit(value: boolean | (() => boolean)): EntityFieldBuilder<F> {
-        // @ts-ignore
-        this.field.isEdit = value;
+        this.field._isEdit = value;
         return this;
     }
 
@@ -170,20 +199,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainFieldProps<F["domain"]>
         >
     > {
-        const old$field = this.field.$field;
-        if (isFunction($field)) {
-            // @ts-ignore
-            delete this.field.$field;
-            extendObservable(this.field, {
-                get $field() {
-                    return merge$fields(old$field, ($field as () => F)());
-                }
-            });
-        } else {
-            // @ts-ignore
-            this.field.$field = merge$fields(this.field.$field, $field);
-        }
-        // @ts-ignore
+        this.field._metadatas.push($field);
         return this;
     }
 
@@ -244,7 +260,6 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         } else {
             this.field.value = getOrValue;
         }
-        // @ts-ignore
         return this;
     }
 
@@ -254,33 +269,40 @@ export class EntityFieldBuilder<F extends FieldEntry> {
     }
 }
 
-function merge$fields(old$field: FieldEntry, $field: Metadata) {
+function mergeMetadatas(domain: Domain, $metadatas: Metadata[]) {
+    let $metadata = $metadatas[0];
+    for (let i = 1; i <= $metadatas.length - 1; i++) {
+        [$metadata, domain] = mergeMetadata(domain, $metadata, $metadatas[i]);
+    }
+    return {...$metadata, domain};
+}
+
+function mergeMetadata(domain: Domain, targetMetadata: Metadata, newMetadata: Metadata) {
     const {
-        isRequired = old$field.isRequired,
-        label = old$field.label,
-        comment = old$field.comment,
+        comment = targetMetadata.comment,
+        isRequired = targetMetadata.isRequired,
+        label = targetMetadata.label,
         ...domainOverrides
-    } = $field;
-    const {domain} = old$field;
-    return {
-        type: "field",
-        name: old$field.name,
-        comment,
-        isRequired,
-        label,
-        domain: {
+    } = newMetadata;
+    return [
+        {
+            comment,
+            isRequired,
+            label
+        },
+        {
             ...domain,
             ...domainOverrides,
             validator: !domain.validator
                 ? domainOverrides.validator
                 : !domainOverrides.validator
-                ? domain.validator
-                : [
-                      ...(Array.isArray(domain.validator) ? domain.validator : [domain.validator]),
-                      ...(Array.isArray(domainOverrides.validator)
-                          ? domainOverrides.validator
-                          : [domainOverrides.validator])
-                  ],
+                  ? domain.validator
+                  : [
+                        ...(Array.isArray(domain.validator) ? domain.validator : [domain.validator]),
+                        ...(Array.isArray(domainOverrides.validator)
+                            ? domainOverrides.validator
+                            : [domainOverrides.validator])
+                    ],
             inputProps: {
                 ...domain.inputProps,
                 ...domainOverrides.inputProps,
@@ -312,5 +334,5 @@ function merge$fields(old$field: FieldEntry, $field: Metadata) {
                 theme: themeable(domain.fieldProps?.theme ?? {}, domainOverrides.fieldProps?.theme ?? {})
             }
         }
-    };
+    ] as const;
 }

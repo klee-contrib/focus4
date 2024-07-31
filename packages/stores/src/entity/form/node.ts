@@ -173,7 +173,7 @@ export class FormNodeBuilder<E, E0 = E> {
         if (isStoreListNode(child)) {
             this.node[node] = builder(new FormListNodeBuilder(child), this.node).collect();
         } else if (isStoreNode(child)) {
-            this.node[node] = builder(new FormNodeBuilder(child as any), this.node).collect();
+            this.node[node] = builder(new FormNodeBuilder(child), this.node).collect();
         } else if (isEntityField(child)) {
             this.node[node] = builder(new EntityFieldBuilder(child), this.node).collect();
         }
@@ -233,9 +233,12 @@ export function clone(source: any): any {
     } else if (isEntityField(source)) {
         return extendObservable(
             {
-                $field: source.$field
+                get $field() {
+                    return source.$field;
+                }
             },
             {
+                _isEdit: true,
                 value: source.$field.defaultValue
             },
             {

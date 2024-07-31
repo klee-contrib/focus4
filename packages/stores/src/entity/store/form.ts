@@ -1,6 +1,7 @@
 import {isBoolean, isEqual, isFunction, toPairs} from "lodash";
 import {action, extendObservable, IArrayDidChange, intercept, observable, observe} from "mobx";
 
+import {BuildingFormEntityField} from "../field";
 import {
     EntityField,
     FormEntityField,
@@ -185,7 +186,7 @@ export function nodeToFormNode<E = any, E0 = E>(
             }
             const child: {} = (node as any)[entry];
             if (isEntityField(child)) {
-                addFormFieldProperties(child, node);
+                addFormFieldProperties(child as BuildingFormEntityField, node);
             } else if (isAnyStoreNode(child)) {
                 nodeToFormNode(child, (sourceNode as any)[entry], node);
             }
@@ -218,19 +219,18 @@ export function nodeToFormNode<E = any, E0 = E>(
 }
 
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
-function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
-    const {isEdit} = field as FormEntityField;
-    delete (field as any).isEdit;
+function addFormFieldProperties(field: BuildingFormEntityField, parentNode: FormNode) {
     extendObservable(field, {
-        _isEdit: isBoolean(isEdit) ? isEdit : true,
         get error() {
             return validateField(field);
         },
         get isEdit() {
-            return parentNode.form.isEdit && (isFunction(isEdit) ? isEdit() : this._isEdit);
+            return parentNode.form.isEdit && (isFunction(field._isEdit) ? field._isEdit() : field._isEdit);
         },
         set isEdit(edit) {
-            this._isEdit = edit;
+            if (!isFunction(field._isEdit)) {
+                field._isEdit = edit;
+            }
         },
         get isValid() {
             return !this.isEdit || !this.error;
@@ -240,7 +240,7 @@ function addFormFieldProperties(field: EntityField, parentNode: FormNode) {
     if (parentNode !== parentNode.sourceNode) {
         const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
         if (sourceField) {
-            (field as FormEntityField)._dispose = intercept(sourceField, "value", change => {
+            (field as any)._dispose = intercept(sourceField, "value", change => {
                 if (parentNode !== parentNode.sourceNode) {
                     field.value = change.newValue;
                 }
