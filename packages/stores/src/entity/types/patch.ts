@@ -3,34 +3,43 @@ import {Domain, FieldEntry, ListEntry, ObjectEntry} from "./entity";
 import {FormListNode, FormNode} from "./form";
 
 /**
- * Patche le type d'une entité pour ajouter ou remplacer des entrées.
+ * Patche le type d'une entité pour ajouter, remplacer ou retirer des entrées.
  *
  * Exemple : `Patch<MyEntity, {nouveauChamp: FieldEntry<"string">, champExistant: FieldEntry2<typeof DO_NEW_DOMAIN}>}`
+ *
+ * Le troisième paramètre peut être utilisé pour lister les champs à retirer, sous la forme `"champ1" | "champ2"`.
  */
-export type Patch<E, P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>> = Omit<
+export type Patch<
     E,
-    keyof P
-> & {[K in keyof P]: P[K]};
+    P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>,
+    R extends string = never
+> = Omit<E, keyof P | R> & {[K in keyof P]: P[K]};
 
 /**
- * Patche le type d'un `FormNode` pour ajouter ou remplacer des entrées à son entité.
+ * Patche le type d'un `FormNode` pour ajouter, remplacer ou retirer des entrées à son entité.
  *
  * Exemple : `PatchedFormNode<MyEntity, {nouveauChamp: FieldEntry<"string">, champExistant: FieldEntry2<typeof DO_NEW_DOMAIN}>}`
+ *
+ * Le troisième paramètre peut être utilisé pour lister les champs à retirer, sous la forme `"champ1" | "champ2"`.
  */
 export type PatchedFormNode<
     E,
-    P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>
-> = FormNode<Patch<E, P>, E>;
+    P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>,
+    R extends string = never
+> = FormNode<Patch<E, P, R>, E>;
 
 /**
- * Patche le type d'un `FormListNode` pour ajouter ou remplacer des entrées à son entité.
+ * Patche le type d'un `FormListNode` pour ajouter, remplacer ou retirer des entrées à son entité.
  *
  * Exemple : `PatchedFormListNode<MyEntity, {nouveauChamp: FieldEntry<"string">, champExistant: FieldEntry2<typeof DO_NEW_DOMAIN}>}`
+ *
+ * Le troisième paramètre peut être utilisé pour lister les champs à retirer, sous la forme `"champ1" | "champ2"`.
  */
 export type PatchedFormListNode<
     E,
-    P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>
-> = FormListNode<Patch<E, P>, E>;
+    P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>,
+    R extends string = never
+> = FormListNode<Patch<E, P, R>, E>;
 
 /**
  * Patche le type du composant de saisie simple d'un champ (via le type des props de son `InputComponent`).
