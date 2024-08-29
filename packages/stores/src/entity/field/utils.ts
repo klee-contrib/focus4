@@ -147,7 +147,7 @@ export function makeField(param1: any, param2: any = {}) {
         const {
             className,
             comment,
-            domain,
+            domain = {type: "string"},
             DisplayComponent = domain?.DisplayComponent,
             displayFormatter = domain?.displayFormatter,
             displayProps,
@@ -156,7 +156,7 @@ export function makeField(param1: any, param2: any = {}) {
             LabelComponent = domain?.LabelComponent,
             labelProps,
             name = ""
-        } = param2;
+        } = param2 as ReadonlyFieldOptions & {name?: string};
         return withIsEdit(
             new EntityFieldBuilder(name)
                 .domain(domain)
