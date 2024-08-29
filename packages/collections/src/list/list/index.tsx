@@ -7,7 +7,6 @@ import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {OperationListItem} from "../contextual-actions";
-import {DndDragLayer, DragLayerCss} from "../drag-layer";
 import {ListBaseProps, useListBase} from "../list-base";
 import {
     AddItemProps,
@@ -37,16 +36,8 @@ export type ListProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     canOpenDetail?: (data: NoInfer<T>) => boolean;
     /** Composant de détail, à afficher dans un "accordéon" au clic sur un objet. */
     DetailComponent?: ComponentType<DetailProps<NoInfer<T>>>;
-    /** Nombre d'éléments à partir du quel on n'affiche plus d'animation de drag and drop sur les lignes. */
-    disableDragAnimThreshold?: number;
-    /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
-    dragItemType?: string;
-    /** CSS du DragLayer. */
-    dragLayerTheme?: CSSProp<DragLayerCss>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ComponentType<EmptyProps<NoInfer<T>>>;
-    /** Active le drag and drop. */
-    hasDragAndDrop?: boolean;
     /** Cache le bouton "Ajouter" dans la mosaïque et le composant vide. */
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
@@ -100,7 +91,6 @@ export type ListProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
  *  complémentaires (il s'ouvre bien au bon endroit en mode mosaïque).
  * - Possibilité de définir un `addItemHandler` et son `AddItemComponent`, pour avoir un composant générique pour ajouter un nouvel élément (utile en
  *  particulier pour l'affichage mosaïque).
- * - Possibilité de définir les éléments de la liste comme des [sources de drag and drop](https://react-dnd.github.io/react-dnd/docs/api/use-drag) (via `hasDragAndDrop`)
  *
  * **Ce composant n'a d'intérêt que si vous avez besoin d'une des fonctionnalités listées dans cette description** (la plupart du temps, il s'agit de la pagination, de
  * la sélection, ou des actions de ligne). Sans ça, il n'a aucun avantage sur un simple `list.map()` React classique et apporte une complexité inutile.
@@ -110,11 +100,7 @@ export function List<T>({
     addItemHandler,
     canOpenDetail = () => true,
     DetailComponent,
-    disableDragAnimThreshold,
-    dragItemType,
-    dragLayerTheme,
     EmptyComponent = DefaultEmptyComponent,
-    hasDragAndDrop,
     // @ts-ignore
     hasSelection,
     hideAdditionalItems,
@@ -147,8 +133,6 @@ export function List<T>({
             displayedIdx: undefined as number | undefined,
             /** Ref vers la liste pour déterminer sa largeur. */
             ulRef: null as HTMLUListElement | null,
-            /** Liste des éléments sélectionnés par le drag and drop. */
-            draggedItems: observable<T>([], {deep: false}),
 
             /** Toggle le détail depuis la ligne. */
             async toggleDetail(
@@ -212,10 +196,6 @@ export function List<T>({
         /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
         const isAddItemShown = !!(!hideAdditionalItems && state.addItemHandler && state.mode === "mosaic");
 
-        /** Désactive l'animation de drag and drop sur les lignes. */
-        const disableDragAnimation =
-            disableDragAnimThreshold === undefined ? false : disableDragAnimThreshold <= displayedData.length;
-
         let Component: ComponentType<LineProps<T>>;
         if (state.mode === "list" && LineComponent) {
             Component = LineComponent;
@@ -242,10 +222,7 @@ export function List<T>({
             <Fragment key={itemKey(item, idx)}>
                 <LineWrapper
                     data={item}
-                    disableDragAnimation={disableDragAnimation}
                     domRef={getDomRef(idx)}
-                    draggedItems={hasDragAndDrop ? state.draggedItems : undefined}
-                    dragItemType={dragItemType}
                     hasSelection={store ? hasSelection : undefined}
                     LineComponent={Component}
                     mosaic={state.mode === "mosaic" ? mosaic : undefined}
@@ -280,45 +257,42 @@ export function List<T>({
         ));
 
         return (
-            <>
-                {hasDragAndDrop ? <DndDragLayer i18nPrefix={i18nPrefix} theme={dragLayerTheme} /> : null}
-                <div
-                    className={theme.list({
-                        mosaic: state.mode === "mosaic",
-                        selected: (store && store.selectionStatus !== "none") ?? false
-                    })}
-                >
-                    {/* Gestion de l'empty state. */}
-                    {!isLoading && !hideAdditionalItems && !displayedData.length ? (
-                        <EmptyComponent addItemHandler={state.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
-                    ) : (
-                        <ul
-                            ref={ul => {
-                                state.ulRef = ul;
-                            }}
-                        >
-                            {/* On regarde si on doit ajouter l'élément d'ajout. */}
-                            {isAddItemShown ? (
-                                <li
-                                    key="mosaic-add"
-                                    className={theme.mosaicAdd()}
-                                    style={{width: mosaic.width, height: mosaic.height}}
-                                >
-                                    <AddItemComponent
-                                        addItemHandler={state.addItemHandler}
-                                        i18nPrefix={i18nPrefix}
-                                        mode="mosaic"
-                                    />
-                                </li>
-                            ) : null}
-                            {lines}
-                        </ul>
-                    )}
-                    {/* Gestion de l'affichage du chargement. */}
-                    {isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
-                    {bottomRow}
-                </div>
-            </>
+            <div
+                className={theme.list({
+                    mosaic: state.mode === "mosaic",
+                    selected: (store && store.selectionStatus !== "none") ?? false
+                })}
+            >
+                {/* Gestion de l'empty state. */}
+                {!isLoading && !hideAdditionalItems && !displayedData.length ? (
+                    <EmptyComponent addItemHandler={state.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
+                ) : (
+                    <ul
+                        ref={ul => {
+                            state.ulRef = ul;
+                        }}
+                    >
+                        {/* On regarde si on doit ajouter l'élément d'ajout. */}
+                        {isAddItemShown ? (
+                            <li
+                                key="mosaic-add"
+                                className={theme.mosaicAdd()}
+                                style={{width: mosaic.width, height: mosaic.height}}
+                            >
+                                <AddItemComponent
+                                    addItemHandler={state.addItemHandler}
+                                    i18nPrefix={i18nPrefix}
+                                    mode="mosaic"
+                                />
+                            </li>
+                        ) : null}
+                        {lines}
+                    </ul>
+                )}
+                {/* Gestion de l'affichage du chargement. */}
+                {isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
+                {bottomRow}
+            </div>
         );
     });
 }
@@ -345,7 +319,6 @@ export function List<T>({
  *  complémentaires (il s'ouvre bien au bon endroit en mode mosaïque).
  * - Possibilité de définir un `addItemHandler` et son `AddItemComponent`, pour avoir un composant générique pour ajouter un nouvel élément (utile en
  *  particulier pour l'affichage mosaïque).
- * - Possibilité de définir les éléments de la liste comme des [sources de drag and drop](https://react-dnd.github.io/react-dnd/docs/api/use-drag) (via `hasDragAndDrop`)
  *
  * **Ce composant n'a d'intérêt que si vous avez besoin d'une des fonctionnalités listées dans cette description** (la plupart du temps, il s'agit de la pagination, de
  * la sélection, ou des actions de ligne). Sans ça, il n'a aucun avantage sur un simple `list.map()` React classique et apporte une complexité inutile.

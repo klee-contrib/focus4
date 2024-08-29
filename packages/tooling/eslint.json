@@ -121,29 +121,6 @@
                 ]
             }
         ],
-        "@typescript-eslint/ban-types": [
-            "warn",
-            {
-                "extendDefaults": false,
-                "types": {
-                    "String": {
-                        "message": "Use string instead",
-                        "fixWith": "string"
-                    },
-                    "Number": {
-                        "message": "Use number instead",
-                        "fixWith": "number"
-                    },
-                    "Boolean": {
-                        "message": "Use boolean instead",
-                        "fixWith": "boolean"
-                    },
-                    "Function": {
-                        "message": "Use a proper function type instead"
-                    }
-                }
-            }
-        ],
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/block-spacing": "off",
         "@typescript-eslint/class-literal-property-style": "off",
@@ -156,13 +133,6 @@
         "@typescript-eslint/explicit-member-accessibility": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/init-declarations": "off",
-        "@typescript-eslint/lines-between-class-members": [
-            "warn",
-            "always",
-            {
-                "exceptAfterSingleLine": true
-            }
-        ],
         "@typescript-eslint/max-params": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/method-signature-style": "off",

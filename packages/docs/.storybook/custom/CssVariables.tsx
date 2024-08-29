@@ -4,7 +4,8 @@ import {PureArgsTable} from "@storybook/blocks";
 import {toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import React from "react";
-import {useDarkMode} from "storybook-dark-mode";
+
+import {useDarkMode} from "./DocsContainer";
 
 type VariableDefinitions = Record<string, {main: string; dark?: string}>;
 
@@ -19,7 +20,7 @@ export function CssVariables() {
             }
             const lol = value.split(":");
             return {...obj, [lol[0].trim()]: lol[1].trim()};
-        }, {})
+        }, {}) as any
     }));
 
     const {global, common, local} = (meta.preparedMeta.parameters?.cssVariables ?? {}) as Record<

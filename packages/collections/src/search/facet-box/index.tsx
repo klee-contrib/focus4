@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {action, comparer, observable, reaction} from "mobx";
 import {useObserver} from "mobx-react";
-import {ElementType, MouseEvent, useEffect, useState} from "react";
+import {ElementType, MouseEvent, ReactElement, useEffect, useState} from "react";
 
 import {CollectionStore, FacetOutput, FormEntityField} from "@focus4/stores";
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
@@ -9,10 +9,10 @@ import {IconButton} from "@focus4/toolbox";
 
 import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
 import {shouldDisplayFacet} from "./utils";
-export {shouldDisplayFacet, FacetProps};
+export {FacetProps, shouldDisplayFacet};
 
 import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
-export {FacetBoxCss, FacetCss, facetBoxCss, facetCss};
+export {FacetBoxCss, facetBoxCss, FacetCss, facetCss};
 
 /** "Facette" additionnelle. */
 export interface AdditionalFacet {
@@ -145,7 +145,7 @@ export function FacetBox<T>({
                     facet.code !== store.groupingKey)
         );
 
-        let sectionElements: JSX.Element[] | undefined;
+        let sectionElements: ReactElement[] | undefined;
         if (sections) {
             if (sections.filter(s => !s.facets).length > 1) {
                 throw new Error("Il ne peut y avoir qu'une seule section de facettes non renseignées.");
@@ -178,7 +178,7 @@ export function FacetBox<T>({
                         return null;
                     }
                 })
-                .filter(x => x) as JSX.Element[];
+                .filter(x => x) as ReactElement[];
 
             const restSection = sections.find(s => !s.facets && !!remainingFacets.length);
             if (restSection) {

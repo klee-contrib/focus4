@@ -1,10 +1,6 @@
 /* eslint-disable camelcase */
 
 export const fr = {
-    dragLayer: {
-        item: "élément",
-        item_other: "éléments"
-    },
     list: {
         add: "Ajouter",
         empty: "Aucun élément",

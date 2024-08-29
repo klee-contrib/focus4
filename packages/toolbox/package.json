@@ -19,7 +19,7 @@
         "@focus4/styling": "11.18.1",
         "@types/luxon": "3.4.2",
         "framer-motion": "11.0.26",
-        "luxon": "3.4.4"
+        "luxon": "3.5.0"
     },
     "devDependencies": {
         "@focus4/tooling": "11.18.0"

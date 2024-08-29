@@ -3,7 +3,7 @@ import {AnimatePresence, HTMLMotionProps, motion} from "framer-motion";
 import {memoize, range} from "lodash";
 import {action, computed, IReactionDisposer, makeObservable, observable, when} from "mobx";
 import {observer, useObserver} from "mobx-react";
-import {cloneElement, Component, HTMLProps, Key, ReactNode, Ref} from "react";
+import {cloneElement, Component, HTMLProps, Key, ReactElement, ReactNode, Ref} from "react";
 import {createPortal} from "react-dom";
 
 import {CSSProp, getSpringTransition, ScrollableContext, themr} from "@focus4/styling";
@@ -197,7 +197,7 @@ export class Scrollable extends Component<ScrollableProps> {
 
     /** @see ScrollableContext.menu */
     @action.bound
-    menu(node: JSX.Element, parentNode: HTMLElement | null, retractable = true) {
+    menu(node: ReactElement, parentNode: HTMLElement | null, retractable = true) {
         if (!parentNode) {
             return null;
         }
@@ -212,7 +212,7 @@ export class Scrollable extends Component<ScrollableProps> {
 
     /** @see ScrollableContext.portal */
     @action.bound
-    portal(node: JSX.Element) {
+    portal(node: ReactElement) {
         return createPortal(node, this.containerNode);
     }
 

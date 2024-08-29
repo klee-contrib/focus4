@@ -3,7 +3,7 @@ import i18next from "i18next";
 import {reduce} from "lodash";
 import {action, reaction} from "mobx";
 import {useObserver} from "mobx-react";
-import {useEffect, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
@@ -104,7 +104,7 @@ export function ActionBar<T>({
                     ...oL,
                     <MenuItem key={key} caption={i18next.t(label)} onClick={() => (store.groupingKey = key)} />
                 ],
-                [] as JSX.Element[]
+                [] as ReactElement[]
             );
 
             if (menuItems.length) {

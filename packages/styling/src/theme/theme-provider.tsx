@@ -11,7 +11,6 @@ export interface FocusCSSContext extends CSSContext {
     actionBar: {};
     advancedSearch: {};
     contextualActions: {};
-    dragLayer: {};
     facet: {};
     facetBox: {};
     group: {};

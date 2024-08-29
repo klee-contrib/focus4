@@ -96,8 +96,7 @@ export function Tooltip({
             setTop(newTop);
             setLeft(newLeft);
         }, 100);
-    },
-    []);
+    }, []);
 
     const deactivate = useCallback(
         function deactivate() {
@@ -117,8 +116,8 @@ export function Tooltip({
     const calculatePosition = useCallback(
         function calculatePosition(element: HTMLElement) {
             const {top: newTop, left: newLeft, height, width} = element.getBoundingClientRect();
-            const xOffset = window.scrollX || window.pageXOffset;
-            const yOffset = window.scrollY || window.pageYOffset;
+            const xOffset = window.scrollX || window.scrollX;
+            const yOffset = window.scrollY || window.scrollY;
             const newPosition = getPosition(element);
             switch (newPosition) {
                 case "bottom":

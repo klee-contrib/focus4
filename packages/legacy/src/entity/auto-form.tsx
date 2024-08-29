@@ -322,7 +322,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
         field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>> &
             Omit<Metadata<T, any, any, any, DCProps, LCProps>, "fieldProps"> = {}
-    ): JSX.Element {
+    ): ReactElement {
         const {
             AutocompleteComponent,
             DisplayComponent,
@@ -368,7 +368,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
                 keyResolver?: (key: T) => Promise<string | undefined>;
                 querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
             } = {}
-    ): JSX.Element {
+    ): ReactElement {
         const {name, ...o} = options;
         return fieldWrapperFor(
             "autocomplete",
@@ -401,7 +401,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
                 isEdit?: boolean;
                 name?: string;
             } = {}
-    ): JSX.Element {
+    ): ReactElement {
         const {name, ...o} = options;
         return fieldWrapperFor(
             "input",
@@ -436,7 +436,7 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
                 isEdit?: boolean;
                 name?: string;
             } = {}
-    ): JSX.Element {
+    ): ReactElement {
         const {name, ...o} = options;
         return fieldWrapperFor(
             "select",

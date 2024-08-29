@@ -1,15 +1,12 @@
-import {motion} from "framer-motion";
-import {IObservableArray, observable} from "mobx";
+import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
-import {ComponentType, Ref, useCallback, useEffect, useLayoutEffect} from "react";
-import {getEmptyImage} from "react-dnd-html5-backend";
+import {ComponentType, Ref, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
-import {getSpringTransition, ToBem} from "@focus4/styling";
+import {ToBem} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
 import {ContextualActions, OperationListItem} from "../contextual-actions";
-import {useDragSource} from "../dnd-utils";
 
 import {ListCss} from "../__style__/list.css";
 
@@ -27,12 +24,6 @@ export interface LineWrapperProps<T> {
     data: T;
     /** Ref vers l'élement DOM racine de la ligne. */
     domRef?: (element: HTMLLIElement | null) => void;
-    /** Désactive l'animation de drag and drop. */
-    disableDragAnimation?: boolean;
-    /** Les items en cours de drag dans la liste. */
-    draggedItems?: IObservableArray<T>;
-    /** Type de l'item de liste pour le drag and drop. Par défaut : "item". */
-    dragItemType?: string;
     /** Affiche ou non la checkbox de sélection. */
     hasSelection?: boolean;
     /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
@@ -51,10 +42,7 @@ export interface LineWrapperProps<T> {
 
 /** Wrapper de ligne dans une liste. */
 export function LineWrapper<T>({
-    disableDragAnimation,
     domRef,
-    draggedItems,
-    dragItemType = "item",
     LineComponent,
     mosaic,
     operationList,
@@ -77,11 +65,6 @@ export function LineWrapper<T>({
     }, [oProps.data, oProps.hasSelection, oProps.store]);
 
     const state = useLocalObservable(() => ({
-        /** Précise si la ligne est en train d'être "draggée". */
-        get isDragged() {
-            return draggedItems?.find(i => i === props.data) ?? false;
-        },
-
         /** Précise si la ligne est sélectionnable. */
         get isSelectable() {
             return (props.hasSelection && props.store?.isItemSelectionnable(props.data)) ?? false;
@@ -98,54 +81,8 @@ export function LineWrapper<T>({
         }
     }));
 
-    let setRef = domRef;
-
-    // Gestion du drag and drop
-    if (draggedItems) {
-        const [, dragSource, dragPreview] = useDragSource({
-            data: props.data,
-            draggedItems,
-            store: props.store,
-            type: dragItemType
-        });
-
-        // Permet de masquer la preview par défaut de drag and drop HTML5.
-        useLayoutEffect(() => {
-            if (dragPreview) {
-                dragPreview(getEmptyImage());
-            }
-        }, []);
-
-        setRef = useCallback((li: HTMLLIElement | null) => {
-            if (domRef) {
-                domRef(li);
-            }
-            if (dragSource) {
-                dragSource(li);
-            }
-        }, []);
-    }
-
     return useObserver(() => (
-        <motion.li
-            ref={setRef}
-            animate={state.isDragged && !disableDragAnimation ? "dragging" : "idle"}
-            className={(mosaic ? theme.mosaic : theme.line)({selected: state.isSelected})}
-            exit={{}}
-            initial={false}
-            style={{opacity: state.isDragged && !disableDragAnimation ? 0 : 1}}
-            transition={getSpringTransition()}
-            variants={{
-                dragging: {
-                    width: mosaic?.width ? 0 : undefined,
-                    height: 0
-                },
-                idle: {
-                    width: mosaic?.width ?? "100%",
-                    height: mosaic?.height ?? "auto"
-                }
-            }}
-        >
+        <li ref={domRef} className={(mosaic ? theme.mosaic : theme.line)({selected: state.isSelected})}>
             <LineComponent data={props.data} toggleDetail={toggleDetail} />
             {state.isSelectable ? (
                 <Checkbox className={theme.checkbox()} onChange={state.onSelection} value={state.isSelected} />
@@ -159,6 +96,6 @@ export function LineWrapper<T>({
                     />
                 </div>
             ) : null}
-        </motion.li>
+        </li>
     ));
 }

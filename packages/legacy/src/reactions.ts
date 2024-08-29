@@ -53,19 +53,21 @@ function patchClass<T extends RCL>(
             type === "autorun"
                 ? autorun(r)
                 : type === "reaction"
-                ? reaction(hasExpressionThis(expression) ? expression(this) : (expression as any), r, opts)
-                : type === "when"
-                ? when(hasExpressionThis(expression) ? expression(this) : (expression as any), r)
-                : undefined;
+                  ? reaction(hasExpressionThis(expression) ? expression(this) : (expression as any), r, opts)
+                  : type === "when"
+                    ? when(hasExpressionThis(expression) ? expression(this) : (expression as any), r)
+                    : undefined;
     }
 
     function componentWillUnmount(this: T) {
         this[`${type}_${propertyKey}`]();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const baseCWM = instance.UNSAFE_componentWillMount;
     const baseCWUM = instance.componentWillUnmount;
 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     instance.UNSAFE_componentWillMount = !baseCWM
         ? UNSAFE_componentWillMount
         : function CWM(this: RCL) {
