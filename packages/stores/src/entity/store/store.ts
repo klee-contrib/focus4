@@ -22,8 +22,8 @@ export type ConfigToEntities<T> = {
     readonly [P in keyof T]: T[P] extends any[]
         ? ListEntry<T[P][0]>
         : T[P] extends StoreNode<infer E>
-        ? ObjectEntry<E>
-        : ObjectEntry<T[P]>;
+          ? ObjectEntry<E>
+          : ObjectEntry<T[P]>;
 };
 
 /**
@@ -75,7 +75,8 @@ export function buildNode<E>(entity: E | E[]): StoreListNode<E> | StoreNode<E> {
     if (isArray(entity)) {
         const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<E>;
 
-        (outputEntry as any).$entity = entity[0];
+        // @ts-ignore
+        outputEntry.$entity = entity[0];
 
         outputEntry.load = defaultLoad;
         outputEntry.pushNode = action("pushNode", function pushNode(this: typeof outputEntry, ...items: {}[]) {
@@ -92,16 +93,21 @@ export function buildNode<E>(entity: E | E[]): StoreListNode<E> | StoreNode<E> {
         ...mapValues(entity as any, (field: FieldEntry | ListEntry | ObjectEntry | RecursiveListEntry) => {
             switch (field.type) {
                 case "list":
-                    return buildNode([field.entity]);
+                    const listNode = buildNode([field.entity]);
+                    listNode.$required = field.isRequired ?? true;
+                    return listNode;
                 case "recursive-list":
-                    return buildNode([entity]);
+                    const rListNode = buildNode([entity]);
+                    rListNode.$required = field.isRequired ?? true;
+                    return rListNode;
                 case "object":
-                    return buildNode(field.entity);
+                    const node = buildNode(field.entity);
+                    node.$required = field.isRequired ?? true;
+                    return node;
                 default:
                     return extendObservable({$field: field}, {value: undefined}, {value: observable.ref});
             }
         }),
-
         clear: clearNode,
         load: defaultLoad,
         replace: replaceNode,
@@ -237,7 +243,7 @@ export function setNode<E>(
                         setNode.call(itemEntry as any, itemValue);
                     } else if (isEntityField(itemValue)) {
                         itemEntry.value = itemValue.value;
-                    } else {
+                    } else if (isEntityField(itemEntry)) {
                         itemEntry.value = itemValue;
                     }
                 }

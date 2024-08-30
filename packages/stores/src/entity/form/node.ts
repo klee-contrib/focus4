@@ -48,6 +48,7 @@ export class FormNodeBuilder<E, E0 = E> {
     constructor(node: StoreNode<E>) {
         this.node = clone(node);
         this.sourceNode = node as any;
+        this.node.$required ??= true;
     }
 
     /**
@@ -83,7 +84,7 @@ export class FormNodeBuilder<E, E0 = E> {
      * Construit le FormNode à partir de la configuration renseignée.
      */
     build(): FormNode<E, E0> {
-        this.node.$tempEdit = this.isEdit ?? false;
+        this.node.$edit = this.isEdit ?? false;
         nodeToFormNode(this.node, this.sourceNode);
 
         // @ts-ignore
@@ -204,9 +205,55 @@ export class FormNodeBuilder<E, E0 = E> {
         return this;
     }
 
+    /**
+     * Surcharge le caractère obligatoire du noeud.
+     * @param value Valeur fixe.
+     */
+    required(value: boolean): FormNodeBuilder<E, E0>;
+    /**
+     * Surcharge le caractère obligatoire du noeud.
+     * @param value Valeur calculée.
+     */
+    required(value: (node: StoreNode<E>) => boolean): FormNodeBuilder<E, E0>;
+    /**
+     * Surcharge le caractère obligatoire de plusieurs champs/noeuds du FormNode.
+     * @param value Valeur fixe.
+     * @param params Les champs.
+     */
+    required(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
+    /**
+     * Surcharge le caractère obligatoire de plusieurs champs/noeuds du FormNode.
+     * @param value Valeur fixe.
+     * @param params Les champs.
+     */
+    required(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
+    required(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
+        const isRequired = isFunction(value) ? () => value(this.node) : value;
+        if (!params.length) {
+            this.node.$required = isRequired;
+        } else {
+            params.forEach(key => {
+                const child = this.node[key];
+                if (isStoreListNode(child)) {
+                    // @ts-ignore
+                    this.node[key] = new FormListNodeBuilder(child).required(isRequired).collect();
+                } else if (isStoreNode(child)) {
+                    // @ts-ignore
+                    this.node[key] = new FormNodeBuilder(child).required(isRequired).collect();
+                } else if (isEntityField(child)) {
+                    // @ts-ignore
+                    this.node[key] = new EntityFieldBuilder(child)
+                        .metadata(isFunction(isRequired) ? () => ({isRequired: isRequired()}) : {isRequired})
+                        .collect();
+                }
+            });
+        }
+        return this;
+    }
+
     /** @internal */
     collect() {
-        this.node.$tempEdit = this.isEdit ?? true;
+        this.node.$edit = this.isEdit ?? true;
         return this.node;
     }
 }
@@ -217,6 +264,7 @@ export function clone(source: any): any {
 
         // @ts-ignore
         res.$entity = source.$entity;
+        res.$required = source.$required;
         res.load = source.load;
         res.pushNode = source.pushNode;
         res.replaceNodes = source.replaceNodes;
@@ -229,6 +277,7 @@ export function clone(source: any): any {
             // @ts-ignore
             res[key] = clone((source as any)[key]);
         }
+        res.$required = source.$required;
         return res;
     } else if (isEntityField(source)) {
         return extendObservable(

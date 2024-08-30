@@ -27,7 +27,13 @@ export type FormNode<E = any, E0 = E> = EntityToForm<E, E0> & {
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
-        /** Précise si le noeud est valide (FormNode uniquement). */
+        /** Précise si le noeud est vide. */
+        readonly isEmpty: boolean;
+
+        /** Précise si le noeud est obligatoire. */
+        readonly isRequired: boolean;
+
+        /** Précise si le noeud est valide. */
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
@@ -69,7 +75,13 @@ export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
 
-        /** Précise si le noeud est valide (FormNode uniquement). */
+        /** Précise si le noeud est vide. */
+        readonly isEmpty: boolean;
+
+        /** Précise si le noeud est obligatoire. */
+        readonly isRequired: boolean;
+
+        /** Précise si le noeud est valide. */
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */

@@ -68,7 +68,7 @@ export type BuildingFormEntityField<F extends FieldEntry = any> = EntityField<F>
     _added: boolean;
     _domain: Domain;
     _isEdit: boolean | (() => boolean);
-    _metadatas: (Metadata | (() => Metadata))[];
+    _metadatas: (Metadata | ((metadata?: Metadata) => Metadata))[];
 };
 
 export class EntityFieldBuilder<F extends FieldEntry> {
@@ -108,10 +108,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                     return {
                         type,
                         name,
-                        ...mergeMetadatas(
-                            this._domain,
-                            this._metadatas.map(m => (isFunction(m) ? m() : m))
-                        )
+                        ...mergeMetadatas(this._domain, this._metadatas)
                     } as F;
                 },
                 value: defaultValue
@@ -269,10 +266,15 @@ export class EntityFieldBuilder<F extends FieldEntry> {
     }
 }
 
-function mergeMetadatas(domain: Domain, $metadatas: Metadata[]) {
-    let $metadata = $metadatas[0];
+export function mergeMetadatas(domain: Domain, $metadatas: (Metadata | ((metadata?: Metadata) => Metadata))[]) {
+    let $metadata = isFunction($metadatas[0]) ? $metadatas[0]() : $metadatas[0];
     for (let i = 1; i <= $metadatas.length - 1; i++) {
-        [$metadata, domain] = mergeMetadata(domain, $metadata, $metadatas[i]);
+        const $newMetadata = $metadatas[i];
+        [$metadata, domain] = mergeMetadata(
+            domain,
+            $metadata,
+            isFunction($newMetadata) ? $newMetadata($metadata) : $newMetadata
+        );
     }
     return {...$metadata, domain};
 }

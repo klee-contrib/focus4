@@ -31,9 +31,12 @@ export function nodeToFormNode<E = any, E0 = E>(
     sourceNode: StoreListNode<E0> | StoreNode<E0>,
     parentNode?: FormListNode | FormNode
 ) {
-    const {$tempEdit} = node;
-    if ($tempEdit !== undefined) {
-        delete node.$tempEdit;
+    const {$edit, $required} = node;
+    if ($edit !== undefined) {
+        delete node.$edit;
+    }
+    if ($required !== undefined) {
+        delete node.$required;
     }
 
     node.load = () => sourceNode.load();
@@ -49,14 +52,18 @@ export function nodeToFormNode<E = any, E0 = E>(
 
     (node as any).form = observable(
         {
-            _isEdit: isBoolean($tempEdit) ? $tempEdit : true,
+            _isEdit: isBoolean($edit) ? $edit : true,
             get isEdit() {
-                return (
-                    (parentNode ? parentNode.form.isEdit : true) && (isFunction($tempEdit) ? $tempEdit() : this._isEdit)
-                );
+                return (parentNode ? parentNode.form.isEdit : true) && (isFunction($edit) ? $edit() : this._isEdit);
             },
             set isEdit(edit) {
                 this._isEdit = edit;
+            },
+            get isRequired() {
+                if (parentNode && parentNode.form.isEmpty && !parentNode.form.isRequired) {
+                    return false;
+                }
+                return isFunction($required) ? $required() : ($required ?? true);
             }
         },
         {},
@@ -85,6 +92,9 @@ export function nodeToFormNode<E = any, E0 = E>(
     if (isFormListNode(node)) {
         node.forEach((item, i) => nodeToFormNode(item, (sourceNode as StoreListNode)[i], node));
         extendObservable(node.form, {
+            get isEmpty() {
+                return node.length === 0;
+            },
             get isValid() {
                 return isFormListNode(node) && node.every(item => item.form.isValid);
             },
@@ -192,6 +202,22 @@ export function nodeToFormNode<E = any, E0 = E>(
             }
         }
         extendObservable(node.form, {
+            get isEmpty() {
+                return Object.values(node).every(item => {
+                    if (isEntityField(item)) {
+                        return (
+                            item.value === undefined ||
+                            item.value === null ||
+                            (typeof item.value === "string" && item.value.trim() === "") ||
+                            (Array.isArray(item.value) && item.value.length === 0)
+                        );
+                    } else if (isAnyFormNode(item)) {
+                        return item.form.isEmpty;
+                    } else {
+                        return true;
+                    }
+                });
+            },
             get isValid() {
                 return !Object.keys(this.errors).length;
             },
@@ -220,6 +246,24 @@ export function nodeToFormNode<E = any, E0 = E>(
 
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */
 function addFormFieldProperties(field: BuildingFormEntityField, parentNode: FormNode) {
+    if ("_metadatas" in field) {
+        field._metadatas.push(metadata => ({
+            isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : (metadata?.isRequired ?? false)
+        }));
+    } else {
+        const {$field} = field as FormEntityField;
+        // @ts-ignore
+        delete field.$field;
+        extendObservable(field, {
+            get $field() {
+                return {
+                    ...$field,
+                    isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : $field.isRequired
+                };
+            }
+        });
+    }
+
     extendObservable(field, {
         get error() {
             return validateField(field);

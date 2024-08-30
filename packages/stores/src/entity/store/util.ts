@@ -3,6 +3,7 @@ import {isUndefined, mapValues, omitBy} from "lodash";
 import {
     FormListNode,
     FormNode,
+    isAnyFormNode,
     isEntityField,
     isFormEntityField,
     isStoreListNode,
@@ -30,6 +31,9 @@ export function toFlatValues<SN extends FormListNode | FormNode | StoreListNode 
             mapValues(storeNode, (item, entry) => {
                 if (entry === "sourceNode") {
                     // On ne récupère pas le `sourceNode` d'un FormNode.
+                    return undefined;
+                } else if (isAnyFormNode(item) && item.form.isEmpty && !item.form.isRequired) {
+                    // Cas entrée de formulaire vide non obligatoire -> on ne renvoie rien.
                     return undefined;
                 } else if (isStoreListNode(item)) {
                     // Cas entrée liste -> `toFlatValues` sur chaque élément.

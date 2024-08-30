@@ -16,13 +16,14 @@ export class FormListNodeBuilder<E, E0 = E> {
     constructor(node: StoreListNode<E>) {
         this.node = clone(node);
         this.sourceNode = node as any;
+        node.$required ??= true;
     }
 
     /**
      * Construit le FormListNode à partir de la configuration renseignée.
      */
     build(): FormListNode<E, E0> {
-        this.node.$tempEdit = this.isEdit ?? false;
+        this.node.$edit = this.isEdit ?? false;
         nodeToFormNode(this.node, this.sourceNode);
 
         // @ts-ignore
@@ -57,9 +58,24 @@ export class FormListNodeBuilder<E, E0 = E> {
         return this;
     }
 
+    /**
+     * Surcharge le caractère obligatoire du noeud.
+     * @param value Valeur fixe.
+     */
+    required(value: boolean): FormListNodeBuilder<E, E0>;
+    /**
+     * Surcharge le caractère obligatoire du noeud.
+     * @param value Valeur calculée.
+     */
+    required(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0>;
+    required(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0> {
+        this.node.$required = isFunction(value) ? () => value(this.node) : value;
+        return this;
+    }
+
     /** @internal */
     collect() {
-        this.node.$tempEdit = this.isEdit ?? true;
+        this.node.$edit = this.isEdit ?? true;
         return this.node;
     }
 }

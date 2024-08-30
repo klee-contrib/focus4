@@ -62,6 +62,7 @@ describe("EntityStore: Création", () => {
             numero: {$field: numero, value: undefined},
             montant: {$field: montant, value: undefined},
             structure: {
+                $required: true,
                 id: {$field: StructureEntity.id, value: undefined},
                 nom: {$field: StructureEntity.nom, value: undefined},
                 siret: {$field: StructureEntity.siret, value: undefined},
@@ -278,6 +279,10 @@ describe("FormNode: Création", () => {
         expect(formNode.numero.hasOwnProperty("error")).toBeTruthy());
     test("Le FormNode a bien une propriété 'isValid', initialisée à 'true'.", () =>
         expect(formNode.form.isValid).toBe(true));
+    test("Le FormNode a bien une propriété 'isRequired', initialisée à 'true'.", () =>
+        expect(formNode.form.isRequired).toBe(true));
+    test("Le FormNode a bien une propriété 'isEmpty', initialisée à 'true'.", () =>
+        expect(formNode.form.isEmpty).toBe(true));
 });
 
 describe("FormNode: Création à partir d'un noeud non-vide", () => {
@@ -301,6 +306,7 @@ describe("FormNode: Modification de StoreNode.", () => {
 
     test("Le contenu du FormNode est identique à celui du StoreNode.", () =>
         expect(toFlatValues(formNode)).toEqual(toFlatValues(entry)));
+    test("La propriété 'isEmpty' vaut bien désormais 'false'.", () => expect(formNode.form.isEmpty).toBe(false));
 });
 
 describe("FormNode: Ajout de champs.", () => {

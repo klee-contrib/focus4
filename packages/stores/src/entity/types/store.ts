@@ -7,19 +7,23 @@ export type EntityToNode<E> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? EntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
-        ? StoreNode<OE>
-        : E[P] extends ListEntry<infer LE>
-        ? StoreListNode<LE>
-        : E[P] extends RecursiveListEntry
-        ? StoreListNode<E>
-        : never;
+          ? StoreNode<OE>
+          : E[P] extends ListEntry<infer LE>
+            ? StoreListNode<LE>
+            : E[P] extends RecursiveListEntry
+              ? StoreListNode<E>
+              : never;
 };
 
 /** Noeud de store simple. */
 export type StoreNode<E = any> = EntityToNode<E> & {
     /** @internal */
-    /** IsEdit temporaire, traité par `addFormProperties`. */
-    $tempEdit?: boolean | (() => boolean);
+    /** IsEdit temporaire, traité par `nodeToFormNode`. */
+    $edit?: boolean | (() => boolean);
+
+    /** @internal */
+    /** IsRequired temporaire, traité par `nodeToFormNode`. */
+    $required?: boolean | (() => boolean);
 
     /** Vide l'objet (récursivement). */
     clear(): StoreNode<E>;
@@ -37,8 +41,12 @@ export type StoreNode<E = any> = EntityToNode<E> & {
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
 export interface StoreListNode<E = any> extends IObservableArray<StoreNode<E>> {
     /** @internal */
-    /** IsEdit temporaire, traité par `addFormProperties`. */
-    $tempEdit?: boolean | (() => boolean);
+    /** IsEdit temporaire, traité par `nodeToFormNode`. */
+    $edit?: boolean | (() => boolean);
+
+    /** @internal */
+    /** IsRequired temporaire, traité par `nodeToFormNode`. */
+    $required?: boolean | (() => boolean);
 
     /** Métadonnées. */
     readonly $entity: E;
