@@ -51,6 +51,29 @@ La façon standard de modifier l'état d'édition d'un membre d'objet est de pas
 permet de spécifier le même état d'édition à plusieurs champs à la fois. C'est aussi une version plus courte pour une seule propriété si l'édition est la seule
 chose à modifier dessus.
 
+### `required(value)`
+
+Permet de surcharger le caractère obligatoire d'un noeud. Comme pour `edit()`, `value` peut valoir :
+
+-   `true` ou `false`, selon l'état souhaité.
+-   Une fonction retournant `true` ou `false`, pour que le caractère obligatoire soit calculé.
+
+### `required(value, ...props)`
+
+Comme `edit()`, `required()` dispose également d'une surcharge permettant de passer des propriétés du `StoreNode` en paramètres. Dans ce cas, **la
+valeur ou la fonction sera appliquée aux champs/listes/objets demandés au lieu de l'objet en lui-même**. Il est donc parfaitement possible d'utiliser
+`required` plusieurs fois, tant que ça s'applique à des propriétés différentes.
+
+Exemple :
+
+```ts
+s.required(false) // noeud en entier
+    .required(() => !router.state.proId, "nom", "prenom"); // surcharge identique sur deux champs du noeud.
+```
+
+Pour des sous-noeuds, `required()` appellera le `required()` du builder du sous-noeud, tandis que pour un champ, il posera un
+[`metadata({isRequired})`](/docs/modèle-métier-makefield--docs#metadatametadata) ou un [`metadata(() => ({isRequired}))`](/docs/modèle-métier-makefield--docs#metadatametadata), selon le type de `value`.
+
 ### `add(name, fieldBuilder)`
 
 La fonction `add` permet d'ajouter un nouveau champ au `FormNode`. Son API est identique à celle de [`makeField`](/docs/modèle-métier-makefield--docs#makefieldname-builder) :
@@ -109,6 +132,10 @@ Il s'agit du builder qui va s'appliquer sur un `StoreListNode`, via `useFormNode
 Il dispose des méthodes suivantes :
 
 ### `edit(value)`
+
+Idem `FormNodeBuilder`
+
+### `required(value)`
 
 Idem `FormNodeBuilder`
 
@@ -199,6 +226,13 @@ type PatchedUtilisateurFormNode = PatchedFormNode<
 // N'hésitez pas à utiliser le type pour typer explicitement le retour de `useFormNode`, afin d'être sûr qu'il est correct
 const entity: PatchedUtilisateurFormNode = useFormNode(utilisateurStore.utilisateur, e => /* ... */);
 // L'affectation sera en erreur si le type de correspond pas, donc pas de crainte à avoir là dessus :)
+```
+
+`Patch`, `PatchedFormNode` et `PatchedFormListNode` peuvent également prendre un 3ème paramètre optionnel pour lister les champs qui ont été retirés du
+noeud avec `remove()` et `removeAllBut()` :
+
+```ts
+type UtilisateurWithoutNameEntity = Patch<UtilisateurEntity, {}, "nom" | "prenom">;
 ```
 
 ### Description d'un champ (et comment le patcher avec `PatchInput`/`PatchSelect`...)

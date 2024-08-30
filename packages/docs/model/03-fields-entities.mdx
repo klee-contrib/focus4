@@ -81,7 +81,8 @@ const ProfilReadEntity = {
     },
     utilisateurs: {
         type: "list",
-        entity: UtilisateurItemEntity
+        entity: UtilisateurItemEntity,
+        isRequired: true
     }
 };
 ```
@@ -93,3 +94,7 @@ Vous devriez utiliser un outil de modélisation externe pour les générer. Il p
 ces entités Focus 😉.
 
 _Remarque : le générateur TopModel génère aussi la définition de type Typescript correspondante à l'entité, et utilise le type `FieldEntry2` pour les champs._
+
+_Remarque 2 : pour que le générateur TopModel génère `isRequired` sur les compositions (ce qui n'est pas un `"field"`), il faut activer l'option
+`extendedCompositions`. Elle ajoutera aussi `label`, mais cette propriété n'est pas utilisée par Focus. Focus accepte que `isRequired` ne soit pas
+renseigné, dans ce cas il sera à `true` par défaut._
