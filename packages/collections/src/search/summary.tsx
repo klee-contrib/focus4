@@ -136,8 +136,8 @@ export function Summary<T>({
                                     invert: inputFacet.selected?.find(v => v === value.code)
                                         ? false
                                         : inputFacet.excluded?.find(v => v === value.code)
-                                        ? true
-                                        : undefined
+                                          ? true
+                                          : undefined
                                 }))
                                 .filter(({invert}) => invert !== undefined),
                             onDeleteClick: () => props.store.removeFacetValue(facetKey)
@@ -180,10 +180,10 @@ export function Summary<T>({
                 {state.includeList.length ? (
                     <>
                         <span>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
-                        {state.includeList.map(chip => (
-                            // eslint-disable-next-line react/jsx-key
+                        {state.includeList.map(({key, ...chip}) => (
                             <SearchChip
                                 {...chip}
+                                key={key}
                                 className={theme.chip()}
                                 deletable
                                 keyResolver={chipKeyResolver}
