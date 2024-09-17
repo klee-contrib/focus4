@@ -47,7 +47,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
      * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
      * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
      */
-    chipKeyResolver?: (type: "facet" | "filter", code: string, value: string) => Promise<string | undefined>;
+    chipKeyResolver?: (type: "facet" | "filter", code: string, value: unknown) => Promise<string | undefined>;
     /**
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
@@ -55,7 +55,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    chipThemer?: (type: ChipType, code: string, values?: string[]) => ChipCss;
+    chipThemer?: (type: ChipType, code: string, values?: unknown[]) => ChipCss;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
     /** Facettes pliées par défaut. */

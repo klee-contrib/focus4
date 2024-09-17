@@ -27,7 +27,7 @@ export interface SearchChipProps {
      * @param value La valeur du champ affiché (filtre: `field.value`, facet : `facetItem.code`)
      * @returns Le libellé à utiliser, ou `undefined` s'il faut garder le libellé existant.
      */
-    keyResolver?: (type: "facet" | "filter", code: string, value: string) => Promise<string | undefined>;
+    keyResolver?: (type: "facet" | "filter", code: string, value: unknown) => Promise<string | undefined>;
     /** Appelé au clic sur la suppression. */
     onDeleteClick?: () => void;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
@@ -41,13 +41,13 @@ export interface SearchChipProps {
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
-    themer?: (type: ChipType, code: string, values?: string[]) => ChipCss;
+    themer?: (type: ChipType, code: string, values?: unknown[]) => ChipCss;
     /** Type du chip affiché (`filter`, `facet`, `sort` ou `group`). */
     type: ChipType;
     /** Opérateur à utiliser entre les différentes valeurs. */
     valueOperator?: "and" | "or";
     /** Valeurs et libellés des champs affichés (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group). */
-    values?: {code: string; label?: string; invert?: boolean}[];
+    values?: {code: unknown; label?: string; invert?: boolean}[];
 }
 
 /** Chip avec un keyResolver. */
@@ -66,10 +66,10 @@ export function SearchChip(props: SearchChipProps) {
         valueOperator = "or",
         values
     } = props;
-    const [valueLabels] = useState(() => observable.map<string, string>());
+    const [valueLabels] = useState(() => observable.map<unknown, string>());
 
     useEffect(() => {
-        valueLabels.replace(values?.map(value => [value.code, value.label ?? value.code]) ?? {});
+        valueLabels.replace(values?.map(value => [value.code, value.label ?? `${value.code as any}`]) ?? {});
         if (keyResolver && values && (type === "facet" || type === "filter")) {
             values.forEach(value => {
                 keyResolver(type, code, value.code).then(newValueLabel => {
