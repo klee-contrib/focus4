@@ -116,7 +116,7 @@ export function MainMenuItem({
                             element,
                             props,
                             icon ? <FontIcon className={theme.icon()} icon={icon} /> : null,
-                            label ? <div className={theme.label()}>{label}</div> : null
+                            label ? <span className={theme.label()}>{label}</span> : null
                         )}
                     </Ripple>
                 </li>

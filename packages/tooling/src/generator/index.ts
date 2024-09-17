@@ -1,7 +1,7 @@
 import {promises as fs} from "fs";
 import path from "path";
 
-import glob from "glob";
+import {glob} from "glob";
 import {camelCase, sortBy, upperFirst} from "lodash";
 import postcss from "postcss";
 import extractImports from "postcss-modules-extract-imports";

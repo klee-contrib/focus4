@@ -126,7 +126,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
 
     const [focused, setFocused] = useState(false);
     const [selected, setSelected] = useState(value ?? undefinedKey);
-    const onSelectedChange = useCallback(function onSelectedChange(key?: string | undefined) {
+    const onSelectedChange = useCallback(function onSelectedChange(key?: string) {
         setSelected(key ?? undefinedKey);
     }, []);
 
@@ -321,12 +321,12 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                                   : "left"
                           }`
                         : direction === "up"
-                          ? sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
-                              ? "top"
-                              : "top-left"
-                          : sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
-                            ? "bottom"
-                            : "bottom-left"
+                        ? sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                            ? "top"
+                            : "top-left"
+                        : sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                        ? "bottom"
+                        : "bottom-left"
                 }
                 selected={selected}
             >
