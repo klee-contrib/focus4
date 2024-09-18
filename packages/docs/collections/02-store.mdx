@@ -16,8 +16,8 @@ Le `CollectionStore` permet, en plus de stocker une liste, de gérer :
 -   De la pagination côté serveur
 -   De la **sélection** d'élements
 -   Du **tri**
--   Du **filtrage** par critère
 -   Des **facettes**
+-   Du **filtrage** par critère
 -   Une répartition en **groupes**
 
 Le store peut être utilisé dans **2 modes** :
@@ -120,7 +120,7 @@ _(Note : l'ordre des deux derniers paramètres sont interchangeables)_
 -   Le fitrage par `query` sur les champs de `filterFields` ne fait qu'un simple `includes` (en minuscule).
 -   Le filtrage par facette, en dehors des nombres et de booléens, se fait avec un simple `==` (sachant que toutes les valeurs dans `inputFacets` sont des strings).
 
-## Intégration avec les composants de listes
+## Intégration avec les composants de listes et de recherche
 
 ### Pagination serveur
 
@@ -134,12 +134,39 @@ _**Remarque : la pagination serveur ne sera appelée que si le serveur à retour
 
 ### Sélection
 
-La sélection peut être activée sur [`listFor`](/docs/listes-composants-de-listes-listfor--list) et [`tableFor`](/docs/listes-composants-de-listes-tablefor--table) via la prop `hasSelection`.
+La sélection peut être activée via la prop `hasSelection` sur :
+
+-   [`listFor`](/docs/listes-composants-de-listes-listfor--list) (sur chaque élément de la liste)
+-   [`tableFor`](/docs/listes-composants-de-listes-tablefor--table) (sur chaque élément de la liste)
+-   [`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs) (au global)
+-   [`Results`](/docs/listes-composants-de-recherche-results--docs) (sur chaque élément de la liste, ou pour tout un groupe)
+-   [`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) (au global, sur chaque élément de la liste, ou pour tout un groupe)
 
 ### Tri
 
 Les définitions de colonnes dans [`tableFor`](/docs/listes-composants-de-listes-tablefor--table) peuvent inclure `sortKey`, qui rendra le titre de la colonne cliquable pour trier par cette colonne là. Recliquer sur
 la colonne permettra de changer le sens.
+
+De plus, via la prop `orderableColumnList`, on peut renseigner une liste de tri possibles dans les composants :
+
+-   [`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs) (pour choisir le tri)
+-   [`Summary`](/docs/listes-composants-de-recherche-summary--docs) (pour afficher le tri, et le retirer)
+-   [`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) (pour choisir et afficher le tri)
+
+### Facettes
+
+Le composant [`FacetBox`](/docs/listes-composants-de-recherche-facetbox--docs) permet d'afficher et sélectionner les facettes, tandis que le composant [`Summary`](/docs/listes-composants-de-recherche-summary--docs) affichera la liste des facettes sélectionnées, avec
+la possibilité de les retirer. Le composant [`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) affiche les deux composants.
+
+### Filtrage par critère
+
+Vous pouvez utiliser tous les composants de formulaires avec les champs de critères, afin de pouvoir les renseigner. Vous pouvez les inclure dans une
+[`FacetBox`](/docs/listes-composants-de-recherche-facetbox--docs) si vous voulez les ajouter à vos facettes. Le [`Summary`](/docs/listes-composants-de-recherche-summary--docs) affichera la liste des critères non vides, avec la possibilité de les retirer.
+
+### Répartition en groupes
+
+Le composant [`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs) permet de choisir une facette sur laquelle grouper, et le composant [`Results`](/docs/listes-composants-de-recherche-results--docs) affichera les groupes. Le composant
+[`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) affichera les deux composants.
 
 ## Lien avec les stores d'entité
 
