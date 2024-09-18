@@ -142,7 +142,18 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     useGroupActionBars?: boolean;
 }
 
-/** Composant tout intégré pour une recherche avancée, avec ActionBar, FacetBox, Summary, ListWrapper et Results. */
+/**
+ * L'`AdvancedSearch` est l'assemblage des 4 composants qui constituent la recherche :
+ *
+ * - [`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs)
+ * - [`FacetBox`](/docs/listes-composants-de-recherche-facetbox--docs)
+ * - [`Results`](/docs/listes-composants-de-recherche-results--docs)
+ * - [`Summary`](/docs/listes-composants-de-recherche-summary--docs)
+ *
+ * ainsi que des actions transverses liés aus listes (mode, ajout).
+ *
+ * L'intégralité des props de ces composants se retrouve dans ses props, souvent avec le même nom ou parfois avec un nom un peu différent (exemple : `hideFacets` dans le `Summary`, `hideSummaryFacets` dans l'`AdvancedSearch`).
+ */
 export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     actionBarTheme,
     AddItemComponent = DefaultAddItemComponent,

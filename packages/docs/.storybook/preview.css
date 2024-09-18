@@ -31,3 +31,7 @@ a code {
     color: steelblue !important;
     text-decoration: underline;
 }
+
+p {
+    white-space: pre-wrap;
+}

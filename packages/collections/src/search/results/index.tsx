@@ -45,7 +45,13 @@ export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
     useGroupActionBars?: boolean;
 }
 
-/** Composants affichant les résultats de recherche, avec affiche par groupe. */
+/**
+ * Ce composant permet d'afficher les résultats de la recherche, sous la forme d'une liste unique ou bien de groupes si on souhaite en afficher.
+ *
+ * Chaque groupe est muni d'un header qui peut être soit un header simple avec une case de sélection et le nom du groupe, soit une `ActionBar` si on veut gérer des actions spécifiques au niveau du groupe (prop `useGroupActionBars`).
+ *
+ * Toutes les listes sont des [`listFor`](/docs/listes-composants-de-listes-listfor--list) (par défaut, on peut également utiliser un autre composant de liste) et peuvent donc utiliser toutes leurs fonctionnalités.
+ */
 export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
     defaultFoldedGroups,
     GroupHeader,

@@ -56,7 +56,20 @@ export interface SummaryProps<T> {
     theme?: CSSProp<SummaryCss>;
 }
 
-/** Affiche le nombre de résultats et les filtres dans la recherche avancée. */
+/**
+ * Le `Summary` sert à afficher le résumé de la recherche en cours en listant, dans l'ordre :
+ *
+ *  - Le nombre de résultats
+ *  - Le champ de recherche textuel
+ *  - Les critères
+ *  - Les facettes
+ *  - Le groupe
+ *  - Le tri
+ *
+ * L'ensemble de ces informations peuvent être masqués unitairement via les props `hideXXX`.
+ *
+ * (Note : le tri et le groupe ne sont jamais effectifs en même temps)
+ */
 
 export function Summary<T>({
     canRemoveSort = true,
@@ -135,8 +148,8 @@ export function Summary<T>({
                                     invert: inputFacet.selected?.find(v => v === value.code)
                                         ? false
                                         : inputFacet.excluded?.find(v => v === value.code)
-                                          ? true
-                                          : undefined
+                                        ? true
+                                        : undefined
                                 }))
                                 .filter(({invert}) => invert !== undefined),
                             onDeleteClick: () => props.store.removeFacetValue(facetKey)

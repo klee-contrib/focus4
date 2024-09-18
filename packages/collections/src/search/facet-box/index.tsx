@@ -55,7 +55,13 @@ export interface FacetBoxProps<T> {
 
 const noAdditionalFacets = {};
 
-/** Composant contenant la liste des facettes retournées par une recherche. */
+/**
+ * Ce composant affiche le résultats des facettes (issues du serveur ou calculées localement) et permet de les sélectionner.
+ *
+ * Le composant peut être affiché tel quel (à priori sur la gauche des résultats), ou bien à l'intérieur de l'[`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs) pour des écrans où on n'a pas la place de les afficher sur la gauche.
+ *
+ * Par défaut, les facettes n'ayant qu'une seule valeur ne sont pas affichées ; il est possible de forcer leur affichage avec la prop `showSingleValuedFacets`.
+ */
 export function FacetBox<T>({
     additionalFacets = noAdditionalFacets,
     customFacetComponents = {},
