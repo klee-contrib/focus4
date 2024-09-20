@@ -28,14 +28,13 @@ type FieldsOf<E> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E
 type ObjectsOf<E> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
 type ListsOf<E> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
 
-type EntryToEntity<E> =
-    E extends ObjectEntry<infer E1>
-        ? E1
-        : E extends ListEntry<infer E2>
-          ? E2
-          : E extends RecursiveListEntry
-            ? E
-            : never;
+type EntryToEntity<E> = E extends ObjectEntry<infer E1>
+    ? E1
+    : E extends ListEntry<infer E2>
+    ? E2
+    : E extends RecursiveListEntry
+    ? E
+    : never;
 
 export class FormNodeBuilder<E, E0 = E> {
     /** @internal */
@@ -64,10 +63,10 @@ export class FormNodeBuilder<E, E0 = E> {
                 FieldEntry<
                     "string",
                     string,
-                    BaseInputProps,
-                    BaseSelectProps,
-                    BaseAutocompleteProps,
-                    BaseDisplayProps,
+                    BaseInputProps<"string">,
+                    BaseSelectProps<"string">,
+                    BaseAutocompleteProps<"string">,
+                    BaseDisplayProps<"string">,
                     BaseLabelProps
                 >
             >,

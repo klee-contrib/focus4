@@ -2,25 +2,19 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {SyntheticEvent} from "react";
 
-import {
-    DomainFieldType,
-    DomainTypeMultiple,
-    DomainTypeSingle,
-    ReferenceList,
-    SingleDomainFieldType
-} from "@focus4/stores";
+import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss} from "@focus4/toolbox";
 
 import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
 export {selectCheckboxCss, SelectCheckboxCss};
 
-function clickHandlerFactory<T extends DomainFieldType>(
+function clickHandlerFactory<T extends DomainFieldTypeMultiple>(
     isDisabled: boolean,
     isSelected: boolean,
-    value: DomainTypeMultiple<T> | undefined,
-    optVal: DomainTypeSingle<SingleDomainFieldType<T>>,
-    onChange: (value: DomainTypeMultiple<T>) => void
+    value: DomainType<T> | undefined,
+    optVal: DomainType<SingleDomainFieldType<T>>,
+    onChange: (value: DomainType<T>) => void
 ) {
     return (e: SyntheticEvent<any>) => {
         e.stopPropagation();
@@ -29,17 +23,17 @@ function clickHandlerFactory<T extends DomainFieldType>(
         if (!isDisabled) {
             if (isSelected) {
                 // Is selected -> remove it
-                onChange((value ? value.filter(val => val !== optVal) : []) as DomainTypeMultiple<T>);
+                onChange((value ? value.filter(val => val !== optVal) : []) as DomainType<T>);
             } else {
                 // Is not selected -> add it
-                onChange((value ? [...value.slice(), optVal] : [optVal]) as DomainTypeMultiple<T>);
+                onChange((value ? [...value.slice(), optVal] : [optVal]) as DomainType<T>);
             }
         }
     };
 }
 
 /** Props du SelectCheckbox */
-export interface SelectCheckboxProps<T extends DomainFieldType> {
+export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -53,7 +47,7 @@ export interface SelectCheckboxProps<T extends DomainFieldType> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainTypeMultiple<T>) => void;
+    onChange: (value: DomainType<T>) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
@@ -61,7 +55,7 @@ export interface SelectCheckboxProps<T extends DomainFieldType> {
     /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
-    value?: DomainTypeMultiple<T>;
+    value?: DomainType<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -71,7 +65,7 @@ export interface SelectCheckboxProps<T extends DomainFieldType> {
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) sur un champ liste.
  */
-export function SelectCheckbox<T extends DomainFieldType>({
+export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
     disabled = false,
     error,
     label,

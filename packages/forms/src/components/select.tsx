@@ -1,24 +1,24 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
 
-import {DomainFieldType, DomainTypeSingle, ReferenceList} from "@focus4/stores";
+import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
 import {stringToDomainType} from "./utils";
 
 /** Props du Select. */
-export interface SelectProps<T extends DomainFieldType>
+export interface SelectProps<T extends DomainFieldTypeSingle>
     extends Omit<DropdownProps<any>, "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"> {
     /** Message d'erreur à afficher. */
     error?: string;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainTypeSingle<T> | undefined) => void;
+    onChange: (value: DomainType<T> | undefined) => void;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
-    value?: DomainTypeSingle<T>;
+    value?: DomainType<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -28,7 +28,7 @@ export interface SelectProps<T extends DomainFieldType>
  *
  * Il s'agit du composant par défaut de tous les domaines pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
-export function Select<T extends DomainFieldType>({
+export function Select<const T extends DomainFieldTypeSingle>({
     error,
     i18nPrefix = "focus",
     onChange,

@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback} from "react";
 
-import {DomainFieldType, DomainTypeSingle, ReferenceList} from "@focus4/stores";
+import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
 
@@ -12,7 +12,7 @@ import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
 export {selectRadioCss, SelectRadioCss};
 
 /** Props du SelectRadio. */
-export interface SelectRadioProps<T extends DomainFieldType> {
+export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     /** Désactive le select. */
     disabled?: boolean;
     /** Message d'erreur à afficher. */
@@ -24,7 +24,7 @@ export interface SelectRadioProps<T extends DomainFieldType> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainTypeSingle<T> | undefined) => void;
+    onChange: (value: DomainType<T> | undefined) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
@@ -36,7 +36,7 @@ export interface SelectRadioProps<T extends DomainFieldType> {
     /** Position du cas vide. Par défaut : "bottom". */
     undefinedPosition?: "bottom" | "top";
     /** Valeur. */
-    value?: DomainTypeSingle<T>;
+    value?: DomainType<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -46,7 +46,7 @@ export interface SelectRadioProps<T extends DomainFieldType> {
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
-export function SelectRadio<T extends DomainFieldType>({
+export function SelectRadio<const T extends DomainFieldTypeSingle>({
     disabled = false,
     error,
     label,

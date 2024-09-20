@@ -21,12 +21,12 @@ import {BuildingFormEntityField, EntityFieldBuilder} from "./builder";
 interface ReadonlyFieldOptions<
     DT extends DomainFieldType = "string",
     T extends DomainType<DT> = DomainType<DT>,
-    DCDProps extends BaseDisplayProps = BaseDisplayProps,
+    DCDProps extends BaseDisplayProps<DT> = BaseDisplayProps<DT>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
-    DCProps extends BaseDisplayProps = DCDProps,
+    DCProps extends BaseDisplayProps<DT> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
     FProps extends WithThemeProps = WithThemeProps
-> extends BaseComponents<DCProps, LCProps> {
+> extends BaseComponents<DT, DCProps, LCProps> {
     className?: string;
     comment?: ReactNode;
     domain?: Domain<DT, any, any, any, DCDProps, LCDProps, FProps>;
@@ -65,9 +65,9 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: 
 export function fromField<
     DT extends DomainFieldType = "string",
     T extends DomainType<DT> = DomainType<DT>,
-    DCDProps extends BaseDisplayProps = BaseDisplayProps,
+    DCDProps extends BaseDisplayProps<DT> = BaseDisplayProps<DT>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
-    DCProps extends BaseDisplayProps = DCDProps,
+    DCProps extends BaseDisplayProps<DT> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
     FProps extends WithThemeProps = WithThemeProps
 >(
@@ -109,9 +109,9 @@ export function fromField<
 export function makeField<
     DT extends DomainFieldType = "string",
     T extends DomainType<DT> = DomainType<DT>,
-    DCDProps extends BaseDisplayProps = BaseDisplayProps,
+    DCDProps extends BaseDisplayProps<DT> = BaseDisplayProps<DT>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
-    DCProps extends BaseDisplayProps = DCDProps,
+    DCProps extends BaseDisplayProps<DT> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
     FProps extends WithThemeProps = WithThemeProps
 >(
@@ -130,10 +130,10 @@ export function makeField<F extends FieldEntry>(
             FieldEntry<
                 "string",
                 string,
-                BaseInputProps,
-                BaseSelectProps,
-                BaseAutocompleteProps,
-                BaseDisplayProps,
+                BaseInputProps<"string">,
+                BaseSelectProps<"string">,
+                BaseAutocompleteProps<"string">,
+                BaseDisplayProps<"string">,
                 BaseLabelProps,
                 WithThemeProps
             >
@@ -147,13 +147,20 @@ export function makeField(param1: any, param2: any = {}) {
         const {
             className,
             comment,
-            domain = {type: "string"},
-            DisplayComponent = domain?.DisplayComponent,
-            displayFormatter = domain?.displayFormatter,
+            domain = {
+                type: "string",
+                AutocompleteComponent: () => null,
+                DisplayComponent: () => null,
+                LabelComponent: () => null,
+                InputComponent: () => null,
+                SelectComponent: () => null
+            } as Domain,
+            DisplayComponent = domain.DisplayComponent,
+            displayFormatter = domain.displayFormatter,
             displayProps,
             fieldProps,
             label,
-            LabelComponent = domain?.LabelComponent,
+            LabelComponent = domain.LabelComponent,
             labelProps,
             name = ""
         } = param2 as ReadonlyFieldOptions & {name?: string};
@@ -167,9 +174,9 @@ export function makeField(param1: any, param2: any = {}) {
                     label,
                     DisplayComponent,
                     LabelComponent,
-                    displayProps: {...(domain?.displayProps ?? {}), ...displayProps},
-                    labelProps: {...(domain?.labelProps ?? {}), ...labelProps},
-                    fieldProps: {...(domain?.fieldProps ?? {}), ...fieldProps}
+                    displayProps: {...(domain.displayProps ?? {}), ...displayProps},
+                    labelProps: {...(domain.labelProps ?? {}), ...labelProps},
+                    fieldProps: {...(domain.fieldProps ?? {}), ...fieldProps}
                 })
                 .value(() => param1)
                 .edit(false)

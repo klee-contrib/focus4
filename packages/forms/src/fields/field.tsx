@@ -14,8 +14,6 @@ import {
 } from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {AutocompleteSearch, Display, Input, Label, Select} from "../components";
-
 import {FormContext} from "./form";
 
 import fieldCss, {FieldCss} from "./__style__/field.css";
@@ -57,7 +55,7 @@ let nameMap: [string, string][] = [];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 export function Field<F extends FieldEntry>(
-    props: FieldOptions<F> & Omit<FieldComponents, "fieldProps"> & {field: EntityField<F>}
+    props: FieldOptions<F> & Omit<FieldComponents<F["domain"]["type"]>, "fieldProps"> & {field: EntityField<F>}
 ) {
     return useObserver(() => {
         const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
@@ -148,17 +146,17 @@ export function Field<F extends FieldEntry>(
                 name,
                 isRequired,
                 domain: {
-                    AutocompleteComponent = AutocompleteSearch,
+                    AutocompleteComponent,
                     autocompleteProps: domainACP = {},
                     className = "",
-                    DisplayComponent = Display,
+                    DisplayComponent,
                     displayFormatter = defaultFormatter,
                     displayProps: domainDCP = {},
-                    LabelComponent = Label,
+                    LabelComponent,
                     labelProps: domainLCP = {},
-                    InputComponent = Input,
+                    InputComponent,
                     inputProps: domainICP = {},
-                    SelectComponent = Select,
+                    SelectComponent,
                     selectProps: domainSCP = {},
                     type
                 }
@@ -169,13 +167,17 @@ export function Field<F extends FieldEntry>(
             setHasHadFocus(false);
         }, [isEdit]);
 
-        const iProps: BaseInputProps & {ref?: Ref<any>} = {
+        const iProps: BaseInputProps<F["domain"]["type"]> & {ref?: Ref<any>} = {
             value,
             error: showError ? error : undefined,
             name,
             id,
             type,
-            onChange,
+            onChange:
+                onChange ??
+                (() => {
+                    /** */
+                }),
             ref: inputRef
         };
 

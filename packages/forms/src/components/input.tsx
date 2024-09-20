@@ -2,13 +2,14 @@ import {range, takeWhile} from "lodash";
 import numeral from "numeral";
 import {FormEvent, ForwardedRef, forwardRef, ReactElement, useCallback, useEffect, useMemo, useState} from "react";
 
-import {DomainFieldType, DomainTypeSingle} from "@focus4/stores";
+import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
 
 import {MaskDefinition, useMask} from "./utils/mask";
 import {getInputSelection, setInputSelection} from "./utils/selection";
 
-export interface InputProps<T extends DomainFieldType> extends Omit<TextFieldProps, "error" | "onChange" | "value"> {
+export interface InputProps<T extends DomainFieldTypeSingle>
+    extends Omit<TextFieldProps, "error" | "onChange" | "value"> {
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Pour un input de type "number", affiche les séparateurs de milliers. */
@@ -38,11 +39,11 @@ export interface InputProps<T extends DomainFieldType> extends Omit<TextFieldPro
     /** Pour un input de type "number", interdit la saisie de nombres négatifs. */
     noNegativeNumbers?: boolean;
     /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
-    onChange: (value: DomainTypeSingle<T> | undefined) => void;
+    onChange: (value: DomainType<T> | undefined) => void;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
-    value?: DomainTypeSingle<T>;
+    value?: DomainType<T>;
 }
 
 /**
@@ -53,7 +54,7 @@ export interface InputProps<T extends DomainFieldType> extends Omit<TextFieldPro
  *
  * Il s'agit du composant par défaut de tous les domaines pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
-export const Input = forwardRef(function Input<T extends DomainFieldType>(
+export const Input = forwardRef(function Input<const T extends DomainFieldTypeSingle>(
     {
         error,
         mask,
@@ -106,7 +107,7 @@ export const Input = forwardRef(function Input<T extends DomainFieldType>(
     const handleChange = useCallback(
         (v: string, e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             if (type !== "number") {
-                onChange(v === "" ? undefined : (v as DomainTypeSingle<T>));
+                onChange(v === "" ? undefined : (v as DomainType<T>));
             } else if (v === "") {
                 setNumberStringValue("");
                 onChange(undefined);
@@ -207,6 +208,6 @@ export const Input = forwardRef(function Input<T extends DomainFieldType>(
             value={finalValue}
         />
     );
-}) as <T extends DomainFieldType>(
+}) as <const T extends DomainFieldTypeSingle>(
     props: InputProps<T> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
 ) => ReactElement;

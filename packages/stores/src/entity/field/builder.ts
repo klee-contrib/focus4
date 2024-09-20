@@ -11,6 +11,7 @@ import {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
+    DomainFieldType,
     DomainType,
     EntityField,
     FieldComponents,
@@ -24,21 +25,24 @@ type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps :
 type DomainSelectProps<D> = D extends Domain<infer _0, infer _1, infer SCProps> ? SCProps : never;
 type DomainAutocompleteProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer ACProps> ? ACProps : never;
 type DomainDisplayProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer DCProps> ? DCProps : never;
-type DomainLabelProps<D> =
-    D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer LCProps> ? LCProps : never;
-type DomainFieldProps<D> =
-    D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer _5, infer FProps> ? FProps : never;
+type DomainLabelProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer LCProps>
+    ? LCProps
+    : never;
+type DomainFieldProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer _5, infer FProps>
+    ? FProps
+    : never;
 
 /** Métadonnées surchargeables dans un champ. */
 export interface Metadata<
-    T = any,
-    ICProps extends BaseInputProps = any,
-    SCProps extends BaseSelectProps = any,
-    ACProps extends BaseAutocompleteProps = any,
-    DCProps extends BaseDisplayProps = any,
+    DT extends DomainFieldType = any,
+    T extends DomainType<DT> = DomainType<DT>,
+    ICProps extends BaseInputProps<DT> = any,
+    SCProps extends BaseSelectProps<DT> = any,
+    ACProps extends BaseAutocompleteProps<DT> = any,
+    DCProps extends BaseDisplayProps<DT> = any,
     LCProps extends BaseLabelProps = any,
     FProps extends WithThemeProps = any
-> extends FieldComponents<ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
+> extends FieldComponents<DT, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Commentaire du champ. */
@@ -167,15 +171,25 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * @param $field Métadonnées du champ à remplacer;
      */
     metadata<
-        ICProps extends BaseInputProps = DomainInputProps<F["domain"]>,
-        SCProps extends BaseSelectProps = DomainSelectProps<F["domain"]>,
-        ACProps extends BaseAutocompleteProps = DomainAutocompleteProps<F["domain"]>,
-        DCProps extends BaseDisplayProps = DomainDisplayProps<F["domain"]>,
+        ICProps extends BaseInputProps<F["domain"]["type"]> = DomainInputProps<F["domain"]>,
+        SCProps extends BaseSelectProps<F["domain"]["type"]> = DomainSelectProps<F["domain"]>,
+        ACProps extends BaseAutocompleteProps<F["domain"]["type"]> = DomainAutocompleteProps<F["domain"]>,
+        DCProps extends BaseDisplayProps<F["domain"]["type"]> = DomainDisplayProps<F["domain"]>,
         LCProps extends BaseLabelProps = DomainLabelProps<F["domain"]>
     >(
         $field:
-            | Metadata<FieldEntryType<F>, ICProps, SCProps, ACProps, DCProps, LCProps, DomainFieldProps<F["domain"]>>
+            | Metadata<
+                  F["domain"]["type"],
+                  FieldEntryType<F>,
+                  ICProps,
+                  SCProps,
+                  ACProps,
+                  DCProps,
+                  LCProps,
+                  DomainFieldProps<F["domain"]>
+              >
             | (() => Metadata<
+                  F["domain"]["type"],
                   FieldEntryType<F>,
                   ICProps,
                   SCProps,
@@ -298,13 +312,13 @@ function mergeMetadata(domain: Domain, targetMetadata: Metadata, newMetadata: Me
             validator: !domain.validator
                 ? domainOverrides.validator
                 : !domainOverrides.validator
-                  ? domain.validator
-                  : [
-                        ...(Array.isArray(domain.validator) ? domain.validator : [domain.validator]),
-                        ...(Array.isArray(domainOverrides.validator)
-                            ? domainOverrides.validator
-                            : [domainOverrides.validator])
-                    ],
+                ? domain.validator
+                : [
+                      ...(Array.isArray(domain.validator) ? domain.validator : [domain.validator]),
+                      ...(Array.isArray(domainOverrides.validator)
+                          ? domainOverrides.validator
+                          : [domainOverrides.validator])
+                  ],
             inputProps: {
                 ...domain.inputProps,
                 ...domainOverrides.inputProps,

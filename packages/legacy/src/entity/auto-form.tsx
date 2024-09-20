@@ -314,14 +314,14 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     displayFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        DCDProps extends BaseDisplayProps = DisplayProps<DT>,
+        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
         LCDProps extends BaseLabelProps = LabelProps,
-        DCProps extends BaseDisplayProps = DCDProps,
+        DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
         field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps>> &
-            Omit<Metadata<T, any, any, any, DCProps, LCProps>, "fieldProps"> = {}
+            Omit<Metadata<DT, T, any, any, any, DCProps, LCProps>, "fieldProps"> = {}
     ): ReactElement {
         const {
             AutocompleteComponent,
@@ -352,16 +352,16 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     autocompleteFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        ACDProps extends BaseAutocompleteProps = AutocompleteSearchProps<DT extends "number" ? "number" : "string">,
-        DCDProps extends BaseDisplayProps = DisplayProps<DT>,
+        ACDProps extends BaseAutocompleteProps<DT> = AutocompleteSearchProps<DT>,
+        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
         LCDProps extends BaseLabelProps = LabelProps,
-        ACProps extends BaseAutocompleteProps = ACDProps,
-        DCProps extends BaseDisplayProps = DCDProps,
+        ACProps extends BaseAutocompleteProps<DT> = ACDProps,
+        DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
         field: EntityField<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, any, any, ACDProps, DCDProps, LCDProps>> &
-            Omit<Metadata<T, any, any, ACProps, DCProps, LCProps>, "fieldProps"> & {
+            Omit<Metadata<DT, T, any, any, ACProps, DCProps, LCProps>, "fieldProps"> & {
                 error?: string;
                 isEdit?: boolean;
                 name?: string;
@@ -387,16 +387,16 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     fieldFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        ICDProps extends BaseInputProps = InputProps<DT extends number ? "number" : "string">,
-        DCDProps extends BaseDisplayProps = DisplayProps<DT>,
+        ICDProps extends BaseInputProps<DT> = InputProps<DT>,
+        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
         LCDProps extends BaseLabelProps = LabelProps,
-        ICProps extends BaseInputProps = ICDProps,
-        DCProps extends BaseDisplayProps = DCDProps,
+        ICProps extends BaseInputProps<DT> = ICDProps,
+        DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
         field: EntityField<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>>,
         options: FieldOptions<FieldEntry<DT, T, ICDProps, any, any, DCDProps, LCDProps>> &
-            Omit<Metadata<T, ICProps, any, any, DCProps, LCProps>, "fieldProps"> & {
+            Omit<Metadata<DT, T, ICProps, any, any, DCProps, LCProps>, "fieldProps"> & {
                 error?: string;
                 isEdit?: boolean;
                 name?: string;
@@ -421,17 +421,17 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     selectFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        SCDProps extends BaseSelectProps = SelectProps<DT extends "number" ? "number" : "string">,
-        DCDProps extends BaseDisplayProps = DisplayProps<DT>,
+        SCDProps extends BaseSelectProps<DT> = SelectProps<DT>,
+        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
         LCDProps extends BaseLabelProps = LabelProps,
-        SCProps extends BaseSelectProps = SCDProps,
-        DCProps extends BaseDisplayProps = DCDProps,
+        SCProps extends BaseSelectProps<DT> = SCDProps,
+        DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
         field: EntityField<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>>,
         values: ReferenceList,
         options: FieldOptions<FieldEntry<DT, T, any, SCDProps, any, DCDProps, LCDProps>> &
-            Omit<Metadata<T, any, SCProps, any, DCProps, LCProps>, "fieldProps"> & {
+            Omit<Metadata<DT, T, any, SCProps, any, DCProps, LCProps>, "fieldProps"> & {
                 error?: string;
                 isEdit?: boolean;
                 name?: string;

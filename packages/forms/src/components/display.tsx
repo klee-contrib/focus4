@@ -3,7 +3,7 @@ import {autorun} from "mobx";
 import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";
 
-import {DomainFieldType, DomainType, DomainTypeSingle, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
+import {DomainFieldType, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import displayCss, {DisplayCss} from "./__style__/display.css";
@@ -12,9 +12,9 @@ export {displayCss, DisplayCss};
 /** Props du composant d'affichage. */
 export interface DisplayProps<T extends DomainFieldType> {
     /** Formatteur. */
-    formatter?: (value: DomainTypeSingle<SingleDomainFieldType<T>> | undefined) => string;
+    formatter?: (value: DomainType<SingleDomainFieldType<T>> | undefined) => string;
     /** Service de résolution de code. */
-    keyResolver?: (key: DomainTypeSingle<SingleDomainFieldType<T>>) => Promise<string>;
+    keyResolver?: (key: DomainType<SingleDomainFieldType<T>>) => Promise<string | undefined>;
     /** Si renseigné pour un affichage multiple en mode `list`, découpe les listes en plusieurs morceaux pour pouvoir les afficher en colonnes par exemple. */
     listChunkSize?: number;
     /**
@@ -60,7 +60,7 @@ export function Display<T extends DomainFieldType>({
                 if (keyResolver) {
                     if (Array.isArray(value)) {
                         Promise.all(
-                            value.map((v: DomainTypeSingle<SingleDomainFieldType<T>>) =>
+                            value.map((v: DomainType<SingleDomainFieldType<T>>) =>
                                 // eslint-disable-next-line @typescript-eslint/no-base-to-string
                                 keyResolver(v).then(res => res ?? `${v}`)
                             )
@@ -75,14 +75,12 @@ export function Display<T extends DomainFieldType>({
                         setLabel(
                             values
                                 ?.filter(v =>
-                                    value.find(
-                                        (v2: DomainTypeSingle<SingleDomainFieldType<T>>) => v[values.$valueKey] === v2
-                                    )
+                                    value.find((v2: DomainType<SingleDomainFieldType<T>>) => v[values.$valueKey] === v2)
                                 )
                                 .map(v => formatter(v[values.$labelKey] ?? `${v[values.$valueKey]}`))
                         );
                     } else {
-                        setLabel(value.map((v: DomainTypeSingle<SingleDomainFieldType<T>>) => formatter(v)));
+                        setLabel(value.map((v: DomainType<SingleDomainFieldType<T>>) => formatter(v)));
                     }
                 } else {
                     setLabel(formatter(values?.getLabel(value) ?? value));

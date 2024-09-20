@@ -2,13 +2,7 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 
-import {
-    DomainFieldType,
-    DomainTypeMultiple,
-    DomainTypeSingle,
-    ReferenceList,
-    SingleDomainFieldType
-} from "@focus4/stores";
+import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Chip, ChipCss, DropdownCss, Icon, TextFieldCss} from "@focus4/toolbox";
 
@@ -18,7 +12,7 @@ import {toSimpleType} from "./utils";
 import selectChipsCss, {SelectChipsCss} from "./__style__/select-chips.css";
 export {selectChipsCss, SelectChipsCss};
 
-export interface SelectChipsProps<T extends DomainFieldType> {
+export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     /** CSS pour les Chips. */
     chipTheme?: CSSProp<ChipCss>;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
@@ -40,7 +34,7 @@ export interface SelectChipsProps<T extends DomainFieldType> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainTypeMultiple<T>) => void;
+    onChange: (value: DomainType<T>) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /**
@@ -56,11 +50,11 @@ export interface SelectChipsProps<T extends DomainFieldType> {
     /** Type du champ (celui du domaine). */
     type: T;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
-    undeletable?: (value: DomainTypeSingle<SingleDomainFieldType<T>>) => boolean;
+    undeletable?: (value: DomainType<SingleDomainFieldType<T>>) => boolean;
     /** Retire les valeurs qui correspondent à ce filtre des valeurs sélectionnables dans le Select. */
     unselectable?: (value: any) => boolean;
     /** Valeur. */
-    value?: DomainTypeMultiple<T>;
+    value?: DomainType<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -70,7 +64,7 @@ export interface SelectChipsProps<T extends DomainFieldType> {
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) sur un champ liste.
  */
-export function SelectChips<T extends DomainFieldType>({
+export function SelectChips<const T extends DomainFieldTypeMultiple>({
     chipTheme,
     direction,
     disabled = false,
@@ -88,7 +82,7 @@ export function SelectChips<T extends DomainFieldType>({
     type,
     undeletable,
     unselectable,
-    value = [] as DomainTypeMultiple<T>,
+    value = [] as DomainType<T>,
     values
 }: SelectChipsProps<T>) {
     const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
@@ -96,7 +90,7 @@ export function SelectChips<T extends DomainFieldType>({
     const handleAddValue = useCallback(
         function handleAddValue(v?: boolean | number | string) {
             if (v && (!maxSelectable || value.length < maxSelectable)) {
-                onChange?.([...value, v] as DomainTypeMultiple<T>);
+                onChange?.([...value, v] as DomainType<T>);
             }
         },
         [onChange, maxSelectable, value]
@@ -104,21 +98,21 @@ export function SelectChips<T extends DomainFieldType>({
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: boolean | number | string) {
-            onChange?.(value.filter(i => i !== v) as DomainTypeMultiple<T>);
+            onChange?.(value.filter(i => i !== v) as DomainType<T>);
         },
         [onChange, value]
     );
 
     const handleAddAll = useCallback(
         function handleRemoveAll() {
-            onChange?.(values.map(i => i[values.$valueKey]) as DomainTypeMultiple<T>);
+            onChange?.(values.map(i => i[values.$valueKey]) as DomainType<T>);
         },
         [onChange, values]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange?.([] as DomainTypeMultiple<T>);
+            onChange?.([] as DomainType<T>);
         },
         [onChange]
     );
@@ -176,7 +170,7 @@ export function SelectChips<T extends DomainFieldType>({
                             disabled={disabled}
                             label={values.getLabel(item)}
                             onDeleteClick={
-                                !undeletable?.(item as DomainTypeSingle<SingleDomainFieldType<T>>)
+                                !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)
                                     ? () => handleRemoveValue(item)
                                     : undefined
                             }

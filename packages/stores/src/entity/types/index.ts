@@ -13,9 +13,9 @@ export {
 export {
     Domain,
     DomainFieldType,
+    DomainFieldTypeMultiple,
+    DomainFieldTypeSingle,
     DomainType,
-    DomainTypeMultiple,
-    DomainTypeSingle,
     EntityField,
     EntityToType,
     FieldEntry,

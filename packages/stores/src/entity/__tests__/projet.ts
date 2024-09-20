@@ -7,7 +7,14 @@ export type ProjetNode = StoreNode<typeof ProjetEntity>;
 export const ProjetEntity = {
     id: {
         type: "field",
-        domain: {type: "number"},
+        domain: {
+            type: "number",
+            AutocompleteComponent: () => null,
+            DisplayComponent: () => null,
+            LabelComponent: () => null,
+            InputComponent: () => null,
+            SelectComponent: () => null
+        },
         isRequired: false,
         name: "id",
         label: "projet.id"

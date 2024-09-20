@@ -44,6 +44,7 @@ export {
     stringToDomainType,
     toSimpleType
 } from "./components";
+export {domain} from "./domain";
 export {
     AutocompleteForOptions,
     Field,
@@ -61,13 +62,5 @@ export {
     formCss,
     selectFor
 } from "./fields";
-export {
-    domain,
-    makeFormActions,
-    makeFormNode,
-    useFormActions,
-    useFormNode,
-    useLoad,
-    useReferenceTracking
-} from "./stores";
+export {makeFormActions, makeFormNode, useFormActions, useFormNode, useLoad, useReferenceTracking} from "./stores";
 export {translation} from "./translation";

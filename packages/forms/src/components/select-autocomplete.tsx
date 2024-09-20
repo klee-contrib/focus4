@@ -2,13 +2,13 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 
-import {DomainFieldType, DomainTypeSingle, ReferenceList} from "@focus4/stores";
+import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
 import {stringToDomainType} from "./utils";
 
 /** Props du Select. */
-export interface SelectAutocompleteProps<T extends DomainFieldType>
+export interface SelectAutocompleteProps<T extends DomainFieldTypeSingle>
     extends Omit<AutocompleteProps<any>, "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"> {
     /** Message d'erreur à afficher. */
     error?: string;
@@ -17,13 +17,13 @@ export interface SelectAutocompleteProps<T extends DomainFieldType>
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainTypeSingle<T> | undefined) => void;
+    onChange: (value: DomainType<T> | undefined) => void;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Libellé de l'option vide. */
     undefinedLabel?: string;
     /** Valeur. */
-    value?: DomainTypeSingle<T>;
+    value?: DomainType<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -35,7 +35,7 @@ const undefinedKey = "$$undefined$$";
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
-export function SelectAutocomplete<T extends DomainFieldType>({
+export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
     error,
     hasUndefined = true,
     i18nPrefix = "focus",

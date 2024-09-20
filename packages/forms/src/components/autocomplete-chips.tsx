@@ -3,7 +3,7 @@ import {observable} from "mobx";
 import {useObserver} from "mobx-react";
 import {useCallback, useEffect, useState} from "react";
 
-import {DomainFieldType, DomainTypeMultiple, DomainTypeSingle, SingleDomainFieldType} from "@focus4/stores";
+import {DomainFieldTypeMultiple, DomainType, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {AutocompleteCss, Chip, ChipCss, Icon, TextFieldCss} from "@focus4/toolbox";
 
@@ -11,7 +11,7 @@ import {AutocompleteSearch} from "./autocomplete";
 import {SelectChipsCss, selectChipsCss} from "./select-chips";
 import {toSimpleType} from "./utils";
 
-export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {key: string; label: string}> {
+export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSource = {key: string; label: string}> {
     /** CSS pour les Chips. */
     chipTheme?: CSSProp<ChipCss>;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
@@ -32,7 +32,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {ke
      */
     getLabel?: (item: TSource) => string;
     /** Service de résolution de clé. Doit retourner le libellé. */
-    keyResolver?: (key: DomainTypeSingle<SingleDomainFieldType<T>>) => Promise<string | undefined>;
+    keyResolver?: (key: DomainType<SingleDomainFieldType<T>>) => Promise<string | undefined>;
     /** Placeholder pour le champ texte. */
     hint?: string;
     /** Préfixe i18n. Par défaut : "focus". */
@@ -46,7 +46,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {ke
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainTypeMultiple<T>) => void;
+    onChange: (value: DomainType<T>) => void;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
@@ -58,9 +58,9 @@ export interface AutocompleteChipsProps<T extends DomainFieldType, TSource = {ke
     /** Type du champ (celui du domaine). */
     type: T;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
-    undeletable?: (value: DomainTypeSingle<SingleDomainFieldType<T>>) => boolean;
+    undeletable?: (value: DomainType<SingleDomainFieldType<T>>) => boolean;
     /** Valeur. */
-    value?: DomainTypeMultiple<T>;
+    value?: DomainType<T>;
 }
 
 const defaultGetKey = (x: any) => x.key;
@@ -70,7 +70,7 @@ const defaultGetKey = (x: any) => x.key;
  *
  * S'utilise avec [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) sur un champ liste.
  */
-export function AutocompleteChips<T extends DomainFieldType, TSource = {key: string; label: string}>({
+export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSource = {key: string; label: string}>({
     chipTheme,
     direction,
     disabled = false,
@@ -91,7 +91,7 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
     theme: pTheme,
     type,
     undeletable,
-    value = [] as DomainTypeMultiple<T>
+    value = [] as DomainType<T>
 }: AutocompleteChipsProps<T, TSource>) {
     const theme = useTheme<AutocompleteCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
 
@@ -100,9 +100,7 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
     useEffect(() => {
         if (keyResolver) {
             for (const item of value.filter(i => !labels.has(i))) {
-                keyResolver(item as DomainTypeSingle<SingleDomainFieldType<T>>).then(label =>
-                    labels.set(item, label ?? "")
-                );
+                keyResolver(item as DomainType<SingleDomainFieldType<T>>).then(label => labels.set(item, label ?? ""));
             }
         }
     }, [keyResolver, value]);
@@ -110,7 +108,7 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
     const handleAddValue = useCallback(
         function handleAddValue(v?: boolean | number | string) {
             if (v && (!maxSelectable || value.length < maxSelectable)) {
-                onChange?.([...value, v] as DomainTypeMultiple<T>);
+                onChange?.([...value, v] as DomainType<T>);
             }
         },
         [onChange, maxSelectable, value]
@@ -118,14 +116,14 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: boolean | number | string) {
-            onChange?.(value.filter(i => i !== v) as DomainTypeMultiple<T>);
+            onChange?.(value.filter(i => i !== v) as DomainType<T>);
         },
         [onChange, value]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange?.([] as DomainTypeMultiple<T>);
+            onChange?.([] as DomainType<T>);
         },
         [onChange]
     );
@@ -180,7 +178,7 @@ export function AutocompleteChips<T extends DomainFieldType, TSource = {key: str
                             disabled={disabled}
                             label={labels.get(item) ?? ""}
                             onDeleteClick={
-                                !undeletable?.(item as DomainTypeSingle<SingleDomainFieldType<T>>)
+                                !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)
                                     ? () => handleRemoveValue(item)
                                     : undefined
                             }

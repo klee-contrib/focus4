@@ -16,11 +16,13 @@ export interface BooleanRadioProps {
     /** Libellé pour le "oui". Par défaut: "focus.boolean.yes" */
     labelYes?: string;
     /** Name for input field. */
-    name: string;
+    name?: string;
     /** Call with each value change. */
     onChange: (value: boolean) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
+    /** Type du domain du champ. */
+    type: "boolean";
     /** CSS. */
     theme?: CSSProp<BooleanRadioCss & RadioCss>;
     /** Value. */

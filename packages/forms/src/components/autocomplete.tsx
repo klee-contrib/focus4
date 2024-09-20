@@ -1,12 +1,12 @@
 import {debounce} from "lodash";
 import {ForwardedRef, forwardRef, ReactElement, useCallback, useEffect, useState} from "react";
 
-import {DomainFieldType, DomainTypeSingle} from "@focus4/stores";
+import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
 import {stringToDomainType} from "./utils";
 
-export interface AutocompleteSearchProps<T extends DomainFieldType, TSource = {key: string; label: string}>
+export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>
     extends Omit<
         AutocompleteProps<TSource>,
         "error" | "loading" | "onChange" | "suggestionMatch" | "value" | "values"
@@ -14,9 +14,9 @@ export interface AutocompleteSearchProps<T extends DomainFieldType, TSource = {k
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Service de résolution de clé. Doit retourner le libellé. */
-    keyResolver?: (key: DomainTypeSingle<T>) => Promise<string | undefined>;
+    keyResolver?: (key: DomainType<T>) => Promise<string | undefined>;
     /** Au changement. */
-    onChange?: (key: DomainTypeSingle<T> | undefined, value?: TSource) => void;
+    onChange: (key: DomainType<T> | undefined, value?: TSource) => void;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
@@ -26,7 +26,7 @@ export interface AutocompleteSearchProps<T extends DomainFieldType, TSource = {k
     /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
-    value?: DomainTypeSingle<T>;
+    value?: DomainType<T>;
 }
 
 const defaultGetKey = (x: any) => x.key;
@@ -38,7 +38,7 @@ const defaultGetKey = (x: any) => x.key;
  * Il s'agit du composant par défaut de tous les domaines pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  */
 export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
-    T extends DomainFieldType,
+    const T extends DomainFieldTypeSingle,
     TSource = {key: string; label: string}
 >(
     {
@@ -141,6 +141,6 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
             values={values}
         />
     );
-}) as <T extends DomainFieldType, TSource = {key: string; label: string}>(
+}) as <const T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>(
     props: AutocompleteSearchProps<T, TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
 ) => ReactElement;

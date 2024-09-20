@@ -6,7 +6,14 @@ export type LigneNode = StoreNode<typeof LigneEntity>;
 export const LigneEntity = {
     id: {
         type: "field",
-        domain: {type: "number"},
+        domain: {
+            type: "number",
+            AutocompleteComponent: () => null,
+            DisplayComponent: () => null,
+            LabelComponent: () => null,
+            InputComponent: () => null,
+            SelectComponent: () => null
+        },
         isRequired: true,
         name: "id",
         label: "ligne.id"
