@@ -18,7 +18,8 @@ import {TimelineAddItem} from "./add";
 import {TimelineLine} from "./line";
 
 import timelineCss, {TimelineCss} from "../__style__/timeline.css";
-export {timelineCss, TimelineCss};
+export {timelineCss};
+export type {TimelineCss};
 
 /** Props du composant de TimeLine. */
 export type TimelineProps<T> = ListBaseProps<NoInfer<T>> & {

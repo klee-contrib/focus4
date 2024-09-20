@@ -12,11 +12,14 @@ import {Button} from "@focus4/toolbox";
 import {headerCss} from "../header";
 
 import {ButtonBackToTop} from "./button-back-to-top";
-export {ButtonBttCss, buttonBttCss} from "./button-back-to-top";
 import {Header} from "./header";
 
+export {buttonBttCss} from "./button-back-to-top";
+export {scrollableCss};
+export type {ButtonBttCss} from "./button-back-to-top";
+export type {ScrollableCss};
+
 import scrollableCss, {ScrollableCss} from "./__style__/scrollable.css";
-export {scrollableCss, ScrollableCss};
 const Theme = themr("scrollable", scrollableCss);
 
 export interface ScrollableProps {

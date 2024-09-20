@@ -1,8 +1,8 @@
 import "./variables";
 import "./global.css";
 
+export {ThemeContext, ThemeProvider, fromBem, themr, toBem, useTheme} from "./theme";
 export {
-    PanelDescriptor,
     ScrollableContext,
     ScrollspyContext,
     colorScheme,
@@ -10,19 +10,15 @@ export {
     initColorScheme,
     getSpringTransition
 } from "./utils";
-export {
+
+export type {
     CSSContext,
     CSSElement,
     CSSMod,
     CSSProp,
     CSSToStrings,
     FocusCSSContext,
-    ThemeContext,
-    ThemeProvider,
     ThemeProviderProps,
-    ToBem,
-    fromBem,
-    themr,
-    toBem,
-    useTheme
+    ToBem
 } from "./theme";
+export type {PanelDescriptor} from "./utils";

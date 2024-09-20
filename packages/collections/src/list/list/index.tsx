@@ -21,10 +21,10 @@ import {ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
 import {LineProps, LineWrapper} from "./line";
 
-export {DetailProps, LineProps, ListContext};
-
 import listCss, {ListCss} from "../__style__/list.css";
-export {listCss, ListCss};
+
+export {ListContext, listCss};
+export type {DetailProps, LineProps, ListCss};
 
 /** Props du composant de liste standard. */
 export type ListProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {

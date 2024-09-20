@@ -1,5 +1,9 @@
-export {CSSContext, CSSElement, CSSMod, CSSToStrings, ThemeContext} from "./common";
-export {FocusCSSContext, ThemeProvider, ThemeProviderProps} from "./theme-provider";
+export {ThemeContext} from "./common";
+export {ThemeProvider} from "./theme-provider";
 export {themr} from "./themr";
-export {CSSProp, ToBem, fromBem, toBem} from "./to-bem";
+export {fromBem, toBem} from "./to-bem";
 export {useTheme} from "./use-theme";
+
+export type {CSSContext, CSSElement, CSSMod, CSSToStrings} from "./common";
+export type {FocusCSSContext, ThemeProviderProps} from "./theme-provider";
+export type {CSSProp, ToBem} from "./to-bem";

@@ -41,7 +41,7 @@ import {
     SearchService,
     SelectionStatus
 } from "./types";
-export {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput};
+export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
 export class CollectionStore<T = any, C = any> {
@@ -731,32 +731,29 @@ export class CollectionStore<T = any, C = any> {
 }
 
 function groupByFacet<T>(list: T[], fieldName: keyof T) {
-    return list.reduce(
-        (buckets, item) => {
-            let value = item[fieldName];
-            if (isEntityField(value)) {
-                // eslint-disable-next-line @typescript-eslint/prefer-destructuring
-                value = value.value;
-            }
+    return list.reduce((buckets, item) => {
+        let value = item[fieldName];
+        if (isEntityField(value)) {
+            // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+            value = value.value;
+        }
 
-            function add(key?: any) {
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
-            }
+        function add(key?: any) {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
+        }
 
-            if (Array.isArray(value) || isObservableArray(value)) {
-                if (value.length === 0) {
-                    add();
-                } else {
-                    value.forEach(add);
-                }
+        if (Array.isArray(value) || isObservableArray(value)) {
+            if (value.length === 0) {
+                add();
             } else {
-                add(value);
+                value.forEach(add);
             }
-            return buckets;
-        },
-        {} as Record<string, T[]>
-    );
+        } else {
+            add(value);
+        }
+        return buckets;
+    }, {} as Record<string, T[]>);
 }
 
 function isFacetMatch(facetValue: string, itemValue: any): boolean {

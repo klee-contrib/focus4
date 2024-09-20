@@ -3,17 +3,7 @@ import {Component, ReactElement} from "react";
 import {v4} from "uuid";
 
 import {messageStore} from "@focus4/core";
-import {
-    AutocompleteSearchProps,
-    DisplayProps,
-    fieldFor,
-    FieldOptions,
-    Form,
-    InputProps,
-    LabelProps,
-    PanelProps,
-    SelectProps
-} from "@focus4/forms";
+import {fieldFor, FieldOptions, Form, PanelProps} from "@focus4/forms";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -314,8 +304,8 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     displayFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
-        LCDProps extends BaseLabelProps = LabelProps,
+        DCDProps extends BaseDisplayProps<DT>,
+        LCDProps extends BaseLabelProps,
         DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
     >(
@@ -352,9 +342,9 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     autocompleteFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        ACDProps extends BaseAutocompleteProps<DT> = AutocompleteSearchProps<DT>,
-        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
-        LCDProps extends BaseLabelProps = LabelProps,
+        ACDProps extends BaseAutocompleteProps<DT>,
+        DCDProps extends BaseDisplayProps<DT>,
+        LCDProps extends BaseLabelProps,
         ACProps extends BaseAutocompleteProps<DT> = ACDProps,
         DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
@@ -387,9 +377,9 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     fieldFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        ICDProps extends BaseInputProps<DT> = InputProps<DT>,
-        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
-        LCDProps extends BaseLabelProps = LabelProps,
+        ICDProps extends BaseInputProps<DT>,
+        DCDProps extends BaseDisplayProps<DT>,
+        LCDProps extends BaseLabelProps,
         ICProps extends BaseInputProps<DT> = ICDProps,
         DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps
@@ -421,9 +411,9 @@ export abstract class AutoForm<P, ST extends StoreListNode | StoreNode> extends 
     selectFor<
         DT extends DomainFieldType,
         T extends DomainType<DT>,
-        SCDProps extends BaseSelectProps<DT> = SelectProps<DT>,
-        DCDProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
-        LCDProps extends BaseLabelProps = LabelProps,
+        SCDProps extends BaseSelectProps<DT>,
+        DCDProps extends BaseDisplayProps<DT>,
+        LCDProps extends BaseLabelProps,
         SCProps extends BaseSelectProps<DT> = SCDProps,
         DCProps extends BaseDisplayProps<DT> = DCDProps,
         LCProps extends BaseLabelProps = LCDProps

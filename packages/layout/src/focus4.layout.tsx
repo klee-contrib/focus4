@@ -2,20 +2,14 @@ import {FocusCSSContext, ThemeProvider} from "@focus4/styling";
 
 import {LayoutBase, LayoutProps} from "./presentation";
 
-export {HeaderActions, HeaderContent, HeaderCss, HeaderItem, HeaderScrolling, HeaderTopRow, headerCss} from "./header";
-export {MainMenu, MainMenuItem, MainMenuProps, MainMenuCss, mainMenuCss} from "./menu";
+export {HeaderActions, HeaderContent, HeaderItem, HeaderScrolling, HeaderTopRow, headerCss} from "./header";
+export {MainMenu, MainMenuItem, mainMenuCss} from "./menu";
 export {
     Content,
     Dialog,
-    DialogCss,
     LayoutBase,
-    LayoutProps,
-    LayoutCss,
-    OverlayCss,
     Popin,
-    PopinCss,
     ScrollspyContainer,
-    ScrollspyCss,
     dialogCss,
     layoutCss,
     overlayCss,
@@ -23,9 +17,15 @@ export {
     scrollspyCss,
     useActiveTransition
 } from "./presentation";
-export {ButtonBttCss, Scrollable, ScrollableProps, ScrollableCss, buttonBttCss, scrollableCss} from "./scrollable";
+export {Scrollable, buttonBttCss, scrollableCss} from "./scrollable";
 export {translation} from "./translation";
-export {MessageCenter, MessageCenterProps} from "./utils";
+export {MessageCenter} from "./utils";
+
+export type {HeaderCss} from "./header";
+export type {MainMenuProps, MainMenuCss} from "./menu";
+export type {DialogCss, LayoutProps, LayoutCss, OverlayCss, PopinCss, ScrollspyCss} from "./presentation";
+export type {ButtonBttCss, ScrollableProps, ScrollableCss} from "./scrollable";
+export type {MessageCenterProps} from "./utils";
 
 /**
  * Composant racine d'une application Focus, contient les composants transverses comme le header, le menu ou le centre de message.

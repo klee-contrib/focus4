@@ -1,1 +1,3 @@
-export {MessageCenter, MessageCenterProps} from "./message-center";
+export {MessageCenter} from "./message-center";
+
+export type {MessageCenterProps} from "./message-center";

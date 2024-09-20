@@ -14,7 +14,8 @@ import {TableLine} from "./line";
 
 import tableCss, {TableCss} from "../__style__/table.css";
 
-export {TableColumn, tableCss, TableCss};
+export {tableCss};
+export type {TableColumn, TableCss};
 
 /** Props du tableau de base. */
 export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {

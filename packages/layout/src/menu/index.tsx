@@ -9,7 +9,8 @@ import {MainMenuItem} from "./item";
 import {MainMenuList} from "./list";
 
 import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
-export {MainMenuItem, MainMenuCss, mainMenuCss};
+export {MainMenuItem, mainMenuCss};
+export type {MainMenuCss};
 
 /** Props du Menu. */
 export interface MainMenuProps {

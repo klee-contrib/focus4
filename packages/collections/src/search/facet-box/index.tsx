@@ -9,10 +9,11 @@ import {IconButton} from "@focus4/toolbox";
 
 import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
 import {shouldDisplayFacet} from "./utils";
-export {FacetProps, shouldDisplayFacet};
 
 import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
-export {FacetBoxCss, facetBoxCss, FacetCss, facetCss};
+
+export {facetBoxCss, facetCss, shouldDisplayFacet};
+export type {FacetProps, FacetBoxCss, FacetCss};
 
 /** "Facette" additionnelle. */
 export interface AdditionalFacet {

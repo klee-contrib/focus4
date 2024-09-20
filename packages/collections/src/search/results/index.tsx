@@ -8,7 +8,8 @@ import {CSSProp} from "@focus4/styling";
 import {List, ListBaseProps, ListProps, OperationListItem} from "../../list";
 
 import {Group, GroupCss, groupCss, GroupHeaderProps} from "./group";
-export {Group, GroupCss, groupCss, GroupHeaderProps};
+export {Group, groupCss};
+export type {GroupCss, GroupHeaderProps};
 
 /** Props de Results. */
 export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {

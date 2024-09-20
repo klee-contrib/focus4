@@ -8,7 +8,11 @@ declare module "i18next" {
     }
 }
 
-export {HttpMethod, Request, coreFetch, downloadFile, getFileObjectUrl, requestStore} from "./network";
-export {Router, RouterConstraintBuilder, makeRouter, param} from "./router";
-export {Message, MessageListener, MessageStore, UserStore, messageStore} from "./stores";
+export {coreFetch, downloadFile, getFileObjectUrl, requestStore} from "./network";
+export {makeRouter, param} from "./router";
+export {MessageStore, UserStore, messageStore} from "./stores";
 export {config, themeable} from "./utils";
+
+export type {HttpMethod, Request} from "./network";
+export type {Router, RouterConstraintBuilder} from "./router";
+export type {Message, MessageListener} from "./stores";

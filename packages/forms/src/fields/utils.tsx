@@ -7,7 +7,7 @@ import {
     BaseDisplayProps,
     BaseInputProps,
     BaseSelectProps,
-    DomainTypeSingle,
+    DomainType,
     EntityField,
     FieldEntry,
     FieldEntryType,
@@ -35,9 +35,7 @@ export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponent
 > &
     Partial<FieldOptions<F>> & {
         /** Service de résolution de code. */
-        keyResolver?: (
-            key: DomainTypeSingle<SingleDomainFieldType<F["domain"]["type"]>>
-        ) => Promise<string | undefined>;
+        keyResolver?: (key: DomainType<SingleDomainFieldType<F["domain"]["type"]>>) => Promise<string | undefined>;
         /** Service de recherche. */
         querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
     };
