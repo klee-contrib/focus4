@@ -31,7 +31,7 @@ export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
     /** Au blur de la Checkbox. */
     onBlur?: FocusEventHandler<HTMLInputElement>;
     /** Handler appelé au clic sur la Checkbox. */
-    onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
+    onChange?: (value?: boolean, event?: MouseEvent<HTMLInputElement>) => void;
     /** Au focus de la Checkbox. */
     onFocus?: FocusEventHandler<HTMLInputElement>;
     /** CSS. */

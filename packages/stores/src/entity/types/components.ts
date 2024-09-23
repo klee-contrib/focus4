@@ -2,7 +2,7 @@ import {CSSProperties, ReactNode} from "react";
 
 import {ReferenceList} from "../../reference";
 
-import {DomainFieldType, DomainType} from "./entity";
+import {DomainFieldType, DomainType, SingleDomainFieldType} from "./entity";
 
 export interface WithThemeProps {
     theme?: object;
@@ -14,8 +14,8 @@ export interface BaseInputProps<DT extends DomainFieldType> extends WithThemePro
     error?: string;
     id?: string;
     name?: string;
-    onChange: (value: any) => void;
-    type: DT;
+    onChange?: (value?: DomainType<DT>) => void;
+    type?: DT;
     value?: DomainType<DT>;
 }
 
@@ -24,12 +24,12 @@ export interface BaseSelectProps<DT extends DomainFieldType> extends BaseInputPr
 }
 
 export interface BaseAutocompleteProps<DT extends DomainFieldType> extends BaseInputProps<DT> {
-    keyResolver?: (key: any) => Promise<string | undefined>;
+    keyResolver?: (key: DomainType<SingleDomainFieldType<DT>>) => Promise<string | undefined>;
 }
 
 export interface BaseDisplayProps<DT extends DomainFieldType> extends WithThemeProps {
-    formatter?: (value: any) => string;
-    keyResolver?: (key: any) => Promise<string | undefined>;
+    formatter?: (value: DomainType<SingleDomainFieldType<DT>>) => string;
+    keyResolver?: (key: DomainType<SingleDomainFieldType<DT>>) => Promise<string | undefined>;
     type: DT;
     value?: DomainType<DT>;
     values?: ReferenceList;

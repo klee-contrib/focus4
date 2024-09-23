@@ -14,7 +14,7 @@ export interface SelectProps<T extends DomainFieldTypeSingle>
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainType<T> | undefined) => void;
+    onChange: (value?: DomainType<T>) => void;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */

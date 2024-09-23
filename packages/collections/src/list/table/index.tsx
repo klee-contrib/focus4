@@ -103,11 +103,11 @@ export function Table<T>({
                         <tr className={theme.header()}>
                             {hasSelection ? (
                                 <th className={theme.checkbox({all: hasSelectAll})}>
-                                    {hasSelectAll ? (
+                                    {hasSelectAll && store ? (
                                         <Checkbox
-                                            indeterminate={store?.selectionStatus === "partial"}
-                                            onChange={store?.toggleAll}
-                                            value={store?.selectionStatus !== "none"}
+                                            indeterminate={store.selectionStatus === "partial"}
+                                            onChange={store.toggleAll}
+                                            value={store.selectionStatus !== "none"}
                                         />
                                     ) : null}
                                 </th>

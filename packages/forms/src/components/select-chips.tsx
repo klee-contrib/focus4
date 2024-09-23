@@ -35,7 +35,7 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainType<T>) => void;
+    onChange: (value?: DomainType<T>) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /**
@@ -91,7 +91,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     const handleAddValue = useCallback(
         function handleAddValue(v?: boolean | number | string) {
             if (v && (!maxSelectable || value.length < maxSelectable)) {
-                onChange?.([...value, v] as DomainType<T>);
+                onChange([...value, v] as DomainType<T>);
             }
         },
         [onChange, maxSelectable, value]
@@ -99,21 +99,21 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: boolean | number | string) {
-            onChange?.(value.filter(i => i !== v) as DomainType<T>);
+            onChange(value.filter(i => i !== v) as DomainType<T>);
         },
         [onChange, value]
     );
 
     const handleAddAll = useCallback(
         function handleRemoveAll() {
-            onChange?.(values.map(i => i[values.$valueKey]) as DomainType<T>);
+            onChange(values.map(i => i[values.$valueKey]) as DomainType<T>);
         },
         [onChange, values]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange?.([] as DomainType<T>);
+            onChange([] as DomainType<T>);
         },
         [onChange]
     );

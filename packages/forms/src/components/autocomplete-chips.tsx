@@ -47,7 +47,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainType<T>) => void;
+    onChange: (value?: DomainType<T>) => void;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
@@ -109,7 +109,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     const handleAddValue = useCallback(
         function handleAddValue(v?: boolean | number | string) {
             if (v && (!maxSelectable || value.length < maxSelectable)) {
-                onChange?.([...value, v] as DomainType<T>);
+                onChange([...value, v] as DomainType<T>);
             }
         },
         [onChange, maxSelectable, value]
@@ -117,14 +117,14 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: boolean | number | string) {
-            onChange?.(value.filter(i => i !== v) as DomainType<T>);
+            onChange(value.filter(i => i !== v) as DomainType<T>);
         },
         [onChange, value]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange?.([] as DomainType<T>);
+            onChange([] as DomainType<T>);
         },
         [onChange]
     );

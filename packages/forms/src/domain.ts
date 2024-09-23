@@ -33,6 +33,7 @@ export function domain<
     const DT extends DomainFieldTypeSingle,
     ICProps extends BaseInputProps<DT> = InputProps<DT>,
     SCProps extends BaseSelectProps<DT> = SelectProps<DT>,
+    // @ts-ignore
     ACProps extends BaseAutocompleteProps<DT> = AutocompleteSearchProps<DT>,
     DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
     LCProps extends BaseLabelProps = LabelProps

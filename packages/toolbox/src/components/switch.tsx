@@ -30,7 +30,7 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     /** Au blur du Switch. */
     onBlur?: FocusEventHandler<HTMLInputElement>;
     /** Handler appelé au clic sur le Switch. */
-    onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
+    onChange?: (value?: boolean, event?: MouseEvent<HTMLInputElement>) => void;
     /** Au focus du Switch. */
     onFocus?: FocusEventHandler<HTMLInputElement>;
     /** CSS. */

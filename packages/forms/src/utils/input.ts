@@ -35,7 +35,7 @@ export interface UseInputProps<T extends DomainFieldTypeSingle> {
     /** Pour un input de type "number", interdit la saisie de nombres négatifs. */
     noNegativeNumbers?: boolean;
     /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
-    onChange: (value: DomainType<T> | undefined) => void;
+    onChange: (value?: DomainType<T>) => void;
     /** Au `keydown` du champ. */
     onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Au collage de texte dans le champ. */

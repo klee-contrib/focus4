@@ -84,8 +84,6 @@ export interface InputDateProps {
     timezoneCode?: string;
     /** CSS. */
     theme?: CSSProp<CalendarCss & InputDateCss>;
-    /** Type du domaine du champ. */
-    type: "string";
     /** Valeur. */
     value?: string;
 }

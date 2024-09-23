@@ -24,7 +24,7 @@ export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainType<T> | undefined) => void;
+    onChange: (value?: DomainType<T>) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */

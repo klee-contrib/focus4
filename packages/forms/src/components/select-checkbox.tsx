@@ -14,7 +14,7 @@ function clickHandlerFactory<T extends DomainFieldTypeMultiple>(
     isSelected: boolean,
     value: DomainType<T> | undefined,
     optVal: DomainType<SingleDomainFieldType<T>>,
-    onChange: (value: DomainType<T>) => void
+    onChange: (value?: DomainType<T>) => void
 ) {
     return (e: SyntheticEvent<any>) => {
         e.stopPropagation();
@@ -47,7 +47,7 @@ export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value: DomainType<T>) => void;
+    onChange: (value?: DomainType<T>) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
