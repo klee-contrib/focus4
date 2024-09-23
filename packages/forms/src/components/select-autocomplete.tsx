@@ -5,7 +5,7 @@ import {useCallback, useMemo} from "react";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
-import {stringToDomainType} from "./utils";
+import {stringToDomainType} from "../utils";
 
 /** Props du Select. */
 export interface SelectAutocompleteProps<T extends DomainFieldTypeSingle>

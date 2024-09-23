@@ -6,7 +6,7 @@ import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
 
-import {stringToDomainType} from "./utils";
+import {stringToDomainType} from "../utils";
 
 import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
 export {selectRadioCss, SelectRadioCss};

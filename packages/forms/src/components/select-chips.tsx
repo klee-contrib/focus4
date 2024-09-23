@@ -6,8 +6,9 @@ import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldTyp
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Chip, ChipCss, DropdownCss, Icon, TextFieldCss} from "@focus4/toolbox";
 
+import {toSimpleType} from "../utils";
+
 import {Select} from "./select";
-import {toSimpleType} from "./utils";
 
 import selectChipsCss, {SelectChipsCss} from "./__style__/select-chips.css";
 export {selectChipsCss, SelectChipsCss};

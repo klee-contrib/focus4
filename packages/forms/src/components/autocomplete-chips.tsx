@@ -7,9 +7,10 @@ import {DomainFieldTypeMultiple, DomainType, SingleDomainFieldType} from "@focus
 import {CSSProp, useTheme} from "@focus4/styling";
 import {AutocompleteCss, Chip, ChipCss, Icon, TextFieldCss} from "@focus4/toolbox";
 
+import {toSimpleType} from "../utils";
+
 import {AutocompleteSearch} from "./autocomplete";
 import {SelectChipsCss, selectChipsCss} from "./select-chips";
-import {toSimpleType} from "./utils";
 
 export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSource = {key: string; label: string}> {
     /** CSS pour les Chips. */

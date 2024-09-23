@@ -12,7 +12,6 @@ export {SelectAutocomplete} from "./select-autocomplete";
 export {SelectCheckbox, selectCheckboxCss} from "./select-checkbox";
 export {SelectChips, selectChipsCss} from "./select-chips";
 export {SelectRadio, selectRadioCss} from "./select-radio";
-export {stringToDomainType, toSimpleType} from "./utils";
 
 export type {AutocompleteSearchProps} from "./autocomplete";
 export type {AutocompleteChipsProps} from "./autocomplete-chips";

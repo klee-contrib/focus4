@@ -4,7 +4,7 @@ import {ForwardedRef, forwardRef, ReactElement, useCallback, useEffect, useState
 import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
-import {stringToDomainType} from "./utils";
+import {stringToDomainType} from "../utils";
 
 export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>
     extends Omit<

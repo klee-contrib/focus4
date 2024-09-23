@@ -4,7 +4,7 @@ import {useObserver} from "mobx-react";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
-import {stringToDomainType} from "./utils";
+import {stringToDomainType} from "../utils";
 
 /** Props du Select. */
 export interface SelectProps<T extends DomainFieldTypeSingle>
