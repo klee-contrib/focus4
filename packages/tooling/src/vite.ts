@@ -40,10 +40,10 @@ export function cssAutoModules(regex: RegExp) {
             id = id.replace("?used", "");
 
             if (id.startsWith(".") && id.endsWith(".css") && !id.endsWith(".module.css")) {
-                const fixedId = `/${path.relative(config.root, path.resolve(path.dirname(importer!), id))}`.replace(
-                    /\\/g,
-                    "/"
-                );
+                const fixedId = `/${path.relative(
+                    config.root,
+                    path.resolve(importer ? path.dirname(importer) : "", id)
+                )}`.replace(/\\/g, "/");
 
                 if (regex.test(fixedId)) {
                     return fixedId.replace(".css", ".module.css");
@@ -69,7 +69,8 @@ export function cssAutoModules(regex: RegExp) {
                 const id = `/${path
                     .relative(config.root, context.file.replace(".css", ".module.css"))
                     .replace(/\\/g, "/")}`;
-                return [context.server.moduleGraph.getModuleById(id)!];
+                const module = context.server.moduleGraph.getModuleById(id);
+                return module ? [module] : [];
             }
         }
     } satisfies PluginOption;

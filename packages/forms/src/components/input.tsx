@@ -52,7 +52,7 @@ export interface InputProps<T extends DomainFieldTypeSingle>
  * -   La gestion de masques de saisie
  * -   Une gestion propre de saisie de nombre (avec formattage, restrictions de décimales, et un `onChange` qui renvoie bien un nombre)
  *
- * Il s'agit du composant par défaut de tous les domaines pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
+ * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export const Input = forwardRef(function Input<const T extends DomainFieldTypeSingle>(
     {

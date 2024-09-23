@@ -2,7 +2,7 @@ import {CSSProperties, ReactNode} from "react";
 
 import {ReferenceList} from "../../reference";
 
-import {DomainFieldType} from "./entity";
+import {DomainFieldType, DomainType} from "./entity";
 
 export interface WithThemeProps {
     theme?: object;
@@ -16,7 +16,7 @@ export interface BaseInputProps<DT extends DomainFieldType> extends WithThemePro
     name?: string;
     onChange: (value: any) => void;
     type: DT;
-    value?: any;
+    value?: DomainType<DT>;
 }
 
 export interface BaseSelectProps<DT extends DomainFieldType> extends BaseInputProps<DT> {
@@ -31,7 +31,7 @@ export interface BaseDisplayProps<DT extends DomainFieldType> extends WithThemeP
     formatter?: (value: any) => string;
     keyResolver?: (key: any) => Promise<string | undefined>;
     type: DT;
-    value?: any;
+    value?: DomainType<DT>;
     values?: ReferenceList;
 }
 

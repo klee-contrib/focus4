@@ -26,7 +26,7 @@ export interface SelectProps<T extends DomainFieldTypeSingle>
 /**
  * Surcharge du [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) de `@focus4/toolbox` pour fonctionner avec une liste de référence.
  *
- * Il s'agit du composant par défaut de tous les domaines pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
+ * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
 export function Select<const T extends DomainFieldTypeSingle>({
     error,
