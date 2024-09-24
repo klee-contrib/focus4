@@ -110,7 +110,11 @@ export function Summary<T>({
                 for (const criteriaKey in props.store.flatCriteria) {
                     const {label, domain} = (props.store.criteria[criteriaKey] as FormEntityField).$field;
                     const value = (props.store.flatCriteria as any)[criteriaKey];
-                    if (!props.hideCriteria || !props.hideCriteria.includes(criteriaKey)) {
+                    if (
+                        (!props.hideCriteria || !props.hideCriteria.includes(criteriaKey)) &&
+                        (value || value === 0) &&
+                        (!Array.isArray(value) || value.length > 0)
+                    ) {
                         topicList.push({
                             type: "filter",
                             key: `${criteriaKey}-${value as string}`,
