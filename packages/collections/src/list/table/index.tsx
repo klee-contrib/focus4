@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import {ComponentType} from "react";
+import {ComponentType, MouseEvent} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -28,7 +28,7 @@ export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     /** Composant à afficher pendant le chargement. */
     LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /** Appelé au clic sur une ligne. */
-    onLineClick?: (data: NoInfer<T>) => void;
+    onLineClick?: (data: NoInfer<T>, event: MouseEvent<HTMLTableCellElement>) => void;
     /** Actions globales sur le tableau, affichées dans le header. */
     operationList?: OperationListItem<NoInfer<T>[]>[];
     /** CSS. */

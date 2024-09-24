@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
-import {useEffect} from "react";
+import {MouseEvent, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {ToBem} from "@focus4/styling";
@@ -40,7 +40,7 @@ export function TableLine<T>({
     /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Appelé au clic sur une ligne. */
-    onClick?: (data: T) => void;
+    onClick?: (data: T, event: MouseEvent<HTMLTableCellElement>) => void;
     /** La liste des actions sur chaque élément de la liste. */
     operationList?: (data: T) => OperationListItem<T>[];
     /** Le store contenant la liste. */
@@ -93,7 +93,11 @@ export function TableLine<T>({
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (
-                <td key={idx} className={classNames(cellClassName, theme.cell())} onClick={() => onClick?.(props.data)}>
+                <td
+                    key={idx}
+                    className={classNames(cellClassName, theme.cell())}
+                    onClick={e => onClick?.(props.data, e)}
+                >
                     {content(props.data)}
                 </td>
             ))}
