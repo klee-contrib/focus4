@@ -44,7 +44,7 @@ import {
 export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class CollectionStore<T = any, C = any> {
+export class CollectionStore<T = any, C = any, NC = C> {
     /** Type de store. */
     readonly type: "local" | "server";
 
@@ -103,7 +103,7 @@ export class CollectionStore<T = any, C = any> {
     @observable isItemSelectionnable: (data: T) => boolean = () => true;
 
     /** StoreNode contenant les critères personnalisés de recherche. */
-    readonly criteria!: FormNode<C>;
+    readonly criteria!: FormNode<NC, C>;
 
     /** Mode de prise en compte de l'objet de critère. */
     readonly criteriaMode!: CollectionStoreInitProperties["criteriaMode"];
@@ -122,18 +122,18 @@ export class CollectionStore<T = any, C = any> {
      * @param criteria La description du critère de recherche personnalisé.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      */
-    constructor(service: SearchService<T>, criteria?: C, initialQuery?: CollectionStoreInitProperties<C>);
+    constructor(service: SearchService<T>, criteria?: C, initialQuery?: CollectionStoreInitProperties<C, NC>);
     /**
      * Crée un nouveau store de recherche.
      * @param initialQuery Les paramètres de recherche à l'initilisation.
      * @param service Le service de recherche.
      * @param criteria La description du critère de recherche personnalisé.
      */
-    constructor(service: SearchService<T>, initialQuery?: CollectionStoreInitProperties<C>, criteria?: C);
+    constructor(service: SearchService<T>, initialQuery?: CollectionStoreInitProperties<C, NC>, criteria?: C);
     constructor(
         firstParam?: LocalStoreConfig<T> | SearchService<T>,
-        secondParam?: C | CollectionStoreInitProperties<C>,
-        thirdParam?: C | CollectionStoreInitProperties<C>
+        secondParam?: C | CollectionStoreInitProperties<C, NC>,
+        thirdParam?: C | CollectionStoreInitProperties<C, NC>
     ) {
         makeObservable(this);
         if (isFunction(firstParam)) {
@@ -141,7 +141,7 @@ export class CollectionStore<T = any, C = any> {
             this.service = firstParam;
 
             // On gère les paramètres du constructeur dans les deux ordres.
-            let initialQuery: CollectionStoreInitProperties<C>;
+            let initialQuery: CollectionStoreInitProperties<C, NC>;
             let criteria;
 
             if (secondParam && (secondParam as any)[Object.keys(secondParam)[0]].type) {
@@ -379,7 +379,7 @@ export class CollectionStore<T = any, C = any> {
         return errors;
     }
 
-    /** Récupère l'objet de critères personnalisé à plat (sans le StoreNode) */
+    /** Récupère l'objet de critères personnalisé à plat (via `toFlatValues`, sans les critères en erreurs). */
     @computed.struct
     get flatCriteria() {
         const criteria =
@@ -516,7 +516,7 @@ export class CollectionStore<T = any, C = any> {
      * @param props Les propriétés à mettre à jour.
      */
     @action.bound
-    setProperties(props: SearchProperties<C>) {
+    setProperties(props: SearchProperties<NC>) {
         this.groupingKey = props.hasOwnProperty("groupingKey") ? props.groupingKey : this.groupingKey;
         this.searchFields = props.hasOwnProperty("searchFields") ? props.searchFields : this.searchFields;
         if (props.inputFacets) {

@@ -43,9 +43,9 @@ export interface FacetInput {
 }
 
 /** Critères génériques de recherche. */
-export interface SearchProperties<C = any> {
+export interface SearchProperties<NC = any> {
     /** Critère personnalisé. */
-    criteria?: EntityToType<C>;
+    criteria?: EntityToType<NC>;
     /** Champ sur lequel grouper. */
     groupingKey?: string;
     /** Champ texte. */
@@ -63,7 +63,7 @@ export interface SearchProperties<C = any> {
 }
 
 /** Initialisation du CollectionStore */
-export interface CollectionStoreInitProperties<C = any> extends SearchProperties<C> {
+export interface CollectionStoreInitProperties<C = any, NC = C> extends SearchProperties<NC> {
     /**
      * Mode de prise en compte de l'objet de critère :
      *
@@ -73,7 +73,7 @@ export interface CollectionStoreInitProperties<C = any> extends SearchProperties
      */
     criteriaMode?: "debounced" | "direct" | "manual";
     /** Configurateur pour le formulaire de critères. */
-    criteriaBuilder?: (s: FormNodeBuilder<C, C>) => FormNodeBuilder<any, C>;
+    criteriaBuilder?: (s: FormNodeBuilder<C, C>) => FormNodeBuilder<NC, C>;
 }
 
 /** Valeur de facette. */
