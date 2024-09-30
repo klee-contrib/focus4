@@ -9,7 +9,7 @@ import {stringToDomainType} from "../utils";
 export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>
     extends Omit<
         AutocompleteProps<TSource>,
-        "error" | "loading" | "onChange" | "suggestionMatch" | "value" | "values"
+        "error" | "loading" | "noSuggestionsOnEmptyQuery" | "onChange" | "suggestionMatch" | "value" | "values"
     > {
     /** Erreur à afficher sous le champ. */
     error?: string;
@@ -129,6 +129,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
             ref={ref}
             error={!!error}
             loading={loading}
+            noSuggestionsOnEmptyQuery={!searchOnEmptyQuery}
             onChange={handleChange}
             onFocus={handleFocus}
             onQueryChange={handleQueryChange}

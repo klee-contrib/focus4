@@ -64,6 +64,8 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
     onChange?: (key?: string, value?: TSource) => void;
     /** Handler appelé lorsque la query (= contenu du champ texte) change. */
     onQueryChange?: (query: string) => void;
+    /** N'affiche pas les suggestions si le champ est vide. */
+    noSuggestionsOnEmptyQuery?: boolean;
     /** Permet de surcharger la query (= contenu du champ texte). A utiliser avec `onQueryChange`.  */
     query?: string;
     /** Précise le mode de correspondance utilisé entre la query et le libellé. Par défaut : "start". */
@@ -117,6 +119,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         onPointerLeave,
         onPointerUp,
         onQueryChange,
+        noSuggestionsOnEmptyQuery = false,
         prefix,
         query: pQuery,
         required,
@@ -200,10 +203,12 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
 
         if (newQuery) {
             return values.filter(v => isMatch(normalize(getLabel(v)), newQuery));
+        } else if (noSuggestionsOnEmptyQuery) {
+            return [];
         } else {
             return values;
         }
-    }, [getLabel, query, suggestionMatch, value, values]);
+    }, [getLabel, noSuggestionsOnEmptyQuery, query, suggestionMatch, value, values]);
 
     // Détermine la valeur sélectionnée dans la liste de suggestions.
     useEffect(() => {
