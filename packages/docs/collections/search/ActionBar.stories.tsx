@@ -21,7 +21,14 @@ export default {
                 action: () => {
                     /** */
                 },
-                label: "action"
+                label: "action 2"
+            },
+            {
+                action: () => {
+                    /** */
+                },
+                label: "action 1",
+                showIfNoData: true
             }
         ]
     },

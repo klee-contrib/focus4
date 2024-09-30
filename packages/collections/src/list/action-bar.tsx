@@ -196,7 +196,9 @@ export function ActionBar<T>({
                     ) ? (
                         <div style={{position: "relative"}}>
                             <Button
-                                icon={{i18nKey: `${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`}}
+                                icon={{
+                                    i18nKey: `${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`
+                                }}
                                 iconPosition="right"
                                 label={i18next.t(`${i18nPrefix}.search.action.filter`)}
                                 onClick={() => setDisplayFacetBox(!displayFacetBox)}
@@ -261,8 +263,11 @@ export function ActionBar<T>({
                         </div>
                     ) : null}
                 </div>
-                {store.selectedItems.size && operationList?.length ? (
-                    <ContextualActions data={Array.from(store.selectedItems)} operationList={operationList} />
+                {operationList ? (
+                    <ContextualActions
+                        data={Array.from(store.selectedItems)}
+                        operationList={operationList.filter(o => !!store.selectedItems.size || o.showIfNoData)}
+                    />
                 ) : null}
             </div>
             {/* FacetBox */}

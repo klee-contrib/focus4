@@ -87,7 +87,7 @@ export function LineWrapper<T>({
             {state.isSelectable ? (
                 <Checkbox className={theme.checkbox()} onChange={state.onSelection} value={state.isSelected} />
             ) : null}
-            {operationList?.(props.data)?.length ? (
+            {operationList?.(props.data) ? (
                 <div className={theme.actions()} style={mosaic ? {width: mosaic.width, height: mosaic.height} : {}}>
                     <ContextualActions
                         data={props.data}

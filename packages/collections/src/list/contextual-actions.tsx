@@ -30,6 +30,8 @@ export interface OperationListItem<T> {
     icon?: Icon;
     /** Label pour la tooltip du bouton d'actions secondaires, si l'action est de type `secondary`. S'il y a plusieurs actions secondaires, c'est le premier label non vide qui sera utilisé. */
     secondaryLabel?: string;
+    /** Affiche quand même l'action même les données qui y seraient passées sont vides (par exemple s'il n'y a pas d'élément sélectionné dans le store pour une action globale). */
+    showIfNoData?: boolean;
     /** Type d'affichage pour l'action. Seul "secondary" sera pris en compte pour une mosaïque. Par défaut : "icon-label". */
     type?: "icon-label" | "icon-tooltip" | "icon" | "label" | "secondary";
     /** Variante du bouton. Si c'est une action secondaire, ce sera la variante du bouton d'actions secondaires. S'il y en a plusieurs, c'est la première valeur non vide qui sera utilisée. */
@@ -37,27 +39,27 @@ export interface OperationListItem<T> {
 }
 
 /** Props du composant d'actions contextuelles. */
-export interface ContextualActionsProps {
+export interface ContextualActionsProps<T> {
     /** Le paramètre à passer aux actions. */
-    data: any;
+    data: T;
     /** Préfixe i18n pour l'icône de dropdown. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Mode mosaïque. */
     isMosaic?: boolean;
     /** La liste d'actions. */
-    operationList: OperationListItem<any>[];
+    operationList: OperationListItem<T>[];
     /** CSS. */
     theme?: CSSProp<ContextualActionsCss>;
 }
 
 /** Affiche une liste d'actions contextuelles. */
-export function ContextualActions({
+export function ContextualActions<T>({
     data,
     i18nPrefix = "focus",
     isMosaic = false,
     operationList,
     theme: pTheme
-}: ContextualActionsProps) {
+}: ContextualActionsProps<T>) {
     const theme = useTheme("contextualActions", contextualActionsCss, pTheme);
 
     const {primaryActions, secondaryActions} = operationList.reduce(
@@ -69,11 +71,16 @@ export function ContextualActions({
                 const FinalButton = isMosaic
                     ? FloatingActionButton
                     : !isMosaic && (operation.type === "icon" || operation.type === "icon-tooltip")
-                      ? IconButton
-                      : Button;
+                    ? IconButton
+                    : Button;
                 const button = (
                     <FinalButton
                         key={key}
+                        className={theme.item({
+                            hidden:
+                                (data === undefined || (Array.isArray(data) && data.length === 0)) &&
+                                !operation.showIfNoData
+                        })}
                         color={isMosaic ? "primary" : operation.color}
                         disabled={operation.disabled}
                         icon={
@@ -97,6 +104,8 @@ export function ContextualActions({
                 );
             } else if (operation.label) {
                 secondaryActions.push({
+                    hidden:
+                        (data === undefined || (Array.isArray(data) && data.length === 0)) && !operation.showIfNoData,
                     iconLeft: operation.icon,
                     onClick: () => operationList[key].action(data),
                     caption: operation.label,
@@ -107,7 +116,7 @@ export function ContextualActions({
         },
         {
             primaryActions: [] as ReactElement[],
-            secondaryActions: [] as MenuItemProps[]
+            secondaryActions: [] as (MenuItemProps & {hidden: boolean})[]
         }
     );
 
@@ -116,12 +125,14 @@ export function ContextualActions({
     const saTooltip = operationList.find(sa => sa.type === "secondary" && !!sa.secondaryLabel)?.secondaryLabel;
     const saButton = isMosaic ? (
         <FloatingActionButton
+            className={theme.item({hidden: secondaryActions.every(c => c.hidden)})}
             color={saColor}
             icon={{i18nKey: `${i18nPrefix}.icons.contextualActions.secondary`}}
             onClick={menu.toggle}
         />
     ) : (
         <IconButton
+            className={theme.item({hidden: secondaryActions.every(c => c.hidden)})}
             color={saColor}
             icon={{i18nKey: `${i18nPrefix}.icons.contextualActions.secondary`}}
             onClick={menu.toggle}
@@ -133,9 +144,11 @@ export function ContextualActions({
         <div ref={menu.anchor} style={{position: "relative"}}>
             {saTooltip ? <Tooltip tooltip={saTooltip}>{saButton}</Tooltip> : saButton}
             <Menu {...menu}>
-                {secondaryActions.map((a, i) => (
-                    <MenuItem key={i} {...a} />
-                ))}
+                {secondaryActions
+                    .filter(a => !a.hidden)
+                    .map(({hidden, ...a}, i) => (
+                        <MenuItem key={i} {...a} />
+                    ))}
             </Menu>
         </div>
     ) : null;

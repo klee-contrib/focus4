@@ -142,10 +142,6 @@
     text-align: right;
 }
 
-.actions--hidden > div {
-    visibility: hidden;
-}
-
 .table--selected .header {
     .checkbox--all,
     .checkbox--all ~ th {

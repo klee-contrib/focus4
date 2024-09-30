@@ -122,14 +122,10 @@ export function Table<T>({
                                 />
                             ))}
                             {!!lineOperationList || !!operationList ? (
-                                <th
-                                    className={theme.actions({
-                                        hidden: hasSelectAll && store?.selectionStatus === "none"
-                                    })}
-                                >
+                                <th className={theme.actions()}>
                                     {operationList ? (
                                         <ContextualActions
-                                            data={store ? Array.from(store.selectedItems) : displayedData}
+                                            data={store ? Array.from(store.selectedItems) : []}
                                             operationList={operationList}
                                         />
                                     ) : null}
