@@ -113,7 +113,7 @@ export async function downloadFile(response: Response) {
     const disposition = response.headers.get("content-disposition") ?? "";
     let filename = "file";
     if (disposition.includes("attachment")) {
-        const filenameRegex = /filename\*=UTF-8''(.+)/;
+        const filenameRegex = /filename\*=UTF-8''(.+)/i;
         const matches = filenameRegex.exec(disposition);
         if (matches?.[1]) {
             filename = decodeURIComponent(matches[1]);
