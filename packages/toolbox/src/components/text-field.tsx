@@ -37,14 +37,14 @@ const CUT_START = 12;
 
 /** Définition des icônes de fin de champ texte. */
 export interface TrailingIcon {
-    /** Blur le champ au clic sur l'icône. */
-    blurOnClick?: boolean;
     /** Affiche l'icône en erreur. */
     error?: boolean;
     /** Icône. */
     icon: Icon;
     /** Handler de clic sur l'icône (pose un bouton icône si renseigné au lieu d'une icône simple.) */
     onClick?: () => void;
+    /** Ne focus pas le champ au clic sur l'icône. */
+    noFocusOnClick?: boolean;
     /** Tooltip pour l'icône. */
     tooltip?: ReactNode;
 }
@@ -366,10 +366,9 @@ export const TextField = forwardRef(function TextField(
                             label={typeof t.tooltip === "string" ? t.tooltip : undefined}
                             onBlur={handleBlur}
                             onClick={e => {
-                                if (t.blurOnClick) {
+                                if (t.noFocusOnClick) {
                                     e.stopPropagation();
                                     e.preventDefault();
-                                    inputNode.current?.blur();
                                     setFocused(false);
                                 }
                                 t.onClick?.();

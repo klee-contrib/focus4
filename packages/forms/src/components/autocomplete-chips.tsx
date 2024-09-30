@@ -165,7 +165,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                     icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
                     onClick: handleRemoveAll,
                     tooltip: i18next.t(`${i18nPrefix}.select.unselectAll`),
-                    blurOnClick: true
+                    noFocusOnClick: true
                 }}
                 type={toSimpleType(type)}
             />

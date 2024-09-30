@@ -123,7 +123,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
             icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
             onClick: handleRemoveAll,
             tooltip: i18next.t(`${i18nPrefix}.select.unselectAll`),
-            blurOnClick: true
+            noFocusOnClick: true
         };
 
         if (hasSelectAll) {
@@ -132,7 +132,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                     icon: {i18nKey: `${i18nPrefix}.icons.select.selectAll`},
                     onClick: handleAddAll,
                     tooltip: i18next.t(`${i18nPrefix}.select.selectAll`),
-                    blurOnClick: true
+                    noFocusOnClick: true
                 },
                 clear
             ];

@@ -282,7 +282,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                     {icon: `arrow_drop_${menu.active ? "up" : "down"}`, error},
                     ...(Array.isArray(trailing) ? trailing : [trailing]).map(t => ({
                         ...t,
-                        blurOnClick: !!t.onClick || t.blurOnClick,
+                        noFocusOnClick: !!t.onClick || t.noFocusOnClick,
                         onClick: t.onClick
                             ? () => {
                                   t.onClick?.();
