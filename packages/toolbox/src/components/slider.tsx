@@ -23,7 +23,7 @@ export interface SliderProps extends PointerEvents<HTMLDivElement> {
     /** Valeur minimale du Slider. Par défaut : 0. */
     min?: number;
     /** Handler appelé au changement de la valeur du Slider. */
-    onChange?: (value: number) => void;
+    onChange?: (value?: number) => void;
     /** Valeur minimale par incrément du Slider. Par défaut : 1. */
     step?: number;
     /** Affiche des indicateurs pour chaque valeur de `step` sur le Slider. */

@@ -7,7 +7,8 @@ import {
     Domain,
     DomainFieldType,
     DomainFieldTypeMultiple,
-    DomainFieldTypeSingle
+    DomainFieldTypeSingle,
+    ReferenceList
 } from "@focus4/stores";
 
 import {
@@ -52,7 +53,7 @@ export function domain<
 ): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
 export function domain<
     const DT extends DomainFieldTypeMultiple,
-    ICProps extends BaseInputProps<DT> = never,
+    ICProps extends BaseInputProps<DT> = {},
     SCProps extends BaseSelectProps<DT> = SelectChipsProps<DT>,
     ACProps extends BaseAutocompleteProps<DT> = AutocompleteChipsProps<DT>,
     DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
@@ -72,9 +73,9 @@ export function domain<
 ): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
 export function domain<
     const DT extends "object",
-    ICProps extends BaseInputProps<DT> = never,
-    SCProps extends BaseSelectProps<DT> = never,
-    ACProps extends BaseAutocompleteProps<DT> = never,
+    ICProps extends BaseInputProps<DT> = {},
+    SCProps extends BaseSelectProps<DT> = {values: ReferenceList},
+    ACProps extends BaseAutocompleteProps<DT> = {},
     DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
     LCProps extends BaseLabelProps = LabelProps
 >(
