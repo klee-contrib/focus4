@@ -45,7 +45,7 @@ export interface FacetInput {
 /** Critères génériques de recherche. */
 export interface SearchProperties<NC = any> {
     /** Critère personnalisé. */
-    criteria?: EntityToType<NC>;
+    criteria?: EntityToType<NoInfer<NC>>;
     /** Champ sur lequel grouper. */
     groupingKey?: string;
     /** Champ texte. */
