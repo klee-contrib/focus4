@@ -13,10 +13,37 @@ export const baseConfig = {
     },
     css: {
         modules: {
-            generateScopedName(name, filename, css) {
-                return `${path.basename(filename).replace(".module.css", "")}_${name}__${Buffer.from(css)
-                    .toString("base64")
-                    .substring(0, 5)}`;
+            generateScopedName(name, filename) {
+                /*
+                 * Le but est d'obtenir un hash en 6 caractères du nom de chaque fichier (son chemin inclus).
+                 * Pour ce faire, on va commencer par convertir le nom en base64, puis on va construire récursivement un entier
+                 * de hash en y intégrant tour à tour la valeur de chaque caractère.
+                 * Méthode de hash : https://www.cs.hmc.edu/~geoff/classes/hmc.cs070.200101/homework10/hashfuncs.html
+                 * (On applique la méthode CRC mais avec 6 bits, puisque nous sommes en base64.)
+                 * Enfin, pour convertir notre hash en un suffixe applicable à une classe css, nous allons utiliser les 26
+                 * caractères minuscules (les sélecteurs css ne sont pas sensibles à la casse) et les 10 chiffres, pour
+                 * arriver à 36 caractères différent. Une suite de 6 caractères parmi ces 36 possibles a donc 36^6 états
+                 * possibles, soit plus de deux milliards, ce qui devrait être suffisant. Nous allons donc calculer le résultat
+                 * de notre hash modulo un nombre premier juste en-dessous de 36^6 (on choisit 2176782103) puis convertir
+                 * ce résultat en notre suite de 6 caractères.
+                 */
+                const base64FileName = Buffer.from(filename.replace(".module.css", "")).toString("base64");
+                const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+                let h = 0;
+                for (const char of base64FileName) {
+                    // Le signe égale est un caractère de complétion à la fin d'une chaîne de caractère en base64
+                    if (char === "=") break;
+                    const charValue = base64Chars.indexOf(char);
+                    const highorder = h & 0xfc000000;
+                    h <<= 26;
+                    h ^= highorder >> 26;
+                    h ^= charValue;
+                }
+                // On déssigne l'entier au cas où il est négatif :
+                h >>>= 0;
+                h %= 2176782103;
+                const hash = h.toString(36);
+                return `${path.basename(filename).replace(".module.css", "")}_${name}__${hash}`;
             }
         },
         postcss: {plugins: [nesting()]}
