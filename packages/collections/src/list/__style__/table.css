@@ -32,11 +32,16 @@
 }
 
 .table {
+    position: relative;
     box-shadow: var(--table-box-shadow);
-    border-collapse: collapse;
+    border-spacing: 0;
     font-size: var(--table-font-size);
     width: 100%;
     border-radius: var(--table-border-radius);
+}
+
+.table--sticky thead {
+    position: sticky;
 }
 
 .table td,

@@ -17,6 +17,7 @@
     "dependencies": {
         "@focus4/core": "11.20.0",
         "@focus4/forms": "11.20.2",
+        "@focus4/layout": "11.20.1",
         "@focus4/stores": "11.20.2",
         "@focus4/styling": "11.20.0",
         "@focus4/toolbox": "11.20.1"
