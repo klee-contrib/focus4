@@ -1,6 +1,5 @@
 export {ThemeContext} from "./common";
 export {ThemeProvider} from "./theme-provider";
-export {themr} from "./themr";
 export {fromBem, toBem} from "./to-bem";
 export {useTheme} from "./use-theme";
 

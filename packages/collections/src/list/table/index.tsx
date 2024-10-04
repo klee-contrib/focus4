@@ -1,6 +1,7 @@
 import {useObserver} from "mobx-react";
-import {ComponentType, MouseEvent} from "react";
+import {ComponentType, MouseEvent, useContext, useRef} from "react";
 
+import {ScrollableContext, useStickyClip} from "@focus4/layout";
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
@@ -27,10 +28,17 @@ export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     lineOperationList?: (data: NoInfer<T>) => OperationListItem<NoInfer<T>>[];
     /** Composant à afficher pendant le chargement. */
     LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
+    /**
+     * Surcharge du 'top' pour le 'position: sticky' du <thead>.
+     * Par défaut calculé avec la hauteur du header.
+     */
+    offsetTopOverride?: number;
     /** Appelé au clic sur une ligne. */
     onLineClick?: (data: NoInfer<T>, event: MouseEvent<HTMLTableCellElement>) => void;
     /** Actions globales sur le tableau, affichées dans le header. */
     operationList?: OperationListItem<NoInfer<T>[]>[];
+    /** Rend le <thead> sticky. Attention au rendu avec `box-shadow` sur le tableau (qui est présent par défaut). */
+    stickyHeader?: boolean;
     /** CSS. */
     theme?: CSSProp<TableCss>;
 } & (
@@ -82,12 +90,18 @@ export function Table<T>({
     lineClassName,
     lineOperationList,
     LoadingComponent = DefaultLoadingComponent,
+    offsetTopOverride,
     onLineClick,
     operationList,
+    stickyHeader = false,
     theme: pTheme,
     ...baseProps
 }: TableProps<T>) {
     const theme = useTheme("table", tableCss, pTheme);
+    const {headerHeight} = useContext(ScrollableContext);
+
+    const tbody = useRef<HTMLTableSectionElement>(null);
+    useStickyClip(tbody);
 
     return useObserver(() => {
         const {bottomRow, displayedData, getDomRef, i18nPrefix, isLoading, itemKey, store} = useListBase(baseProps);
@@ -96,10 +110,17 @@ export function Table<T>({
                 <table
                     className={theme.table({
                         empty: displayedData.length === 0,
-                        selected: (store && store.selectionStatus !== "none") ?? false
+                        selected: (store && store.selectionStatus !== "none") ?? false,
+                        sticky: stickyHeader
                     })}
                 >
-                    <thead>
+                    <thead
+                        style={
+                            stickyHeader
+                                ? {top: `calc(${offsetTopOverride ?? headerHeight}px + var(--content-padding-top))`}
+                                : undefined
+                        }
+                    >
                         <tr className={theme.header()}>
                             {hasSelection ? (
                                 <th className={theme.checkbox({all: hasSelectAll})}>
@@ -133,7 +154,7 @@ export function Table<T>({
                             ) : null}
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody ref={tbody}>
                         {displayedData.map((item, idx) => (
                             <TableLine
                                 key={itemKey(item, idx)}

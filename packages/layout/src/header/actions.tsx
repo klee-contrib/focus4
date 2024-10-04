@@ -1,6 +1,6 @@
-import {motion} from "framer-motion";
+import {useContext} from "react";
 
-import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {
     FloatingActionButton,
     FloatingActionButtonProps,
@@ -11,6 +11,8 @@ import {
     TooltipProps,
     useMenu
 } from "@focus4/toolbox";
+
+import {ScrollableContext} from "../utils/contexts";
 
 import headerCss from "./__style__/header.css";
 
@@ -46,37 +48,17 @@ export function HeaderActions({
     theme: pTheme
 }: HeaderActionsProps) {
     const theme = useTheme("header", headerCss, pTheme);
+
+    const {headerHeight} = useContext(ScrollableContext);
+
     const menu = useMenu();
     return (
-        <motion.div
+        <div
             className={theme.actions()}
-            transition={getDefaultTransition()}
-            variants={{
-                visible: {
-                    y: "0%",
-                    opacity: 1
-                },
-                hidden: {
-                    y: "-50%",
-                    opacity: 0.3
-                }
-            }}
+            style={{top: `calc(${headerHeight}px - var(--floating-action-button-size) / 2)`}}
         >
-            {primary.map((action, i) => {
-                const button = <FloatingActionButton key={`${i}`} {...action} />;
-
-                if (action.tooltip && !action.disabled) {
-                    return (
-                        <Tooltip key={`${i}`} {...action.tooltip}>
-                            {button}
-                        </Tooltip>
-                    );
-                } else {
-                    return button;
-                }
-            })}
             {secondary.length > 0 ? (
-                <div ref={menu.anchor} className={theme.secondaryActions()}>
+                <div ref={menu.anchor} style={{position: "relative"}}>
                     <FloatingActionButton
                         {...secondaryButton}
                         icon={secondaryButton.icon ?? {i18nKey: `${i18nPrefix}.icons.headerActions.secondary`}}
@@ -89,6 +71,21 @@ export function HeaderActions({
                     </Menu>
                 </div>
             ) : null}
-        </motion.div>
+            {primary
+                .map((action, i) => {
+                    const button = <FloatingActionButton key={`${i}`} {...action} />;
+
+                    if (action.tooltip && !action.disabled) {
+                        return (
+                            <Tooltip key={`${i}`} {...action.tooltip}>
+                                {button}
+                            </Tooltip>
+                        );
+                    } else {
+                        return button;
+                    }
+                })
+                .reverse()}
+        </div>
     );
 }

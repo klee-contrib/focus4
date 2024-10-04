@@ -1,3 +1,12 @@
+.container {
+    position: relative;
+}
+
+.scrollable {
+    overflow: auto;
+    height: 100%;
+}
+
 .backToTop {
     position: absolute;
     bottom: 8%;
