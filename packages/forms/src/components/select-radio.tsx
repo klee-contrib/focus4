@@ -9,7 +9,8 @@ import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
 import {stringToDomainType} from "../utils";
 
 import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
-export {selectRadioCss, SelectRadioCss};
+export {selectRadioCss};
+export type {SelectRadioCss};
 
 /** Props du SelectRadio. */
 export interface SelectRadioProps<T extends DomainFieldTypeSingle> {

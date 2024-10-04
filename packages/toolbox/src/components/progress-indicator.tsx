@@ -6,7 +6,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {PointerEvents} from "../focus4.toolbox";
 
 import progressIndicatorCss, {ProgressIndicatorCss} from "./__style__/progress-indicator.css";
-export {progressIndicatorCss, ProgressIndicatorCss};
+export {progressIndicatorCss};
+export type {ProgressIndicatorCss};
 
 export interface ProgressIndicatorProps extends PointerEvents<HTMLDivElement> {
     /** Classe CSS pour l'élément racine. */

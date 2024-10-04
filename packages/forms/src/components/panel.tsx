@@ -8,7 +8,8 @@ import {FontIcon, Icon, LinearProgressIndicator} from "@focus4/toolbox";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
 import panelCss, {PanelCss} from "./__style__/panel.css";
-export {panelCss, PanelCss};
+export {panelCss};
+export type {PanelCss};
 
 /** Props du panel. */
 export interface PanelProps extends PanelButtonsProps {

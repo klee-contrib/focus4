@@ -6,7 +6,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {PointerEvents} from "../utils/pointer-events";
 
 import tooltipCss, {TooltipCss} from "./__style__/tooltip.css";
-export {tooltipCss, TooltipCss};
+export {tooltipCss};
+export type {TooltipCss};
 
 export interface TooltipProps<T extends HTMLElement = HTMLElement> extends PointerEvents<T> {
     /** Composant enfant autour duquel poser la tooltip. */
@@ -96,7 +97,8 @@ export function Tooltip({
             setTop(newTop);
             setLeft(newLeft);
         }, 100);
-    }, []);
+    },
+    []);
 
     const deactivate = useCallback(
         function deactivate() {

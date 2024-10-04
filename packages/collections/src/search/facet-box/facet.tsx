@@ -8,7 +8,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, Checkbox, IconButton} from "@focus4/toolbox";
 
 import facetCss, {FacetCss} from "../__style__/facet.css";
-export {FacetCss, facetCss};
+export {facetCss};
+export type {FacetCss};
 
 /** Props de Facet. */
 export interface FacetProps {

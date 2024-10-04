@@ -9,7 +9,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {useActiveTransition} from "./active-transition";
 
 import overlayCss, {OverlayCss} from "./__style__/overlay.css";
-export {overlayCss, OverlayCss};
+export {overlayCss};
+export type {OverlayCss};
 
 export interface OverlayProps {
     active: boolean;

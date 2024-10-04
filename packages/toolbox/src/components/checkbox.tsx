@@ -10,7 +10,8 @@ import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import checkboxCss, {CheckboxCss} from "./__style__/checkbox.css";
-export {checkboxCss, CheckboxCss};
+export {checkboxCss};
+export type {CheckboxCss};
 
 /** Props du Checkbox. */
 export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {

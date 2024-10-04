@@ -11,7 +11,8 @@ import {IconButton} from "./icon-button";
 import {Ripple} from "./ripple";
 
 import chipCss, {ChipCss} from "./__style__/chip.css";
-export {chipCss, ChipCss};
+export {chipCss};
+export type {ChipCss};
 
 export interface ChipProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement | HTMLSpanElement> {
     /** Classe CSS a ajouter au composant racine. */

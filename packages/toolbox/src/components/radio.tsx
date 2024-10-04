@@ -9,7 +9,8 @@ import {useInputRef} from "../utils/use-input-ref";
 import {Ripple} from "./ripple";
 
 import radioCss, {RadioCss} from "./__style__/radio.css";
-export {RadioCss, radioCss};
+export {radioCss};
+export type {RadioCss};
 
 const RadioContext = createContext({
     disabled: false,

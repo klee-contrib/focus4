@@ -25,7 +25,8 @@ import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import menuCss, {MenuCss} from "./__style__/menu.css";
-export {menuCss, MenuCss};
+export {menuCss};
+export {MenuCss};
 
 export interface MenuControls<T extends HTMLElement = HTMLDivElement> {
     /** Element HTML parent du menu sur lequel le menu s'attachera (au dessus ou en dessous, selon la position).  */
@@ -219,12 +220,12 @@ export function Menu({
         pPosition === "auto-fill"
             ? "bottom"
             : pPosition === "auto-fit" || pPosition === "auto-left" || pPosition === "bottom-auto"
-              ? "bottom-left"
-              : pPosition === "auto-right"
-                ? "bottom-right"
-                : pPosition === "top-auto"
-                  ? "top-left"
-                  : pPosition
+            ? "bottom-left"
+            : pPosition === "auto-right"
+            ? "bottom-right"
+            : pPosition === "top-auto"
+            ? "top-left"
+            : pPosition
     );
     const [positions, setPositions] = useState({top: 0, bottom: 0, left: 0, right: 0});
     const [maxHeight, setMaxHeight] = useState(0);
@@ -536,6 +537,6 @@ function getScrollableParent(ele: HTMLElement): HTMLElement {
     return !ele || ele === document.body
         ? document.body
         : isScrollable(ele)
-          ? ele
-          : getScrollableParent(ele.parentNode as HTMLElement);
+        ? ele
+        : getScrollableParent(ele.parentNode as HTMLElement);
 }

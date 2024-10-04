@@ -11,7 +11,8 @@ import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import floatingActionButtonCss, {FloatingActionButtonCss} from "./__style__/floating-action-button.css";
-export {floatingActionButtonCss, FloatingActionButtonCss};
+export {floatingActionButtonCss};
+export type {FloatingActionButtonCss};
 
 export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement>, AriaAttributes {
     /** Classe CSS a ajouter au composant racine. */

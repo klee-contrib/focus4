@@ -31,7 +31,8 @@ import {CircularProgressIndicator} from "./progress-indicator";
 import {Tooltip} from "./tooltip";
 
 import textFieldCss, {TextFieldCss} from "./__style__/text-field.css";
-export {textFieldCss, TextFieldCss};
+export {textFieldCss};
+export type {TextFieldCss};
 
 const CUT_START = 12;
 

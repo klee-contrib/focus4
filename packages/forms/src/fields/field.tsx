@@ -17,7 +17,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {FormContext} from "./form";
 
 import fieldCss, {FieldCss} from "./__style__/field.css";
-export {fieldCss, FieldCss};
+export {fieldCss};
+export type {FieldCss};
 
 /** Options pour un champ défini à partir de `fieldFor` et consorts. */
 export interface FieldOptions<F extends FieldEntry> {

@@ -10,7 +10,8 @@ import {Checkbox, IconButton} from "@focus4/toolbox";
 import {ActionBar, List, ListBaseProps, ListProps, OperationListItem} from "../../list";
 
 import groupCss, {GroupCss} from "../__style__/group.css";
-export {groupCss, GroupCss};
+export {groupCss};
+export type {GroupCss};
 
 export interface GroupHeaderProps<T> {
     group: GroupResult<T>;

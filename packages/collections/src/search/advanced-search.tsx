@@ -24,7 +24,8 @@ import {GroupCss, GroupHeaderProps, Results} from "./results";
 import {Summary, SummaryCss} from "./summary";
 
 import advancedSearchCss, {AdvancedSearchCss} from "./__style__/advanced-search.css";
-export {advancedSearchCss, AdvancedSearchCss};
+export {advancedSearchCss};
+export type {AdvancedSearchCss};
 
 /** Props de l'AdvancedSearch. */
 export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T>> {

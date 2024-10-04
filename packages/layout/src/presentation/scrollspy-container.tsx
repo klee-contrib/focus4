@@ -7,7 +7,9 @@ import {Component, ComponentType, ContextType, createRef, ReactNode} from "react
 import {CSSProp, PanelDescriptor, ScrollableContext, ScrollspyContext, themr} from "@focus4/styling";
 
 import scrollspyCss, {ScrollspyCss} from "./__style__/scrollspy.css";
-export {scrollspyCss, ScrollspyCss};
+export {scrollspyCss};
+export type {ScrollspyCss};
+
 const Theme = themr("scrollspy", scrollspyCss);
 
 /** Props du ScrollspyContainer. */

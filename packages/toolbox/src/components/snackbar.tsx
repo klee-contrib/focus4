@@ -9,7 +9,8 @@ import {Button} from "./button";
 import {IconButton} from "./icon-button";
 
 import snackbarCss, {SnackbarCss} from "./__style__/snackbar.css";
-export {SnackbarCss, snackbarCss};
+export {snackbarCss};
+export type {SnackbarCss};
 
 export interface SnackbarProps {
     /** Action de la Snackbar. */

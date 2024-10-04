@@ -9,7 +9,8 @@ import {useActiveTransition} from "./active-transition";
 import {Overlay} from "./overlay";
 
 import popinCss, {PopinCss} from "./__style__/popin.css";
-export {popinCss, PopinCss};
+export {popinCss};
+export type {PopinCss};
 
 /** Props de la popin. */
 export interface PopinProps {

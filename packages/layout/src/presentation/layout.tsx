@@ -6,7 +6,8 @@ import {Scrollable} from "../scrollable";
 import {MessageCenter, MessageCenterProps} from "../utils";
 
 import layoutCss, {LayoutCss} from "./__style__/layout.css";
-export {layoutCss, LayoutCss};
+export {layoutCss};
+export type {LayoutCss};
 
 /** Props du Layout. */
 export interface LayoutProps extends MessageCenterProps {

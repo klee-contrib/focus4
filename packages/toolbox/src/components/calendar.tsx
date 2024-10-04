@@ -10,7 +10,8 @@ import {Button} from "./button";
 import {IconButton} from "./icon-button";
 
 import calendarCss, {CalendarCss} from "./__style__/calendar.css";
-export {calendarCss, CalendarCss};
+export {calendarCss};
+export type {CalendarCss};
 
 export interface CalendarProps {
     /** Classe CSS pour le composant racine. */
@@ -147,15 +148,15 @@ export const Calendar = forwardRef(function Calendar(
                     newDisplayedMonth.month + 1 === displayedMonth.month
                         ? "up"
                         : newDisplayedMonth.month - 1 === displayedMonth.month
-                          ? "down"
-                          : undefined;
+                        ? "down"
+                        : undefined;
             } else if (view === "months") {
                 dir =
                     newDisplayedMonth.year + 1 === displayedMonth.year
                         ? "up"
                         : newDisplayedMonth.year - 1 === displayedMonth.year
-                          ? "down"
-                          : undefined;
+                        ? "down"
+                        : undefined;
             } else {
                 const ndmy = +`${newDisplayedMonth.year.toString().substring(0, 3)}0`;
                 const dmy = +`${displayedMonth.year.toString().substring(0, 3)}0`;
@@ -215,16 +216,16 @@ export const Calendar = forwardRef(function Calendar(
                 e.key === "ArrowLeft"
                     ? -1
                     : e.key === "ArrowRight"
-                      ? 1
-                      : e.key === "ArrowUp" && view === "days"
-                        ? -7
-                        : e.key === "ArrowUp"
-                          ? -3
-                          : e.key === "ArrowDown" && view === "days"
-                            ? 7
-                            : e.key === "ArrowDown"
-                              ? 3
-                              : 0;
+                    ? 1
+                    : e.key === "ArrowUp" && view === "days"
+                    ? -7
+                    : e.key === "ArrowUp"
+                    ? -3
+                    : e.key === "ArrowDown" && view === "days"
+                    ? 7
+                    : e.key === "ArrowDown"
+                    ? 3
+                    : 0;
 
             if (change || e.key === "PageUp" || e.key === "PageDown") {
                 e.preventDefault();
@@ -307,10 +308,10 @@ export const Calendar = forwardRef(function Calendar(
                         view === "days"
                             ? upperFirst(displayedMonth.toLocaleString({month: "long", year: "numeric"}))
                             : view === "months"
-                              ? displayedMonth.year.toString()
-                              : `${displayedMonth.year.toString().substring(0, 3)}0 - ${displayedMonth.year
-                                    .toString()
-                                    .substring(0, 3)}9`
+                            ? displayedMonth.year.toString()
+                            : `${displayedMonth.year.toString().substring(0, 3)}0 - ${displayedMonth.year
+                                  .toString()
+                                  .substring(0, 3)}9`
                     }
                     onClick={useCallback(
                         () => changeView(view === "days" ? "days-to-months" : "months-to-years"),
@@ -353,11 +354,11 @@ export const Calendar = forwardRef(function Calendar(
                                 view === "years"
                                     ? {opacity: 0, scale: 1.25}
                                     : view === "days"
-                                      ? {opacity: 0, scale: 0.8}
-                                      : v => ({
-                                            opacity: 0,
-                                            scale: v === "years-to-months" || v === "months-to-days" ? 1.25 : 0.8
-                                        }),
+                                    ? {opacity: 0, scale: 0.8}
+                                    : v => ({
+                                          opacity: 0,
+                                          scale: v === "years-to-months" || v === "months-to-days" ? 1.25 : 0.8
+                                      }),
                             initial:
                                 view === "years" || view === "days"
                                     ? {opacity: 0, scale: 0.8}
@@ -392,12 +393,12 @@ export const Calendar = forwardRef(function Calendar(
                                                 view === "days"
                                                     ? theme.day({outside: d.month !== displayedMonth.month})
                                                     : view === "months"
-                                                      ? theme.month({outside: d.year !== displayedMonth.year})
-                                                      : theme.year({
-                                                            outside:
-                                                                d.year.toString()[2] !==
-                                                                displayedMonth?.year.toString()[2]
-                                                        })
+                                                    ? theme.month({outside: d.year !== displayedMonth.year})
+                                                    : theme.year({
+                                                          outside:
+                                                              d.year.toString()[2] !==
+                                                              displayedMonth?.year.toString()[2]
+                                                      })
                                             }
                                             color={
                                                 (view === "days" &&
@@ -425,8 +426,8 @@ export const Calendar = forwardRef(function Calendar(
                                                 view === "days"
                                                     ? d.day.toString()
                                                     : view === "months"
-                                                      ? d.monthLong!
-                                                      : d.year.toString()
+                                                    ? d.monthLong!
+                                                    : d.year.toString()
                                             }
                                             onClick={e => {
                                                 if (viewFormat === format) {
@@ -449,20 +450,20 @@ export const Calendar = forwardRef(function Calendar(
                                                 (view === "days" && date && d.equals(date))
                                                     ? "filled"
                                                     : (view === "years" && d.year === DateTime.now().year) ||
-                                                        (view === "months" &&
-                                                            d.year === DateTime.now().year &&
-                                                            d.month === DateTime.now().month) ||
-                                                        (view === "days" &&
-                                                            d.equals(
-                                                                DateTime.now().set({
-                                                                    hour: 0,
-                                                                    minute: 0,
-                                                                    second: 0,
-                                                                    millisecond: 0
-                                                                })
-                                                            ))
-                                                      ? "outlined"
-                                                      : undefined
+                                                      (view === "months" &&
+                                                          d.year === DateTime.now().year &&
+                                                          d.month === DateTime.now().month) ||
+                                                      (view === "days" &&
+                                                          d.equals(
+                                                              DateTime.now().set({
+                                                                  hour: 0,
+                                                                  minute: 0,
+                                                                  second: 0,
+                                                                  millisecond: 0
+                                                              })
+                                                          ))
+                                                    ? "outlined"
+                                                    : undefined
                                             }
                                         />
                                     ))}

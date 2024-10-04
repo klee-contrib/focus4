@@ -11,7 +11,8 @@ import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";
-export {searchBarCss, SearchBarCss};
+export {searchBarCss};
+export type {SearchBarCss};
 
 /** Props de la SearchBar. */
 export interface SearchBarProps<T, C> {

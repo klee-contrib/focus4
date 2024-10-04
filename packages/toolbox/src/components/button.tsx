@@ -11,7 +11,8 @@ import {CircularProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 
 import buttonCss, {ButtonCss} from "./__style__/button.css";
-export {buttonCss, ButtonCss};
+export {buttonCss};
+export type {ButtonCss};
 
 export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement>, AriaAttributes {
     /** Classe CSS a ajouter au composant racine. */

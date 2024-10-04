@@ -10,7 +10,8 @@ import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import switchCss, {SwitchCss} from "./__style__/switch.css";
-export {switchCss, SwitchCss};
+export {switchCss};
+export type {SwitchCss};
 
 export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     /** Classe CSS a ajouter au composant racine. */

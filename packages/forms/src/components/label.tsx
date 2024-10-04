@@ -5,7 +5,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon, IconButton, Tooltip, TooltipCss} from "@focus4/toolbox";
 
 import labelCss, {LabelCss} from "./__style__/label.css";
-export {labelCss, LabelCss};
+export {labelCss};
+export type {LabelCss};
 
 /** Props du Label. */
 export interface LabelProps {

@@ -14,7 +14,8 @@ import {
 } from "@focus4/toolbox";
 
 import contextualActionsCss, {ContextualActionsCss} from "./__style__/contextual-actions.css";
-export {contextualActionsCss, ContextualActionsCss};
+export {contextualActionsCss};
+export type {ContextualActionsCss};
 
 /** Description d'une action sur un ou plusieurs éléments de liste. */
 export interface OperationListItem<T> {

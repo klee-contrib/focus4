@@ -17,10 +17,10 @@ import {Header} from "./header";
 export {buttonBttCss} from "./button-back-to-top";
 export {scrollableCss};
 export type {ButtonBttCss} from "./button-back-to-top";
-export type {ScrollableCss};
 
 import scrollableCss, {ScrollableCss} from "./__style__/scrollable.css";
 const Theme = themr("scrollable", scrollableCss);
+export type {ScrollableCss};
 
 export interface ScrollableProps {
     /** Offset avant l'apparition du bouton de retour en haut. Par défaut : 300. */

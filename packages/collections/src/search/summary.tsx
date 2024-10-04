@@ -10,7 +10,8 @@ import {Button, ChipCss} from "@focus4/toolbox";
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 
 import summaryCss, {SummaryCss} from "./__style__/summary.css";
-export {summaryCss, SummaryCss};
+export {summaryCss};
+export type {SummaryCss};
 
 /** Props du Summary. */
 export interface SummaryProps<T> {

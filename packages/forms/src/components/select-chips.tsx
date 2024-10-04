@@ -11,7 +11,8 @@ import {toSimpleType} from "../utils";
 import {Select} from "./select";
 
 import selectChipsCss, {SelectChipsCss} from "./__style__/select-chips.css";
-export {selectChipsCss, SelectChipsCss};
+export {selectChipsCss};
+export type {SelectChipsCss};
 
 export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     /** CSS pour les Chips. */

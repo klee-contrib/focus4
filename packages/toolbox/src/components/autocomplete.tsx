@@ -24,7 +24,8 @@ import {Ripple} from "./ripple";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
-export {autocompleteCss, AutocompleteCss};
+export {autocompleteCss};
+export type {AutocompleteCss};
 
 export interface AutocompleteProps<TSource = {key: string; label: string}>
     extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "readonly" | "theme" | "type"> {

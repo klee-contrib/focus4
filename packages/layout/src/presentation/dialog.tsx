@@ -8,7 +8,8 @@ import {useActiveTransition} from "./active-transition";
 import {Overlay} from "./overlay";
 
 import dialogCss, {DialogCss} from "./__style__/dialog.css";
-export {dialogCss, DialogCss};
+export {dialogCss};
+export type {DialogCss};
 
 export interface DialogProps {
     /** Liste de props de boutons pour définir les actions du Dialog. */

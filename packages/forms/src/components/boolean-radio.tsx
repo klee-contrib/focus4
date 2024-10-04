@@ -4,7 +4,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
 
 import booleanRadioCss, {BooleanRadioCss} from "./__style__/boolean-radio.css";
-export {booleanRadioCss, BooleanRadioCss};
+export {booleanRadioCss};
+export type {BooleanRadioCss};
 
 export interface BooleanRadioProps {
     /** Disabled radio-select, default to: false */

@@ -7,7 +7,8 @@ import {DomainFieldType, DomainType, ReferenceList, SingleDomainFieldType} from 
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import displayCss, {DisplayCss} from "./__style__/display.css";
-export {displayCss, DisplayCss};
+export {displayCss};
+export type {DisplayCss};
 
 /** Props du composant d'affichage. */
 export interface DisplayProps<T extends DomainFieldType> {

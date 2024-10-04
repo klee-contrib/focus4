@@ -6,7 +6,8 @@ import {useTheme} from "@focus4/styling";
 import {PointerEvents} from "../utils/pointer-events";
 
 import rippleCss, {RippleCss} from "./__style__/ripple.css";
-export {rippleCss, RippleCss};
+export {rippleCss};
+export type {RippleCss};
 
 export interface RippleProps<T extends HTMLElement = HTMLElement> extends PointerEvents<T> {
     /** Centre le ripple sur la cible au lieu de l'endroit cliqué. */

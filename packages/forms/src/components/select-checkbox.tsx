@@ -7,7 +7,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss} from "@focus4/toolbox";
 
 import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
-export {selectCheckboxCss, SelectCheckboxCss};
+export {selectCheckboxCss};
+export type {SelectCheckboxCss};
 
 function clickHandlerFactory<T extends DomainFieldTypeMultiple>(
     isDisabled: boolean,

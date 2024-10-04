@@ -9,7 +9,8 @@ import {PointerEvents} from "../utils/pointer-events";
 import {Ripple} from "./ripple";
 
 import sliderCss, {SliderCss} from "./__style__/slider.css";
-export {sliderCss, SliderCss};
+export {sliderCss};
+export type {SliderCss};
 
 export interface SliderProps extends PointerEvents<HTMLDivElement> {
     /** Classe CSS pour le composant racine. */

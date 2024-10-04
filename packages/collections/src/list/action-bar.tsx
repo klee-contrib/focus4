@@ -14,7 +14,8 @@ import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
 import actionBarCss, {ActionBarCss} from "./__style__/action-bar.css";
-export {actionBarCss, ActionBarCss};
+export {actionBarCss};
+export type {ActionBarCss};
 
 /** Props de l'ActionBar. */
 export interface ActionBarProps<T> {

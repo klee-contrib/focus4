@@ -21,7 +21,8 @@ import {Ripple} from "./ripple";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
-export {dropdownCss, DropdownCss};
+export {dropdownCss};
+export type {DropdownCss};
 
 export interface DropdownProps<TSource = {key: string; label: string}>
     extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "readonly" | "theme" | "type"> {
