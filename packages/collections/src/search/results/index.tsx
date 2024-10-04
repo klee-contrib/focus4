@@ -1,7 +1,8 @@
 import {comparer, observable, reaction} from "mobx";
 import {useObserver} from "mobx-react";
-import {ComponentType, useEffect, useState} from "react";
+import {ComponentType, useEffect, useRef, useState} from "react";
 
+import {useStickyClip} from "@focus4/layout";
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp} from "@focus4/styling";
 
@@ -96,10 +97,13 @@ export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
         [store]
     );
 
+    const ref = useRef<HTMLDivElement>(null);
+    useStickyClip(ref);
+
     return useObserver(() => {
         const filteredGroups = store.groups.filter(group => group.totalCount !== 0);
         return (
-            <div data-focus="results">
+            <div ref={ref} data-focus="results">
                 {filteredGroups.length ? (
                     <List
                         key="result-group-list"

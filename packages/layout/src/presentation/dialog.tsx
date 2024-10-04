@@ -1,8 +1,10 @@
 import classNames from "classnames";
 import {ReactNode, useContext} from "react";
 
-import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, ButtonProps} from "@focus4/toolbox";
+
+import {ScrollableContext} from "../utils";
 
 import {useActiveTransition} from "./active-transition";
 import {Overlay} from "./overlay";
@@ -38,11 +40,11 @@ export function Dialog({
     theme: pTheme
 }: DialogProps) {
     const theme = useTheme("dialog", dialogCss, pTheme);
-    const context = useContext(ScrollableContext);
+    const {portal} = useContext(ScrollableContext);
 
     const [displayed, tClassName] = useActiveTransition(active, theme);
 
-    return context.portal(
+    return portal(
         <>
             <Overlay active={active} onClick={onOverlayClick} />
             {displayed ? (

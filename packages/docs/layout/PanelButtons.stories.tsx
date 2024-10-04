@@ -1,4 +1,4 @@
-import {PanelButtons} from "@focus4/forms";
+import {PanelButtons} from "@focus4/layout";
 
 import {PanelButtonsMeta} from "./metas/panel-buttons";
 
@@ -6,7 +6,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...PanelButtonsMeta,
-    title: "Composants/@focus4∕forms/PanelButtons"
+    title: "Mise en page/PanelButtons"
 } as Meta<typeof PanelButtons>;
 
 export const Showcase: StoryObj<typeof PanelButtons> = {};

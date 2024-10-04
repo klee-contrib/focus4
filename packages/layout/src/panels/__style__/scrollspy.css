@@ -1,20 +1,23 @@
 :root {
     --scrollspy-active-border-color: rgb(var(--color-primary));
+    --scrollspy-active-border-size: 3px;
     --scrollspy-active-color: rgb(var(--color-accent));
-    --scrollspy-padding-left: 25px;
     --scrollspy-menu-size: 220px;
 }
 
 .scrollspy {
     padding-top: var(--content-padding-top);
+    position: relative;
+    display: flex;
 }
 
 .content {
     padding: 0 var(--content-padding-side);
+    flex: 1;
 }
 
 .menu {
-    padding: var(--content-padding-top) 0 0 var(--scrollspy-padding-left);
+    padding-left: var(--scrollspy-active-border-size);
     width: var(--scrollspy-menu-size);
 }
 
@@ -34,9 +37,9 @@
     }
 
     & .active {
-        margin-left: -4px;
+        margin-left: calc(-1 * var(--scrollspy-active-border-size));
         font-weight: var(--font-weight-bold);
-        border-left: 3px solid var(--scrollspy-active-border-color);
+        border-left: var(--scrollspy-active-border-size) solid var(--scrollspy-active-border-color);
         color: var(--scrollspy-active-color);
     }
 }

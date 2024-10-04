@@ -1,10 +1,11 @@
 import i18next from "i18next";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
-import {ComponentType, ElementType, useContext, useEffect, useState} from "react";
+import {ComponentType, ElementType, useContext, useEffect} from "react";
 
+import {LateralMenu, ScrollableContext} from "@focus4/layout";
 import {CollectionStore, GroupResult} from "@focus4/stores";
-import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {ChipCss, IconButton, MenuProps, Tooltip} from "@focus4/toolbox";
 
 import {
@@ -66,7 +67,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     /** Groupes pliés par défauts (par groupingKey) */
     defaultFoldedGroups?: Record<string, string[]>;
     /** Emplacement de la FacetBox. Par défaut : "left" */
-    facetBoxPosition?: "action-bar" | "fixed-sticky" | "left" | "none" | "sticky";
+    facetBoxPosition?: "action-bar" | "left" | "left-fixed" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: CSSProp<FacetBoxCss>;
     /**
@@ -125,6 +126,11 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     mosaic?: {width: number; height: number};
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
+    /**
+     * Surcharge du 'top' pour le 'position: sticky' de la FacetBox en mode `sticky`.
+     * Par défaut calculé avec la hauteur du header.
+     */
+    offsetTopOverride?: number;
     /** La liste des actions globales.  */
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
@@ -195,6 +201,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     listProps,
     mode = "list",
     nbDefaultDataListFacet,
+    offsetTopOverride,
     operationList,
     orderableColumnList,
     searchBarPlaceholder,
@@ -205,9 +212,8 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     theme: pTheme,
     useGroupActionBars
 }: AdvancedSearchProps<T, P>) {
-    const [rootNode, setRootNode] = useState<HTMLDivElement | null>(null);
-    const context = useContext(ScrollableContext);
     const theme = useTheme("advancedSearch", advancedSearchCss, pTheme);
+    const {headerHeight} = useContext(ScrollableContext);
     const listContext = useLocalObservable(() => ({addItemHandler, mode}), {addItemHandler: observable.ref});
 
     useEffect(() => {
@@ -233,88 +239,92 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
             </div>
         );
 
-        if (facetBoxPosition === "left") {
-            return facetBox;
-        } else if (facetBoxPosition.includes("sticky")) {
-            return context.menu(facetBox, rootNode, facetBoxPosition === "sticky");
+        if (facetBoxPosition.includes("left")) {
+            return (
+                <LateralMenu headerHeight={offsetTopOverride ?? headerHeight} retractable={facetBoxPosition === "left"}>
+                    {facetBox}
+                </LateralMenu>
+            );
         } else {
             return null;
         }
     }
 
     const {MosaicComponent, LineComponent} = listProps as any as ListProps<T>;
+
     return useObserver(() => (
-        <div ref={setRootNode} className={theme.search()}>
+        <div className={theme.search()}>
             {renderFacetBox()}
-            <div
-                className={theme.resultContainer({
-                    withFacetBox: facetBoxPosition === "left"
-                })}
-            >
-                <div className={theme.topRow()}>
-                    <Summary
-                        canRemoveSort={canRemoveSort}
-                        chipKeyResolver={chipKeyResolver}
-                        chipThemer={chipThemer}
-                        hideCriteria={hideSummaryCriteria}
-                        hideFacets={hideSummaryFacets}
-                        hideGroup={hideSummaryGroup}
-                        hideQuery={hideSummaryQuery}
-                        hideResults={hideSummaryResults}
-                        hideSort={hideSummarySort}
-                        i18nPrefix={i18nPrefix}
-                        orderableColumnList={orderableColumnList}
-                        store={store}
-                        theme={summaryTheme}
-                    />
-                    <div className={theme.actions()}>
-                        {LineComponent && MosaicComponent ? (
-                            <>
-                                <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
-                                    <IconButton
-                                        color={listContext.mode === "list" ? "accent" : undefined}
-                                        icon={{i18nKey: `${i18nPrefix}.icons.list.list`}}
-                                        onClick={() => (listContext.mode = "list")}
-                                    />
-                                </Tooltip>
-                                <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
-                                    <IconButton
-                                        color={listContext.mode === "mosaic" ? "accent" : undefined}
-                                        icon={{i18nKey: `${i18nPrefix}.icons.list.mosaic`}}
-                                        onClick={() => (listContext.mode = "mosaic")}
-                                    />
-                                </Tooltip>
-                            </>
-                        ) : null}
-                        {addItemHandler && listContext.mode === "list" ? (
-                            <AddItemComponent
-                                addItemHandler={addItemHandler}
-                                i18nPrefix={i18nPrefix}
-                                mode="search"
-                                store={store}
-                            />
-                        ) : null}
+            <div className={theme.resultContainer()}>
+                <div
+                    className={theme.stickyContainer()}
+                    style={{top: `calc(${offsetTopOverride ?? headerHeight}px + var(--content-padding-top))`}}
+                >
+                    <div className={theme.topRow({withFacetBox: facetBoxPosition.includes("left")})}>
+                        <Summary
+                            canRemoveSort={canRemoveSort}
+                            chipKeyResolver={chipKeyResolver}
+                            chipThemer={chipThemer}
+                            hideCriteria={hideSummaryCriteria}
+                            hideFacets={hideSummaryFacets}
+                            hideGroup={hideSummaryGroup}
+                            hideQuery={hideSummaryQuery}
+                            hideResults={hideSummaryResults}
+                            hideSort={hideSummarySort}
+                            i18nPrefix={i18nPrefix}
+                            orderableColumnList={orderableColumnList}
+                            store={store}
+                            theme={summaryTheme}
+                        />
+                        <div className={theme.actions()}>
+                            {LineComponent && MosaicComponent ? (
+                                <>
+                                    <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
+                                        <IconButton
+                                            color={listContext.mode === "list" ? "accent" : undefined}
+                                            icon={{i18nKey: `${i18nPrefix}.icons.list.list`}}
+                                            onClick={() => (listContext.mode = "list")}
+                                        />
+                                    </Tooltip>
+                                    <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
+                                        <IconButton
+                                            color={listContext.mode === "mosaic" ? "accent" : undefined}
+                                            icon={{i18nKey: `${i18nPrefix}.icons.list.mosaic`}}
+                                            onClick={() => (listContext.mode = "mosaic")}
+                                        />
+                                    </Tooltip>
+                                </>
+                            ) : null}
+                            {addItemHandler && listContext.mode === "list" ? (
+                                <AddItemComponent
+                                    addItemHandler={addItemHandler}
+                                    i18nPrefix={i18nPrefix}
+                                    mode="search"
+                                    store={store}
+                                />
+                            ) : null}
+                        </div>
                     </div>
+                    {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
+                        <ActionBar
+                            defaultFoldedFacets={defaultFoldedFacets}
+                            groupableFacets={groupableFacets}
+                            hasFacetBox={facetBoxPosition === "action-bar"}
+                            hasGrouping={hasGrouping}
+                            hasSearchBar={hasSearchBar}
+                            hasSelection={hasSelection}
+                            i18nPrefix={i18nPrefix}
+                            menuPositions={actionBarMenuPositions}
+                            nbDefaultDataListFacet={nbDefaultDataListFacet}
+                            operationList={operationList}
+                            orderableColumnList={orderableColumnList}
+                            searchBarPlaceholder={searchBarPlaceholder}
+                            showSingleValuedFacets={showSingleValuedFacets}
+                            store={store}
+                            theme={actionBarTheme}
+                        />
+                    ) : null}
                 </div>
-                {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
-                    <ActionBar
-                        defaultFoldedFacets={defaultFoldedFacets}
-                        groupableFacets={groupableFacets}
-                        hasFacetBox={facetBoxPosition === "action-bar"}
-                        hasGrouping={hasGrouping}
-                        hasSearchBar={hasSearchBar}
-                        hasSelection={hasSelection}
-                        i18nPrefix={i18nPrefix}
-                        menuPositions={actionBarMenuPositions}
-                        nbDefaultDataListFacet={nbDefaultDataListFacet}
-                        operationList={operationList}
-                        orderableColumnList={orderableColumnList}
-                        searchBarPlaceholder={searchBarPlaceholder}
-                        showSingleValuedFacets={showSingleValuedFacets}
-                        store={store}
-                        theme={actionBarTheme}
-                    />
-                ) : null}
                 <ListContext.Provider value={listContext}>
                     <Results
                         defaultFoldedGroups={defaultFoldedGroups}
