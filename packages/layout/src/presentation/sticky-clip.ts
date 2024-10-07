@@ -15,6 +15,7 @@ export function useStickyClip(ref: RefObject<HTMLElement>) {
         }
 
         if (ref.current && stickyElement && window.getComputedStyle(stickyElement).position === "sticky") {
+            onScroll();
             const scrollableParent = getScrollableParent(ref.current);
             scrollableParent.addEventListener("scroll", onScroll);
             return () => scrollableParent.removeEventListener("scroll", onScroll);

@@ -4,4 +4,4 @@ export {ScrollspyContainer, ScrollspyMenu, scrollspyCss} from "./scrollspy-conta
 
 export type {PanelCss, PanelProps} from "./panel";
 export type {PanelButtonsProps} from "./panel-buttons";
-export type {ScrollspyContainerProps, ScrollspyCss} from "./scrollspy-container";
+export type {ScrollspyContainerProps, ScrollspyContainerRef, ScrollspyCss} from "./scrollspy-container";

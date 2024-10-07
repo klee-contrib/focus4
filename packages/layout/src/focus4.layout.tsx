@@ -25,7 +25,7 @@ export {MessageCenter, HeaderContext, ScrollableContext, ScrollspyContext} from 
 
 export type {HeaderCss} from "./header";
 export type {MainMenuProps, MainMenuCss} from "./menu";
-export type {PanelButtonsProps, PanelCss, PanelProps, ScrollspyContainerProps} from "./panels";
+export type {PanelButtonsProps, PanelCss, PanelProps, ScrollspyContainerProps, ScrollspyContainerRef} from "./panels";
 export type {
     DialogCss,
     LateralMenuCss,
