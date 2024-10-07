@@ -30,6 +30,9 @@ Exemple :
 stringFor(makeField(date, {domain: DO_DATE}));
 ```
 
+_Remarque : si vous voulez afficher le champ ainsi créé avec `fieldFor` et consorts, n'oubliez pas de spécifier les composants d'affichages soit en
+passant un domaine, soit en renseignant `LabelComponent` et/ou `DisplayComponent`._
+
 ### `fromField(field, options)`
 
 Cette fonction permet de dupliquer un champ en remplaçant certaines métadonnées par celles précisées dans `options`. **Cette fonction ne sert qu'à de
@@ -76,6 +79,8 @@ Permet de contrôler l'état d'édition du champ.
 Cette fonction permet de (re)définir le domaine d'un champ. A l'inverse des autres méthodes, le domaine ne peut pas être calculé, car il fixe le type du champ.
 
 Le reste des propriétés du domaine pourront être modifiées par la suite (et rendues dynamiques) par la fonction `metadata`.
+
+_Remarque : vous serez très souvent obligés de poser un domaine afin de pouvoir soit changer le type par défaut du champ (`"string"`, soit pour spécifier des composants d'affichage ou de saisie)._
 
 ### `value(initialValue)` / `value(get, set?)`
 
