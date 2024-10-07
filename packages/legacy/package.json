@@ -1,6 +1,6 @@
 {
     "name": "@focus4/legacy",
-    "version": "11.20.5",
+    "version": "11.21.0-beta.0",
     "description": "Focus v4, legacy module",
     "main": "lib/focus4.legacy.js",
     "type": "module",
@@ -16,11 +16,11 @@
     },
     "dependencies": {
         "@focus4/core": "11.20.0",
-        "@focus4/forms": "11.20.5",
+        "@focus4/forms": "11.21.0-beta.0",
+        "@focus4/layout": "11.21.0-beta.0",
         "@focus4/stores": "11.20.5",
-        "@focus4/layout": "11.20.4",
-        "@focus4/styling": "11.20.4",
-        "@focus4/toolbox": "11.20.4",
+        "@focus4/styling": "11.21.0-beta.0",
+        "@focus4/toolbox": "11.21.0-beta.0",
         "core-decorators": "0.20.0"
     }
 }
