@@ -85,7 +85,14 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             source = {
                 $field: {
                     type: "field",
-                    domain: {type: "string"},
+                    domain: {
+                        type: "string",
+                        AutocompleteComponent: () => null,
+                        DisplayComponent: () => null,
+                        LabelComponent: () => null,
+                        InputComponent: () => null,
+                        SelectComponent: () => null
+                    } as Domain,
                     isRequired: false,
                     label: "",
                     name: field
