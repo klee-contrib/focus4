@@ -7,7 +7,7 @@ import {EntityField, FieldEntry} from "./types";
 /**
  * Formatte un champ et récupère la représentation textuelle associée.
  *
- * Utilise le `displayFormatter` du domaine et peut résoudre une liste de référence.
+ * Utilise le `displayFormatter` du domaine et peut résoudre une liste de référence (si renseignée).
  *
  * @param field La définition de champ.
  * @param values L'éventulle liste de référence associée.
