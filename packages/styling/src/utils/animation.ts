@@ -10,6 +10,7 @@ function get() {
     return {delay, duration, ease};
 }
 
+/** Récupère les paramètres de transition par défaut, à partir des variables CSS correspondantes. */
 export function getDefaultTransition() {
     const {delay, duration, ease} = get();
     return {
@@ -19,6 +20,7 @@ export function getDefaultTransition() {
     } as const;
 }
 
+/** Récupère les paramètres de transition "spring" par défaut. */
 export function getSpringTransition() {
     return {
         type: "spring",
