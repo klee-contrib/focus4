@@ -2,7 +2,19 @@ import i18next from "i18next";
 import {sortBy} from "lodash";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
-import {ComponentType, ReactNode, RefObject, useCallback, useContext, useLayoutEffect, useMemo, useRef} from "react";
+import {
+    ComponentType,
+    ForwardedRef,
+    forwardRef,
+    ReactNode,
+    RefObject,
+    useCallback,
+    useContext,
+    useImperativeHandle,
+    useLayoutEffect,
+    useMemo,
+    useRef
+} from "react";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 
@@ -32,17 +44,29 @@ export interface ScrollspyContainerProps {
     theme?: CSSProp<ScrollspyCss>;
 }
 
-export function ScrollspyContainer({
-    children,
-    contentRef,
-    MenuComponent = ScrollspyMenu,
-    offsetTopOverride,
-    retractable = true,
-    theme: pTheme
-}: ScrollspyContainerProps) {
+/** Ref du ScrollSpyContainer. */
+export interface ScrollspyContainerRef {
+    /**
+     * Scrolle vers le panel demandé.
+     * @param name Id du panel.
+     */
+    scrollToPanel: (name: string) => void;
+}
+
+export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
+    {
+        children,
+        contentRef,
+        MenuComponent = ScrollspyMenu,
+        offsetTopOverride,
+        retractable = true,
+        theme: pTheme
+    }: ScrollspyContainerProps,
+    ref: ForwardedRef<ScrollspyContainerRef>
+) {
     const theme = useTheme("scrollspy", scrollspyCss, pTheme);
     const {headerHeight, registerIntersect, scrollTo} = useContext(ScrollableContext);
-    const ref = useRef<HTMLDivElement>(null);
+    const innerRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(() => {
         state.headerHeight = offsetTopOverride ?? headerHeight;
@@ -72,7 +96,7 @@ export function ScrollspyContainer({
         () => ({
             registerPanel(name: string, panel: PanelDescriptor) {
                 // Le panel ne sera pas enregistré s'il n'est pas contenu dans le scrollspy (ex: dans une popin).
-                if (!ref.current!.contains(panel.node)) {
+                if (!innerRef.current!.contains(panel.node)) {
                     return;
                 }
 
@@ -102,8 +126,10 @@ export function ScrollspyContainer({
         }
     }, []);
 
+    useImperativeHandle(ref, () => ({scrollToPanel}), [scrollTo]);
+
     return useObserver(() => (
-        <div ref={ref} className={theme.scrollspy()}>
+        <div ref={innerRef} className={theme.scrollspy()}>
             <ScrollspyContext.Provider value={scrollSpyContext}>
                 <MenuComponent
                     activeId={state.activeItem}
@@ -122,7 +148,7 @@ export function ScrollspyContainer({
             </ScrollspyContext.Provider>
         </div>
     ));
-}
+});
 
 /**
  * Récupère l'offset d'un noeud HTML (un panel) par rapport au top du document.

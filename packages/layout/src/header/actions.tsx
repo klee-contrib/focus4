@@ -52,6 +52,11 @@ export function HeaderActions({
     const {headerHeight} = useContext(ScrollableContext);
 
     const menu = useMenu();
+
+    if (!primary.length && !secondary.length) {
+        return null;
+    }
+
     return (
         <div
             className={theme.actions()}

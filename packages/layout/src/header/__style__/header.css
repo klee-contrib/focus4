@@ -53,7 +53,7 @@
 
     position: sticky;
     top: 0;
-    display: inline-flex;
+    display: flex;
     flex-direction: row-reverse;
     gap: 9px;
     margin-top: calc(-1 * var(--floating-action-button-size) / 2);
@@ -63,10 +63,12 @@
     box-sizing: border-box;
     transition: margin var(--animation-duration-short) var(--animation-curve-default);
     z-index: calc(var(--z-index-high) + 2);
+    pointer-events: none;
 }
 
 .actions button {
     transition: all var(--animation-duration) var(--animation-curve-default);
+    pointer-events: all;
 }
 
 @media (max-width: 840px) {
