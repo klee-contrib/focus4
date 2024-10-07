@@ -14,7 +14,6 @@
     display: contents;
     color: var(--header-color);
     box-shadow: var(--header-box-shadow);
-    z-index: calc(var(--z-index-high) + 1);
 }
 
 .content {

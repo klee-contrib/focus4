@@ -22,7 +22,7 @@ button.button {
 
     position: sticky;
     height: var(--lateral-menu-button-height);
-    z-index: var(--z-index-higher);
+    z-index: var(--z-index-high);
     right: calc(-1 * var(--lateral-menu-button-width));
     margin-right: calc(-1 * var(--content-padding-side));
     background: rgb(var(--color-white));
