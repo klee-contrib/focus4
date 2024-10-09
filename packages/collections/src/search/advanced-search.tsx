@@ -66,6 +66,8 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
     defaultFoldedFacets?: string[];
     /** Groupes pliés par défauts (par groupingKey) */
     defaultFoldedGroups?: Record<string, string[]>;
+    /** Désactive le caractère sticky du Summary et de l'ActionBar. */
+    disableStickyTopRow?: boolean;
     /** Emplacement de la FacetBox. Par défaut : "left" */
     facetBoxPosition?: "action-bar" | "left" | "left-fixed" | "none";
     /** CSS de la FacetBox (si position = "left") */
@@ -175,6 +177,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
     customFacetComponents,
     defaultFoldedFacets,
     defaultFoldedGroups,
+    disableStickyTopRow = false,
     facetBoxPosition = "left",
     facetBoxTheme,
     facetSections,
@@ -257,8 +260,12 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
             {renderFacetBox()}
             <div className={theme.resultContainer()}>
                 <div
-                    className={theme.stickyContainer()}
-                    style={{top: `calc(${offsetTopOverride ?? headerHeight}px + var(--content-padding-top))`}}
+                    className={!disableStickyTopRow ? theme.stickyContainer() : undefined}
+                    style={
+                        !disableStickyTopRow
+                            ? {top: `calc(${offsetTopOverride ?? headerHeight}px + var(--content-padding-top))`}
+                            : undefined
+                    }
                 >
                     <div className={theme.topRow({withFacetBox: facetBoxPosition.includes("left")})}>
                         <Summary
