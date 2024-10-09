@@ -1,3 +1,4 @@
+import {createHash} from "crypto";
 import dns from "dns";
 import {existsSync, promises as fs} from "fs";
 import path from "path";
@@ -14,8 +15,10 @@ export const baseConfig = {
     css: {
         modules: {
             generateScopedName(name, filename, css) {
-                return `${path.basename(filename).replace(".module.css", "")}_${name}__${Buffer.from(css)
-                    .toString("base64")
+                return `${path.basename(filename).replace(".module.css", "")}_${name}__${createHash("sha1")
+                    .update(filename + css)
+                    .digest("base64")
+                    .replace(/[+/=]/g, "")
                     .substring(0, 5)}`;
             }
         },
