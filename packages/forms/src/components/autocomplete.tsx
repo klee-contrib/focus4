@@ -128,6 +128,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
             {...props}
             ref={ref}
             error={!!error}
+            getKey={getKey}
             loading={loading}
             noSuggestionsOnEmptyQuery={!searchOnEmptyQuery}
             onChange={handleChange}
