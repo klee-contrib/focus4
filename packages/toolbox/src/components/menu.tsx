@@ -69,6 +69,8 @@ export interface MenuProps extends MenuControls {
     id?: string;
     /** Si renseigné, la navigation clavier dans le Menu n'appelera pas le `blur` de l'élément courant actif (pour un input par exemple). */
     noBlurOnArrowPress?: boolean;
+    /** Ne ferme pas le menu au clic sur un item. */
+    noCloseOnClick?: boolean;
     /** Si renseigné, utilise des <div> à la place d'un <ul> et des <li> pour les éléments du Menu. */
     noList?: boolean;
     /** N'affiche pas le focus ring lors de la navigation clavier dans le Menu. */
@@ -199,6 +201,7 @@ export function Menu({
     keepSelectionOnToggle = false,
     id,
     noBlurOnArrowPress = false,
+    noCloseOnClick = false,
     noList = false,
     noRing = false,
     noSelection = false,
@@ -370,10 +373,12 @@ export function Menu({
                 onItemClick?.(item.key, e instanceof KeyboardEvent ? "keyboard" : "click");
             }
 
-            setShowRing(false);
-            close?.();
+            if (!noCloseOnClick) {
+                setShowRing(false);
+                close?.();
+            }
         },
-        [noSelection, onItemClick, close]
+        [noCloseOnClick, noSelection, onItemClick, close]
     );
 
     const resetPointerEvents = useCallback(function resetPointerEvents() {

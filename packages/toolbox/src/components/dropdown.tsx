@@ -44,6 +44,8 @@ export interface DropdownProps<TSource = {key: string; label: string}>
     hasUndefined?: boolean;
     /** Composant personnalisé pour afficher les valeurs. */
     LineComponent?: (props: {item: TSource}) => ReactElement;
+    /** Ne ferme pas le menu de la Dropdown lors de la sélection d'un item. */
+    noCloseOnChange?: boolean;
     /** Appelé avec la clé correspondante lors de la sélection d'une valeur. */
     onChange?: (value?: string) => void;
     /**
@@ -92,6 +94,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
         loading = false,
         multiline,
         name,
+        noCloseOnChange,
         onBlur,
         onChange,
         onContextMenu,
@@ -312,6 +315,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 keepSelectionOnPointerLeave
                 keepSelectionOnToggle
                 noBlurOnArrowPress
+                noCloseOnClick={noCloseOnChange}
                 onItemClick={handleChange}
                 onSelectedChange={onSelectedChange}
                 position={

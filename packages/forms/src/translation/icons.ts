@@ -24,6 +24,9 @@ export const icons = {
         },
         unselectAll: {
             name: "clear"
+        },
+        selected: {
+            name: "check"
         }
     }
 };

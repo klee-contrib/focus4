@@ -56,6 +56,8 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
      * Par défaut : 50.
      */
     maxDisplayed?: number;
+    /** Ne ferme pas le menu de l'Autocomplete lors de la sélection d'un item. */
+    noCloseOnChange?: boolean;
     /**
      * Appelé avec la clé correspondante lors de la sélection d'une valeur.
      *
@@ -108,6 +110,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         maxDisplayed = 50,
         multiline,
         name,
+        noCloseOnChange,
         onBlur,
         onChange,
         onContextMenu,
@@ -349,6 +352,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 {...menu}
                 keepSelectionOnPointerLeave
                 noBlurOnArrowPress
+                noCloseOnClick={noCloseOnChange}
                 noRing
                 onItemClick={key => onValueChange(key)}
                 onSelectedChange={setSelected}

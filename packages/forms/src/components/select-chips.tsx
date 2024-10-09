@@ -4,7 +4,7 @@ import {useCallback, useMemo} from "react";
 
 import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {Chip, ChipCss, DropdownCss, Icon, TextFieldCss} from "@focus4/toolbox";
+import {Chip, ChipCss, DropdownCss, FontIcon, Icon, TextFieldCss} from "@focus4/toolbox";
 
 import {toSimpleType} from "../utils";
 
@@ -25,6 +25,8 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     error?: string;
     /** Permet la sélection de tous les éléments à la fois. */
     hasSelectAll?: boolean;
+    /** Laisse les valeurs sélectionnées dans le Select au lieu de les retirer. */
+    keepSelectedValuesInSelect?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Icône à poser devant le texte. */
@@ -72,6 +74,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     disabled = false,
     error,
     hasSelectAll = false,
+    keepSelectedValuesInSelect = false,
     i18nPrefix = "focus",
     icon,
     id,
@@ -89,20 +92,24 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
 }: SelectChipsProps<T>) {
     const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
 
-    const handleAddValue = useCallback(
-        function handleAddValue(v?: boolean | number | string) {
-            if (v && (!maxSelectable || value.length < maxSelectable)) {
-                onChange([...value, v] as DomainType<T>);
-            }
-        },
-        [onChange, maxSelectable, value]
-    );
-
     const handleRemoveValue = useCallback(
-        function handleRemoveValue(v: boolean | number | string) {
+        function handleRemoveValue(v: DomainType<SingleDomainFieldType<T>>) {
             onChange(value.filter(i => i !== v) as DomainType<T>);
         },
         [onChange, value]
+    );
+
+    const handleAddValue = useCallback(
+        function handleAddValue(v?: DomainType<SingleDomainFieldType<T>>) {
+            const hasValue = v !== undefined && (value as DomainType<SingleDomainFieldType<T>>[]).includes(v);
+
+            if (v !== undefined && !hasValue && (!maxSelectable || value.length < maxSelectable)) {
+                onChange([...value, v] as DomainType<T>);
+            } else if (hasValue) {
+                handleRemoveValue(v);
+            }
+        },
+        [handleRemoveValue, maxSelectable]
     );
 
     const handleAddAll = useCallback(
@@ -142,6 +149,22 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
         }
     }, [handleAddAll, handleRemoveAll, hasSelectAll, i18nPrefix]);
 
+    const LineComponent = useMemo(() => {
+        if (!keepSelectedValuesInSelect) {
+            return undefined;
+        }
+
+        return function SelectChipsLineComponent({item}: any) {
+            const selected = (value as any).includes(item[values.$valueKey]);
+            return (
+                <span className={theme.line({selected})}>
+                    {item[values.$labelKey]}
+                    {selected ? <FontIcon iconI18nKey={`${i18nPrefix}.icons.select.selected`} /> : null}
+                </span>
+            );
+        };
+    }, [i18nPrefix, keepSelectedValuesInSelect, value, values]);
+
     return useObserver(() => (
         <div className={theme.select({error: !!error})}>
             <Select
@@ -151,7 +174,9 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                 error={error}
                 icon={icon}
                 id={id}
+                LineComponent={LineComponent}
                 name={name}
+                noCloseOnChange={keepSelectedValuesInSelect}
                 onChange={handleAddValue}
                 showSupportingText="never"
                 sizing={sizing}
@@ -159,7 +184,10 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                 trailing={trailing}
                 type={toSimpleType(type)}
                 values={values.filter(
-                    v => !(value as (boolean | number | string)[]).includes(v[values.$valueKey]) && !unselectable?.(v)
+                    v =>
+                        (keepSelectedValuesInSelect ||
+                            !(value as (boolean | number | string)[]).includes(v[values.$valueKey])) &&
+                        !unselectable?.(v)
                 )}
             />
             {value.length > 0 ? (
@@ -173,7 +201,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                             label={values.getLabel(item)}
                             onDeleteClick={
                                 !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)
-                                    ? () => handleRemoveValue(item)
+                                    ? () => handleRemoveValue(item as DomainType<SingleDomainFieldType<T>>)
                                     : undefined
                             }
                             theme={chipTheme}
