@@ -5,7 +5,7 @@ import {ComponentType, ElementType, useContext, useEffect, useState} from "react
 
 import {CollectionStore, GroupResult} from "@focus4/stores";
 import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
-import {ChipCss, IconButton, Tooltip} from "@focus4/toolbox";
+import {ChipCss, IconButton, MenuProps, Tooltip} from "@focus4/toolbox";
 
 import {
     ActionBar,
@@ -29,6 +29,8 @@ export type {AdvancedSearchCss};
 
 /** Props de l'AdvancedSearch. */
 export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T>> {
+    /** Positions des menus de l'ActionBar (boutons de tri et de groupe). */
+    actionBarMenuPositions?: MenuProps["position"];
     /** CSS de l'ActionBar. */
     actionBarTheme?: CSSProp<ActionBarCss>;
     /** Composant personnalisé pour le bouton "Ajouter". */
@@ -156,6 +158,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
  * L'intégralité des props de ces composants se retrouve dans ses props, souvent avec le même nom ou parfois avec un nom un peu différent (exemple : `hideFacets` dans le `Summary`, `hideSummaryFacets` dans l'`AdvancedSearch`).
  */
 export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
+    actionBarMenuPositions,
     actionBarTheme,
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
@@ -302,6 +305,7 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
                         hasSearchBar={hasSearchBar}
                         hasSelection={hasSelection}
                         i18nPrefix={i18nPrefix}
+                        menuPositions={actionBarMenuPositions}
                         nbDefaultDataListFacet={nbDefaultDataListFacet}
                         operationList={operationList}
                         orderableColumnList={orderableColumnList}

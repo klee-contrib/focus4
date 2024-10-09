@@ -7,7 +7,7 @@ import {ReactElement, useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
-import {Button, Checkbox, IconButton, Menu, MenuItem, TextField, useMenu} from "@focus4/toolbox";
+import {Button, Checkbox, IconButton, Menu, MenuItem, MenuProps, TextField, useMenu} from "@focus4/toolbox";
 
 import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 
@@ -39,6 +39,8 @@ export interface ActionBarProps<T> {
     hasSelection?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
+    /** Positions des menus (boutons de tri et de groupe) */
+    menuPositions?: MenuProps["position"];
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
     /** Liste des colonnes sur lesquels on peut trier. */
@@ -78,6 +80,7 @@ export function ActionBar<T>({
     hasSearchBar,
     hasSelection,
     i18nPrefix = "focus",
+    menuPositions,
     nbDefaultDataListFacet = 6,
     operationList,
     orderableColumnList,
@@ -136,7 +139,9 @@ export function ActionBar<T>({
                                 setDisplayFacetBox(false);
                             }}
                         />
-                        <Menu {...groupMenu}>{menuItems}</Menu>
+                        <Menu {...groupMenu} position={menuPositions}>
+                            {menuItems}
+                        </Menu>
                     </div>
                 );
             }
@@ -224,7 +229,7 @@ export function ActionBar<T>({
                                     setDisplayFacetBox(false);
                                 }}
                             />
-                            <Menu {...sortMenu}>
+                            <Menu {...sortMenu} position={menuPositions}>
                                 {orderableColumnList.map((description, idx) => (
                                     <MenuItem
                                         key={idx}
