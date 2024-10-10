@@ -220,6 +220,7 @@ generateDocFile("collections", "./packages/collections/src/**/*.tsx", [
     "Table",
     "Timeline"
 ]);
+generateDocFile("layout", "./packages/layout/src/**/*.tsx", ["Panel", "PanelButtons"]);
 
 function escape(text) {
     return text.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("<", "&lt;").replaceAll(">", "&gt;");

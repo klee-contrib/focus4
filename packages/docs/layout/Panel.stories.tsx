@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Panel} from "@focus4/forms";
+import {Panel} from "@focus4/layout";
 
 import {PanelMeta} from "./metas/panel";
 
@@ -8,7 +8,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...PanelMeta,
-    title: "Composants/@focus4∕forms/Panel",
+    title: "Mise en page/Panel",
     args: {
         title: "Titre",
         children: "Contenu du Panel"

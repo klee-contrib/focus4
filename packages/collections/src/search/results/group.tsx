@@ -3,8 +3,9 @@ import {ObservableMap} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, useContext} from "react";
 
+import {ScrollableContext} from "@focus4/layout";
 import {CollectionStore, GroupResult} from "@focus4/stores";
-import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, IconButton} from "@focus4/toolbox";
 
 import {ActionBar, List, ListBaseProps, ListProps, OperationListItem} from "../../list";
@@ -63,7 +64,7 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
     useGroupActionBars
 }: GroupProps<T, P>) {
     const theme = useTheme("group", groupCss, pTheme);
-    const context = useContext(ScrollableContext);
+    const {scrollTo} = useContext(ScrollableContext);
     const state = useLocalObservable(() => ({
         /** Store pour le groupe. */
         get store(): CollectionStore<T> {
@@ -74,7 +75,7 @@ export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
         showAllHandler() {
             store.addFacetValue(store.groupingKey!, group.code, "selected");
             store.groupingKey = undefined;
-            context.scrollTo({
+            scrollTo({
                 top: 0,
                 behavior: "smooth"
             });

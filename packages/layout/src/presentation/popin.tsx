@@ -1,12 +1,13 @@
 import classNames from "classnames";
 import {PropsWithChildren, useContext} from "react";
 
-import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 
-import {Scrollable} from "../scrollable";
+import {ScrollableContext} from "../utils";
 
 import {useActiveTransition} from "./active-transition";
 import {Overlay} from "./overlay";
+import {Scrollable} from "./scrollable";
 
 import popinCss, {PopinCss} from "./__style__/popin.css";
 export {popinCss};
@@ -45,11 +46,11 @@ export function Popin({
     type = "from-right"
 }: PropsWithChildren<PopinProps>) {
     const theme = useTheme("popin", popinCss, pTheme);
-    const context = useContext(ScrollableContext);
+    const {portal} = useContext(ScrollableContext);
 
     const [displayed, tClassName] = useActiveTransition(opened, theme);
 
-    return context.portal(
+    return portal(
         <>
             <Overlay active={opened} onClick={(!preventOverlayClick && closePopin) || undefined} />
             {displayed ? (

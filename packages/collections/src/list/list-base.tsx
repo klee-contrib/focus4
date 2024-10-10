@@ -4,8 +4,9 @@ import {extendObservable, observable, observe} from "mobx";
 import {useLocalObservable} from "mobx-react";
 import {useContext, useEffect, useState} from "react";
 
+import {ScrollableContext} from "@focus4/layout";
 import {CollectionStore} from "@focus4/stores";
-import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import listBaseCss, {ListBaseCss} from "./__style__/list-base.css";
@@ -44,7 +45,7 @@ export function useListBase<T>({
     showAllHandler,
     store
 }: ListBaseProps<T> & {data?: T[]; store?: CollectionStore<T>}) {
-    const context = useContext(ScrollableContext);
+    const {registerIntersect} = useContext(ScrollableContext);
     const theme = useTheme("listBase", listBaseCss, baseTheme);
     const state = useLocalObservable(
         () => ({
@@ -121,7 +122,7 @@ export function useListBase<T>({
             registerSentinel(listNode: HTMLElement | null) {
                 if (state.hasInfiniteScroll) {
                     if (listNode) {
-                        const sentinel = context.registerIntersect(listNode, (_, isIntersecting) => {
+                        const sentinel = registerIntersect(listNode, (_, isIntersecting) => {
                             if (isIntersecting) {
                                 state.handleShowMore();
                                 sentinel();

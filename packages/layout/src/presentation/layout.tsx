@@ -2,8 +2,9 @@ import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {Scrollable} from "../scrollable";
 import {MessageCenter, MessageCenterProps} from "../utils";
+
+import {Scrollable} from "./scrollable";
 
 import layoutCss, {LayoutCss} from "./__style__/layout.css";
 export {layoutCss};

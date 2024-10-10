@@ -3,7 +3,8 @@ import {Component, ReactElement} from "react";
 import {v4} from "uuid";
 
 import {messageStore} from "@focus4/core";
-import {fieldFor, FieldOptions, Form, PanelProps} from "@focus4/forms";
+import {fieldFor, FieldOptions, Form} from "@focus4/forms";
+import {PanelProps} from "@focus4/layout";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
