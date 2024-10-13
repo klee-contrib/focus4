@@ -12,7 +12,11 @@ export interface HeaderContentProps {
     theme?: CSSProp<HeaderCss>;
 }
 
-/** Contenu du header. n'est affiché que si le header est déplié. */
+/**
+ * Partie non fixe du Header, qui scrollera avec la page.
+ *
+ * Il peut être utilisé pour mettre en évidence un contenu lors de la navigation vers une nouvelle page, qui sera réduit une fois que l'on scrolle vers le reste de son contenu.
+ */
 export function HeaderContent(props: HeaderContentProps) {
     const theme = useTheme("header", headerCss, props.theme);
 

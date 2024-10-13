@@ -1,0 +1,23 @@
+import {Meta, Description, Title, Controls, Canvas} from "@storybook/blocks";
+
+import MainMenuStories, {Showcase} from "./MainMenu.stories";
+import MainMenuItemStories, {Showcase as MainMenuItem} from "./MainMenuItem.stories";
+
+import {CssVariables} from "../.storybook/custom/CssVariables";
+
+<Meta of={MainMenuStories} />
+
+<Title />
+<Description />
+
+<Canvas of={Showcase} />
+
+<Controls of={Showcase} />
+
+<Title of={MainMenuItemStories} />
+<Description of={MainMenuItemStories} />
+
+<Controls of={MainMenuItem} />
+
+<h3>Variables CSS</h3>
+<CssVariables />

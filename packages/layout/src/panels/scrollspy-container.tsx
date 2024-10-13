@@ -53,6 +53,9 @@ export interface ScrollspyContainerRef {
     scrollToPanel: (name: string) => void;
 }
 
+/**
+ * Le `ScrollspyContainer` est un composant du mise en page qui permet d'affiche un menu sur la gauche qui recapitule les titres de tous les [`Panel`](/docs/mise-en-page-panel--docs) posés à l'intérieur, avec la possibilité de naviguer vers eux en cliquant dessus.
+ */
 export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
     {
         children,

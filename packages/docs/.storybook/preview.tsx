@@ -7,6 +7,7 @@ import "./preview.css";
 
 import {translation as collections} from "@focus4/collections";
 import {translation as forms} from "@focus4/forms";
+import {translation as layout} from "@focus4/layout";
 import {colorScheme, initColorScheme} from "@focus4/styling";
 
 import {Title, Subtitle, Description, Primary, Controls} from "@storybook/blocks";
@@ -26,7 +27,15 @@ initColorScheme(true);
 i18next.init({
     lng: "fr",
     resources: {
-        fr: {translation: {focus: {...collections.fr, ...forms.fr, icons: {...collections.icons, ...forms.icons}}}}
+        fr: {
+            translation: {
+                focus: {
+                    ...collections.fr,
+                    ...forms.fr,
+                    icons: {...collections.icons, ...forms.icons, ...layout.icons}
+                }
+            }
+        }
     },
     nsSeparator: "🤷‍♂️"
 });
@@ -62,6 +71,18 @@ export default {
                     "Listes",
                     "Routage",
                     "Mise en page",
+                    [
+                        "Présentation",
+                        "Layout",
+                        "Scrollable",
+                        "HeaderScrolling",
+                        "MainMenu",
+                        "Panel",
+                        "ScrollspyContainer",
+                        "Popin",
+                        "Dialog",
+                        "LateralMenu"
+                    ],
                     "CSS",
                     "Autres modules"
                 ]

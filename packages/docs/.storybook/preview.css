@@ -35,3 +35,7 @@ a code {
 p {
     white-space: pre-wrap;
 }
+
+.doc-scrollable {
+    max-height: 400px;
+}

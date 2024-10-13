@@ -33,7 +33,14 @@ export interface PopinProps {
     type?: "from-left" | "from-right";
 }
 
-/** Affiche son contenu dans une popin, dont l'ouverture est contrôlée par ses props. */
+/**
+ * La `Popin` est un panneau latéral qui s'ouvre sur la gauche ou la droite et qui prend en général la moitié de l'écran.
+ *
+ * La `Popin` pose son propre [`Scrollable`](/docs/mise-en-page-scrollable--docs), donc il est possible d'utiliser dedans les fonctionnalités qui en ont besoin (le scroll infini, en particulier).
+ *
+ * Elle **doit être placée dans un [`Scrollable`](/docs/mise-en-page-scrollable--docs)**, c'est-à-dire en pratique soit dans le [`Layout`](/docs/mise-en-page-layout--docs) (donc n'importe où dans votre application, ce n'est pas vraiment limitant), soit dans une autre `Popin`.
+ * En particulier, **elle s'ouvrira dans le contexte du premier [`Scrollable`](/docs/mise-en-page-scrollable--docs) parent** qu'elle rencontre. Ainsi, on peut mettre des `Popin` dans des `Popin`.
+ */
 export function Popin({
     backToTopOffset,
     children,

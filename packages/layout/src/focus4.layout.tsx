@@ -22,6 +22,7 @@ export {
 } from "./presentation";
 export {translation} from "./translation";
 export {MessageCenter, HeaderContext, ScrollableContext, ScrollspyContext} from "./utils";
+export {LayoutBase};
 
 export type {HeaderCss} from "./header";
 export type {MainMenuProps, MainMenuCss} from "./menu";
@@ -39,9 +40,13 @@ export type {
 export type {MessageCenterProps, PanelDescriptor} from "./utils";
 
 /**
- * Composant racine d'une application Focus, contient les composants transverses comme le header, le menu ou le centre de message.
+ * Le `Layout` est le composant racine d'une application Focus. Tous vos composants seront à priori posé dans le `Layout`.
  *
- * C'est également le point d'entrée pour la surcharge de CSS via la prop `appTheme` (il pose un `ThemeProvider`).
+ * Le `Layout` :
+ * - Pose un [`Scrollable`](/docs/mise-en-page-scrollable--docs), qui prend tout l'écran (100wh x 100vh) et "remplace" la scrollbar native de la page.
+ * - Pose le `MessageCenter`, qui est le composant qui permet d'afficher les [messages](/docs/les-bases-gestion-des-messages--docs).
+ * - Pose un  [`ThemeProvider`](/docs/css-le-css-de-focus--docs#surcharge-globale), pour gérer les surcharges de CSS Focus.
+ * - Optionnellement, peut poser un `menu` fixe, à gauche, dans lequel vous pourrez y passer une instance de [`MainMenu`](/docs/mise-en-page-menu-principal--docs) par exemple.
  */
 export function Layout(
     props: LayoutProps & {

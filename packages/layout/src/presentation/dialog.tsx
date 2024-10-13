@@ -30,6 +30,12 @@ export interface DialogProps {
     theme?: CSSProp<DialogCss>;
 }
 
+/**
+ * Le `Dialog` est une petite fenêtre qui s'ouvre au centre, avec un titre, un contenu, et d'éventuelles actions.
+ *
+ * Il **doit être placé dans un [`Scrollable`](/docs/mise-en-page-scrollable--docs)**, c'est-à-dire en pratique soit dans le [`Layout`](/docs/mise-en-page-layout--docs) (donc n'importe où dans votre application, ce n'est pas vraiment limitant), soit dans une [`Popin`](/docs/mise-en-page-popin--docs).
+ * En particulier, **il s'ouvrira dans le contexte du premier [`Scrollable`](/docs/mise-en-page-scrollable--docs) parent** qu'il rencontre. En particulier, il s'ouvrira donc dans la [`Popin`](/docs/mise-en-page-popin--docs) qui le contient et non dans le [`Layout`](/docs/mise-en-page-layout--docs) global, donc il sera centré dedans.
+ */
 export function Dialog({
     actions = [],
     active = false,

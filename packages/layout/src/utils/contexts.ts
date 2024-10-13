@@ -33,6 +33,7 @@ export const ScrollableContext = createContext<{
      * @returns Le disposer.
      */
     registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void): () => void;
+    /** @internal */
     /** Met à jour la hauteur du `HeaderTopRow` */
     setHeaderHeight: (height: number) => void;
     /**

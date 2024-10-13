@@ -1,0 +1,20 @@
+import {Meta, Description, Title, Controls} from "@storybook/blocks";
+
+import {CssVariables} from "../.storybook/custom/CssVariables";
+
+import {LayoutBaseMeta} from "./metas/layout-base";
+import LayoutStories, {Showcase} from "./Layout.stories";
+import ContentStories from "./Content.stories";
+
+<Meta of={LayoutStories} />
+
+<Title />
+<Description />
+
+<Controls of={Showcase} />
+
+<Title of={ContentStories} />
+<Description of={ContentStories} />
+
+<h3>Variables CSS</h3>
+<CssVariables cssVariables={LayoutBaseMeta.parameters.cssVariables} />

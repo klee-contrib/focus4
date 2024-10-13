@@ -19,7 +19,11 @@ export interface LateralMenuProps {
     theme?: CSSProp<LateralMenuCss>;
 }
 
-/** Menu latéral sticky */
+/**
+ * Le `LateralMenu` permet de créer un menu latéral (à priori à gauche), qui restera sticky au scroll en haut de la page.
+ *
+ * Il doit être posé dans un conteneur avec un `display: flex`, et s'il est rétractable, alors son contenu devrait idéalement avoir une taille fixe.
+ */
 export function LateralMenu({children, headerHeight = 0, retractable = true, theme: pTheme}: LateralMenuProps) {
     const theme = useTheme("lateral-menu", lateralMenuCss, pTheme);
     const [opened, setOpened] = useState(true);

@@ -1,0 +1,23 @@
+import {Meta, Description, Title, Canvas, Controls} from "@storybook/blocks";
+
+import {CssVariables} from "../.storybook/custom/CssVariables";
+
+import ScrollspyContainerStories, {Showcase} from "./ScrollspyContainer.stories";
+import ScrollspyMenuStories, {Showcase as ScrollspyMenu} from "./ScrollspyMenu.stories";
+
+<Meta of={ScrollspyContainerStories} />
+
+<Title />
+<Description />
+
+<Canvas of={Showcase} />
+
+<Controls of={Showcase} />
+
+<Title of={ScrollspyMenuStories} />
+<Description of={ScrollspyMenuStories} />
+
+<Controls of={ScrollspyMenu} />
+
+<h3>Variables CSS</h3>
+<CssVariables />

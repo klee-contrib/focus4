@@ -39,7 +39,11 @@ export interface HeaderActionsProps {
     }>;
 }
 
-/** Barre d'actions du header. */
+/**
+ * Barre d'actions du header.
+ *
+ * Sera affichée sous le `HeaderContent` s'il y en a un et qu'il est encore affiché sur la page, puis en sticky sous le `HeaderTopRow`.
+ */
 export function HeaderActions({
     i18nPrefix = "focus",
     primary = [],

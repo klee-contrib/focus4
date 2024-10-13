@@ -12,7 +12,9 @@ export interface HeaderTopRowProps {
     theme?: CSSProp<HeaderCss>;
 }
 
-/** Barre du haut dans le header. */
+/**
+ * Partie fixe du Header. C'est un composant obligatoire du `HeaderScrolling`.
+ */
 export function HeaderTopRow(props: HeaderTopRowProps) {
     const theme = useTheme("header", headerCss, props.theme);
 

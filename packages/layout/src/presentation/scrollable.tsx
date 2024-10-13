@@ -30,6 +30,19 @@ export interface ScrollableProps {
     theme?: CSSProp<ScrollableCss>;
 }
 
+/**
+ * Le composant **`Scrollable`**, qui pose un **`ScrollableContext`**, est le composant central du système de présentation et mise en page de Focus.
+ *
+ * C'est un composant que vous n'utiliserez jamais directement (où alors avec une très bonne raison), mais il est posé par le [`Layout`](/docs/mise-en-page-layout--docs) et la [`Popin`](/docs/mise-en-page-popin--docs), qui sont des constituants basiques de votre application.
+ *
+ * Le `Scrollable` permet de :
+ *
+ * - Savoir si un élément est visible à l'écran (via un [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)), ce qui permet de gérer le scroll infini des listes, où bien afficher l'élement en cours dans le [`ScrollspyContainer`](/docs/mise-en-page-scrollspycontainer--docs)
+ * - Gérer un "portal" vers l'élément racine, pour poser des popins par exemple.
+ * - Poser un bouton de retour vers le haut une fois qu'on a scrollé un peu.
+ *
+ * Le `Scrollable` **pose son propre contexte de scroll sur la page**. En particulier, pour celui du [`Layout`](/docs/mise-en-page-layout--docs), il faut bien comprendre que le scroll général de l'application n'est pas celui de le page mais celui du `Scrollable` qui prend 100% de l'espace de l'écran (sauf la partie dédiée au [`MainMenu`](/docs/mise-en-page-menu-principal--docs) s'il y'en a un). Il faut bien prendre cela en compte lorsque vous essaierez de personnaliser le CSS général de votre application.
+ */
 export function Scrollable({
     backToTopOffset = 300,
     className,

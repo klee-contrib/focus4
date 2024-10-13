@@ -38,7 +38,7 @@ export interface PanelProps extends PanelButtonsProps {
  *
  * Il peut avoir un titre, des actions (en haut et/ou en bas) et un contenu.
  *
- * Il s'interface nativement avec les actions de formulaire et le `ScrollspyContainer`.
+ * Il s'interface nativement avec les actions de formulaire et le [`ScrollspyContainer`](/docs/mise-en-page-scrollspycontainer--docs).
  */
 export function Panel({
     Buttons = PanelButtons,

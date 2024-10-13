@@ -18,7 +18,15 @@ export interface HeaderProps {
     theme?: CSSProp<HeaderCss>;
 }
 
-/** Conteneur du header, gérant en particulier le dépliement et le repliement. */
+/**
+ * Le `HeaderScrolling` permet de poser un Header en haut de la page, avec au moins une partie fixe.
+ *
+ * Il doit contenir un `HeaderTopRow` pour contenir les `HeaderItem` qui le constituent qui en sera la partie fixe.
+ * Il peut contenir un `HeaderContent`, qui sera affiché en dessous du `HeaderTopRow` et qui scrollera avec la page.
+ * Il peut aussi contenir des `HeaderActions`, des boutons d'actions qui seront affichés sous le `HeaderContent` et resteront fixés au `HeaderTopRow` une fois la page scrollée.
+ *
+ * La taille du `HeaderTopRow` sera sauvegardée dans le contexte du [`Scrollable`](/docs/mise-en-page-scrollable--docs) qui le contient, afin que les autre composants sticky qui seront posés dedans puissent se positionner par rapport à lui.
+ */
 export function HeaderScrolling({children, theme: pTheme}: HeaderProps) {
     const theme = useTheme("header", headerCss, pTheme);
     const ref = useRef<HTMLElement>(null);

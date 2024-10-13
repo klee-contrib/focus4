@@ -220,7 +220,26 @@ generateDocFile("collections", "./packages/collections/src/**/*.tsx", [
     "Table",
     "Timeline"
 ]);
-generateDocFile("layout", "./packages/layout/src/**/*.tsx", ["Panel", "PanelButtons"]);
+generateDocFile("layout", "./packages/layout/src/**/*.tsx", [
+    "Content",
+    "Dialog",
+    "HeaderActions",
+    "HeaderContent",
+    "HeaderItem",
+    "HeaderScrolling",
+    "HeaderTopRow",
+    "LateralMenu",
+    "Layout",
+    "LayoutBase",
+    "MainMenuItem",
+    "MainMenu",
+    "Panel",
+    "PanelButtons",
+    "Popin",
+    "Scrollable",
+    "ScrollspyContainer",
+    "ScrollspyMenu"
+]);
 
 function escape(text) {
     return text.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
