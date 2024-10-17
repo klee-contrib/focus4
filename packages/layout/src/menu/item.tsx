@@ -32,13 +32,15 @@ export interface MainMenuItemProps extends PointerEvents<HTMLButtonElement | HTM
     label?: string;
     /** Au clic sur le l'item de menu. */
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    /** La route associée, pour comparaison avec la route active. */
+    /** La route associée, pour comparaison avec la route active définie dans le `MainMenu`. */
     route?: string;
     /** CSS. */
     theme?: CSSProp<MainMenuCss>;
 }
 
-/** Elément de menu. */
+/**
+ * Elément de menu, à poser comme enfant direct d'un `MainMenu` ou d'un autre `MainMenuItem` (pour faire un sous-menu).
+ */
 export function MainMenuItem({
     children,
     href,

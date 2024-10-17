@@ -2,8 +2,10 @@ import i18next from "i18next";
 import {snakeCase} from "lodash";
 import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "react";
 
-import {CSSProp, ScrollspyContext, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon, Icon, LinearProgressIndicator} from "@focus4/toolbox";
+
+import {ScrollspyContext} from "../utils";
 
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
@@ -36,7 +38,7 @@ export interface PanelProps extends PanelButtonsProps {
  *
  * Il peut avoir un titre, des actions (en haut et/ou en bas) et un contenu.
  *
- * Il s'interface nativement avec les actions de formulaire et le `ScrollspyContainer`.
+ * Il s'interface nativement avec les actions de formulaire et le [`ScrollspyContainer`](/docs/mise-en-page-scrollspycontainer--docs).
  */
 export function Panel({
     Buttons = PanelButtons,

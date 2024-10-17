@@ -1,26 +1,28 @@
 :root {
-    --advanced-search-facets-width: 275px;
+    --advanced-search-facets-width: 240px;
     --advanced-search-facets-padding: 10px;
 }
 
 .search {
     padding-top: var(--content-padding-top);
+    position: relative;
+    display: flex;
 }
 
 .facetContainer {
-    float: left;
     width: var(--advanced-search-facets-width);
-    padding: var(--content-padding-top) var(--advanced-search-facets-padding) var(--advanced-search-facets-padding);
+    padding: var(--advanced-search-facets-padding);
     box-sizing: content-box;
 }
 
 .resultContainer {
     padding: 0 var(--content-padding-side);
-    box-sizing: border-box;
+    flex: 1;
 }
 
-.resultContainer--withFacetBox {
-    margin-left: calc(var(--advanced-search-facets-width) + var(--advanced-search-facets-padding));
+.stickyContainer {
+    position: sticky;
+    z-index: 1;
 }
 
 .topRow {
@@ -28,6 +30,10 @@
     align-items: flex-end;
     justify-content: space-between;
     min-height: calc(var(--button-height) + var(--summary-margin-bottom));
+}
+
+.topRow--withFacetBox {
+    margin-left: calc(var(--lateral-menu-button-width) / 2);
 }
 
 .actions {

@@ -1,0 +1,24 @@
+import {Meta, Description, Title, Controls} from "@storybook/blocks";
+
+import {CssVariables} from "../.storybook/custom/CssVariables";
+
+import ScrollableStories, {Showcase} from "./Scrollable.stories";
+
+<Meta of={ScrollableStories} />
+
+<Title />
+<Description />
+
+<Controls of={Showcase} />
+
+## API du `ScrollableContext`
+
+Le `ScrollableContext` propose une API "publique", dans le sens ou vous pouvez l'utiliser dans votre projet mais qu'elle existe surtout pour les composants internes de Focus. Il s'utilise dans un composant React avec le hook de context classique `useContext` :
+
+-   **`headerHeight`**: La hauteur calculée du `HeaderTopRow`, s'il y en a un de posé.
+
+-   **`scrollTo(options)`**: même chose que `window.scrollTo`, pour le `<Scrollable>`. Vous pouvez toujours essayer d'utiliser `window.scrollTo` mais ça ne marchera plus, puisque la fenêtre est fixe. C'est à priori la seule raison "standard" (et encore) pour laquelle vous pourriez avoir besoin d'utiliser le contexte.
+
+-   **`portal(node: JSX.Element)`**: cette méthode permet de poser un élément à la racine du `<Scrollable>`. C'est utilisé par les popins.
+
+-   **`registerIntersect(node, onIntersect)`** : cette méthode permet d'enregistrer un handler d'évènement sur un nœud HTML, qui sera appelé régulièrement quand la section visible de ce noeud dans le viewport du `<Scrollable>` change. En général, via un évènement de scroll, mais pas nécessairement. Cela permet de faire des choses lorsqu'un élément entre ou quitte le viewport par exemple (utilisé par le scroll infini par exemple).

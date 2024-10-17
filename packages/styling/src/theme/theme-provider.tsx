@@ -28,19 +28,19 @@ export interface FocusCSSContext extends CSSContext {
     form: {};
     inputDate: {};
     label: {};
-    panel: {};
     select: {};
     selectCheckbox: {};
     selectChips: {};
     selectRadio: {};
 
     // Layout
-    buttonBTT: {};
     dialog: {};
     header: {};
+    lateralMenu: {};
     layout: {};
     mainMenu: {};
     overlay: {};
+    panel: {};
     popin: {};
     scrollable: {};
     scrollspy: {};

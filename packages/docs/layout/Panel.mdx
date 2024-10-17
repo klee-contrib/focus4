@@ -1,6 +1,6 @@
 import {Meta, Description, Title, Controls, Canvas} from "@storybook/blocks";
 
-import {CssVariables} from "../../.storybook/custom/CssVariables";
+import {CssVariables} from "../.storybook/custom/CssVariables";
 
 import PanelStories, {Showcase} from "./Panel.stories";
 import PanelButtonsStories, {Showcase as PanelButtons} from "./PanelButtons.stories";
@@ -14,8 +14,8 @@ import PanelButtonsStories, {Showcase as PanelButtons} from "./PanelButtons.stor
 
 <Controls of={Showcase} />
 
-<Title>{PanelButtonsStories.title.split("/")[2]}</Title>
-<Description>{PanelButtonsStories.parameters.docs.description.component}</Description>
+<Title of={PanelButtonsStories} />
+<Description of={PanelButtonsStories} />
 
 <Controls of={PanelButtons} />
 

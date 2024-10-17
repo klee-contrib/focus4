@@ -1,44 +1,31 @@
-import {createContext, HTMLProps, ReactElement, ReactPortal} from "react";
+import {createContext, ReactElement, ReactPortal} from "react";
 
 export interface PanelDescriptor {
     node: HTMLDivElement;
     title?: string;
 }
 
+/** Context d'un header, pour gérer son caractère sticky avec la présence ou non d'un `HeaderContent` */
+export const HeaderContext = createContext({
+    /** Si le header est sticky (s'il n'y pas de `HeaderContent`, ou s'il est sorti du viewport). */
+    sticky: true,
+    /** Met à jour le caractère sticky du header. */
+    setSticky(sticky: boolean) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        sticky;
+    }
+});
+
 /** Contexte d'un Scrollable, expose les méthodes associées. */
 export const ScrollableContext = createContext<{
-    /**
-     * Retourne la status du header.
-     * @returns La taille du header et s'il est sticky ou non.
-     */
-    getHeaderStatus(): {sticky: boolean; height: number};
-    /**
-     * Affiche un élement dans le menu sticky du Scrollable
-     * @param node Le noeud React.
-     * @param parentNode Noeud à suivre pour positionner l'élément sticky.
-     * @param retractable Menu rétractable.
-     * @returns Le Portal associé.
-     */
-    menu(node: ReactElement, parentNode: HTMLElement | null, retractable: boolean): ReactPortal | null;
+    /** Hauteur calculée du `HeaderTopRow` (s'il y en a un) */
+    headerHeight: number;
     /**
      * Affiche un élement dans le Scrollable.
      * @param node Le noeud React.
      * @returns Le Portal associé.
      */
-    portal(node: ReactElement): ReactPortal;
-    /**
-     * Enregistre le header dans le Scrollable
-     * @param nonStickyElement Le noeud DOM représentant le header non sticky.
-     * @param canDeploy Précise si le header est toujours sticky ou non.
-     * @returns Le disposer.
-     */
-    registerHeader(nonStickyElement: HTMLElement, canDeploy: boolean): () => void;
-    /**
-     * Set les props du header du Scrollable.
-     * @param headerProps Les props du header.
-     * @returns Le disposer.
-     */
-    registerHeaderProps(headerProps: HTMLProps<HTMLElement>): void;
+    portal(node: ReactElement): ReactPortal | null;
     /**
      * Enregistre un observateur d'intersection avec le viewport du Scrollable.
      * @param node Le noeud DOM à observer.
@@ -46,12 +33,27 @@ export const ScrollableContext = createContext<{
      * @returns Le disposer.
      */
     registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void): () => void;
+    /** @internal */
+    /** Met à jour la hauteur du `HeaderTopRow` */
+    setHeaderHeight: (height: number) => void;
     /**
      * Scrolle vers la position demandée.
      * @param options Options.
      */
     scrollTo(options?: ScrollToOptions): void;
-}>({} as any);
+}>({
+    headerHeight: 0,
+    portal: () => null,
+    registerIntersect: () => () => {
+        /** */
+    },
+    setHeaderHeight() {
+        /** */
+    },
+    scrollTo() {
+        /** */
+    }
+});
 
 /** Contexte d'un ScrollspyContainer, expose les méthodes associées. */
 export const ScrollspyContext = createContext({

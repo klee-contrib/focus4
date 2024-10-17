@@ -1,0 +1,39 @@
+:root {
+    --lateral-menu-box-shadow: var(--shadow-2p);
+    --lateral-menu-border-radius: 12px;
+
+    --lateral-menu-button-width: 20px;
+    --lateral-menu-button-height: 40px;
+    --lateral-menu-button-border-radius: 6px;
+}
+
+.menu {
+    position: sticky;
+    align-self: flex-start;
+    background: rgb(var(--color-white));
+    box-shadow: var(--lateral-menu-box-shadow);
+    border-radius: var(--lateral-menu-border-radius);
+    overflow-x: hidden;
+}
+
+button.button {
+    --button-border-radius: var(--lateral-menu-button-border-radius);
+    --button-padding: 0;
+
+    position: sticky;
+    height: var(--lateral-menu-button-height);
+    z-index: var(--z-index-high);
+    right: calc(-1 * var(--lateral-menu-button-width));
+    margin-right: calc(-1 * var(--content-padding-side));
+    background: rgb(var(--color-white));
+    width: var(--lateral-menu-button-width);
+    min-width: var(--lateral-menu-button-width);
+    box-shadow: var(--shadow-2p);
+
+    & > span {
+        left: 0;
+        width: var(--lateral-menu-button-width);
+        line-height: var(--lateral-menu-button-height);
+        height: var(--lateral-menu-button-height);
+    }
+}

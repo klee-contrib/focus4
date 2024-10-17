@@ -9,7 +9,7 @@ import {useDarkMode} from "./DocsContainer";
 
 type VariableDefinitions = Record<string, {main: string; dark?: string}>;
 
-export function CssVariables() {
+export function CssVariables({cssVariables}: {cssVariables?: Record<string, VariableDefinitions>}) {
     const meta = useOf<"meta">("meta");
     const dark = useDarkMode();
     const [ref, setRef] = React.useState<HTMLDivElement | null>(null);
@@ -23,7 +23,7 @@ export function CssVariables() {
         }, {}) as any
     }));
 
-    const {global, common, local} = (meta.preparedMeta.parameters?.cssVariables ?? {}) as Record<
+    const {global, common, local} = (cssVariables ?? meta.preparedMeta.parameters?.cssVariables ?? {}) as Record<
         string,
         VariableDefinitions
     >;

@@ -4,33 +4,49 @@ import {LayoutBase, LayoutProps} from "./presentation";
 
 export {HeaderActions, HeaderContent, HeaderItem, HeaderScrolling, HeaderTopRow, headerCss} from "./header";
 export {MainMenu, MainMenuItem, mainMenuCss} from "./menu";
+export {Panel, PanelButtons, ScrollspyContainer, ScrollspyMenu, panelCss, scrollspyCss} from "./panels";
 export {
     Content,
     Dialog,
-    LayoutBase,
+    LateralMenu,
     Popin,
-    ScrollspyContainer,
+    Scrollable,
     dialogCss,
+    lateralMenuCss,
     layoutCss,
     overlayCss,
     popinCss,
-    scrollspyCss,
-    useActiveTransition
+    scrollableCss,
+    useActiveTransition,
+    useStickyClip
 } from "./presentation";
-export {Scrollable, buttonBttCss, scrollableCss} from "./scrollable";
 export {translation} from "./translation";
-export {MessageCenter} from "./utils";
+export {MessageCenter, HeaderContext, ScrollableContext, ScrollspyContext} from "./utils";
+export {LayoutBase};
 
 export type {HeaderCss} from "./header";
 export type {MainMenuProps, MainMenuCss} from "./menu";
-export type {DialogCss, LayoutProps, LayoutCss, OverlayCss, PopinCss, ScrollspyCss} from "./presentation";
-export type {ButtonBttCss, ScrollableProps, ScrollableCss} from "./scrollable";
-export type {MessageCenterProps} from "./utils";
+export type {PanelButtonsProps, PanelCss, PanelProps, ScrollspyContainerProps, ScrollspyContainerRef} from "./panels";
+export type {
+    DialogCss,
+    LateralMenuCss,
+    LateralMenuProps,
+    LayoutCss,
+    OverlayCss,
+    PopinCss,
+    ScrollableCss,
+    ScrollableProps
+} from "./presentation";
+export type {MessageCenterProps, PanelDescriptor} from "./utils";
 
 /**
- * Composant racine d'une application Focus, contient les composants transverses comme le header, le menu ou le centre de message.
+ * Le `Layout` est le composant racine d'une application Focus. Tous vos composants seront à priori posé dans le `Layout`.
  *
- * C'est également le point d'entrée pour la surcharge de CSS via la prop `appTheme` (il pose un `ThemeProvider`).
+ * Le `Layout` :
+ * - Pose un [`Scrollable`](/docs/mise-en-page-scrollable--docs), qui prend tout l'écran (100wh x 100vh) et "remplace" la scrollbar native de la page.
+ * - Pose le `MessageCenter`, qui est le composant qui permet d'afficher les [messages](/docs/les-bases-gestion-des-messages--docs).
+ * - Pose un  [`ThemeProvider`](/docs/css-le-css-de-focus--docs#surcharge-globale), pour gérer les surcharges de CSS Focus.
+ * - Optionnellement, peut poser un `menu` fixe, à gauche, dans lequel vous pourrez y passer une instance de [`MainMenu`](/docs/mise-en-page-menu-principal--docs) par exemple.
  */
 export function Layout(
     props: LayoutProps & {

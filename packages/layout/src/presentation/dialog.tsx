@@ -1,8 +1,10 @@
 import classNames from "classnames";
 import {ReactNode, useContext} from "react";
 
-import {CSSProp, ScrollableContext, useTheme} from "@focus4/styling";
+import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, ButtonProps} from "@focus4/toolbox";
+
+import {ScrollableContext} from "../utils";
 
 import {useActiveTransition} from "./active-transition";
 import {Overlay} from "./overlay";
@@ -28,6 +30,12 @@ export interface DialogProps {
     theme?: CSSProp<DialogCss>;
 }
 
+/**
+ * Le `Dialog` est une petite fenêtre qui s'ouvre au centre, avec un titre, un contenu, et d'éventuelles actions.
+ *
+ * Il **doit être placé dans un [`Scrollable`](/docs/mise-en-page-scrollable--docs)**, c'est-à-dire en pratique soit dans le [`Layout`](/docs/mise-en-page-layout--docs) (donc n'importe où dans votre application, ce n'est pas vraiment limitant), soit dans une [`Popin`](/docs/mise-en-page-popin--docs).
+ * En particulier, **il s'ouvrira dans le contexte du premier [`Scrollable`](/docs/mise-en-page-scrollable--docs) parent** qu'il rencontre. En particulier, il s'ouvrira donc dans la [`Popin`](/docs/mise-en-page-popin--docs) qui le contient et non dans le [`Layout`](/docs/mise-en-page-layout--docs) global, donc il sera centré dedans.
+ */
 export function Dialog({
     actions = [],
     active = false,
@@ -38,11 +46,11 @@ export function Dialog({
     theme: pTheme
 }: DialogProps) {
     const theme = useTheme("dialog", dialogCss, pTheme);
-    const context = useContext(ScrollableContext);
+    const {portal} = useContext(ScrollableContext);
 
     const [displayed, tClassName] = useActiveTransition(active, theme);
 
-    return context.portal(
+    return portal(
         <>
             <Overlay active={active} onClick={onOverlayClick} />
             {displayed ? (

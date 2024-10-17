@@ -1,6 +1,8 @@
-import {ReactNode} from "react";
+import {ReactNode, useContext, useLayoutEffect, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {ScrollableContext} from "../utils/contexts";
 
 import headerCss, {HeaderCss} from "./__style__/header.css";
 
@@ -10,8 +12,22 @@ export interface HeaderTopRowProps {
     theme?: CSSProp<HeaderCss>;
 }
 
-/** Barre du haut dans le header. */
+/**
+ * Partie fixe du Header. C'est un composant obligatoire du `HeaderScrolling`.
+ */
 export function HeaderTopRow(props: HeaderTopRowProps) {
     const theme = useTheme("header", headerCss, props.theme);
-    return <div className={theme.topRow()}>{props.children}</div>;
+
+    const ref = useRef<HTMLDivElement>(null);
+    const {setHeaderHeight} = useContext(ScrollableContext);
+
+    useLayoutEffect(() => {
+        setHeaderHeight(ref.current?.clientHeight ?? 0);
+    });
+
+    return (
+        <div ref={ref} className={theme.topRow()}>
+            {props.children}
+        </div>
+    );
 }

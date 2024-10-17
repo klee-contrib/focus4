@@ -16,7 +16,11 @@ export interface HeaderItemProps {
     theme?: CSSProp<HeaderCss>;
 }
 
-/** Item de header, doit être posé dans `HeaderTopRow`. */
+/**
+ * Elément à poser dans `HeaderTopRow`, pour représenter les différentes section de la partie fixe du Header.
+ *
+ * On peut en mettre en nombre arbitraire, et ils peuvent être affichés ou non si le `HeaderContent` est visible via la prop `stickyOnly`.
+ */
 export function HeaderItem({children, fillWidth = false, stickyOnly = false, theme: pTheme}: HeaderItemProps) {
     const theme = useTheme("header", headerCss, pTheme);
     return <div className={theme.item({fillWidth, stickyOnly})}>{children}</div>;
