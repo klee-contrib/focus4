@@ -1,5 +1,7 @@
-[![Build Status](https://dev.azure.com/klee-focus/focus4/_apis/build/status/CI)](https://dev.azure.com/klee-focus/focus4/_build/latest?definitionId=1&view=logs)
+[![.github/workflows/docs-and-tests.yaml](https://github.com/klee-contrib/focus4/actions/workflows/docs-and-tests.yaml/badge.svg)](https://github.com/klee-contrib/focus4/actions/workflows/docs-and-tests.yaml)
 [![npm version](https://badge.fury.io/js/focus4.svg)](https://www.npmjs.com/package/focus4)
+
+La documentation complète est disponible [ici](https://klee-contrib.github.io/focus4).
 
 # Présentation
 
