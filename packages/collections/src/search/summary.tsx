@@ -113,7 +113,7 @@ export function Summary<T>({
                     const value = (props.store.flatCriteria as any)[criteriaKey];
                     if (
                         (!props.hideCriteria || !props.hideCriteria.includes(criteriaKey)) &&
-                        (value || value === 0) &&
+                        value !== undefined &&
                         (!Array.isArray(value) || value.length > 0)
                     ) {
                         topicList.push({
