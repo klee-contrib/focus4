@@ -1,6 +1,6 @@
 {
     "name": "@focus4/layout",
-    "version": "11.21.0-beta.2",
+    "version": "11.21.0",
     "description": "Focus v4, layout module",
     "main": "lib/focus4.layout.js",
     "type": "module",
@@ -15,13 +15,13 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "11.20.0",
-        "@focus4/styling": "11.21.0-beta.2",
-        "@focus4/toolbox": "11.21.0-beta.2",
+        "@focus4/core": "11.21.0",
+        "@focus4/styling": "11.21.0",
+        "@focus4/toolbox": "11.21.0",
         "react-transition-state": "2.1.2"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.20.6",
+        "@focus4/tooling": "11.21.0",
         "@testing-library/react": "16.0.1",
         "jsdom": "25.0.1"
     }
