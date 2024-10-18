@@ -20,8 +20,10 @@ export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     error?: string;
     /** Libellé. */
     label?: string;
-    /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "false". */
-    hasUndefined?: boolean;
+    /** Permet de sélectionner `undefined` avec une option supplémentaire "vide" (`"first-option"` ou `"last-option"`), ou en re-cliquant sur le radio sélectionné (`"no-option"`) */
+    hasUndefined?: "first-option" | "last-option" | "no-option";
+    /** Préfixe i18n. Par défaut : "focus". */
+    i18nPrefix?: string;
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
@@ -34,13 +36,13 @@ export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     type: T;
     /** Libellé du cas vide. */
     undefinedLabel?: string;
-    /** Position du cas vide. Par défaut : "bottom". */
-    undefinedPosition?: "bottom" | "top";
     /** Valeur. */
     value?: DomainType<T>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
+
+const undefinedKey = "$$undefined$$";
 
 /**
  * Un [`RadioGroup`](/docs/composants-focus4∕toolbox-radiobutton--docs) avec un [`RadioButton`](/docs/composants-focus4∕toolbox-radiobutton--docs) par élément d'une liste de référence.
@@ -50,15 +52,15 @@ export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
 export function SelectRadio<const T extends DomainFieldTypeSingle>({
     disabled = false,
     error,
+    hasUndefined,
+    i18nPrefix = "focus",
     label,
-    hasUndefined = false,
     name,
     onChange,
     showSupportingText = "always",
     theme: pTheme,
     type,
-    undefinedLabel = "focus.select.none",
-    undefinedPosition = "bottom",
+    undefinedLabel = `${i18nPrefix}.select.none`,
     value,
     values
 }: SelectRadioProps<T>) {
@@ -66,25 +68,31 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
     const {$labelKey, $valueKey} = values;
 
     const handleChange = useCallback(
-        (newValue: string) => {
-            onChange(stringToDomainType(newValue, type));
+        (newValue?: string) => {
+            onChange(stringToDomainType(newValue === undefinedKey ? undefined : newValue, type));
         },
         [onChange, type]
     );
 
     return useObserver(() => {
         let definitiveValues: any[] = values;
-        if (hasUndefined && undefinedPosition === "bottom") {
-            definitiveValues = [...values.slice(), {[$valueKey]: undefined, [$labelKey]: undefinedLabel}];
+        if (hasUndefined === "last-option") {
+            definitiveValues = [...values.slice(), {[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}];
         }
-        if (hasUndefined && undefinedPosition === "top") {
-            definitiveValues = [{[$valueKey]: undefined, [$labelKey]: undefinedLabel}, ...values.slice()];
+        if (hasUndefined === "first-option") {
+            definitiveValues = [{[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}, ...values.slice()];
         }
 
         return (
             <div className={theme.select({error: !!error})}>
                 {label ? <h5 className={theme.title()}>{i18next.t(label)}</h5> : null}
-                <RadioGroup disabled={disabled} onChange={handleChange} value={`${value}`}>
+                <RadioGroup
+                    allowUndefined={hasUndefined === "no-option"}
+                    disabled={disabled}
+                    onChange={handleChange}
+                    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                    value={value === undefined ? undefinedKey : `${value}`}
+                >
                     {definitiveValues.map(option => {
                         const optVal = option[$valueKey];
                         const optLabel = option[$labelKey];

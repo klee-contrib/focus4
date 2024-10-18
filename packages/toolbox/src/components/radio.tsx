@@ -13,8 +13,9 @@ export {radioCss};
 export type {RadioCss};
 
 const RadioContext = createContext({
+    allowUndefined: false,
     disabled: false,
-    onChange: undefined as ((value: string) => void) | undefined,
+    onChange: undefined as ((value?: string) => void) | undefined,
     value: undefined as string | undefined
 });
 
@@ -62,7 +63,7 @@ export function RadioButton({
 }: RadioButtonProps) {
     const theme = useTheme("radio", radioCss, pTheme);
 
-    const {disabled: pDisabled, onChange, value: selectedValue} = useContext(RadioContext);
+    const {allowUndefined, disabled: pDisabled, onChange, value: selectedValue} = useContext(RadioContext);
     const checked = selectedValue === value;
     disabled ||= pDisabled;
 
@@ -71,7 +72,7 @@ export function RadioButton({
         HTMLLabelElement
     >({
         disabled,
-        onChange: () => onChange?.(value),
+        onChange: () => onChange?.(checked && allowUndefined ? undefined : value),
         onPointerLeave,
         onPointerUp,
         value: checked
@@ -111,6 +112,8 @@ export function RadioButton({
 }
 
 export interface RadioGroupProps {
+    /** Autorise la sélection de `undefined` en cliquant sur le radio sélectionné pour le déselectionner. */
+    allowUndefined?: boolean;
     /** Classe CSS a ajouter au composant racine. */
     className?: string;
     /** Les RadioButtons passés en enfant de ce composant seront ajoutés au groupe. */
@@ -118,7 +121,7 @@ export interface RadioGroupProps {
     /** Désactive le RadioGroup. */
     disabled?: boolean;
     /** Handler appelé au clic sur un RadioButton. */
-    onChange?: (value: string) => void;
+    onChange?: (value?: string) => void;
     /** Valeur séléctionnée parmis les RadioButtons. */
     value?: string;
 }
@@ -129,8 +132,18 @@ export interface RadioGroupProps {
  * Les composants `BooleanRadio` et `SelectRadio` sont des implémentations de plus haut niveau qui couvrent la plupart des cas d'utilisation
  * et sont à privilégier par rapport à l'usage direct d'un `RadioGroup` et de `RadioButton`.
  */
-export function RadioGroup({className = "", children, disabled = false, onChange, value}: RadioGroupProps) {
-    const ctx = useMemo(() => ({disabled, onChange, value}), [disabled, onChange, value]);
+export function RadioGroup({
+    allowUndefined = false,
+    className = "",
+    children,
+    disabled = false,
+    onChange,
+    value
+}: RadioGroupProps) {
+    const ctx = useMemo(
+        () => ({allowUndefined, disabled, onChange, value}),
+        [allowUndefined, disabled, onChange, value]
+    );
     return (
         <RadioContext.Provider value={ctx}>
             <div className={className}>{children}</div>

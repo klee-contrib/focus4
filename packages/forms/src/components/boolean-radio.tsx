@@ -8,6 +8,8 @@ export {booleanRadioCss};
 export type {BooleanRadioCss};
 
 export interface BooleanRadioProps {
+    /** Autorise la sélection de `undefined` en cliquant sur le radio sélectionné pour le déselectionner. */
+    allowUndefined?: boolean;
     /** Disabled radio-select, default to: false */
     disabled?: boolean;
     /** Error message to display. */
@@ -32,6 +34,7 @@ export interface BooleanRadioProps {
  * Un [`RadioGroup`](/docs/composants-focus4∕toolbox-radiobutton--docs) avec 2 [`RadioButtons`](/docs/composants-focus4∕toolbox-radiobutton--docs) pour sélectionner un booléen (Oui/Non).
  */
 export function BooleanRadio({
+    allowUndefined = false,
     disabled,
     error,
     labelNo = "focus.boolean.no",
@@ -46,9 +49,10 @@ export function BooleanRadio({
     return (
         <>
             <RadioGroup
+                allowUndefined={allowUndefined}
                 className={theme.boolean()}
                 disabled={disabled}
-                onChange={x => onChange(x === "true")}
+                onChange={x => onChange(x === "true" ? true : x === "false" ? false : undefined)}
                 value={value === true ? "true" : value === false ? "false" : undefined}
             >
                 <RadioButton label={i18next.t(labelYes)} name={`${name}-yes`} theme={theme} value="true" />

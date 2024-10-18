@@ -16,6 +16,7 @@ export const fr = {
     },
     select: {
         noLabel: "",
+        none: "Aucun",
         selectAll: "Tout sélectionner",
         unselected: "",
         unselectAll: "Tout désélectionner"
