@@ -70,6 +70,10 @@
     pointer-events: all;
 }
 
+.actions ul {
+    pointer-events: all;
+}
+
 @media (max-width: 840px) {
     .actions {
         padding-right: var(--header-actions-margin-right-mobile);
