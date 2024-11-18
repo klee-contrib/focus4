@@ -14,23 +14,22 @@ export type UrlRouteDescriptor<C, _K = unknown, _T = unknown> = (C extends Param
       ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
           ? UrlRouteDescriptor<C[K]>
           : C[K] extends ParamDef<infer _4, infer _5>
-            ? void
-            : UrlRouteDescriptor<C[K]>) & {spec: C};
+          ? void
+          : UrlRouteDescriptor<C[K]>) & {spec: C};
 
 /** Callback permettant de décrire une URL. */
-export type UrlPathDescriptor<C> =
-    C extends ParamDef<infer _0, Param<infer T>, infer V>
-        ? (param: T) => UrlPathDescriptor<V>
-        : <K extends keyof C>(
-              x: K
-          ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
-              ? UrlPathDescriptor<C[K]>
-              : C[K] extends ParamDef<infer _4, infer _5>
-                ? void
-                : UrlPathDescriptor<C[K]>;
+export type UrlPathDescriptor<C> = C extends ParamDef<infer _0, Param<infer T>, infer V>
+    ? (param: T) => UrlPathDescriptor<V>
+    : <K extends keyof C>(
+          x: K
+      ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
+          ? UrlPathDescriptor<C[K]>
+          : C[K] extends ParamDef<infer _4, infer _5>
+          ? void
+          : UrlPathDescriptor<C[K]>;
 
 /** Router correspondant à la config donnée. */
-export interface Router<C, Q extends QueryParamConfig = {}> {
+export interface Router<C = any, Q extends QueryParamConfig = {}> {
     /** Valeurs des paramètres de query. */
     readonly query: QueryParams<Q>;
 
@@ -41,7 +40,7 @@ export interface Router<C, Q extends QueryParamConfig = {}> {
      * Si la route demandée est active, retourne le morceau de route suivant.
      * @param predicate Callback décrivant la route.
      */
-    get<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): keyof C2 | undefined;
+    get<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): (keyof C2 & string) | undefined;
 
     /**
      * Récupère l'URL correspondante à la route demandée.
@@ -101,14 +100,13 @@ export interface RouterConstraintBuilder<C> {
 }
 
 /** Type décrivant l'objet de valeurs de paramètre d'un routeur de configuration quelconque. */
-export type ParamObject<C = any> =
-    C extends ParamDef<infer K1, Param<infer T1>, ParamDef<infer K2, Param<infer T2>>>
-        ? Record<K1, T1> & Record<K2, T2>
-        : C extends ParamDef<infer A3, Param<infer N3>, infer U>
-          ? Record<A3, N3> & {readonly [P in keyof U]: ParamObject<U[P]>}
-          : {
-                readonly [P in keyof C]: ParamObject<C[P]>;
-            };
+export type ParamObject<C = any> = C extends ParamDef<infer K1, Param<infer T1>, ParamDef<infer K2, Param<infer T2>>>
+    ? Record<K1, T1> & Record<K2, T2>
+    : C extends ParamDef<infer A3, Param<infer N3>, infer U>
+    ? Record<A3, N3> & {readonly [P in keyof U]: ParamObject<U[P]>}
+    : {
+          readonly [P in keyof C]: ParamObject<C[P]>;
+      };
 
 /**
  * `makeRouter` permet de construire le routeur de l'application.
@@ -316,7 +314,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
 
                                 return undefined;
                             })
-                        }) as RouteConfig
+                        } as RouteConfig)
                 ),
                 {
                     // Route non matchée => on revient là où on était avant (ou à la racine si premier appel).
@@ -556,14 +554,14 @@ function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams
                 value === undefined
                     ? undefined
                     : query[key] === "number"
-                      ? parseFloat(value)
-                      : query[key] === "boolean"
-                        ? value === "true"
-                            ? true
-                            : value === "false"
-                              ? false
-                              : Number.NaN
-                        : value;
+                    ? parseFloat(value)
+                    : query[key] === "boolean"
+                    ? value === "true"
+                        ? true
+                        : value === "false"
+                        ? false
+                        : Number.NaN
+                    : value;
             (object as any)[key] = newValue;
             return newValue;
         };

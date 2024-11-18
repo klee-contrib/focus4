@@ -8,10 +8,12 @@ export {Panel, PanelButtons, ScrollspyContainer, ScrollspyMenu, panelCss, scroll
 export {
     Content,
     Dialog,
+    FilAriane,
     LateralMenu,
     Popin,
     Scrollable,
     dialogCss,
+    filArianeCss,
     lateralMenuCss,
     layoutCss,
     overlayCss,
@@ -29,6 +31,7 @@ export type {MainMenuProps, MainMenuCss} from "./menu";
 export type {PanelButtonsProps, PanelCss, PanelProps, ScrollspyContainerProps, ScrollspyContainerRef} from "./panels";
 export type {
     DialogCss,
+    FilArianeCss,
     LateralMenuCss,
     LateralMenuProps,
     LayoutCss,

@@ -33,6 +33,15 @@ i18next.init({
                     ...collections.fr,
                     ...forms.fr,
                     icons: {...collections.icons, ...forms.icons, ...layout.icons}
+                },
+                router: {
+                    root: "Accueil",
+                    utilisateurs: {
+                        root: "Utilisateurs",
+                        utiId: {
+                            root: "Détail de l'utilisateur : {{param}}"
+                        }
+                    }
                 }
             }
         }
@@ -77,6 +86,7 @@ export default {
                         "Scrollable",
                         "HeaderScrolling",
                         "MainMenu",
+                        "FilAriane",
                         "Panel",
                         "ScrollspyContainer",
                         "Popin",

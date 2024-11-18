@@ -25,7 +25,7 @@ export interface LateralMenuProps {
  * Il doit être posé dans un conteneur avec un `display: flex`, et s'il est rétractable, alors son contenu devrait idéalement avoir une taille fixe.
  */
 export function LateralMenu({children, headerHeight = 0, retractable = true, theme: pTheme}: LateralMenuProps) {
-    const theme = useTheme("lateral-menu", lateralMenuCss, pTheme);
+    const theme = useTheme("lateralMenu", lateralMenuCss, pTheme);
     const [opened, setOpened] = useState(true);
 
     return (

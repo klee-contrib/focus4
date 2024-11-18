@@ -223,6 +223,7 @@ generateDocFile("collections", "./packages/collections/src/**/*.tsx", [
 generateDocFile("layout", "./packages/layout/src/**/*.tsx", [
     "Content",
     "Dialog",
+    "FilAriane",
     "HeaderActions",
     "HeaderContent",
     "HeaderItem",

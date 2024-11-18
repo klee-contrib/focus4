@@ -1,0 +1,37 @@
+:root {
+    --fil-ariane-spacing: var(--button-spacing);
+    --fil-ariane-height: 20px;
+    --fil-ariane-font-size: var(--font-size-small);
+    --fil-ariane-item-color: rgb(var(--color-black));
+    --fil-ariane-item-active-color: rgb(var(--color-primary));
+}
+
+.container {
+    display: inline-flex;
+    height: var(--fil-ariane-height);
+    padding: var(--fil-ariane-spacing) calc(2 * var(--fil-ariane-spacing));
+    gap: var(--fil-ariane-spacing);
+    align-items: center;
+}
+
+.item {
+    color: var(--fil-ariane-item-color);
+    font-size: var(--fil-ariane-font-size);
+}
+
+a.item {
+    text-decoration: none;
+}
+
+a.item:hover {
+    text-decoration: underline;
+}
+
+.item--active {
+    color: var(--fil-ariane-item-active-color);
+    font-weight: var(--font-weight-bold);
+}
+
+.separator {
+    font-size: var(--fil-ariane-height);
+}

@@ -35,6 +35,7 @@ export interface FocusCSSContext extends CSSContext {
 
     // Layout
     dialog: {};
+    filAriane: {};
     header: {};
     lateralMenu: {};
     layout: {};
