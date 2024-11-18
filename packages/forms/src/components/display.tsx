@@ -23,6 +23,8 @@ export interface DisplayProps<T extends DomainFieldType> {
      * Par défaut : `lists-if-multiple` (`inline` si une seule valeur et `lists` sinon).
      */
     multiValueDisplay?: "inline" | "lists-if-multiple" | "lists";
+    /** Nom du champ. */
+    name?: string;
     /** CSS. */
     theme?: CSSProp<DisplayCss>;
     /** Type du champ (celui du domaine). */
@@ -48,6 +50,7 @@ export function Display<T extends DomainFieldType>({
     listChunkSize,
     keyResolver,
     multiValueDisplay = "lists-if-multiple",
+    name,
     theme: pTheme,
     value,
     values
@@ -91,7 +94,7 @@ export function Display<T extends DomainFieldType>({
     );
 
     return useObserver(() => (
-        <div className={theme.display()}>
+        <div className={theme.display()} data-name={name}>
             {Array.isArray(label) ? (
                 multiValueDisplay === "lists" || (multiValueDisplay === "lists-if-multiple" && label.length > 1) ? (
                     <div className={theme.lists()}>

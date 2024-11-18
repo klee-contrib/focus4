@@ -242,6 +242,7 @@ export function Field<F extends FieldEntry>(
                             {...displayProps}
                             formatter={displayFormatter}
                             keyResolver={autocompleteProps.keyResolver}
+                            name={name}
                             theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
                             type={type}
                             value={value}

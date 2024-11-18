@@ -30,6 +30,7 @@ export interface BaseAutocompleteProps<DT extends DomainFieldType> extends BaseI
 export interface BaseDisplayProps<DT extends DomainFieldType> extends WithThemeProps {
     formatter?: (value: DomainType<SingleDomainFieldType<DT>>) => string;
     keyResolver?: (key: DomainType<SingleDomainFieldType<DT>>) => Promise<string | undefined>;
+    name?: string;
     type?: DT;
     value?: DomainType<DT>;
     values?: ReferenceList;
