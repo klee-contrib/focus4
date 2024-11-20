@@ -1,6 +1,6 @@
 {
     "name": "@focus4/layout",
-    "version": "11.21.2",
+    "version": "11.21.3",
     "description": "Focus v4, layout module",
     "main": "lib/focus4.layout.js",
     "type": "module",
