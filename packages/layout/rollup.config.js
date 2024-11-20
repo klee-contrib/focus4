@@ -20,9 +20,8 @@ export default (async () => {
             copy([
                 {files: "src/header/**/*.css.d.ts", dest: "lib/header"},
                 {files: "src/menu/**/*.css.d.ts", dest: "lib/menu"},
-                {files: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"},
-                {files: "src/scrollable/**/*.css.d.ts", dest: "lib/scrollable"},
-                {files: "src/utils/**/*.css.d.ts", dest: "lib/utils"}
+                {files: "src/panels/**/*.css.d.ts", dest: "lib/panels"},
+                {files: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"}
             ])
         ],
         treeshake: {
