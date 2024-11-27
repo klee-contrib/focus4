@@ -9,12 +9,15 @@ import {Chip, ChipCss, DropdownCss, FontIcon, Icon, TextFieldCss} from "@focus4/
 import {toSimpleType} from "../utils";
 
 import {Select} from "./select";
+import {SelectAutocomplete} from "./select-autocomplete";
 
 import selectChipsCss, {SelectChipsCss} from "./__style__/select-chips.css";
 export {selectChipsCss};
 export type {SelectChipsCss};
 
 export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
+    /** Si renseigné, utilise un `SelectAutocomplete` à la place d'un `Select`. */
+    autocomplete?: boolean;
     /** CSS pour les Chips. */
     chipTheme?: CSSProp<ChipCss>;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
@@ -69,6 +72,7 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
  * Il s'agit du composant par défaut de tous les domaines listes (`"boolean-array"`,`"number-array"` et `"string-array"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
 export function SelectChips<const T extends DomainFieldTypeMultiple>({
+    autocomplete = false,
     chipTheme,
     direction,
     disabled = false,
@@ -165,55 +169,78 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
         };
     }, [i18nPrefix, keepSelectedValuesInSelect, value, values]);
 
-    return useObserver(() => (
-        <div className={theme.select({error: !!error})}>
-            <Select
-                direction={direction}
-                disableArrowSelectionWhenClosed
-                disabled={disabled}
-                error={error}
-                icon={icon}
-                id={id}
-                LineComponent={LineComponent}
-                name={name}
-                noCloseOnChange={keepSelectedValuesInSelect}
-                onChange={handleAddValue}
-                showSupportingText="never"
-                sizing={sizing}
-                theme={theme}
-                trailing={trailing}
-                type={toSimpleType(type)}
-                values={values.filter(
-                    v =>
-                        (keepSelectedValuesInSelect ||
-                            !(value as (boolean | number | string)[]).includes(v[values.$valueKey])) &&
-                        !unselectable?.(v)
+    return useObserver(() => {
+        const finalValues = values.filter(
+            v =>
+                (keepSelectedValuesInSelect ||
+                    !(value as (boolean | number | string)[]).includes(v[values.$valueKey])) &&
+                !unselectable?.(v)
+        );
+
+        return (
+            <div className={theme.select({error: !!error})}>
+                {autocomplete ? (
+                    <SelectAutocomplete
+                        direction={direction}
+                        disabled={disabled}
+                        error={error}
+                        icon={icon}
+                        id={id}
+                        LineComponent={LineComponent}
+                        name={name}
+                        noCloseOnChange={keepSelectedValuesInSelect}
+                        onChange={handleAddValue}
+                        showSupportingText="never"
+                        theme={theme}
+                        trailing={trailing}
+                        type={toSimpleType(type)}
+                        values={finalValues}
+                    />
+                ) : (
+                    <Select
+                        direction={direction}
+                        disableArrowSelectionWhenClosed
+                        disabled={disabled}
+                        error={error}
+                        icon={icon}
+                        id={id}
+                        LineComponent={LineComponent}
+                        name={name}
+                        noCloseOnChange={keepSelectedValuesInSelect}
+                        onChange={handleAddValue}
+                        showSupportingText="never"
+                        sizing={sizing}
+                        theme={theme}
+                        trailing={trailing}
+                        type={toSimpleType(type)}
+                        values={finalValues}
+                    />
                 )}
-            />
-            {value.length > 0 ? (
-                <div className={theme.chips()}>
-                    {value.map(item => (
-                        <Chip
-                            key={`${item}`}
-                            className={theme.chip()}
-                            color="light"
-                            disabled={disabled}
-                            label={values.getLabel(item)}
-                            onDeleteClick={
-                                !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)
-                                    ? () => handleRemoveValue(item as DomainType<SingleDomainFieldType<T>>)
-                                    : undefined
-                            }
-                            theme={chipTheme}
-                        />
-                    ))}
-                </div>
-            ) : null}
-            {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                <div className={theme.supportingText()}>
-                    <div id={id ? `${id}-st` : undefined}>{error}</div>
-                </div>
-            ) : null}
-        </div>
-    ));
+                {value.length > 0 ? (
+                    <div className={theme.chips()}>
+                        {value.map(item => (
+                            <Chip
+                                key={`${item}`}
+                                className={theme.chip()}
+                                color="light"
+                                disabled={disabled}
+                                label={values.getLabel(item)}
+                                onDeleteClick={
+                                    !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)
+                                        ? () => handleRemoveValue(item as DomainType<SingleDomainFieldType<T>>)
+                                        : undefined
+                                }
+                                theme={chipTheme}
+                            />
+                        ))}
+                    </div>
+                ) : null}
+                {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
+                    <div className={theme.supportingText()}>
+                        <div id={id ? `${id}-st` : undefined}>{error}</div>
+                    </div>
+                ) : null}
+            </div>
+        );
+    });
 }
