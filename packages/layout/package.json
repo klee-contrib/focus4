@@ -1,6 +1,6 @@
 {
     "name": "@focus4/layout",
-    "version": "11.21.3",
+    "version": "11.21.5",
     "description": "Focus v4, layout module",
     "main": "lib/focus4.layout.js",
     "type": "module",
@@ -17,7 +17,7 @@
     "dependencies": {
         "@focus4/core": "11.21.2",
         "@focus4/styling": "11.21.2",
-        "@focus4/toolbox": "11.21.2",
+        "@focus4/toolbox": "11.21.5",
         "react-transition-state": "2.1.2"
     },
     "devDependencies": {
