@@ -89,6 +89,9 @@ Par exemple, `router.get(x => x("operation")("ofaId"))` peut renvoyer :
 
 Comme `is`, `get` est une fonction "computed".
 
+_Remarque : `router.get(x => x("operation"))` renvoie le **nom** de la section de route suivante, donc ici `"ofaId"` et non la valeur du paramètre. La
+valeur du paramètre `ofaId` se récupère dans le state, via `router.state.operation.ofaId`._
+
 ## `to(url, replace?, query?)`
 
 La fonction `to` permet de **changer la route active** par une navigation vers l'URL demandée. L'URL se définit également d'une façon similaire à `is` et `get`, sauf que cette fois-ci on doit renseigner les valeurs des paramètres.
