@@ -42,6 +42,8 @@ export interface DropdownProps<TSource = {key: string; label: string}>
     getLabel?: (item: TSource) => string;
     /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
     hasUndefined?: boolean;
+    /** Masque l'option vide dans la liste des options (si la non-sélection est autorisée). */
+    hideUndefined?: boolean;
     /** Composant personnalisé pour afficher les valeurs. */
     LineComponent?: (props: {item: TSource}) => ReactElement;
     /** Ne ferme pas le menu de la Dropdown lors de la sélection d'un item. */
@@ -86,6 +88,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
         getKey = defaultGetKey,
         getLabel = defaultGetLabel,
         hasUndefined = true,
+        hideUndefined = false,
         hint,
         icon,
         id,
@@ -335,7 +338,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 }
                 selected={selected}
             >
-                {hasUndefined ? (
+                {hasUndefined && !hideUndefined ? (
                     <Ripple key={undefinedKey}>
                         <span
                             aria-label=""

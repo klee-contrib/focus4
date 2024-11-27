@@ -54,7 +54,7 @@ export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
             hasUndefined
                 ? [{[values.$valueKey]: undefinedKey, [values.$labelKey]: i18next.t(undefinedLabel)}, ...values]
                 : values.slice(),
-        [hasUndefined, undefinedLabel, values]
+        [hasUndefined, undefinedLabel, values, values.length]
     );
 
     const getKey = useCallback((v: any) => `${v[values.$valueKey]}`, [values.$valueKey]);
