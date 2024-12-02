@@ -27,6 +27,8 @@ export interface OperationListItem<T> {
     disabled?: boolean;
     /** Le libellé (ou la tooltip) du bouton. */
     label?: string;
+    /** Affiche un indicateur de chargement sur l'action (action principale uniquement). */
+    loading?: boolean;
     /** L'icône du bouton */
     icon?: Icon;
     /** Label pour la tooltip du bouton d'actions secondaires, si l'action est de type `secondary`. S'il y a plusieurs actions secondaires, c'est le premier label non vide qui sera utilisé. */
@@ -90,6 +92,7 @@ export function ContextualActions<T>({
                                 : undefined)!
                         }
                         label={!isMosaic && FinalButton === Button ? operation.label : undefined}
+                        loading={operation.loading}
                         onClick={() => operationList[key].action(data)}
                         variant={operation.variant as "filled"}
                     />
