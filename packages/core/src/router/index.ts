@@ -1,112 +1,17 @@
-import {uniq} from "lodash";
-import {action, extendObservable, intercept, observable} from "mobx";
+import {createHashHistory, HashHistory} from "history";
+import {isEqual, uniq} from "lodash";
+import {action, extendObservable, intercept, observable, runInAction} from "mobx";
 import {computedFn} from "mobx-utils";
-import {RouteConfig, Router as YesterRouter} from "yester";
 
-import {Param, ParamDef, QueryParamConfig, QueryParams} from "./param";
+import {buildEndpoints, buildParamsMap, ParamObject} from "./builders";
+import {RouteConfig, startHistory} from "./history";
+import {buildQueryMap, buildQueryString, QueryParamConfig, QueryParams} from "./query";
+import {Router, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor} from "./types";
+
 export {param} from "./param";
+export {startHistory};
 
-/** Callback permettant de décrire une définition de route. */
-export type UrlRouteDescriptor<C, _K = unknown, _T = unknown> = (C extends ParamDef<infer K0, Param<infer T>, infer V>
-    ? (param: K0) => UrlRouteDescriptor<V, K0, T>
-    : <K extends keyof C>(
-          x: K
-      ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
-          ? UrlRouteDescriptor<C[K]>
-          : C[K] extends ParamDef<infer _4, infer _5>
-          ? void
-          : UrlRouteDescriptor<C[K]>) & {spec: C};
-
-/** Callback permettant de décrire une URL. */
-export type UrlPathDescriptor<C> = C extends ParamDef<infer _0, Param<infer T>, infer V>
-    ? (param: T) => UrlPathDescriptor<V>
-    : <K extends keyof C>(
-          x: K
-      ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
-          ? UrlPathDescriptor<C[K]>
-          : C[K] extends ParamDef<infer _4, infer _5>
-          ? void
-          : UrlPathDescriptor<C[K]>;
-
-/** Router correspondant à la config donnée. */
-export interface Router<C = any, Q extends QueryParamConfig = {}> {
-    /** Valeurs des paramètres de query. */
-    readonly query: QueryParams<Q>;
-
-    /** Etat du routeur. */
-    readonly state: ParamObject<C>;
-
-    /**
-     * Si la route demandée est active, retourne le morceau de route suivant.
-     * @param predicate Callback décrivant la route.
-     */
-    get<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): (keyof C2 & string) | undefined;
-
-    /**
-     * Récupère l'URL correspondante à la route demandée.
-     * @param predicate Callback décrivant la route.
-     * @param query Query params à ajouter.
-     */
-    href(predicate: (x: UrlPathDescriptor<C>) => void, query?: QueryParams<Q>): string;
-    /**
-     * Vérifie si la section de route demandée est active dans le routeur.
-     * @param predicate Callback décrivant la route.
-     */
-    is(predicate: (x: UrlRouteDescriptor<C>) => void): boolean;
-    /**
-     * Navigue vers l'URL demandée.
-     * @param predicate Callback décrivant l'URL.
-     * @param replace Remplace la route précédente dans l'historique.
-     * @param query Remplace les query params courants avec ceux donnés.
-     */
-    to(predicate: (x: UrlPathDescriptor<C>) => void, replace?: boolean, query?: QueryParams<Q>): void;
-    /**
-     * Construit une vue du routeur à partir d'une route donnée, permettant de manipuler une
-     * sous section du routeur.
-     * @param predicate Callback décrivant la route de base de la vue.
-     */
-    sub<C2, K, T>(
-        predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2, K, T>
-    ): Router<C2, Q> & {state: {[P in K & string]: T}};
-    /** Lance le routeur. */
-    start(): Promise<void>;
-}
-
-/** Builder pour construire des contraintes sur les routes d'un routeur. */
-export interface RouterConstraintBuilder<C> {
-    /**
-     * Bloque l'accès à une route si une condition est remplie.
-     * @param predicate Callback décrivant la route.
-     * @param condition Condition.
-     */
-    block(predicate: (x: UrlRouteDescriptor<C>) => void, condition: () => boolean): RouterConstraintBuilder<C>;
-    /**
-     * Redirige une route vers une autre si une condition est remplie.
-     * @param predicate Callback décrivant la route.
-     * @param condition Condition.
-     * @param to Callback décrivant l'URL cible.
-     */
-    redirect(
-        predicate: (x: UrlRouteDescriptor<C>) => void,
-        condition: () => boolean,
-        to: (x: UrlPathDescriptor<C>) => void
-    ): RouterConstraintBuilder<C>;
-    /**
-     * Construit une vue du ConstraintBuilder à partir d'une route donnée, permettant de manipuler une
-     * sous section du ConstraintBuilder.
-     * @param predicate Callback décrivant la route de base de la vue.
-     */
-    sub<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): RouterConstraintBuilder<C2>;
-}
-
-/** Type décrivant l'objet de valeurs de paramètre d'un routeur de configuration quelconque. */
-export type ParamObject<C = any> = C extends ParamDef<infer K1, Param<infer T1>, ParamDef<infer K2, Param<infer T2>>>
-    ? Record<K1, T1> & Record<K2, T2>
-    : C extends ParamDef<infer A3, Param<infer N3>, infer U>
-    ? Record<A3, N3> & {readonly [P in keyof U]: ParamObject<U[P]>}
-    : {
-          readonly [P in keyof C]: ParamObject<C[P]>;
-      };
+export type {Router, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor};
 
 /**
  * `makeRouter` permet de construire le routeur de l'application.
@@ -152,13 +57,8 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                 if (isActive && !isUndefined) {
                     // eslint-disable-next-line
                     store._activeParams[cIn[0]] = `${change.newValue as string}`;
-                    let route = store._activeRoute + buildQueryString(store._activeQuery);
-
-                    for (const param in store._activeParams) {
-                        route = route.replace(`:${param}`, store._activeParams[param]);
-                    }
-                    if (route !== window.location.hash?.replace("#", "")) {
-                        router.navigate(route, true);
+                    if (store._activeUrl !== window.location.hash?.replace("#", "")) {
+                        history.replace(store._activeUrl);
                     }
                 }
 
@@ -207,7 +107,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
             }
 
             if (route !== window.location.hash?.replace("#", "")) {
-                router.navigate(route, true);
+                history.replace(route);
             }
 
             return change;
@@ -222,108 +122,152 @@ export function makeRouter<C, Q extends QueryParamConfig>(
         {
             _activeRoute: "/",
             _activeParams: {},
-            _activeQuery: {}
+            _activeQuery: {},
+            _hasConfirm: false,
+            _pending: undefined,
+
+            get _activeUrl() {
+                let url = store._activeRoute + buildQueryString(store._activeQuery);
+
+                for (const param in store._activeParams) {
+                    url = url.replace(`:${param}`, store._activeParams[param]);
+                }
+
+                return url;
+            }
+        },
+        {
+            _pending: observable.ref
         }
-    ) as any as Router<C, Q> & {
+    ) as Router<C, Q> & {
         _activeRoute: string;
         _activeParams: Record<string, string>;
         _activeQuery: Record<string, string>;
+        _activeUrl: string;
+        _hasConfirm: boolean;
+        _pending?: {
+            activeRoute: string;
+            activeParams: Record<string, string>;
+            activeQuery: Record<string, string>;
+            prevUrl: string;
+        };
     };
 
     const paramsMap = buildParamsMap(config, store.state);
     const queryMap = buildQueryMap(queryConfig, store.query);
 
     const constraints = [] as {route: string; condition: () => boolean; redirect?: () => string}[];
-    let router: YesterRouter;
+    let history: HashHistory;
 
     /** Crée le routeur, appelé par "start". */
-    function buildRouter() {
-        router = new YesterRouter(
-            [
-                // Spécifie tous les endpoints dans le routeur.
-                ...uniq(buildEndpoints(config)).map(
-                    $ =>
-                        ({
-                            $,
-                            beforeEnter: action(({params, oldPath, search}) => {
-                                const oldPathWithQuery = (oldPath || "/") + buildQueryString(store._activeQuery);
+    async function start() {
+        history = createHashHistory();
 
-                                // On refuse la navigation si on tombe sur un query param inconnu.
-                                if (
-                                    Object.keys(search)
-                                        .filter(x => x)
-                                        .some(qp => !Object.keys(queryConfig).includes(qp))
-                                ) {
-                                    return {redirect: oldPathWithQuery, replace: true};
-                                }
+        const routes = [
+            // Spécifie tous les endpoints dans le routeur.
+            ...uniq(buildEndpoints(config)).map(
+                $ =>
+                    ({
+                        $,
+                        enter: action(({params, oldPath, search}) => {
+                            if (store._pending) {
+                                return;
+                            }
 
-                                const prevRoute = store._activeRoute;
-                                const prevParams = store._activeParams;
-                                const prevQuery = store._activeQuery;
+                            const oldPathWithQuery = (oldPath || "/") + buildQueryString(store._activeQuery);
 
-                                store._activeRoute = $;
-                                store._activeParams = params;
-                                store._activeQuery = Object.keys(search)
+                            // On refuse la navigation si on tombe sur un query param inconnu.
+                            if (
+                                Object.keys(search)
                                     .filter(x => x)
-                                    .reduce((acc, k) => ({...acc, [k]: decodeURIComponent(search[k])}), {});
+                                    .some(qp => !Object.keys(queryConfig).includes(qp))
+                            ) {
+                                return {redirect: oldPathWithQuery, replace: true};
+                            }
 
-                                // On parcourt toutes les constraintes définies sur cette route.
-                                for (const constraint of constraints.filter(c =>
-                                    store._activeRoute.startsWith(c.route)
-                                )) {
-                                    // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
-                                    if (constraint.condition()) {
-                                        const redirect =
-                                            (constraint.redirect?.() ?? (oldPath || "/")) +
-                                            buildQueryString(store._activeQuery);
-                                        if (redirect !== window.location.hash?.replace("#", "")) {
-                                            store._activeRoute = prevRoute;
-                                            store._activeParams = prevParams;
-                                            return {redirect, replace: true};
-                                        }
+                            const prevRoute = store._activeRoute;
+                            const prevParams = store._activeParams;
+                            const prevQuery = store._activeQuery;
+                            const prevUrl = store._activeUrl;
+
+                            const activeRoute = $;
+                            const activeParams = params;
+                            const activeQuery = Object.keys(search)
+                                .filter(x => x)
+                                .reduce((acc, k) => ({...acc, [k]: decodeURIComponent(search[k])}), {});
+
+                            if (
+                                isEqual(
+                                    {activeRoute, activeParams, activeQuery},
+                                    {activeRoute: prevRoute, activeParams: prevParams, activeQuery: prevQuery}
+                                )
+                            ) {
+                                return;
+                            }
+
+                            // On parcourt toutes les constraintes définies sur cette route.
+                            for (const constraint of constraints.filter(c => activeRoute.startsWith(c.route))) {
+                                // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
+                                if (constraint.condition()) {
+                                    const redirect =
+                                        (constraint.redirect?.() ?? (oldPath || "/")) + buildQueryString(activeQuery);
+                                    if (redirect !== window.location.hash?.replace("#", "")) {
+                                        store._activeRoute = prevRoute;
+                                        store._activeParams = prevParams;
+                                        return {redirect, replace: true};
                                     }
                                 }
+                            }
 
-                                const newValues: (boolean | number | string | undefined)[] = [];
+                            if (store._hasConfirm) {
+                                store._pending = {
+                                    activeRoute,
+                                    activeParams,
+                                    activeQuery,
+                                    prevUrl
+                                };
+                                return;
+                            } else {
+                                store._activeRoute = activeRoute;
+                                store._activeParams = activeParams;
+                                store._activeQuery = activeQuery;
+                            }
 
-                                // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
-                                for (const key in paramsMap) {
-                                    if (key in store._activeParams) {
-                                        newValues.push(paramsMap[key](store._activeParams[key]));
-                                    } else {
-                                        paramsMap[key](undefined);
-                                    }
+                            const newValues: (boolean | number | string | undefined)[] = [];
+
+                            // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
+                            for (const key in paramsMap) {
+                                if (key in store._activeParams) {
+                                    newValues.push(paramsMap[key](store._activeParams[key]));
+                                } else {
+                                    paramsMap[key](undefined);
                                 }
+                            }
 
-                                // Chaque paramètre de l'objet de query est réinitialisé à partir de sa valeur dans la query courante.
-                                for (const key in queryMap) {
-                                    if (key in store._activeQuery) {
-                                        newValues.push(queryMap[key](store._activeQuery[key]));
-                                    } else {
-                                        queryMap[key](undefined);
-                                    }
+                            // Chaque paramètre de l'objet de query est réinitialisé à partir de sa valeur dans la query courante.
+                            for (const key in queryMap) {
+                                if (key in store._activeQuery) {
+                                    newValues.push(queryMap[key](store._activeQuery[key]));
+                                } else {
+                                    queryMap[key](undefined);
                                 }
+                            }
 
-                                // Si une valeur est invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
-                                if (newValues.some(Number.isNaN)) {
-                                    store._activeRoute = prevRoute;
-                                    store._activeParams = prevParams;
-                                    store._activeQuery = prevQuery;
-                                    return {redirect: oldPathWithQuery, replace: true};
-                                }
+                            // Si une valeur est invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
+                            if (newValues.some(Number.isNaN)) {
+                                store._activeRoute = prevRoute;
+                                store._activeParams = prevParams;
+                                store._activeQuery = prevQuery;
+                                return {redirect: oldPathWithQuery, replace: true};
+                            }
 
-                                return undefined;
-                            })
-                        } as RouteConfig)
-                ),
-                {
-                    // Route non matchée => on revient là où on était avant (ou à la racine si premier appel).
-                    $: "*",
-                    beforeEnter: ({oldPath}) => ({redirect: oldPath || "/"})
-                }
-            ],
-            {type: "hash"}
-        );
+                            return undefined;
+                        })
+                    } as RouteConfig)
+            )
+        ];
+
+        await startHistory(history, routes);
     }
 
     /** Récupère le chemin correspondant à un préfixe + un prédicat. */
@@ -383,9 +327,83 @@ export function makeRouter<C, Q extends QueryParamConfig>(
     function to(route: string, predicate: (x: UrlPathDescriptor<C>) => void, replace: boolean, query?: QueryParams<Q>) {
         route = getPath(route, predicate) + buildQueryString(query ?? store._activeQuery);
         if (route !== window.location.hash?.replace("#", "")) {
-            router.navigate(route, replace);
+            if (replace) {
+                history.replace(route);
+            } else {
+                history.push(route);
+            }
         }
     }
+
+    function blockOutside(e: BeforeUnloadEvent) {
+        e.preventDefault();
+    }
+
+    const confirmation = {
+        get active() {
+            return store._hasConfirm;
+        },
+        set active(value) {
+            if (value && !store._hasConfirm) {
+                window.addEventListener("beforeunload", blockOutside);
+            } else if (!value && store._hasConfirm) {
+                window.removeEventListener("beforeunload", blockOutside);
+            }
+
+            runInAction(() => {
+                store._hasConfirm = value;
+                store._pending = undefined;
+            });
+        },
+
+        get pending() {
+            return store._pending !== undefined;
+        },
+
+        async commit(beforeCommit?: () => Promise<void>) {
+            if (store._hasConfirm && store._pending) {
+                const {activeRoute, activeParams, activeQuery} = store._pending;
+
+                if (beforeCommit) {
+                    await beforeCommit();
+                }
+
+                runInAction(() => {
+                    store._activeRoute = activeRoute;
+                    store._activeParams = activeParams;
+                    store._activeQuery = activeQuery;
+                    store._pending = undefined;
+
+                    // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
+                    for (const key in paramsMap) {
+                        if (key in store._activeParams) {
+                            paramsMap[key](store._activeParams[key]);
+                        } else {
+                            paramsMap[key](undefined);
+                        }
+                    }
+
+                    // Chaque paramètre de l'objet de query est réinitialisé à partir de sa valeur dans la query courante.
+                    for (const key in queryMap) {
+                        if (key in store._activeQuery) {
+                            queryMap[key](store._activeQuery[key]);
+                        } else {
+                            queryMap[key](undefined);
+                        }
+                    }
+                });
+            }
+        },
+
+        cancel() {
+            runInAction(() => {
+                if (store._hasConfirm && store._pending) {
+                    history.push(store._pending.prevUrl);
+                    store._pending = undefined;
+                }
+            });
+        }
+    };
 
     /** Fonction "sub" de base */
     function sub(route: string, state: any, predicate: (x: UrlRouteDescriptor<C>) => void): any {
@@ -421,7 +439,8 @@ export function makeRouter<C, Q extends QueryParamConfig>(
             sub: (p: any) => sub(route, state, p),
             start: () => {
                 /** */
-            }
+            },
+            navigation: confirmation
         };
     }
 
@@ -430,10 +449,8 @@ export function makeRouter<C, Q extends QueryParamConfig>(
     store.is = p => is("", p);
     store.to = (p, r = false, q = undefined) => to("", p, r, q);
     store.sub = p => sub("", store.state, p);
-    store.start = () => {
-        buildRouter();
-        return router.init()!;
-    };
+    store.start = start;
+    store.confirmation = confirmation;
 
     function getConstraintBuilder(route: string): RouterConstraintBuilder<C> {
         return {
@@ -466,116 +483,4 @@ export function makeRouter<C, Q extends QueryParamConfig>(
     constraintConfigurator?.(getConstraintBuilder(""));
 
     return store;
-}
-
-/**
- * Construit la liste des endpoints du routeur.
- * @param config Config du routeur.
- */
-function buildEndpoints<C>(config: C) {
-    const endpoints: string[] = [];
-
-    function addEndpoints(c: any, root: string) {
-        if (Array.isArray(c)) {
-            if (!c[1].required) {
-                endpoints.push(root);
-            }
-
-            root = `${root}/:${c[0] as string}`;
-
-            if (!Array.isArray(c[2])) {
-                endpoints.push(root);
-            }
-
-            if (c[2]) {
-                addEndpoints(c[2], root);
-            }
-        } else {
-            endpoints.push(root);
-            for (const key in c) {
-                addEndpoints(c[key], `${root}/${key}`);
-            }
-        }
-    }
-
-    endpoints.push("/");
-    addEndpoints(config, "");
-
-    return endpoints;
-}
-
-/**
- * Construit la map de setters des paramètres du routeur.
- * @param config Config du routeur.
- * @param object Object de paramètres pré-construit.
- * @param params Pour récursion.
- */
-function buildParamsMap<C>(
-    config: C,
-    object: ParamObject<C>,
-    params: Record<string, (value: string | undefined) => number | string | undefined> = {}
-) {
-    if (Array.isArray(config)) {
-        const setter = (value: string | undefined) => {
-            const newValue = config[1].type === "number" && value !== undefined ? parseFloat(value) : value;
-            (object as any)[config[0]] = newValue;
-            return newValue;
-        };
-
-        if (params[config[0]]) {
-            const existing = params[config[0]];
-            params[config[0]] = value => {
-                existing(value);
-                setter(value);
-                return value;
-            };
-        } else {
-            params[config[0]] = setter;
-        }
-
-        if (config[2]) {
-            buildParamsMap(config[2], object, params);
-        }
-    } else {
-        for (const key in config) {
-            buildParamsMap(config[key], (object as any)[key], params);
-        }
-    }
-
-    return params;
-}
-
-function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams<Q>) {
-    const map = {} as Record<keyof Q, (value: string | undefined) => boolean | number | string | undefined>;
-
-    for (const key in query) {
-        const setter = (value: string | undefined) => {
-            const newValue =
-                value === undefined
-                    ? undefined
-                    : query[key] === "number"
-                    ? parseFloat(value)
-                    : query[key] === "boolean"
-                    ? value === "true"
-                        ? true
-                        : value === "false"
-                        ? false
-                        : Number.NaN
-                    : value;
-            (object as any)[key] = newValue;
-            return newValue;
-        };
-
-        map[key] = setter;
-    }
-
-    return map;
-}
-
-function buildQueryString(query: Record<string, boolean | number | string | undefined>) {
-    return Object.keys(query).reduce(
-        (acc, qp) =>
-            query[qp] === undefined ? acc : `${acc + (acc === "" ? "?" : "&")}${qp}=${encodeURIComponent(query[qp])}`,
-        ""
-    );
 }

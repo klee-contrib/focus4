@@ -4,8 +4,7 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {Fragment} from "react/jsx-runtime";
 
-import {Router} from "@focus4/core";
-import {UrlRouteDescriptor} from "@focus4/core/lib/router";
+import {Router, UrlRouteDescriptor} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 

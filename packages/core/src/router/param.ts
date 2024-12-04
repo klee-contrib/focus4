@@ -36,20 +36,6 @@ export interface ParamTypeBuilder {
     string<S extends string>(required?: boolean): StringParam<S>;
 }
 
-export interface QueryParamConfig {
-    [key: string]: "boolean" | "number" | "string";
-}
-
-export type QueryParams<T extends QueryParamConfig> = {
-    [P in keyof T]?: T[P] extends "string"
-        ? string
-        : T[P] extends "number"
-        ? number
-        : T[P] extends "boolean"
-        ? boolean
-        : never;
-};
-
 const paramTypeBuilder: ParamTypeBuilder = {
     number<N extends number>(required = false): NumberParam<N> {
         return {type: "number", required, spec: {} as N};

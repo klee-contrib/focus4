@@ -1,12 +1,12 @@
+import {createHashHistory} from "history";
 import {action, observable, reaction, runInAction} from "mobx";
-import {RouteConfig, RouteEnterEvent, Router} from "yester";
+
+import {startHistory} from "@focus4/core";
 
 import {ViewStore} from "./store";
 export {ViewStore};
 
 export interface RouterConfig<E = "error"> {
-    /** Mode du routeur. Par défaut: "hash" */
-    routerMode?: "browser" | "hash";
     /** Nom du préfixe pour la page d'erreur. Par défaut : "error" */
     errorPageName?: E;
     /** Nom du code pour une page non trouvée. Par défaut : "notfound" */
@@ -24,7 +24,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
     stores: Store[],
     config: RouterConfig<E> = {}
 ) {
-    const {routerMode = "hash", errorPageName = "error", notfoundCode = "notfound"} = config;
+    const {errorPageName = "error", notfoundCode = "notfound"} = config;
 
     if (stores.length === 0) {
         throw new Error("Au moins un store doit avoir été spécifié.");
@@ -35,11 +35,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
 
     /** Récupère l'URL courante. */
     function getUrl() {
-        if (routerMode === "browser") {
-            return window.location.pathname;
-        } else {
-            return window.location.hash.substring(1); // On enlève le #.
-        }
+        return window.location.hash.substring(1); // On enlève le #.
     }
 
     /**
@@ -47,11 +43,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
      * @param url L'url à renseigner.
      */
     function updateUrl(url: string) {
-        if (routerMode === "browser") {
-            window.history.pushState(null, "", url);
-        } else {
-            window.location.hash = url;
-        }
+        window.location.hash = url;
     }
 
     /**
@@ -68,88 +60,83 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
         throw new Error("Tous les stores doivent avoir un préfixe.");
     }
 
-    // On construit le router.
-    const router = new Router(
-        [
-            // On construit une route par store.
-            ...stores.map(
-                (store, i) =>
-                    ({
-                        // Route sur laquelle matcher, construite à partir du préfixe et des paramètres.
-                        $: `/${store.prefix ? (store.prefix as string) : ""}${store.paramNames
-                            .map((param, idx) => `(${idx !== 0 || store.prefix ? "/" : ""}:${param as string})`)
-                            .join("")}`,
-                        // Appelé à chaque navigation vers la route.
-                        beforeEnter: ({params}) => {
-                            // On applique le `beforeEnter` du store s'il y en a un.
-                            if (store.beforeEnter) {
-                                const {errorCode: err, redirect} = store.beforeEnter(params) ?? {
-                                    errorCode: undefined,
-                                    redirect: undefined
-                                };
-                                if (err) {
-                                    // Cas de l'erreur : on redirige vers la page d'erreur avec le code.
-                                    return {redirect: `/${errorPageName}/${err}`, replace: true};
-                                } else if (redirect) {
-                                    // Cas de la redirection : on récupère la nouvelle URL et on redirige dessus, si on n'y est pas déjà.
-                                    const url = store.getUrl({...params, ...redirect});
-                                    if (url !== getUrl()) {
-                                        return {redirect: url, replace: true};
-                                    }
-                                }
-                            }
+    const history = createHashHistory();
 
-                            runInAction(() => {
-                                store.setView(params, true); // On met à jour la vue avec les paramètres d'URL.
-                                updateActivity(i); // On met à jour l'activité.
-                            });
-
-                            return undefined;
+    const routes: Parameters<typeof startHistory>[1] = [
+        // On construit une route par store.
+        ...(stores.map((store, i) => ({
+            // Route sur laquelle matcher, construite à partir du préfixe et des paramètres.
+            $: `/${store.prefix ? (store.prefix as string) : ""}${store.paramNames
+                .map((param, idx) => `(${idx !== 0 || store.prefix ? "/" : ""}:${param as string})`)
+                .join("")}`,
+            // Appelé à chaque navigation vers la route.
+            enter: ({params}) => {
+                // On applique le `beforeEnter` du store s'il y en a un.
+                if (store.beforeEnter) {
+                    const {errorCode: err, redirect} = store.beforeEnter(params) ?? {
+                        errorCode: undefined,
+                        redirect: undefined
+                    };
+                    if (err) {
+                        // Cas de l'erreur : on redirige vers la page d'erreur avec le code.
+                        return {redirect: `/${errorPageName}/${err}`, replace: true};
+                    } else if (redirect) {
+                        // Cas de la redirection : on récupère la nouvelle URL et on redirige dessus, si on n'y est pas déjà.
+                        const url = store.getUrl({...params, ...redirect});
+                        if (url !== getUrl()) {
+                            return {redirect: url, replace: true};
                         }
-                    } as RouteConfig)
-            ),
-
-            // On ajoute la route d'erreur.
-            {
-                $: `/${errorPageName}/:code`,
-                beforeEnter: action("beforeEnter", ({params}: RouteEnterEvent) => {
-                    errorCode.set(params.code);
-                    updateActivity(stores.length);
-                })
-            },
-
-            // On ajoute le wildcard pour les URLs non matchées.
-            {
-                $: "*",
-                beforeEnter: ({newPath, oldPath}) => {
-                    if (newPath === "/") {
-                        // Si on a pas de route initiale, on redirige vers le store principal.
-                        return {redirect: `/${stores[0].prefix as string}`, replace: true};
-                    } else {
-                        // On traite le handler personnalisé.
-                        if (config.notfoundHandler) {
-                            const result = config.notfoundHandler(newPath);
-                            if (result) {
-                                if (result === true) {
-                                    return {redirect: oldPath || getUrl(), replace: true}; // On reste où on est.
-                                } else {
-                                    return {redirect: result, replace: true}; // On redirige ailleurs.
-                                }
-                            }
-                        }
-
-                        // Sinon on redirige vers la page d'erreur.
-                        return {redirect: `/${errorPageName}/${notfoundCode}`, replace: true};
                     }
                 }
+
+                runInAction(() => {
+                    store.setView(params, true); // On met à jour la vue avec les paramètres d'URL.
+                    updateActivity(i); // On met à jour l'activité.
+                });
+
+                return undefined;
             }
-        ],
-        {type: routerMode}
-    );
+        })) as Parameters<typeof startHistory>[1]),
+
+        // On ajoute la route d'erreur.
+        {
+            $: `/${errorPageName}/:code`,
+            enter: action("enter", ({params}) => {
+                errorCode.set(params.code);
+                updateActivity(stores.length);
+            })
+        },
+
+        // On ajoute le wildcard pour les URLs non matchées.
+        {
+            $: "*",
+            enter: ({newPath, oldPath}) => {
+                if (newPath === "/") {
+                    // Si on a pas de route initiale, on redirige vers le store principal.
+                    return {redirect: `/${stores[0].prefix as string}`, replace: true};
+                } else {
+                    // On traite le handler personnalisé.
+                    if (config.notfoundHandler) {
+                        const result = config.notfoundHandler(newPath);
+                        if (result) {
+                            if (result === true) {
+                                return {redirect: oldPath || getUrl(), replace: true}; // On reste où on est.
+                            } else {
+                                return {redirect: result, replace: true}; // On redirige ailleurs.
+                            }
+                        }
+                    }
+
+                    // Sinon on redirige vers la page d'erreur.
+                    return {redirect: `/${errorPageName}/${notfoundCode}`, replace: true};
+                }
+            }
+        }
+    ];
 
     stores.forEach((store, i) => {
         // On donne les handlers d'erreur et d'activité à chaque store.
-        store.handleError = errCode => router.navigate(`/${errorPageName}/${errCode}`);
+        store.handleError = errCode => history.push(`/${errorPageName}/${errCode}`);
         store.updateActivity = () => updateActivity(i);
 
         // On met en place les réactions sur le currentPath de chaque ViewStore.
@@ -178,7 +165,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
             },
 
             /** Lance le routeur. */
-            start: router.init.bind(router) as () => Promise<void>,
+            start: () => startHistory(history, routes),
 
             /** La liste des ViewStores enregistrés dans le routeur. */
             stores,
