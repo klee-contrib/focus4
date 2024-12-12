@@ -3,7 +3,7 @@ import {isObject, merge, toPairs} from "lodash";
 
 import {config} from "../utils";
 
-import {ManagedErrorResponse, manageResponseErrors} from "./error-parsing";
+import {ManagedErrorResponse, manageProblemDetail, manageResponseErrors} from "./error-parsing";
 import {HttpMethod, requestStore} from "./store";
 
 /**
@@ -77,6 +77,9 @@ export async function coreFetch(
                     return await Promise.reject<ManagedErrorResponse>(
                         manageResponseErrors(response.status, await response.json())
                     );
+                } else if (contentType?.includes("application/problem+json")) {
+                    // Pour une erreur JSON, on la parse pour trouver et enregistrer les erreurs "attendues".
+                    return await Promise.reject<ManagedErrorResponse>(manageProblemDetail(await response.json()));
                 } else {
                     // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).
                     console.error(`Une erreur ${response.status} est survenue lors de l'appel à "${url}".`);
