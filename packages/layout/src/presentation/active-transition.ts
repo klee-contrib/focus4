@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import {useEffect} from "react";
-import useTransition from "react-transition-state";
+import {useTransitionState} from "react-transition-state";
 
 import {CSSProp, fromBem, getDefaultTransition} from "@focus4/styling";
 
@@ -19,7 +19,7 @@ export function useActiveTransition(
     active: boolean,
     theme: CSSProp<{enter: string; enterActive: string; exit: string; exitActive: string}>
 ) {
-    const [{status, isMounted}, toggle] = useTransition({
+    const [{status, isMounted}, toggle] = useTransitionState({
         preEnter: true,
         preExit: true,
         mountOnEnter: true,
@@ -35,11 +35,11 @@ export function useActiveTransition(
         status === "preEnter"
             ? enter
             : status === "entering"
-              ? classNames(enter, enterActive)
-              : status === "preExit"
-                ? exit
-                : status === "exiting"
-                  ? classNames(exit, exitActive)
-                  : ""
+            ? classNames(enter, enterActive)
+            : status === "preExit"
+            ? exit
+            : status === "exiting"
+            ? classNames(exit, exitActive)
+            : ""
     ];
 }

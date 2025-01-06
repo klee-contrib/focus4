@@ -24,7 +24,7 @@
     },
     "devDependencies": {
         "@focus4/tooling": "11.21.2",
-        "@testing-library/react": "16.0.1",
+        "@testing-library/react": "16.1.0",
         "jsdom": "25.0.1"
     }
 }
