@@ -1,8 +1,9 @@
 import i18next from "i18next";
-import {action, computed, makeObservable, observable, runInAction} from "mobx";
+import {uniqueId} from "lodash";
+import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
-import {messageStore, requestStore} from "@focus4/core";
+import {messageStore, requestStore, Router, RouterConfirmation} from "@focus4/core";
 
 import {LoadRegistration, NodeLoadBuilder, toFlatValues} from "../store";
 import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, NodeToType} from "../types";
@@ -186,6 +187,24 @@ export class FormActions<
             throw e;
         }
     }
+
+    override register(node?: FN["sourceNode"], builder?: NodeLoadBuilder<FN["sourceNode"], A>) {
+        const loadDisposer = super.register(node, builder);
+
+        if (this.builder.confirmation) {
+            const confirmationId = uniqueId("FormActions_");
+            const confirmationDisposer = autorun(() => {
+                this.builder.confirmation!.toggle(confirmationId, this.formNode.form.isEdit, () => this.save());
+            });
+            return () => {
+                loadDisposer();
+                confirmationDisposer();
+                this.builder.confirmation!.toggle(confirmationId, false);
+            };
+        }
+
+        return loadDisposer;
+    }
 }
 
 export class FormActionsBuilder<
@@ -197,6 +216,8 @@ export class FormActionsBuilder<
 
     /** @internal */
     actionsErrorDisplay?: "after-focus" | "always" | "never";
+    /** @internal */
+    confirmation?: RouterConfirmation;
     /** @internal */
     message = "focus.detail.saved";
     /** @internal */
@@ -279,6 +300,15 @@ export class FormActionsBuilder<
      */
     successMessage(message: string): FormActionsBuilder<FN, A> {
         this.message = message;
+        return this;
+    }
+
+    /**
+     * Active le mode 'confirmation' du routeur lorsque le formulaire est en édition.
+     * @param router Router.
+     */
+    withConfirmation(router: Router) {
+        this.confirmation = router.confirmation;
         return this;
     }
 }

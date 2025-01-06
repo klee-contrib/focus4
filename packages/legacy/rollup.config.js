@@ -18,6 +18,7 @@ const config = {
         ...Object.keys(pkg.dependencies || {}),
         "classnames",
         "core-decorators",
+        "history",
         "i18next",
         "inputmask-core",
         "lodash",
@@ -28,8 +29,7 @@ const config = {
         "react/jsx-runtime",
         "react-dom",
         "tslib",
-        "uuid",
-        "yester"
+        "uuid"
     ]
 };
 

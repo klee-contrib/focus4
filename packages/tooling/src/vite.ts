@@ -30,7 +30,7 @@ export const baseConfig = {
  * Plugin pour que Vite considère tous les fichiers CSS du projet qui matchent la regex en tant que modules CSS (au lieu de ne gérer que les fichiers en `.module.css`).
  * @param regex Regex pour identifier les modules CSS.
  */
-export function cssAutoModules(regex: RegExp) {
+export function cssAutoModules(regex: RegExp): PluginOption {
     let config: ResolvedConfig;
 
     return {
