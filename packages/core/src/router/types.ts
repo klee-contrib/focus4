@@ -36,19 +36,7 @@ export interface Router<C = any, Q extends QueryParamConfig = {}> {
      * Permet d'activer un mode de "confirmation" du routeur,
      * qui bloque la prochaine navigation et demandera une confirmation (ou une annulation) à l'utilisateur pour continuer.
      */
-    confirmation: {
-        /** Si la mode "confirmation" est activé. */
-        active: boolean;
-        /** S'il y a une navigation en attente. */
-        readonly pending: boolean;
-        /**
-         * Confirme la navigation demandée.
-         * @param beforeCommit Callback à appeler avant le commit (par exemple pour une sauvegarde de formulaire).
-         */
-        commit(beforeCommit: () => Promise<void>): Promise<void>;
-        /** Annule la navigation demandée. */
-        cancel(): void;
-    };
+    confirmation: RouterConfirmation;
 
     /**
      * Si la route demandée est active, retourne le morceau de route suivant.
@@ -84,6 +72,31 @@ export interface Router<C = any, Q extends QueryParamConfig = {}> {
     ): Router<C2, Q> & {state: {[P in K & string]: T}};
     /** Lance le routeur. */
     start(): Promise<void>;
+}
+
+/**
+ * Permet d'activer un mode de "confirmation" du routeur,
+ * qui bloque la prochaine navigation et demandera une confirmation (ou une annulation) à l'utilisateur pour continuer.
+ */
+export interface RouterConfirmation {
+    /** Si la mode "confirmation" est activé. */
+    readonly active: boolean;
+    /** S'il y a une navigation en attente. */
+    readonly pending: boolean;
+    /**
+     * Confirme la navigation demandée.
+     * @param save Si oui, appelle tous les callbacks enregistrés pour la sauvegarde au commit.
+     */
+    commit(save?: boolean): Promise<void>;
+    /** Annule la navigation demandée. */
+    cancel(): void;
+    /**
+     * Active ou désactive le mode "confirmation", pour un identifiant donné. La mode sera activé sur le routeur s'il l'est au moins pour un identifiant.
+     * @param id Identifiant unique, à générer au préable.
+     * @param active Activation/Désactivation.
+     * @param onCommitSave Callback à appeler si la confirmation est appelée avec sauvegarde.
+     */
+    toggle(id: string, active: boolean, onCommitSave?: () => Promise<void>): void;
 }
 
 /** Builder pour construire des contraintes sur les routes d'un routeur. */

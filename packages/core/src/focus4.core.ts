@@ -14,5 +14,11 @@ export {MessageStore, UserStore, messageStore} from "./stores";
 export {config, themeable} from "./utils";
 
 export type {HttpMethod, Request} from "./network";
-export type {Router, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor} from "./router";
+export type {
+    Router,
+    RouterConfirmation,
+    RouterConstraintBuilder,
+    UrlPathDescriptor,
+    UrlRouteDescriptor
+} from "./router";
 export type {Message, MessageListener} from "./stores";

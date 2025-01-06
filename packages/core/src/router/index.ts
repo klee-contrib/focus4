@@ -6,12 +6,12 @@ import {computedFn} from "mobx-utils";
 import {buildEndpoints, buildParamsMap, ParamObject} from "./builders";
 import {RouteConfig, startHistory} from "./history";
 import {buildQueryMap, buildQueryString, QueryParamConfig, QueryParams} from "./query";
-import {Router, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor} from "./types";
+import {Router, RouterConfirmation, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor} from "./types";
 
 export {param} from "./param";
 export {startHistory};
 
-export type {Router, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor};
+export type {Router, RouterConfirmation, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor};
 
 /**
  * `makeRouter` permet de construire le routeur de l'application.
@@ -339,33 +339,45 @@ export function makeRouter<C, Q extends QueryParamConfig>(
         e.preventDefault();
     }
 
-    const confirmation = {
+    const confirmation = observable({
+        _activeIds: new Map<string, (() => Promise<void>) | undefined>(),
+
         get active() {
             return store._hasConfirm;
         },
-        set active(value) {
-            if (value && !store._hasConfirm) {
+
+        toggle(id: string, active: boolean, onCommitSave?: () => Promise<void>) {
+            if (this._activeIds.has(id) && !active) {
+                this._activeIds.delete(id);
+            } else if (active) {
+                this._activeIds.set(id, onCommitSave);
+            }
+
+            const hasConfirm = this._activeIds.size > 0;
+            if (hasConfirm && !store._hasConfirm) {
                 window.addEventListener("beforeunload", blockOutside);
-            } else if (!value && store._hasConfirm) {
+            } else if (!hasConfirm && store._hasConfirm) {
                 window.removeEventListener("beforeunload", blockOutside);
             }
 
-            runInAction(() => {
-                store._hasConfirm = value;
-                store._pending = undefined;
-            });
+            store._hasConfirm = hasConfirm;
+            store._pending = undefined;
         },
 
         get pending() {
             return store._pending !== undefined;
         },
 
-        async commit(beforeCommit?: () => Promise<void>) {
+        async commit(save = false) {
             if (store._hasConfirm && store._pending) {
                 const {activeRoute, activeParams, activeQuery} = store._pending;
 
-                if (beforeCommit) {
-                    await beforeCommit();
+                if (save) {
+                    await Promise.all(
+                        Array.from(this._activeIds.values())
+                            .filter(x => !!x)
+                            .map(x => x())
+                    );
                 }
 
                 runInAction(() => {
@@ -396,14 +408,12 @@ export function makeRouter<C, Q extends QueryParamConfig>(
         },
 
         cancel() {
-            runInAction(() => {
-                if (store._hasConfirm && store._pending) {
-                    history.push(store._pending.prevUrl);
-                    store._pending = undefined;
-                }
-            });
+            if (store._hasConfirm && store._pending) {
+                history.push(store._pending.prevUrl);
+                store._pending = undefined;
+            }
         }
-    };
+    });
 
     /** Fonction "sub" de base */
     function sub(route: string, state: any, predicate: (x: UrlRouteDescriptor<C>) => void): any {
