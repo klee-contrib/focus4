@@ -8,12 +8,12 @@ export type EntityToForm<E, E0 = E> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? FormEntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
-          ? FormNode<OE, P extends keyof E0 ? (E0[P] extends ObjectEntry<infer OE0> ? OE0 : OE) : OE>
-          : E[P] extends ListEntry<infer LE>
-            ? FormListNode<LE, P extends keyof E0 ? (E0[P] extends ListEntry<infer LE0> ? LE0 : LE) : LE>
-            : E[P] extends RecursiveListEntry
-              ? FormListNode<E, E0>
-              : never;
+        ? FormNode<OE, P extends keyof E0 ? (E0[P] extends ObjectEntry<infer OE0> ? OE0 : OE) : OE>
+        : E[P] extends ListEntry<infer LE>
+        ? FormListNode<LE, P extends keyof E0 ? (E0[P] extends ListEntry<infer LE0> ? LE0 : LE) : LE>
+        : E[P] extends RecursiveListEntry
+        ? FormListNode<E, E0>
+        : never;
 };
 
 /** Champs additionnels pour un noeud de formulaire. */
@@ -23,6 +23,9 @@ export type FormNode<E = any, E0 = E> = EntityToForm<E, E0> & {
         /** @internal */
         /** Données initiales du formulaire. */
         _initialData?: EntityToType<E>;
+
+        /** Précise si le noeud a fait l'objet d'une modification par rapport au noeud source. */
+        readonly hasChanged: boolean;
 
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
@@ -71,6 +74,9 @@ export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode
         /** @internal */
         /** Données initiales du formulaire. */
         _initialData?: EntityToType<E>[];
+
+        /** Précise si le noeud a fait l'objet d'une modification par rapport au noeud source. */
+        readonly hasChanged: boolean;
 
         /** Précise si le formulaire associé est en édition ou non. */
         isEdit: boolean;
@@ -130,6 +136,9 @@ export interface FormEntityField<F extends FieldEntry = FieldEntry> extends Enti
 
     /** Erreur de validation du champ (FormNode uniquement). */
     readonly error: string | undefined;
+
+    /** Précise si le chhamp a fait l'objet d'une modification par rapport au noeud source. */
+    readonly hasChanged: boolean;
 
     /** Précise si le champ associé est en édition ou non. */
     isEdit: boolean;

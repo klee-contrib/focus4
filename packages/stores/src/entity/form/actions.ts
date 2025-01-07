@@ -194,7 +194,11 @@ export class FormActions<
         if (this.builder.confirmation) {
             const confirmationId = uniqueId("FormActions_");
             const confirmationDisposer = autorun(() => {
-                this.builder.confirmation!.toggle(confirmationId, this.formNode.form.isEdit, () => this.save());
+                this.builder.confirmation!.toggle(
+                    confirmationId,
+                    this.formNode.form.isEdit && this.formNode.form.hasChanged,
+                    () => this.save()
+                );
             });
             return () => {
                 loadDisposer();

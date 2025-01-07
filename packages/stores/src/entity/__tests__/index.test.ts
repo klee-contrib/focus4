@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import {isObservableArray} from "mobx";
+import {describe, expect, test, vi} from "vitest";
 
 import {FormNodeBuilder} from "../form";
 import {makeEntityStore, toFlatValues} from "../store";
@@ -8,7 +9,6 @@ import {LigneEntity} from "./ligne";
 import {OperationEntity} from "./operation";
 import {ProjetEntity} from "./projet";
 import {StructureEntity} from "./structure";
-import {describe, expect, test, vi} from "vitest";
 
 i18next.init();
 
@@ -283,6 +283,8 @@ describe("FormNode: Création", () => {
         expect(formNode.form.isRequired).toBe(true));
     test("Le FormNode a bien une propriété 'isEmpty', initialisée à 'true'.", () =>
         expect(formNode.form.isEmpty).toBe(true));
+    test("Le FormNode a bien une propriété 'hasChanged', initialisée à 'false'.", () =>
+        expect(formNode.form.hasChanged).toBe(false));
 });
 
 describe("FormNode: Création à partir d'un noeud non-vide", () => {
@@ -298,6 +300,7 @@ describe("FormNode: Création à partir d'un noeud non-vide", () => {
         expect(toFlatValues(formNode)).toEqual({structure: {}}));
     test("Un FormListNode vide à partir d'une source non vide est bien vide.", () =>
         expect(toFlatValues(formNode2)).toEqual({ligneList: []}));
+    test("La propriété 'hasChanged' est initialisée à 'true'.", () => expect(formNode.form.hasChanged).toBe(true));
 });
 
 describe("FormNode: Modification de StoreNode.", () => {
@@ -307,6 +310,7 @@ describe("FormNode: Modification de StoreNode.", () => {
     test("Le contenu du FormNode est identique à celui du StoreNode.", () =>
         expect(toFlatValues(formNode)).toEqual(toFlatValues(entry)));
     test("La propriété 'isEmpty' vaut bien désormais 'false'.", () => expect(formNode.form.isEmpty).toBe(false));
+    test("La propriété 'hasChanged' vaut bien désormais 'false'.", () => expect(formNode.form.hasChanged).toBe(false));
 });
 
 describe("FormNode: Ajout de champs.", () => {
@@ -330,6 +334,7 @@ describe("FormNode: Ajout de champs.", () => {
                 test: "yolo",
                 test2: "2"
             }));
+        test("Un champ ajouté à toujours 'hasChanged' à 'false'.", () => expect(formNode2.test.hasChanged).toBe(false));
     });
 
     describe("replace sur formNode", () => {
@@ -371,6 +376,8 @@ describe("FormNode: Modification de StoreListNode.", () => {
             expect(toFlatValues(formNode2)).toEqual(toFlatValues(entry2)));
         test("Le sourceNode d'un objet de liste est bien le bon.", () =>
             expect(formNode2.ligneList[0].sourceNode).toEqual(entry2.ligneList[0]));
+        test("La propriété 'hasChanged' vaut bien désormais 'false'.", () =>
+            expect(formNode2.form.hasChanged).toBe(false));
     });
 
     describe("delete", () => {
@@ -386,8 +393,11 @@ describe("FormNode: Modification de StoreListNode.", () => {
         entry2.replace(projetTest);
         entry2.ligneList.splice(2, 1);
         entry2.ligneList.pushNode({id: 8});
+
         test("Les ajouts d'élements de liste dans un StoreNode sont bien répercutées.", () =>
             expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 6}, {id: 8}]));
+        test("La propriété 'hasChanged' vaut bien désormais 'false'.", () =>
+            expect(formNode2.ligneList.form.hasChanged).toBe(false));
     });
 });
 
@@ -409,6 +419,9 @@ describe("FormNode: Modification de FormNode", () => {
         expect(formNode.structure.nom.value).toBe("yolo"));
     test("Champ composite via set local: le StoreNode est bien toujours identique.", () =>
         expect(entry.structure.nom.value).toBe(operation.structure.nom));
+    test("La propriété 'hasChanged' est bien 'true'.", () => expect(formNode.form.hasChanged).toBe(true));
+    test("La propriété 'hasChanged' du montant est bien 'true'.", () => expect(formNode.montant.hasChanged).toBe(true));
+    test("La propriété 'hasChanged' du numéro est bien 'false'.", () => expect(formNode.numero.hasChanged).toBe(false));
 });
 
 describe("FormListNode: Modification", () => {
@@ -423,6 +436,10 @@ describe("FormListNode: Modification", () => {
     test("Une suppression d'élement dans un StoreListNode est bien répercutée dans le FormListNode en conservant un élément dans ce dernier ajouté à la fin.", () => {
         const {formNode2} = step1();
         expect(toFlatValues(formNode2.ligneList)).toEqual([{id: 5}, {id: 7}, {id: 8}]);
+        expect(formNode2.ligneList.form.hasChanged).toBe(true);
+        expect(formNode2.ligneList[0].form.hasChanged).toBe(false);
+        expect(formNode2.ligneList[1].form.hasChanged).toBe(false);
+        expect(formNode2.ligneList[2].form.hasChanged).toBe(true);
     });
 
     function step2() {

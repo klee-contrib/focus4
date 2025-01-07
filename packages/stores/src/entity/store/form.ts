@@ -63,7 +63,7 @@ export function nodeToFormNode<E = any, E0 = E>(
                 if (parentNode && parentNode.form.isEmpty && !parentNode.form.isRequired) {
                     return false;
                 }
-                return isFunction($required) ? $required() : ($required ?? true);
+                return isFunction($required) ? $required() : $required ?? true;
             }
         },
         {},
@@ -92,6 +92,9 @@ export function nodeToFormNode<E = any, E0 = E>(
     if (isFormListNode(node)) {
         node.forEach((item, i) => nodeToFormNode(item, (sourceNode as StoreListNode)[i], node));
         extendObservable(node.form, {
+            get hasChanged() {
+                return node.some(item => item.form.hasChanged);
+            },
             get isEmpty() {
                 return node.length === 0;
             },
@@ -202,6 +205,17 @@ export function nodeToFormNode<E = any, E0 = E>(
             }
         }
         extendObservable(node.form, {
+            get hasChanged() {
+                return Object.values(node).some(item => {
+                    if (isFormEntityField(item)) {
+                        return item.hasChanged;
+                    } else if (isAnyFormNode(item)) {
+                        return item.form.hasChanged;
+                    } else {
+                        return false;
+                    }
+                });
+            },
             get isEmpty() {
                 return Object.values(node).every(item => {
                     if (isEntityField(item)) {
@@ -248,7 +262,7 @@ export function nodeToFormNode<E = any, E0 = E>(
 function addFormFieldProperties(field: BuildingFormEntityField, parentNode: FormNode) {
     if ("_metadatas" in field) {
         field._metadatas.push(metadata => ({
-            isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : (metadata?.isRequired ?? false)
+            isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : metadata?.isRequired ?? false
         }));
     } else {
         const {$field} = field as FormEntityField;
@@ -267,6 +281,16 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
     extendObservable(field, {
         get error() {
             return validateField(field);
+        },
+        get hasChanged() {
+            const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
+            if (sourceField === field) {
+                return true; // Le champ est dans un item de liste ajouté => forcément changé.
+            } else if (!sourceField) {
+                return false; // Le champ est ajouté => forcément inchangé.
+            } else {
+                return !isEqual(sourceField.value, field.value);
+            }
         },
         get isEdit() {
             return parentNode.form.isEdit && (isFunction(field._isEdit) ? field._isEdit() : field._isEdit);

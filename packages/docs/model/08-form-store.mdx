@@ -75,12 +75,26 @@ un noeud vide non obligatoire, au lieu d'un objet vide (`{}`).
 
 _Remarque : un champ non éditable (`field.isEdit == false`) est toujours valide (`field.isValid == true`), quelque soit le résultat de la valiadtion._
 
+## Etat de modification d'un formulaire
+
+Chaque noeud et champ porte également une propriété calculée `hasChanged`, qui permet de savoir si la valeur d'un champ (ou des champs qui constituent un
+noeud) ont été modifiés par rapport au noeud source.
+
+Cas particuliers :
+
+-   Un champ ajouté à toujours `hasChanged = false`, puisqu'il n'existe pas dans le noeud source.
+-   Un champ dans un noeud ajouté dans un noeud liste est toujours `hasChanged = true`, puisqu'il correspond à un item de liste qui n'existe pas dans le
+    noeud source.
+-   Les valeurs de champs sont comparées avec un simple "deep equals", ce qui implique par exemple qu'une valeur de champ d'un domaine multiple sera
+    considérée comme modifiée même si elle contient les mêmes éléments dans un ordre différent.
+
 ## APIs de `FormNode`, `FormListNode` et `FormEntityField`
 
 Ce sont tous des versions "dérivées" de leur objet source, donc toute API qui prend un `StoreNode` pourra aussi prendre un `FormNode` par exemple.
 
-En plus des trois propriétés `isEdit`, `error(s)` et `isValid` vues précédement, `FormNode` et `FormListNode` exposent aussi :
+En plus des quatre propriétés `hasChanged`, `isEdit`, `error(s)` et `isValid` vues précédement, `FormNode` et `FormListNode` exposent aussi :
 
+-   `isEmpty`, pour savoir si le noeud est vide (en lien avec la condition de validité du noeud).
 -   `sourceNode`, une référence vers le noeud source parent du `FormNode`/`FormListNode`.
 -   `reset()`, une méthode pour réinitialiser le `FormNode`/`FormListNode` sur son `sourceNode`.
 
