@@ -17,10 +17,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: node 20
+      - name: node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: install
         run: npm install
@@ -48,10 +48,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: node 20
+      - name: node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: install
         run: npm install
