@@ -3,7 +3,7 @@ import {isObject, merge, toPairs} from "lodash";
 
 import {config} from "../utils";
 
-import {ManagedErrorResponse, manageResponseErrors} from "./error-parsing";
+import {createProblemDetails, handleProblemDetails} from "./error-parsing";
 import {HttpMethod, requestStore} from "./store";
 
 /**
@@ -72,10 +72,13 @@ export async function coreFetch(
 
                 // On détermine le type de retour en fonction du Content-Type dans le header.
                 const contentType = response.headers.get("Content-Type");
-                if (contentType?.includes("application/json")) {
-                    // Pour une erreur JSON, on la parse pour trouver et enregistrer les erreurs "attendues".
-                    return await Promise.reject<ManagedErrorResponse>(
-                        manageResponseErrors(response.status, await response.json())
+                if (contentType?.includes("application/problem+json")) {
+                    // Pour un ProblemDetails, on le parse pour récupérer les erreurs à ajouter dans le MessageStore, puis on le renvoie.
+                    return await Promise.reject(handleProblemDetails(await response.json()));
+                } else if (contentType?.includes("application/json")) {
+                    // Pour une erreur JSON classique, on la transforme en ProblemDetails, puis on la traite comme précédemment.
+                    return await Promise.reject(
+                        handleProblemDetails(createProblemDetails(response.status, await response.json()))
                     );
                 } else {
                     // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).

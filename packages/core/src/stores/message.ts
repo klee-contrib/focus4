@@ -95,7 +95,7 @@ export class MessageStore {
      */
     @action.bound
     addMessages(messages: Record<string, string[] | string>) {
-        const allMessages: string[] = [];
+        const allMessages: {type: string; message: string}[] = [];
 
         Object.keys(messages).forEach(type => {
             const possibleTypes = [
@@ -109,7 +109,7 @@ export class MessageStore {
                 if (this.messageTypes.includes(possibleType)) {
                     (Array.isArray(messages[type]) ? messages[type] : [messages[type]]).forEach(message => {
                         this.addMessage(possibleType, message);
-                        allMessages.push(message);
+                        allMessages.push({type: possibleType, message});
                     });
                 }
             });
