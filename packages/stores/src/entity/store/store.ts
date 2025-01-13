@@ -22,8 +22,8 @@ export type ConfigToEntities<T> = {
     readonly [P in keyof T]: T[P] extends any[]
         ? ListEntry<T[P][0]>
         : T[P] extends StoreNode<infer E>
-          ? ObjectEntry<E>
-          : ObjectEntry<T[P]>;
+        ? ObjectEntry<E>
+        : ObjectEntry<T[P]>;
 };
 
 /**
@@ -126,7 +126,9 @@ export function getNodeForList<E>(list: StoreListNode<E>, item: EntityToType<E> 
         node = list.$nodeBuilder(node);
     }
     if (isFormListNode(list)) {
-        nodeToFormNode<E>(node, isStoreNode<E>(item) ? item : node, list);
+        // @ts-ignore
+        node.sourceNode = isStoreNode<E>(item) ? item : node;
+        nodeToFormNode<E>(node, list);
     }
     node.set(item as EntityToType<E>);
     return node;

@@ -39,15 +39,9 @@ type EntryToEntity<E> = E extends ObjectEntry<infer E1>
 export class FormNodeBuilder<E, E0 = E> {
     /** @internal */
     node: StoreNode<E>;
-    /** @internal */
-    sourceNode: StoreNode<E0>;
-    /** @internal */
-    isEdit?: boolean | (() => boolean);
 
     constructor(node: StoreNode<E>) {
-        this.node = clone(node);
-        this.sourceNode = node as any;
-        this.node.$required ??= true;
+        this.node = node.$form ? node : initFormNode(node);
     }
 
     /**
@@ -83,8 +77,9 @@ export class FormNodeBuilder<E, E0 = E> {
      * Construit le FormNode à partir de la configuration renseignée.
      */
     build(): FormNode<E, E0> {
-        this.node.$edit = this.isEdit ?? false;
-        nodeToFormNode(this.node, this.sourceNode);
+        this.node.$edit ??= false;
+
+        nodeToFormNode(this.node);
 
         // @ts-ignore
         return this.node;
@@ -115,7 +110,7 @@ export class FormNodeBuilder<E, E0 = E> {
     edit(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
         const isEdit = isFunction(value) ? () => value(this.node) : value;
         if (!params.length) {
-            this.isEdit = isEdit;
+            this.node.$edit = isEdit;
         } else {
             params.forEach(key => {
                 const child = this.node[key];
@@ -252,38 +247,47 @@ export class FormNodeBuilder<E, E0 = E> {
 
     /** @internal */
     collect() {
-        this.node.$edit = this.isEdit ?? true;
+        this.node.$edit ??= true;
         return this.node;
     }
 }
 
-export function clone(source: any): any {
+export function initFormNode(source: any): any {
     if (isStoreListNode(source)) {
         const res = observable.array<{}>([], {deep: false}) as StoreListNode;
 
+        res.$form = true;
+        res.$required = source.$required ?? true;
+
         // @ts-ignore
         res.$entity = source.$entity;
-        res.$required = source.$required;
         res.load = source.load;
         res.pushNode = source.pushNode;
         res.replaceNodes = source.replaceNodes;
         res.setNodes = source.setNodes;
+
+        // @ts-ignore
+        res.sourceNode = source;
 
         return res;
     } else if (isStoreNode(source)) {
         const res: typeof source = {} as any;
         for (const key in source) {
             // @ts-ignore
-            res[key] = clone((source as any)[key]);
+            res[key] = initFormNode((source as any)[key]);
         }
-        res.$required = source.$required;
+
+        res.$form = true;
+        res.$required = source.$required ?? true;
+
+        // @ts-ignore
+        res.sourceNode = source;
+
         return res;
     } else if (isEntityField(source)) {
         return extendObservable(
             {
-                get $field() {
-                    return source.$field;
-                }
+                $field: source.$field
             },
             {
                 _isEdit: true,

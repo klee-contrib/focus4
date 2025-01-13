@@ -3,28 +3,23 @@ import {isFunction} from "lodash";
 import {nodeToFormNode} from "../store";
 import {FormListNode, StoreListNode} from "../types";
 
-import {clone, FormNodeBuilder} from "./node";
+import {FormNodeBuilder, initFormNode} from "./node";
 
 export class FormListNodeBuilder<E, E0 = E> {
     /** @internal */
     node: StoreListNode<E>;
-    /** @internal */
-    sourceNode: StoreListNode<E0>;
-    /** @internal */
-    isEdit?: boolean | (() => boolean);
 
     constructor(node: StoreListNode<E>) {
-        this.node = clone(node);
-        this.sourceNode = node as any;
-        node.$required ??= true;
+        this.node = node.$form ? node : initFormNode(node);
     }
 
     /**
      * Construit le FormListNode à partir de la configuration renseignée.
      */
     build(): FormListNode<E, E0> {
-        this.node.$edit = this.isEdit ?? false;
-        nodeToFormNode(this.node, this.sourceNode);
+        this.node.$edit ??= false;
+
+        nodeToFormNode(this.node);
 
         // @ts-ignore
         return this.node;
@@ -41,7 +36,7 @@ export class FormListNodeBuilder<E, E0 = E> {
      */
     edit(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0>;
     edit(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0> {
-        this.isEdit = isFunction(value) ? () => value(this.node) : value;
+        this.node.$edit = isFunction(value) ? () => value(this.node) : value;
         return this;
     }
 
@@ -75,7 +70,7 @@ export class FormListNodeBuilder<E, E0 = E> {
 
     /** @internal */
     collect() {
-        this.node.$edit = this.isEdit ?? true;
+        this.node.$edit ??= true;
         return this.node;
     }
 }

@@ -23,14 +23,9 @@ import {getNodeForList, replaceNode, setNode} from "./store";
 /**
  * Transforme un Store(List)Node en Form(List)Node.
  * @param node Le FormNode en cours de création.
- * @param sourceNode Le node origine du FormNode.
  * @param parentNode Le node parent.
  */
-export function nodeToFormNode<E = any, E0 = E>(
-    node: StoreListNode<E> | StoreNode<E>,
-    sourceNode: StoreListNode<E0> | StoreNode<E0>,
-    parentNode?: FormListNode | FormNode
-) {
+export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, parentNode?: FormListNode | FormNode) {
     const {$edit, $required} = node;
     if ($edit !== undefined) {
         delete node.$edit;
@@ -39,16 +34,18 @@ export function nodeToFormNode<E = any, E0 = E>(
         delete node.$required;
     }
 
+    delete node.$form;
+
+    const {sourceNode} = node as any;
+
     node.load = () => sourceNode.load();
     (node as any).reset = action("formNode.reset", () => {
         if ((node as any).form._initialData) {
             replaceNode.call(node as any, (node as any).form._initialData);
         }
-        setNode.call(node as any, sourceNode as any);
+        setNode.call(node as any, sourceNode);
         return node;
     });
-
-    (node as any).sourceNode = sourceNode;
 
     (node as any).form = observable(
         {
@@ -90,7 +87,7 @@ export function nodeToFormNode<E = any, E0 = E>(
     };
 
     if (isFormListNode(node)) {
-        node.forEach((item, i) => nodeToFormNode(item, (sourceNode as StoreListNode)[i], node));
+        node.forEach(item => nodeToFormNode(item, node));
         extendObservable(node.form, {
             get hasChanged() {
                 return node.some(item => item.form.hasChanged);
@@ -201,7 +198,7 @@ export function nodeToFormNode<E = any, E0 = E>(
             if (isEntityField(child)) {
                 addFormFieldProperties(child as BuildingFormEntityField, node);
             } else if (isAnyStoreNode(child)) {
-                nodeToFormNode(child, (sourceNode as any)[entry], node);
+                nodeToFormNode(child, node);
             }
         }
         extendObservable(node.form, {
@@ -209,7 +206,7 @@ export function nodeToFormNode<E = any, E0 = E>(
                 return Object.values(node).some(item => {
                     if (isFormEntityField(item)) {
                         return item.hasChanged;
-                    } else if (isAnyFormNode(item)) {
+                    } else if (isAnyFormNode(item) && item !== node) {
                         return item.form.hasChanged;
                     } else {
                         return false;
@@ -225,7 +222,7 @@ export function nodeToFormNode<E = any, E0 = E>(
                             (typeof item.value === "string" && item.value.trim() === "") ||
                             (Array.isArray(item.value) && item.value.length === 0)
                         );
-                    } else if (isAnyFormNode(item)) {
+                    } else if (isAnyFormNode(item) && node !== item) {
                         return item.form.isEmpty;
                     } else {
                         return true;
