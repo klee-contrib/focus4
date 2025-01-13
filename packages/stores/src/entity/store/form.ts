@@ -77,8 +77,8 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
                     continue;
                 }
                 const child: {} = (node as any)[entry];
-                if (isEntityField(child)) {
-                    (child as FormEntityField)._dispose?.();
+                if (isFormEntityField(child)) {
+                    child._dispose?.();
                 } else if (isAnyFormNode(child)) {
                     child.dispose();
                 }
@@ -215,8 +215,9 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
             },
             get isEmpty() {
                 return Object.values(node).every(item => {
-                    if (isEntityField(item)) {
+                    if (isFormEntityField(item)) {
                         return (
+                            !!item._added ||
                             item.value === undefined ||
                             item.value === null ||
                             (typeof item.value === "string" && item.value.trim() === "") ||
@@ -236,10 +237,9 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
                 return (
                     (isFormNode(node) &&
                         toPairs(node).reduce((errors, [key, item]) => {
-                            if (isEntityField(item)) {
-                                const fItem = item as FormEntityField;
-                                if (!fItem.isValid) {
-                                    return {...errors, [key]: fItem.error};
+                            if (isFormEntityField(item)) {
+                                if (!item.isValid) {
+                                    return {...errors, [key]: item.error};
                                 }
                             } else if (isAnyFormNode(item) && item !== (node as any)) {
                                 if (!item.form.isValid) {

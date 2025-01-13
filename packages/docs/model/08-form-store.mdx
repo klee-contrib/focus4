@@ -94,7 +94,7 @@ Ce sont tous des versions "dérivées" de leur objet source, donc toute API qui 
 
 En plus des quatre propriétés `hasChanged`, `isEdit`, `error(s)` et `isValid` vues précédement, `FormNode` et `FormListNode` exposent aussi :
 
--   `isEmpty`, pour savoir si le noeud est vide (en lien avec la condition de validité du noeud).
+-   `isEmpty`, pour savoir si le noeud est vide (en lien avec la condition de validité du noeud). Les champs ajoutés ne sont pas pris en compte.
 -   `sourceNode`, une référence vers le noeud source parent du `FormNode`/`FormListNode`.
 -   `reset()`, une méthode pour réinitialiser le `FormNode`/`FormListNode` sur son `sourceNode`.
 
