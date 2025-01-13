@@ -244,7 +244,9 @@ export function setNode<E>(
                     if (isAnyStoreNode(itemEntry)) {
                         setNode.call(itemEntry as any, itemValue);
                     } else if (isEntityField(itemValue)) {
-                        itemEntry.value = itemValue.value;
+                        if (itemValue.value !== undefined) {
+                            itemEntry.value = itemValue.value;
+                        }
                     } else if (isEntityField(itemEntry)) {
                         itemEntry.value = itemValue;
                     }
