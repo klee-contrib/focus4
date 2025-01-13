@@ -88,6 +88,10 @@ export function handleProblemDetails(problemDetails: ProblemDetails): HandledPro
     }
 
     for (const key in problemDetails) {
+        if (["type", "status", "title", "detail", "instance"].includes(key)) {
+            continue;
+        }
+
         if (typeof problemDetails[key] === "string") {
             add(key, problemDetails[key]);
         } else if (

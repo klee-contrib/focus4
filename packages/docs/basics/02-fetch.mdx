@@ -19,9 +19,36 @@ Son API est la suivante :
 -   **`options`** est le paramètre d'options de `window.fetch`. Cet objet d'options est prérempli par `coreFetch` pour y inclure ce qu'on a déjà défini (la
     méthode et le body en particulier), mais il est surchargeable via ce paramètre.
 
-Si `coreFetch` reçoit une erreur et que le corps de la réponse est un JSON, alors cette réponse sera envoyée au [`messageStore`](/docs/les-bases-gestion-des-messages--docs) en appelant sa méthode
-`addMessages`. Pour assurer une intégration native avec la gestion de messages Focus, les APIs appelées devront renvoyer des réponses de la forme
-`{error: "Message d'erreur"}` ou `{errors: ["Message 1", "Message 2"]}`.
+### Gestion des erreurs
+
+Si `coreFetch` reçoit une **réponse avec un code de statut en erreur** (4xx-5xx), et si le serveur renvoie une réponse structurée en JSON, alors elle sera
+interprétée afin de pouvoir **enregistrer automatiquement des messages d'erreur** (à priori) dans le [`messageStore`](/docs/les-bases-gestion-des-messages--docs).
+
+Focus supporte nativement les erreurs qui utilisent la spécification [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807), mais acceptera aussi des réponses dans un format JSON arbitaire.
+
+Les messages suivants seront générés :
+
+-   Si `detail` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
+-   La méthode `addMessages` du `messageStore` est appelée avec tous les champs non standard présent dans la réponse (`type`, `status`, `title`,
+    `detail` et `instance`). Ces champs peuvent être typés :
+    -   `string` : enregistre un message de la catégorie du nom du champ.
+    -   `string[]` : enregistre plusieurs messages de la catégorie du nom du champ.
+    -   `Record<string, string>` : enregistre un message par valeur du record de la catégorie du nom du champ. Si la clé ne vaut pas `global` ou
+        `globals`, il sera préfixé par sa clé (ex : `"{champ}: {message}"`).
+    -   `Record<string, string[]>` : combinaison des deux cas précédents.
+-   Si aucun message n'a été enregistré et que `title` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
+
+Pour rappel, les catégories de messages supportées par le `messageStore` doivent avoir été définies au préalable, si vous voulez gérer autre chose que
+`error`, `info` ou `warning`. Ce mécanisme permet en revanche de pouvoir gérer des types de messages personnalisés à partir de erreurs serveur
+personnalisées. Cela peut par la suite être utilisé pour différencier la façon dont les erreurs sont restituées à l'utilisateur (au delà du `MessageCenter` par
+défaut) par exemple.
+
+Après traitement des erreurs, `coreFetch` renverra une Promise rejetée avec la réponse du serveur, complétée :
+
+-   De `type` et `status` si ce n'était pas un `ProblemDetails`.
+-   D'une propriété `$messages` qui contient la liste des messages générés (dans l'ordre) par la lecture de la réponse.
+
+Vous pouvez utiliser le type exporté `HandledProblemDetails` si besoin pour la représenter.
 
 ## `RequestStore`
 
