@@ -10,10 +10,10 @@ declare module "i18next" {
 
 export {coreFetch, downloadFile, getFileObjectUrl, requestStore} from "./network";
 export {makeRouter, param, startHistory} from "./router";
-export {MessageStore, UserStore, messageStore} from "./stores";
+export {MessageStore, messageStore, UserStore} from "./stores";
 export {config, themeable} from "./utils";
 
-export type {HttpMethod, Request} from "./network";
+export type {HandledProblemDetails, HttpMethod, ProblemDetails, Request} from "./network";
 export type {
     Router,
     RouterConfirmation,
