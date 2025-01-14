@@ -3,6 +3,7 @@ import {disposeOnUnmount} from "mobx-react";
 import {Component, useEffect, useId, useState} from "react";
 
 import {
+    buildNode,
     EntityToType,
     FormActions,
     FormActionsBuilder,
@@ -10,6 +11,7 @@ import {
     FormListNodeBuilder,
     FormNode,
     FormNodeBuilder,
+    isAnyStoreNode,
     isStoreListNode,
     StoreListNode,
     StoreNode,
@@ -17,10 +19,25 @@ import {
 } from "@focus4/stores";
 
 /**
+ * Construit un FormListNode à partir d'un StoreListNode.
+ * Le FormListNode est un clone d'un StoreListNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
+ * Toute mise à jour du StoreListNode réinitialise le FormListNode.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
+ * @param node Le noeud de base
+ * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
+ */
+export function makeFormNode<E, NE = E>(
+    componentClass: Component | null,
+    node: StoreListNode<E>,
+    builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
+    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
+): FormListNode<NE, E>;
+/**
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
- * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
  * @param node Le noeud de base
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
@@ -32,26 +49,39 @@ export function makeFormNode<E, NE = E>(
     initialData?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE, E>;
 /**
- * Construit un FormListNode à partir d'un StoreListNode.
- * Le FormListNode est un clone d'un StoreListNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
- * Toute mise à jour du StoreListNode réinitialise le FormListNode.
- * @param componentClass Le composant (classe) lié au FormActions, pour disposer la réaction de chargement à son démontage.
- * @param node Le noeud de base
+ * Construit un FormListNode à partir d'une définition d'entité
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
+ * @param entity La définition d'entité, dans un array.
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
 export function makeFormNode<E, NE = E>(
     componentClass: Component | null,
-    node: StoreListNode<E>,
+    node: [E],
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
 ): FormListNode<NE, E>;
+/**
+ * Construit un FormNode à partir d'une définition d'entité.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
+ * @param entity La définition d'entité
+ * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
+ */
+export function makeFormNode<E, NE = E>(
+    componentClass: Component | null,
+    node: E,
+    builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
+    initialData?: EntityToType<E> | (() => EntityToType<E>)
+): FormNode<NE, E>;
 export function makeFormNode(
     componentClass: Component | null,
-    node: StoreListNode | StoreNode,
+    entityOrNode: any,
     builder: (x: any) => any = (x: any) => x,
     initialData?: any
 ): any {
+    const node = isAnyStoreNode(entityOrNode) ? entityOrNode : buildNode(entityOrNode);
+
     let formNode;
     if (isStoreListNode(node)) {
         formNode = builder(new FormListNodeBuilder(node)).build();
@@ -85,9 +115,9 @@ export function useFormNode<E, NE = E>(
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
 ): FormListNode<NE, E>;
 /**
- * Construit un FormNode à partir d'un StoreNode.
+ * Construit un FormListNode à partir d'un StoreListNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
- * Toute mise à jour du StoreNode réinitialise le FormNode.
+ * Toute mise à jour du StoreNode réinitialise le FormListNode.
  * @param node Le noeud de base
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
@@ -97,11 +127,30 @@ export function useFormNode<E, NE = E>(
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE, E>;
-export function useFormNode(
-    node: StoreListNode | StoreNode,
-    builder: (x: any) => any = (x: any) => x,
-    initialData: any = undefined
-) {
+/**
+ * Construit un FormListNode à partir d'une définition d'entité.
+ * @param entity La définition d'entité, dans un array.
+ * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
+ */
+export function useFormNode<E, NE = E>(
+    entity: [E],
+    builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
+    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
+): FormListNode<NE, E>;
+/**
+ * Construit un FormNode à partir d'un StoreNode.
+ * @param entity La définition d'entité.
+ * @param builder Le configurateur
+ * @param initialData Les données initiales du formulaire
+ */
+export function useFormNode<E, NE = E>(
+    entity: E,
+    builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
+    initialData?: EntityToType<E> | (() => EntityToType<E>)
+): FormNode<NE, E>;
+export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: any) => x, initialData: any = undefined) {
+    const [node] = useState(() => (isAnyStoreNode(entityOrNode) ? entityOrNode : buildNode(entityOrNode)));
     const [formNode] = useState(() => {
         let fn;
         if (isStoreListNode(node)) {

@@ -89,6 +89,8 @@ De plus, un champ ajouté sera **omis par défaut du résultat de [`toFlatValues
 est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le
 second paramètre (optionnel) de `toFlatValues` à `true`.
 
+Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud parent, et la valeur de son `hasChanged` sera toujours `false`.
+
 ### `patch(name, builder)`
 
 La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un champ, une sous-liste ou un sous-objet. Elle prend comme paramètres :
