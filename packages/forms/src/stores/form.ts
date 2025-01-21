@@ -1,6 +1,6 @@
 import {isFunction} from "lodash";
 import {disposeOnUnmount} from "mobx-react";
-import {Component, useEffect, useId, useState} from "react";
+import {Component, useEffect, useId, useRef, useState} from "react";
 
 import {
     buildNode,
@@ -13,6 +13,7 @@ import {
     FormNodeBuilder,
     isAnyStoreNode,
     isStoreListNode,
+    SourceNodeType,
     StoreListNode,
     StoreNode,
     toFlatValues
@@ -177,14 +178,21 @@ export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: an
  * @param formNode Le FormNode du formulaire.
  * @param builder Le configurateur.
  */
-export function makeFormActions<FN extends FormListNode | FormNode, A extends readonly any[] = never>(
+export function makeFormActions<
+    FN extends FormListNode | FormNode,
+    A extends readonly any[] = never,
+    C extends SourceNodeType<FN> | void | string | number = never,
+    U extends SourceNodeType<FN> | void | string | number = never,
+    S extends SourceNodeType<FN> | void | string | number = never
+>(
     componentClass: Component | null,
     formNode: FN,
-    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A>
+    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, C, U, S>
 ): FormActions<FN, A> {
     const formActions = new FormActions(formNode, builder(new FormActionsBuilder()));
     if (componentClass) {
         disposeOnUnmount(componentClass, formActions.register());
+        formActions.init();
     }
     return formActions;
 }
@@ -199,15 +207,25 @@ export function makeFormActions<FN extends FormListNode | FormNode, A extends re
  * @param deps Liste de dépendances (React) pour les actions de formulaire. Le builder sera redéfini à tout changement d'une valeur de cette liste, et l'éventuel service de chargement sera rappelé.
  * @returns Objet d'actions de formulaire.
  */
-export function useFormActions<FN extends FormListNode | FormNode, A extends readonly any[] = never>(
-    node: FN,
-    builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A>,
-    deps: any[] = []
-) {
+export function useFormActions<
+    FN extends FormListNode | FormNode,
+    A extends readonly any[] = never,
+    C extends SourceNodeType<FN> | void | string | number = never,
+    U extends SourceNodeType<FN> | void | string | number = never,
+    S extends SourceNodeType<FN> | void | string | number = never
+>(node: FN, builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, C, U, S>, deps: any[] = []) {
     const trackingId = useId();
     const [formActions] = useState(() => new FormActions(node, builder(new FormActionsBuilder()), trackingId));
 
-    useEffect(() => formActions.register(node.sourceNode, builder(new FormActionsBuilder())), [node, ...deps]);
+    const firstRender = useRef(true);
+    useEffect(() => {
+        const disposer = formActions.register(node.sourceNode, builder(new FormActionsBuilder()));
+        if (firstRender.current) {
+            formActions.init();
+            firstRender.current = false;
+        }
+        return disposer;
+    }, [node, ...deps]);
 
     return formActions;
 }

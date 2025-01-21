@@ -39,7 +39,6 @@ export type {
     FieldEntry2,
     FormEntityField,
     FormNode,
-    FormNodeToSourceType,
     ListEntry,
     NodeToType,
     ObjectEntry,
@@ -53,6 +52,7 @@ export type {
     PatchedFormNode,
     RecursiveListEntry,
     SingleDomainFieldType,
+    SourceNodeType,
     StoreListNode,
     StoreNode,
     Validator

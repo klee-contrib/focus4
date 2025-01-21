@@ -49,7 +49,6 @@ export type {
     FormEntityField,
     FormListNode,
     FormNode,
-    FormNodeToSourceType,
     InputComponents,
     ListEntry,
     Metadata,
@@ -66,6 +65,7 @@ export type {
     RecursiveListEntry,
     SelectComponents,
     SingleDomainFieldType,
+    SourceNodeType,
     StoreListNode,
     StoreNode,
     Validator

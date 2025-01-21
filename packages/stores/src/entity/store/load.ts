@@ -50,7 +50,8 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
         makeObservable<this, "builder" | "node">(this, {
             builder: observable.ref,
             isLoading: computed,
-            node: observable.ref
+            node: observable.ref,
+            params: computed.struct
         });
     }
 
@@ -59,19 +60,31 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
         return requestStore.isLoading(this.trackingId);
     }
 
+    /** La valeur courante des paramètres de chargement. */
+    get params(): A | undefined {
+        const params = this.builder.getLoadParams?.();
+        if (!params) {
+            return undefined;
+        }
+
+        if (!Array.isArray(params)) {
+            // @ts-ignore
+            return [params];
+        }
+
+        // @ts-ignore
+        return params;
+    }
+
     /**
      * Appelle le service de chargement avec la valeur courante des paramètres, et insère le résultat dans le store associé.
      *
      * Cette méthode est également accessible depuis le store (via `node.load()`).
      */
     async load() {
-        let params = this.builder.getLoadParams?.();
-        if (params !== undefined && this.builder.loadService) {
-            if (!Array.isArray(params)) {
-                params = [params];
-            }
+        if (this.params !== undefined && this.builder.loadService) {
             const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
-                this.builder.loadService!(...params)
+                this.builder.loadService!(...this.params!)
             );
             runInAction(() => {
                 if (data) {
@@ -82,7 +95,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
                     }
                 }
 
-                (this.builder.handlers.load || []).forEach(handler => handler("load"));
+                (this.builder.handlers.load ?? []).forEach(handler => handler("load", data));
             });
         }
     }
@@ -125,14 +138,14 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
 }
 
 /** Objet de configuration pour un enregistrement de chargement. */
-export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends readonly any[] = never> {
+export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends readonly any[] = never> {
     /** @internal */
-    readonly handlers = {} as Record<"load", ((event: "load") => void)[]>;
+    readonly handlers: {load?: ((event: "load", data: NodeToType<SN>) => void)[]} = {};
 
     /** @internal */
     getLoadParams?: () => any | undefined;
     /** @internal */
-    loadService?: (...args: A) => Promise<NodeToType<SN> | undefined>;
+    loadService?: (...args: P) => Promise<NodeToType<SN>>;
     /** @internal */
     trackingIds: string[] = [];
 
@@ -141,22 +154,24 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
      * Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification.
      * @param get Getter.
      */
-    params<const NA extends any[]>(get: () => NA | undefined): NodeLoadBuilder<SN, NonNullable<NA>>;
-    params<NA>(get: () => NA): NodeLoadBuilder<SN, [NonNullable<NA>]>;
+    params<const NP extends any[]>(get: () => NP | undefined): NodeLoadBuilder<SN, NP>;
+    params<NP>(get: () => NP): NodeLoadBuilder<SN, [NonNullable<NP>]>;
     /**
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    params<const NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>>;
-    params<const NA extends any[]>(...params: NA): NodeLoadBuilder<SN, NonNullable<NA>> {
-        if (!params.length) {
+    params<const NP extends any[]>(params?: NP): NodeLoadBuilder<SN, NP>;
+    params<NP>(params?: NP): NodeLoadBuilder<SN, [NonNullable<NP>]>;
+    params<const NP extends any[]>(params?: NP | (() => NP | undefined)): any {
+        if (params === undefined) {
             // @ts-ignore
             this.getLoadParams = () => [];
-        } else if (!isFunction(params[0])) {
+        } else if (isFunction(params)) {
             // @ts-ignore
-            this.getLoadParams = () => (params.length === 1 ? params[0] : params);
+            this.getLoadParams = params;
         } else {
-            this.getLoadParams = params[0];
+            // @ts-ignore
+            this.getLoadParams = () => params;
         }
 
         // @ts-ignore
@@ -167,9 +182,7 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
      * Enregistre le service de chargement.
      * @param service Service de chargement.
      */
-    load(
-        service: A extends never ? never : (...params: A) => Promise<NodeToType<SN> | undefined>
-    ): NodeLoadBuilder<SN, A> {
+    load(service: P extends never ? never : (...params: P) => Promise<NodeToType<SN>>): NodeLoadBuilder<SN, P> {
         this.loadService = service;
         return this;
     }
@@ -179,7 +192,7 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
      * @param event Nom de l'évènement.
      * @param handler Handler de l'évènement.
      */
-    on(event: "load"[] | "load", handler: (event: "load") => void): NodeLoadBuilder<SN, A> {
+    on(event: "load"[] | "load", handler: (event: "load", data?: NodeToType<SN>) => void): NodeLoadBuilder<SN, P> {
         if (!Array.isArray(event)) {
             event = [event];
         }
@@ -201,7 +214,7 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, A extends rea
      * Cela permettra d'ajouter l'état du service au `isLoading` de cet(ces) id(s).
      * @param trackingIds Id(s) de suivi.
      */
-    trackingId(...trackingIds: string[]): NodeLoadBuilder<SN, A> {
+    trackingId(...trackingIds: string[]): NodeLoadBuilder<SN, P> {
         this.trackingIds = trackingIds;
         return this;
     }

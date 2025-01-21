@@ -49,7 +49,7 @@ export type {
     PatchedFormNode
 } from "./patch";
 export type {StoreListNode, StoreNode} from "./store";
-export type {FormNodeToSourceType, NodeToType} from "./utils";
+export type {NodeToType, SourceNodeType} from "./utils";
 export type {
     DateValidator,
     EmailValidator,

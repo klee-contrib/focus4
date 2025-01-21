@@ -1,14 +1,28 @@
 import i18next from "i18next";
-import {uniqueId} from "lodash";
+import {merge, uniqueId} from "lodash";
 import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
 import {messageStore, requestStore, Router, RouterConfirmation} from "@focus4/core";
 
 import {LoadRegistration, NodeLoadBuilder, toFlatValues} from "../store";
-import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, NodeToType} from "../types";
+import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, SourceNodeType} from "../types";
 
-type FormActionsEvent = "cancel" | "edit" | "error" | "load" | "save";
+interface FormActionHandlers<
+    FN extends FormNode | FormListNode,
+    C extends SourceNodeType<FN> | void | string | number,
+    U extends SourceNodeType<FN> | void | string | number,
+    S extends SourceNodeType<FN> | void | string | number
+> {
+    init?: ((event: "init", data: SourceNodeType<FN>) => void)[];
+    load?: ((event: "load", data: SourceNodeType<FN>) => void)[];
+    cancel?: ((event: "cancel") => void)[];
+    edit?: ((event: "edit") => void)[];
+    create?: ((event: "create", data: C) => void)[];
+    update?: ((event: "update", data: U) => void)[];
+    save?: ((event: "save", data: S) => void)[];
+    error?: ((event: "error") => void)[];
+}
 
 /** Props passées au composant de formulaire. */
 export interface ActionsFormProps {
@@ -35,12 +49,15 @@ export interface ActionsPanelProps {
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
 export class FormActions<
     FN extends FormListNode | FormNode = any,
-    A extends readonly any[] = any[]
+    A extends readonly any[] = never,
+    C extends SourceNodeType<FN> | void | string | number = never,
+    U extends SourceNodeType<FN> | void | string | number = never,
+    S extends SourceNodeType<FN> | void | string | number = never
 > extends LoadRegistration<FN["sourceNode"], A> {
     /** Mode d'affichage des erreurs du formulaire. */
     errorDisplay: "after-focus" | "always" | "never";
 
-    protected declare builder: FormActionsBuilder<FN, A>;
+    protected declare builder: FormActionsBuilder<FN, A, C, U, S>;
 
     private readonly formNode: FN;
 
@@ -50,7 +67,7 @@ export class FormActions<
      * @param builder Builder pour les actions de forumaire.
      * @param trackingId Id de suivi de requête pour ce load.
      */
-    constructor(formNode: FN, builder: FormActionsBuilder<FN, A>, trackingId = v4()) {
+    constructor(formNode: FN, builder: FormActionsBuilder<FN, A, C, U, S>, trackingId = v4()) {
         super(formNode.sourceNode, builder, trackingId);
         this.formNode = formNode;
 
@@ -93,7 +110,6 @@ export class FormActions<
     /**
      * Handler de clic sur le bouton "Annuler".
      *
-     *
      * Repasse le formulaire en mode consultation, annule toutes les modification et lance les handlers `"cancel"`.
      */
     onClickCancel() {
@@ -102,7 +118,7 @@ export class FormActions<
         }
         this.formNode.form.isEdit = false;
         this.formNode.reset();
-        (this.builder.handlers.cancel || []).forEach(handler => handler("cancel"));
+        (this.builder.handlers.cancel ?? []).forEach(handler => handler("cancel"));
     }
 
     /**
@@ -115,7 +131,7 @@ export class FormActions<
             this.errorDisplay = "after-focus";
         }
         this.formNode.form.isEdit = true;
-        (this.builder.handlers.edit || []).forEach(handler => handler("edit"));
+        (this.builder.handlers.edit ?? []).forEach(handler => handler("edit"));
     }
 
     /** Appelle le service de sauvegarde avec le contenu du formulaire, si ce dernier est valide. */
@@ -124,8 +140,15 @@ export class FormActions<
             this.errorDisplay = "always";
         }
 
-        // On ne fait rien si on est déjà en chargement.
-        if (this.isLoading || !this.builder.saveService) {
+        // On ne fait rien si on est déjà en chargement et qu'on a pas le bon service disponible à appeler.
+        if (
+            this.isLoading ||
+            !(
+                this.builder.saveService ||
+                (this.builder.createService && !this.params) ||
+                (this.builder.updateService && this.params)
+            )
+        ) {
             return;
         }
 
@@ -139,9 +162,16 @@ export class FormActions<
                 };
             }
 
-            const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
-                this.builder.saveService!(toFlatValues(this.formNode))
-            );
+            const data = await requestStore.track<C | U | S>([this.trackingId, ...this.builder.trackingIds], () => {
+                const d = toFlatValues(this.formNode);
+                if (this.builder.saveService) {
+                    return this.builder.saveService(d);
+                } else if (this.params && this.builder.updateService) {
+                    return this.builder.updateService(...[...this.params, d]);
+                } else {
+                    return this.builder.createService!(d);
+                }
+            });
             runInAction(() => {
                 this.formNode.form.isEdit = false;
 
@@ -162,7 +192,7 @@ export class FormActions<
                 }
                 updateInitialData(this.formNode, this.formNode.form._initialData);
 
-                if (data) {
+                if (data && typeof data === "object") {
                     // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                     if (isStoreNode(this.formNode.sourceNode)) {
                         this.formNode.sourceNode.replace(data);
@@ -181,9 +211,15 @@ export class FormActions<
                 this.errorDisplay = "after-focus";
             }
 
-            (this.builder.handlers.save || []).forEach(handler => handler("save"));
+            if (this.builder.saveService) {
+                (this.builder.handlers.save ?? []).forEach(handler => handler("save", data as S));
+            } else if (this.builder.updateService && this.params) {
+                (this.builder.handlers.update ?? []).forEach(handler => handler("update", data as U));
+            } else {
+                (this.builder.handlers.create ?? []).forEach(handler => handler("create", data as C));
+            }
         } catch (e: unknown) {
-            (this.builder.handlers.error || []).forEach(handler => handler("error"));
+            (this.builder.handlers.error ?? []).forEach(handler => handler("error"));
             throw e;
         }
     }
@@ -209,14 +245,34 @@ export class FormActions<
 
         return loadDisposer;
     }
+
+    /** Appelle le service d'initilisation enregistré sur le `FormActions`, si aucun `load` ne peut être appelé. */
+    init() {
+        if (this.builder.initService && (!this.params || !this.builder.loadService)) {
+            this.builder.initService().then(initData => {
+                this.formNode.form._initialData = merge(this.formNode.form._initialData ?? {}, initData);
+
+                if (isFormNode(this.formNode)) {
+                    this.formNode.sourceNode.replace(this.formNode.form._initialData!);
+                } else {
+                    this.formNode.sourceNode.replaceNodes(this.formNode.form._initialData!);
+                }
+
+                (this.builder.handlers.init ?? []).forEach(handler => handler("init", initData));
+            });
+        }
+    }
 }
 
 export class FormActionsBuilder<
     FN extends FormListNode | FormNode,
-    A extends readonly any[] = never
-> extends NodeLoadBuilder<FN["sourceNode"], A> {
+    P extends readonly any[] = never,
+    C extends SourceNodeType<FN> | void | string | number = never,
+    U extends SourceNodeType<FN> | void | string | number = never,
+    S extends SourceNodeType<FN> | void | string | number = never
+> extends NodeLoadBuilder<FN["sourceNode"], P> {
     /** @internal */
-    readonly handlers = {} as Record<FormActionsEvent, ((event: FormActionsEvent) => void)[]>;
+    readonly handlers: FormActionHandlers<FN, C, U, S> = {};
 
     /** @internal */
     actionsErrorDisplay?: "after-focus" | "always" | "never";
@@ -225,40 +281,108 @@ export class FormActionsBuilder<
     /** @internal */
     message = "focus.detail.saved";
     /** @internal */
-    saveService?: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>;
+    initService?: () => Promise<SourceNodeType<FN>>;
+    /** @internal */
+    createService?: (entity: SourceNodeType<FN>) => Promise<C>;
+    /** @internal */
+    updateService?: (...params: [...P, SourceNodeType<FN>]) => Promise<U>;
+    /** @internal */
+    saveService?: (entity: SourceNodeType<FN>) => Promise<S>;
 
     /**
      * Précise la getter permettant de récupérer la liste des paramètres pour l'action de chargement.
      * Si le résultat contient des observables, le service de chargement sera rappelé à chaque modification.
      * @param get Getter.
      */
-    params<const NA extends any[]>(get: () => NA | undefined): FormActionsBuilder<FN, NonNullable<NA>>;
-    params<NA>(get: () => NA): FormActionsBuilder<FN, [NonNullable<NA>]>;
+    override params<const NP extends any[]>(
+        get: () => NP | undefined
+    ): FormActionsBuilder<FN, NonNullable<NP>, C, U, S>;
+    override params<NP>(get: () => NP): FormActionsBuilder<FN, [NonNullable<NP>], C, U, S>;
     /**
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    params<const NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>>;
-    params<const NA extends any[]>(...params: NA): FormActionsBuilder<FN, NonNullable<NA>> {
-        return super.params(...params) as any;
+    override params<const NP extends any[]>(params?: NP): FormActionsBuilder<FN, NonNullable<NP>, C, U, S>;
+    override params<NP>(params?: NP): FormActionsBuilder<FN, [NonNullable<NP>], C, U, S>;
+    override params<const NP extends any[]>(params?: NP | (() => NP | undefined)): any {
+        return super.params(params);
+    }
+
+    /**
+     * Enregistre un service d'initilisation du formulaire, qui sera appelé au premier rendu pour compléter les données
+     * déjà présentes dans le `formNode`, s'il n'y a pas de `load` a appeler.
+     *
+     * Les données seront ensuite recopiées dans le noeud source, afin de pouvoir correctement identifier les données
+     * qui ont été saisies par l'utilisateur dans le formulaire (via `formNode.form.hasChanged`).
+     *
+     * La méthode peut aussi être appelée sans service, simplement pour effectuer la recopie (ou un clear) du noeud source.
+     * @param service Service d'initialisation.
+     */
+    init(service?: () => Promise<SourceNodeType<FN>>) {
+        this.initService = service ?? (async () => ({} as SourceNodeType<FN>));
+        return this;
     }
 
     /**
      * Enregistre le service de chargement.
      * @param service Service de chargement.
      */
-    load(
-        service: A extends never ? never : (...params: A) => Promise<NodeToType<FN> | undefined>
-    ): FormActionsBuilder<FN, A> {
+    override load(
+        service: P extends never ? never : (...params: P) => Promise<SourceNodeType<FN>>
+    ): FormActionsBuilder<FN, P, C, U, S> {
         return super.load(service) as any;
     }
 
     /**
-     * Enregistre un service de sauvegarde.
+     * Enregistre un service de création, appelé par `actions.save()` si les `params` sont `undefined`.
+     * @param service Service de création.
+     */
+    create<NC extends SourceNodeType<FN> | void | string | number>(
+        service: (entity: SourceNodeType<FN>) => Promise<NC>
+    ): FormActionsBuilder<FN, P, NC, U, S> {
+        if (this.saveService) {
+            throw new Error("Impossible de spécifier un `create` en même temps qu'un `save`.");
+        }
+
+        // @ts-ignore
+        this.createService = service;
+        // @ts-ignore
+        return this as any;
+    }
+
+    /**
+     * Enregistre un service de mise à jour, appelé par `actions.save()` si les `params` ne sont pas `undefined`.
+     *
+     * Le service sera appelé avec les `params`, puis le contenu du `formNode`.
+     * @param service Service de mise à jour.
+     */
+    update<NU extends SourceNodeType<FN> | void | string | number>(
+        service: (...params: [...P, SourceNodeType<FN>]) => Promise<NU>
+    ): FormActionsBuilder<FN, P, C, NU, S> {
+        if (this.saveService) {
+            throw new Error("Impossible de spécifier un `update` en même temps qu'un `save`.");
+        }
+
+        // @ts-ignore
+        this.updateService = service;
+        // @ts-ignore
+        return this;
+    }
+
+    /**
+     * Enregistre un service de sauvegarde, appelé par `actions.save()`.
      * @param service Service de sauvegarde.
      */
-    save(service: (entity: NodeToType<FN>) => Promise<NodeToType<FN> | void>): FormActionsBuilder<FN, A> {
+    save<NS extends SourceNodeType<FN> | void | string | number>(
+        service: (entity: SourceNodeType<FN>) => Promise<NS>
+    ): FormActionsBuilder<FN, P, C, U, NS> {
+        if (this.createService || this.updateService) {
+            throw new Error("Impossible de spécifier un `save` en même temps qu'un `create` ou un `update`.");
+        }
+
+        // @ts-ignore
         this.saveService = service;
+        // @ts-ignore
         return this;
     }
 
@@ -267,7 +391,10 @@ export class FormActionsBuilder<
      * @param event Nom de l'évènement.
      * @param handler Handler de l'évènement.
      */
-    on<E extends FormActionsEvent>(event: E | E[], handler: (event: E) => void): FormActionsBuilder<FN, A> {
+    override on<E extends keyof FormActionHandlers<FN, C, U, S>>(
+        event: E | E[],
+        handler: (event: E, data: Parameters<NonNullable<FormActionHandlers<FN, C, U, S>[E]>[0]>[1]) => void
+    ): FormActionsBuilder<FN, P, C, U, S> {
         return super.on(event as any, handler as any) as any;
     }
 
@@ -277,7 +404,7 @@ export class FormActionsBuilder<
      * Cela permettra d'ajouter l'état du service au `isLoading` de cet(ces) id(s).
      * @param trackingIds Id(s) de suivi.
      */
-    trackingId(...trackingIds: string[]): FormActionsBuilder<FN, A> {
+    override trackingId(...trackingIds: string[]): FormActionsBuilder<FN, P, C, U, S> {
         return super.trackingId(...trackingIds) as any;
     }
 
@@ -293,7 +420,7 @@ export class FormActionsBuilder<
      *
      * @param mode Mode d'affichage des erreurs.
      */
-    errorDisplay(mode: "after-focus" | "always" | "never"): FormActionsBuilder<FN, A> {
+    errorDisplay(mode: "after-focus" | "always" | "never") {
         this.actionsErrorDisplay = mode;
         return this;
     }
@@ -302,7 +429,7 @@ export class FormActionsBuilder<
      * Surcharge le message de succès à la sauvegarde du formulaire. Si le message est vide, aucun message ne sera affiché.
      * @param message Le message de succès.
      */
-    successMessage(message: string): FormActionsBuilder<FN, A> {
+    successMessage(message: string) {
         this.message = message;
         return this;
     }
