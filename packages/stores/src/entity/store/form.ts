@@ -68,11 +68,11 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
     );
 
     (node as any).dispose = function dispose() {
-        if (isFormListNode(node)) {
+        if (isFormListNode<E>(node)) {
             node.forEach(item => item.dispose());
             node._dispose();
         } else {
-            for (const entry in node) {
+            for (const entry in node as StoreNode<E>) {
                 if (entry === "sourceNode") {
                     continue;
                 }
@@ -189,7 +189,7 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
             onSourceSplice();
             onRemove();
         };
-    } else if (isFormNode(node)) {
+    } else if (isFormNode<E>(node)) {
         for (const entry in node) {
             if (entry === "sourceNode") {
                 continue;
@@ -318,7 +318,7 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
 function setSourceNode(node: FormListNode | FormNode, sourceNode: StoreListNode | StoreNode) {
     if (sourceNode && node !== sourceNode) {
         (node as any).sourceNode = sourceNode;
-        for (const key in node) {
+        for (const key in node as FormNode) {
             const item = (node as any)[key];
             const sourceItem = (sourceNode as any)[key];
             if (isAnyFormNode(item) && isAnyStoreNode(item)) {

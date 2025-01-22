@@ -147,7 +147,7 @@ export function clearNode<E>(this: StoreListNode<E>): StoreListNode<E>;
 export function clearNode<E>(this: StoreListNode<E> | StoreNode<E>) {
     runInAction(() => {
         // Cas du noeud de liste : On vide simplement la liste.
-        if (isStoreListNode(this)) {
+        if (isStoreListNode<E>(this)) {
             this.clear();
         } else {
             // Cas du noeud simple, on parcourt chaque champ.
@@ -235,9 +235,9 @@ export function setNode<E>(
                 }
                 self[i].set(item);
             });
-        } else if (isStoreNode(this) && isObject(value)) {
+        } else if (isStoreNode<E>(this) && isObject(value)) {
             // On affecte chaque valeur du noeud avec la valeur demandée (si elle existe), et on réappelle `setNode` si la valeur n'est pas primitive.
-            for (const item in value) {
+            for (const item in value as EntityToType<E>) {
                 const itemEntry = (this as any)[item];
                 const itemValue = (value as any)[item];
                 if (itemEntry) {
