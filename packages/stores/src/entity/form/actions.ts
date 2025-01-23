@@ -199,6 +199,11 @@ export class FormActions<
                     } else {
                         this.formNode.sourceNode.replaceNodes(data as any);
                     }
+                    // Si on a pas de retour du serveur, on sauvegarde à la place les données du formulaire dans le noeud de store.
+                } else if (isFormNode(this.formNode)) {
+                    this.formNode.sourceNode.replace(this.formNode);
+                } else {
+                    this.formNode.sourceNode.replaceNodes(this.formNode);
                 }
             });
 
