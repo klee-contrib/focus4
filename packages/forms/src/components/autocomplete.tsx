@@ -15,7 +15,12 @@ export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSourc
     error?: string;
     /** Service de résolution de clé. Doit retourner le libellé. */
     keyResolver?: (key: DomainType<T>) => Promise<string | undefined>;
-    /** Au changement. */
+    /**
+     * Appelé à la sélection d'une valeur.
+     *
+     * En plus de passer la valeur choisie comme tout composant de saisie, le composant envoie aussi en second paramètre l'objet source entier qui correspond à cette valeur.
+     * Même si la signature de `onChange` de `autocompleteFor` ne vous le dit pas, vous pouvez quand même la récupérer par ici dans votre composant.
+     */
     onChange: (key: DomainType<T> | undefined, value?: TSource) => void;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<TSource[]>;
