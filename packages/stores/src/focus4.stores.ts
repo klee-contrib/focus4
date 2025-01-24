@@ -1,13 +1,11 @@
 export {CollectionStore} from "./collection";
 export {
+    buildNode,
+    cloneField,
     FormActions,
     FormActionsBuilder,
     FormListNodeBuilder,
     FormNodeBuilder,
-    LoadRegistration,
-    NodeLoadBuilder,
-    buildNode,
-    cloneField,
     fromField,
     isAnyFormNode,
     isAnyStoreNode,
@@ -17,10 +15,13 @@ export {
     isFormNode,
     isStoreListNode,
     isStoreNode,
+    LoadRegistration,
     makeEntityStore,
     makeField,
+    NodeLoadBuilder,
     stringFor,
     toFlatValues,
+    UndefinedComponent,
     validateField
 } from "./entity";
 export {emptyReferenceList, makeReferenceList, makeReferenceStore, referenceTrackingId} from "./reference";
@@ -57,11 +58,11 @@ export type {
     Patch,
     PatchAutocomplete,
     PatchDisplay,
+    PatchedFormListNode,
+    PatchedFormNode,
     PatchInput,
     PatchLabel,
     PatchSelect,
-    PatchedFormListNode,
-    PatchedFormNode,
     RecursiveListEntry,
     SelectComponents,
     SingleDomainFieldType,

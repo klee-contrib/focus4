@@ -21,6 +21,8 @@ import {
     WithThemeProps
 } from "../types";
 
+import {UndefinedComponent} from "./utils";
+
 type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps : never;
 type DomainSelectProps<D> = D extends Domain<infer _0, infer _1, infer SCProps> ? SCProps : never;
 type DomainAutocompleteProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer ACProps> ? ACProps : never;
@@ -87,11 +89,11 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                     type: "field",
                     domain: {
                         type: "string",
-                        AutocompleteComponent: () => null,
-                        DisplayComponent: () => null,
-                        LabelComponent: () => null,
-                        InputComponent: () => null,
-                        SelectComponent: () => null
+                        AutocompleteComponent: UndefinedComponent,
+                        DisplayComponent: UndefinedComponent,
+                        LabelComponent: UndefinedComponent,
+                        InputComponent: UndefinedComponent,
+                        SelectComponent: UndefinedComponent
                     } as Domain,
                     isRequired: false,
                     label: "",

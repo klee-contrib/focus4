@@ -149,11 +149,11 @@ export function makeField(param1: any, param2: any = {}) {
             comment,
             domain = {
                 type: "string",
-                AutocompleteComponent: () => null,
-                DisplayComponent: () => null,
-                LabelComponent: () => null,
-                InputComponent: () => null,
-                SelectComponent: () => null
+                AutocompleteComponent: UndefinedComponent,
+                DisplayComponent: UndefinedComponent,
+                LabelComponent: UndefinedComponent,
+                InputComponent: UndefinedComponent,
+                SelectComponent: UndefinedComponent
             } as Domain,
             DisplayComponent = domain.DisplayComponent,
             displayFormatter = domain.displayFormatter,
@@ -183,6 +183,11 @@ export function makeField(param1: any, param2: any = {}) {
                 .collect()
         );
     }
+}
+
+/** Composant de domaine/champ non défini (vide). */
+export function UndefinedComponent() {
+    return null;
 }
 
 function withIsEdit(field: BuildingFormEntityField) {

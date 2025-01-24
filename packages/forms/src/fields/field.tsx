@@ -10,7 +10,8 @@ import {
     FieldComponents,
     FieldEntry,
     FieldEntryType,
-    FormEntityField
+    FormEntityField,
+    UndefinedComponent
 } from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
@@ -147,17 +148,17 @@ export function Field<F extends FieldEntry>(
                 name,
                 isRequired,
                 domain: {
-                    AutocompleteComponent,
+                    AutocompleteComponent = UndefinedComponent,
                     autocompleteProps: domainACP = {},
                     className = "",
-                    DisplayComponent,
+                    DisplayComponent = UndefinedComponent,
                     displayFormatter = defaultFormatter,
                     displayProps: domainDCP = {},
-                    LabelComponent,
+                    LabelComponent = UndefinedComponent,
                     labelProps: domainLCP = {},
-                    InputComponent,
+                    InputComponent = UndefinedComponent,
                     inputProps: domainICP = {},
-                    SelectComponent,
+                    SelectComponent = UndefinedComponent,
                     selectProps: domainSCP = {},
                     type
                 }
@@ -189,6 +190,36 @@ export function Field<F extends FieldEntry>(
         if (valueWidth) {
             style["--field-value-width"] = valueWidth;
         }
+
+        useEffect(() => {
+            if (hasLabel && LabelComponent === UndefinedComponent) {
+                console.warn(`Le champ '${name}' essaie d'afficher un 'LabelComponent' qui n'a pas été défini.`);
+            }
+        }, [hasLabel, LabelComponent, name]);
+
+        useEffect(() => {
+            if (isEdit && inputType === "select" && SelectComponent === UndefinedComponent) {
+                console.warn(`Le champ '${name}' essaie d'afficher un 'SelectComponent' qui n'a pas été défini.`);
+            }
+        }, [inputType, isEdit, SelectComponent, name]);
+
+        useEffect(() => {
+            if (isEdit && inputType === "input" && InputComponent === UndefinedComponent) {
+                console.warn(`Le champ '${name}' essaie d'afficher un 'InputComponent' qui n'a pas été défini.`);
+            }
+        }, [inputType, isEdit, InputComponent, name]);
+
+        useEffect(() => {
+            if (isEdit && inputType === "autocomplete" && AutocompleteComponent === UndefinedComponent) {
+                console.warn(`Le champ '${name}' essaie d'afficher un 'AutocompleteComponent' qui n'a pas été défini.`);
+            }
+        }, [inputType, isEdit, AutocompleteComponent, name]);
+
+        useEffect(() => {
+            if (!isEdit && DisplayComponent === UndefinedComponent) {
+                console.warn(`Le champ '${name}' essaie d'afficher un 'DisplayComponent' qui n'a pas été défini.`);
+            }
+        }, [isEdit, DisplayComponent, name]);
 
         return (
             <div

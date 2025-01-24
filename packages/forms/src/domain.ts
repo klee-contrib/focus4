@@ -8,7 +8,8 @@ import {
     DomainFieldType,
     DomainFieldTypeMultiple,
     DomainFieldTypeSingle,
-    ReferenceList
+    ReferenceList,
+    UndefinedComponent
 } from "@focus4/stores";
 
 import {
@@ -106,17 +107,17 @@ export function domain(d: Partial<Domain> & {type: DomainFieldType}): Domain {
             AutocompleteComponent: AutocompleteChips,
             DisplayComponent: Display,
             LabelComponent: Label,
-            InputComponent: () => null,
+            InputComponent: UndefinedComponent,
             SelectComponent: SelectChips,
             ...d
         };
     } else {
         return {
-            AutocompleteComponent: () => null,
+            AutocompleteComponent: UndefinedComponent,
             DisplayComponent: Display,
             LabelComponent: Label,
-            InputComponent: () => null,
-            SelectComponent: () => null,
+            InputComponent: UndefinedComponent,
+            SelectComponent: UndefinedComponent,
             ...d
         };
     }
