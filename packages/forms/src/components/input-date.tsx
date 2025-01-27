@@ -195,7 +195,11 @@ export function InputDate({
             if (ISOStringFormat === "local-utc-midnight") {
                 newDate = newDate.toUTC();
             }
-            onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
+            onChange(
+                ISOStringFormat === "date-only"
+                    ? newDate.toFormat("yyyy-MM-dd")
+                    : newDate.toISO({suppressMilliseconds: true}) ?? ""
+            );
             setTimeout(() => {
                 if (fromKeyDown) {
                     inputRef.current?.focus();
@@ -209,16 +213,24 @@ export function InputDate({
     const commitDate = useCallback(
         function commitDate(newDateText?: string) {
             const text = (newDateText ?? dateText ?? "").trim() || undefined;
-            const newDate = text ? transformDate(text, inputFormat) : undefined;
+            const transformedDate = text ? transformDate(text, inputFormat) : undefined;
 
-            if (newDate?.isValid) {
-                setDate(newDate);
-                onChange(ISOStringFormat === "date-only" ? newDate.toFormat("yyyy-MM-dd") : newDate.toISO() ?? "");
+            if (transformedDate?.isValid) {
+                const {year, month, day} = transformedDate;
+                let newDate = date.set({year, month, day});
+                if (ISOStringFormat === "local-utc-midnight") {
+                    newDate = newDate.toUTC();
+                }
+                onChange(
+                    ISOStringFormat === "date-only"
+                        ? newDate.toFormat("yyyy-MM-dd")
+                        : newDate.toISO({suppressMilliseconds: true}) ?? ""
+                );
             } else {
                 onChange(text);
             }
         },
-        [dateText, inputFormat, ISOStringFormat, onChange, transformDate]
+        [date, dateText, inputFormat, ISOStringFormat, onChange, transformDate]
     );
 
     /** Appelé lorsqu'on quitte le champ texte. */

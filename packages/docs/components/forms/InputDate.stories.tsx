@@ -1,3 +1,4 @@
+import {DateTime} from "luxon";
 import {useState} from "react";
 
 import {InputDate} from "@focus4/forms";
@@ -15,7 +16,9 @@ export default {
 
 export const Showcase: StoryObj<typeof InputDate> = {
     render(props) {
-        const [date, setDate] = useState<string | undefined>(new Date().toISOString());
+        const [date, setDate] = useState<string | undefined>(
+            DateTime.utc().startOf("second").toISO({suppressMilliseconds: true})
+        );
         return <InputDate {...props} onChange={setDate} value={date} />;
     }
 };
