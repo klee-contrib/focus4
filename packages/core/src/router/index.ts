@@ -358,6 +358,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                 window.addEventListener("beforeunload", blockOutside);
             } else if (!hasConfirm && store._hasConfirm) {
                 window.removeEventListener("beforeunload", blockOutside);
+                this.commit();
             }
 
             store._hasConfirm = hasConfirm;
