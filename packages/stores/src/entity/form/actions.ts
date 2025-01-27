@@ -253,9 +253,15 @@ export class FormActions<
     }
 
     /** Appelle le service d'initilisation enregistré sur le `FormActions`, si aucun `load` ne peut être appelé. */
-    init() {
-        if (this.builder.initService && (!this.params || !this.builder.loadService)) {
-            this.builder.initService().then(initData => {
+    async init() {
+        if (this.builder.hasInit && (!this.params || !this.builder.loadService)) {
+            try {
+                const initData = this.builder.initService
+                    ? await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
+                          this.builder.initService!()
+                      )
+                    : ({} as SourceNodeType<FN>);
+
                 this.formNode.form._initialData = merge(this.formNode.form._initialData ?? {}, initData);
 
                 if (isFormNode(this.formNode)) {
@@ -265,7 +271,11 @@ export class FormActions<
                 }
 
                 (this.builder.handlers.init ?? []).forEach(handler => handler("init", initData));
-            });
+            } catch (e: unknown) {
+                this.clear();
+                (this.builder.handlers.error ?? []).forEach(handler => handler("error", "init", e));
+                throw e;
+            }
         }
     }
 }
@@ -286,6 +296,8 @@ export class FormActionsBuilder<
     confirmation?: RouterConfirmation;
     /** @internal */
     message = "focus.detail.saved";
+    /** @internal */
+    hasInit = false;
     /** @internal */
     initService?: () => Promise<SourceNodeType<FN>>;
     /** @internal */
@@ -325,7 +337,8 @@ export class FormActionsBuilder<
      * @param service Service d'initialisation.
      */
     init(service?: () => Promise<SourceNodeType<FN>>) {
-        this.initService = service ?? (async () => ({} as SourceNodeType<FN>));
+        this.hasInit = true;
+        this.initService = service;
         return this;
     }
 
